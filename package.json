@@ -1,5 +1,5 @@
 {
-  "name": "nuggft-web-webpack",
+  "name": "nuggft-interface",
   "version": "1.0.0",
   "description": "nuggft web facing application",
   "main": "index.tsx",
@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "typechain": "typechain --target ethers-v5 --out-dir src/typechain/ './src/abis/*'"
   },
   "eslintConfig": {
     "extends": [
