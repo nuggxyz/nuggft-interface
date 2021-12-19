@@ -1,0 +1,8 @@
+declare namespace NL.GraphQL.Fragments.User {
+    type Full = Omit<NL.GraphQL.User<NL.GraphQL.GraphScalars>, '__typename'>;
+
+    type Bare = Pick<Full, 'ethin' | 'ethout' | 'id' | 'xnugg'> & {
+        nuggs: NL.GraphQL.Fragments.General.Id[];
+        offers: NL.GraphQL.Fragments.General.Id[];
+    };
+}

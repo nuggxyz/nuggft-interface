@@ -1,16 +1,11 @@
 {
-  "name": "nuggft-web-cra",
-  "version": "0.1.0",
+  "name": "nuggft-web",
+  "version": "1.0.0",
+  "description": "nuggft web facing application",
+  "main": "index.tsx",
+  "author": "@nuggxyz",
+  "license": "MIT",
   "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^12.0.0",
-    "@testing-library/user-event": "^13.2.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "5.0.0",
-    "web-vitals": "^2.1.0"
-  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -18,21 +13,78 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "extends": ["react-app", "react-app/jest"]
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
+    "production": [">0.2%", "not dead", "not op_mini all"],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.8",
+    "@babel/eslint-parser": "^7.14.9",
+    "@babel/preset-react": "^7.14.5",
+    "@babel/preset-typescript": "^7.14.5",
+    "@types/bluebird": "^3.5.36",
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.4.10",
+    "@types/react-helmet": "^6.1.4",
+    "@types/websocket": "^1.0.4",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-universe": "^7.0.1",
+    "eslint-plugin-gatsby": "^1.0.2",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-unused-imports": "^1.1.2",
+    "eslint-plugin-yaml": "^0.5.0",
+    "eslint-webpack-plugin": "^3.0.1",
+    "graphql-tag": "^2.12.5",
+    "prettier": "^2.3.2",
+    "typechain": "^5.1.2",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-decorators": "^7.14.5",
+    "@davatar/react": "^1.8.1",
+    "@ethersproject/providers": "^5.4.5",
+    "@loadable/component": "^5.15.2",
+    "@reduxjs/toolkit": "^1.6.1",
+    "@typechain/ethers-v5": "^7.1.0",
+    "@web3-react/core": "^6.1.9",
+    "@web3-react/injected-connector": "^6.0.7",
+    "@web3-react/network-connector": "^6.1.9",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-client": "^2.6.10",
+    "apollo-link-http": "^1.5.17",
+    "assert": "^2.0.0",
+    "babel-preset-gatsby": "^1.10.0",
+    "crypto-browserify": "^3.12.0",
+    "decimal.js-light": "^2.5.1",
+    "ethers": "^5.4.6",
+    "https-browserify": "^1.0.0",
+    "numbro": "^2.3.5",
+    "os-browserify": "^0.3.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-feather": "^2.0.9",
+    "react-flip-move": "^3.0.4",
+    "react-helmet": "^6.1.0",
+    "react-redux": "^7.2.4",
+    "react-scripts": "5.0.0",
+    "react-spring": "^9.3.0",
+    "redux-thunk": "^2.3.0",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0"
   }
 }

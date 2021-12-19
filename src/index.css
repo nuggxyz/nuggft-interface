@@ -1,13 +1,98 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    padding: 0;
+    margin: 0;
+    background: white;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+* {
+    box-sizing: border-box;
+}
+
+.placeholder-blue::-webkit-input-placeholder {
+    color:rgb(80, 144, 234);
+}
+
+.placeholder-blue::-moz-placeholder {
+    color:rgb(80, 144, 234);
+}
+
+.placeholder-blue::-ms-placeholder {
+    color:rgb(80, 144, 234);
+}
+
+.placeholder-blue::placeholder {
+    color:rgb(80, 144, 234);
+}
+.placeholder-white::-webkit-input-placeholder {
+    color:white;
+}
+
+.placeholder-white::-moz-placeholder {
+    color:white;
+}
+
+.placeholder-white::-ms-placeholder {
+    color:white;
+}
+
+.placeholder-white::placeholder {
+    color:white;
+}
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type='number'] {
+    -moz-appearance: textfield;
+}
+
+@font-face {
+    font-family: 'SF-Mono';
+    unicode-range: U+000-5FF;
+    src: local('SF-Mono'), url(./lib/fonts/SF-Mono-Light.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Inter';
+    unicode-range: U+000-5FF;
+    src: local('Inter'), url(./lib/fonts/Inter.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Inter-SemiBold';
+    unicode-range: U+000-5FF;
+    src: local('Inter-SemiBold'), url(./lib/fonts/Inter-SemiBold.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    unicode-range: U+000-5FF;
+    src: local('Montserrat'), url(./lib/fonts/Montserrat-Bold.woff2) format('woff2');
+}
+
+
+
+@-webkit-keyframes AnimatedBackground {
+    0% {
+        background-position: 0% 15%;
+    }
+    50% {
+        background-position: 100% 86%;
+    }
+    100% {
+        background-position: 0% 15%;
+    }
+}
+@keyframes AnimatedBackground {
+    0% {
+        background-position: 0% 15%;
+    }
+    50% {
+        background-position: 100% 86%;
+    }
+    100% {
+        background-position: 0% 15%;
+    }
 }
