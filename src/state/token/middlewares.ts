@@ -18,7 +18,7 @@ const onTokenSet: NL.Redux.Middleware<
         const go = next(action);
         if (TokenState.isOwnFulfilledAction(action, 'setTokenFromThumbnail')) {
             TokenState.dispatch.getSwapHistory({ tokenId: action.payload.id });
-            AppState.dispatch.silentlySetRoute(`#/nugg/${action.payload.id}`);
+            AppState.silentlySetRoute(`#/nugg/${action.payload.id}`);
         } else if (TokenState.isOwnFulfilledAction(action, 'setTokenFromId')) {
             const thumbnail = await nuggThumbnailQuery(action.payload);
             if (!isUndefinedOrNullOrObjectEmpty(thumbnail)) {

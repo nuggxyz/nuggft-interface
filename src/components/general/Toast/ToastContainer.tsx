@@ -11,20 +11,10 @@ import ToastCard from './ToastCard';
 type Props = {};
 
 const ToastContainer: FunctionComponent<Props> = () => {
-    const { height, width } = AppState.select.dimensions();
-
     const toasts = AppState.select.toasts();
 
-    const containerStyle = useMemo(() => {
-        return {
-            ...styles.container,
-            height,
-            width,
-        };
-    }, [height, width]);
-
     return (
-        <div style={containerStyle}>
+        <div style={styles.container}>
             <FlipMove
                 enterAnimation="none"
                 leaveAnimation="none"

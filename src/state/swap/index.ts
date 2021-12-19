@@ -76,15 +76,16 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
         extraReducers: (builder) => {
             builder
                 .addCase(thactions.initSwap.fulfilled, (state, action) => {
-                    const data = action.payload.data;
-                    state.nugg = data.nugg;
-                    state.owner = data.owner;
-                    state.offers = data.offers;
-                    state.id = data.id;
-                    state.leader = data.leader;
-                    state.eth = data.eth;
-                    state.ethUsd = data.ethUsd;
+                    const swap = action.payload.data.swap;
+                    state.nugg = swap.nugg;
+                    state.owner = swap.owner;
+                    state.offers = swap.offers;
+                    state.id = swap.id;
+                    state.leader = swap.leader;
+                    state.eth = swap.eth;
+                    state.ethUsd = swap.ethUsd;
                     state.lastUpdated = Date.now();
+                    state.status = action.payload.data.status;
                 })
                 .addCase(thactions.pollOffers.fulfilled, (state, action) => {
                     state.offers = action.payload.data;

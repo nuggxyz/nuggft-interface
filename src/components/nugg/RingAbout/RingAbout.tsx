@@ -99,4 +99,4 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     );
 };
 
-export default RingAbout;
+export default React.memo(RingAbout);

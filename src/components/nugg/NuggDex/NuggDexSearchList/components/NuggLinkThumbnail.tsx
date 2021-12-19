@@ -45,4 +45,4 @@ const NuggLinkThumbnail: FunctionComponent<{
     );
 };
 
-export default NuggLinkThumbnail;
+export default React.memo(NuggLinkThumbnail);

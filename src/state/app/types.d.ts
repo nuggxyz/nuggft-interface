@@ -1,14 +1,8 @@
 declare namespace NL.Redux.App {
     interface State {
-        dimensions: {
-            height: number;
-            width: number;
-        };
-        isSmallDevice: boolean;
         toasts: Toast[];
         modalIsOpen: Modals;
         modalData: ModalsData;
-        route: string;
         view: Views;
         walletVisible: boolean;
     }

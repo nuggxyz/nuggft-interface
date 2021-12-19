@@ -48,6 +48,7 @@ const TheRing: FunctionComponent<Props> = () => {
             duration={blockDuration}
             remaining={blocksRemaining}
             blocktime={constants.BLOCKTIME}
+            width={1400}
             staticColor={
                 status === 'over'
                     ? Colors.purple
@@ -63,4 +64,4 @@ const TheRing: FunctionComponent<Props> = () => {
     );
 };
 
-export default TheRing;
+export default React.memo(TheRing);

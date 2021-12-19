@@ -73,4 +73,4 @@ const TokenViewer: FunctionComponent<Props> = ({
     );
 };
 
-export default TokenViewer;
+export default React.memo(TokenViewer);

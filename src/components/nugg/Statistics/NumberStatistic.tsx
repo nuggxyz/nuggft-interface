@@ -39,4 +39,4 @@ const NumberStatistic: FC<Props> = ({ value, percent = false, ...props }) => {
     );
 };
 
-export default NumberStatistic;
+export default React.memo(NumberStatistic);

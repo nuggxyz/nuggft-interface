@@ -44,83 +44,6 @@ const logger: NL.Redux.Middleware<
         return fin;
     };
 
-const router: NL.Redux.Middleware<
-    Record<string, unknown>,
-    any,
-    Dispatch<any>
-> =
-    ({ getState }) =>
-    (next) =>
-    async (action: PayloadAction<string>) => {
-        if (AppState.isOwnFulfilledAction(action, 'onRouteUpdate')) {
-            if (action.payload !== getState().app.route) {
-                try {
-                    const swapRoute = action.payload.match(
-                        /\/(swap)\/(\d+)\-(\d+)/,
-                    );
-                    const tokenRoute = action.payload.match(/\/(nugg)\/(\d+)/);
-
-                    const soloTokenRoute = action.payload.match(
-                        /\/(nugg)((?=\/)\/|.*)/,
-                    );
-
-                    const currentView = getState().app.view;
-
-                    const currentEpoch = !isUndefinedOrNullOrObjectEmpty(
-                        getState().protocol.epoch,
-                    )
-                        ? getState().protocol.epoch.id
-                        : '';
-
-                    if (
-                        action.payload === '/' &&
-                        !isUndefinedOrNullOrStringEmpty(currentEpoch)
-                    ) {
-                        SwapState.dispatch.initSwap({
-                            swapId: `${currentEpoch}-${currentEpoch}`,
-                        });
-                    } else if (
-                        !isUndefinedOrNullOrArrayEmpty(swapRoute) &&
-                        swapRoute.length === 4 &&
-                        swapRoute[1] === 'swap'
-                    ) {
-                        console.log(
-                            'setting swap',
-                            `${swapRoute[2]}-${swapRoute[3]}`,
-                        );
-                        SwapState.dispatch.initSwap({
-                            swapId: `${swapRoute[2]}-${swapRoute[3]}`,
-                        });
-                        if (currentView !== 'Swap') {
-                            AppState.dispatch.changeView('Swap');
-                        }
-                    } else if (
-                        !isUndefinedOrNullOrArrayEmpty(tokenRoute) &&
-                        tokenRoute.length === 3 &&
-                        tokenRoute[1] === 'nugg'
-                    ) {
-                        if (!isUndefinedOrNullOrStringEmpty(currentEpoch)) {
-                            SwapState.dispatch.initSwap({
-                                swapId: `${currentEpoch}-${currentEpoch}`,
-                            });
-                        }
-                        TokenState.dispatch.setTokenFromId(tokenRoute[2]);
-                        if (currentView !== 'Search') {
-                            AppState.dispatch.changeView('Search');
-                        }
-                    } else if (!isUndefinedOrNullOrArrayEmpty(soloTokenRoute)) {
-                        if (currentView !== 'Search') {
-                            AppState.dispatch.changeView('Search');
-                        }
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-        }
-        return next(action);
-    };
-
 const localStorager: Middleware<{}, any, Dispatch<any>> =
     ({ dispatch }) =>
     (next: any) =>
@@ -182,7 +105,7 @@ const viewChange: Middleware<{}, any, Dispatch<any>> =
         if (AppState.isOwnFulfilledAction(action, 'changeView')) {
             if (action.payload === 'Search') {
                 const currentToken = getState().token.tokenId;
-                AppState.dispatch.silentlySetRoute(
+                AppState.silentlySetRoute(
                     `#/nugg${
                         !isUndefinedOrNullOrStringEmpty(currentToken)
                             ? `/${currentToken}`
@@ -196,7 +119,7 @@ const viewChange: Middleware<{}, any, Dispatch<any>> =
                 )
                     ? getState().protocol.epoch.id
                     : '';
-                AppState.dispatch.silentlySetRoute(
+                AppState.silentlySetRoute(
                     (currentEpoch &&
                         currentSwap &&
                         currentSwap.includes(currentEpoch)) ||
@@ -230,4 +153,4 @@ const rejectedThactions: Middleware<{}, any, Dispatch<any>> =
         return next(action);
     };
 
-export default { logger, router, localStorager, viewChange, rejectedThactions };
+export default { localStorager, viewChange, rejectedThactions };

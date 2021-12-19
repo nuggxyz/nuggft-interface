@@ -10,7 +10,7 @@ export default () => {
         if (!isUndefinedOrNullOrStringEmpty(swapId)) {
             SwapState.dispatch.pollOffers({ swapId });
         }
-    }, constants.BLOCKTIME);
+    }, constants.QUERYTIME);
 
     return null;
 };

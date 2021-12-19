@@ -95,12 +95,15 @@ export class NLState<S> {
         if (isUndefinedOrNullOrObjectEmpty(this._selectors)) {
             this._selectors = Object.keys(this.instance._initialState).reduce(
                 (selectors, key) => {
-                    selectors[key] = () =>
+                    selectors[key] = (
+                        eqFn?: (prev: any, cur: any) => boolean,
+                    ) =>
                         useSelector(
                             createSelector(
                                 NLSelector,
                                 (s) => s[this.instance._name][key],
                             ),
+                            eqFn,
                         );
                     return selectors;
                 },

@@ -52,7 +52,7 @@ const ChainIndicator: FunctionComponent<Props> = () => {
         <animated.div style={springStyle}>
             <Button
                 textStyle={{ fontFamily: Layout.font.code.regular }}
-                onClick={() => AppState.dispatch.onRouteUpdate('/')}
+                onClick={() => AppState.onRouteUpdate('/')}
                 buttonStyle={{
                     ...styles.button,
                     ...(connectionWarning ? styles.warning : styles.normal),

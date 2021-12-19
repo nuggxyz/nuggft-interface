@@ -4,6 +4,7 @@ import { BigNumber } from 'ethers';
 
 import {
     isUndefinedOrNullOrNotObject,
+    isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 import { toEth } from '../../lib/conversion';
@@ -16,17 +17,31 @@ import pollOffersQuery from './queries/pollOffersQuery';
 const initSwap = createAsyncThunk<
     {
         success: NL.Redux.Swap.Success;
-        data: NL.GraphQL.Fragments.Swap.Bare;
+        data: {
+            swap: NL.GraphQL.Fragments.Swap.Bare;
+            status: NL.Redux.Swap.Status;
+        };
     },
     { swapId: string },
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
 >('swap/initSwap', async ({ swapId }, thunkAPI) => {
     try {
         invariant(swapId, 'swap id passed as undefined');
-        let res = await initSwapQuery(swapId);
+        const res = await initSwapQuery(swapId);
+
+        const currentEpoch = thunkAPI.getState().protocol.epoch;
+        const status = swapId.includes(
+            !isUndefinedOrNullOrObjectEmpty(currentEpoch)
+                ? currentEpoch.id
+                : null,
+        )
+            ? 'ongoing'
+            : swapId.includes('-0')
+            ? 'waiting'
+            : 'over';
         return {
             success: 'SUCCESS',
-            data: res,
+            data: { swap: res, status },
         };
     } catch (err) {
         console.log({ err });

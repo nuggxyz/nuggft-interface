@@ -1,7 +1,6 @@
 import { Dispatch, Middleware, PayloadAction } from '@reduxjs/toolkit';
 
 import {
-    gatsbyDOM,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
@@ -36,7 +35,7 @@ const updateEpochMiddleware: Middleware<
                 });
             }
 
-            if (gatsbyDOM('navigator') && !navigator.onLine) {
+            if (!navigator.onLine) {
                 Web3State.dispatch.setConnectivityWarning(true);
             } else if (getState().web3.connectivityWarning === true) {
                 Web3State.dispatch.setConnectivityWarning(false);

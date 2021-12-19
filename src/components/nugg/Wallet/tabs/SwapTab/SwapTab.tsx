@@ -80,4 +80,4 @@ const SwapTab: FunctionComponent<Props> = () => {
     );
 };
 
-export default SwapTab;
+export default React.memo(SwapTab);

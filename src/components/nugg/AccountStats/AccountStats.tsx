@@ -43,4 +43,4 @@ const AccountStats: FunctionComponent<Props> = () => {
     );
 };
 
-export default AccountStats;
+export default React.memo(AccountStats);

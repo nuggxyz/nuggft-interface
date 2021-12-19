@@ -3,13 +3,16 @@ import React, {
     FunctionComponent,
     RefCallback,
     useCallback,
+    useEffect,
     useMemo,
+    useState,
 } from 'react';
 
 import Text from '../Texts/Text/Text';
 import Loader from '../Loader/Loader';
 import { isUndefinedOrNullOrArrayEmpty } from '../../../lib';
 import useOnScroll from '../../../hooks/useOnScroll';
+import usePrevious from '../../../hooks/usePrevious';
 
 import styles from './List.styles';
 
@@ -17,13 +20,14 @@ export type ListRenderItemProps<T> = {
     item: T;
     extraData?: any[];
     action?: any;
+    onScrollEnd?: any;
     index: number;
     rootRef?: any;
     selected?: boolean;
 };
 
 type Props = {
-    data: string[] | any;
+    data: any[];
     RenderItem: FunctionComponent<ListRenderItemProps<any>>;
     loading?: boolean;
     extraData?: any[];
@@ -34,10 +38,11 @@ type Props = {
     horizontal?: boolean;
     style?: CSSProperties;
     onScroll?: RefCallback<any>;
+    selected?: any;
 };
 
 const List: FunctionComponent<Props> = ({
-    data,
+    data = [],
     RenderItem,
     loading = false,
     extraData,
@@ -48,6 +53,7 @@ const List: FunctionComponent<Props> = ({
     horizontal = false,
     style,
     onScroll,
+    selected,
 }) => {
     const ref = useOnScroll(onScroll);
     const containerStyle = useMemo(() => {
@@ -60,7 +66,7 @@ const List: FunctionComponent<Props> = ({
     }, [border, horizontal, style]);
 
     const List = useCallback(
-        () =>
+        ({ selected }) =>
             !isUndefinedOrNullOrArrayEmpty(data) ? (
                 <>
                     {data.map((item, index) => (
@@ -71,6 +77,10 @@ const List: FunctionComponent<Props> = ({
                             extraData={extraData}
                             action={action}
                             rootRef={ref}
+                            selected={
+                                JSON.stringify(selected) ===
+                                JSON.stringify(item)
+                            }
                         />
                     ))}
                 </>
@@ -94,7 +104,7 @@ const List: FunctionComponent<Props> = ({
                 item=""
                 key="w0w0w0w0w0w"
                 index={-1}
-                action={onScrollEnd}
+                onScrollEnd={onScrollEnd}
                 rootRef={ref}
             />
         ),
@@ -119,7 +129,7 @@ const List: FunctionComponent<Props> = ({
         <>
             <Label />
             <div style={containerStyle} ref={ref}>
-                <List />
+                <List selected={selected} />
                 <EndOfList onScrollEnd={onScrollEnd} />
                 <Loading />
             </div>
