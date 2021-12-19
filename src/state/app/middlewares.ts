@@ -14,7 +14,11 @@ import { NLState } from '../NLState';
 
 import AppState from '.';
 
-const logger: Middleware<{}, Dispatch<any>> =
+const logger: NL.Redux.Middleware<
+    Record<string, unknown>,
+    any,
+    Dispatch<any>
+> =
     ({ dispatch, getState }) =>
     (next: any) =>
     async (action) => {
@@ -42,8 +46,8 @@ const logger: Middleware<{}, Dispatch<any>> =
 
 const router: NL.Redux.Middleware<
     Record<string, unknown>,
-    NL.Redux.RootState,
-    NL.Redux.Dispatch<any>
+    any,
+    Dispatch<any>
 > =
     ({ getState }) =>
     (next) =>
@@ -117,7 +121,7 @@ const router: NL.Redux.Middleware<
         return next(action);
     };
 
-const localStorager: Middleware<{}, NL.Redux.RootState, Dispatch<any>> =
+const localStorager: Middleware<{}, any, Dispatch<any>> =
     ({ dispatch }) =>
     (next: any) =>
     async (action: PayloadAction<NL.Redux.LocalStoragePayload<any>>) => {
@@ -170,7 +174,7 @@ const localStorager: Middleware<{}, NL.Redux.RootState, Dispatch<any>> =
         return next(tempAction);
     };
 
-const viewChange: Middleware<{}, NL.Redux.RootState, Dispatch<any>> =
+const viewChange: Middleware<{}, any, Dispatch<any>> =
     ({ getState }) =>
     (next: any) =>
     async (action: PayloadAction<NL.Redux.App.Views>) => {
@@ -206,7 +210,7 @@ const viewChange: Middleware<{}, NL.Redux.RootState, Dispatch<any>> =
         return go;
     };
 
-const rejectedThactions: Middleware<{}, NL.Redux.RootState, Dispatch<any>> =
+const rejectedThactions: Middleware<{}, any, Dispatch<any>> =
     ({ getState }) =>
     (next: any) =>
     async (action: PayloadAction<NL.Redux.App.Views>) => {

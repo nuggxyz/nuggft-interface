@@ -54,6 +54,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     });
 
     return (
+        //@ts-ignore
         <animated.div style={animatedStyle}>
             <img
                 style={{ width: '400px', height: '400px', ...style }}

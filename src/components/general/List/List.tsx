@@ -23,7 +23,7 @@ export type ListRenderItemProps<T> = {
 };
 
 type Props = {
-    data: string[];
+    data: string[] | any;
     RenderItem: FunctionComponent<ListRenderItemProps<any>>;
     loading?: boolean;
     extraData?: any[];

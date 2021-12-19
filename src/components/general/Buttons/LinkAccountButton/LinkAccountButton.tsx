@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import Davatar from '@davatar/react';
+// import Davatar from '@davatar/react';
 
 import Button from '../Button/Button';
 import { isUndefinedOrNullOrObjectEmpty } from '../../../../lib';
@@ -18,8 +18,8 @@ const Identicon = () => {
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
     return (
         address &&
-        library?.provider && (
-            <Davatar address={address} size={16} provider={library.provider} />
+        library?.provider && (<div>COOL</div>
+            // <Davatar address={address} size={16} provider={library.provider} />
         )
     );
 };

@@ -1,4 +1,4 @@
-import copy from 'copy-to-clipboard';
+// import copy from 'copy-to-clipboard';
 import { useCallback, useEffect, useState } from 'react';
 
 export default function useCopyClipboard(
@@ -7,8 +7,8 @@ export default function useCopyClipboard(
     const [isCopied, setIsCopied] = useState(false);
 
     const staticCopy = useCallback((text) => {
-        const didCopy = copy(text);
-        setIsCopied(didCopy);
+        // const didCopy = copy(text);
+        setIsCopied(false);
     }, []);
 
     useEffect(() => {

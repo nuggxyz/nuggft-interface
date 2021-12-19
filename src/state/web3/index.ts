@@ -138,9 +138,8 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
                         : 'any',
                 );
             }
-            library = Web3State._library;
+            library = Web3State._networkLibrary;
         }
-        console.log(library);
         library.pollingInterval = 1000;
         return library;
     }

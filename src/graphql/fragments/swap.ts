@@ -2,22 +2,22 @@ import gql from 'graphql-tag';
 import { epochFull } from './epoch';
 import { idFragment } from './general';
 import { itemOfferBare } from './itemOffer';
-import { nuggBare, nuggFull } from './nugg';
-import { offerBare, offerFull } from './offer';
-import { userFull } from './user';
+// import { nuggBare, nuggFull } from './nugg';
+// import { offerBare, offerFull } from './offer';
+// import { userFull } from './user';
 
-export const swapFull = gql`
-    {
-        id
-        nugg ${nuggFull}
-        offers ${offerFull}
-        epoch ${epochFull}
-        eth
-        ethUsd
-        owner ${userFull}
-        leader ${userFull}
-    }
-`;
+// export const swapFull = gql`
+//     {
+//         id
+//         nugg ${nuggFull}
+//         offers ${offerFull}
+//         epoch ${epochFull}
+//         eth
+//         ethUsd
+//         owner ${userFull}
+//         leader ${userFull}
+//     }
+// `;
 
 // TODO DANNY figure out why this is a thing
 export const swapBare = gql`

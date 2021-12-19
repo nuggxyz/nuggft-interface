@@ -1,41 +1,41 @@
 import gql from 'graphql-tag';
 import { epochFull } from './epoch';
 import { idFragment } from './general';
-import { nuggFull } from './nugg';
-import { nuggItemFull } from './nuggItem';
-import { userBare, userFull } from './user';
+// import { nuggFull } from './nugg';
+// import { nuggItemFull } from './nuggItem';
+import { userBare } from './user';
 
-export const protocolFull = gql`
-    {
-        id
-        epoch ${epochFull}
-        totalSwaps 
-        totalUsers 
-        totalNuggs 
-        totalItems 
-        totalItemSwaps 
-        genesisBlock 
-        interval 
-        xnuggUser ${userBare}
-        nuggftUser ${userBare}
-        nullUser ${userBare}
-        xnuggTotalSupply
-        xnuggTotalEth
-        nuggftTotalEth
-        nuggftStakedUsdPerShare
-        nuggftStakedUsd
-        nuggftStakedEthPerShare
-        nuggftStakedEth
-        nuggftStakedShares
-        priceUsdcWeth
-        priceWethXnugg
-        tvlEth
-        tvlUsd
-        defaultActiveNugg ${idFragment}
-        activeNuggs ${idFragment}
-        activeItems ${idFragment}
-    }
-`;
+// export const protocolFull = gql`
+//     {
+//         id
+//         epoch ${epochFull}
+//         totalSwaps 
+//         totalUsers 
+//         totalNuggs 
+//         totalItems 
+//         totalItemSwaps 
+//         genesisBlock 
+//         interval 
+//         xnuggUser ${userBare}
+//         nuggftUser ${userBare}
+//         nullUser ${userBare}
+//         xnuggTotalSupply
+//         xnuggTotalEth
+//         nuggftTotalEth
+//         nuggftStakedUsdPerShare
+//         nuggftStakedUsd
+//         nuggftStakedEthPerShare
+//         nuggftStakedEth
+//         nuggftStakedShares
+//         priceUsdcWeth
+//         priceWethXnugg
+//         tvlEth
+//         tvlUsd
+//         defaultActiveNugg ${idFragment}
+//         activeNuggs ${idFragment}
+//         activeItems ${idFragment}
+//     }
+// `;
 
 export const protocolPrices = gql`
     {

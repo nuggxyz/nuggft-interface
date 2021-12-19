@@ -1,19 +1,19 @@
 import gql from 'graphql-tag';
 import { idFragment } from './general';
-import { swapFull, swapThumbnail } from './swap';
-import { userFull } from './user';
+// import { swapFull, swapThumbnail } from './swap';
+// import { userFull } from './user';
 
-export const offerFull = gql`
-    {
-        id
-        swap ${swapFull}
-        user ${userFull}
-        eth
-        ethUsd
-        claimed
-        owner
-    }
-`;
+// export const offerFull = gql`
+//     {
+//         id
+//         swap ${swapFull}
+//         user ${userFull}
+//         eth
+//         ethUsd
+//         claimed
+//         owner
+//     }
+// `;
 
 export const offerBare = gql`
 {
