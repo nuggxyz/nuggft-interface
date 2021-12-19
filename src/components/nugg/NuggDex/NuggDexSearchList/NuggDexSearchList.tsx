@@ -24,6 +24,9 @@ type Props = {};
 const NuggDexSearchView: FunctionComponent<Props> = () => {
     const viewing = NuggDexState.select.viewing();
 
+    const [localViewing, setLocalViewing] =
+        useState<NL.Redux.NuggDex.SearchViews>('home');
+
     const allNuggs = NuggDexState.select.allNuggs();
     const activeNuggs = NuggDexState.select.activeNuggs();
     const myNuggs = NuggDexState.select.myNuggs();
@@ -39,7 +42,7 @@ const NuggDexSearchView: FunctionComponent<Props> = () => {
         if (!isUndefinedOrNullOrObjectEmpty(nuggLinkRef)) {
             setNuggLinkRect(nuggLinkRef.getBoundingClientRect());
         }
-    }, [nuggLinkRef, viewing]);
+    }, [nuggLinkRef, localViewing]);
 
     useEffect(() => {
         homeRef &&
@@ -49,7 +52,7 @@ const NuggDexSearchView: FunctionComponent<Props> = () => {
 
     const transRef = useSpringRef();
     const transitions = useTransition(
-        viewing,
+        localViewing,
         {
             ref: transRef,
             keys: null,
@@ -77,22 +80,28 @@ const NuggDexSearchView: FunctionComponent<Props> = () => {
                 opacity: 0,
             },
             config: config.default,
+            onStart: () =>
+                localViewing !== 'home' &&
+                // viewing !== localViewing &&
+                NuggDexState.dispatch.setViewing(localViewing),
         },
         [nuggLinkRect, homeRect],
     );
 
     const animatedStyle = useSpring({
         ...styles.nuggLinksContainer,
-        opacity: viewing !== 'home' ? 0 : 1,
-        transform: viewing !== 'home' ? 'scale(0.9)' : 'scale(1)',
+        opacity: localViewing !== 'home' ? 0 : 1,
+        transform: localViewing !== 'home' ? 'scale(0.9)' : 'scale(1)',
     });
+
+    console.log();
 
     useEffect(() => {
         nuggLinkRect && transRef.start();
     }, [nuggLinkRect, transRef]);
 
     const values = useMemo(() => {
-        switch (viewing) {
+        switch (localViewing) {
             case 'all nuggs':
                 return allNuggs;
             case 'my nuggs':
@@ -104,27 +113,35 @@ const NuggDexSearchView: FunctionComponent<Props> = () => {
             case 'home':
                 return [];
         }
-    }, [viewing, activeNuggs, allNuggs, myNuggs, recents]);
+    }, [localViewing, activeNuggs, allNuggs, myNuggs, recents]);
 
     return (
         <div ref={homeRef} style={styles.searchListContainer}>
             <animated.div style={animatedStyle}>
                 <NuggLink
+                    localViewing={localViewing}
+                    onClick={setLocalViewing}
                     setRef={setNuggLinkRef}
                     type="recently viewed"
                     previewNuggs={recents}
-                /> 
+                />
                 <NuggLink
+                    localViewing={localViewing}
+                    onClick={setLocalViewing}
                     setRef={setNuggLinkRef}
                     type="my nuggs"
                     previewNuggs={myNuggs}
                 />
                 <NuggLink
+                    localViewing={localViewing}
+                    onClick={setLocalViewing}
                     setRef={setNuggLinkRef}
                     type="on sale"
                     previewNuggs={activeNuggs}
                 />
                 <NuggLink
+                    localViewing={localViewing}
+                    onClick={setLocalViewing}
                     setRef={setNuggLinkRef}
                     type="all nuggs"
                     previewNuggs={allNuggs}
@@ -132,7 +149,14 @@ const NuggDexSearchView: FunctionComponent<Props> = () => {
             </animated.div>
             {transitions[0]((style, i) => {
                 return (
-                    i !== 'home' && <NuggList style={style} values={values} />
+                    i !== 'home' && (
+                        <NuggList
+                            style={style}
+                            values={values}
+                            setLocalViewing={setLocalViewing}
+                            viewing={localViewing}
+                        />
+                    )
                 );
             })}
         </div>

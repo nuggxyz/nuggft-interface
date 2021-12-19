@@ -11,17 +11,25 @@ import NuggLinkThumbnail from './NuggLinkThumbnail';
 
 type Props = {
     type: NL.Redux.NuggDex.SearchViews;
+    localViewing: NL.Redux.NuggDex.SearchViews;
     previewNuggs: string[];
     setRef: Dispatch<SetStateAction<HTMLDivElement>>;
+    onClick: Dispatch<SetStateAction<NL.Redux.NuggDex.SearchViews>>;
 };
 
-const NuggLink: FunctionComponent<Props> = ({ type, previewNuggs, setRef }) => {
-    const viewing = NuggDexState.select.viewing();
+const NuggLink: FunctionComponent<Props> = ({
+    type,
+    previewNuggs,
+    localViewing,
+    setRef,
+    onClick,
+}) => {
+    // const viewing = NuggDexState.select.viewing();
     const opacity = useSpring({
-        opacity: viewing !== 'home' ? 0 : 1,
+        opacity: localViewing !== 'home' ? 0 : 1,
         transform:
-            viewing !== 'home'
-                ? viewing !== type
+            localViewing !== 'home'
+                ? localViewing !== type
                     ? 'scale(1)'
                     : 'scale(1.2)'
                 : 'scale(1)',
@@ -30,7 +38,7 @@ const NuggLink: FunctionComponent<Props> = ({ type, previewNuggs, setRef }) => {
     return (
         <animated.div style={{ ...styles.nuggLinkContainer, ...opacity }}>
             <animated.div
-                ref={(ref) => viewing === type && setRef(ref)}
+                ref={(ref) => localViewing === type && setRef(ref)}
                 style={{ ...styles.nuggLinkPreviewContainer }}>
                 {previewNuggs
                     .first(3)
@@ -44,9 +52,7 @@ const NuggLink: FunctionComponent<Props> = ({ type, previewNuggs, setRef }) => {
                                 />
                             ),
                     )}
-                <NuggLinkAnchor
-                    onClick={() => NuggDexState.dispatch.setViewing(type)}
-                />
+                <NuggLinkAnchor onClick={() => onClick(type)} />
             </animated.div>
             <Text size="smaller" textStyle={styles.nuggLinkCategoryTitle}>
                 {ucFirst(type)}

@@ -7,7 +7,6 @@ import {
 } from '../../lib';
 import AppState from '../app';
 import { NLState } from '../NLState';
-// import TokenState from '../token';
 
 import TransactionState from '.';
 

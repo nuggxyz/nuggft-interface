@@ -1,5 +1,6 @@
 export default {
     NUGGDEX_SEARCH_LIST_CHUNK: 10,
 
-    BLOCKTIME: 12000,
+    BLOCKTIME: 25000,
+    QUERYTIME: 10000,
 };

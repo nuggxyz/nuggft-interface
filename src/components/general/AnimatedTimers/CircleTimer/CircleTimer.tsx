@@ -25,6 +25,7 @@ type Props = {
     blocktime: number;
     staticColor: string;
     style?: CSSProperties;
+    width: number;
 };
 const TWOPI = Math.PI * 2;
 
@@ -35,8 +36,8 @@ const CircleTimer: FunctionComponent<Props> = ({
     blocktime,
     staticColor,
     style,
+    width,
 }) => {
-    const { width } = AppState.select.dimensions();
     const timerCircleRadius = useMemo(() => width / 6.5, [width]);
     const circumference = useMemo(
         () => timerCircleRadius * TWOPI,

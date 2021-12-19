@@ -103,9 +103,7 @@ const RenderItem: FunctionComponent<
                     <Button
                         buttonStyle={styles.nuggButton}
                         onClick={() =>
-                            AppState.dispatch.onRouteUpdate(
-                                `/nugg/${parsedTitle.nugg}`,
-                            )
+                            AppState.onRouteUpdate(`/nugg/${parsedTitle.nugg}`)
                         }
                         rightIcon={
                             <TokenViewer

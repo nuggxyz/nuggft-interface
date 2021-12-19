@@ -1,4 +1,9 @@
-import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import React, {
+    FunctionComponent,
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
 import { animated, config, useTransition } from 'react-spring';
 
 import { EnsAddress } from '../../../classes/Address';
@@ -52,9 +57,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                             buttonStyle={styles.owner}
                             key={index}
                             onClick={() =>
-                                AppState.dispatch.onRouteUpdate(
-                                    `/swap/${swap.id}`,
-                                )
+                                AppState.onRouteUpdate(`#/swap/${swap.id}`)
                             }
                             rightIcon={
                                 <>
@@ -66,7 +69,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                                             display: 'flex',
                                         }}>
                                         <Text>
-                                            Swap {swap.id.split('-')[0]}
+                                            Swap {swap.id.split('-')[1]}
                                         </Text>
                                         <CurrencyText
                                             image="eth"

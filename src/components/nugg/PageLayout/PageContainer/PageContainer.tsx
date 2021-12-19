@@ -16,16 +16,12 @@ type Props = {
 };
 
 const PageContainer: FC<Props> = ({ children }) => {
-    const { height } = AppState.select.dimensions();
     const isOpen = AppState.select.walletVisible();
     const address = Web3State.select.web3address();
     return (
-        <div
-            style={{
-                height: height === 0 ? '100%' : height,
-            }}>
+        <>
             <NavigationBar />
-            <div style={styles.background} />
+            {/* <div style={styles.background} /> */}
             {!isUndefinedOrNullOrStringEmpty(address) && (
                 <Button
                     hoverStyle={styles.hoverColor}
@@ -45,7 +41,7 @@ const PageContainer: FC<Props> = ({ children }) => {
             </div>
 
             {children}
-        </div>
+        </>
     );
 };
 export default PageContainer;

@@ -70,7 +70,7 @@ export default () => {
 
     useEffect(() => {
         if (!isUndefinedOrNullOrStringEmpty(web3address)) {
-            if (!hasBeenSafeActivated && !web3Account) {
+            if (!hasBeenSafeActivated) {
                 Web3State.safeActivate(Web3Config.connectors.injected);
                 Web3State.dispatch.setWeb3Status('SELECTED');
                 setHasBeenSafeActivated(true);

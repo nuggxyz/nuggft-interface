@@ -1,7 +1,20 @@
 body {
     padding: 0;
     margin: 0;
-    background: white;
+    height: 100%;
+    width: 100%;
+}
+html {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#root {
+    background: radial-gradient(50% 50% at 50% 50%, rgb(80, 144, 234, .1) 0%, rgba(80, 144, 234, .34) 100%);
+    height: 100%;
+    width: 100%;
 }
 
 * {

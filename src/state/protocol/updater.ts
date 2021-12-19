@@ -26,6 +26,6 @@ export default () => {
     useRecursiveTimeout(() => {
         checkEpoch();
         ProtocolState.dispatch.updateBlock();
-    }, constants.BLOCKTIME);
+    }, constants.QUERYTIME);
     return null;
 };

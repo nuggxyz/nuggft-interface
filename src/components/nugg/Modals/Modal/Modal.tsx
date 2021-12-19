@@ -27,7 +27,6 @@ type Props = {};
 const Modal: FunctionComponent<Props> = () => {
     const isOpen = AppState.select.modalIsOpen();
     const data = AppState.select.modalData();
-    const isMobile = AppState.select.isSmallDevice();
     const [currentModal, setCurrentModal] = useState<NL.Redux.App.Modals>();
     const previousOpen = usePrevious(isOpen);
     const node = useRef<HTMLDivElement>();

@@ -5,7 +5,7 @@ type ApplyToChildren<T> = {
 };
 
 type ApplyFuncToChildren<T> = {
-    [E in keyof T]: () => T[E];
+    [E in keyof T]: (fn?: (prev: T[E], cur: T[E]) => boolean) => T[E];
 };
 
 type AnyElementOf<T extends any[]> = T[number];

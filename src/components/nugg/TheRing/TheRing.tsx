@@ -48,6 +48,7 @@ const TheRing: FunctionComponent<Props> = () => {
             duration={blockDuration}
             remaining={blocksRemaining}
             blocktime={constants.BLOCKTIME}
+            width={1400}
             staticColor={
                 status === 'over'
                     ? Colors.purple

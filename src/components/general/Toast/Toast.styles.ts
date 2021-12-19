@@ -11,6 +11,8 @@ const styles = NLStyleSheetCreator({
         alignItems: 'flex-start',
         paddingTop: Layout.header.height,
         overflow: 'hidden',
+        height: '100%',
+        width: '100%',
     },
     closeButton: {
         position: 'absolute',

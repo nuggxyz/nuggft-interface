@@ -1,13 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import {
+    isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
+    isUndefinedOrNullOrStringEmpty,
     smartInsert,
     smartRemove,
     smartReplace,
 } from '../../lib';
 import Layout from '../../lib/layout';
 import { NLState } from '../NLState';
+import store from '../store';
+import SwapState from '../swap';
+import TokenState from '../token';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -35,15 +40,9 @@ class AppState extends NLState<NL.Redux.App.State> {
 
     constructor() {
         super(STATE_NAME, updater, middlewares, thactions, hooks, {
-            dimensions: {
-                height: 0,
-                width: 0,
-            },
-            isSmallDevice: false,
             toasts: [],
             modalIsOpen: undefined,
             modalData: {},
-            route: '',
             view: 'Swap',
             walletVisible: false,
         });
@@ -53,14 +52,6 @@ class AppState extends NLState<NL.Redux.App.State> {
         name: this._name,
         initialState: this._initialState,
         reducers: {
-            setWindowDimensions: (
-                state,
-                action: PayloadAction<{ height: number; width: number }>,
-            ) => {
-                state.dimensions = action.payload;
-                state.isSmallDevice =
-                    action.payload.width < Layout.smallDeviceWidth;
-            },
             addToastToList: (
                 state,
                 action: PayloadAction<NL.Redux.App.Toast>,
@@ -102,14 +93,6 @@ class AppState extends NLState<NL.Redux.App.State> {
                 state.modalIsOpen = undefined;
                 state.modalData = {};
             },
-            onRouteUpdate: (state, action: PayloadAction<string>) => {
-                window.location.hash = action.payload;
-                state.route = action.payload;
-            },
-            silentlySetRoute: (state, action: PayloadAction<string>) => {
-                window.location.hash = action.payload;
-                state.route = action.payload;
-            },
             changeView: (state, action: PayloadAction<NL.Redux.App.Views>) => {
                 state.view = action.payload;
             },
@@ -118,6 +101,68 @@ class AppState extends NLState<NL.Redux.App.State> {
             },
         },
     });
+
+    public static silentlySetRoute(route: string) {
+        window.location.hash = route;
+    }
+
+    public static onRouteUpdate(route: string) {
+        try {
+            const swapRoute = route.match(/\/(swap)\/(\d+)\-(\d+)/);
+            const tokenRoute = route.match(/\/(nugg)\/(\d+)/);
+
+            const soloTokenRoute = route.match(/\/(nugg)((?=\/)\/|.*)/);
+
+            const currentView = store.getState().app.view;
+
+            const currentEpoch = !isUndefinedOrNullOrObjectEmpty(
+                store.getState().protocol.epoch,
+            )
+                ? store.getState().protocol.epoch.id
+                : '';
+
+            if (
+                route === '/' &&
+                !isUndefinedOrNullOrStringEmpty(currentEpoch)
+            ) {
+                SwapState.dispatch.initSwap({
+                    swapId: `${currentEpoch}-${currentEpoch}`,
+                });
+            } else if (
+                !isUndefinedOrNullOrArrayEmpty(swapRoute) &&
+                swapRoute.length === 4 &&
+                swapRoute[1] === 'swap'
+            ) {
+                SwapState.dispatch.initSwap({
+                    swapId: `${swapRoute[2]}-${swapRoute[3]}`,
+                });
+                if (currentView !== 'Swap') {
+                    AppState.dispatch.changeView('Swap');
+                }
+            } else if (
+                !isUndefinedOrNullOrArrayEmpty(tokenRoute) &&
+                tokenRoute.length === 3 &&
+                tokenRoute[1] === 'nugg'
+            ) {
+                if (!isUndefinedOrNullOrStringEmpty(currentEpoch)) {
+                    SwapState.dispatch.initSwap({
+                        swapId: `${currentEpoch}-${currentEpoch}`,
+                    });
+                }
+                TokenState.dispatch.setTokenFromId(tokenRoute[2]);
+                if (currentView !== 'Search') {
+                    AppState.dispatch.changeView('Search');
+                }
+            } else if (!isUndefinedOrNullOrArrayEmpty(soloTokenRoute)) {
+                if (currentView !== 'Search') {
+                    AppState.dispatch.changeView('Search');
+                }
+            }
+            AppState.silentlySetRoute(route);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
 
 export default AppState;

@@ -1,5 +1,7 @@
-// import { StaticImage } from 'gatsby-plugin-image';
 import React, { FunctionComponent } from 'react';
+
+import eth from '../../assets/images/currency/eth.svg';
+import metamask from '../../assets/images/nugg/metamask.png';
 
 type Props = {
     image: NLStaticImageKey;
@@ -8,42 +10,11 @@ type Props = {
 export type NLStaticImageKey = 'nugglabs' | 'metamask' | 'eth';
 
 const NLStaticImage: FunctionComponent<Props> = ({ image }) => {
-    return <div>IMAGE</div>
-    // switch (image) {
-    //     case 'nugglabs':
-    //         return (
-    //             <StaticImage
-    //                 alt="nugglabs image"
-    //                 src="../../assets/images/nugg/nugglabs.png"
-    //                 placeholder="blurred"
-    //             />
-    //         );
-    //     case 'metamask':
-    //         return (
-    //             <StaticImage
-    //                 src="../../assets/images/nugg/metamask.png"
-    //                 alt="metamask"
-    //                 placeholder="blurred"
-    //             />
-    //         );
-    //     case 'eth':
-    //         return (
-    //             <StaticImage
-    //                 src="../../assets/images/currency/eth.svg"
-    //                 alt="eth"
-    //                 placeholder="blurred"
-    //                 width={17}
-    //             />
-    //         );
-    //     default:
-    //         return (
-    //             <StaticImage
-    //                 alt="nugglabs image"
-    //                 src="../../assets/images/nugg/nugglabs.png"
-    //                 placeholder="blurred"
-    //             />
-    //         );
-    // }
+    return image === 'eth' ? (
+        <img src={eth} height={20} width={20} />
+    ) : (
+        <img src={metamask} height={20} width={20} />
+    );
 };
 
 export default NLStaticImage;

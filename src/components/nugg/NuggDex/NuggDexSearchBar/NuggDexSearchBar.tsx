@@ -2,6 +2,7 @@ import { useSpring } from '@react-spring/core';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { CornerRightDown, CornerRightUp, Search, X } from 'react-feather';
 
+import useDebounce from '../../../../hooks/useDebounce';
 import usePrevious from '../../../../hooks/usePrevious';
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import Colors from '../../../../lib/colors';
@@ -20,9 +21,11 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const view = AppState.select.view();
 
     const [searchValue, setSearchValue] = useState('');
+
+    const debouncedValue = useDebounce(searchValue, 100);
     const [sortAsc, setSortAsc] = useState(true);
 
-    const previousSearchValue = usePrevious(searchValue);
+    const previousSearchValue = usePrevious(debouncedValue);
     const previousSortAsc = usePrevious(sortAsc);
 
     useEffect(() => {
@@ -36,13 +39,13 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
         if (view === 'Search') {
             if (
                 viewing === 'home' &&
-                !isUndefinedOrNullOrStringEmpty(searchValue) &&
+                !isUndefinedOrNullOrStringEmpty(debouncedValue) &&
                 isUndefinedOrNullOrStringEmpty(previousSearchValue)
             ) {
                 NuggDexState.dispatch.setViewing('all nuggs');
             }
             const filters: NL.Redux.NuggDex.Filters = {
-                searchValue,
+                searchValue: debouncedValue,
                 sort: {
                     by: 'id',
                     asc: sortAsc,
@@ -52,14 +55,14 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                 filters,
                 addToResult:
                     continueSearch.includes('yes') &&
-                    searchValue === previousSearchValue &&
+                    debouncedValue === previousSearchValue &&
                     sortAsc === previousSortAsc,
             });
         } else {
             setSearchValue('');
         }
     }, [
-        searchValue,
+        debouncedValue,
         view,
         continueSearch,
         viewing,
