@@ -1,6 +1,6 @@
 .loader {
-    -webkit-animation: Loader 5s ease infinite;
-    animation: Loader 5s ease infinite;
+    -webkit-animation: Loader 3s linear infinite;
+    animation: Loader 3s linear infinite;
 }
 
 
