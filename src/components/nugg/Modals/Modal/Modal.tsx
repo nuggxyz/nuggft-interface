@@ -93,4 +93,4 @@ const Modal: FunctionComponent<Props> = () => {
     );
 };
 
-export default Modal;
+export default React.memo(Modal);

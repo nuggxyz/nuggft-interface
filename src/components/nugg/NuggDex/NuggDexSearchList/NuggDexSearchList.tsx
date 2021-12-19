@@ -21,9 +21,7 @@ import NuggLink from './components/NuggLink';
 import styles from './NuggDexSearchList.styles';
 
 type Props = {};
-const NuggDexSearchView: FunctionComponent<Props> = () => {
-    const viewing = NuggDexState.select.viewing();
-
+const NuggDexSearchList: FunctionComponent<Props> = () => {
     const [localViewing, setLocalViewing] =
         useState<NL.Redux.NuggDex.SearchViews>('home');
 
@@ -94,8 +92,6 @@ const NuggDexSearchView: FunctionComponent<Props> = () => {
         transform: localViewing !== 'home' ? 'scale(0.9)' : 'scale(1)',
     });
 
-    console.log();
-
     useEffect(() => {
         nuggLinkRect && transRef.start();
     }, [nuggLinkRect, transRef]);
@@ -163,4 +159,4 @@ const NuggDexSearchView: FunctionComponent<Props> = () => {
     );
 };
 
-export default NuggDexSearchView;
+export default React.memo(NuggDexSearchList);

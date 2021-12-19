@@ -21,7 +21,6 @@ const PageContainer: FC<Props> = ({ children }) => {
     return (
         <>
             <NavigationBar />
-            {/* <div style={styles.background} /> */}
             {!isUndefinedOrNullOrStringEmpty(address) && (
                 <Button
                     hoverStyle={styles.hoverColor}
@@ -44,4 +43,4 @@ const PageContainer: FC<Props> = ({ children }) => {
         </>
     );
 };
-export default PageContainer;
+export default React.memo(PageContainer);

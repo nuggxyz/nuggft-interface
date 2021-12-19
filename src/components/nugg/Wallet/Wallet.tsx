@@ -12,7 +12,7 @@ import styles from './Wallet.styles';
 
 type Props = {};
 
-const Wallet2: FunctionComponent<Props> = () => {
+const Wallet: FunctionComponent<Props> = () => {
     const show = AppState.select.walletVisible();
     const spring = useSpring({
         to: {
@@ -38,4 +38,4 @@ const Wallet2: FunctionComponent<Props> = () => {
     );
 };
 
-export default Wallet2;
+export default React.memo(Wallet);

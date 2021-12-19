@@ -29,4 +29,4 @@ const TextStatistic: FC<Props> = ({ value, percent = false, ...props }) => {
     );
 };
 
-export default TextStatistic;
+export default React.memo(TextStatistic);

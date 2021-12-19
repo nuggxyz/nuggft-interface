@@ -61,4 +61,4 @@ const NuggLink: FunctionComponent<Props> = ({
     );
 };
 
-export default NuggLink;
+export default React.memo(NuggLink);

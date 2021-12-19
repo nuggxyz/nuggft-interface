@@ -117,4 +117,4 @@ const NuggList: FunctionComponent<Props> = ({
     );
 };
 
-export default NuggList;
+export default React.memo(NuggList);

@@ -64,4 +64,4 @@ const TheRing: FunctionComponent<Props> = () => {
     );
 };
 
-export default TheRing;
+export default React.memo(TheRing);

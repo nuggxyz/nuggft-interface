@@ -92,13 +92,13 @@ const CircleTimer: FunctionComponent<Props> = ({
         config: customConfig,
     });
 
-    const { pix } = useSpring({
-        from: { pix: 7 },
-        to: { pix: 20 },
-        loop: { reverse: true },
-        delay: 500,
-        config: config.molasses,
-    });
+    // const { pix } = useSpring({
+    //     from: { pix: 7 },
+    //     to: { pix: 20 },
+    //     loop: { reverse: true },
+    //     delay: 500,
+    //     config: config.molasses,
+    // });
 
     const shadowColor = useMemo(() => {
         const percent = remaining / duration;
@@ -119,9 +119,9 @@ const CircleTimer: FunctionComponent<Props> = ({
             <animated.svg
                 height="100%"
                 width="100%"
-                filter={pix.to(
-                    (x) => `drop-shadow(0px 6px ${x}px ${shadowColor}`,
-                )}
+                filter={`drop-shadow(0px 6px 15px ${shadowColor}`} //pix.to(
+                //     (x) => `drop-shadow(0px 6px ${x}px ${shadowColor}`,
+                // )}
                 style={styles.svgTransition}>
                 <animated.circle
                     style={styles.circleConfig}

@@ -51,4 +51,4 @@ const StatisticsWrapper: FC<StatisticsProps> = ({
     );
 };
 
-export default StatisticsWrapper;
+export default React.memo(StatisticsWrapper);

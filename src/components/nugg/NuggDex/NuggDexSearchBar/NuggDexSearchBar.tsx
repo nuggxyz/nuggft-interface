@@ -135,4 +135,4 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     );
 };
 
-export default NuggDexSearchBar;
+export default React.memo(NuggDexSearchBar);

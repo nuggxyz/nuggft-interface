@@ -124,4 +124,4 @@ const RenderItem: FunctionComponent<
     );
 };
 
-export default HistoryTab;
+export default React.memo(HistoryTab);

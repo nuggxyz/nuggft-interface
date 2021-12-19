@@ -72,4 +72,4 @@ const NuggListRenderItem: FunctionComponent<Props> = memo(
         JSON.stringify(prevProps.action) === JSON.stringify(props.action),
 );
 
-export default NuggListRenderItem;
+export default React.memo(NuggListRenderItem);

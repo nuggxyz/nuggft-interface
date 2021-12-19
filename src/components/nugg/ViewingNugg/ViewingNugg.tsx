@@ -183,4 +183,4 @@ const ViewingNugg: FunctionComponent<Props> = () => {
     );
 };
 
-export default ViewingNugg;
+export default React.memo(ViewingNugg);
