@@ -3,7 +3,6 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import AppState from '../../../../state/app';
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import NuggFTHelper from '../../../../contracts/NuggFTHelper';
-import ProtocolState from '../../../../state/protocol';
 import TokenViewer from '../../TokenViewer';
 import Button from '../../../general/Buttons/Button/Button';
 import Text from '../../../general/Texts/Text/Text';
@@ -11,13 +10,14 @@ import { fromEth } from '../../../../lib/conversion';
 import WalletDispatches from '../../../../state/wallet/dispatches';
 import TransactionsSelectors from '../../../../state/transaction/selectors';
 import TokenDispatches from '../../../../state/token/dispatches';
+import ProtocolSelectors from '../../../../state/protocol/selectors';
 
 import styles from './StartSaleModal.styles';
 
 type Props = {};
 
 const SwapModal: FunctionComponent<Props> = () => {
-    const shareValue = ProtocolState.select.nuggftStakedEthPerShare();
+    const shareValue = ProtocolSelectors.nuggftStakedEthPerShare();
     const toggle = TransactionsSelectors.toggleCompletedTxn();
     const { targetId, type } = AppState.select.modalData();
 

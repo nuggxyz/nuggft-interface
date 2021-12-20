@@ -4,13 +4,13 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
-import ProtocolState from '../protocol';
 import Web3Selectors from '../web3/selectors';
+import ProtocolSelectors from '../protocol/selectors';
 
 import NuggDexState from '.';
 
 export default () => {
-    const epoch = ProtocolState.select.epoch();
+    const epoch = ProtocolSelectors.epoch();
     const web3address = Web3Selectors.web3address();
 
     useEffect(() => {

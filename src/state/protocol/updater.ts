@@ -7,25 +7,28 @@ import {
 } from '../../lib';
 import constants from '../../lib/constants';
 
-import ProtocolState from '.';
+import ProtocolSelectors from './selectors';
+import ProtocolDispatches from './dispatches';
 
-export default () => {
-    const block = ProtocolState.select.currentBlock();
-    const epoch = ProtocolState.select.epoch();
+const ProtocolUpdater = () => {
+    const block = ProtocolSelectors.currentBlock();
+    const epoch = ProtocolSelectors.epoch();
 
     const checkEpoch = useCallback(() => {
         if (
             isUndefinedOrNullOrObjectEmpty(epoch) ||
             (!isUndefinedOrNullOrNumberZero(block) && block >= +epoch.endblock)
         ) {
-            ProtocolState.dispatch.updateEpoch();
-            ProtocolState.dispatch.updateStaked();
+            ProtocolDispatches.updateEpoch();
+            ProtocolDispatches.updateStaked();
         }
     }, [epoch, block]);
 
     useRecursiveTimeout(() => {
         checkEpoch();
-        ProtocolState.dispatch.updateBlock();
+        ProtocolDispatches.updateBlock();
     }, constants.QUERYTIME);
     return null;
 };
+
+export default ProtocolUpdater;

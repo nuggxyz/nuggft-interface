@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 
 import AppState from './app';
 import TransactionSlice from './transaction';
-import ProtocolState from './protocol';
 import TokenSlice from './token';
 import SwapSlice from './swap';
 import NuggDexState from './nuggdex';
@@ -14,17 +13,17 @@ import WalletMiddlewares from './wallet/middlewares';
 import TransactionMiddlewares from './transaction/middlewares';
 import TokenMiddlewares from './token/middlewares';
 import SwapMiddlewares from './swap/middlewares';
+import ProtocolSlice from './protocol';
+import ProtocolMiddlewares from './protocol/middlewares';
 
 export const states = {
-    AppState,
-    ProtocolState,
     NuggDexState,
 };
 
 export const rootReducer = combineReducers({
     app: AppState.reducer,
     nuggdex: NuggDexState.reducer,
-    protocol: ProtocolState.reducer,
+    protocol: ProtocolSlice.reducer,
     swap: SwapSlice.reducer,
     transaction: TransactionSlice.reducer,
     token: TokenSlice.reducer,
@@ -79,6 +78,7 @@ const store = configureStore({
                 ...Object.values(TransactionMiddlewares),
                 ...Object.values(TokenMiddlewares),
                 ...Object.values(SwapMiddlewares),
+                ...Object.values(ProtocolMiddlewares),
             ]),
 });
 

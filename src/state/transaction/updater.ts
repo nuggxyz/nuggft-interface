@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { retry, RetryableError, RetryOptions } from '../../lib/retry';
-import ProtocolState from '../protocol';
+import ProtocolDispatches from '../protocol/dispatches';
+import ProtocolSelectors from '../protocol/selectors';
 import Web3Hooks from '../web3/hooks';
 
 import TransactionDispatches from './dispatches';
@@ -40,7 +41,7 @@ const DEFAULT_RETRY_OPTIONS: RetryOptions = {
 const TransactionUpdater = () => {
     const { library } = Web3Hooks.useActiveWeb3React();
 
-    const lastBlockNumber = ProtocolState.select.currentBlock();
+    const lastBlockNumber = ProtocolSelectors.currentBlock();
 
     const txs = TransactionsSelectors.txs();
 
@@ -98,7 +99,7 @@ const TransactionUpdater = () => {
 
                             // the receipt was fetched before the block, fast forward to that block to trigger balance updates
                             if (receipt.blockNumber > lastBlockNumber) {
-                                ProtocolState.dispatch.setCurrentBlock(
+                                ProtocolDispatches.setCurrentBlock(
                                     receipt.blockNumber,
                                 );
                             }

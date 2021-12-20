@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 
-import ProtocolState from '../protocol';
+import ProtocolSelectors from '../protocol/selectors';
 import Web3Selectors from '../web3/selectors';
 
 import WalletDispatches from './dispatches';
 
 const WalletUpdater = () => {
     const web3address = Web3Selectors.web3address();
-    const epoch = ProtocolState.select.epoch();
+    const epoch = ProtocolSelectors.epoch();
 
     useEffect(() => {
         if (web3address && epoch) {

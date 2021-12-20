@@ -3,7 +3,7 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { isUndefinedOrNullOrObjectEmpty } from '../../../lib';
 import Colors from '../../../lib/colors';
 import constants from '../../../lib/constants';
-import ProtocolState from '../../../state/protocol';
+import ProtocolSelectors from '../../../state/protocol/selectors';
 import SwapSelectors from '../../../state/swap/selectors';
 import CircleTimer from '../../general/AnimatedTimers/CircleTimer/CircleTimer';
 import AnimatedCard from '../../general/Cards/AnimatedCard/AnimatedCard';
@@ -14,8 +14,8 @@ import styles from './TheRing.styles';
 type Props = {};
 
 const TheRing: FunctionComponent<Props> = () => {
-    const lastBlock = ProtocolState.select.currentBlock();
-    const epoch = ProtocolState.select.epoch();
+    const lastBlock = ProtocolSelectors.currentBlock();
+    const epoch = ProtocolSelectors.epoch();
     const nugg = SwapSelectors.nugg();
     const status = SwapSelectors.status();
 

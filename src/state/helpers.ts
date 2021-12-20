@@ -34,7 +34,8 @@ export const hasPrefix = (action: AnyAction, prefix: string) =>
     action.type.startsWith(prefix);
 
 export const hasSuffix = (action: AnyAction, suffix: string) =>
-    action.type.includes(suffix);
+    action.type.endsWith(suffix) ||
+    (action.type.includes(suffix) && action.type.endsWith('fulfilled'));
 
 export const isPending = (action: AnyAction) =>
     action.type.endsWith('/pending');

@@ -6,8 +6,7 @@ import {
 } from '../../lib';
 import Web3Dispatches from '../web3/dispatches';
 import SwapDispatches from '../swap/dispatches';
-
-import ProtocolState from '.';
+import { hasSuffix } from '../helpers';
 
 const updateEpochMiddleware: Middleware<
     Record<string, unknown>,
@@ -17,7 +16,7 @@ const updateEpochMiddleware: Middleware<
     ({ getState }) =>
     (next) =>
     async (action: PayloadAction<any>) => {
-        if (ProtocolState.isOwnFulfilledAction(action, 'updateEpoch')) {
+        if (hasSuffix(action, 'updateEpoch')) {
             const currentEpoch = !isUndefinedOrNullOrObjectEmpty(
                 getState().protocol.epoch,
             )
@@ -44,4 +43,6 @@ const updateEpochMiddleware: Middleware<
         return next(action);
     };
 
-export default { updateEpochMiddleware };
+const ProtocolMiddlewares = { updateEpochMiddleware };
+
+export default ProtocolMiddlewares;
