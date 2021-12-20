@@ -5,7 +5,7 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 import SwapState from '../swap';
-import Web3State from '../web3';
+import Web3Dispatches from '../web3/dispatches';
 
 import ProtocolState from '.';
 
@@ -36,9 +36,9 @@ const updateEpochMiddleware: Middleware<
             }
 
             if (!navigator.onLine) {
-                Web3State.dispatch.setConnectivityWarning(true);
+                Web3Dispatches().setConnectivityWarning(true);
             } else if (getState().web3.connectivityWarning === true) {
-                Web3State.dispatch.setConnectivityWarning(false);
+                Web3Dispatches().setConnectivityWarning(false);
             }
         }
         return next(action);

@@ -1,6 +1,13 @@
 import React, { FunctionComponent, ReactChild } from 'react';
 
-import { states } from './store';
+import Web3Updater from './web3/updater';
+import App from './app/updater';
+import NuggDex from './nuggdex/updater';
+import Protocol from './protocol/updater';
+import Swap from './swap/updater';
+import Token from './token/updater';
+import Transaction from './transaction/updater';
+import Wallet from './wallet/updater';
 
 type Props = {
     children: ReactChild | ReactChild[];
@@ -8,9 +15,14 @@ type Props = {
 
 const Initializer: FunctionComponent<Props> = ({ children }) => (
     <>
-        {Object.values(states).map((state, index) => (
-            <state.updater key={index} />
-        ))}
+        <Web3Updater />
+        <App />
+        <NuggDex />
+        <Protocol />
+        <Swap />
+        <Token />
+        <Transaction />
+        <Wallet />
         {children}
     </>
 );

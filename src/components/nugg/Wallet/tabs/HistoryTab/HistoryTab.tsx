@@ -8,7 +8,7 @@ import Colors from '../../../../../lib/colors';
 import { fromEth } from '../../../../../lib/conversion';
 import AppState from '../../../../../state/app';
 import WalletState from '../../../../../state/wallet';
-import Web3State from '../../../../../state/web3';
+import Web3Selectors from '../../../../../state/web3/selectors';
 import Button from '../../../../general/Buttons/Button/Button';
 import List, { ListRenderItemProps } from '../../../../general/List/List';
 import Text from '../../../../general/Texts/Text/Text';
@@ -21,7 +21,7 @@ type Props = {};
 const HistoryTab: FunctionComponent<Props> = () => {
     const unclaimedOffers = WalletState.select.unclaimedOffers();
     const history = WalletState.select.history();
-    const address = Web3State.select.web3address();
+    const address = Web3Selectors().web3address();
 
     return (
         <div style={styles.container}>

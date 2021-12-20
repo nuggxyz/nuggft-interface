@@ -1,4 +1,4 @@
-import Web3Config from '../Web3Config';
+import Web3Config from '../config';
 
 const ETHERSCAN_PREFIXES: { [chainId: number]: string } = {
     [Web3Config.SupportedChainId.MAINNET]: '',

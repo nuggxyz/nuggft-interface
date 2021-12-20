@@ -10,10 +10,10 @@ import { animated } from '@react-spring/web';
 
 import { isUndefinedOrNullOrObjectEmpty } from '../../../../lib';
 import ProtocolState from '../../../../state/protocol';
-import Web3State from '../../../../state/web3';
 import AppState from '../../../../state/app';
 import Button from '../Button/Button';
 import Layout from '../../../../lib/layout';
+import Web3Selectors from '../../../../state/web3/selectors';
 
 import styles from './ChainIndicator.styles';
 import ChainIndicatorPulse from './ChainIndicatorPulse';
@@ -22,7 +22,7 @@ type Props = {};
 
 const ChainIndicator: FunctionComponent<Props> = () => {
     const epoch = ProtocolState.select.epoch();
-    const connectionWarning = Web3State.select.connectivityWarning();
+    const connectionWarning = Web3Selectors().connectivityWarning();
     const currentBlock = ProtocolState.select.currentBlock();
 
     const [blocksRemaining, setBlocksRemaining] = useState(0);

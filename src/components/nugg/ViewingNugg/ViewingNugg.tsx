@@ -12,7 +12,7 @@ import Colors from '../../../lib/colors';
 import { fromEth } from '../../../lib/conversion';
 import AppState from '../../../state/app';
 import TokenState from '../../../state/token';
-import Web3State from '../../../state/web3';
+import Web3Selectors from '../../../state/web3/selectors';
 import Button from '../../general/Buttons/Button/Button';
 import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
 import Text from '../../general/Texts/Text/Text';
@@ -24,7 +24,7 @@ type Props = {};
 
 const ViewingNugg: FunctionComponent<Props> = () => {
     const tokenId = TokenState.select.tokenId();
-    const address = Web3State.select.web3address();
+    const address = Web3Selectors().web3address();
     const owner = TokenState.select.owner();
     const swaps = TokenState.select.swaps();
 

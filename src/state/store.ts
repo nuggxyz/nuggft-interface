@@ -6,9 +6,10 @@ import AppState from './app';
 import TransactionState from './transaction';
 import ProtocolState from './protocol';
 import TokenState from './token';
-import Web3State from './web3';
 import SwapState from './swap';
 import NuggDexState from './nuggdex';
+import Web3Slice from './web3';
+import Web3Middlewares from './web3/middlewares';
 
 export const states = {
     AppState,
@@ -17,7 +18,6 @@ export const states = {
     TokenState,
     TransactionState,
     WalletState,
-    Web3State,
     NuggDexState,
 };
 
@@ -29,7 +29,7 @@ export const rootReducer = combineReducers({
     transaction: TransactionState.reducer,
     token: TokenState.reducer,
     wallet: WalletState.reducer,
-    web3: Web3State.reducer,
+    web3: Web3Slice.reducer,
 });
 
 const store = configureStore({
@@ -71,7 +71,9 @@ const store = configureStore({
                     'nuggdex',
                 ],
             },
-        }).concat(Object.values(states).flatMap((state) => state.middlewares)),
+        })
+            .concat(Object.values(states).flatMap((state) => state.middlewares))
+            .concat([...Object.values(Web3Middlewares)]),
 });
 
 export type NLRootState = ReturnType<typeof rootReducer>;

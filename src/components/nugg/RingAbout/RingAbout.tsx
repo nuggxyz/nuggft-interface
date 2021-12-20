@@ -6,7 +6,6 @@ import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
 import SwapState from '../../../state/swap';
 import Button from '../../general/Buttons/Button/Button';
 import AppState from '../../../state/app';
-import Web3State from '../../../state/web3';
 import { Address } from '../../../classes/Address';
 import {
     isUndefinedOrNullOrNumberZero,
@@ -15,6 +14,7 @@ import {
 } from '../../../lib';
 import { fromEth } from '../../../lib/conversion';
 import Colors from '../../../lib/colors';
+import Web3Hooks from '../../../state/web3/hooks';
 
 import styles from './RingAbout.styles';
 
@@ -33,7 +33,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
             : Address.ZERO.hash;
     }, [leader]);
 
-    const ens = Web3State.hook.useEns(safeLeaderEns);
+    const ens = Web3Hooks.useEns(safeLeaderEns);
 
     const hasBids = useMemo(
         () =>

@@ -11,26 +11,27 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 
-import Web3Config from './Web3Config';
-import { switchToNetwork } from './helpers';
+import Web3Config from './config';
+import Web3Helpers from './helpers';
+import Web3Hooks from './hooks';
+import Web3Dispatches from './dispatches';
+import Web3Selectors from './selectors';
 
-import Web3State from '.';
-
-export default () => {
+const Web3Updater = () => {
     const { library, chainId, activate, error } =
-        Web3State.hook.useActiveWeb3React();
+        Web3Hooks.useActiveWeb3React();
     const {
         activate: defaultActivate,
         account: web3Account,
         deactivate,
     } = useWeb3React();
-    const web3status = Web3State.select.web3status();
-    const web3address = Web3State.select.web3address();
+    const web3status = Web3Selectors().web3status();
+    const web3address = Web3Selectors().web3address();
     const [hasBeenActivated, setHasBeenActivated] = useState(false);
     const [hasBeenSafeActivated, setHasBeenSafeActivated] = useState(false);
     const onDisconnect = useCallback(async () => {
         console.log('eth event: disconnect');
-        Web3State.dispatch.clearWeb3Address();
+        Web3Dispatches().clearWeb3Address();
     }, []);
     const onConnect = useCallback(async (connectInfo: { chainId: string }) => {
         console.log('eth event: connect', connectInfo);
@@ -38,9 +39,9 @@ export default () => {
     const onAccountsChanged = useCallback(async (accounts) => {
         console.log('eth event: accountsChanged', { accounts });
         if (!isUndefinedOrNullOrArrayEmpty(accounts)) {
-            Web3State.dispatch.setWeb3Address(accounts[0]);
+            Web3Dispatches().setWeb3Address(accounts[0]);
         } else {
-            Web3State.dispatch.clearWeb3Address();
+            Web3Dispatches().clearWeb3Address();
         }
     }, []);
     const onChainChanged = useCallback(async (chainId) => {
@@ -55,29 +56,29 @@ export default () => {
 
     useEffect(() => {
         if (!isUndefinedOrNullOrNotFunction(defaultActivate)) {
-            Web3State.activate = defaultActivate;
+            Web3Helpers.activate = defaultActivate;
         }
         if (!isUndefinedOrNullOrNotFunction(deactivate)) {
-            Web3State.deactivate = deactivate;
+            Web3Helpers.deactivate = deactivate;
         }
     }, [defaultActivate, deactivate]);
 
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(error)) {
-            Web3State.dispatch.setWeb3Status('ERROR');
+            Web3Dispatches().setWeb3Status('ERROR');
         }
     }, [error]);
 
     useEffect(() => {
         if (!isUndefinedOrNullOrStringEmpty(web3address)) {
             if (!hasBeenSafeActivated) {
-                Web3State.safeActivate(Web3Config.connectors.injected);
-                Web3State.dispatch.setWeb3Status('SELECTED');
+                Web3Helpers.safeActivate(Web3Config.connectors.injected);
+                Web3Dispatches().setWeb3Status('SELECTED');
                 setHasBeenSafeActivated(true);
             }
         } else if (!hasBeenActivated) {
             activate(Web3Config.connectors.network);
-            Web3State.dispatch.setWeb3Status('NOT_SELECTED');
+            Web3Dispatches().setWeb3Status('NOT_SELECTED');
             setHasBeenActivated(true);
         }
     }, [
@@ -96,13 +97,13 @@ export default () => {
         ) {
             return;
         }
-        switchToNetwork({ library })
+        Web3Helpers.switchToNetwork({ library })
             .then(
                 (x) =>
                     !isUndefinedOrNull(x) ??
-                    Web3State.dispatch.setImplements3085(true),
+                    Web3Dispatches().setImplements3085(true),
             )
-            .catch(() => Web3State.dispatch.setImplements3085(true));
+            .catch(() => Web3Dispatches().setImplements3085(true));
     }, [web3Account, chainId, library]);
 
     useEffect(() => {
@@ -123,7 +124,7 @@ export default () => {
                 !isUndefinedOrNullOrObjectEmpty(window.ethereum._state) &&
                 !isUndefinedOrNullOrArrayEmpty(window.ethereum._state.accounts)
             ) {
-                Web3State.dispatch.setWeb3Address(
+                Web3Dispatches().setWeb3Address(
                     window.ethereum._state.accounts[0],
                 );
             } else if (
@@ -134,11 +135,11 @@ export default () => {
                     window.ethereum.selectedProvider.selectedAddress,
                 )
             ) {
-                Web3State.dispatch.setWeb3Address(
+                Web3Dispatches().setWeb3Address(
                     window.ethereum.selectedProvider.selectedAddress,
                 );
             } else if (!isUndefinedOrNullOrStringEmpty(web3Account)) {
-                Web3State.dispatch.setWeb3Address(web3Account);
+                Web3Dispatches().setWeb3Address(web3Account);
             }
         }
     }, [
@@ -154,3 +155,5 @@ export default () => {
 
     return null;
 };
+
+export default Web3Updater;

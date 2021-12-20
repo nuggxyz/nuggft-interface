@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { retry, RetryableError, RetryOptions } from '../../lib/retry';
-import Web3State from '../web3';
 import ProtocolState from '../protocol';
+import Web3Hooks from '../web3/hooks';
 
 import TransactionState from '.';
 
@@ -37,7 +37,7 @@ const DEFAULT_RETRY_OPTIONS: RetryOptions = {
 };
 
 export default () => {
-    const { library } = Web3State.hook.useActiveWeb3React();
+    const { library } = Web3Hooks.useActiveWeb3React();
 
     const lastBlockNumber = ProtocolState.select.currentBlock();
 
