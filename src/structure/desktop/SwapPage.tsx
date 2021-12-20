@@ -13,13 +13,13 @@ const SwapPage: FunctionComponent<Props> = () => {
     return (
         <div style={styles.container}>
             <Wallet />
-            <div style={styles.theRingContainer}>
+            <div style={styles.secondaryContainer}>
                 <RingAbout />
             </div>
             <div style={styles.theRingContainer}>
                 <TheRing />
             </div>
-            <div style={styles.theRingContainer}>
+            <div style={styles.secondaryContainer}>
                 <AccountStats />
             </div>
         </div>

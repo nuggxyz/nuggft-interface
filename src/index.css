@@ -64,25 +64,25 @@ input[type='number'] {
 @font-face {
     font-family: 'SF-Mono';
     unicode-range: U+000-5FF;
-    src: local('SF-Mono'), url(./lib/fonts/SF-Mono-Light.woff2) format('woff2');
+    src: local('SF-Mono'), url(./fonts/SF-Mono-Light.woff2) format('woff2');
 }
 
 @font-face {
     font-family: 'Inter';
     unicode-range: U+000-5FF;
-    src: local('Inter'), url(./lib/fonts/Inter.woff2) format('woff2');
+    src: local('Inter'), url(./fonts/Inter.woff2) format('woff2');
 }
 
 @font-face {
     font-family: 'Inter-SemiBold';
     unicode-range: U+000-5FF;
-    src: local('Inter-SemiBold'), url(./lib/fonts/Inter-SemiBold.woff2) format('woff2');
+    src: local('Inter-SemiBold'), url(./fonts/Inter-SemiBold.woff2) format('woff2');
 }
 
 @font-face {
     font-family: 'Montserrat';
     unicode-range: U+000-5FF;
-    src: local('Montserrat'), url(./lib/fonts/Montserrat-Bold.woff2) format('woff2');
+    src: local('Montserrat'), url(./fonts/Montserrat-Bold.woff2) format('woff2');
 }
 
 

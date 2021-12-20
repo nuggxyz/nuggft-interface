@@ -92,14 +92,6 @@ const CircleTimer: FunctionComponent<Props> = ({
         config: customConfig,
     });
 
-    // const { pix } = useSpring({
-    //     from: { pix: 7 },
-    //     to: { pix: 20 },
-    //     loop: { reverse: true },
-    //     delay: 500,
-    //     config: config.molasses,
-    // });
-
     const shadowColor = useMemo(() => {
         const percent = remaining / duration;
         if (!isUndefinedOrNullOrStringEmpty(staticColor)) {
@@ -116,28 +108,32 @@ const CircleTimer: FunctionComponent<Props> = ({
     return (
         <div style={{ ...style, ...styles.container }}>
             <div style={styles.childrenContainer}>{children}</div>
-            <animated.svg
-                height="100%"
-                width="100%"
-                filter={`drop-shadow(0px 6px 15px ${shadowColor}`} //pix.to(
-                //     (x) => `drop-shadow(0px 6px ${x}px ${shadowColor}`,
-                // )}
-                style={styles.svgTransition}>
-                <animated.circle
-                    style={styles.circleConfig}
-                    cx="50%"
-                    cy="50%"
+            <div
+                style={{
+                    filter: `drop-shadow(0px 6px 15px ${shadowColor}`,
+                    width: '100%',
+                    height: '100%',
+                }}>
+                <animated.svg
                     height="100%"
                     width="100%"
-                    r={timerCircleRadius}
-                    stroke={'white'}
-                    strokeDashoffset={x}
-                    strokeWidth={20}
-                    fill="none"
-                    strokeDasharray={`${circumference} ${circumference}`}
-                    strokeLinecap="round"
-                />
-            </animated.svg>
+                    style={styles.svgTransition}>
+                    <animated.circle
+                        style={styles.circleConfig}
+                        cx="50%"
+                        cy="50%"
+                        height="100%"
+                        width="100%"
+                        r={timerCircleRadius}
+                        stroke={'white'}
+                        strokeDashoffset={x}
+                        strokeWidth={20}
+                        fill="none"
+                        strokeDasharray={`${circumference} ${circumference}`}
+                        strokeLinecap="round"
+                    />
+                </animated.svg>
+            </div>
         </div>
     );
 };
