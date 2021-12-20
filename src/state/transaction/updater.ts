@@ -4,7 +4,8 @@ import { retry, RetryableError, RetryOptions } from '../../lib/retry';
 import ProtocolState from '../protocol';
 import Web3Hooks from '../web3/hooks';
 
-import TransactionState from '.';
+import TransactionDispatches from './dispatches';
+import TransactionsSelectors from './selectors';
 
 interface TxInterface {
     addedTime: number;
@@ -36,12 +37,12 @@ const DEFAULT_RETRY_OPTIONS: RetryOptions = {
     maxWait: 10000,
 };
 
-export default () => {
+const TransactionUpdater = () => {
     const { library } = Web3Hooks.useActiveWeb3React();
 
     const lastBlockNumber = ProtocolState.select.currentBlock();
 
-    const txs = TransactionState.select.txs();
+    const txs = TransactionsSelectors.txs();
 
     const transactions = useMemo(() => txs ?? {}, [txs]);
 
@@ -81,7 +82,7 @@ export default () => {
                 promise
                     .then((receipt) => {
                         if (receipt) {
-                            TransactionState.dispatch.finalizeTransaction({
+                            TransactionDispatches.finalizeTransaction({
                                 hash,
                                 receipt: {
                                     blockHash: receipt.blockHash,
@@ -102,7 +103,7 @@ export default () => {
                                 );
                             }
                         } else {
-                            TransactionState.dispatch.checkedTransaction({
+                            TransactionDispatches.checkedTransaction({
                                 hash,
                                 blockNumber: lastBlockNumber,
                             });
@@ -126,3 +127,5 @@ export default () => {
 
     return null;
 };
+
+export default TransactionUpdater;

@@ -1,4 +1,4 @@
-import { PayloadAction } from '@reduxjs/toolkit';
+import { Middleware, PayloadAction } from '@reduxjs/toolkit';
 
 import {
     isUndefinedOrNullOrNotFunction,
@@ -8,7 +8,7 @@ import {
 import AppState from '../app';
 import { NLState } from '../NLState';
 
-import TransactionState from '.';
+import TransactionDispatches from './dispatches';
 
 export const pending: NL.Redux.Middleware<
     Record<string, unknown>,
@@ -22,7 +22,7 @@ export const pending: NL.Redux.Middleware<
             !isUndefinedOrNullOrObjectEmpty(action.payload) &&
             !isUndefinedOrNullOrObjectEmpty(action.payload._pendingtx)
         ) {
-            TransactionState.dispatch.addTransaction({
+            TransactionDispatches.addTransaction({
                 hash: action.payload._pendingtx.hash,
                 from: action.payload._pendingtx.from,
                 info: action.payload._pendingtx.info,
@@ -59,4 +59,6 @@ export const pending: NL.Redux.Middleware<
         return next(action);
     };
 
-export default { pending };
+const TransactionMiddlewares = { pending };
+
+export default TransactionMiddlewares as Dictionary<Middleware>;

@@ -5,7 +5,7 @@ import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import { fromEth } from '../../../../lib/conversion';
 import NuggDexState from '../../../../state/nuggdex';
 import ProtocolState from '../../../../state/protocol';
-import TransactionState from '../../../../state/transaction';
+import TransactionsSelectors from '../../../../state/transaction/selectors';
 import WalletDispatches from '../../../../state/wallet/dispatches';
 import Button from '../../../general/Buttons/Button/Button';
 import Text from '../../../general/Texts/Text/Text';
@@ -17,7 +17,7 @@ type Props = {};
 
 const BurnModal: FunctionComponent<Props> = () => {
     const shareValue = ProtocolState.select.nuggftStakedEthPerShare();
-    const toggle = TransactionState.select.toggleCompletedTxn();
+    const toggle = TransactionsSelectors.toggleCompletedTxn();
     const myNuggs = NuggDexState.select.myNuggs();
 
     const [selected, setSelected] = useState('');

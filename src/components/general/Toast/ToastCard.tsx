@@ -62,6 +62,9 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
     const animatedS = useSpring({
         ...styles.toast,
         opacity: hovering ? 0 : 1,
+        config: {
+            duration: 100,
+        },
     });
 
     return (

@@ -20,12 +20,15 @@ const AnimatedBarTimer: FunctionComponent<Props> = ({
 }) => {
     const ref = useRef<HTMLDivElement>();
     let time = duration;
-    useAnimationFrame((t) => {
-        if (time > 0 && ref.current && ref.current.style) {
-            time -= t;
-            ref.current.style.width = `${(time / duration) * 100}%`;
-        }
-    });
+    useAnimationFrame(
+        (t) => {
+            if (time > 0 && ref.current && ref.current.style) {
+                time -= t;
+                ref.current.style.width = `${(time / duration) * 100}%`;
+            }
+        },
+        [duration],
+    );
     return (
         <div
             style={{

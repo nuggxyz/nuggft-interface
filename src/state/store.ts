@@ -2,7 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 
 import AppState from './app';
-import TransactionState from './transaction';
+import TransactionSlice from './transaction';
 import ProtocolState from './protocol';
 import TokenState from './token';
 import SwapState from './swap';
@@ -11,13 +11,13 @@ import Web3Slice from './web3';
 import Web3Middlewares from './web3/middlewares';
 import WalletSlice from './wallet';
 import WalletMiddlewares from './wallet/middlewares';
+import TransactionMiddlewares from './transaction/middlewares';
 
 export const states = {
     AppState,
     SwapState,
     ProtocolState,
     TokenState,
-    TransactionState,
     NuggDexState,
 };
 
@@ -26,7 +26,7 @@ export const rootReducer = combineReducers({
     nuggdex: NuggDexState.reducer,
     protocol: ProtocolState.reducer,
     swap: SwapState.reducer,
-    transaction: TransactionState.reducer,
+    transaction: TransactionSlice.reducer,
     token: TokenState.reducer,
     wallet: WalletSlice.reducer,
     web3: Web3Slice.reducer,
@@ -76,6 +76,7 @@ const store = configureStore({
             .concat([
                 ...Object.values(Web3Middlewares),
                 ...Object.values(WalletMiddlewares),
+                ...Object.values(TransactionMiddlewares),
             ]),
 });
 
