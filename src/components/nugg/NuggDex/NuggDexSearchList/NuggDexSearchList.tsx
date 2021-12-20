@@ -14,7 +14,8 @@ import {
 } from '@react-spring/web';
 
 import { isUndefinedOrNullOrObjectEmpty } from '../../../../lib';
-import NuggDexState from '../../../../state/nuggdex';
+import NuggDexSelectors from '../../../../state/nuggdex/selectors';
+import NuggDexDispatches from '../../../../state/nuggdex/dispatches';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -25,10 +26,10 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const [localViewing, setLocalViewing] =
         useState<NL.Redux.NuggDex.SearchViews>('home');
 
-    const allNuggs = NuggDexState.select.allNuggs();
-    const activeNuggs = NuggDexState.select.activeNuggs();
-    const myNuggs = NuggDexState.select.myNuggs();
-    const recents = NuggDexState.select.recents();
+    const allNuggs = NuggDexSelectors.allNuggs();
+    const activeNuggs = NuggDexSelectors.activeNuggs();
+    const myNuggs = NuggDexSelectors.myNuggs();
+    const recents = NuggDexSelectors.recents();
 
     const [nuggLinkRef, setNuggLinkRef] = useState<HTMLDivElement>();
     const homeRef = useRef<HTMLDivElement>();
@@ -81,7 +82,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             onStart: () =>
                 localViewing !== 'home' &&
                 // viewing !== localViewing &&
-                NuggDexState.dispatch.setViewing(localViewing),
+                NuggDexDispatches.setViewing(localViewing),
         },
         [nuggLinkRect, homeRect],
     );

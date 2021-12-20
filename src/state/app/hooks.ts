@@ -1,1 +1,3 @@
-export default {};
+const AppHooks = {};
+
+export default AppHooks;

@@ -8,9 +8,9 @@ import {
     loadStringFromLocalStorage,
     saveStringToLocalStorage,
 } from '../lib';
-import Web3State from '../state/web3';
 import { NuggFT, NuggFT__factory } from '../typechain';
 import { Svg } from '../classes/Svg';
+import Web3Helpers from '../state/web3/helpers';
 
 import ContractHelper from './abstract/ContractHelper';
 
@@ -21,7 +21,7 @@ export default class NuggFTHelper extends ContractHelper {
             NuggFTHelper._instance = new Contract(
                 config.GATSBY_NUGGFT,
                 NuggFT__factory.abi,
-                Web3State.getLibraryOrProvider(),
+                Web3Helpers.getLibraryOrProvider(),
             ) as NuggFT;
         }
         return NuggFTHelper._instance;

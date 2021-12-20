@@ -1,25 +1,25 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 
-import AppState from '../../../../state/app';
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import NuggFTHelper from '../../../../contracts/NuggFTHelper';
-import ProtocolState from '../../../../state/protocol';
-import TransactionState from '../../../../state/transaction';
 import TokenViewer from '../../TokenViewer';
 import Button from '../../../general/Buttons/Button/Button';
 import Text from '../../../general/Texts/Text/Text';
-import WalletState from '../../../../state/wallet';
-import TokenState from '../../../../state/token';
 import { fromEth } from '../../../../lib/conversion';
+import WalletDispatches from '../../../../state/wallet/dispatches';
+import TransactionsSelectors from '../../../../state/transaction/selectors';
+import TokenDispatches from '../../../../state/token/dispatches';
+import ProtocolSelectors from '../../../../state/protocol/selectors';
+import AppSelectors from '../../../../state/app/selectors';
 
 import styles from './StartSaleModal.styles';
 
 type Props = {};
 
 const SwapModal: FunctionComponent<Props> = () => {
-    const shareValue = ProtocolState.select.nuggftStakedEthPerShare();
-    const toggle = TransactionState.select.toggleCompletedTxn();
-    const { targetId, type } = AppState.select.modalData();
+    const shareValue = ProtocolSelectors.nuggftStakedEthPerShare();
+    const toggle = TransactionsSelectors.toggleCompletedTxn();
+    const { targetId, type } = AppSelectors.modalData();
 
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(targetId);
@@ -70,13 +70,13 @@ const SwapModal: FunctionComponent<Props> = () => {
                     onClick={() =>
                         isApproved
                             ? stableType === 'StartSale'
-                                ? TokenState.dispatch.initSale({
+                                ? TokenDispatches.initSale({
                                       tokenId: stableId,
                                   })
-                                : WalletState.dispatch.withdraw({
+                                : WalletDispatches.withdraw({
                                       tokenId: stableId,
                                   })
-                            : WalletState.dispatch.approveNugg({
+                            : WalletDispatches.approveNugg({
                                   tokenId: stableId,
                               })
                     }

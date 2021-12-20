@@ -3,10 +3,7 @@ import { ChevronDown } from 'react-feather';
 
 import Text from '../../general/Texts/Text/Text';
 import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
-import SwapState from '../../../state/swap';
 import Button from '../../general/Buttons/Button/Button';
-import AppState from '../../../state/app';
-import Web3State from '../../../state/web3';
 import { Address } from '../../../classes/Address';
 import {
     isUndefinedOrNullOrNumberZero,
@@ -15,17 +12,20 @@ import {
 } from '../../../lib';
 import { fromEth } from '../../../lib/conversion';
 import Colors from '../../../lib/colors';
+import Web3Hooks from '../../../state/web3/hooks';
+import SwapSelectors from '../../../state/swap/selectors';
+import AppDispatches from '../../../state/app/dispatches';
 
 import styles from './RingAbout.styles';
 
 type Props = {};
 
 const RingAbout: FunctionComponent<Props> = ({}) => {
-    const eth = SwapState.select.eth();
-    const ethUsd = SwapState.select.ethUsd();
-    const leader = SwapState.select.leader();
+    const eth = SwapSelectors.eth();
+    const ethUsd = SwapSelectors.ethUsd();
+    const leader = SwapSelectors.leader();
 
-    const status = SwapState.select.status();
+    const status = SwapSelectors.status();
 
     const safeLeaderEns = useMemo(() => {
         return !isUndefinedOrNullOrObjectEmpty(leader)
@@ -33,7 +33,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
             : Address.ZERO.hash;
     }, [leader]);
 
-    const ens = Web3State.hook.useEns(safeLeaderEns);
+    const ens = Web3Hooks.useEns(safeLeaderEns);
 
     const hasBids = useMemo(
         () =>
@@ -88,7 +88,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                     buttonStyle={styles.button}
                     textStyle={styles.buttonText}
                     onClick={() =>
-                        AppState.dispatch.setModalOpen({
+                        AppDispatches.setModalOpen({
                             name: 'Offer',
                         })
                     }

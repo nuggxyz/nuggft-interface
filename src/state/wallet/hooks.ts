@@ -1,1 +1,3 @@
-export default {};
+const WalletHooks = {};
+
+export default WalletHooks;

@@ -10,9 +10,10 @@ import { EnsAddress } from '../../../classes/Address';
 import { isUndefinedOrNullOrStringEmpty } from '../../../lib';
 import Colors from '../../../lib/colors';
 import { fromEth } from '../../../lib/conversion';
-import AppState from '../../../state/app';
-import TokenState from '../../../state/token';
-import Web3State from '../../../state/web3';
+import AppDispatches from '../../../state/app/dispatches';
+import AppHelpers from '../../../state/app/helpers';
+import TokenSelectors from '../../../state/token/selectors';
+import Web3Selectors from '../../../state/web3/selectors';
 import Button from '../../general/Buttons/Button/Button';
 import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
 import Text from '../../general/Texts/Text/Text';
@@ -23,10 +24,10 @@ import styles from './ViewingNugg.styles';
 type Props = {};
 
 const ViewingNugg: FunctionComponent<Props> = () => {
-    const tokenId = TokenState.select.tokenId();
-    const address = Web3State.select.web3address();
-    const owner = TokenState.select.owner();
-    const swaps = TokenState.select.swaps();
+    const tokenId = TokenSelectors.tokenId();
+    const address = Web3Selectors.web3address();
+    const owner = TokenSelectors.owner();
+    const swaps = TokenSelectors.swaps();
 
     const [items, setItems] = useState([tokenId]);
 
@@ -57,7 +58,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                             buttonStyle={styles.owner}
                             key={index}
                             onClick={() =>
-                                AppState.onRouteUpdate(`#/swap/${swap.id}`)
+                                AppHelpers.onRouteUpdate(`#/swap/${swap.id}`)
                             }
                             rightIcon={
                                 <>
@@ -145,7 +146,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                                     }}
                                     label="Withdraw"
                                     onClick={() =>
-                                        AppState.dispatch.setModalOpen({
+                                        AppDispatches.setModalOpen({
                                             name: 'StartSale',
                                             modalData: {
                                                 targetId: item,
@@ -166,7 +167,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                                     }}
                                     label="Sell"
                                     onClick={() =>
-                                        AppState.dispatch.setModalOpen({
+                                        AppDispatches.setModalOpen({
                                             name: 'StartSale',
                                             modalData: {
                                                 targetId: item,

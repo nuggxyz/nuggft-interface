@@ -90,7 +90,9 @@ const initSale = createAsyncThunk<
     }
 });
 
-export default {
+const TokenThactions = {
     initSale,
     getSwapHistory,
 };
+
+export default TokenThactions;

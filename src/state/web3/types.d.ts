@@ -7,6 +7,7 @@ declare namespace NL.Redux.Web3 {
         connectivityWarning: boolean;
         error?: Error;
         success?: Success;
+        currentChain: import('./config').SupportedChainId;
     }
 
     type Web3Status = 'NOT_SELECTED' | 'PENDING' | 'SELECTED' | 'ERROR';

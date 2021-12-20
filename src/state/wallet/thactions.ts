@@ -15,8 +15,7 @@ import config from '../../config';
 import historyQuery from './queries/historyQuery';
 import unclaimedOffersQuery from './queries/unclaimedOffersQuery';
 import userSharesQuery from './queries/userSharesQuery';
-
-import WalletState from '.';
+import WalletDispatches from './dispatches';
 
 const getUnclaimedOffers = createAsyncThunk<
     {
@@ -223,10 +222,6 @@ const claim = createAsyncThunk<
         return {
             success: 'SUCCESS',
             _pendingtx,
-            callbackFn: () => {
-                WalletState.dispatch.getUnclaimedOffers();
-                WalletState.dispatch.getHistory({});
-            },
         };
     } catch (err) {
         console.log({ err });
@@ -245,7 +240,7 @@ const claim = createAsyncThunk<
     }
 });
 
-export default {
+const WalletThactions = {
     getUnclaimedOffers,
     getUserShares,
     getHistory,
@@ -253,3 +248,5 @@ export default {
     claim,
     approveNugg,
 };
+
+export default WalletThactions;

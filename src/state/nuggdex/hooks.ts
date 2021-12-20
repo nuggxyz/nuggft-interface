@@ -1,1 +1,3 @@
-export default {};
+const NuggDexHooks = {};
+
+export default NuggDexHooks;

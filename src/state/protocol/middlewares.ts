@@ -4,10 +4,9 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
-import SwapState from '../swap';
-import Web3State from '../web3';
-
-import ProtocolState from '.';
+import Web3Dispatches from '../web3/dispatches';
+import SwapDispatches from '../swap/dispatches';
+import { hasSuffix } from '../helpers';
 
 const updateEpochMiddleware: Middleware<
     Record<string, unknown>,
@@ -17,7 +16,7 @@ const updateEpochMiddleware: Middleware<
     ({ getState }) =>
     (next) =>
     async (action: PayloadAction<any>) => {
-        if (ProtocolState.isOwnFulfilledAction(action, 'updateEpoch')) {
+        if (hasSuffix(action, 'updateEpoch')) {
             const currentEpoch = !isUndefinedOrNullOrObjectEmpty(
                 getState().protocol.epoch,
             )
@@ -30,18 +29,20 @@ const updateEpochMiddleware: Middleware<
                 (isUndefinedOrNullOrStringEmpty(currentSwap) ||
                     currentSwap.split('-')[1] === currentEpoch)
             ) {
-                SwapState.dispatch.initSwap({
+                SwapDispatches.initSwap({
                     swapId: `${nextEpoch}-${nextEpoch}`,
                 });
             }
 
             if (!navigator.onLine) {
-                Web3State.dispatch.setConnectivityWarning(true);
+                Web3Dispatches.setConnectivityWarning(true);
             } else if (getState().web3.connectivityWarning === true) {
-                Web3State.dispatch.setConnectivityWarning(false);
+                Web3Dispatches.setConnectivityWarning(false);
             }
         }
         return next(action);
     };
 
-export default { updateEpochMiddleware };
+const ProtocolMiddlewares = { updateEpochMiddleware };
+
+export default ProtocolMiddlewares;

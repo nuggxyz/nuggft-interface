@@ -1,20 +1,22 @@
 import { useEffect } from 'react';
 
-import Web3State from '../web3';
-import ProtocolState from '../protocol';
+import ProtocolSelectors from '../protocol/selectors';
+import Web3Selectors from '../web3/selectors';
 
-import WalletState from '.';
+import WalletDispatches from './dispatches';
 
-export default () => {
-    const web3address = Web3State.select.web3address();
-    const epoch = ProtocolState.select.epoch();
+const WalletUpdater = () => {
+    const web3address = Web3Selectors.web3address();
+    const epoch = ProtocolSelectors.epoch();
 
     useEffect(() => {
         if (web3address && epoch) {
-            WalletState.dispatch.getUnclaimedOffers();
-            WalletState.dispatch.getHistory({});
-            WalletState.dispatch.getUserShares();
+            WalletDispatches.getUnclaimedOffers();
+            WalletDispatches.getHistory({});
+            WalletDispatches.getUserShares();
         }
     }, [epoch, web3address]);
     return null;
 };
+
+export default WalletUpdater;

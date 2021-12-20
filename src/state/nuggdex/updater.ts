@@ -4,25 +4,27 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
-import ProtocolState from '../protocol';
-import Web3State from '../web3';
+import Web3Selectors from '../web3/selectors';
+import ProtocolSelectors from '../protocol/selectors';
 
-import NuggDexState from '.';
+import NuggDexDispatches from './dispatches';
 
-export default () => {
-    const epoch = ProtocolState.select.epoch();
-    const web3address = Web3State.select.web3address();
+const NuggDexUpdater = () => {
+    const epoch = ProtocolSelectors.epoch();
+    const web3address = Web3Selectors.web3address();
 
     useEffect(() => {
         if (
             !isUndefinedOrNullOrObjectEmpty(epoch) &&
             !isUndefinedOrNullOrStringEmpty(web3address)
         ) {
-            NuggDexState.dispatch.refillRecents({
+            NuggDexDispatches.refillRecents({
                 _localStorageTarget: 'recents',
             });
-            NuggDexState.dispatch.initNuggDex();
+            NuggDexDispatches.initNuggDex();
         }
     }, [epoch, web3address]);
     return null;
 };
+
+export default NuggDexUpdater;

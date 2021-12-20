@@ -204,8 +204,10 @@ const initNuggDex = createAsyncThunk<
     }
 });
 
-export default {
+const NuggDexThactions = {
     getNuggThumbnail,
     searchTokens,
     initNuggDex,
 };
+
+export default NuggDexThactions;

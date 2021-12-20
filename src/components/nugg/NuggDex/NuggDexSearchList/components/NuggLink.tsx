@@ -2,7 +2,6 @@ import React, { Dispatch, FunctionComponent, SetStateAction } from 'react';
 import { animated, useSpring } from 'react-spring';
 
 import { ucFirst } from '../../../../../lib';
-import NuggDexState from '../../../../../state/nuggdex';
 import Text from '../../../../general/Texts/Text/Text';
 
 import styles from './NuggDexComponents.styles';
@@ -24,7 +23,6 @@ const NuggLink: FunctionComponent<Props> = ({
     setRef,
     onClick,
 }) => {
-    // const viewing = NuggDexState.select.viewing();
     const opacity = useSpring({
         opacity: localViewing !== 'home' ? 0 : 1,
         transform:

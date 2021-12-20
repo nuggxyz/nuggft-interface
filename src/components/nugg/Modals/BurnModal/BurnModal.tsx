@@ -3,10 +3,10 @@ import React, { Fragment, FunctionComponent, useEffect, useState } from 'react';
 import NuggFTHelper from '../../../../contracts/NuggFTHelper';
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import { fromEth } from '../../../../lib/conversion';
-import NuggDexState from '../../../../state/nuggdex';
-import ProtocolState from '../../../../state/protocol';
-import TransactionState from '../../../../state/transaction';
-import WalletState from '../../../../state/wallet';
+import NuggDexSelectors from '../../../../state/nuggdex/selectors';
+import ProtocolSelectors from '../../../../state/protocol/selectors';
+import TransactionsSelectors from '../../../../state/transaction/selectors';
+import WalletDispatches from '../../../../state/wallet/dispatches';
 import Button from '../../../general/Buttons/Button/Button';
 import Text from '../../../general/Texts/Text/Text';
 import TokenViewer from '../../TokenViewer';
@@ -16,9 +16,9 @@ import styles from './BurnModal.styles';
 type Props = {};
 
 const BurnModal: FunctionComponent<Props> = () => {
-    const shareValue = ProtocolState.select.nuggftStakedEthPerShare();
-    const toggle = TransactionState.select.toggleCompletedTxn();
-    const myNuggs = NuggDexState.select.myNuggs();
+    const shareValue = ProtocolSelectors.nuggftStakedEthPerShare();
+    const toggle = TransactionsSelectors.toggleCompletedTxn();
+    const myNuggs = NuggDexSelectors.myNuggs();
 
     const [selected, setSelected] = useState('');
 
@@ -80,10 +80,10 @@ const BurnModal: FunctionComponent<Props> = () => {
                     disabled={isUndefinedOrNullOrStringEmpty(selected)}
                     onClick={() =>
                         isApproved
-                            ? WalletState.dispatch.withdraw({
+                            ? WalletDispatches.withdraw({
                                   tokenId: selected,
                               })
-                            : WalletState.dispatch.approveNugg({
+                            : WalletDispatches.approveNugg({
                                   tokenId: selected,
                               })
                     }

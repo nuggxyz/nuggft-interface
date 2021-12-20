@@ -3,8 +3,8 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { isUndefinedOrNullOrObjectEmpty } from '../../../lib';
 import Colors from '../../../lib/colors';
 import constants from '../../../lib/constants';
-import ProtocolState from '../../../state/protocol';
-import SwapState from '../../../state/swap';
+import ProtocolSelectors from '../../../state/protocol/selectors';
+import SwapSelectors from '../../../state/swap/selectors';
 import CircleTimer from '../../general/AnimatedTimers/CircleTimer/CircleTimer';
 import AnimatedCard from '../../general/Cards/AnimatedCard/AnimatedCard';
 import TokenViewer from '../TokenViewer';
@@ -14,10 +14,10 @@ import styles from './TheRing.styles';
 type Props = {};
 
 const TheRing: FunctionComponent<Props> = () => {
-    const lastBlock = ProtocolState.select.currentBlock();
-    const epoch = ProtocolState.select.epoch();
-    const nugg = SwapState.select.nugg();
-    const status = SwapState.select.status();
+    const lastBlock = ProtocolSelectors.currentBlock();
+    const epoch = ProtocolSelectors.epoch();
+    const nugg = SwapSelectors.nugg();
+    const status = SwapSelectors.status();
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
@@ -48,7 +48,7 @@ const TheRing: FunctionComponent<Props> = () => {
             duration={blockDuration}
             remaining={blocksRemaining}
             blocktime={constants.BLOCKTIME}
-            width={1400}
+            width={1600}
             staticColor={
                 status === 'over'
                     ? Colors.purple

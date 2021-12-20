@@ -2,15 +2,18 @@ import useRecursiveTimeout from '../../hooks/useRecursiveTimeout';
 import { isUndefinedOrNullOrStringEmpty } from '../../lib';
 import constants from '../../lib/constants';
 
-import SwapState from '.';
+import SwapDispatches from './dispatches';
+import SwapSelectors from './selectors';
 
-export default () => {
-    const swapId = SwapState.select.id();
+const SwapUpdater = () => {
+    const swapId = SwapSelectors.id();
     useRecursiveTimeout(() => {
         if (!isUndefinedOrNullOrStringEmpty(swapId)) {
-            SwapState.dispatch.pollOffers({ swapId });
+            SwapDispatches.pollOffers({ swapId });
         }
     }, constants.QUERYTIME);
 
     return null;
 };
+
+export default SwapUpdater;

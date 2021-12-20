@@ -5,16 +5,16 @@ import config from '../config';
 import { isUndefinedOrNullOrObjectEmpty } from '../lib';
 import { EnsRegistrar__factory, EnsResolver } from '../typechain';
 import { Address } from '../classes/Address';
-import Web3State from '../state/web3';
 import { EnsResolver__factory } from '../typechain/factories/EnsResolver__factory';
 import { EnsRegistrar } from '../typechain/EnsRegistrar';
+import Web3Helpers from '../state/web3/helpers';
 
 export default class ENSHelper {
     private static _instance_resolver: EnsResolver;
     private static _instance_registrar: EnsRegistrar;
     private static _signer: ethers.Signer;
     static get signer() {
-        return Web3State.getLibrary() as ethers.providers.Web3Provider;
+        return Web3Helpers.getLibrary() as ethers.providers.Web3Provider;
     }
     static set signer(_) {
         return;
@@ -24,7 +24,7 @@ export default class ENSHelper {
             ENSHelper._instance_registrar = new Contract(
                 config.GATSBY_ENS,
                 EnsRegistrar__factory.abi,
-                Web3State.getLibrary(),
+                Web3Helpers.getLibrary(),
             ) as EnsRegistrar;
         }
         return ENSHelper._instance_registrar;

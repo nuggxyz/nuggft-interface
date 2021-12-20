@@ -6,8 +6,10 @@ import useDebounce from '../../../../hooks/useDebounce';
 import usePrevious from '../../../../hooks/usePrevious';
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import Colors from '../../../../lib/colors';
-import AppState from '../../../../state/app';
-import NuggDexState from '../../../../state/nuggdex';
+import AppDispatches from '../../../../state/app/dispatches';
+import AppSelectors from '../../../../state/app/selectors';
+import NuggDexDispatches from '../../../../state/nuggdex/dispatches';
+import NuggDexSelectors from '../../../../state/nuggdex/selectors';
 import Button from '../../../general/Buttons/Button/Button';
 import TextInput from '../../../general/TextInputs/TextInput/TextInput';
 
@@ -16,9 +18,9 @@ import styles from './NuggDexSearchBar.styles';
 type Props = {};
 
 const NuggDexSearchBar: FunctionComponent<Props> = () => {
-    const viewing = NuggDexState.select.viewing();
-    const continueSearch = NuggDexState.select.continueSearch();
-    const view = AppState.select.view();
+    const viewing = NuggDexSelectors.viewing();
+    const continueSearch = NuggDexSelectors.continueSearch();
+    const view = AppSelectors.view();
 
     const [searchValue, setSearchValue] = useState('');
 
@@ -31,7 +33,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     useEffect(() => {
         if (continueSearch.includes('no')) {
             setSearchValue('');
-            NuggDexState.dispatch.setViewing('home');
+            NuggDexDispatches.setViewing('home');
         }
     }, [continueSearch]);
 
@@ -42,7 +44,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                 !isUndefinedOrNullOrStringEmpty(debouncedValue) &&
                 isUndefinedOrNullOrStringEmpty(previousSearchValue)
             ) {
-                NuggDexState.dispatch.setViewing('all nuggs');
+                NuggDexDispatches.setViewing('all nuggs');
             }
             const filters: NL.Redux.NuggDex.Filters = {
                 searchValue: debouncedValue,
@@ -51,7 +53,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                     asc: sortAsc,
                 },
             };
-            NuggDexState.dispatch.searchTokens({
+            NuggDexDispatches.searchTokens({
                 filters,
                 addToResult:
                     continueSearch.includes('yes') &&
@@ -92,7 +94,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                 <Button
                     buttonStyle={styles.searchBarButton}
                     onClick={() =>
-                        AppState.dispatch.changeView(
+                        AppDispatches.changeView(
                             view === 'Search' ? 'Swap' : 'Search',
                         )
                     }
