@@ -8,7 +8,7 @@ import styles from './HappyTabber.styles';
 
 export type HappyTabberItem = {
     label: string;
-    comp: () => JSX.Element;
+    comp: ({ isActive: boolean }) => JSX.Element;
 };
 
 type Props = {
@@ -82,7 +82,7 @@ const HappyTabber: FunctionComponent<Props> = ({
                 {tabFadeTransition((styles, Item) => (
                     //@ts-ignore
                     <animated.div style={styles}>
-                        {Item && <Item />}
+                        {Item && <Item isActive={true} />}
                     </animated.div>
                 ))}
             </div>

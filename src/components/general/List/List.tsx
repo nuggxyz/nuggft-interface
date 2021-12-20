@@ -104,7 +104,12 @@ const List: FunctionComponent<Props> = ({
 
     const Loading = useCallback(
         () => (
-            <div style={{ marginTop: '1rem' }}>
+            <div
+                style={{
+                    marginTop: '1rem',
+                    height: '1rem',
+                    position: 'relative',
+                }}>
                 {loading && <Loader color="black" />}
             </div>
         ),
@@ -121,10 +126,14 @@ const List: FunctionComponent<Props> = ({
             <Label />
             <div style={containerStyle} ref={ref}>
                 <List selected={selected} />
-                {!isUndefinedOrNullOrNotFunction(onScrollEnd) && (
-                    <EndOfListAnchor onScrollEnd={onScrollEnd} rootRef={ref} />
-                )}
                 <Loading />
+                {!isUndefinedOrNullOrNotFunction(onScrollEnd) && (
+                    <EndOfListAnchor
+                        onScrollEnd={onScrollEnd}
+                        rootRef={ref}
+                        loading={loading}
+                    />
+                )}
             </div>
         </>
     );
@@ -132,13 +141,18 @@ const List: FunctionComponent<Props> = ({
 
 export default List;
 
-const EndOfListAnchor = ({ rootRef, onScrollEnd }) => {
+const EndOfListAnchor = ({ rootRef, onScrollEnd, loading }) => {
     const [ref, isVisible] = useIsVisible(rootRef.current, '10px');
+    const prevVisible = usePrevious(isVisible);
     useEffect(() => {
-        if (!isUndefinedOrNullOrBooleanFalse(isVisible)) {
+        if (
+            !isUndefinedOrNullOrBooleanFalse(isVisible) &&
+            isVisible !== prevVisible &&
+            !loading
+        ) {
             onScrollEnd();
         }
-    }, [isVisible]);
+    }, [isVisible, prevVisible, loading]);
 
     return <div ref={ref} key="NUGGNUGGNUGGNUGGNUGG" />;
 };

@@ -11,8 +11,6 @@ export default () => {
 
     useEffect(() => {
         if (web3address && epoch) {
-            WalletState.dispatch.getUnclaimedOffers();
-            WalletState.dispatch.getHistory({});
             WalletState.dispatch.getUserShares();
         }
     }, [epoch, web3address]);

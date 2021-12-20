@@ -12,6 +12,8 @@ const query = (id: string, first: number, skip: number) => gql`
         user(id: "${id}") {
             offers (
                 where: { claimed: true },
+                orderDirection: desc,
+                orderBy: id,
                 first: ${first}
                 skip: ${skip}
             ) ${offerThumbnail}

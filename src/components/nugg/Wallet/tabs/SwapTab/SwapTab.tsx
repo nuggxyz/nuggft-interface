@@ -11,9 +11,9 @@ import AppState from '../../../../../state/app';
 
 import styles from './SwapTab.styles';
 
-type Props = {};
+type Props = { isActive?: boolean };
 
-const SwapTab: FunctionComponent<Props> = () => {
+const SwapTab: FunctionComponent<Props> = ({ isActive }) => {
     const userShares = WalletState.select.userShares();
 
     const totalEth = ProtocolState.select.nuggftStakedEth();

@@ -24,9 +24,15 @@ const Wallet: FunctionComponent<Props> = () => {
     });
 
     const happytabs: HappyTabberItem[] = [
-        { label: 'Pool', comp: () => <SwapTab /> },
+        {
+            label: 'Pool',
+            comp: ({ isActive }) => <SwapTab isActive={isActive} />,
+        },
 
-        { label: 'Claim', comp: () => <HistoryTab /> },
+        {
+            label: 'Claim',
+            comp: ({ isActive }) => <HistoryTab isActive={isActive} />,
+        },
     ];
 
     return (

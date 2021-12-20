@@ -31,8 +31,6 @@ export default class WalletState extends NLState<NL.Redux.Wallet.State> {
             error: undefined,
             success: undefined,
             loading: false,
-            unclaimedOffers: [],
-            history: [],
             userShares: 0,
         });
     }
@@ -50,15 +48,6 @@ export default class WalletState extends NLState<NL.Redux.Wallet.State> {
         },
         extraReducers: (builder) =>
             builder
-                .addCase(
-                    thactions.getUnclaimedOffers.fulfilled,
-                    (state, action) => {
-                        state.unclaimedOffers = action.payload.data;
-                    },
-                )
-                .addCase(thactions.getHistory.fulfilled, (state, action) => {
-                    state.history = action.payload.data;
-                })
                 .addCase(thactions.getUserShares.fulfilled, (state, action) => {
                     state.userShares = action.payload.data;
                 })
