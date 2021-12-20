@@ -20,6 +20,7 @@ type Props = {};
 
 const HistoryTab: FunctionComponent<Props> = () => {
     const unclaimedOffers = WalletState.select.unclaimedOffers();
+    const loading = WalletState.select.loading();
     const history = WalletState.select.history();
     const address = Web3State.select.web3address();
 
@@ -28,7 +29,12 @@ const HistoryTab: FunctionComponent<Props> = () => {
             {!isUndefinedOrNullOrArrayEmpty(unclaimedOffers) && (
                 <List
                     data={unclaimedOffers}
-                    RenderItem={RenderItem}
+                    RenderItem={React.memo(
+                        RenderItem,
+                        (prev, props) =>
+                            JSON.stringify(prev.item) ===
+                            JSON.stringify(props.item),
+                    )}
                     label="Unclaimed"
                     style={styles.list}
                     extraData={['claim', address]}
@@ -37,10 +43,16 @@ const HistoryTab: FunctionComponent<Props> = () => {
             {!isUndefinedOrNullOrArrayEmpty(history) && (
                 <List
                     data={history}
-                    RenderItem={RenderItem}
+                    RenderItem={React.memo(
+                        RenderItem,
+                        (prev, props) =>
+                            JSON.stringify(prev.item) ===
+                            JSON.stringify(props.item),
+                    )}
                     label="History"
                     style={styles.list}
                     extraData={['history', address]}
+                    loading={loading}
                     onScrollEnd={() =>
                         WalletState.dispatch.getHistory({ addToResult: true })
                     }

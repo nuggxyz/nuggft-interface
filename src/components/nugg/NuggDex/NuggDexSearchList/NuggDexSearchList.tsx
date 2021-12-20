@@ -36,6 +36,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const [nuggLinkRect, setNuggLinkRect] = useState<any>();
     const [homeRect, setHomeRect] = useState<any>();
 
+    const [beginListSearch, setBeginListSearch] = useState(false);
+
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(nuggLinkRef)) {
             setNuggLinkRect(nuggLinkRef.getBoundingClientRect());
@@ -78,10 +80,9 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 opacity: 0,
             },
             config: config.default,
-            onStart: () =>
-                localViewing !== 'home' &&
-                // viewing !== localViewing &&
-                NuggDexState.dispatch.setViewing(localViewing),
+            onStart: () => {
+                NuggDexState.dispatch.setViewing(localViewing);
+            },
         },
         [nuggLinkRect, homeRect],
     );
@@ -150,7 +151,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                             style={style}
                             values={values}
                             setLocalViewing={setLocalViewing}
-                            viewing={localViewing}
+                            localViewing={localViewing}
                         />
                     )
                 );

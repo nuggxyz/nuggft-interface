@@ -17,7 +17,6 @@ type Props = {};
 
 const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const viewing = NuggDexState.select.viewing();
-    const continueSearch = NuggDexState.select.continueSearch();
     const view = AppState.select.view();
 
     const [searchValue, setSearchValue] = useState('');
@@ -29,47 +28,18 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const previousSortAsc = usePrevious(sortAsc);
 
     useEffect(() => {
-        if (continueSearch.includes('no')) {
-            setSearchValue('');
-            NuggDexState.dispatch.setViewing('home');
-        }
-    }, [continueSearch]);
-
-    useEffect(() => {
         if (view === 'Search') {
-            if (
-                viewing === 'home' &&
-                !isUndefinedOrNullOrStringEmpty(debouncedValue) &&
-                isUndefinedOrNullOrStringEmpty(previousSearchValue)
-            ) {
-                NuggDexState.dispatch.setViewing('all nuggs');
-            }
-            const filters: NL.Redux.NuggDex.Filters = {
+            NuggDexState.dispatch.setSearchFilters({
                 searchValue: debouncedValue,
                 sort: {
                     by: 'id',
                     asc: sortAsc,
                 },
-            };
-            NuggDexState.dispatch.searchTokens({
-                filters,
-                addToResult:
-                    continueSearch.includes('yes') &&
-                    debouncedValue === previousSearchValue &&
-                    sortAsc === previousSortAsc,
             });
         } else {
             setSearchValue('');
         }
-    }, [
-        debouncedValue,
-        view,
-        continueSearch,
-        viewing,
-        previousSearchValue,
-        sortAsc,
-        previousSortAsc,
-    ]);
+    }, [debouncedValue, view, previousSearchValue, sortAsc, previousSortAsc]);
 
     const styleInput = useSpring({
         width: view === 'Search' ? '100%' : '0%',

@@ -86,7 +86,7 @@ const getHistory = createAsyncThunk<
             res.length,
         );
 
-        res.push(...history);
+        res = [...res, ...history];
 
         return {
             success: 'SUCCESS',

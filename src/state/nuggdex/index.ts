@@ -31,8 +31,6 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
 
     constructor() {
         super(STATE_NAME, updater, middlewares, thactions, hooks, {
-            searchResults: [],
-            continueSearch: 'no',
             recents: [],
             myNuggs: [],
             activeNuggs: [],
@@ -42,6 +40,13 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
             success: undefined,
             error: undefined,
             loading: false,
+            searchFilters: {
+                searchValue: '',
+                sort: {
+                    asc: false,
+                    by: 'id',
+                },
+            },
         });
     }
 
@@ -77,18 +82,15 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
                     ? action.payload
                     : [];
             },
-            setContinueSearch: (
+            setSearchFilters: (
                 state,
-                action: PayloadAction<'no' | 'no_' | 'yes' | 'yes_'>,
+                action: PayloadAction<NL.Redux.NuggDex.Filters>,
             ) => {
-                state.continueSearch = action.payload;
+                state.searchFilters = action.payload;
             },
         },
         extraReducers: (builder) => {
             builder
-                .addCase(thactions.searchTokens.fulfilled, (state, action) => {
-                    state.searchResults = action.payload.data;
-                })
                 .addCase(thactions.initNuggDex.fulfilled, (state, action) => {
                     const data = action.payload.data;
                     state.activeNuggs = data.activeNuggs;

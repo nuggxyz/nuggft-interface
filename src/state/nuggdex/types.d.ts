@@ -1,7 +1,5 @@
 declare namespace NL.Redux.NuggDex {
     type State = {
-        searchResults: string[];
-        continueSearch: 'no' | 'no_' | 'yes_' | 'yes';
         recents: string[];
         thumbnails: Dictionary<Thumbnail>;
         success: Success;
@@ -11,6 +9,7 @@ declare namespace NL.Redux.NuggDex {
         myNuggs: string[];
         allNuggs: string[];
         viewing: SearchViews;
+        searchFilters: Filters;
     };
 
     type NuggResult = {
