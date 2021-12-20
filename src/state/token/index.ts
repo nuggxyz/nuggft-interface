@@ -45,10 +45,6 @@ class TokenState extends NLState<NL.Redux.Token.State> {
             loading: false,
             tokenId: undefined,
             tokenURI: undefined,
-            // status: undefined,
-            owner: undefined,
-            sellerApproval: undefined,
-            swaps: [],
         });
     }
 
@@ -62,28 +58,12 @@ class TokenState extends NLState<NL.Redux.Token.State> {
             clearError: (state) => {
                 state.error = undefined;
             },
-            setTokenFromThumbnail: (
-                state,
-                action: PayloadAction<NL.GraphQL.Fragments.Nugg.Thumbnail>,
-            ) => {
-                state.tokenId = action.payload.id;
-                state.swaps = action.payload.swaps;
-                state.owner = action.payload.user.id;
-            },
             setTokenFromId: (state, action: PayloadAction<string>) => {
                 state.tokenId = action.payload;
-                state.swaps = [];
-                state.owner = '';
             },
         },
         extraReducers: (builder) => {
             builder
-                .addCase(
-                    thactions.getSwapHistory.fulfilled,
-                    (state, action) => {
-                        state.swaps = action.payload.data;
-                    },
-                )
                 .addMatcher(NLState.isPendingAction('token/'), (state) => {
                     state.loading = true;
                     state.success = undefined;

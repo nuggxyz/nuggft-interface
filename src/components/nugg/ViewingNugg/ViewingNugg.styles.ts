@@ -7,7 +7,6 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',
-        marginLeft: '100px',
     },
     owner: {
         background: Colors.gradient2Transparent,
@@ -26,13 +25,15 @@ const styles = NLStyleSheetCreator({
         padding: '1rem',
         marginTop: '1rem',
         maxHeight: '40%',
-        width: '100%',
+        width: '50%',
         overflow: 'scroll',
     },
     button: {
         padding: '.4rem .7rem',
         borderRadius: Layout.borderRadius.large,
         marginTop: '.5rem',
+        background: 'white',
+        margin: '.5rem .25rem',
     },
     textWhite: { color: 'white' },
 });
