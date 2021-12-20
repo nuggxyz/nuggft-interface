@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 
 import {
-    gatsbyDOM,
     isUndefinedOrNull,
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrBooleanFalse,
@@ -34,6 +33,7 @@ export default () => {
     }, []);
     const onConnect = useCallback(async (connectInfo: { chainId: string }) => {
         console.log('eth event: connect', connectInfo);
+        Web3State.dispatch.setCurrentChain(chainId);
     }, []);
     const onAccountsChanged = useCallback(async (accounts) => {
         console.log('eth event: accountsChanged', { accounts });
@@ -45,6 +45,7 @@ export default () => {
     }, []);
     const onChainChanged = useCallback(async (chainId) => {
         console.log('eth event: chainChanged', { chainId });
+        Web3State.dispatch.setCurrentChain(chainId);
     }, []);
     const onMessage = useCallback(
         async (message: { type: string; data: unknown }) => {
@@ -114,7 +115,6 @@ export default () => {
             window.ethereum.on('message', onMessage);
         }
         if (
-            gatsbyDOM('window') &&
             isUndefinedOrNullOrBooleanFalse(web3status === 'SELECTED') &&
             isUndefinedOrNullOrObjectEmpty(web3address) &&
             !isUndefinedOrNullOrObjectEmpty(window.ethereum)
@@ -136,6 +136,12 @@ export default () => {
             ) {
                 Web3State.dispatch.setWeb3Address(
                     window.ethereum.selectedProvider.selectedAddress,
+                );
+            } else if (
+                !isUndefinedOrNullOrStringEmpty(window.ethereum.selectedAddress)
+            ) {
+                Web3State.dispatch.setWeb3Address(
+                    window.ethereum.selectedAddress,
                 );
             } else if (!isUndefinedOrNullOrStringEmpty(web3Account)) {
                 Web3State.dispatch.setWeb3Address(web3Account);

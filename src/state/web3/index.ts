@@ -15,7 +15,7 @@ import store from '../store';
 
 import middlewares from './middlewares';
 import updater from './updater';
-import Web3Config from './Web3Config';
+import Web3Config, { SupportedChainId } from './Web3Config';
 import hooks from './hooks';
 
 const STATE_NAME = 'web3';
@@ -46,6 +46,7 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
             web3error: false,
             connectivityWarning: false,
             implements3085: false,
+            currentChain: 1,
         });
     }
 
@@ -77,6 +78,12 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
             },
             setWeb3Error: (state, action: PayloadAction<boolean>) => {
                 state.web3error = action.payload;
+            },
+            setCurrentChain: (
+                state,
+                action: PayloadAction<SupportedChainId>,
+            ) => {
+                state.currentChain = action.payload;
             },
         },
     });
