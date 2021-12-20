@@ -192,7 +192,7 @@ const updateBlock = createAsyncThunk<
     }
 });
 
-const ProtocolThactions = {
+export default {
     updateProtocol,
     updateEpoch,
     updatePrices,
@@ -202,5 +202,3 @@ const ProtocolThactions = {
     updateStaked,
     updateBlock,
 };
-
-export default ProtocolThactions;

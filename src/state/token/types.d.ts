@@ -2,10 +2,6 @@ declare namespace NL.Redux.Token {
     type State = {
         tokenId?: string;
         tokenURI?: ReactSVG;
-        // status: import('./index').TokenStatus;
-        owner: string;
-        sellerApproval: boolean;
-        swaps: NL.GraphQL.Fragments.Swap.Thumbnail[];
         success: Success;
         error: Error;
         loading: boolean;

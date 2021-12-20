@@ -3,8 +3,6 @@ declare namespace NL.Redux.Wallet {
         error: Error;
         success: Success;
         loading: boolean;
-        unclaimedOffers: NL.GraphQL.Fragments.Offer.Thumbnail[];
-        history: NL.GraphQL.Fragments.Offer.Thumbnail[];
         userShares: number;
     }
 

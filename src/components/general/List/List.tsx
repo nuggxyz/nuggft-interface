@@ -10,9 +10,14 @@ import React, {
 
 import Text from '../Texts/Text/Text';
 import Loader from '../Loader/Loader';
-import { isUndefinedOrNullOrArrayEmpty } from '../../../lib';
+import {
+    isUndefinedOrNullOrArrayEmpty,
+    isUndefinedOrNullOrBooleanFalse,
+    isUndefinedOrNullOrNotFunction,
+} from '../../../lib';
 import useOnScroll from '../../../hooks/useOnScroll';
 import usePrevious from '../../../hooks/usePrevious';
+import useIsVisible from '../../../hooks/useIsVisible';
 
 import styles from './List.styles';
 
@@ -76,7 +81,6 @@ const List: FunctionComponent<Props> = ({
                             index={index}
                             extraData={extraData}
                             action={action}
-                            rootRef={ref}
                             selected={
                                 JSON.stringify(selected) ===
                                 JSON.stringify(item)
@@ -95,25 +99,17 @@ const List: FunctionComponent<Props> = ({
                     </Text>
                 </div>
             ),
-        [data, action, extraData, RenderItem, ref],
-    );
-
-    const EndOfList = useCallback(
-        ({ onScrollEnd }) => (
-            <RenderItem
-                item=""
-                key="w0w0w0w0w0w"
-                index={-1}
-                onScrollEnd={onScrollEnd}
-                rootRef={ref}
-            />
-        ),
-        [ref, RenderItem],
+        [data, action, extraData, RenderItem],
     );
 
     const Loading = useCallback(
         () => (
-            <div style={{ marginTop: '1rem' }}>
+            <div
+                style={{
+                    marginTop: '1rem',
+                    height: '1rem',
+                    position: 'relative',
+                }}>
                 {loading && <Loader color="black" />}
             </div>
         ),
@@ -130,11 +126,33 @@ const List: FunctionComponent<Props> = ({
             <Label />
             <div style={containerStyle} ref={ref}>
                 <List selected={selected} />
-                <EndOfList onScrollEnd={onScrollEnd} />
                 <Loading />
+                {!isUndefinedOrNullOrNotFunction(onScrollEnd) && (
+                    <EndOfListAnchor
+                        onScrollEnd={onScrollEnd}
+                        rootRef={ref}
+                        loading={loading}
+                    />
+                )}
             </div>
         </>
     );
 };
 
 export default List;
+
+const EndOfListAnchor = ({ rootRef, onScrollEnd, loading }) => {
+    const [ref, isVisible] = useIsVisible(rootRef.current, '10px');
+    const prevVisible = usePrevious(isVisible);
+    useEffect(() => {
+        if (
+            !isUndefinedOrNullOrBooleanFalse(isVisible) &&
+            isVisible !== prevVisible &&
+            !loading
+        ) {
+            onScrollEnd();
+        }
+    }, [isVisible, prevVisible, loading]);
+
+    return <div ref={ref} key="NUGGNUGGNUGGNUGGNUGG" />;
+};

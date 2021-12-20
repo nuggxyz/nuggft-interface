@@ -1,8 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 
 import { fromEth } from '../../../../lib/conversion';
-import SwapDispatches from '../../../../state/swap/dispatches';
-import SwapSelectors from '../../../../state/swap/selectors';
+import SwapState from '../../../../state/swap';
 import Button from '../../../general/Buttons/Button/Button';
 import CurrencyInput from '../../../general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '../../../general/Texts/Text/Text';
@@ -14,8 +13,8 @@ type Props = {};
 
 const OfferModal: FunctionComponent<Props> = () => {
     const [amount, setAmount] = useState('');
-    const minimum = SwapSelectors.eth();
-    const nugg = SwapSelectors.nugg();
+    const minimum = SwapState.select.eth();
+    const nugg = SwapState.select.nugg();
 
     return (
         <div style={styles.container}>
@@ -39,7 +38,7 @@ const OfferModal: FunctionComponent<Props> = () => {
                     buttonStyle={styles.button}
                     label="Place offer"
                     onClick={() => {
-                        SwapDispatches.placeOffer({
+                        SwapState.dispatch.placeOffer({
                             tokenId: nugg.id,
                             amount: amount,
                         });

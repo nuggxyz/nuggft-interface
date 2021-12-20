@@ -27,7 +27,7 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'space-between',
         alignItems: 'center',
         width: '100%',
-        borderRadius: Layout.borderRadius.smallish,
+        borderRadius: Layout.borderRadius.medium,
         margin: '.25rem 0rem',
     },
     renderTitle: {

@@ -1,11 +1,8 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 
-import { isUndefinedOrNullOrObjectEmpty } from '../../lib';
-import { hasSuffix } from '../helpers';
-import AppHelpers from '../app/helpers';
+import AppState from '../app';
 
-import nuggThumbnailQuery from './queries/nuggThumbnailQuery';
-import TokenDispatches from './dispatches';
+import TokenState from '.';
 
 const onTokenSet: NL.Redux.Middleware<
     Record<string, unknown>,
@@ -16,18 +13,10 @@ const onTokenSet: NL.Redux.Middleware<
     (next) =>
     async (action: PayloadAction<any>) => {
         const go = next(action);
-        if (hasSuffix(action, 'setTokenFromThumbnail')) {
-            TokenDispatches.getSwapHistory({ tokenId: action.payload.id });
-            AppHelpers.silentlySetRoute(`#/nugg/${action.payload.id}`);
-        } else if (hasSuffix(action, 'setTokenFromId')) {
-            const thumbnail = await nuggThumbnailQuery(action.payload);
-            if (!isUndefinedOrNullOrObjectEmpty(thumbnail)) {
-                TokenDispatches.setTokenFromThumbnail(thumbnail);
-            }
+        if (TokenState.isOwnFulfilledAction(action, 'setTokenFromId')) {
+            AppState.silentlySetRoute(`#/nugg/${action.payload}`);
         }
         return go;
     };
 
-const TokenMiddlewares = { onTokenSet };
-
-export default TokenMiddlewares;
+export default { onTokenSet };

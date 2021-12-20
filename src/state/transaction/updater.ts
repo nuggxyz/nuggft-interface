@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { retry, RetryableError, RetryOptions } from '../../lib/retry';
-import ProtocolDispatches from '../protocol/dispatches';
-import ProtocolSelectors from '../protocol/selectors';
-import Web3Hooks from '../web3/hooks';
+import Web3State from '../web3';
+import ProtocolState from '../protocol';
 
-import TransactionDispatches from './dispatches';
-import TransactionsSelectors from './selectors';
+import TransactionState from '.';
 
 interface TxInterface {
     addedTime: number;
@@ -38,12 +36,12 @@ const DEFAULT_RETRY_OPTIONS: RetryOptions = {
     maxWait: 10000,
 };
 
-const TransactionUpdater = () => {
-    const { library } = Web3Hooks.useActiveWeb3React();
+export default () => {
+    const { library } = Web3State.hook.useActiveWeb3React();
 
-    const lastBlockNumber = ProtocolSelectors.currentBlock();
+    const lastBlockNumber = ProtocolState.select.currentBlock();
 
-    const txs = TransactionsSelectors.txs();
+    const txs = TransactionState.select.txs();
 
     const transactions = useMemo(() => txs ?? {}, [txs]);
 
@@ -83,7 +81,7 @@ const TransactionUpdater = () => {
                 promise
                     .then((receipt) => {
                         if (receipt) {
-                            TransactionDispatches.finalizeTransaction({
+                            TransactionState.dispatch.finalizeTransaction({
                                 hash,
                                 receipt: {
                                     blockHash: receipt.blockHash,
@@ -99,12 +97,12 @@ const TransactionUpdater = () => {
 
                             // the receipt was fetched before the block, fast forward to that block to trigger balance updates
                             if (receipt.blockNumber > lastBlockNumber) {
-                                ProtocolDispatches.setCurrentBlock(
+                                ProtocolState.dispatch.setCurrentBlock(
                                     receipt.blockNumber,
                                 );
                             }
                         } else {
-                            TransactionDispatches.checkedTransaction({
+                            TransactionState.dispatch.checkedTransaction({
                                 hash,
                                 blockNumber: lastBlockNumber,
                             });
@@ -128,5 +126,3 @@ const TransactionUpdater = () => {
 
     return null;
 };
-
-export default TransactionUpdater;

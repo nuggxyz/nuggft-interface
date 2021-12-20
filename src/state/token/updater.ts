@@ -1,5 +1,3 @@
-const TokenUpdater = () => {
+export default () => {
     return null;
 };
-
-export default TokenUpdater;

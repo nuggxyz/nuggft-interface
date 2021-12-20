@@ -9,7 +9,7 @@ import {
     isUndefinedOrNullOrNumberZero,
 } from '../../../lib';
 import Colors from '../../../lib/colors';
-import AppDispatches from '../../../state/app/dispatches';
+import AppState from '../../../state/app';
 import AnimatedBarTimer from '../AnimatedTimers/BarTimer/BarTimer';
 import Button from '../Buttons/Button/Button';
 import Loader from '../Loader/Loader';
@@ -36,7 +36,7 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
         if (close) {
             setHidden(true);
             let id = setTimeout(
-                () => AppDispatches.removeToastFromList(toast),
+                () => AppState.dispatch.removeToastFromList(toast),
                 500,
             );
             return () => clearTimeout(id);

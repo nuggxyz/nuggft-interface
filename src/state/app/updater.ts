@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 
-import AppHelpers from './helpers';
+import { gatsbyDOM } from '../../lib';
 
-const AppUpdater = () => {
+import AppState from '.';
+
+export default () => {
     useEffect(() => {
-        AppHelpers.onRouteUpdate(window.location.hash);
+        AppState.onRouteUpdate(window.location.hash);
     }, []);
     return null;
 };
-
-export default AppUpdater;

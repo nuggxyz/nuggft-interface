@@ -1,15 +1,25 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, {
+    FunctionComponent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 
 import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
+    isUndefinedOrNullOrStringEmpty,
 } from '../../../../../lib';
 import Colors from '../../../../../lib/colors';
+import constants from '../../../../../lib/constants';
 import { fromEth } from '../../../../../lib/conversion';
-import AppHelpers from '../../../../../state/app/helpers';
-import WalletDispatches from '../../../../../state/wallet/dispatches';
-import WalletSelectors from '../../../../../state/wallet/selectors';
-import Web3Selectors from '../../../../../state/web3/selectors';
+import AppState from '../../../../../state/app';
+import ProtocolState from '../../../../../state/protocol';
+import WalletState from '../../../../../state/wallet';
+import historyQuery from '../../../../../state/wallet/queries/historyQuery';
+import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedOffersQuery';
+import Web3State from '../../../../../state/web3';
 import Button from '../../../../general/Buttons/Button/Button';
 import List, { ListRenderItemProps } from '../../../../general/List/List';
 import Text from '../../../../general/Texts/Text/Text';
@@ -17,38 +27,98 @@ import TokenViewer from '../../../TokenViewer';
 
 import styles from './HistoryTab.styles';
 
-type Props = {};
+type Props = { isActive?: boolean };
 
-const HistoryTab: FunctionComponent<Props> = () => {
-    const unclaimedOffers = WalletSelectors.unclaimedOffers();
-    const history = WalletSelectors.history();
-    const address = Web3Selectors.web3address();
+const HistoryTab: FunctionComponent<Props> = ({ isActive }) => {
+    const address = Web3State.select.web3address();
+    const epoch = ProtocolState.select.epoch();
+    const [unclaimedOffers, setUnclaimedOffers] = useState([]);
+    const [history, setHistory] = useState([]);
+    const [loadingOffers, setLoadingOffers] = useState(false);
+    const [loadingHistory, setLoadingHistory] = useState(false);
+
+    const getUnclaimedOffers = useCallback(async () => {
+        console.log(address);
+        setLoadingOffers(true);
+        if (!isUndefinedOrNullOrStringEmpty(address)) {
+            const offersRes = await unclaimedOffersQuery(address, epoch.id);
+            setUnclaimedOffers(offersRes);
+        } else {
+            setUnclaimedOffers([]);
+        }
+        setLoadingOffers(false);
+    }, [address, epoch]);
+
+    const getHistory = useCallback(
+        async (addToResult?: boolean) => {
+            setLoadingHistory(true);
+            if (!isUndefinedOrNullOrStringEmpty(address)) {
+                const startAt = addToResult ? history.length : 0;
+
+                const historyRes = await historyQuery(
+                    address,
+                    constants.NUGGDEX_SEARCH_LIST_CHUNK,
+                    startAt,
+                );
+                setHistory((hist) =>
+                    addToResult ? [...hist, ...historyRes] : historyRes,
+                );
+            } else {
+                setHistory([]);
+            }
+            setLoadingHistory(false);
+        },
+        [address, history],
+    );
+
+    useEffect(() => {
+        if (isActive) {
+            setLoadingHistory(true);
+            setTimeout(() => {
+                getUnclaimedOffers();
+                getHistory();
+            }, 500);
+        }
+    }, [address]);
 
     return (
         <div style={styles.container}>
-            {!isUndefinedOrNullOrArrayEmpty(unclaimedOffers) && (
+            {(!isUndefinedOrNullOrArrayEmpty(unclaimedOffers) ||
+                loadingOffers) && (
                 <List
                     data={unclaimedOffers}
-                    RenderItem={RenderItem}
+                    RenderItem={React.memo(
+                        RenderItem,
+                        (prev, props) =>
+                            JSON.stringify(prev.item) ===
+                            JSON.stringify(props.item),
+                    )}
                     label="Unclaimed"
+                    loading={loadingOffers}
                     style={styles.list}
                     extraData={['claim', address]}
                 />
             )}
-            {!isUndefinedOrNullOrArrayEmpty(history) && (
+            {(!isUndefinedOrNullOrArrayEmpty(history) || loadingHistory) && (
                 <List
                     data={history}
-                    RenderItem={RenderItem}
+                    RenderItem={React.memo(
+                        RenderItem,
+                        (prev, props) =>
+                            JSON.stringify(prev.item) ===
+                            JSON.stringify(props.item),
+                    )}
                     label="History"
                     style={styles.list}
                     extraData={['history', address]}
-                    onScrollEnd={() =>
-                        WalletDispatches.getHistory({ addToResult: true })
-                    }
+                    loading={loadingHistory}
+                    onScrollEnd={() => getHistory(true)}
                 />
             )}
             {isUndefinedOrNullOrArrayEmpty(history) &&
-                isUndefinedOrNullOrArrayEmpty(unclaimedOffers) && (
+                isUndefinedOrNullOrArrayEmpty(unclaimedOffers) &&
+                !loadingOffers &&
+                !loadingHistory && (
                     <Text>
                         Place some offers on nuggs to claim your winnings!
                     </Text>
@@ -84,7 +154,10 @@ const RenderItem: FunctionComponent<
                     <Text textStyle={styles.renderTitle}>
                         NuggFT #{parsedTitle.nugg}
                     </Text>
-                    <Text type="text" textStyle={{ color: Colors.textColor }}>
+                    <Text
+                        type="text"
+                        textStyle={{ color: Colors.textColor }}
+                        size="small">
                         Swap {parsedTitle.swap}
                     </Text>
                 </div>
@@ -94,7 +167,7 @@ const RenderItem: FunctionComponent<
                         buttonStyle={styles.renderButton}
                         label={`Claim your ${isWinner ? 'NUGG' : 'ETH'}`}
                         onClick={() =>
-                            WalletDispatches.claim({
+                            WalletState.dispatch.claim({
                                 tokenId: parsedTitle.nugg,
                                 endingEpoch: parsedTitle.nugg,
                             })
@@ -104,9 +177,7 @@ const RenderItem: FunctionComponent<
                     <Button
                         buttonStyle={styles.nuggButton}
                         onClick={() =>
-                            AppHelpers.onRouteUpdate(
-                                `/nugg/${parsedTitle.nugg}`,
-                            )
+                            AppState.onRouteUpdate(`/nugg/${parsedTitle.nugg}`)
                         }
                         rightIcon={
                             <TokenViewer

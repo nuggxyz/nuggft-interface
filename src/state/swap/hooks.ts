@@ -1,3 +1,1 @@
-const SwapHooks = {};
-
-export default SwapHooks;
+export default {};

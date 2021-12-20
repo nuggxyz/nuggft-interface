@@ -1,3 +1,1 @@
-const ProtocolHooks = {};
-
-export default ProtocolHooks;
+export default {};

@@ -1,24 +1,24 @@
 import React, { FunctionComponent, useState } from 'react';
 
 import { EthInt } from '../../../../../classes/Fraction';
+import WalletState from '../../../../../state/wallet';
 import NumberStatistic from '../../../Statistics/NumberStatistic';
+import ProtocolState from '../../../../../state/protocol';
 import TextStatistic from '../../../Statistics/TextStatistic';
 import Colors from '../../../../../lib/colors';
 import Button from '../../../../general/Buttons/Button/Button';
-import WalletSelectors from '../../../../../state/wallet/selectors';
-import ProtocolSelectors from '../../../../../state/protocol/selectors';
-import AppDispatches from '../../../../../state/app/dispatches';
+import AppState from '../../../../../state/app';
 
 import styles from './SwapTab.styles';
 
-type Props = {};
+type Props = { isActive?: boolean };
 
-const SwapTab: FunctionComponent<Props> = () => {
-    const userShares = WalletSelectors.userShares();
+const SwapTab: FunctionComponent<Props> = ({ isActive }) => {
+    const userShares = WalletState.select.userShares();
 
-    const totalEth = ProtocolSelectors.nuggftStakedEth();
-    const totalShares = ProtocolSelectors.nuggftStakedShares();
-    const valuePerShare = ProtocolSelectors.nuggftStakedEthPerShare();
+    const totalEth = ProtocolState.select.nuggftStakedEth();
+    const totalShares = ProtocolState.select.nuggftStakedShares();
+    const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
 
     const [amount, setAmount] = useState();
 
@@ -64,7 +64,7 @@ const SwapTab: FunctionComponent<Props> = () => {
                         textStyle={styles.whiteText}
                         label="Withdraw..."
                         onClick={() =>
-                            AppDispatches.setModalOpen({
+                            AppState.dispatch.setModalOpen({
                                 name: 'Burn',
                                 modalData: {
                                     backgroundStyle: {

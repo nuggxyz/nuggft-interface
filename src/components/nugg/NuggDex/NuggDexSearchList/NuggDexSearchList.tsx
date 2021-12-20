@@ -14,8 +14,7 @@ import {
 } from '@react-spring/web';
 
 import { isUndefinedOrNullOrObjectEmpty } from '../../../../lib';
-import NuggDexSelectors from '../../../../state/nuggdex/selectors';
-import NuggDexDispatches from '../../../../state/nuggdex/dispatches';
+import NuggDexState from '../../../../state/nuggdex';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -26,16 +25,18 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const [localViewing, setLocalViewing] =
         useState<NL.Redux.NuggDex.SearchViews>('home');
 
-    const allNuggs = NuggDexSelectors.allNuggs();
-    const activeNuggs = NuggDexSelectors.activeNuggs();
-    const myNuggs = NuggDexSelectors.myNuggs();
-    const recents = NuggDexSelectors.recents();
+    const allNuggs = NuggDexState.select.allNuggs();
+    const activeNuggs = NuggDexState.select.activeNuggs();
+    const myNuggs = NuggDexState.select.myNuggs();
+    const recents = NuggDexState.select.recents();
 
     const [nuggLinkRef, setNuggLinkRef] = useState<HTMLDivElement>();
     const homeRef = useRef<HTMLDivElement>();
 
     const [nuggLinkRect, setNuggLinkRect] = useState<any>();
     const [homeRect, setHomeRect] = useState<any>();
+
+    const [beginListSearch, setBeginListSearch] = useState(false);
 
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(nuggLinkRef)) {
@@ -79,10 +80,9 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 opacity: 0,
             },
             config: config.default,
-            onStart: () =>
-                localViewing !== 'home' &&
-                // viewing !== localViewing &&
-                NuggDexDispatches.setViewing(localViewing),
+            onStart: () => {
+                NuggDexState.dispatch.setViewing(localViewing);
+            },
         },
         [nuggLinkRect, homeRect],
     );
@@ -151,7 +151,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                             style={style}
                             values={values}
                             setLocalViewing={setLocalViewing}
-                            viewing={localViewing}
+                            localViewing={localViewing}
                         />
                     )
                 );

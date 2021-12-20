@@ -1,3 +1,1 @@
-const TransactionHooks = {};
-
-export default TransactionHooks;
+export default {};

@@ -8,11 +8,11 @@ import {
     saveToLocalStorage,
 } from '../../lib';
 import { isUndefinedOrNull } from '../../lib/index';
-import { hasSuffix } from '../helpers';
+import SwapState from '../swap';
+import TokenState from '../token';
 import { NLState } from '../NLState';
 
-import AppDispatches from './dispatches';
-import AppHelpers from './helpers';
+import AppState from '.';
 
 const logger: NL.Redux.Middleware<
     Record<string, unknown>,
@@ -102,10 +102,10 @@ const viewChange: Middleware<{}, any, Dispatch<any>> =
     (next: any) =>
     async (action: PayloadAction<NL.Redux.App.Views>) => {
         const go = next(action);
-        if (hasSuffix(action, 'changeView')) {
+        if (AppState.isOwnFulfilledAction(action, 'changeView')) {
             if (action.payload === 'Search') {
                 const currentToken = getState().token.tokenId;
-                AppHelpers.silentlySetRoute(
+                AppState.silentlySetRoute(
                     `#/nugg${
                         !isUndefinedOrNullOrStringEmpty(currentToken)
                             ? `/${currentToken}`
@@ -119,7 +119,7 @@ const viewChange: Middleware<{}, any, Dispatch<any>> =
                 )
                     ? getState().protocol.epoch.id
                     : '';
-                AppHelpers.silentlySetRoute(
+                AppState.silentlySetRoute(
                     (currentEpoch &&
                         currentSwap &&
                         currentSwap.includes(currentEpoch)) ||
@@ -139,7 +139,7 @@ const rejectedThactions: Middleware<{}, any, Dispatch<any>> =
     async (action: PayloadAction<NL.Redux.App.Views>) => {
         if (NLState.isRejected(action)) {
             const toasts = getState().app.toasts.length;
-            AppDispatches.addToastToList({
+            AppState.dispatch.addToastToList({
                 index: toasts + 1,
                 id: `${toasts + 1}`,
                 duration: 0,
@@ -153,6 +153,4 @@ const rejectedThactions: Middleware<{}, any, Dispatch<any>> =
         return next(action);
     };
 
-const AppMiddlewares = { localStorager, viewChange, rejectedThactions };
-
-export default AppMiddlewares;
+export default { localStorager, viewChange, rejectedThactions };

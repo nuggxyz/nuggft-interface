@@ -2,9 +2,9 @@ import React, { FunctionComponent } from 'react';
 import { animated, config, useSpring } from 'react-spring';
 
 import { EthInt } from '../../../classes/Fraction';
-import AppSelectors from '../../../state/app/selectors';
-import ProtocolSelectors from '../../../state/protocol/selectors';
-import WalletSelectors from '../../../state/wallet/selectors';
+import AppState from '../../../state/app';
+import ProtocolState from '../../../state/protocol';
+import WalletState from '../../../state/wallet';
 import NumberStatistic from '../Statistics/NumberStatistic';
 import TextStatistic from '../Statistics/TextStatistic';
 
@@ -13,10 +13,10 @@ import styles from './AccountStats.styles';
 type Props = {};
 
 const AccountStats: FunctionComponent<Props> = () => {
-    const userShares = WalletSelectors.userShares();
-    const valuePerShare = ProtocolSelectors.nuggftStakedEthPerShare();
+    const userShares = WalletState.select.userShares();
+    const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
 
-    const walletVisible = AppSelectors.walletVisible();
+    const walletVisible = AppState.select.walletVisible();
 
     const containerStyle = useSpring({
         to: {

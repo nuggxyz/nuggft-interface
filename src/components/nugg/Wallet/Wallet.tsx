@@ -1,7 +1,7 @@
 import { animated, config, useSpring } from '@react-spring/web';
 import React, { FunctionComponent } from 'react';
 
-import AppSelectors from '../../../state/app/selectors';
+import AppState from '../../../state/app';
 import HappyTabber, {
     HappyTabberItem,
 } from '../../general/HappyTabber/HappyTabber';
@@ -13,7 +13,7 @@ import styles from './Wallet.styles';
 type Props = {};
 
 const Wallet: FunctionComponent<Props> = () => {
-    const show = AppSelectors.walletVisible();
+    const show = AppState.select.walletVisible();
     const spring = useSpring({
         to: {
             ...styles.wallet,
@@ -24,9 +24,15 @@ const Wallet: FunctionComponent<Props> = () => {
     });
 
     const happytabs: HappyTabberItem[] = [
-        { label: 'Pool', comp: () => <SwapTab /> },
+        {
+            label: 'Pool',
+            comp: ({ isActive }) => <SwapTab isActive={isActive} />,
+        },
 
-        { label: 'Claim', comp: () => <HistoryTab /> },
+        {
+            label: 'Claim',
+            comp: ({ isActive }) => <HistoryTab isActive={isActive} />,
+        },
     ];
 
     return (

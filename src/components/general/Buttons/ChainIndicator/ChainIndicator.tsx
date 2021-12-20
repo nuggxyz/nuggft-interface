@@ -9,11 +9,11 @@ import { useSpring } from '@react-spring/core';
 import { animated } from '@react-spring/web';
 
 import { isUndefinedOrNullOrObjectEmpty } from '../../../../lib';
+import ProtocolState from '../../../../state/protocol';
+import Web3State from '../../../../state/web3';
+import AppState from '../../../../state/app';
 import Button from '../Button/Button';
 import Layout from '../../../../lib/layout';
-import Web3Selectors from '../../../../state/web3/selectors';
-import ProtocolSelectors from '../../../../state/protocol/selectors';
-import AppHelpers from '../../../../state/app/helpers';
 
 import styles from './ChainIndicator.styles';
 import ChainIndicatorPulse from './ChainIndicatorPulse';
@@ -21,9 +21,9 @@ import ChainIndicatorPulse from './ChainIndicatorPulse';
 type Props = {};
 
 const ChainIndicator: FunctionComponent<Props> = () => {
-    const epoch = ProtocolSelectors.epoch();
-    const connectionWarning = Web3Selectors.connectivityWarning();
-    const currentBlock = ProtocolSelectors.currentBlock();
+    const epoch = ProtocolState.select.epoch();
+    const connectionWarning = Web3State.select.connectivityWarning();
+    const currentBlock = ProtocolState.select.currentBlock();
 
     const [blocksRemaining, setBlocksRemaining] = useState(0);
 
@@ -52,7 +52,7 @@ const ChainIndicator: FunctionComponent<Props> = () => {
         <animated.div style={springStyle}>
             <Button
                 textStyle={{ fontFamily: Layout.font.code.regular }}
-                onClick={() => AppHelpers.onRouteUpdate('/')}
+                onClick={() => AppState.onRouteUpdate('/')}
                 buttonStyle={{
                     ...styles.button,
                     ...(connectionWarning ? styles.warning : styles.normal),

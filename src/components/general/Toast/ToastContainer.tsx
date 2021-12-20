@@ -3,7 +3,7 @@ import FlipMove from 'react-flip-move';
 
 import { sortByField } from '../../../lib';
 import Layout from '../../../lib/layout';
-import AppSelectors from '../../../state/app/selectors';
+import AppState from '../../../state/app';
 
 import styles from './Toast.styles';
 import ToastCard from './ToastCard';
@@ -11,7 +11,7 @@ import ToastCard from './ToastCard';
 type Props = {};
 
 const ToastContainer: FunctionComponent<Props> = () => {
-    const toasts = AppSelectors.toasts();
+    const toasts = AppState.select.toasts();
 
     return (
         <div style={styles.container}>

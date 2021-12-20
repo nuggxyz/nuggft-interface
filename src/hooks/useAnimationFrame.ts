@@ -10,7 +10,6 @@ const useAnimationFrame = (
 ) => {
     const previousTime = useRef<number>();
     const previousRequest = useRef<number>();
-
     const animate = useCallback((time: number) => {
         if (!isUndefinedOrNullOrNotNumber(previousTime.current)) {
             const deltaTime = time - previousTime.current;

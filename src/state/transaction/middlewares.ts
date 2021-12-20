@@ -1,14 +1,14 @@
-import { Middleware, PayloadAction } from '@reduxjs/toolkit';
+import { PayloadAction } from '@reduxjs/toolkit';
 
 import {
     isUndefinedOrNullOrNotFunction,
     isUndefinedOrNullOrObjectEmpty,
     shortenTxnHash,
 } from '../../lib';
-import AppDispatches from '../app/dispatches';
+import AppState from '../app';
 import { NLState } from '../NLState';
 
-import TransactionDispatches from './dispatches';
+import TransactionState from '.';
 
 export const pending: NL.Redux.Middleware<
     Record<string, unknown>,
@@ -22,12 +22,12 @@ export const pending: NL.Redux.Middleware<
             !isUndefinedOrNullOrObjectEmpty(action.payload) &&
             !isUndefinedOrNullOrObjectEmpty(action.payload._pendingtx)
         ) {
-            TransactionDispatches.addTransaction({
+            TransactionState.dispatch.addTransaction({
                 hash: action.payload._pendingtx.hash,
                 from: action.payload._pendingtx.from,
                 info: action.payload._pendingtx.info,
             });
-            AppDispatches.addToastToList({
+            AppState.dispatch.addToastToList({
                 duration: 0,
                 title: 'Pending Transaction',
                 message: shortenTxnHash(action.payload._pendingtx.hash),
@@ -41,7 +41,7 @@ export const pending: NL.Redux.Middleware<
             }
         }
         if (NLState.hasSuffix(action, 'finalizeTransaction')) {
-            AppDispatches.replaceToast({
+            AppState.dispatch.replaceToast({
                 //@ts-ignore
                 id: action.payload.hash,
                 duration: 5000,
@@ -51,11 +51,12 @@ export const pending: NL.Redux.Middleware<
             const tmp = action.payload._pendingtx
                 ?.info as NL.Redux.Transaction.ERC721ApprovalInfo;
             if (tmp?.erc721) {
+                // TokenState.dispatch.getSubmitSwapApproval({
+                //     tokenId: tmp.tokenId,
+                // });
             }
         }
         return next(action);
     };
 
-const TransactionMiddlewares = { pending };
-
-export default TransactionMiddlewares as Dictionary<Middleware>;
+export default { pending };

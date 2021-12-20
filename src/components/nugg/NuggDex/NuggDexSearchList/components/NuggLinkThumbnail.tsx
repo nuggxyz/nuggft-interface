@@ -2,9 +2,8 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { animated } from 'react-spring';
 
 import useOnHover from '../../../../../hooks/useOnHover';
-import NuggDexDispatches from '../../../../../state/nuggdex/dispatches';
-import TokenDispatches from '../../../../../state/token/dispatches';
-import TokenSelectors from '../../../../../state/token/selectors';
+import NuggDexState from '../../../../../state/nuggdex';
+import TokenState from '../../../../../state/token';
 import Text from '../../../../general/Texts/Text/Text';
 import TokenViewer from '../../../TokenViewer';
 
@@ -15,7 +14,7 @@ const NuggLinkThumbnail: FunctionComponent<{
     index: number;
 }> = ({ item, index }) => {
     const [ref, isHovering] = useOnHover();
-    const selected = TokenSelectors.tokenId();
+    const selected = TokenState.select.tokenId();
 
     const style = useMemo(() => {
         return {
@@ -31,8 +30,8 @@ const NuggLinkThumbnail: FunctionComponent<{
             key={index}
             style={style}
             onClick={() => {
-                TokenDispatches.setTokenFromId(item);
-                NuggDexDispatches.addToRecents({
+                TokenState.dispatch.setTokenFromId(item);
+                NuggDexState.dispatch.addToRecents({
                     _localStorageValue: item,
                     _localStorageTarget: 'recents',
                     _localStorageExpectedType: 'array',

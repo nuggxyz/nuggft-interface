@@ -15,60 +15,55 @@ import {
 } from '../../../../../lib';
 import Label from '../../../../general/Label/Label';
 import { ListRenderItemProps } from '../../../../general/List/List';
+import TokenState from '../../../../../state/token';
+import NuggDexState from '../../../../../state/nuggdex';
 import TokenViewer from '../../../TokenViewer';
-import TokenSelectors from '../../../../../state/token/selectors';
 
 import styles from './NuggDexComponents.styles';
 
 type Props = ListRenderItemProps<string>;
 
-const NuggListRenderItem: FunctionComponent<Props> = memo(
-    ({ item, index, extraData, rootRef, action, onScrollEnd }) => {
-        const [ref, isVisible] = useIsVisible(rootRef.current, '10px');
-        const selected = TokenSelectors.tokenId();
+const NuggListRenderItem: FunctionComponent<Props> = ({
+    item,
+    index,
+    extraData,
+    action,
+}) => {
+    const selected = TokenState.select.tokenId();
 
-        useEffect(() => {
-            if (
-                !isUndefinedOrNullOrBooleanFalse(isVisible) &&
-                !isUndefinedOrNullOrNotFunction(onScrollEnd)
-            ) {
-                onScrollEnd();
-            }
-        }, [isVisible]);
+    const style = useMemo(() => {
+        return {
+            ...(!isUndefinedOrNullOrStringEmpty(item)
+                ? styles.nuggListRenderItemContainer
+                : {}),
+            ...(selected === item ? styles.selected : {}),
+        };
+    }, [item, selected]);
 
-        const style = useMemo(() => {
-            return {
-                ...(!isUndefinedOrNullOrStringEmpty(item)
-                    ? styles.nuggListRenderItemContainer
-                    : {}),
-                ...(selected === item ? styles.selected : {}),
-            };
-        }, [item, selected]);
-
-        const Body = useCallback(() => {
-            // console.log('rendering', item);
-            return !isUndefinedOrNullOrStringEmpty(item) ? (
-                <div style={styles.nuggListRenderItemNugg}>
-                    <TokenViewer
-                        tokenId={item || ''}
-                        style={{ height: '80px', width: '80px' }}
-                    />
-                    <Label text={'NuggFT #' + item} />
-                </div>
-            ) : null;
-        }, [item]);
-
-        return (
-            <div ref={ref} style={style} onClick={() => action(item)}>
-                <Body />
+    const Body = useCallback(() => {
+        console.log('rendering', item);
+        return !isUndefinedOrNullOrStringEmpty(item) ? (
+            <div style={styles.nuggListRenderItemNugg}>
+                <TokenViewer
+                    tokenId={item || ''}
+                    style={{ height: '80px', width: '80px' }}
+                />
+                <Label text={'NuggFT #' + item} />
             </div>
-        );
-    },
+        ) : null;
+    }, [item]);
+
+    return (
+        <div style={style} onClick={() => action(item)}>
+            <Body />
+        </div>
+    );
+};
+
+export default React.memo(
+    NuggListRenderItem,
     (prevProps, props) =>
         JSON.stringify(prevProps.item) === JSON.stringify(props.item) &&
-        props.item !== '' &&
         prevProps.selected === props.selected &&
         JSON.stringify(prevProps.action) === JSON.stringify(props.action),
 );
-
-export default React.memo(NuggListRenderItem);

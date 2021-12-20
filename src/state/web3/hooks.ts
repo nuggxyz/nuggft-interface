@@ -33,6 +33,4 @@ const useEns = (address: string): EnsAddress => {
     return addr;
 };
 
-const Web3Hooks = { useActiveWeb3React, useEns };
-
-export default Web3Hooks;
+export default { useActiveWeb3React, useEns };

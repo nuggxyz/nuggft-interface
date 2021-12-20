@@ -1,3 +1,1 @@
-const AppThactions = {};
-
-export default AppThactions;
+export default {};

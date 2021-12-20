@@ -8,9 +8,9 @@ import {
     loadStringFromLocalStorage,
     saveStringToLocalStorage,
 } from '../lib';
+import Web3State from '../state/web3';
 import { NuggFT, NuggFT__factory } from '../typechain';
 import { Svg } from '../classes/Svg';
-import Web3Helpers from '../state/web3/helpers';
 
 import ContractHelper from './abstract/ContractHelper';
 
@@ -21,7 +21,7 @@ export default class NuggFTHelper extends ContractHelper {
             NuggFTHelper._instance = new Contract(
                 config.GATSBY_NUGGFT,
                 NuggFT__factory.abi,
-                Web3Helpers.getLibraryOrProvider(),
+                Web3State.getLibraryOrProvider(),
             ) as NuggFT;
         }
         return NuggFTHelper._instance;
@@ -46,18 +46,21 @@ export default class NuggFTHelper extends ContractHelper {
         invariant(tokenId, 'OP:TOKEN:URI');
         let check = loadStringFromLocalStorage('NL-TokenURI-' + tokenId);
         if (check) {
-            return check;
+            return Svg.drawSvgFromString(check, 1);
         } else {
-            let res: string;
             try {
                 let byteArray = await NuggFTHelper.instance.rawProcessURI(
                     BigNumber.from(tokenId),
                 );
-                res = Svg.drawSvg(byteArray, 10);
-                if (!res) throw new Error('token does not exist');
+
+                if (!byteArray) throw new Error('token does not exist');
                 else {
-                    saveStringToLocalStorage(res, 'NL-TokenURI-' + tokenId);
-                    return res;
+                    let byteStr = byteArray.reduce(
+                        (nugg, num) => `${nugg}${num.toHexString()}`,
+                        '',
+                    );
+                    saveStringToLocalStorage(byteStr, 'NL-TokenURI-' + tokenId);
+                    return Svg.drawSvgFromString(byteStr, 1);
                 }
             } catch (err) {
                 // console.log('optimizedDotNugg:', err);
