@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core';
+
 import './prototypes';
+global.Buffer = global.Buffer || require('buffer').Buffer;
 
 // import Initializer from './state/Initializer';
 import store from './state/store';

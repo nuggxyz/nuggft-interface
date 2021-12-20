@@ -32,7 +32,16 @@ const styles = NLStyleSheetCreator({
         position: 'relative',
         display: 'flex',
         width: '50%',
-        justifyContent: 'start',
+        justifyContent: 'flex-start',
+        pointerEvents: 'none',
+    },
+    linkAccountContainer: {
+        padding: '0rem 1rem',
+        position: 'relative',
+        display: 'flex',
+        width: '50%',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
         pointerEvents: 'none',
     },
 });

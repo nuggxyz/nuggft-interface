@@ -74,6 +74,7 @@ const HistoryTab: FunctionComponent<Props> = ({ isActive }) => {
     useEffect(() => {
         if (isActive) {
             setLoadingHistory(true);
+            setLoadingOffers(true);
             setTimeout(() => {
                 getUnclaimedOffers();
                 getHistory();

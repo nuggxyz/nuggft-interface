@@ -36,8 +36,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const [nuggLinkRect, setNuggLinkRect] = useState<any>();
     const [homeRect, setHomeRect] = useState<any>();
 
-    const [beginListSearch, setBeginListSearch] = useState(false);
-
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(nuggLinkRef)) {
             setNuggLinkRect(nuggLinkRef.getBoundingClientRect());

@@ -35,7 +35,9 @@ const NavigationBar: FC<Props> = () => {
             <div style={styles.searchBarContainer}>
                 <NuggDexSearchBar />
             </div>
-            <LinkAccountButton />
+            <div style={styles.linkAccountContainer}>
+                <LinkAccountButton />
+            </div>
         </div>
     );
 };

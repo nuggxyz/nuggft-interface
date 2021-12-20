@@ -9,23 +9,42 @@ import {
     saveStringToLocalStorage,
 } from '../lib';
 import Web3State from '../state/web3';
-import { NuggFT, NuggFT__factory } from '../typechain';
+import {
+    IdotnuggV1Processor,
+    IdotnuggV1Processor__factory,
+    INuggFT,
+    INuggFT__factory,
+} from '../typechain';
 import { Svg } from '../classes/Svg';
 
 import ContractHelper from './abstract/ContractHelper';
 
 export default class NuggFTHelper extends ContractHelper {
-    protected static _instance: NuggFT;
+    protected static _instance: INuggFT;
+    protected static _dotnugg: IdotnuggV1Processor;
+
     static get instance() {
         if (isUndefinedOrNullOrObjectEmpty(NuggFTHelper._instance)) {
             NuggFTHelper._instance = new Contract(
-                config.GATSBY_NUGGFT,
-                NuggFT__factory.abi,
+                config.NUGGFT,
+                INuggFT__factory.abi,
                 Web3State.getLibraryOrProvider(),
-            ) as NuggFT;
+            ) as INuggFT;
         }
         return NuggFTHelper._instance;
     }
+
+    static get dotnugg() {
+        if (isUndefinedOrNullOrObjectEmpty(NuggFTHelper._dotnugg)) {
+            NuggFTHelper._dotnugg = new Contract(
+                config.DOTNUGG_RESOLVER,
+                IdotnuggV1Processor__factory.abi,
+                Web3State.getLibraryOrProvider(),
+            ) as IdotnuggV1Processor;
+        }
+        return NuggFTHelper._dotnugg;
+    }
+
     static reset() {
         NuggFTHelper._instance = undefined;
     }
@@ -49,8 +68,12 @@ export default class NuggFTHelper extends ContractHelper {
             return Svg.drawSvgFromString(check, 1);
         } else {
             try {
-                let byteArray = await NuggFTHelper.instance.rawProcessURI(
+                let byteArray = await NuggFTHelper.dotnugg.dotnuggToRaw(
+                    config.NUGGFT,
                     BigNumber.from(tokenId),
+                    Address.ZERO.hash,
+                    33,
+                    1,
                 );
 
                 if (!byteArray) throw new Error('token does not exist');
@@ -63,6 +86,7 @@ export default class NuggFTHelper extends ContractHelper {
                     return Svg.drawSvgFromString(byteStr, 1);
                 }
             } catch (err) {
+                // console.log({ tokenId, err });
                 // console.log('optimizedDotNugg:', err);
             }
         }
@@ -90,7 +114,7 @@ export default class NuggFTHelper extends ContractHelper {
     }
     public static async sellerApproval(tokenId: string): Promise<boolean> {
         let response = await this.instance.getApproved(tokenId);
-        return new Address(response).equals(new Address(config.GATSBY_NUGGFT));
+        return new Address(response).equals(new Address(config.NUGGFT));
     }
     public static async approval(tokenId: string): Promise<Address> {
         let response = await this.instance.getApproved(tokenId);

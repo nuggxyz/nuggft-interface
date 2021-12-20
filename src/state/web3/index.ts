@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { UnsupportedChainIdError } from '@web3-react/core';
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 
 import {
     isUndefinedOrNull,
@@ -61,7 +62,7 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
                 state.connectivityWarning = action.payload;
             },
             setWeb3Address: (state, action: PayloadAction<string>) => {
-                state.web3address = action.payload;
+                state.web3address = action.payload.toLowerCase();
             },
             clearWeb3Address: (state) => {
                 state.web3address = undefined;
@@ -100,12 +101,16 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
         Web3State.dispatch.setWeb3Status('PENDING');
         Web3State.dispatch.setWeb3Error(false);
 
+        if (connector instanceof WalletConnectConnector) {
+            connector.walletConnectProvider = undefined;
+        }
+
         if (!isUndefinedOrNullOrObjectEmpty(connector)) {
             Web3State.activate(connector, undefined, true)
-                .then(() => Web3State.dispatch.setWeb3Status('SELECTED'))
+                .then(async () => {
+                    Web3State.dispatch.setWeb3Status('SELECTED');
+                })
                 .catch((error) => {
-                    console.log({ error });
-                    // a little janky...can't use setError because the connector isn't set
                     if (error instanceof UnsupportedChainIdError) {
                         Web3State.activate(connector);
                         Web3State.dispatch.setWeb3Status('SELECTED');
@@ -151,12 +156,18 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
         return library;
     }
 
+    public static _walletConnectSigner: any;
+
     public static getLibraryOrProvider():
         | Web3Provider
         | ethers.providers.JsonRpcSigner {
         return isUndefinedOrNullOrStringEmpty(store.getState().web3.web3address)
             ? this.getLibrary()
-            : new ethers.providers.Web3Provider(window.ethereum).getSigner();
+            : window.ethereum
+            ? new ethers.providers.Web3Provider(window.ethereum).getSigner()
+            : new ethers.providers.Web3Provider(
+                  Web3Config.connectors.walletconnect.walletConnectProvider,
+              ).getSigner();
     }
 
     // account is not optional
