@@ -3,7 +3,7 @@ import React, { Fragment, FunctionComponent, useEffect, useState } from 'react';
 import NuggFTHelper from '../../../../contracts/NuggFTHelper';
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import { fromEth } from '../../../../lib/conversion';
-import NuggDexState from '../../../../state/nuggdex';
+import NuggDexSelectors from '../../../../state/nuggdex/selectors';
 import ProtocolSelectors from '../../../../state/protocol/selectors';
 import TransactionsSelectors from '../../../../state/transaction/selectors';
 import WalletDispatches from '../../../../state/wallet/dispatches';
@@ -18,7 +18,7 @@ type Props = {};
 const BurnModal: FunctionComponent<Props> = () => {
     const shareValue = ProtocolSelectors.nuggftStakedEthPerShare();
     const toggle = TransactionsSelectors.toggleCompletedTxn();
-    const myNuggs = NuggDexState.select.myNuggs();
+    const myNuggs = NuggDexSelectors.myNuggs();
 
     const [selected, setSelected] = useState('');
 

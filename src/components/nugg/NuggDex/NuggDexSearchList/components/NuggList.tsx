@@ -16,8 +16,9 @@ import { isUndefinedOrNullOrArrayEmpty, ucFirst } from '../../../../../lib';
 import List from '../../../../general/List/List';
 import TransitionText from '../../../../general/Texts/TransitionText/TransitionText';
 import globalStyles from '../../../../../lib/globalStyles';
-import NuggDexState from '../../../../../state/nuggdex';
 import TokenDispatches from '../../../../../state/token/dispatches';
+import NuggDexSelectors from '../../../../../state/nuggdex/selectors';
+import NuggDexDispatches from '../../../../../state/nuggdex/dispatches';
 
 import styles from './NuggDexComponents.styles';
 import NuggListRenderItem from './NuggListRenderItem';
@@ -36,10 +37,10 @@ const NuggList: FunctionComponent<Props> = ({
     viewing,
 }) => {
     const [view, setView] = useState('');
-    const thumbnails = NuggDexState.select.thumbnails();
-    const results = NuggDexState.select.searchResults();
-    const loading = NuggDexState.select.loading();
-    const continueSearch = NuggDexState.select.continueSearch();
+    const thumbnails = NuggDexSelectors.thumbnails();
+    const results = NuggDexSelectors.searchResults();
+    const loading = NuggDexSelectors.loading();
+    const continueSearch = NuggDexSelectors.continueSearch();
 
     useLayoutEffect(() => {
         if (viewing !== 'home') {
@@ -48,7 +49,7 @@ const NuggList: FunctionComponent<Props> = ({
     }, [viewing]);
 
     const updateContinueSearch = useCallback(() => {
-        NuggDexState.dispatch.setContinueSearch(
+        NuggDexDispatches.setContinueSearch(
             continueSearch === 'yes_' ? 'yes' : 'yes_',
         );
     }, [continueSearch]);
@@ -61,7 +62,7 @@ const NuggList: FunctionComponent<Props> = ({
     const onClick = useCallback((item) => {
         batch(() => {
             TokenDispatches.setTokenFromId(item);
-            NuggDexState.dispatch.addToRecents({
+            NuggDexDispatches.addToRecents({
                 _localStorageValue: item,
                 _localStorageTarget: 'recents',
                 _localStorageExpectedType: 'array',
@@ -91,11 +92,10 @@ const NuggList: FunctionComponent<Props> = ({
                         text={ucFirst(view)}
                         transitionText="Go back"
                         onClick={() => {
-                            NuggDexState.dispatch.setContinueSearch(
+                            NuggDexDispatches.setContinueSearch(
                                 continueSearch === 'no' ? 'no_' : 'no',
                             );
                             setLocalViewing('home');
-                            // NuggDexState.dispatch.setViewing('home');
                         }}
                     />
                 </div>
@@ -109,7 +109,6 @@ const NuggList: FunctionComponent<Props> = ({
                     extraData={[thumbnails]}
                     loading={loading}
                     onScrollEnd={updateContinueSearch}
-                    // selected={selected}
                     action={onClick}
                 />
             </animated.div>

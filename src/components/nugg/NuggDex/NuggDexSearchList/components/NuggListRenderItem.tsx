@@ -15,7 +15,6 @@ import {
 } from '../../../../../lib';
 import Label from '../../../../general/Label/Label';
 import { ListRenderItemProps } from '../../../../general/List/List';
-import NuggDexState from '../../../../../state/nuggdex';
 import TokenViewer from '../../../TokenViewer';
 import TokenSelectors from '../../../../../state/token/selectors';
 
@@ -47,7 +46,7 @@ const NuggListRenderItem: FunctionComponent<Props> = memo(
         }, [item, selected]);
 
         const Body = useCallback(() => {
-            console.log('rendering', item);
+            // console.log('rendering', item);
             return !isUndefinedOrNullOrStringEmpty(item) ? (
                 <div style={styles.nuggListRenderItemNugg}>
                     <TokenViewer

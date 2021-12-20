@@ -7,9 +7,9 @@ import {
 import Web3Selectors from '../web3/selectors';
 import ProtocolSelectors from '../protocol/selectors';
 
-import NuggDexState from '.';
+import NuggDexDispatches from './dispatches';
 
-export default () => {
+const NuggDexUpdater = () => {
     const epoch = ProtocolSelectors.epoch();
     const web3address = Web3Selectors.web3address();
 
@@ -18,11 +18,13 @@ export default () => {
             !isUndefinedOrNullOrObjectEmpty(epoch) &&
             !isUndefinedOrNullOrStringEmpty(web3address)
         ) {
-            NuggDexState.dispatch.refillRecents({
+            NuggDexDispatches.refillRecents({
                 _localStorageTarget: 'recents',
             });
-            NuggDexState.dispatch.initNuggDex();
+            NuggDexDispatches.initNuggDex();
         }
     }, [epoch, web3address]);
     return null;
 };
+
+export default NuggDexUpdater;

@@ -5,7 +5,7 @@ import AppState from './app';
 import TransactionSlice from './transaction';
 import TokenSlice from './token';
 import SwapSlice from './swap';
-import NuggDexState from './nuggdex';
+import NuggDexSlice from './nuggdex';
 import Web3Slice from './web3';
 import Web3Middlewares from './web3/middlewares';
 import WalletSlice from './wallet';
@@ -15,14 +15,12 @@ import TokenMiddlewares from './token/middlewares';
 import SwapMiddlewares from './swap/middlewares';
 import ProtocolSlice from './protocol';
 import ProtocolMiddlewares from './protocol/middlewares';
-
-export const states = {
-    NuggDexState,
-};
+import NuggDexMiddlewares from './nuggdex/middlewares';
+import AppMiddlewares from './app/middlewares';
 
 export const rootReducer = combineReducers({
     app: AppState.reducer,
-    nuggdex: NuggDexState.reducer,
+    nuggdex: NuggDexSlice.reducer,
     protocol: ProtocolSlice.reducer,
     swap: SwapSlice.reducer,
     transaction: TransactionSlice.reducer,
@@ -70,16 +68,16 @@ const store = configureStore({
                     'nuggdex',
                 ],
             },
-        })
-            .concat(Object.values(states).flatMap((state) => state.middlewares))
-            .concat([
-                ...Object.values(Web3Middlewares),
-                ...Object.values(WalletMiddlewares),
-                ...Object.values(TransactionMiddlewares),
-                ...Object.values(TokenMiddlewares),
-                ...Object.values(SwapMiddlewares),
-                ...Object.values(ProtocolMiddlewares),
-            ]),
+        }).concat([
+            ...Object.values(Web3Middlewares),
+            ...Object.values(WalletMiddlewares),
+            ...Object.values(TransactionMiddlewares),
+            ...Object.values(TokenMiddlewares),
+            ...Object.values(SwapMiddlewares),
+            ...Object.values(ProtocolMiddlewares),
+            ...Object.values(NuggDexMiddlewares),
+            ...Object.values(AppMiddlewares),
+        ]),
 });
 
 export type NLRootState = ReturnType<typeof rootReducer>;
