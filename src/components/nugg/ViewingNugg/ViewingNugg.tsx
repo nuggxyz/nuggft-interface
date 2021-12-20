@@ -10,7 +10,8 @@ import { EnsAddress } from '../../../classes/Address';
 import { isUndefinedOrNullOrStringEmpty } from '../../../lib';
 import Colors from '../../../lib/colors';
 import { fromEth } from '../../../lib/conversion';
-import AppState from '../../../state/app';
+import AppDispatches from '../../../state/app/dispatches';
+import AppHelpers from '../../../state/app/helpers';
 import TokenSelectors from '../../../state/token/selectors';
 import Web3Selectors from '../../../state/web3/selectors';
 import Button from '../../general/Buttons/Button/Button';
@@ -57,7 +58,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                             buttonStyle={styles.owner}
                             key={index}
                             onClick={() =>
-                                AppState.onRouteUpdate(`#/swap/${swap.id}`)
+                                AppHelpers.onRouteUpdate(`#/swap/${swap.id}`)
                             }
                             rightIcon={
                                 <>
@@ -145,7 +146,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                                     }}
                                     label="Withdraw"
                                     onClick={() =>
-                                        AppState.dispatch.setModalOpen({
+                                        AppDispatches.setModalOpen({
                                             name: 'StartSale',
                                             modalData: {
                                                 targetId: item,
@@ -166,7 +167,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                                     }}
                                     label="Sell"
                                     onClick={() =>
-                                        AppState.dispatch.setModalOpen({
+                                        AppDispatches.setModalOpen({
                                             name: 'StartSale',
                                             modalData: {
                                                 targetId: item,

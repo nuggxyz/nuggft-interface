@@ -4,7 +4,6 @@ import { ChevronDown } from 'react-feather';
 import Text from '../../general/Texts/Text/Text';
 import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
 import Button from '../../general/Buttons/Button/Button';
-import AppState from '../../../state/app';
 import { Address } from '../../../classes/Address';
 import {
     isUndefinedOrNullOrNumberZero,
@@ -15,6 +14,7 @@ import { fromEth } from '../../../lib/conversion';
 import Colors from '../../../lib/colors';
 import Web3Hooks from '../../../state/web3/hooks';
 import SwapSelectors from '../../../state/swap/selectors';
+import AppDispatches from '../../../state/app/dispatches';
 
 import styles from './RingAbout.styles';
 
@@ -88,7 +88,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                     buttonStyle={styles.button}
                     textStyle={styles.buttonText}
                     onClick={() =>
-                        AppState.dispatch.setModalOpen({
+                        AppDispatches.setModalOpen({
                             name: 'Offer',
                         })
                     }

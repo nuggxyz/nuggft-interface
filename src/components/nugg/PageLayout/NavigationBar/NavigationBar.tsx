@@ -1,7 +1,8 @@
 import React, { FC, useCallback, useMemo } from 'react';
 
 import useOnHover from '../../../../hooks/useOnHover';
-import AppState from '../../../../state/app';
+import AppDispatches from '../../../../state/app/dispatches';
+import AppSelectors from '../../../../state/app/selectors';
 import LinkAccountButton from '../../../general/Buttons/LinkAccountButton/LinkAccountButton';
 import NuggDexSearchBar from '../../NuggDex/NuggDexSearchBar/NuggDexSearchBar';
 
@@ -13,12 +14,10 @@ type Props = {
 
 const NavigationBar: FC<Props> = () => {
     const [ref, isHovering] = useOnHover();
-    const view = AppState.select.view();
+    const view = AppSelectors.view();
     const onClick = useCallback(
         () =>
-            view === 'Search'
-                ? AppState.dispatch.changeView('Swap')
-                : undefined,
+            view === 'Search' ? AppDispatches.changeView('Swap') : undefined,
         [view],
     );
 

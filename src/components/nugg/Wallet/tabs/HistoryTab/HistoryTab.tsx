@@ -6,7 +6,7 @@ import {
 } from '../../../../../lib';
 import Colors from '../../../../../lib/colors';
 import { fromEth } from '../../../../../lib/conversion';
-import AppState from '../../../../../state/app';
+import AppHelpers from '../../../../../state/app/helpers';
 import WalletDispatches from '../../../../../state/wallet/dispatches';
 import WalletSelectors from '../../../../../state/wallet/selectors';
 import Web3Selectors from '../../../../../state/web3/selectors';
@@ -104,7 +104,9 @@ const RenderItem: FunctionComponent<
                     <Button
                         buttonStyle={styles.nuggButton}
                         onClick={() =>
-                            AppState.onRouteUpdate(`/nugg/${parsedTitle.nugg}`)
+                            AppHelpers.onRouteUpdate(
+                                `/nugg/${parsedTitle.nugg}`,
+                            )
                         }
                         rightIcon={
                             <TokenViewer

@@ -5,9 +5,9 @@ import NumberStatistic from '../../../Statistics/NumberStatistic';
 import TextStatistic from '../../../Statistics/TextStatistic';
 import Colors from '../../../../../lib/colors';
 import Button from '../../../../general/Buttons/Button/Button';
-import AppState from '../../../../../state/app';
 import WalletSelectors from '../../../../../state/wallet/selectors';
 import ProtocolSelectors from '../../../../../state/protocol/selectors';
+import AppDispatches from '../../../../../state/app/dispatches';
 
 import styles from './SwapTab.styles';
 
@@ -64,7 +64,7 @@ const SwapTab: FunctionComponent<Props> = () => {
                         textStyle={styles.whiteText}
                         label="Withdraw..."
                         onClick={() =>
-                            AppState.dispatch.setModalOpen({
+                            AppDispatches.setModalOpen({
                                 name: 'Burn',
                                 modalData: {
                                     backgroundStyle: {

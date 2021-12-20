@@ -6,7 +6,8 @@ import useDebounce from '../../../../hooks/useDebounce';
 import usePrevious from '../../../../hooks/usePrevious';
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import Colors from '../../../../lib/colors';
-import AppState from '../../../../state/app';
+import AppDispatches from '../../../../state/app/dispatches';
+import AppSelectors from '../../../../state/app/selectors';
 import NuggDexDispatches from '../../../../state/nuggdex/dispatches';
 import NuggDexSelectors from '../../../../state/nuggdex/selectors';
 import Button from '../../../general/Buttons/Button/Button';
@@ -19,7 +20,7 @@ type Props = {};
 const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const viewing = NuggDexSelectors.viewing();
     const continueSearch = NuggDexSelectors.continueSearch();
-    const view = AppState.select.view();
+    const view = AppSelectors.view();
 
     const [searchValue, setSearchValue] = useState('');
 
@@ -93,7 +94,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                 <Button
                     buttonStyle={styles.searchBarButton}
                     onClick={() =>
-                        AppState.dispatch.changeView(
+                        AppDispatches.changeView(
                             view === 'Search' ? 'Swap' : 'Search',
                         )
                     }

@@ -1,4 +1,4 @@
-const AppInitialState = {
+const AppInitialState: NL.Redux.App.State = {
     toasts: [],
     modalIsOpen: undefined,
     modalData: {},

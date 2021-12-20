@@ -15,18 +15,19 @@ import {
 import useOnClickOutside from '../../../../hooks/useOnClickOutside';
 import usePrevious from '../../../../hooks/usePrevious';
 import OfferModal from '../OfferModal/OfferModal';
-import AppState from '../../../../state/app';
 import StartSaleModal from '../StartSaleModal/StartSaleModal';
 import useAnimateOverlay from '../../../../hooks/useAnimateOverlay';
 import BurnModal from '../BurnModal/BurnModal';
+import AppSelectors from '../../../../state/app/selectors';
+import AppDispatches from '../../../../state/app/dispatches';
 
 import styles from './Modal.styles';
 
 type Props = {};
 
 const Modal: FunctionComponent<Props> = () => {
-    const isOpen = AppState.select.modalIsOpen();
-    const data = AppState.select.modalData();
+    const isOpen = AppSelectors.modalIsOpen();
+    const data = AppSelectors.modalData();
     const [currentModal, setCurrentModal] = useState<NL.Redux.App.Modals>();
     const previousOpen = usePrevious(isOpen);
     const node = useRef<HTMLDivElement>();
@@ -68,7 +69,7 @@ const Modal: FunctionComponent<Props> = () => {
     const closeModal = useCallback(
         () =>
             !isUndefinedOrNullOrNotString(isOpen) &&
-            AppState.dispatch.setModalClosed(),
+            AppDispatches.setModalClosed(),
         [isOpen],
     );
 

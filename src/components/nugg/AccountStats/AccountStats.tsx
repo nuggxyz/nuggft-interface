@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { animated, config, useSpring } from 'react-spring';
 
 import { EthInt } from '../../../classes/Fraction';
-import AppState from '../../../state/app';
+import AppSelectors from '../../../state/app/selectors';
 import ProtocolSelectors from '../../../state/protocol/selectors';
 import WalletSelectors from '../../../state/wallet/selectors';
 import NumberStatistic from '../Statistics/NumberStatistic';
@@ -16,7 +16,7 @@ const AccountStats: FunctionComponent<Props> = () => {
     const userShares = WalletSelectors.userShares();
     const valuePerShare = ProtocolSelectors.nuggftStakedEthPerShare();
 
-    const walletVisible = AppState.select.walletVisible();
+    const walletVisible = AppSelectors.walletVisible();
 
     const containerStyle = useSpring({
         to: {

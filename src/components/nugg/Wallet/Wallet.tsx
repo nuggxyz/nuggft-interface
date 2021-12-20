@@ -1,7 +1,7 @@
 import { animated, config, useSpring } from '@react-spring/web';
 import React, { FunctionComponent } from 'react';
 
-import AppState from '../../../state/app';
+import AppSelectors from '../../../state/app/selectors';
 import HappyTabber, {
     HappyTabberItem,
 } from '../../general/HappyTabber/HappyTabber';
@@ -13,7 +13,7 @@ import styles from './Wallet.styles';
 type Props = {};
 
 const Wallet: FunctionComponent<Props> = () => {
-    const show = AppState.select.walletVisible();
+    const show = AppSelectors.walletVisible();
     const spring = useSpring({
         to: {
             ...styles.wallet,

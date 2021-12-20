@@ -9,7 +9,7 @@ import {
 } from '../../lib';
 import { toEth } from '../../lib/conversion';
 import NuggFTHelper from '../../contracts/NuggFTHelper';
-import AppState from '../app';
+import AppDispatches from '../app/dispatches';
 
 import initSwapQuery from './queries/initSwapQuery';
 import pollOffersQuery from './queries/pollOffersQuery';
@@ -106,7 +106,7 @@ const placeOffer = createAsyncThunk<
         return {
             success: 'SUCCESS',
             _pendingtx,
-            callbackFn: () => AppState.dispatch.setModalClosed(),
+            callbackFn: () => AppDispatches.setModalClosed(),
         };
     } catch (err) {
         console.log({ err });

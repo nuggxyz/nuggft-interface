@@ -4,14 +4,14 @@ import React, { FunctionComponent } from 'react';
 import NuggDexSearchList from '../../components/nugg/NuggDex/NuggDexSearchList/NuggDexSearchList';
 import ViewingNugg from '../../components/nugg/ViewingNugg/ViewingNugg';
 import useAnimateOverlay from '../../hooks/useAnimateOverlay';
-import AppState from '../../state/app';
+import AppSelectors from '../../state/app/selectors';
 
 import styles from './SearchOverlay.styles';
 
 type Props = {};
 
 const SearchOverlay: FunctionComponent<Props> = () => {
-    const appView = AppState.select.view();
+    const appView = AppSelectors.view();
     const style = useAnimateOverlay(appView === 'Search', { zIndex: 997 });
     return (
         <animated.div style={{ ...styles.container, ...style }}>

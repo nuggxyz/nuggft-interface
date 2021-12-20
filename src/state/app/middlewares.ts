@@ -8,9 +8,11 @@ import {
     saveToLocalStorage,
 } from '../../lib';
 import { isUndefinedOrNull } from '../../lib/index';
+import { hasSuffix } from '../helpers';
 import { NLState } from '../NLState';
 
-import AppState from '.';
+import AppDispatches from './dispatches';
+import AppHelpers from './helpers';
 
 const logger: NL.Redux.Middleware<
     Record<string, unknown>,
@@ -100,10 +102,10 @@ const viewChange: Middleware<{}, any, Dispatch<any>> =
     (next: any) =>
     async (action: PayloadAction<NL.Redux.App.Views>) => {
         const go = next(action);
-        if (AppState.isOwnFulfilledAction(action, 'changeView')) {
+        if (hasSuffix(action, 'changeView')) {
             if (action.payload === 'Search') {
                 const currentToken = getState().token.tokenId;
-                AppState.silentlySetRoute(
+                AppHelpers.silentlySetRoute(
                     `#/nugg${
                         !isUndefinedOrNullOrStringEmpty(currentToken)
                             ? `/${currentToken}`
@@ -117,7 +119,7 @@ const viewChange: Middleware<{}, any, Dispatch<any>> =
                 )
                     ? getState().protocol.epoch.id
                     : '';
-                AppState.silentlySetRoute(
+                AppHelpers.silentlySetRoute(
                     (currentEpoch &&
                         currentSwap &&
                         currentSwap.includes(currentEpoch)) ||
@@ -137,7 +139,7 @@ const rejectedThactions: Middleware<{}, any, Dispatch<any>> =
     async (action: PayloadAction<NL.Redux.App.Views>) => {
         if (NLState.isRejected(action)) {
             const toasts = getState().app.toasts.length;
-            AppState.dispatch.addToastToList({
+            AppDispatches.addToastToList({
                 index: toasts + 1,
                 id: `${toasts + 1}`,
                 duration: 0,

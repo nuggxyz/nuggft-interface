@@ -5,7 +5,7 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     shortenTxnHash,
 } from '../../lib';
-import AppState from '../app';
+import AppDispatches from '../app/dispatches';
 import { NLState } from '../NLState';
 
 import TransactionDispatches from './dispatches';
@@ -27,7 +27,7 @@ export const pending: NL.Redux.Middleware<
                 from: action.payload._pendingtx.from,
                 info: action.payload._pendingtx.info,
             });
-            AppState.dispatch.addToastToList({
+            AppDispatches.addToastToList({
                 duration: 0,
                 title: 'Pending Transaction',
                 message: shortenTxnHash(action.payload._pendingtx.hash),
@@ -41,7 +41,7 @@ export const pending: NL.Redux.Middleware<
             }
         }
         if (NLState.hasSuffix(action, 'finalizeTransaction')) {
-            AppState.dispatch.replaceToast({
+            AppDispatches.replaceToast({
                 //@ts-ignore
                 id: action.payload.hash,
                 duration: 5000,

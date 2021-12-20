@@ -1,7 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 
-import AppState from './app';
+import AppSlice from './app';
 import TransactionSlice from './transaction';
 import TokenSlice from './token';
 import SwapSlice from './swap';
@@ -19,7 +19,7 @@ import NuggDexMiddlewares from './nuggdex/middlewares';
 import AppMiddlewares from './app/middlewares';
 
 export const rootReducer = combineReducers({
-    app: AppState.reducer,
+    app: AppSlice.reducer,
     nuggdex: NuggDexSlice.reducer,
     protocol: ProtocolSlice.reducer,
     swap: SwapSlice.reducer,

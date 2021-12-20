@@ -2,7 +2,8 @@ import React, { FC, ReactChild } from 'react';
 import { ChevronRight, ChevronLeft } from 'react-feather';
 
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
-import AppState from '../../../../state/app';
+import AppDispatches from '../../../../state/app/dispatches';
+import AppSelectors from '../../../../state/app/selectors';
 import Web3Selectors from '../../../../state/web3/selectors';
 import Button from '../../../general/Buttons/Button/Button';
 import ChainIndicator from '../../../general/Buttons/ChainIndicator/ChainIndicator';
@@ -16,7 +17,7 @@ type Props = {
 };
 
 const PageContainer: FC<Props> = ({ children }) => {
-    const isOpen = AppState.select.walletVisible();
+    const isOpen = AppSelectors.walletVisible();
     const address = Web3Selectors.web3address();
     return (
         <>
@@ -32,7 +33,7 @@ const PageContainer: FC<Props> = ({ children }) => {
                             <ChevronLeft style={styles.iconColor} />
                         )
                     }
-                    onClick={() => AppState.dispatch.toggleWallet()}
+                    onClick={() => AppDispatches.toggleWallet()}
                 />
             )}
             <div style={styles.bottomRight}>
