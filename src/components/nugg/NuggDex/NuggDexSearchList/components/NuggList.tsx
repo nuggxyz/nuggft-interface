@@ -17,7 +17,7 @@ import List from '../../../../general/List/List';
 import TransitionText from '../../../../general/Texts/TransitionText/TransitionText';
 import globalStyles from '../../../../../lib/globalStyles';
 import NuggDexState from '../../../../../state/nuggdex';
-import TokenState from '../../../../../state/token';
+import TokenDispatches from '../../../../../state/token/dispatches';
 
 import styles from './NuggDexComponents.styles';
 import NuggListRenderItem from './NuggListRenderItem';
@@ -60,7 +60,7 @@ const NuggList: FunctionComponent<Props> = ({
 
     const onClick = useCallback((item) => {
         batch(() => {
-            TokenState.dispatch.setTokenFromId(item);
+            TokenDispatches.setTokenFromId(item);
             NuggDexState.dispatch.addToRecents({
                 _localStorageValue: item,
                 _localStorageTarget: 'recents',

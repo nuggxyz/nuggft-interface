@@ -51,9 +51,6 @@ export const pending: NL.Redux.Middleware<
             const tmp = action.payload._pendingtx
                 ?.info as NL.Redux.Transaction.ERC721ApprovalInfo;
             if (tmp?.erc721) {
-                // TokenState.dispatch.getSubmitSwapApproval({
-                //     tokenId: tmp.tokenId,
-                // });
             }
         }
         return next(action);

@@ -1,1 +1,3 @@
-export default {};
+const TokenHooks = {};
+
+export default TokenHooks;

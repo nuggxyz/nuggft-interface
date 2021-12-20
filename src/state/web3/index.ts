@@ -35,7 +35,6 @@ const Web3Slice = createSlice({
             state.web3error = action.payload;
         },
         setCurrentChain: (state, action: PayloadAction<SupportedChainId>) => {
-            console.log('SHIT ass');
             state.currentChain = action.payload;
         },
     },

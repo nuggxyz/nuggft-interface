@@ -9,7 +9,6 @@ import {
 } from '../../lib';
 import { isUndefinedOrNull } from '../../lib/index';
 import SwapState from '../swap';
-import TokenState from '../token';
 import { NLState } from '../NLState';
 
 import AppState from '.';

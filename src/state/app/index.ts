@@ -12,7 +12,7 @@ import Layout from '../../lib/layout';
 import { NLState } from '../NLState';
 import store from '../store';
 import SwapState from '../swap';
-import TokenState from '../token';
+import TokenDispatches from '../token/dispatches';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -149,7 +149,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                         swapId: `${currentEpoch}-${currentEpoch}`,
                     });
                 }
-                TokenState.dispatch.setTokenFromId(tokenRoute[2]);
+                TokenDispatches.setTokenFromId(tokenRoute[2]);
                 if (currentView !== 'Search') {
                     AppState.dispatch.changeView('Search');
                 }

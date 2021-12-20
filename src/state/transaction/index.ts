@@ -1,6 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { NLState } from '../NLState';
+import {
+    isFulfilledAction,
+    isPendingAction,
+    isRejectedAction,
+} from '../helpers';
 
 import TransactionInitialState from './initialState';
 
@@ -75,13 +79,13 @@ const TransactionSlice = createSlice({
     },
     extraReducers: (builder) =>
         builder
-            .addMatcher(NLState.isPendingAction(`${STATE_NAME}/`), (state) => {
+            .addMatcher(isPendingAction(`${STATE_NAME}/`), (state) => {
                 state.loading = true;
                 state.success = undefined;
                 state.error = undefined;
             })
             .addMatcher(
-                NLState.isRejectedAction(`${STATE_NAME}/`),
+                isRejectedAction(`${STATE_NAME}/`),
                 (state, action: PayloadAction<NL.Redux.Transaction.Error>) => {
                     state.loading = false;
                     state.error = action.payload;
@@ -89,7 +93,7 @@ const TransactionSlice = createSlice({
                 },
             )
             .addMatcher(
-                NLState.isFulfilledAction(`${STATE_NAME}/`),
+                isFulfilledAction(`${STATE_NAME}/`),
                 (
                     state,
                     action: PayloadAction<{

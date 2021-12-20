@@ -11,7 +11,7 @@ import { isUndefinedOrNullOrStringEmpty } from '../../../lib';
 import Colors from '../../../lib/colors';
 import { fromEth } from '../../../lib/conversion';
 import AppState from '../../../state/app';
-import TokenState from '../../../state/token';
+import TokenSelectors from '../../../state/token/selectors';
 import Web3Selectors from '../../../state/web3/selectors';
 import Button from '../../general/Buttons/Button/Button';
 import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
@@ -23,10 +23,10 @@ import styles from './ViewingNugg.styles';
 type Props = {};
 
 const ViewingNugg: FunctionComponent<Props> = () => {
-    const tokenId = TokenState.select.tokenId();
+    const tokenId = TokenSelectors.tokenId();
     const address = Web3Selectors.web3address();
-    const owner = TokenState.select.owner();
-    const swaps = TokenState.select.swaps();
+    const owner = TokenSelectors.owner();
+    const swaps = TokenSelectors.swaps();
 
     const [items, setItems] = useState([tokenId]);
 

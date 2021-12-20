@@ -15,9 +15,9 @@ import {
 } from '../../../../../lib';
 import Label from '../../../../general/Label/Label';
 import { ListRenderItemProps } from '../../../../general/List/List';
-import TokenState from '../../../../../state/token';
 import NuggDexState from '../../../../../state/nuggdex';
 import TokenViewer from '../../../TokenViewer';
+import TokenSelectors from '../../../../../state/token/selectors';
 
 import styles from './NuggDexComponents.styles';
 
@@ -26,7 +26,7 @@ type Props = ListRenderItemProps<string>;
 const NuggListRenderItem: FunctionComponent<Props> = memo(
     ({ item, index, extraData, rootRef, action, onScrollEnd }) => {
         const [ref, isVisible] = useIsVisible(rootRef.current, '10px');
-        const selected = TokenState.select.tokenId();
+        const selected = TokenSelectors.tokenId();
 
         useEffect(() => {
             if (

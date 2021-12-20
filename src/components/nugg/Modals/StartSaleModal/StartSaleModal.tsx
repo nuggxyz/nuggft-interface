@@ -7,10 +7,10 @@ import ProtocolState from '../../../../state/protocol';
 import TokenViewer from '../../TokenViewer';
 import Button from '../../../general/Buttons/Button/Button';
 import Text from '../../../general/Texts/Text/Text';
-import TokenState from '../../../../state/token';
 import { fromEth } from '../../../../lib/conversion';
 import WalletDispatches from '../../../../state/wallet/dispatches';
 import TransactionsSelectors from '../../../../state/transaction/selectors';
+import TokenDispatches from '../../../../state/token/dispatches';
 
 import styles from './StartSaleModal.styles';
 
@@ -70,7 +70,7 @@ const SwapModal: FunctionComponent<Props> = () => {
                     onClick={() =>
                         isApproved
                             ? stableType === 'StartSale'
-                                ? TokenState.dispatch.initSale({
+                                ? TokenDispatches.initSale({
                                       tokenId: stableId,
                                   })
                                 : WalletDispatches.withdraw({
