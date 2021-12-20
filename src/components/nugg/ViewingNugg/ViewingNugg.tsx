@@ -24,7 +24,7 @@ type Props = {};
 
 const ViewingNugg: FunctionComponent<Props> = () => {
     const tokenId = TokenState.select.tokenId();
-    const address = Web3Selectors().web3address();
+    const address = Web3Selectors.web3address();
     const owner = TokenState.select.owner();
     const swaps = TokenState.select.swaps();
 

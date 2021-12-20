@@ -6,7 +6,7 @@ import { fromEth } from '../../../../lib/conversion';
 import NuggDexState from '../../../../state/nuggdex';
 import ProtocolState from '../../../../state/protocol';
 import TransactionState from '../../../../state/transaction';
-import WalletState from '../../../../state/wallet';
+import WalletDispatches from '../../../../state/wallet/dispatches';
 import Button from '../../../general/Buttons/Button/Button';
 import Text from '../../../general/Texts/Text/Text';
 import TokenViewer from '../../TokenViewer';
@@ -80,10 +80,10 @@ const BurnModal: FunctionComponent<Props> = () => {
                     disabled={isUndefinedOrNullOrStringEmpty(selected)}
                     onClick={() =>
                         isApproved
-                            ? WalletState.dispatch.withdraw({
+                            ? WalletDispatches.withdraw({
                                   tokenId: selected,
                               })
-                            : WalletState.dispatch.approveNugg({
+                            : WalletDispatches.approveNugg({
                                   tokenId: selected,
                               })
                     }

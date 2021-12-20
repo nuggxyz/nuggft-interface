@@ -18,6 +18,8 @@ import Web3Dispatches from './dispatches';
 import Web3Selectors from './selectors';
 
 const Web3Updater = () => {
+    const onReduxChainChange = Web3Selectors.currentChain();
+
     const { library, chainId, activate, error } =
         Web3Hooks.useActiveWeb3React();
     const {
@@ -25,27 +27,29 @@ const Web3Updater = () => {
         account: web3Account,
         deactivate,
     } = useWeb3React();
-    const web3status = Web3Selectors().web3status();
-    const web3address = Web3Selectors().web3address();
+    const web3status = Web3Selectors.web3status();
+    const web3address = Web3Selectors.web3address();
     const [hasBeenActivated, setHasBeenActivated] = useState(false);
     const [hasBeenSafeActivated, setHasBeenSafeActivated] = useState(false);
     const onDisconnect = useCallback(async () => {
         console.log('eth event: disconnect');
-        Web3Dispatches().clearWeb3Address();
+        Web3Dispatches.clearWeb3Address();
     }, []);
     const onConnect = useCallback(async (connectInfo: { chainId: string }) => {
         console.log('eth event: connect', connectInfo);
+        Web3Dispatches.setCurrentChain(chainId);
     }, []);
     const onAccountsChanged = useCallback(async (accounts) => {
         console.log('eth event: accountsChanged', { accounts });
         if (!isUndefinedOrNullOrArrayEmpty(accounts)) {
-            Web3Dispatches().setWeb3Address(accounts[0]);
+            Web3Dispatches.setWeb3Address(accounts[0]);
         } else {
-            Web3Dispatches().clearWeb3Address();
+            Web3Dispatches.clearWeb3Address();
         }
     }, []);
     const onChainChanged = useCallback(async (chainId) => {
         console.log('eth event: chainChanged', { chainId });
+        Web3Dispatches.setCurrentChain(chainId);
     }, []);
     const onMessage = useCallback(
         async (message: { type: string; data: unknown }) => {
@@ -53,7 +57,6 @@ const Web3Updater = () => {
         },
         [],
     );
-
     useEffect(() => {
         if (!isUndefinedOrNullOrNotFunction(defaultActivate)) {
             Web3Helpers.activate = defaultActivate;
@@ -65,7 +68,7 @@ const Web3Updater = () => {
 
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(error)) {
-            Web3Dispatches().setWeb3Status('ERROR');
+            Web3Dispatches.setWeb3Status('ERROR');
         }
     }, [error]);
 
@@ -73,12 +76,12 @@ const Web3Updater = () => {
         if (!isUndefinedOrNullOrStringEmpty(web3address)) {
             if (!hasBeenSafeActivated) {
                 Web3Helpers.safeActivate(Web3Config.connectors.injected);
-                Web3Dispatches().setWeb3Status('SELECTED');
+                Web3Dispatches.setWeb3Status('SELECTED');
                 setHasBeenSafeActivated(true);
             }
         } else if (!hasBeenActivated) {
             activate(Web3Config.connectors.network);
-            Web3Dispatches().setWeb3Status('NOT_SELECTED');
+            Web3Dispatches.setWeb3Status('NOT_SELECTED');
             setHasBeenActivated(true);
         }
     }, [
@@ -101,9 +104,9 @@ const Web3Updater = () => {
             .then(
                 (x) =>
                     !isUndefinedOrNull(x) ??
-                    Web3Dispatches().setImplements3085(true),
+                    Web3Dispatches.setImplements3085(true),
             )
-            .catch(() => Web3Dispatches().setImplements3085(true));
+            .catch(() => Web3Dispatches.setImplements3085(true));
     }, [web3Account, chainId, library]);
 
     useEffect(() => {
@@ -115,16 +118,17 @@ const Web3Updater = () => {
             window.ethereum.on('message', onMessage);
         }
         if (
-            gatsbyDOM('window') &&
             isUndefinedOrNullOrBooleanFalse(web3status === 'SELECTED') &&
-            isUndefinedOrNullOrObjectEmpty(web3address) &&
+            isUndefinedOrNullOrStringEmpty(web3address) &&
             !isUndefinedOrNullOrObjectEmpty(window.ethereum)
         ) {
+            console.log(window.ethereum.selectedAddress);
             if (
                 !isUndefinedOrNullOrObjectEmpty(window.ethereum._state) &&
                 !isUndefinedOrNullOrArrayEmpty(window.ethereum._state.accounts)
             ) {
-                Web3Dispatches().setWeb3Address(
+                console.log('1');
+                Web3Dispatches.setWeb3Address(
                     window.ethereum._state.accounts[0],
                 );
             } else if (
@@ -135,11 +139,18 @@ const Web3Updater = () => {
                     window.ethereum.selectedProvider.selectedAddress,
                 )
             ) {
-                Web3Dispatches().setWeb3Address(
+                console.log(2);
+                Web3Dispatches.setWeb3Address(
                     window.ethereum.selectedProvider.selectedAddress,
                 );
+            } else if (
+                !isUndefinedOrNullOrStringEmpty(window.ethereum.selectedAddress)
+            ) {
+                console.log(3);
+                Web3Dispatches.setWeb3Address(window.ethereum.selectedAddress);
             } else if (!isUndefinedOrNullOrStringEmpty(web3Account)) {
-                Web3Dispatches().setWeb3Address(web3Account);
+                console.log(4);
+                Web3Dispatches.setWeb3Address(web3Account);
             }
         }
     }, [
@@ -151,6 +162,7 @@ const Web3Updater = () => {
         onAccountsChanged,
         onChainChanged,
         onMessage,
+        onReduxChainChange,
     ]);
 
     return null;

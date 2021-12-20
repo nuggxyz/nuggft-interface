@@ -8,9 +8,9 @@ import TransactionState from '../../../../state/transaction';
 import TokenViewer from '../../TokenViewer';
 import Button from '../../../general/Buttons/Button/Button';
 import Text from '../../../general/Texts/Text/Text';
-import WalletState from '../../../../state/wallet';
 import TokenState from '../../../../state/token';
 import { fromEth } from '../../../../lib/conversion';
+import WalletDispatches from '../../../../state/wallet/dispatches';
 
 import styles from './StartSaleModal.styles';
 
@@ -73,10 +73,10 @@ const SwapModal: FunctionComponent<Props> = () => {
                                 ? TokenState.dispatch.initSale({
                                       tokenId: stableId,
                                   })
-                                : WalletState.dispatch.withdraw({
+                                : WalletDispatches.withdraw({
                                       tokenId: stableId,
                                   })
-                            : WalletState.dispatch.approveNugg({
+                            : WalletDispatches.approveNugg({
                                   tokenId: stableId,
                               })
                     }

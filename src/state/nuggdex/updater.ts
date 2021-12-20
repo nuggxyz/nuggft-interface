@@ -11,7 +11,7 @@ import NuggDexState from '.';
 
 export default () => {
     const epoch = ProtocolState.select.epoch();
-    const web3address = Web3Selectors().web3address();
+    const web3address = Web3Selectors.web3address();
 
     useEffect(() => {
         if (

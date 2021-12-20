@@ -36,9 +36,9 @@ const updateEpochMiddleware: Middleware<
             }
 
             if (!navigator.onLine) {
-                Web3Dispatches().setConnectivityWarning(true);
+                Web3Dispatches.setConnectivityWarning(true);
             } else if (getState().web3.connectivityWarning === true) {
-                Web3Dispatches().setConnectivityWarning(false);
+                Web3Dispatches.setConnectivityWarning(false);
             }
         }
         return next(action);

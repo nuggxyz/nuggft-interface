@@ -156,25 +156,25 @@ let activate: (
 ) => Promise<void>;
 
 const safeActivate = (connector?: AbstractConnector) => {
-    Web3Dispatches().setWeb3Status('PENDING');
-    Web3Dispatches().setWeb3Error(false);
+    Web3Dispatches.setWeb3Status('PENDING');
+    Web3Dispatches.setWeb3Error(false);
 
     if (!isUndefinedOrNullOrObjectEmpty(connector)) {
         Web3Helpers.activate(connector, undefined, true)
-            .then(() => Web3Dispatches().setWeb3Status('SELECTED'))
+            .then(() => Web3Dispatches.setWeb3Status('SELECTED'))
             .catch((error) => {
                 console.log({ error });
                 // a little janky...can't use setError because the connector isn't set
                 if (error instanceof UnsupportedChainIdError) {
                     Web3Helpers.activate(connector);
-                    Web3Dispatches().setWeb3Status('SELECTED');
+                    Web3Dispatches.setWeb3Status('SELECTED');
                 } else {
-                    Web3Dispatches().setWeb3Error(true);
-                    Web3Dispatches().setWeb3Status('NOT_SELECTED');
+                    Web3Dispatches.setWeb3Error(true);
+                    Web3Dispatches.setWeb3Status('NOT_SELECTED');
                 }
             });
     } else {
-        Web3Dispatches().setWeb3Status('NOT_SELECTED');
+        Web3Dispatches.setWeb3Status('NOT_SELECTED');
     }
 };
 

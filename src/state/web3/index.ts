@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { SupportedChainId } from './config';
 import Web3InitialState from './initialState';
 
 export const STATE_NAME = 'web3';
@@ -32,6 +33,10 @@ const Web3Slice = createSlice({
         },
         setWeb3Error: (state, action: PayloadAction<boolean>) => {
             state.web3error = action.payload;
+        },
+        setCurrentChain: (state, action: PayloadAction<SupportedChainId>) => {
+            console.log('SHIT ass');
+            state.currentChain = action.payload;
         },
     },
 });

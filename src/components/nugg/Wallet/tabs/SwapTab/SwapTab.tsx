@@ -1,20 +1,20 @@
 import React, { FunctionComponent, useState } from 'react';
 
 import { EthInt } from '../../../../../classes/Fraction';
-import WalletState from '../../../../../state/wallet';
 import NumberStatistic from '../../../Statistics/NumberStatistic';
 import ProtocolState from '../../../../../state/protocol';
 import TextStatistic from '../../../Statistics/TextStatistic';
 import Colors from '../../../../../lib/colors';
 import Button from '../../../../general/Buttons/Button/Button';
 import AppState from '../../../../../state/app';
+import WalletSelectors from '../../../../../state/wallet/selectors';
 
 import styles from './SwapTab.styles';
 
 type Props = {};
 
 const SwapTab: FunctionComponent<Props> = () => {
-    const userShares = WalletState.select.userShares();
+    const userShares = WalletSelectors.userShares();
 
     const totalEth = ProtocolState.select.nuggftStakedEth();
     const totalShares = ProtocolState.select.nuggftStakedShares();

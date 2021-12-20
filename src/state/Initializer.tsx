@@ -7,7 +7,7 @@ import Protocol from './protocol/updater';
 import Swap from './swap/updater';
 import Token from './token/updater';
 import Transaction from './transaction/updater';
-import Wallet from './wallet/updater';
+import WalletUpdater from './wallet/updater';
 
 type Props = {
     children: ReactChild | ReactChild[];
@@ -15,14 +15,14 @@ type Props = {
 
 const Initializer: FunctionComponent<Props> = ({ children }) => (
     <>
-        <Web3Updater />
         <App />
         <NuggDex />
         <Protocol />
         <Swap />
         <Token />
         <Transaction />
-        <Wallet />
+        <WalletUpdater />
+        <Web3Updater />
         {children}
     </>
 );

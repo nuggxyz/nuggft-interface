@@ -17,7 +17,7 @@ type Props = {
 
 const PageContainer: FC<Props> = ({ children }) => {
     const isOpen = AppState.select.walletVisible();
-    const address = Web3Selectors().web3address();
+    const address = Web3Selectors.web3address();
     return (
         <>
             <NavigationBar />

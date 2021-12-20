@@ -7,7 +7,8 @@ import {
 import Colors from '../../../../../lib/colors';
 import { fromEth } from '../../../../../lib/conversion';
 import AppState from '../../../../../state/app';
-import WalletState from '../../../../../state/wallet';
+import WalletDispatches from '../../../../../state/wallet/dispatches';
+import WalletSelectors from '../../../../../state/wallet/selectors';
 import Web3Selectors from '../../../../../state/web3/selectors';
 import Button from '../../../../general/Buttons/Button/Button';
 import List, { ListRenderItemProps } from '../../../../general/List/List';
@@ -19,9 +20,9 @@ import styles from './HistoryTab.styles';
 type Props = {};
 
 const HistoryTab: FunctionComponent<Props> = () => {
-    const unclaimedOffers = WalletState.select.unclaimedOffers();
-    const history = WalletState.select.history();
-    const address = Web3Selectors().web3address();
+    const unclaimedOffers = WalletSelectors.unclaimedOffers();
+    const history = WalletSelectors.history();
+    const address = Web3Selectors.web3address();
 
     return (
         <div style={styles.container}>
@@ -42,7 +43,7 @@ const HistoryTab: FunctionComponent<Props> = () => {
                     style={styles.list}
                     extraData={['history', address]}
                     onScrollEnd={() =>
-                        WalletState.dispatch.getHistory({ addToResult: true })
+                        WalletDispatches.getHistory({ addToResult: true })
                     }
                 />
             )}
@@ -93,7 +94,7 @@ const RenderItem: FunctionComponent<
                         buttonStyle={styles.renderButton}
                         label={`Claim your ${isWinner ? 'NUGG' : 'ETH'}`}
                         onClick={() =>
-                            WalletState.dispatch.claim({
+                            WalletDispatches.claim({
                                 tokenId: parsedTitle.nugg,
                                 endingEpoch: parsedTitle.nugg,
                             })

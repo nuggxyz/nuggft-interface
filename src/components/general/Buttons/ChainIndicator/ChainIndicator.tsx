@@ -22,7 +22,7 @@ type Props = {};
 
 const ChainIndicator: FunctionComponent<Props> = () => {
     const epoch = ProtocolState.select.epoch();
-    const connectionWarning = Web3Selectors().connectivityWarning();
+    const connectionWarning = Web3Selectors.connectivityWarning();
     const currentBlock = ProtocolState.select.currentBlock();
 
     const [blocksRemaining, setBlocksRemaining] = useState(0);

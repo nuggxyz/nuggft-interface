@@ -15,7 +15,7 @@ import Web3Dispatches from '../../../../state/web3/dispatches';
 import styles from './LinkAccountButton.styles';
 
 const Identicon = () => {
-    const address = Web3Selectors().web3address();
+    const address = Web3Selectors.web3address();
     const library = useMemo(
         () => Web3Helpers.getLibraryOrProvider(),
         [address],
@@ -31,8 +31,8 @@ const Identicon = () => {
 };
 
 const LinkAccountButton = () => {
-    const address = Web3Selectors().web3address();
-    const status = Web3Selectors().web3status();
+    const address = Web3Selectors.web3address();
+    const status = Web3Selectors.web3status();
     const ens = Web3Hooks.useEns(address);
 
     const buttonLabel = useMemo(() => {
@@ -62,7 +62,7 @@ const LinkAccountButton = () => {
         }
         if (status === 'SELECTED') {
             Web3Helpers.deactivate();
-            Web3Dispatches().clearWeb3Address();
+            Web3Dispatches.clearWeb3Address();
         }
     }, [status]);
 
