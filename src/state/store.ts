@@ -5,7 +5,7 @@ import AppState from './app';
 import TransactionSlice from './transaction';
 import ProtocolState from './protocol';
 import TokenSlice from './token';
-import SwapState from './swap';
+import SwapSlice from './swap';
 import NuggDexState from './nuggdex';
 import Web3Slice from './web3';
 import Web3Middlewares from './web3/middlewares';
@@ -13,10 +13,10 @@ import WalletSlice from './wallet';
 import WalletMiddlewares from './wallet/middlewares';
 import TransactionMiddlewares from './transaction/middlewares';
 import TokenMiddlewares from './token/middlewares';
+import SwapMiddlewares from './swap/middlewares';
 
 export const states = {
     AppState,
-    SwapState,
     ProtocolState,
     NuggDexState,
 };
@@ -25,7 +25,7 @@ export const rootReducer = combineReducers({
     app: AppState.reducer,
     nuggdex: NuggDexState.reducer,
     protocol: ProtocolState.reducer,
-    swap: SwapState.reducer,
+    swap: SwapSlice.reducer,
     transaction: TransactionSlice.reducer,
     token: TokenSlice.reducer,
     wallet: WalletSlice.reducer,
@@ -78,6 +78,7 @@ const store = configureStore({
                 ...Object.values(WalletMiddlewares),
                 ...Object.values(TransactionMiddlewares),
                 ...Object.values(TokenMiddlewares),
+                ...Object.values(SwapMiddlewares),
             ]),
 });
 

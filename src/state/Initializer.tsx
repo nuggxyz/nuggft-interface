@@ -4,7 +4,7 @@ import Web3Updater from './web3/updater';
 import App from './app/updater';
 import NuggDex from './nuggdex/updater';
 import Protocol from './protocol/updater';
-import Swap from './swap/updater';
+import SwapState from './swap/updater';
 import TokenUpdater from './token/updater';
 import TransactionUpdater from './transaction/updater';
 import WalletUpdater from './wallet/updater';
@@ -18,7 +18,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => (
         <App />
         <NuggDex />
         <Protocol />
-        <Swap />
+        <SwapState />
         <TokenUpdater />
         <TransactionUpdater />
         <WalletUpdater />

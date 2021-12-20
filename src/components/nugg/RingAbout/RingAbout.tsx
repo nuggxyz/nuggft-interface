@@ -3,7 +3,6 @@ import { ChevronDown } from 'react-feather';
 
 import Text from '../../general/Texts/Text/Text';
 import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
-import SwapState from '../../../state/swap';
 import Button from '../../general/Buttons/Button/Button';
 import AppState from '../../../state/app';
 import { Address } from '../../../classes/Address';
@@ -15,17 +14,18 @@ import {
 import { fromEth } from '../../../lib/conversion';
 import Colors from '../../../lib/colors';
 import Web3Hooks from '../../../state/web3/hooks';
+import SwapSelectors from '../../../state/swap/selectors';
 
 import styles from './RingAbout.styles';
 
 type Props = {};
 
 const RingAbout: FunctionComponent<Props> = ({}) => {
-    const eth = SwapState.select.eth();
-    const ethUsd = SwapState.select.ethUsd();
-    const leader = SwapState.select.leader();
+    const eth = SwapSelectors.eth();
+    const ethUsd = SwapSelectors.ethUsd();
+    const leader = SwapSelectors.leader();
 
-    const status = SwapState.select.status();
+    const status = SwapSelectors.status();
 
     const safeLeaderEns = useMemo(() => {
         return !isUndefinedOrNullOrObjectEmpty(leader)

@@ -125,8 +125,10 @@ const placeOffer = createAsyncThunk<
     }
 });
 
-export default {
+const SwapThactions = {
     initSwap,
     placeOffer,
     pollOffers,
 };
+
+export default SwapThactions;

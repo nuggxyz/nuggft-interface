@@ -4,8 +4,8 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
-import SwapState from '../swap';
 import Web3Dispatches from '../web3/dispatches';
+import SwapDispatches from '../swap/dispatches';
 
 import ProtocolState from '.';
 
@@ -30,7 +30,7 @@ const updateEpochMiddleware: Middleware<
                 (isUndefinedOrNullOrStringEmpty(currentSwap) ||
                     currentSwap.split('-')[1] === currentEpoch)
             ) {
-                SwapState.dispatch.initSwap({
+                SwapDispatches.initSwap({
                     swapId: `${nextEpoch}-${nextEpoch}`,
                 });
             }

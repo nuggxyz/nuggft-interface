@@ -8,7 +8,6 @@ import {
     saveToLocalStorage,
 } from '../../lib';
 import { isUndefinedOrNull } from '../../lib/index';
-import SwapState from '../swap';
 import { NLState } from '../NLState';
 
 import AppState from '.';

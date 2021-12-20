@@ -11,7 +11,7 @@ import {
 import Layout from '../../lib/layout';
 import { NLState } from '../NLState';
 import store from '../store';
-import SwapState from '../swap';
+import SwapDispatches from '../swap/dispatches';
 import TokenDispatches from '../token/dispatches';
 
 import hooks from './hooks';
@@ -125,7 +125,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 route === '/' &&
                 !isUndefinedOrNullOrStringEmpty(currentEpoch)
             ) {
-                SwapState.dispatch.initSwap({
+                SwapDispatches.initSwap({
                     swapId: `${currentEpoch}-${currentEpoch}`,
                 });
             } else if (
@@ -133,7 +133,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 swapRoute.length === 4 &&
                 swapRoute[1] === 'swap'
             ) {
-                SwapState.dispatch.initSwap({
+                SwapDispatches.initSwap({
                     swapId: `${swapRoute[2]}-${swapRoute[3]}`,
                 });
                 if (currentView !== 'Swap') {
@@ -145,7 +145,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 tokenRoute[1] === 'nugg'
             ) {
                 if (!isUndefinedOrNullOrStringEmpty(currentEpoch)) {
-                    SwapState.dispatch.initSwap({
+                    SwapDispatches.initSwap({
                         swapId: `${currentEpoch}-${currentEpoch}`,
                     });
                 }

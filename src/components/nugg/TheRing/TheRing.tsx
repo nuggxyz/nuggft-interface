@@ -4,7 +4,7 @@ import { isUndefinedOrNullOrObjectEmpty } from '../../../lib';
 import Colors from '../../../lib/colors';
 import constants from '../../../lib/constants';
 import ProtocolState from '../../../state/protocol';
-import SwapState from '../../../state/swap';
+import SwapSelectors from '../../../state/swap/selectors';
 import CircleTimer from '../../general/AnimatedTimers/CircleTimer/CircleTimer';
 import AnimatedCard from '../../general/Cards/AnimatedCard/AnimatedCard';
 import TokenViewer from '../TokenViewer';
@@ -16,8 +16,8 @@ type Props = {};
 const TheRing: FunctionComponent<Props> = () => {
     const lastBlock = ProtocolState.select.currentBlock();
     const epoch = ProtocolState.select.epoch();
-    const nugg = SwapState.select.nugg();
-    const status = SwapState.select.status();
+    const nugg = SwapSelectors.nugg();
+    const status = SwapSelectors.status();
 
     const blockDuration = useMemo(() => {
         let remaining = 0;

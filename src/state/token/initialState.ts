@@ -1,4 +1,4 @@
-const TokenInitialState = {
+const TokenInitialState: NL.Redux.Token.State = {
     success: undefined,
     error: undefined,
     loading: false,
