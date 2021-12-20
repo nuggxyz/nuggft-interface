@@ -108,7 +108,7 @@ const CircleTimer: FunctionComponent<Props> = ({
     return (
         <div style={{ ...style, ...styles.container }}>
             <div style={styles.childrenContainer}>{children}</div>
-            <div
+            {/* <div
                 style={{
                     filter: `drop-shadow(0px 6px 15px ${shadowColor}`,
                     width: '100%',
@@ -133,7 +133,7 @@ const CircleTimer: FunctionComponent<Props> = ({
                         strokeLinecap="round"
                     />
                 </animated.svg>
-            </div>
+            </div> */}
         </div>
     );
 };

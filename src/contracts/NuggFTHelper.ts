@@ -46,18 +46,21 @@ export default class NuggFTHelper extends ContractHelper {
         invariant(tokenId, 'OP:TOKEN:URI');
         let check = loadStringFromLocalStorage('NL-TokenURI-' + tokenId);
         if (check) {
-            return check;
+            return Svg.drawSvgFromString(check, 1);
         } else {
-            let res: string;
             try {
                 let byteArray = await NuggFTHelper.instance.rawProcessURI(
                     BigNumber.from(tokenId),
                 );
-                res = Svg.drawSvg(byteArray, 10);
-                if (!res) throw new Error('token does not exist');
+
+                if (!byteArray) throw new Error('token does not exist');
                 else {
-                    saveStringToLocalStorage(res, 'NL-TokenURI-' + tokenId);
-                    return res;
+                    let byteStr = byteArray.reduce(
+                        (nugg, num) => `${nugg}${num.toHexString()}`,
+                        '',
+                    );
+                    saveStringToLocalStorage(byteStr, 'NL-TokenURI-' + tokenId);
+                    return Svg.drawSvgFromString(byteStr, 1);
                 }
             } catch (err) {
                 // console.log('optimizedDotNugg:', err);

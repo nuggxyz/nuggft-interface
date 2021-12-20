@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 export class Svg {
     private static CreateNumberedRow(num: number): string {
@@ -91,6 +91,21 @@ export class Svg {
             feature: val.shr(36).and('0xf').toNumber(),
         };
     };
+
+    public static drawSvgFromString(input: string, multip) {
+        return this.drawSvg(
+            input
+                .split('0x')
+                .reduce(
+                    (arr, num) =>
+                        num !== ''
+                            ? arr.concat(BigNumber.from(`0x${num}`))
+                            : arr,
+                    [],
+                ),
+            multip,
+        );
+    }
 
     public static drawSvg(
         input: ethers.BigNumber[],

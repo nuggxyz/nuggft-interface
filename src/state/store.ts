@@ -35,43 +35,9 @@ export const rootReducer = combineReducers({
 const store = configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: {
-                // Ignore these action types
-                ignoredActions: [
-                    'time/timeSetTimeRemaining',
-                    'epoch/expochSetBlock',
-                    'xnugg/getCurrentStakeState/fulfilled',
-                    'xnugg/getCurrentStakePosition/fulfilled',
-                    'swap/getCurrentSwap/fulfilled',
-                    'epoch/getPendingToken/fulfilled',
-                    'swap/getCurrentSwap/pending',
-                ],
-                // Ignore these field paths in all actions
-                ignoredActionPaths: [
-                    'payload.xnugg',
-                    'xnugg.stakePosition',
-                    'xnugg.stakePosition.shares',
-                    'swap',
-                    'meta',
-                    'xnugg',
-                    'meta.arg.amount',
-                    'payload',
-                ],
-                // Ignore these paths in the state
-                ignoredPaths: [
-                    'token',
-                    'meta',
-                    'payload',
-                    'transaction',
-                    'subgraph',
-                    'web3',
-                    'wallet',
-                    'swap',
-                    'nuggdex',
-                ],
-            },
-        }).concat(Object.values(states).flatMap((state) => state.middlewares)),
+        getDefaultMiddleware().concat(
+            Object.values(states).flatMap((state) => state.middlewares),
+        ),
 });
 
 export type NLRootState = ReturnType<typeof rootReducer>;
