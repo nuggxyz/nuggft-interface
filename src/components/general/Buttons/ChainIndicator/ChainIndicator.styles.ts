@@ -8,6 +8,8 @@ const styles = NLStyleSheetCreator({
         borderRadius: Layout.borderRadius.large,
         fontSize: FontSize.p,
         transition: `all 0.5s ease`,
+        flexWrap: 'nowrap',
+        flexGrow: 2,
     },
     normal: {
         background: Colors.nuggBlueTransparent,

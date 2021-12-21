@@ -41,15 +41,11 @@ const CurrencyText: React.FC<BalanceProps> = ({
                 ...styles.textStyle,
                 ...props.textStyle,
             }}>
-            {image && (
-                <div style={{ paddingRight: '.3rem' }}>
-                    <NLStaticImage image={image} />
-                </div>
-            )}
-            <animated.div className="number">
+            <animated.div className="number" style={{ paddingRight: '.5rem' }}>
                 {spring.val.to((val) => val.toFixed(percent ? 2 : 3))}
             </animated.div>
             {percent && '%'}
+            {image && <div style={{ paddingRight: '.3rem' }}>ETH</div>}
         </Text>
     );
 };

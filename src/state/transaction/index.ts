@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { NLState } from '../NLState';
 
 import hooks from './hooks';
+import { BaseTransactionInfo } from './interfaces';
 import middlewares from './middlewares';
 import updater from './updater';
 
@@ -53,7 +54,7 @@ export default class TransactionState extends NLState<NL.Redux.Transaction.State
                 action: PayloadAction<{
                     hash: string;
                     from: string;
-                    info: NL.Redux.Transaction.Info;
+                    info: BaseTransactionInfo;
                 }>,
             ) => {
                 if (state.txs?.[action.payload.hash]) {

@@ -48,13 +48,8 @@ export const pending: NL.Redux.Middleware<
                 loading: false,
                 title: 'Successful Transaction',
             });
-            const tmp = action.payload._pendingtx
-                ?.info as NL.Redux.Transaction.ERC721ApprovalInfo;
-            if (tmp?.erc721) {
-                // TokenState.dispatch.getSubmitSwapApproval({
-                //     tokenId: tmp.tokenId,
-                // });
-            }
+            // const tmp = action.payload._pendingtx
+            //     ?.info as NL.Redux.Transaction.ERC721ApprovalInfo;
         }
         return next(action);
     };

@@ -128,6 +128,9 @@ class AppState extends NLState<NL.Redux.App.State> {
                 SwapState.dispatch.initSwap({
                     swapId: `${currentEpoch}-${currentEpoch}`,
                 });
+                if (currentView !== 'Swap') {
+                    AppState.dispatch.changeView('Swap');
+                }
             } else if (
                 !isUndefinedOrNullOrArrayEmpty(swapRoute) &&
                 swapRoute.length === 4 &&

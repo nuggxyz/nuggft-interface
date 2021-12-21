@@ -5,7 +5,7 @@ import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import AppState from '../../../../state/app';
 import Web3State from '../../../../state/web3';
 import Button from '../../../general/Buttons/Button/Button';
-import ChainIndicator from '../../../general/Buttons/ChainIndicator/ChainIndicator';
+// import ChainIndicator from '../../../general/Buttons/ChainIndicator/ChainIndicator';
 import NavigationBar from '../NavigationBar/NavigationBar';
 
 import styles from './PageContainer.styles';
@@ -35,9 +35,9 @@ const PageContainer: FC<Props> = ({ children }) => {
                     onClick={() => AppState.dispatch.toggleWallet()}
                 />
             )}
-            <div style={styles.bottomRight}>
+            {/* <div style={styles.bottomRight}>
                 <ChainIndicator />
-            </div>
+            </div> */}
 
             {children}
         </>
