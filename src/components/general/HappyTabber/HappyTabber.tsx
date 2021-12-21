@@ -90,4 +90,4 @@ const HappyTabber: FunctionComponent<Props> = ({
     );
 };
 
-export default HappyTabber;
+export default React.memo(HappyTabber);

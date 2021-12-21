@@ -139,7 +139,7 @@ const List: FunctionComponent<Props> = ({
     );
 };
 
-export default List;
+export default React.memo(List);
 
 const EndOfListAnchor = ({ rootRef, onScrollEnd, loading }) => {
     const [ref, isVisible] = useIsVisible(rootRef.current, '10px');

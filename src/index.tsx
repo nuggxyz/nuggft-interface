@@ -6,12 +6,9 @@ import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core';
 import './prototypes';
 global.Buffer = global.Buffer || require('buffer').Buffer;
 
-// import Initializer from './state/Initializer';
 import store from './state/store';
 import './index.css';
 import { NetworkContextName } from './config';
-// import Modal from './components/nugg/Modals/Modal/Modal';
-// import ToastContainer from './components/general/Toast/ToastContainer';
 import Web3State from './state/web3';
 import Initializer from './state/Initializer';
 import Modal from './components/nugg/Modals/Modal/Modal';

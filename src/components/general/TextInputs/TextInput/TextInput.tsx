@@ -142,4 +142,4 @@ const TextInput: FunctionComponent<TextInputProps> = ({
     );
 };
 
-export default TextInput;
+export default React.memo(TextInput);

@@ -41,4 +41,4 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
     );
 };
 
-export default Flyout;
+export default React.memo(Flyout);

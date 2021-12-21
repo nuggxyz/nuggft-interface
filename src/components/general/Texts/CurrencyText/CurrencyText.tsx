@@ -54,4 +54,4 @@ const CurrencyText: React.FC<BalanceProps> = ({
     );
 };
 
-export default CurrencyText;
+export default React.memo(CurrencyText);

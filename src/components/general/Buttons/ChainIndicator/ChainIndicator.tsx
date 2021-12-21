@@ -73,4 +73,4 @@ const ChainIndicator: FunctionComponent<Props> = () => {
     );
 };
 
-export default ChainIndicator;
+export default React.memo(ChainIndicator);

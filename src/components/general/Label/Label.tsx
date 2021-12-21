@@ -27,4 +27,4 @@ const Label: FunctionComponent<Props> = ({
     );
 };
 
-export default Label;
+export default React.memo(Label);

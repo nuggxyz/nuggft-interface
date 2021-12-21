@@ -37,4 +37,4 @@ const CurrencyInput: FunctionComponent<Props> = ({
     );
 };
 
-export default CurrencyInput;
+export default React.memo(CurrencyInput);

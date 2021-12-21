@@ -50,4 +50,4 @@ const TransitionText: FunctionComponent<Props> = ({
     );
 };
 
-export default TransitionText;
+export default React.memo(TransitionText);

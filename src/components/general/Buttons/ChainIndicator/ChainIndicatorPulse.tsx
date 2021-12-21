@@ -8,4 +8,4 @@ const ChainIndicatorPulse: FunctionComponent<Props> = () => {
     return <div className="blob"></div>;
 };
 
-export default ChainIndicatorPulse;
+export default React.memo(ChainIndicatorPulse);

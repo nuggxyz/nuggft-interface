@@ -138,4 +138,4 @@ const CircleTimer: FunctionComponent<Props> = ({
     );
 };
 
-export default CircleTimer;
+export default React.memo(CircleTimer);

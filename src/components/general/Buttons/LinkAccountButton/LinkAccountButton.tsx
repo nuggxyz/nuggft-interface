@@ -117,4 +117,4 @@ const LinkAccountButton = () => {
     );
 };
 
-export default LinkAccountButton;
+export default React.memo(LinkAccountButton);

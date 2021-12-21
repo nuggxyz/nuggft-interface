@@ -36,4 +36,4 @@ const HoverCard: FunctionComponent<Props> = ({ children, action, style }) => {
     );
 };
 
-export default HoverCard;
+export default React.memo(HoverCard);
