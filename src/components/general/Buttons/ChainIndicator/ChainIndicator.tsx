@@ -69,7 +69,7 @@ const ChainIndicator: FunctionComponent<Props> = () => {
                             <ChainIndicatorPulse />
                             <TokenViewer
                                 tokenId={epoch?.id || ''}
-                                style={{ width: '40px', height: '40px' }}
+                                style={{ width: '20px', height: '20px' }}
                             />
                         </>
                     )

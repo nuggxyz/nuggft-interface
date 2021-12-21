@@ -10,6 +10,8 @@ const styles = NLStyleSheetCreator({
         transition: `all 0.5s ease`,
         flexWrap: 'nowrap',
         flexGrow: 2,
+        dipaly: 'flex',
+        alignItems: 'center',
     },
     normal: {
         background: Colors.nuggBlueTransparent,

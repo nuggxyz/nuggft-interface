@@ -76,7 +76,7 @@ export default class NuggFTHelper extends ContractHelper {
                     config.NUGGFT,
                     BigNumber.from(tokenId),
                     Address.ZERO.hash,
-                    33,
+                    45,
                     1,
                 );
 
@@ -122,5 +122,12 @@ export default class NuggFTHelper extends ContractHelper {
     public static async approval(tokenId: string): Promise<Address> {
         let response = await this.instance.getApproved(tokenId);
         return new Address(response);
+    }
+
+    public static async balanceOf(address: Address): Promise<BigNumber> {
+        return await this.instance.balanceOf(address.hash);
+    }
+    public static async ethBalance(): Promise<BigNumber> {
+        return await this.instance.signer.getBalance();
     }
 }

@@ -35,11 +35,7 @@ const SwapTab: FunctionComponent<Props> = ({ isActive }) => {
                 </div>
                 <div style={styles.statisticContainer}>
                     <TextStatistic label="Total shares" value={totalShares} />
-                    <NumberStatistic
-                        label="Value per share"
-                        value={new EthInt(valuePerShare)}
-                        image="eth"
-                    />
+
                 </div>
             </div>
             <div style={styles.selectContainer}>
