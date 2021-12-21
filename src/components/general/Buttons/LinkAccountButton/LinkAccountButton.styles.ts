@@ -6,10 +6,11 @@ const styles = NLStyleSheetCreator({
     button: {
         color: 'white',
         background: Colors.nuggBlueTransparent,
-        position: 'absolute',
-        right: '1rem',
+        // position: 'absolute',
+        // right: '1rem',
         borderRadius: Layout.borderRadius.large,
         padding: '.6rem 1rem',
+        pointerEvents: 'auto',
     },
     amount: {
         display: 'flex',

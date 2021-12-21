@@ -74,6 +74,10 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                     textStyle={styles.leadingOffer}
                                     value={+fromEth(eth)}
                                 />
+                                <CurrencyText
+                                    textStyle={styles.leadingOffer}
+                                    value={+ethUsd}
+                                />
                                 <Text textStyle={styles.code}>
                                     {ens ? ens.short : 'Loading...'}
                                 </Text>

@@ -44,6 +44,7 @@ const myNuggsQuery = async (
             query(address, orderDirection, searchValue, first, skip),
             'user',
         )) as NL.GraphQL.Fragments.User.Bare;
+
         return !isUndefinedOrNullOrObjectEmpty(result) &&
             !isUndefinedOrNullOrArrayEmpty(result.nuggs)
             ? result.nuggs

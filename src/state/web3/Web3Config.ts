@@ -1,4 +1,5 @@
 import { InjectedConnector } from '@web3-react/injected-connector';
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 
 import { NetworkConnector } from './connectors/NetworkConnector';
 
@@ -43,17 +44,13 @@ export default class Web3Config {
         injected: new InjectedConnector({
             supportedChainIds: Web3Config.supportedChainIds,
         }),
+        walletconnect: new WalletConnectConnector({
+            supportedChainIds: Web3Config.supportedChainIds,
+            rpc: Web3Config.NETWORK_URLS,
+            qrcode: true,
+        }),
     };
     static SUPPORTED_WALLETS: { [key: string]: NL.Redux.Web3.WalletInfo } = {
-        INJECTED: {
-            connector: Web3Config.connectors.injected,
-            name: 'Injected',
-            iconURL: 'injected',
-            description: 'Injected web3 provider.',
-            href: null,
-            color: '#010101',
-            primary: true,
-        },
         METAMASK: {
             connector: Web3Config.connectors.injected,
             name: 'MetaMask',
@@ -61,6 +58,15 @@ export default class Web3Config {
             description: 'Easy-to-use browser extension.',
             href: null,
             color: '#E8831D',
+        },
+        WALLET_CONNECT: {
+            connector: Web3Config.connectors.walletconnect,
+            name: 'WalletConnect',
+            iconURL: 'walletConnect',
+            description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
+            href: null,
+            color: '#4196FC',
+            mobile: true,
         },
     };
 

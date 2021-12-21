@@ -57,7 +57,7 @@ const withdraw = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/withdraw`, async ({ tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance.burn(tokenId);
+        const _pendingtx = await NuggFTHelper.instance.withdrawStake(tokenId);
 
         return {
             success: 'SUCCESS',
@@ -88,7 +88,7 @@ const approveNugg = createAsyncThunk<
 >(`wallet/approveNugg`, async ({ tokenId }, thunkAPI) => {
     try {
         const _pendingtx = await NuggFTHelper.approve(
-            new Address(config.GATSBY_NUGGFT),
+            new Address(config.NUGGFT),
             tokenId,
         );
 
@@ -118,12 +118,11 @@ const claim = createAsyncThunk<
     { tokenId: string; endingEpoch: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/claim`, async ({ tokenId, endingEpoch }, thunkAPI) => {
+>(`wallet/claim`, async ({ tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance.claim(
-            tokenId,
-            endingEpoch,
-        );
+        const _pendingtx = await NuggFTHelper.instance.claim(tokenId);
+
+        console.log("CLAIM??", _pendingtx)
 
         return {
             success: 'SUCCESS',

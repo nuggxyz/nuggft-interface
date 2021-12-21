@@ -22,7 +22,7 @@ export default class ENSHelper {
     static get registrar() {
         if (isUndefinedOrNullOrObjectEmpty(ENSHelper._instance_registrar)) {
             ENSHelper._instance_registrar = new Contract(
-                config.GATSBY_ENS,
+                config.ENS,
                 EnsRegistrar__factory.abi,
                 Web3State.getLibrary(),
             ) as EnsRegistrar;
