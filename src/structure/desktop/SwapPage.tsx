@@ -12,7 +12,6 @@ type Props = {};
 const SwapPage: FunctionComponent<Props> = () => {
     return (
         <div style={styles.container}>
-            <Wallet />
             <div style={styles.secondaryContainer}>
                 <RingAbout />
             </div>
@@ -20,7 +19,7 @@ const SwapPage: FunctionComponent<Props> = () => {
                 <TheRing />
             </div>
             <div style={styles.secondaryContainer}>
-                <AccountStats />
+                <Wallet />
             </div>
         </div>
     );

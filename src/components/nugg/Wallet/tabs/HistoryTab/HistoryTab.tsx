@@ -31,23 +31,8 @@ type Props = { isActive?: boolean };
 
 const HistoryTab: FunctionComponent<Props> = ({ isActive }) => {
     const address = Web3State.select.web3address();
-    const epoch = ProtocolState.select.epoch();
-    const [unclaimedOffers, setUnclaimedOffers] = useState([]);
     const [history, setHistory] = useState([]);
-    const [loadingOffers, setLoadingOffers] = useState(false);
     const [loadingHistory, setLoadingHistory] = useState(false);
-
-    const getUnclaimedOffers = useCallback(async () => {
-        console.log(address);
-        setLoadingOffers(true);
-        if (!isUndefinedOrNullOrStringEmpty(address)) {
-            const offersRes = await unclaimedOffersQuery(address, epoch.id);
-            setUnclaimedOffers(offersRes);
-        } else {
-            setUnclaimedOffers([]);
-        }
-        setLoadingOffers(false);
-    }, [address, epoch]);
 
     const getHistory = useCallback(
         async (addToResult?: boolean) => {
@@ -74,9 +59,7 @@ const HistoryTab: FunctionComponent<Props> = ({ isActive }) => {
     useEffect(() => {
         if (isActive) {
             setLoadingHistory(true);
-            setLoadingOffers(true);
             setTimeout(() => {
-                getUnclaimedOffers();
                 getHistory();
             }, 500);
         }
@@ -84,46 +67,21 @@ const HistoryTab: FunctionComponent<Props> = ({ isActive }) => {
 
     return (
         <div style={styles.container}>
-            {(!isUndefinedOrNullOrArrayEmpty(unclaimedOffers) ||
-                loadingOffers) && (
-                <List
-                    data={unclaimedOffers}
-                    RenderItem={React.memo(
-                        RenderItem,
-                        (prev, props) =>
-                            JSON.stringify(prev.item) ===
-                            JSON.stringify(props.item),
-                    )}
-                    label="Unclaimed"
-                    loading={loadingOffers}
-                    style={styles.list}
-                    extraData={['claim', address]}
-                />
-            )}
-            {(!isUndefinedOrNullOrArrayEmpty(history) || loadingHistory) && (
-                <List
-                    data={history}
-                    RenderItem={React.memo(
-                        RenderItem,
-                        (prev, props) =>
-                            JSON.stringify(prev.item) ===
-                            JSON.stringify(props.item),
-                    )}
-                    label="History"
-                    style={styles.list}
-                    extraData={['history', address]}
-                    loading={loadingHistory}
-                    onScrollEnd={() => getHistory(true)}
-                />
-            )}
-            {isUndefinedOrNullOrArrayEmpty(history) &&
-                isUndefinedOrNullOrArrayEmpty(unclaimedOffers) &&
-                !loadingOffers &&
-                !loadingHistory && (
-                    <Text>
-                        Place some offers on nuggs to claim your winnings!
-                    </Text>
+            <List
+                data={history}
+                RenderItem={React.memo(
+                    RenderItem,
+                    (prev, props) =>
+                        JSON.stringify(prev.item) ===
+                        JSON.stringify(props.item),
                 )}
+                label="History"
+                style={styles.list}
+                extraData={[address]}
+                loading={loadingHistory}
+                onScrollEnd={() => getHistory(true)}
+                listEmptyText="Place some offers on nuggs to claim your winnings!"
+            />
         </div>
     );
 };
@@ -145,7 +103,7 @@ const RenderItem: FunctionComponent<
     }, [item]);
 
     const isWinner = useMemo(() => {
-        return item && extraData[1] === item.swap.leader.id;
+        return item && extraData[0] === item.swap.leader.id;
     }, [item, extraData]);
 
     return (
@@ -162,19 +120,7 @@ const RenderItem: FunctionComponent<
                         Swap {parsedTitle.swap}
                     </Text>
                 </div>
-                {extraData[0] === 'claim' ? (
-                    <Button
-                        textStyle={styles.textWhite}
-                        buttonStyle={styles.renderButton}
-                        label={`Claim your ${isWinner ? 'NUGG' : 'ETH'}`}
-                        onClick={() =>
-                            WalletState.dispatch.claim({
-                                tokenId: parsedTitle.nugg,
-                                endingEpoch: parsedTitle.nugg,
-                            })
-                        }
-                    />
-                ) : isWinner ? (
+                {isWinner ? (
                     <Button
                         buttonStyle={styles.nuggButton}
                         onClick={() =>

@@ -5,7 +5,7 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 
-import myNuggsQuery from './queries/myNuggsQuery';
+import myNuggsQuery from '../wallet/queries/myNuggsQuery';
 import getNuggThumbnailQuery from './queries/getNuggThumbnailQuery';
 import activeNuggsQuery from './queries/activeNuggsQuery';
 import allNuggsQuery from './queries/allNuggsQuery';

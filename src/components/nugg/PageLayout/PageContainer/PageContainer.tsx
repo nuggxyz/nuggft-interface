@@ -21,7 +21,7 @@ const PageContainer: FC<Props> = ({ children }) => {
     return (
         <>
             <NavigationBar />
-            {!isUndefinedOrNullOrStringEmpty(address) && (
+            {/* {!isUndefinedOrNullOrStringEmpty(address) && (
                 <Button
                     hoverStyle={styles.hoverColor}
                     buttonStyle={styles.toggleContainer}
@@ -34,7 +34,7 @@ const PageContainer: FC<Props> = ({ children }) => {
                     }
                     onClick={() => AppState.dispatch.toggleWallet()}
                 />
-            )}
+            )} */}
             {/* <div style={styles.bottomRight}>
                 <ChainIndicator />
             </div> */}

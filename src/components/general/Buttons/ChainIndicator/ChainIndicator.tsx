@@ -65,13 +65,13 @@ const ChainIndicator: FunctionComponent<Props> = () => {
                             style={{ paddingRight: 0.5 + 'rem' }}
                         />
                     ) : (
-                        <>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
                             <ChainIndicatorPulse />
                             <TokenViewer
                                 tokenId={epoch?.id || ''}
                                 style={{ width: '20px', height: '20px' }}
                             />
-                        </>
+                        </div>
                     )
                 }
                 label={epoch?.id + ' | ' + blocksRemaining}
