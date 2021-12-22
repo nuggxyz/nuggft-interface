@@ -65,12 +65,11 @@ export default () => {
 
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(error)) {
-            Web3State.dispatch.setWeb3Status('ERROR');
+        Web3State.dispatch.setWeb3Status('ERROR');
         }
     }, [error]);
 
     useEffect(() => {
-        console.log({ web3address });
         if (!isUndefinedOrNullOrStringEmpty(web3address)) {
             if (!hasBeenSafeActivated) {
                 Web3State.safeActivate(Web3Config.connectors.injected);

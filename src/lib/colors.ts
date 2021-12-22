@@ -39,6 +39,8 @@ const Colors = {
         'linear-gradient(-90deg, #e856d088 0%, #FF687188 100%)',
     gradientRadialTransparent:
         'radial-gradient(50% 50% at 50% 50%, rgb(80, 144, 234, .1) 0%, rgba(80, 144, 234, .34) 100%)',
+    gradientRadialPurpleTransparent:
+        'radial-gradient(50% 50% at 50% 50%, #8A2BE211 0%, #8A2BE266 100%)',
 
     background: 'white',
     shadows: {

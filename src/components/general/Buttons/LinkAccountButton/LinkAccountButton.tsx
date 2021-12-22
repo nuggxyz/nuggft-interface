@@ -3,7 +3,10 @@ import Davatar from '@davatar/react';
 import { useWeb3React } from '@web3-react/core';
 
 import Button from '../Button/Button';
-import { isUndefinedOrNullOrObjectEmpty } from '../../../../lib';
+import {
+    isUndefinedOrNullOrObjectEmpty,
+    shortenAddress,
+} from '../../../../lib';
 import Web3State from '../../../../state/web3';
 import Web3Config from '../../../../state/web3/Web3Config';
 import Loader from '../../Loader/Loader';
@@ -13,6 +16,7 @@ import NuggFTHelper from '../../../../contracts/NuggFTHelper';
 import { EthInt } from '../../../../classes/Fraction';
 import ProtocolState from '../../../../state/protocol';
 import CurrencyText from '../../Texts/CurrencyText/CurrencyText';
+import AppState from '../../../../state/app';
 
 import styles from './LinkAccountButton.styles';
 
@@ -39,13 +43,13 @@ const LinkAccountButton = () => {
         if (status === 'SELECTED') {
             return !isUndefinedOrNullOrObjectEmpty(ens)
                 ? ens.short
-                : 'Loading ENS';
+                : shortenAddress(address).toLowerCase();
         } else if (status === 'ERROR') {
             return 'Error';
         } else if (status === 'PENDING') {
             return 'Check your wallet';
         } else {
-            return 'Connect to nugg.xyz';
+            return 'Connect';
         }
     }, [status, ens]);
 
@@ -57,21 +61,20 @@ const LinkAccountButton = () => {
     }, [status]);
 
     const onClick = useCallback(() => {
+        // AppState.dispatch.setModalOpen({ name: 'Wallet' });
         if (status !== 'SELECTED') {
             Web3State.safeActivate(Web3Config.connectors.injected);
         }
-        if (status === 'SELECTED') {
-            Web3State.deactivate();
-            Web3State.dispatch.clearWeb3Address();
-        }
-    }, [status]);
+        // if (status === 'SELECTED') {
+        //     Web3State.deactivate();
+        //     Web3State.dispatch.clearWeb3Address();
+        // }
+    }, []);
 
     const getRightIcon = useCallback(
         () => (
             <div style={styles.iconWrapper}>
                 {
-                    (status === 'SELECTED' &&
-                        isUndefinedOrNullOrObjectEmpty(ens)) ||
                     status === 'PENDING' ? (
                         <Loader color={Colors.nuggBlueText} />
                     ) : status === 'SELECTED' ? (

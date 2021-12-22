@@ -66,10 +66,15 @@ const ChainIndicator: FunctionComponent<Props> = () => {
                         />
                     ) : (
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <ChainIndicatorPulse />
+                            {/* <ChainIndicatorPulse /> */}
                             <TokenViewer
                                 tokenId={epoch?.id || ''}
-                                style={{ width: '20px', height: '20px' }}
+                                style={{
+                                    width: '35px',
+                                    height: '35px',
+                                    marginTop: '0.2rem',
+                                    margin: '0rem .5rem'
+                                }}
                             />
                         </div>
                     )

@@ -43,9 +43,10 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
                 constants.NUGGDEX_SEARCH_LIST_CHUNK,
                 loanedNuggs.length,
             );
+            console.log(nuggResult);
 
             if (!isUndefinedOrNullOrArrayEmpty(nuggResult)) {
-                setLoanedNuggs((res) => [...res, nuggResult]);
+                setLoanedNuggs((res) => [...res, ...nuggResult]);
             }
         } else {
             setLoanedNuggs([]);
@@ -88,25 +89,12 @@ export default React.memo(MyNuggsTab);
 const RenderItem: FunctionComponent<
     ListRenderItemProps<NL.GraphQL.Fragments.Loan.Bare>
 > = ({ item, index, extraData }) => {
-    const parsedTitle = useMemo(() => {
-        if (!isUndefinedOrNullOrObjectEmpty(item)) {
-            let parsed = item.id.split('-');
-            if (!isUndefinedOrNullOrArrayEmpty(parsed)) {
-                return {
-                    nugg: parsed[0],
-                    swap: parsed[1],
-                };
-            }
-        }
-        return { swap: '', nugg: '' };
-    }, [item]);
-
     return (
         !isUndefinedOrNullOrObjectEmpty(item) && (
             <div key={index} style={styles.render}>
                 <div>
                     <Text textStyle={styles.renderTitle}>
-                        Nugg #{parsedTitle.nugg}
+                        Nugg #{item.nugg?.id}
                     </Text>
                     <Text
                         type="text"

@@ -12,10 +12,11 @@ const styles = NLStyleSheetCreator({
         flexGrow: 2,
         dipaly: 'flex',
         alignItems: 'center',
+        padding: '.1rem 1rem .1rem .5rem',
     },
     normal: {
-        background: Colors.nuggBlueTransparent,
-        color: Colors.nuggBlueText,
+        background: Colors.gradient2Transparent,
+        color: 'white', //Colors.nuggBlueText,
     },
     warning: {
         background: Colors.nuggRedTransparent,

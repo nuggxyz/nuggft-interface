@@ -149,7 +149,7 @@ const claim = createAsyncThunk<
 
 const initLoan = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { tokenId: string; endingEpoch: string },
+    { tokenId: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/claim`, async ({ tokenId }, thunkAPI) => {

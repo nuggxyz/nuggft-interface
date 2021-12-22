@@ -66,7 +66,7 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                     onClick={() =>
                         isApproved
                             ? stableType === 'Loan'
-                                ? TokenState.dispatch.initSale({
+                                ? WalletState.dispatch.initLoan({
                                       tokenId: stableId,
                                   })
                                 : WalletState.dispatch.withdraw({
