@@ -39,7 +39,7 @@ const styles = NLStyleSheetCreator({
         padding: '0rem 1rem',
         position: 'relative',
         display: 'flex',
-        width: '30%',
+        width: '50%',
         justifyContent: 'flex-end',
         alignItems: 'center',
         pointerEvents: 'none',

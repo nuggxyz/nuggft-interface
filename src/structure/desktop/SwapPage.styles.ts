@@ -17,6 +17,7 @@ const styles = NLStyleSheetCreator({
     },
     secondaryContainer: {
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         height: '100%',

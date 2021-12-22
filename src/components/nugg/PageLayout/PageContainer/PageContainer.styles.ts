@@ -1,6 +1,5 @@
 import Colors from '../../../../lib/colors';
 import Layout from '../../../../lib/layout';
-
 import { NLStyleSheetCreator } from '../../../../lib/index';
 
 const styles = NLStyleSheetCreator({
@@ -12,10 +11,10 @@ const styles = NLStyleSheetCreator({
         cursor: 'pointer',
         display: 'flex',
     },
-    bottomRight: {
+    bottomLeft: {
         position: 'absolute',
         bottom: '1rem',
-        right: '1rem',
+        left: '1rem',
         display: 'flex',
         cursor: 'pointer',
     },

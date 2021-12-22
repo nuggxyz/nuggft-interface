@@ -32,7 +32,7 @@ import AppState from '../../../../../state/app';
 type Props = {};
 
 const MintTab: FunctionComponent<Props> = () => {
-    const userShares = WalletState.select.userShares();
+    // const userShares = WalletState.select.userShares();
     const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
     const address = Web3State.select.web3address();
     const epoch = ProtocolState.select.epoch();
@@ -51,8 +51,7 @@ const MintTab: FunctionComponent<Props> = () => {
             );
 
             if (!isUndefinedOrNullOrArrayEmpty(nuggResult)) {
-                const ids = nuggResult.map((my) => my.id);
-                setMyNuggs((res) => [...res, ...ids]);
+                setMyNuggs((res) => [...res, ...nuggResult]);
             }
         } else {
             setMyNuggs([]);
@@ -61,6 +60,7 @@ const MintTab: FunctionComponent<Props> = () => {
     }, [address, epoch, myNuggs]);
 
     useEffect(() => {
+        console.log('address changing')
         setLoadingNuggs(true);
         setTimeout(() => {
             getMyNuggs();
@@ -72,13 +72,13 @@ const MintTab: FunctionComponent<Props> = () => {
             <div style={styles.statisticContainer}>
                 <TextStatistic
                     label="Nuggs"
-                    value={'' + userShares}
+                    value={'' + myNuggs.length}
                     // style={{ background: Colors.gradient3 }}
                     // labelColor="white"
                 />
                 <NumberStatistic
                     label="TVL"
-                    value={new EthInt(`${+valuePerShare * userShares}`)}
+                    value={new EthInt(`${+valuePerShare * myNuggs.length}`)}
                     image="eth"
                     // style={{ background: Colors.gradient3 }}
                     // labelColor="white"
@@ -103,7 +103,7 @@ const MintTab: FunctionComponent<Props> = () => {
                 }
             />
             <List
-                data={[{ id: '3002' }]} //myNuggs}
+                data={myNuggs}
                 RenderItem={React.memo(
                     RenderItem,
                     (prev, props) =>
@@ -111,7 +111,7 @@ const MintTab: FunctionComponent<Props> = () => {
                         JSON.stringify(props.item),
                 )}
                 label="My Nuggs"
-                loading={loadingNuggs}
+                loading={loadingNuggs && isUndefinedOrNullOrArrayEmpty(myNuggs)}
                 style={listStyle.list}
                 extraData={[address]}
                 listEmptyText="No nuggs yet!"
@@ -126,6 +126,7 @@ export default MintTab;
 const RenderItem: FunctionComponent<
     ListRenderItemProps<NL.GraphQL.Fragments.General.Id>
 > = ({ item, index, extraData }) => {
+    console.log(item);
     return (
         !isUndefinedOrNullOrObjectEmpty(item) && (
             <div key={index} style={listStyle.render}>

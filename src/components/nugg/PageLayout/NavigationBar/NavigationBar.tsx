@@ -22,7 +22,6 @@ type Props = {
 const NavigationBar: FC<Props> = () => {
     // const [ref, isHovering] = useOnHover();
     const view = AppState.select.view();
-    const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
     const onClick = useCallback(
         () =>
             view === 'Search'
@@ -45,10 +44,14 @@ const NavigationBar: FC<Props> = () => {
                 <NuggDexSearchBar />
             </div>
             <div
-                style={{ width: '30%', display: 'flex', alignItems: 'center' }}>
+                style={{
+                    whiteSpace: 'nowrap',
+                    display: 'flex',
+                    alignItems: 'center',
+                }}>
                 <ChainIndicator />
             </div>
-            <div
+            {/* <div
                 style={{
                     zIndex: 1000,
                     display: 'flex',
@@ -72,7 +75,7 @@ const NavigationBar: FC<Props> = () => {
                     image="eth"
                     value={new EthInt(valuePerShare).decimal.toNumber()}
                 />
-            </div>
+            </div> */}
             <div style={styles.linkAccountContainer}>
                 <LinkAccountButton />
             </div>

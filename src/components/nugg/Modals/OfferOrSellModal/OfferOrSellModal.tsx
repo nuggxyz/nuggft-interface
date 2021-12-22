@@ -11,21 +11,26 @@ import SwapState from '../../../../state/swap';
 import TokenState from '../../../../state/token';
 import TransactionState from '../../../../state/transaction';
 import WalletState from '../../../../state/wallet';
+import Web3State from '../../../../state/web3';
 import Button from '../../../general/Buttons/Button/Button';
 import CurrencyInput from '../../../general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '../../../general/Texts/Text/Text';
 import TokenViewer from '../../TokenViewer';
 
-import styles from './OffeOrSellrModal.styles';
+import styles from './OffeOrSellModal.styles';
 
 type Props = {};
 
 const OfferOrSellModal: FunctionComponent<Props> = () => {
     const [amount, setAmount] = useState('');
+    const address = Web3State.select.web3address();
     const toggle = TransactionState.select.toggleCompletedTxn();
-    const minimum = SwapState.select.eth();
     const nugg = SwapState.select.nugg();
-    console.log(nugg);
+
+    const resArr = useAsyncState(
+        () => nugg && NuggFTHelper.instance.valueForDelegate(nugg.id, address),
+        [address, nugg],
+    );
 
     const { targetId, type } = AppState.select.modalData();
 
@@ -54,9 +59,29 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         } else setIsApproved(true);
     }, [targetId, toggle, isApproved]);
 
+    useEffect(() => {
+        if (
+            isUndefinedOrNullOrStringEmpty(amount) &&
+            resArr &&
+            resArr.nextSwapAmount &&
+            resArr.userCurrentOffer
+        ) {
+            // ((nextOfferMin / 10**13) + 1) * 10**13
+            setAmount(
+                fromEth(
+                    resArr?.nextSwapAmount
+                        .sub(resArr?.userCurrentOffer)
+                        .div(10 ** 13)
+                        .add(1)
+                        .mul(10 ** 13),
+                ),
+            );
+        }
+    }, [resArr]);
+
     return (
         <div style={styles.container}>
-            <TokenViewer tokenId={nugg.id} showLabel labelColor="white" />
+            <TokenViewer tokenId={nugg?.id} showLabel labelColor="white" />
             <div style={styles.inputContainer}>
                 <CurrencyInput
                     style={styles.input}
@@ -69,8 +94,19 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     className="placeholder-white"
                 />
                 <Text textStyle={styles.text}>
-                    Offer must be greater than {minimum ? fromEth(minimum) : 0}{' '}
-                    ETH
+                    {resArr && resArr.canDelegate
+                        ? `Offer must be greater than ${
+                              resArr?.nextSwapAmount
+                                  ? fromEth(
+                                        resArr?.nextSwapAmount
+                                            .sub(resArr?.userCurrentOffer)
+                                            .div(10 ** 13)
+                                            .add(1)
+                                            .mul(10 ** 13),
+                                    )
+                                  : 0
+                          } ETH`
+                        : 'Error'}
                 </Text>
             </div>
             <div style={styles.subContainer}>
@@ -82,14 +118,14 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                                   stableType === 'StartSale'
                                       ? 'Sell'
                                       : 'Place offer for'
-                              } Nugg #${stableId || nugg.id}`
-                            : `Approve Nugg #${stableId || nugg.id}`
+                              } Nugg #${stableId || nugg?.id}`
+                            : `Approve Nugg #${stableId || nugg?.id}`
                     }
                     onClick={() =>
                         isApproved
                             ? stableType === 'Offer'
                                 ? SwapState.dispatch.placeOffer({
-                                      tokenId: nugg.id,
+                                      tokenId: nugg?.id,
                                       amount: amount,
                                   })
                                 : TokenState.dispatch.initSale({
