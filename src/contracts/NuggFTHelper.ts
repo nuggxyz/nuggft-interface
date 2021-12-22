@@ -128,6 +128,6 @@ export default class NuggFTHelper extends ContractHelper {
         return await this.instance.balanceOf(address.hash);
     }
     public static async ethBalance(): Promise<BigNumber> {
-        return await this.instance.signer.getBalance();
+        return await this.instance?.signer?.getBalance();
     }
 }

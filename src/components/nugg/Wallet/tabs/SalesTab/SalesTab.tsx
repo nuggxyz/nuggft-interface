@@ -18,7 +18,7 @@ import Web3State from '../../../../../state/web3';
 import Button from '../../../../general/Buttons/Button/Button';
 import Text from '../../../../general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '../../../../general/List/List';
-import styles from '../HistoryTab/HistoryTab.styles';
+import styles from '../HistoryTab.styles';
 import Colors from '../../../../../lib/colors';
 import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import constants from '../../../../../lib/constants';

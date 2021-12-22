@@ -31,7 +31,13 @@ declare namespace NL.Redux.App {
 
     type Views = 'Swap' | 'Search';
 
-    type Modals = 'Burn' | 'Offer' | 'StartSale';
+    type Modals =
+        | 'Burn'
+        | 'Offer'
+        | 'StartSale'
+        | 'Loan'
+        | 'LoanOrBurn'
+        | 'OfferOrSell';
 
     type ModalsData = {
         backgroundStyle?: import('react').CSSProperties;

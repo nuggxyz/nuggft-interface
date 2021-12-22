@@ -13,29 +13,38 @@ const styles = NLStyleSheetCreator({
     subContainer: {
         width: '100%',
     },
+    inputContainer: {
+        display: 'flex',
+        width: '100%',
+        alignItems: 'flex-end',
+        padding: '.5rem',
+    },
     input: {
         paddingTop: '1.5rem',
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: '100%',
+        width: '50%',
         color: 'white',
     },
     button: {
         borderRadius: Layout.borderRadius.mediumish,
     },
     heading: {
-        width: '50%',
+        width: '100%',
         marginTop: 0,
     },
     inputCurrency: {
-        textAlign: 'right',
+        textAlign: 'left',
+        width: '100%',
     },
     text: {
         fontFamily: Layout.font.inter.regular,
         color: Colors.transparentWhite,
         textAlign: 'right',
-        marginBottom: '1rem',
+        width: '50%',
+        // marginBottom: '1rem',
         fontSize: FontSize.h6,
     },
 });

@@ -18,7 +18,7 @@ import Web3State from '../../../../../state/web3';
 import Button from '../../../../general/Buttons/Button/Button';
 import Text from '../../../../general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '../../../../general/List/List';
-import styles from '../HistoryTab/HistoryTab.styles';
+import styles from '../HistoryTab.styles';
 import Colors from '../../../../../lib/colors';
 
 type Props = { isActive?: boolean };
@@ -96,7 +96,7 @@ const RenderItem: FunctionComponent<
             <div key={index} style={styles.render}>
                 <div>
                     <Text textStyle={styles.renderTitle}>
-                        NuggFT #{parsedTitle.nugg}
+                        Nugg #{parsedTitle.nugg}
                     </Text>
                     <Text
                         type="text"

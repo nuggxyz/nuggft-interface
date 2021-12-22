@@ -14,11 +14,11 @@ import {
 } from '../../../../lib';
 import useOnClickOutside from '../../../../hooks/useOnClickOutside';
 import usePrevious from '../../../../hooks/usePrevious';
-import OfferModal from '../OfferModal/OfferModal';
+import OfferOrSellModal from '../OfferOrSellModal/OfferOrSellModal';
 import AppState from '../../../../state/app';
-import StartSaleModal from '../StartSaleModal/StartSaleModal';
+import LoanOrBurnModal from '../LoanOrBurn/LoanOrBurnModal';
 import useAnimateOverlay from '../../../../hooks/useAnimateOverlay';
-import BurnModal from '../BurnModal/BurnModal';
+import BurnModal from '../BurnModal_DEPRECATED/BurnModal';
 
 import styles from './Modal.styles';
 
@@ -84,9 +84,11 @@ const Modal: FunctionComponent<Props> = () => {
                 }}>
                 <animated.div style={containerBackgroundStyle} />
                 <animated.div style={containerStyle} ref={node}>
-                    {currentModal === 'Offer' ? <OfferModal /> : null}
-                    {currentModal === 'StartSale' ? <StartSaleModal /> : null}
-                    {currentModal === 'Burn' ? <BurnModal /> : null}
+                    {currentModal === 'OfferOrSell' ? (
+                        <OfferOrSellModal />
+                    ) : null}
+                    {currentModal === 'LoanOrBurn' ? <LoanOrBurnModal /> : null}
+                    {/* {currentModal === 'Burn' ? <BurnModal /> : null} */}
                 </animated.div>
             </div>
         </animated.div>

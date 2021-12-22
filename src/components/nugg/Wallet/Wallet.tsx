@@ -14,12 +14,9 @@ import HappyTabber, {
 } from '../../general/HappyTabber/HappyTabber';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
-import HistoryTab from './tabs/HistoryTab/HistoryTab';
 import LoansTab from './tabs/LoansTab/LoansTab';
 import MintTab from './tabs/MintTab/MintTab';
-import MyNuggsTab from './tabs/MyNuggsTab/MyNuggsTab';
 import SalesTab from './tabs/SalesTab/SalesTab';
-import SwapTab from './tabs/SwapTab_DEPRECATED/SwapTab';
 import styles from './Wallet.styles';
 
 type Props = {};
@@ -46,8 +43,6 @@ const Wallet: FunctionComponent<Props> = () => {
         () => historyQuery(address, 1, 0),
         [address, block],
     );
-
-    console.log({ history });
     // const spring = useSpring({
     //     to: {
     //         ...styles.wallet,
@@ -63,17 +58,9 @@ const Wallet: FunctionComponent<Props> = () => {
             comp: ({ isActive }) => <MintTab />,
         },
         {
-            label: 'Nuggs',
-            comp: ({ isActive }) => <MyNuggsTab isActive={isActive} />,
-        },
-        {
             label: 'Claims',
             comp: ({ isActive }) => <ClaimTab isActive={isActive} />,
         },
-        // {
-        //     label: 'History',
-        //     comp: ({ isActive }) => <HistoryTab isActive={isActive} />,
-        // },
         {
             label: 'Loans',
             comp: ({ isActive }) => <LoansTab isActive={isActive} />,

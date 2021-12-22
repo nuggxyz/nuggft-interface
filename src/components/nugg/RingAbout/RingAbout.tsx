@@ -93,7 +93,10 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                     textStyle={styles.buttonText}
                     onClick={() =>
                         AppState.dispatch.setModalOpen({
-                            name: 'Offer',
+                            name: 'OfferOrSell',
+                            modalData: {
+                                type: 'Offer',
+                            },
                         })
                     }
                     label="Place offer..."
