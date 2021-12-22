@@ -14,6 +14,7 @@ import Web3State from '../../../../state/web3';
 import AppState from '../../../../state/app';
 import Button from '../Button/Button';
 import Layout from '../../../../lib/layout';
+import TokenViewer from '../../../nugg/TokenViewer';
 
 import styles from './ChainIndicator.styles';
 import ChainIndicatorPulse from './ChainIndicatorPulse';
@@ -64,7 +65,13 @@ const ChainIndicator: FunctionComponent<Props> = () => {
                             style={{ paddingRight: 0.5 + 'rem' }}
                         />
                     ) : (
-                        <ChainIndicatorPulse />
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <ChainIndicatorPulse />
+                            <TokenViewer
+                                tokenId={epoch?.id || ''}
+                                style={{ width: '20px', height: '20px' }}
+                            />
+                        </div>
                     )
                 }
                 label={epoch?.id + ' | ' + blocksRemaining}
@@ -73,4 +80,4 @@ const ChainIndicator: FunctionComponent<Props> = () => {
     );
 };
 
-export default ChainIndicator;
+export default React.memo(ChainIndicator);

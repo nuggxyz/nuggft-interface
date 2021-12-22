@@ -48,10 +48,11 @@ declare namespace NL.GraphQL {
     type Protocol<T extends Scalars> = {
         __typename?: 'Protocol';
         id: T['ID'];
-        currentBlock: T['BigNumber'];
         init: T['Boolean'];
+        lastBlock: T['BigNumber'];
         epoch: Epoch<T>;
         totalSwaps: T['BigNumber'];
+        totalLoans: T['BigNumber'];
         totalUsers: T['BigNumber'];
         totalNuggs: T['BigNumber'];
         totalItems: T['BigNumber'];
@@ -61,19 +62,19 @@ declare namespace NL.GraphQL {
         xnuggUser: User<T>;
         nuggftUser: User<T>;
         nullUser: User<T>;
-        xnuggTotalSupply: T['EthInt'];
-        xnuggTotalEth: T['EthInt'];
-        nuggftTotalEth: T['EthInt'];
+        xnuggTotalSupply: T['BigNumber'];
+        xnuggTotalEth: T['BigNumber'];
+        nuggftTotalEth: T['BigNumber'];
         nuggftStakedUsdPerShare: T['BigNumber'];
         nuggftStakedUsd: T['BigNumber'];
         nuggftStakedEthPerShare: T['BigNumber'];
         nuggftStakedEth: T['BigNumber'];
         nuggftStakedShares: T['BigNumber'];
-        priceUsdcWeth: T['EthInt'];
-        priceWethXnugg: T['EthInt'];
-        tvlEth: T['EthInt'];
-        tvlUsd: T['EthInt'];
-        defaultActiveNugg: Nugg<T>;
+        priceUsdcWeth: T['BigNumber'];
+        priceWethXnugg: T['BigNumber'];
+        tvlEth: T['BigNumber'];
+        tvlUsd: T['BigNumber'];
+        defaultActiveNugg?: Maybe<Nugg<T>>;
         activeNuggs: Array<Nugg<T>>;
         activeItems: Array<NuggItem<T>>;
     };
@@ -154,11 +155,14 @@ declare namespace NL.GraphQL {
     type User<T extends Scalars> = {
         __typename?: 'User';
         id: T['ID'];
-        xnugg: T['EthInt'];
-        ethin: T['EthInt'];
-        ethout: T['EthInt'];
+        xnugg: T['BigNumber'];
+        shares: T['BigNumber'];
+        ethin: T['BigNumber'];
+        ethout: T['BigNumber'];
         nuggs: Array<Nugg<T>>;
         offers: Array<Offer<T>>;
+        loans: Array<Loan<T>>;
+        swaps: Array<Swap<T>>;
     };
 
     type ItemSwap<T extends Scalars> = {
@@ -189,10 +193,28 @@ declare namespace NL.GraphQL {
         block: _Block_;
         deployment: string;
         hasIndexingError: boolean;
-    }
+    };
 
-    type _Block_ ={
+    type _Block_ = {
         hash: string;
         number: number;
-    }
+    };
+
+    type Loan<T extends Scalars> = {
+        __typename?: 'Loan';
+        id: T['ID'];
+        nugg: Nugg<T>;
+        user: User<T>;
+        epoch: Epoch<T>;
+        endingEpoch: T['BigNumber'];
+        feeEth: T['BigNumber'];
+        feeUsd: T['BigNumber'];
+        protocol?: Maybe<Protocol<T>>;
+        liquidated: T['Boolean'];
+        liquidatedBy?: Maybe<User<T>>;
+        liquidatedForEth: T['BigNumber'];
+        liquidatedForUsd: T['BigNumber'];
+        eth: T['BigNumber'];
+        ethUsd: T['BigNumber'];
+    };
 }

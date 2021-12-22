@@ -1,3 +1,4 @@
+type base = import('./interfaces').BaseTransactionInfo;
 declare namespace NL.Redux.Transaction {
     interface Details {
         hash: string;
@@ -6,10 +7,10 @@ declare namespace NL.Redux.Transaction {
         addedTime: number;
         confirmedTime?: number;
         from: string;
-        info: Info;
+        info: base;
     }
 
-    interface Response<T extends Info> {
+    interface Response<T extends base> {
         hash: string;
         receipt?: SerializableTransactionReceipt;
         response: TransactionResponse;
@@ -71,79 +72,7 @@ declare namespace NL.Redux.Transaction {
         | 'TX_EXISTS'
         | 'UNKNOWN';
 
-    interface Info {}
-
     interface TxThunkSuccess<T> extends PendingMiddlwareTx {
         success: T;
-    }
-
-    interface ApproveInfo extends Info {
-        tokenAddress: string;
-        spender: string;
-    }
-
-    interface StakeDepositInfo extends Info {
-        currency: Currency;
-        amount: EthInt;
-        // account: string;
-    }
-    interface StakeWithdrawInfo extends Info {
-        currency: Currency;
-        amount: EthInt;
-    }
-
-    interface StakeCompoundInfo extends Info {
-        // account: string;
-    }
-
-    interface SwapOfferInfo extends Info {
-        currency: Currency;
-        amount: EthInt;
-        swapId: number;
-        account: Address;
-    }
-
-    interface SwapClaimInfo extends Info {
-        currency: Currency;
-        amount: EthInt;
-        swapId: number;
-        presumedWinner: boolean;
-        account: Address;
-    }
-
-    interface SubmitSwapInfo extends Info {
-        length: BigNumberish;
-        floor: EthInt;
-    }
-
-    interface SellerStopSaleInfo extends Info {
-        saleId: BigNumberish;
-    }
-    interface SellerClaimSaleInfo extends Info {
-        saleId: BigNumberish;
-        currency: Currency;
-    }
-
-    interface ERC20ApprovalInfo extends Info {
-        erc20: Address;
-        spender: Address;
-        amount: EthInt;
-    }
-
-    interface ERC721ApprovalInfo extends Info {
-        erc721: Address;
-        spender: Address;
-        tokenId: string;
-    }
-
-    interface SubmitOfferInfo extends Info {
-        nft: NL.Address;
-        tokenid: BigNumber;
-        amount: EthInt;
-    }
-
-    interface SubmitClaimInfo extends Info {
-        nft: NL.Address;
-        tokenid: BigNumber;
     }
 }

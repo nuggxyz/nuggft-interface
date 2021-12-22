@@ -28,7 +28,7 @@ import activeNuggsQuery from '../../../../../state/nuggdex/queries/activeNuggsQu
 import constants from '../../../../../lib/constants';
 import ProtocolState from '../../../../../state/protocol';
 import allNuggsQuery from '../../../../../state/nuggdex/queries/allNuggsQuery';
-import myNuggsQuery from '../../../../../state/nuggdex/queries/myNuggsQuery';
+import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import Web3State from '../../../../../state/web3';
 
 import NuggListRenderItem from './NuggListRenderItem';

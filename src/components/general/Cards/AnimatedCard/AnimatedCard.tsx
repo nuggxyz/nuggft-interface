@@ -36,4 +36,4 @@ const AnimatedCard: FunctionComponent<React.PropsWithChildren<{}>> = ({
     );
 };
 
-export default AnimatedCard;
+export default React.memo(AnimatedCard);

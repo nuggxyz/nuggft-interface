@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Davatar from '@davatar/react';
 import { useWeb3React } from '@web3-react/core';
 
@@ -9,6 +9,10 @@ import Web3Config from '../../../../state/web3/Web3Config';
 import Loader from '../../Loader/Loader';
 import Colors from '../../../../lib/colors';
 import NLStaticImage from '../../NLStaticImage';
+import NuggFTHelper from '../../../../contracts/NuggFTHelper';
+import { EthInt } from '../../../../classes/Fraction';
+import ProtocolState from '../../../../state/protocol';
+import CurrencyText from '../../Texts/CurrencyText/CurrencyText';
 
 import styles from './LinkAccountButton.styles';
 
@@ -28,6 +32,7 @@ const Identicon = () => {
 const LinkAccountButton = () => {
     const address = Web3State.select.web3address();
     const status = Web3State.select.web3status();
+    const block = ProtocolState.select.currentBlock();
     const ens = Web3State.hook.useEns(address);
 
     const buttonLabel = useMemo(() => {
@@ -53,7 +58,7 @@ const LinkAccountButton = () => {
 
     const onClick = useCallback(() => {
         if (status !== 'SELECTED') {
-            // Web3State.safeActivate(Web3Config.connectors.injected);
+            Web3State.safeActivate(Web3Config.connectors.injected);
         }
         if (status === 'SELECTED') {
             Web3State.deactivate();
@@ -80,9 +85,22 @@ const LinkAccountButton = () => {
         [status, ens],
     );
 
+    const [balance, setBalance] = useState(0);
+
+    const getEthBalance = useCallback(async () => {
+        setBalance(
+            new EthInt(await NuggFTHelper.ethBalance()).decimal.toNumber(),
+        );
+    }, [address]);
+
+    useEffect(() => {
+        getEthBalance();
+    }, [block]);
+
     return (
         <>
-            <>
+            {address && <CurrencyText image="eth" value={balance} />}
+            {/* <>
                 {Object.values(Web3Config.SUPPORTED_WALLETS).map(
                     (walletObject) =>
                         walletObject.name !== 'MetaMask' ||
@@ -105,7 +123,7 @@ const LinkAccountButton = () => {
                             />
                         ) : null,
                 )}
-            </>
+            </> */}
             <Button
                 buttonStyle={buttonStyle}
                 textStyle={styles.text}
@@ -117,4 +135,4 @@ const LinkAccountButton = () => {
     );
 };
 
-export default LinkAccountButton;
+export default React.memo(LinkAccountButton);

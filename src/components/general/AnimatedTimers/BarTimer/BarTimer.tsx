@@ -48,4 +48,4 @@ const AnimatedBarTimer: FunctionComponent<Props> = ({
     );
 };
 
-export default AnimatedBarTimer;
+export default React.memo(AnimatedBarTimer);

@@ -44,6 +44,7 @@ type Props = {
     style?: CSSProperties;
     onScroll?: RefCallback<any>;
     selected?: any;
+    listEmptyText?: string;
 };
 
 const List: FunctionComponent<Props> = ({
@@ -59,6 +60,7 @@ const List: FunctionComponent<Props> = ({
     style,
     onScroll,
     selected,
+    listEmptyText,
 }) => {
     const ref = useOnScroll(onScroll);
     const containerStyle = useMemo(() => {
@@ -95,11 +97,11 @@ const List: FunctionComponent<Props> = ({
                         justifyContent: 'center',
                     }}>
                     <Text weight="light" textStyle={styles.noItems}>
-                        No items to display...
+                        {listEmptyText || 'No items to display...'}
                     </Text>
                 </div>
             ),
-        [data, action, extraData, RenderItem],
+        [data, action, extraData, RenderItem, listEmptyText],
     );
 
     const Loading = useCallback(
@@ -139,7 +141,7 @@ const List: FunctionComponent<Props> = ({
     );
 };
 
-export default List;
+export default React.memo(List);
 
 const EndOfListAnchor = ({ rootRef, onScrollEnd, loading }) => {
     const [ref, isVisible] = useIsVisible(rootRef.current, '10px');

@@ -57,10 +57,12 @@ export const swapBare = gql`
 export const swapThumbnail = gql`
     {
         id
+        endingEpoch
         eth
         ethUsd
         owner ${idFragment}
         leader ${idFragment}
+        nugg ${idFragment}
     }
 `;
 

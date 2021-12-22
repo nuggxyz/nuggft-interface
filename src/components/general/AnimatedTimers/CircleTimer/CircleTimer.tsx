@@ -62,34 +62,34 @@ const CircleTimer: FunctionComponent<Props> = ({
             : 0;
     }, [stateRemaining, duration, timerCircleRadius]);
 
-    const [previousTo, setPreviousTo] = useState(to);
+    // const [previousTo, setPreviousTo] = useState(to);
 
-    const customConfig = useMemo(
-        () =>
-            !isUndefinedOrNullOrStringEmpty(staticColor) ||
-            isUndefinedOrNullOrNotNumber(previousTo) ||
-            to < previousTo ||
-            Math.abs(previousTo - to) > jumpThreshold
-                ? config.molasses
-                : { duration: blocktime },
-        [to, previousTo, blocktime, jumpThreshold, staticColor],
-    );
+    // const customConfig = useMemo(
+    //     () =>
+    //         !isUndefinedOrNullOrStringEmpty(staticColor) ||
+    //         isUndefinedOrNullOrNotNumber(previousTo) ||
+    //         to < previousTo ||
+    //         Math.abs(previousTo - to) > jumpThreshold
+    //             ? config.molasses
+    //             : { duration: blocktime },
+    //     [to, previousTo, blocktime, jumpThreshold, staticColor],
+    // );
 
     const { x } = useSpring({
         to: {
             x: to,
         },
-        from: {
-            x: previousTo,
-        },
-        onRest: () => {
-            if (isUndefinedOrNullOrStringEmpty(staticColor)) {
-                setPreviousTo(to);
-                const val = stateRemaining - 1 > 0 ? stateRemaining - 1 : 0;
-                setStateRemaining(val);
-            }
-        },
-        config: customConfig,
+        // from: {
+        //     x: previousTo,
+        // },
+        // onRest: () => {
+        //     if (isUndefinedOrNullOrStringEmpty(staticColor)) {
+        //         setPreviousTo(to);
+        //         const val = stateRemaining - 1 > 0 ? stateRemaining - 1 : 0;
+        //         setStateRemaining(val);
+        //     }
+        // },
+        config: config.molasses,
     });
 
     const shadowColor = useMemo(() => {
@@ -108,7 +108,7 @@ const CircleTimer: FunctionComponent<Props> = ({
     return (
         <div style={{ ...style, ...styles.container }}>
             <div style={styles.childrenContainer}>{children}</div>
-            {/* <div
+            <div
                 style={{
                     filter: `drop-shadow(0px 6px 15px ${shadowColor}`,
                     width: '100%',
@@ -133,9 +133,9 @@ const CircleTimer: FunctionComponent<Props> = ({
                         strokeLinecap="round"
                     />
                 </animated.svg>
-            </div> */}
+            </div>
         </div>
     );
 };
 
-export default CircleTimer;
+export default React.memo(CircleTimer);

@@ -16,6 +16,10 @@ import {
     INuggFT__factory,
 } from '../typechain';
 import { Svg } from '../classes/Svg';
+import {
+    TokenApproveInfo,
+    TransactionType,
+} from '../state/transaction/interfaces';
 
 import ContractHelper from './abstract/ContractHelper';
 
@@ -72,7 +76,7 @@ export default class NuggFTHelper extends ContractHelper {
                     config.NUGGFT,
                     BigNumber.from(tokenId),
                     Address.ZERO.hash,
-                    33,
+                    45,
                     1,
                 );
 
@@ -94,9 +98,7 @@ export default class NuggFTHelper extends ContractHelper {
     public static async approve(
         spender: Address,
         tokenId: string,
-    ): Promise<
-        NL.Redux.Transaction.Response<NL.Redux.Transaction.ERC721ApprovalInfo>
-    > {
+    ): Promise<NL.Redux.Transaction.Response<TokenApproveInfo>> {
         let response = await this.instance
             .connect(this.instance.signer)
             .approve(spender.hash, tokenId);
@@ -107,8 +109,9 @@ export default class NuggFTHelper extends ContractHelper {
             from: response.from,
             info: {
                 tokenId,
-                spender,
-                erc721: new Address(this.instance.address),
+                type: TransactionType.TOKEN_APPROVE,
+                // spender,
+                // erc721: new Address(this.instance.address),
             },
         };
     }
@@ -119,5 +122,12 @@ export default class NuggFTHelper extends ContractHelper {
     public static async approval(tokenId: string): Promise<Address> {
         let response = await this.instance.getApproved(tokenId);
         return new Address(response);
+    }
+
+    public static async balanceOf(address: Address): Promise<BigNumber> {
+        return await this.instance.balanceOf(address.hash);
+    }
+    public static async ethBalance(): Promise<BigNumber> {
+        return await this.instance?.signer?.getBalance();
     }
 }

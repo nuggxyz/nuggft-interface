@@ -26,4 +26,4 @@ const Text: FunctionComponent<TextProps> = ({
     return <div style={style}>{children}</div>;
 };
 
-export default Text;
+export default React.memo(Text);

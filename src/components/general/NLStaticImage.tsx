@@ -29,4 +29,4 @@ const NLStaticImage: FunctionComponent<Props> = ({ image }) => {
     return img;
 };
 
-export default NLStaticImage;
+export default React.memo(NLStaticImage);

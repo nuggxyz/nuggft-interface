@@ -42,9 +42,7 @@ const StatisticsWrapper: FC<StatisticsProps> = ({
                 </Text>
             )}
             <div style={{ display: 'flex' }}>
-                {!isUndefinedOrNullOrStringEmpty(image) && (
-                    <NLStaticImage image={image} />
-                )}
+                {!isUndefinedOrNullOrStringEmpty(image) && ''}
                 {children}
             </div>
         </div>

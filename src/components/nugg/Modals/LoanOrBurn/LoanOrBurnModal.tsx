@@ -12,11 +12,11 @@ import WalletState from '../../../../state/wallet';
 import TokenState from '../../../../state/token';
 import { fromEth } from '../../../../lib/conversion';
 
-import styles from './StartSaleModal.styles';
+import styles from './LoanOrBurn.styles';
 
 type Props = {};
 
-const SwapModal: FunctionComponent<Props> = () => {
+const LoanOrBurnModal: FunctionComponent<Props> = () => {
     const shareValue = ProtocolState.select.nuggftStakedEthPerShare();
     const toggle = TransactionState.select.toggleCompletedTxn();
     const { targetId, type } = AppState.select.modalData();
@@ -42,34 +42,30 @@ const SwapModal: FunctionComponent<Props> = () => {
         }
     }, [targetId, toggle, isApproved]);
 
+    console.log(stableId);
     return (
         <div style={styles.container}>
             <Text textStyle={styles.textWhite}>
-                {stableType === 'StartSale' ? 'Sell' : 'Withdraw'} your NuggFT
+                {stableType === 'Loan' ? 'Loan' : 'Burn'} your Nugg
             </Text>
             <TokenViewer tokenId={stableId} />
 
             <div style={{ width: '100%' }}>
                 <Text type="text" size="smaller" textStyle={styles.text}>
-                    {stableType === 'StartSale'
-                        ? 'The starting price will be '
-                        : 'You will receieve '}
-                    {(+fromEth(shareValue)).toFixed(4)} ETH
+                    You will receive {(+fromEth(shareValue)).toFixed(4)} ETH
                 </Text>
                 <Button
                     buttonStyle={styles.button}
                     label={
                         isApproved
                             ? `${
-                                  stableType === 'StartSale'
-                                      ? 'Sell'
-                                      : 'Withdraw'
-                              } NuggFT #${stableId}`
-                            : `Approve NuggFT #${stableId}`
+                                  stableType === 'Loan' ? 'Loan' : 'Burn'
+                              } Nugg #${stableId}`
+                            : `Approve Nugg #${stableId}`
                     }
                     onClick={() =>
                         isApproved
-                            ? stableType === 'StartSale'
+                            ? stableType === 'Loan'
                                 ? TokenState.dispatch.initSale({
                                       tokenId: stableId,
                                   })
@@ -86,4 +82,4 @@ const SwapModal: FunctionComponent<Props> = () => {
     );
 };
 
-export default SwapModal;
+export default LoanOrBurnModal;

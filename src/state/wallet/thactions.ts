@@ -122,7 +122,39 @@ const claim = createAsyncThunk<
     try {
         const _pendingtx = await NuggFTHelper.instance.claim(tokenId);
 
-        console.log("CLAIM??", _pendingtx)
+        return {
+            success: 'SUCCESS',
+            _pendingtx,
+            // callbackFn: () => {
+            //     WalletState.dispatch.getUnclaimedOffers();
+            //     WalletState.dispatch.getHistory({});
+            // },
+        };
+    } catch (err) {
+        console.log({ err });
+        if (
+            !isUndefinedOrNullOrNotObject(err) &&
+            !isUndefinedOrNullOrNotObject(err.data) &&
+            !isUndefinedOrNullOrStringEmpty(err.data.message)
+        ) {
+            const code = err.data.message.replace(
+                'execution reverted: ',
+                '',
+            ) as NL.Redux.Wallet.Error;
+            return thunkAPI.rejectWithValue(code);
+        }
+        return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
+    }
+});
+
+const initLoan = createAsyncThunk<
+    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
+    { tokenId: string; endingEpoch: string },
+    // adding the root state type to this thaction causes a circular reference
+    { rejectValue: NL.Redux.Wallet.Error }
+>(`wallet/claim`, async ({ tokenId }, thunkAPI) => {
+    try {
+        const _pendingtx = await NuggFTHelper.instance.loan(tokenId);
 
         return {
             success: 'SUCCESS',
@@ -154,4 +186,5 @@ export default {
     withdraw,
     claim,
     approveNugg,
+    initLoan,
 };

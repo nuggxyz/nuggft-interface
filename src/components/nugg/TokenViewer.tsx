@@ -66,7 +66,7 @@ const TokenViewer: FunctionComponent<Props> = ({
                         textAlign: 'center',
                         color: labelColor ? labelColor : 'black',
                     }}>
-                    NuggFT #{tokenId}
+                    Nugg #{tokenId}
                 </Text>
             )}
         </animated.div>

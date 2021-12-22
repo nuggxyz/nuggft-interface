@@ -29,6 +29,7 @@ const NumberStatistic: FC<Props> = ({ value, percent = false, ...props }) => {
     return (
         <StatisticsWrapper {...props}>
             <CurrencyText
+                image={props.image}
                 textStyle={styles.value}
                 value={
                     !isUndefinedOrNullOrBooleanFalse(percent) ? val * 100 : val

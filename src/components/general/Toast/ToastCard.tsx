@@ -111,4 +111,4 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
     );
 };
 
-export default ToastCard;
+export default React.memo(ToastCard);

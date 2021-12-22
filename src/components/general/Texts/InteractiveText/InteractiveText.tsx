@@ -82,4 +82,4 @@ const InteractiveText: FunctionComponent<Props> = ({
     );
 };
 
-export default InteractiveText;
+export default React.memo(InteractiveText);
