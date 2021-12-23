@@ -51,7 +51,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
 
     const getThumbnail = useCallback(async () => {
         const thumbnail = await nuggThumbnailQuery(tokenId);
-        setOwner(thumbnail.user.id);
+        setOwner(thumbnail?.user?.id);
     }, [tokenId]);
 
     useEffect(() => {
