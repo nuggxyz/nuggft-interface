@@ -2,6 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { animated, useSpring, useTransition, config } from 'react-spring';
 
 import Colors from '../../../lib/colors';
+import AppState from '../../../state/app';
 import Text from '../Texts/Text/Text';
 
 import styles from './HappyTabber.styles';
@@ -46,7 +47,11 @@ const HappyTabber: FunctionComponent<Props> = ({
     });
 
     return (
-        <div style={styles.wrapperContainer}>
+        <div
+            style={{
+                ...styles.wrapperContainer,
+                ...(AppState.isMobile && styles.wrapperMobile),
+            }}>
             <div
                 style={{
                     ...styles.header,

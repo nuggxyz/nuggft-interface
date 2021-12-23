@@ -146,7 +146,9 @@ class AppState extends NLState<NL.Redux.App.State> {
                 SwapState.dispatch.initSwap({
                     swapId: `${currentEpoch}-${currentEpoch}`,
                 });
-                if (currentView !== 'Swap') {
+                if (AppState.isMobile) {
+                    AppState.dispatch.changeMobileView('Mint');
+                } else if (currentView !== 'Swap') {
                     AppState.dispatch.changeView('Swap');
                 }
             } else if (
@@ -157,7 +159,9 @@ class AppState extends NLState<NL.Redux.App.State> {
                 SwapState.dispatch.initSwap({
                     swapId: `${swapRoute[2]}-${swapRoute[3]}`,
                 });
-                if (currentView !== 'Swap') {
+                if (AppState.isMobile) {
+                    AppState.dispatch.changeMobileView('Mint');
+                } else if (currentView !== 'Swap') {
                     AppState.dispatch.changeView('Swap');
                 }
             } else if (
@@ -171,7 +175,9 @@ class AppState extends NLState<NL.Redux.App.State> {
                     });
                 }
                 TokenState.dispatch.setTokenFromId(tokenRoute[2]);
-                if (currentView !== 'Search') {
+                if (AppState.isMobile) {
+                    AppState.dispatch.changeMobileView('Search');
+                } else if (currentView !== 'Search') {
                     AppState.dispatch.changeView('Search');
                 }
             } else if (!isUndefinedOrNullOrArrayEmpty(soloTokenRoute)) {

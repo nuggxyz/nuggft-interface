@@ -30,6 +30,7 @@ import ProtocolState from '../../../../../state/protocol';
 import allNuggsQuery from '../../../../../state/nuggdex/queries/allNuggsQuery';
 import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import Web3State from '../../../../../state/web3';
+import AppState from '../../../../../state/app';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -162,37 +163,46 @@ const NuggList: FunctionComponent<Props> = ({
     );
 
     useEffect(() => {
-        if (!isUndefinedOrNullOrStringEmpty(filters.searchValue)) {
+        if (
+            !isUndefinedOrNullOrStringEmpty(filters.searchValue) ||
+            AppState.isMobile
+        ) {
             searchTokens(false);
         }
-    }, [filters]);
+    }, [filters, localViewing]);
 
     return (
-        <div style={styles.nuggListContainer}>
+        <div
+            style={{
+                ...styles.nuggListContainer,
+                ...(AppState.isMobile && { position: 'relative' }),
+            }}>
             <animated.div
                 style={{
                     ...styles.nuggListDefault,
                     ...style,
                 }}>
-                <div
-                    style={{
-                        display: 'flex',
-                        ...styles.nuggListTitle,
-                        ...globalStyles.backdropFilter,
-                        zIndex: 10,
-                    }}>
-                    <TransitionText
-                        Icon={ChevronLeft}
+                {!AppState.isMobile && (
+                    <div
                         style={{
-                            marginTop: '.12rem',
-                        }}
-                        text={ucFirst(localViewing)}
-                        transitionText="Go back"
-                        onClick={() => {
-                            setLocalViewing('home');
-                        }}
-                    />
-                </div>
+                            display: 'flex',
+                            ...styles.nuggListTitle,
+                            ...globalStyles.backdropFilter,
+                            zIndex: 10,
+                        }}>
+                        <TransitionText
+                            Icon={ChevronLeft}
+                            style={{
+                                marginTop: '.12rem',
+                            }}
+                            text={ucFirst(localViewing)}
+                            transitionText="Go back"
+                            onClick={() => {
+                                setLocalViewing('home');
+                            }}
+                        />
+                    </div>
+                )}
                 <List
                     style={{
                         padding: '1.6rem 1rem',

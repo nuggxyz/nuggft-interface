@@ -7,6 +7,7 @@ const styles = NLStyleSheetCreator({
         overflow: 'hiiden',
         display: 'flex',
         flexDirection: 'column',
+        position: 'relative',
     },
     bottomBar: {
         height: '10%',

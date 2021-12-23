@@ -11,6 +11,9 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'start',
         alignItems: 'center',
     },
+    wrapperMobile: {
+        flexDirection: 'column-reverse',
+    },
     header: {
         display: 'flex',
         justifyContent: 'space-between',
@@ -20,7 +23,7 @@ const styles = NLStyleSheetCreator({
         padding: '4px',
         width: '100%',
         flexDirection: 'row',
-        marginBottom: '.5rem',
+        margin: '.5rem 0rem',
     },
     headerTextContainer: {
         display: 'flex',
