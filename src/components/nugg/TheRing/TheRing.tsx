@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
 import { isUndefinedOrNullOrObjectEmpty } from '../../../lib';
 import Colors from '../../../lib/colors';
@@ -11,9 +11,17 @@ import TokenViewer from '../TokenViewer';
 
 import styles from './TheRing.styles';
 
-type Props = {};
+type Props = {
+    containerStyle?: CSSProperties;
+    circleWidth?: number;
+    tokenStyle?: CSSProperties;
+};
 
-const TheRing: FunctionComponent<Props> = () => {
+const TheRing: FunctionComponent<Props> = ({
+    containerStyle,
+    circleWidth = 1600,
+    tokenStyle,
+}) => {
     const lastBlock = ProtocolState.select.currentBlock();
     const epoch = ProtocolState.select.epoch();
     const nugg = SwapState.select.nugg();
@@ -44,23 +52,29 @@ const TheRing: FunctionComponent<Props> = () => {
     }, [lastBlock, epoch]);
 
     return (
-        <CircleTimer
-            duration={blockDuration}
-            remaining={blocksRemaining}
-            blocktime={constants.BLOCKTIME}
-            width={1600}
-            staticColor={
-                status === 'over'
-                    ? Colors.purple
-                    : status === 'waiting'
-                    ? Colors.green
-                    : ''
-            }
-            style={styles.circle}>
-            <AnimatedCard>
-                <TokenViewer tokenId={(nugg && nugg.id) || ''} showLabel />
-            </AnimatedCard>
-        </CircleTimer>
+        <div style={{ width: '100%', height: '100%', ...containerStyle }}>
+            <CircleTimer
+                duration={blockDuration}
+                remaining={blocksRemaining}
+                blocktime={constants.BLOCKTIME}
+                width={circleWidth}
+                staticColor={
+                    status === 'over'
+                        ? Colors.purple
+                        : status === 'waiting'
+                        ? Colors.green
+                        : ''
+                }
+                style={styles.circle}>
+                <AnimatedCard>
+                    <TokenViewer
+                        tokenId={(nugg && nugg.id) || ''}
+                        showLabel
+                        style={tokenStyle}
+                    />
+                </AnimatedCard>
+            </CircleTimer>
+        </div>
     );
 };
 

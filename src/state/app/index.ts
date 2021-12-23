@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import UAParser from 'ua-parser-js';
 
 import {
     isUndefinedOrNullOrArrayEmpty,
@@ -38,14 +39,25 @@ class AppState extends NLState<NL.Redux.App.State> {
         return this._instance;
     }
 
+    static userAgent: UAParser.IResult;
+    static isMobile: boolean;
+
     constructor() {
         super(STATE_NAME, updater, middlewares, thactions, hooks, {
             toasts: [],
             modalIsOpen: undefined,
             modalData: {},
             view: 'Swap',
+            mobileView: 'Mint',
             walletVisible: false,
         });
+
+        const parser = new UAParser(window.navigator.userAgent);
+        const { type } = parser.getDevice();
+
+        AppState.userAgent = parser.getResult();
+
+        AppState.isMobile = type === 'mobile' || type === 'tablet';
     }
 
     protected override _slice = createSlice({
@@ -95,6 +107,12 @@ class AppState extends NLState<NL.Redux.App.State> {
             },
             changeView: (state, action: PayloadAction<NL.Redux.App.Views>) => {
                 state.view = action.payload;
+            },
+            changeMobileView: (
+                state,
+                action: PayloadAction<NL.Redux.App.MobileViews>,
+            ) => {
+                state.mobileView = action.payload;
             },
             toggleWallet: (state) => {
                 state.walletVisible = !state.walletVisible;

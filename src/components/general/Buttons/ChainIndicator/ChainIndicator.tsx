@@ -19,9 +19,9 @@ import TokenViewer from '../../../nugg/TokenViewer';
 import styles from './ChainIndicator.styles';
 import ChainIndicatorPulse from './ChainIndicatorPulse';
 
-type Props = {};
+type Props = { onClick?: () => void };
 
-const ChainIndicator: FunctionComponent<Props> = () => {
+const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
     const epoch = ProtocolState.select.epoch();
     const connectionWarning = Web3State.select.connectivityWarning();
     const currentBlock = ProtocolState.select.currentBlock();
@@ -53,7 +53,7 @@ const ChainIndicator: FunctionComponent<Props> = () => {
         <animated.div style={springStyle}>
             <Button
                 textStyle={{ fontFamily: Layout.font.code.regular }}
-                onClick={() => AppState.onRouteUpdate('/')}
+                onClick={onClick || (() => AppState.onRouteUpdate('/'))}
                 buttonStyle={{
                     ...styles.button,
                     ...(connectionWarning ? styles.warning : styles.normal),
@@ -73,7 +73,7 @@ const ChainIndicator: FunctionComponent<Props> = () => {
                                     width: '35px',
                                     height: '35px',
                                     marginTop: '0.2rem',
-                                    margin: '0rem .5rem'
+                                    margin: '0rem .5rem',
                                 }}
                             />
                         </div>

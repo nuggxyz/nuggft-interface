@@ -4,6 +4,7 @@ declare namespace NL.Redux.App {
         modalIsOpen: Modals;
         modalData: ModalsData;
         view: Views;
+        mobileView: MobileViews;
         walletVisible: boolean;
     }
 
@@ -30,6 +31,8 @@ declare namespace NL.Redux.App {
     }
 
     type Views = 'Swap' | 'Search';
+
+    type MobileViews = 'Mint' | 'Search' | 'Wallet';
 
     type Modals =
         | 'Burn'

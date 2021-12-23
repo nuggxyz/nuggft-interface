@@ -18,19 +18,21 @@ import ToastContainer from './components/general/Toast/ToastContainer';
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
 
 ReactDOM.render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <Web3ReactProvider getLibrary={Web3State.getLibrary}>
-                <Web3ProviderNetwork getLibrary={Web3State.getLibrary}>
-                    <Initializer>
-                        <ToastContainer />
-                        <Modal />
-                        <IndexPage />
-                    </Initializer>
-                </Web3ProviderNetwork>
-            </Web3ReactProvider>
-        </Provider>
-    </React.StrictMode>,
+    <div style={{ width: '100%', height: '100%' }}>
+        <React.StrictMode>
+            <Provider store={store}>
+                <Web3ReactProvider getLibrary={Web3State.getLibrary}>
+                    <Web3ProviderNetwork getLibrary={Web3State.getLibrary}>
+                        <Initializer>
+                            <ToastContainer />
+                            <Modal />
+                            <IndexPage />
+                        </Initializer>
+                    </Web3ProviderNetwork>
+                </Web3ReactProvider>
+            </Provider>
+        </React.StrictMode>
+    </div>,
     document.getElementById('root'),
 );
 

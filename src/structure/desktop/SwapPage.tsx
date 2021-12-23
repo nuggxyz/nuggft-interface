@@ -44,7 +44,9 @@ const SwapPage: FunctionComponent<Props> = () => {
                     </Text>
                     <CurrencyText
                         image="eth"
-                        value={new EthInt(valuePerShare).decimal.toNumber()}
+                        value={new EthInt(
+                            valuePerShare.split('.')[0],
+                        ).decimal.toNumber()}
                     />
                 </div>
                 <RingAbout />

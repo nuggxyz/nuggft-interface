@@ -16,6 +16,9 @@ const styles = NLStyleSheetCreator({
         padding: '.5rem',
         width: '50%',
     },
+    mobile: {
+        width: '90%',
+    },
     bodyContainer: {
         display: 'flex',
         flexDirection: 'row',

@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useCallback, useMemo } from 'react';
 
 import useOnHover from '../../../../hooks/useOnHover';
+import AppState from '../../../../state/app';
 import Text from '../../Texts/Text/Text';
 
 import styles from './Button.styles';
@@ -33,7 +34,10 @@ const Button: FunctionComponent<Props> = ({
     const style = useMemo(() => {
         return {
             ...styles.button,
-            filter: hover ? 'brightness(.8)' : 'brightness(1)',
+            filter:
+                hover && !AppState.isMobile
+                    ? 'brightness(.8)'
+                    : 'brightness(1)',
             cursor: disabled ? 'not-allowed' : 'pointer',
             ...buttonStyle,
             ...(hover && hoverStyle),
