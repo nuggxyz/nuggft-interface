@@ -30,4 +30,7 @@ const styles = NLStyleSheetCreator({
         overflow: 'hidden',
         zIndex: 999,
     },
+    mobile:{
+        
+    }
 });

@@ -1,10 +1,8 @@
-/** @format */
-
 import React, { FunctionComponent } from 'react';
 
 type Props = {};
 
-const WalletTab: FunctionComponent<Props> = () => {
+const WalletView: FunctionComponent<Props> = () => {
     return (
         <div>
             <h1>WalletTab</h1>
@@ -12,4 +10,4 @@ const WalletTab: FunctionComponent<Props> = () => {
     );
 };
 
-export default WalletTab;
+export default WalletView;

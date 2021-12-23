@@ -44,7 +44,11 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     );
 
     return (
-        <div style={styles.container}>
+        <div
+            style={{
+                ...styles.container,
+                ...(AppState.isMobile && styles.mobile),
+            }}>
             <div style={styles.bodyContainer}>
                 <div style={styles.leaderContainer}>
                     <Text textStyle={styles.title}>
@@ -58,26 +62,28 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                     </Text>
                     {hasBids && (
                         <div style={styles.leadingOfferContainer}>
-                            <Button
-                                rightIcon={
-                                    <ChevronDown
-                                        color={Colors.nuggBlueText}
-                                        size={14}
-                                    />
-                                }
-                                onClick={() => console.log('All offers')}
-                                buttonStyle={styles.allOffersButton}
-                            />
+                            {!AppState.isMobile && (
+                                <Button
+                                    rightIcon={
+                                        <ChevronDown
+                                            color={Colors.nuggBlueText}
+                                            size={14}
+                                        />
+                                    }
+                                    onClick={() => console.log('All offers')}
+                                    buttonStyle={styles.allOffersButton}
+                                />
+                            )}
                             <div style={styles.leadingOfferAmount}>
                                 <CurrencyText
                                     image="eth"
                                     textStyle={styles.leadingOffer}
                                     value={+fromEth(eth)}
                                 />
-                                <CurrencyText
+                                {/* <CurrencyText
                                     textStyle={styles.leadingOffer}
                                     value={+ethUsd}
-                                />
+                                /> */}
                                 <Text textStyle={styles.code}>
                                     {ens ? ens.short : 'Loading...'}
                                 </Text>

@@ -45,6 +45,7 @@ const styles = NLStyleSheetCreator({
     containerMobile: {
         width: '90%',
         maxHeight: '90%',
+        margin: '0rem .5rem',
         transform: 'translate(0rem, 0rem)',
     },
     containerOpen: {

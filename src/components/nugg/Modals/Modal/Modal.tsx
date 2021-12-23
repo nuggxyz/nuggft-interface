@@ -47,7 +47,9 @@ const Modal: FunctionComponent<Props> = () => {
     const containerStyle = useSpring({
         to: {
             ...styles.container,
-            ...styles.containerFull,
+            ...(AppState.isMobile
+                ? styles.containerMobile
+                : styles.containerFull),
             transform: isOpen ? 'translate(8px, 8px)' : 'translate(36px, 36px)',
             ...data.containerStyle,
         },
@@ -60,7 +62,9 @@ const Modal: FunctionComponent<Props> = () => {
             transform: isOpen
                 ? 'translate(-4px, -4px)'
                 : 'translate(-24px, -24px)',
-            ...styles.containerFull,
+            ...(AppState.isMobile
+                ? styles.containerMobile
+                : styles.containerFull),
             ...data.backgroundStyle,
         },
         config: config.default,

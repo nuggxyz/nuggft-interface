@@ -81,7 +81,9 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
 
     return (
         <div style={styles.container}>
-            <TokenViewer tokenId={nugg?.id} showLabel labelColor="white" />
+            {!AppState.isMobile && (
+                <TokenViewer tokenId={nugg?.id} showLabel labelColor="white" />
+            )}
             <div style={styles.inputContainer}>
                 <CurrencyInput
                     style={styles.input}
