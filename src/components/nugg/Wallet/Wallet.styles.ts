@@ -16,7 +16,7 @@ const styles = NLStyleSheetCreator({
         flexDirection: 'column',
         justifyContent: 'space-between',
         width: '430px',
-        height: '90%',
+        height: '70%',
         // position: 'absolute',
         justifySelf: 'center',
         pointerEvents: 'auto',

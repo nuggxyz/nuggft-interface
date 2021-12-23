@@ -73,7 +73,11 @@ const Wallet: FunctionComponent<Props> = () => {
 
     return (
         <div style={styles.container}>
-            <div style={styles.wallet}>
+            <div
+                style={{
+                    ...styles.wallet,
+                    ...(AppState.isMobile && { height: '90%' }),
+                }}>
                 <HappyTabber items={happytabs} />
             </div>
         </div>
