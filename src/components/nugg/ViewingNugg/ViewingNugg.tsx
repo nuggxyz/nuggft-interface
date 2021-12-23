@@ -69,6 +69,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    flexDirection: AppState.isMobile ? 'column' : 'row',
                 }}>
                 <Swaps swaps={swaps} />
                 <div style={styles.container}>
@@ -85,7 +86,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                                 label="Withdraw"
                                 onClick={() =>
                                     AppState.dispatch.setModalOpen({
-                                        name: 'StartSale',
+                                        name: 'LoanOrBurn',
                                         modalData: {
                                             targetId: tokenId,
                                             type: 'Burn',
@@ -105,7 +106,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                                 label="Sell"
                                 onClick={() =>
                                     AppState.dispatch.setModalOpen({
-                                        name: 'StartSale',
+                                        name: 'OfferOrSell',
                                         modalData: {
                                             targetId: tokenId,
                                             type: 'StartSale',
