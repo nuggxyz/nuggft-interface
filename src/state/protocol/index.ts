@@ -151,10 +151,11 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
                     const totalEth = data.nuggftStakedEth;
                     state.nuggftStakedEth = totalEth;
                     state.nuggftStakedShares = totalShares;
-                    state.nuggftStakedEthPerShare =
+                    const perShare =
                         totalShares === '0'
                             ? '0'
                             : `${+totalEth / +totalShares}`;
+                    state.nuggftStakedEthPerShare = perShare.split('.')[0];
                 })
                 .addCase(thactions.updateBlock.fulfilled, (state, action) => {
                     state.currentBlock = action.payload.data;

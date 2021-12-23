@@ -5,12 +5,14 @@ import React, {
     FunctionComponent,
     useCallback,
     useLayoutEffect,
+    useMemo,
     useState,
 } from 'react';
 
 import pendingToken from '../../assets/images/pending-token.svg';
 import NuggFTHelper from '../../contracts/NuggFTHelper';
 import { isUndefinedOrNullOrStringEmpty } from '../../lib';
+import AppState from '../../state/app';
 import Text from '../general/Texts/Text/Text';
 
 type Props = {
@@ -26,6 +28,9 @@ const TokenViewer: FunctionComponent<Props> = ({
     showLabel,
     labelColor,
 }) => {
+    const { width, height } = useMemo(() => {
+        return { width: window.innerWidth, height: window.innerHeight };
+    }, []);
     const [src, setSrc] = useState<any>(pendingToken);
     const getDotNuggSrc = useCallback(async () => {
         if (!isUndefinedOrNullOrStringEmpty(tokenId)) {
@@ -57,7 +62,12 @@ const TokenViewer: FunctionComponent<Props> = ({
         //@ts-ignore
         <animated.div style={animatedStyle}>
             <img
-                style={{ width: '400px', height: '400px', ...style }}
+                style={{
+                    ...(AppState.isMobile
+                        ? { width: width / 1.2, height: width / 1.2 }
+                        : { width: '400px', height: '400px' }),
+                    ...style,
+                }}
                 src={src}
             />
             {showLabel && (

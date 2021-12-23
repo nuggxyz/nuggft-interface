@@ -17,7 +17,6 @@ const MintView: FunctionComponent<Props> = () => {
             <div style={styles.subContainer}>
                 <TheRing
                     circleWidth={width * 2.5}
-                    tokenStyle={{ width: width / 1.2, height: width / 1.2 }}
                 />
             </div>
             <div style={styles.subContainer}>
