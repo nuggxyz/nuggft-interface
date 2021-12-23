@@ -28,6 +28,7 @@ import listStyle from '../HistoryTab.styles';
 import Text from '../../../../general/Texts/Text/Text';
 import Colors from '../../../../../lib/colors';
 import AppState from '../../../../../state/app';
+import LinkAccountButton from '../../../../general/Buttons/LinkAccountButton/LinkAccountButton';
 
 type Props = {};
 
@@ -60,7 +61,7 @@ const MintTab: FunctionComponent<Props> = () => {
     }, [address, epoch, myNuggs]);
 
     useEffect(() => {
-        console.log('address changing')
+        console.log('address changing');
         setLoadingNuggs(true);
         setTimeout(() => {
             getMyNuggs();
@@ -69,6 +70,11 @@ const MintTab: FunctionComponent<Props> = () => {
 
     return (
         <div>
+            {AppState.isMobile && (
+                <div style={{ display: 'flex', padding: '.5rem' }}>
+                    <LinkAccountButton />
+                </div>
+            )}
             <div style={styles.statisticContainer}>
                 <TextStatistic
                     label="Nuggs"
