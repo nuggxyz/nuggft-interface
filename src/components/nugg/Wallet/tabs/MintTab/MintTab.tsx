@@ -71,7 +71,11 @@ const MintTab: FunctionComponent<Props> = () => {
     return (
         <div>
             {AppState.isMobile && (
-                <div style={{ display: 'flex', padding: '.5rem' }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        padding: '.5rem 0rem .5rem 1.5rem',
+                    }}>
                     <LinkAccountButton />
                 </div>
             )}
