@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { BigNumber } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 
 import {
     isUndefinedOrNullOrNotObject,
@@ -10,9 +10,13 @@ import {
 import { toEth } from '../../lib/conversion';
 import NuggFTHelper from '../../contracts/NuggFTHelper';
 import AppState from '../app';
+import config from '../../config';
+import Web3State from '../web3';
+import { INuggFT } from '../../typechain/INuggFT';
+import { INuggFT__factory } from '../../typechain/factories/INuggFT__factory';
 
-import initSwapQuery from './queries/initSwapQuery';
 import pollOffersQuery from './queries/pollOffersQuery';
+import initSwapQuery from './queries/initSwapQuery';
 
 const initSwap = createAsyncThunk<
     {
@@ -98,10 +102,13 @@ const placeOffer = createAsyncThunk<
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
 >('swap/placeOffer', async ({ amount, tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance.delegate(
-            BigNumber.from(tokenId),
-            { value: toEth(amount) },
-        );
+        const _pendingtx = await (
+            new Contract(
+                config.NUGGFT,
+                INuggFT__factory.abi,
+                Web3State.getLibraryOrProvider(),
+            ) as INuggFT
+        ).delegate(BigNumber.from(tokenId), { value: toEth(amount) });
 
         return {
             success: 'SUCCESS',
