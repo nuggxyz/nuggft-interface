@@ -1,5 +1,5 @@
 import { animated } from '@react-spring/web';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useCallback } from 'react';
 
 import NuggDexSearchList from '../../components/nugg/NuggDex/NuggDexSearchList/NuggDexSearchList';
 import ViewingNugg from '../../components/nugg/ViewingNugg/ViewingNugg';
@@ -11,14 +11,30 @@ import styles from './SearchOverlay.styles';
 type Props = {};
 
 const SearchOverlay: FunctionComponent<Props> = () => {
-    const appView = AppState.select.view();
-    const style = useAnimateOverlay(appView === 'Search', { zIndex: 997 });
+    const view = AppState.select.view();
+    const onClick = useCallback(
+        () =>
+            view === 'Search'
+                ? AppState.dispatch.changeView('Swap')
+                : undefined,
+        [view],
+    );
+    const style = useAnimateOverlay(view === 'Search', {
+        zIndex: 997,
+        ...styles.container,
+    });
     return (
-        <animated.div style={{ ...styles.container, ...style }}>
-            <div style={styles.nuggDexContainer}>
+        <animated.div
+            style={{ ...styles.container, ...style }}
+            onClick={onClick}>
+            <div
+                style={styles.nuggDexContainer}
+                onClick={(e) => e.stopPropagation()}>
                 <NuggDexSearchList />
             </div>
-            <div style={styles.tokenContainer}>
+            <div
+                style={styles.tokenContainer}
+                onClick={(e) => e.stopPropagation()}>
                 <ViewingNugg />
             </div>
         </animated.div>

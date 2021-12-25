@@ -83,13 +83,33 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                                     ...styles.button,
                                     background: Colors.gradient3Transparent,
                                 }}
-                                label="Withdraw"
+                                label="Burn"
                                 onClick={() =>
                                     AppState.dispatch.setModalOpen({
                                         name: 'LoanOrBurn',
                                         modalData: {
                                             targetId: tokenId,
                                             type: 'Burn',
+                                            backgroundStyle: {
+                                                background: Colors.gradient3,
+                                            },
+                                        },
+                                    })
+                                }
+                            />
+                            <Button
+                                textStyle={styles.textWhite}
+                                buttonStyle={{
+                                    ...styles.button,
+                                    background: Colors.gradient3Transparent,
+                                }}
+                                label="Loan"
+                                onClick={() =>
+                                    AppState.dispatch.setModalOpen({
+                                        name: 'LoanOrBurn',
+                                        modalData: {
+                                            targetId: tokenId,
+                                            type: 'Loan',
                                             backgroundStyle: {
                                                 background: Colors.gradient3,
                                             },
@@ -135,6 +155,58 @@ const ViewingNugg: FunctionComponent<Props> = () => {
         )
     );
 };
+
+/* <Button */
+//         textStyle={listStyle.textWhite}
+//         buttonStyle={listStyle.renderButton}
+//         label="Sell"
+//         onClick={() =>
+//             AppState.dispatch.setModalOpen({
+//                 name: 'OfferOrSell',
+//                 modalData: {
+//                     targetId: item.id,
+//                     type: 'StartSale',
+//                     backgroundStyle: {
+//                         background: Colors.gradient3,
+//                     },
+//                 },
+//             })
+//         }
+//     />
+//     <Button
+//         textStyle={listStyle.textWhite}
+//         buttonStyle={listStyle.renderButton}
+//         label="Loan"
+//         onClick={() =>
+//             AppState.dispatch.setModalOpen({
+//                 name: 'LoanOrBurn',
+//                 modalData: {
+//                     targetId: item.id,
+//                     type: 'Loan',
+//                     backgroundStyle: {
+//                         background: Colors.gradient3,
+//                     },
+//                 },
+//             })
+//         }
+//     />
+//     <Button
+//         textStyle={listStyle.textWhite}
+//         buttonStyle={listStyle.renderButton}
+//         label="Burn"
+//         onClick={() =>
+//             AppState.dispatch.setModalOpen({
+//                 name: 'LoanOrBurn',
+//                 modalData: {
+//                     targetId: item.id,
+//                     type: 'Burn',
+//                     backgroundStyle: {
+//                         background: Colors.gradient3,
+//                     },
+//                 },
+//             })
+//         }
+//     />
 
 const Swaps = ({ swaps }) => (
     <div style={styles.swaps}>

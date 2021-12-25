@@ -44,7 +44,6 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
                 constants.NUGGDEX_SEARCH_LIST_CHUNK,
                 loanedNuggs.length,
             );
-            console.log(nuggResult);
 
             if (!isUndefinedOrNullOrArrayEmpty(nuggResult)) {
                 setLoanedNuggs((res) => [...res, ...nuggResult]);

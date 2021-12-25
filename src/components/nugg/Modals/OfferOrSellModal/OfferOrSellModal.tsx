@@ -57,7 +57,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             !isApproved &&
             stableType === 'StartSale'
         ) {
-            NuggFTHelper.sellerApproval(targetId).then((res) =>
+            NuggFTHelper.sellerApproval(stableId).then((res) =>
                 setIsApproved(res),
             );
         } else setIsApproved(true);
@@ -85,7 +85,11 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
 
     return (
         <div style={styles.container}>
-            <TokenViewer tokenId={nugg?.id} showLabel labelColor="white" />
+            <TokenViewer
+                tokenId={stableId || nugg?.id}
+                showLabel
+                labelColor="white"
+            />
             <div style={styles.inputContainer}>
                 <CurrencyInput
                     style={styles.input}

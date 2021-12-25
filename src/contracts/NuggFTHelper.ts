@@ -100,7 +100,7 @@ export default class NuggFTHelper extends ContractHelper {
         tokenId: string,
     ): Promise<NL.Redux.Transaction.Response<TokenApproveInfo>> {
         let response = await this.instance
-            .connect(this.instance.signer)
+            .connect(Web3State.getLibraryOrProvider())
             .approve(spender.hash, tokenId);
         return {
             response,

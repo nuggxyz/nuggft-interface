@@ -42,7 +42,6 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
         }
     }, [targetId, toggle, isApproved]);
 
-    console.log(stableId);
     return (
         <div style={styles.container}>
             <Text textStyle={styles.textWhite}>

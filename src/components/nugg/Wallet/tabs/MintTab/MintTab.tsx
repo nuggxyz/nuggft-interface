@@ -34,6 +34,7 @@ import useAsyncState from '../../../../../hooks/useAsyncState';
 import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQuery';
 import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSalesQuery';
 import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedOffersQuery';
+import TokenViewer from '../../../TokenViewer';
 
 type Props = {};
 
@@ -149,7 +150,7 @@ const MintTab: FunctionComponent<Props> = () => {
                     listEmptyStyle={listStyle.textWhite}
                     extraData={[address]}
                     listEmptyText="You don't have any Nuggs yet!"
-                    loaderColor='white'
+                    loaderColor="white"
                 />
             }
         </div>
@@ -161,67 +162,78 @@ export default MintTab;
 const RenderItem: FunctionComponent<
     ListRenderItemProps<NL.GraphQL.Fragments.General.Id>
 > = ({ item, index, extraData }) => {
-    console.log(item);
     return (
         !isUndefinedOrNullOrObjectEmpty(item) && (
-            <div key={index} style={listStyle.render}>
-                <div>
-                    <Text textStyle={listStyle.renderTitle}>
-                        Nugg #{item.id}
-                    </Text>
-                </div>
-                <Button
-                    textStyle={listStyle.textWhite}
-                    buttonStyle={listStyle.renderButton}
-                    label="Sell"
-                    onClick={() =>
-                        AppState.dispatch.setModalOpen({
-                            name: 'OfferOrSell',
-                            modalData: {
-                                targetId: item.id,
-                                type: 'StartSale',
-                                backgroundStyle: {
-                                    background: Colors.gradient3,
-                                },
-                            },
-                        })
-                    }
-                />
-                <Button
-                    textStyle={listStyle.textWhite}
-                    buttonStyle={listStyle.renderButton}
-                    label="Loan"
-                    onClick={() =>
-                        AppState.dispatch.setModalOpen({
-                            name: 'LoanOrBurn',
-                            modalData: {
-                                targetId: item.id,
-                                type: 'Loan',
-                                backgroundStyle: {
-                                    background: Colors.gradient3,
-                                },
-                            },
-                        })
-                    }
-                />
-                <Button
-                    textStyle={listStyle.textWhite}
-                    buttonStyle={listStyle.renderButton}
-                    label="Burn"
-                    onClick={() =>
-                        AppState.dispatch.setModalOpen({
-                            name: 'LoanOrBurn',
-                            modalData: {
-                                targetId: item.id,
-                                type: 'Burn',
-                                backgroundStyle: {
-                                    background: Colors.gradient3,
-                                },
-                            },
-                        })
-                    }
-                />
-            </div>
+            <Button
+                key={index}
+                onClick={() => AppState.onRouteUpdate(`#/nugg/${item.id}`)}
+                buttonStyle={styles.listNuggButton}
+                rightIcon={
+                    <>
+                        <TokenViewer
+                            tokenId={item?.id || ''}
+                            style={styles.listNugg}
+                        />
+
+                        <Text textStyle={{ color: Colors.nuggRedText }}>
+                            Nugg #{item?.id || ''}
+                        </Text>
+                    </>
+                }
+            />
+            // <div>
+            //     {/* <Button
+            //         textStyle={listStyle.textWhite}
+            //         buttonStyle={listStyle.renderButton}
+            //         label="Sell"
+            //         onClick={() =>
+            //             AppState.dispatch.setModalOpen({
+            //                 name: 'OfferOrSell',
+            //                 modalData: {
+            //                     targetId: item.id,
+            //                     type: 'StartSale',
+            //                     backgroundStyle: {
+            //                         background: Colors.gradient3,
+            //                     },
+            //                 },
+            //             })
+            //         }
+            //     />
+            //     <Button
+            //         textStyle={listStyle.textWhite}
+            //         buttonStyle={listStyle.renderButton}
+            //         label="Loan"
+            //         onClick={() =>
+            //             AppState.dispatch.setModalOpen({
+            //                 name: 'LoanOrBurn',
+            //                 modalData: {
+            //                     targetId: item.id,
+            //                     type: 'Loan',
+            //                     backgroundStyle: {
+            //                         background: Colors.gradient3,
+            //                     },
+            //                 },
+            //             })
+            //         }
+            //     />
+            //     <Button
+            //         textStyle={listStyle.textWhite}
+            //         buttonStyle={listStyle.renderButton}
+            //         label="Burn"
+            //         onClick={() =>
+            //             AppState.dispatch.setModalOpen({
+            //                 name: 'LoanOrBurn',
+            //                 modalData: {
+            //                     targetId: item.id,
+            //                     type: 'Burn',
+            //                     backgroundStyle: {
+            //                         background: Colors.gradient3,
+            //                     },
+            //                 },
+            //             })
+            //         }
+            //     /> */}
+            // </div>
         )
     );
 };

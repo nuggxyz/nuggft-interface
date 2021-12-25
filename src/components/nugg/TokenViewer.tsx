@@ -13,13 +13,14 @@ import pendingToken from '../../assets/images/pending-token.svg';
 import NuggFTHelper from '../../contracts/NuggFTHelper';
 import { isUndefinedOrNullOrStringEmpty } from '../../lib';
 import AppState from '../../state/app';
-import Text from '../general/Texts/Text/Text';
+import Text, { TextProps } from '../general/Texts/Text/Text';
 
 type Props = {
     tokenId: string;
     style?: CSSProperties;
     showLabel?: boolean;
     labelColor?: string;
+    textProps?: Omit<TextProps, 'children'>;
 };
 
 const TokenViewer: FunctionComponent<Props> = ({
@@ -27,6 +28,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     style,
     showLabel,
     labelColor,
+    textProps,
 }) => {
     const { width, height } = useMemo(() => {
         return { width: window.innerWidth, height: window.innerHeight };
@@ -75,7 +77,8 @@ const TokenViewer: FunctionComponent<Props> = ({
                     textStyle={{
                         textAlign: 'center',
                         color: labelColor ? labelColor : 'black',
-                    }}>
+                    }}
+                    {...textProps}>
                     Nugg #{tokenId}
                 </Text>
             )}
