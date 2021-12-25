@@ -34,7 +34,7 @@ const HappyTabber: FunctionComponent<Props> = ({
         config: config.default,
     });
 
-    const tabFadeTransition = useTransition(items[activeIndex].comp, {
+    const tabFadeTransition = useTransition(items[activeIndex]?.comp, {
         from: {
             opacity: 0,
             position: 'absolute',

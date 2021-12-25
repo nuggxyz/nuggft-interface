@@ -61,7 +61,6 @@ const MintTab: FunctionComponent<Props> = () => {
     }, [address, epoch, myNuggs]);
 
     useEffect(() => {
-        console.log('address changing');
         setLoadingNuggs(true);
         setTimeout(() => {
             getMyNuggs();
@@ -69,7 +68,7 @@ const MintTab: FunctionComponent<Props> = () => {
     }, [address]);
 
     return (
-        <div>
+        <div style={{ padding: '1rem' }}>
             {AppState.isMobile && (
                 <div
                     style={{

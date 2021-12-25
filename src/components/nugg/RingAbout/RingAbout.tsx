@@ -22,6 +22,7 @@ type Props = {};
 
 const RingAbout: FunctionComponent<Props> = ({}) => {
     const eth = SwapState.select.eth();
+    const address = Web3State.select.web3address();
     const ethUsd = SwapState.select.ethUsd();
     const leader = SwapState.select.leader();
 
@@ -93,7 +94,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                 </div>
             </div>
 
-            {status !== 'over' && (
+            {status !== 'over' && !isUndefinedOrNullOrStringEmpty(address) && (
                 <Button
                     buttonStyle={styles.button}
                     textStyle={styles.buttonText}

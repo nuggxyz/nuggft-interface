@@ -112,7 +112,6 @@ const RenderItem: FunctionComponent<
                     onClick={() =>
                         WalletState.dispatch.claim({
                             tokenId: parsedTitle.nugg,
-                            endingEpoch: parsedTitle.nugg,
                         })
                     }
                 />

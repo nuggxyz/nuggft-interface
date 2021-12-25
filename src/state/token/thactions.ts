@@ -5,6 +5,7 @@ import {
     isUndefinedOrNullOrNotObject,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
+import Web3State from '../web3';
 
 const initSale = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
@@ -13,7 +14,9 @@ const initSale = createAsyncThunk<
 >(`token/initSale`, async ({ tokenId }, thunkAPI) => {
     try {
         const floor = thunkAPI.getState().protocol.nuggftStakedEthPerShare;
-        const _pendingtx = await NuggFTHelper.instance.swap(tokenId, floor);
+        const _pendingtx = await NuggFTHelper.instance
+            .connect(Web3State.getLibraryOrProvider())
+            .swap(tokenId, floor);
 
         return {
             success: 'SUCCESS',

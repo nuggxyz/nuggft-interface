@@ -11,6 +11,7 @@ import {
 import constants from '../../lib/constants';
 import { Address } from '../../classes/Address';
 import config from '../../config';
+import Web3State from '../web3';
 
 import userSharesQuery from './queries/userSharesQuery';
 
@@ -57,7 +58,9 @@ const withdraw = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/withdraw`, async ({ tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance.withdrawStake(tokenId);
+        const _pendingtx = await NuggFTHelper.instance
+            .connect(Web3State.getLibraryOrProvider())
+            .withdrawStake(tokenId);
 
         return {
             success: 'SUCCESS',
@@ -115,12 +118,15 @@ const approveNugg = createAsyncThunk<
 
 const claim = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { tokenId: string; endingEpoch: string },
+    { tokenId: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/claim`, async ({ tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance.claim(tokenId);
+        const _pendingtx = await NuggFTHelper.instance
+            .connect(Web3State.getLibraryOrProvider())
+            //@ts-ignore
+            .claim(thunkAPI.getState().web3.web3address, tokenId);
 
         return {
             success: 'SUCCESS',
@@ -154,7 +160,9 @@ const initLoan = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/claim`, async ({ tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance.loan(tokenId);
+        const _pendingtx = await NuggFTHelper.instance
+            .connect(Web3State.getLibraryOrProvider())
+            .loan(tokenId);
 
         return {
             success: 'SUCCESS',

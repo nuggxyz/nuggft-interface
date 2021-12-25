@@ -65,7 +65,7 @@ export default () => {
 
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(error)) {
-        Web3State.dispatch.setWeb3Status('ERROR');
+            Web3State.dispatch.setWeb3Status('ERROR');
         }
     }, [error]);
 
@@ -106,6 +106,8 @@ export default () => {
             .catch(() => Web3State.dispatch.setImplements3085(true));
     }, [web3Account, chainId, library]);
 
+    const [walletConnectSignerSet, setFun] = useState();
+
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
             window.ethereum.on('connect', onConnect);
@@ -114,9 +116,7 @@ export default () => {
             window.ethereum.on('chainChanged', onChainChanged);
             window.ethereum.on('message', onMessage);
         }
-        if (
-            isUndefinedOrNullOrObjectEmpty(web3address)
-        ) {
+        if (isUndefinedOrNullOrObjectEmpty(web3address)) {
             if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
                 if (
                     !isUndefinedOrNullOrObjectEmpty(window.ethereum._state) &&
@@ -152,6 +152,7 @@ export default () => {
             } else if (!isUndefinedOrNullOrStringEmpty(web3Account)) {
                 Web3State.dispatch.setWeb3Address(web3Account);
                 Web3State.dispatch.setWeb3Status('SELECTED');
+                console.log('setting signer', web3Account);
                 Web3State._walletConnectSigner =
                     library?.getSigner(web3Account);
             }

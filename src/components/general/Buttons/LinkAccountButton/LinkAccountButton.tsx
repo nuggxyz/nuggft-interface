@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import Davatar from '@davatar/react';
-import { useWeb3React } from '@web3-react/core';
 
 import Button from '../Button/Button';
 import {
@@ -17,21 +15,9 @@ import { EthInt } from '../../../../classes/Fraction';
 import ProtocolState from '../../../../state/protocol';
 import CurrencyText from '../../Texts/CurrencyText/CurrencyText';
 import AppState from '../../../../state/app';
+import Jazzicon from '../../../nugg/Jazzicon';
 
 import styles from './LinkAccountButton.styles';
-
-const Identicon = () => {
-    const address = Web3State.select.web3address();
-    const library = useMemo(() => Web3State.getLibraryOrProvider(), [address]);
-
-    // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/30451
-    return (
-        address &&
-        library?.provider && (
-            <Davatar address={address} size={16} provider={library.provider} />
-        )
-    );
-};
 
 const LinkAccountButton = () => {
     const address = Web3State.select.web3address();
@@ -63,7 +49,7 @@ const LinkAccountButton = () => {
     const onClick = useCallback(() => {
         // AppState.dispatch.setModalOpen({ name: 'Wallet' });
         if (status !== 'SELECTED') {
-            Web3State.safeActivate(Web3Config.connectors.injected);
+            Web3State.safeActivate(Web3Config.connectors.walletconnect);
         }
         // if (status === 'SELECTED') {
         //     Web3State.deactivate();
@@ -78,21 +64,23 @@ const LinkAccountButton = () => {
                     status === 'PENDING' ? (
                         <Loader color={Colors.nuggBlueText} />
                     ) : status === 'SELECTED' ? (
-                        <Identicon />
+                        <Jazzicon address={address} />
                     ) : status === 'NOT_SELECTED' ? (
                         <NLStaticImage image="nugg" />
                     ) : null //
                 }
             </div>
         ),
-        [status, ens],
+        [status, address],
     );
 
     const [balance, setBalance] = useState(0);
 
     const getEthBalance = useCallback(async () => {
         setBalance(
-            new EthInt(await NuggFTHelper.ethBalance()).decimal.toNumber(),
+            new EthInt(
+                await NuggFTHelper.ethBalance(Web3State.getLibraryOrProvider()),
+            ).decimal.toNumber(),
         );
     }, [address]);
 
