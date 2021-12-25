@@ -18,6 +18,7 @@ import HappyTabber, {
 import NLStaticImage from '../../general/NLStaticImage';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
+import ConnectWalletTab from './tabs/ConnectWalletTab';
 import LoansTab from './tabs/LoansTab/LoansTab';
 import MintTab from './tabs/MintTab/MintTab';
 import SalesTab from './tabs/SalesTab/SalesTab';
@@ -61,40 +62,7 @@ const Wallet: FunctionComponent<Props> = () => {
                 : [
                       {
                           label: 'Home',
-                          comp: ({ isActive }) => (
-                              <div style={{ padding: '1rem' }}>
-                                  {Object.values(
-                                      Web3Config.SUPPORTED_WALLETS,
-                                  ).map((walletObject) =>
-                                      walletObject.name !== 'MetaMask' ||
-                                      (walletObject.name === 'MetaMask' &&
-                                          window.ethereum) ? (
-                                          <Button
-                                              label={walletObject.name}
-                                              buttonStyle={{
-                                                  color: 'white',
-                                                  borderRadius:
-                                                      Layout.borderRadius.large,
-                                                  padding: '.6rem 1rem',
-                                                  pointerEvents: 'auto',
-                                                  background: `${walletObject.color}66`,
-                                              }}
-                                              rightIcon={
-                                                  <NLStaticImage
-                                                      //@ts-ignore
-                                                      image={walletObject.name}
-                                                  />
-                                              }
-                                              onClick={() =>
-                                                  Web3State.safeActivate(
-                                                      walletObject.connector,
-                                                  )
-                                              }
-                                          />
-                                      ) : null,
-                                  )}
-                              </div>
-                          ),
+                          comp: ({ isActive }) => <ConnectWalletTab />,
                       },
                   ]),
         ],

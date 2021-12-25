@@ -76,7 +76,7 @@ export default class NuggFTHelper extends ContractHelper {
                     config.NUGGFT,
                     BigNumber.from(tokenId),
                     Address.ZERO.hash,
-                    45,
+                    40,
                     1,
                 );
 

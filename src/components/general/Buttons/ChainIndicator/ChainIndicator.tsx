@@ -13,8 +13,12 @@ import ProtocolState from '../../../../state/protocol';
 import Web3State from '../../../../state/web3';
 import AppState from '../../../../state/app';
 import Button from '../Button/Button';
+import Text from '../../Texts/Text/Text';
 import Layout from '../../../../lib/layout';
 import TokenViewer from '../../../nugg/TokenViewer';
+import CurrencyText from '../../Texts/CurrencyText/CurrencyText';
+import { EthInt } from '../../../../classes/Fraction';
+import Colors from '../../../../lib/colors';
 
 import styles from './ChainIndicator.styles';
 import ChainIndicatorPulse from './ChainIndicatorPulse';
@@ -25,6 +29,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
     const epoch = ProtocolState.select.epoch();
     const connectionWarning = Web3State.select.connectivityWarning();
     const currentBlock = ProtocolState.select.currentBlock();
+    const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
 
     const [blocksRemaining, setBlocksRemaining] = useState(0);
 
@@ -46,6 +51,8 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
     }, [getBlocksRemaining]);
 
     const springStyle = useSpring({
+        display: 'flex',
+        alignItems: 'center',
         opacity: epoch ? 1 : 0,
     });
 

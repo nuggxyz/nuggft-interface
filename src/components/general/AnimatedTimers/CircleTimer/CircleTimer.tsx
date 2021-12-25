@@ -113,6 +113,7 @@ const CircleTimer: FunctionComponent<Props> = ({
                     filter: `drop-shadow(0px 6px 15px ${shadowColor}`,
                     width: '100%',
                     height: '100%',
+                    transform: 'translate3D(0, 0, 0)',
                 }}>
                 <animated.svg
                     height="100%"

@@ -16,39 +16,9 @@ import styles from './SwapPage.styles';
 type Props = {};
 
 const SwapPage: FunctionComponent<Props> = () => {
-    const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
-
     return (
         <div style={styles.container}>
             <div style={styles.secondaryContainer}>
-                <div
-                    style={{
-                        // zIndex: 1000,
-                        display: 'flex',
-                        // background: 'white',
-                        borderRadius: Layout.borderRadius.large,
-                        padding: '.4rem .7rem',
-                        alignItems: 'center',
-                        marginBottom: '1rem',
-                    }}>
-                    <Text
-                        type="text"
-                        size="small"
-                        weight="bolder"
-                        textStyle={{
-                            paddingRight: '.6rem',
-                            color: Colors.nuggBlueText,
-                            font: Layout.font.inter.bold,
-                        }}>
-                        FLOOR
-                    </Text>
-                    <CurrencyText
-                        image="eth"
-                        value={new EthInt(
-                            valuePerShare.split('.')[0],
-                        ).decimal.toNumber()}
-                    />
-                </div>
                 <RingAbout />
             </div>
             <div style={styles.theRingContainer}>

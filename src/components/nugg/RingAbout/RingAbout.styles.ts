@@ -23,7 +23,7 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         flexDirection: 'row',
         width: '100%',
-        height: '75%',
+        // height: '75%',
         padding: '.75rem',
         alignItems: 'center',
         justifyContent: 'center',
