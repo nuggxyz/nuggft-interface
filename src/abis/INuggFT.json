@@ -80,7 +80,7 @@
             {
                 "indexed": false,
                 "internalType": "uint160",
-                "name": "sellingTokenId",
+                "name": "sellerTokenId",
                 "type": "uint160"
             },
             {
@@ -92,7 +92,7 @@
             {
                 "indexed": false,
                 "internalType": "uint160",
-                "name": "buyingTokenId",
+                "name": "buyerTokenId",
                 "type": "uint160"
             },
             {
@@ -161,7 +161,7 @@
             {
                 "indexed": false,
                 "internalType": "uint160",
-                "name": "sellingTokenId",
+                "name": "sellerTokenId",
                 "type": "uint160"
             },
             {
@@ -173,7 +173,7 @@
             {
                 "indexed": false,
                 "internalType": "uint160",
-                "name": "buyingTokenId",
+                "name": "buyerTokenId",
                 "type": "uint160"
             },
             {
@@ -486,7 +486,7 @@
             {
                 "indexed": false,
                 "internalType": "uint160",
-                "name": "sellingTokenId",
+                "name": "sellerTokenId",
                 "type": "uint160"
             },
             {
@@ -498,7 +498,7 @@
             {
                 "indexed": false,
                 "internalType": "uint160",
-                "name": "buyingTokenId",
+                "name": "buyerTokenId",
                 "type": "uint160"
             },
             {
@@ -517,7 +517,7 @@
             {
                 "indexed": false,
                 "internalType": "uint160",
-                "name": "sellingTokenId",
+                "name": "sellerTokenId",
                 "type": "uint160"
             },
             {
@@ -734,6 +734,11 @@
     {
         "inputs": [
             {
+                "internalType": "address",
+                "name": "sender",
+                "type": "address"
+            },
+            {
                 "internalType": "uint160",
                 "name": "tokenId",
                 "type": "uint160"
@@ -748,6 +753,11 @@
         "inputs": [
             {
                 "internalType": "uint160",
+                "name": "buyerTokenId",
+                "type": "uint160"
+            },
+            {
+                "internalType": "uint160",
                 "name": "sellerTokenId",
                 "type": "uint160"
             },
@@ -755,11 +765,6 @@
                 "internalType": "uint16",
                 "name": "itemid",
                 "type": "uint16"
-            },
-            {
-                "internalType": "uint160",
-                "name": "buyerTokenId",
-                "type": "uint160"
             }
         ],
         "name": "claimItem",
@@ -796,6 +801,11 @@
     {
         "inputs": [
             {
+                "internalType": "address",
+                "name": "sender",
+                "type": "address"
+            },
+            {
                 "internalType": "uint160",
                 "name": "tokenId",
                 "type": "uint160"
@@ -810,18 +820,18 @@
         "inputs": [
             {
                 "internalType": "uint160",
+                "name": "buyerTokenId",
+                "type": "uint160"
+            },
+            {
+                "internalType": "uint160",
                 "name": "sellerTokenId",
                 "type": "uint160"
             },
             {
                 "internalType": "uint16",
-                "name": "itemid",
+                "name": "itemId",
                 "type": "uint16"
-            },
-            {
-                "internalType": "uint160",
-                "name": "buyerTokenId",
-                "type": "uint160"
             }
         ],
         "name": "delegateItem",
@@ -1430,7 +1440,7 @@
         "inputs": [
             {
                 "internalType": "uint160",
-                "name": "tokenId",
+                "name": "sellerTokenId",
                 "type": "uint160"
             },
             {
@@ -1609,14 +1619,14 @@
     {
         "inputs": [
             {
+                "internalType": "address",
+                "name": "sender",
+                "type": "address"
+            },
+            {
                 "internalType": "uint160",
                 "name": "tokenId",
                 "type": "uint160"
-            },
-            {
-                "internalType": "address",
-                "name": "user",
-                "type": "address"
             }
         ],
         "name": "valueForDelegate",
@@ -1633,7 +1643,7 @@
             },
             {
                 "internalType": "uint96",
-                "name": "userCurrentOffer",
+                "name": "senderCurrentOffer",
                 "type": "uint96"
             }
         ],

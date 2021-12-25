@@ -64,13 +64,13 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             isUndefinedOrNullOrStringEmpty(amount) &&
             resArr &&
             resArr.nextSwapAmount &&
-            resArr.userCurrentOffer
+            resArr.senderCurrentOffer
         ) {
             // ((nextOfferMin / 10**13) + 1) * 10**13
             setAmount(
                 fromEth(
                     resArr?.nextSwapAmount
-                        .sub(resArr?.userCurrentOffer)
+                        .sub(resArr?.senderCurrentOffer)
                         .div(10 ** 13)
                         .add(1)
                         .mul(10 ** 13),
@@ -99,7 +99,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                               resArr?.nextSwapAmount
                                   ? fromEth(
                                         resArr?.nextSwapAmount
-                                            .sub(resArr?.userCurrentOffer)
+                                            .sub(resArr?.senderCurrentOffer)
                                             .div(10 ** 13)
                                             .add(1)
                                             .mul(10 ** 13),

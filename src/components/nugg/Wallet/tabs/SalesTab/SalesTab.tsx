@@ -120,7 +120,9 @@ const RenderItem: FunctionComponent<
                     textStyle={styles.textWhite}
                     buttonStyle={styles.renderButton}
                     label={`Reclaim your nugg`}
-                    onClick={() => NuggFTHelper.instance.claim(item.nugg.id)}
+                    onClick={() =>
+                        WalletState.dispatch.claim({ tokenId: item.nugg.id })
+                    }
                 />
             </div>
         )

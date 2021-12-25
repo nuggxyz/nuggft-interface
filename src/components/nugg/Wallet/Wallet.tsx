@@ -1,7 +1,8 @@
 import { animated, config, useSpring } from '@react-spring/web';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 
 import useAsyncState from '../../../hooks/useAsyncState';
+import Layout from '../../../lib/layout';
 import AppState from '../../../state/app';
 import ProtocolState from '../../../state/protocol';
 import historyQuery from '../../../state/wallet/queries/historyQuery';
@@ -9,9 +10,12 @@ import loanedNuggsQuery from '../../../state/wallet/queries/loanedNuggsQuery';
 import myActiveSalesQuery from '../../../state/wallet/queries/myActiveSalesQuery';
 import unclaimedOffersQuery from '../../../state/wallet/queries/unclaimedOffersQuery';
 import Web3State from '../../../state/web3';
+import Web3Config from '../../../state/web3/Web3Config';
+import Button from '../../general/Buttons/Button/Button';
 import HappyTabber, {
     HappyTabberItem,
 } from '../../general/HappyTabber/HappyTabber';
+import NLStaticImage from '../../general/NLStaticImage';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import LoansTab from './tabs/LoansTab/LoansTab';
@@ -27,49 +31,75 @@ const Wallet: FunctionComponent<Props> = () => {
     const block = ProtocolState.select.currentBlock();
     const epoch = ProtocolState.select.epoch();
 
-    // const loan = useAsyncState(
-    //     () => loanedNuggsQuery(address, 'desc', '', 1, 0),
-    //     [address, block],
-    // );
-    // const reclaims = useAsyncState(
-    //     () => myActiveSalesQuery(address, 'desc', '', 1, 0),
-    //     [address, block],
-    // );
-    // const claims = useAsyncState(
-    //     () => unclaimedOffersQuery(address, epoch?.id),
-    //     [address, block],
-    // );
-    const history = useAsyncState(
-        () => historyQuery(address, 1, 0),
-        [address, block],
+    const happytabs: HappyTabberItem[] = useMemo(
+        () => [
+            ...(address
+                ? [
+                      {
+                          label: 'Home',
+                          comp: ({ isActive }) => <MintTab />,
+                      },
+                      {
+                          label: 'Claims',
+                          comp: ({ isActive }) => (
+                              <ClaimTab isActive={isActive} />
+                          ),
+                      },
+                      {
+                          label: 'Loans',
+                          comp: ({ isActive }) => (
+                              <LoansTab isActive={isActive} />
+                          ),
+                      },
+                      {
+                          label: 'Sales',
+                          comp: ({ isActive }) => (
+                              <SalesTab isActive={isActive} />
+                          ),
+                      },
+                  ]
+                : [
+                      {
+                          label: 'Home',
+                          comp: ({ isActive }) => (
+                              <div style={{ padding: '1rem' }}>
+                                  {Object.values(
+                                      Web3Config.SUPPORTED_WALLETS,
+                                  ).map((walletObject) =>
+                                      walletObject.name !== 'MetaMask' ||
+                                      (walletObject.name === 'MetaMask' &&
+                                          window.ethereum) ? (
+                                          <Button
+                                              label={walletObject.name}
+                                              buttonStyle={{
+                                                  color: 'white',
+                                                  borderRadius:
+                                                      Layout.borderRadius.large,
+                                                  padding: '.6rem 1rem',
+                                                  pointerEvents: 'auto',
+                                                  background: `${walletObject.color}66`,
+                                              }}
+                                              rightIcon={
+                                                  <NLStaticImage
+                                                      //@ts-ignore
+                                                      image={walletObject.name}
+                                                  />
+                                              }
+                                              onClick={() =>
+                                                  Web3State.safeActivate(
+                                                      walletObject.connector,
+                                                  )
+                                              }
+                                          />
+                                      ) : null,
+                                  )}
+                              </div>
+                          ),
+                      },
+                  ]),
+        ],
+        [address],
     );
-    // const spring = useSpring({
-    //     to: {
-    //         ...styles.wallet,
-    //         right: show ? '65px' : '-430px',
-    //         opacity: show ? 1 : 0,
-    //     },
-    //     config: config.default,
-    // });
-
-    const happytabs: HappyTabberItem[] = [
-        {
-            label: 'Home',
-            comp: ({ isActive }) => <MintTab />,
-        },
-        {
-            label: 'Claims',
-            comp: ({ isActive }) => <ClaimTab isActive={isActive} />,
-        },
-        {
-            label: 'Loans',
-            comp: ({ isActive }) => <LoansTab isActive={isActive} />,
-        },
-        {
-            label: 'Sales',
-            comp: ({ isActive }) => <SalesTab isActive={isActive} />,
-        },
-    ];
 
     return (
         <div style={styles.container}>

@@ -102,13 +102,13 @@ const placeOffer = createAsyncThunk<
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
 >('swap/placeOffer', async ({ amount, tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await (
-            new Contract(
-                config.NUGGFT,
-                INuggFT__factory.abi,
-                Web3State.getLibraryOrProvider(),
-            ) as INuggFT
-        ).delegate(BigNumber.from(tokenId), { value: toEth(amount) });
+        const _pendingtx = await NuggFTHelper.instance
+            .connect(Web3State.getLibraryOrProvider())
+            .delegate(
+                thunkAPI.getState().web3.web3address,
+                BigNumber.from(tokenId),
+                { value: toEth(amount) },
+            );
 
         return {
             success: 'SUCCESS',

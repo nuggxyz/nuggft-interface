@@ -78,7 +78,9 @@ const LinkAccountButton = () => {
 
     const getEthBalance = useCallback(async () => {
         setBalance(
-            new EthInt(await NuggFTHelper.ethBalance()).decimal.toNumber(),
+            new EthInt(
+                await NuggFTHelper.ethBalance(Web3State.getLibraryOrProvider()),
+            ).decimal.toNumber(),
         );
     }, [address]);
 
