@@ -3,7 +3,7 @@ import React, { FunctionComponent, useMemo } from 'react';
 import eth from '../../assets/images/currency/eth.svg';
 import metamask from '../../assets/images/nugg/metamask-full.webp';
 import walletconnect from '../../assets/images/nugg/walletconnect-full.png';
-import nugg from '../../assets/images/nugg/nugg.png';
+import nugg from '../../assets/images/nugg/nugg-white.png';
 
 type Props = {
     image: NLStaticImageKey;

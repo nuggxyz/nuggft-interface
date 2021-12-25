@@ -19,6 +19,7 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 flexDirection: 'column',
+                height: '100%',
             }}>
             <div
                 style={{
@@ -30,7 +31,7 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                 <Text
                     size="large"
                     textStyle={{
-                        color: Colors.nuggBlueText,
+                        color: 'white',
                         marginRight: '1rem',
                     }}>
                     Connect to Nugg.xyz!
@@ -39,42 +40,60 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
             </div>
             <div
                 style={{
-                    background: Colors.transparentWhite,
-                    borderRadius: Layout.borderRadius.mediumish,
+                    background: Colors.transparentLightGrey,
+                    borderRadius: Layout.borderRadius.smallish,
                     margin: '1.5rem',
                     padding: '1rem',
                 }}>
-                <Text type="text" size="smaller">
+                <Text
+                    type="text"
+                    size="smaller"
+                    textStyle={{ color: Colors.textColor }}>
                     By connecting a wallet, you agree to Nugg.xyz's Terms of
                     Service and acknowledge that you have read and understood
                     the Nugg.xyz Protocol Disclaimer.
                 </Text>
             </div>
-            {Object.values(Web3Config.SUPPORTED_WALLETS).map((walletObject) =>
-                walletObject.name !== 'MetaMask' ||
-                (walletObject.name === 'MetaMask' && window.ethereum) ? (
-                    <Button
-                        buttonStyle={{
-                            color: 'white',
-                            borderRadius: Layout.borderRadius.large,
-                            padding: '1rem',
-                            width: '50%',
-                            pointerEvents: 'auto',
-                            background: `${walletObject.color}66`,
-                            margin: '1rem',
-                        }}
-                        rightIcon={
-                            <NLStaticImage
-                                //@ts-ignore
-                                image={walletObject.name}
+            <div
+                style={{
+                    background: Colors.transparentWhite,
+                    borderRadius: Layout.borderRadius.medium,
+                    // margin: '1.5rem',
+                    padding: '1rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                    height: '100%',
+                }}>
+                {Object.values(Web3Config.SUPPORTED_WALLETS).map(
+                    (walletObject) =>
+                        walletObject.name !== 'MetaMask' ||
+                        (walletObject.name === 'MetaMask' &&
+                            window.ethereum) ? (
+                            <Button
+                                buttonStyle={{
+                                    color: 'white',
+                                    borderRadius: Layout.borderRadius.large,
+                                    padding: '1rem',
+                                    pointerEvents: 'auto',
+                                    background: `${walletObject.color}66`,
+                                    margin: '1rem',
+                                }}
+                                rightIcon={
+                                    <NLStaticImage
+                                        //@ts-ignore
+                                        image={walletObject.name}
+                                    />
+                                }
+                                onClick={() =>
+                                    Web3State.safeActivate(
+                                        walletObject.connector,
+                                    )
+                                }
                             />
-                        }
-                        onClick={() =>
-                            Web3State.safeActivate(walletObject.connector)
-                        }
-                    />
-                ) : null,
-            )}
+                        ) : null,
+                )}
+            </div>
         </div>
     );
 };

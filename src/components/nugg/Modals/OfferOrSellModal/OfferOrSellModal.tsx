@@ -28,7 +28,11 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     const nugg = SwapState.select.nugg();
 
     const resArr = useAsyncState(
-        () => nugg && NuggFTHelper.instance.valueForDelegate(nugg.id, address),
+        () =>
+            nugg &&
+            NuggFTHelper.instance
+                .connect(Web3State.getLibraryOrProvider())
+                .valueForDelegate(address, nugg.id),
         [address, nugg],
     );
 

@@ -4,8 +4,8 @@ import {
     isUndefinedOrNullOrNotObject,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
-
 import myNuggsQuery from '../wallet/queries/myNuggsQuery';
+
 import getNuggThumbnailQuery from './queries/getNuggThumbnailQuery';
 import activeNuggsQuery from './queries/activeNuggsQuery';
 import allNuggsQuery from './queries/allNuggsQuery';
@@ -55,7 +55,7 @@ const initNuggDex = createAsyncThunk<
     { state: NL.Redux.RootState; rejectValue: NL.Redux.NuggDex.Error }
 >('nuggdex/initNuggDex', async (_, thunkAPI) => {
     try {
-        const currentEpoch = thunkAPI.getState().protocol.epoch.id;
+        const currentEpoch = thunkAPI.getState().protocol.epoch?.id || '0';
 
         const activeNuggs = (
             await activeNuggsQuery('id', 'desc', '', currentEpoch, 5, 0)

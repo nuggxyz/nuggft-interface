@@ -16,11 +16,11 @@ const styles = NLStyleSheetCreator({
     statisticContainer: {
         display: 'flex',
         flexDirection: 'row',
-        width: '100%',
+        // width: '100%',
         justifyContent: 'space-between',
     },
     selectContainer: {
-        borderRadius: Layout.borderRadius.medium,
+        borderRadius: Layout.borderRadius.large,
         background: Colors.transparentLightGrey,
         ...globalStyles.backdropFilter,
         padding: '.5rem',
@@ -33,8 +33,8 @@ const styles = NLStyleSheetCreator({
         flexGrow: 1,
     },
     button: {
-        background: Colors.gradient3,
-        borderRadius: Layout.borderRadius.mediumish,
+        background: 'white',
+        borderRadius: Layout.borderRadius.large,
         margin: '.5rem',
     },
     whiteText: {

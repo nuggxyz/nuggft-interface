@@ -18,12 +18,13 @@ import Web3State from '../../../../../state/web3';
 import Button from '../../../../general/Buttons/Button/Button';
 import Text from '../../../../general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '../../../../general/List/List';
-import styles from '../HistoryTab.styles';
+import listStyles from '../HistoryTab.styles';
 import Colors from '../../../../../lib/colors';
 import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import constants from '../../../../../lib/constants';
 import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQuery';
 import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
+import styles from '../Tabs.styles';
 
 type Props = { isActive?: boolean };
 
@@ -64,7 +65,7 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
     }, [address]);
 
     return (
-        <div>
+        <div style={styles.container}>
             <List
                 data={loanedNuggs}
                 RenderItem={React.memo(
@@ -73,12 +74,14 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
                         JSON.stringify(prev.item) ===
                         JSON.stringify(props.item),
                 )}
-                label="My Nuggs"
+                label="Loaned Nuggs"
                 loading={loadingNuggs}
-                style={styles.list}
-                extraData={[epoch.id]}
-                listEmptyText="Loan some nuggs"
-                action={() => console.log('Open Nugg Modal')}
+                style={listStyles.list}
+                extraData={[epoch?.id || '0']}
+                listEmptyText="You haven't loaned any nuggs yet!"
+                labelStyle={styles.listLabel}
+                listEmptyStyle={listStyles.textWhite}
+                loaderColor="white"
             />
         </div>
     );
@@ -91,9 +94,9 @@ const RenderItem: FunctionComponent<
 > = ({ item, index, extraData }) => {
     return (
         !isUndefinedOrNullOrObjectEmpty(item) && (
-            <div key={index} style={styles.render}>
+            <div key={index} style={listStyles.render}>
                 <div>
-                    <Text textStyle={styles.renderTitle}>
+                    <Text textStyle={listStyles.renderTitle}>
                         Nugg #{item.nugg?.id}
                     </Text>
                     <Text
@@ -105,8 +108,8 @@ const RenderItem: FunctionComponent<
                 </div>
                 <div>
                     <Button
-                        textStyle={styles.textWhite}
-                        buttonStyle={styles.renderButton}
+                        textStyle={listStyles.textWhite}
+                        buttonStyle={listStyles.renderButton}
                         label={`Extend`}
                         onClick={() =>
                             NuggFTHelper.instance.rebalance(item.nugg.id, {
@@ -115,8 +118,8 @@ const RenderItem: FunctionComponent<
                         }
                     />
                     <Button
-                        textStyle={styles.textWhite}
-                        buttonStyle={styles.renderButton}
+                        textStyle={listStyles.textWhite}
+                        buttonStyle={listStyles.renderButton}
                         label={`Pay off`}
                         onClick={() =>
                             NuggFTHelper.instance.payoff(item.nugg.id, {

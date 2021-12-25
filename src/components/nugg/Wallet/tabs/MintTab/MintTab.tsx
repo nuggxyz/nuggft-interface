@@ -23,22 +23,40 @@ import List, { ListRenderItemProps } from '../../../../general/List/List';
 import NuggListRenderItem from '../../../NuggDex/NuggDexSearchList/components/NuggListRenderItem';
 import NumberStatistic from '../../../Statistics/NumberStatistic';
 import TextStatistic from '../../../Statistics/TextStatistic';
-import styles from '../SwapTab.styles';
+import swapStyles from '../SwapTab.styles';
 import listStyle from '../HistoryTab.styles';
 import Text from '../../../../general/Texts/Text/Text';
 import Colors from '../../../../../lib/colors';
 import AppState from '../../../../../state/app';
 import LinkAccountButton from '../../../../general/Buttons/LinkAccountButton/LinkAccountButton';
+import styles from '../Tabs.styles';
+import useAsyncState from '../../../../../hooks/useAsyncState';
+import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQuery';
+import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSalesQuery';
+import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedOffersQuery';
 
 type Props = {};
 
 const MintTab: FunctionComponent<Props> = () => {
     // const userShares = WalletState.select.userShares();
+
     const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
     const address = Web3State.select.web3address();
     const epoch = ProtocolState.select.epoch();
     const [myNuggs, setMyNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
+    const loans = useAsyncState(
+        () => loanedNuggsQuery(address, 'desc', '', 10000, 0),
+        [address, epoch],
+    );
+    const sales = useAsyncState(
+        () => myActiveSalesQuery(address, 'desc', '', 10000, 0),
+        [address, epoch],
+    );
+    const claims = useAsyncState(
+        () => unclaimedOffersQuery(address, epoch?.id),
+        [address, epoch],
+    );
 
     const getMyNuggs = useCallback(async () => {
         setLoadingNuggs(true);
@@ -68,34 +86,36 @@ const MintTab: FunctionComponent<Props> = () => {
     }, [address]);
 
     return (
-        <div style={{ padding: '1rem' }}>
-            {AppState.isMobile && (
-                <div
-                    style={{
-                        display: 'flex',
-                        padding: '.5rem 0rem .5rem 1.5rem',
-                    }}>
-                    <LinkAccountButton />
-                </div>
-            )}
-            <div style={styles.statisticContainer}>
+        <div style={styles.container}>
+            <div style={swapStyles.statisticContainer}>
                 <TextStatistic
                     label="Nuggs"
-                    value={'' + myNuggs.length}
-                    // style={{ background: Colors.gradient3 }}
-                    // labelColor="white"
+                    value={'' + (myNuggs?.length || 0)}
                 />
+                <TextStatistic
+                    label="Claims"
+                    value={'' + (claims?.length || 0)}
+                />
+                <TextStatistic
+                    label="Loans"
+                    value={'' + (loans?.length || 0)}
+                />
+                <TextStatistic
+                    label="Sales"
+                    value={'' + (sales?.length || 0)}
+                />
+            </div>
+            <div>
                 <NumberStatistic
+                    style={{ alignItems: 'center', width: '' }}
                     label="TVL"
                     value={new EthInt(`${+valuePerShare * myNuggs.length}`)}
                     image="eth"
-                    // style={{ background: Colors.gradient3 }}
-                    // labelColor="white"
                 />
             </div>
             <Button
-                buttonStyle={styles.button}
-                textStyle={styles.whiteText}
+                buttonStyle={swapStyles.button}
+                textStyle={{ color: Colors.nuggRedText }}
                 label="Mint a nugg"
                 onClick={() =>
                     NuggFTHelper.instance.minSharePrice().then((minPrice) =>
@@ -111,21 +131,27 @@ const MintTab: FunctionComponent<Props> = () => {
                     )
                 }
             />
-            <List
-                data={myNuggs}
-                RenderItem={React.memo(
-                    RenderItem,
-                    (prev, props) =>
-                        JSON.stringify(prev.item) ===
-                        JSON.stringify(props.item),
-                )}
-                label="My Nuggs"
-                loading={loadingNuggs && isUndefinedOrNullOrArrayEmpty(myNuggs)}
-                style={listStyle.list}
-                extraData={[address]}
-                listEmptyText="No nuggs yet!"
-                action={() => console.log('Open Nugg Modal')}
-            />
+            {
+                <List
+                    labelStyle={styles.listLabel}
+                    data={myNuggs}
+                    RenderItem={React.memo(
+                        RenderItem,
+                        (prev, props) =>
+                            JSON.stringify(prev.item) ===
+                            JSON.stringify(props.item),
+                    )}
+                    label="My Nuggs"
+                    loading={
+                        loadingNuggs && isUndefinedOrNullOrArrayEmpty(myNuggs)
+                    }
+                    style={listStyle.list}
+                    listEmptyStyle={listStyle.textWhite}
+                    extraData={[address]}
+                    listEmptyText="You don't have any Nuggs yet!"
+                    loaderColor='white'
+                />
+            }
         </div>
     );
 };

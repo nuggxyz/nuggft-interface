@@ -1,13 +1,16 @@
 import FontSize from '../../../../lib/fontSize';
 import { NLStyleSheetCreator } from '../../../../lib';
 import Layout from '../../../../lib/layout';
+import Colors from '../../../../lib/colors';
 
 const styles = NLStyleSheetCreator({
     title: {
         fontFamily: Layout.font.montserrat.bold,
+        // color: Colors.textColor,
     },
     text: {
         fontFamily: Layout.font.inter.regular,
+        // color: Colors.textColor,
     },
     light: {
         fontWeight: 'lighter',

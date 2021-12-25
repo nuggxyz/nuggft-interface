@@ -17,6 +17,7 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'space-between',
         width: '430px',
         height: '70%',
+        position: 'relative',
         // position: 'absolute',
         justifySelf: 'center',
         pointerEvents: 'auto',

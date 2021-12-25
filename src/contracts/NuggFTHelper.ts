@@ -32,7 +32,7 @@ export default class NuggFTHelper extends ContractHelper {
             NuggFTHelper._instance = new Contract(
                 config.NUGGFT,
                 INuggFT__factory.abi,
-                Web3State.getLibraryOrProvider(),
+                // Web3State.getLibraryOrProvider(),
             ) as INuggFT;
         }
         return NuggFTHelper._instance;

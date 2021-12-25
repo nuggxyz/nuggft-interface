@@ -15,10 +15,9 @@ const styles = NLStyleSheetCreator({
         background: Colors.transparentLightGrey,
         borderRadius: Layout.borderRadius.mediumish,
         padding: ' .75rem 1rem',
-        margin: '0rem 0rem 1rem 0rem',
         flexGrow: 1,
         minHeight: '100px',
-        height: 'auto',
+        height: '100%',
     },
     render: {
         display: 'flex',
@@ -35,7 +34,7 @@ const styles = NLStyleSheetCreator({
     },
     renderButton: {
         background: Colors.gradient2,
-        borderRadius: Layout.borderRadius.smallish,
+        borderRadius: Layout.borderRadius.large,
     },
     textWhite: {
         color: ' white',

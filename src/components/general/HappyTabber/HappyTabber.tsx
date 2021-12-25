@@ -41,6 +41,7 @@ const HappyTabber: FunctionComponent<Props> = ({
             position: 'absolute',
             height: '100%',
             width: '100%',
+            display: 'flex',
         },
         enter: { opacity: 1 },
         leave: { opacity: 0 },
@@ -75,7 +76,7 @@ const HappyTabber: FunctionComponent<Props> = ({
                             onClick={() => setActiveIndex(index)}>
                             <Text
                                 textStyle={{
-                                    color: Colors.textColor,
+                                    color: Colors.nuggRedText,
                                     ...(index === activeIndex
                                         ? styles.headerTextBold
                                         : styles.headerText),
