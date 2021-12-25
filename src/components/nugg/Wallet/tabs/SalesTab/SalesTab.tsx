@@ -18,13 +18,14 @@ import Web3State from '../../../../../state/web3';
 import Button from '../../../../general/Buttons/Button/Button';
 import Text from '../../../../general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '../../../../general/List/List';
-import styles from '../HistoryTab.styles';
+import listStyles from '../HistoryTab.styles';
 import Colors from '../../../../../lib/colors';
 import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import constants from '../../../../../lib/constants';
 import NuggListRenderItem from '../../../NuggDex/NuggDexSearchList/components/NuggListRenderItem';
 import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSalesQuery';
 import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
+import styles from '../Tabs.styles';
 
 type Props = { isActive?: boolean };
 
@@ -64,7 +65,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
     }, [address]);
 
     return (
-        <div>
+        <div style={styles.container}>
             <List
                 data={myNuggs}
                 RenderItem={React.memo(
@@ -73,12 +74,14 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                         JSON.stringify(prev.item) ===
                         JSON.stringify(props.item),
                 )}
-                label="My Nuggs"
+                label="Active Nugg sales"
                 loading={loadingNuggs}
-                style={styles.list}
+                style={listStyles.list}
                 extraData={[address]}
-                listEmptyText="No nuggs yet!"
-                action={() => console.log('Open Nugg Modal')}
+                listEmptyText="You haven't sold any nuggs yet!"
+                labelStyle={styles.listLabel}
+                listEmptyStyle={listStyles.textWhite}
+                loaderColor="white"
             />
         </div>
     );
@@ -104,9 +107,9 @@ const RenderItem: FunctionComponent<
 
     return (
         !isUndefinedOrNullOrObjectEmpty(item) && (
-            <div key={index} style={styles.render}>
+            <div key={index} style={listStyles.render}>
                 <div>
-                    <Text textStyle={styles.renderTitle}>
+                    <Text textStyle={listStyles.renderTitle}>
                         Nugg #{parsedTitle.nugg}
                     </Text>
                     <Text
@@ -117,8 +120,8 @@ const RenderItem: FunctionComponent<
                     </Text>
                 </div>
                 <Button
-                    textStyle={styles.textWhite}
-                    buttonStyle={styles.renderButton}
+                    textStyle={listStyles.textWhite}
+                    buttonStyle={listStyles.renderButton}
                     label={`Reclaim your nugg`}
                     onClick={() =>
                         WalletState.dispatch.claim({ tokenId: item.nugg.id })

@@ -33,10 +33,10 @@ const styles = NLStyleSheetCreator({
         height: '1px',
         width: '100%',
     },
-    noItems: {
-        fontFamily: Layout.font.inter.bold,
-        fontSize: FontSize.h5,
-    },
+    // noItems: {
+    //     fontFamily: Layout.font.inter.bold,
+    //     fontSize: FontSize.h5,
+    // },
 });
 
 export default styles;

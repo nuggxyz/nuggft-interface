@@ -10,6 +10,7 @@ import ChainIndicator from '../../../general/Buttons/ChainIndicator/ChainIndicat
 import LinkAccountButton from '../../../general/Buttons/LinkAccountButton/LinkAccountButton';
 import CurrencyText from '../../../general/Texts/CurrencyText/CurrencyText';
 import Text from '../../../general/Texts/Text/Text';
+import FloorPrice from '../../FloorPrice';
 import NuggDexSearchBar from '../../NuggDex/NuggDexSearchBar/NuggDexSearchBar';
 import NumberStatistic from '../../Statistics/NumberStatistic';
 
@@ -77,6 +78,7 @@ const NavigationBar: FC<Props> = () => {
                 />
             </div> */}
             <div style={styles.linkAccountContainer}>
+                <FloorPrice />
                 <LinkAccountButton />
             </div>
         </div>

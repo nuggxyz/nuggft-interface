@@ -18,8 +18,9 @@ import Web3State from '../../../../../state/web3';
 import Button from '../../../../general/Buttons/Button/Button';
 import Text from '../../../../general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '../../../../general/List/List';
-import styles from '../HistoryTab.styles';
+import listStyles from '../HistoryTab.styles';
 import Colors from '../../../../../lib/colors';
+import styles from '../Tabs.styles';
 
 type Props = { isActive?: boolean };
 
@@ -50,7 +51,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     }, [address]);
 
     return (
-        <div>
+        <div style={styles.container}>
             <List
                 data={unclaimedOffers}
                 RenderItem={React.memo(
@@ -59,9 +60,12 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                         JSON.stringify(prev.item) ===
                         JSON.stringify(props.item),
                 )}
-                label="Unclaimed"
+                label="Unclaimed Nuggs or ETH"
+                labelStyle={styles.listLabel}
+                listEmptyStyle={listStyles.textWhite}
+                loaderColor="white"
                 loading={loadingOffers}
-                style={styles.list}
+                style={listStyles.list}
                 extraData={[address]}
                 listEmptyText="Nothing to claim..."
             />
@@ -93,9 +97,9 @@ const RenderItem: FunctionComponent<
 
     return (
         !isUndefinedOrNullOrObjectEmpty(item) && (
-            <div key={index} style={styles.render}>
+            <div key={index} style={listStyles.render}>
                 <div>
-                    <Text textStyle={styles.renderTitle}>
+                    <Text textStyle={listStyles.renderTitle}>
                         Nugg #{parsedTitle.nugg}
                     </Text>
                     <Text
@@ -106,8 +110,8 @@ const RenderItem: FunctionComponent<
                     </Text>
                 </div>
                 <Button
-                    textStyle={styles.textWhite}
-                    buttonStyle={styles.renderButton}
+                    textStyle={listStyles.textWhite}
+                    buttonStyle={listStyles.renderButton}
                     label={`Claim your ${isWinner ? 'NUGG' : 'ETH'}`}
                     onClick={() =>
                         WalletState.dispatch.claim({

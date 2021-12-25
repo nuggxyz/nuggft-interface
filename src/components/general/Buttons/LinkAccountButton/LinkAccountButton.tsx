@@ -16,6 +16,7 @@ import ProtocolState from '../../../../state/protocol';
 import CurrencyText from '../../Texts/CurrencyText/CurrencyText';
 import AppState from '../../../../state/app';
 import Jazzicon from '../../../nugg/Jazzicon';
+import Text from '../../Texts/Text/Text';
 
 import styles from './LinkAccountButton.styles';
 
@@ -65,9 +66,7 @@ const LinkAccountButton = () => {
                         <Loader color={Colors.nuggBlueText} />
                     ) : status === 'SELECTED' ? (
                         <Jazzicon address={address} />
-                    ) : status === 'NOT_SELECTED' ? (
-                        <NLStaticImage image="nugg" />
-                    ) : null //
+                    ) : status === 'NOT_SELECTED' ? null : null // <NLStaticImage image="nugg" /> //
                 }
             </div>
         ),
@@ -90,7 +89,7 @@ const LinkAccountButton = () => {
 
     return (
         <>
-            {address && <CurrencyText image="eth" value={balance} />}
+            {/* {address && <CurrencyText image="eth" value={balance} />} */}
             {/* <>
                 {Object.values(Web3Config.SUPPORTED_WALLETS).map(
                     (walletObject) =>
@@ -115,13 +114,22 @@ const LinkAccountButton = () => {
                         ) : null,
                 )}
             </> */}
-            <Button
+            {address && (
+                <div style={styles.textContainer}>
+                    <Text type="text" textStyle={buttonStyle}>
+                        {buttonLabel}
+                    </Text>
+                    {getRightIcon()}
+                </div>
+            )}
+
+            {/* <Button
                 buttonStyle={buttonStyle}
                 textStyle={styles.text}
                 onClick={onClick}
                 label={buttonLabel}
                 rightIcon={getRightIcon()}
-            />
+            /> */}
         </>
     );
 };

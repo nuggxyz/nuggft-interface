@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import { animated, useSpring, useTransition, config } from 'react-spring';
 
+import { isUndefinedOrNullOrArrayEmpty } from '../../../lib';
 import Colors from '../../../lib/colors';
 import AppState from '../../../state/app';
 import Text from '../Texts/Text/Text';
@@ -40,6 +41,7 @@ const HappyTabber: FunctionComponent<Props> = ({
             position: 'absolute',
             height: '100%',
             width: '100%',
+            display: 'flex',
         },
         enter: { opacity: 1 },
         leave: { opacity: 0 },
@@ -52,37 +54,39 @@ const HappyTabber: FunctionComponent<Props> = ({
                 ...styles.wrapperContainer,
                 ...(AppState.isMobile && styles.wrapperMobile),
             }}>
-            <div
-                style={{
-                    ...styles.header,
-                    width: `${WIDTH}px`,
-                }}>
-                <animated.div
+            {!isUndefinedOrNullOrArrayEmpty(items) && items.length > 1 && (
+                <div
                     style={{
-                        width: `${(WIDTH - 8) / items.length}px`,
-                        ...selectionIndicatorSpring,
-                    }}
-                />
-                {items.map((item, index) => (
-                    <div
-                        key={index}
+                        ...styles.header,
+                        width: `${WIDTH}px`,
+                    }}>
+                    <animated.div
                         style={{
-                            width: `${WIDTH / items.length}px`,
-                            ...styles.headerTextContainer,
+                            width: `${(WIDTH - 8) / items.length}px`,
+                            ...selectionIndicatorSpring,
                         }}
-                        onClick={() => setActiveIndex(index)}>
-                        <Text
-                            textStyle={{
-                                color: Colors.textColor,
-                                ...(index === activeIndex
-                                    ? styles.headerTextBold
-                                    : styles.headerText),
-                            }}>
-                            {item.label}
-                        </Text>
-                    </div>
-                ))}
-            </div>
+                    />
+                    {items.map((item, index) => (
+                        <div
+                            key={index}
+                            style={{
+                                width: `${WIDTH / items.length}px`,
+                                ...styles.headerTextContainer,
+                            }}
+                            onClick={() => setActiveIndex(index)}>
+                            <Text
+                                textStyle={{
+                                    color: Colors.nuggRedText,
+                                    ...(index === activeIndex
+                                        ? styles.headerTextBold
+                                        : styles.headerText),
+                                }}>
+                                {item.label}
+                            </Text>
+                        </div>
+                    ))}
+                </div>
+            )}
             <div style={styles.body}>
                 {tabFadeTransition((styles, Item) => (
                     //@ts-ignore

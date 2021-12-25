@@ -32,7 +32,7 @@ export default class NuggFTHelper extends ContractHelper {
             NuggFTHelper._instance = new Contract(
                 config.NUGGFT,
                 INuggFT__factory.abi,
-                Web3State.getLibraryOrProvider(),
+                // Web3State.getLibraryOrProvider(),
             ) as INuggFT;
         }
         return NuggFTHelper._instance;
@@ -76,7 +76,7 @@ export default class NuggFTHelper extends ContractHelper {
                     config.NUGGFT,
                     BigNumber.from(tokenId),
                     Address.ZERO.hash,
-                    45,
+                    40,
                     1,
                 );
 
@@ -100,7 +100,7 @@ export default class NuggFTHelper extends ContractHelper {
         tokenId: string,
     ): Promise<NL.Redux.Transaction.Response<TokenApproveInfo>> {
         let response = await this.instance
-            .connect(this.instance.signer)
+            .connect(Web3State.getLibraryOrProvider())
             .approve(spender.hash, tokenId);
         return {
             response,

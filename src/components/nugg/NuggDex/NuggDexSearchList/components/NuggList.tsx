@@ -108,7 +108,7 @@ const NuggList: FunctionComponent<Props> = ({
             } else {
                 const startFrom = addToResult ? results.length : 0;
                 if (localViewing === 'on sale') {
-                    const currentEpoch = epoch.id;
+                    const currentEpoch = epoch?.id || '0';
                     const activeNuggs = await activeNuggsQuery(
                         filters.sort.by,
                         filters.sort.asc ? 'asc' : 'desc',

@@ -45,6 +45,9 @@ type Props = {
     onScroll?: RefCallback<any>;
     selected?: any;
     listEmptyText?: string;
+    labelStyle?: CSSProperties;
+    listEmptyStyle?: CSSProperties;
+    loaderColor?: string;
 };
 
 const List: FunctionComponent<Props> = ({
@@ -61,6 +64,9 @@ const List: FunctionComponent<Props> = ({
     onScroll,
     selected,
     listEmptyText,
+    labelStyle,
+    loaderColor,
+    listEmptyStyle,
 }) => {
     const ref = useOnScroll(onScroll);
     const containerStyle = useMemo(() => {
@@ -96,12 +102,18 @@ const List: FunctionComponent<Props> = ({
                         ...styles.container,
                         justifyContent: 'center',
                     }}>
-                    <Text weight="light" textStyle={styles.noItems}>
-                        {listEmptyText || 'No items to display...'}
-                    </Text>
+                    {!loading && (
+                        <Text
+                            weight="light"
+                            size="small"
+                            type="text"
+                            textStyle={listEmptyStyle}>
+                            {listEmptyText || 'No items to display...'}
+                        </Text>
+                    )}
                 </div>
             ),
-        [data, action, extraData, RenderItem, listEmptyText],
+        [data, action, extraData, RenderItem, listEmptyText, loading],
     );
 
     const Loading = useCallback(
@@ -112,14 +124,19 @@ const List: FunctionComponent<Props> = ({
                     height: '1rem',
                     position: 'relative',
                 }}>
-                {loading && <Loader color="black" />}
+                {loading && <Loader color={loaderColor || 'black'} />}
             </div>
         ),
         [loading],
     );
 
     const Label = useCallback(
-        () => (label ? <Text textStyle={styles.label}>{label}</Text> : null),
+        () =>
+            label ? (
+                <Text textStyle={{ ...styles.label, ...labelStyle }}>
+                    {label}
+                </Text>
+            ) : null,
         [label],
     );
 
