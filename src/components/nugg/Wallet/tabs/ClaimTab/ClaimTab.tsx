@@ -112,7 +112,7 @@ const RenderItem: FunctionComponent<
                 <Button
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
-                    label={`Claim your ${isWinner ? 'NUGG' : 'ETH'}`}
+                    label={`Claim ${isWinner ? 'Nugg' : 'ETH'}`}
                     onClick={() =>
                         WalletState.dispatch.claim({
                             tokenId: parsedTitle.nugg,

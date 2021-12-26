@@ -1,6 +1,9 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
-import { isUndefinedOrNullOrObjectEmpty } from '../../../lib';
+import {
+    isUndefinedOrNullOrNumberZero,
+    isUndefinedOrNullOrObjectEmpty,
+} from '../../../lib';
 import Colors from '../../../lib/colors';
 import constants from '../../../lib/constants';
 import ProtocolState from '../../../state/protocol';
@@ -24,39 +27,38 @@ const TheRing: FunctionComponent<Props> = ({
 }) => {
     const lastBlock = ProtocolState.select.currentBlock();
     const epoch = ProtocolState.select.epoch();
-    const end = SwapState.select.epoch();
+    const currentSwap = SwapState.select.epoch();
     const nugg = SwapState.select.nugg();
     const status = SwapState.select.status();
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
-        if (
-            !isUndefinedOrNullOrObjectEmpty(epoch) &&
-            !isUndefinedOrNullOrObjectEmpty(end)
-        ) {
-            remaining = +end.endblock - +epoch.startblock;
+        if (!isUndefinedOrNullOrObjectEmpty(currentSwap)) {
+            remaining = +currentSwap.endblock - +currentSwap.startblock;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
         return remaining;
-    }, [epoch, end]);
+    }, [currentSwap]);
 
     const blocksRemaining = useMemo(() => {
         let remaining = 0;
 
         if (
-            !isUndefinedOrNullOrObjectEmpty(epoch) &&
-            !isUndefinedOrNullOrObjectEmpty(end)
+            !isUndefinedOrNullOrObjectEmpty(currentSwap) &&
+            !isUndefinedOrNullOrNumberZero(lastBlock)
         ) {
-            remaining = end.endblock - lastBlock;
+            remaining = +currentSwap.endblock - +lastBlock;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
 
         return remaining;
-    }, [lastBlock, epoch, end]);
+    }, [lastBlock, currentSwap]);
+
+    console.log({ blockDuration, blocksRemaining, lastBlock });
 
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>

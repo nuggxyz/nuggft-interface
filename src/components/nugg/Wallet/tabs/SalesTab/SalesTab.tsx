@@ -126,7 +126,7 @@ const RenderItem: FunctionComponent<
                 <Button
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
-                    label={`Reclaim your ${
+                    label={`Reclaim ${
                         parsedTitle.swap === '0' ? 'Nugg' : 'ETH'
                     }`}
                     onClick={() =>
