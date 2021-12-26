@@ -14,8 +14,8 @@ const query = (
 ) => gql`
     {
         swaps(
-            where: {epoch: "${currentEpoch}", nugg_contains: "${searchValue}"}, 
-            orderBy: ${orderBy === 'id' ? 'endingEpoch' : 'eth'}, 
+            where: {epoch_gte: "${currentEpoch}", nugg_contains: "${searchValue}"},
+            orderBy: ${orderBy === 'id' ? 'endingEpoch' : 'eth'},
             orderDirection: ${orderDirection},
             first: ${first},
             skip: ${skip}
@@ -32,8 +32,8 @@ const query2 = (
 ) => gql`
     {
         swaps(
-            where: {endingEpoch: "0", id_not:"0-0", nugg_contains: "${searchValue}"}, 
-            orderBy: ${orderBy === 'id' ? 'endingEpoch' : 'eth'}, 
+            where: {endingEpoch: "0", id_not:"0-0", nugg_contains: "${searchValue}"},
+            orderBy: ${orderBy === 'id' ? 'endingEpoch' : 'eth'},
             orderDirection: ${orderDirection},
             first: ${first},
             skip: ${skip}

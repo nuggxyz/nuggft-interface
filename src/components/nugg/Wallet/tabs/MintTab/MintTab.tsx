@@ -47,13 +47,14 @@ const MintTab: FunctionComponent<Props> = () => {
     const [myNuggs, setMyNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
     const loans = useAsyncState(
-        () => loanedNuggsQuery(address, 'desc', '', 10000, 0),
+        () => loanedNuggsQuery(address, 'desc', '', 1000, 0),
         [address, epoch],
     );
     const sales = useAsyncState(
-        () => myActiveSalesQuery(address, 'desc', '', 10000, 0),
+        () => myActiveSalesQuery(address, 'desc', '', 1000, 0),
         [address, epoch],
     );
+
     const claims = useAsyncState(
         () => unclaimedOffersQuery(address, epoch?.id),
         [address, epoch],

@@ -156,6 +156,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 swapRoute.length === 4 &&
                 swapRoute[1] === 'swap'
             ) {
+                console.log(`${swapRoute[2]}-${swapRoute[3]}`);
                 SwapState.dispatch.initSwap({
                     swapId: `${swapRoute[2]}-${swapRoute[3]}`,
                 });

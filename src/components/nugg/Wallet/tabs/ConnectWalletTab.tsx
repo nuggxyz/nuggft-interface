@@ -71,6 +71,7 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                         (walletObject.name === 'MetaMask' &&
                             window.ethereum) ? (
                             <Button
+                                key={walletObject.name}
                                 buttonStyle={{
                                     color: 'white',
                                     borderRadius: Layout.borderRadius.large,

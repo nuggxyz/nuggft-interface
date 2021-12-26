@@ -61,7 +61,11 @@ export default class ENSHelper {
      */
     private static async resolveName(address: Address): Promise<string> {
         try {
-            if (!isUndefinedOrNullOrObjectEmpty(address)) {
+            console.log(address.equals(Address.ZERO));
+            if (
+                !isUndefinedOrNullOrObjectEmpty(address) &&
+                (!address.equals(Address.ZERO) || !address.equals(Address.NULL))
+            ) {
                 const resolver = await this.reverseResolver(
                     address,
                     this.signer,

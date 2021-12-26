@@ -12,12 +12,13 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'space-between',
         alignItems: 'stretch',
         padding: '1rem',
+        position: 'relative',
     },
     statisticContainer: {
         display: 'flex',
-        flexDirection: 'row',
-        // width: '100%',
+        width: '100%',
         justifyContent: 'space-between',
+        position: 'relative'
     },
     selectContainer: {
         borderRadius: Layout.borderRadius.large,

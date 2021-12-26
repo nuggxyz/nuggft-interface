@@ -34,15 +34,16 @@ const initSwap = createAsyncThunk<
         const res = await initSwapQuery(swapId);
 
         const currentEpoch = thunkAPI.getState().protocol.epoch;
-        const status = swapId.includes(
-            !isUndefinedOrNullOrObjectEmpty(currentEpoch)
-                ? currentEpoch.id
-                : null,
-        )
-            ? 'ongoing'
-            : swapId.includes('-0')
-            ? 'waiting'
-            : 'over';
+        const status =
+            swapId.includes(
+                !isUndefinedOrNullOrObjectEmpty(currentEpoch)
+                    ? currentEpoch.id
+                    : null,
+            ) || +currentEpoch?.id < +swapId.split('-')[1]
+                ? 'ongoing'
+                : swapId.includes('-0')
+                ? 'waiting'
+                : 'over';
         return {
             success: 'SUCCESS',
             data: { swap: res, status },
