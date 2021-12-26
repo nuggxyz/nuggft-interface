@@ -47,9 +47,44 @@ export const swapBare = gql`
             claimed
             owner
         }
+        eth
+        ethUsd
+        owner ${idFragment}
+        leader ${idFragment}
+    }
+`;
+
+export const swapBareWithEpoch = gql`
+    {
+        id
+        nugg {
+            id
+            user ${idFragment}
+            items ${idFragment}
+            offers {
+                id
+                swap ${idFragment}
+                nugg ${idFragment}
+                eth
+                ethUsd
+                claimed
+                owner
+            }
+            swaps ${idFragment}
+            activeSwap ${idFragment}
+        }
+        offers {
+            id
+            user ${idFragment}
+            eth
+            ethUsd
+            claimed
+            owner
+        }
         epoch {
             id
             endblock
+            startblock
         }
         eth
         ethUsd
@@ -64,6 +99,20 @@ export const swapThumbnail = gql`
         endingEpoch
         eth
         ethUsd
+        owner ${idFragment}
+        leader ${idFragment}
+        nugg ${idFragment}
+    }
+`;
+export const swapThumbnailActiveSales = gql`
+    {
+        id
+        endingEpoch
+        eth
+        ethUsd
+        offers(first: 1, orderBy: eth, orderDirection: desc, where: {claimed: false}) {
+            id
+        }
         owner ${idFragment}
         leader ${idFragment}
         nugg ${idFragment}

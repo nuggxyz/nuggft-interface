@@ -1,6 +1,11 @@
 import gql from 'graphql-tag';
 
-import { swapNuggId, swapThumbnail } from '../../../graphql/fragments/swap';
+import { idFragment } from '../../../graphql/fragments/general';
+import {
+    swapNuggId,
+    swapThumbnail,
+    swapThumbnailActiveSales,
+} from '../../../graphql/fragments/swap';
 import { executeQuery } from '../../../graphql/helpers';
 import { isUndefinedOrNullOrArrayEmpty } from '../../../lib';
 
@@ -18,7 +23,18 @@ const query = (
             orderDirection: ${orderDirection},
             first: ${first},
             skip: ${skip}
-        ) ${swapThumbnail}
+        ) {
+            id
+            endingEpoch
+            eth
+            ethUsd
+            offers(first: 1, orderBy: eth, orderDirection: desc, where: {claimed: false, user: "${address}"}) {
+                id
+            }
+            owner ${idFragment}
+            leader ${idFragment}
+            nugg ${idFragment}
+        }
     }
 `;
 
@@ -33,8 +49,12 @@ const myActiveSalesQuery = async (
         const result = (await executeQuery(
             query(address, orderDirection, searchValue, first, skip),
             'swaps',
-        )) as NL.GraphQL.Fragments.Swap.Thumbnail[];
-        return !isUndefinedOrNullOrArrayEmpty(result) ? result : [];
+        )) as NL.GraphQL.Fragments.Swap.ThumbnailActiveSales[];
+        return !isUndefinedOrNullOrArrayEmpty(result)
+            ? result.filter(
+                  (swap) => !isUndefinedOrNullOrArrayEmpty(swap.offers),
+              )
+            : [];
     } catch (e) {
         throw new Error(`activeNuggsQuery: ${e}`);
     }

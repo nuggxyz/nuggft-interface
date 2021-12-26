@@ -1,11 +1,13 @@
 import gql from 'graphql-tag';
 
-import { swapBare } from '../../../graphql/fragments/swap';
+import { swapBare, swapBareWithEpoch } from '../../../graphql/fragments/swap';
 import { executeQuery } from '../../../graphql/helpers';
 
 const query = (id: string) => gql`
     {
-        swap(id: "${id}") ${swapBare}
+        swap(id: "${id}") ${
+    id.split('-')[1] === '0' ? swapBare : swapBareWithEpoch
+}
     }
 `;
 

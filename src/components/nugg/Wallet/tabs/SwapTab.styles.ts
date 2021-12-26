@@ -18,7 +18,8 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         width: '100%',
         justifyContent: 'space-between',
-        position: 'relative'
+        // position: 'relative',
+        // margin: '0rem .5rem'
     },
     selectContainer: {
         borderRadius: Layout.borderRadius.large,

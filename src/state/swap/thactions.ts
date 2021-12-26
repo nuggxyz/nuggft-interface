@@ -10,10 +10,7 @@ import {
 import { toEth } from '../../lib/conversion';
 import NuggFTHelper from '../../contracts/NuggFTHelper';
 import AppState from '../app';
-import config from '../../config';
 import Web3State from '../web3';
-import { INuggFT } from '../../typechain/INuggFT';
-import { INuggFT__factory } from '../../typechain/factories/INuggFT__factory';
 
 import pollOffersQuery from './queries/pollOffersQuery';
 import initSwapQuery from './queries/initSwapQuery';
@@ -32,24 +29,29 @@ const initSwap = createAsyncThunk<
     try {
         invariant(swapId, 'swap id passed as undefined');
         const res = await initSwapQuery(swapId);
-
-        const currentEpoch = thunkAPI.getState().protocol.epoch;
-        const status =
-            swapId.includes(
-                !isUndefinedOrNullOrObjectEmpty(currentEpoch)
-                    ? currentEpoch.id
-                    : null,
-            ) || +currentEpoch?.id < +swapId.split('-')[1]
-                ? 'ongoing'
-                : swapId.includes('-0')
-                ? 'waiting'
-                : 'over';
-        return {
-            success: 'SUCCESS',
-            data: { swap: res, status },
-        };
+        if (!isUndefinedOrNullOrObjectEmpty(res)) {
+            const currentEpoch = thunkAPI.getState().protocol.epoch;
+            const status =
+                swapId.includes(
+                    !isUndefinedOrNullOrObjectEmpty(currentEpoch)
+                        ? currentEpoch.id
+                        : null,
+                ) || +currentEpoch?.id < +swapId.split('-')[1]
+                    ? 'ongoing'
+                    : swapId.includes('-0')
+                    ? 'waiting'
+                    : 'over';
+            return {
+                success: 'SUCCESS',
+                data: { swap: res, status },
+            };
+        } else {
+            AppState.onRouteUpdate('/');
+            return thunkAPI.rejectWithValue('UNKNOWN');
+        }
     } catch (err) {
         console.log({ err });
+        AppState.onRouteUpdate('/');
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&

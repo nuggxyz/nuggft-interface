@@ -89,31 +89,58 @@ const MintTab: FunctionComponent<Props> = () => {
 
     return (
         <div style={styles.container}>
-            <div style={swapStyles.statisticContainer}>
-                <TextStatistic
-                    label="Nuggs"
-                    value={'' + (myNuggs?.length || 0)}
-                />
-                <TextStatistic
-                    label="Claims"
-                    value={'' + (claims?.length || 0)}
-                />
-                <TextStatistic
-                    label="Loans"
-                    value={'' + (loans?.length || 0)}
-                />
-                <TextStatistic
-                    label="Sales"
-                    value={'' + (sales?.length || 0)}
-                />
-            </div>
-            <div>
-                <NumberStatistic
-                    style={{ alignItems: 'center', width: '' }}
-                    label="TVL"
-                    value={new EthInt(`${+valuePerShare * myNuggs.length}`)}
-                    image="eth"
-                />
+            {AppState.isMobile && <LinkAccountButton />}
+            <div style={{ margin: '.5rem' }}>
+                <div >
+                    <NumberStatistic
+                        style={{
+                            alignItems: 'center',
+                            width: '',
+                            margin: '0rem',
+                        }}
+                        label="TVL"
+                        value={new EthInt(`${+valuePerShare * myNuggs.length}`)}
+                        image="eth"
+                    />
+                </div>
+                <div style={swapStyles.statisticContainer}>
+                    <TextStatistic
+                        label="Nuggs"
+                        value={'' + (myNuggs?.length || 0)}
+                        style={{
+                            width: '23%',
+                            marginLeft: '0rem',
+                            marginRight: '0rem',
+                        }}
+                    />
+                    <TextStatistic
+                        label="Claims"
+                        value={'' + (claims?.length || 0)}
+                        style={{
+                            width: '23%',
+                            marginLeft: '0rem',
+                            marginRight: '0rem',
+                        }}
+                    />
+                    <TextStatistic
+                        label="Loans"
+                        value={'' + (loans?.length || 0)}
+                        style={{
+                            width: '23%',
+                            marginLeft: '0rem',
+                            marginRight: '0rem',
+                        }}
+                    />
+                    <TextStatistic
+                        label="Sales"
+                        value={'' + (sales?.length || 0)}
+                        style={{
+                            width: '23%',
+                            marginLeft: '0rem',
+                            marginRight: '0rem',
+                        }}
+                    />
+                </div>
             </div>
             <Button
                 buttonStyle={swapStyles.button}
