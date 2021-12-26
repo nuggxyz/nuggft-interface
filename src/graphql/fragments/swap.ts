@@ -47,6 +47,10 @@ export const swapBare = gql`
             claimed
             owner
         }
+        epoch {
+            id
+            endblock
+        }
         eth
         ethUsd
         owner ${idFragment}

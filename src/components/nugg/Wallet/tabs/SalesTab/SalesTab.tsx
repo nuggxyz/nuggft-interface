@@ -55,6 +55,8 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
         setLoadingNuggs(false);
     }, [address, epoch, myNuggs]);
 
+    console.log(myNuggs);
+
     useEffect(() => {
         if (isActive) {
             setLoadingNuggs(true);
@@ -116,13 +118,17 @@ const RenderItem: FunctionComponent<
                         type="text"
                         textStyle={{ color: Colors.textColor }}
                         size="small">
-                        Swap {parsedTitle.swap}
+                        {parsedTitle.swap === '0'
+                            ? 'Awaiting offer'
+                            : `Swap ${parsedTitle.swap}`}
                     </Text>
                 </div>
                 <Button
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
-                    label={`Reclaim your nugg`}
+                    label={`Reclaim your ${
+                        parsedTitle.swap === '0' ? 'Nugg' : 'ETH'
+                    }`}
                     onClick={() =>
                         WalletState.dispatch.claim({ tokenId: item.nugg.id })
                     }

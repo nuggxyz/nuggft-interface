@@ -58,7 +58,10 @@ const CircleTimer: FunctionComponent<Props> = ({
     const to = useMemo(() => {
         return !isUndefinedOrNullOrNotNumber(stateRemaining) &&
             !isUndefinedOrNullOrNumberZero(duration)
-            ? timerCircleRadius * (TWOPI - (stateRemaining / duration) * TWOPI)
+            ? Math.abs(
+                  timerCircleRadius *
+                      (TWOPI - (stateRemaining / duration) * TWOPI),
+              )
             : 0;
     }, [stateRemaining, duration, timerCircleRadius]);
 

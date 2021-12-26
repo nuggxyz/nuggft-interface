@@ -34,16 +34,14 @@ const TokenViewer: FunctionComponent<Props> = ({
         return { width: window.innerWidth, height: window.innerHeight };
     }, []);
     const [src, setSrc] = useState<any>(pendingToken);
+    const [correctImageData, setCorrectImageData] = useState(false);
     const getDotNuggSrc = useCallback(async () => {
         if (!isUndefinedOrNullOrStringEmpty(tokenId)) {
             const dotNuggData = await NuggFTHelper.optimizedDotNugg(tokenId);
-            setSrc(
-                dotNuggData
-                    ? `data:image/svg+xml;base64,${btoa(dotNuggData)}`
-                    : pendingToken,
-            );
-        } else {
-            setSrc(pendingToken);
+            if (!isUndefinedOrNullOrStringEmpty(dotNuggData)) {
+                // setCorrectImageData(true);
+                setSrc(`data:image/svg+xml;base64,${btoa(dotNuggData)}`);
+            }
         }
     }, [tokenId]);
 
@@ -86,4 +84,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     );
 };
 
-export default React.memo(TokenViewer);
+export default React.memo(
+    TokenViewer,
+    (prev, props) => prev.tokenId === props.tokenId,
+);

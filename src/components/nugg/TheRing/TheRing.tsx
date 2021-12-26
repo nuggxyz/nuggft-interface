@@ -24,32 +24,39 @@ const TheRing: FunctionComponent<Props> = ({
 }) => {
     const lastBlock = ProtocolState.select.currentBlock();
     const epoch = ProtocolState.select.epoch();
+    const end = SwapState.select.epoch();
     const nugg = SwapState.select.nugg();
     const status = SwapState.select.status();
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
-        if (!isUndefinedOrNullOrObjectEmpty(epoch)) {
-            remaining = +epoch.endblock - +epoch.startblock;
+        if (
+            !isUndefinedOrNullOrObjectEmpty(epoch) &&
+            !isUndefinedOrNullOrObjectEmpty(end)
+        ) {
+            remaining = +end.endblock - +epoch.startblock;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
         return remaining;
-    }, [epoch]);
+    }, [epoch, end]);
 
     const blocksRemaining = useMemo(() => {
         let remaining = 0;
 
-        if (!isUndefinedOrNullOrObjectEmpty(epoch)) {
-            remaining = +epoch.endblock - lastBlock;
+        if (
+            !isUndefinedOrNullOrObjectEmpty(epoch) &&
+            !isUndefinedOrNullOrObjectEmpty(end)
+        ) {
+            remaining = end.endblock - lastBlock;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
 
         return remaining;
-    }, [lastBlock, epoch]);
+    }, [lastBlock, epoch, end]);
 
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>

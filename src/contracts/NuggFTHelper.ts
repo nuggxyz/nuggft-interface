@@ -43,7 +43,7 @@ export default class NuggFTHelper extends ContractHelper {
             NuggFTHelper._dotnugg = new Contract(
                 config.DOTNUGG_RESOLVER,
                 IdotnuggV1Processor__factory.abi,
-                Web3State.getLibraryOrProvider(),
+                // Web3State.getLibraryOrProvider(),
             ) as IdotnuggV1Processor;
         }
         return NuggFTHelper._dotnugg;
@@ -72,14 +72,16 @@ export default class NuggFTHelper extends ContractHelper {
             return Svg.drawSvgFromString(check, 1);
         } else {
             try {
-                let byteArray = await NuggFTHelper.dotnugg.dotnuggToRaw(
-                    config.NUGGFT,
-                    BigNumber.from(tokenId),
-                    Address.ZERO.hash,
-                    40,
-                    1,
-                );
-
+                console.log('going');
+                let byteArray = await NuggFTHelper.dotnugg
+                    .connect(Web3State.getLibraryOrProvider())
+                    .dotnuggToRaw(
+                        config.NUGGFT,
+                        BigNumber.from(tokenId),
+                        Address.ZERO.hash,
+                        45,
+                        1,
+                    );
                 if (!byteArray) throw new Error('token does not exist');
                 else {
                     let byteStr = byteArray.reduce(
@@ -116,7 +118,9 @@ export default class NuggFTHelper extends ContractHelper {
         };
     }
     public static async sellerApproval(tokenId: string): Promise<boolean> {
-        let response = await this.instance.getApproved(tokenId);
+        let response = await this.instance
+            .connect(Web3State.getLibraryOrProvider())
+            .getApproved(tokenId);
         return new Address(response).equals(new Address(config.NUGGFT));
     }
     public static async approval(tokenId: string): Promise<Address> {

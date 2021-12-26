@@ -25,8 +25,11 @@ const updateEpochMiddleware: Middleware<
                 : '';
             const nextEpoch = action.payload.data.epoch.id;
             const currentSwap = getState().swap.id;
+            console.log({ currentSwap });
             if (
                 currentEpoch !== nextEpoch &&
+                (window.location.hash.length <= 2 ||
+                    window.location.hash.includes('/nugg')) &&
                 (isUndefinedOrNullOrStringEmpty(currentSwap) ||
                     currentSwap.split('-')[1] === currentEpoch)
             ) {
