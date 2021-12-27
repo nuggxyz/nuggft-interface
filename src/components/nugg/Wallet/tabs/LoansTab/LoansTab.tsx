@@ -25,6 +25,8 @@ import constants from '../../../../../lib/constants';
 import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQuery';
 import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
 import styles from '../Tabs.styles';
+import AppState from '../../../../../state/app';
+import TransactionState from '../../../../../state/transaction';
 
 type Props = { isActive?: boolean };
 
@@ -33,6 +35,7 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
     const epoch = ProtocolState.select.epoch();
     const [loanedNuggs, setLoanedNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
+    const txnToggle = TransactionState.select.toggleCompletedTxn();
 
     const getMyNuggs = useCallback(async () => {
         setLoadingNuggs(true);
@@ -61,7 +64,7 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
                 getMyNuggs();
             }, 500);
         }
-    }, [address]);
+    }, [address, txnToggle]);
 
     return (
         <div style={styles.container}>
@@ -95,7 +98,7 @@ const RenderItem: FunctionComponent<
         !isUndefinedOrNullOrObjectEmpty(item) && (
             <div key={index} style={listStyles.render}>
                 <div>
-                    <Text textStyle={listStyles.renderTitle}>
+                    <Text textStyle={{ color: Colors.nuggRedText }}>
                         Nugg #{item.nugg?.id}
                     </Text>
                     <Text
@@ -108,21 +111,38 @@ const RenderItem: FunctionComponent<
                 <div>
                     <Button
                         textStyle={listStyles.textWhite}
-                        buttonStyle={listStyles.renderButton}
+                        buttonStyle={{
+                            ...listStyles.renderButtonLoan,
+                            marginBottom: '.3rem',
+                        }}
                         label={`Extend`}
                         onClick={() =>
-                            NuggFTHelper.instance.rebalance(item.nugg.id, {
-                                value: 0.69,
+                            AppState.dispatch.setModalOpen({
+                                name: 'Loan',
+                                modalData: {
+                                    targetId: item.nugg.id,
+                                    type: 'ExtendLoan',
+                                    backgroundStyle: {
+                                        background: Colors.gradient3,
+                                    },
+                                },
                             })
                         }
                     />
                     <Button
                         textStyle={listStyles.textWhite}
-                        buttonStyle={listStyles.renderButton}
+                        buttonStyle={listStyles.renderButtonLoan}
                         label={`Pay off`}
                         onClick={() =>
-                            NuggFTHelper.instance.payoff(item.nugg.id, {
-                                value: 0.69,
+                            AppState.dispatch.setModalOpen({
+                                name: 'Loan',
+                                modalData: {
+                                    targetId: item.nugg.id,
+                                    type: 'PayOffLoan',
+                                    backgroundStyle: {
+                                        background: Colors.gradient3,
+                                    },
+                                },
                             })
                         }
                     />

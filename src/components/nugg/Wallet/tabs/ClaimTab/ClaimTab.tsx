@@ -106,7 +106,9 @@ const RenderItem: FunctionComponent<
                         type="text"
                         textStyle={{ color: Colors.textColor }}
                         size="small">
-                        Swap {parsedTitle.swap}
+                        {item.swap.num === '0'
+                            ? 'Mint'
+                            : `Swap #${item.swap.num}`}
                     </Text>
                 </div>
                 <Button

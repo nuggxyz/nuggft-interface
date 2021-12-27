@@ -125,8 +125,8 @@ const MintTab: FunctionComponent<Props> = () => {
                         }}
                     />
                     <TextStatistic
-                        label="Loans"
-                        value={'' + (loans?.length || 0)}
+                        label="Sales"
+                        value={'' + (sales?.length || 0)}
                         style={{
                             width: '23%',
                             marginLeft: '0rem',
@@ -134,8 +134,8 @@ const MintTab: FunctionComponent<Props> = () => {
                         }}
                     />
                     <TextStatistic
-                        label="Sales"
-                        value={'' + (sales?.length || 0)}
+                        label="Loans"
+                        value={'' + (loans?.length || 0)}
                         style={{
                             width: '23%',
                             marginLeft: '0rem',
@@ -157,7 +157,7 @@ const MintTab: FunctionComponent<Props> = () => {
                                 gql`
                                     {
                                         nuggs(
-                                            where: { id_gt: "500" }
+                                            where: { id_gt: "${constants.PRE_MINT_STARTING_EPOCH}" }
                                             first: 1
                                             orderDirection: desc
                                             orderBy: id
@@ -171,7 +171,7 @@ const MintTab: FunctionComponent<Props> = () => {
                                 res &&
                                     res[0].id &&
                                     +res[0].id + 1 <
-                                        constants.PRE_MINT_STARTING_SWAP &&
+                                        constants.PRE_MINT_ENDING_EPOCH &&
                                     NuggFTHelper.instance
                                         .connect(
                                             Web3State.getLibraryOrProvider(),

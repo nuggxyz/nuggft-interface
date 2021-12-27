@@ -12,9 +12,11 @@ declare namespace NL.GraphQL.Fragments.Swap {
 
     type Thumbnail = Omit<Bare, 'offers'> & {
         nugg: NL.GraphQL.Fragments.General.Id;
+        num: string;
     };
     type ThumbnailActiveSales = Omit<Bare, 'offers'> & {
         nugg: NL.GraphQL.Fragments.General.Id;
+        num: string;
         offers: NL.GraphQL.Fragments.General.Id[];
     };
 

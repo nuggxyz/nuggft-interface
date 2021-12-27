@@ -16,6 +16,7 @@ import nuggThumbnailQuery from '../../../state/token/queries/nuggThumbnailQuery'
 import swapHistoryQuery from '../../../state/token/queries/swapHistoryQuery';
 import Web3State from '../../../state/web3';
 import Button from '../../general/Buttons/Button/Button';
+import List from '../../general/List/List';
 import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
 import Text from '../../general/Texts/Text/Text';
 import TokenViewer from '../TokenViewer';
@@ -229,7 +230,9 @@ const Swaps = ({ swaps }) => (
                                 <Text>
                                     {awaitingBid
                                         ? 'Awaiting bid!'
-                                        : `Swap ${swap.id.split('-')[1]}`}
+                                        : swap.num === '0'
+                                        ? 'Mint'
+                                        : `Swap #${swap.num}`}
                                 </Text>
                                 <CurrencyText
                                     image="eth"

@@ -47,15 +47,15 @@ const Wallet: FunctionComponent<Props> = () => {
                           ),
                       },
                       {
-                          label: 'Loans',
-                          comp: ({ isActive }) => (
-                              <LoansTab isActive={isActive} />
-                          ),
-                      },
-                      {
                           label: 'Sales',
                           comp: ({ isActive }) => (
                               <SalesTab isActive={isActive} />
+                          ),
+                      },
+                      {
+                          label: 'Loans',
+                          comp: ({ isActive }) => (
+                              <LoansTab isActive={isActive} />
                           ),
                       },
                   ]

@@ -26,6 +26,7 @@ const query = (
         ) {
             id
             endingEpoch
+            num
             eth
             ethUsd
             offers(first: 1, orderBy: eth, orderDirection: desc, where: {claimed: false, user: "${address}"}) {

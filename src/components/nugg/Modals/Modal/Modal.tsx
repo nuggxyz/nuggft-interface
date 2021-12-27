@@ -20,6 +20,7 @@ import LoanOrBurnModal from '../LoanOrBurn/LoanOrBurnModal';
 import useAnimateOverlay from '../../../../hooks/useAnimateOverlay';
 import BurnModal from '../BurnModal_DEPRECATED/BurnModal';
 import WalletModal from '../WalletModal/WalletModal';
+import LoanInputModal from '../LoanInputModal/LoanInputModal';
 
 import styles from './Modal.styles';
 
@@ -94,6 +95,7 @@ const Modal: FunctionComponent<Props> = () => {
                     ) : null}
                     {currentModal === 'LoanOrBurn' ? <LoanOrBurnModal /> : null}
                     {currentModal === 'Wallet' ? <WalletModal /> : null}
+                    {currentModal === 'Loan' ? <LoanInputModal /> : null}
                 </animated.div>
             </div>
         </animated.div>

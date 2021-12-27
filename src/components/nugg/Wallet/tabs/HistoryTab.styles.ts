@@ -36,6 +36,10 @@ const styles = NLStyleSheetCreator({
         background: Colors.gradient2,
         borderRadius: Layout.borderRadius.large,
     },
+    renderButtonLoan: {
+        background: Colors.gradient3,
+        borderRadius: Layout.borderRadius.large,
+    },
     textWhite: {
         color: ' white',
     },
