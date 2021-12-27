@@ -27,38 +27,41 @@ const TheRing: FunctionComponent<Props> = ({
 }) => {
     const lastBlock = ProtocolState.select.currentBlock();
     const epoch = ProtocolState.select.epoch();
-    const currentSwap = SwapState.select.epoch();
+    const endingSwapEpoch = SwapState.select.epoch();
+    const startingSwapEpoch = SwapState.select.startingEpoch();
     const nugg = SwapState.select.nugg();
     const status = SwapState.select.status();
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
-        if (!isUndefinedOrNullOrObjectEmpty(currentSwap)) {
-            remaining = +currentSwap.endblock - +currentSwap.startblock;
+        if (
+            !isUndefinedOrNullOrObjectEmpty(endingSwapEpoch) &&
+            !isUndefinedOrNullOrObjectEmpty(startingSwapEpoch)
+        ) {
+            remaining =
+                +endingSwapEpoch.endblock - +startingSwapEpoch.startblock;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
         return remaining;
-    }, [currentSwap]);
+    }, [endingSwapEpoch, startingSwapEpoch]);
 
     const blocksRemaining = useMemo(() => {
         let remaining = 0;
 
         if (
-            !isUndefinedOrNullOrObjectEmpty(currentSwap) &&
+            !isUndefinedOrNullOrObjectEmpty(endingSwapEpoch) &&
             !isUndefinedOrNullOrNumberZero(lastBlock)
         ) {
-            remaining = +currentSwap.endblock - +lastBlock;
+            remaining = +endingSwapEpoch.endblock - +lastBlock;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
 
         return remaining;
-    }, [lastBlock, currentSwap]);
-
-    console.log({ blockDuration, blocksRemaining, lastBlock });
+    }, [lastBlock, endingSwapEpoch]);
 
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>

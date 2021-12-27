@@ -1,5 +1,6 @@
 import invariant from 'tiny-invariant';
 import { BigNumber, Contract } from 'ethers';
+import gql from 'graphql-tag';
 
 import { Address } from '../classes/Address';
 import config from '../config';
@@ -9,31 +10,32 @@ import {
     saveStringToLocalStorage,
 } from '../lib';
 import Web3State from '../state/web3';
-import {
-    IdotnuggV1Processor,
-    IdotnuggV1Processor__factory,
-    INuggFT,
-    INuggFT__factory,
-} from '../typechain';
 import { Svg } from '../classes/Svg';
 import {
     TokenApproveInfo,
     TransactionType,
 } from '../state/transaction/interfaces';
+import {
+    DotnuggV1Processor,
+    DotnuggV1Processor__factory,
+    NuggFT,
+    NuggFT__factory,
+} from '../typechain';
+import { executeQuery } from '../graphql/helpers';
 
 import ContractHelper from './abstract/ContractHelper';
 
 export default class NuggFTHelper extends ContractHelper {
-    protected static _instance: INuggFT;
-    protected static _dotnugg: IdotnuggV1Processor;
+    protected static _instance: NuggFT;
+    protected static _dotnugg: DotnuggV1Processor;
 
     static get instance() {
         if (isUndefinedOrNullOrObjectEmpty(NuggFTHelper._instance)) {
             NuggFTHelper._instance = new Contract(
                 config.NUGGFT,
-                INuggFT__factory.abi,
+                NuggFT__factory.abi,
                 // Web3State.getLibraryOrProvider(),
-            ) as INuggFT;
+            ) as NuggFT;
         }
         return NuggFTHelper._instance;
     }
@@ -42,9 +44,9 @@ export default class NuggFTHelper extends ContractHelper {
         if (isUndefinedOrNullOrObjectEmpty(NuggFTHelper._dotnugg)) {
             NuggFTHelper._dotnugg = new Contract(
                 config.DOTNUGG_RESOLVER,
-                IdotnuggV1Processor__factory.abi,
+                DotnuggV1Processor__factory.abi,
                 // Web3State.getLibraryOrProvider(),
-            ) as IdotnuggV1Processor;
+            ) as DotnuggV1Processor;
         }
         return NuggFTHelper._dotnugg;
     }
@@ -73,26 +75,23 @@ export default class NuggFTHelper extends ContractHelper {
         } else {
             try {
                 console.log('going');
-                let byteArray = await NuggFTHelper.dotnugg
-                    .connect(Web3State.getLibraryOrProvider())
-                    .dotnuggToRaw(
-                        config.NUGGFT,
-                        BigNumber.from(tokenId),
-                        Address.ZERO.hash,
-                        45,
-                        1,
-                    );
-                if (!byteArray) throw new Error('token does not exist');
+                let res = await executeQuery(
+                    gql`
+                        {
+                            nugg(id: "3002") {
+                                dotnuggRawCache
+                            }
+                        }
+                    `,
+                    'nugg',
+                );
+                if (!res) throw new Error('token does not exist');
                 else {
-                    let byteStr = byteArray.reduce(
-                        (nugg, num) => `${nugg}${num.toHexString()}`,
-                        '',
-                    );
-                    saveStringToLocalStorage(byteStr, 'NL-TokenURI-' + tokenId);
-                    return Svg.drawSvgFromString(byteStr, 1);
+                    // saveStringToLocalStorage(bytres.dotnuggRawCacheStr, 'NL-TokenURI-' + tokenId);
+                    return Svg.drawSvgFromString(res.dotnuggRawCache, 1);
                 }
             } catch (err) {
-                // console.log({ tokenId, err });
+                console.log({ tokenId, err });
                 // console.log('optimizedDotNugg:', err);
             }
         }

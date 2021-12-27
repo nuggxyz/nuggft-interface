@@ -3,4 +3,6 @@ export default {
 
     BLOCKTIME: 25000,
     QUERYTIME: 10000,
+    PRE_MINT_STARTING_SWAP: 3000,
+    
 };

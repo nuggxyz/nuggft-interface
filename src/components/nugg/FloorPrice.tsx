@@ -23,6 +23,7 @@ const FloorPrice: FunctionComponent<Props> = () => {
                 borderRadius: Layout.borderRadius.large,
                 padding: '.4rem .7rem',
                 alignItems: 'center',
+                justifyContent: 'center'
                 // marginLeft: '13rem',
             }}>
             <Text

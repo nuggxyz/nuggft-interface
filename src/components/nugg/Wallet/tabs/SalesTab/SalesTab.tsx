@@ -55,8 +55,6 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
         setLoadingNuggs(false);
     }, [address, epoch, myNuggs]);
 
-    console.log(myNuggs);
-
     useEffect(() => {
         if (isActive) {
             setLoadingNuggs(true);
