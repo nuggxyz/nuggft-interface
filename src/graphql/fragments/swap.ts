@@ -22,6 +22,7 @@ import { itemOfferBare } from './itemOffer';
 export const swapBare = gql`
     {
         id
+        num
         nugg {
             id
             user ${idFragment}
@@ -56,6 +57,7 @@ export const swapBare = gql`
 export const swapBareWithEpoch = gql`
     {
         id
+        num
         nugg {
             id
             user ${idFragment}
@@ -101,6 +103,7 @@ export const swapThumbnail = gql`
     {
         id
         endingEpoch
+        num
         eth
         ethUsd
         owner ${idFragment}
@@ -112,6 +115,7 @@ export const swapThumbnailActiveSales = gql`
     {
         id
         endingEpoch
+        num
         eth
         ethUsd
         offers(first: 1, orderBy: eth, orderDirection: desc, where: {claimed: false}) {

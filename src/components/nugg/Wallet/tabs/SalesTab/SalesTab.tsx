@@ -74,7 +74,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                         JSON.stringify(prev.item) ===
                         JSON.stringify(props.item),
                 )}
-                label="Active Nugg sales"
+                label="Nugg sales"
                 loading={loadingNuggs}
                 style={listStyles.list}
                 extraData={[address]}
@@ -118,7 +118,9 @@ const RenderItem: FunctionComponent<
                         size="small">
                         {parsedTitle.swap === '0'
                             ? 'Awaiting offer'
-                            : `Swap ${parsedTitle.swap}`}
+                            : item.num === '0'
+                            ? 'Mint'
+                            : `Swap #${item.num}`}
                     </Text>
                 </div>
                 <Button

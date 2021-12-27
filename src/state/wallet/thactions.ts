@@ -13,6 +13,7 @@ import { Address } from '../../classes/Address';
 import config from '../../config';
 import Web3State from '../web3';
 import AppState from '../app';
+import { toEth } from '../../lib/conversion';
 
 import userSharesQuery from './queries/userSharesQuery';
 
@@ -184,10 +185,78 @@ const initLoan = createAsyncThunk<
     }
 });
 
+const payOffLoan = createAsyncThunk<
+    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
+    { tokenId: string; amount: string },
+    // adding the root state type to this thaction causes a circular reference
+    { rejectValue: NL.Redux.Wallet.Error }
+>(`wallet/claim`, async ({ tokenId, amount }, thunkAPI) => {
+    try {
+        const _pendingtx = await NuggFTHelper.instance
+            .connect(Web3State.getLibraryOrProvider())
+            .payoff(tokenId, { value: toEth(amount) });
+
+        return {
+            success: 'SUCCESS',
+            _pendingtx,
+            callbackFn: () => AppState.dispatch.setModalClosed(),
+        };
+    } catch (err) {
+        console.log({ err });
+        if (
+            !isUndefinedOrNullOrNotObject(err) &&
+            !isUndefinedOrNullOrNotObject(err.data) &&
+            !isUndefinedOrNullOrStringEmpty(err.data.message)
+        ) {
+            const code = err.data.message.replace(
+                'execution reverted: ',
+                '',
+            ) as NL.Redux.Wallet.Error;
+            return thunkAPI.rejectWithValue(code);
+        }
+        return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
+    }
+});
+
+const extend = createAsyncThunk<
+    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
+    { tokenId: string; amount: string },
+    // adding the root state type to this thaction causes a circular reference
+    { rejectValue: NL.Redux.Wallet.Error }
+>(`wallet/claim`, async ({ tokenId, amount }, thunkAPI) => {
+    try {
+        const _pendingtx = await NuggFTHelper.instance
+            .connect(Web3State.getLibraryOrProvider())
+            .rebalance(tokenId, { value: toEth(amount) });
+
+        return {
+            success: 'SUCCESS',
+            _pendingtx,
+            callbackFn: () => AppState.dispatch.setModalClosed(),
+        };
+    } catch (err) {
+        console.log({ err });
+        if (
+            !isUndefinedOrNullOrNotObject(err) &&
+            !isUndefinedOrNullOrNotObject(err.data) &&
+            !isUndefinedOrNullOrStringEmpty(err.data.message)
+        ) {
+            const code = err.data.message.replace(
+                'execution reverted: ',
+                '',
+            ) as NL.Redux.Wallet.Error;
+            return thunkAPI.rejectWithValue(code);
+        }
+        return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
+    }
+});
+
 export default {
     getUserShares,
     withdraw,
     claim,
     approveNugg,
     initLoan,
+    payOffLoan,
+    extend,
 };

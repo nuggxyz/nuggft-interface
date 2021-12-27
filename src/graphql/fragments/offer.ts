@@ -35,6 +35,7 @@ export const offerThumbnail = gql`
             ethUsd
             owner ${idFragment}
             leader ${idFragment}
+            num
         }
         eth
         ethUsd

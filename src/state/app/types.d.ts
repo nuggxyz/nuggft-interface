@@ -27,6 +27,7 @@ declare namespace NL.Redux.App {
         index: number;
         id: string;
         loading: boolean;
+        action?: () => void;
         callback?: () => void;
     }
 
@@ -41,7 +42,9 @@ declare namespace NL.Redux.App {
         | 'Loan'
         | 'LoanOrBurn'
         | 'OfferOrSell'
-        | 'Wallet';
+        | 'Wallet'
+        | 'ExtendLoan'
+        | 'PayOffLoan';
 
     type ModalsData = {
         backgroundStyle?: import('react').CSSProperties;

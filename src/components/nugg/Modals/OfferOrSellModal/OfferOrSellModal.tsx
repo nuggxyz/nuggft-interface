@@ -1,3 +1,5 @@
+import { text } from 'stream/consumers';
+
 import { BigNumber } from 'ethers';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 
@@ -26,6 +28,11 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     const address = Web3State.select.web3address();
     const toggle = TransactionState.select.toggleCompletedTxn();
     const nugg = SwapState.select.nugg();
+
+    const userBalance = useAsyncState(
+        () => NuggFTHelper.ethBalance(Web3State.getLibraryOrProvider()),
+        [address, nugg],
+    );
 
     const resArr = useAsyncState(
         () =>
@@ -100,23 +107,41 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     code
                     className="placeholder-white"
                 />
-                <Text textStyle={styles.text}>
-                    {resArr && resArr.canDelegate
-                        ? `${
-                              stableType === 'StartSale' ? 'Sale' : 'Offer'
-                          } must be at least ${
-                              resArr?.nextSwapAmount
-                                  ? fromEth(
-                                        resArr?.nextSwapAmount
-                                            .sub(resArr?.senderCurrentOffer)
-                                            .div(10 ** 13)
-                                            .add(1)
-                                            .mul(10 ** 13),
-                                    )
-                                  : 0
-                          } ETH`
-                        : 'Error'}
-                </Text>
+                <div style={{ width: '50%' }}>
+                    {stableType === 'Offer' && userBalance && (
+                        <Text
+                            type="text"
+                            size='small'
+                            textStyle={{ color: 'white', textAlign: 'right' }}
+                            weight="bolder">
+                            You currently have{' '}
+                            {new EthInt(
+                                userBalance
+                                    .div(10 ** 13)
+                                    .add(1)
+                                    .mul(10 ** 13),
+                            ).decimal.toNumber()}{' '}
+                            ETH
+                        </Text>
+                    )}
+                    <Text textStyle={styles.text}>
+                        {resArr && resArr.canDelegate
+                            ? `${
+                                  stableType === 'StartSale' ? 'Sale' : 'Offer'
+                              } must be at least ${
+                                  resArr?.nextSwapAmount
+                                      ? fromEth(
+                                            resArr?.nextSwapAmount
+                                                .sub(resArr?.senderCurrentOffer)
+                                                .div(10 ** 13)
+                                                .add(1)
+                                                .mul(10 ** 13),
+                                        )
+                                      : 0
+                              } ETH`
+                            : 'Error'}
+                    </Text>
+                </div>
             </div>
             <div style={styles.subContainer}>
                 <Button
