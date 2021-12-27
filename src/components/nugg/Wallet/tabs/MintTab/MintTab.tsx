@@ -4,6 +4,7 @@ import React, {
     useEffect,
     useState,
 } from 'react';
+import gql from 'graphql-tag';
 
 import { EthInt } from '../../../../../classes/Fraction';
 import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
@@ -35,6 +36,7 @@ import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQue
 import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSalesQuery';
 import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedOffersQuery';
 import TokenViewer from '../../../TokenViewer';
+import { executeQuery } from '../../../../../graphql/helpers';
 
 type Props = {};
 
@@ -91,7 +93,7 @@ const MintTab: FunctionComponent<Props> = () => {
         <div style={styles.container}>
             {AppState.isMobile && <LinkAccountButton />}
             <div style={{ margin: '.5rem' }}>
-                <div >
+                <div>
                     <NumberStatistic
                         style={{
                             alignItems: 'center',
@@ -145,19 +147,46 @@ const MintTab: FunctionComponent<Props> = () => {
             <Button
                 buttonStyle={swapStyles.button}
                 textStyle={{ color: Colors.nuggRedText }}
-                label="Mint a nugg"
+                label="Mint a Nugg"
                 onClick={() =>
-                    NuggFTHelper.instance.minSharePrice().then((minPrice) =>
-                        NuggFTHelper.instance
-                            .mint(701, {
-                                value: minPrice,
-                            })
-                            .then((_pendingtx) =>
-                                TransactionState.dispatch.initiate({
-                                    _pendingtx,
-                                }),
-                            ),
-                    )
+                    NuggFTHelper.instance
+                        .connect(Web3State.getLibraryOrProvider())
+                        .minSharePrice()
+                        .then((minPrice) =>
+                            executeQuery(
+                                gql`
+                                    {
+                                        nuggs(
+                                            where: { id_gt: "500" }
+                                            first: 1
+                                            orderDirection: desc
+                                            orderBy: id
+                                        ) {
+                                            id
+                                        }
+                                    }
+                                `,
+                                'nuggs',
+                            ).then((res) => {
+                                res &&
+                                    res[0].id &&
+                                    +res[0].id + 1 <
+                                        constants.PRE_MINT_STARTING_SWAP &&
+                                    NuggFTHelper.instance
+                                        .connect(
+                                            Web3State.getLibraryOrProvider(),
+                                        )
+                                        .mint(+res[0].id + 1, {
+                                            value: minPrice,
+                                        })
+                                        .then((_pendingtx) =>
+                                            TransactionState.dispatch.initiate({
+                                                _pendingtx,
+                                            }),
+                                        );
+                            }),
+                        )
+                        .catch((e) => console.log(e))
                 }
             />
             {

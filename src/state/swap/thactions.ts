@@ -105,6 +105,11 @@ const placeOffer = createAsyncThunk<
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
 >('swap/placeOffer', async ({ amount, tokenId }, thunkAPI) => {
     try {
+        //@ts-ignore
+        const swapStatus = thunkAPI.getState().swap.status;
+        //@ts-ignore
+        const epoch = thunkAPI.getState().protocol.epoch?.id;
+
         const _pendingtx = await NuggFTHelper.instance
             .connect(Web3State.getLibraryOrProvider())
             .delegate(
@@ -116,7 +121,12 @@ const placeOffer = createAsyncThunk<
         return {
             success: 'SUCCESS',
             _pendingtx,
-            callbackFn: () => AppState.dispatch.setModalClosed(),
+            callbackFn: () => {
+                if (swapStatus === 'waiting') {
+                    AppState.onRouteUpdate(`#/swap/${tokenId}-${+epoch + 1}`);
+                }
+                AppState.dispatch.setModalClosed();
+            },
         };
     } catch (err) {
         console.log({ err });

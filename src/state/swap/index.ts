@@ -44,6 +44,7 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
             owner: undefined,
             status: 'waiting',
             epoch: undefined,
+            startingEpoch: undefined,
         });
     }
 
@@ -88,6 +89,7 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
                     state.lastUpdated = Date.now();
                     state.status = action.payload.data.status;
                     state.epoch = swap.epoch;
+                    state.startingEpoch = swap.startingEpoch;
                 })
                 .addCase(thactions.pollOffers.fulfilled, (state, action) => {
                     state.offers = action.payload.data;

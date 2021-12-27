@@ -70,7 +70,6 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             resArr.nextSwapAmount &&
             resArr.senderCurrentOffer
         ) {
-            // ((nextOfferMin / 10**13) + 1) * 10**13
             setAmount(
                 fromEth(
                     resArr?.nextSwapAmount
@@ -103,7 +102,9 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 />
                 <Text textStyle={styles.text}>
                     {resArr && resArr.canDelegate
-                        ? `Offer must be greater than ${
+                        ? `${
+                              stableType === 'StartSale' ? 'Sale' : 'Offer'
+                          } must be at least ${
                               resArr?.nextSwapAmount
                                   ? fromEth(
                                         resArr?.nextSwapAmount

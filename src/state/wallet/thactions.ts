@@ -12,6 +12,7 @@ import constants from '../../lib/constants';
 import { Address } from '../../classes/Address';
 import config from '../../config';
 import Web3State from '../web3';
+import AppState from '../app';
 
 import userSharesQuery from './queries/userSharesQuery';
 
@@ -60,11 +61,12 @@ const withdraw = createAsyncThunk<
     try {
         const _pendingtx = await NuggFTHelper.instance
             .connect(Web3State.getLibraryOrProvider())
-            .withdrawStake(tokenId);
+            .burn(tokenId);
 
         return {
             success: 'SUCCESS',
             _pendingtx,
+            callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {
         console.log({ err });
@@ -131,10 +133,6 @@ const claim = createAsyncThunk<
         return {
             success: 'SUCCESS',
             _pendingtx,
-            // callbackFn: () => {
-            //     WalletState.dispatch.getUnclaimedOffers();
-            //     WalletState.dispatch.getHistory({});
-            // },
         };
     } catch (err) {
         console.log({ err });
@@ -167,10 +165,7 @@ const initLoan = createAsyncThunk<
         return {
             success: 'SUCCESS',
             _pendingtx,
-            // callbackFn: () => {
-            //     WalletState.dispatch.getUnclaimedOffers();
-            //     WalletState.dispatch.getHistory({});
-            // },
+            callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {
         console.log({ err });

@@ -19,7 +19,6 @@ import { itemOfferBare } from './itemOffer';
 //     }
 // `;
 
-// TODO DANNY figure out why this is a thing
 export const swapBare = gql`
     {
         id
@@ -82,6 +81,11 @@ export const swapBareWithEpoch = gql`
             owner
         }
         epoch {
+            id
+            endblock
+            startblock
+        }
+        startingEpoch {
             id
             endblock
             startblock
