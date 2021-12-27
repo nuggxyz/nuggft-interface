@@ -27,6 +27,7 @@ declare namespace NL.Redux.App {
         index: number;
         id: string;
         loading: boolean;
+        action?: () => void;
         callback?: () => void;
     }
 

@@ -7,6 +7,7 @@ import {
 } from '../../lib';
 import AppState from '../app';
 import { NLState } from '../NLState';
+import Web3Config from '../web3/Web3Config';
 
 import TransactionState from '.';
 
@@ -35,6 +36,16 @@ export const pending: NL.Redux.Middleware<
                 id: action.payload._pendingtx.hash,
                 index: getState().app.toasts.length,
                 loading: true,
+                action: () => {
+                    let win = window.open(
+                        `${
+                            Web3Config.CHAIN_INFO[getState().web3.currentChain]
+                                .explorer
+                        }/tx/${action.payload._pendingtx.hash}`,
+                        '_blank',
+                    );
+                    win.focus();
+                },
             });
             if (!isUndefinedOrNullOrNotFunction(action.payload.callbackFn)) {
                 action.payload.callbackFn();

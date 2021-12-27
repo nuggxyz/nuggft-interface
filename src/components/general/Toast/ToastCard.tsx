@@ -1,7 +1,7 @@
 import { useSpring } from '@react-spring/core';
 import { animated } from '@react-spring/web';
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
-import { XCircle } from 'react-feather';
+import { ExternalLink, XCircle } from 'react-feather';
 
 import useOnHover from '../../../hooks/useOnHover';
 import {
@@ -100,12 +100,21 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
                     opacity: animatedS.opacity.to([0, 1], [1, 0]),
                     position: 'absolute',
                     width: '100%',
+                    display: 'flex',
+                    justifyContent: 'space-around'
                 }}>
                 <Button
                     buttonStyle={{ background: 'transparent' }}
                     onClick={() => setClose(true)}
                     rightIcon={<XCircle />}
                 />
+                {toast.action && (
+                    <Button
+                        buttonStyle={{ background: 'transparent' }}
+                        onClick={toast.action}
+                        rightIcon={<ExternalLink />}
+                    />
+                )}
             </animated.div>
         </div>
     );

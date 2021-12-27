@@ -47,7 +47,7 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
             web3error: false,
             connectivityWarning: false,
             implements3085: false,
-            currentChain: 1,
+            currentChain: 3,
         });
     }
 
