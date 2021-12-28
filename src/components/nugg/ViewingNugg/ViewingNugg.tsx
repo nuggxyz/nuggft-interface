@@ -2,6 +2,7 @@ import React, {
     FunctionComponent,
     useCallback,
     useEffect,
+    useMemo,
     useState,
 } from 'react';
 
@@ -61,6 +62,10 @@ const ViewingNugg: FunctionComponent<Props> = () => {
         getThumbnail();
         getSwapHistory();
     }, [tokenId]);
+
+    const ownerAddress = useMemo(() => {
+        return owner ? new EnsAddress(owner).short : '';
+    }, [owner]);
 
     return (
         !isUndefinedOrNullOrStringEmpty(tokenId) && (
@@ -147,7 +152,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                                 {owner && 'Purchased by'}
                             </Text>
                             <Text textStyle={{ color: 'white' }}>
-                                {owner && new EnsAddress(owner).short}
+                                {ownerAddress}
                             </Text>
                         </div>
                     )}
@@ -156,58 +161,6 @@ const ViewingNugg: FunctionComponent<Props> = () => {
         )
     );
 };
-
-/* <Button */
-//         textStyle={listStyle.textWhite}
-//         buttonStyle={listStyle.renderButton}
-//         label="Sell"
-//         onClick={() =>
-//             AppState.dispatch.setModalOpen({
-//                 name: 'OfferOrSell',
-//                 modalData: {
-//                     targetId: item.id,
-//                     type: 'StartSale',
-//                     backgroundStyle: {
-//                         background: Colors.gradient3,
-//                     },
-//                 },
-//             })
-//         }
-//     />
-//     <Button
-//         textStyle={listStyle.textWhite}
-//         buttonStyle={listStyle.renderButton}
-//         label="Loan"
-//         onClick={() =>
-//             AppState.dispatch.setModalOpen({
-//                 name: 'LoanOrBurn',
-//                 modalData: {
-//                     targetId: item.id,
-//                     type: 'Loan',
-//                     backgroundStyle: {
-//                         background: Colors.gradient3,
-//                     },
-//                 },
-//             })
-//         }
-//     />
-//     <Button
-//         textStyle={listStyle.textWhite}
-//         buttonStyle={listStyle.renderButton}
-//         label="Burn"
-//         onClick={() =>
-//             AppState.dispatch.setModalOpen({
-//                 name: 'LoanOrBurn',
-//                 modalData: {
-//                     targetId: item.id,
-//                     type: 'Burn',
-//                     backgroundStyle: {
-//                         background: Colors.gradient3,
-//                     },
-//                 },
-//             })
-//         }
-//     />
 
 const Swaps = ({ swaps }) => (
     <div style={styles.swaps}>

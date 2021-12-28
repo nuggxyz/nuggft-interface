@@ -1,5 +1,6 @@
 import React, {
     FunctionComponent,
+    useCallback,
     useEffect,
     useMemo,
     useRef,
@@ -13,8 +14,15 @@ import {
     useTransition,
 } from '@react-spring/web';
 
-import { isUndefinedOrNullOrObjectEmpty } from '../../../../lib';
+import {
+    isUndefinedOrNullOrArrayEmpty,
+    isUndefinedOrNullOrObjectEmpty,
+} from '../../../../lib';
 import NuggDexState from '../../../../state/nuggdex';
+import activeNuggsQuery from '../../../../state/nuggdex/queries/activeNuggsQuery';
+import ProtocolState from '../../../../state/protocol';
+import constants from '../../../../lib/constants';
+import allNuggsQuery from '../../../../state/nuggdex/queries/allNuggsQuery';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -22,12 +30,17 @@ import styles from './NuggDexSearchList.styles';
 
 type Props = {};
 const NuggDexSearchList: FunctionComponent<Props> = () => {
+    const epoch = ProtocolState.select.epoch();
+    const filters = NuggDexState.select.searchFilters();
+
     const [localViewing, setLocalViewing] =
         useState<NL.Redux.NuggDex.SearchViews>('home');
 
-    const allNuggs = NuggDexState.select.allNuggs();
-    const activeNuggs = NuggDexState.select.activeNuggs();
-    const myNuggs = NuggDexState.select.myNuggs();
+    // const allNuggs = NuggDexState.select.allNuggs();
+    // const activeNuggs = NuggDexState.select.activeNuggs();
+    // const myNuggs = NuggDexState.select.myNuggs();
+    const [allNuggs, setAllNuggs] = useState<string[]>([]);
+    const [activeNuggs, setActiveNuggs] = useState<string[]>([]);
     const recents = NuggDexState.select.recents();
 
     const [nuggLinkRef, setNuggLinkRef] = useState<HTMLDivElement>();
@@ -78,9 +91,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 opacity: 0,
             },
             config: config.default,
-            onStart: () => {
-                NuggDexState.dispatch.setViewing(localViewing);
-            },
         },
         [nuggLinkRect, homeRect],
     );
@@ -99,8 +109,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         switch (localViewing) {
             case 'all nuggs':
                 return allNuggs;
-            case 'my nuggs':
-                return myNuggs;
             case 'on sale':
                 return activeNuggs;
             case 'recently viewed':
@@ -108,7 +116,83 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             case 'home':
                 return [];
         }
-    }, [localViewing, activeNuggs, allNuggs, myNuggs, recents]);
+    }, [localViewing, activeNuggs, allNuggs, recents]);
+
+    const handleGetActive = useCallback(
+        async (
+            setResults: any,
+            startFrom: number,
+            addToResult: boolean = false,
+        ) => {
+            const activeNuggs = await activeNuggsQuery(
+                filters.sort.by,
+                filters.sort.asc ? 'asc' : 'desc',
+                filters.searchValue,
+                epoch.id,
+                constants.NUGGDEX_SEARCH_LIST_CHUNK,
+                startFrom,
+            );
+
+            if (!isUndefinedOrNullOrArrayEmpty(activeNuggs)) {
+                const ids = activeNuggs.map((active) => active.nugg.id);
+                setResults((res) => (addToResult ? [...res, ...ids] : ids));
+            }
+        },
+        [epoch, filters],
+    );
+
+    const handleGetAll = useCallback(
+        async (
+            setResults: any,
+            startFrom: number,
+            addToResult: boolean = false,
+        ) => {
+            const allNuggs = (
+                await allNuggsQuery(
+                    filters.sort.by,
+                    filters.sort.asc ? 'asc' : 'desc',
+                    filters.searchValue,
+                    constants.NUGGDEX_SEARCH_LIST_CHUNK,
+                    startFrom,
+                )
+            ).reduce((map, all) => {
+                map[all.nugg.id] = all.nugg.id;
+                return map;
+                //@ts-ignore
+            }, {});
+            const ids = Object.keys(allNuggs);
+            setResults((res) => (addToResult ? [...res, ...ids] : ids));
+        },
+        [filters],
+    );
+
+    const onScrollEnd = useCallback(() => {
+        switch (localViewing) {
+            case 'all nuggs':
+                return handleGetAll(setAllNuggs, allNuggs.length, true);
+            case 'on sale':
+                return handleGetActive(
+                    setActiveNuggs,
+                    activeNuggs.length,
+                    true,
+                );
+            case 'recently viewed':
+                return () => {};
+        }
+    }, [
+        allNuggs,
+        activeNuggs,
+        localViewing,
+        setAllNuggs,
+        setActiveNuggs,
+        handleGetActive,
+        handleGetAll,
+    ]);
+
+    useEffect(() => {
+        handleGetAll(setAllNuggs, 0);
+        handleGetActive(setActiveNuggs, 0);
+    }, []);
 
     return (
         <div ref={homeRef} style={styles.searchListContainer}>
@@ -124,13 +208,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     localViewing={localViewing}
                     onClick={setLocalViewing}
                     setRef={setNuggLinkRef}
-                    type="my nuggs"
-                    previewNuggs={myNuggs}
-                />
-                <NuggLink
-                    localViewing={localViewing}
-                    onClick={setLocalViewing}
-                    setRef={setNuggLinkRef}
                     type="on sale"
                     previewNuggs={activeNuggs}
                 />
@@ -140,6 +217,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     setRef={setNuggLinkRef}
                     type="all nuggs"
                     previewNuggs={allNuggs}
+                    style={{ width: '100%' }}
+                    limit={9}
                 />
             </animated.div>
             {transitions[0]((style, i) => {
@@ -150,6 +229,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                             values={values}
                             setLocalViewing={setLocalViewing}
                             localViewing={localViewing}
+                            onScrollEnd={onScrollEnd}
                         />
                     )
                 );

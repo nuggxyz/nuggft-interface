@@ -21,7 +21,7 @@ export default () => {
             NuggDexState.dispatch.refillRecents({
                 _localStorageTarget: 'recents',
             });
-            NuggDexState.dispatch.initNuggDex();
+            // NuggDexState.dispatch.initNuggDex();
         }
     }, [epoch, web3address]);
     return null;

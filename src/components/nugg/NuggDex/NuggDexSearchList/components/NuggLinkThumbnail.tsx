@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 import { animated } from 'react-spring';
 
 import useOnHover from '../../../../../hooks/useOnHover';
@@ -12,7 +12,8 @@ import styles from './NuggDexComponents.styles';
 const NuggLinkThumbnail: FunctionComponent<{
     item: string;
     index: number;
-}> = ({ item, index }) => {
+    style?: CSSProperties;
+}> = ({ item, index, style: customStyle }) => {
     const [ref, isHovering] = useOnHover();
     const selected = TokenState.select.tokenId();
 
@@ -21,8 +22,9 @@ const NuggLinkThumbnail: FunctionComponent<{
             ...styles.nuggLinkThumbnailContainer,
             ...(isHovering ? styles.hover : {}),
             ...(selected === item ? styles.selected : {}),
+            ...customStyle,
         };
-    }, [item, isHovering, selected]);
+    }, [item, isHovering, selected, customStyle]);
 
     return (
         <animated.div

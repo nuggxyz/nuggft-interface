@@ -23,7 +23,11 @@ const unclaimedOffersQuery = async (id: string, epoch?: string) => {
 
     return !isUndefinedOrNullOrObjectEmpty(result) &&
         !isUndefinedOrNullOrArrayEmpty(result.offers)
-        ? (result.offers as NL.GraphQL.Fragments.Offer.Thumbnail[])
+        ? (result.offers.filter(
+              (offer) =>
+                  //@ts-ignore
+                  +offer.swap.endingEpoch <= +id,
+          ) as NL.GraphQL.Fragments.Offer.Thumbnail[])
         : [];
 };
 

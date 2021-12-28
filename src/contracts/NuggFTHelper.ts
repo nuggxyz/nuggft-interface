@@ -71,14 +71,13 @@ export default class NuggFTHelper extends ContractHelper {
         invariant(tokenId, 'OP:TOKEN:URI');
         let check = loadStringFromLocalStorage('NL-TokenURI-' + tokenId);
         if (check) {
-            return Svg.drawSvgFromString(check, 1);
+            return check;
         } else {
             try {
-                console.log('going');
                 let res = await executeQuery(
                     gql`
                         {
-                            nugg(id: "3002") {
+                            nugg(id: "${tokenId}") {
                                 dotnuggRawCache
                             }
                         }
@@ -87,8 +86,9 @@ export default class NuggFTHelper extends ContractHelper {
                 );
                 if (!res) throw new Error('token does not exist');
                 else {
-                    // saveStringToLocalStorage(bytres.dotnuggRawCacheStr, 'NL-TokenURI-' + tokenId);
-                    return Svg.drawSvgFromString(res.dotnuggRawCache, 1);
+                    const svg = Svg.drawSvgFromString(res.dotnuggRawCache, 1);
+                    saveStringToLocalStorage(svg, 'NL-TokenURI-' + tokenId);
+                    return svg;
                 }
             } catch (err) {
                 console.log({ tokenId, err });

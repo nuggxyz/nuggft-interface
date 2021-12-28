@@ -40,6 +40,7 @@ type Props = {
     values: string[];
     setLocalViewing: Dispatch<SetStateAction<NL.Redux.NuggDex.SearchViews>>;
     localViewing: NL.Redux.NuggDex.SearchViews;
+    onScrollEnd?: () => void;
 };
 
 const NuggList: FunctionComponent<Props> = ({
@@ -47,6 +48,7 @@ const NuggList: FunctionComponent<Props> = ({
     values,
     setLocalViewing,
     localViewing,
+    onScrollEnd,
 }) => {
     const filters = NuggDexState.select.searchFilters();
     const recents = NuggDexState.select.recents();
@@ -54,16 +56,6 @@ const NuggList: FunctionComponent<Props> = ({
     const web3address = Web3State.select.web3address();
 
     const [loading, setLoading] = useState(false);
-    const [results, setResults] = useState([]);
-
-    useEffect(() => {
-        if (
-            localViewing === 'home' &&
-            !isUndefinedOrNullOrArrayEmpty(results)
-        ) {
-            setResults([]);
-        }
-    }, [localViewing, results]);
 
     useEffect(() => {
         if (
@@ -73,11 +65,6 @@ const NuggList: FunctionComponent<Props> = ({
             setLocalViewing('all nuggs');
         }
     }, [filters.searchValue, setLocalViewing]);
-
-    const listData = useMemo(
-        () => (!isUndefinedOrNullOrArrayEmpty(results) ? results : values),
-        [values, results],
-    );
 
     const onClick = useCallback((item) => {
         batch(() => {
@@ -89,87 +76,14 @@ const NuggList: FunctionComponent<Props> = ({
             });
         });
     }, []);
-
-    const searchTokens = useCallback(
-        async (addToResult: boolean) => {
-            setLoading(true);
-            if (localViewing === 'recently viewed') {
-                const recentsCopy = Object.assign([], recents);
-
-                recentsCopy
-                    .sort((a, b) => (+a > +b && filters.sort.asc ? 1 : -1))
-                    .filter(
-                        (id) =>
-                            isUndefinedOrNullOrStringEmpty(
-                                filters.searchValue,
-                            ) || id.includes(filters.searchValue),
-                    );
-                setResults(recentsCopy);
-            } else {
-                const startFrom = addToResult ? results.length : 0;
-                if (localViewing === 'on sale') {
-                    const currentEpoch = epoch?.id || '0';
-                    const activeNuggs = await activeNuggsQuery(
-                        filters.sort.by,
-                        filters.sort.asc ? 'asc' : 'desc',
-                        filters.searchValue,
-                        currentEpoch,
-                        constants.NUGGDEX_SEARCH_LIST_CHUNK,
-                        startFrom,
-                    );
-
-                    if (!isUndefinedOrNullOrArrayEmpty(activeNuggs)) {
-                        const ids = activeNuggs.map((active) => active.nugg.id);
-                        setResults((res) =>
-                            addToResult ? [...res, ...ids] : ids,
-                        );
-                    }
-                } else if (localViewing === 'all nuggs') {
-                    const allNuggs = (
-                        await allNuggsQuery(
-                            filters.sort.by,
-                            filters.sort.asc ? 'asc' : 'desc',
-                            filters.searchValue,
-                            constants.NUGGDEX_SEARCH_LIST_CHUNK,
-                            startFrom,
-                        )
-                    ).reduce((map, all) => {
-                        map[all.nugg.id] = all.nugg.id;
-                        return map;
-                        //@ts-ignore
-                    }, {});
-                    const ids = Object.keys(allNuggs);
-                    setResults((res) => (addToResult ? [...res, ...ids] : ids));
-                } else if (localViewing === 'my nuggs') {
-                    const myNuggs = await myNuggsQuery(
-                        web3address,
-                        filters.sort.asc ? 'asc' : 'desc',
-                        filters.searchValue,
-                        constants.NUGGDEX_SEARCH_LIST_CHUNK,
-                        startFrom,
-                    );
-
-                    if (!isUndefinedOrNullOrArrayEmpty(myNuggs)) {
-                        const ids = myNuggs.map((my) => my.id);
-                        setResults((res) =>
-                            addToResult ? [...res, ...ids] : ids,
-                        );
-                    }
-                }
-            }
-            setLoading(false);
-        },
-        [results, localViewing, filters, epoch, recents, web3address],
-    );
-
     useEffect(() => {
         if (
             !isUndefinedOrNullOrStringEmpty(filters.searchValue) ||
             AppState.isMobile
         ) {
-            searchTokens(false);
+            onScrollEnd();
         }
-    }, [filters, localViewing]);
+    }, [filters, localViewing, onScrollEnd]);
 
     return (
         <div
@@ -208,10 +122,10 @@ const NuggList: FunctionComponent<Props> = ({
                         padding: '1.6rem 1rem',
                         zIndex: 0,
                     }}
-                    data={listData}
+                    data={values}
                     RenderItem={NuggListRenderItem}
                     loading={loading}
-                    onScrollEnd={() => searchTokens(true)}
+                    onScrollEnd={onScrollEnd}
                     action={onClick}
                 />
             </animated.div>

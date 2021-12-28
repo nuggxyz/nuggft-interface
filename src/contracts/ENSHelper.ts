@@ -64,7 +64,7 @@ export default class ENSHelper {
             console.log(address.equals(Address.ZERO));
             if (
                 !isUndefinedOrNullOrObjectEmpty(address) &&
-                (!address.equals(Address.ZERO) || !address.equals(Address.NULL))
+                !address.equals(Address.ZERO)
             ) {
                 const resolver = await this.reverseResolver(
                     address,

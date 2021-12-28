@@ -13,8 +13,8 @@ const query = (
 ) => gql`
     {
         swaps(
-            where: {nugg_contains: "${searchValue}"}, 
-            orderBy: ${orderBy === 'id' ? 'endingEpoch' : 'eth'}, 
+            where: {nugg_contains: "${searchValue}"},
+            orderBy: ${orderBy === 'id' ? 'endingEpoch' : 'eth'},
             orderDirection: ${orderDirection},
             first: ${first},
             skip: ${skip}

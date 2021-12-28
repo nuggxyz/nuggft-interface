@@ -1,10 +1,11 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, Suspense } from 'react';
 import { Helmet } from 'react-helmet';
 
+import Loader from '../../components/general/Loader/Loader';
 import PageContainer from '../../components/nugg/PageLayout/PageContainer/PageContainer';
 
-import SearchOverlay from './SearchOverlay';
-import SwapPage from './SwapPage';
+const SearchOverlay = React.lazy(() => import('./SearchOverlay'));
+const SwapPage = React.lazy(() => import('./SwapPage'));
 
 type Props = {};
 
@@ -12,8 +13,10 @@ const Desktop: FunctionComponent<Props> = () => {
     return (
         <PageContainer>
             <Helmet></Helmet>
-            <SearchOverlay />
-            <SwapPage />
+            <Suspense fallback={<Loader />}>
+                <SearchOverlay />
+                <SwapPage />
+            </Suspense>
         </PageContainer>
     );
 };
