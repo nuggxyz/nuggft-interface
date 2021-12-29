@@ -43,9 +43,10 @@ const styles = NLStyleSheetCreator({
         color: 'white',
     },
     button: {
-        borderRadius: Layout.borderRadius.mediumish,
+        borderRadius: Layout.borderRadius.large,
         background: 'white',
         width: '100%',
+        margin: '.25rem',
     },
     buttonText: {
         color: Colors.nuggBlueText,

@@ -153,4 +153,4 @@ const rejectedThactions: Middleware<{}, any, Dispatch<any>> =
         return next(action);
     };
 
-export default { localStorager, viewChange, rejectedThactions, logger };
+export default { localStorager, viewChange, rejectedThactions };

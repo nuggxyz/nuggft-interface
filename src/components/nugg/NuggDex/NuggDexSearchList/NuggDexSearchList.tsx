@@ -132,6 +132,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 startFrom,
             );
 
+            console.log('GETTING ACTIVE NUGGS', activeNuggs);
             if (!isUndefinedOrNullOrArrayEmpty(activeNuggs)) {
                 const ids = activeNuggs.map((active) => active.nugg.id);
                 setResults((res) => (addToResult ? [...res, ...ids] : ids));
@@ -201,9 +202,11 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     );
 
     useEffect(() => {
-        handleGetAll(setAllNuggs, 0);
-        handleGetActive(setActiveNuggs, 0);
-    }, []);
+        if (epoch) {
+            handleGetAll(setAllNuggs, 0);
+            handleGetActive(setActiveNuggs, 0);
+        }
+    }, [epoch]);
 
     return (
         <div ref={homeRef} style={styles.searchListContainer}>

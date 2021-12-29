@@ -203,7 +203,9 @@ const Swaps = ({ swaps, tokenId, address, owner }) => {
                     {swaps
                         .filter((swap) => !swap.id.endsWith('-0'))
                         .map((swap, index) => (
-                            <SwapItem {...{ swap, index }} />
+                            <div key={index}>
+                                <SwapItem {...{ swap, index }} />
+                            </div>
                         ))}
                 </div>
             </div>
@@ -216,7 +218,6 @@ const SwapItem = ({ swap, index }) => {
     return (
         <Button
             buttonStyle={styles.swap}
-            key={index}
             onClick={() => AppState.onRouteUpdate(`#/swap/${swap.id}`)}
             rightIcon={
                 <>

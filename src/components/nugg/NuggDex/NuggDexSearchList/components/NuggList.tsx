@@ -31,10 +31,10 @@ import allNuggsQuery from '../../../../../state/nuggdex/queries/allNuggsQuery';
 import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import Web3State from '../../../../../state/web3';
 import AppState from '../../../../../state/app';
+import Colors from '../../../../../lib/colors';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
-import Colors from '../../../../../lib/colors';
 
 type Props = {
     style: CSSProperties | UseSpringProps;
@@ -77,12 +77,17 @@ const NuggList: FunctionComponent<Props> = ({
             });
         });
     }, []);
+
+    useEffect(() => {
+        onScrollEnd(setLoading);
+    }, []);
+
     useEffect(() => {
         if (
             !isUndefinedOrNullOrStringEmpty(filters.searchValue) ||
             AppState.isMobile
         ) {
-            onScrollEnd();
+            onScrollEnd(setLoading);
         }
     }, [filters, localViewing, onScrollEnd]);
 
