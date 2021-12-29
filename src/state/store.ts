@@ -35,9 +35,11 @@ export const rootReducer = combineReducers({
 const store = configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(
-            Object.values(states).flatMap((state) => state.middlewares),
-        ),
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredPaths: ['app'],
+            },
+        }).concat(Object.values(states).flatMap((state) => state.middlewares)),
 });
 
 export type NLRootState = ReturnType<typeof rootReducer>;
