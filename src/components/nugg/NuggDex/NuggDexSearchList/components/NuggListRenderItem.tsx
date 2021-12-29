@@ -5,19 +5,14 @@ import React, {
     useEffect,
     useMemo,
 } from 'react';
-import { batch } from 'react-redux';
 
-import useIsVisible from '../../../../../hooks/useIsVisible';
-import {
-    isUndefinedOrNullOrBooleanFalse,
-    isUndefinedOrNullOrNotFunction,
-    isUndefinedOrNullOrStringEmpty,
-} from '../../../../../lib';
+import { isUndefinedOrNullOrStringEmpty } from '../../../../../lib';
 import Label from '../../../../general/Label/Label';
 import { ListRenderItemProps } from '../../../../general/List/List';
 import TokenState from '../../../../../state/token';
-import NuggDexState from '../../../../../state/nuggdex';
 import TokenViewer from '../../../TokenViewer';
+import Colors from '../../../../../lib/colors';
+import FontSize from '../../../../../lib/fontSize';
 
 import styles from './NuggDexComponents.styles';
 
@@ -41,14 +36,17 @@ const NuggListRenderItem: FunctionComponent<Props> = ({
     }, [item, selected]);
 
     const Body = useCallback(() => {
-        console.log('rendering', item);
         return !isUndefinedOrNullOrStringEmpty(item) ? (
             <div style={styles.nuggListRenderItemNugg}>
                 <TokenViewer
                     tokenId={item || ''}
-                    style={{ height: '80px', width: '80px' }}
+                    style={{ height: '140px', width: '140px' }}
                 />
-                <Label text={'NuggFT #' + item} />
+                <Label
+                    text={'Nugg #' + item}
+                    size="larger"
+                    // containerStyles={{ color: Colors.nuggBlueText }}
+                />
             </div>
         ) : null;
     }, [item]);

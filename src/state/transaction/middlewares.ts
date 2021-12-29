@@ -52,12 +52,17 @@ export const pending: NL.Redux.Middleware<
             }
         }
         if (NLState.hasSuffix(action, 'finalizeTransaction')) {
+            //@ts-ignore
+            const successful = action.payload.receipt.status ? true : false;
             AppState.dispatch.replaceToast({
                 //@ts-ignore
                 id: action.payload.hash,
-                duration: 5000,
+                duration: successful ? 5000 : 0,
                 loading: false,
-                title: 'Successful Transaction',
+                error: !successful,
+                title: successful
+                    ? 'Successful Transaction'
+                    : 'Transaction Failed',
             });
             // const tmp = action.payload._pendingtx
             //     ?.info as NL.Redux.Transaction.ERC721ApprovalInfo;

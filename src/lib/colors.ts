@@ -5,7 +5,7 @@ const Colors = {
     grey: '#DBDBDB',
     darkerGray: '#788796',
     textColor: 'rgb(86, 90, 105)',
-    transparentGrey: 'rgba(0, 0, 0, 0.3)',
+    transparentGrey: '#b7caed55',
     transparentDarkGrey: 'rgba(0, 0, 0, 0.7)',
     transparentWhite: '#FFFFFF99',
     transparentLightGrey: '#c9d9f255',

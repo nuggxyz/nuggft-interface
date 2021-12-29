@@ -1,4 +1,9 @@
-import React, { Dispatch, FunctionComponent, SetStateAction } from 'react';
+import React, {
+    CSSProperties,
+    Dispatch,
+    FunctionComponent,
+    SetStateAction,
+} from 'react';
 import { animated, useSpring } from 'react-spring';
 
 import { ucFirst } from '../../../../../lib';
@@ -15,6 +20,8 @@ type Props = {
     previewNuggs: string[];
     setRef: Dispatch<SetStateAction<HTMLDivElement>>;
     onClick: Dispatch<SetStateAction<NL.Redux.NuggDex.SearchViews>>;
+    style?: CSSProperties;
+    limit?: number;
 };
 
 const NuggLink: FunctionComponent<Props> = ({
@@ -23,6 +30,8 @@ const NuggLink: FunctionComponent<Props> = ({
     localViewing,
     setRef,
     onClick,
+    style,
+    limit = 3,
 }) => {
     // const viewing = NuggDexState.select.viewing();
     const opacity = useSpring({
@@ -36,25 +45,46 @@ const NuggLink: FunctionComponent<Props> = ({
     });
 
     return (
-        <animated.div style={{ ...styles.nuggLinkContainer, ...opacity }}>
+        <animated.div
+            style={{ ...styles.nuggLinkContainer, ...opacity, ...style }}>
             <animated.div
                 ref={(ref) => localViewing === type && setRef(ref)}
-                style={{ ...styles.nuggLinkPreviewContainer }}>
-                {previewNuggs
-                    .first(3)
-                    .map(
-                        (nugg, i) =>
-                            nugg && (
-                                <NuggLinkThumbnail
-                                    item={nugg}
-                                    index={i}
-                                    key={i}
-                                />
-                            ),
-                    )}
-                <NuggLinkAnchor onClick={() => onClick(type)} />
+                style={{
+                    ...styles.nuggLinkPreviewContainer,
+                }}>
+                {previewNuggs.first(limit).map(
+                    (nugg, i) =>
+                        nugg && (
+                            <NuggLinkThumbnail
+                                item={nugg}
+                                index={i}
+                                key={i}
+                                style={{
+                                    ...(limit > 3
+                                        ? {
+                                              height: '35%',
+                                              width: '15%',
+                                              margin: '.5rem .75rem',
+                                          }
+                                        : {}),
+                                }}
+                            />
+                        ),
+                )}
+                <NuggLinkAnchor
+                    onClick={() => onClick(type)}
+                    style={{
+                        ...(limit > 3
+                            ? {
+                                  height: '35%',
+                                  width: '15%',
+                                  margin: '.5rem .75rem',
+                              }
+                            : {}),
+                    }}
+                />
             </animated.div>
-            <Text size="smaller" textStyle={styles.nuggLinkCategoryTitle}>
+            <Text size="medium" textStyle={styles.nuggLinkCategoryTitle}>
                 {ucFirst(type)}
             </Text>
         </animated.div>

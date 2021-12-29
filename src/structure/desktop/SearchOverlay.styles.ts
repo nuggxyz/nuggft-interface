@@ -21,6 +21,7 @@ const styles = NLStyleSheetCreator({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
+        position: 'relative',
     },
 });
 

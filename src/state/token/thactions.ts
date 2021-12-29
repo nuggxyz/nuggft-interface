@@ -5,6 +5,7 @@ import {
     isUndefinedOrNullOrNotObject,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
+import AppState from '../app';
 import Web3State from '../web3';
 
 const initSale = createAsyncThunk<
@@ -21,6 +22,7 @@ const initSale = createAsyncThunk<
         return {
             success: 'SUCCESS',
             _pendingtx,
+            callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {
         console.log({ err });

@@ -19,6 +19,7 @@ import TokenViewer from '../../../nugg/TokenViewer';
 import CurrencyText from '../../Texts/CurrencyText/CurrencyText';
 import { EthInt } from '../../../../classes/Fraction';
 import Colors from '../../../../lib/colors';
+import SwapState from '../../../../state/swap';
 
 import styles from './ChainIndicator.styles';
 import ChainIndicatorPulse from './ChainIndicatorPulse';
@@ -28,8 +29,9 @@ type Props = { onClick?: () => void };
 const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
     const epoch = ProtocolState.select.epoch();
     const connectionWarning = Web3State.select.connectivityWarning();
+    const view = AppState.select.view();
     const currentBlock = ProtocolState.select.currentBlock();
-    const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
+    const swapId = SwapState.select.id();
 
     const [blocksRemaining, setBlocksRemaining] = useState(0);
 
@@ -60,7 +62,15 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
         <animated.div style={springStyle}>
             <Button
                 textStyle={{ fontFamily: Layout.font.code.regular }}
-                onClick={onClick || (() => AppState.onRouteUpdate('/'))}
+                onClick={
+                    onClick ||
+                    (() =>
+                        AppState.onRouteUpdate(
+                            view === 'Search' || !swapId.includes(epoch.id)
+                                ? '/'
+                                : `/nugg/${epoch.id}`,
+                        ))
+                }
                 buttonStyle={{
                     ...styles.button,
                     ...(connectionWarning ? styles.warning : styles.normal),

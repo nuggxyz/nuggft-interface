@@ -91,7 +91,9 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
                     <AnimatedBarTimer
                         duration={toast.duration}
                         style={styles.toastTimer}
-                        color={Colors.gradient2}
+                        color={
+                            toast.error ? Colors.gradient3 : Colors.gradient2
+                        }
                     />
                 )}
             </animated.div>
@@ -101,7 +103,7 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
                     position: 'absolute',
                     width: '100%',
                     display: 'flex',
-                    justifyContent: 'space-around'
+                    justifyContent: 'space-around',
                 }}>
                 <Button
                     buttonStyle={{ background: 'transparent' }}

@@ -91,11 +91,12 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
 
     return (
         <div style={styles.container}>
-            <TokenViewer
-                tokenId={stableId || nugg?.id}
-                showLabel
-                labelColor="white"
-            />
+            <Text textStyle={{ color: 'white' }}>
+                {stableType === 'StartSale'
+                    ? 'Sell your nugg'
+                    : 'Bid on this nugg'}
+            </Text>
+            <TokenViewer tokenId={stableId || nugg?.id} />
             <div style={styles.inputContainer}>
                 <CurrencyInput
                     style={styles.input}
@@ -111,7 +112,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     {stableType === 'Offer' && userBalance && (
                         <Text
                             type="text"
-                            size='small'
+                            size="small"
                             textStyle={{ color: 'white', textAlign: 'right' }}
                             weight="bolder">
                             You currently have{' '}
@@ -139,12 +140,17 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                                         )
                                       : 0
                               } ETH`
-                            : 'Error'}
+                            : `You cannot ${
+                                  stableType === 'StartSale'
+                                      ? 'sell'
+                                      : 'place an offer on'
+                              } this Nugg`}
                     </Text>
                 </div>
             </div>
             <div style={styles.subContainer}>
                 <Button
+                    disabled={resArr && !resArr.canDelegate}
                     buttonStyle={styles.button}
                     label={
                         isApproved

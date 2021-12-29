@@ -5,6 +5,7 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 import myNuggsQuery from '../wallet/queries/myNuggsQuery';
+import { nuggBare } from '../../graphql/fragments/nugg';
 
 import getNuggThumbnailQuery from './queries/getNuggThumbnailQuery';
 import activeNuggsQuery from './queries/activeNuggsQuery';
@@ -60,9 +61,10 @@ const initNuggDex = createAsyncThunk<
         const activeNuggs = (
             await activeNuggsQuery('id', 'desc', '', currentEpoch, 5, 0)
         ).map((val) => val.nugg.id);
-        const allNuggs = Object.keys(
-            await allNuggsQuery('id', 'desc', '', 5, 0),
+        const allNuggs = (await allNuggsQuery('id', 'desc', '', 5, 0)).map(
+            (swap) => swap.nugg.id,
         );
+        console.log({ allNuggs });
         const myNuggs = (
             await myNuggsQuery(
                 thunkAPI.getState().web3.web3address,

@@ -23,7 +23,7 @@ const query = (
                     !isUndefinedOrNullOrStringEmpty(searchValue)
                         ? `id: "${searchValue}"`
                         : ''
-                }},
+                } liquidated: false},
                 first: ${first},
                 skip: ${skip}
             ) ${loanBare}

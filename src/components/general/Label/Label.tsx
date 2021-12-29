@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-import Text from '../Texts/Text/Text';
+import Text, { TextProps } from '../Texts/Text/Text';
 
 import styles from './Label.styles';
 
@@ -8,12 +8,13 @@ type Props = {
     basic?: boolean;
     text: string;
     containerStyles?: React.CSSProperties;
-};
+} & Partial<TextProps>;
 
 const Label: FunctionComponent<Props> = ({
     basic = false,
     text,
     containerStyles = {},
+    ...props
 }) => {
     return (
         <div
@@ -22,7 +23,9 @@ const Label: FunctionComponent<Props> = ({
                 ...(basic ? styles.basic : {}),
                 ...containerStyles,
             }}>
-            <Text textStyle={styles.text}>{text}</Text>
+            <Text {...props} textStyle={styles.text}>
+                {text}
+            </Text>
         </div>
     );
 };
