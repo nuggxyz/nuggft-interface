@@ -75,7 +75,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                             : status === 'ongoing' && !hasBids
                             ? 'No offers yet'
                             : status === 'waiting'
-                            ? 'Place offer to initialize auction'
+                            ? 'Place offer to begin auction'
                             : 'Winner'}
                     </Text>
                     {hasBids && (

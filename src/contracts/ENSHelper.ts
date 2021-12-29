@@ -61,7 +61,6 @@ export default class ENSHelper {
      */
     private static async resolveName(address: Address): Promise<string> {
         try {
-            console.log(address.equals(Address.ZERO));
             if (
                 !isUndefinedOrNullOrObjectEmpty(address) &&
                 !address.equals(Address.ZERO)
