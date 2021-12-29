@@ -34,13 +34,14 @@ import AppState from '../../../../../state/app';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
+import Colors from '../../../../../lib/colors';
 
 type Props = {
     style: CSSProperties | UseSpringProps;
     values: string[];
     setLocalViewing: Dispatch<SetStateAction<NL.Redux.NuggDex.SearchViews>>;
     localViewing: NL.Redux.NuggDex.SearchViews;
-    onScrollEnd?: () => void;
+    onScrollEnd?: (setLoading?: any) => void;
 };
 
 const NuggList: FunctionComponent<Props> = ({
@@ -108,6 +109,7 @@ const NuggList: FunctionComponent<Props> = ({
                             Icon={ChevronLeft}
                             style={{
                                 marginTop: '.12rem',
+                                // color: Colors.nuggBlueText
                             }}
                             text={ucFirst(localViewing)}
                             transitionText="Go back"
@@ -125,7 +127,9 @@ const NuggList: FunctionComponent<Props> = ({
                     data={values}
                     RenderItem={NuggListRenderItem}
                     loading={loading}
-                    onScrollEnd={onScrollEnd}
+                    onScrollEnd={() => {
+                        onScrollEnd(setLoading);
+                    }}
                     action={onClick}
                 />
             </animated.div>

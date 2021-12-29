@@ -18,10 +18,10 @@ const styles = NLStyleSheetCreator({
     },
     navBarBackground: {
         ...globalStyles.absoluteFill,
-        background: 'transparent',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        transition: `all 0.6s ${Layout.animation}`,
+        // background: 'transparent',
+        // backdropFilter: 'blur(20px)',
+        // WebkitBackdropFilter: 'blur(20px)',
+        // transition: `all 0.6s ${Layout.animation}`,
     },
     navBarHover: {
         background: Colors.nuggBlueTransparent,

@@ -20,6 +20,12 @@ html {
 
 * {
     box-sizing: border-box;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
 }
 
 .placeholder-blue::-webkit-input-placeholder {

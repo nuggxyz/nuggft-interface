@@ -28,6 +28,7 @@ type Props = { onClick?: () => void };
 const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
     const epoch = ProtocolState.select.epoch();
     const connectionWarning = Web3State.select.connectivityWarning();
+    const view = AppState.select.view();
     const currentBlock = ProtocolState.select.currentBlock();
     const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
 
@@ -60,7 +61,13 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
         <animated.div style={springStyle}>
             <Button
                 textStyle={{ fontFamily: Layout.font.code.regular }}
-                onClick={onClick || (() => AppState.onRouteUpdate('/'))}
+                onClick={
+                    onClick ||
+                    (() =>
+                        AppState.onRouteUpdate(
+                            view === 'Search' ? '/' : `/nugg/${epoch.id}`,
+                        ))
+                }
                 buttonStyle={{
                     ...styles.button,
                     ...(connectionWarning ? styles.warning : styles.normal),

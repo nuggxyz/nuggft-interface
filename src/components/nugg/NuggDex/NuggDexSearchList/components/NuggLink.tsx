@@ -84,7 +84,7 @@ const NuggLink: FunctionComponent<Props> = ({
                     }}
                 />
             </animated.div>
-            <Text size="smaller" textStyle={styles.nuggLinkCategoryTitle}>
+            <Text size="medium" textStyle={styles.nuggLinkCategoryTitle}>
                 {ucFirst(type)}
             </Text>
         </animated.div>

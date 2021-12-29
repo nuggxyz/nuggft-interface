@@ -15,7 +15,7 @@ const styles = NLStyleSheetCreator({
     nuggLinkPreviewContainer: {
         marginBottom: '.5rem',
         padding: '.5rem',
-        background: Colors.transparentLightGrey,
+        background: Colors.transparentGrey,
         borderRadius: Layout.borderRadius.medium,
         width: '100%',
         height: '100%',
@@ -35,6 +35,7 @@ const styles = NLStyleSheetCreator({
         left: '0rem',
         padding: '.5rem',
         width: '100%',
+        // background: Colors.transparentWhite,
     },
     nuggListDefault: {
         position: 'absolute',
@@ -42,7 +43,7 @@ const styles = NLStyleSheetCreator({
         top: 0,
         height: 0,
         width: 0,
-        background: Colors.transparentLightGrey,
+        background: Colors.transparentGrey,
         borderRadius: Layout.borderRadius.medium,
         overflow: 'hidden',
     },
@@ -73,7 +74,7 @@ const styles = NLStyleSheetCreator({
         background: Colors.transparentWhite,
         padding: '1rem',
         cursor: 'pointer',
-        transition: `background .7s ${Layout.animation}`,
+        transition: `background .4s ${Layout.animation}`,
     },
     hover: {
         background: Colors.nuggBlueTransparent,
@@ -92,6 +93,7 @@ const styles = NLStyleSheetCreator({
     nuggLinkCategoryTitle: {
         fontFamily: Layout.font.inter.bold,
         fontWeight: 'bold',
+        // color: ,
     },
 });
 

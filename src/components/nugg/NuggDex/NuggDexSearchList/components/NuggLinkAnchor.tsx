@@ -5,6 +5,7 @@ import { Maximize2 } from 'react-feather';
 import useOnHover from '../../../../../hooks/useOnHover';
 import Text from '../../../../general/Texts/Text/Text';
 import globalStyles from '../../../../../lib/globalStyles';
+import Colors from '../../../../../lib/colors';
 
 import styles from './NuggDexComponents.styles';
 
@@ -26,7 +27,9 @@ const NuggThumbnail: FunctionComponent<Props> = ({ onClick, style }) => {
                 justifyContent: 'space-evenly',
             }}
             onClick={onClick}>
-            <Maximize2 style={globalStyles.fillWidth} />
+            <Maximize2
+                style={globalStyles.fillWidth}
+            />
             <Text size="smaller" textStyle={styles.label}>
                 MORE
             </Text>

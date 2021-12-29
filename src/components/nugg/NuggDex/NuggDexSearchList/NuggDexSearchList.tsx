@@ -1,5 +1,6 @@
 import React, {
     FunctionComponent,
+    SetStateAction,
     useCallback,
     useEffect,
     useMemo,
@@ -35,10 +36,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 
     const [localViewing, setLocalViewing] =
         useState<NL.Redux.NuggDex.SearchViews>('home');
-
-    // const allNuggs = NuggDexState.select.allNuggs();
-    // const activeNuggs = NuggDexState.select.activeNuggs();
-    // const myNuggs = NuggDexState.select.myNuggs();
     const [allNuggs, setAllNuggs] = useState<string[]>([]);
     const [activeNuggs, setActiveNuggs] = useState<string[]>([]);
     const recents = NuggDexState.select.recents();
@@ -74,7 +71,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 top: nuggLinkRect
                     ? `${nuggLinkRect.top - homeRect.top}px`
                     : '0px',
-                width: '35%',
+                width: localViewing === 'all nuggs' ? '90%' : '35%',
                 height: '35%',
                 opacity: 0,
             },
@@ -86,7 +83,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 top: nuggLinkRect
                     ? `${nuggLinkRect.top - homeRect.top}px`
                     : '600px',
-                width: '30%',
+                width: localViewing === 'all nuggs' ? '90%' : '30%',
                 height: '30%',
                 opacity: 0,
             },
@@ -123,7 +120,9 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             setResults: any,
             startFrom: number,
             addToResult: boolean = false,
+            setLoading?: React.Dispatch<SetStateAction<boolean>>,
         ) => {
+            setLoading && setLoading(true);
             const activeNuggs = await activeNuggsQuery(
                 filters.sort.by,
                 filters.sort.asc ? 'asc' : 'desc',
@@ -137,6 +136,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 const ids = activeNuggs.map((active) => active.nugg.id);
                 setResults((res) => (addToResult ? [...res, ...ids] : ids));
             }
+            setLoading && setLoading(false);
         },
         [epoch, filters],
     );
@@ -146,7 +146,9 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             setResults: any,
             startFrom: number,
             addToResult: boolean = false,
+            setLoading?: React.Dispatch<SetStateAction<boolean>>,
         ) => {
+            setLoading && setLoading(true);
             const allNuggs = (
                 await allNuggsQuery(
                     filters.sort.by,
@@ -162,32 +164,41 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             }, {});
             const ids = Object.keys(allNuggs);
             setResults((res) => (addToResult ? [...res, ...ids] : ids));
+            setLoading && setLoading(false);
         },
         [filters],
     );
 
-    const onScrollEnd = useCallback(() => {
-        switch (localViewing) {
-            case 'all nuggs':
-                return handleGetAll(setAllNuggs, allNuggs.length, true);
-            case 'on sale':
-                return handleGetActive(
-                    setActiveNuggs,
-                    activeNuggs.length,
-                    true,
-                );
-            case 'recently viewed':
-                return () => {};
-        }
-    }, [
-        allNuggs,
-        activeNuggs,
-        localViewing,
-        setAllNuggs,
-        setActiveNuggs,
-        handleGetActive,
-        handleGetAll,
-    ]);
+    const onScrollEnd = useCallback(
+        (setLoading?: React.Dispatch<SetStateAction<boolean>>) => {
+            switch (localViewing) {
+                case 'all nuggs':
+                    return handleGetAll(
+                        setAllNuggs,
+                        allNuggs.length,
+                        true,
+                        setLoading,
+                    );
+                case 'on sale':
+                    return handleGetActive(
+                        setActiveNuggs,
+                        activeNuggs.length,
+                        true,
+                    );
+                case 'recently viewed':
+                    return () => {};
+            }
+        },
+        [
+            allNuggs,
+            activeNuggs,
+            localViewing,
+            setAllNuggs,
+            setActiveNuggs,
+            handleGetActive,
+            handleGetAll,
+        ],
+    );
 
     useEffect(() => {
         handleGetAll(setAllNuggs, 0);
@@ -217,8 +228,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     setRef={setNuggLinkRef}
                     type="all nuggs"
                     previewNuggs={allNuggs}
-                    style={{ width: '100%' }}
-                    limit={9}
+                    style={{ width: '90%' }}
+                    limit={7}
                 />
             </animated.div>
             {transitions[0]((style, i) => {

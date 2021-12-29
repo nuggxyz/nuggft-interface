@@ -53,6 +53,15 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                 <Text type="text" size="smaller" textStyle={styles.text}>
                     You will receive {(+fromEth(shareValue)).toFixed(4)} ETH
                 </Text>
+                {stableType === 'Burn' && (
+                    <Text
+                        type="text"
+                        size="medium"
+                        weight="bold"
+                        textStyle={{ ...styles.text, color: 'white' }}>
+                        This cannot be undone
+                    </Text>
+                )}
                 <Button
                     buttonStyle={styles.button}
                     label={
