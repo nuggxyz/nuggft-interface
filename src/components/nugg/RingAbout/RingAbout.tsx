@@ -1,5 +1,7 @@
-import React, { FunctionComponent, useMemo } from 'react';
-import { ChevronDown } from 'react-feather';
+import React, { FunctionComponent, useMemo, useState } from 'react';
+import { ChevronDown, ChevronUp } from 'react-feather';
+import { animated, useSpring } from 'react-spring';
+import { BigNumber } from 'ethers';
 
 import Text from '../../general/Texts/Text/Text';
 import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
@@ -7,7 +9,7 @@ import SwapState from '../../../state/swap';
 import Button from '../../general/Buttons/Button/Button';
 import AppState from '../../../state/app';
 import Web3State from '../../../state/web3';
-import { Address } from '../../../classes/Address';
+import { Address, EnsAddress } from '../../../classes/Address';
 import {
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
@@ -25,8 +27,11 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const address = Web3State.select.web3address();
     const ethUsd = SwapState.select.ethUsd();
     const leader = SwapState.select.leader();
+    const offers = SwapState.select.offers();
 
     const status = SwapState.select.status();
+
+    const [open, setOpen] = useState(false);
 
     const safeLeaderEns = useMemo(() => {
         return !isUndefinedOrNullOrObjectEmpty(leader)
@@ -34,7 +39,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
             : Address.ZERO.hash;
     }, [leader]);
 
-    const ens = Web3State.hook.useEns(safeLeaderEns);
+    // const ens = Web3State.hook.useEns(safeLeaderEns);
 
     const hasBids = useMemo(
         () =>
@@ -44,11 +49,23 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
         [eth, leader],
     );
 
+    const springStyle = useSpring({
+        ...styles.container,
+        height: open ? '70%' : '19%',
+    });
+
+    const offerStyle = useSpring({
+        ...styles.offersContainer,
+        opacity: open ? 1 : 0,
+        position: open ? 'relative' : 'absolute',
+        pointerEvents: 'none',
+    });
+
     return (
-        <div
+        <animated.div
             style={{
-                ...styles.container,
                 ...(AppState.isMobile && styles.mobile),
+                ...springStyle,
             }}>
             <div style={styles.bodyContainer}>
                 <div style={styles.leaderContainer}>
@@ -63,18 +80,6 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                     </Text>
                     {hasBids && (
                         <div style={styles.leadingOfferContainer}>
-                            {!AppState.isMobile && (
-                                <Button
-                                    rightIcon={
-                                        <ChevronDown
-                                            color={Colors.nuggBlueText}
-                                            size={14}
-                                        />
-                                    }
-                                    onClick={() => console.log('All offers')}
-                                    buttonStyle={styles.allOffersButton}
-                                />
-                            )}
                             <div style={styles.leadingOfferAmount}>
                                 <CurrencyText
                                     image="eth"
@@ -86,13 +91,50 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                     value={+ethUsd}
                                 /> */}
                                 <Text textStyle={styles.code}>
-                                    {ens ? ens.short : 'Loading...'}
+                                    {new EnsAddress(leader.id).short}
                                 </Text>
                             </div>
+                            {!AppState.isMobile && offers.length > 1 && (
+                                <Button
+                                    rightIcon={
+                                        !open ? (
+                                            <ChevronUp
+                                                color={Colors.nuggBlueText}
+                                                size={14}
+                                            />
+                                        ) : (
+                                            <ChevronDown
+                                                color={Colors.nuggBlueText}
+                                                size={14}
+                                            />
+                                        )
+                                    }
+                                    onClick={() => setOpen(!open)}
+                                    buttonStyle={styles.allOffersButton}
+                                />
+                            )}
                         </div>
                     )}
                 </div>
             </div>
+            {/*//@ts-ignore*/}
+            <animated.div style={offerStyle}>
+                {offers.map(
+                    (offer, index) =>
+                        index !== 0 && (
+                            <div style={styles.offerAmount}>
+                                <CurrencyText
+                                    image="eth"
+                                    // textStyle={styles.leadingOffer}
+                                    value={+fromEth(offer.eth)}
+                                />
+                                <Text textStyle={styles.code}>
+                                    {new EnsAddress(offer.user.id).short}
+                                </Text>
+                            </div>
+                        ),
+                )}
+            </animated.div>
 
             {status !== 'over' && !isUndefinedOrNullOrStringEmpty(address) && (
                 <Button
@@ -109,7 +151,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                     label="Place offer..."
                 />
             )}
-        </div>
+        </animated.div>
     );
 };
 

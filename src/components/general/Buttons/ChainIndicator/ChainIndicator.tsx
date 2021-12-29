@@ -19,6 +19,7 @@ import TokenViewer from '../../../nugg/TokenViewer';
 import CurrencyText from '../../Texts/CurrencyText/CurrencyText';
 import { EthInt } from '../../../../classes/Fraction';
 import Colors from '../../../../lib/colors';
+import SwapState from '../../../../state/swap';
 
 import styles from './ChainIndicator.styles';
 import ChainIndicatorPulse from './ChainIndicatorPulse';
@@ -30,7 +31,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
     const connectionWarning = Web3State.select.connectivityWarning();
     const view = AppState.select.view();
     const currentBlock = ProtocolState.select.currentBlock();
-    const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
+    const swapId = SwapState.select.id();
 
     const [blocksRemaining, setBlocksRemaining] = useState(0);
 
@@ -65,7 +66,9 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
                     onClick ||
                     (() =>
                         AppState.onRouteUpdate(
-                            view === 'Search' ? '/' : `/nugg/${epoch.id}`,
+                            view === 'Search' || !swapId.includes(epoch.id)
+                                ? '/'
+                                : `/nugg/${epoch.id}`,
                         ))
                 }
                 buttonStyle={{
