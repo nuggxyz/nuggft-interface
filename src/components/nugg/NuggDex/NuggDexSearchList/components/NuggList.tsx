@@ -97,11 +97,12 @@ const NuggList: FunctionComponent<Props> = ({
 
     useEffect(
         () => () => {
-            onScrollEnd({
-                setLoading,
-                filters: { searchValue: '', sort: { by: 'id', asc: true } },
-                addToList: false,
-            });
+            onScrollEnd &&
+                onScrollEnd({
+                    setLoading,
+                    filters: { searchValue: '', sort: { by: 'id', asc: true } },
+                    addToList: false,
+                });
         },
         [],
     );

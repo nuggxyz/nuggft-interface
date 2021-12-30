@@ -5,6 +5,7 @@ import Layout from '../../../lib/layout';
 const styles = NLStyleSheetCreator({
     wrapper: {
         height: '90%',
+        width: '100%',
         borderRadius: Layout.borderRadius.medium,
         position: 'absolute',
         display: 'flex',
