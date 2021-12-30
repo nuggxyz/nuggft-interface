@@ -28,9 +28,7 @@ const LinkAccountButton = () => {
 
     const buttonLabel = useMemo(() => {
         if (status === 'SELECTED') {
-            return !isUndefinedOrNullOrObjectEmpty(ens)
-                ? ens.short
-                : shortenAddress(address).toLowerCase();
+            return ens.toLowerCase();
         } else if (status === 'ERROR') {
             return 'Error';
         } else if (status === 'PENDING') {

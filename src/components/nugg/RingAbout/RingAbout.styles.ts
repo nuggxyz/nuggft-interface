@@ -16,6 +16,7 @@ const styles = NLStyleSheetCreator({
         padding: '.5rem',
         width: '70%',
         position: 'relative',
+        height: 'auto',
     },
     mobile: {
         width: '90%',
@@ -32,10 +33,7 @@ const styles = NLStyleSheetCreator({
     offersContainer: {
         background: Colors.transparentGrey,
         width: '100%',
-        height: '100%',
         borderRadius: Layout.borderRadius.mediumish,
-        margin: '0rem 0rem .5rem 0rem',
-        padding: '1rem',
     },
     title: {
         fontFamily: Layout.font.inter.bold,
@@ -46,7 +44,7 @@ const styles = NLStyleSheetCreator({
         borderRadius: Layout.borderRadius.large,
         background: 'white',
         width: '100%',
-        margin: '.25rem',
+        marginTop: '.5rem',
     },
     buttonText: {
         color: Colors.nuggBlueText,
