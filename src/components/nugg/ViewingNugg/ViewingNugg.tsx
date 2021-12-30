@@ -98,13 +98,59 @@ const Swaps = ({ swaps, tokenId, address, owner }) => {
                     }}>
                     Nugg #{tokenId}
                 </Text>
-                {owner === address ? (
+                <div style={{ marginLeft: '1rem' }}>
+                    {owner ? (
+                        <>
+                            <Text
+                                type="text"
+                                size="smaller"
+                                textStyle={{
+                                    color: Colors.nuggBlueText,
+                                }}>
+                                Owner
+                            </Text>
+                            <Text
+                                textStyle={{
+                                    color: Colors.nuggBlueText,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                }}>
+                                {ownerAddress === config.NUGGFT ||
+                                ownerAddress === Address.ZERO.hash
+                                    ? 'NuggFT'
+                                    : ownerAddress}
+                                {owner === address && (
+                                    <Text
+                                        type="text"
+                                        size="smaller"
+                                        textStyle={{ paddingLeft: '.5rem' }}>
+                                        (you)
+                                    </Text>
+                                )}
+                            </Text>
+                        </>
+                    ) : (
+                        <Loader color={Colors.nuggBlueText} />
+                    )}
+                </div>
+            </div>
+            {owner === address && (
+                <div
+                    style={{
+                        // width: '50%',
+                        display: 'flex',
+                        padding: '.5rem',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
                     <div
                         style={{
                             display: 'flex',
                             borderRadius: Layout.borderRadius.large,
                             overflow: 'hidden',
-                            marginLeft: '1rem',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            // marginLeft: '1rem',
                             background: Colors.gradient2Transparent,
                         }}>
                         <Button
@@ -165,33 +211,9 @@ const Swaps = ({ swaps, tokenId, address, owner }) => {
                             }
                         />
                     </div>
-                ) : (
-                    <div style={{ marginLeft: '1rem' }}>
-                        {owner ? (
-                            <>
-                                <Text
-                                    type="text"
-                                    size="smaller"
-                                    textStyle={{
-                                        color: Colors.nuggBlueText,
-                                    }}>
-                                    Owner
-                                </Text>
-                                <Text
-                                    textStyle={{ color: Colors.nuggBlueText }}>
-                                    {ownerAddress === config.NUGGFT ||
-                                    ownerAddress === Address.ZERO.hash
-                                        ? 'NuggFT'
-                                        : ownerAddress}
-                                </Text>
-                            </>
-                        ) : (
-                            <Loader color={Colors.nuggBlueText} />
-                        )}
-                    </div>
-                )}
-            </div>
-            <div style={{ padding: '1rem' }}>
+                </div>
+            )}
+            <div style={{ padding: '0rem 1rem 1rem 1rem' }}>
                 {swaps.find((swap) => swap.id.endsWith('-0')) && (
                     <SwapItem
                         swap={swaps.find((swap) => swap.id.endsWith('-0'))}

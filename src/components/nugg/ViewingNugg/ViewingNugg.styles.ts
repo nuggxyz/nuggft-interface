@@ -5,6 +5,7 @@ import Layout from '../../../lib/layout';
 const styles = NLStyleSheetCreator({
     wrapper: {
         height: '90%',
+        width: '100%',
         borderRadius: Layout.borderRadius.medium,
         position: 'absolute',
         display: 'flex',
@@ -25,7 +26,6 @@ const styles = NLStyleSheetCreator({
         borderRadius: Layout.borderRadius.mediumish,
         postion: 'relative',
         display: 'flex',
-        // flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'stretch',
         borderBottomRightRadius: 0,

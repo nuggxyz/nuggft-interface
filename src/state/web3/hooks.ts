@@ -2,7 +2,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import { useCallback, useEffect, useState } from 'react';
 
-import { EnsAddress } from '../../classes/Address';
+import { Address, EnsAddress } from '../../classes/Address';
 import { NetworkContextName } from '../../config';
 
 const useActiveWeb3React = () => {
@@ -15,14 +15,15 @@ const useActiveWeb3React = () => {
  * Given a name or address, does a lookup to resolve to an address and name
  * @param nameOrAddress ENS name or address
  */
-const useEns = (address: string): EnsAddress => {
-    const [addr, setAddr] = useState<EnsAddress>();
+const useEns = (address: string): string => {
+    const [addr, setAddr] = useState('');
 
     const getData = useCallback(async () => {
         if (address) {
             const ensAddress = new EnsAddress(address);
+            setAddr(Address.shortenAddress(ensAddress));
             await ensAddress.ensureEns();
-            setAddr(ensAddress);
+            setAddr(ensAddress.short);
         }
     }, [address]);
 

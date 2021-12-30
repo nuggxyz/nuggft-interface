@@ -59,6 +59,131 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     }, [homeRef]);
 
     const transRef = useSpringRef();
+
+    const animatedStyle = useSpring({
+        ...styles.nuggLinksContainer,
+        opacity: localViewing !== 'home' ? 0 : 1,
+        transform: localViewing !== 'home' ? 'scale(0.9)' : 'scale(1)',
+    });
+
+    useEffect(() => {
+        nuggLinkRect && transRef.start();
+    }, [nuggLinkRect, transRef]);
+
+    const values = useMemo(() => {
+        switch (localViewing) {
+            case 'all nuggs':
+                return allNuggs;
+            case 'on sale':
+                return activeNuggs;
+            case 'recently viewed':
+                return recents;
+            case 'home':
+                return [];
+        }
+    }, [localViewing, activeNuggs, allNuggs, recents]);
+
+    const handleGetActive = useCallback(
+        async (
+            setResults: any,
+            startFrom: number,
+            addToResult: boolean = false,
+            filters: NL.Redux.NuggDex.Filters,
+            setLoading?: React.Dispatch<SetStateAction<boolean>>,
+        ) => {
+            setLoading && setLoading(true);
+            const activeNuggs = await activeNuggsQuery(
+                filters.sort.by,
+                filters.sort.asc ? 'asc' : 'desc',
+                filters.searchValue,
+                epoch.id,
+                constants.NUGGDEX_SEARCH_LIST_CHUNK,
+                startFrom,
+            );
+            if (!isUndefinedOrNullOrArrayEmpty(activeNuggs)) {
+                const ids = activeNuggs.map((active) => active.nugg.id);
+                setResults((res) => (addToResult ? [...res, ...ids] : ids));
+            }
+            setLoading && setLoading(false);
+        },
+        [epoch],
+    );
+
+    const handleGetAll = useCallback(
+        async (
+            setResults: any,
+            startFrom: number,
+            addToResult: boolean = false,
+            filters: NL.Redux.NuggDex.Filters,
+            setLoading?: React.Dispatch<SetStateAction<boolean>>,
+        ) => {
+            console.log('GET ALL', startFrom);
+            setLoading && setLoading(true);
+            const allNuggs = await allNuggsQuery(
+                filters.sort.by,
+                filters.sort.asc ? 'asc' : 'desc',
+                filters.searchValue,
+                constants.NUGGDEX_SEARCH_LIST_CHUNK,
+                startFrom,
+            );
+            setResults((res) =>
+                addToResult ? [...res, ...allNuggs] : allNuggs,
+            );
+            setLoading && setLoading(false);
+        },
+        [],
+    );
+
+    const onScrollEnd = useCallback(
+        ({
+            setLoading,
+            filters,
+            addToList,
+        }: {
+            setLoading?: React.Dispatch<SetStateAction<boolean>>;
+            filters: NL.Redux.NuggDex.Filters;
+            addToList?: boolean;
+        }) => {
+            switch (localViewing) {
+                case 'all nuggs':
+                    return handleGetAll(
+                        setAllNuggs,
+                        addToList ? allNuggs.length : 0,
+                        addToList,
+                        filters,
+                        setLoading,
+                    );
+                case 'on sale':
+                    return handleGetActive(
+                        setActiveNuggs,
+                        addToList ? activeNuggs.length : 0,
+                        addToList,
+                        filters,
+                    );
+                case 'recently viewed':
+                    return () => {};
+            }
+        },
+        [
+            allNuggs,
+            activeNuggs,
+            localViewing,
+            setAllNuggs,
+            setActiveNuggs,
+            handleGetActive,
+            handleGetAll,
+        ],
+    );
+
+    useEffect(() => {
+        if (epoch) {
+            handleGetAll(setAllNuggs, 0, false, filters);
+            handleGetActive(setActiveNuggs, 0, false, filters);
+        }
+    }, [epoch]);
+
+    // useEffect(() => {}, [filters]);
+
     const transitions = useTransition(
         localViewing,
         {
@@ -92,121 +217,11 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         [nuggLinkRect, homeRect],
     );
 
-    const animatedStyle = useSpring({
-        ...styles.nuggLinksContainer,
-        opacity: localViewing !== 'home' ? 0 : 1,
-        transform: localViewing !== 'home' ? 'scale(0.9)' : 'scale(1)',
-    });
-
     useEffect(() => {
-        nuggLinkRect && transRef.start();
-    }, [nuggLinkRect, transRef]);
-
-    const values = useMemo(() => {
-        switch (localViewing) {
-            case 'all nuggs':
-                return allNuggs;
-            case 'on sale':
-                return activeNuggs;
-            case 'recently viewed':
-                return recents;
-            case 'home':
-                return [];
+        if (localViewing === 'home' && filters.searchValue !== '') {
+            setLocalViewing('all nuggs');
         }
-    }, [localViewing, activeNuggs, allNuggs, recents]);
-
-    const handleGetActive = useCallback(
-        async (
-            setResults: any,
-            startFrom: number,
-            addToResult: boolean = false,
-            setLoading?: React.Dispatch<SetStateAction<boolean>>,
-        ) => {
-            setLoading && setLoading(true);
-            const activeNuggs = await activeNuggsQuery(
-                filters.sort.by,
-                filters.sort.asc ? 'asc' : 'desc',
-                filters.searchValue,
-                epoch.id,
-                constants.NUGGDEX_SEARCH_LIST_CHUNK,
-                startFrom,
-            );
-
-            console.log('GETTING ACTIVE NUGGS', activeNuggs);
-            if (!isUndefinedOrNullOrArrayEmpty(activeNuggs)) {
-                const ids = activeNuggs.map((active) => active.nugg.id);
-                setResults((res) => (addToResult ? [...res, ...ids] : ids));
-            }
-            setLoading && setLoading(false);
-        },
-        [epoch, filters],
-    );
-
-    const handleGetAll = useCallback(
-        async (
-            setResults: any,
-            startFrom: number,
-            addToResult: boolean = false,
-            setLoading?: React.Dispatch<SetStateAction<boolean>>,
-        ) => {
-            setLoading && setLoading(true);
-            const allNuggs = (
-                await allNuggsQuery(
-                    filters.sort.by,
-                    filters.sort.asc ? 'asc' : 'desc',
-                    filters.searchValue,
-                    constants.NUGGDEX_SEARCH_LIST_CHUNK,
-                    startFrom,
-                )
-            ).reduce((map, all) => {
-                map[all.nugg.id] = all.nugg.id;
-                return map;
-                //@ts-ignore
-            }, {});
-            const ids = Object.keys(allNuggs);
-            setResults((res) => (addToResult ? [...res, ...ids] : ids));
-            setLoading && setLoading(false);
-        },
-        [filters],
-    );
-
-    const onScrollEnd = useCallback(
-        (setLoading?: React.Dispatch<SetStateAction<boolean>>) => {
-            switch (localViewing) {
-                case 'all nuggs':
-                    return handleGetAll(
-                        setAllNuggs,
-                        allNuggs.length,
-                        true,
-                        setLoading,
-                    );
-                case 'on sale':
-                    return handleGetActive(
-                        setActiveNuggs,
-                        activeNuggs.length,
-                        true,
-                    );
-                case 'recently viewed':
-                    return () => {};
-            }
-        },
-        [
-            allNuggs,
-            activeNuggs,
-            localViewing,
-            setAllNuggs,
-            setActiveNuggs,
-            handleGetActive,
-            handleGetAll,
-        ],
-    );
-
-    useEffect(() => {
-        if (epoch) {
-            handleGetAll(setAllNuggs, 0);
-            handleGetActive(setActiveNuggs, 0);
-        }
-    }, [epoch]);
+    }, [filters, localViewing]);
 
     return (
         <div ref={homeRef} style={styles.searchListContainer}>

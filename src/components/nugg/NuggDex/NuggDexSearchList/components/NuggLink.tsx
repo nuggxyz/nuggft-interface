@@ -61,11 +61,7 @@ const NuggLink: FunctionComponent<Props> = ({
                                 key={i}
                                 style={{
                                     ...(limit > 3
-                                        ? {
-                                              height: '35%',
-                                              width: '15%',
-                                              margin: '.5rem .75rem',
-                                          }
+                                        ? styles.nuggLinkThumbnailContainerBig
                                         : {}),
                                 }}
                             />
@@ -75,11 +71,7 @@ const NuggLink: FunctionComponent<Props> = ({
                     onClick={() => onClick(type)}
                     style={{
                         ...(limit > 3
-                            ? {
-                                  height: '35%',
-                                  width: '15%',
-                                  margin: '.5rem .75rem',
-                              }
+                            ? styles.nuggLinkThumbnailContainerBig
                             : {}),
                     }}
                 />

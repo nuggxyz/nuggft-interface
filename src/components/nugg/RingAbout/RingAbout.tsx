@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo, useState } from 'react';
+import React, { FunctionComponent, useMemo, useRef, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'react-feather';
 import { animated, useSpring } from 'react-spring';
 import { BigNumber } from 'ethers';
@@ -33,13 +33,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const [open, setOpen] = useState(false);
 
-    const safeLeaderEns = useMemo(() => {
-        return !isUndefinedOrNullOrObjectEmpty(leader)
-            ? leader.id
-            : Address.ZERO.hash;
-    }, [leader]);
-
-    // const ens = Web3State.hook.useEns(safeLeaderEns);
+    const leaderEns = Web3State.hook.useEns(leader?.id);
 
     const hasBids = useMemo(
         () =>
@@ -50,22 +44,17 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     );
 
     const springStyle = useSpring({
-        ...styles.container,
-        height: open ? '70%' : '19%',
-    });
-
-    const offerStyle = useSpring({
         ...styles.offersContainer,
+        height: open ? '500px' : '0px',
         opacity: open ? 1 : 0,
-        position: open ? 'relative' : 'absolute',
-        pointerEvents: 'none',
+        padding: open ? '1rem' : '0rem',
     });
 
     return (
         <animated.div
             style={{
                 ...(AppState.isMobile && styles.mobile),
-                ...springStyle,
+                ...styles.container,
             }}>
             <div style={styles.bodyContainer}>
                 <div style={styles.leaderContainer}>
@@ -90,9 +79,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                     textStyle={styles.leadingOffer}
                                     value={+ethUsd}
                                 /> */}
-                                <Text textStyle={styles.code}>
-                                    {new EnsAddress(leader.id).short}
-                                </Text>
+                                <Text textStyle={styles.code}>{leaderEns}</Text>
                             </div>
                             {!AppState.isMobile && offers.length > 1 && (
                                 <Button
@@ -118,20 +105,14 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                 </div>
             </div>
             {/*//@ts-ignore*/}
-            <animated.div style={offerStyle}>
+            <animated.div style={springStyle}>
                 {offers.map(
                     (offer, index) =>
                         index !== 0 && (
-                            <div style={styles.offerAmount}>
-                                <CurrencyText
-                                    image="eth"
-                                    // textStyle={styles.leadingOffer}
-                                    value={+fromEth(offer.eth)}
-                                />
-                                <Text textStyle={styles.code}>
-                                    {new EnsAddress(offer.user.id).short}
-                                </Text>
-                            </div>
+                            <OfferRenderItem
+                                {...{ offer, index }}
+                                key={index}
+                            />
                         ),
                 )}
             </animated.div>
@@ -156,3 +137,19 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 };
 
 export default React.memo(RingAbout);
+
+const OfferRenderItem = ({
+    offer,
+    index,
+}: {
+    offer: NL.GraphQL.Fragments.Offer.Bare;
+    index: number;
+}) => {
+    const ens = Web3State.hook.useEns(offer.user.id);
+    return (
+        <div style={styles.offerAmount}>
+            <CurrencyText image="eth" value={+fromEth(offer.eth)} />
+            <Text textStyle={styles.code}>{ens}</Text>
+        </div>
+    );
+};
