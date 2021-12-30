@@ -32,6 +32,7 @@ import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import Web3State from '../../../../../state/web3';
 import AppState from '../../../../../state/app';
 import Colors from '../../../../../lib/colors';
+import usePrevious from '../../../../../hooks/usePrevious';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -41,7 +42,15 @@ type Props = {
     values: string[];
     setLocalViewing: Dispatch<SetStateAction<NL.Redux.NuggDex.SearchViews>>;
     localViewing: NL.Redux.NuggDex.SearchViews;
-    onScrollEnd?: (setLoading?: any) => void;
+    onScrollEnd?: ({
+        setLoading,
+        filters,
+        addToList,
+    }: {
+        setLoading?: React.Dispatch<SetStateAction<boolean>>;
+        filters: NL.Redux.NuggDex.Filters;
+        addToList?: boolean;
+    }) => Promise<void> | (() => void);
 };
 
 const NuggList: FunctionComponent<Props> = ({
@@ -52,6 +61,7 @@ const NuggList: FunctionComponent<Props> = ({
     onScrollEnd,
 }) => {
     const filters = NuggDexState.select.searchFilters();
+    const prevFilters = usePrevious(filters);
     const recents = NuggDexState.select.recents();
     const epoch = ProtocolState.select.epoch();
     const web3address = Web3State.select.web3address();
@@ -79,17 +89,22 @@ const NuggList: FunctionComponent<Props> = ({
     }, []);
 
     useEffect(() => {
-        onScrollEnd(setLoading);
-    }, []);
+        onScrollEnd &&
+            ((prevFilters && prevFilters.searchValue !== filters.searchValue) ||
+                filters.searchValue !== '') &&
+            onScrollEnd({ setLoading, filters, addToList: false });
+    }, [filters]);
 
-    useEffect(() => {
-        if (
-            !isUndefinedOrNullOrStringEmpty(filters.searchValue) ||
-            AppState.isMobile
-        ) {
-            onScrollEnd(setLoading);
-        }
-    }, [filters, localViewing, onScrollEnd]);
+    useEffect(
+        () => () => {
+            onScrollEnd({
+                setLoading,
+                filters: { searchValue: '', sort: { by: 'id', asc: true } },
+                addToList: false,
+            });
+        },
+        [],
+    );
 
     return (
         <div
@@ -119,6 +134,13 @@ const NuggList: FunctionComponent<Props> = ({
                             text={ucFirst(localViewing)}
                             transitionText="Go back"
                             onClick={() => {
+                                NuggDexState.dispatch.setSearchFilters({
+                                    searchValue: '',
+                                    sort: {
+                                        asc: true,
+                                        by: 'id',
+                                    },
+                                });
                                 setLocalViewing('home');
                             }}
                         />
@@ -126,14 +148,15 @@ const NuggList: FunctionComponent<Props> = ({
                 )}
                 <List
                     style={{
-                        padding: '1.6rem 1rem',
+                        padding: '1.7rem 1rem',
                         zIndex: 0,
+                        position: 'absolute',
                     }}
                     data={values}
                     RenderItem={NuggListRenderItem}
                     loading={loading}
                     onScrollEnd={() => {
-                        onScrollEnd(setLoading);
+                        onScrollEnd({ setLoading, filters, addToList: true });
                     }}
                     action={onClick}
                 />

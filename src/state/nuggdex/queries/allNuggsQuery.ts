@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 
+import { idFragment } from '../../../graphql/fragments/general';
 import { swapNuggId } from '../../../graphql/fragments/swap';
 import { executeQuery } from '../../../graphql/helpers';
 import { isUndefinedOrNullOrArrayEmpty } from '../../../lib';
@@ -12,13 +13,13 @@ const query = (
     skip: number,
 ) => gql`
     {
-        swaps(
-            where: {nugg_contains: "${searchValue}"},
-            orderBy: ${orderBy === 'id' ? 'endingEpoch' : 'eth'},
+        nuggs(
+            where: {${searchValue ? `id: "${searchValue}"` : ''}},
+            orderBy: id,
             orderDirection: ${orderDirection},
             first: ${first},
             skip: ${skip}
-        ) ${swapNuggId}
+        ) ${idFragment}
     }
 `;
 
@@ -32,9 +33,11 @@ const allNuggsQuery = async (
     try {
         const result = (await executeQuery(
             query(orderBy, orderDirection, searchValue, first, skip),
-            'swaps',
-        )) as Promise<NL.GraphQL.Fragments.Swap.NuggId[]>;
-        return !isUndefinedOrNullOrArrayEmpty(result) ? result : [];
+            'nuggs',
+        )) as NL.GraphQL.Fragments.General.Id[];
+        return !isUndefinedOrNullOrArrayEmpty(result)
+            ? result.map((res) => res.id)
+            : [];
     } catch (e) {
         throw new Error(`allNuggsQuery: ${e}`);
     }

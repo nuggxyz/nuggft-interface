@@ -76,6 +76,11 @@ const styles = NLStyleSheetCreator({
         cursor: 'pointer',
         transition: `background .4s ${Layout.animation}`,
     },
+    nuggLinkThumbnailContainerBig: {
+        height: '40%',
+        width: '18%',
+        margin: '.5rem 2%',
+    },
     hover: {
         background: Colors.nuggBlueTransparent,
     },

@@ -18,6 +18,8 @@ type Props = {};
 const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const viewing = NuggDexState.select.viewing();
     const view = AppState.select.view();
+    const filters = NuggDexState.select.searchFilters();
+    const prevFilters = usePrevious(filters);
 
     const [searchValue, setSearchValue] = useState('');
 
@@ -40,6 +42,16 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
             setSearchValue('');
         }
     }, [debouncedValue, view, previousSearchValue, sortAsc, previousSortAsc]);
+
+    useEffect(() => {
+        if (
+            filters.searchValue === '' &&
+            prevFilters &&
+            prevFilters.searchValue !== filters.searchValue
+        ) {
+            setSearchValue('');
+        }
+    }, [filters]);
 
     const styleInput = useSpring({
         width: view === 'Search' ? '100%' : '0%',

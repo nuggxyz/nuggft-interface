@@ -27,9 +27,7 @@ const NuggThumbnail: FunctionComponent<Props> = ({ onClick, style }) => {
                 justifyContent: 'space-evenly',
             }}
             onClick={onClick}>
-            <Maximize2
-                style={globalStyles.fillWidth}
-            />
+            <Maximize2 style={{ ...globalStyles.fillWidth, height: '60px' }} />
             <Text size="smaller" textStyle={styles.label}>
                 MORE
             </Text>

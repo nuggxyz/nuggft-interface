@@ -91,12 +91,12 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
         },
         extraReducers: (builder) => {
             builder
-                .addCase(thactions.initNuggDex.fulfilled, (state, action) => {
-                    const data = action.payload.data;
-                    state.activeNuggs = data.activeNuggs;
-                    state.myNuggs = data.myNuggs;
-                    state.allNuggs = data.allNuggs;
-                })
+                // .addCase(thactions.initNuggDex.fulfilled, (state, action) => {
+                //     const data = action.payload.data;
+                //     state.activeNuggs = data.activeNuggs;
+                //     state.myNuggs = data.myNuggs;
+                //     state.allNuggs = data.allNuggs;
+                // })
                 .addCase(
                     thactions.getNuggThumbnail.fulfilled,
                     (state, action) => {

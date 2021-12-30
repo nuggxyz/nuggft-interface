@@ -25,7 +25,6 @@ const styles = NLStyleSheetCreator({
         borderRadius: Layout.borderRadius.mediumish,
         postion: 'relative',
         display: 'flex',
-        // flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'stretch',
         borderBottomRightRadius: 0,
