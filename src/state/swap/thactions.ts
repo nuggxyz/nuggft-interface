@@ -32,14 +32,10 @@ const initSwap = createAsyncThunk<
         if (!isUndefinedOrNullOrObjectEmpty(res)) {
             const currentEpoch = thunkAPI.getState().protocol.epoch;
             const status =
-                swapId.includes(
-                    !isUndefinedOrNullOrObjectEmpty(currentEpoch)
-                        ? currentEpoch.id
-                        : null,
-                ) || +currentEpoch?.id < +swapId.split('-')[1]
-                    ? 'ongoing'
-                    : res.endingEpoch === null
+                res.endingEpoch === null
                     ? 'waiting'
+                    : currentEpoch && res.endingEpoch >= +currentEpoch.id
+                    ? 'ongoing'
                     : 'over';
             return {
                 success: 'SUCCESS',
@@ -122,9 +118,6 @@ const placeOffer = createAsyncThunk<
             success: 'SUCCESS',
             _pendingtx,
             callbackFn: () => {
-                if (swapStatus === 'waiting') {
-                    AppState.onRouteUpdate(`#/swap/${tokenId}-${+epoch + 1}`);
-                }
                 AppState.dispatch.setModalClosed();
             },
         };
