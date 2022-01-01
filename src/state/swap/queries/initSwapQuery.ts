@@ -5,9 +5,7 @@ import { executeQuery } from '../../../graphql/helpers';
 
 const query = (id: string) => gql`
     {
-        swap(id: "${id}") ${
-    id.split('-')[1] === '0' ? swapBare : swapBareWithEpoch
-}
+        swap(id: "${id}") ${swapBareWithEpoch}
     }
 `;
 
@@ -19,4 +17,3 @@ const initSwapQuery = async (id: string) => {
 };
 
 export default initSwapQuery;
- 

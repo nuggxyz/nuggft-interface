@@ -12,6 +12,7 @@ import {
     isUndefinedOrNullOrStringEmpty,
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
+    toGwei,
 } from '../../../../../lib';
 import constants from '../../../../../lib/constants';
 import ProtocolState from '../../../../../state/protocol';
@@ -41,7 +42,7 @@ import { executeQuery } from '../../../../../graphql/helpers';
 type Props = {};
 
 const MintTab: FunctionComponent<Props> = () => {
-    // const userShares = WalletState.select.userShares();
+    const userShares = WalletState.select.userShares();
 
     const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
     const address = Web3State.select.web3address();
@@ -101,14 +102,14 @@ const MintTab: FunctionComponent<Props> = () => {
                             margin: '0rem',
                         }}
                         label="TVL"
-                        value={new EthInt(`${+valuePerShare * myNuggs.length}`)}
+                        value={new EthInt(`${+valuePerShare * userShares}`)}
                         image="eth"
                     />
                 </div>
                 <div style={swapStyles.statisticContainer}>
                     <TextStatistic
                         label="Nuggs"
-                        value={'' + (myNuggs?.length || 0)}
+                        value={'' + (userShares || 0)}
                         style={{
                             width: '23%',
                             marginLeft: '0rem',
@@ -157,27 +158,31 @@ const MintTab: FunctionComponent<Props> = () => {
                                 gql`
                                     {
                                         nuggs(
-                                            where: { id_gt: "${constants.PRE_MINT_STARTING_EPOCH}" }
+                                            where: {
+                                                idnum_gt: ${constants.PRE_MINT_STARTING_EPOCH}
+                                                idnum_lt: ${constants.PRE_MINT_ENDING_EPOCH}
+                                            }
                                             first: 1
                                             orderDirection: desc
-                                            orderBy: id
+                                            orderBy: idnum
                                         ) {
-                                            id
+                                            idnum
                                         }
                                     }
                                 `,
                                 'nuggs',
                             ).then((res) => {
                                 res &&
-                                    res[0].id &&
-                                    +res[0].id + 1 <
+                                    res[0].idnum &&
+                                    +res[0].idnum + 1 <
                                         constants.PRE_MINT_ENDING_EPOCH &&
                                     NuggFTHelper.instance
                                         .connect(
                                             Web3State.getLibraryOrProvider(),
                                         )
-                                        .mint(+res[0].id + 1, {
+                                        .mint(+res[0].idnum + 1, {
                                             value: minPrice,
+                                            gasLimit: 81000,
                                         })
                                         .then((_pendingtx) =>
                                             TransactionState.dispatch.initiate({
@@ -201,13 +206,14 @@ const MintTab: FunctionComponent<Props> = () => {
                     )}
                     label="My Nuggs"
                     loading={
-                        loadingNuggs && isUndefinedOrNullOrArrayEmpty(myNuggs)
+                        loadingNuggs //&& isUndefinedOrNullOrArrayEmpty(myNuggs)
                     }
                     style={listStyle.list}
                     listEmptyStyle={listStyle.textWhite}
                     extraData={[address]}
                     listEmptyText="You don't have any Nuggs yet!"
                     loaderColor="white"
+                    onScrollEnd={getMyNuggs}
                 />
             }
         </div>

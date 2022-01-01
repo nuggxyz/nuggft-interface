@@ -25,7 +25,6 @@ const updateEpochMiddleware: Middleware<
                 : '';
             const nextEpoch = action.payload.data.epoch.id;
             const currentSwap = getState().swap.id;
-            console.log({ currentSwap });
             if (
                 currentEpoch !== nextEpoch &&
                 (window.location.hash.length <= 2 ||
@@ -34,7 +33,7 @@ const updateEpochMiddleware: Middleware<
                     currentSwap.split('-')[1] === currentEpoch)
             ) {
                 SwapState.dispatch.initSwap({
-                    swapId: `${nextEpoch}-${nextEpoch}`,
+                    swapId: `${nextEpoch}-0`,
                 });
             }
 

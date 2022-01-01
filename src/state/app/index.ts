@@ -144,7 +144,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 !isUndefinedOrNullOrStringEmpty(currentEpoch)
             ) {
                 SwapState.dispatch.initSwap({
-                    swapId: `${currentEpoch}-${currentEpoch}`,
+                    swapId: `${currentEpoch}-0`,
                 });
                 if (AppState.isMobile) {
                     AppState.dispatch.changeMobileView('Mint');
@@ -172,7 +172,7 @@ class AppState extends NLState<NL.Redux.App.State> {
             ) {
                 if (!isUndefinedOrNullOrStringEmpty(currentEpoch)) {
                     SwapState.dispatch.initSwap({
-                        swapId: `${currentEpoch}-${currentEpoch}`,
+                        swapId: `${currentEpoch}-0`,
                     });
                 }
                 TokenState.dispatch.setTokenFromId(tokenRoute[2]);

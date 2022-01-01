@@ -82,6 +82,7 @@ export const swapBareWithEpoch = gql`
             claimed
             owner
         }
+        endingEpoch
         epoch {
             id
             endblock

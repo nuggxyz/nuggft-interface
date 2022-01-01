@@ -64,6 +64,10 @@ const localStorager: Middleware<{}, any, Dispatch<any>> =
                     if (possibleValue.indexOf(_._localStorageValue) === -1) {
                         possibleValue.push(_._localStorageValue);
                     }
+                    if (possibleValue.length > 50) {
+                        console.log('splicing');
+                        possibleValue.splice(0, possibleValue.length - 50);
+                    }
                 } else {
                     possibleValue = [_._localStorageValue];
                 }

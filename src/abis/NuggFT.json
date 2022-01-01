@@ -90,143 +90,6 @@
         "inputs": [
             {
                 "indexed": false,
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "eth",
-                "type": "uint96"
-            }
-        ],
-        "name": "DelegateCommit",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "sellerTokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint16",
-                "name": "itemId",
-                "type": "uint16"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "buyerTokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "eth",
-                "type": "uint96"
-            }
-        ],
-        "name": "DelegateCommitItem",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "epoch",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "eth",
-                "type": "uint96"
-            }
-        ],
-        "name": "DelegateMint",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "eth",
-                "type": "uint96"
-            }
-        ],
-        "name": "DelegateOffer",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "sellerTokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint16",
-                "name": "itemId",
-                "type": "uint16"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "buyerTokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "eth",
-                "type": "uint96"
-            }
-        ],
-        "name": "DelegateOfferItem",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
                 "internalType": "uint256",
                 "name": "tokenId",
                 "type": "uint256"
@@ -321,337 +184,12 @@
         "inputs": [
             {
                 "indexed": false,
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "payoffAmount",
-                "type": "uint96"
-            }
-        ],
-        "name": "Payoff",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "proof",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint16",
-                "name": "itemId",
-                "type": "uint16"
-            }
-        ],
-        "name": "PopItem",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
                 "internalType": "uint96",
                 "name": "eth",
                 "type": "uint96"
             }
         ],
         "name": "ProtocolEthExtracted",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "proof",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint16",
-                "name": "itemId",
-                "type": "uint16"
-            }
-        ],
-        "name": "PushItem",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "fee",
-                "type": "uint96"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "earned",
-                "type": "uint96"
-            }
-        ],
-        "name": "Rebalance",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "proof",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint8",
-                "name": "feature",
-                "type": "uint8"
-            }
-        ],
-        "name": "RotateItem",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "proof",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint8[]",
-                "name": "xs",
-                "type": "uint8[]"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint8[]",
-                "name": "ys",
-                "type": "uint8[]"
-            }
-        ],
-        "name": "SetAnchorOverrides",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "proof",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint8[]",
-                "name": "items",
-                "type": "uint8[]"
-            }
-        ],
-        "name": "SetProof",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "stake",
-                "type": "uint96"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "protocol",
-                "type": "uint96"
-            }
-        ],
-        "name": "StakeEth",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint32",
-                "name": "epoch",
-                "type": "uint32"
-            }
-        ],
-        "name": "SwapClaim",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "sellerTokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint16",
-                "name": "itemId",
-                "type": "uint16"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "buyerTokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint32",
-                "name": "epoch",
-                "type": "uint32"
-            }
-        ],
-        "name": "SwapClaimItem",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "sellerTokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint16",
-                "name": "itemId",
-                "type": "uint16"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "eth",
-                "type": "uint96"
-            }
-        ],
-        "name": "SwapItemStart",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "eth",
-                "type": "uint96"
-            }
-        ],
-        "name": "SwapStart",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "principal",
-                "type": "uint96"
-            }
-        ],
-        "name": "TakeLoan",
         "type": "event"
     },
     {
@@ -702,25 +240,6 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "stake",
-                "type": "uint96"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            }
-        ],
-        "name": "UnstakeEth",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
                 "indexed": true,
                 "internalType": "address",
                 "name": "user",
@@ -747,6 +266,34 @@
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint160",
+                "name": "tokenId",
+                "type": "uint160"
+            },
+            {
+                "internalType": "uint16",
+                "name": "itemId",
+                "type": "uint16"
+            },
+            {
+                "internalType": "uint256",
+                "name": "x",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "y",
+                "type": "uint256"
+            }
+        ],
+        "name": "anchor",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -924,18 +471,8 @@
                         "type": "uint256"
                     },
                     {
-                        "internalType": "uint256",
-                        "name": "proof",
-                        "type": "uint256"
-                    },
-                    {
                         "internalType": "uint8[]",
                         "name": "ids",
-                        "type": "uint8[]"
-                    },
-                    {
-                        "internalType": "uint8[]",
-                        "name": "extras",
                         "type": "uint8[]"
                     },
                     {
@@ -947,9 +484,19 @@
                         "internalType": "uint8[]",
                         "name": "yovers",
                         "type": "uint8[]"
+                    },
+                    {
+                        "internalType": "string[]",
+                        "name": "labels",
+                        "type": "string[]"
+                    },
+                    {
+                        "internalType": "bytes",
+                        "name": "data",
+                        "type": "bytes"
                     }
                 ],
-                "internalType": "struct IDotnuggV1Data.Data",
+                "internalType": "struct IDotnuggV1Metadata.Memory",
                 "name": "data",
                 "type": "tuple"
             }
@@ -1015,7 +562,6 @@
         "stateMutability": "view",
         "type": "function"
     },
-
     {
         "inputs": [],
         "name": "epoch",
@@ -1119,6 +665,25 @@
                 "internalType": "bool",
                 "name": "",
                 "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint8",
+                "name": "feature",
+                "type": "uint8"
+            }
+        ],
+        "name": "lengthOf",
+        "outputs": [
+            {
+                "internalType": "uint8",
+                "name": "",
+                "type": "uint8"
             }
         ],
         "stateMutability": "view",
@@ -1268,45 +833,6 @@
                 "type": "uint160"
             }
         ],
-        "name": "parsedProofOf",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "proof",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint8[]",
-                "name": "defaultIds",
-                "type": "uint8[]"
-            },
-            {
-                "internalType": "uint8[]",
-                "name": "extraIds",
-                "type": "uint8[]"
-            },
-            {
-                "internalType": "uint8[]",
-                "name": "overxs",
-                "type": "uint8[]"
-            },
-            {
-                "internalType": "uint8[]",
-                "name": "overys",
-                "type": "uint8[]"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            }
-        ],
         "name": "payoff",
         "outputs": [],
         "stateMutability": "payable",
@@ -1326,6 +852,40 @@
                 "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint160",
+                "name": "tokenId",
+                "type": "uint160"
+            }
+        ],
+        "name": "proofToDotnuggMetadata",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "proof",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint8[]",
+                "name": "defaultIds",
+                "type": "uint8[]"
+            },
+            {
+                "internalType": "uint8[]",
+                "name": "overxs",
+                "type": "uint8[]"
+            },
+            {
+                "internalType": "uint8[]",
+                "name": "overys",
+                "type": "uint8[]"
             }
         ],
         "stateMutability": "view",
@@ -1366,11 +926,16 @@
             },
             {
                 "internalType": "uint8",
-                "name": "feature",
+                "name": "index0",
+                "type": "uint8"
+            },
+            {
+                "internalType": "uint8",
+                "name": "index1",
                 "type": "uint8"
             }
         ],
-        "name": "rotateFeature",
+        "name": "rotate",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -1489,29 +1054,6 @@
             }
         ],
         "name": "setMigrator",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint160",
-                "name": "tokenId",
-                "type": "uint160"
-            },
-            {
-                "internalType": "uint8[]",
-                "name": "xs",
-                "type": "uint8[]"
-            },
-            {
-                "internalType": "uint8[]",
-                "name": "ys",
-                "type": "uint8[]"
-            }
-        ],
-        "name": "setOverrides",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

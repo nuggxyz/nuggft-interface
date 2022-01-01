@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { BigNumberish } from 'ethers';
 
 import NuggFTHelper from '../../contracts/NuggFTHelper';
 import {
@@ -10,11 +11,10 @@ import Web3State from '../web3';
 
 const initSale = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
-    { tokenId: string },
+    { tokenId: string; floor: BigNumberish },
     { rejectValue: NL.Redux.Wallet.Error; state: NL.Redux.RootState }
->(`token/initSale`, async ({ tokenId }, thunkAPI) => {
+>(`token/initSale`, async ({ tokenId, floor }, thunkAPI) => {
     try {
-        const floor = thunkAPI.getState().protocol.nuggftStakedEthPerShare;
         const _pendingtx = await NuggFTHelper.instance
             .connect(Web3State.getLibraryOrProvider())
             .swap(tokenId, floor);

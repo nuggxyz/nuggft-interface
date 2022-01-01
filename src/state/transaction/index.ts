@@ -49,9 +49,7 @@ export default class TransactionState extends NLState<NL.Redux.Transaction.State
             clearTransactions: (state) => {
                 state.txs = {};
             },
-            initiate: (state, action: PayloadAction<{ _pendingtx: any }>) => {
-                console.log('coooooool');
-            },
+            initiate: (state, action: PayloadAction<{ _pendingtx: any }>) => {},
             addTransaction: (
                 state,
                 action: PayloadAction<{

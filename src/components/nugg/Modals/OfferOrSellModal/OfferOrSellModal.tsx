@@ -170,6 +170,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                                   })
                                 : TokenState.dispatch.initSale({
                                       tokenId: stableId,
+                                      floor: resArr.nextSwapAmount,
                                   })
                             : WalletState.dispatch.approveNugg({
                                   tokenId: stableId,

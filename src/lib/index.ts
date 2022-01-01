@@ -1,4 +1,5 @@
 import { getAddress } from '@ethersproject/address';
+import {ethers} from 'ethers';
 
 import config from '../config';
 
@@ -302,4 +303,8 @@ export const smartReplace = <T extends { id: string }>(
         }
         return acc;
     }, []);
+};
+
+export const toGwei = (num: string): ethers.BigNumber => {
+    return ethers.utils.parseUnits(num, 'gwei');
 };
