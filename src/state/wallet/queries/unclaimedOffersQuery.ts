@@ -26,7 +26,9 @@ const unclaimedOffersQuery = async (id: string, epoch?: string) => {
         ? (result.offers.filter(
               (offer) =>
                   //@ts-ignore
-                  +offer.swap.endingEpoch <= +epoch,
+                  offer.swap.endingEpoch !== null &&
+                  //@ts-ignore
+                  offer.swap.endingEpoch <= +epoch,
           ) as NL.GraphQL.Fragments.Offer.Thumbnail[])
         : [];
 };

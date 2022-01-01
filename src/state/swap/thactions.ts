@@ -38,7 +38,7 @@ const initSwap = createAsyncThunk<
                         : null,
                 ) || +currentEpoch?.id < +swapId.split('-')[1]
                     ? 'ongoing'
-                    : swapId.includes('-0')
+                    : res.endingEpoch === null
                     ? 'waiting'
                     : 'over';
             return {

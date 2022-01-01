@@ -30,8 +30,8 @@ const TokenViewer: FunctionComponent<Props> = ({
     labelColor,
     textProps,
 }) => {
-    const { width, height } = useMemo(() => {
-        return { width: window.innerWidth, height: window.innerHeight };
+    const { width } = useMemo(() => {
+        return { width: window.innerWidth };
     }, []);
     const [src, setSrc] = useState<any>(pendingToken);
     const getDotNuggSrc = useCallback(async () => {

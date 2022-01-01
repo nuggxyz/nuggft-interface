@@ -6,6 +6,7 @@ declare namespace NL.GraphQL.Fragments.Swap {
         leader: NL.GraphQL.Fragments.General.Id;
         offers: NL.GraphQL.Fragments.Offer.Bare[];
         nugg: NL.GraphQL.Fragments.Nugg.Bare;
+        endingEpoch?: number;
         epoch: { endblock: string; startblock: string };
         startingEpoch: { endblock: string; startblock: string };
     };

@@ -116,7 +116,7 @@ const RenderItem: FunctionComponent<
                         type="text"
                         textStyle={{ color: Colors.textColor }}
                         size="small">
-                        {parsedTitle.swap === '0'
+                        {item.endingEpoch === null
                             ? 'Awaiting offer'
                             : item.num === '0'
                             ? 'Mint'
@@ -127,7 +127,7 @@ const RenderItem: FunctionComponent<
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
                     label={`Reclaim ${
-                        parsedTitle.swap === '0' ? 'Nugg' : 'ETH'
+                        item.endingEpoch === null ? 'Nugg' : 'ETH'
                     }`}
                     onClick={() =>
                         WalletState.dispatch.claim({ tokenId: item.nugg.id })

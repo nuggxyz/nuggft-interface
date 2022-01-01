@@ -169,7 +169,6 @@ const EndOfListAnchor = ({ rootRef, onScrollEnd, loading }) => {
             isVisible !== prevVisible &&
             !loading
         ) {
-            console.log('END');
             onScrollEnd();
         }
     }, [isVisible, prevVisible, loading]);

@@ -214,16 +214,16 @@ const Swaps = ({ swaps, tokenId, address, owner }) => {
                 </div>
             )}
             <div style={{ padding: '0rem 1rem 1rem 1rem' }}>
-                {swaps.find((swap) => swap.id.endsWith('-0')) && (
+                {swaps.find((swap) => swap.endingEpoch === null) && (
                     <SwapItem
-                        swap={swaps.find((swap) => swap.id.endsWith('-0'))}
+                        swap={swaps.find((swap) => swap.endingEpoch === null)}
                         index={-1}
                     />
                 )}
                 <Text textStyle={{ marginTop: '.5rem' }}>Swaps</Text>
                 <div style={{ overflow: 'scroll' }}>
                     {swaps
-                        .filter((swap) => !swap.id.endsWith('-0'))
+                        .filter((swap) => swap.endingEpoch !== null)
                         .map((swap, index) => (
                             <div key={index}>
                                 <SwapItem {...{ swap, index }} />
@@ -236,7 +236,7 @@ const Swaps = ({ swaps, tokenId, address, owner }) => {
 };
 
 const SwapItem = ({ swap, index }) => {
-    const awaitingBid = swap.id.split('-')[1] === '0';
+    const awaitingBid = swap.endingEpoch === null;
     return (
         <Button
             buttonStyle={styles.swap}

@@ -46,7 +46,7 @@ const SearchView: FunctionComponent<Props> = () => {
                 startFrom,
             );
             if (!isUndefinedOrNullOrArrayEmpty(activeNuggs)) {
-                const ids = activeNuggs.map((active) => active.nugg.id);
+                const ids = activeNuggs.map((active) => active.id);
                 setResults((res) => (addToResult ? [...res, ...ids] : ids));
             }
             setLoading && setLoading(false);
@@ -62,7 +62,6 @@ const SearchView: FunctionComponent<Props> = () => {
             filters: NL.Redux.NuggDex.Filters,
             setLoading?: React.Dispatch<SetStateAction<boolean>>,
         ) => {
-            console.log('GET ALL', startFrom);
             setLoading && setLoading(true);
             const allNuggs = await allNuggsQuery(
                 filters.sort.by,
