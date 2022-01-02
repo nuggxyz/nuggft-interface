@@ -41,6 +41,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({
                 <TokenViewer
                     tokenId={item || ''}
                     style={{ height: '140px', width: '140px' }}
+                    data={extraData[0][index]}
                 />
                 <Label
                     text={'Nugg #' + item}

@@ -6,6 +6,7 @@ import { Address } from '../classes/Address';
 import config from '../config';
 import {
     isUndefinedOrNullOrObjectEmpty,
+    isUndefinedOrNullOrStringEmpty,
     loadStringFromLocalStorage,
     saveStringToLocalStorage,
 } from '../lib';
@@ -86,15 +87,16 @@ export default class NuggFTHelper extends ContractHelper {
             );
             if (!res) throw new Error('token does not exist');
             else {
-                // const svg = Svg.drawSvgFromString(res.dotnuggRawCache, 1);
+                // const svg = Svg.decodeSvg(res.dotnuggSvgCache);
                 // saveStringToLocalStorage(svg, 'NL-TokenURI-' + tokenId);
-                return res.dotnuggRawCache.split(',')[1];
+
+                return res.dotnuggRawCache;
             }
         } catch (err) {
             console.log({ tokenId, err });
             // console.log('optimizedDotNugg:', err);
+            // }
         }
-        // }
     }
     public static async approve(
         spender: Address,

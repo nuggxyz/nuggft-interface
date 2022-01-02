@@ -5,6 +5,7 @@ import React, {
     useState,
 } from 'react';
 import gql from 'graphql-tag';
+import { Promise } from 'bluebird';
 
 import { EthInt } from '../../../../../classes/Fraction';
 import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
@@ -38,12 +39,13 @@ import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSale
 import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedOffersQuery';
 import TokenViewer from '../../../TokenViewer';
 import { executeQuery } from '../../../../../graphql/helpers';
+import InfiniteList from '../../../../general/List/InfiniteList';
 
 type Props = {};
 
 const MintTab: FunctionComponent<Props> = () => {
     const userShares = WalletState.select.userShares();
-
+    const [images, setImages] = useState([]);
     const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
     const address = Web3State.select.web3address();
     const epoch = ProtocolState.select.epoch();
@@ -75,7 +77,8 @@ const MintTab: FunctionComponent<Props> = () => {
             );
 
             if (!isUndefinedOrNullOrArrayEmpty(nuggResult)) {
-                setMyNuggs((res) => [...res, ...nuggResult]);
+                const ids = nuggResult.map((nugg) => nugg.id);
+                setMyNuggs((res) => [...res, ...ids]);
             }
         } else {
             setMyNuggs([]);
@@ -89,6 +92,21 @@ const MintTab: FunctionComponent<Props> = () => {
             getMyNuggs();
         }, 500);
     }, [address]);
+
+    useEffect(() => {
+        const get = async () => {
+            const list = myNuggs.slice(images.length);
+            if (list.length > 0) {
+                const newNuggs = await Promise.map(list, (nugg) =>
+                    NuggFTHelper.optimizedDotNugg(nugg),
+                );
+                setImages((old) => [...old, ...newNuggs]);
+            }
+        };
+        (myNuggs.length !== images.length ||
+            (myNuggs.length !== 0 && images.length === 0)) &&
+            get();
+    }, [myNuggs, images]);
 
     return (
         <div style={styles.container}>
@@ -194,109 +212,55 @@ const MintTab: FunctionComponent<Props> = () => {
                         .catch((e) => console.log(e))
                 }
             />
-            {
-                <List
-                    labelStyle={styles.listLabel}
-                    data={myNuggs}
-                    RenderItem={React.memo(
-                        RenderItem,
-                        (prev, props) =>
-                            JSON.stringify(prev.item) ===
-                            JSON.stringify(props.item),
-                    )}
-                    label="My Nuggs"
-                    loading={
-                        loadingNuggs //&& isUndefinedOrNullOrArrayEmpty(myNuggs)
-                    }
-                    style={listStyle.list}
-                    listEmptyStyle={listStyle.textWhite}
-                    extraData={[address]}
-                    listEmptyText="You don't have any Nuggs yet!"
-                    loaderColor="white"
-                    onScrollEnd={getMyNuggs}
-                />
-            }
+            <InfiniteList
+                labelStyle={styles.listLabel}
+                data={myNuggs}
+                RenderItem={React.memo(
+                    RenderItem,
+                    (prev, props) =>
+                        JSON.stringify(prev.item) ===
+                        JSON.stringify(props.item),
+                )}
+                label="My Nuggs"
+                loading={loadingNuggs}
+                style={listStyle.list}
+                listEmptyStyle={listStyle.textWhite}
+                extraData={[images]}
+                listEmptyText="You don't have any Nuggs yet!"
+                loaderColor="white"
+                onScrollEnd={getMyNuggs}
+                itemHeight={108}
+            />
         </div>
     );
 };
 
 export default MintTab;
 
-const RenderItem: FunctionComponent<
-    ListRenderItemProps<NL.GraphQL.Fragments.General.Id>
-> = ({ item, index, extraData }) => {
-    return (
-        !isUndefinedOrNullOrObjectEmpty(item) && (
-            <Button
-                key={index}
-                onClick={() => AppState.onRouteUpdate(`#/nugg/${item.id}`)}
-                buttonStyle={styles.listNuggButton}
-                rightIcon={
-                    <>
-                        <TokenViewer
-                            tokenId={item?.id || ''}
-                            style={styles.listNugg}
-                        />
+const RenderItem: FunctionComponent<ListRenderItemProps<string>> = React.memo(
+    ({ item, extraData, style, index }) => {
+        return (
+            !isUndefinedOrNullOrStringEmpty(item) && (
+                <Button
+                    key={JSON.stringify(item)}
+                    onClick={() => AppState.onRouteUpdate(`#/nugg/${item}`)}
+                    buttonStyle={{ ...styles.listNuggButton, ...style }}
+                    rightIcon={
+                        <>
+                            <TokenViewer
+                                tokenId={item || ''}
+                                style={styles.listNugg}
+                                data={extraData[0][index]}
+                            />
 
-                        <Text textStyle={{ color: Colors.nuggRedText }}>
-                            Nugg #{item?.id || ''}
-                        </Text>
-                    </>
-                }
-            />
-            // <div>
-            //     {/* <Button
-            //         textStyle={listStyle.textWhite}
-            //         buttonStyle={listStyle.renderButton}
-            //         label="Sell"
-            //         onClick={() =>
-            //             AppState.dispatch.setModalOpen({
-            //                 name: 'OfferOrSell',
-            //                 modalData: {
-            //                     targetId: item.id,
-            //                     type: 'StartSale',
-            //                     backgroundStyle: {
-            //                         background: Colors.gradient3,
-            //                     },
-            //                 },
-            //             })
-            //         }
-            //     />
-            //     <Button
-            //         textStyle={listStyle.textWhite}
-            //         buttonStyle={listStyle.renderButton}
-            //         label="Loan"
-            //         onClick={() =>
-            //             AppState.dispatch.setModalOpen({
-            //                 name: 'LoanOrBurn',
-            //                 modalData: {
-            //                     targetId: item.id,
-            //                     type: 'Loan',
-            //                     backgroundStyle: {
-            //                         background: Colors.gradient3,
-            //                     },
-            //                 },
-            //             })
-            //         }
-            //     />
-            //     <Button
-            //         textStyle={listStyle.textWhite}
-            //         buttonStyle={listStyle.renderButton}
-            //         label="Burn"
-            //         onClick={() =>
-            //             AppState.dispatch.setModalOpen({
-            //                 name: 'LoanOrBurn',
-            //                 modalData: {
-            //                     targetId: item.id,
-            //                     type: 'Burn',
-            //                     backgroundStyle: {
-            //                         background: Colors.gradient3,
-            //                     },
-            //                 },
-            //             })
-            //         }
-            //     /> */}
-            // </div>
-        )
-    );
-};
+                            <Text textStyle={{ color: Colors.nuggRedText }}>
+                                Nugg #{item || ''}
+                            </Text>
+                        </>
+                    }
+                />
+            )
+        );
+    },
+    (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
+);

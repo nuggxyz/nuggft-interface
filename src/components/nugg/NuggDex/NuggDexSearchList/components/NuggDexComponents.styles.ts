@@ -28,6 +28,7 @@ const styles = NLStyleSheetCreator({
         position: 'absolute',
         width: '100%',
         height: '100%',
+        pointerEvents: 'none',
     },
     nuggListTitle: {
         position: 'absolute',
@@ -46,6 +47,7 @@ const styles = NLStyleSheetCreator({
         background: Colors.transparentGrey,
         borderRadius: Layout.borderRadius.medium,
         overflow: 'hidden',
+        padding: '0rem 1rem',
     },
     nuggListRenderItemContainer: {
         width: '100%',
