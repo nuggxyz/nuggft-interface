@@ -2,6 +2,7 @@ import React, {
     FunctionComponent,
     useCallback,
     useLayoutEffect,
+    useMemo,
     useState,
 } from 'react';
 import { AlertCircle } from 'react-feather';
@@ -58,6 +59,27 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
         opacity: epoch ? 1 : 0,
     });
 
+    const LeftIcon = useCallback(
+        () =>
+            connectionWarning ? (
+                <AlertCircle size={24} style={{ paddingRight: 0.5 + 'rem' }} />
+            ) : (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {/* <ChainIndicatorPulse /> */}
+                    <TokenViewer
+                        tokenId={epoch?.id || ''}
+                        style={{
+                            width: '35px',
+                            height: '35px',
+                            marginTop: '0.2rem',
+                            margin: '0rem .5rem',
+                        }}
+                    />
+                </div>
+            ),
+        [connectionWarning, epoch],
+    );
+
     return (
         <animated.div style={springStyle}>
             <Button
@@ -75,27 +97,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
                     ...styles.button,
                     ...(connectionWarning ? styles.warning : styles.normal),
                 }}
-                leftIcon={
-                    connectionWarning ? (
-                        <AlertCircle
-                            size={24}
-                            style={{ paddingRight: 0.5 + 'rem' }}
-                        />
-                    ) : (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            {/* <ChainIndicatorPulse /> */}
-                            <TokenViewer
-                                tokenId={epoch?.id || ''}
-                                style={{
-                                    width: '35px',
-                                    height: '35px',
-                                    marginTop: '0.2rem',
-                                    margin: '0rem .5rem',
-                                }}
-                            />
-                        </div>
-                    )
-                }
+                leftIcon={<LeftIcon />}
                 label={epoch?.id + ' | ' + blocksRemaining}
             />
         </animated.div>

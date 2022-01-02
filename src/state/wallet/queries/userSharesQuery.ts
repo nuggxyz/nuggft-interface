@@ -10,7 +10,7 @@ import {
 const query = (id: string) => gql`
     {
         user(id: "${id}") {
-            nuggs ${idFragment}
+            nuggs (first: 1000)${idFragment}
         }
     }
 `;

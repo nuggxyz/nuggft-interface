@@ -24,9 +24,10 @@ html {
     scrollbar-width: none;
 }
 
-*::-webkit-scrollbar {
-    display: none;  /* Safari and Chrome */
+*::-webkit-scrollbar{
+    display: none;
 }
+
 
 .placeholder-blue::-webkit-input-placeholder {
     color:rgb(80, 144, 234);

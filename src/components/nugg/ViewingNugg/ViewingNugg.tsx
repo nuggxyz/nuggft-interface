@@ -83,9 +83,8 @@ const ViewingNugg: FunctionComponent<Props> = () => {
 };
 
 const Swaps = ({ swaps, tokenId, address, owner }) => {
-    const ownerAddress = useMemo(() => {
-        return owner ? new EnsAddress(owner).short : '';
-    }, [owner]);
+    const ens = Web3State.hook.useEns(owner);
+
     return (
         <div style={styles.swaps}>
             <div style={styles.owner}>
@@ -115,10 +114,10 @@ const Swaps = ({ swaps, tokenId, address, owner }) => {
                                     display: 'flex',
                                     alignItems: 'center',
                                 }}>
-                                {ownerAddress === config.NUGGFT ||
-                                ownerAddress === Address.ZERO.hash
+                                {ens === config.NUGGFT ||
+                                ens === Address.ZERO.hash
                                     ? 'NuggFT'
-                                    : ownerAddress}
+                                    : ens}
                                 {owner === address && (
                                     <Text
                                         type="text"

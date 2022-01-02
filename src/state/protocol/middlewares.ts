@@ -1,6 +1,7 @@
 import { Dispatch, Middleware, PayloadAction } from '@reduxjs/toolkit';
 
 import {
+    isUndefinedOrNullOrNotNumber,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
@@ -24,13 +25,13 @@ const updateEpochMiddleware: Middleware<
                 ? getState().protocol.epoch.id
                 : '';
             const nextEpoch = action.payload.data.epoch.id;
-            const currentSwap = getState().swap.id;
+            const currentSwap = getState().swap.endingEpoch;
             if (
                 currentEpoch !== nextEpoch &&
                 (window.location.hash.length <= 2 ||
                     window.location.hash.includes('/nugg')) &&
-                (isUndefinedOrNullOrStringEmpty(currentSwap) ||
-                    currentSwap.split('-')[1] === currentEpoch)
+                (isUndefinedOrNullOrNotNumber(currentSwap) ||
+                    currentSwap === +currentEpoch)
             ) {
                 SwapState.dispatch.initSwap({
                     swapId: `${nextEpoch}-0`,

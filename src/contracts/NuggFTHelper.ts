@@ -6,6 +6,7 @@ import { Address } from '../classes/Address';
 import config from '../config';
 import {
     isUndefinedOrNullOrObjectEmpty,
+    isUndefinedOrNullOrStringEmpty,
     loadStringFromLocalStorage,
     saveStringToLocalStorage,
 } from '../lib';
@@ -69,31 +70,32 @@ export default class NuggFTHelper extends ContractHelper {
 
     public static async optimizedDotNugg(tokenId: string) {
         invariant(tokenId, 'OP:TOKEN:URI');
-        let check = loadStringFromLocalStorage('NL-TokenURI-' + tokenId);
-        if (check) {
-            return check;
-        } else {
-            try {
-                let res = await executeQuery(
-                    gql`
+        // let check = loadStringFromLocalStorage('NL-TokenURI-' + tokenId);
+        // if (check) {
+        //     return check;
+        // } else {
+        try {
+            let res = await executeQuery(
+                gql`
                         {
                             nugg(id: "${tokenId}") {
                                 dotnuggRawCache
                             }
                         }
                     `,
-                    'nugg',
-                );
-                if (!res) throw new Error('token does not exist');
-                else {
-                    const svg = Svg.drawSvgFromString(res.dotnuggRawCache, 1);
-                    saveStringToLocalStorage(svg, 'NL-TokenURI-' + tokenId);
-                    return svg;
-                }
-            } catch (err) {
-                console.log({ tokenId, err });
-                // console.log('optimizedDotNugg:', err);
+                'nugg',
+            );
+            if (!res) throw new Error('token does not exist');
+            else {
+                // const svg = Svg.decodeSvg(res.dotnuggSvgCache);
+                // saveStringToLocalStorage(svg, 'NL-TokenURI-' + tokenId);
+
+                return res.dotnuggRawCache;
             }
+        } catch (err) {
+            console.log({ tokenId, err });
+            // console.log('optimizedDotNugg:', err);
+            // }
         }
     }
     public static async approve(

@@ -9,6 +9,7 @@ import React, {
     useMemo,
     useState,
 } from 'react';
+import { Promise } from 'bluebird';
 import { animated, UseSpringProps } from 'react-spring';
 import { ChevronLeft } from 'react-feather';
 import { batch } from 'react-redux';
@@ -24,8 +25,6 @@ import TransitionText from '../../../../general/Texts/TransitionText/TransitionT
 import globalStyles from '../../../../../lib/globalStyles';
 import NuggDexState from '../../../../../state/nuggdex';
 import TokenState from '../../../../../state/token';
-import activeNuggsQuery from '../../../../../state/nuggdex/queries/activeNuggsQuery';
-import constants from '../../../../../lib/constants';
 import ProtocolState from '../../../../../state/protocol';
 import allNuggsQuery from '../../../../../state/nuggdex/queries/allNuggsQuery';
 import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
@@ -33,6 +32,8 @@ import Web3State from '../../../../../state/web3';
 import AppState from '../../../../../state/app';
 import Colors from '../../../../../lib/colors';
 import usePrevious from '../../../../../hooks/usePrevious';
+import InfiniteList from '../../../../general/List/InfiniteList';
+import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -42,6 +43,7 @@ type Props = {
     values: string[];
     setLocalViewing: Dispatch<SetStateAction<NL.Redux.NuggDex.SearchViews>>;
     localViewing: NL.Redux.NuggDex.SearchViews;
+    animationToggle?: boolean;
     onScrollEnd?: ({
         setLoading,
         filters,
@@ -59,12 +61,26 @@ const NuggList: FunctionComponent<Props> = ({
     setLocalViewing,
     localViewing,
     onScrollEnd,
+    animationToggle,
 }) => {
+    const [images, setImages] = useState([]);
+    useEffect(() => {
+        const get = async () => {
+            const list = values.slice(images.length);
+            if (list.length > 0) {
+                const newNuggs = await Promise.map(list, (nugg) =>
+                    NuggFTHelper.optimizedDotNugg(nugg),
+                );
+                setImages((old) => [...old, ...newNuggs]);
+            }
+        };
+        (values.length !== images.length ||
+            (values.length !== 0 && images.length === 0)) &&
+            get();
+    }, [values, images]);
+
     const filters = NuggDexState.select.searchFilters();
     const prevFilters = usePrevious(filters);
-    const recents = NuggDexState.select.recents();
-    const epoch = ProtocolState.select.epoch();
-    const web3address = Web3State.select.web3address();
 
     const [loading, setLoading] = useState(false);
 
@@ -147,12 +163,13 @@ const NuggList: FunctionComponent<Props> = ({
                         />
                     </div>
                 )}
-                <List
-                    style={{
-                        padding: '1.7rem 1rem',
-                        zIndex: 0,
-                        position: 'absolute',
-                    }}
+                <InfiniteList
+                    // style={{
+                    //     padding: '1.7rem 1rem',
+                    //     zIndex: 0,
+                    //     position: 'absolute',
+                    // }}
+                    extraData={[images]}
                     data={values}
                     RenderItem={NuggListRenderItem}
                     loading={loading}
@@ -160,6 +177,8 @@ const NuggList: FunctionComponent<Props> = ({
                         onScrollEnd({ setLoading, filters, addToList: true });
                     }}
                     action={onClick}
+                    itemHeight={176}
+                    animationToggle={animationToggle}
                 />
             </animated.div>
         </div>

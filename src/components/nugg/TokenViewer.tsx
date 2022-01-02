@@ -21,6 +21,7 @@ type Props = {
     showLabel?: boolean;
     labelColor?: string;
     textProps?: Omit<TextProps, 'children'>;
+    data?: string;
 };
 
 const TokenViewer: FunctionComponent<Props> = ({
@@ -29,24 +30,33 @@ const TokenViewer: FunctionComponent<Props> = ({
     showLabel,
     labelColor,
     textProps,
+    data,
 }) => {
     const { width } = useMemo(() => {
         return { width: window.innerWidth };
     }, []);
     const [src, setSrc] = useState<any>(pendingToken);
-    const getDotNuggSrc = useCallback(async () => {
-        if (!isUndefinedOrNullOrStringEmpty(tokenId)) {
-            const dotNuggData = await NuggFTHelper.optimizedDotNugg(tokenId);
-            if (!isUndefinedOrNullOrStringEmpty(dotNuggData)) {
-                // setCorrectImageData(true);
-                setSrc(`data:image/svg+xml;base64,${btoa(dotNuggData)}`);
-            }
-        }
-    }, [tokenId]);
 
     useLayoutEffect(() => {
+        let unmounted = false;
+        const getDotNuggSrc = async () => {
+            if (!isUndefinedOrNullOrStringEmpty(tokenId)) {
+                const dotNuggData = !isUndefinedOrNullOrStringEmpty(data)
+                    ? data
+                    : await NuggFTHelper.optimizedDotNugg(tokenId);
+                if (
+                    !isUndefinedOrNullOrStringEmpty(dotNuggData) &&
+                    !unmounted
+                ) {
+                    setSrc(dotNuggData);
+                }
+            }
+        };
         getDotNuggSrc();
-    }, [getDotNuggSrc]);
+        return () => {
+            unmounted = true;
+        };
+    }, [tokenId, data]);
 
     const animatedStyle = useSpring({
         to: {

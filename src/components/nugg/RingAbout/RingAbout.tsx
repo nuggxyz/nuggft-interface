@@ -1,4 +1,10 @@
-import React, { FunctionComponent, useMemo, useRef, useState } from 'react';
+import React, {
+    FunctionComponent,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { ChevronDown, ChevronUp } from 'react-feather';
 import { animated, useSpring } from 'react-spring';
 import { BigNumber } from 'ethers';
@@ -9,7 +15,6 @@ import SwapState from '../../../state/swap';
 import Button from '../../general/Buttons/Button/Button';
 import AppState from '../../../state/app';
 import Web3State from '../../../state/web3';
-import { Address, EnsAddress } from '../../../classes/Address';
 import {
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
@@ -17,6 +22,8 @@ import {
 } from '../../../lib';
 import { fromEth } from '../../../lib/conversion';
 import Colors from '../../../lib/colors';
+import TransactionState from '../../../state/transaction';
+import usePrevious from '../../../hooks/usePrevious';
 
 import styles from './RingAbout.styles';
 
@@ -28,8 +35,21 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const ethUsd = SwapState.select.ethUsd();
     const leader = SwapState.select.leader();
     const offers = SwapState.select.offers();
+    const swapId = SwapState.select.id();
+    const txnToggle = TransactionState.select.toggleCompletedTxn();
+    const prevToggle = usePrevious(txnToggle);
 
     const status = SwapState.select.status();
+
+    useEffect(() => {
+        if (
+            status === 'waiting' &&
+            prevToggle !== undefined &&
+            prevToggle !== txnToggle
+        ) {
+            SwapState.dispatch.initSwap({ swapId });
+        }
+    }, [status, txnToggle, swapId, prevToggle]);
 
     const [open, setOpen] = useState(false);
 
@@ -129,7 +149,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                             },
                         })
                     }
-                    label="Place offer..."
+                    label="Place offer"
                 />
             )}
         </animated.div>

@@ -146,4 +146,37 @@ export class Svg {
         }
         return res + '</svg>';
     }
+
+    public static decodeSvg(data: string[]) {
+        const paletteLength = +data[0];
+
+        const palette = [];
+        const rekts = [];
+
+        for (let i = 1; i < paletteLength + 1; i++) {
+            palette.push(
+                ethers.utils
+                    .hexZeroPad(BigNumber.from(data[i])._hex, 4)
+                    .replace('0x', '#'),
+            );
+        }
+
+        for (let i = paletteLength + 1; i < data.length; i++) {
+            let d = +data[i];
+            let color = d & 255;
+            d >>= 8;
+            let x = d & 255;
+            d >>= 8;
+            let y = d & 255;
+            d >>= 8;
+            let xlen = d & 255;
+            rekts.push(
+                `<rect class="_${color}" x="${x}" y="${y}" width="${xlen}" height="1"/>`,
+            );
+        }
+
+        return `<svg viewbox="0 0 63 63" height="63" width="63" version="1.2" id="Layer_1" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="visible" xml:space="preserve"><style><![CDATA[${palette
+            .map((p, index) => `._${index}{fill:${p}}`)
+            .join('')}]]></style>${rekts.join('')}</svg>`;
+    }
 }

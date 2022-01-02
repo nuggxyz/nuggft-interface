@@ -181,6 +181,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         }
     }, [epoch]);
 
+    const [animationToggle, setAnimationToggle] = useState(false);
+
     // useEffect(() => {}, [filters]);
 
     const transitions = useTransition(
@@ -212,9 +214,39 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 opacity: 0,
             },
             config: config.default,
+            onRest: () => setAnimationToggle(!animationToggle),
         },
-        [nuggLinkRect, homeRect],
+        [nuggLinkRect, homeRect, animationToggle],
     );
+    // console.log(animationToggle);
+
+    // const springStyle = useSpring({
+    //     from: {
+    //         left: nuggLinkRect
+    //             ? `${nuggLinkRect.left - homeRect.left}px`
+    //             : '0px',
+    //         top: nuggLinkRect ? `${nuggLinkRect.top - homeRect.top}px` : '0px',
+    //         width: localViewing === 'all nuggs' ? '90%' : '35%',
+    //         height: '35%',
+    //         opacity: 0,
+    //         pointerEvents: 'none',
+    //     },
+    //     to:
+    //         localViewing === 'home'
+    //             ? {
+    //                   left: nuggLinkRect
+    //                       ? `${nuggLinkRect.left - homeRect.left}px`
+    //                       : '0px',
+    //                   top: nuggLinkRect
+    //                       ? `${nuggLinkRect.top - homeRect.top}px`
+    //                       : '0px',
+    //                   width: '35%',
+    //                   height: '35%',
+    //                   opacity: 0,
+    //               }
+    //             : styles.nuggListEnter,
+    //     config: config.default,
+    // });
 
     useEffect(() => {
         if (localViewing === 'home' && filters.searchValue !== '') {
@@ -249,6 +281,14 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     limit={7}
                 />
             </animated.div>
+            {/* <NuggList
+                //@ts-ignore
+                style={springStyle}
+                values={values}
+                setLocalViewing={setLocalViewing}
+                localViewing={localViewing}
+                onScrollEnd={onScrollEnd}
+            /> */}
             {transitions[0]((style, i) => {
                 return (
                     i !== 'home' && (
@@ -258,6 +298,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                             setLocalViewing={setLocalViewing}
                             localViewing={localViewing}
                             onScrollEnd={onScrollEnd}
+                            animationToggle={animationToggle}
                         />
                     )
                 );
