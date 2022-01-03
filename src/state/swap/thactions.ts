@@ -66,7 +66,7 @@ const initSwap = createAsyncThunk<
 const pollOffers = createAsyncThunk<
     {
         success: NL.Redux.Swap.Success;
-        data: NL.GraphQL.Fragments.Offer.Bare[];
+        data: { offers: NL.GraphQL.Fragments.Offer.Bare[]; swapId: string };
     },
     { swapId: string },
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
@@ -76,7 +76,7 @@ const pollOffers = createAsyncThunk<
         let res = await pollOffersQuery(swapId);
         return {
             success: 'SUCCESS',
-            data: res,
+            data: { offers: res, swapId },
         };
     } catch (err) {
         console.log({ err });
@@ -111,7 +111,10 @@ const placeOffer = createAsyncThunk<
 
         return {
             success: 'SUCCESS',
-            _pendingtx,
+            _pendingtx: {
+                from: _pendingtx.from,
+                hash: _pendingtx.hash,
+            },
             callbackFn: () => {
                 AppState.dispatch.setModalClosed();
             },

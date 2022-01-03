@@ -1,12 +1,15 @@
 import { text } from 'stream/consumers';
 
 import { BigNumber } from 'ethers';
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 
 import { EthInt } from '../../../../classes/Fraction';
 import NuggFTHelper from '../../../../contracts/NuggFTHelper';
 import useAsyncState from '../../../../hooks/useAsyncState';
-import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
+import {
+    isUndefinedOrNullOrObjectEmpty,
+    isUndefinedOrNullOrStringEmpty,
+} from '../../../../lib';
 import { fromEth } from '../../../../lib/conversion';
 import AppState from '../../../../state/app';
 import SwapState from '../../../../state/swap';
@@ -35,7 +38,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         [address, nugg],
     );
 
-    const resArr = useAsyncState(
+    const amountArray = useAsyncState(
         () =>
             nugg &&
             NuggFTHelper.instance
@@ -43,6 +46,32 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 .valueForDelegate(address, nugg.id),
         [address, nugg],
     );
+
+    const minOfferAmount = useMemo(() => {
+        if (!isUndefinedOrNullOrObjectEmpty(amountArray)) {
+            if (!amountArray.senderCurrentOffer.isZero()) {
+                return fromEth(
+                    amountArray?.nextSwapAmount
+                        .sub(amountArray?.senderCurrentOffer)
+                        .div(10 ** 13)
+                        .add(1)
+                        .mul(10 ** 13),
+                );
+            } else {
+                return Math.max(
+                    +fromEth(
+                        amountArray.nextSwapAmount
+                            .sub(amountArray.senderCurrentOffer)
+                            .div(10 ** 13)
+                            .add(1)
+                            .mul(10 ** 13),
+                    ),
+                    constants.MIN_OFFER,
+                );
+            }
+        }
+        return constants.MIN_OFFER;
+    }, [amountArray]);
 
     const { targetId, type } = AppState.select.modalData();
 
@@ -72,23 +101,8 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     }, [targetId, toggle, isApproved]);
 
     useEffect(() => {
-        if (
-            isUndefinedOrNullOrStringEmpty(amount) &&
-            resArr &&
-            resArr.nextSwapAmount &&
-            resArr.senderCurrentOffer
-        ) {
-            setAmount(
-                fromEth(
-                    resArr?.nextSwapAmount
-                        .sub(resArr?.senderCurrentOffer)
-                        .div(10 ** 13)
-                        .add(1)
-                        .mul(10 ** 13),
-                ),
-            );
-        }
-    }, [resArr]);
+        setAmount(`${minOfferAmount}`);
+    }, [minOfferAmount]);
 
     return (
         <div style={styles.container}>
@@ -105,7 +119,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     styleInput={styles.inputCurrency}
                     label="Enter amount"
                     setValue={setAmount}
-                    value={`${Math.max(+amount, constants.MIN_OFFER)}`}
+                    value={amount}
                     code
                     className="placeholder-white"
                 />
@@ -127,21 +141,10 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                         </Text>
                     )}
                     <Text textStyle={styles.text}>
-                        {resArr && resArr.canDelegate
+                        {amountArray && amountArray.canDelegate
                             ? `${
                                   stableType === 'StartSale' ? 'Sale' : 'Offer'
-                              } must be at least ${
-                                  Math.max(
-                                      +fromEth(
-                                          resArr?.nextSwapAmount
-                                              .sub(resArr?.senderCurrentOffer)
-                                              .div(10 ** 13)
-                                              .add(1)
-                                              .mul(10 ** 13),
-                                      ),
-                                      constants.MIN_OFFER,
-                                  ) || 0
-                              } ETH`
+                              } must be at least ${minOfferAmount} ETH`
                             : `You cannot ${
                                   stableType === 'StartSale'
                                       ? 'sell'
@@ -152,7 +155,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             </div>
             <div style={styles.subContainer}>
                 <Button
-                    disabled={resArr && !resArr.canDelegate}
+                    disabled={amountArray && !amountArray.canDelegate}
                     buttonStyle={styles.button}
                     label={
                         isApproved
@@ -168,14 +171,11 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                             ? stableType === 'Offer'
                                 ? SwapState.dispatch.placeOffer({
                                       tokenId: nugg?.id,
-                                      amount: `${Math.max(
-                                          +amount,
-                                          constants.MIN_OFFER,
-                                      )}`,
+                                      amount,
                                   })
                                 : TokenState.dispatch.initSale({
                                       tokenId: stableId,
-                                      floor: resArr.nextSwapAmount,
+                                      floor: amountArray.nextSwapAmount,
                                   })
                             : WalletState.dispatch.approveNugg({
                                   tokenId: stableId,

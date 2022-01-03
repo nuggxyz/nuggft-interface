@@ -10,12 +10,15 @@ import CurrencyText from '../../components/general/Texts/CurrencyText/CurrencyTe
 import { EthInt } from '../../classes/Fraction';
 import Colors from '../../lib/colors';
 import ProtocolState from '../../state/protocol';
+import AppState from '../../state/app';
 
 import styles from './SwapPage.styles';
 
 type Props = {};
 
 const SwapPage: FunctionComponent<Props> = () => {
+    const { width } = AppState.select.dimensions();
+    console.log(width);
     return (
         <div style={styles.container}>
             <div style={styles.secondaryContainer}>

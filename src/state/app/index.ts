@@ -44,6 +44,11 @@ class AppState extends NLState<NL.Redux.App.State> {
 
     constructor() {
         super(STATE_NAME, updater, middlewares, thactions, hooks, {
+            dimensions: {
+                height: 0,
+                width: 0,
+            },
+            isSmallDevice: false,
             toasts: [],
             modalIsOpen: undefined,
             modalData: {},
@@ -64,6 +69,14 @@ class AppState extends NLState<NL.Redux.App.State> {
         name: this._name,
         initialState: this._initialState,
         reducers: {
+            setWindowDimensions: (
+                state,
+                action: PayloadAction<{ height: number; width: number }>,
+            ) => {
+                state.dimensions = action.payload;
+                state.isSmallDevice =
+                    action.payload.width < Layout.smallDeviceWidth;
+            },
             addToastToList: (
                 state,
                 action: PayloadAction<NL.Redux.App.Toast>,

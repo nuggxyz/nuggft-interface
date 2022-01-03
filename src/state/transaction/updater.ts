@@ -57,6 +57,7 @@ export default () => {
                     library
                         .getTransactionReceipt(hash)
                         .then((receipt) => {
+                            console.log("IN RETRY, GET RECEIPT")
                             if (receipt === null) {
                                 console.debug('Retrying for hash', hash);
                                 // DANNY this is the error it keeps hitting.. i think that it is correckly hitting it at the beggiining, bc essentially what it is logically doing is waiting for a receipt to be returned true, which indiicaates a confiremed transaxtion - however i think it does not check again after the first couple of seconds
@@ -73,6 +74,8 @@ export default () => {
 
     useEffect(() => {
         if (!library || !lastBlockNumber) return;
+
+        console.log(transactions)
 
         const cancels = Object.keys(transactions)
             .filter((hash) => shouldCheck(lastBlockNumber, transactions[hash]))

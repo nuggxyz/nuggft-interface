@@ -12,10 +12,10 @@ const styles = NLStyleSheetCreator({
     },
     wallet: {
         display: 'flex',
-        alignItems: 'start',
+        alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        width: '430px',
+        width: '90%', //'430px',
         height: '70%',
         position: 'relative',
         // position: 'absolute',

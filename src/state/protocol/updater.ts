@@ -8,7 +8,7 @@ import {
 } from '../../lib';
 import constants from '../../lib/constants';
 import { _metaBare } from '../../graphql/fragments/_meta';
-import { client,  } from '../../graphql/client';
+import { client } from '../../graphql/client';
 
 import ProtocolState from '.';
 
@@ -26,29 +26,30 @@ export default () => {
         }
     }, [epoch, block]);
 
-    const { data } = useSubscription(
-        gql`
-            subscription Cool {
-                _meta {
-                    block {
-                        number
-                    }
-                }
-            }
-        `,
-        { client },
-    );
+    // const { data } = useSubscription(
+    //     gql`
+    //         subscription Cool {
+    //             _meta {
+    //                 block {
+    //                     number
+    //                 }
+    //             }
+    //         }
+    //     `,
+    //     { client },
+    // );
 
-    useEffect(() => {
-        if (data && data._meta && data._meta.block && data._meta.block.number) {
-            ProtocolState.dispatch.setCurrentBlock(data._meta.block.number);
-            checkEpoch();
-        }
-    }, [data]);
+    // useEffect(() => {
+    //     if (data && data._meta && data._meta.block && data._meta.block.number) {
+    //         ProtocolState.dispatch.setCurrentBlock(data._meta.block.number);
+    //         console.log('blocknum');
+    //         checkEpoch();
+    //     }
+    // }, [data]);
 
-    // useRecursiveTimeout(() => {
-    //     checkEpoch();
-    //     ProtocolState.dispatch.updateBlock();
-    // }, constants.QUERYTIME);
+    useRecursiveTimeout(() => {
+        checkEpoch();
+        ProtocolState.dispatch.updateBlock();
+    }, constants.QUERYTIME);
     return null;
 };

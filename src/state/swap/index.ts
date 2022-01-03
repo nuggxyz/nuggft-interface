@@ -76,9 +76,20 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
             },
             setOffers: (
                 state,
-                action: PayloadAction<NL.GraphQL.Fragments.Offer.Bare[]>,
+                action: PayloadAction<{
+                    offers: NL.GraphQL.Fragments.Offer.Bare[];
+                    swapId: string;
+                }>,
             ) => {
-                state.offers = action.payload;
+                if (state.id === action.payload.swapId) {
+                    state.offers = action.payload.offers;
+                    const top = action.payload.offers[0];
+                    if (!isUndefinedOrNullOrObjectEmpty(top)) {
+                        state.eth = top.eth;
+                        state.ethUsd = top.ethUsd;
+                        state.leader = top.user;
+                    }
+                }
             },
         },
         extraReducers: (builder) => {
@@ -98,12 +109,14 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
                     state.startingEpoch = swap.startingEpoch;
                 })
                 .addCase(thactions.pollOffers.fulfilled, (state, action) => {
-                    state.offers = action.payload.data;
-                    const top = action.payload.data[0];
-                    if (!isUndefinedOrNullOrObjectEmpty(top)) {
-                        state.eth = top.eth;
-                        state.ethUsd = top.ethUsd;
-                        state.leader = top.user;
+                    if (state.id === action.payload.data.swapId) {
+                        state.offers = action.payload.data.offers;
+                        const top = action.payload.data.offers[0];
+                        if (!isUndefinedOrNullOrObjectEmpty(top)) {
+                            state.eth = top.eth;
+                            state.ethUsd = top.ethUsd;
+                            state.leader = top.user;
+                        }
                     }
                 })
                 .addMatcher(NLState.isPendingAction('swap/'), (state) => {

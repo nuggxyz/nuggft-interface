@@ -23,6 +23,7 @@ const styles = NLStyleSheetCreator({
         height: '100%',
         width: '29%',
     },
+    
 });
 
 export default styles;
