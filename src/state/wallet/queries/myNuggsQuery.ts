@@ -18,11 +18,11 @@ const query = (
     {
         user(id: "${address}") {
             nuggs (
-                where: {${
+                ${
                     !isUndefinedOrNullOrStringEmpty(searchValue)
-                        ? `id: "${searchValue}"`
+                        ? `where: {id: "${searchValue}"},`
                         : ''
-                }},
+                }
                 orderBy: idnum,
                 orderDirection: ${orderDirection},
                 first: ${first},

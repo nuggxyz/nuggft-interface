@@ -10,7 +10,7 @@ import {
 const query = (id: string, epoch: string) => gql`
     {
         user(id: "${id}") {
-            offers (where: { claimed: false, swap_not_contains: "${epoch}", swap_not: "0-0", swap_not_ends_with: "-0" }) ${offerThumbnail}
+            offers (where: { claimed: false}) ${offerThumbnail}
         }
     }
 `;
@@ -28,7 +28,7 @@ const unclaimedOffersQuery = async (id: string, epoch?: string) => {
                   //@ts-ignore
                   offer.swap.endingEpoch !== null &&
                   //@ts-ignore
-                  offer.swap.endingEpoch <= +epoch,
+                  offer.swap.endingEpoch < +epoch,
           ) as NL.GraphQL.Fragments.Offer.Thumbnail[])
         : [];
 };

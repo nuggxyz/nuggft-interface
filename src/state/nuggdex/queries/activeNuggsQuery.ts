@@ -19,11 +19,11 @@ const query = (
     {
         protocol (id: "${config.NUGG_PROTOCOL}") {
             activeNuggs (
-                where: {${
+                ${
                     !isUndefinedOrNullOrStringEmpty(searchValue)
-                        ? `id: ${searchValue}`
+                        ? `where: {id: ${searchValue}}`
                         : ''
-                }},
+                }
                 first: ${first},
                 skip: ${skip},
                 orderBy: idnum,

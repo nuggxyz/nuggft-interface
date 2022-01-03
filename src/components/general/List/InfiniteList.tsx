@@ -160,7 +160,6 @@ const InfiniteList: FunctionComponent<Props> = ({
                 prevEnd !== endIndex &&
                 !loading
             ) {
-                console.log('FETCH');
                 onScrollEnd && onScrollEnd();
             }
         }
@@ -251,7 +250,6 @@ const InfiniteList: FunctionComponent<Props> = ({
                 style={{
                     ...containerStyle,
                     overflow: 'scroll',
-                    // height: `${windowHeight}px`,
                 }}
                 onScroll={_onScroll}>
                 <List />

@@ -63,21 +63,21 @@ const NuggList: FunctionComponent<Props> = ({
     onScrollEnd,
     animationToggle,
 }) => {
-    const [images, setImages] = useState([]);
-    useEffect(() => {
-        const get = async () => {
-            const list = values.slice(images.length);
-            if (list.length > 0) {
-                const newNuggs = await Promise.map(list, (nugg) =>
-                    NuggFTHelper.optimizedDotNugg(nugg),
-                );
-                setImages((old) => [...old, ...newNuggs]);
-            }
-        };
-        (values.length !== images.length ||
-            (values.length !== 0 && images.length === 0)) &&
-            get();
-    }, [values, images]);
+    // const [images, setImages] = useState([]);
+    // useEffect(() => {
+    //     const get = async () => {
+    //         const list = values.slice(images.length);
+    //         if (list.length > 0) {
+    //             const newNuggs = await Promise.map(list, (nugg) =>
+    //                 NuggFTHelper.optimizedDotNugg(nugg),
+    //             );
+    //             setImages((old) => [...old, ...newNuggs]);
+    //         }
+    //     };
+    //     (values.length !== images.length ||
+    //         (values.length !== 0 && images.length === 0)) &&
+    //         get();
+    // }, [values, images]);
 
     const filters = NuggDexState.select.searchFilters();
     const prevFilters = usePrevious(filters);
@@ -169,7 +169,7 @@ const NuggList: FunctionComponent<Props> = ({
                     //     zIndex: 0,
                     //     position: 'absolute',
                     // }}
-                    extraData={[images]}
+                    // extraData={[images]}/
                     data={values}
                     RenderItem={NuggListRenderItem}
                     loading={loading}

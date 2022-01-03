@@ -45,7 +45,7 @@ type Props = {};
 
 const MintTab: FunctionComponent<Props> = () => {
     const userShares = WalletState.select.userShares();
-    const [images, setImages] = useState([]);
+    // const [images, setImages] = useState([]);
     const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
     const address = Web3State.select.web3address();
     const epoch = ProtocolState.select.epoch();
@@ -93,20 +93,20 @@ const MintTab: FunctionComponent<Props> = () => {
         }, 500);
     }, [address]);
 
-    useEffect(() => {
-        const get = async () => {
-            const list = myNuggs.slice(images.length);
-            if (list.length > 0) {
-                const newNuggs = await Promise.map(list, (nugg) =>
-                    NuggFTHelper.optimizedDotNugg(nugg),
-                );
-                setImages((old) => [...old, ...newNuggs]);
-            }
-        };
-        (myNuggs.length !== images.length ||
-            (myNuggs.length !== 0 && images.length === 0)) &&
-            get();
-    }, [myNuggs, images]);
+    // useEffect(() => {
+    //     const get = async () => {
+    //         const list = myNuggs.slice(images.length);
+    //         if (list.length > 0) {
+    //             const newNuggs = await Promise.map(list, (nugg) =>
+    //                 NuggFTHelper.optimizedDotNugg(nugg),
+    //             );
+    //             setImages((old) => [...old, ...newNuggs]);
+    //         }
+    //     };
+    //     (myNuggs.length !== images.length ||
+    //         (myNuggs.length !== 0 && images.length === 0)) &&
+    //         get();
+    // }, [myNuggs, images]);
 
     return (
         <div style={styles.container}>
@@ -225,7 +225,7 @@ const MintTab: FunctionComponent<Props> = () => {
                 loading={loadingNuggs}
                 style={listStyle.list}
                 listEmptyStyle={listStyle.textWhite}
-                extraData={[images]}
+                // extraData={[images]}
                 listEmptyText="You don't have any Nuggs yet!"
                 loaderColor="white"
                 onScrollEnd={getMyNuggs}
@@ -250,7 +250,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<string>> = React.memo(
                             <TokenViewer
                                 tokenId={item || ''}
                                 style={styles.listNugg}
-                                data={extraData[0][index]}
+                                // data={extraData[0][index]}
                             />
 
                             <Text textStyle={{ color: Colors.nuggRedText }}>

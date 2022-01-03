@@ -28,10 +28,12 @@ import allNuggsQuery from '../../../../state/nuggdex/queries/allNuggsQuery';
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
 import styles from './NuggDexSearchList.styles';
+import usePrevious from '../../../../hooks/usePrevious';
 
 type Props = {};
 const NuggDexSearchList: FunctionComponent<Props> = () => {
     const epoch = ProtocolState.select.epoch();
+    const prevEpoch = usePrevious(epoch);
     const filters = NuggDexState.select.searchFilters();
 
     const [localViewing, setLocalViewing] =
@@ -158,6 +160,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         addToList ? activeNuggs.length : 0,
                         addToList,
                         filters,
+                        setLoading,
                     );
                 case 'recently viewed':
                     return () => {};
@@ -176,14 +179,14 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 
     useEffect(() => {
         if (epoch) {
-            handleGetAll(setAllNuggs, 0, false, filters);
-            handleGetActive(setActiveNuggs, 0, false, filters);
+            localViewing !== 'all nuggs' &&
+                handleGetAll(setAllNuggs, 0, false, filters);
+            localViewing !== 'on sale' &&
+                handleGetActive(setActiveNuggs, 0, false, filters);
         }
     }, [epoch]);
 
     const [animationToggle, setAnimationToggle] = useState(false);
-
-    // useEffect(() => {}, [filters]);
 
     const transitions = useTransition(
         localViewing,
@@ -218,35 +221,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         },
         [nuggLinkRect, homeRect, animationToggle],
     );
-    // console.log(animationToggle);
-
-    // const springStyle = useSpring({
-    //     from: {
-    //         left: nuggLinkRect
-    //             ? `${nuggLinkRect.left - homeRect.left}px`
-    //             : '0px',
-    //         top: nuggLinkRect ? `${nuggLinkRect.top - homeRect.top}px` : '0px',
-    //         width: localViewing === 'all nuggs' ? '90%' : '35%',
-    //         height: '35%',
-    //         opacity: 0,
-    //         pointerEvents: 'none',
-    //     },
-    //     to:
-    //         localViewing === 'home'
-    //             ? {
-    //                   left: nuggLinkRect
-    //                       ? `${nuggLinkRect.left - homeRect.left}px`
-    //                       : '0px',
-    //                   top: nuggLinkRect
-    //                       ? `${nuggLinkRect.top - homeRect.top}px`
-    //                       : '0px',
-    //                   width: '35%',
-    //                   height: '35%',
-    //                   opacity: 0,
-    //               }
-    //             : styles.nuggListEnter,
-    //     config: config.default,
-    // });
 
     useEffect(() => {
         if (localViewing === 'home' && filters.searchValue !== '') {
@@ -281,14 +255,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     limit={7}
                 />
             </animated.div>
-            {/* <NuggList
-                //@ts-ignore
-                style={springStyle}
-                values={values}
-                setLocalViewing={setLocalViewing}
-                localViewing={localViewing}
-                onScrollEnd={onScrollEnd}
-            /> */}
             {transitions[0]((style, i) => {
                 return (
                     i !== 'home' && (

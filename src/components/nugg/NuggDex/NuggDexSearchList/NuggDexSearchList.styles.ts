@@ -25,7 +25,7 @@ const styles = NLStyleSheetCreator({
         width: '100%',
         height: '100%',
         opacity: 1,
-        pointerEvents: 'auto',
+        // pointerEvents: 'auto',
     },
 });
 

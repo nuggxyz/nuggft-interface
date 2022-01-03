@@ -2,7 +2,10 @@ import gql from 'graphql-tag';
 
 import { swapThumbnail } from '../../../graphql/fragments/swap';
 import { executeQuery } from '../../../graphql/helpers';
-import { isUndefinedOrNullOrArrayEmpty } from '../../../lib';
+import {
+    isUndefinedOrNullOrArrayEmpty,
+    isUndefinedOrNullOrStringEmpty,
+} from '../../../lib';
 
 const query = (
     id: string,
@@ -12,7 +15,9 @@ const query = (
 ) => gql`
     {
         swaps (
-            where: {nugg: "${id}"}
+            ${!isUndefinedOrNullOrStringEmpty(
+                id ? `where: {nugg: "${id}"}` : '',
+            )}
             orderBy: id
             orderDirection: ${orderDirection},
             first: ${first},

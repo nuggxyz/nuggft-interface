@@ -9,7 +9,11 @@ import { AlertCircle } from 'react-feather';
 import { useSpring } from '@react-spring/core';
 import { animated } from '@react-spring/web';
 
-import { isUndefinedOrNullOrObjectEmpty } from '../../../../lib';
+import {
+    isUndefinedOrNullOrNotNumber,
+    isUndefinedOrNullOrObjectEmpty,
+    isUndefinedOrNullOrStringEmpty,
+} from '../../../../lib';
 import ProtocolState from '../../../../state/protocol';
 import Web3State from '../../../../state/web3';
 import AppState from '../../../../state/app';
@@ -39,7 +43,11 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
     const getBlocksRemaining = useCallback(async () => {
         let remaining = 0;
 
-        if (!isUndefinedOrNullOrObjectEmpty(epoch)) {
+        if (
+            !isUndefinedOrNullOrObjectEmpty(epoch) &&
+            !isUndefinedOrNullOrStringEmpty(epoch.endblock) &&
+            !isUndefinedOrNullOrNotNumber(currentBlock)
+        ) {
             remaining = +epoch.endblock - currentBlock;
         }
         if (remaining <= 0) {
