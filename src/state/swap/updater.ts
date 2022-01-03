@@ -1,4 +1,5 @@
 import { gql, useSubscription } from '@apollo/client';
+import { useEffect } from 'react';
 
 import useRecursiveTimeout from '../../hooks/useRecursiveTimeout';
 import { isUndefinedOrNullOrStringEmpty } from '../../lib';
@@ -30,7 +31,11 @@ export default () => {
         { client, variables: { swapId } },
     );
 
-    console.log(data);
+    useEffect(() => {
+        if (data && data.swap && data.swap.offers) {
+            SwapState.dispatch.setOffers(data.swap.offers);
+        }
+    }, [data]);
     // useRecursiveTimeout(() => {
     //     if (!isUndefinedOrNullOrStringEmpty(swapId)) {
     //         SwapState.dispatch.pollOffers({ swapId });

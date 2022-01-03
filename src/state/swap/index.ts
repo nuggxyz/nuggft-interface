@@ -74,6 +74,12 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
             setStatus: (state, action: PayloadAction<NL.Redux.Swap.Status>) => {
                 state.status = action.payload;
             },
+            setOffers: (
+                state,
+                action: PayloadAction<NL.GraphQL.Fragments.Offer.Bare[]>,
+            ) => {
+                state.offers = action.payload;
+            },
         },
         extraReducers: (builder) => {
             builder
