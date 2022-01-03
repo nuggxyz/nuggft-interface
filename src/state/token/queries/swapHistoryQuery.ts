@@ -15,9 +15,11 @@ const query = (
 ) => gql`
     {
         swaps (
-            ${!isUndefinedOrNullOrStringEmpty(
-                id ? `where: {nugg: "${id}"}` : '',
-            )}
+            ${
+                !isUndefinedOrNullOrStringEmpty(id)
+                    ? `where: {nugg: "${id}"}`
+                    : ''
+            }
             orderBy: id
             orderDirection: ${orderDirection},
             first: ${first},
