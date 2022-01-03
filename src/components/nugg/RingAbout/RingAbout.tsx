@@ -30,6 +30,7 @@ import styles from './RingAbout.styles';
 type Props = {};
 
 const RingAbout: FunctionComponent<Props> = ({}) => {
+    const screenType = AppState.select.screenType();
     const eth = SwapState.select.eth();
     const address = Web3State.select.web3address();
     const ethUsd = SwapState.select.ethUsd();
@@ -92,7 +93,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     return (
         <animated.div
             style={{
-                ...(AppState.isMobile && styles.mobile),
+                ...(screenType === 'phone' && styles.mobile),
                 ...styles.container,
             }}>
             <div style={styles.bodyContainer}>
@@ -120,7 +121,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                 /> */}
                                 <Text textStyle={styles.code}>{leaderEns}</Text>
                             </div>
-                            {!AppState.isMobile && offers.length > 1 && (
+                            {screenType === 'desktop' && offers.length > 1 && (
                                 <Button
                                     rightIcon={
                                         !open ? (

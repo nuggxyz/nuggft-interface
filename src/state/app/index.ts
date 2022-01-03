@@ -48,7 +48,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 height: 0,
                 width: 0,
             },
-            isSmallDevice: false,
+            screenType: 'desktop',
             toasts: [],
             modalIsOpen: undefined,
             modalData: {},
@@ -74,8 +74,12 @@ class AppState extends NLState<NL.Redux.App.State> {
                 action: PayloadAction<{ height: number; width: number }>,
             ) => {
                 state.dimensions = action.payload;
-                state.isSmallDevice =
-                    action.payload.width < Layout.smallDeviceWidth;
+                state.screenType =
+                    action.payload.width > 1360
+                        ? 'desktop'
+                        : action.payload.width > 875
+                        ? 'tablet'
+                        : 'phone';
             },
             addToastToList: (
                 state,

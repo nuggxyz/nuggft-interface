@@ -14,9 +14,10 @@ const styles = NLStyleSheetCreator({
         borderRadius: Layout.borderRadius.medium,
         background: Colors.gradient2,
         padding: '.5rem',
-        width: '70%',
+        width: '90%',
         position: 'relative',
         height: 'auto',
+        pointerEvents: 'auto',
     },
     mobile: {
         width: '90%',

@@ -4,7 +4,7 @@ declare namespace NL.Redux.App {
             height: number;
             width: number;
         };
-        isSmallDevice: boolean;
+        screenType: 'desktop' | 'tablet' | 'phone';
         toasts: Toast[];
         modalIsOpen: Modals;
         modalData: ModalsData;

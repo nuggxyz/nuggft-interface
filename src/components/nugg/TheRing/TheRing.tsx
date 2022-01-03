@@ -16,12 +16,14 @@ import styles from './TheRing.styles';
 
 type Props = {
     containerStyle?: CSSProperties;
+    circleStyle?: CSSProperties;
     circleWidth?: number;
     tokenStyle?: CSSProperties;
 };
 
 const TheRing: FunctionComponent<Props> = ({
     containerStyle,
+    circleStyle,
     circleWidth = 1600,
     tokenStyle,
 }) => {
@@ -77,7 +79,7 @@ const TheRing: FunctionComponent<Props> = ({
                         ? Colors.green
                         : ''
                 }
-                style={styles.circle}>
+                style={{ ...styles.circle, ...circleStyle }}>
                 <AnimatedCard>
                     <TokenViewer
                         tokenId={(nugg && nugg.id) || ''}

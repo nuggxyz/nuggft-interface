@@ -40,6 +40,7 @@ import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedO
 import TokenViewer from '../../../TokenViewer';
 import { executeQuery } from '../../../../../graphql/helpers';
 import InfiniteList from '../../../../general/List/InfiniteList';
+import FontSize from '../../../../../lib/fontSize';
 
 type Props = {};
 
@@ -150,6 +151,7 @@ const MintTab: FunctionComponent<Props> = () => {
                             width: '23%',
                             marginLeft: '0rem',
                             marginRight: '0rem',
+                            fontSize: FontSize.h6,
                         }}
                     />
                     <TextStatistic
@@ -164,8 +166,15 @@ const MintTab: FunctionComponent<Props> = () => {
                 </div>
             </div>
             <Button
-                buttonStyle={swapStyles.button}
-                textStyle={{ color: Colors.nuggRedText }}
+                buttonStyle={{
+                    ...swapStyles.button,
+                    margin: '0rem',
+                    width: '40%',
+                    marginBottom: '-2.5rem',
+                    alignSelf: 'flex-end',
+                    padding: '.2rem 0rem',
+                }}
+                textStyle={{ color: Colors.nuggRedText, fontSize: FontSize.h6 }}
                 label="Mint a Nugg"
                 onClick={() =>
                     NuggFTHelper.instance

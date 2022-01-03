@@ -1,5 +1,6 @@
 import { NLStyleSheetCreator } from '../../../../lib';
 import Colors from '../../../../lib/colors';
+import FontSize from '../../../../lib/fontSize';
 import Layout from '../../../../lib/layout';
 
 const styles = NLStyleSheetCreator({
@@ -42,6 +43,7 @@ const styles = NLStyleSheetCreator({
     },
     textWhite: {
         color: ' white',
+        fontSize: FontSize.h6,
     },
     eth: {
         background: Colors.gradient2,
