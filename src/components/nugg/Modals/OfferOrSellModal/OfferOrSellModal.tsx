@@ -18,6 +18,7 @@ import Button from '../../../general/Buttons/Button/Button';
 import CurrencyInput from '../../../general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '../../../general/Texts/Text/Text';
 import TokenViewer from '../../TokenViewer';
+import constants from '../../../../lib/constants';
 
 import styles from './OffeOrSellModal.styles';
 
@@ -104,7 +105,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     styleInput={styles.inputCurrency}
                     label="Enter amount"
                     setValue={setAmount}
-                    value={amount}
+                    value={`${Math.max(+amount, constants.MIN_OFFER)}`}
                     code
                     className="placeholder-white"
                 />
@@ -130,15 +131,16 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                             ? `${
                                   stableType === 'StartSale' ? 'Sale' : 'Offer'
                               } must be at least ${
-                                  resArr?.nextSwapAmount
-                                      ? fromEth(
-                                            resArr?.nextSwapAmount
-                                                .sub(resArr?.senderCurrentOffer)
-                                                .div(10 ** 13)
-                                                .add(1)
-                                                .mul(10 ** 13),
-                                        )
-                                      : 0
+                                  Math.max(
+                                      +fromEth(
+                                          resArr?.nextSwapAmount
+                                              .sub(resArr?.senderCurrentOffer)
+                                              .div(10 ** 13)
+                                              .add(1)
+                                              .mul(10 ** 13),
+                                      ),
+                                      constants.MIN_OFFER,
+                                  ) || 0
                               } ETH`
                             : `You cannot ${
                                   stableType === 'StartSale'
@@ -166,7 +168,10 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                             ? stableType === 'Offer'
                                 ? SwapState.dispatch.placeOffer({
                                       tokenId: nugg?.id,
-                                      amount: amount,
+                                      amount: `${Math.max(
+                                          +amount,
+                                          constants.MIN_OFFER,
+                                      )}`,
                                   })
                                 : TokenState.dispatch.initSale({
                                       tokenId: stableId,

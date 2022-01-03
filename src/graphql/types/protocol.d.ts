@@ -21,7 +21,15 @@ declare namespace NL.GraphQL.Fragments.Protocol {
         activeNuggs: NL.GraphQL.Fragments.General.Id[];
     };
 
-    type Epochs = Pick<Full, 'genesisBlock' | 'interval' | 'epoch'>;
+    type Staked = {
+        nuggftStakedUsdPerShare: string;
+        nuggftStakedUsd: string;
+        nuggftStakedEthPerShare: string;
+        nuggftStakedEth: string;
+        nuggftStakedShares: string;
+    };
+
+    type Epochs = Pick<Full, 'genesisBlock' | 'interval' | 'epoch'> & Staked;
 
     type Totals = Pick<
         Full,
@@ -36,14 +44,6 @@ declare namespace NL.GraphQL.Fragments.Protocol {
         nuggftUser: NL.GraphQL.Fragments.User.Bare;
         nullUser: NL.GraphQL.Fragments.User.Bare;
         xnuggUser: NL.GraphQL.Fragments.User.Bare;
-    };
-
-    type Staked = {
-        nuggftStakedUsdPerShare: string;
-        nuggftStakedUsd: string;
-        nuggftStakedEthPerShare: string;
-        nuggftStakedEth: string;
-        nuggftStakedShares: string;
     };
 
     type Index = Prices &

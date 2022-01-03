@@ -7,7 +7,10 @@ import {
     swapThumbnailActiveSales,
 } from '../../../graphql/fragments/swap';
 import { executeQuery } from '../../../graphql/helpers';
-import { isUndefinedOrNullOrArrayEmpty } from '../../../lib';
+import {
+    isUndefinedOrNullOrArrayEmpty,
+    isUndefinedOrNullOrStringEmpty,
+} from '../../../lib';
 
 const query = (
     address: string,
@@ -18,7 +21,11 @@ const query = (
 ) => gql`
     {
         swaps(
-            where: {owner: "${address}", nugg_contains: "${searchValue}"},
+            where: {owner: "${address}", ${
+    !isUndefinedOrNullOrStringEmpty(searchValue)
+        ? `nugg_contains: "${searchValue}"`
+        : ''
+}},
             orderBy: endingEpoch,
             orderDirection: ${orderDirection},
             first: ${first},

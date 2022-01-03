@@ -19,7 +19,7 @@ export default () => {
             (!isUndefinedOrNullOrNumberZero(block) && block >= +epoch.endblock)
         ) {
             ProtocolState.dispatch.updateEpoch();
-            ProtocolState.dispatch.updateStaked();
+            // ProtocolState.dispatch.updateStaked();
         }
     }, [epoch, block]);
 

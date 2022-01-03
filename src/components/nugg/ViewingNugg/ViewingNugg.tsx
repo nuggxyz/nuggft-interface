@@ -43,13 +43,17 @@ const ViewingNugg: FunctionComponent<Props> = () => {
 
     const getSwapHistory = useCallback(
         async (addToResult?: boolean, direction = 'desc') => {
-            const history = await swapHistoryQuery(
-                tokenId,
-                direction,
-                constants.NUGGDEX_SEARCH_LIST_CHUNK,
-                addToResult ? swaps.length : 0,
-            );
-            setSwaps((res) => (addToResult ? [...res, ...history] : history));
+            if (tokenId) {
+                const history = await swapHistoryQuery(
+                    tokenId,
+                    direction,
+                    constants.NUGGDEX_SEARCH_LIST_CHUNK,
+                    addToResult ? swaps.length : 0,
+                );
+                setSwaps((res) =>
+                    addToResult ? [...res, ...history] : history,
+                );
+            }
         },
         [swaps, tokenId],
     );

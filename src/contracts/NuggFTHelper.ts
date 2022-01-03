@@ -5,10 +5,13 @@ import gql from 'graphql-tag';
 import { Address } from '../classes/Address';
 import config from '../config';
 import {
+    cipher,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
+    loadFromLocalStorage,
     loadStringFromLocalStorage,
     saveStringToLocalStorage,
+    saveToLocalStorage,
 } from '../lib';
 import Web3State from '../state/web3';
 import { Svg } from '../classes/Svg';
@@ -23,6 +26,7 @@ import {
     NuggFT__factory,
 } from '../typechain';
 import { executeQuery } from '../graphql/helpers';
+import AppState from '../state/app';
 
 import ContractHelper from './abstract/ContractHelper';
 
@@ -70,32 +74,43 @@ export default class NuggFTHelper extends ContractHelper {
 
     public static async optimizedDotNugg(tokenId: string) {
         invariant(tokenId, 'OP:TOKEN:URI');
-        // let check = loadStringFromLocalStorage('NL-TokenURI-' + tokenId);
-        // if (check) {
-        //     return check;
-        // } else {
-        try {
-            let res = await executeQuery(
-                gql`
+        let nuggs =
+            loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
+        if (nuggs[tokenId]) {
+            return nuggs[tokenId];
+        } else {
+            try {
+                let res = await executeQuery(
+                    gql`
                         {
                             nugg(id: "${tokenId}") {
                                 dotnuggRawCache
                             }
                         }
                     `,
-                'nugg',
-            );
-            if (!res) throw new Error('token does not exist');
-            else {
-                // const svg = Svg.decodeSvg(res.dotnuggSvgCache);
-                // saveStringToLocalStorage(svg, 'NL-TokenURI-' + tokenId);
+                    'nugg',
+                );
+                if (!res) throw new Error('token does not exist');
+                else {
+                    // const svg = Svg.decodeSvg(res.dotnuggSvgCache);
+                    nuggs =
+                        loadFromLocalStorage(
+                            `${Math.floor(+tokenId / 100)}`,
+                            false,
+                        ) || {};
+                    nuggs[tokenId] = res.dotnuggRawCache;
+                    saveToLocalStorage(
+                        nuggs,
+                        `${Math.floor(+tokenId / 100)}`,
+                        false,
+                    );
 
-                return res.dotnuggRawCache;
+                    return res.dotnuggRawCache;
+                }
+            } catch (err) {
+                console.log({ tokenId, err });
+                // console.log('optimizedDotNugg:', err);
             }
-        } catch (err) {
-            console.log({ tokenId, err });
-            // console.log('optimizedDotNugg:', err);
-            // }
         }
     }
     public static async approve(

@@ -70,6 +70,25 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
         padding: open ? '1rem' : '0rem',
     });
 
+    // function gen(n) {
+    //     return new Array(n * 1024 + 1).join('a');
+    // }
+
+    // // Determine size of localStorage if it's not set
+    // if (!localStorage.getItem('size')) {
+    //     var i = 0;
+    //     try {
+    //         // Test up to 10 MB
+    //         for (i = 0; i <= 10000; i += 250) {
+    //             localStorage.setItem('test', gen(i));
+    //         }
+    //     } catch (e) {
+    //         localStorage.removeItem('test');
+    //         //@ts-ignore
+    //         localStorage.setItem('size', i ? i - 250 : 0);
+    //     }
+    // }
+
     return (
         <animated.div
             style={{

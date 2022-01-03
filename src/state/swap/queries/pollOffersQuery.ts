@@ -5,12 +5,14 @@ import { executeQuery } from '../../../graphql/helpers';
 
 const query = (id: string) => gql`
     {
-        offers (where: {swap: "${id}"}, orderBy: eth, orderDirection: desc) ${offerBare}
+        swap(id: "${id}") {
+            offers (orderBy: eth, orderDirection: desc) ${offerBare}
+        }
     }
 `;
 
 const pollOffersQuery = async (swapId: string) => {
-    return (await executeQuery(query(swapId), 'offers')) as Promise<
+    return (await executeQuery(query(swapId), 'swap')).offers as Promise<
         NL.GraphQL.Fragments.Offer.Bare[]
     >;
 };

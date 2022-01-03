@@ -3,7 +3,10 @@ import gql from 'graphql-tag';
 import { idFragment } from '../../../graphql/fragments/general';
 import { swapNuggId } from '../../../graphql/fragments/swap';
 import { executeQuery } from '../../../graphql/helpers';
-import { isUndefinedOrNullOrArrayEmpty } from '../../../lib';
+import {
+    isUndefinedOrNullOrArrayEmpty,
+    isUndefinedOrNullOrStringEmpty,
+} from '../../../lib';
 
 const query = (
     orderBy: 'eth' | 'id',
@@ -14,7 +17,11 @@ const query = (
 ) => gql`
     {
         nuggs(
-            where: {${searchValue ? `id: "${searchValue}"` : ''}},
+            ${
+                !isUndefinedOrNullOrStringEmpty(searchValue)
+                    ? `where: {id: "${searchValue}"},`
+                    : ''
+            }
             orderBy: id,
             orderDirection: ${orderDirection},
             first: ${first},

@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address';
-import {ethers} from 'ethers';
+import { ethers } from 'ethers';
 
 import config from '../config';
 
@@ -163,7 +163,7 @@ export const unCamelize = (text: string) => {
         .join('')}`;
 };
 
-const cipher = (text: string) => {
+export const cipher = (text: string) => {
     let textToChars = (text: any) =>
         text.split('').map((c: any) => c.charCodeAt(0));
     let byteHex = (n: any) => ('0' + Number(n).toString(16)).substr(-2);
@@ -192,14 +192,16 @@ const decipher = (encoded: string) => {
         .join('');
 };
 
-export const loadFromLocalStorage = (target: string) => {
+export const loadFromLocalStorage = (target: string, encrypt = true) => {
     try {
         const serializedObject = localStorage.getItem(target);
 
         if (serializedObject === null) {
             return undefined;
         }
-        let res = JSON.parse(decipher(serializedObject));
+        let res = JSON.parse(
+            encrypt ? decipher(serializedObject) : serializedObject,
+        );
         return res;
     } catch (e) {
         console.log(e);
@@ -207,12 +209,18 @@ export const loadFromLocalStorage = (target: string) => {
     }
 };
 
-export const saveToLocalStorage = (obj: object, target: string = 'tokens') => {
+export const saveToLocalStorage = (
+    obj: object,
+    target: string = 'tokens',
+    encrypt = true,
+) => {
     try {
-        const serializedObject = cipher(JSON.stringify(obj));
+        const serializedObject = encrypt
+            ? cipher(JSON.stringify(obj))
+            : JSON.stringify(obj);
         localStorage.setItem(target, serializedObject);
     } catch (e) {
-        console.log(e);
+        console.log('saveToLocalStorage', e);
     }
 };
 

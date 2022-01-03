@@ -9,13 +9,13 @@ import { userBare } from './user';
 //     {
 //         id
 //         epoch ${epochFull}
-//         totalSwaps 
-//         totalUsers 
-//         totalNuggs 
-//         totalItems 
-//         totalItemSwaps 
-//         genesisBlock 
-//         interval 
+//         totalSwaps
+//         totalUsers
+//         totalNuggs
+//         totalItems
+//         totalItemSwaps
+//         genesisBlock
+//         interval
 //         xnuggUser ${userBare}
 //         nuggftUser ${userBare}
 //         nullUser ${userBare}
@@ -72,6 +72,11 @@ export const protocolEpochs = gql`
         interval
         epoch ${epochFull}
         lastBlock
+        nuggftStakedUsdPerShare
+        nuggftStakedUsd
+        nuggftStakedEthPerShare
+        nuggftStakedEth
+        nuggftStakedShares
     }
 `;
 
