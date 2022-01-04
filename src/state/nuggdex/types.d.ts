@@ -1,6 +1,6 @@
 declare namespace NL.Redux.NuggDex {
     type State = {
-        recents: string[];
+        recents: NL.GraphQL.Fragments.Nugg.ListItem[];
         thumbnails: Dictionary<Thumbnail>;
         success: Success;
         error: Error;

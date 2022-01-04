@@ -32,6 +32,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     textProps,
     data,
 }) => {
+    const screenType = AppState.select.screenType();
     const { width } = useMemo(() => {
         return { width: window.innerWidth };
     }, []);
@@ -62,6 +63,10 @@ const TokenViewer: FunctionComponent<Props> = ({
         to: {
             // ...style,
             position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
             opacity: tokenId ? 1 : 0,
         },
         config: config.default,
@@ -72,7 +77,7 @@ const TokenViewer: FunctionComponent<Props> = ({
         <animated.div style={animatedStyle}>
             <img
                 style={{
-                    ...(AppState.isMobile
+                    ...(screenType === 'phone'
                         ? { width: width / 1.2, height: width / 1.2 }
                         : { width: '400px', height: '400px' }),
                     ...style,

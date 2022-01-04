@@ -6,6 +6,7 @@ import React, {
 } from 'react';
 import gql from 'graphql-tag';
 import { Promise } from 'bluebird';
+import { batch } from 'react-redux';
 
 import { EthInt } from '../../../../../classes/Fraction';
 import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
@@ -41,6 +42,8 @@ import TokenViewer from '../../../TokenViewer';
 import { executeQuery } from '../../../../../graphql/helpers';
 import InfiniteList from '../../../../general/List/InfiniteList';
 import FontSize from '../../../../../lib/fontSize';
+import TokenState from '../../../../../state/token';
+import NuggDexState from '../../../../../state/nuggdex';
 
 type Props = {};
 
@@ -78,8 +81,7 @@ const MintTab: FunctionComponent<Props> = () => {
             );
 
             if (!isUndefinedOrNullOrArrayEmpty(nuggResult)) {
-                const ids = nuggResult.map((nugg) => nugg.id);
-                setMyNuggs((res) => [...res, ...ids]);
+                setMyNuggs((res) => [...res, ...nuggResult]);
             }
         } else {
             setMyNuggs([]);
@@ -111,7 +113,6 @@ const MintTab: FunctionComponent<Props> = () => {
 
     return (
         <div style={styles.container}>
-            {AppState.isMobile && <LinkAccountButton />}
             <div style={{ margin: '.5rem' }}>
                 <div>
                     <NumberStatistic
@@ -170,7 +171,7 @@ const MintTab: FunctionComponent<Props> = () => {
                     ...swapStyles.button,
                     margin: '0rem',
                     width: '40%',
-                    marginBottom: '-2.5rem',
+                    marginBottom: '-1.9rem',
                     alignSelf: 'flex-end',
                     padding: '.2rem 0rem',
                 }}
@@ -225,7 +226,7 @@ const MintTab: FunctionComponent<Props> = () => {
                 }
             />
             <InfiniteList
-                labelStyle={styles.listLabel}
+                labelStyle={{ ...styles.listLabel, paddingTop: '.5rem' }}
                 data={myNuggs}
                 RenderItem={React.memo(
                     RenderItem,
@@ -249,24 +250,33 @@ const MintTab: FunctionComponent<Props> = () => {
 
 export default MintTab;
 
-const RenderItem: FunctionComponent<ListRenderItemProps<string>> = React.memo(
+const RenderItem: FunctionComponent<
+    ListRenderItemProps<NL.GraphQL.Fragments.Nugg.ListItem>
+> = React.memo(
     ({ item, extraData, style, index }) => {
         return (
-            !isUndefinedOrNullOrStringEmpty(item) && (
+            !isUndefinedOrNullOrObjectEmpty(item) && (
                 <Button
                     key={JSON.stringify(item)}
-                    onClick={() => AppState.onRouteUpdate(`#/nugg/${item}`)}
+                    onClick={() => {
+                        batch(() => {
+                            TokenState.dispatch.setNugg(item);
+                            AppState.dispatch.changeView('Search');
+                            NuggDexState.dispatch.addToRecents(item);
+                        });
+                        AppState.silentlySetRoute(`#/nugg/${item.id}`);
+                    }}
                     buttonStyle={{ ...styles.listNuggButton, ...style }}
                     rightIcon={
                         <>
                             <TokenViewer
-                                tokenId={item || ''}
+                                tokenId={item.id || ''}
                                 style={styles.listNugg}
-                                // data={extraData[0][index]}
+                                data={item.dotnuggRawCache}
                             />
 
                             <Text textStyle={{ color: Colors.nuggRedText }}>
-                                Nugg #{item || ''}
+                                Nugg #{item.id || ''}
                             </Text>
                         </>
                     }

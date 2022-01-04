@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { CSSProperties, FunctionComponent } from 'react';
 import { animated, useSpring } from 'react-spring';
 
 import { EthInt } from '../../classes/Fraction';
@@ -9,26 +9,27 @@ import ProtocolState from '../../state/protocol';
 import CurrencyText from '../general/Texts/CurrencyText/CurrencyText';
 import Text from '../general/Texts/Text/Text';
 
-type Props = {};
+type Props = { style?: CSSProperties };
 
-const FloorPrice: FunctionComponent<Props> = () => {
+const FloorPrice: FunctionComponent<Props> = ({ style }) => {
     const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
 
-    const style = useSpring({
+    const springStyle = useSpring({
         // position: 'absolute',
         zIndex: 1000,
         display: 'flex',
         // background: 'white',
         borderRadius: Layout.borderRadius.large,
-        padding: '.4rem .7rem',
+        // padding: '.4rem .7rem',
         alignItems: 'center',
         justifyContent: 'center',
         // marginLeft: '13rem',
         opacity: valuePerShare !== '0' ? 1 : 0,
+        ...style,
     });
 
-    return !AppState.isMobile ? (
-        <animated.div style={style}>
+    return (
+        <animated.div style={springStyle}>
             <Text
                 type="text"
                 size="small"
@@ -47,7 +48,7 @@ const FloorPrice: FunctionComponent<Props> = () => {
                 ).decimal.toNumber()}
             />
         </animated.div>
-    ) : null;
+    );
 };
 
 export default FloorPrice;

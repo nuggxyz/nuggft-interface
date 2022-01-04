@@ -152,6 +152,28 @@ const InfiniteList: FunctionComponent<Props> = ({
         itemHeight,
     ]);
 
+    // useEffect(() => {
+    //     if (loading) {
+    //         let i = endIndex - startIndex + 1;
+    //         setItems((items) => [
+    //             ...items,
+    //             <div
+    //                 key="loading"
+    //                 style={{
+    //                     position: 'absolute',
+    //                     top: `${i * itemHeight}px`,
+    //                     width: '100%',
+    //                     height: `${itemHeight}px`,
+    //                     display: 'flex',
+    //                     alignItems: 'center',
+    //                     justifyContent: 'center',
+    //                 }}>
+    //                 <Loader color={loaderColor || 'black'} />
+    //             </div>,
+    //         ]);
+    //     }
+    // }, [loading, loaderColor, itemHeight, endIndex, startIndex]);
+
     useEffect(() => {
         if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
             if (
@@ -224,9 +246,9 @@ const InfiniteList: FunctionComponent<Props> = ({
                 style={{
                     marginTop: '1rem',
                     height: '1rem',
-                    position: 'relative',
+                    position: 'absolute',
                 }}>
-                {loading && <Loader color={loaderColor || 'black'} />}
+                {!loading && <Loader color={loaderColor || 'black'} />}
             </div>
         ),
         [loading, loaderColor],
@@ -235,11 +257,23 @@ const InfiniteList: FunctionComponent<Props> = ({
     const Label = useCallback(
         () =>
             label ? (
-                <Text textStyle={{ ...styles.label, ...labelStyle }}>
+                <Text
+                    textStyle={{
+                        ...styles.label,
+                        ...labelStyle,
+                        display: 'flex',
+                        alignItems: 'center',
+                    }}>
                     {label}
+                    {loading && (
+                        <Loader
+                            color={loaderColor || 'black'}
+                            style={{ marginLeft: '.5rem' }}
+                        />
+                    )}
                 </Text>
             ) : null,
-        [label, labelStyle],
+        [label, labelStyle, loading, loaderColor],
     );
 
     return (
@@ -253,7 +287,7 @@ const InfiniteList: FunctionComponent<Props> = ({
                 }}
                 onScroll={_onScroll}>
                 <List />
-                <Loading />
+                {/* <Loading /> */}
             </div>
         </>
     );

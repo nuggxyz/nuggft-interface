@@ -72,12 +72,18 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
             ) => {
                 state.thumbnails[action.payload.id] = action.payload;
             },
-            addToRecents: (state, action: PayloadAction<string>) => {
+            addToRecents: (
+                state,
+                action: PayloadAction<NL.GraphQL.Fragments.Nugg.ListItem>,
+            ) => {
                 if (state.recents.indexOf(action.payload) === -1) {
                     state.recents.push(action.payload);
                 }
             },
-            refillRecents: (state, action: PayloadAction<string[]>) => {
+            refillRecents: (
+                state,
+                action: PayloadAction<NL.GraphQL.Fragments.Nugg.ListItem[]>,
+            ) => {
                 state.recents = !isUndefinedOrNullOrArrayEmpty(action.payload)
                     ? action.payload
                     : [];

@@ -44,10 +44,11 @@ const styles = NLStyleSheetCreator({
     containerFull: { width: '100%', minWidth: '630px' },
     containerMobile: {
         width: '90%',
-        maxHeight: '90%',
+        maxHeight: '100%',
         margin: '0rem .5rem',
         transform: 'translate(0rem, 0rem)',
-        justifyContent: 'flex-start'
+        justifyContent: 'flex-start',
+        minWidth: '0px',
     },
     containerOpen: {
         transform: 'translate(.5rem, .5rem)',

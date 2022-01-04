@@ -72,7 +72,7 @@ const Wallet: FunctionComponent<Props> = () => {
             style={{
                 ...styles.wallet,
                 ...(screenType === 'tablet' && { width: '100%' }),
-                ...(screenType === 'phone' && { height: '90%' }),
+                ...(screenType === 'phone' && { height: '100%' }),
             }}>
             <HappyTabber items={happytabs} />
         </div>

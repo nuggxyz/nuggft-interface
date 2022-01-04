@@ -77,7 +77,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 state.screenType =
                     action.payload.width > 1360
                         ? 'desktop'
-                        : action.payload.width > 875
+                        : action.payload.width > 750
                         ? 'tablet'
                         : 'phone';
             },
@@ -148,6 +148,8 @@ class AppState extends NLState<NL.Redux.App.State> {
 
             const soloTokenRoute = route.match(/\/(nugg)((?=\/)\/|.*)/);
 
+            const screenType = store.getState().app.screenType;
+
             const currentView = store.getState().app.view;
 
             const currentEpoch = !isUndefinedOrNullOrObjectEmpty(
@@ -163,7 +165,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 SwapState.dispatch.initSwap({
                     swapId: `${currentEpoch}-0`,
                 });
-                if (AppState.isMobile) {
+                if (screenType === 'phone') {
                     AppState.dispatch.changeMobileView('Mint');
                 } else if (currentView !== 'Swap') {
                     AppState.dispatch.changeView('Swap');
@@ -177,7 +179,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 SwapState.dispatch.initSwap({
                     swapId: `${swapRoute[2]}-${swapRoute[3]}`,
                 });
-                if (AppState.isMobile) {
+                if (screenType === 'phone') {
                     AppState.dispatch.changeMobileView('Mint');
                 } else if (currentView !== 'Swap') {
                     AppState.dispatch.changeView('Swap');
@@ -192,8 +194,11 @@ class AppState extends NLState<NL.Redux.App.State> {
                         swapId: `${currentEpoch}-0`,
                     });
                 }
-                TokenState.dispatch.setTokenFromId(tokenRoute[2]);
-                if (AppState.isMobile) {
+                TokenState.dispatch.setNugg({
+                    id: tokenRoute[2],
+                    dotnuggRawCache: '',
+                });
+                if (screenType === 'phone') {
                     AppState.dispatch.changeMobileView('Search');
                 } else if (currentView !== 'Search') {
                     AppState.dispatch.changeView('Search');

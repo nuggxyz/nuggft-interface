@@ -40,7 +40,7 @@ import styles from './NuggDexComponents.styles';
 
 type Props = {
     style: CSSProperties | UseSpringProps;
-    values: string[];
+    values: NL.GraphQL.Fragments.Nugg.ListItem[];
     setLocalViewing: Dispatch<SetStateAction<NL.Redux.NuggDex.SearchViews>>;
     localViewing: NL.Redux.NuggDex.SearchViews;
     animationToggle?: boolean;
@@ -81,6 +81,7 @@ const NuggList: FunctionComponent<Props> = ({
 
     const filters = NuggDexState.select.searchFilters();
     const prevFilters = usePrevious(filters);
+    const screenType = AppState.select.screenType();
 
     const [loading, setLoading] = useState(false);
 
@@ -95,12 +96,15 @@ const NuggList: FunctionComponent<Props> = ({
 
     const onClick = useCallback((item) => {
         batch(() => {
-            TokenState.dispatch.setTokenFromId(item);
-            NuggDexState.dispatch.addToRecents({
-                _localStorageValue: item,
-                _localStorageTarget: 'recents',
-                _localStorageExpectedType: 'array',
-            });
+            TokenState.dispatch.setNugg(item);
+            NuggDexState.dispatch.addToRecents(
+                item,
+                //     {
+                //     _localStorageValue: item,
+                //     _localStorageTarget: 'recents',
+                //     _localStorageExpectedType: 'array',
+                // }
+            );
         });
     }, []);
 
@@ -127,14 +131,14 @@ const NuggList: FunctionComponent<Props> = ({
         <div
             style={{
                 ...styles.nuggListContainer,
-                ...(AppState.isMobile && { position: 'relative' }),
+                ...(screenType === 'phone' && { position: 'relative' }),
             }}>
             <animated.div
                 style={{
                     ...styles.nuggListDefault,
                     ...style,
                 }}>
-                {!AppState.isMobile && (
+                {screenType !== 'phone' && (
                     <div
                         style={{
                             display: 'flex',

@@ -25,6 +25,7 @@ const HappyTabber: FunctionComponent<Props> = ({
     defaultActiveIndex = 0,
 }) => {
     const [activeIndex, setActiveIndex] = useState(defaultActiveIndex);
+    const screenType = AppState.select.screenType();
 
     const selectionIndicatorSpring = useSpring({
         from: { x: 0, opacity: 1, ...styles.selectionIndicator },
@@ -52,12 +53,16 @@ const HappyTabber: FunctionComponent<Props> = ({
         <div
             style={{
                 ...styles.wrapperContainer,
-                ...(AppState.isMobile && styles.wrapperMobile),
+                ...(screenType === 'phone' && styles.wrapperMobile),
+                minWidth: screenType === 'phone' ? '100%' : `${WIDTH}px`,
             }}>
             {!isUndefinedOrNullOrArrayEmpty(items) && items.length > 1 && (
                 <div
                     style={{
                         ...styles.header,
+                        ...(screenType === 'phone'
+                            ? { marginTop: '.5rem' }
+                            : { marginBottom: '.5rem' }),
                         width: `${WIDTH}px`,
                     }}>
                     <animated.div

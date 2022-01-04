@@ -2,12 +2,24 @@ import { useSpring } from '@react-spring/core';
 import { CSSProperties } from 'react';
 
 import { NLStyleSheetCreator } from '../lib';
+import AppState from '../state/app';
 
 const useAnimateOverlay = (isOpen: boolean, style?: CSSProperties) => {
+    const screenType = AppState.select.screenType();
     const wrapperStyle: any = useSpring({
         ...styles.wrapper,
         opacity: isOpen ? 1 : 0,
         pointerEvents: isOpen ? 'auto' : 'none',
+        ...(screenType === 'phone'
+            ? {
+                  justifyContent: 'center',
+                  alignItems: 'flex-start',
+                  paddingTop: '4rem',
+              }
+            : {
+                  justifyContent: 'center',
+                  alignItems: 'center',
+              }),
         ...style,
     });
     return wrapperStyle;
@@ -30,7 +42,5 @@ const styles = NLStyleSheetCreator({
         overflow: 'hidden',
         zIndex: 999,
     },
-    mobile:{
-        
-    }
+    mobile: {},
 });

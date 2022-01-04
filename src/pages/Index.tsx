@@ -7,7 +7,7 @@ import Mobile from '../structure/mobile';
 
 const IndexPage = () => {
     const type = AppState.select.screenType();
-    return AppState.isMobile || type === 'phone' ? <Mobile /> : <Desktop />;
+    return type === 'phone' ? <Mobile /> : <Desktop />;
 };
 
 export default IndexPage;

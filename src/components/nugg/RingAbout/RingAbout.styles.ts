@@ -58,8 +58,15 @@ const styles = NLStyleSheetCreator({
     },
     leaderContainer: {
         display: 'flex',
-        width: '100%',
         flexDirection: 'column',
+        width: '100%',
+    },
+    leaderContainerMobile: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        display: 'flex',
+        alignItems: 'center',
     },
     leadingOfferContainer: {
         display: 'flex',
@@ -67,6 +74,12 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'space-between',
         width: '100%',
         marginTop: '.5rem',
+        zIndex: 2,
+    },
+    leadingOfferContainerMobile: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
         zIndex: 2,
     },
     leadingOfferAmount: {

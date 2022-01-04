@@ -1,19 +1,29 @@
 import { NLStyleSheetCreator } from '../../lib';
+import globalStyles from '../../lib/globalStyles';
 
 const styles = NLStyleSheetCreator({
     container: {
         height: '100%',
         width: '100%',
-        overflow: 'hiiden',
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
     },
+    account: {
+        position: 'absolute',
+        top: '0rem',
+        width: '100%',
+        zIndex: 1000,
+        ...globalStyles.backdropFilter,
+        padding: '.5rem',
+    },
     bottomBar: {
-        height: '10%',
+        height: '7%',
+        position: 'relative',
     },
     viewContainer: {
-        height: '90%',
+        height: '93%',
+        position: 'relative',
     },
 });
 

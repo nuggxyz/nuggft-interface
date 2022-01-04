@@ -15,7 +15,7 @@ const styles = NLStyleSheetCreator({
     list: {
         background: Colors.transparentLightGrey,
         borderRadius: Layout.borderRadius.mediumish,
-        padding: ' .75rem 1rem',
+        padding: ' .65rem ',
         flexGrow: 1,
         minHeight: '100px',
         height: '100%',

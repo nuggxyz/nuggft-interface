@@ -97,7 +97,14 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                 ...styles.container,
             }}>
             <div style={styles.bodyContainer}>
-                <div style={styles.leaderContainer}>
+                <div
+                    style={
+                        styles[
+                            screenType === 'phone'
+                                ? 'leaderContainerMobile'
+                                : 'leaderContainer'
+                        ]
+                    }>
                     <Text textStyle={styles.title}>
                         {status === 'ongoing' && hasBids
                             ? 'Highest Offer'
@@ -108,17 +115,20 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                             : 'Winner'}
                     </Text>
                     {hasBids && (
-                        <div style={styles.leadingOfferContainer}>
+                        <div
+                            style={
+                                styles[
+                                    screenType === 'phone'
+                                        ? 'leadingOfferContainerMobile'
+                                        : 'leadingOfferContainer'
+                                ]
+                            }>
                             <div style={styles.leadingOfferAmount}>
                                 <CurrencyText
                                     image="eth"
                                     textStyle={styles.leadingOffer}
                                     value={+fromEth(eth)}
                                 />
-                                {/* <CurrencyText
-                                    textStyle={styles.leadingOffer}
-                                    value={+ethUsd}
-                                /> */}
                                 <Text textStyle={styles.code}>{leaderEns}</Text>
                             </div>
                             {screenType === 'desktop' && offers.length > 1 && (

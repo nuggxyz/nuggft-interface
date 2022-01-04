@@ -12,6 +12,7 @@ const styles = NLStyleSheetCreator({
     listLabel: {
         color: 'white',
         marginBottom: '.5rem',
+        paddingTop: '0rem',
     },
     listNugg: {
         height: '80px',
@@ -25,7 +26,7 @@ const styles = NLStyleSheetCreator({
         alignItems: 'center',
         width: '100%',
         borderRadius: Layout.borderRadius.medium,
-        margin: '.25rem 0rem',
+        margin: '0rem 0rem',
     },
 });
 

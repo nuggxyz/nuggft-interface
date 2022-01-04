@@ -18,7 +18,9 @@ declare namespace NL.GraphQL.Fragments.Protocol {
     type Actives = {
         defaultActiveNugg: NL.GraphQL.Fragments.General.Id;
         activeItems: NL.GraphQL.Fragments.General.Id[];
-        activeNuggs: NL.GraphQL.Fragments.General.Id[];
+        activeNuggs: (NL.GraphQL.Fragments.General.Id & {
+            dotnuggRawCache: string;
+        })[];
     };
 
     type Staked = {
