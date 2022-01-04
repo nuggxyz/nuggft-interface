@@ -27,7 +27,10 @@ const query = (
                 orderDirection: ${orderDirection},
                 first: ${first},
                 skip: ${skip}
-            ) ${idFragment}
+            ) {
+                id
+                dotnuggRawCache
+            }
         }
     }
 `;
@@ -47,7 +50,7 @@ const myNuggsQuery = async (
 
         return !isUndefinedOrNullOrObjectEmpty(result) &&
             !isUndefinedOrNullOrArrayEmpty(result.nuggs)
-            ? result.nuggs
+            ? (result.nuggs as NL.GraphQL.Fragments.Nugg.ListItem[])
             : [];
     } catch (e) {
         throw new Error(`myNuggsQuery: ${e}`);

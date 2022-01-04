@@ -1,5 +1,6 @@
 import { NLStyleSheetCreator } from '../../../../lib';
 import Colors from '../../../../lib/colors';
+import FontSize from '../../../../lib/fontSize';
 import Layout from '../../../../lib/layout';
 
 const styles = NLStyleSheetCreator({
@@ -14,7 +15,7 @@ const styles = NLStyleSheetCreator({
     list: {
         background: Colors.transparentLightGrey,
         borderRadius: Layout.borderRadius.mediumish,
-        padding: ' .75rem 1rem',
+        padding: ' .65rem ',
         flexGrow: 1,
         minHeight: '100px',
         height: '100%',
@@ -42,6 +43,7 @@ const styles = NLStyleSheetCreator({
     },
     textWhite: {
         color: ' white',
+        fontSize: FontSize.h6,
     },
     eth: {
         background: Colors.gradient2,

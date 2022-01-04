@@ -24,11 +24,11 @@ import activeNuggsQuery from '../../../../state/nuggdex/queries/activeNuggsQuery
 import ProtocolState from '../../../../state/protocol';
 import constants from '../../../../lib/constants';
 import allNuggsQuery from '../../../../state/nuggdex/queries/allNuggsQuery';
+import usePrevious from '../../../../hooks/usePrevious';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
 import styles from './NuggDexSearchList.styles';
-import usePrevious from '../../../../hooks/usePrevious';
 
 type Props = {};
 const NuggDexSearchList: FunctionComponent<Props> = () => {
@@ -38,8 +38,12 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 
     const [localViewing, setLocalViewing] =
         useState<NL.Redux.NuggDex.SearchViews>('home');
-    const [allNuggs, setAllNuggs] = useState<string[]>([]);
-    const [activeNuggs, setActiveNuggs] = useState<string[]>([]);
+    const [allNuggs, setAllNuggs] = useState<
+        NL.GraphQL.Fragments.Nugg.ListItem[]
+    >([]);
+    const [activeNuggs, setActiveNuggs] = useState<
+        NL.GraphQL.Fragments.Nugg.ListItem[]
+    >([]);
     const recents = NuggDexState.select.recents();
 
     const [nuggLinkRef, setNuggLinkRef] = useState<HTMLDivElement>();
@@ -103,8 +107,9 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 startFrom,
             );
             if (!isUndefinedOrNullOrArrayEmpty(activeNuggs)) {
-                const ids = activeNuggs.map((active) => active.id);
-                setResults((res) => (addToResult ? [...res, ...ids] : ids));
+                setResults((res) =>
+                    addToResult ? [...res, ...activeNuggs] : activeNuggs,
+                );
             }
             setLoading && setLoading(false);
         },

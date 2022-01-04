@@ -88,7 +88,7 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
                         state.genesisBlock = data.genesisBlock;
                         state.defaultActiveNugg = data.defaultActiveNugg;
                         state.activeItems = data.activeItems;
-                        state.activeNuggs = data.activeNuggs;
+                        // state.activeNuggs = data.activeNuggs;
                         state.xnuggTotalSupply = data.xnuggTotalSupply;
                         state.xnuggTotalEth = data.xnuggTotalEth;
                         state.nuggftTotalEth = data.nuggftTotalEth;

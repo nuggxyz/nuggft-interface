@@ -30,6 +30,7 @@ import styles from './RingAbout.styles';
 type Props = {};
 
 const RingAbout: FunctionComponent<Props> = ({}) => {
+    const screenType = AppState.select.screenType();
     const eth = SwapState.select.eth();
     const address = Web3State.select.web3address();
     const ethUsd = SwapState.select.ethUsd();
@@ -92,11 +93,18 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     return (
         <animated.div
             style={{
-                ...(AppState.isMobile && styles.mobile),
+                ...(screenType === 'phone' && styles.mobile),
                 ...styles.container,
             }}>
             <div style={styles.bodyContainer}>
-                <div style={styles.leaderContainer}>
+                <div
+                    style={
+                        styles[
+                            screenType === 'phone'
+                                ? 'leaderContainerMobile'
+                                : 'leaderContainer'
+                        ]
+                    }>
                     <Text textStyle={styles.title}>
                         {status === 'ongoing' && hasBids
                             ? 'Highest Offer'
@@ -107,20 +115,23 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                             : 'Winner'}
                     </Text>
                     {hasBids && (
-                        <div style={styles.leadingOfferContainer}>
+                        <div
+                            style={
+                                styles[
+                                    screenType === 'phone'
+                                        ? 'leadingOfferContainerMobile'
+                                        : 'leadingOfferContainer'
+                                ]
+                            }>
                             <div style={styles.leadingOfferAmount}>
                                 <CurrencyText
                                     image="eth"
                                     textStyle={styles.leadingOffer}
                                     value={+fromEth(eth)}
                                 />
-                                {/* <CurrencyText
-                                    textStyle={styles.leadingOffer}
-                                    value={+ethUsd}
-                                /> */}
                                 <Text textStyle={styles.code}>{leaderEns}</Text>
                             </div>
-                            {!AppState.isMobile && offers.length > 1 && (
+                            {screenType === 'desktop' && offers.length > 1 && (
                                 <Button
                                     rightIcon={
                                         !open ? (

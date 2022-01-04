@@ -31,6 +31,7 @@ type Props = {};
 
 const ViewingNugg: FunctionComponent<Props> = () => {
     const tokenId = TokenState.select.tokenId();
+    const svg = TokenState.select.tokenURI();
     const address = Web3State.select.web3address();
     const [owner, setOwner] = useState('');
     const [swaps, setSwaps] = useState([]);
@@ -78,7 +79,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                     ...styles.wrapper,
                 }}>
                 <div style={styles.container}>
-                    <TokenViewer tokenId={tokenId} />
+                    <TokenViewer tokenId={tokenId} data={svg} />
                     <Swaps {...{ swaps, tokenId, address, owner }} />
                 </div>
             </div>

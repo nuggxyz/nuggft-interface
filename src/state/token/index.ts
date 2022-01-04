@@ -58,8 +58,19 @@ class TokenState extends NLState<NL.Redux.Token.State> {
             clearError: (state) => {
                 state.error = undefined;
             },
-            setTokenFromId: (state, action: PayloadAction<string>) => {
-                state.tokenId = action.payload;
+            setNugg: (
+                state,
+                action: PayloadAction<
+                    NL.GraphQL.Fragments.Nugg.ListItem | undefined
+                >,
+            ) => {
+                if (action.payload) {
+                    state.tokenId = action.payload.id;
+                    state.tokenURI = action.payload.dotnuggRawCache;
+                } else {
+                    state.tokenId = undefined;
+                    state.tokenURI = undefined;
+                }
             },
         },
         extraReducers: (builder) => {

@@ -2,16 +2,21 @@ import React, {
     FunctionComponent,
     SetStateAction,
     useCallback,
+    useEffect,
     useState,
 } from 'react';
 import { ChevronLeft } from 'react-feather';
+import { animated, config, useSpring, useTransition } from 'react-spring';
 
 import Button from '../../components/general/Buttons/Button/Button';
 import TransitionText from '../../components/general/Texts/TransitionText/TransitionText';
 import NuggList from '../../components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
 import ViewingNugg from '../../components/nugg/ViewingNugg/ViewingNugg';
 import { isUndefinedOrNullOrArrayEmpty, ucFirst } from '../../lib';
+import Colors from '../../lib/colors';
 import constants from '../../lib/constants';
+import globalStyles from '../../lib/globalStyles';
+import Layout from '../../lib/layout';
 import activeNuggsQuery from '../../state/nuggdex/queries/activeNuggsQuery';
 import allNuggsQuery from '../../state/nuggdex/queries/allNuggsQuery';
 import ProtocolState from '../../state/protocol';
@@ -25,8 +30,12 @@ const SearchView: FunctionComponent<Props> = () => {
     const selected = TokenState.select.tokenId();
     const epoch = ProtocolState.select.epoch();
 
-    const [allNuggs, setAllNuggs] = useState<string[]>([]);
-    const [activeNuggs, setActiveNuggs] = useState<string[]>([]);
+    const [allNuggs, setAllNuggs] = useState<
+        NL.GraphQL.Fragments.Nugg.ListItem[]
+    >([]);
+    const [activeNuggs, setActiveNuggs] = useState<
+        NL.GraphQL.Fragments.Nugg.ListItem[]
+    >([]);
 
     const handleGetActive = useCallback(
         async (
@@ -38,16 +47,17 @@ const SearchView: FunctionComponent<Props> = () => {
         ) => {
             setLoading && setLoading(true);
             const activeNuggs = await activeNuggsQuery(
-                filters.sort.by,
-                filters.sort.asc ? 'asc' : 'desc',
-                filters.searchValue,
+                filters ? filters.sort.by : 'id',
+                filters && filters.sort.asc ? 'asc' : 'desc',
+                filters ? filters.searchValue : '',
                 epoch.id,
                 constants.NUGGDEX_SEARCH_LIST_CHUNK,
                 startFrom,
             );
             if (!isUndefinedOrNullOrArrayEmpty(activeNuggs)) {
-                const ids = activeNuggs.map((active) => active.id);
-                setResults((res) => (addToResult ? [...res, ...ids] : ids));
+                setResults((res) =>
+                    addToResult ? [...res, ...activeNuggs] : activeNuggs,
+                );
             }
             setLoading && setLoading(false);
         },
@@ -64,9 +74,9 @@ const SearchView: FunctionComponent<Props> = () => {
         ) => {
             setLoading && setLoading(true);
             const allNuggs = await allNuggsQuery(
-                filters.sort.by,
-                filters.sort.asc ? 'asc' : 'desc',
-                filters.searchValue,
+                filters ? filters.sort.by : 'id',
+                filters && filters.sort.asc ? 'asc' : 'desc',
+                filters ? filters.searchValue : '',
                 constants.NUGGDEX_SEARCH_LIST_CHUNK,
                 startFrom,
             );
@@ -85,7 +95,7 @@ const SearchView: FunctionComponent<Props> = () => {
             addToList,
         }: {
             setLoading?: React.Dispatch<SetStateAction<boolean>>;
-            filters: NL.Redux.NuggDex.Filters;
+            filters?: NL.Redux.NuggDex.Filters;
             addToList?: boolean;
         }) => {
             switch (localViewing) {
@@ -119,11 +129,72 @@ const SearchView: FunctionComponent<Props> = () => {
         ],
     );
 
+    useEffect(() => {
+        onScrollEnd({});
+    }, []);
+
+    const { opacity } = useSpring({
+        opacity: selected ? 1 : 0,
+        config: config.default,
+    });
+
     return (
-        <div style={{ height: '100%', width: '100%' }}>
-            {!selected ? (
-                <>
-                    <div
+        <>
+            <animated.div
+                style={{
+                    opacity: opacity.to([1, 0], [0, 1]),
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    pointerEvents: !selected ? 'auto' : 'none',
+                    justifyContent: 'center',
+                    display: 'flex',
+                }}>
+                <Button
+                    label="Sales"
+                    onClick={() =>
+                        setLocalViewing((view) =>
+                            view === 'on sale' ? 'all nuggs' : 'on sale',
+                        )
+                    }
+                    textStyle={{
+                        color:
+                            localViewing === 'on sale'
+                                ? 'white'
+                                : Colors.nuggBlueText,
+                        transition: 'color .3s ease-in',
+                    }}
+                    buttonStyle={{
+                        zIndex: 1,
+                        position: 'absolute',
+                        bottom: '0rem',
+                        margin: '0 auto',
+                        ...globalStyles.backdropFilter,
+                        background:
+                            localViewing === 'on sale'
+                                ? Colors.nuggBlueText
+                                : Colors.nuggBlueTransparent,
+                        borderRadius: Layout.borderRadius.large,
+                        transition: 'background .3s ease-in',
+                    }}
+                />
+                <NuggList
+                    values={
+                        localViewing === 'all nuggs' ? allNuggs : activeNuggs
+                    }
+                    localViewing={localViewing}
+                    setLocalViewing={setLocalViewing}
+                    onScrollEnd={onScrollEnd}
+                    style={{
+                        height: '100%',
+                        zIndex: 0,
+                        width: '100%',
+                        position: 'fixed',
+                        background: 'transparent',
+                    }}
+                />
+
+                {/* <div
                         style={{
                             display: 'flex',
                             width: '100%',
@@ -139,50 +210,22 @@ const SearchView: FunctionComponent<Props> = () => {
                                         : 'transparent',
                             }}
                         />
-                        <Button
-                            label="On sale"
-                            onClick={() => setLocalViewing('on sale')}
-                            buttonStyle={{
-                                background:
-                                    localViewing === 'on sale'
-                                        ? 'white'
-                                        : 'transparent',
-                            }}
-                        />
-                    </div>
-                    <NuggList
-                        values={
-                            localViewing === 'all nuggs'
-                                ? allNuggs
-                                : activeNuggs
-                        }
-                        localViewing={localViewing}
-                        setLocalViewing={setLocalViewing}
-                        onScrollEnd={onScrollEnd}
-                        style={{
-                            height: '95%',
-                            width: '100%',
-                            position: 'relative',
-                        }}
-                    />
-                </>
-            ) : (
-                <>
-                    <TransitionText
-                        Icon={ChevronLeft}
-                        style={{
-                            marginTop: '.12rem',
-                        }}
-                        text={ucFirst(localViewing)}
-                        transitionText="Go back"
-                        onClick={() => {
-                            TokenState.dispatch.setTokenFromId('');
-                        }}
-                    />
-                    <ViewingNugg />
-                </>
-            )}
-        </div>
+
+                    </div> */}
+            </animated.div>
+            <animated.div
+                style={{
+                    opacity,
+                    position: 'absolute',
+                    pointerEvents: selected ? 'auto' : 'none',
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                }}>
+                <ViewingNugg />
+            </animated.div>
+        </>
     );
 };
 

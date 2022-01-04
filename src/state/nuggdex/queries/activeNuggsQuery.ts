@@ -30,6 +30,7 @@ const query = (
                 orderDirection: ${orderDirection}
             ) {
                 id
+                dotnuggRawCache
             }
         }
     }
@@ -78,7 +79,7 @@ const activeNuggsQuery = async (
         //     'swaps',
         // )) as NL.GraphQL.Fragments.Swap.NuggId[];
         return !isUndefinedOrNullOrArrayEmpty(result.activeNuggs)
-            ? result.activeNuggs
+            ? (result.activeNuggs as NL.GraphQL.Fragments.Nugg.ListItem[])
             : [];
     } catch (e) {
         throw new Error(`activeNuggsQuery: ${e}`);

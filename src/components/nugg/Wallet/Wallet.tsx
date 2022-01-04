@@ -27,10 +27,8 @@ import styles from './Wallet.styles';
 type Props = {};
 
 const Wallet: FunctionComponent<Props> = () => {
-    const show = AppState.select.walletVisible();
     const address = Web3State.select.web3address();
-    const block = ProtocolState.select.currentBlock();
-    const epoch = ProtocolState.select.epoch();
+    const screenType = AppState.select.screenType();
 
     const happytabs: HappyTabberItem[] = useMemo(
         () => [
@@ -70,14 +68,13 @@ const Wallet: FunctionComponent<Props> = () => {
     );
 
     return (
-        <div style={styles.container}>
-            <div
-                style={{
-                    ...styles.wallet,
-                    ...(AppState.isMobile && { height: '90%' }),
-                }}>
-                <HappyTabber items={happytabs} />
-            </div>
+        <div
+            style={{
+                ...styles.wallet,
+                ...(screenType === 'tablet' && { width: '100%' }),
+                ...(screenType === 'phone' && { height: '100%' }),
+            }}>
+            <HappyTabber items={happytabs} />
         </div>
     );
 };

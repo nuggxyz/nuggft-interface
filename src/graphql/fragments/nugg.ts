@@ -45,3 +45,10 @@ export const nuggThumbnail = gql`
         activeSwap ${idFragment}
     }
 `;
+
+export const nuggListItem = gql`
+    {
+        id
+        dotnuggRawCache
+    }
+`;

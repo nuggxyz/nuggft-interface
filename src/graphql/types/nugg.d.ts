@@ -12,4 +12,9 @@ declare namespace NL.GraphQL.Fragments.Nugg {
     type Thumbnail = Pick<Bare, 'id' | 'activeSwap' | 'user' | 'items'> & {
         swaps: NL.GraphQL.Fragments.Swap.Thumbnail[];
     };
+
+    type ListItem = {
+        id: string;
+        dotnuggRawCache: string;
+    };
 }

@@ -11,6 +11,7 @@ import styles from './SearchOverlay.styles';
 type Props = {};
 
 const SearchOverlay: FunctionComponent<Props> = () => {
+    const screenType = AppState.select.screenType();
     const view = AppState.select.view();
     const onClick = useCallback(
         () =>
@@ -28,12 +29,18 @@ const SearchOverlay: FunctionComponent<Props> = () => {
             style={{ ...styles.container, ...style }}
             onClick={onClick}>
             <div
-                style={styles.nuggDexContainer}
+                style={{
+                    ...styles.nuggDexContainer,
+                    ...(screenType === 'tablet' ? { width: '50%' } : {}),
+                }}
                 onClick={(e) => e.stopPropagation()}>
                 <NuggDexSearchList />
             </div>
             <div
-                style={styles.tokenContainer}
+                style={{
+                    ...styles.tokenContainer,
+                    ...(screenType === 'tablet' ? { width: '50%' } : {}),
+                }}
                 onClick={(e) => e.stopPropagation()}>
                 <ViewingNugg />
             </div>

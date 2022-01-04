@@ -17,7 +17,6 @@ const TextStatistic: FC<Props> = ({ value, percent = false, ...props }) => {
     return (
         <StatisticsWrapper {...props}>
             <Text
-                size="small"
                 textStyle={{
                     ...styles.value,
                 }}>

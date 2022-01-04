@@ -33,6 +33,7 @@ const StatisticsWrapper: FC<StatisticsProps> = ({
             }}>
             {!isUndefinedOrNullOrStringEmpty(label) && (
                 <Text
+                size='small'
                     textStyle={{
                         ...styles.title,
                         ...(!transparent && styles.titleRed),

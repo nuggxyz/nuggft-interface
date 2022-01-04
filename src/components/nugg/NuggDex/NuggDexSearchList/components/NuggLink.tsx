@@ -17,7 +17,7 @@ import NuggLinkThumbnail from './NuggLinkThumbnail';
 type Props = {
     type: NL.Redux.NuggDex.SearchViews;
     localViewing: NL.Redux.NuggDex.SearchViews;
-    previewNuggs: string[];
+    previewNuggs: NL.GraphQL.Fragments.Nugg.ListItem[];
     setRef: Dispatch<SetStateAction<HTMLDivElement>>;
     onClick: Dispatch<SetStateAction<NL.Redux.NuggDex.SearchViews>>;
     style?: CSSProperties;

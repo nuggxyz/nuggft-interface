@@ -1,5 +1,10 @@
 declare namespace NL.Redux.App {
     interface State {
+        dimensions: {
+            height: number;
+            width: number;
+        };
+        screenType: 'desktop' | 'tablet' | 'phone';
         toasts: Toast[];
         modalIsOpen: Modals;
         modalData: ModalsData;

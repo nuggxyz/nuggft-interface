@@ -6,6 +6,7 @@ import {
 } from '../../../lib';
 import Colors from '../../../lib/colors';
 import constants from '../../../lib/constants';
+import AppState from '../../../state/app';
 import ProtocolState from '../../../state/protocol';
 import SwapState from '../../../state/swap';
 import CircleTimer from '../../general/AnimatedTimers/CircleTimer/CircleTimer';
@@ -16,15 +17,18 @@ import styles from './TheRing.styles';
 
 type Props = {
     containerStyle?: CSSProperties;
+    circleStyle?: CSSProperties;
     circleWidth?: number;
     tokenStyle?: CSSProperties;
 };
 
 const TheRing: FunctionComponent<Props> = ({
     containerStyle,
+    circleStyle,
     circleWidth = 1600,
     tokenStyle,
 }) => {
+    const screenType = AppState.select.screenType();
     const lastBlock = ProtocolState.select.currentBlock();
     const epoch = ProtocolState.select.epoch();
     const endingSwapEpoch = SwapState.select.epoch();
@@ -77,11 +81,11 @@ const TheRing: FunctionComponent<Props> = ({
                         ? Colors.green
                         : ''
                 }
-                style={styles.circle}>
+                style={{ ...styles.circle, ...circleStyle }}>
                 <AnimatedCard>
                     <TokenViewer
                         tokenId={(nugg && nugg.id) || ''}
-                        showLabel
+                        showLabel={screenType !== 'phone'}
                         style={tokenStyle}
                     />
                 </AnimatedCard>

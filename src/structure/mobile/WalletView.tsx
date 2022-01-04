@@ -9,11 +9,11 @@ const WalletView: FunctionComponent<Props> = () => {
         <div
             style={{
                 display: 'flex',
-                alignItems: 'center',
+                alignItems: 'flex-end',
                 justifyContent: 'center',
                 width: '100%',
-                height: '100%',
-                padding: '0rem 1rem',
+                height: '95%',
+                padding: '0rem .5rem',
             }}>
             <Wallet />
         </div>

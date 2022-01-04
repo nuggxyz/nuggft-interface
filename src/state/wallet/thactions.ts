@@ -66,7 +66,10 @@ const withdraw = createAsyncThunk<
 
         return {
             success: 'SUCCESS',
-            _pendingtx,
+            _pendingtx: {
+                from: _pendingtx.from,
+                hash: _pendingtx.hash,
+            },
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {
@@ -100,7 +103,10 @@ const approveNugg = createAsyncThunk<
 
         return {
             success: 'SUCCESS',
-            _pendingtx,
+            _pendingtx: {
+                from: _pendingtx.from,
+                hash: _pendingtx.hash,
+            },
         };
     } catch (err) {
         console.log({ err });
@@ -133,7 +139,10 @@ const claim = createAsyncThunk<
 
         return {
             success: 'SUCCESS',
-            _pendingtx,
+            _pendingtx: {
+                from: _pendingtx.from,
+                hash: _pendingtx.hash,
+            },
         };
     } catch (err) {
         console.log({ err });
@@ -165,7 +174,10 @@ const initLoan = createAsyncThunk<
 
         return {
             success: 'SUCCESS',
-            _pendingtx,
+            _pendingtx: {
+                from: _pendingtx.from,
+                hash: _pendingtx.hash,
+            },
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {
@@ -198,7 +210,10 @@ const payOffLoan = createAsyncThunk<
 
         return {
             success: 'SUCCESS',
-            _pendingtx,
+            _pendingtx: {
+                from: _pendingtx.from,
+                hash: _pendingtx.hash,
+            },
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {
@@ -231,7 +246,10 @@ const extend = createAsyncThunk<
 
         return {
             success: 'SUCCESS',
-            _pendingtx,
+            _pendingtx: {
+                from: _pendingtx.from,
+                hash: _pendingtx.hash,
+            },
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {

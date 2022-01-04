@@ -23,7 +23,6 @@ const styles = NLStyleSheetCreator({
         padding: '4px',
         width: '100%',
         flexDirection: 'row',
-        margin: '.5rem 0rem',
     },
     headerTextContainer: {
         display: 'flex',
@@ -49,7 +48,7 @@ const styles = NLStyleSheetCreator({
         borderRadius: Layout.borderRadius.medium,
         background: Colors.gradient3,
         // backgroundSize: '400% 400%',
-        padding: '1rem',
+        padding: '.75rem',
     },
     item: {
         position: 'absolute',
