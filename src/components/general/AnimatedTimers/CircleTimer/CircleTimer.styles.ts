@@ -12,8 +12,6 @@ const styles = NLStyleSheetCreator({
     },
     svgTransition: {
         transition: 'filter .5s ease',
-    },
-    circleConfig: {
         transformBox: 'fill-box',
         transformOrigin: 'center',
         transform: 'rotate(-90deg)',
