@@ -7,7 +7,7 @@ import Layout from '../../../../lib/layout';
 import AppState from '../../../../state/app';
 import ProtocolState from '../../../../state/protocol';
 import ChainIndicator from '../../../general/Buttons/ChainIndicator/ChainIndicator';
-import LinkAccountButton from '../../../general/Buttons/LinkAccountButton/LinkAccountButton';
+import AccountViewer from '../../AccountViewer/AccountViewer';
 import CurrencyText from '../../../general/Texts/CurrencyText/CurrencyText';
 import Text from '../../../general/Texts/Text/Text';
 import FloorPrice from '../../FloorPrice';
@@ -79,7 +79,7 @@ const NavigationBar: FC<Props> = () => {
             </div> */}
             <div style={styles.linkAccountContainer}>
                 <FloorPrice />
-                <LinkAccountButton />
+                <AccountViewer />
             </div>
         </div>
     );

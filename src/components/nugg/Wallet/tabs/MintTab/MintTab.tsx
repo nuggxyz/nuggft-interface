@@ -32,7 +32,7 @@ import listStyle from '../HistoryTab.styles';
 import Text from '../../../../general/Texts/Text/Text';
 import Colors from '../../../../../lib/colors';
 import AppState from '../../../../../state/app';
-import LinkAccountButton from '../../../../general/Buttons/LinkAccountButton/LinkAccountButton';
+import AccountViewer from '../../../AccountViewer/AccountViewer';
 import styles from '../Tabs.styles';
 import useAsyncState from '../../../../../hooks/useAsyncState';
 import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQuery';

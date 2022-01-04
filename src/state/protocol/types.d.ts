@@ -1,10 +1,10 @@
 declare namespace NL.Redux.Protocol {
-    type State = {
+    type State = NL.GraphQL.Fragments.Protocol.Index & {
         error: Error;
         success: Success;
         loading: boolean;
         currentBlock: number;
-    } & NL.GraphQL.Fragments.Protocol.Index;
+    };
 
     type Success = 'SUCCESS';
 

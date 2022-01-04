@@ -31,7 +31,8 @@ declare namespace NL.GraphQL.Fragments.Protocol {
         nuggftStakedShares: string;
     };
 
-    type Epochs = Pick<Full, 'genesisBlock' | 'interval' | 'epoch'> & Staked;
+    type Epochs = Pick<Full, 'interval' | 'epoch'> &
+        Staked & { genesisBlock: number };
 
     type Totals = Pick<
         Full,

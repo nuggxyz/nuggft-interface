@@ -18,13 +18,17 @@ const updateEpochMiddleware: Middleware<
     ({ getState }) =>
     (next) =>
     async (action: PayloadAction<any>) => {
-        if (ProtocolState.isOwnFulfilledAction(action, 'updateEpoch')) {
+        if (
+            ProtocolState.isOwnFulfilledAction(action, 'updateEpoch') ||
+            ProtocolState.isOwnFulfilledAction(action, 'setEpoch')
+        ) {
             const currentEpoch = !isUndefinedOrNullOrObjectEmpty(
                 getState().protocol.epoch,
             )
                 ? getState().protocol.epoch.id
                 : '';
-            const nextEpoch = action.payload.data.epoch.id;
+            const nextEpoch =
+                action.payload.data?.epoch.id || action.payload.id;
             const currentSwap = getState().swap.endingEpoch;
             if (
                 currentEpoch !== nextEpoch &&

@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 
-import LinkAccountButton from '../../components/general/Buttons/LinkAccountButton/LinkAccountButton';
+import AccountViewer from '../../components/nugg/AccountViewer/AccountViewer';
 import FloorPrice from '../../components/nugg/FloorPrice';
 import AppState from '../../state/app';
 import TokenState from '../../state/token';
@@ -41,7 +41,7 @@ const Mobile: FunctionComponent<Props> = () => {
     return (
         <div style={styles.container}>
             <div style={styles.account}>
-                <LinkAccountButton />
+                <AccountViewer />
             </div>
             <div style={styles.viewContainer}>
                 {tabFadeTransition((style, value) => (

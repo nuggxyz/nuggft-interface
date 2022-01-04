@@ -149,7 +149,7 @@ const rejectedThactions: Middleware<{}, any, Dispatch<any>> =
                 duration: 0,
                 error: true,
                 loading: false,
-                message: 'An unknown error has occured',
+                message: action.type,
                 title: 'Error',
             });
         }

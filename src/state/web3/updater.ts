@@ -1,23 +1,19 @@
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 
 import {
-    isUndefinedOrNull,
     isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrBooleanFalse,
     isUndefinedOrNullOrNotFunction,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 
 import Web3Config from './Web3Config';
-import { switchToNetwork } from './helpers';
 
 import Web3State from '.';
 
 export default () => {
-    const { library, chainId, activate, error } =
-        Web3State.hook.useActiveWeb3React();
+    const { library, activate, error } = Web3State.hook.useActiveWeb3React();
     const {
         activate: defaultActivate,
         account: web3Account,
@@ -27,32 +23,6 @@ export default () => {
     const web3address = Web3State.select.web3address();
     const [hasBeenActivated, setHasBeenActivated] = useState(false);
     const [hasBeenSafeActivated, setHasBeenSafeActivated] = useState(false);
-    const onDisconnect = useCallback(async () => {
-        console.log('eth event: disconnect');
-        Web3State.dispatch.clearWeb3Address();
-    }, []);
-    const onConnect = useCallback(async (connectInfo: { chainId: string }) => {
-        console.log('eth event: connect', connectInfo);
-        Web3State.dispatch.setCurrentChain(chainId);
-    }, []);
-    const onAccountsChanged = useCallback(async (accounts) => {
-        console.log('eth event: accountsChanged', { accounts });
-        if (!isUndefinedOrNullOrArrayEmpty(accounts)) {
-            Web3State.dispatch.setWeb3Address(accounts[0]);
-        } else {
-            Web3State.dispatch.clearWeb3Address();
-        }
-    }, []);
-    const onChainChanged = useCallback(async (chainId) => {
-        console.log('eth event: chainChanged', { chainId });
-        Web3State.dispatch.setCurrentChain(chainId);
-    }, []);
-    const onMessage = useCallback(
-        async (message: { type: string; data: unknown }) => {
-            console.log('eth event: message', { message });
-        },
-        [],
-    );
 
     useEffect(() => {
         if (!isUndefinedOrNullOrNotFunction(defaultActivate)) {
@@ -90,31 +60,33 @@ export default () => {
     ]);
 
     useEffect(() => {
-        if (
-            !web3Account ||
-            !library?.provider?.request ||
-            !library?.provider?.isMetaMask
-        ) {
-            return;
-        }
-        switchToNetwork({ library })
-            .then(
-                (x) =>
-                    !isUndefinedOrNull(x) ??
-                    Web3State.dispatch.setImplements3085(true),
-            )
-            .catch(() => Web3State.dispatch.setImplements3085(true));
-    }, [web3Account, chainId, library]);
-
-    const [walletConnectSignerSet, setFun] = useState();
-
-    useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
-            window.ethereum.on('connect', onConnect);
-            window.ethereum.on('disconnect', onDisconnect);
-            window.ethereum.on('accountsChanged', onAccountsChanged);
-            window.ethereum.on('chainChanged', onChainChanged);
-            window.ethereum.on('message', onMessage);
+            window.ethereum.on('connect', (chainId) => {
+                console.log('eth event: connect', { chainId });
+                Web3State.dispatch.setCurrentChain(chainId);
+            });
+            window.ethereum.on('disconnect', () => {
+                console.log('eth event: disconnect');
+                Web3State.dispatch.clearWeb3Address();
+            });
+            window.ethereum.on('accountsChanged', (accounts) => {
+                console.log('eth event: accountsChanged', { accounts });
+                if (!isUndefinedOrNullOrArrayEmpty(accounts)) {
+                    Web3State.dispatch.setWeb3Address(accounts[0]);
+                } else {
+                    Web3State.dispatch.clearWeb3Address();
+                }
+            });
+            window.ethereum.on('chainChanged', (chainId) => {
+                console.log('eth event: chainChanged', { chainId });
+                Web3State.dispatch.setCurrentChain(chainId);
+            });
+            window.ethereum.on(
+                'message',
+                (message: { type: string; data: unknown }) => {
+                    console.log('eth event: message', { message });
+                },
+            );
         }
         if (isUndefinedOrNullOrObjectEmpty(web3address)) {
             if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
@@ -152,22 +124,11 @@ export default () => {
             } else if (!isUndefinedOrNullOrStringEmpty(web3Account)) {
                 Web3State.dispatch.setWeb3Address(web3Account);
                 Web3State.dispatch.setWeb3Status('SELECTED');
-                console.log('setting signer', web3Account);
                 Web3State._walletConnectSigner =
                     library?.getSigner(web3Account);
             }
         }
-    }, [
-        web3status,
-        web3address,
-        web3Account,
-        onConnect,
-        onDisconnect,
-        onAccountsChanged,
-        onChainChanged,
-        onMessage,
-        library,
-    ]);
+    }, [web3status, web3address, web3Account, library]);
 
     return null;
 };

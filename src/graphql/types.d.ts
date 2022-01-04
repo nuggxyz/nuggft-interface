@@ -101,7 +101,7 @@ declare namespace NL.GraphQL {
         id: T['ID'];
         startblock: T['BigNumber'];
         endblock: T['BigNumber'];
-        status: EpochStatus;
+        status?: EpochStatus;
     };
 
     type Item<T extends Scalars> = {
