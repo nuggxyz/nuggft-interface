@@ -24,6 +24,7 @@ import { fromEth } from '../../../lib/conversion';
 import Colors from '../../../lib/colors';
 import TransactionState from '../../../state/transaction';
 import usePrevious from '../../../hooks/usePrevious';
+import NuggFTHelper from '../../../contracts/NuggFTHelper';
 
 import styles from './RingAbout.styles';
 
@@ -100,7 +101,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                 <div
                     style={
                         styles[
-                            screenType === 'phone'
+                            screenType !== 'desktop'
                                 ? 'leaderContainerMobile'
                                 : 'leaderContainer'
                         ]
@@ -118,7 +119,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                         <div
                             style={
                                 styles[
-                                    screenType === 'phone'
+                                    screenType !== 'desktop'
                                         ? 'leadingOfferContainerMobile'
                                         : 'leadingOfferContainer'
                                 ]

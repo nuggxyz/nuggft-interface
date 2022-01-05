@@ -94,7 +94,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                     Partial<NL.Redux.App.Toast> & { index: number }
                 >,
             ) => {
-                let temp = state.toasts;
+                let temp = [...state.toasts];
                 state.toasts = smartRemove(temp, action.payload);
             },
             replaceToast: (

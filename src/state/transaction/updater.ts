@@ -12,14 +12,10 @@ export default () => {
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(library)) {
             library.once(txn, (result) => {
-                setTimeout(
-                    () =>
-                        TransactionState.dispatch.finalizeTransaction({
-                            hash: txn,
-                            successful: result.status ? true : false,
-                        }),
-                    500,
-                );
+                TransactionState.dispatch.finalizeTransaction({
+                    hash: txn,
+                    successful: result.status ? true : false,
+                });
             });
         }
     }, [library, txn]);

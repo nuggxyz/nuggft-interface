@@ -18,9 +18,14 @@ const wsLink = new WebSocketLink({
     },
 });
 
+const fetchLogger = (url, init) => {
+    console.log(init.body);
+    return fetch(url, init).then((response) => response);
+};
+
 const httpLink = new HttpLink({
     uri: constants.MAIN_ENDPOINT,
-    // fetch: fetch as any,
+    fetch: fetch as any,
 });
 
 const splitLink = split(

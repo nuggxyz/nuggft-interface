@@ -98,7 +98,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 setIsApproved(res),
             );
         } else setIsApproved(true);
-    }, [targetId, toggle, isApproved]);
+    }, [targetId, toggle, isApproved, stableId, stableType]);
 
     useEffect(() => {
         setAmount(`${minOfferAmount}`);

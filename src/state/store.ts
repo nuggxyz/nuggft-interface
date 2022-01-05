@@ -40,6 +40,7 @@ const store = configureStore({
                 ignoredActions: [
                     'app/addToastToList',
                     'app/removeToastFromList',
+                    'swap/placeOffer/fulfilled',
                 ],
                 ignoredPaths: ['app'],
             },
