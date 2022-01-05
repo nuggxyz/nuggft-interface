@@ -193,25 +193,6 @@ const SearchView: FunctionComponent<Props> = () => {
                         background: 'transparent',
                     }}
                 />
-
-                {/* <div
-                        style={{
-                            display: 'flex',
-                            width: '100%',
-                            justifyContent: 'space-around',
-                        }}>
-                        <Button
-                            label="All nuggs"
-                            onClick={() => setLocalViewing('all nuggs')}
-                            buttonStyle={{
-                                background:
-                                    localViewing === 'all nuggs'
-                                        ? 'white'
-                                        : 'transparent',
-                            }}
-                        />
-
-                    </div> */}
             </animated.div>
             <animated.div
                 style={{

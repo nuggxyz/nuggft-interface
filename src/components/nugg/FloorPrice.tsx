@@ -13,6 +13,7 @@ type Props = { style?: CSSProperties };
 
 const FloorPrice: FunctionComponent<Props> = ({ style }) => {
     const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
+    console.log(valuePerShare);
 
     const springStyle = useSpring({
         // position: 'absolute',

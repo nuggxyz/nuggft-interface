@@ -41,6 +41,7 @@ const store = configureStore({
                     'app/addToastToList',
                     'app/removeToastFromList',
                     'swap/placeOffer/fulfilled',
+                    'wallet/claim/fulfilled',
                 ],
                 ignoredPaths: ['app'],
             },

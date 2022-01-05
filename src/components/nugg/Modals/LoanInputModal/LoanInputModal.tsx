@@ -21,6 +21,7 @@ import Button from '../../../general/Buttons/Button/Button';
 import CurrencyInput from '../../../general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '../../../general/Texts/Text/Text';
 import TokenViewer from '../../TokenViewer';
+import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
 
 import styles from './LoanInputModal.styles';
 
@@ -115,7 +116,8 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                 </div>
             </div>
             <div style={styles.subContainer}>
-                <Button
+                <FeedbackButton
+                    feedbackText="Check Wallet..."
                     buttonStyle={styles.button}
                     label={`${
                         stableType === 'PayOffLoan' ? 'Payoff' : 'Extend'

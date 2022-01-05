@@ -22,6 +22,7 @@ import listStyles from '../HistoryTab.styles';
 import Colors from '../../../../../lib/colors';
 import styles from '../Tabs.styles';
 import TransactionState from '../../../../../state/transaction';
+import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
 
 type Props = { isActive?: boolean };
 
@@ -113,7 +114,8 @@ const RenderItem: FunctionComponent<
                             : `Swap #${item.swap.num}`}
                     </Text>
                 </div>
-                <Button
+                <FeedbackButton
+                    feedbackText="Check Wallet..."
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
                     label={`Claim ${isWinner ? 'Nugg' : 'ETH'}`}

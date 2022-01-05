@@ -44,6 +44,7 @@ import InfiniteList from '../../../../general/List/InfiniteList';
 import FontSize from '../../../../../lib/fontSize';
 import TokenState from '../../../../../state/token';
 import NuggDexState from '../../../../../state/nuggdex';
+import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
 
 type Props = {};
 
@@ -166,7 +167,8 @@ const MintTab: FunctionComponent<Props> = () => {
                     />
                 </div>
             </div>
-            <Button
+            <FeedbackButton
+                feedbackText="Check Wallet..."
                 buttonStyle={{
                     ...swapStyles.button,
                     margin: '0rem',

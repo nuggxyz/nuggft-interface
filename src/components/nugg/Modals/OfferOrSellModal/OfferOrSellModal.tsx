@@ -24,6 +24,7 @@ import TokenViewer from '../../TokenViewer';
 import constants from '../../../../lib/constants';
 
 import styles from './OffeOrSellModal.styles';
+import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
 
 type Props = {};
 
@@ -154,7 +155,8 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 </div>
             </div>
             <div style={styles.subContainer}>
-                <Button
+                <FeedbackButton
+                    feedbackText="Check Wallet..."
                     disabled={amountArray && !amountArray.canDelegate}
                     buttonStyle={styles.button}
                     label={
