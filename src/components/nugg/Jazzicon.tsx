@@ -7,7 +7,7 @@ const Jazzicon: FC<{ address: string }> = ({ address }) => {
     useEffect(() => {
         const current = ref.current;
         if (current && address) {
-            const jazzman = jazziconer(20, parseInt(address.slice(2, 10), 16));
+            const jazzman = jazziconer(30, parseInt(address.slice(2, 10), 16));
             current.appendChild(jazzman);
 
             return () => {
@@ -20,7 +20,7 @@ const Jazzicon: FC<{ address: string }> = ({ address }) => {
         }
     }, [ref, address]);
 
-    return <div ref={ref} style={{ height: '20px', width: '20px' }} />;
+    return <div ref={ref} style={{ height: '30px', width: '30px' }} />;
 };
 
 export default Jazzicon;

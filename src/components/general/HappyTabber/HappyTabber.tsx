@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { CSSProperties, FunctionComponent, useState } from 'react';
 import { animated, useSpring, useTransition, config } from 'react-spring';
 
 import { isUndefinedOrNullOrArrayEmpty } from '../../../lib';
@@ -16,6 +16,9 @@ export type HappyTabberItem = {
 type Props = {
     items: HappyTabberItem[];
     defaultActiveIndex?: number;
+    containerStyle?: CSSProperties;
+    bodyStyle?: CSSProperties;
+    headerTextStyle?: CSSProperties;
 };
 
 const WIDTH = 350;
@@ -23,6 +26,9 @@ const WIDTH = 350;
 const HappyTabber: FunctionComponent<Props> = ({
     items,
     defaultActiveIndex = 0,
+    containerStyle,
+    bodyStyle,
+    headerTextStyle,
 }) => {
     const [activeIndex, setActiveIndex] = useState(defaultActiveIndex);
     const screenType = AppState.select.screenType();
@@ -38,6 +44,7 @@ const HappyTabber: FunctionComponent<Props> = ({
 
     const tabFadeTransition = useTransition(items[activeIndex]?.comp, {
         from: {
+            ...bodyStyle,
             opacity: 0,
             position: 'absolute',
             height: '100%',
@@ -81,7 +88,7 @@ const HappyTabber: FunctionComponent<Props> = ({
                             onClick={() => setActiveIndex(index)}>
                             <Text
                                 textStyle={{
-                                    color: Colors.nuggRedText,
+                                    ...headerTextStyle,
                                     ...(index === activeIndex
                                         ? styles.headerTextBold
                                         : styles.headerText),

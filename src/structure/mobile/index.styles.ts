@@ -8,6 +8,7 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
+        transition: 'background 1s ease',
     },
     account: {
         position: 'absolute',
@@ -18,7 +19,6 @@ const styles = NLStyleSheetCreator({
         padding: '.5rem',
     },
     bottomBar: {
-        height: '7%',
         position: 'relative',
     },
     viewContainer: {

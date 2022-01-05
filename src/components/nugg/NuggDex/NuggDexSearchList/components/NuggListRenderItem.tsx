@@ -6,7 +6,10 @@ import React, {
     useMemo,
 } from 'react';
 
-import { isUndefinedOrNullOrObjectEmpty, isUndefinedOrNullOrStringEmpty } from '../../../../../lib';
+import {
+    isUndefinedOrNullOrObjectEmpty,
+    isUndefinedOrNullOrStringEmpty,
+} from '../../../../../lib';
 import Label from '../../../../general/Label/Label';
 import { ListRenderItemProps } from '../../../../general/List/List';
 import TokenState from '../../../../../state/token';
@@ -35,26 +38,14 @@ const NuggListRenderItem: FunctionComponent<Props> = ({
         };
     }, [item, selected]);
 
-    const Body = useCallback(() => {
-        return !isUndefinedOrNullOrObjectEmpty(item) ? (
-            <div style={styles.nuggListRenderItemNugg}>
-                <TokenViewer
-                    tokenId={item.id || ''}
-                    style={{ height: '140px', width: '140px' }}
-                    data={item.dotnuggRawCache}
-                />
-                <Label
-                    text={'Nugg #' + item.id}
-                    size="larger"
-                    // containerStyles={{ color: Colors.nuggBlueText }}
-                />
-            </div>
-        ) : null;
-    }, [item]);
-
     return (
         <div style={style} onClick={() => action(item)}>
-            <Body />
+            <TokenViewer
+                tokenId={item.id || ''}
+                style={{ height: '200px', width: '200px' }}
+                data={item.dotnuggRawCache}
+            />
+            <Label text={'Nugg #' + item.id} size="larger" />
         </div>
     );
 };

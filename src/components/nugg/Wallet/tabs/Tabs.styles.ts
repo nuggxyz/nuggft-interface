@@ -3,7 +3,7 @@ import Layout from '../../../../lib/layout';
 
 const styles = NLStyleSheetCreator({
     container: {
-        padding: '1rem',
+        // padding: '1rem',
         width: '100%',
         height: '100%',
         display: 'flex',

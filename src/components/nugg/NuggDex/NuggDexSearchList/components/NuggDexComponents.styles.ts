@@ -52,11 +52,11 @@ const styles = NLStyleSheetCreator({
     },
     nuggListRenderItemContainer: {
         width: '100%',
-        marginTop: '1rem',
+        height: '200px',
+        marginTop: '10px',
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
-        padding: '.5rem 1rem',
         borderRadius: Layout.borderRadius.mediumish,
         transition: `background .7s ${Layout.animation}`,
         cursor: 'pointer',
@@ -64,7 +64,10 @@ const styles = NLStyleSheetCreator({
     },
     nuggListRenderItemNugg: {
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
     },
     nuggLinkThumbnailContainer: {
         display: 'flex',

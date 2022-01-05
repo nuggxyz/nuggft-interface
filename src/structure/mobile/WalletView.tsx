@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
 import Wallet from '../../components/nugg/Wallet/Wallet';
+import Colors from '../../lib/colors';
 
 type Props = {};
 
@@ -12,7 +13,7 @@ const WalletView: FunctionComponent<Props> = () => {
                 alignItems: 'flex-end',
                 justifyContent: 'center',
                 width: '100%',
-                height: '95%',
+                height: '100%',
                 padding: '0rem .5rem',
             }}>
             <Wallet />

@@ -77,10 +77,10 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
                     <TokenViewer
                         tokenId={epoch?.id || ''}
                         style={{
-                            width: '35px',
-                            height: '35px',
+                            width: '37px',
+                            height: '37px',
                             marginTop: '0.2rem',
-                            margin: '0rem .5rem',
+                            margin: '0rem .5rem 0rem 0rem',
                         }}
                     />
                 </div>

@@ -38,6 +38,7 @@ const CircleTimer: FunctionComponent<Props> = ({
     style,
     width,
 }) => {
+    const dimensions = AppState.select.dimensions();
     const timerCircleRadius = useMemo(() => width / 6.5, [width]);
     const circumference = useMemo(
         () => timerCircleRadius * TWOPI,
@@ -119,6 +120,7 @@ const CircleTimer: FunctionComponent<Props> = ({
                 <animated.circle
                     cx="50%"
                     cy="50%"
+                    style={styles.circle}
                     r={timerCircleRadius}
                     stroke={'white'}
                     strokeDashoffset={x}

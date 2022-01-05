@@ -186,7 +186,7 @@ const NuggList: FunctionComponent<Props> = ({
                         onScrollEnd({ setLoading, filters, addToList: true });
                     }}
                     action={onClick}
-                    itemHeight={176}
+                    itemHeight={210}
                     animationToggle={animationToggle}
                 />
             </animated.div>
