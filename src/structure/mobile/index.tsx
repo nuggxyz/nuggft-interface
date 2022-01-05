@@ -3,6 +3,7 @@ import { animated, config, useTransition } from 'react-spring';
 
 import AccountViewer from '../../components/nugg/AccountViewer/AccountViewer';
 import FloorPrice from '../../components/nugg/FloorPrice';
+import Colors from '../../lib/colors';
 import AppState from '../../state/app';
 import TokenState from '../../state/token';
 
@@ -38,11 +39,17 @@ const Mobile: FunctionComponent<Props> = () => {
         leave: { opacity: 0 },
         config: config.default,
     });
+
     return (
-        <div style={styles.container}>
-            <div style={styles.account}>
+        <div
+            style={{
+                ...styles.container,
+                background:
+                    currentView === 'Wallet' ? Colors.gradient3 : 'transparent',
+            }}>
+            {/* <div style={styles.account}>
                 <AccountViewer />
-            </div>
+            </div> */}
             <div style={styles.viewContainer}>
                 {tabFadeTransition((style, value) => (
                     //@ts-ignore

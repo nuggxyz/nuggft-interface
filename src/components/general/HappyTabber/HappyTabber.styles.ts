@@ -42,13 +42,7 @@ const styles = NLStyleSheetCreator({
         color: 'black',
         width: '100%',
         height: '100%',
-        // textDecoration: 'none',
         position: 'relative',
-        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadows.nuggPink}`,
-        borderRadius: Layout.borderRadius.medium,
-        background: Colors.gradient3,
-        // backgroundSize: '400% 400%',
-        padding: '.75rem',
     },
     item: {
         position: 'absolute',

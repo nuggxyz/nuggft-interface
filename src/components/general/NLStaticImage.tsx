@@ -28,7 +28,7 @@ const NLStaticImage: FunctionComponent<Props> = ({ image }) => {
             case 'eth':
                 return <img src={eth} height={20} width={20} />;
             case 'nugg':
-                return <img src={nugg} height={40} width={40} />;
+                return <img src={nugg} height={35} width={35} />;
             default:
                 return null;
         }

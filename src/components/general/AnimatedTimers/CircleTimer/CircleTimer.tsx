@@ -113,13 +113,14 @@ const CircleTimer: FunctionComponent<Props> = ({
         <div style={{ ...style, ...styles.container }}>
             <div style={styles.childrenContainer}>{children}</div>
             <svg
-                height={dimensions.width}
-                width={dimensions.height}
+                height="100%"
+                width="100%"
                 filter={`drop-shadow(-10px 0px 15px ${shadowColor})`}
                 style={styles.svgTransition}>
                 <animated.circle
                     cx="50%"
                     cy="50%"
+                    style={styles.circle}
                     r={timerCircleRadius}
                     stroke={'white'}
                     strokeDashoffset={x}

@@ -29,6 +29,7 @@ const SearchView: FunctionComponent<Props> = () => {
         useState<NL.Redux.NuggDex.SearchViews>('all nuggs');
     const selected = TokenState.select.tokenId();
     const epoch = ProtocolState.select.epoch();
+    const [loading, setLoading] = useState(false);
 
     const [allNuggs, setAllNuggs] = useState<
         NL.GraphQL.Fragments.Nugg.ListItem[]
@@ -130,7 +131,7 @@ const SearchView: FunctionComponent<Props> = () => {
     );
 
     useEffect(() => {
-        onScrollEnd({});
+        onScrollEnd({ setLoading });
     }, []);
 
     const { opacity } = useSpring({

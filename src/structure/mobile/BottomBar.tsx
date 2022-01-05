@@ -1,8 +1,11 @@
 import React, { FunctionComponent, useCallback } from 'react';
 import { BookOpen, ChevronLeft, Search } from 'react-feather';
+import { IoWalletSharp, IoBookSharp } from 'react-icons/io5';
 
 import Button from '../../components/general/Buttons/Button/Button';
 import ChainIndicator from '../../components/general/Buttons/ChainIndicator/ChainIndicator';
+import NLStaticImage from '../../components/general/NLStaticImage';
+import Jazzicon from '../../components/nugg/Jazzicon';
 import TokenViewer from '../../components/nugg/TokenViewer';
 import Colors from '../../lib/colors';
 import FontSize from '../../lib/fontSize';
@@ -10,6 +13,7 @@ import Layout from '../../lib/layout';
 import AppState from '../../state/app';
 import SwapState from '../../state/swap';
 import TokenState from '../../state/token';
+import Web3State from '../../state/web3';
 
 import styles from './BottomBar.styles';
 
@@ -21,22 +25,9 @@ const BottomBar: FunctionComponent<Props> = () => {
     const onClick = useCallback((view: NL.Redux.App.MobileViews) => {
         AppState.dispatch.changeMobileView(view);
     }, []);
+    const address = Web3State.select.web3address();
     return (
         <div style={styles.container}>
-            <Button
-                onClick={() => onClick('Wallet')}
-                rightIcon={<BookOpen color={Colors.nuggBlueText} />}
-                buttonStyle={{
-                    ...styles.button,
-                    background:
-                        mobileView === 'Wallet'
-                            ? Colors.nuggBlueTransparent
-                            : 'transparent',
-                }}
-            />
-            <ChainIndicator
-                onClick={mobileView !== 'Mint' && (() => onClick('Mint'))}
-            />
             <Button
                 onClick={() =>
                     nuggSelected && mobileView === 'Search'
@@ -47,7 +38,7 @@ const BottomBar: FunctionComponent<Props> = () => {
                     nuggSelected && mobileView === 'Search' ? (
                         <ChevronLeft color={Colors.nuggBlueText} />
                     ) : (
-                        <Search color={Colors.nuggBlueText} />
+                        <IoBookSharp color="white" size="25" />
                     )
                 }
                 label={nuggSelected && mobileView === 'Search' ? 'Back' : ''}
@@ -64,6 +55,20 @@ const BottomBar: FunctionComponent<Props> = () => {
                             : '.5rem',
                     background:
                         mobileView === 'Search'
+                            ? Colors.nuggBlueTransparent
+                            : 'transparent',
+                }}
+            />
+            <ChainIndicator
+                onClick={mobileView !== 'Mint' && (() => onClick('Mint'))}
+            />
+            <Button
+                onClick={() => onClick('Wallet')}
+                rightIcon={<IoWalletSharp color="white" size="25" />}
+                buttonStyle={{
+                    ...styles.button,
+                    background:
+                        mobileView === 'Wallet'
                             ? Colors.nuggBlueTransparent
                             : 'transparent',
                 }}

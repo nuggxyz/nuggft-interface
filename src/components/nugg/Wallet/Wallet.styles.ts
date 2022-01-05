@@ -1,4 +1,6 @@
 import { NLStyleSheetCreator } from '../../../lib';
+import Colors from '../../../lib/colors';
+import Layout from '../../../lib/layout';
 
 const styles = NLStyleSheetCreator({
     container: {
@@ -19,6 +21,21 @@ const styles = NLStyleSheetCreator({
         // position: 'absolute',
         justifySelf: 'center',
         pointerEvents: 'auto',
+    },
+    body: {
+        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadows.nuggPink}`,
+        borderRadius: Layout.borderRadius.medium,
+        background: Colors.gradient3,
+        padding: '.75rem',
+    },
+    headerText: {
+        color: Colors.nuggRedText,
+    },
+    mobileBody: {
+        padding: '.5rem 0rem 0rem 0rem',
+    },
+    mobileHeaderText: {
+        color: 'white',
     },
 });
 

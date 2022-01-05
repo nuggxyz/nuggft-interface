@@ -74,7 +74,17 @@ const Wallet: FunctionComponent<Props> = () => {
                 ...(screenType === 'tablet' && { width: '100%' }),
                 ...(screenType === 'phone' && { height: '100%' }),
             }}>
-            <HappyTabber items={happytabs} />
+            <HappyTabber
+                items={happytabs}
+                bodyStyle={
+                    screenType === 'phone' ? styles.mobileBody : styles.body
+                }
+                headerTextStyle={
+                    screenType === 'phone'
+                        ? styles.mobileHeaderText
+                        : styles.headerText
+                }
+            />
         </div>
     );
 };
