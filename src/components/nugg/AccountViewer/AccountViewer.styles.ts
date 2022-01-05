@@ -11,6 +11,7 @@ const styles = NLStyleSheetCreator({
         borderRadius: Layout.borderRadius.large,
         // padding: '.6rem 1rem',
         pointerEvents: 'auto',
+        paddingRight: '.5rem',
     },
     textContainer: {
         display: 'flex',

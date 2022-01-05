@@ -36,7 +36,10 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
         if (close) {
             setHidden(true);
             let id = setTimeout(
-                () => AppState.dispatch.removeToastFromList(toast),
+                () =>
+                    AppState.dispatch.removeToastFromList({
+                        index: toast.index,
+                    }),
                 500,
             );
             return () => clearTimeout(id);

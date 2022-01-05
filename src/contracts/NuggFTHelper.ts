@@ -116,22 +116,11 @@ export default class NuggFTHelper extends ContractHelper {
     public static async approve(
         spender: Address,
         tokenId: string,
-    ): Promise<NL.Redux.Transaction.Response<TokenApproveInfo>> {
+    ): Promise<string> {
         let response = await this.instance
             .connect(Web3State.getLibraryOrProvider())
             .approve(spender.hash, tokenId);
-        return {
-            response,
-            hash: response.hash,
-            addedTime: new Date().getTime(),
-            from: response.from,
-            info: {
-                tokenId,
-                type: TransactionType.TOKEN_APPROVE,
-                // spender,
-                // erc721: new Address(this.instance.address),
-            },
-        };
+        return response.hash;
     }
     public static async sellerApproval(tokenId: string): Promise<boolean> {
         let response = await this.instance

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
+import { BigNumber } from 'ethers';
 
 import {
     isUndefinedOrNullOrArrayEmpty,
@@ -62,8 +63,11 @@ export default () => {
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
             window.ethereum.on('connect', (chainId) => {
-                console.log('eth event: connect', { chainId });
-                Web3State.dispatch.setCurrentChain(chainId);
+                console.log('ss');
+                console.log('eth event: connect', chainId);
+                Web3State.dispatch.setCurrentChain(
+                    BigNumber.from(chainId).toNumber(),
+                );
             });
             window.ethereum.on('disconnect', () => {
                 console.log('eth event: disconnect');
@@ -79,7 +83,9 @@ export default () => {
             });
             window.ethereum.on('chainChanged', (chainId) => {
                 console.log('eth event: chainChanged', { chainId });
-                Web3State.dispatch.setCurrentChain(chainId);
+                Web3State.dispatch.setCurrentChain(
+                    BigNumber.from(chainId).toNumber(),
+                );
             });
             window.ethereum.on(
                 'message',

@@ -37,6 +37,10 @@ const store = configureStore({
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {
+                ignoredActions: [
+                    'app/addToastToList',
+                    'app/removeToastFromList',
+                ],
                 ignoredPaths: ['app'],
             },
         }).concat(Object.values(states).flatMap((state) => state.middlewares)),

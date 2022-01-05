@@ -32,7 +32,7 @@ const logger: NL.Redux.Middleware<
             '%cAction',
             'color: #6FAAF7; font-weight: bold',
             action.type,
-            action.payload,
+            // action.payload,
         );
         let fin = next(action);
         // console.log(

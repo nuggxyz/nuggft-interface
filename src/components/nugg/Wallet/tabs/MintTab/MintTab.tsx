@@ -214,10 +214,7 @@ const MintTab: FunctionComponent<Props> = () => {
                                         })
                                         .then((_pendingtx) =>
                                             TransactionState.dispatch.initiate({
-                                                _pendingtx: {
-                                                    from: _pendingtx.from,
-                                                    hash: _pendingtx.hash,
-                                                },
+                                                _pendingtx: _pendingtx.hash,
                                             }),
                                         );
                             }),

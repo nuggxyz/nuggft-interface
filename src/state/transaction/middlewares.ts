@@ -3,6 +3,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import {
     isUndefinedOrNullOrNotFunction,
     isUndefinedOrNullOrObjectEmpty,
+    isUndefinedOrNullOrStringEmpty,
     shortenTxnHash,
 } from '../../lib';
 import AppState from '../app';
@@ -21,19 +22,15 @@ export const pending: NL.Redux.Middleware<
     async (action: PayloadAction<NL.Redux.Transaction.PendingMiddlewareTx>) => {
         if (
             !isUndefinedOrNullOrObjectEmpty(action.payload) &&
-            !isUndefinedOrNullOrObjectEmpty(action.payload._pendingtx)
+            !isUndefinedOrNullOrStringEmpty(action.payload._pendingtx)
         ) {
-            TransactionState.dispatch.addTransaction({
-                hash: action.payload._pendingtx.hash,
-                from: action.payload._pendingtx.from,
-                info: action.payload._pendingtx.info,
-            });
+            TransactionState.dispatch.addTransaction(action.payload._pendingtx);
             AppState.dispatch.addToastToList({
                 duration: 0,
                 title: 'Pending Transaction',
-                message: shortenTxnHash(action.payload._pendingtx.hash),
+                message: shortenTxnHash(action.payload._pendingtx),
                 error: false,
-                id: action.payload._pendingtx.hash,
+                id: action.payload._pendingtx,
                 index: getState().app.toasts.length,
                 loading: true,
                 action: () => {
@@ -41,7 +38,7 @@ export const pending: NL.Redux.Middleware<
                         `${
                             Web3Config.CHAIN_INFO[getState().web3.currentChain]
                                 .explorer
-                        }/tx/${action.payload._pendingtx.hash}`,
+                        }/tx/${action.payload._pendingtx}`,
                         '_blank',
                     );
                     win.focus();
@@ -52,20 +49,19 @@ export const pending: NL.Redux.Middleware<
             }
         }
         if (NLState.hasSuffix(action, 'finalizeTransaction')) {
-            //@ts-ignore
-            const successful = action.payload.receipt.status ? true : false;
             AppState.dispatch.replaceToast({
                 //@ts-ignore
                 id: action.payload.hash,
-                duration: successful ? 5000 : 0,
+                //@ts-ignore
+                duration: action.payload.successful ? 5000 : 0,
                 loading: false,
-                error: !successful,
-                title: successful
+                //@ts-ignore
+                error: !action.payload.successful,
+                //@ts-ignore
+                title: action.payload.successful
                     ? 'Successful Transaction'
                     : 'Transaction Failed',
             });
-            // const tmp = action.payload._pendingtx
-            //     ?.info as NL.Redux.Transaction.ERC721ApprovalInfo;
         }
         return next(action);
     };

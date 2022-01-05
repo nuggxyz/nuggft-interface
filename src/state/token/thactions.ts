@@ -21,10 +21,7 @@ const initSale = createAsyncThunk<
 
         return {
             success: 'SUCCESS',
-            _pendingtx: {
-                from: _pendingtx.from,
-                hash: _pendingtx.hash,
-            },
+            _pendingtx: _pendingtx.hash,
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {
