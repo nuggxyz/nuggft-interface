@@ -38,7 +38,7 @@ const styles = NLStyleSheetCreator({
     tabletMain: {
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         alignItems: 'center',
         height: '100%',
         width: '70%',
@@ -50,6 +50,7 @@ const styles = NLStyleSheetCreator({
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
+        position: 'absolute',
         alignItems: 'flex-start',
     },
     tabletRingAbout: {
