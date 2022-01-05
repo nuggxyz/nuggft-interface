@@ -19,7 +19,7 @@ const useEns = (address: string): string => {
     const [addr, setAddr] = useState('');
 
     const getData = useCallback(async () => {
-        if (address) {
+        if (address && Address.ZERO.hash !== address) {
             const ensAddress = new EnsAddress(address);
             setAddr(Address.shortenAddress(ensAddress));
             await ensAddress.ensureEns();

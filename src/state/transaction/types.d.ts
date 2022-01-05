@@ -1,28 +1,7 @@
 type base = import('./interfaces').BaseTransactionInfo;
 declare namespace NL.Redux.Transaction {
-    interface Details {
-        hash: string;
-        receipt?: SerializableTransactionReceipt;
-        lastCheckedBlockNumber?: number;
-        addedTime: number;
-        confirmedTime?: number;
-        from: string;
-        info: base;
-    }
-
-    interface Response<T extends base> {
-        hash: string;
-        receipt?: SerializableTransactionReceipt;
-        response: TransactionResponse;
-        lastCheckedBlockNumber?: number;
-        addedTime: number;
-        confirmedTime?: number;
-        from: string;
-        info: T;
-    }
-
     type State = {
-        txs: Dictionary<Details>;
+        txn: string;
         toggleCompletedTxn: boolean;
         success: Success;
         error: Error;
@@ -30,22 +9,9 @@ declare namespace NL.Redux.Transaction {
     };
 
     interface PendingMiddlewareTx {
-        _pendingtx: Response<Info>;
+        _pendingtx: string;
         callbackFn?: () => void;
     }
-
-    interface SerializableTransactionReceipt {
-        to: string;
-        from: string;
-        contractAddress: string;
-        transactionIndex: number;
-        blockHash: string;
-        transactionHash: string;
-        blockNumber: number;
-        status?: number;
-    }
-
-    type Map = { [txHash: string]: Details };
 
     type Success =
         | 'PLACED_BID'

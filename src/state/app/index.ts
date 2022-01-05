@@ -90,9 +90,11 @@ class AppState extends NLState<NL.Redux.App.State> {
             },
             removeToastFromList: (
                 state,
-                action: PayloadAction<NL.Redux.App.Toast>,
+                action: PayloadAction<
+                    Partial<NL.Redux.App.Toast> & { index: number }
+                >,
             ) => {
-                let temp = state.toasts;
+                let temp = [...state.toasts];
                 state.toasts = smartRemove(temp, action.payload);
             },
             replaceToast: (

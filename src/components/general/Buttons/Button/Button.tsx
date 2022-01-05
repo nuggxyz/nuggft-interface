@@ -6,7 +6,7 @@ import Text from '../../Texts/Text/Text';
 
 import styles from './Button.styles';
 
-type Props = {
+export type ButtonProps = {
     onClick: any | (() => void);
     label?: string;
     buttonStyle?: React.CSSProperties;
@@ -18,7 +18,7 @@ type Props = {
     isHovering?: (hover: boolean) => void;
 };
 
-const Button: FunctionComponent<Props> = ({
+const Button: FunctionComponent<ButtonProps> = ({
     onClick,
     label,
     buttonStyle,

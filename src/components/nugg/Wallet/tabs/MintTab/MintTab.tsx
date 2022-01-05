@@ -32,7 +32,7 @@ import listStyle from '../HistoryTab.styles';
 import Text from '../../../../general/Texts/Text/Text';
 import Colors from '../../../../../lib/colors';
 import AppState from '../../../../../state/app';
-import LinkAccountButton from '../../../../general/Buttons/LinkAccountButton/LinkAccountButton';
+import AccountViewer from '../../../AccountViewer/AccountViewer';
 import styles from '../Tabs.styles';
 import useAsyncState from '../../../../../hooks/useAsyncState';
 import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQuery';
@@ -44,6 +44,7 @@ import InfiniteList from '../../../../general/List/InfiniteList';
 import FontSize from '../../../../../lib/fontSize';
 import TokenState from '../../../../../state/token';
 import NuggDexState from '../../../../../state/nuggdex';
+import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
 
 type Props = {};
 
@@ -166,7 +167,8 @@ const MintTab: FunctionComponent<Props> = () => {
                     />
                 </div>
             </div>
-            <Button
+            <FeedbackButton
+                feedbackText="Check Wallet..."
                 buttonStyle={{
                     ...swapStyles.button,
                     margin: '0rem',
@@ -214,10 +216,7 @@ const MintTab: FunctionComponent<Props> = () => {
                                         })
                                         .then((_pendingtx) =>
                                             TransactionState.dispatch.initiate({
-                                                _pendingtx: {
-                                                    from: _pendingtx.from,
-                                                    hash: _pendingtx.hash,
-                                                },
+                                                _pendingtx: _pendingtx.hash,
                                             }),
                                         );
                             }),

@@ -37,6 +37,12 @@ const store = configureStore({
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {
+                ignoredActions: [
+                    'app/addToastToList',
+                    'app/removeToastFromList',
+                    'swap/placeOffer/fulfilled',
+                    'wallet/claim/fulfilled',
+                ],
                 ignoredPaths: ['app'],
             },
         }).concat(Object.values(states).flatMap((state) => state.middlewares)),

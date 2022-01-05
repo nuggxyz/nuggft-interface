@@ -19,7 +19,7 @@ export default class Web3Config {
     }
 
     static NETWORK_HEALTH_CHECK_MS = 15 * 1000;
-    static DEFAULT_MS_BEFORE_WARNING = 0.5 * 60 * 1000;
+    static DEFAULT_MS_BEFORE_WARNING = 90 * 1000;
 
     static INFURA_KEY = 'a1625b39cf0047febd415f9b37d8c931';
 

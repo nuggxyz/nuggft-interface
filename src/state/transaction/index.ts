@@ -28,7 +28,7 @@ export default class TransactionState extends NLState<NL.Redux.Transaction.State
 
     constructor() {
         super(STATE_NAME, updater, middlewares, {}, hooks, {
-            txs: {},
+            txn: '',
             toggleCompletedTxn: false,
             success: undefined,
             error: undefined,
@@ -46,64 +46,21 @@ export default class TransactionState extends NLState<NL.Redux.Transaction.State
             clearError: (state) => {
                 state.error = undefined;
             },
-            clearTransactions: (state) => {
-                state.txs = {};
+            clearTransaction: (state) => {
+                state.txn = '';
             },
-            initiate: (state, action: PayloadAction<{ _pendingtx: any }>) => {},
-            addTransaction: (
-                state,
-                action: PayloadAction<{
-                    hash: string;
-                    from: string;
-                    info: BaseTransactionInfo;
-                }>,
-            ) => {
-                if (state.txs?.[action.payload.hash]) {
-                    return; // TODO maybe throw error?
-                }
-                state.txs[action.payload.hash] = {
-                    hash: action.payload.hash,
-                    info: action.payload.info,
-                    from: action.payload.from,
-                    addedTime: new Date().getTime(),
-                };
+            initiate: (_, __: PayloadAction<{ _pendingtx: any }>) => {},
+            addTransaction: (state, action: PayloadAction<string>) => {
+                state.txn = action.payload;
             },
             finalizeTransaction: (
                 state,
-                action: PayloadAction<{
+                _: PayloadAction<{
                     hash: string;
-                    receipt: NL.TransactionReceipt;
+                    successful: boolean;
                 }>,
             ) => {
-                if (!state.txs?.[action.payload.hash]) {
-                    return; // TODO maybe throw error?
-                }
-                state.txs[action.payload.hash].receipt = action.payload.receipt;
-                state.txs[action.payload.hash].confirmedTime =
-                    new Date().getTime();
                 state.toggleCompletedTxn = !state.toggleCompletedTxn;
-            },
-            checkedTransaction: (
-                state,
-                action: PayloadAction<{
-                    hash: string;
-                    blockNumber: number;
-                }>,
-            ) => {
-                if (!state.txs?.[action.payload.hash]) {
-                    return; // TODO maybe throw error?
-                }
-                if (!state.txs[action.payload.hash].lastCheckedBlockNumber) {
-                    state.txs[action.payload.hash].lastCheckedBlockNumber =
-                        action.payload.blockNumber;
-                } else {
-                    state.txs[action.payload.hash].lastCheckedBlockNumber =
-                        Math.max(
-                            action.payload.blockNumber,
-                            state.txs[action.payload.hash]
-                                .lastCheckedBlockNumber,
-                        );
-                }
             },
         },
         extraReducers: (builder) =>

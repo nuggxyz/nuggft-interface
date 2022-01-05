@@ -139,40 +139,45 @@ const NuggList: FunctionComponent<Props> = ({
                     ...style,
                 }}>
                 {screenType !== 'phone' && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            ...styles.nuggListTitle,
-                            ...globalStyles.backdropFilter,
-                            zIndex: 10,
-                        }}>
-                        <TransitionText
-                            Icon={ChevronLeft}
+                    <div style={styles.nuggListTitle}>
+                        <div
                             style={{
-                                marginTop: '.12rem',
-                                // color: Colors.nuggBlueText
-                            }}
-                            text={ucFirst(localViewing)}
-                            transitionText="Go back"
-                            onClick={() => {
-                                NuggDexState.dispatch.setSearchFilters({
-                                    searchValue: '',
-                                    sort: {
-                                        asc: true,
-                                        by: 'id',
-                                    },
-                                });
-                                setLocalViewing('home');
-                            }}
-                        />
+                                display: 'flex',
+                                justifyContent: 'flex-start',
+                                alignItems: 'center',
+                                width: '100%',
+                                padding: '.5rem',
+                                height: '100%',
+                                ...globalStyles.backdropFilter,
+                            }}>
+                            <TransitionText
+                                Icon={ChevronLeft}
+                                style={{
+                                    marginTop: '.12rem',
+                                    // color: Colors.nuggBlueText
+                                }}
+                                text={ucFirst(localViewing)}
+                                transitionText="Go back"
+                                onClick={() => {
+                                    NuggDexState.dispatch.setSearchFilters({
+                                        searchValue: '',
+                                        sort: {
+                                            asc: true,
+                                            by: 'id',
+                                        },
+                                    });
+                                    setLocalViewing('home');
+                                }}
+                            />
+                        </div>
                     </div>
                 )}
                 <InfiniteList
-                    // style={{
-                    //     padding: '1.7rem 1rem',
-                    //     zIndex: 0,
-                    //     position: 'absolute',
-                    // }}
+                    style={{
+                        // padding: '1.7rem 1rem',
+                        zIndex: 0,
+                        // position: 'absolute',
+                    }}
                     // extraData={[images]}/
                     data={values}
                     RenderItem={NuggListRenderItem}

@@ -32,7 +32,7 @@ const logger: NL.Redux.Middleware<
             '%cAction',
             'color: #6FAAF7; font-weight: bold',
             action.type,
-            action.payload,
+            // action.payload,
         );
         let fin = next(action);
         // console.log(
@@ -149,7 +149,7 @@ const rejectedThactions: Middleware<{}, any, Dispatch<any>> =
                 duration: 0,
                 error: true,
                 loading: false,
-                message: 'An unknown error has occured',
+                message: action.type,
                 title: 'Error',
             });
         }

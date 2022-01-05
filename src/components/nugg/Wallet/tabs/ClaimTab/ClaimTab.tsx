@@ -21,10 +21,13 @@ import List, { ListRenderItemProps } from '../../../../general/List/List';
 import listStyles from '../HistoryTab.styles';
 import Colors from '../../../../../lib/colors';
 import styles from '../Tabs.styles';
+import TransactionState from '../../../../../state/transaction';
+import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
 
 type Props = { isActive?: boolean };
 
 const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
+    const txnToggle = TransactionState.select.toggleCompletedTxn();
     const address = Web3State.select.web3address();
     const epoch = ProtocolState.select.epoch();
     const [unclaimedOffers, setUnclaimedOffers] = useState([]);
@@ -48,7 +51,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                 getUnclaimedOffers();
             }, 500);
         }
-    }, [address]);
+    }, [address, txnToggle]);
 
     return (
         <div style={styles.container}>
@@ -111,7 +114,8 @@ const RenderItem: FunctionComponent<
                             : `Swap #${item.swap.num}`}
                     </Text>
                 </div>
-                <Button
+                <FeedbackButton
+                    feedbackText="Check Wallet..."
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
                     label={`Claim ${isWinner ? 'Nugg' : 'ETH'}`}

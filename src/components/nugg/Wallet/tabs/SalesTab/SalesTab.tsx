@@ -26,6 +26,7 @@ import NuggListRenderItem from '../../../NuggDex/NuggDexSearchList/components/Nu
 import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSalesQuery';
 import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
 import styles from '../Tabs.styles';
+import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
 
 type Props = { isActive?: boolean };
 
@@ -123,7 +124,8 @@ const RenderItem: FunctionComponent<
                             : `Swap #${item.num}`}
                     </Text>
                 </div>
-                <Button
+                <FeedbackButton
+                    feedbackText="Check Wallet..."
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
                     label={`Reclaim ${

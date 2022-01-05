@@ -4,6 +4,8 @@ export default {
     ENS: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
     NUGG_PROTOCOL: '0x42069',
     SALT: 'DUBNDAN',
+    EPOCH_INTERVAL: 69,
+    EPOCH_OFFSET: 3000,
 };
 
 export const NetworkContextName = 'NETWORK';

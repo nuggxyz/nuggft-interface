@@ -37,7 +37,7 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
             totalNuggs: '0',
             totalItems: '0',
             totalItemSwaps: '0',
-            genesisBlock: '0',
+            genesisBlock: undefined,
             interval: '0',
             xnuggTotalSupply: '0',
             xnuggTotalEth: '0',
@@ -76,6 +76,15 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
             setCurrentBlock: (state, action: PayloadAction<number>) => {
                 state.currentBlock = action.payload;
             },
+            setGenesisBlock: (state, action: PayloadAction<number>) => {
+                state.genesisBlock = action.payload;
+            },
+            setEpoch: (
+                state,
+                action: PayloadAction<NL.GraphQL.Epoch<NL.GraphQL.Scalars>>,
+            ) => {
+                state.epoch = action.payload;
+            },
         },
         extraReducers: (builder) =>
             builder
@@ -85,7 +94,7 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
                         const data = action.payload.data;
                         state.epoch = data.epoch;
                         state.interval = data.interval;
-                        state.genesisBlock = data.genesisBlock;
+                        // state.genesisBlock = data.genesisBlock;
                         state.defaultActiveNugg = data.defaultActiveNugg;
                         state.activeItems = data.activeItems;
                         // state.activeNuggs = data.activeNuggs;

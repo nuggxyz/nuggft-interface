@@ -64,7 +64,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
     const springStyle = useSpring({
         display: 'flex',
         alignItems: 'center',
-        opacity: epoch ? 1 : 0,
+        opacity: epoch && +epoch.id ? 1 : 0,
     });
 
     const LeftIcon = useCallback(
