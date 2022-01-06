@@ -12,12 +12,11 @@ const styles = NLStyleSheetCreator({
     },
     svgTransition: {
         transition: 'filter .5s ease',
-        // transformBox: 'fill-box',
-    },
-    circle: {
+        transformBox: 'fill-box',
         transformOrigin: 'center',
         transform: 'rotate(-90deg)',
     },
+    circle: {},
 });
 
 export default styles;
