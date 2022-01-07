@@ -8,7 +8,7 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 import { toEth } from '../../lib/conversion';
-import NuggFTHelper from '../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import AppState from '../app';
 import Web3State from '../web3';
 
@@ -101,13 +101,9 @@ const placeOffer = createAsyncThunk<
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
 >('swap/placeOffer', async ({ amount, tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance
+        const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
-            .delegate(
-                thunkAPI.getState().web3.web3address,
-                BigNumber.from(tokenId),
-                { value: toEth(amount) },
-            );
+            .delegate(BigNumber.from(tokenId), { value: toEth(amount) });
 
         return {
             success: 'SUCCESS',

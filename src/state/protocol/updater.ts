@@ -15,7 +15,7 @@ import { client } from '../../graphql/client';
 import Web3State from '../web3';
 import useDebounce from '../../hooks/useDebounce';
 import Web3Config from '../web3/Web3Config';
-import NuggFTHelper from '../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import config from '../../config';
 
 import ProtocolState from '.';
@@ -68,7 +68,7 @@ export default () => {
 
     useEffect(() => {
         if (isUndefinedOrNullOrNotNumber(genesisBlock)) {
-            NuggFTHelper.instance
+            NuggftV1Helper.instance
                 .connect(Web3State.getLibraryOrProvider())
                 .genesis()
                 .then((genesis) => {

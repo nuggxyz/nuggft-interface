@@ -4,7 +4,7 @@ import { BigNumber } from 'ethers';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 
 import { EthInt } from '../../../../classes/Fraction';
-import NuggFTHelper from '../../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
 import useAsyncState from '../../../../hooks/useAsyncState';
 import {
     isUndefinedOrNullOrObjectEmpty,
@@ -46,17 +46,17 @@ const LoanInputModal: FunctionComponent<Props> = () => {
     }, [type, targetId]);
 
     const userBalance = useAsyncState(
-        () => NuggFTHelper.ethBalance(Web3State.getLibraryOrProvider()),
+        () => NuggftV1Helper.ethBalance(Web3State.getLibraryOrProvider()),
         [address, stableId],
     );
 
     const amountFromChain = useAsyncState(
         () =>
             stableId && stableType === 'PayOffLoan'
-                ? NuggFTHelper.instance
+                ? NuggftV1Helper.instance
                       .connect(Web3State.getLibraryOrProvider())
-                      .valueForPayoff(stableId)
-                : NuggFTHelper.instance
+                      .valueForLiquidate(stableId)
+                : NuggftV1Helper.instance
                       .connect(Web3State.getLibraryOrProvider())
                       .valueForRebalance(stableId),
         [address, stableId, stableType],

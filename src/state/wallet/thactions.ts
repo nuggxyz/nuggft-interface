@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import NuggFTHelper from '../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrBooleanFalse,
     isUndefinedOrNullOrNotObject,
@@ -60,7 +60,7 @@ const withdraw = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/withdraw`, async ({ tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance
+        const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
             .burn(tokenId);
 
@@ -93,7 +93,7 @@ const approveNugg = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/approveNugg`, async ({ tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.approve(
+        const _pendingtx = await NuggftV1Helper.approve(
             new Address(config.NUGGFT),
             tokenId,
         );
@@ -126,10 +126,10 @@ const claim = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/claim`, async ({ tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance
+        const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
             //@ts-ignore
-            .claim(thunkAPI.getState().web3.web3address, tokenId);
+            .claim(tokenId);
 
         return {
             success: 'SUCCESS',
@@ -159,7 +159,7 @@ const initLoan = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/claim`, async ({ tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance
+        const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
             .loan(tokenId);
 
@@ -192,9 +192,9 @@ const payOffLoan = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/claim`, async ({ tokenId, amount }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance
+        const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
-            .payoff(tokenId, { value: toEth(amount) });
+            .liquidate(tokenId, { value: toEth(amount) });
 
         return {
             success: 'SUCCESS',
@@ -225,7 +225,7 @@ const extend = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/claim`, async ({ tokenId, amount }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance
+        const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
             .rebalance(tokenId, { value: toEth(amount) });
 

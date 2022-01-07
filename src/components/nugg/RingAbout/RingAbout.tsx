@@ -26,7 +26,7 @@ import { fromEth } from '../../../lib/conversion';
 import Colors from '../../../lib/colors';
 import TransactionState from '../../../state/transaction';
 import usePrevious from '../../../hooks/usePrevious';
-import NuggFTHelper from '../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../contracts/NuggftV1Helper';
 
 import styles from './RingAbout.styles';
 

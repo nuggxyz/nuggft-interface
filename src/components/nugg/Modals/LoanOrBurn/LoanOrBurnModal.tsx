@@ -2,7 +2,7 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 
 import AppState from '../../../../state/app';
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
-import NuggFTHelper from '../../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
 import ProtocolState from '../../../../state/protocol';
 import TransactionState from '../../../../state/transaction';
 import TokenViewer from '../../TokenViewer';
@@ -36,7 +36,7 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
 
     useEffect(() => {
         if (!isUndefinedOrNullOrStringEmpty(targetId) && !isApproved) {
-            NuggFTHelper.sellerApproval(targetId).then((res) =>
+            NuggftV1Helper.sellerApproval(targetId).then((res) =>
                 setIsApproved(res),
             );
         }

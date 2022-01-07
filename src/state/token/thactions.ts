@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BigNumberish } from 'ethers';
 
-import NuggFTHelper from '../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrNotObject,
     isUndefinedOrNullOrStringEmpty,
@@ -15,7 +15,7 @@ const initSale = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error; state: NL.Redux.RootState }
 >(`token/initSale`, async ({ tokenId, floor }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance
+        const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
             .swap(tokenId, floor);
 

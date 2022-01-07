@@ -20,44 +20,44 @@ import {
     TransactionType,
 } from '../state/transaction/interfaces';
 import {
-    DotnuggV1Processor,
-    DotnuggV1Processor__factory,
-    NuggFT,
-    NuggFT__factory,
+    DotnuggV1,
+    DotnuggV1__factory,
+    NuggftV1,
+    NuggftV1__factory,
 } from '../typechain';
 import { executeQuery } from '../graphql/helpers';
 import AppState from '../state/app';
 
 import ContractHelper from './abstract/ContractHelper';
 
-export default class NuggFTHelper extends ContractHelper {
-    protected static _instance: NuggFT;
-    protected static _dotnugg: DotnuggV1Processor;
+export default class NuggftV1Helper extends ContractHelper {
+    protected static _instance: NuggftV1;
+    protected static _dotnugg: DotnuggV1;
 
     static get instance() {
-        if (isUndefinedOrNullOrObjectEmpty(NuggFTHelper._instance)) {
-            NuggFTHelper._instance = new Contract(
+        if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._instance)) {
+            NuggftV1Helper._instance = new Contract(
                 config.NUGGFT,
-                NuggFT__factory.abi,
+                NuggftV1__factory.abi,
                 // Web3State.getLibraryOrProvider(),
-            ) as NuggFT;
+            ) as NuggftV1;
         }
-        return NuggFTHelper._instance;
+        return NuggftV1Helper._instance;
     }
 
     static get dotnugg() {
-        if (isUndefinedOrNullOrObjectEmpty(NuggFTHelper._dotnugg)) {
-            NuggFTHelper._dotnugg = new Contract(
+        if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._dotnugg)) {
+            NuggftV1Helper._dotnugg = new Contract(
                 config.DOTNUGG_RESOLVER,
-                DotnuggV1Processor__factory.abi,
+                DotnuggV1__factory.abi,
                 // Web3State.getLibraryOrProvider(),
-            ) as DotnuggV1Processor;
+            ) as DotnuggV1;
         }
-        return NuggFTHelper._dotnugg;
+        return NuggftV1Helper._dotnugg;
     }
 
     static reset() {
-        NuggFTHelper._instance = undefined;
+        NuggftV1Helper._instance = undefined;
     }
     static set instance(_) {
         return;

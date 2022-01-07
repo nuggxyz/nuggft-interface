@@ -9,7 +9,7 @@ import { Promise } from 'bluebird';
 import { batch } from 'react-redux';
 
 import { EthInt } from '../../../../../classes/Fraction';
-import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrStringEmpty,
     isUndefinedOrNullOrArrayEmpty,
@@ -166,7 +166,7 @@ const MintTab: FunctionComponent<Props> = () => {
                 textStyle={{ color: Colors.nuggRedText, fontSize: FontSize.h6 }}
                 label="Mint a Nugg"
                 onClick={() =>
-                    NuggFTHelper.instance
+                    NuggftV1Helper.instance
                         .connect(Web3State.getLibraryOrProvider())
                         .minSharePrice()
                         .then((minPrice) =>
@@ -192,7 +192,7 @@ const MintTab: FunctionComponent<Props> = () => {
                                     res[0].idnum &&
                                     +res[0].idnum + 1 <
                                         constants.PRE_MINT_ENDING_EPOCH &&
-                                    NuggFTHelper.instance
+                                    NuggftV1Helper.instance
                                         .connect(
                                             Web3State.getLibraryOrProvider(),
                                         )

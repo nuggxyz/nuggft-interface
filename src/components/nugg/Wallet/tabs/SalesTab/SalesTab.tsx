@@ -24,7 +24,7 @@ import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import constants from '../../../../../lib/constants';
 import NuggListRenderItem from '../../../NuggDex/NuggDexSearchList/components/NuggListRenderItem';
 import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSalesQuery';
-import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 import styles from '../Tabs.styles';
 import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
 

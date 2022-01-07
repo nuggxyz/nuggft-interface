@@ -1,1 +1,1 @@
-# NuggFT
+# NuggftV1 interface

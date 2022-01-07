@@ -1,6 +1,6 @@
 import React, { Fragment, FunctionComponent, useEffect, useState } from 'react';
 
-import NuggFTHelper from '../../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import { fromEth } from '../../../../lib/conversion';
 import NuggDexState from '../../../../state/nuggdex';
@@ -30,7 +30,7 @@ const BurnModal: FunctionComponent<Props> = () => {
 
     useEffect(() => {
         if (!isUndefinedOrNullOrStringEmpty(selected) && !isApproved) {
-            NuggFTHelper.sellerApproval(selected).then((res) =>
+            NuggftV1Helper.sellerApproval(selected).then((res) =>
                 setIsApproved(res),
             );
         }

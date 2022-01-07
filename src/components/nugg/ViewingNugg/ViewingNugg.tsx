@@ -150,7 +150,7 @@ const Swaps = ({ swaps, tokenId, address, owner, MobileBackButton }) => {
                                 }}>
                                 {ens === config.NUGGFT ||
                                 ens === Address.ZERO.hash
-                                    ? 'NuggFT'
+                                    ? 'NuggftV1'
                                     : ens}
                                 {owner === address && (
                                     <Text
@@ -334,7 +334,7 @@ const SwapItem = ({ swap, index }) => {
                                 color: 'white',
                             }}>
                             {swap.owner.id === Address.ZERO.hash
-                                ? 'NuggFT'
+                                ? 'NuggftV1'
                                 : new EnsAddress(swap.owner.id).short}
                         </Text>
                     </div>

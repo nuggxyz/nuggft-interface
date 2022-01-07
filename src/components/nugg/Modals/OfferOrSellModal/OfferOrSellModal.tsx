@@ -4,7 +4,7 @@ import { BigNumber } from 'ethers';
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 
 import { EthInt } from '../../../../classes/Fraction';
-import NuggFTHelper from '../../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
 import useAsyncState from '../../../../hooks/useAsyncState';
 import {
     isUndefinedOrNullOrObjectEmpty,
@@ -35,14 +35,14 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     const nugg = SwapState.select.nugg();
 
     const userBalance = useAsyncState(
-        () => NuggFTHelper.ethBalance(Web3State.getLibraryOrProvider()),
+        () => NuggftV1Helper.ethBalance(Web3State.getLibraryOrProvider()),
         [address, nugg],
     );
 
     const amountArray = useAsyncState(
         () =>
             nugg &&
-            NuggFTHelper.instance
+            NuggftV1Helper.instance
                 .connect(Web3State.getLibraryOrProvider())
                 .valueForDelegate(address, nugg.id),
         [address, nugg],
@@ -95,7 +95,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             !isApproved &&
             stableType === 'StartSale'
         ) {
-            NuggFTHelper.sellerApproval(stableId).then((res) =>
+            NuggftV1Helper.sellerApproval(stableId).then((res) =>
                 setIsApproved(res),
             );
         } else setIsApproved(true);

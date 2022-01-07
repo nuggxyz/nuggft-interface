@@ -10,7 +10,7 @@ import React, {
 } from 'react';
 
 import pendingToken from '../../assets/images/pending-token.svg';
-import NuggFTHelper from '../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import { isUndefinedOrNullOrStringEmpty } from '../../lib';
 import AppState from '../../state/app';
 import Text, { TextProps } from '../general/Texts/Text/Text';
@@ -44,7 +44,7 @@ const TokenViewer: FunctionComponent<Props> = ({
             if (!isUndefinedOrNullOrStringEmpty(tokenId)) {
                 const dotNuggData = !isUndefinedOrNullOrStringEmpty(data)
                     ? data
-                    : await NuggFTHelper.optimizedDotNugg(tokenId);
+                    : await NuggftV1Helper.optimizedDotNugg(tokenId);
                 if (
                     !isUndefinedOrNullOrStringEmpty(dotNuggData) &&
                     !unmounted

@@ -23,7 +23,7 @@ import Colors from '../../../../../lib/colors';
 import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import constants from '../../../../../lib/constants';
 import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQuery';
-import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 import styles from '../Tabs.styles';
 import AppState from '../../../../../state/app';
 import TransactionState from '../../../../../state/transaction';
