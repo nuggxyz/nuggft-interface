@@ -1,11 +1,24 @@
 import React, { FunctionComponent } from 'react';
 
+import NuggList from '../../../components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
+import NuggDexState from '../../../state/nuggdex';
+
 type Props = {};
 
 const Recents: FunctionComponent<Props> = () => {
+    const recents = NuggDexState.select.recents();
     return (
         <div>
-            <h1>Recents</h1>
+            <NuggList
+                values={recents}
+                style={{
+                    height: '100%',
+                    zIndex: 0,
+                    width: '100%',
+                    position: 'fixed',
+                    background: 'transparent',
+                }}
+            />
         </div>
     );
 };

@@ -86,29 +86,31 @@ const SearchView: FunctionComponent<Props> = () => {
                     alignItems: 'flex-end',
                     overflow: 'scroll',
                 }}>
-                <ViewingNugg />
-                <Button
-                    leftIcon={
-                        <IoChevronBackOutline
-                            color={Colors.nuggBlueText}
-                            size="25"
+                <ViewingNugg
+                    MobileBackButton={() => (
+                        <Button
+                            leftIcon={
+                                <IoChevronBackOutline
+                                    color={Colors.nuggBlueText}
+                                    size="25"
+                                />
+                            }
+                            label="Back"
+                            onClick={() =>
+                                TokenState.dispatch.setNugg(undefined)
+                            }
+                            buttonStyle={{
+                                background: Colors.nuggBlueTransparent,
+                                borderRadius: Layout.borderRadius.large,
+                                paddingLeft: '0.4rem',
+                            }}
+                            textStyle={{
+                                fontFamily: Layout.font.inter.light,
+                                color: Colors.nuggBlueText,
+                                fontSize: FontSize.h6,
+                            }}
                         />
-                    }
-                    label="Back"
-                    onClick={() => TokenState.dispatch.setNugg(undefined)}
-                    buttonStyle={{
-                        position: 'absolute',
-                        bottom: '.5rem',
-                        left: '.5rem',
-                        background: Colors.nuggBlueTransparent,
-                        borderRadius: Layout.borderRadius.large,
-                        paddingLeft: '0.4rem',
-                    }}
-                    textStyle={{
-                        fontFamily: Layout.font.inter.light,
-                        color: Colors.nuggBlueText,
-                        fontSize: FontSize.h6,
-                    }}
+                    )}
                 />
             </animated.div>
         </>

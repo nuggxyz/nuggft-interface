@@ -52,7 +52,11 @@ const Modal: FunctionComponent<Props> = () => {
             ...(screenType === 'phone'
                 ? styles.containerMobile
                 : styles.containerFull),
-            transform: isOpen ? 'translate(8px, 8px)' : 'translate(36px, 36px)',
+            transform: isOpen
+                ? screenType === 'phone'
+                    ? 'translate(10px, 8px)'
+                    : 'translate(8px, 8px)'
+                : 'translate(36px, 36px)',
             ...data.containerStyle,
         },
         config: config.default,
@@ -89,7 +93,9 @@ const Modal: FunctionComponent<Props> = () => {
                 style={{
                     position: 'relative',
                 }}>
-                <animated.div style={containerBackgroundStyle} />
+                {screenType !== 'phone' && (
+                    <animated.div style={containerBackgroundStyle} />
+                )}
                 <animated.div style={containerStyle} ref={node}>
                     {currentModal === 'OfferOrSell' ? (
                         <OfferOrSellModal />

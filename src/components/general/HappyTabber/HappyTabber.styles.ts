@@ -34,7 +34,13 @@ const styles = NLStyleSheetCreator({
         zIndex: 5,
     },
     headerTextBold: { fontWeight: 'bold', fontFamily: Layout.font.inter.bold },
-    headerText: { fontFamily: Layout.font.inter.regular },
+    headerText: {
+        fontFamily: Layout.font.inter.regular,
+    },
+    headerTextMobile: {
+        fontFamily: Layout.font.inter.regular,
+        textShadow: `0 0 20px ${Colors.textColor}`,
+    },
     body: {
         display: 'flex',
         alignItems: 'center',
