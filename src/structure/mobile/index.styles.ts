@@ -20,6 +20,7 @@ const styles = NLStyleSheetCreator({
     },
     bottomBar: {
         position: 'relative',
+        zIndex: 10,
     },
     viewContainer: {
         height: '93%',

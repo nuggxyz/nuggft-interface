@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect } from 'react';
-import { animated, config, useTransition } from 'react-spring';
+import { animated, config, useSpring, useTransition } from 'react-spring';
 
 import AccountViewer from '../../components/nugg/AccountViewer/AccountViewer';
 import FloorPrice from '../../components/nugg/FloorPrice';
@@ -15,6 +15,16 @@ import WalletView from './WalletView';
 
 type Props = {};
 
+const sty = {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingBottom: '1rem',
+};
+
 const Mobile: FunctionComponent<Props> = () => {
     const currentView = AppState.select.mobileView();
     const nugg = TokenState.select.tokenId();
@@ -24,19 +34,25 @@ const Mobile: FunctionComponent<Props> = () => {
         }
     }, [nugg]);
 
-    const tabFadeTransition = useTransition(currentView, {
-        from: {
-            opacity: 0,
-            position: 'absolute',
-            height: '100%',
-            width: '100%',
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'center',
-            paddingBottom: '1rem',
-        },
-        enter: { opacity: 1 },
-        leave: { opacity: 0 },
+    const wallet = useSpring({
+        opacity: currentView === 'Wallet' ? 1 : 0,
+        pointerEvents: currentView === 'Wallet' ? 'auto' : 'none',
+        zIndex: currentView === 'Wallet' ? 1 : 0,
+        ...sty,
+        config: config.default,
+    });
+    const mint = useSpring({
+        opacity: currentView === 'Mint' ? 1 : 0,
+        pointerEvents: currentView === 'Mint' ? 'auto' : 'none',
+        zIndex: currentView === 'Mint' ? 1 : 0,
+        ...sty,
+        config: config.default,
+    });
+    const search = useSpring({
+        opacity: currentView === 'Search' ? 1 : 0,
+        pointerEvents: currentView === 'Search' ? 'auto' : 'none',
+        zIndex: currentView === 'Search' ? 1 : 0,
+        ...sty,
         config: config.default,
     });
 
@@ -51,18 +67,22 @@ const Mobile: FunctionComponent<Props> = () => {
                         ? Colors.gradient2
                         : 'transparent',
             }}>
-            {/* <div style={styles.account}>
-                <AccountViewer />
-            </div> */}
             <div style={styles.viewContainer}>
-                {tabFadeTransition((style, value) => (
-                    //@ts-ignore
-                    <animated.div style={style}>
-                        {value === 'Wallet' && <WalletView />}
-                        {value === 'Mint' && <MintView />}
-                        {value === 'Search' && <SearchView />}
-                    </animated.div>
-                ))}
+                <animated.div
+                    //@ts-ignore¸
+                    style={wallet}>
+                    <WalletView />
+                </animated.div>
+                <animated.div
+                    //@ts-ignore¸
+                    style={mint}>
+                    <MintView />
+                </animated.div>
+                <animated.div
+                    //@ts-ignore¸
+                    style={search}>
+                    <SearchView />
+                </animated.div>
             </div>
             <div style={styles.bottomBar}>
                 <BottomBar />
