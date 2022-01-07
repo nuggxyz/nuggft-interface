@@ -49,8 +49,8 @@ import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackB
 type Props = {};
 
 const MintTab: FunctionComponent<Props> = () => {
+    const screenType = AppState.select.screenType();
     const userShares = WalletState.select.userShares();
-    // const [images, setImages] = useState([]);
     const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
     const address = Web3State.select.web3address();
     const epoch = ProtocolState.select.epoch();
@@ -97,23 +97,9 @@ const MintTab: FunctionComponent<Props> = () => {
         }, 500);
     }, [address]);
 
-    // useEffect(() => {
-    //     const get = async () => {
-    //         const list = myNuggs.slice(images.length);
-    //         if (list.length > 0) {
-    //             const newNuggs = await Promise.map(list, (nugg) =>
-    //                 NuggFTHelper.optimizedDotNugg(nugg),
-    //             );
-    //             setImages((old) => [...old, ...newNuggs]);
-    //         }
-    //     };
-    //     (myNuggs.length !== images.length ||
-    //         (myNuggs.length !== 0 && images.length === 0)) &&
-    //         get();
-    // }, [myNuggs, images]);
-
     return (
         <div style={styles.container}>
+            {screenType === 'phone' && <AccountViewer />}
             <div style={{ margin: '.5rem' }}>
                 <div>
                     <NumberStatistic
