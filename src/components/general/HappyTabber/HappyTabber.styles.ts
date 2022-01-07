@@ -1,5 +1,6 @@
 import { NLStyleSheetCreator } from '../../../lib';
 import Colors from '../../../lib/colors';
+import globalStyles from '../../../lib/globalStyles';
 import Layout from '../../../lib/layout';
 
 const styles = NLStyleSheetCreator({
@@ -33,7 +34,13 @@ const styles = NLStyleSheetCreator({
         zIndex: 5,
     },
     headerTextBold: { fontWeight: 'bold', fontFamily: Layout.font.inter.bold },
-    headerText: { fontFamily: Layout.font.inter.regular },
+    headerText: {
+        fontFamily: Layout.font.inter.regular,
+    },
+    headerTextMobile: {
+        fontFamily: Layout.font.inter.regular,
+        textShadow: `0 0 20px ${Colors.textColor}`,
+    },
     body: {
         display: 'flex',
         alignItems: 'center',
@@ -63,6 +70,7 @@ const styles = NLStyleSheetCreator({
         // backgroundColor: 'rgba(80, 144, 234, 0.4)',
         background: Colors.transparentWhite,
         borderRadius: Layout.borderRadius.mediumish,
+        ...globalStyles.backdropFilter,
     },
 });
 

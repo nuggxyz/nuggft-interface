@@ -91,6 +91,8 @@ const HappyTabber: FunctionComponent<Props> = ({
                                     ...headerTextStyle,
                                     ...(index === activeIndex
                                         ? styles.headerTextBold
+                                        : screenType === 'phone'
+                                        ? styles.headerTextMobile
                                         : styles.headerText),
                                 }}>
                                 {item.label}

@@ -14,11 +14,13 @@ import constants from '../../../lib/constants';
 import { fromEth } from '../../../lib/conversion';
 import Layout from '../../../lib/layout';
 import AppState from '../../../state/app';
+import ProtocolState from '../../../state/protocol';
 import TokenState from '../../../state/token';
 import nuggThumbnailQuery from '../../../state/token/queries/nuggThumbnailQuery';
 import swapHistoryQuery from '../../../state/token/queries/swapHistoryQuery';
 import Web3State from '../../../state/web3';
 import Button from '../../general/Buttons/Button/Button';
+import AnimatedCard from '../../general/Cards/AnimatedCard/AnimatedCard';
 import List from '../../general/List/List';
 import Loader from '../../general/Loader/Loader';
 import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
@@ -27,14 +29,15 @@ import TokenViewer from '../TokenViewer';
 
 import styles from './ViewingNugg.styles';
 
-type Props = {};
+type Props = { MobileBackButton?: () => JSX.Element };
 
-const ViewingNugg: FunctionComponent<Props> = () => {
+const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const tokenId = TokenState.select.tokenId();
     const svg = TokenState.select.tokenURI();
     const address = Web3State.select.web3address();
     const [owner, setOwner] = useState('');
     const [swaps, setSwaps] = useState([]);
+    const screenType = AppState.select.screenType();
 
     const [items, setItems] = useState([tokenId]);
 
@@ -78,30 +81,56 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                     // flexDirection: AppState.isMobile ? 'column' : 'row',
                     ...styles.wrapper,
                 }}>
-                <div style={styles.container}>
-                    <TokenViewer tokenId={tokenId} data={svg} />
-                    <Swaps {...{ swaps, tokenId, address, owner }} />
+                <div
+                    style={{
+                        ...styles.container,
+                        ...(screenType === 'phone' && { width: '95%' }),
+                    }}>
+                    <AnimatedCard>
+                        <TokenViewer
+                            tokenId={tokenId}
+                            data={svg}
+                            showLabel={screenType === 'phone'}
+                        />
+                    </AnimatedCard>
+                    <Swaps
+                        {...{
+                            swaps,
+                            tokenId,
+                            address,
+                            owner,
+                            MobileBackButton,
+                        }}
+                    />
                 </div>
             </div>
         )
     );
 };
 
-const Swaps = ({ swaps, tokenId, address, owner }) => {
+const Swaps = ({ swaps, tokenId, address, owner, MobileBackButton }) => {
     const ens = Web3State.hook.useEns(owner);
+    const epoch = ProtocolState.select.epoch();
+    const filteredSwaps = swaps.filter(
+        (swap) => swap.endingEpoch !== null && swap.endingEpoch !== epoch?.id,
+    );
 
     return (
         <div style={styles.swaps}>
             <div style={styles.owner}>
-                <Text
-                    textStyle={{
-                        color: 'white',
-                        padding: '1rem',
-                        background: Colors.nuggBlueSemiTransparent,
-                        borderRadius: Layout.borderRadius.small,
-                    }}>
-                    Nugg #{tokenId}
-                </Text>
+                {MobileBackButton ? (
+                    <MobileBackButton />
+                ) : (
+                    <Text
+                        textStyle={{
+                            color: 'white',
+                            padding: '1rem',
+                            background: Colors.nuggBlueSemiTransparent,
+                            borderRadius: Layout.borderRadius.small,
+                        }}>
+                        Nugg #{tokenId}
+                    </Text>
+                )}
                 <div style={{ marginLeft: '1rem' }}>
                     {owner ? (
                         <>
@@ -158,10 +187,16 @@ const Swaps = ({ swaps, tokenId, address, owner }) => {
                             background: Colors.gradient2Transparent,
                         }}>
                         <Button
-                            textStyle={styles.textWhite}
+                            textStyle={
+                                MobileBackButton
+                                    ? styles.textBlue
+                                    : styles.textWhite
+                            }
                             buttonStyle={{
                                 ...styles.button,
-                                background: 'transparent', //Colors.gradient2Transparent,
+                                background: MobileBackButton
+                                    ? 'white'
+                                    : 'transparent', //Colors.gradient2Transparent,
                             }}
                             label="Sell"
                             onClick={() =>
@@ -175,10 +210,16 @@ const Swaps = ({ swaps, tokenId, address, owner }) => {
                             }
                         />
                         <Button
-                            textStyle={styles.textWhite}
+                            textStyle={
+                                MobileBackButton
+                                    ? styles.textBlue
+                                    : styles.textWhite
+                            }
                             buttonStyle={{
                                 ...styles.button,
-                                background: 'transparent', //Colors.gradient3Transparent,
+                                background: MobileBackButton
+                                    ? 'white'
+                                    : 'transparent', //Colors.gradient2Transparent,
                             }}
                             label="Loan"
                             onClick={() =>
@@ -195,10 +236,16 @@ const Swaps = ({ swaps, tokenId, address, owner }) => {
                             }
                         />
                         <Button
-                            textStyle={styles.textWhite}
+                            textStyle={
+                                MobileBackButton
+                                    ? styles.textBlue
+                                    : styles.textWhite
+                            }
                             buttonStyle={{
                                 ...styles.button,
-                                background: 'transparent', //Colors.gradient3Transparent,
+                                background: MobileBackButton
+                                    ? 'white'
+                                    : 'transparent', //Colors.gradient2Transparent,
                             }}
                             label="Burn"
                             onClick={() =>
@@ -218,21 +265,31 @@ const Swaps = ({ swaps, tokenId, address, owner }) => {
                 </div>
             )}
             <div style={{ padding: '0rem 1rem 1rem 1rem' }}>
-                {swaps.find((swap) => swap.endingEpoch === null) && (
+                {swaps.find(
+                    (swap) =>
+                        swap.endingEpoch === null ||
+                        swap.endingEpoch === epoch?.id,
+                ) && (
                     <SwapItem
-                        swap={swaps.find((swap) => swap.endingEpoch === null)}
+                        swap={swaps.find(
+                            (swap) =>
+                                swap.endingEpoch === null ||
+                                swap.endingEpoch === epoch?.id,
+                        )}
                         index={-1}
                     />
                 )}
-                <Text textStyle={{ marginTop: '.5rem' }}>Swaps</Text>
+                {filteredSwaps.length > 0 && (
+                    <Text textStyle={{ marginTop: '.5rem' }}>
+                        Previous Swaps
+                    </Text>
+                )}
                 <div style={{ overflow: 'scroll' }}>
-                    {swaps
-                        .filter((swap) => swap.endingEpoch !== null)
-                        .map((swap, index) => (
-                            <div key={index}>
-                                <SwapItem {...{ swap, index }} />
-                            </div>
-                        ))}
+                    {filteredSwaps.map((swap, index) => (
+                        <div key={index}>
+                            <SwapItem {...{ swap, index }} />
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

@@ -58,6 +58,7 @@ const styles = NLStyleSheetCreator({
         // margin: '.2rem',
     },
     textWhite: { color: 'white' },
+    textBlue: { color: Colors.nuggBlueText },
 });
 
 export default styles;

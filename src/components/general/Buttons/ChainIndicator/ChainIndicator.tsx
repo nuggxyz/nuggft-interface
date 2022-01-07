@@ -1,4 +1,5 @@
 import React, {
+    CSSProperties,
     FunctionComponent,
     useCallback,
     useLayoutEffect,
@@ -29,9 +30,17 @@ import SwapState from '../../../../state/swap';
 import styles from './ChainIndicator.styles';
 import ChainIndicatorPulse from './ChainIndicatorPulse';
 
-type Props = { onClick?: () => void };
+type Props = {
+    onClick?: () => void;
+    style?: CSSProperties;
+    textStyle?: CSSProperties;
+};
 
-const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
+const ChainIndicator: FunctionComponent<Props> = ({
+    onClick,
+    style,
+    textStyle,
+}) => {
     const epoch = ProtocolState.select.epoch();
     const connectionWarning = Web3State.select.connectivityWarning();
     const view = AppState.select.view();
@@ -91,7 +100,10 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
     return (
         <animated.div style={springStyle}>
             <Button
-                textStyle={{ fontFamily: Layout.font.code.regular }}
+                textStyle={{
+                    fontFamily: Layout.font.code.regular,
+                    ...textStyle,
+                }}
                 onClick={
                     onClick ||
                     (() =>
@@ -104,6 +116,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick }) => {
                 buttonStyle={{
                     ...styles.button,
                     ...(connectionWarning ? styles.warning : styles.normal),
+                    ...style,
                 }}
                 leftIcon={<LeftIcon />}
                 label={epoch?.id + ' | ' + blocksRemaining}

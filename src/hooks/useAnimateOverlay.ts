@@ -14,7 +14,6 @@ const useAnimateOverlay = (isOpen: boolean, style?: CSSProperties) => {
             ? {
                   justifyContent: 'center',
                   alignItems: 'flex-start',
-                  paddingTop: '4rem',
               }
             : {
                   justifyContent: 'center',

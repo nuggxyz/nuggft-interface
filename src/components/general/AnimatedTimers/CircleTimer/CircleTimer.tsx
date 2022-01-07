@@ -28,6 +28,7 @@ type Props = {
     width: number;
 };
 const TWOPI = Math.PI * 2;
+const HALFPI = Math.PI / 2;
 
 const CircleTimer: FunctionComponent<Props> = ({
     children,
@@ -38,16 +39,16 @@ const CircleTimer: FunctionComponent<Props> = ({
     style,
     width,
 }) => {
-    const dimensions = AppState.select.dimensions();
+    // const dimensions = AppState.select.dimensions();
     const timerCircleRadius = useMemo(() => width / 6.5, [width]);
     const circumference = useMemo(
         () => timerCircleRadius * TWOPI,
         [timerCircleRadius],
     );
-    const jumpThreshold = useMemo(
-        () => ((timerCircleRadius * TWOPI) / duration) * 1.5,
-        [timerCircleRadius, duration],
-    );
+    // const jumpThreshold = useMemo(
+    //     () => ((timerCircleRadius * TWOPI) / duration) * 1.5,
+    //     [timerCircleRadius, duration],
+    // );
     const [stateRemaining, setStateRemaining] = useState(remaining);
 
     useEffect(() => {
@@ -61,7 +62,8 @@ const CircleTimer: FunctionComponent<Props> = ({
             !isUndefinedOrNullOrNumberZero(duration)
             ? Math.abs(
                   timerCircleRadius *
-                      (TWOPI - (stateRemaining / duration) * TWOPI),
+                      (TWOPI - (stateRemaining / duration) * TWOPI) +
+                      HALFPI,
               )
             : 0;
     }, [stateRemaining, duration, timerCircleRadius]);
@@ -120,9 +122,8 @@ const CircleTimer: FunctionComponent<Props> = ({
                 <animated.circle
                     cx="50%"
                     cy="50%"
-                    style={styles.circle}
                     r={timerCircleRadius}
-                    stroke={'white'}
+                    stroke="white"
                     strokeDashoffset={x}
                     strokeWidth={20}
                     fill="none"

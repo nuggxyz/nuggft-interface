@@ -21,7 +21,10 @@ const styles = NLStyleSheetCreator({
     },
     mobile: {
         width: '90%',
+        background: 'transparent',
+        boxShadow: 'none',
     },
+
     bodyContainer: {
         display: 'flex',
         flexDirection: 'column',

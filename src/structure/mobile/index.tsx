@@ -7,10 +7,10 @@ import Colors from '../../lib/colors';
 import AppState from '../../state/app';
 import TokenState from '../../state/token';
 
-import BottomBar from './BottomBar';
+import BottomBar from './BottomBar/BottomBar';
 import styles from './index.styles';
-import MintView from './MintView';
-import SearchView from './SearchView';
+import MintView from './MintView/MintView';
+import SearchView from './SearchView/SearchView';
 import WalletView from './WalletView';
 
 type Props = {};
@@ -45,7 +45,11 @@ const Mobile: FunctionComponent<Props> = () => {
             style={{
                 ...styles.container,
                 background:
-                    currentView === 'Wallet' ? Colors.gradient3 : 'transparent',
+                    currentView === 'Wallet'
+                        ? Colors.gradient3
+                        : currentView === 'Search'
+                        ? Colors.gradient2
+                        : 'transparent',
             }}>
             {/* <div style={styles.account}>
                 <AccountViewer />

@@ -32,7 +32,7 @@ const styles = NLStyleSheetCreator({
         color: Colors.nuggRedText,
     },
     mobileBody: {
-        padding: '.5rem 0rem 0rem 0rem',
+        padding: '.5rem .4rem 0rem .4rem',
     },
     mobileHeaderText: {
         color: 'white',

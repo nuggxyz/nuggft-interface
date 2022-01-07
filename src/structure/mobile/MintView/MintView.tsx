@@ -1,11 +1,11 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
-import Text from '../../components/general/Texts/Text/Text';
-import FloorPrice from '../../components/nugg/FloorPrice';
-import RingAbout from '../../components/nugg/RingAbout/RingAbout';
-import TheRing from '../../components/nugg/TheRing/TheRing';
-import AppState from '../../state/app';
-import SwapState from '../../state/swap';
+import Text from '../../../components/general/Texts/Text/Text';
+import FloorPrice from '../../../components/nugg/FloorPrice';
+import RingAbout from '../../../components/nugg/RingAbout/RingAbout';
+import TheRing from '../../../components/nugg/TheRing/TheRing';
+import AppState from '../../../state/app';
+import SwapState from '../../../state/swap';
 
 import styles from './MintView.styles';
 

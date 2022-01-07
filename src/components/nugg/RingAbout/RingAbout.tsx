@@ -1,3 +1,5 @@
+import { title } from 'process';
+
 import React, {
     FunctionComponent,
     useEffect,
@@ -94,8 +96,8 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     return (
         <animated.div
             style={{
-                ...(screenType === 'phone' && styles.mobile),
                 ...styles.container,
+                ...(screenType === 'phone' && styles.mobile),
             }}>
             <div style={styles.bodyContainer}>
                 <div
@@ -106,7 +108,13 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                 : 'leaderContainer'
                         ]
                     }>
-                    <Text textStyle={styles.title}>
+                    <Text
+                        textStyle={{
+                            ...styles.title,
+                            ...(screenType === 'phone' && {
+                                color: Colors.nuggBlueText,
+                            }),
+                        }}>
                         {status === 'ongoing' && hasBids
                             ? 'Highest Offer'
                             : status === 'ongoing' && !hasBids
@@ -170,8 +178,18 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
             {status !== 'over' && !isUndefinedOrNullOrStringEmpty(address) && (
                 <Button
-                    buttonStyle={styles.button}
-                    textStyle={styles.buttonText}
+                    buttonStyle={{
+                        ...styles.button,
+                        ...(screenType === 'phone' && {
+                            background: Colors.nuggBlueText,
+                        }),
+                    }}
+                    textStyle={{
+                        ...styles.buttonText,
+                        ...(screenType === 'phone' && {
+                            color: 'white',
+                        }),
+                    }}
                     onClick={() =>
                         AppState.dispatch.setModalOpen({
                             name: 'OfferOrSell',
