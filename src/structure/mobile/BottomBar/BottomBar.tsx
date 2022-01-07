@@ -9,17 +9,17 @@ import { BookOpen, ChevronLeft, Search } from 'react-feather';
 import { IoWalletSharp, IoBookSharp } from 'react-icons/io5';
 import { animated, config, useSpring } from 'react-spring';
 
-import Button from '../../components/general/Buttons/Button/Button';
-import ChainIndicator from '../../components/general/Buttons/ChainIndicator/ChainIndicator';
-import useSetState from '../../hooks/useSetState';
-import Colors from '../../lib/colors';
-import FontSize from '../../lib/fontSize';
-import Layout from '../../lib/layout';
-import AppState from '../../state/app';
-import ProtocolState from '../../state/protocol';
-import SwapState from '../../state/swap';
-import TokenState from '../../state/token';
-import Web3State from '../../state/web3';
+import Button from '../../../components/general/Buttons/Button/Button';
+import ChainIndicator from '../../../components/general/Buttons/ChainIndicator/ChainIndicator';
+import useSetState from '../../../hooks/useSetState';
+import Colors from '../../../lib/colors';
+import FontSize from '../../../lib/fontSize';
+import Layout from '../../../lib/layout';
+import AppState from '../../../state/app';
+import ProtocolState from '../../../state/protocol';
+import SwapState from '../../../state/swap';
+import TokenState from '../../../state/token';
+import Web3State from '../../../state/web3';
 
 import styles from './BottomBar.styles';
 

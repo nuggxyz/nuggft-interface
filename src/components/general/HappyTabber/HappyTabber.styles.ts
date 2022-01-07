@@ -1,5 +1,6 @@
 import { NLStyleSheetCreator } from '../../../lib';
 import Colors from '../../../lib/colors';
+import globalStyles from '../../../lib/globalStyles';
 import Layout from '../../../lib/layout';
 
 const styles = NLStyleSheetCreator({
@@ -63,6 +64,7 @@ const styles = NLStyleSheetCreator({
         // backgroundColor: 'rgba(80, 144, 234, 0.4)',
         background: Colors.transparentWhite,
         borderRadius: Layout.borderRadius.mediumish,
+        ...globalStyles.backdropFilter,
     },
 });
 

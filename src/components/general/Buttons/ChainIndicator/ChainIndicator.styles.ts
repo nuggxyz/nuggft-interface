@@ -15,8 +15,8 @@ const styles = NLStyleSheetCreator({
         padding: '.1rem 1rem .1rem .5rem',
     },
     normal: {
-        background: Colors.gradient2Transparent,
-        color: 'white', //Colors.nuggBlueText,
+        background: Colors.nuggBlueTransparent,
+        color: Colors.nuggBlueText,
     },
     warning: {
         background: Colors.nuggRedTransparent,

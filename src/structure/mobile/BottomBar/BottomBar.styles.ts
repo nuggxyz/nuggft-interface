@@ -1,7 +1,7 @@
-import { NLStyleSheetCreator } from '../../lib';
-import Colors from '../../lib/colors';
-import globalStyles from '../../lib/globalStyles';
-import Layout from '../../lib/layout';
+import { NLStyleSheetCreator } from '../../../lib';
+import Colors from '../../../lib/colors';
+import globalStyles from '../../../lib/globalStyles';
+import Layout from '../../../lib/layout';
 
 const styles = NLStyleSheetCreator({
     fixed: {

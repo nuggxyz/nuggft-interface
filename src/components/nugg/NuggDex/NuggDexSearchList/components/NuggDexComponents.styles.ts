@@ -37,6 +37,7 @@ const styles = NLStyleSheetCreator({
         // padding: '.5rem',
         width: '100%',
         zIndex: 1,
+        overflow: 'hidden',
         // background: Colors.transparentWhite,
     },
     nuggListDefault: {

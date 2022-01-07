@@ -41,8 +41,8 @@ import styles from './NuggDexComponents.styles';
 type Props = {
     style: CSSProperties | UseSpringProps;
     values: NL.GraphQL.Fragments.Nugg.ListItem[];
-    setLocalViewing: Dispatch<SetStateAction<NL.Redux.NuggDex.SearchViews>>;
-    localViewing: NL.Redux.NuggDex.SearchViews;
+    setLocalViewing?: Dispatch<SetStateAction<NL.Redux.NuggDex.SearchViews>>;
+    localViewing?: NL.Redux.NuggDex.SearchViews;
     animationToggle?: boolean;
     onScrollEnd?: ({
         setLoading,

@@ -19,6 +19,7 @@ import nuggThumbnailQuery from '../../../state/token/queries/nuggThumbnailQuery'
 import swapHistoryQuery from '../../../state/token/queries/swapHistoryQuery';
 import Web3State from '../../../state/web3';
 import Button from '../../general/Buttons/Button/Button';
+import AnimatedCard from '../../general/Cards/AnimatedCard/AnimatedCard';
 import List from '../../general/List/List';
 import Loader from '../../general/Loader/Loader';
 import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
@@ -79,7 +80,9 @@ const ViewingNugg: FunctionComponent<Props> = () => {
                     ...styles.wrapper,
                 }}>
                 <div style={styles.container}>
-                    <TokenViewer tokenId={tokenId} data={svg} />
+                    <AnimatedCard>
+                        <TokenViewer tokenId={tokenId} data={svg} />
+                    </AnimatedCard>
                     <Swaps {...{ swaps, tokenId, address, owner }} />
                 </div>
             </div>
