@@ -8,6 +8,7 @@ import { Address } from '../classes/Address';
 import Web3State from '../state/web3';
 import { EnsResolver__factory } from '../typechain/factories/EnsResolver__factory';
 import { EnsRegistrar } from '../typechain/EnsRegistrar';
+import Web3Config from '../state/web3/Web3Config';
 
 export default class ENSHelper {
     private static _instance_resolver: EnsResolver;
@@ -22,7 +23,7 @@ export default class ENSHelper {
     static get registrar() {
         if (isUndefinedOrNullOrObjectEmpty(ENSHelper._instance_registrar)) {
             ENSHelper._instance_registrar = new Contract(
-                config.ENS,
+                Web3Config.activeChain__EnsRegistrar,
                 EnsRegistrar__factory.abi,
                 Web3State.getLibrary(),
             ) as EnsRegistrar;

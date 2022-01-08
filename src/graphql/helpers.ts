@@ -3,7 +3,7 @@ import { client } from './client';
 
 export const executeQuery = async (query: any, tableName: string) => {
     try {
-        const result = await client.query({
+        const result = await client().query({
             query,
             fetchPolicy: 'no-cache',
         });

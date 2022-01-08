@@ -14,6 +14,7 @@ import config from '../../config';
 import Web3State from '../web3';
 import AppState from '../app';
 import { toEth } from '../../lib/conversion';
+import Web3Config from '../web3/Web3Config';
 
 import userSharesQuery from './queries/userSharesQuery';
 
@@ -94,7 +95,7 @@ const approveNugg = createAsyncThunk<
 >(`wallet/approveNugg`, async ({ tokenId }, thunkAPI) => {
     try {
         const _pendingtx = await NuggftV1Helper.approve(
-            new Address(config.NUGGFT),
+            new Address(Web3Config.activeChain__NuggftV1),
             tokenId,
         );
 

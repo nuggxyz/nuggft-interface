@@ -19,6 +19,7 @@ import TokenState from '../../../state/token';
 import nuggThumbnailQuery from '../../../state/token/queries/nuggThumbnailQuery';
 import swapHistoryQuery from '../../../state/token/queries/swapHistoryQuery';
 import Web3State from '../../../state/web3';
+import Web3Config from '../../../state/web3/Web3Config';
 import Button from '../../general/Buttons/Button/Button';
 import AnimatedCard from '../../general/Cards/AnimatedCard/AnimatedCard';
 import List from '../../general/List/List';
@@ -148,7 +149,7 @@ const Swaps = ({ swaps, tokenId, address, owner, MobileBackButton }) => {
                                     display: 'flex',
                                     alignItems: 'center',
                                 }}>
-                                {ens === config.NUGGFT ||
+                                {ens === Web3Config.activeChain__NuggftV1 ||
                                 ens === Address.ZERO.hash
                                     ? 'NuggftV1'
                                     : ens}

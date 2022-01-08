@@ -27,6 +27,7 @@ import {
 } from '../typechain';
 import { executeQuery } from '../graphql/helpers';
 import AppState from '../state/app';
+import Web3Config from '../state/web3/Web3Config';
 
 import ContractHelper from './abstract/ContractHelper';
 
@@ -37,7 +38,7 @@ export default class NuggftV1Helper extends ContractHelper {
     static get instance() {
         if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._instance)) {
             NuggftV1Helper._instance = new Contract(
-                config.NUGGFT,
+                Web3Config.activeChain__NuggftV1,
                 NuggftV1__factory.abi,
                 // Web3State.getLibraryOrProvider(),
             ) as NuggftV1;
@@ -48,7 +49,7 @@ export default class NuggftV1Helper extends ContractHelper {
     static get dotnugg() {
         if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._dotnugg)) {
             NuggftV1Helper._dotnugg = new Contract(
-                config.DOTNUGG_RESOLVER,
+                Web3Config.activeChain__DotnuggV1,
                 DotnuggV1__factory.abi,
                 // Web3State.getLibraryOrProvider(),
             ) as DotnuggV1;
@@ -126,7 +127,9 @@ export default class NuggftV1Helper extends ContractHelper {
         let response = await this.instance
             .connect(Web3State.getLibraryOrProvider())
             .getApproved(tokenId);
-        return new Address(response).equals(new Address(config.NUGGFT));
+        return new Address(response).equals(
+            new Address(Web3Config.activeChain__NuggftV1),
+        );
     }
     public static async approval(tokenId: string): Promise<Address> {
         let response = await this.instance.getApproved(tokenId);

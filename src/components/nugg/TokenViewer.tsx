@@ -76,10 +76,12 @@ const TokenViewer: FunctionComponent<Props> = ({
         //@ts-ignore
         <animated.div style={animatedStyle}>
             <img
+                width="100%"
                 style={{
-                    ...(screenType === 'phone'
-                        ? { width: width / 1.2, height: width / 1.2 }
-                        : { width: '400px', height: '400px' }),
+                    // ...(screenType === 'phone'
+                    //     ? { width: width / 1.2, height: width / 1.2 }
+                    //     : { width: '400px', height: '400px' }),
+                    // width: '100%',
                     ...style,
                 }}
                 src={src}
