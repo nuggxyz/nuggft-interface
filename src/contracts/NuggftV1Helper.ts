@@ -27,6 +27,7 @@ import {
 } from '../typechain';
 import { executeQuery } from '../graphql/helpers';
 import AppState from '../state/app';
+import Web3Config from '../state/web3/Web3Config';
 
 import ContractHelper from './abstract/ContractHelper';
 
@@ -37,9 +38,8 @@ export default class NuggftV1Helper extends ContractHelper {
     static get instance() {
         if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._instance)) {
             NuggftV1Helper._instance = new Contract(
-                config.NUGGFT,
+                '0x33E938eB4256C2BB68551d829dc3326D346e9bf9', //Web3Config.activeChain__NuggftV1,
                 NuggftV1__factory.abi,
-                // Web3State.getLibraryOrProvider(),
             ) as NuggftV1;
         }
         return NuggftV1Helper._instance;
@@ -48,7 +48,7 @@ export default class NuggftV1Helper extends ContractHelper {
     static get dotnugg() {
         if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._dotnugg)) {
             NuggftV1Helper._dotnugg = new Contract(
-                config.DOTNUGG_RESOLVER,
+                '0x0857A644Aeb95685b4eeb63570Cef8a056e57D07', //Web3Config.activeChain__DotnuggV1,
                 DotnuggV1__factory.abi,
                 // Web3State.getLibraryOrProvider(),
             ) as DotnuggV1;
@@ -58,6 +58,7 @@ export default class NuggftV1Helper extends ContractHelper {
 
     static reset() {
         NuggftV1Helper._instance = undefined;
+        NuggftV1Helper._dotnugg = undefined;
     }
     static set instance(_) {
         return;

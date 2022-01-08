@@ -1,5 +1,8 @@
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import { ethers } from 'ethers';
+
+import store from '../store';
 
 import { NetworkConnector } from './connectors/NetworkConnector';
 
@@ -35,6 +38,27 @@ export default class Web3Config {
         [Web3Config.SupportedChainId
             .KOVAN]: `https://kovan.infura.io/v3/${Web3Config.INFURA_KEY}`,
     };
+
+    // static ENDPOINTS = {
+    //     [Web3Config.SupportedChainId.ROPSTEN]: {
+    //         NuggFTV1: '0x33E938eB4256C2BB68551d829dc3326D346e9bf9',
+    //         DotnuggV1: '0x0857A644Aeb95685b4eeb63570Cef8a056e57D07',
+    //         GraphV1:
+    //             'https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten',
+    //     },
+    //     [Web3Config.SupportedChainId.RINKEBY]: {
+    //         NuggFTV1: '0x53de977e6A3bF8D972d9Dbd84533274A10450c7b',
+    //         DotnuggV1: '0x6adffE28e703be151A7157D425B680E74166bC15',
+    //         GraphV1:
+    //             'https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby',
+    //     },
+    //     [Web3Config.SupportedChainId.GOERLI]: {
+    //         NuggFTV1: '0x2BB9b6DDB2444327E06A7fc748D92DbAA12a1E79',
+    //         DotnuggV1: '0x6adffE28e703be151A7157D425B680E74166bC15',
+    //         GraphV1:
+    //             'https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli',
+    //     },
+    // };
 
     static connectors = {
         network: new NetworkConnector({
@@ -134,5 +158,52 @@ export default class Web3Config {
             '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
         [Web3Config.SupportedChainId.RINKEBY]:
             '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    };
+
+    static CONTRACTS = {
+        [Web3Config.SupportedChainId.MAINNET]: {
+            NuggftV1: ethers.constants.AddressZero,
+            DotnuggV1: ethers.constants.AddressZero,
+        },
+        [Web3Config.SupportedChainId.ROPSTEN]: {
+            NuggftV1: '0x33E938eB4256C2BB68551d829dc3326D346e9bf9',
+            DotnuggV1: '0x0857A644Aeb95685b4eeb63570Cef8a056e57D07',
+        },
+        [Web3Config.SupportedChainId.RINKEBY]: {
+            NuggftV1: '0x53de977e6A3bF8D972d9Dbd84533274A10450c7b',
+            DotnuggV1: '0x6adffE28e703be151A7157D425B680E74166bC15',
+        },
+        [Web3Config.SupportedChainId.GOERLI]: {
+            NuggftV1: '0x2BB9b6DDB2444327E06A7fc748D92DbAA12a1E79',
+            DotnuggV1: '0x6adffE28e703be151A7157D425B680E74166bC15',
+        },
+    };
+
+    static get activeChain__NuggftV1() {
+        console.log(store.getState().web3.currentChain);
+        return this.CONTRACTS[store.getState().web3.currentChain].NuggftV1;
+    }
+
+    static get activeChain__GraphEndpoint() {
+        return this.GRAPH_ENPOINTS[store.getState().web3.currentChain];
+    }
+
+    static get activeChain__DotnuggV1() {
+        return this.CONTRACTS[store.getState().web3.currentChain].DotnuggV1;
+    }
+
+    static get activeChain__EnsRegistrar() {
+        return this.ENS_REGISTRAR_ADDRESSES[store.getState().web3.currentChain];
+    }
+
+    static GRAPH_ENPOINTS = {
+        [Web3Config.SupportedChainId
+            .MAINNET]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-mainnet`,
+        [Web3Config.SupportedChainId
+            .RINKEBY]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby`,
+        [Web3Config.SupportedChainId
+            .ROPSTEN]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
+        [Web3Config.SupportedChainId
+            .GOERLI]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli`,
     };
 }

@@ -8,6 +8,7 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
+import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 
 import Web3Config from './Web3Config';
 
@@ -62,9 +63,12 @@ export default () => {
 
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
-            window.ethereum.on('connect', (chainId) => {
-                console.log('ss');
-                console.log('eth event: connect', chainId);
+            window.ethereum.on('connect', ({ chainId }) => {
+                console.log(
+                    'eth event: connect',
+                    BigNumber.from(chainId).toNumber(),
+                );
+                NuggftV1Helper.reset();
                 Web3State.dispatch.setCurrentChain(
                     BigNumber.from(chainId).toNumber(),
                 );
@@ -81,8 +85,12 @@ export default () => {
                     Web3State.dispatch.clearWeb3Address();
                 }
             });
-            window.ethereum.on('chainChanged', (chainId) => {
-                console.log('eth event: chainChanged', { chainId });
+            window.ethereum.on('chainChanged', ({ chainId }) => {
+                console.log(
+                    'eth event: chainChanged',
+                    BigNumber.from(chainId).toNumber(),
+                );
+                NuggftV1Helper.reset();
                 Web3State.dispatch.setCurrentChain(
                     BigNumber.from(chainId).toNumber(),
                 );

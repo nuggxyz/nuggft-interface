@@ -7,6 +7,8 @@ import constants from './constants';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { split, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
+import Web3State from '../state/web3';
+import Web3Config from '../state/web3/Web3Config';
 
 const wsLink = new WebSocketLink({
     uri: constants.MAIN_WEBSOCKET,
@@ -24,7 +26,7 @@ const fetchLogger = (url, init) => {
 };
 
 const httpLink = new HttpLink({
-    uri: constants.MAIN_ENDPOINT,
+    uri: Web3Config.GRAPH_ENPOINTS[3], //constants.MAIN_ENDPOINT,
     fetch: fetch as any,
 });
 
