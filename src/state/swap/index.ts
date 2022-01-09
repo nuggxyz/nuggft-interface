@@ -91,6 +91,22 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
                     }
                 }
             },
+            reset: (state) => {
+                state.error = undefined;
+                state.lastUpdated = undefined;
+                state.loading = false;
+                state.success = undefined;
+                state.eth = undefined;
+                state.ethUsd = undefined;
+                state.id = undefined;
+                state.leader = undefined;
+                state.nugg = undefined;
+                state.offers = [];
+                state.owner = undefined;
+                state.status = 'waiting';
+                state.epoch = undefined;
+                state.startingEpoch = undefined;
+            },
         },
         extraReducers: (builder) => {
             builder

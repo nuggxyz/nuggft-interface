@@ -68,6 +68,8 @@ export default () => {
 
     useEffect(() => {
         if (isUndefinedOrNullOrNotNumber(genesisBlock)) {
+            console.log('GENESIS');
+            setBlocknum(0);
             NuggftV1Helper.instance
                 .connect(Web3State.getLibraryOrProvider())
                 .genesis()
@@ -114,6 +116,7 @@ export default () => {
     const updateBlocknum = useCallback(
         (newBlock: number) =>
             setBlocknum((currentBlock) => {
+                console.log({ currentBlock });
                 const blockToSet = Math.max(currentBlock, newBlock);
                 const calculatedEpoch = calculateEpochId(blockToSet);
                 if (
@@ -136,6 +139,9 @@ export default () => {
             }),
         [epoch, calculateEpochStartBlock, calculateEpochId],
     );
+    useEffect(() => {
+        console.log(library);
+    }, [library]);
 
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(library)) {

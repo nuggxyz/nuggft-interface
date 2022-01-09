@@ -72,6 +72,13 @@ class TokenState extends NLState<NL.Redux.Token.State> {
                     state.tokenURI = undefined;
                 }
             },
+            reset: (state) => {
+                state.success = undefined;
+                state.error = undefined;
+                state.loading = false;
+                state.tokenId = undefined;
+                state.tokenURI = undefined;
+            },
         },
         extraReducers: (builder) => {
             builder

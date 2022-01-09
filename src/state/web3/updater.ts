@@ -8,13 +8,22 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
+import NuggftV1Helper from '../../contracts/NuggftV1Helper';
+import NuggDexState from '../nuggdex';
+import ProtocolState from '../protocol';
+import SwapState from '../swap';
+import TokenState from '../token';
+import TransactionState from '../transaction';
+import WalletState from '../wallet';
+import GQLHelper from '../../graphql/GQLHelper';
 
 import Web3Config from './Web3Config';
 
 import Web3State from '.';
 
 export default () => {
-    const { library, activate, error } = Web3State.hook.useActiveWeb3React();
+    const { library, activate, error, chainId } =
+        Web3State.hook.useActiveWeb3React();
     const {
         activate: defaultActivate,
         account: web3Account,
@@ -39,18 +48,23 @@ export default () => {
             Web3State.dispatch.setWeb3Status('ERROR');
         }
     }, [error]);
+    console.log({ chainId, library });
+    // activate(Web3Config.connectors.network);
 
     useEffect(() => {
         if (!isUndefinedOrNullOrStringEmpty(web3address)) {
-            if (!hasBeenSafeActivated) {
-                Web3State.safeActivate(Web3Config.connectors.injected);
-                Web3State.dispatch.setWeb3Status('SELECTED');
-                setHasBeenSafeActivated(true);
-            }
-        } else if (!hasBeenActivated) {
-            activate(Web3Config.connectors.network);
+            console.log('acc');
+            // if (!hasBeenSafeActivated) {
+            // deactivate();
+            Web3State.safeActivate(Web3Config.connectors.injected);
+            Web3State.dispatch.setWeb3Status('SELECTED');
+            //     setHasBeenSafeActivated(true);
+            // }
+        } else {
+            // deactivate();
+            // activate(Web3Config.connectors.network);
             Web3State.dispatch.setWeb3Status('NOT_SELECTED');
-            setHasBeenActivated(true);
+            // setHasBeenActivated(true);
         }
     }, [
         web3address,
@@ -58,16 +72,29 @@ export default () => {
         activate,
         hasBeenSafeActivated,
         web3Account,
+        chainId,
+        defaultActivate,
+        deactivate,
     ]);
-
+    useEffect(() => {});
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
-            window.ethereum.on('connect', (chainId) => {
-                console.log('ss');
-                console.log('eth event: connect', chainId);
+            window.ethereum.on('connect', (chain) => {
+                defaultActivate(Web3Config.connectors.injected);
+                console.log('eth event: connect', chain);
                 Web3State.dispatch.setCurrentChain(
-                    BigNumber.from(chainId).toNumber(),
+                    BigNumber.from(chain.chainId).toNumber(),
                 );
+                // NuggftV1Helper.reset();
+                // GQLHelper.reset();
+                // localStorage.clear();
+                // NuggDexState.dispatch.reset();
+                // ProtocolState.dispatch.reset();
+                // SwapState.dispatch.reset();
+                // TokenState.dispatch.reset();
+                // TransactionState.dispatch.reset();
+                // //@ts-ignore
+                // WalletState.dispatch.reset();
             });
             window.ethereum.on('disconnect', () => {
                 console.log('eth event: disconnect');
@@ -82,10 +109,22 @@ export default () => {
                 }
             });
             window.ethereum.on('chainChanged', (chainId) => {
-                console.log('eth event: chainChanged', { chainId });
+                console.log('eth event: chainChanged', chainId);
                 Web3State.dispatch.setCurrentChain(
                     BigNumber.from(chainId).toNumber(),
                 );
+                NuggftV1Helper.reset();
+                GQLHelper.reset();
+                localStorage.clear();
+                NuggDexState.dispatch.reset();
+                ProtocolState.dispatch.reset();
+                SwapState.dispatch.reset();
+                TokenState.dispatch.reset();
+                TransactionState.dispatch.reset();
+                //@ts-ignore
+                WalletState.dispatch.reset();
+                deactivate();
+                defaultActivate(Web3Config.connectors.injected);
             });
             window.ethereum.on(
                 'message',

@@ -62,6 +62,13 @@ export default class TransactionState extends NLState<NL.Redux.Transaction.State
             ) => {
                 state.toggleCompletedTxn = !state.toggleCompletedTxn;
             },
+            reset: (state) => {
+                state.txn = '';
+                state.toggleCompletedTxn = false;
+                state.success = undefined;
+                state.error = undefined;
+                state.loading = false;
+            },
         },
         extraReducers: (builder) =>
             builder

@@ -85,6 +85,40 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
             ) => {
                 state.epoch = action.payload;
             },
+            reset: (state) => {
+                state.id = undefined;
+                state.currentBlock = 0;
+                state.init = false;
+                state.epoch = undefined;
+                state.totalSwaps = '0';
+                state.totalUsers = '0';
+                state.totalNuggs = '0';
+                state.totalItems = '0';
+                state.totalItemSwaps = '0';
+                state.genesisBlock = undefined;
+                state.interval = '0';
+                state.xnuggTotalSupply = '0';
+                state.xnuggTotalEth = '0';
+                state.nuggftTotalEth = '0';
+                state.nuggftStakedUsdPerShare = '0';
+                state.nuggftStakedUsd = '0';
+                state.nuggftStakedEthPerShare = '0';
+                state.nuggftStakedEth = '0';
+                state.nuggftStakedShares = '0';
+                state.priceUsdcWeth = '0';
+                state.priceWethXnugg = '0';
+                state.tvlEth = '0';
+                state.tvlUsd = '0';
+                state.defaultActiveNugg = undefined;
+                state.activeNuggs = [];
+                state.activeItems = [];
+                state.error = undefined;
+                state.success = undefined;
+                state.loading = false;
+                state.xnuggUser = undefined;
+                state.nuggftUser = undefined;
+                state.nullUser = undefined;
+            },
         },
         extraReducers: (builder) =>
             builder

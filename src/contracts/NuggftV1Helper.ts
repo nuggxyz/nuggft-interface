@@ -59,6 +59,7 @@ export default class NuggftV1Helper extends ContractHelper {
 
     static reset() {
         NuggftV1Helper._instance = undefined;
+        NuggftV1Helper._dotnugg = undefined;
     }
     static set instance(_) {
         return;

@@ -36,12 +36,12 @@ export default class Web3Config {
             DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
         },
         [Web3Config.SupportedChainId.RINKEBY]: {
-            NuggftV1: '0x53de977e6A3bF8D972d9Dbd84533274A10450c7b',
-            DotnuggV1: '0x6adffE28e703be151A7157D425B680E74166bC15',
+            NuggftV1: '0x420690c1b1519a32fa36768dc2cefe128160a9b7',
+            DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
         },
         [Web3Config.SupportedChainId.GOERLI]: {
-            NuggftV1: '0x2BB9b6DDB2444327E06A7fc748D92DbAA12a1E79',
-            DotnuggV1: '0x6adffE28e703be151A7157D425B680E74166bC15',
+            NuggftV1: '0x420690c1b1519a32fa36768dc2cefe128160a9b7',
+            DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
         },
     };
 
@@ -88,7 +88,7 @@ export default class Web3Config {
     static connectors = {
         network: new NetworkConnector({
             urls: Web3Config.NETWORK_URLS,
-            defaultChainId: 3,
+            defaultChainId: 4,
         }),
         injected: new InjectedConnector({
             supportedChainIds: Web3Config.supportedChainIds,

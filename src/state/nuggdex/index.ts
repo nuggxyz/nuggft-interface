@@ -94,6 +94,24 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
             ) => {
                 state.searchFilters = action.payload;
             },
+            reset: (state) => {
+                state.recents = [];
+                state.myNuggs = [];
+                state.activeNuggs = [];
+                state.allNuggs = [];
+                state.thumbnails = {};
+                state.viewing = 'home';
+                state.success = undefined;
+                state.error = undefined;
+                state.loading = false;
+                state.searchFilters = {
+                    searchValue: '',
+                    sort: {
+                        asc: false,
+                        by: 'id',
+                    },
+                };
+            },
         },
         extraReducers: (builder) => {
             builder

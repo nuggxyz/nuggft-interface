@@ -51,7 +51,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
             prevToggle !== undefined &&
             prevToggle !== txnToggle
         ) {
-            SwapState.dispatch.initSwap({ swapId });
+            // SwapState.dispatch.initSwap({ swapId });
         }
     }, [status, txnToggle, swapId, prevToggle]);
 

@@ -41,6 +41,8 @@ const fetchLogger = (url, init) => {
 // );
 
 export const client = (): ApolloClient<any> => {
+    console.log('NEW CLIENT', Web3Config.activeChain__GraphEndpoint);
+    console.trace();
     return new ApolloClient({
         link: new HttpLink({
             // uri: Web3Config.GRAPH_ENPOINTS[store.getState().web3.currentChain],
