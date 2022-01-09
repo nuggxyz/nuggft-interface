@@ -11,10 +11,10 @@ import Text from '../../../general/Texts/Text/Text';
 import WalletState from '../../../../state/wallet';
 import TokenState from '../../../../state/token';
 import { fromEth } from '../../../../lib/conversion';
+import { Address } from '../../../../classes/Address';
+import Web3Config from '../../../../state/web3/Web3Config';
 
 import styles from './LoanOrBurn.styles';
-import {Address} from '../../../../classes/Address';
-import Web3Config from '../../../../state/web3/Web3Config';
 
 type Props = {};
 
@@ -37,7 +37,6 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
     const [isApproved, setIsApproved] = useState(false);
 
     useEffect(() => {
-        console.log(targetId)
         if (!isUndefinedOrNullOrStringEmpty(targetId) && !isApproved) {
             NuggftV1Helper.sellerApproval(targetId).then((res) =>
                 setIsApproved(res),
@@ -85,7 +84,7 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                                   })
                             : WalletState.dispatch.approveNugg({
                                   spender: new Address(
-                                      Web3Config.activeChain__DotnuggV1,
+                                      Web3Config.activeChain__NuggftV1,
                                   ),
                                   tokenId: stableId,
                               })

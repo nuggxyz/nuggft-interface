@@ -22,11 +22,11 @@ import CurrencyInput from '../../../general/TextInputs/CurrencyInput/CurrencyInp
 import Text from '../../../general/Texts/Text/Text';
 import TokenViewer from '../../TokenViewer';
 import constants from '../../../../lib/constants';
+import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
+import { Address } from '../../../../classes/Address';
+import Web3Config from '../../../../state/web3/Web3Config';
 
 import styles from './OffeOrSellModal.styles';
-import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
-import {Address} from '../../../../classes/Address';
-import Web3Config from '../../../../state/web3/Web3Config';
 
 type Props = {};
 
@@ -183,7 +183,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                                   })
                             : WalletState.dispatch.approveNugg({
                                   spender: new Address(
-                                      Web3Config.activeChain__DotnuggV1,
+                                      Web3Config.activeChain__NuggftV1,
                                   ),
                                   tokenId: stableId,
                               })

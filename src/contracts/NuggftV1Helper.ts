@@ -126,9 +126,8 @@ export default class NuggftV1Helper extends ContractHelper {
         let response = await this.instance
             .connect(Web3State.getLibraryOrProvider())
             .getApproved(tokenId);
-        console.log(response, Web3Config.activeChain__NuggftV1);
         return new Address(response).equals(
-            new Address(Web3Config.activeChain__DotnuggV1),
+            new Address(Web3Config.activeChain__NuggftV1),
         );
     }
     public static async approval(tokenId: string): Promise<Address> {

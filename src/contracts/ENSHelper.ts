@@ -21,13 +21,13 @@ export default class ENSHelper {
         return;
     }
     static get registrar() {
-        if (isUndefinedOrNullOrObjectEmpty(ENSHelper._instance_registrar)) {
+        // if (isUndefinedOrNullOrObjectEmpty(ENSHelper._instance_registrar)) {
             ENSHelper._instance_registrar = new Contract(
                 Web3Config.activeChain__EnsRegistrar,
                 EnsRegistrar__factory.abi,
                 Web3State.getLibrary(),
             ) as EnsRegistrar;
-        }
+        // }
         return ENSHelper._instance_registrar;
     }
     /**
