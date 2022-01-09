@@ -47,7 +47,7 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
             web3error: false,
             connectivityWarning: false,
             implements3085: false,
-            currentChain: 4,
+            currentChain: Web3Config.DEFAULT_CHAIN,
         });
     }
 
@@ -97,59 +97,72 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
         throwErrors?: boolean,
     ) => Promise<void>;
 
-    public static safeActivate(connector?: AbstractConnector) {
-        Web3State.dispatch.setWeb3Status('PENDING');
-        Web3State.dispatch.setWeb3Error(false);
+    public static safeActivate(
+        activate: (
+            connector: AbstractConnector,
+            onError?: (error: Error) => void,
+            throwErrors?: boolean,
+        ) => Promise<void>,
+    ) {
+        return async (connector?: AbstractConnector) => {
+            Web3State.dispatch.setWeb3Status('PENDING');
+            Web3State.dispatch.setWeb3Error(false);
 
-        if (connector instanceof WalletConnectConnector) {
-            connector.walletConnectProvider = undefined;
-        }
+            if (connector instanceof WalletConnectConnector) {
+                connector.walletConnectProvider = undefined;
+            }
 
-        if (!isUndefinedOrNullOrObjectEmpty(connector)) {
-            Web3State.activate(connector, undefined, true)
-                .then(async () => {
-                    Web3State.dispatch.setWeb3Status('SELECTED');
-                })
-                .catch((error) => {
-                    if (error instanceof UnsupportedChainIdError) {
-                        Web3State.activate(connector);
+            if (!isUndefinedOrNullOrObjectEmpty(connector)) {
+                return await activate(connector, undefined, true)
+                    .then(async () => {
                         Web3State.dispatch.setWeb3Status('SELECTED');
-                    } else {
-                        Web3State.dispatch.setWeb3Error(true);
-                        Web3State.dispatch.setWeb3Status('NOT_SELECTED');
-                    }
-                });
-        } else {
-            Web3State.dispatch.setWeb3Status('NOT_SELECTED');
-        }
+                    })
+                    .catch((error) => {
+                        if (error instanceof UnsupportedChainIdError) {
+                            activate(connector);
+                            Web3State.dispatch.setWeb3Status('SELECTED');
+                        } else {
+                            Web3State.dispatch.setWeb3Error(true);
+                            Web3State.dispatch.setWeb3Status('NOT_SELECTED');
+                        }
+                    });
+            } else {
+                Web3State.dispatch.setWeb3Status('NOT_SELECTED');
+            }
+        };
     }
 
     private static _library: Web3Provider;
 
     private static _networkLibrary: Web3Provider;
 
+    public static resetLibraries() {
+        Web3State._library = undefined;
+        Web3State._networkLibrary = undefined;
+    }
+
     public static getLibrary(provider?: any): Web3Provider {
         let library: Web3Provider;
         if (isUndefinedOrNullOrObjectEmpty(provider)) {
-            if (isUndefinedOrNullOrObjectEmpty(Web3State._networkLibrary)) {
-                let networkProvider = Web3Config.connectors.network.provider;
-                Web3State._networkLibrary = new Web3Provider(
-                    networkProvider as any,
-                    !isUndefinedOrNull(networkProvider.chainId)
-                        ? +networkProvider.chainId
-                        : 'any',
-                );
-            }
+            // if (isUndefinedOrNullOrObjectEmpty(Web3State._networkLibrary)) {
+            let networkProvider = Web3Config.connectors.network.provider;
+            Web3State._networkLibrary = new Web3Provider(
+                networkProvider as any,
+                !isUndefinedOrNull(networkProvider.chainId)
+                    ? +networkProvider.chainId
+                    : 'any',
+            );
+            // }
             library = Web3State._networkLibrary;
         } else {
-            if (isUndefinedOrNullOrObjectEmpty(Web3State._library)) {
-                Web3State._library = new Web3Provider(
-                    provider as any,
-                    !isUndefinedOrNull(provider.chainId)
-                        ? +provider.chainId
-                        : 'any',
-                );
-            }
+            // if (isUndefinedOrNullOrObjectEmpty(Web3State._library)) {
+            Web3State._library = new Web3Provider(
+                provider as any,
+                !isUndefinedOrNull(provider.chainId)
+                    ? +provider.chainId
+                    : 'any',
+            );
+            // }
             library = Web3State._library;
         }
         library.pollingInterval = 1000;

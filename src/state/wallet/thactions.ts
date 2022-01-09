@@ -64,7 +64,6 @@ const withdraw = createAsyncThunk<
         const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
             .burn(tokenId);
-
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -89,16 +88,12 @@ const withdraw = createAsyncThunk<
 
 const approveNugg = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
-    { tokenId: string },
+    { tokenId: string; spender: Address },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/approveNugg`, async ({ tokenId }, thunkAPI) => {
+>(`wallet/approveNugg`, async ({ tokenId, spender }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggftV1Helper.approve(
-            new Address(Web3Config.activeChain__NuggftV1),
-            tokenId,
-        );
-
+        const _pendingtx = await NuggftV1Helper.approve(spender, tokenId);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx,
@@ -129,9 +124,7 @@ const claim = createAsyncThunk<
     try {
         const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
-            //@ts-ignore
             .claim(tokenId);
-
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -163,7 +156,6 @@ const initLoan = createAsyncThunk<
         const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
             .loan(tokenId);
-
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -196,7 +188,6 @@ const payOffLoan = createAsyncThunk<
         const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
             .liquidate(tokenId, { value: toEth(amount) });
-
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,

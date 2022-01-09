@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { gql, useSubscription } from '@apollo/client';
+import { useWeb3React } from '@web3-react/core';
 
 import useRecursiveTimeout from '../../hooks/useRecursiveTimeout';
 import {
@@ -62,13 +63,14 @@ export default () => {
 
     // TODO DELETE THIS SHIT ABOVE
 
-    const { library } = Web3State.hook.useActiveWeb3React();
+    const { library } = useWeb3React();
     const genesisBlock = ProtocolState.select.genesisBlock();
     const epoch = ProtocolState.select.epoch();
+    const chainId = Web3State.select.currentChain();
 
-    useEffect(() => {
-        if (isUndefinedOrNullOrNotNumber(genesisBlock)) {
-            console.log('GENESIS');
+    useEffect(
+        () => {
+            // if (isUndefinedOrNullOrNotNumber(genesisBlock)) {
             setBlocknum(0);
             NuggftV1Helper.instance
                 .connect(Web3State.getLibraryOrProvider())
@@ -81,8 +83,10 @@ export default () => {
                         genesisBlock === undefined ? null : undefined,
                     ),
                 );
-        }
-    }, [genesisBlock]);
+        },
+        // }
+        [genesisBlock],
+    );
 
     const [blocknum, setBlocknum] = useState(0);
     const [lastChainUpdate, setLastChainUpdate] = useState(0);
@@ -92,9 +96,12 @@ export default () => {
     const calculateEpochId = useCallback(
         (blocknum: number) => {
             return genesisBlock
-                ? Math.floor(
-                      (blocknum - genesisBlock) / config.EPOCH_INTERVAL +
-                          config.EPOCH_OFFSET,
+                ? Math.max(
+                      Math.floor(
+                          (blocknum - genesisBlock) / config.EPOCH_INTERVAL +
+                              config.EPOCH_OFFSET,
+                      ),
+                      0,
                   )
                 : null;
         },
@@ -116,7 +123,6 @@ export default () => {
     const updateBlocknum = useCallback(
         (newBlock: number) =>
             setBlocknum((currentBlock) => {
-                console.log({ currentBlock });
                 const blockToSet = Math.max(currentBlock, newBlock);
                 const calculatedEpoch = calculateEpochId(blockToSet);
                 if (
@@ -139,9 +145,6 @@ export default () => {
             }),
         [epoch, calculateEpochStartBlock, calculateEpochId],
     );
-    useEffect(() => {
-        console.log(library);
-    }, [library]);
 
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(library)) {
@@ -157,7 +160,7 @@ export default () => {
                 library.removeListener('block', updateBlocknum);
             };
         }
-    }, [updateBlocknum, library]);
+    }, [updateBlocknum, library, chainId]);
 
     useEffect(() => {
         if (!isUndefinedOrNullOrNotNumber(debouncedBlocknum)) {

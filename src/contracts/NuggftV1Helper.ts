@@ -7,10 +7,7 @@ import config from '../config';
 import {
     cipher,
     isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
     loadFromLocalStorage,
-    loadStringFromLocalStorage,
-    saveStringToLocalStorage,
     saveToLocalStorage,
 } from '../lib';
 import Web3State from '../state/web3';
@@ -115,6 +112,7 @@ export default class NuggftV1Helper extends ContractHelper {
             }
         }
     }
+
     public static async approve(
         spender: Address,
         tokenId: string,
@@ -128,8 +126,9 @@ export default class NuggftV1Helper extends ContractHelper {
         let response = await this.instance
             .connect(Web3State.getLibraryOrProvider())
             .getApproved(tokenId);
+        console.log(response, Web3Config.activeChain__NuggftV1);
         return new Address(response).equals(
-            new Address(Web3Config.activeChain__NuggftV1),
+            new Address(Web3Config.activeChain__DotnuggV1),
         );
     }
     public static async approval(tokenId: string): Promise<Address> {

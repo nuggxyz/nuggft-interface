@@ -22,7 +22,7 @@ const query = (
                     ? `where: {id: "${searchValue}"},`
                     : ''
             }
-            orderBy: id,
+            orderBy: idnum,
             orderDirection: ${orderDirection},
             first: ${first},
             skip: ${skip}

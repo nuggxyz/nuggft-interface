@@ -13,6 +13,8 @@ import TokenState from '../../../../state/token';
 import { fromEth } from '../../../../lib/conversion';
 
 import styles from './LoanOrBurn.styles';
+import {Address} from '../../../../classes/Address';
+import Web3Config from '../../../../state/web3/Web3Config';
 
 type Props = {};
 
@@ -35,6 +37,7 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
     const [isApproved, setIsApproved] = useState(false);
 
     useEffect(() => {
+        console.log(targetId)
         if (!isUndefinedOrNullOrStringEmpty(targetId) && !isApproved) {
             NuggftV1Helper.sellerApproval(targetId).then((res) =>
                 setIsApproved(res),
@@ -81,6 +84,9 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                                       tokenId: stableId,
                                   })
                             : WalletState.dispatch.approveNugg({
+                                  spender: new Address(
+                                      Web3Config.activeChain__DotnuggV1,
+                                  ),
                                   tokenId: stableId,
                               })
                     }

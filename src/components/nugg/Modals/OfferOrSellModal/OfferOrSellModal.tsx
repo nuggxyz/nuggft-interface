@@ -25,6 +25,8 @@ import constants from '../../../../lib/constants';
 
 import styles from './OffeOrSellModal.styles';
 import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
+import {Address} from '../../../../classes/Address';
+import Web3Config from '../../../../state/web3/Web3Config';
 
 type Props = {};
 
@@ -180,6 +182,9 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                                       floor: amountArray.nextSwapAmount,
                                   })
                             : WalletState.dispatch.approveNugg({
+                                  spender: new Address(
+                                      Web3Config.activeChain__DotnuggV1,
+                                  ),
                                   tokenId: stableId,
                               })
                     }

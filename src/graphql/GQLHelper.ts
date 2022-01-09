@@ -11,7 +11,7 @@ export default class GQLHelper {
     protected static _instance: ApolloClient<NormalizedCacheObject>;
 
     static get instance() {
-        if (isUndefinedOrNullOrObjectEmpty(GQLHelper._instance)) {
+        // if (isUndefinedOrNullOrObjectEmpty(GQLHelper._instance)) {
             GQLHelper._instance = new ApolloClient({
                 link: new HttpLink({
                     // uri: Web3Config.GRAPH_ENPOINTS[store.getState().web3.currentChain],
@@ -20,7 +20,7 @@ export default class GQLHelper {
                 }),
                 cache: new InMemoryCache(),
             });
-        }
+        // }
         return GQLHelper._instance;
     }
 

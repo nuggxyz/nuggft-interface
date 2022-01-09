@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address';
-import { ethers } from 'ethers';
+import { BytesLike, ethers } from 'ethers';
 
 import config from '../config';
 

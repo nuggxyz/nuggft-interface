@@ -1,3 +1,4 @@
+import { useWeb3React } from '@web3-react/core';
 import React, { FunctionComponent } from 'react';
 
 import Colors from '../../../../lib/colors';
@@ -11,6 +12,7 @@ import Text from '../../../general/Texts/Text/Text';
 type Props = {};
 
 const ConnectWalletTab: FunctionComponent<Props> = () => {
+    const { activate } = useWeb3React();
     return (
         <div
             style={{
@@ -87,7 +89,7 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                                     />
                                 }
                                 onClick={() =>
-                                    Web3State.safeActivate(
+                                    Web3State.safeActivate(activate)(
                                         walletObject.connector,
                                     )
                                 }

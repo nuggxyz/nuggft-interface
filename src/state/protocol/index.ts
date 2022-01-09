@@ -89,7 +89,12 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
                 state.id = undefined;
                 state.currentBlock = 0;
                 state.init = false;
-                state.epoch = undefined;
+                state.epoch = {
+                    endblock: '0',
+                    startblock: '0',
+                    id: '0',
+                    status: undefined,
+                };
                 state.totalSwaps = '0';
                 state.totalUsers = '0';
                 state.totalNuggs = '0';

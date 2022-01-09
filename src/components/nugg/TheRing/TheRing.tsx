@@ -1,5 +1,6 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
+import useDebounce from '../../../hooks/useDebounce';
 import {
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
@@ -32,40 +33,41 @@ const TheRing: FunctionComponent<Props> = ({
     const lastBlock = ProtocolState.select.currentBlock();
     const epoch = ProtocolState.select.epoch();
     const endingSwapEpoch = SwapState.select.epoch();
+    const endingDebounce = useDebounce(endingSwapEpoch, 500);
     const startingSwapEpoch = SwapState.select.startingEpoch();
+    const startingDebounce = useDebounce(startingSwapEpoch, 500);
     const nugg = SwapState.select.nugg();
     const status = SwapState.select.status();
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
         if (
-            !isUndefinedOrNullOrObjectEmpty(endingSwapEpoch) &&
-            !isUndefinedOrNullOrObjectEmpty(startingSwapEpoch)
+            !isUndefinedOrNullOrObjectEmpty(endingDebounce) &&
+            !isUndefinedOrNullOrObjectEmpty(startingDebounce)
         ) {
-            remaining =
-                +endingSwapEpoch.endblock - +startingSwapEpoch.startblock;
+            remaining = +endingDebounce.endblock - +startingDebounce.startblock;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
         return remaining;
-    }, [endingSwapEpoch, startingSwapEpoch]);
+    }, [endingDebounce, startingDebounce]);
 
     const blocksRemaining = useMemo(() => {
         let remaining = 0;
 
         if (
-            !isUndefinedOrNullOrObjectEmpty(endingSwapEpoch) &&
+            !isUndefinedOrNullOrObjectEmpty(endingDebounce) &&
             !isUndefinedOrNullOrNumberZero(lastBlock)
         ) {
-            remaining = +endingSwapEpoch.endblock - +lastBlock;
+            remaining = +endingDebounce.endblock - +lastBlock;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
 
         return remaining;
-    }, [lastBlock, endingSwapEpoch]);
+    }, [lastBlock, endingDebounce]);
 
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>

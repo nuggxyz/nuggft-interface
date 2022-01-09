@@ -21,6 +21,8 @@ export default class Web3Config {
         return Object.values<number>(SupportedChainId);
     }
 
+    static DEFAULT_CHAIN = 4;
+
     static NETWORK_HEALTH_CHECK_MS = 15 * 1000;
     static DEFAULT_MS_BEFORE_WARNING = 90 * 1000;
 
@@ -46,19 +48,35 @@ export default class Web3Config {
     };
 
     static get activeChain__NuggftV1() {
-        return this.CONTRACTS[store.getState().web3.currentChain].NuggftV1;
+        return this.CONTRACTS[
+            store.getState().web3.web3status === 'SELECTED'
+                ? store.getState().web3.currentChain
+                : Web3Config.DEFAULT_CHAIN
+        ].NuggftV1;
     }
 
     static get activeChain__GraphEndpoint() {
-        return this.GRAPH_ENPOINTS[store.getState().web3.currentChain];
+        return this.GRAPH_ENPOINTS[
+            store.getState().web3.web3status === 'SELECTED'
+                ? store.getState().web3.currentChain
+                : Web3Config.DEFAULT_CHAIN
+        ];
     }
 
     static get activeChain__DotnuggV1() {
-        return this.CONTRACTS[store.getState().web3.currentChain].DotnuggV1;
+        return this.CONTRACTS[
+            store.getState().web3.web3status === 'SELECTED'
+                ? store.getState().web3.currentChain
+                : Web3Config.DEFAULT_CHAIN
+        ].DotnuggV1;
     }
 
     static get activeChain__EnsRegistrar() {
-        return this.ENS_REGISTRAR_ADDRESSES[store.getState().web3.currentChain];
+        return this.ENS_REGISTRAR_ADDRESSES[
+            store.getState().web3.web3status === 'SELECTED'
+                ? store.getState().web3.currentChain
+                : Web3Config.DEFAULT_CHAIN
+        ];
     }
 
     static GRAPH_ENPOINTS = {
@@ -88,7 +106,7 @@ export default class Web3Config {
     static connectors = {
         network: new NetworkConnector({
             urls: Web3Config.NETWORK_URLS,
-            defaultChainId: 4,
+            defaultChainId: Web3Config.DEFAULT_CHAIN,
         }),
         injected: new InjectedConnector({
             supportedChainIds: Web3Config.supportedChainIds,
