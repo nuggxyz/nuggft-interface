@@ -63,35 +63,28 @@ export default () => {
 
     // TODO DELETE THIS SHIT ABOVE
 
-    const { library } = useWeb3React();
+    const { library } = Web3State.hook.useActiveWeb3React();
     const genesisBlock = ProtocolState.select.genesisBlock();
     const epoch = ProtocolState.select.epoch();
     const chainId = Web3State.select.currentChain();
-
-    useEffect(
-        () => {
-            // if (isUndefinedOrNullOrNotNumber(genesisBlock)) {
-            setBlocknum(0);
-            NuggftV1Helper.instance
-                .connect(Web3State.getLibraryOrProvider())
-                .genesis()
-                .then((genesis) => {
-                    ProtocolState.dispatch.setGenesisBlock(genesis.toNumber());
-                })
-                .catch(() =>
-                    ProtocolState.dispatch.setGenesisBlock(
-                        genesisBlock === undefined ? null : undefined,
-                    ),
-                );
-        },
-        // }
-        [genesisBlock],
-    );
-
     const [blocknum, setBlocknum] = useState(0);
     const [lastChainUpdate, setLastChainUpdate] = useState(0);
-
     const debouncedBlocknum = useDebounce(blocknum, 100);
+
+    useEffect(() => {
+        setBlocknum(0);
+        NuggftV1Helper.instance
+            .connect(Web3State.getLibraryOrProvider())
+            .genesis()
+            .then((genesis) => {
+                ProtocolState.dispatch.setGenesisBlock(genesis.toNumber());
+            })
+            .catch(() =>
+                ProtocolState.dispatch.setGenesisBlock(
+                    genesisBlock === undefined ? null : undefined,
+                ),
+            );
+    }, [genesisBlock]);
 
     const calculateEpochId = useCallback(
         (blocknum: number) => {

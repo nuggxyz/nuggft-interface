@@ -42,7 +42,6 @@ const initSwap = createAsyncThunk<
                 data: { swap: res, status },
             };
         } else {
-            AppState.onRouteUpdate('/');
             return thunkAPI.rejectWithValue('UNKNOWN');
         }
     } catch (err) {

@@ -59,12 +59,12 @@ export default () => {
     }, [error]);
 
     useEffect(() => {
-        console.log(typeof defaultActivate, typeof activateNetwork);
         if (defaultActivate) {
             Web3State.safeActivate(defaultActivate)(
                 Web3Config.connectors.injected,
             );
-        } else if (activateNetwork) {
+        }
+        if (activateNetwork) {
             console.log('NETWORK ');
             activateNetwork(Web3Config.connectors.network);
             Web3State.dispatch.setWeb3Status('NOT_SELECTED');

@@ -53,7 +53,7 @@ const useSetWeb3Listeners = ({
         if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
             const connect = (chain) => {
                 console.log('eth event: connect', chain);
-                RESET_APP(chain.chainId);
+                // RESET_APP(chain.chainId);
             };
             const disconnect = () => {
                 console.log('eth event: disconnect');
@@ -66,11 +66,12 @@ const useSetWeb3Listeners = ({
                     Web3State.dispatch.setWeb3Address(accounts[0]);
                 } else {
                     Web3State.dispatch.clearWeb3Address();
+                    RESET_APP(Web3Config.DEFAULT_CHAIN);
                 }
             };
             const chainChanged = (chainId) => {
                 console.log('eth event: chainChanged', chainId);
-                RESET_APP(chainId);
+                // RESET_APP(chainId);
             };
             const message = (message: { type: string; data: unknown }) => {
                 console.log('eth event: message', { message });
