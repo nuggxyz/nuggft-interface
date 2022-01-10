@@ -2,6 +2,7 @@
 
 import { NLStyleSheetCreator } from '../../../../lib';
 import Colors from '../../../../lib/colors';
+import FontSize from '../../../../lib/fontSize';
 import Layout from '../../../../lib/layout';
 
 const styles = NLStyleSheetCreator({
@@ -19,13 +20,15 @@ const styles = NLStyleSheetCreator({
         color: 'white',
     },
     button: {
-        borderRadius: Layout.borderRadius.mediumish,
+        borderRadius: Layout.borderRadius.large,
         width: '100%',
     },
     text: {
         color: Colors.grey,
         marginBottom: '.5rem',
         marginLeft: '.5rem',
+        textAlign: 'center',
+        fontSize: FontSize.h6,
     },
     textWhite: {
         color: 'white',

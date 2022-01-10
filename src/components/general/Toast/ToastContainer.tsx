@@ -12,9 +12,14 @@ type Props = {};
 
 const ToastContainer: FunctionComponent<Props> = () => {
     const toasts = AppState.select.toasts();
+    const screenType = AppState.select.screenType();
 
     return (
-        <div style={styles.container}>
+        <div
+            style={{
+                ...styles.container,
+                ...(screenType === 'phone' && { paddingTop: '0rem' }),
+            }}>
             <FlipMove
                 enterAnimation="none"
                 leaveAnimation="none"

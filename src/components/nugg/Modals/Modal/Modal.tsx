@@ -21,6 +21,7 @@ import useAnimateOverlay from '../../../../hooks/useAnimateOverlay';
 import BurnModal from '../BurnModal_DEPRECATED/BurnModal';
 import WalletModal from '../WalletModal/WalletModal';
 import LoanInputModal from '../LoanInputModal/LoanInputModal';
+import Colors from '../../../../lib/colors';
 
 import styles from './Modal.styles';
 
@@ -54,7 +55,7 @@ const Modal: FunctionComponent<Props> = () => {
                 : styles.containerFull),
             transform: isOpen
                 ? screenType === 'phone'
-                    ? 'translate(10px, 8px)'
+                    ? 'translate(0px, 18px)'
                     : 'translate(8px, 8px)'
                 : 'translate(36px, 36px)',
             ...data.containerStyle,
@@ -92,6 +93,11 @@ const Modal: FunctionComponent<Props> = () => {
             <div
                 style={{
                     position: 'relative',
+                    ...(screenType === 'phone' && {
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                    }),
                 }}>
                 {screenType !== 'phone' && (
                     <animated.div style={containerBackgroundStyle} />

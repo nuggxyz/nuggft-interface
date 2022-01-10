@@ -13,6 +13,9 @@ import TokenState from '../../../../state/token';
 import { fromEth } from '../../../../lib/conversion';
 import { Address } from '../../../../classes/Address';
 import Web3Config from '../../../../state/web3/Web3Config';
+import FontSize from '../../../../lib/fontSize';
+import AnimatedCard from '../../../general/Cards/AnimatedCard/AnimatedCard';
+import Colors from '../../../../lib/colors';
 
 import styles from './LoanOrBurn.styles';
 
@@ -49,21 +52,27 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
             <Text textStyle={styles.textWhite}>
                 {stableType === 'Loan' ? 'Loan' : 'Burn'} your Nugg
             </Text>
-            <TokenViewer tokenId={stableId} />
+            <AnimatedCard>
+                <TokenViewer tokenId={stableId} />
+            </AnimatedCard>
 
             <div style={{ width: '100%' }}>
-                <Text type="text" size="smaller" textStyle={styles.text}>
-                    You will receive {(+fromEth(shareValue)).toFixed(4)} ETH
-                </Text>
                 {stableType === 'Burn' && (
                     <Text
                         type="text"
                         size="medium"
                         weight="bold"
-                        textStyle={{ ...styles.text, color: 'white' }}>
+                        textStyle={{
+                            ...styles.text,
+                            color: Colors.nuggRedText,
+                            fontSize: FontSize.h5,
+                        }}>
                         This cannot be undone
                     </Text>
                 )}
+                <Text type="text" textStyle={styles.text}>
+                    You will receive {(+fromEth(shareValue)).toFixed(4)} ETH
+                </Text>
                 <Button
                     buttonStyle={styles.button}
                     label={

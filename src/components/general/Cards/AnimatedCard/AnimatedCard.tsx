@@ -19,7 +19,9 @@ const AnimatedCard: FunctionComponent<React.PropsWithChildren<{}>> = ({
     return (
         <div ref={ref} style={{ zIndex: 10, cursor: 'none' }}>
             <animated.div
-                style={{ transform: props.xys.to(trans) }}
+                style={{
+                    transform: props.xys.to(trans),
+                }}
                 onMouseLeave={() => set([0, 0, 1])}
                 onMouseMove={(e) =>
                     set(

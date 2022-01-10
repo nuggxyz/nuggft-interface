@@ -1,6 +1,12 @@
 import { UseSpringProps } from '@react-spring/core';
 import { animated } from '@react-spring/web';
-import React, { CSSProperties, FunctionComponent, SetStateAction } from 'react';
+import React, {
+    CSSProperties,
+    FunctionComponent,
+    SetStateAction,
+    useEffect,
+    useRef,
+} from 'react';
 
 import Text from '../../Texts/Text/Text';
 
@@ -28,6 +34,7 @@ export interface TextInputProps {
     inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
     className?: string;
     styleLabel?: CSSProperties;
+    shouldFocus?: boolean;
 }
 
 const TextInput: FunctionComponent<TextInputProps> = ({
@@ -52,6 +59,7 @@ const TextInput: FunctionComponent<TextInputProps> = ({
     inputMode,
     className,
     styleLabel,
+    shouldFocus,
 }) => {
     const inputStyle = {
         ...styles.textInput,
@@ -79,6 +87,14 @@ const TextInput: FunctionComponent<TextInputProps> = ({
         ...(border && styles.border),
     };
 
+    const ref = useRef<HTMLInputElement | HTMLTextAreaElement>();
+
+    useEffect(() => {
+        if (ref.current && shouldFocus) {
+            ref.current.focus();
+        }
+    }, [ref, shouldFocus]);
+
     return (
         <animated.div style={containerStyle}>
             <div style={headingStyle}>
@@ -105,6 +121,8 @@ const TextInput: FunctionComponent<TextInputProps> = ({
             <animated.div style={subContainerStyle}>
                 {multi ? (
                     <textarea
+                        //@ts-ignore
+                        ref={ref}
                         className={className}
                         placeholder={placeholder}
                         style={inputStyle}
@@ -118,6 +136,8 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                     />
                 ) : (
                     <input
+                        //@ts-ignore
+                        ref={ref}
                         className={className}
                         placeholder={placeholder}
                         type={type}

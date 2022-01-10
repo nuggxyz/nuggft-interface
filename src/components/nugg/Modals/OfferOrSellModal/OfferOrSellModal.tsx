@@ -25,6 +25,9 @@ import constants from '../../../../lib/constants';
 import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
 import { Address } from '../../../../classes/Address';
 import Web3Config from '../../../../state/web3/Web3Config';
+import AnimatedCard from '../../../general/Cards/AnimatedCard/AnimatedCard';
+import Layout from '../../../../lib/layout';
+import FontSize from '../../../../lib/fontSize';
 
 import styles from './OffeOrSellModal.styles';
 
@@ -103,47 +106,66 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         } else setIsApproved(true);
     }, [targetId, toggle, isApproved, stableId, stableType]);
 
-    useEffect(() => {
-        setAmount(`${minOfferAmount}`);
-    }, [minOfferAmount]);
-
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
                 {stableType === 'StartSale'
-                    ? 'Sell your nugg'
-                    : 'Bid on this nugg'}
+                    ? `Sell Nugg #${stableId || nugg?.id}`
+                    : `Bid on Nugg #${stableId || nugg?.id}`}
             </Text>
-            <TokenViewer tokenId={stableId || nugg?.id} />
+            <AnimatedCard>
+                <TokenViewer tokenId={stableId || nugg?.id} />
+            </AnimatedCard>
             <div style={styles.inputContainer}>
                 <CurrencyInput
+                    shouldFocus
                     style={styles.input}
                     styleHeading={styles.heading}
-                    styleInput={styles.inputCurrency}
+                    styleInputContainer={styles.inputCurrency}
                     label="Enter amount"
                     setValue={setAmount}
                     value={amount}
                     code
                     className="placeholder-white"
+                    rightToggles={[
+                        <Button
+                            onClick={() => setAmount(`${minOfferAmount}`)}
+                            label="Min"
+                            textStyle={{
+                                fontFamily: Layout.font.inter.bold,
+                                fontSize: FontSize.h6,
+                            }}
+                            buttonStyle={{
+                                borderRadius: Layout.borderRadius.large,
+                                padding: '.2rem .5rem',
+                            }}
+                        />,
+                    ]}
                 />
-                <div style={{ width: '50%' }}>
-                    {stableType === 'Offer' && userBalance && (
-                        <Text
-                            type="text"
-                            size="small"
-                            textStyle={{ color: 'white', textAlign: 'right' }}
-                            weight="bolder">
-                            You currently have{' '}
-                            {new EthInt(
-                                userBalance
-                                    .div(10 ** 13)
-                                    .add(1)
-                                    .mul(10 ** 13),
-                            ).decimal.toNumber()}{' '}
-                            ETH
-                        </Text>
-                    )}
-                    <Text textStyle={styles.text}>
+            </div>
+            <div
+                style={{
+                    width: '100%',
+                    height: '1rem',
+                    marginBottom: '.5rem',
+                }}>
+                {stableType === 'Offer' && userBalance && (
+                    <Text
+                        type="text"
+                        size="small"
+                        textStyle={styles.text}
+                        weight="bolder">
+                        You currently have{' '}
+                        {new EthInt(
+                            userBalance
+                                .div(10 ** 13)
+                                .add(1)
+                                .mul(10 ** 13),
+                        ).decimal.toNumber()}{' '}
+                        ETH
+                    </Text>
+                )}
+                {/* <Text textStyle={styles.text}>
                         {amountArray && amountArray.canDelegate
                             ? `${
                                   stableType === 'StartSale' ? 'Sale' : 'Offer'
@@ -153,8 +175,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                                       ? 'sell'
                                       : 'place an offer on'
                               } this Nugg`}
-                    </Text>
-                </div>
+                    </Text> */}
             </div>
             <div style={styles.subContainer}>
                 <FeedbackButton
@@ -162,12 +183,18 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     disabled={amountArray && !amountArray.canDelegate}
                     buttonStyle={styles.button}
                     label={
-                        isApproved
+                        amountArray && !amountArray.canDelegate
+                            ? `You cannot ${
+                                  stableType === 'StartSale'
+                                      ? 'sell'
+                                      : 'place an offer on'
+                              } this Nugg`
+                            : isApproved
                             ? `${
                                   stableType === 'StartSale'
-                                      ? 'Sell'
-                                      : 'Place offer for'
-                              } Nugg #${stableId || nugg?.id}`
+                                      ? 'Sell Nugg'
+                                      : 'Place offer'
+                              }`
                             : `Approve Nugg #${stableId || nugg?.id}`
                     }
                     onClick={() =>
