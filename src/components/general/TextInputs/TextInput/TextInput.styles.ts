@@ -34,8 +34,6 @@ const styles = NLStyleSheetCreator({
     },
     warningText: {
         color: 'red',
-        fontSize: FontSize.p,
-        fontWeight: 'bold',
         alignSelf: 'flex-end',
         padding: 0,
         margin: 0,

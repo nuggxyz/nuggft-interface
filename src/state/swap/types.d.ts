@@ -32,5 +32,6 @@ declare namespace NL.Redux.Swap {
         | 'EPC:SBL'
         | 'EPC:GBL:0'
         | 'EPC:GBL:1'
-        | 'UNKNOWN';
+        | 'UNKNOWN'
+        | 'GAS_ERROR';
 }

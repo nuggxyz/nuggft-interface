@@ -17,7 +17,7 @@ export interface TextInputProps {
     value: string;
     setValue: React.Dispatch<SetStateAction<string>> | any;
     disabled?: boolean;
-    warning?: boolean;
+    warning?: string;
     style?: React.CSSProperties | UseSpringProps;
     styleInputContainer?: CSSProperties | UseSpringProps;
     styleHeading?: CSSProperties;
@@ -107,10 +107,12 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                 </Text>
                 {warning && (
                     <span style={styles.warningContainer}>
-                        <p style={styles.warningText}>{warning} </p>
-                        <span style={styles.warningIcon}>
-                            <p style={styles.warningText}>!</p>
-                        </span>
+                        <Text
+                            type="text"
+                            size="smaller"
+                            textStyle={styles.warningText}>
+                            {warning}
+                        </Text>
                     </span>
                 )}
             </div>

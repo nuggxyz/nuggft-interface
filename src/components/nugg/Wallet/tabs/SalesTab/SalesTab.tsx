@@ -27,6 +27,7 @@ import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSale
 import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 import styles from '../Tabs.styles';
 import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
+import TransactionState from '../../../../../state/transaction';
 
 type Props = { isActive?: boolean };
 
@@ -35,6 +36,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
     const epoch = ProtocolState.select.epoch();
     const [myNuggs, setMyNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
+    const txnToggle = TransactionState.select.toggleCompletedTxn();
 
     const getMyNuggs = useCallback(async () => {
         setLoadingNuggs(true);
@@ -63,7 +65,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                 getMyNuggs();
             }, 500);
         }
-    }, [address]);
+    }, [address, txnToggle]);
 
     return (
         <div style={styles.container}>

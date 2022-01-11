@@ -4,6 +4,7 @@ import { BigNumberish } from 'ethers';
 import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrNotObject,
+    isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 import AppState from '../app';
@@ -26,6 +27,13 @@ const initSale = createAsyncThunk<
         };
     } catch (err) {
         console.log({ err });
+        if (
+            !isUndefinedOrNullOrObjectEmpty(err) &&
+            !isUndefinedOrNullOrStringEmpty(err.method) &&
+            err.method === 'estimateGas'
+        ) {
+            return thunkAPI.rejectWithValue('GAS_ERROR');
+        }
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&

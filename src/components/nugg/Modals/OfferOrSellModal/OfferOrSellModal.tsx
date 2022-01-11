@@ -7,10 +7,11 @@ import { EthInt } from '../../../../classes/Fraction';
 import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
 import useAsyncState from '../../../../hooks/useAsyncState';
 import {
+    isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../../../lib';
-import { fromEth } from '../../../../lib/conversion';
+import { fromEth, toEth } from '../../../../lib/conversion';
 import AppState from '../../../../state/app';
 import SwapState from '../../../../state/swap';
 import TokenState from '../../../../state/token';
@@ -28,12 +29,14 @@ import Web3Config from '../../../../state/web3/Web3Config';
 import AnimatedCard from '../../../general/Cards/AnimatedCard/AnimatedCard';
 import Layout from '../../../../lib/layout';
 import FontSize from '../../../../lib/fontSize';
+import useHandleError from '../../../../hooks/useHandleError';
 
-import styles from './OffeOrSellModal.styles';
+import styles from './OfferOrSellModal.styles';
 
 type Props = {};
 
 const OfferOrSellModal: FunctionComponent<Props> = () => {
+    const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = Web3State.select.web3address();
     const toggle = TransactionState.select.toggleCompletedTxn();
@@ -58,7 +61,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             if (!amountArray.senderCurrentOffer.isZero()) {
                 return fromEth(
                     amountArray?.nextSwapAmount
-                        .sub(amountArray?.senderCurrentOffer)
+                        // .sub(amountArray?.senderCurrentOffer)
                         .div(10 ** 13)
                         .add(1)
                         .mul(10 ** 13),
@@ -67,7 +70,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 return Math.max(
                     +fromEth(
                         amountArray.nextSwapAmount
-                            .sub(amountArray.senderCurrentOffer)
+                            // .sub(amountArray.senderCurrentOffer)
                             .div(10 ** 13)
                             .add(1)
                             .mul(10 ** 13),
@@ -106,24 +109,37 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         } else setIsApproved(true);
     }, [targetId, toggle, isApproved, stableId, stableType]);
 
+    console.log(amountArray && amountArray.senderCurrentOffer.toNumber());
+
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
                 {stableType === 'StartSale'
                     ? `Sell Nugg #${stableId || nugg?.id}`
-                    : `Bid on Nugg #${stableId || nugg?.id}`}
+                    : `${
+                          amountArray &&
+                          !isUndefinedOrNullOrNumberZero(
+                              amountArray.senderCurrentOffer.toNumber(),
+                          )
+                              ? 'Change bid for'
+                              : 'Bid on'
+                      } Nugg #${stableId || nugg?.id}`}
             </Text>
             <AnimatedCard>
                 <TokenViewer tokenId={stableId || nugg?.id} />
             </AnimatedCard>
             <div style={styles.inputContainer}>
                 <CurrencyInput
+                    warning={swapError && 'Invalid input'}
                     shouldFocus
                     style={styles.input}
                     styleHeading={styles.heading}
                     styleInputContainer={styles.inputCurrency}
                     label="Enter amount"
-                    setValue={setAmount}
+                    setValue={(text: string) => {
+                        setAmount(text);
+                        clearError();
+                    }}
                     value={amount}
                     code
                     className="placeholder-white"
@@ -179,6 +195,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             </div>
             <div style={styles.subContainer}>
                 <FeedbackButton
+                    overrideFeedback
                     feedbackText="Check Wallet..."
                     disabled={amountArray && !amountArray.canDelegate}
                     buttonStyle={styles.button}
@@ -193,6 +210,11 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                             ? `${
                                   stableType === 'StartSale'
                                       ? 'Sell Nugg'
+                                      : amountArray &&
+                                        !isUndefinedOrNullOrNumberZero(
+                                            amountArray.senderCurrentOffer.toNumber(),
+                                        )
+                                      ? 'Update offer'
                                       : 'Place offer'
                               }`
                             : `Approve Nugg #${stableId || nugg?.id}`
@@ -202,7 +224,11 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                             ? stableType === 'Offer'
                                 ? SwapState.dispatch.placeOffer({
                                       tokenId: nugg?.id,
-                                      amount,
+                                      amount: fromEth(
+                                          toEth(amount).sub(
+                                              amountArray.senderCurrentOffer,
+                                          ),
+                                      ),
                                   })
                                 : TokenState.dispatch.initSale({
                                       tokenId: stableId,

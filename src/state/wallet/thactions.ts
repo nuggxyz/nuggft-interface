@@ -196,6 +196,13 @@ const payOffLoan = createAsyncThunk<
     } catch (err) {
         console.log({ err });
         if (
+            !isUndefinedOrNullOrObjectEmpty(err) &&
+            !isUndefinedOrNullOrStringEmpty(err.method) &&
+            err.method === 'estimateGas'
+        ) {
+            return thunkAPI.rejectWithValue('GAS_ERROR');
+        }
+        if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&
             !isUndefinedOrNullOrStringEmpty(err.data.message)
@@ -228,6 +235,13 @@ const extend = createAsyncThunk<
         };
     } catch (err) {
         console.log({ err });
+        if (
+            !isUndefinedOrNullOrObjectEmpty(err) &&
+            !isUndefinedOrNullOrStringEmpty(err.method) &&
+            err.method === 'estimateGas'
+        ) {
+            return thunkAPI.rejectWithValue('GAS_ERROR');
+        }
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&

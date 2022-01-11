@@ -140,8 +140,8 @@ const viewChange: Middleware<{}, any, Dispatch<any>> =
 const rejectedThactions: Middleware<{}, any, Dispatch<any>> =
     ({ getState }) =>
     (next: any) =>
-    async (action: PayloadAction<NL.Redux.App.Views>) => {
-        if (NLState.isRejected(action)) {
+    async (action: PayloadAction<string>) => {
+        if (NLState.isRejected(action) && action.payload !== 'GAS_ERROR') {
             const toasts = getState().app.toasts.length;
             AppState.dispatch.addToastToList({
                 index: toasts + 1,

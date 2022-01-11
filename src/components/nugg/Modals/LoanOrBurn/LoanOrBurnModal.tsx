@@ -16,6 +16,7 @@ import Web3Config from '../../../../state/web3/Web3Config';
 import FontSize from '../../../../lib/fontSize';
 import AnimatedCard from '../../../general/Cards/AnimatedCard/AnimatedCard';
 import Colors from '../../../../lib/colors';
+import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
 
 import styles from './LoanOrBurn.styles';
 
@@ -50,7 +51,7 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
     return (
         <div style={styles.container}>
             <Text textStyle={styles.textWhite}>
-                {stableType === 'Loan' ? 'Loan' : 'Burn'} your Nugg
+                {stableType === 'Loan' ? 'Loan' : 'Burn'} Nugg #{stableId}
             </Text>
             <AnimatedCard>
                 <TokenViewer tokenId={stableId} />
@@ -73,13 +74,13 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                 <Text type="text" textStyle={styles.text}>
                     You will receive {(+fromEth(shareValue)).toFixed(4)} ETH
                 </Text>
-                <Button
+                <FeedbackButton
+                    overrideFeedback
+                    feedbackText="Check Wallet..."
                     buttonStyle={styles.button}
                     label={
                         isApproved
-                            ? `${
-                                  stableType === 'Loan' ? 'Loan' : 'Burn'
-                              } Nugg #${stableId}`
+                            ? `${stableType === 'Loan' ? 'Loan' : 'Burn'}`
                             : `Approve Nugg #${stableId}`
                     }
                     onClick={() =>
