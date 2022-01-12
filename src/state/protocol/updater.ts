@@ -79,12 +79,13 @@ export default () => {
             .then((genesis) => {
                 ProtocolState.dispatch.setGenesisBlock(genesis.toNumber());
             })
-            .catch(() =>
-                ProtocolState.dispatch.setGenesisBlock(
-                    genesisBlock === undefined ? null : undefined,
-                ),
-            );
-    }, [genesisBlock]);
+            .catch((e) => {
+                console.log(e);
+                if (!window.web3) {
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+            });
+    }, [genesisBlock, chainId]);
 
     const calculateEpochId = useCallback(
         (blocknum: number) => {

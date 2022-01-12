@@ -22,6 +22,7 @@ const RESET_APP = (chainId: number | string) => {
     if (!isUndefinedOrNull(chainId)) {
         console.log('RESET');
         Web3State.dispatch.setCurrentChain(BigNumber.from(chainId).toNumber());
+        localStorage.removeItem('recents');
         NuggftV1Helper.reset();
         GQLHelper.reset();
         batch(() => {
@@ -32,7 +33,6 @@ const RESET_APP = (chainId: number | string) => {
             TransactionState.dispatch.reset();
             WalletState.dispatch.reset();
         });
-        localStorage.clear();
     }
 };
 

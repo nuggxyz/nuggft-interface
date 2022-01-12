@@ -9,6 +9,7 @@ import {
     isUndefinedOrNullOrNotFunction,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
+    loadStringFromLocalStorage,
 } from '../../lib';
 import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import NuggDexState from '../nuggdex';
@@ -59,16 +60,22 @@ export default () => {
     }, [error]);
 
     useEffect(() => {
-        if (defaultActivate) {
-            Web3State.safeActivate(defaultActivate)(
-                Web3Config.connectors.injected,
-            );
+        if (defaultActivate && !active) {
+            const safeActivate = Web3State.safeActivate(defaultActivate);
+            if (
+                !window.ethereum &&
+                !isUndefinedOrNullOrStringEmpty(
+                    loadStringFromLocalStorage('walletconnect'),
+                )
+            ) {
+                safeActivate(Web3Config.connectors.walletconnect);
+            } else {
+                safeActivate(Web3Config.connectors.injected);
+            }
         }
         if (activateNetwork) {
-            console.log('NETWORK ');
             activateNetwork(Web3Config.connectors.network);
             Web3State.dispatch.setWeb3Status('NOT_SELECTED');
-            // }
         }
     }, [active, activateNetwork, defaultActivate]);
     return null;
