@@ -1,11 +1,12 @@
 declare namespace NL.Redux.Swap {
-    type State = {
+    type State = Omit<NL.GraphQL.Fragments.Swap.Bare, 'leader'> & {
         error: Error;
         lastUpdated: number;
         loading: boolean;
         success: Success;
+        leader: string;
         status: Status;
-    } & NL.GraphQL.Fragments.Swap.Bare;
+    };
 
     type Status = 'over' | 'ongoing' | 'waiting';
 

@@ -9,6 +9,7 @@ const styles = NLStyleSheetCreator({
         alignItems: 'center',
         display: 'flex',
         justifyContent: 'center',
+        flexDirection: 'column',
     },
     svgTransition: {
         transition: 'filter .5s ease',
@@ -16,7 +17,6 @@ const styles = NLStyleSheetCreator({
         transformOrigin: 'center',
         transform: 'rotate(-90deg)',
     },
-    circle: {},
 });
 
 export default styles;

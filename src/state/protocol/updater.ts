@@ -182,5 +182,23 @@ export default () => {
         };
     }, [lastChainUpdate, setLastChainUpdate]);
 
+    useEffect(() => {
+        if (!isUndefinedOrNullOrObjectEmpty(library)) {
+            const update = (log: any) => {
+                console.log(log);
+            };
+
+            const filters =
+                NuggftV1Helper.instance.filters['Stake(uint256)'](null);
+            console.log(filters);
+
+            library.on(filters, update);
+
+            return () => {
+                library.removeListener(filters, update);
+            };
+        }
+    }, [library]);
+
     return null;
 };

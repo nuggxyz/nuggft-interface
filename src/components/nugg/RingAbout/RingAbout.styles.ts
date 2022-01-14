@@ -103,6 +103,7 @@ const styles = NLStyleSheetCreator({
         width: '100%',
         marginBottom: '1.5rem',
         zIndex: 1,
+        paddingLeft: '.4rem',
     },
     leadingOffer: {
         paddingRight: '0rem',

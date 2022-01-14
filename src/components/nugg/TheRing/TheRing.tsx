@@ -12,6 +12,7 @@ import ProtocolState from '../../../state/protocol';
 import SwapState from '../../../state/swap';
 import CircleTimer from '../../general/AnimatedTimers/CircleTimer/CircleTimer';
 import AnimatedCard from '../../general/Cards/AnimatedCard/AnimatedCard';
+import Text from '../../general/Texts/Text/Text';
 import TokenViewer from '../TokenViewer';
 
 import styles from './TheRing.styles';
@@ -83,14 +84,19 @@ const TheRing: FunctionComponent<Props> = ({
                         ? Colors.green
                         : ''
                 }
-                style={{ ...styles.circle, ...circleStyle }}>
+                style={{
+                    ...styles.circle,
+                    ...circleStyle,
+                    flexDirection: 'column',
+                }}>
                 <AnimatedCard>
                     <TokenViewer
                         tokenId={(nugg && nugg.id) || ''}
-                        showLabel={screenType !== 'phone'}
+                        // showLabel={screenType !== 'phone'}
                         style={tokenStyle}
                     />
                 </AnimatedCard>
+                {screenType !== 'phone' && <Text>Nugg #{nugg && nugg.id}</Text>}
             </CircleTimer>
         </div>
     );

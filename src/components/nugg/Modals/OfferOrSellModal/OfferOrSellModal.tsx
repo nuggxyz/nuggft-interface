@@ -109,8 +109,6 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         } else setIsApproved(true);
     }, [targetId, toggle, isApproved, stableId, stableType]);
 
-    console.log(amountArray && amountArray.senderCurrentOffer.toNumber());
-
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>

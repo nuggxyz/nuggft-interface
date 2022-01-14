@@ -122,6 +122,13 @@ const CircleTimer: FunctionComponent<Props> = ({
                 <animated.circle
                     cx="50%"
                     cy="50%"
+                    r={timerCircleRadius + 50}
+                    strokeDashoffset={x}
+                    fill="none"
+                />
+                <animated.circle
+                    cx="50%"
+                    cy="50%"
                     r={timerCircleRadius}
                     stroke="white"
                     strokeDashoffset={x}
