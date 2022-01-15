@@ -100,19 +100,13 @@ const placeOffer = createAsyncThunk<
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
 >('swap/placeOffer', async ({ amount, tokenId }, thunkAPI) => {
     try {
-        console.log('BEFORE');
-        const _pendingtx = await (
-            await NuggftV1Helper.instance
-                .connect(Web3State.getLibraryOrProvider())
-                .delegate(BigNumber.from(tokenId), { value: toEth(amount) })
-        ).wait();
-
-        console.log('AFTER');
-        console.log({ _pendingtx });
+        const _pendingtx = await NuggftV1Helper.instance
+            .connect(Web3State.getLibraryOrProvider())
+            .delegate(BigNumber.from(tokenId), { value: toEth(amount) });
 
         return {
             success: 'SUCCESS',
-            _pendingtx: _pendingtx,
+            _pendingtx: _pendingtx.hash,
             callbackFn: () => {
                 AppState.dispatch.setModalClosed();
             },

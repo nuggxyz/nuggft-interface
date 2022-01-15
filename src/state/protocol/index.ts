@@ -85,6 +85,24 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
             ) => {
                 state.epoch = action.payload;
             },
+            setStaked: (
+                state,
+                action: PayloadAction<{
+                    stakedShares: number;
+                    stakedEth: number;
+                }>,
+            ) => {
+                const perShare =
+                    action.payload.stakedShares === 0
+                        ? '0'
+                        : `${Math.floor(
+                              action.payload.stakedEth /
+                                  action.payload.stakedShares,
+                          )}`;
+                state.nuggftStakedEth = '' + action.payload.stakedEth;
+                state.nuggftStakedShares = '' + action.payload.stakedShares;
+                state.nuggftStakedEthPerShare = perShare;
+            },
             reset: (state) => {
                 state.id = undefined;
                 state.currentBlock = 0;

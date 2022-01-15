@@ -12,12 +12,13 @@ import styles from './MintView.styles';
 type Props = {};
 
 const MintView: FunctionComponent<Props> = () => {
-    const { width } = AppState.select.dimensions();
+    const { width, height } = AppState.select.dimensions();
     const nugg = SwapState.select.nugg();
     return (
         <div style={styles.container}>
+            <FloorPrice style={{ zIndex: 0, marginTop: '.3rem' }} />
             <div style={styles.ring}>
-                <TheRing circleWidth={width * 2.8} />
+                <TheRing circleWidth={Math.min(width * 2.7, height / 0.6)} />
                 {nugg && (
                     <Text textStyle={{ marginBottom: '.4rem' }}>
                         Nugg #{nugg.id}
@@ -25,7 +26,6 @@ const MintView: FunctionComponent<Props> = () => {
                 )}
             </div>
             <div style={styles.ringAbout}>
-                <FloorPrice style={{ zIndex: 0 }} />
                 <RingAbout />
             </div>
         </div>

@@ -113,7 +113,13 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
         <animated.div
             style={{
                 ...styles.container,
-                ...(screenType === 'phone' && styles.mobile),
+                ...(screenType === 'phone' && {
+                    ...styles.mobile,
+                    background: springStyle.opacity.to(
+                        [0, 1],
+                        ['#FFFFFF00', Colors.transparentWhite],
+                    ),
+                }),
             }}>
             <div style={styles.bodyContainer}>
                 <div
@@ -158,7 +164,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                 />
                                 <Text textStyle={styles.code}>{leaderEns}</Text>
                             </animated.div>
-                            {offers.length > 1 && (
+                            {offers.length >= 1 && (
                                 <Button
                                     rightIcon={
                                         !open ? (

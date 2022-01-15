@@ -22,6 +22,7 @@ type Props = {
 
 const NavigationBar: FC<Props> = () => {
     // const [ref, isHovering] = useOnHover();
+    const screenType = AppState.select.screenType();
     const view = AppState.select.view();
     const onClick = useCallback(
         () =>
@@ -47,38 +48,23 @@ const NavigationBar: FC<Props> = () => {
             <div
                 style={{
                     whiteSpace: 'nowrap',
-                    display: 'flex',
+                    // display: 'flex',
                     alignItems: 'center',
                 }}>
                 <ChainIndicator />
+                {screenType === 'tablet' && (
+                    <div style={{position: 'absolute', marginTop: '0rem'}}>
+                        <FloorPrice />
+                    </div>
+                )}
             </div>
-            {/* <div
+            <div
                 style={{
-                    zIndex: 1000,
-                    display: 'flex',
-                    background: 'white',
-                    borderRadius: Layout.borderRadius.large,
-                    padding: '.4rem .7rem',
-                    alignItems: 'center',
+                    ...styles.linkAccountContainer,
+                    justifyContent:
+                        screenType === 'desktop' ? 'space-between' : 'flex-end',
                 }}>
-                <Text
-                    type="text"
-                    size="small"
-                    weight="bolder"
-                    textStyle={{
-                        paddingRight: '.6rem',
-                        color: Colors.nuggBlueText,
-                        font: Layout.font.inter.bold,
-                    }}>
-                    FLOOR
-                </Text>
-                <CurrencyText
-                    image="eth"
-                    value={new EthInt(valuePerShare).decimal.toNumber()}
-                />
-            </div> */}
-            <div style={styles.linkAccountContainer}>
-                <FloorPrice />
+                {screenType === 'desktop' && <FloorPrice />}
                 <AccountViewer />
             </div>
         </div>

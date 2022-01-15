@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSpring, animated, config } from 'react-spring';
+import Colors from '../../../../lib/colors';
 
 import NLStaticImage, { NLStaticImageKey } from '../../NLStaticImage';
 import Text, { TextProps } from '../Text/Text';

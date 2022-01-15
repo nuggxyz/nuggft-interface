@@ -38,7 +38,7 @@ export const pending: NL.Redux.Middleware<
                         `${
                             Web3Config.CHAIN_INFO[getState().web3.currentChain]
                                 .explorer
-                        }/tx/${action.payload._pendingtx}`,
+                        }tx/${action.payload._pendingtx}`,
                         '_blank',
                     );
                     win.focus();

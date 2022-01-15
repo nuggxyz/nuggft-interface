@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { gql, useSubscription } from '@apollo/client';
 import { useWeb3React } from '@web3-react/core';
+import { BigNumber } from 'ethers';
 
 import useRecursiveTimeout from '../../hooks/useRecursiveTimeout';
 import {
@@ -22,47 +23,6 @@ import config from '../../config';
 import ProtocolState from '.';
 
 export default () => {
-    // const block = ProtocolState.select.currentBlock();
-    // const epoch = ProtocolState.select.epoch();
-
-    // const checkEpoch = useCallback(() => {
-    //     if (
-    //         isUndefinedOrNullOrObjectEmpty(epoch) ||
-    //         (!isUndefinedOrNullOrNumberZero(block) && block >= +epoch.endblock)
-    //     ) {
-    //         ProtocolState.dispatch.updateEpoch();
-    //         // ProtocolState.dispatch.updateStaked();
-    //     }
-    // }, [epoch, block]);
-
-    // const { data } = useSubscription(
-    //     gql`
-    //         subscription Cool {
-    //             _meta {
-    //                 block {
-    //                     number
-    //                 }
-    //             }
-    //         }
-    //     `,
-    //     { client },
-    // );
-
-    // useEffect(() => {
-    //     if (data && data._meta && data._meta.block && data._meta.block.number) {
-    //         ProtocolState.dispatch.setCurrentBlock(data._meta.block.number);
-    //         console.log('blocknum');
-    //         checkEpoch();
-    //     }
-    // }, [data]);
-
-    // useRecursiveTimeout(() => {
-    //     checkEpoch();
-    //     ProtocolState.dispatch.updateBlock();
-    // }, constants.QUERYTIME);
-
-    // TODO DELETE THIS SHIT ABOVE
-
     const { library } = Web3State.hook.useActiveWeb3React();
     const genesisBlock = ProtocolState.select.genesisBlock();
     const epoch = ProtocolState.select.epoch();
@@ -184,13 +144,31 @@ export default () => {
 
     useEffect(() => {
         if (!isUndefinedOrNullOrObjectEmpty(library)) {
+            ProtocolState.dispatch.updateStaked();
+
             const update = (log: any) => {
-                console.log(log);
+                const { args } =
+                    NuggftV1Helper.instance.interface.parseLog(log);
+
+                // const protocol = (args.stake as BigNumber)
+                //     .shr(96)
+                //     .shl(96)
+                //     .xor(args.stake);
+
+                const stakedShares = (args.stake as BigNumber).shr(96 + 96);
+
+                const stakedEth = (args.stake as BigNumber)
+                    .shr(96)
+                    .xor(stakedShares.shl(96));
+
+                ProtocolState.dispatch.setStaked({
+                    stakedShares: stakedShares.toNumber(),
+                    stakedEth: stakedEth.toNumber(),
+                });
             };
 
             const filters =
                 NuggftV1Helper.instance.filters['Stake(uint256)'](null);
-            console.log(filters);
 
             library.on(filters, update);
 

@@ -151,7 +151,7 @@ const NuggList: FunctionComponent<Props> = ({
                                 ...globalStyles.backdropFilter,
                             }}>
                             <TransitionText
-                                Icon={ChevronLeft}
+                                Icon={<ChevronLeft />}
                                 style={{
                                     marginTop: '.12rem',
                                     // color: Colors.nuggBlueText

@@ -1,6 +1,5 @@
 import { animated, config, useSpring } from '@react-spring/web';
 import React, { CSSProperties, FunctionComponent } from 'react';
-import { Icon } from 'react-feather';
 
 import useOnHover from '../../../../hooks/useOnHover';
 import Text from '../Text/Text';
@@ -12,7 +11,7 @@ type Props = {
     transitionText: string;
     onClick: () => void;
     style?: CSSProperties;
-    Icon?: Icon;
+    Icon?: React.ReactElement;
 };
 
 const TransitionText: FunctionComponent<Props> = ({
@@ -39,7 +38,7 @@ const TransitionText: FunctionComponent<Props> = ({
             ref={ref}
             onClick={onClick}
             style={{ ...styles.container, ...style }}>
-            {Icon && <Icon />}
+            {Icon && Icon}
             <animated.div style={{ ...styles.text, ...textStyle }}>
                 <Text>{text}</Text>
             </animated.div>

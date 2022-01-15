@@ -45,6 +45,7 @@ import FontSize from '../../../../../lib/fontSize';
 import TokenState from '../../../../../state/token';
 import NuggDexState from '../../../../../state/nuggdex';
 import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
+import Layout from '../../../../../lib/layout';
 
 type Props = {};
 
@@ -99,19 +100,38 @@ const MintTab: FunctionComponent<Props> = () => {
 
     return (
         <div style={styles.container}>
-            {screenType === 'phone' && <AccountViewer />}
-            <div style={{ margin: '.5rem' }}>
-                <div>
+            <div>
+                <div
+                    style={
+                        screenType === 'phone'
+                            ? {
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                              }
+                            : undefined
+                    }>
                     <NumberStatistic
                         style={{
                             alignItems: 'center',
-                            width: '',
                             margin: '0rem',
+                            width: screenType === 'phone' ? '48%' : '100%',
                         }}
                         label="TVL"
                         value={new EthInt(`${+valuePerShare * userShares}`)}
                         image="eth"
                     />
+                    {screenType === 'phone' && (
+                        <div
+                            style={{
+                                background: Colors.transparentWhite,
+                                padding: '12px 10px',
+                                borderRadius: Layout.borderRadius.medium,
+                                width: '48%',
+                            }}>
+                            <AccountViewer />
+                        </div>
+                    )}
                 </div>
                 <div style={swapStyles.statisticContainer}>
                     <TextStatistic

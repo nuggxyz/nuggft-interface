@@ -13,18 +13,14 @@ type Props = { style?: CSSProperties };
 
 const FloorPrice: FunctionComponent<Props> = ({ style }) => {
     const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
-    console.log(valuePerShare);
 
     const springStyle = useSpring({
-        // position: 'absolute',
-        zIndex: 1000,
+        // zIndex: 1000,
         display: 'flex',
-        // background: 'white',
         borderRadius: Layout.borderRadius.large,
-        // padding: '.4rem .7rem',
         alignItems: 'center',
         justifyContent: 'center',
-        // marginLeft: '13rem',
+        margin: '.3rem 0rem',
         opacity: valuePerShare !== '0' ? 1 : 0,
         ...style,
     });
@@ -44,9 +40,7 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
             </Text>
             <CurrencyText
                 image="eth"
-                value={new EthInt(
-                    valuePerShare.split('.')[0],
-                ).decimal.toNumber()}
+                value={new EthInt(valuePerShare).decimal.toNumber()}
             />
         </animated.div>
     );

@@ -17,7 +17,7 @@ const SwapPage: FunctionComponent<Props> = () => {
                 <>
                     <div style={styles.tabletMain}>
                         <div style={styles.tabletRing}>
-                            <TheRing />
+                            <TheRing circleWidth={1100} />
                         </div>
                         <div style={styles.tabletRingAbout}>
                             <RingAbout />

@@ -21,37 +21,6 @@ export default () => {
     const swapId = SwapState.select.id();
     const { library } = Web3State.hook.useActiveWeb3React();
 
-    // const { data } = useSubscription(
-    //     gql`
-    //         subscription Cool($swapId: ID!) {
-    //             swap(id: $swapId) {
-    //                 id
-    //                 offers(orderBy: eth, orderDirection: desc) {
-    //                     id
-    //                     user {
-    //                         id
-    //                     }
-    //                     eth
-    //                     ethUsd
-    //                     claimed
-    //                     owner
-    //                 }
-    //             }
-    //         }
-    //     `,
-    //     { client, variables: { swapId } },
-    // );
-
-    // useEffect(() => {
-    //     if (data && data.swap && data.swap.offers) {
-    //         console.log("GO ON GIT")
-    //         SwapState.dispatch.setOffers({
-    //             offers: data.swap.offers,
-    //             swapId: swapId,
-    //         });
-    //     }
-    // }, [data]);
-
     const updateOffer = useCallback((log: any) => {
         const { args } = NuggftV1Helper.instance.interface.parseLog(log);
 

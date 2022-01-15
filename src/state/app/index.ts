@@ -75,7 +75,7 @@ class AppState extends NLState<NL.Redux.App.State> {
             ) => {
                 state.dimensions = action.payload;
                 state.screenType =
-                    action.payload.width > 1360
+                    action.payload.width > 1300
                         ? 'desktop'
                         : action.payload.width > 750
                         ? 'tablet'

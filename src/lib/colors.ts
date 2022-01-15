@@ -1,7 +1,7 @@
 const Colors = {
     primaryColor: '#000000',
     secondaryColor: '#FFFFFF',
-    tintColor: '#D69E2C',
+    tintColor: 'rgb(80, 144, 234)',
     grey: '#DBDBDB',
     darkerGray: '#788796',
     textColor: 'rgb(86, 90, 105)',
