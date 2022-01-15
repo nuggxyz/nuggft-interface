@@ -50,6 +50,9 @@ const useSetWeb3Listeners = ({
     }, [connectorChainId, chainId]);
 
     useEffect(() => {
+        if (library) {
+            library.on('disconnect', () => console.log('DISCONNECGT'));
+        }
         if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
             const connect = (chain) => {
                 console.log('eth event: connect', chain);

@@ -37,6 +37,9 @@ export const offerThumbnail = gql`
             owner ${idFragment}
             leader ${idFragment}
             num
+            nugg {
+                dotnuggRawCache
+            }
         }
         eth
         ethUsd

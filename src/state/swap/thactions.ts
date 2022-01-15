@@ -34,7 +34,7 @@ const initSwap = createAsyncThunk<
             const status =
                 res.endingEpoch === null
                     ? 'waiting'
-                    : currentEpoch && res.endingEpoch >= +currentEpoch.id
+                    : currentEpoch && +res.endingEpoch >= +currentEpoch.id
                     ? 'ongoing'
                     : 'over';
             return {
@@ -46,7 +46,7 @@ const initSwap = createAsyncThunk<
         }
     } catch (err) {
         console.log({ err });
-        AppState.onRouteUpdate('/');
+        // AppState.onRouteUpdate('/');
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&

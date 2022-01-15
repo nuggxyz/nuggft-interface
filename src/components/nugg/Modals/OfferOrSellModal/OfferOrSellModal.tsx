@@ -133,7 +133,11 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     style={styles.input}
                     styleHeading={styles.heading}
                     styleInputContainer={styles.inputCurrency}
-                    label="Enter amount"
+                    label={
+                        stableType === 'StartSale'
+                            ? 'Enter floor'
+                            : 'Enter amount'
+                    }
                     setValue={(text: string) => {
                         setAmount(text);
                         clearError();

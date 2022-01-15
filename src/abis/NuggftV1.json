@@ -1583,5 +1583,41 @@
         ],
         "stateMutability": "view",
         "type": "function"
+    },
+    {
+        "type": "function",
+        "name": "multiclaim",
+        "inputs": [
+            {
+                "internalType": "uint160[]",
+                "name": "tokenIds",
+                "type": "uint160[]"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "multiclaimItem",
+        "inputs": [
+            {
+                "internalType": "uint160[]",
+                "name": "buyerTokenIds",
+                "type": "uint160[]"
+            },
+            {
+                "internalType": "uint160[]",
+                "name": "sellerTokenIds",
+                "type": "uint160[]"
+            },
+            {
+                "internalType": "uint16[]",
+                "name": "itemIds",
+                "type": "uint16[]"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
     }
 ]

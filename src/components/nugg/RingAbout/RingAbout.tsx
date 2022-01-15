@@ -18,6 +18,7 @@ import Button from '../../general/Buttons/Button/Button';
 import AppState from '../../../state/app';
 import Web3State from '../../../state/web3';
 import {
+    isUndefinedOrNull,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
@@ -27,6 +28,8 @@ import Colors from '../../../lib/colors';
 import TransactionState from '../../../state/transaction';
 import usePrevious from '../../../hooks/usePrevious';
 import NuggftV1Helper from '../../../contracts/NuggftV1Helper';
+import useSetState from '../../../hooks/useSetState';
+import ProtocolState from '../../../state/protocol';
 
 import styles from './RingAbout.styles';
 
@@ -35,6 +38,8 @@ type Props = {};
 const RingAbout: FunctionComponent<Props> = ({}) => {
     const screenType = AppState.select.screenType();
     const eth = SwapState.select.eth();
+    const epoch = ProtocolState.select.epoch();
+    const endingSwapEpoch = SwapState.select.epoch();
     const address = Web3State.select.web3address();
     const ethUsd = SwapState.select.ethUsd();
     const leader = SwapState.select.leader();
@@ -43,7 +48,15 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const prevToggle = usePrevious(txnToggle);
 
-    const status = SwapState.select.status();
+    // const status = SwapState.select.status();
+
+    const status = useSetState(() => {
+        return isUndefinedOrNull(endingSwapEpoch) || isUndefinedOrNull(epoch)
+            ? 'waiting'
+            : +endingSwapEpoch.endblock >= +epoch.endblock
+            ? 'ongoing'
+            : 'over';
+    }, [epoch, endingSwapEpoch]);
 
     useEffect(() => {
         if (
@@ -164,7 +177,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                 />
                                 <Text textStyle={styles.code}>{leaderEns}</Text>
                             </animated.div>
-                            {offers.length >= 1 && (
+                            {offers.length > 1 && (
                                 <Button
                                     rightIcon={
                                         !open ? (

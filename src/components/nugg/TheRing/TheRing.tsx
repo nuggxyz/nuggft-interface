@@ -1,6 +1,7 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
 import useDebounce from '../../../hooks/useDebounce';
+import useSetState from '../../../hooks/useSetState';
 import {
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
@@ -38,7 +39,15 @@ const TheRing: FunctionComponent<Props> = ({
     const startingSwapEpoch = SwapState.select.startingEpoch();
     const startingDebounce = useDebounce(startingSwapEpoch, 500);
     const nugg = SwapState.select.nugg();
-    const status = SwapState.select.status();
+    // const status = SwapState.select.status();
+
+    const status = useSetState(() => {
+        return endingSwapEpoch === null || endingSwapEpoch === undefined
+            ? 'waiting'
+            : epoch && +endingSwapEpoch.endblock >= +epoch.endblock
+            ? 'ongoing'
+            : 'over';
+    }, [epoch, endingSwapEpoch]);
 
     const blockDuration = useMemo(() => {
         let remaining = 0;

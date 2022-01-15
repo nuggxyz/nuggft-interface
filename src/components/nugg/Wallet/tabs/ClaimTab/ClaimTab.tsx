@@ -23,6 +23,9 @@ import Colors from '../../../../../lib/colors';
 import styles from '../Tabs.styles';
 import TransactionState from '../../../../../state/transaction';
 import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
+import TokenViewer from '../../../TokenViewer';
+import { fromEth } from '../../../../../lib/conversion';
+import NLStaticImage from '../../../../general/NLStaticImage';
 
 type Props = { isActive?: boolean };
 
@@ -98,27 +101,57 @@ const RenderItem: FunctionComponent<
         return item && extraData[0] === item.swap.leader.id;
     }, [item, extraData]);
 
+    const swapText = useMemo(
+        () => (item.swap.num === '0' ? 'Mint' : `Swap #${item.swap.num}`),
+        [item],
+    );
+
     return (
         !isUndefinedOrNullOrObjectEmpty(item) && (
             <div key={index} style={listStyles.render}>
-                <div>
-                    <Text textStyle={listStyles.renderTitle}>
-                        Nugg #{parsedTitle.nugg}
-                    </Text>
-                    <Text
-                        type="text"
-                        textStyle={{ color: Colors.textColor }}
-                        size="small">
-                        {item.swap.num === '0'
-                            ? 'Mint'
-                            : `Swap #${item.swap.num}`}
-                    </Text>
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        // flexDirection: 'column',
+                    }}>
+                    {isWinner ? (
+                        <TokenViewer
+                            tokenId={parsedTitle.nugg}
+                            data={(item as any).swap.nugg.dotnuggRawCache}
+                            style={{ width: '60px', height: '50px' }}
+                        />
+                    ) : (
+                        <NLStaticImage
+                            image="eth"
+                            style={{
+                                width: '60px',
+                                height: '30px',
+                                margin: '.6rem 0rem',
+                            }}
+                        />
+                    )}
+                    <div>
+                        <Text textStyle={listStyles.renderTitle} size="small">
+                            {isWinner
+                                ? `Nugg #${parsedTitle.nugg}`
+                                : `${fromEth(item.eth)} ETH`}
+                        </Text>
+                        <Text
+                            textStyle={{ color: Colors.textColor }}
+                            size="smaller"
+                            type="text">
+                            {isWinner
+                                ? swapText
+                                : `Nugg #${parsedTitle.nugg} | ${swapText}`}
+                        </Text>
+                    </div>
                 </div>
                 <FeedbackButton
                     feedbackText="Check Wallet..."
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
-                    label={`Claim ${isWinner ? 'Nugg' : 'ETH'}`}
+                    label={`Claim`}
                     onClick={() =>
                         WalletState.dispatch.claim({
                             tokenId: parsedTitle.nugg,
