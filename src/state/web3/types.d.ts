@@ -1,7 +1,6 @@
 declare namespace NL.Redux.Web3 {
     interface State {
         web3address: string;
-        web3status: Web3Status;
         web3error: boolean;
         implements3085: boolean;
         connectivityWarning: boolean;
@@ -10,7 +9,6 @@ declare namespace NL.Redux.Web3 {
         currentChain: import('./Web3Config').SupportedChainId;
     }
 
-    type Web3Status = 'NOT_SELECTED' | 'PENDING' | 'SELECTED' | 'ERROR';
     type Error = 'ERROR';
     type Success = 'Success';
     type AddressMap = { [chainId: number]: string };

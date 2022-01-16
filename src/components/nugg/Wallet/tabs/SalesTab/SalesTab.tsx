@@ -31,6 +31,8 @@ import TransactionState from '../../../../../state/transaction';
 import TokenViewer from '../../../TokenViewer';
 import NLStaticImage from '../../../../general/NLStaticImage';
 import { fromEth } from '../../../../../lib/conversion';
+import FontSize from '../../../../../lib/fontSize';
+import swapStyles from '../SwapTab.styles';
 
 type Props = { isActive?: boolean };
 
@@ -80,14 +82,40 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                         JSON.stringify(prev.item) ===
                         JSON.stringify(props.item),
                 )}
-                label="Nugg sales"
+                label="Sales"
                 loading={loadingNuggs}
                 style={listStyles.list}
                 extraData={[address]}
-                listEmptyText="You haven't sold any nuggs yet!"
+                listEmptyText="No Nuggs on sale..."
                 labelStyle={styles.listLabel}
                 listEmptyStyle={listStyles.textWhite}
                 loaderColor="white"
+                TitleButton={
+                    !isUndefinedOrNullOrArrayEmpty(myNuggs)
+                        ? () => (
+                              <FeedbackButton
+                                  feedbackText="Check Wallet..."
+                                  buttonStyle={{
+                                      ...swapStyles.button,
+                                      margin: '0rem',
+                                      padding: '.2rem 1rem',
+                                  }}
+                                  textStyle={{
+                                      color: Colors.nuggRedText,
+                                      fontSize: FontSize.h6,
+                                  }}
+                                  label="Reclaim all"
+                                  onClick={() =>
+                                      WalletState.dispatch.multiClaim({
+                                          tokenIds: myNuggs.map(
+                                              (offer) => (offer as any).nugg.id,
+                                          ),
+                                      })
+                                  }
+                              />
+                          )
+                        : undefined
+                }
             />
         </div>
     );

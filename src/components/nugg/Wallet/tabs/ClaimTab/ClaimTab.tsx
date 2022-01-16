@@ -21,11 +21,13 @@ import List, { ListRenderItemProps } from '../../../../general/List/List';
 import listStyles from '../HistoryTab.styles';
 import Colors from '../../../../../lib/colors';
 import styles from '../Tabs.styles';
+import swapStyles from '../SwapTab.styles';
 import TransactionState from '../../../../../state/transaction';
 import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
 import TokenViewer from '../../../TokenViewer';
 import { fromEth } from '../../../../../lib/conversion';
 import NLStaticImage from '../../../../general/NLStaticImage';
+import FontSize from '../../../../../lib/fontSize';
 
 type Props = { isActive?: boolean };
 
@@ -66,14 +68,41 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                         JSON.stringify(prev.item) ===
                         JSON.stringify(props.item),
                 )}
-                label="Unclaimed Nuggs or ETH"
+                TitleButton={
+                    !isUndefinedOrNullOrArrayEmpty(unclaimedOffers)
+                        ? () => (
+                              <FeedbackButton
+                                  feedbackText="Check Wallet..."
+                                  buttonStyle={{
+                                      ...swapStyles.button,
+                                      margin: '0rem',
+                                      padding: '.2rem 1rem',
+                                  }}
+                                  textStyle={{
+                                      color: Colors.nuggRedText,
+                                      fontSize: FontSize.h6,
+                                  }}
+                                  label="Claim all"
+                                  onClick={() =>
+                                      WalletState.dispatch.multiClaim({
+                                          tokenIds: unclaimedOffers.map(
+                                              (offer) =>
+                                                  (offer as any).swap.nugg.id,
+                                          ),
+                                      })
+                                  }
+                              />
+                          )
+                        : undefined
+                }
+                label="Claims"
                 labelStyle={styles.listLabel}
                 listEmptyStyle={listStyles.textWhite}
                 loaderColor="white"
                 loading={loadingOffers}
                 style={listStyles.list}
                 extraData={[address]}
-                listEmptyText="Nothing to claim..."
+                listEmptyText="No Nuggs or ETH to claim..."
             />
         </div>
     );

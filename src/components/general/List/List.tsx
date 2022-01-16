@@ -49,6 +49,7 @@ type Props = {
     labelStyle?: CSSProperties;
     listEmptyStyle?: CSSProperties;
     loaderColor?: string;
+    TitleButton?: FunctionComponent;
     // itemHeight: number;
 };
 
@@ -69,6 +70,7 @@ const List: FunctionComponent<Props> = ({
     labelStyle,
     loaderColor,
     listEmptyStyle,
+    TitleButton,
 }) => {
     const ref = useOnScroll(onScroll);
     const containerStyle = useMemo(() => {
@@ -129,7 +131,7 @@ const List: FunctionComponent<Props> = ({
                 {loading && <Loader color={loaderColor || 'black'} />}
             </div>
         ),
-        [loading],
+        [loading, loaderColor],
     );
 
     const Label = useCallback(
@@ -139,12 +141,15 @@ const List: FunctionComponent<Props> = ({
                     {label}
                 </Text>
             ) : null,
-        [label],
+        [label, labelStyle],
     );
 
     return (
         <>
-            <Label />
+            <div style={styles.labelContainer}>
+                <Label />
+                {TitleButton && <TitleButton />}
+            </div>
             <div style={containerStyle} ref={ref}>
                 <List selected={selected} />
                 <Loading />

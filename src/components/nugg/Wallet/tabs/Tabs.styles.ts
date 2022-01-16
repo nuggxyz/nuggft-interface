@@ -11,7 +11,7 @@ const styles = NLStyleSheetCreator({
     },
     listLabel: {
         color: 'white',
-        marginBottom: '.5rem',
+        // marginBottom: '.5rem',
         paddingTop: '0rem',
     },
     listNugg: {

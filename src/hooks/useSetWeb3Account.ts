@@ -8,7 +8,6 @@ import {
 import Web3State from '../state/web3';
 
 const useSetWeb3Account = ({ web3Account, library }) => {
-    const web3status = Web3State.select.web3status();
     const web3address = Web3State.select.web3address();
 
     useEffect(() => {
@@ -47,12 +46,11 @@ const useSetWeb3Account = ({ web3Account, library }) => {
                 }
             } else if (!isUndefinedOrNullOrStringEmpty(web3Account)) {
                 Web3State.dispatch.setWeb3Address(web3Account);
-                Web3State.dispatch.setWeb3Status('SELECTED');
                 Web3State._walletConnectSigner =
                     library?.getSigner(web3Account);
             }
         }
-    }, [web3status, web3address, web3Account, library]);
+    }, [web3address, web3Account, library]);
 };
 
 export default useSetWeb3Account;

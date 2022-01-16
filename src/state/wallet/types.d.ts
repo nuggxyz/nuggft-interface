@@ -35,5 +35,6 @@ declare namespace NL.Redux.Wallet {
         | 'AUC:VNB:0'
         | 'ERROR_GETTING_GQL'
         | 'UNKNOWN'
-        | 'GAS_ERROR';
+        | 'GAS_ERROR'
+        | 'NO_NUGGS_TO_MINT';
 }

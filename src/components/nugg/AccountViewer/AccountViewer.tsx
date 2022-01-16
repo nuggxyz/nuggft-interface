@@ -17,10 +17,9 @@ import styles from './AccountViewer.styles';
 
 const AccountViewer = () => {
     const screenType = AppState.select.screenType();
-    const address = Web3State.select.web3address();
-    const ens = Web3State.hook.useEns(address);
-    const chain = Web3State.select.currentChain();
     const web3address = Web3State.select.web3address();
+    const chain = Web3State.select.currentChain();
+    const ens = Web3State.hook.useEns(web3address, [chain, web3address]);
 
     const name = useMemo(() => {
         return Web3Config.CHAIN_INFO[chain].label;
@@ -28,7 +27,7 @@ const AccountViewer = () => {
 
     const userBalance = useAsyncState(
         () => NuggftV1Helper.ethBalance(Web3State.getLibraryOrProvider()),
-        [address],
+        [web3address],
     );
 
     return ens ? (
@@ -67,7 +66,7 @@ const AccountViewer = () => {
                         {ens.toLowerCase()}
                     </InteractiveText>
                     {screenType === 'phone' && (
-                        <Jazzicon address={address} size={15} />
+                        <Jazzicon address={web3address} size={15} />
                     )}
                 </div>
                 <Text size="smaller" type="text" textStyle={styles.button}>
@@ -83,7 +82,9 @@ const AccountViewer = () => {
                     ETH
                 </Text>
             </div>
-            {screenType !== 'phone' && <Jazzicon address={address} size={35} />}
+            {screenType !== 'phone' && (
+                <Jazzicon address={web3address} size={35} />
+            )}
         </div>
     ) : null;
 };

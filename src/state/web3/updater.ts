@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
-import { BigNumber } from 'ethers';
-import { batch } from 'react-redux';
 
 import {
     isUndefinedOrNull,
@@ -11,14 +9,6 @@ import {
     isUndefinedOrNullOrStringEmpty,
     loadStringFromLocalStorage,
 } from '../../lib';
-import NuggftV1Helper from '../../contracts/NuggftV1Helper';
-import NuggDexState from '../nuggdex';
-import ProtocolState from '../protocol';
-import SwapState from '../swap';
-import TokenState from '../token';
-import TransactionState from '../transaction';
-import WalletState from '../wallet';
-import GQLHelper from '../../graphql/GQLHelper';
 import { NetworkContextName } from '../../config';
 import useSetWeb3Account from '../../hooks/useSetWeb3Account';
 import useSetWeb3Listeners from '../../hooks/useSetWeb3Listeners';
@@ -54,12 +44,6 @@ export default () => {
     useSetWeb3Account({ web3Account, library });
 
     useEffect(() => {
-        if (!isUndefinedOrNullOrObjectEmpty(error)) {
-            Web3State.dispatch.setWeb3Status('ERROR');
-        }
-    }, [error]);
-
-    useEffect(() => {
         if (defaultActivate && !active) {
             const safeActivate = Web3State.safeActivate(defaultActivate);
             if (
@@ -75,7 +59,6 @@ export default () => {
         }
         if (activateNetwork) {
             activateNetwork(Web3Config.connectors.network);
-            Web3State.dispatch.setWeb3Status('NOT_SELECTED');
         }
     }, [active, activateNetwork, defaultActivate]);
     return null;

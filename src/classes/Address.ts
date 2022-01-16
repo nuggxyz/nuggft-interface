@@ -5,6 +5,7 @@ import { namehash } from 'ethers/lib/utils';
 import invariant from 'tiny-invariant';
 
 import ENSHelper from '../contracts/ENSHelper';
+import store from '../state/store';
 
 export interface IAddress {
     hash: string;
@@ -79,7 +80,7 @@ export class EnsAddress extends Address {
     private _ens: string;
     private _promise: Promise<this>;
 
-    private static _ens_cache: { [_: string]: string } = {};
+    private static _ens_cache: Dictionary<Dictionary<string>> = {};
 
     constructor(address: string) {
         if (address !== undefined) {
@@ -91,18 +92,22 @@ export class EnsAddress extends Address {
     }
 
     private async resolve() {
+        const chain = store.getState().web3.currentChain;
+        if (!EnsAddress._ens_cache[chain]) {
+            EnsAddress._ens_cache[chain] = {};
+        }
         if (
-            EnsAddress._ens_cache[this.hash] &&
-            EnsAddress._ens_cache[this.hash] !== 'INVALID.69'
+            EnsAddress._ens_cache[chain][this.hash] &&
+            EnsAddress._ens_cache[chain][this.hash] !== 'INVALID.69'
         ) {
-            this._ens = EnsAddress._ens_cache[this.hash];
+            this._ens = EnsAddress._ens_cache[chain][this.hash];
         } else if (!this.ens) {
             const res = await ENSHelper.resolve(this);
             if (res) {
                 this._ens = res;
-                EnsAddress._ens_cache[this.hash] = res;
+                EnsAddress._ens_cache[chain][this.hash] = res;
             } else {
-                EnsAddress._ens_cache[this.hash] = 'INVALID.69';
+                EnsAddress._ens_cache[chain][this.hash] = 'INVALID.69';
             }
         }
         return this;

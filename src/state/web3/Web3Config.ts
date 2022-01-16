@@ -21,7 +21,7 @@ export default class Web3Config {
         return Object.values<number>(SupportedChainId);
     }
 
-    static DEFAULT_CHAIN = 4;
+    static DEFAULT_CHAIN = 5;
 
     static NETWORK_HEALTH_CHECK_MS = 15 * 1000;
     static DEFAULT_MS_BEFORE_WARNING = 90 * 1000;
@@ -43,13 +43,13 @@ export default class Web3Config {
         },
         [Web3Config.SupportedChainId.GOERLI]: {
             NuggftV1: '0x20Db7F8eFB2b9D556e13Ad47cD799C0e4D9a7C07',
-            DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
+            DotnuggV1: '0x01388800182ebb81fd8922eea79d1ace76f1612e',
         },
     };
 
     static get activeChain__NuggftV1() {
         return this.CONTRACTS[
-            store.getState().web3.web3status === 'SELECTED'
+            store.getState().web3.web3address
                 ? store.getState().web3.currentChain
                 : Web3Config.DEFAULT_CHAIN
         ].NuggftV1;
@@ -57,7 +57,7 @@ export default class Web3Config {
 
     static get activeChain__GraphEndpoint() {
         return this.GRAPH_ENPOINTS[
-            store.getState().web3.web3status === 'SELECTED'
+            store.getState().web3.web3address
                 ? store.getState().web3.currentChain
                 : Web3Config.DEFAULT_CHAIN
         ];
@@ -65,7 +65,7 @@ export default class Web3Config {
 
     static get activeChain__DotnuggV1() {
         return this.CONTRACTS[
-            store.getState().web3.web3status === 'SELECTED'
+            store.getState().web3.web3address
                 ? store.getState().web3.currentChain
                 : Web3Config.DEFAULT_CHAIN
         ].DotnuggV1;
@@ -73,7 +73,7 @@ export default class Web3Config {
 
     static get activeChain__EnsRegistrar() {
         return this.ENS_REGISTRAR_ADDRESSES[
-            store.getState().web3.web3status === 'SELECTED'
+            store.getState().web3.web3address
                 ? store.getState().web3.currentChain
                 : Web3Config.DEFAULT_CHAIN
         ];

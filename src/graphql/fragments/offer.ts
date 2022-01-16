@@ -39,6 +39,7 @@ export const offerThumbnail = gql`
             num
             nugg {
                 dotnuggRawCache
+                id
             }
         }
         eth

@@ -43,7 +43,6 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
     constructor() {
         super(STATE_NAME, updater, middlewares, {}, hooks, {
             web3address: undefined,
-            web3status: 'NOT_SELECTED',
             web3error: false,
             connectivityWarning: false,
             implements3085: false,
@@ -66,16 +65,6 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
             },
             clearWeb3Address: (state) => {
                 state.web3address = undefined;
-                state.web3status = 'NOT_SELECTED';
-            },
-            setWeb3Status: (
-                state,
-                action: PayloadAction<NL.Redux.Web3.Web3Status>,
-            ) => {
-                state.web3status = action.payload;
-            },
-            clearWeb3Status: (state) => {
-                state.web3status = 'NOT_SELECTED';
             },
             setWeb3Error: (state, action: PayloadAction<boolean>) => {
                 state.web3error = action.payload;
@@ -105,7 +94,6 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
         ) => Promise<void>,
     ) {
         return async (connector?: AbstractConnector) => {
-            Web3State.dispatch.setWeb3Status('PENDING');
             Web3State.dispatch.setWeb3Error(false);
 
             if (connector instanceof WalletConnectConnector) {
@@ -113,21 +101,15 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
             }
 
             if (!isUndefinedOrNullOrObjectEmpty(connector)) {
-                return await activate(connector, undefined, true)
-                    .then(async () => {
-                        Web3State.dispatch.setWeb3Status('SELECTED');
-                    })
-                    .catch((error) => {
+                return await activate(connector, undefined, true).catch(
+                    (error) => {
                         if (error instanceof UnsupportedChainIdError) {
                             activate(connector);
-                            Web3State.dispatch.setWeb3Status('SELECTED');
                         } else {
                             Web3State.dispatch.setWeb3Error(true);
-                            Web3State.dispatch.setWeb3Status('NOT_SELECTED');
                         }
-                    });
-            } else {
-                Web3State.dispatch.setWeb3Status('NOT_SELECTED');
+                    },
+                );
             }
         };
     }
