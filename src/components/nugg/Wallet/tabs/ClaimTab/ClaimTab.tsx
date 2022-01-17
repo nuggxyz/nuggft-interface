@@ -28,6 +28,7 @@ import TokenViewer from '../../../TokenViewer';
 import { fromEth } from '../../../../../lib/conversion';
 import NLStaticImage from '../../../../general/NLStaticImage';
 import FontSize from '../../../../../lib/fontSize';
+import Layout from '../../../../../lib/layout';
 
 type Props = { isActive?: boolean };
 
@@ -81,6 +82,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                                   textStyle={{
                                       color: Colors.nuggRedText,
                                       fontSize: FontSize.h6,
+                                      fontFamily: Layout.font.inter.light,
                                   }}
                                   label="Claim all"
                                   onClick={() =>

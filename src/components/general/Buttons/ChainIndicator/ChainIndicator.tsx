@@ -108,7 +108,8 @@ const ChainIndicator: FunctionComponent<Props> = ({
                     onClick ||
                     (() =>
                         AppState.onRouteUpdate(
-                            view === 'Search' || !swapId.includes(epoch.id)
+                            view === 'Search' ||
+                                (swapId && !swapId.includes(epoch.id))
                                 ? '/'
                                 : `/nugg/${epoch.id}`,
                         ))

@@ -30,7 +30,7 @@ const AccountViewer = () => {
         [web3address],
     );
 
-    return ens ? (
+    return ens && web3address ? (
         <div style={styles.textContainer}>
             <div
                 style={{

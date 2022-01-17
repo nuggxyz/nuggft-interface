@@ -33,6 +33,7 @@ import NLStaticImage from '../../../../general/NLStaticImage';
 import { fromEth } from '../../../../../lib/conversion';
 import FontSize from '../../../../../lib/fontSize';
 import swapStyles from '../SwapTab.styles';
+import Layout from '../../../../../lib/layout';
 
 type Props = { isActive?: boolean };
 
@@ -103,6 +104,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                                   textStyle={{
                                       color: Colors.nuggRedText,
                                       fontSize: FontSize.h6,
+                                      fontFamily: Layout.font.inter.light,
                                   }}
                                   label="Reclaim all"
                                   onClick={() =>

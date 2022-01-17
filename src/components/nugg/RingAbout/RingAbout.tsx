@@ -48,8 +48,6 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const prevToggle = usePrevious(txnToggle);
 
-    // const status = SwapState.select.status();
-
     const status = useSetState(() => {
         return isUndefinedOrNull(endingSwapEpoch) || isUndefinedOrNull(epoch)
             ? 'waiting'
@@ -62,7 +60,9 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
         if (
             status === 'waiting' &&
             prevToggle !== undefined &&
-            prevToggle !== txnToggle
+            prevToggle !== txnToggle &&
+            !isUndefinedOrNullOrStringEmpty(swapId) &&
+            !swapId.includes('undefined')
         ) {
             SwapState.dispatch.initSwap({ swapId });
         }
@@ -70,30 +70,15 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const [open, setOpen] = useState(false);
 
-    const leaderEns = Web3State.hook.useEns(leader);
+    const leaderEns = Web3State.hook.useEns(leader, [leader, eth]);
 
     const hasBids = useMemo(
         () =>
             !isUndefinedOrNullOrStringEmpty(leader) &&
             !isUndefinedOrNullOrStringEmpty(eth) &&
-            !isUndefinedOrNullOrNumberZero(+eth),
-        [eth, leader],
+            (status === 'over' || !isUndefinedOrNullOrNumberZero(+eth)),
+        [eth, leader, status],
     );
-
-    useEffect(() => {
-        api.start({
-            to: [
-                {
-                    ...styles.leadingOfferAmount,
-                    background: 'white',
-                },
-                {
-                    ...styles.leadingOfferAmount,
-                    background: Colors.transparentWhite,
-                },
-            ],
-        });
-    }, [eth]);
 
     const [flashStyle, api] = useSpring(() => {
         return {
@@ -114,6 +99,21 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
             config: config.molasses,
         };
     });
+
+    useEffect(() => {
+        api.start({
+            to: [
+                {
+                    ...styles.leadingOfferAmount,
+                    background: 'white',
+                },
+                {
+                    ...styles.leadingOfferAmount,
+                    background: Colors.transparentWhite,
+                },
+            ],
+        });
+    }, [eth]);
 
     const springStyle = useSpring({
         ...styles.offersContainer,

@@ -3,6 +3,7 @@ import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 import useDebounce from '../../../hooks/useDebounce';
 import useSetState from '../../../hooks/useSetState';
 import {
+    isUndefinedOrNull,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
 } from '../../../lib';
@@ -32,52 +33,57 @@ const TheRing: FunctionComponent<Props> = ({
     tokenStyle,
 }) => {
     const screenType = AppState.select.screenType();
-    const lastBlock = ProtocolState.select.currentBlock();
+    const currentBlock = ProtocolState.select.currentBlock();
     const epoch = ProtocolState.select.epoch();
     const endingSwapEpoch = SwapState.select.epoch();
-    const endingDebounce = useDebounce(endingSwapEpoch, 500);
     const startingSwapEpoch = SwapState.select.startingEpoch();
-    const startingDebounce = useDebounce(startingSwapEpoch, 500);
     const nugg = SwapState.select.nugg();
-    // const status = SwapState.select.status();
 
     const status = useSetState(() => {
-        return endingSwapEpoch === null || endingSwapEpoch === undefined
+        return isUndefinedOrNull(endingSwapEpoch)
             ? 'waiting'
-            : epoch && +endingSwapEpoch.endblock >= +epoch.endblock
+            : epoch &&
+              +endingSwapEpoch.endblock >= +epoch.endblock &&
+              currentBlock !== +endingSwapEpoch.endblock
             ? 'ongoing'
             : 'over';
-    }, [epoch, endingSwapEpoch]);
+    }, [epoch, endingSwapEpoch, currentBlock]);
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
         if (
-            !isUndefinedOrNullOrObjectEmpty(endingDebounce) &&
-            !isUndefinedOrNullOrObjectEmpty(startingDebounce)
+            !isUndefinedOrNullOrObjectEmpty(endingSwapEpoch) &&
+            !isUndefinedOrNullOrObjectEmpty(startingSwapEpoch)
         ) {
-            remaining = +endingDebounce.endblock - +startingDebounce.startblock;
+            remaining =
+                +endingSwapEpoch.endblock - +startingSwapEpoch.startblock;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
         return remaining;
-    }, [endingDebounce, startingDebounce]);
+    }, [endingSwapEpoch, startingSwapEpoch]);
 
     const blocksRemaining = useMemo(() => {
         let remaining = 0;
 
         if (
-            !isUndefinedOrNullOrObjectEmpty(endingDebounce) &&
-            !isUndefinedOrNullOrNumberZero(lastBlock)
+            !isUndefinedOrNullOrObjectEmpty(endingSwapEpoch) &&
+            !isUndefinedOrNullOrNumberZero(currentBlock)
         ) {
-            remaining = +endingDebounce.endblock - +lastBlock;
+            remaining = +endingSwapEpoch.endblock - +currentBlock;
         }
         if (remaining <= 0) {
             remaining = 0;
+            if (+currentBlock !== 0 && status === 'over') {
+                ProtocolState.dispatch.setEpochIsOver(true);
+            } else {
+                ProtocolState.dispatch.setEpochIsOver(false);
+            }
         }
 
         return remaining;
-    }, [lastBlock, endingDebounce]);
+    }, [currentBlock, endingSwapEpoch, status]);
 
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>

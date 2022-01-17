@@ -2,10 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 
 import {
-    isUndefinedOrNull,
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrNotFunction,
-    isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
     loadStringFromLocalStorage,
 } from '../../lib';
@@ -31,7 +27,6 @@ export default () => {
         library,
     } = useWeb3React();
 
-    const web3address = Web3State.select.web3address();
     const chainId = Web3State.select.currentChain();
 
     useSetWeb3Listeners({

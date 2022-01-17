@@ -4,6 +4,7 @@ declare namespace NL.Redux.Protocol {
         success: Success;
         loading: boolean;
         currentBlock: number;
+        epochIsOver: boolean;
     };
 
     type Success = 'SUCCESS';

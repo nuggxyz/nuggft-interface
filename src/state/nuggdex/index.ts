@@ -76,7 +76,11 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
                 state,
                 action: PayloadAction<NL.GraphQL.Fragments.Nugg.ListItem>,
             ) => {
-                if (state.recents.indexOf(action.payload) === -1) {
+                if (
+                    !state.recents.find(
+                        (recent) => recent.id === action.payload.id,
+                    )
+                ) {
                     state.recents.push(action.payload);
                 }
             },

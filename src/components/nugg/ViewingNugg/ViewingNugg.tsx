@@ -149,10 +149,7 @@ const Swaps = ({ swaps, tokenId, address, owner, MobileBackButton }) => {
                                     display: 'flex',
                                     alignItems: 'center',
                                 }}>
-                                {owner === Web3Config.activeChain__NuggftV1 ||
-                                owner === Address.ZERO.hash
-                                    ? 'NuggftV1'
-                                    : ens}
+                                {ens}
                                 {owner === address && (
                                     <Text
                                         type="text"

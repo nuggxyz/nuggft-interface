@@ -280,10 +280,12 @@ const InfiniteList: FunctionComponent<Props> = ({
 
     return (
         <>
-            <div style={styles.labelContainer}>
-                <Label />
-                {TitleButton && <TitleButton />}
-            </div>
+            {(label || TitleButton) && (
+                <div style={styles.labelContainer}>
+                    {label && <Label />}
+                    {TitleButton && <TitleButton />}
+                </div>
+            )}
             <div
                 ref={windowRef}
                 style={{

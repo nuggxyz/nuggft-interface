@@ -225,7 +225,7 @@ const mintNugg = createAsyncThunk<
                 .connect(Web3State.getLibraryOrProvider())
                 .mint(nuggToMint, {
                     value: nuggPrice,
-                    gasLimit: 81000,
+                    gasLimit: 85000,
                 });
             return {
                 success: 'SUCCESS',

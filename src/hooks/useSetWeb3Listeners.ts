@@ -8,6 +8,9 @@ import {
     isUndefinedOrNull,
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
+    isUndefinedOrNullOrStringEmpty,
+    loadStringFromLocalStorage,
+    saveStringToLocalStorage,
 } from '../lib';
 import NuggDexState from '../state/nuggdex';
 import ProtocolState from '../state/protocol';
@@ -22,7 +25,11 @@ const RESET_APP = (chainId: number | string) => {
     if (!isUndefinedOrNull(chainId)) {
         console.log('RESET');
         Web3State.dispatch.setCurrentChain(BigNumber.from(chainId).toNumber());
-        localStorage.removeItem('recents');
+        const walletconnect = loadStringFromLocalStorage('walletconnect');
+        localStorage.clear();
+        if (!isUndefinedOrNullOrStringEmpty(walletconnect)) {
+            saveStringToLocalStorage(walletconnect, 'walletconnect');
+        }
         NuggftV1Helper.reset();
         GQLHelper.reset();
         batch(() => {
@@ -50,9 +57,6 @@ const useSetWeb3Listeners = ({
     }, [connectorChainId, chainId]);
 
     useEffect(() => {
-        if (library) {
-            library.on('disconnect', () => console.log('DISCONNECGT'));
-        }
         if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
             const connect = (chain) => {
                 console.log('eth event: connect', chain);

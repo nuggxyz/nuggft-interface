@@ -26,11 +26,11 @@ const initSwap = createAsyncThunk<
     { swapId: string },
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
 >('swap/initSwap', async ({ swapId }, thunkAPI) => {
+    const currentEpoch = thunkAPI.getState().protocol.epoch;
     try {
         invariant(swapId, 'swap id passed as undefined');
         const res = await initSwapQuery(swapId);
         if (!isUndefinedOrNullOrObjectEmpty(res)) {
-            const currentEpoch = thunkAPI.getState().protocol.epoch;
             const status =
                 res.endingEpoch === null
                     ? 'waiting'
@@ -42,11 +42,16 @@ const initSwap = createAsyncThunk<
                 data: { swap: res, status },
             };
         } else {
+            if (currentEpoch && !swapId.includes(currentEpoch.id)) {
+                AppState.onRouteUpdate('/');
+            }
             return thunkAPI.rejectWithValue('UNKNOWN');
         }
     } catch (err) {
         console.log({ err });
-        // AppState.onRouteUpdate('/');
+        if (currentEpoch && !swapId.includes(currentEpoch.id)) {
+            AppState.onRouteUpdate('/');
+        }
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&

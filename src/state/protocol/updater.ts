@@ -34,18 +34,7 @@ export default () => {
 
     useEffect(() => {
         setBlocknum(0);
-        NuggftV1Helper.instance
-            .connect(Web3State.getLibraryOrProvider())
-            .genesis()
-            .then((genesis) => {
-                ProtocolState.dispatch.setGenesisBlock(genesis.toNumber());
-            })
-            .catch((e) => {
-                console.log(e);
-                if (!window.web3) {
-                    setTimeout(() => window.location.reload(), 1000);
-                }
-            });
+        ProtocolState.dispatch.getGenesisBlock();
     }, [genesisBlock, chainId]);
 
     const calculateEpochId = useCallback(
@@ -89,7 +78,7 @@ export default () => {
                     const endBlock =
                         calculateEpochStartBlock(calculatedEpoch + 1) - 1;
                     if (startBlock && endBlock) {
-                        ProtocolState.dispatch.setEpoch({
+                        ProtocolState.dispatch.safeSetEpoch({
                             id: '' + calculatedEpoch,
                             startblock: '' + startBlock,
                             endblock: '' + endBlock,
@@ -102,7 +91,10 @@ export default () => {
     );
 
     useEffect(() => {
-        if (!isUndefinedOrNullOrObjectEmpty(library)) {
+        if (
+            !isUndefinedOrNullOrObjectEmpty(library) &&
+            !isUndefinedOrNullOrNotNumber(genesisBlock)
+        ) {
             library
                 .getBlockNumber()
                 .then(updateBlocknum)
@@ -115,7 +107,7 @@ export default () => {
                 library.removeListener('block', updateBlocknum);
             };
         }
-    }, [updateBlocknum, library, chainId]);
+    }, [updateBlocknum, library, chainId, genesisBlock]);
 
     useEffect(() => {
         if (!isUndefinedOrNullOrNotNumber(debouncedBlocknum)) {
