@@ -210,7 +210,7 @@ const mintNugg = createAsyncThunk<
 
         const nuggPrice = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
-            .minSharePrice();
+            .msp();
 
         if (
             isUndefinedOrNullOrArrayEmpty(latestNugg) ||

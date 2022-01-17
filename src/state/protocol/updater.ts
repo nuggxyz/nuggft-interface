@@ -19,6 +19,7 @@ import useDebounce from '../../hooks/useDebounce';
 import Web3Config from '../web3/Web3Config';
 import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import config from '../../config';
+import { StakeEvent } from '../../typechain/NuggftV1';
 
 import ProtocolState from '.';
 
@@ -147,17 +148,18 @@ export default () => {
             ProtocolState.dispatch.updateStaked();
 
             const update = (log: any) => {
-                const { args } =
-                    NuggftV1Helper.instance.interface.parseLog(log);
+                const event = NuggftV1Helper.instance.interface.parseLog(
+                    log,
+                ) as unknown as StakeEvent;
 
                 // const protocol = (args.stake as BigNumber)
                 //     .shr(96)
                 //     .shl(96)
                 //     .xor(args.stake);
 
-                const stakedShares = (args.stake as BigNumber).shr(96 + 96);
+                const stakedShares = event.args.stake.shr(96 + 96);
 
-                const stakedEth = (args.stake as BigNumber)
+                const stakedEth = event.args.stake
                     .shr(96)
                     .xor(stakedShares.shl(96));
 

@@ -130,6 +130,21 @@ checkBrowsers(paths.appPath, isInteractive)
             }
 
             console.log(chalk.cyan('Starting the development server...\n'));
+            console.log(
+                chalk.bold.magentaBright(`
+              _-====-__-======-__-========-_____-============-__
+            _(                                                 _)
+         OO(           _/_ _  _  _/_   _/_ _  _  _/_           )_
+        0  (_          (__(_)(_) (__   (__(_)(_) (__            _)
+      o0     (_                                                _)
+     o         '=-___-===-_____-========-___________-===-dwb-='
+   .o                                _________
+  . ______          ______________  |   gas   |      _____
+_()_||__|| ________ |   and      |  |_________|   __||___||__
+( eating| |  ass  | |    passing | __Y______00_| |_         _|
+/-OO----OO""="OO--OO"="OO--------OO"="OO-------OO"="OO-------OO"=P
+#####################################################################`),
+            );
             //   openBrowser(urls.localUrlForBrowser);
         });
 

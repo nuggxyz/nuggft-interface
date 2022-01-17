@@ -38,11 +38,11 @@ export default class Web3Config {
             DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
         },
         [Web3Config.SupportedChainId.RINKEBY]: {
-            NuggftV1: '0x62aab6699b0a09e0c346cf78f290a5f26e3ff0d5',
+            NuggftV1: '0xca7c0ab381bc7097e09db7ef2e070247bbfa2420',
             DotnuggV1: '0x01388800182ebb81fd8922eea79d1ace76f1612e',
         },
         [Web3Config.SupportedChainId.GOERLI]: {
-            NuggftV1: '0x20Db7F8eFB2b9D556e13Ad47cD799C0e4D9a7C07',
+            NuggftV1: '0x469cb880fb4824c3feda5f3ebe1262d2415e591a',
             DotnuggV1: '0x01388800182ebb81fd8922eea79d1ace76f1612e',
         },
     };
