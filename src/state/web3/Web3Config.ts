@@ -21,7 +21,7 @@ export default class Web3Config {
         return Object.values<number>(SupportedChainId);
     }
 
-    static DEFAULT_CHAIN = 5;
+    static DEFAULT_CHAIN = 4;
 
     static NETWORK_HEALTH_CHECK_MS = 15 * 1000;
     static DEFAULT_MS_BEFORE_WARNING = 90 * 1000;
@@ -38,12 +38,12 @@ export default class Web3Config {
             DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
         },
         [Web3Config.SupportedChainId.RINKEBY]: {
-            NuggftV1: '0xc828080be70d43c19e6e81546d5356499930ddd5',
-            DotnuggV1: '0x734f3cba6494778faa89b666af160ba2bfb4f435',
+            NuggftV1: '0x47f7100Fd49A162A08D000202eb68145Aa9CeBaC',
+            DotnuggV1: '0x6039df117f2d6e805d90114809ca3769a2f50ddb',
         },
         [Web3Config.SupportedChainId.GOERLI]: {
-            NuggftV1: '0x469cb880fb4824c3feda5f3ebe1262d2415e591a',
-            DotnuggV1: '0xd62948fefd5cc7429888b1bbd452b1e9015be1e3',
+            NuggftV1: '0x31820c1345e28d55260636f22cce57081898a397',
+            DotnuggV1: '0xb5fe53b2f909bcc2521acd90cde0321d2447306b',
         },
     };
 

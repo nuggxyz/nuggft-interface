@@ -159,7 +159,7 @@ const multiClaim = createAsyncThunk<
         const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
             .multiclaim(tokenIds, {
-                gasLimit: 81000,
+                gasLimit: 500000,
             });
         return {
             success: 'SUCCESS',

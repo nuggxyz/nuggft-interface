@@ -18,7 +18,7 @@ const initSale = createAsyncThunk<
     try {
         const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
-            .swap(tokenId, floor);
+            .sell(tokenId, floor);
 
         return {
             success: 'SUCCESS',

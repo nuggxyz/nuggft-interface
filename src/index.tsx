@@ -41,15 +41,14 @@ ReactDOM.render(
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 // reportWebVitals(console.log);
 
-
 // events: {
 //     "Approval(address,address,uint256)": EventFragment;
 //     "ApprovalForAll(address,address,bool)": EventFragment;
 //     "Burn(uint160,address,uint96)": EventFragment;
 //     "Claim(uint160,address)": EventFragment;
 //     "ClaimItem(uint176,uint160)": EventFragment;
-//     "Delegate(uint160,address,uint96)": EventFragment; // tokenid, user, new current value
-//     "DelegateItem(uint176,uint160,uint96)": EventFragment; // tokenId + itemId, 'user',
+//     "Offer(uint160,address,uint96)": EventFragment; // tokenid, user, new current value
+//     "OfferItem(uint176,uint160,uint96)": EventFragment; // tokenId + itemId, 'user',
 //     "DotnuggV1ConfigUpdated(uint256)": EventFragment;
 //     "Genesis(uint256,uint32,uint24)": EventFragment;
 //     "Liquidate(uint160,uint96,address)": EventFragment;

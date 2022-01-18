@@ -52,7 +52,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             nugg &&
             NuggftV1Helper.instance
                 .connect(Web3State.getLibraryOrProvider())
-                .valueForDelegate(address, nugg.id),
+                .valueForOffer(address, nugg.id),
         [address, nugg],
     );
 
@@ -60,7 +60,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         if (!isUndefinedOrNullOrObjectEmpty(amountArray)) {
             if (!amountArray.senderCurrentOffer.isZero()) {
                 return fromEth(
-                    amountArray?.nextSwapAmount
+                    amountArray?.nextSellAmount
                         // .sub(amountArray?.senderCurrentOffer)
                         .div(10 ** 13)
                         .add(1)
@@ -69,7 +69,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             } else {
                 return Math.max(
                     +fromEth(
-                        amountArray.nextSwapAmount
+                        amountArray.nextSellAmount
                             // .sub(amountArray.senderCurrentOffer)
                             .div(10 ** 13)
                             .add(1)
@@ -184,7 +184,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     </Text>
                 )}
                 {/* <Text textStyle={styles.text}>
-                        {amountArray && amountArray.canDelegate
+                        {amountArray && amountArray.canOffer
                             ? `${
                                   stableType === 'StartSale' ? 'Sale' : 'Offer'
                               } must be at least ${minOfferAmount} ETH`
@@ -199,10 +199,10 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 <FeedbackButton
                     overrideFeedback
                     feedbackText="Check Wallet..."
-                    disabled={amountArray && !amountArray.canDelegate}
+                    disabled={amountArray && !amountArray.canOffer}
                     buttonStyle={styles.button}
                     label={
-                        amountArray && !amountArray.canDelegate
+                        amountArray && !amountArray.canOffer
                             ? `You cannot ${
                                   stableType === 'StartSale'
                                       ? 'sell'
@@ -234,7 +234,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                                   })
                                 : TokenState.dispatch.initSale({
                                       tokenId: stableId,
-                                      floor: amountArray.nextSwapAmount,
+                                      floor: amountArray.nextSellAmount,
                                   })
                             : WalletState.dispatch.approveNugg({
                                   spender: new Address(
