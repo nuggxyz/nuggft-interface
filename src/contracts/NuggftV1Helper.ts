@@ -3,7 +3,6 @@ import { BigNumber, Contract } from 'ethers';
 import gql from 'graphql-tag';
 
 import { Address } from '../classes/Address';
-import config from '../config';
 import {
     cipher,
     isUndefinedOrNullOrObjectEmpty,
@@ -11,11 +10,6 @@ import {
     saveToLocalStorage,
 } from '../lib';
 import Web3State from '../state/web3';
-import { Svg } from '../classes/Svg';
-import {
-    TokenApproveInfo,
-    TransactionType,
-} from '../state/transaction/interfaces';
 import {
     DotnuggV1,
     DotnuggV1__factory,
@@ -23,7 +17,6 @@ import {
     NuggftV1__factory,
 } from '../typechain';
 import { executeQuery } from '../graphql/helpers';
-import AppState from '../state/app';
 import Web3Config from '../state/web3/Web3Config';
 
 import ContractHelper from './abstract/ContractHelper';
@@ -61,6 +54,7 @@ export default class NuggftV1Helper extends ContractHelper {
     static set instance(_) {
         return;
     }
+
     public static async ownerOf(tokenId: string): Promise<Address> {
         const res = await this.instance.ownerOf(tokenId);
         try {

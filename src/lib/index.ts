@@ -23,7 +23,7 @@ export const gatsbyDOM = (
         return typeof document !== `undefined` ? document : false;
     else return false;
 };
-
+// 6287103
 // VERIFICATION
 export const isAnybodyThere = (value: any) => {
     try {
@@ -59,6 +59,16 @@ export const isUndefinedOrNullOrNotString = (value: any) => {
 };
 export const isUndefinedOrNullOrStringEmpty = (value: any) => {
     return isUndefinedOrNullOrNotString(value) || value === '';
+};
+export const isUndefinedOrNullOrStringEmptyOrZeroOrStringZero = (
+    value: any,
+) => {
+    return (
+        isUndefinedOrNullOrNotString(value) ||
+        value === '' ||
+        value === 0 ||
+        value === '0'
+    );
 };
 export const isUndefinedOrNullOrNotBoolean = (value: any) => {
     return isUndefinedOrNull(value) || typeof value !== 'boolean';

@@ -57,13 +57,14 @@ const LoanInputModal: FunctionComponent<Props> = () => {
 
     const amountFromChain = useAsyncState(
         () =>
-            stableId && stableType === 'PayOffLoan'
+            stableId &&
+            (stableType === 'PayOffLoan'
                 ? NuggftV1Helper.instance
                       .connect(Web3State.getLibraryOrProvider())
-                      .valueForLiquidate(stableId)
+                      .vfl([stableId])
                 : NuggftV1Helper.instance
                       .connect(Web3State.getLibraryOrProvider())
-                      .valueForRebalance(stableId),
+                      .vfr([stableId])),
         [address, stableId, stableType],
     );
 
@@ -108,7 +109,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                             onClick={() =>
                                 setAmount(
                                     `${fromEth(
-                                        amountFromChain
+                                        amountFromChain[0]
                                             .div(10 ** 13)
                                             .add(1)
                                             .mul(10 ** 13),

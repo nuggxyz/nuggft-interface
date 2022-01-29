@@ -11,7 +11,10 @@ import React, {
 
 import pendingToken from '../../assets/images/pending-token.svg';
 import NuggftV1Helper from '../../contracts/NuggftV1Helper';
-import { isUndefinedOrNullOrStringEmpty } from '../../lib';
+import {
+    isUndefinedOrNullOrStringEmpty,
+    isUndefinedOrNullOrStringEmptyOrZeroOrStringZero,
+} from '../../lib';
 import AppState from '../../state/app';
 import Text, { TextProps } from '../general/Texts/Text/Text';
 
@@ -41,7 +44,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     useLayoutEffect(() => {
         let unmounted = false;
         const getDotNuggSrc = async () => {
-            if (!isUndefinedOrNullOrStringEmpty(tokenId)) {
+            if (!isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(tokenId)) {
                 const dotNuggData = !isUndefinedOrNullOrStringEmpty(data)
                     ? data
                     : await NuggftV1Helper.optimizedDotNugg(tokenId);

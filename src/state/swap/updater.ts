@@ -38,9 +38,10 @@ export default () => {
             !isUndefinedOrNullOrObjectEmpty(library) &&
             !isUndefinedOrNullOrStringEmpty(swapId)
         ) {
-            const filters = NuggftV1Helper.instance.filters[
-                'Offer(uint160,address,uint96)'
-            ](BigNumber.from(swapId.split('-')[0]), null, null);
+            const filters = NuggftV1Helper.instance.filters.Offer(
+                BigNumber.from(swapId.split('-')[0]),
+                null,
+            );
             library.on(filters, updateOffer);
 
             return () => {

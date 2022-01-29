@@ -47,21 +47,30 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         [address, nugg],
     );
 
-    const amountArray = useAsyncState(
+    // const VFO = useAsyncState(
+    //     () =>
+    //         nugg &&
+    //         NuggftV1Helper.instance
+    //             .connect(Web3State.getLibraryOrProvider())
+    //             ['vfo(address,uint160)'](address, nugg.id),
+    //     [address, nugg],
+    // );
+
+    const check = useAsyncState(
         () =>
             nugg &&
             NuggftV1Helper.instance
                 .connect(Web3State.getLibraryOrProvider())
-                .valueForOffer(address, nugg.id),
+                ['check(address,uint160)'](address, nugg.id),
         [address, nugg],
     );
 
     const minOfferAmount = useMemo(() => {
-        if (!isUndefinedOrNullOrObjectEmpty(amountArray)) {
-            if (!amountArray.senderCurrentOffer.isZero()) {
+        if (!isUndefinedOrNullOrObjectEmpty(check)) {
+            if (!check.senderCurrentOffer.isZero()) {
                 return fromEth(
-                    amountArray?.nextSellAmount
-                        // .sub(amountArray?.senderCurrentOffer)
+                    check?.nextSwapAmount
+                        // .sub(check?.senderCurrentOffer)
                         .div(10 ** 13)
                         .add(1)
                         .mul(10 ** 13),
@@ -69,8 +78,8 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             } else {
                 return Math.max(
                     +fromEth(
-                        amountArray.nextSellAmount
-                            // .sub(amountArray.senderCurrentOffer)
+                        check.nextSwapAmount
+                            // .sub(check.senderCurrentOffer)
                             .div(10 ** 13)
                             .add(1)
                             .mul(10 ** 13),
@@ -80,7 +89,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             }
         }
         return constants.MIN_OFFER;
-    }, [amountArray]);
+    }, [check]);
 
     const { targetId, type } = AppState.select.modalData();
 
@@ -115,9 +124,9 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 {stableType === 'StartSale'
                     ? `Sell Nugg #${stableId || nugg?.id}`
                     : `${
-                          amountArray &&
+                          check &&
                           !isUndefinedOrNullOrNumberZero(
-                              amountArray.senderCurrentOffer.toNumber(),
+                              check.senderCurrentOffer.toNumber(),
                           )
                               ? 'Change bid for'
                               : 'Bid on'
@@ -184,7 +193,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     </Text>
                 )}
                 {/* <Text textStyle={styles.text}>
-                        {amountArray && amountArray.canOffer
+                        {check && check.canOffer
                             ? `${
                                   stableType === 'StartSale' ? 'Sale' : 'Offer'
                               } must be at least ${minOfferAmount} ETH`
@@ -199,10 +208,10 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 <FeedbackButton
                     overrideFeedback
                     feedbackText="Check Wallet..."
-                    disabled={amountArray && !amountArray.canOffer}
+                    disabled={check && !check.canOffer}
                     buttonStyle={styles.button}
                     label={
-                        amountArray && !amountArray.canOffer
+                        check && !check.canOffer
                             ? `You cannot ${
                                   stableType === 'StartSale'
                                       ? 'sell'
@@ -212,9 +221,9 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                             ? `${
                                   stableType === 'StartSale'
                                       ? 'Sell Nugg'
-                                      : amountArray &&
+                                      : check &&
                                         !isUndefinedOrNullOrNumberZero(
-                                            amountArray.senderCurrentOffer.toNumber(),
+                                            check.senderCurrentOffer.toNumber(),
                                         )
                                       ? 'Update offer'
                                       : 'Place offer'
@@ -228,13 +237,13 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                                       tokenId: nugg?.id,
                                       amount: fromEth(
                                           toEth(amount).sub(
-                                              amountArray.senderCurrentOffer,
+                                              check.senderCurrentOffer,
                                           ),
                                       ),
                                   })
                                 : TokenState.dispatch.initSale({
                                       tokenId: stableId,
-                                      floor: amountArray.nextSellAmount,
+                                      floor: check.nextSwapAmount,
                                   })
                             : WalletState.dispatch.approveNugg({
                                   spender: new Address(

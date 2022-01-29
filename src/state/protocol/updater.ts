@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { gql, useSubscription } from '@apollo/client';
 import { useWeb3React } from '@web3-react/core';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 import useRecursiveTimeout from '../../hooks/useRecursiveTimeout';
 import {
@@ -149,9 +149,11 @@ export default () => {
                 //     .shl(96)
                 //     .xor(args.stake);
 
-                const stakedShares = event.args.stake.shr(96 + 96);
+                const stakedShares = ethers.BigNumber.from(
+                    event.args.cache,
+                ).shr(96 + 96);
 
-                const stakedEth = event.args.stake
+                const stakedEth = ethers.BigNumber.from(event.args.cache)
                     .shr(96)
                     .xor(stakedShares.shl(96));
 
@@ -161,8 +163,7 @@ export default () => {
                 });
             };
 
-            const filters =
-                NuggftV1Helper.instance.filters['Stake(uint256)'](null);
+            const filters = NuggftV1Helper.instance.filters.Stake(null);
 
             library.on(filters, update);
 

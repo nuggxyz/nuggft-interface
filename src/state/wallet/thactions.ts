@@ -18,6 +18,8 @@ import AppState from '../app';
 import { toEth } from '../../lib/conversion';
 import Web3Config from '../web3/Web3Config';
 import { executeQuery } from '../../graphql/helpers';
+import { NLRootState } from '../store';
+import { NLState } from '../NLState';
 
 import userSharesQuery from './queries/userSharesQuery';
 
@@ -125,9 +127,12 @@ const claim = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/claim`, async ({ tokenId }, thunkAPI) => {
     try {
+        //@ts-ignore
+        const addr = thunkAPI.getState().web3.web3address;
+
         const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
-            .claim(tokenId);
+            ['claim(uint160[],address[])']([tokenId], [addr]);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -156,11 +161,18 @@ const multiClaim = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/multiClaim`, async ({ tokenIds }, thunkAPI) => {
     try {
+        //@ts-ignore
+        const addr = thunkAPI.getState().web3.web3address;
+
         const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
-            .multiclaim(tokenIds, {
-                gasLimit: 500000,
-            });
+            ['claim(uint160[],address[])'](
+                tokenIds,
+                new Array(tokenIds.length).fill(addr),
+                {
+                    gasLimit: 500000,
+                },
+            );
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -259,7 +271,7 @@ const initLoan = createAsyncThunk<
     try {
         const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
-            .loan(tokenId);
+            .loan([tokenId]);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -330,7 +342,7 @@ const extend = createAsyncThunk<
     try {
         const _pendingtx = await NuggftV1Helper.instance
             .connect(Web3State.getLibraryOrProvider())
-            .rebalance(tokenId, { value: toEth(amount) });
+            .rebalance([tokenId], { value: toEth(amount) });
 
         return {
             success: 'SUCCESS',
