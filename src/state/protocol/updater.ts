@@ -158,8 +158,8 @@ export default () => {
                     .xor(stakedShares.shl(96));
 
                 ProtocolState.dispatch.setStaked({
-                    stakedShares: stakedShares.toNumber(),
-                    stakedEth: stakedEth.toNumber(),
+                    stakedShares: stakedShares.toString(),
+                    stakedEth: stakedEth.toString(),
                 });
             };
 

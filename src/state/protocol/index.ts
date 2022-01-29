@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { BigNumber } from 'ethers';
 
 import { NLState } from '../NLState';
 
@@ -86,17 +87,17 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
             setStaked: (
                 state,
                 action: PayloadAction<{
-                    stakedShares: number;
-                    stakedEth: number;
+                    stakedShares: string;
+                    stakedEth: string;
                 }>,
             ) => {
                 const perShare =
-                    action.payload.stakedShares === 0
+                    action.payload.stakedShares === '0'
                         ? '0'
-                        : `${Math.floor(
-                              action.payload.stakedEth /
-                                  action.payload.stakedShares,
-                          )}`;
+                        : BigNumber.from(action.payload.stakedEth)
+                              .div(action.payload.stakedShares)
+                              .toString();
+
                 state.nuggftStakedEth = '' + action.payload.stakedEth;
                 state.nuggftStakedShares = '' + action.payload.stakedShares;
                 state.nuggftStakedEthPerShare = perShare;
