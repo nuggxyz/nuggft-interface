@@ -284,6 +284,33 @@ export const smartInsert = <
     }, []);
 };
 
+export const smartInsertIndex = <
+    T extends {
+        index: number;
+    },
+>(
+    array: T[],
+    element: T,
+) => {
+    if (isUndefinedOrNullOrArrayEmpty(array)) {
+        return [element];
+    }
+    if (element.index === array.length) {
+        return [...array, element];
+    }
+    return array.reduce((acc, elem) => {
+        if (elem.index === element.index) {
+            acc.push(element);
+            elem.index++;
+        }
+        if (elem.index >= element.index) {
+            elem.index++;
+        }
+        acc.push(elem);
+        return acc;
+    }, []);
+};
+
 export const smartRemove = <T extends { index: number }>(
     array: T[],
     element: T,

@@ -1,7 +1,7 @@
 import { useSpring } from '@react-spring/core';
 import { animated } from '@react-spring/web';
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
-import { ExternalLink, XCircle } from 'react-feather';
+import { IoClose, IoOpenOutline } from 'react-icons/io5';
 
 import useOnHover from '../../../hooks/useOnHover';
 import {
@@ -9,6 +9,7 @@ import {
     isUndefinedOrNullOrNumberZero,
 } from '../../../lib';
 import Colors from '../../../lib/colors';
+import Layout from '../../../lib/layout';
 import AppState from '../../../state/app';
 import AnimatedBarTimer from '../AnimatedTimers/BarTimer/BarTimer';
 import Button from '../Buttons/Button/Button';
@@ -35,25 +36,24 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
     useEffect(() => {
         if (close) {
             setHidden(true);
-            let id = setTimeout(
-                () =>
-                    AppState.dispatch.removeToastFromList({
-                        index: toast.index,
-                    }),
-                500,
-            );
-            return () => clearTimeout(id);
-        } else {
-            let id = setTimeout(() => setHidden(false), 500);
+            let id = setTimeout(() => {
+                AppState.dispatch.removeToastFromList({
+                    index: toast.index,
+                });
+            }, 500);
             return () => clearTimeout(id);
         }
-    }, [close, toast]);
+    }, [close]);
+
+    useEffect(() => {
+        let id = setTimeout(() => setHidden(false), 500);
+        return () => clearTimeout(id);
+    }, [toast]);
 
     const style = useMemo(() => {
         return {
             ...(!hidden ? styles.visible : styles.hidden),
-            ...(toast.error ? styles.error : {}),
-            ...(!toast.error ? styles.success : {}),
+            ...(toast.error ? styles.error : styles.success),
             ...styles.toast,
             cursor: 'pointer',
             marginTop: '1rem',
@@ -103,21 +103,18 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
             <animated.div
                 style={{
                     opacity: animatedS.opacity.to([0, 1], [1, 0]),
-                    position: 'absolute',
-                    width: '100%',
-                    display: 'flex',
-                    justifyContent: 'space-around',
+                    ...styles.buttonContainer,
                 }}>
                 <Button
-                    buttonStyle={{ background: 'transparent' }}
+                    buttonStyle={styles.button}
                     onClick={() => setClose(true)}
-                    rightIcon={<XCircle />}
+                    rightIcon={<IoClose size={30} />}
                 />
                 {toast.action && (
                     <Button
-                        buttonStyle={{ background: 'transparent' }}
-                        onClick={toast.action}
-                        rightIcon={<ExternalLink />}
+                        buttonStyle={styles.button}
+                        onClick={() => toast.action(setClose)}
+                        rightIcon={<IoOpenOutline size={30} />}
                     />
                 )}
             </animated.div>
