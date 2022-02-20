@@ -19,9 +19,9 @@ const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
 const ESLintPlugin = require('eslint-webpack-plugin');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 
-const paths = require('./paths');
-const modules = require('./modules');
-const getClientEnvironment = require('./env');
+const paths = require('./webpack/paths');
+const modules = require('./webpack/modules');
+const getClientEnvironment = require('./webpack/env');
 
 const ForkTsCheckerWebpackPlugin =
     process.env.TSC_COMPILE_ON_ERROR === 'true'
@@ -375,7 +375,22 @@ module.exports = function (webpackEnv) {
                     enforce: 'pre',
                     exclude: /@babel(?:\/|\\{1,2})runtime/,
                     test: /\.(js|mjs|jsx|ts|tsx|css)$/,
-                    loader: require.resolve('source-map-loader'),
+                    use: [
+                        {
+                            loader: 'source-map-loader',
+                            options: {
+                                filterSourceMappingUrl: (url, resourcePath) => {
+                                    if (
+                                        resourcePath.includes('@walletconnect')
+                                    ) {
+                                        return 'skip';
+                                    }
+
+                                    return true;
+                                },
+                            },
+                        },
+                    ],
                 },
                 {
                     // "oneOf" will traverse all following loaders until one will

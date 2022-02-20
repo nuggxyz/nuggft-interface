@@ -12,7 +12,7 @@ process.on('unhandledRejection', (err) => {
 });
 
 // Ensure environment variables are read.
-require('../config/env');
+require('../env');
 
 const fs = require('fs');
 
@@ -30,10 +30,10 @@ const {
 const openBrowser = require('react-dev-utils/openBrowser');
 const semver = require('semver');
 
-const paths = require('../config/paths');
-const configFactory = require('../config/webpack.config');
-const createDevServerConfig = require('../config/webpackDevServer.config');
-const getClientEnvironment = require('../config/env');
+const paths = require('../paths');
+const configFactory = require('../../webpack.config');
+const createDevServerConfig = require('../webpackDevServer.config');
+const getClientEnvironment = require('../env');
 const react = require(require.resolve('react', { paths: [paths.appPath] }));
 
 const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
@@ -130,22 +130,7 @@ checkBrowsers(paths.appPath, isInteractive)
             }
 
             console.log(chalk.cyan('Starting the development server...\n'));
-            console.log(
-                chalk.bold.magentaBright(`
-              _-====-__-======-__-========-_____-============-__
-            _(                                                 _)
-         OO(           _/_ _  _  _/_   _/_ _  _  _/_           )_
-        0  (_          (__(_)(_) (__   (__(_)(_) (__            _)
-      o0     (_                                                _)
-     o         '=-___-===-_____-========-___________-===-dwb-='
-   .o                                _________
-  . ______          ______________  |   gas   |      _____
-_()_||__|| ________ |   and      |  |_________|   __||___||__
-( eating| |  ass  | |    passing | __Y______00_| |_         _|
-/-OO----OO""="OO--OO"="OO--------OO"="OO-------OO"="OO-------OO"=P
-#####################################################################`),
-            );
-            //   openBrowser(urls.localUrlForBrowser);
+            openBrowser(urls.localUrlForBrowser);
         });
 
         ['SIGINT', 'SIGTERM'].forEach(function (sig) {
