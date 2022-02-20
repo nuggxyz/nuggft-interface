@@ -375,7 +375,22 @@ module.exports = function (webpackEnv) {
                     enforce: 'pre',
                     exclude: /@babel(?:\/|\\{1,2})runtime/,
                     test: /\.(js|mjs|jsx|ts|tsx|css)$/,
-                    loader: require.resolve('source-map-loader'),
+                    use: [
+                        {
+                            loader: 'source-map-loader',
+                            options: {
+                                filterSourceMappingUrl: (url, resourcePath) => {
+                                    if (
+                                        resourcePath.includes('@walletconnect')
+                                    ) {
+                                        return 'skip';
+                                    }
+
+                                    return true;
+                                },
+                            },
+                        },
+                    ],
                 },
                 {
                     // "oneOf" will traverse all following loaders until one will
