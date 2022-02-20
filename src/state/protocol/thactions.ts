@@ -254,7 +254,7 @@ const getGenesisBlock = createAsyncThunk<
 >('protocol/getGenesisBlock', async (_, thunkAPI) => {
     try {
         const res = await NuggftV1Helper.instance
-            .connect(Web3State.getLibraryOrProvider())
+            // .connect(Web3State.getSignerOrProvider())
             .genesis();
 
         if (!isUndefinedOrNullOrObjectEmpty(res)) {

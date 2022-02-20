@@ -26,7 +26,7 @@ const AccountViewer = () => {
     }, [chain]);
 
     const userBalance = useAsyncState(
-        () => NuggftV1Helper.ethBalance(Web3State.getLibraryOrProvider()),
+        () => NuggftV1Helper.ethBalance(Web3State.getSignerOrProvider()),
         [web3address],
     );
 

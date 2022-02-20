@@ -106,7 +106,7 @@ const placeOffer = createAsyncThunk<
 >('swap/placeOffer', async ({ amount, tokenId }, thunkAPI) => {
     try {
         const _pendingtx = await NuggftV1Helper.instance
-            .connect(Web3State.getLibraryOrProvider())
+            // .connect(Web3State.getSignerOrProvider())
             ['offer(uint160)'](BigNumber.from(tokenId), {
                 value: toEth(amount),
             });

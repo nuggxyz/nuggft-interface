@@ -33,7 +33,9 @@ export default class NuggftV1Helper extends ContractHelper {
                 // Web3State.getLibraryOrProvider(),
             ) as NuggftV1;
         }
-        return NuggftV1Helper._instance;
+        return NuggftV1Helper._instance.connect(
+            Web3State.getSignerOrProvider(),
+        );
     }
 
     static get dotnugg() {
@@ -41,10 +43,9 @@ export default class NuggftV1Helper extends ContractHelper {
             NuggftV1Helper._dotnugg = new Contract(
                 Web3Config.activeChain__DotnuggV1,
                 DotnuggV1__factory.abi,
-                // Web3State.getLibraryOrProvider(),
             ) as DotnuggV1;
         }
-        return NuggftV1Helper._dotnugg;
+        return NuggftV1Helper._dotnugg.connect(Web3State.getSignerOrProvider());
     }
 
     static reset() {
@@ -112,13 +113,13 @@ export default class NuggftV1Helper extends ContractHelper {
         tokenId: string,
     ): Promise<string> {
         let response = await this.instance
-            .connect(Web3State.getLibraryOrProvider())
+            .connect(Web3State.getSignerOrProvider())
             .approve(spender.hash, tokenId);
         return response.hash;
     }
     public static async sellerApproval(tokenId: string): Promise<boolean> {
         let response = await this.instance
-            .connect(Web3State.getLibraryOrProvider())
+            .connect(Web3State.getSignerOrProvider())
             .getApproved(tokenId);
         return new Address(response).equals(
             new Address(Web3Config.activeChain__NuggftV1),

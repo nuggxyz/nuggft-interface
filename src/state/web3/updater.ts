@@ -6,8 +6,6 @@ import {
     loadStringFromLocalStorage,
 } from '../../lib';
 import { NetworkContextName } from '../../config';
-import useSetWeb3Account from '../../hooks/useSetWeb3Account';
-import useSetWeb3Listeners from '../../hooks/useSetWeb3Listeners';
 import useAsyncState from '../../hooks/useAsyncState';
 
 import Web3Config from './Web3Config';
@@ -15,28 +13,17 @@ import Web3Config from './Web3Config';
 import Web3State from '.';
 
 export default () => {
-    const { activate: activateNetwork, active: activeNetwork } =
-        useWeb3React(NetworkContextName);
+    const { activate: activateNetwork } = useWeb3React(NetworkContextName);
     const {
         activate: defaultActivate,
         account: web3Account,
-        deactivate,
         active,
-        error,
-        chainId: connectorChainId,
         library,
     } = useWeb3React();
 
-    const chainId = Web3State.select.currentChain();
+    Web3State.hook.useWeb3Listeners();
 
-    useSetWeb3Listeners({
-        chainId,
-        library,
-        activateNetwork,
-        connectorChainId,
-    });
-
-    useSetWeb3Account({ web3Account, library });
+    Web3State.hook.useSetWeb3Account();
 
     useEffect(() => {
         if (defaultActivate && !active) {

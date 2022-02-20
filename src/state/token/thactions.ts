@@ -17,7 +17,7 @@ const initSale = createAsyncThunk<
 >(`token/initSale`, async ({ tokenId, floor }, thunkAPI) => {
     try {
         const _pendingtx = await NuggftV1Helper.instance
-            .connect(Web3State.getLibraryOrProvider())
+            // .connect(Web3State.getSignerOrProvider())
             ['sell(uint160,uint96)'](tokenId, floor);
 
         return {

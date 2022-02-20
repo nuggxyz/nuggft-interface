@@ -51,7 +51,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
     }, [type, targetId]);
 
     const userBalance = useAsyncState(
-        () => NuggftV1Helper.ethBalance(Web3State.getLibraryOrProvider()),
+        () => NuggftV1Helper.ethBalance(Web3State.getSignerOrProvider()),
         [address, stableId],
     );
 
@@ -60,10 +60,10 @@ const LoanInputModal: FunctionComponent<Props> = () => {
             stableId &&
             (stableType === 'PayOffLoan'
                 ? NuggftV1Helper.instance
-                      .connect(Web3State.getLibraryOrProvider())
+                    //   .connect(Web3State.getSignerOrProvider())
                       .vfl([stableId])
                 : NuggftV1Helper.instance
-                      .connect(Web3State.getLibraryOrProvider())
+                    //   .connect(Web3State.getSignerOrProvider())
                       .vfr([stableId])),
         [address, stableId, stableType],
     );

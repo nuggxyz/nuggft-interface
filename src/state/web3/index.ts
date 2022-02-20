@@ -78,8 +78,6 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
         },
     });
 
-    public static deactivate: () => void;
-
     public static activate: (
         connector: AbstractConnector,
         onError?: (error: Error) => void,
@@ -123,28 +121,35 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
         Web3State._networkLibrary = undefined;
     }
 
-    public static getLibrary(provider?: any): Web3Provider {
+    public static getProvider(provider?: any): Web3Provider {
+        const currentChain = store.getState().web3.currentChain;
         let library: Web3Provider;
         if (isUndefinedOrNullOrObjectEmpty(provider)) {
-            // if (isUndefinedOrNullOrObjectEmpty(Web3State._networkLibrary)) {
             let networkProvider = Web3Config.connectors.network.provider;
-            Web3State._networkLibrary = new Web3Provider(
-                networkProvider as any,
-                !isUndefinedOrNull(networkProvider.chainId)
-                    ? +networkProvider.chainId
-                    : 'any',
-            );
-            // }
+            if (
+                isUndefinedOrNullOrObjectEmpty(Web3State._networkLibrary) ||
+                networkProvider.chainId !== currentChain
+            ) {
+                Web3State._networkLibrary = new Web3Provider(
+                    networkProvider as any,
+                    !isUndefinedOrNull(networkProvider.chainId)
+                        ? +networkProvider.chainId
+                        : 'any',
+                );
+            }
             library = Web3State._networkLibrary;
         } else {
-            // if (isUndefinedOrNullOrObjectEmpty(Web3State._library)) {
-            Web3State._library = new Web3Provider(
-                provider as any,
-                !isUndefinedOrNull(provider.chainId)
-                    ? +provider.chainId
-                    : 'any',
-            );
-            // }
+            if (
+                isUndefinedOrNullOrObjectEmpty(Web3State._library) ||
+                provider.chainId !== currentChain
+            ) {
+                Web3State._library = new Web3Provider(
+                    provider as any,
+                    !isUndefinedOrNull(provider.chainId)
+                        ? +provider.chainId
+                        : 'any',
+                );
+            }
             library = Web3State._library;
         }
         library.pollingInterval = 1000;
@@ -153,28 +158,20 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
 
     public static _walletConnectSigner: any;
 
-    public static getLibraryOrProvider():
+    public static getSignerOrProvider():
         | Web3Provider
         | ethers.providers.JsonRpcSigner {
-        return isUndefinedOrNullOrStringEmpty(store.getState().web3.web3address)
-            ? this.getLibrary()
-            : window.ethereum
-            ? new ethers.providers.Web3Provider(window.ethereum).getSigner()
-            : new ethers.providers.Web3Provider(
-                  Web3Config.connectors.walletconnect.walletConnectProvider,
-              ).getSigner();
-    }
-
-    // account is not optional
-    public static getSigner(account: Address): JsonRpcSigner {
-        return this.getLibrary().getSigner(account.hash).connectUnchecked();
-    }
-
-    // account is optional
-    public static getProviderOrSigner(
-        library: Web3Provider,
-        account?: Address,
-    ): Web3Provider | JsonRpcSigner {
-        return account ? this.getSigner(account) : library;
+        if (isUndefinedOrNullOrStringEmpty(store.getState().web3.web3address)) {
+            return this.getProvider();
+        }
+        if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
+            return new ethers.providers.Web3Provider(
+                window.ethereum,
+            ).getSigner();
+        } else {
+            return new ethers.providers.Web3Provider(
+                Web3Config.connectors.walletconnect.walletConnectProvider,
+            ).getSigner();
+        }
     }
 }

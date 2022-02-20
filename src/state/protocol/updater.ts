@@ -30,7 +30,7 @@ export default () => {
     const chainId = Web3State.select.currentChain();
     const [blocknum, setBlocknum] = useState(0);
     const [lastChainUpdate, setLastChainUpdate] = useState(0);
-    const debouncedBlocknum = useDebounce(blocknum, 100);
+    const debouncedBlocknum = useDebounce(blocknum, 10);
 
     useEffect(() => {
         setBlocknum(0);

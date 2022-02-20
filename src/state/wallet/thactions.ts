@@ -67,7 +67,7 @@ const withdraw = createAsyncThunk<
 >(`wallet/withdraw`, async ({ tokenId }, thunkAPI) => {
     try {
         const _pendingtx = await NuggftV1Helper.instance
-            .connect(Web3State.getLibraryOrProvider())
+            // .connect(Web3State.getSignerOrProvider())
             .burn(tokenId);
         return {
             success: 'SUCCESS',
@@ -131,7 +131,7 @@ const claim = createAsyncThunk<
         const addr = thunkAPI.getState().web3.web3address;
 
         const _pendingtx = await NuggftV1Helper.instance
-            .connect(Web3State.getLibraryOrProvider())
+            // .connect(Web3State.getSignerOrProvider())
             ['claim(uint160[],address[])']([tokenId], [addr]);
         return {
             success: 'SUCCESS',
@@ -165,7 +165,7 @@ const multiClaim = createAsyncThunk<
         const addr = thunkAPI.getState().web3.web3address;
 
         const _pendingtx = await NuggftV1Helper.instance
-            .connect(Web3State.getLibraryOrProvider())
+            // .connect(Web3State.getSignerOrProvider())
             ['claim(uint160[],address[])'](
                 tokenIds,
                 new Array(tokenIds.length).fill(addr),
@@ -221,7 +221,7 @@ const mintNugg = createAsyncThunk<
         );
 
         const nuggPrice = await NuggftV1Helper.instance
-            .connect(Web3State.getLibraryOrProvider())
+            // .connect(Web3State.getSignerOrProvider())
             .msp();
 
         if (
@@ -234,7 +234,7 @@ const mintNugg = createAsyncThunk<
                 ? constants.PRE_MINT_STARTING_EPOCH + 1
                 : +latestNugg[0].idnum + 1;
             const _pendingtx = await NuggftV1Helper.instance
-                .connect(Web3State.getLibraryOrProvider())
+                // .connect(Web3State.getSignerOrProvider())
                 .mint(nuggToMint, {
                     value: nuggPrice,
                     gasLimit: 85000,
@@ -270,7 +270,7 @@ const initLoan = createAsyncThunk<
 >(`wallet/initLoan`, async ({ tokenId }, thunkAPI) => {
     try {
         const _pendingtx = await NuggftV1Helper.instance
-            .connect(Web3State.getLibraryOrProvider())
+            // .connect(Web3State.getSignerOrProvider())
             .loan([tokenId]);
         return {
             success: 'SUCCESS',
@@ -302,7 +302,7 @@ const payOffLoan = createAsyncThunk<
 >(`wallet/payOffLoan`, async ({ tokenId, amount }, thunkAPI) => {
     try {
         const _pendingtx = await NuggftV1Helper.instance
-            .connect(Web3State.getLibraryOrProvider())
+            // .connect(Web3State.getSignerOrProvider())
             .liquidate(tokenId, { value: toEth(amount) });
         return {
             success: 'SUCCESS',
@@ -341,7 +341,7 @@ const extend = createAsyncThunk<
 >(`wallet/extend`, async ({ tokenId, amount }, thunkAPI) => {
     try {
         const _pendingtx = await NuggftV1Helper.instance
-            .connect(Web3State.getLibraryOrProvider())
+            // .connect(Web3State.getSignerOrProvider())
             .rebalance([tokenId], { value: toEth(amount) });
 
         return {

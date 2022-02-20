@@ -21,8 +21,8 @@ ReactDOM.render(
     <div style={{ width: '100%', height: '100%' }}>
         <React.StrictMode>
             <Provider store={store}>
-                <Web3ReactProvider getLibrary={Web3State.getLibrary}>
-                    <Web3ProviderNetwork getLibrary={Web3State.getLibrary}>
+                <Web3ReactProvider getLibrary={Web3State.getProvider}>
+                    <Web3ProviderNetwork getLibrary={Web3State.getProvider}>
                         <Initializer>
                             <ToastContainer />
                             <Modal />

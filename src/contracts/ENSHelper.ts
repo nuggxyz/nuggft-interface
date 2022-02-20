@@ -15,7 +15,7 @@ export default class ENSHelper {
     private static _instance_registrar: EnsRegistrar;
     // private static _signer: ethers.Signer;
     static get signer() {
-        return Web3State.getLibraryOrProvider() as ethers.providers.Web3Provider;
+        return Web3State.getSignerOrProvider() as ethers.providers.Web3Provider;
     }
     static set signer(_) {
         return;

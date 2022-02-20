@@ -43,7 +43,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     const nugg = SwapState.select.nugg();
 
     const userBalance = useAsyncState(
-        () => NuggftV1Helper.ethBalance(Web3State.getLibraryOrProvider()),
+        () => NuggftV1Helper.ethBalance(Web3State.getSignerOrProvider()),
         [address, nugg],
     );
 
@@ -60,7 +60,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         () =>
             nugg &&
             NuggftV1Helper.instance
-                .connect(Web3State.getLibraryOrProvider())
+                // .connect(Web3State.getSignerOrProvider())
                 ['check(address,uint160)'](address, nugg.id),
         [address, nugg],
     );
