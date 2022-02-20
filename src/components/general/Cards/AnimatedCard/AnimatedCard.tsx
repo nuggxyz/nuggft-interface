@@ -19,9 +19,7 @@ const AnimatedCard: FunctionComponent<React.PropsWithChildren<{}>> = ({
         <div
             ref={ref}
             style={{
-                // width: '100%',
-                // height: '100%',
-                zIndex: 100,
+                zIndex: 1,
                 cursor: 'none',
             }}>
             <animated.div
