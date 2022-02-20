@@ -6,6 +6,7 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
     smartInsert,
+    smartInsertIndex,
     smartRemove,
     smartReplace,
 } from '../../lib';
@@ -75,7 +76,7 @@ class AppState extends NLState<NL.Redux.App.State> {
             ) => {
                 state.dimensions = action.payload;
                 state.screenType =
-                    action.payload.width > 1360
+                    action.payload.width > 1300
                         ? 'desktop'
                         : action.payload.width > 750
                         ? 'tablet'
@@ -86,7 +87,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 action: PayloadAction<NL.Redux.App.Toast>,
             ) => {
                 let temp = state.toasts;
-                state.toasts = smartInsert(temp, action.payload);
+                state.toasts = smartInsertIndex(temp, action.payload);
             },
             removeToastFromList: (
                 state,
@@ -94,8 +95,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                     Partial<NL.Redux.App.Toast> & { index: number }
                 >,
             ) => {
-                let temp = [...state.toasts];
-                state.toasts = smartRemove(temp, action.payload);
+                state.toasts = smartRemove(state.toasts, action.payload);
             },
             replaceToast: (
                 state,

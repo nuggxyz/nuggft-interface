@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BigNumberish } from 'ethers';
 
-import NuggFTHelper from '../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrNotObject,
+    isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 import AppState from '../app';
@@ -15,9 +16,9 @@ const initSale = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error; state: NL.Redux.RootState }
 >(`token/initSale`, async ({ tokenId, floor }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance
-            .connect(Web3State.getLibraryOrProvider())
-            .swap(tokenId, floor);
+        const _pendingtx = await NuggftV1Helper.instance
+            // .connect(Web3State.getSignerOrProvider())
+            ['sell(uint160,uint96)'](tokenId, floor);
 
         return {
             success: 'SUCCESS',
@@ -26,6 +27,13 @@ const initSale = createAsyncThunk<
         };
     } catch (err) {
         console.log({ err });
+        if (
+            !isUndefinedOrNullOrObjectEmpty(err) &&
+            !isUndefinedOrNullOrStringEmpty(err.method) &&
+            err.method === 'estimateGas'
+        ) {
+            return thunkAPI.rejectWithValue('GAS_ERROR');
+        }
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&

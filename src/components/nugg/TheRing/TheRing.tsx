@@ -1,6 +1,9 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
+import useDebounce from '../../../hooks/useDebounce';
+import useSetState from '../../../hooks/useSetState';
 import {
+    isUndefinedOrNull,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
 } from '../../../lib';
@@ -11,6 +14,7 @@ import ProtocolState from '../../../state/protocol';
 import SwapState from '../../../state/swap';
 import CircleTimer from '../../general/AnimatedTimers/CircleTimer/CircleTimer';
 import AnimatedCard from '../../general/Cards/AnimatedCard/AnimatedCard';
+import Text from '../../general/Texts/Text/Text';
 import TokenViewer from '../TokenViewer';
 
 import styles from './TheRing.styles';
@@ -29,12 +33,21 @@ const TheRing: FunctionComponent<Props> = ({
     tokenStyle,
 }) => {
     const screenType = AppState.select.screenType();
-    const lastBlock = ProtocolState.select.currentBlock();
+    const currentBlock = ProtocolState.select.currentBlock();
     const epoch = ProtocolState.select.epoch();
     const endingSwapEpoch = SwapState.select.epoch();
     const startingSwapEpoch = SwapState.select.startingEpoch();
     const nugg = SwapState.select.nugg();
-    const status = SwapState.select.status();
+
+    const status = useSetState(() => {
+        return isUndefinedOrNull(endingSwapEpoch)
+            ? 'waiting'
+            : epoch &&
+              +endingSwapEpoch.endblock >= +epoch.endblock &&
+              currentBlock !== +endingSwapEpoch.endblock
+            ? 'ongoing'
+            : 'over';
+    }, [epoch, endingSwapEpoch, currentBlock]);
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
@@ -56,16 +69,21 @@ const TheRing: FunctionComponent<Props> = ({
 
         if (
             !isUndefinedOrNullOrObjectEmpty(endingSwapEpoch) &&
-            !isUndefinedOrNullOrNumberZero(lastBlock)
+            !isUndefinedOrNullOrNumberZero(currentBlock)
         ) {
-            remaining = +endingSwapEpoch.endblock - +lastBlock;
+            remaining = +endingSwapEpoch.endblock - +currentBlock;
         }
         if (remaining <= 0) {
             remaining = 0;
+            if (+currentBlock !== 0 && status === 'over') {
+                ProtocolState.dispatch.setEpochIsOver(true);
+            } else {
+                ProtocolState.dispatch.setEpochIsOver(false);
+            }
         }
 
         return remaining;
-    }, [lastBlock, endingSwapEpoch]);
+    }, [currentBlock, endingSwapEpoch, status]);
 
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
@@ -81,14 +99,19 @@ const TheRing: FunctionComponent<Props> = ({
                         ? Colors.green
                         : ''
                 }
-                style={{ ...styles.circle, ...circleStyle }}>
+                style={{
+                    ...styles.circle,
+                    ...circleStyle,
+                    flexDirection: 'column',
+                }}>
                 <AnimatedCard>
                     <TokenViewer
                         tokenId={(nugg && nugg.id) || ''}
-                        showLabel={screenType !== 'phone'}
+                        // showLabel={screenType !== 'phone'}
                         style={tokenStyle}
                     />
                 </AnimatedCard>
+                {screenType !== 'phone' && <Text>Nugg #{nugg && nugg.id}</Text>}
             </CircleTimer>
         </div>
     );

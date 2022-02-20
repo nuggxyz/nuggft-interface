@@ -45,6 +45,12 @@ export default class WalletState extends NLState<NL.Redux.Wallet.State> {
             clearError: (state) => {
                 state.error = undefined;
             },
+            reset: (state) => {
+                state.error = undefined;
+                state.success = undefined;
+                state.loading = false;
+                state.userShares = 0;
+            },
         },
         extraReducers: (builder) =>
             builder

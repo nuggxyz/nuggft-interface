@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address';
-import { ethers } from 'ethers';
+import { BytesLike, ethers } from 'ethers';
 
 import config from '../config';
 
@@ -23,7 +23,7 @@ export const gatsbyDOM = (
         return typeof document !== `undefined` ? document : false;
     else return false;
 };
-
+// 6287103
 // VERIFICATION
 export const isAnybodyThere = (value: any) => {
     try {
@@ -59,6 +59,16 @@ export const isUndefinedOrNullOrNotString = (value: any) => {
 };
 export const isUndefinedOrNullOrStringEmpty = (value: any) => {
     return isUndefinedOrNullOrNotString(value) || value === '';
+};
+export const isUndefinedOrNullOrStringEmptyOrZeroOrStringZero = (
+    value: any,
+) => {
+    return (
+        isUndefinedOrNullOrNotString(value) ||
+        value === '' ||
+        value === 0 ||
+        value === '0'
+    );
 };
 export const isUndefinedOrNullOrNotBoolean = (value: any) => {
     return isUndefinedOrNull(value) || typeof value !== 'boolean';
@@ -248,6 +258,33 @@ export const ucFirst = (value: string) => {
 };
 
 export const smartInsert = <
+    T extends {
+        index: number;
+    },
+>(
+    array: T[],
+    element: T,
+) => {
+    if (isUndefinedOrNullOrArrayEmpty(array)) {
+        return [element];
+    }
+    if (element.index === array.length) {
+        return [...array, element];
+    }
+    return array.reduce((acc, elem) => {
+        if (elem.index === element.index) {
+            acc.push(element);
+            elem.index++;
+        }
+        if (elem.index >= element.index) {
+            elem.index++;
+        }
+        acc.push(elem);
+        return acc;
+    }, []);
+};
+
+export const smartInsertIndex = <
     T extends {
         index: number;
     },

@@ -1,12 +1,14 @@
 import React, { Fragment, FunctionComponent, useEffect, useState } from 'react';
 
-import NuggFTHelper from '../../../../contracts/NuggFTHelper';
+import { Address } from '../../../../classes/Address';
+import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import { fromEth } from '../../../../lib/conversion';
 import NuggDexState from '../../../../state/nuggdex';
 import ProtocolState from '../../../../state/protocol';
 import TransactionState from '../../../../state/transaction';
 import WalletState from '../../../../state/wallet';
+import Web3Config from '../../../../state/web3/Web3Config';
 import Button from '../../../general/Buttons/Button/Button';
 import Text from '../../../general/Texts/Text/Text';
 import TokenViewer from '../../TokenViewer';
@@ -30,7 +32,7 @@ const BurnModal: FunctionComponent<Props> = () => {
 
     useEffect(() => {
         if (!isUndefinedOrNullOrStringEmpty(selected) && !isApproved) {
-            NuggFTHelper.sellerApproval(selected).then((res) =>
+            NuggftV1Helper.sellerApproval(selected).then((res) =>
                 setIsApproved(res),
             );
         }
@@ -84,6 +86,9 @@ const BurnModal: FunctionComponent<Props> = () => {
                                   tokenId: selected,
                               })
                             : WalletState.dispatch.approveNugg({
+                                  spender: new Address(
+                                      Web3Config.activeChain__DotnuggV1,
+                                  ),
                                   tokenId: selected,
                               })
                     }

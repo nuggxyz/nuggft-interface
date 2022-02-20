@@ -19,7 +19,8 @@ const styles = NLStyleSheetCreator({
     border: {
         width: '0%',
         height: '1px',
-        marginTop: '.3rem',
+        marginTop: '.1rem',
+        marginBottom: '.2rem',
         background: 'white',
         transition: `.5s ${Layout.animation} width, .5s ${Layout.animation} background`,
     },

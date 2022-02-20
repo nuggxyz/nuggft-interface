@@ -22,6 +22,7 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
+        overflow: 'scroll',
     },
 });
 

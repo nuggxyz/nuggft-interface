@@ -8,7 +8,7 @@ import React, {
     useState,
 } from 'react';
 import { ChevronDown, ChevronUp } from 'react-feather';
-import { animated, useSpring } from 'react-spring';
+import { animated, config, useSpring, useTransition } from 'react-spring';
 import { BigNumber } from 'ethers';
 
 import Text from '../../general/Texts/Text/Text';
@@ -18,6 +18,7 @@ import Button from '../../general/Buttons/Button/Button';
 import AppState from '../../../state/app';
 import Web3State from '../../../state/web3';
 import {
+    isUndefinedOrNull,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
@@ -26,7 +27,9 @@ import { fromEth } from '../../../lib/conversion';
 import Colors from '../../../lib/colors';
 import TransactionState from '../../../state/transaction';
 import usePrevious from '../../../hooks/usePrevious';
-import NuggFTHelper from '../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../contracts/NuggftV1Helper';
+import useSetState from '../../../hooks/useSetState';
+import ProtocolState from '../../../state/protocol';
 
 import styles from './RingAbout.styles';
 
@@ -35,6 +38,8 @@ type Props = {};
 const RingAbout: FunctionComponent<Props> = ({}) => {
     const screenType = AppState.select.screenType();
     const eth = SwapState.select.eth();
+    const epoch = ProtocolState.select.epoch();
+    const endingSwapEpoch = SwapState.select.epoch();
     const address = Web3State.select.web3address();
     const ethUsd = SwapState.select.ethUsd();
     const leader = SwapState.select.leader();
@@ -43,13 +48,21 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const prevToggle = usePrevious(txnToggle);
 
-    const status = SwapState.select.status();
+    const status = useSetState(() => {
+        return isUndefinedOrNull(endingSwapEpoch) || isUndefinedOrNull(epoch)
+            ? 'waiting'
+            : +endingSwapEpoch.endblock >= +epoch.endblock
+            ? 'ongoing'
+            : 'over';
+    }, [epoch, endingSwapEpoch]);
 
     useEffect(() => {
         if (
             status === 'waiting' &&
             prevToggle !== undefined &&
-            prevToggle !== txnToggle
+            prevToggle !== txnToggle &&
+            !isUndefinedOrNullOrStringEmpty(swapId) &&
+            !swapId.includes('undefined')
         ) {
             SwapState.dispatch.initSwap({ swapId });
         }
@@ -57,47 +70,69 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const [open, setOpen] = useState(false);
 
-    const leaderEns = Web3State.hook.useEns(leader?.id);
+    const leaderEns = Web3State.hook.useEns(leader, [leader, eth]);
 
     const hasBids = useMemo(
         () =>
-            !isUndefinedOrNullOrObjectEmpty(leader) &&
+            !isUndefinedOrNullOrStringEmpty(leader) &&
             !isUndefinedOrNullOrStringEmpty(eth) &&
-            !isUndefinedOrNullOrNumberZero(+eth),
-        [eth, leader],
+            (status === 'over' || !isUndefinedOrNullOrNumberZero(+eth)),
+        [eth, leader, status],
     );
+
+    const [flashStyle, api] = useSpring(() => {
+        return {
+            to: [
+                {
+                    ...styles.leadingOfferAmount,
+                    background: 'white',
+                },
+                {
+                    ...styles.leadingOfferAmount,
+                    background: Colors.transparentWhite,
+                },
+            ],
+            from: {
+                ...styles.leadingOfferAmount,
+                background: Colors.transparentWhite,
+            },
+            config: config.molasses,
+        };
+    });
+
+    useEffect(() => {
+        api.start({
+            to: [
+                {
+                    ...styles.leadingOfferAmount,
+                    background: 'white',
+                },
+                {
+                    ...styles.leadingOfferAmount,
+                    background: Colors.transparentWhite,
+                },
+            ],
+        });
+    }, [eth]);
 
     const springStyle = useSpring({
         ...styles.offersContainer,
-        height: open ? '500px' : '0px',
+        height: open ? '300px' : '0px',
         opacity: open ? 1 : 0,
-        padding: open ? '1rem' : '0rem',
+        padding: open ? '0.75rem' : '0rem',
     });
-
-    // function gen(n) {
-    //     return new Array(n * 1024 + 1).join('a');
-    // }
-
-    // // Determine size of localStorage if it's not set
-    // if (!localStorage.getItem('size')) {
-    //     var i = 0;
-    //     try {
-    //         // Test up to 10 MB
-    //         for (i = 0; i <= 10000; i += 250) {
-    //             localStorage.setItem('test', gen(i));
-    //         }
-    //     } catch (e) {
-    //         localStorage.removeItem('test');
-    //         //@ts-ignore
-    //         localStorage.setItem('size', i ? i - 250 : 0);
-    //     }
-    // }
 
     return (
         <animated.div
             style={{
                 ...styles.container,
-                ...(screenType === 'phone' && styles.mobile),
+                ...(screenType === 'phone' && {
+                    ...styles.mobile,
+                    background: springStyle.opacity.to(
+                        [0, 1],
+                        ['#FFFFFF00', Colors.transparentWhite],
+                    ),
+                }),
             }}>
             <div style={styles.bodyContainer}>
                 <div
@@ -118,12 +153,12 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                         {status === 'ongoing' && hasBids
                             ? 'Highest Offer'
                             : status === 'ongoing' && !hasBids
-                            ? 'No offers yet'
+                            ? 'No offers yet...'
                             : status === 'waiting'
                             ? 'Place offer to begin auction'
                             : 'Winner'}
                     </Text>
-                    {hasBids && (
+                    {hasBids && status !== 'waiting' && (
                         <div
                             style={
                                 styles[
@@ -132,15 +167,17 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                         : 'leadingOfferContainer'
                                 ]
                             }>
-                            <div style={styles.leadingOfferAmount}>
+                            <animated.div
+                                //@ts-ignore
+                                style={flashStyle}>
                                 <CurrencyText
                                     image="eth"
                                     textStyle={styles.leadingOffer}
                                     value={+fromEth(eth)}
                                 />
                                 <Text textStyle={styles.code}>{leaderEns}</Text>
-                            </div>
-                            {screenType === 'desktop' && offers.length > 1 && (
+                            </animated.div>
+                            {offers.length > 1 && (
                                 <Button
                                     rightIcon={
                                         !open ? (
@@ -165,6 +202,9 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
             </div>
             {/*//@ts-ignore*/}
             <animated.div style={springStyle}>
+                <Text textStyle={{ marginBottom: '1rem' }}>
+                    Previous offers
+                </Text>
                 {offers.map(
                     (offer, index) =>
                         index !== 0 && (
@@ -176,31 +216,41 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                 )}
             </animated.div>
 
-            {status !== 'over' && !isUndefinedOrNullOrStringEmpty(address) && (
-                <Button
-                    buttonStyle={{
-                        ...styles.button,
-                        ...(screenType === 'phone' && {
-                            background: Colors.nuggBlueText,
-                        }),
-                    }}
-                    textStyle={{
-                        ...styles.buttonText,
-                        ...(screenType === 'phone' && {
-                            color: 'white',
-                        }),
-                    }}
-                    onClick={() =>
-                        AppState.dispatch.setModalOpen({
-                            name: 'OfferOrSell',
-                            modalData: {
-                                type: 'Offer',
-                            },
-                        })
-                    }
-                    label="Place offer"
-                />
-            )}
+            {status !== 'over' &&
+                (screenType === 'phone' ||
+                    !isUndefinedOrNullOrStringEmpty(address)) && (
+                    <Button
+                        buttonStyle={{
+                            ...styles.button,
+                            ...(screenType === 'phone' && {
+                                background: Colors.nuggBlueText,
+                            }),
+                        }}
+                        textStyle={{
+                            ...styles.buttonText,
+                            ...(screenType === 'phone' && {
+                                color: 'white',
+                            }),
+                        }}
+                        onClick={() =>
+                            screenType === 'phone' &&
+                            isUndefinedOrNullOrStringEmpty(address)
+                                ? AppState.dispatch.changeMobileView('Wallet')
+                                : AppState.dispatch.setModalOpen({
+                                      name: 'OfferOrSell',
+                                      modalData: {
+                                          type: 'Offer',
+                                      },
+                                  })
+                        }
+                        label={
+                            screenType === 'phone' &&
+                            isUndefinedOrNullOrStringEmpty(address)
+                                ? 'Connect wallet'
+                                : 'Place offer'
+                        }
+                    />
+                )}
         </animated.div>
     );
 };

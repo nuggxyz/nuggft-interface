@@ -23,10 +23,11 @@ import Colors from '../../../../../lib/colors';
 import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import constants from '../../../../../lib/constants';
 import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQuery';
-import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 import styles from '../Tabs.styles';
 import AppState from '../../../../../state/app';
 import TransactionState from '../../../../../state/transaction';
+import TokenViewer from '../../../TokenViewer';
 
 type Props = { isActive?: boolean };
 
@@ -97,16 +98,25 @@ const RenderItem: FunctionComponent<
     return (
         !isUndefinedOrNullOrObjectEmpty(item) && (
             <div key={index} style={listStyles.render}>
-                <div>
-                    <Text textStyle={{ color: Colors.nuggRedText }}>
-                        Nugg #{item.nugg?.id}
-                    </Text>
-                    <Text
-                        type="text"
-                        textStyle={{ color: Colors.textColor }}
-                        size="small">
-                        {+item.endingEpoch - +extraData[0]} epochs remaining
-                    </Text>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <TokenViewer
+                        tokenId={item.nugg.id}
+                        data={(item as any).nugg.dotnuggRawCache}
+                        style={{ width: '60px', height: '50px' }}
+                    />
+                    <div>
+                        <Text
+                            textStyle={{ color: Colors.nuggRedText }}
+                            size="small">
+                            Nugg #{item.nugg?.id}
+                        </Text>
+                        <Text
+                            type="text"
+                            textStyle={{ color: Colors.textColor }}
+                            size="smaller">
+                            {+item.endingEpoch - +extraData[0]} epochs remaining
+                        </Text>
+                    </div>
                 </div>
                 <div>
                     <Button

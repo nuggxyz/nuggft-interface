@@ -1,5 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
+import NuggftV1Helper from '../../contracts/NuggftV1Helper';
+import { isUndefinedOrNullOrObjectEmpty } from '../../lib';
+import Web3State from '../web3';
+
 import updateActivesQuery from './queries/updateActivesQuery';
 import updateBlockQuery from './queries/updateBlockQuery';
 import updateEpochQuery from './queries/updateEpochQuery';
@@ -32,27 +36,73 @@ const updateProtocol = createAsyncThunk<
     }
 });
 
-const updateEpoch = createAsyncThunk<
+const safeSetEpoch = createAsyncThunk<
     {
         success: NL.Redux.Protocol.Success;
-        data: NL.GraphQL.Fragments.Protocol.Epochs;
+        data: {
+            epoch: { id: string; startblock: string; endblock: string };
+            isOver: boolean;
+        };
     },
-    undefined,
+    { id: string; startblock: string; endblock: string },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
->('protocol/updateEpoch', async (_, thunkAPI) => {
+>('protocol/safeSetEpoch', async (epoch, thunkAPI) => {
     try {
         const res = await updateEpochQuery();
-        return {
-            data: res,
-            success: 'SUCCESS',
-        };
+        //@ts-ignore
+        const currentEpoch = thunkAPI.getState().protocol.epoch;
+
+        if (
+            !isUndefinedOrNullOrObjectEmpty(currentEpoch) &&
+            !isUndefinedOrNullOrObjectEmpty(res) &&
+            +currentEpoch.id !== +epoch.id &&
+            +res.epoch.id === +epoch.id
+        ) {
+            return {
+                success: 'SUCCESS',
+                data: {
+                    epoch: res.epoch,
+                    isOver: true,
+                },
+            };
+        } else {
+            return {
+                success: 'SUCCESS',
+                data: {
+                    epoch,
+                    isOver: false,
+                },
+            };
+        }
     } catch (error) {
-        console.log('protocol/updateEpoch', error);
+        console.log('protocol/safeSetEpoch', error);
         return thunkAPI.rejectWithValue('UNKNOWN');
     }
 });
+
+// const updateEpoch = createAsyncThunk<
+//     {
+//         success: NL.Redux.Protocol.Success;
+//         data: NL.GraphQL.Fragments.Protocol.Epochs;
+//     },
+//     undefined,
+//     {
+//         rejectValue: NL.Redux.Protocol.Error;
+//     }
+// >('protocol/updateEpoch', async (_, thunkAPI) => {
+//     try {
+//         const res = await updateEpochQuery();
+//         return {
+//             data: res,
+//             success: 'SUCCESS',
+//         };
+//     } catch (error) {
+//         console.log('protocol/updateEpoch', error);
+//         return thunkAPI.rejectWithValue('UNKNOWN');
+//     }
+// });
 
 const updatePrices = createAsyncThunk<
     {
@@ -192,13 +242,47 @@ const updateBlock = createAsyncThunk<
     }
 });
 
+const getGenesisBlock = createAsyncThunk<
+    {
+        success: NL.Redux.Protocol.Success;
+        data: number;
+    },
+    undefined,
+    {
+        rejectValue: NL.Redux.Protocol.Error;
+    }
+>('protocol/getGenesisBlock', async (_, thunkAPI) => {
+    try {
+        const res = await NuggftV1Helper.instance
+            // .connect(Web3State.getSignerOrProvider())
+            .genesis();
+
+        if (!isUndefinedOrNullOrObjectEmpty(res)) {
+            return {
+                data: res.toNumber(),
+                success: 'SUCCESS',
+            };
+        }
+        if (!window.web3) {
+            setTimeout(() => window.location.reload(), 1000);
+        }
+        console.log('protocol/getGenesisBlock');
+        return thunkAPI.rejectWithValue('UNKNOWN');
+    } catch (error) {
+        console.log('protocol/getGenesisBlock', error);
+        return thunkAPI.rejectWithValue('UNKNOWN');
+    }
+});
+
 export default {
     updateProtocol,
-    updateEpoch,
+    // updateEpoch,
     updatePrices,
     updateActives,
     updateTotals,
     updateUsers,
     updateStaked,
     updateBlock,
+    safeSetEpoch,
+    getGenesisBlock,
 };

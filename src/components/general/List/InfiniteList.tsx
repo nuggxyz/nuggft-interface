@@ -52,6 +52,7 @@ type Props = {
     loaderColor?: string;
     itemHeight: number;
     animationToggle?: boolean;
+    TitleButton?: FunctionComponent;
 };
 
 const LIST_PADDING = 2;
@@ -75,6 +76,7 @@ const InfiniteList: FunctionComponent<Props> = ({
     listEmptyStyle,
     itemHeight = 10,
     animationToggle,
+    TitleButton,
 }) => {
     const windowRef = useRef<HTMLDivElement>();
     const [windowHeight, setWindowHeight] = useState(100);
@@ -278,7 +280,12 @@ const InfiniteList: FunctionComponent<Props> = ({
 
     return (
         <>
-            <Label />
+            {(label || TitleButton) && (
+                <div style={styles.labelContainer}>
+                    {label && <Label />}
+                    {TitleButton && <TitleButton />}
+                </div>
+            )}
             <div
                 ref={windowRef}
                 style={{

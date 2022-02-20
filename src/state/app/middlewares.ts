@@ -2,6 +2,7 @@ import { Middleware, Dispatch, PayloadAction } from '@reduxjs/toolkit';
 
 import {
     isUndefinedOrNullOrArrayEmpty,
+    isUndefinedOrNullOrNotNumber,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
     loadFromLocalStorage,
@@ -13,6 +14,54 @@ import TokenState from '../token';
 import { NLState } from '../NLState';
 
 import AppState from '.';
+
+// export const findAndReplaceWith = (value: any) => {
+//     if (!isUndefinedOrNullOrObjectEmpty(value)) {
+//         const keys = Object.keys(value);
+//         keys.forEach((key) => {
+//             if (!isUndefinedOrNullOrObjectEmpty(value[key])) {
+//                 if ('replaceWith' in value[key]) {
+//                     value[key] = value[key]['replaceWith'];
+//                 } else {
+//                     findAndReplaceWith(value[key]);
+//                 }
+//             }
+//         });
+//     }
+// };
+
+// const versionCheck: NL.Redux.Middleware<
+//     Record<string, unknown>,
+//     any,
+//     Dispatch<any>
+// > =
+//     ({ dispatch, getState }) =>
+//     (next: any) =>
+//     (action) => {
+//         console.log(action);
+//         if (
+//             !isUndefinedOrNull(action.payload) &&
+//             !isUndefinedOrNullOrNotNumber(action.payload.currentChain) &&
+//             action.payload.currentChain === getState().web3.currentChain
+//         ) {
+//             console.log('MOVING ON');
+//             action.payload = action.payload.replaceWith;
+//             return next(action);
+//         } else if (
+//             action.meta !== undefined &&
+//             action.meta.arg.currentChain === getState().web3.currentChain
+//         ) {
+//             // console.log('MOVING ON');
+//             let temp = { ...action };
+//             if (!action.type.includes('pending')) {
+//                 findAndReplaceWith(temp.payload);
+//                 console.log('UPDATED ACTION', temp);
+//             }
+//             // action.payload = action.meta.arg.replaceWith;
+//             return next(temp);
+//         }
+//         console.log('NOT MOVING ON');
+//     };
 
 const logger: NL.Redux.Middleware<
     Record<string, unknown>,
@@ -32,7 +81,7 @@ const logger: NL.Redux.Middleware<
             '%cAction',
             'color: #6FAAF7; font-weight: bold',
             action.type,
-            // action.payload,
+            action.payload,
         );
         let fin = next(action);
         // console.log(
@@ -140,8 +189,8 @@ const viewChange: Middleware<{}, any, Dispatch<any>> =
 const rejectedThactions: Middleware<{}, any, Dispatch<any>> =
     ({ getState }) =>
     (next: any) =>
-    async (action: PayloadAction<NL.Redux.App.Views>) => {
-        if (NLState.isRejected(action)) {
+    async (action: PayloadAction<string>) => {
+        if (NLState.isRejected(action) && action.payload !== 'GAS_ERROR') {
             const toasts = getState().app.toasts.length;
             AppState.dispatch.addToastToList({
                 index: toasts + 1,
@@ -157,4 +206,8 @@ const rejectedThactions: Middleware<{}, any, Dispatch<any>> =
         return next(action);
     };
 
-export default { localStorager, viewChange, rejectedThactions };
+export default {
+    localStorager,
+    viewChange,
+    rejectedThactions,
+};

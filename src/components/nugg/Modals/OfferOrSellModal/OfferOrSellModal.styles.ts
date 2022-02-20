@@ -25,11 +25,11 @@ const styles = NLStyleSheetCreator({
         flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: '50%',
+        width: '100%',
         color: 'white',
     },
     button: {
-        borderRadius: Layout.borderRadius.mediumish,
+        borderRadius: Layout.borderRadius.large,
     },
     heading: {
         width: '100%',
@@ -38,12 +38,14 @@ const styles = NLStyleSheetCreator({
     inputCurrency: {
         textAlign: 'left',
         width: '100%',
+        background: Colors.transparentLightGrey,
+        padding: '.3rem .6rem',
+        borderRadius: Layout.borderRadius.mediumish,
     },
     text: {
         fontFamily: Layout.font.inter.regular,
         color: Colors.transparentWhite,
-        textAlign: 'right',
-        // marginBottom: '1rem',
+        textAlign: 'center',
         fontSize: FontSize.h6,
     },
 });

@@ -24,9 +24,16 @@ import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import constants from '../../../../../lib/constants';
 import NuggListRenderItem from '../../../NuggDex/NuggDexSearchList/components/NuggListRenderItem';
 import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSalesQuery';
-import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 import styles from '../Tabs.styles';
 import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
+import TransactionState from '../../../../../state/transaction';
+import TokenViewer from '../../../TokenViewer';
+import NLStaticImage from '../../../../general/NLStaticImage';
+import { fromEth } from '../../../../../lib/conversion';
+import FontSize from '../../../../../lib/fontSize';
+import swapStyles from '../SwapTab.styles';
+import Layout from '../../../../../lib/layout';
 
 type Props = { isActive?: boolean };
 
@@ -35,6 +42,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
     const epoch = ProtocolState.select.epoch();
     const [myNuggs, setMyNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
+    const txnToggle = TransactionState.select.toggleCompletedTxn();
 
     const getMyNuggs = useCallback(async () => {
         setLoadingNuggs(true);
@@ -63,7 +71,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                 getMyNuggs();
             }, 500);
         }
-    }, [address]);
+    }, [address, txnToggle]);
 
     return (
         <div style={styles.container}>
@@ -75,14 +83,41 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                         JSON.stringify(prev.item) ===
                         JSON.stringify(props.item),
                 )}
-                label="Nugg sales"
+                label="Sales"
                 loading={loadingNuggs}
                 style={listStyles.list}
                 extraData={[address]}
-                listEmptyText="You haven't sold any nuggs yet!"
+                listEmptyText="No Nuggs on sale..."
                 labelStyle={styles.listLabel}
                 listEmptyStyle={listStyles.textWhite}
                 loaderColor="white"
+                TitleButton={
+                    !isUndefinedOrNullOrArrayEmpty(myNuggs)
+                        ? () => (
+                              <FeedbackButton
+                                  feedbackText="Check Wallet..."
+                                  buttonStyle={{
+                                      ...swapStyles.button,
+                                      margin: '0rem',
+                                      padding: '.2rem 1rem',
+                                  }}
+                                  textStyle={{
+                                      color: Colors.nuggRedText,
+                                      fontSize: FontSize.h6,
+                                      fontFamily: Layout.font.inter.light,
+                                  }}
+                                  label="Reclaim all"
+                                  onClick={() =>
+                                      WalletState.dispatch.multiClaim({
+                                          tokenIds: myNuggs.map(
+                                              (offer) => (offer as any).nugg.id,
+                                          ),
+                                      })
+                                  }
+                              />
+                          )
+                        : undefined
+                }
             />
         </div>
     );
@@ -106,31 +141,67 @@ const RenderItem: FunctionComponent<
         return { swap: '', nugg: '' };
     }, [item]);
 
+    const isWinner = useMemo(() => {
+        return item.endingEpoch === null; //item && item.leader.id === extraData[0];
+    }, [item]);
+
+    const swapText = useMemo(
+        () => (item.num === '0' ? 'Mint' : `Swap #${item.num}`),
+        [item],
+    );
+
     return (
         !isUndefinedOrNullOrObjectEmpty(item) && (
             <div key={index} style={listStyles.render}>
-                <div>
-                    <Text textStyle={listStyles.renderTitle}>
-                        Nugg #{parsedTitle.nugg}
-                    </Text>
-                    <Text
-                        type="text"
-                        textStyle={{ color: Colors.textColor }}
-                        size="small">
-                        {item.endingEpoch === null
-                            ? 'Awaiting offer'
-                            : item.num === '0'
-                            ? 'Mint'
-                            : `Swap #${item.num}`}
-                    </Text>
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        // flexDirection: 'column',
+                    }}>
+                    {isWinner ? (
+                        <TokenViewer
+                            tokenId={parsedTitle.nugg}
+                            data={(item as any).nugg.dotnuggRawCache}
+                            style={{ width: '60px', height: '50px' }}
+                        />
+                    ) : (
+                        <NLStaticImage
+                            image="eth"
+                            style={{
+                                width: '60px',
+                                height: '30px',
+                                margin: '.6rem 0rem',
+                            }}
+                        />
+                    )}
+                    <div>
+                        <Text
+                            textStyle={listStyles.renderTitle}
+                            size="small"
+                            // type="text"
+                        >
+                            {isWinner
+                                ? `Nugg #${parsedTitle.nugg}`
+                                : `${fromEth(item.eth)} ETH`}
+                        </Text>
+                        <Text
+                            textStyle={{ color: Colors.textColor }}
+                            size="smaller"
+                            type="text">
+                            {isWinner
+                                ? item.endingEpoch === null
+                                    ? 'Awaiting offer'
+                                    : swapText
+                                : `Nugg #${parsedTitle.nugg} | ${swapText}`}
+                        </Text>
+                    </div>
                 </div>
                 <FeedbackButton
                     feedbackText="Check Wallet..."
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
-                    label={`Reclaim ${
-                        item.endingEpoch === null ? 'Nugg' : 'ETH'
-                    }`}
+                    label={`Reclaim`}
                     onClick={() =>
                         WalletState.dispatch.claim({ tokenId: item.nugg.id })
                     }

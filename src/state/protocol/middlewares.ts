@@ -18,19 +18,16 @@ const updateEpochMiddleware: Middleware<
     ({ getState }) =>
     (next) =>
     async (action: PayloadAction<any>) => {
-        if (
-            ProtocolState.isOwnFulfilledAction(action, 'updateEpoch') ||
-            ProtocolState.isOwnFulfilledAction(action, 'setEpoch')
-        ) {
+        if (ProtocolState.isOwnFulfilledAction(action, 'safeSetEpoch')) {
             const currentEpoch = !isUndefinedOrNullOrObjectEmpty(
                 getState().protocol.epoch,
             )
                 ? getState().protocol.epoch.id
                 : '';
-            const nextEpoch =
-                action.payload.data?.epoch.id || action.payload.id;
+            const nextEpoch = action.payload.data.epoch.id;
             const currentSwap = getState().swap.endingEpoch;
             if (
+                !isUndefinedOrNullOrStringEmpty(nextEpoch) &&
                 currentEpoch !== nextEpoch &&
                 (window.location.hash.length <= 2 ||
                     window.location.hash.includes('/nugg')) &&

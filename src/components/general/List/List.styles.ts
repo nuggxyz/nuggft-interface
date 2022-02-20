@@ -33,6 +33,17 @@ const styles = NLStyleSheetCreator({
         height: '1px',
         width: '100%',
     },
+    labelContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: '.5rem',
+    },
+    sticky: {
+        position: 'sticky',
+        top: 0,
+        zIndex: 1,
+    },
     // noItems: {
     //     fontFamily: Layout.font.inter.bold,
     //     fontSize: FontSize.h5,

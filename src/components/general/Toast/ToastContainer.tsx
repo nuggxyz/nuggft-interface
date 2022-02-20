@@ -16,6 +16,7 @@ const ToastContainer: FunctionComponent<Props> = () => {
     return (
         <div style={styles.container}>
             <FlipMove
+                style={{ zIndex: 1000 }}
                 enterAnimation="none"
                 leaveAnimation="none"
                 easing={Layout.animation}>

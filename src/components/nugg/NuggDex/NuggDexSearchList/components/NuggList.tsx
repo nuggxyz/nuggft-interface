@@ -33,7 +33,7 @@ import AppState from '../../../../../state/app';
 import Colors from '../../../../../lib/colors';
 import usePrevious from '../../../../../hooks/usePrevious';
 import InfiniteList from '../../../../general/List/InfiniteList';
-import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -69,7 +69,7 @@ const NuggList: FunctionComponent<Props> = ({
     //         const list = values.slice(images.length);
     //         if (list.length > 0) {
     //             const newNuggs = await Promise.map(list, (nugg) =>
-    //                 NuggFTHelper.optimizedDotNugg(nugg),
+    //                 NuggftV1Helper.optimizedDotNugg(nugg),
     //             );
     //             setImages((old) => [...old, ...newNuggs]);
     //         }
@@ -151,7 +151,7 @@ const NuggList: FunctionComponent<Props> = ({
                                 ...globalStyles.backdropFilter,
                             }}>
                             <TransitionText
-                                Icon={ChevronLeft}
+                                Icon={<ChevronLeft />}
                                 style={{
                                     marginTop: '.12rem',
                                     // color: Colors.nuggBlueText

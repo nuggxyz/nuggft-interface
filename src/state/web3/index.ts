@@ -43,11 +43,10 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
     constructor() {
         super(STATE_NAME, updater, middlewares, {}, hooks, {
             web3address: undefined,
-            web3status: 'NOT_SELECTED',
             web3error: false,
             connectivityWarning: false,
             implements3085: false,
-            currentChain: 3,
+            currentChain: Web3Config.DEFAULT_CHAIN,
         });
     }
 
@@ -66,16 +65,6 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
             },
             clearWeb3Address: (state) => {
                 state.web3address = undefined;
-                state.web3status = 'NOT_SELECTED';
-            },
-            setWeb3Status: (
-                state,
-                action: PayloadAction<NL.Redux.Web3.Web3Status>,
-            ) => {
-                state.web3status = action.payload;
-            },
-            clearWeb3Status: (state) => {
-                state.web3status = 'NOT_SELECTED';
             },
             setWeb3Error: (state, action: PayloadAction<boolean>) => {
                 state.web3error = action.payload;
@@ -89,50 +78,58 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
         },
     });
 
-    public static deactivate: () => void;
-
     public static activate: (
         connector: AbstractConnector,
         onError?: (error: Error) => void,
         throwErrors?: boolean,
     ) => Promise<void>;
 
-    public static safeActivate(connector?: AbstractConnector) {
-        Web3State.dispatch.setWeb3Status('PENDING');
-        Web3State.dispatch.setWeb3Error(false);
+    public static safeActivate(
+        activate: (
+            connector: AbstractConnector,
+            onError?: (error: Error) => void,
+            throwErrors?: boolean,
+        ) => Promise<void>,
+    ) {
+        return async (connector?: AbstractConnector) => {
+            Web3State.dispatch.setWeb3Error(false);
 
-        if (connector instanceof WalletConnectConnector) {
-            connector.walletConnectProvider = undefined;
-        }
+            if (connector instanceof WalletConnectConnector) {
+                connector.walletConnectProvider = undefined;
+            }
 
-        if (!isUndefinedOrNullOrObjectEmpty(connector)) {
-            Web3State.activate(connector, undefined, true)
-                .then(async () => {
-                    Web3State.dispatch.setWeb3Status('SELECTED');
-                })
-                .catch((error) => {
-                    if (error instanceof UnsupportedChainIdError) {
-                        Web3State.activate(connector);
-                        Web3State.dispatch.setWeb3Status('SELECTED');
-                    } else {
-                        Web3State.dispatch.setWeb3Error(true);
-                        Web3State.dispatch.setWeb3Status('NOT_SELECTED');
-                    }
-                });
-        } else {
-            Web3State.dispatch.setWeb3Status('NOT_SELECTED');
-        }
+            if (!isUndefinedOrNullOrObjectEmpty(connector)) {
+                return await activate(connector, undefined, true).catch(
+                    (error) => {
+                        if (error instanceof UnsupportedChainIdError) {
+                            activate(connector);
+                        } else {
+                            Web3State.dispatch.setWeb3Error(true);
+                        }
+                    },
+                );
+            }
+        };
     }
 
     private static _library: Web3Provider;
 
     private static _networkLibrary: Web3Provider;
 
-    public static getLibrary(provider?: any): Web3Provider {
+    public static resetLibraries() {
+        Web3State._library = undefined;
+        Web3State._networkLibrary = undefined;
+    }
+
+    public static getProvider(provider?: any): Web3Provider {
+        const currentChain = store.getState().web3.currentChain;
         let library: Web3Provider;
         if (isUndefinedOrNullOrObjectEmpty(provider)) {
-            if (isUndefinedOrNullOrObjectEmpty(Web3State._networkLibrary)) {
-                let networkProvider = Web3Config.connectors.network.provider;
+            let networkProvider = Web3Config.connectors.network.provider;
+            if (
+                isUndefinedOrNullOrObjectEmpty(Web3State._networkLibrary) ||
+                networkProvider.chainId !== currentChain
+            ) {
                 Web3State._networkLibrary = new Web3Provider(
                     networkProvider as any,
                     !isUndefinedOrNull(networkProvider.chainId)
@@ -142,7 +139,10 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
             }
             library = Web3State._networkLibrary;
         } else {
-            if (isUndefinedOrNullOrObjectEmpty(Web3State._library)) {
+            if (
+                isUndefinedOrNullOrObjectEmpty(Web3State._library) ||
+                provider.chainId !== currentChain
+            ) {
                 Web3State._library = new Web3Provider(
                     provider as any,
                     !isUndefinedOrNull(provider.chainId)
@@ -158,28 +158,20 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
 
     public static _walletConnectSigner: any;
 
-    public static getLibraryOrProvider():
+    public static getSignerOrProvider():
         | Web3Provider
         | ethers.providers.JsonRpcSigner {
-        return isUndefinedOrNullOrStringEmpty(store.getState().web3.web3address)
-            ? this.getLibrary()
-            : window.ethereum
-            ? new ethers.providers.Web3Provider(window.ethereum).getSigner()
-            : new ethers.providers.Web3Provider(
-                  Web3Config.connectors.walletconnect.walletConnectProvider,
-              ).getSigner();
-    }
-
-    // account is not optional
-    public static getSigner(account: Address): JsonRpcSigner {
-        return this.getLibrary().getSigner(account.hash).connectUnchecked();
-    }
-
-    // account is optional
-    public static getProviderOrSigner(
-        library: Web3Provider,
-        account?: Address,
-    ): Web3Provider | JsonRpcSigner {
-        return account ? this.getSigner(account) : library;
+        if (isUndefinedOrNullOrStringEmpty(store.getState().web3.web3address)) {
+            return this.getProvider();
+        }
+        if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
+            return new ethers.providers.Web3Provider(
+                window.ethereum,
+            ).getSigner();
+        } else {
+            return new ethers.providers.Web3Provider(
+                Web3Config.connectors.walletconnect.walletConnectProvider,
+            ).getSigner();
+        }
     }
 }

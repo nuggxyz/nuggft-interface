@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { gql, useSubscription } from '@apollo/client';
+import { useWeb3React } from '@web3-react/core';
+import { BigNumber, ethers } from 'ethers';
 
 import useRecursiveTimeout from '../../hooks/useRecursiveTimeout';
 import {
@@ -15,84 +17,35 @@ import { client } from '../../graphql/client';
 import Web3State from '../web3';
 import useDebounce from '../../hooks/useDebounce';
 import Web3Config from '../web3/Web3Config';
-import NuggFTHelper from '../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import config from '../../config';
+import { StakeEvent } from '../../typechain/NuggftV1';
 
 import ProtocolState from '.';
 
 export default () => {
-    // const block = ProtocolState.select.currentBlock();
-    // const epoch = ProtocolState.select.epoch();
-
-    // const checkEpoch = useCallback(() => {
-    //     if (
-    //         isUndefinedOrNullOrObjectEmpty(epoch) ||
-    //         (!isUndefinedOrNullOrNumberZero(block) && block >= +epoch.endblock)
-    //     ) {
-    //         ProtocolState.dispatch.updateEpoch();
-    //         // ProtocolState.dispatch.updateStaked();
-    //     }
-    // }, [epoch, block]);
-
-    // const { data } = useSubscription(
-    //     gql`
-    //         subscription Cool {
-    //             _meta {
-    //                 block {
-    //                     number
-    //                 }
-    //             }
-    //         }
-    //     `,
-    //     { client },
-    // );
-
-    // useEffect(() => {
-    //     if (data && data._meta && data._meta.block && data._meta.block.number) {
-    //         ProtocolState.dispatch.setCurrentBlock(data._meta.block.number);
-    //         console.log('blocknum');
-    //         checkEpoch();
-    //     }
-    // }, [data]);
-
-    // useRecursiveTimeout(() => {
-    //     checkEpoch();
-    //     ProtocolState.dispatch.updateBlock();
-    // }, constants.QUERYTIME);
-
-    // TODO DELETE THIS SHIT ABOVE
-
     const { library } = Web3State.hook.useActiveWeb3React();
     const genesisBlock = ProtocolState.select.genesisBlock();
     const epoch = ProtocolState.select.epoch();
-
-    useEffect(() => {
-        if (isUndefinedOrNullOrNotNumber(genesisBlock)) {
-            NuggFTHelper.instance
-                .connect(Web3State.getLibraryOrProvider())
-                .genesis()
-                .then((genesis) => {
-                    ProtocolState.dispatch.setGenesisBlock(genesis.toNumber());
-                })
-                .catch(() =>
-                    ProtocolState.dispatch.setGenesisBlock(
-                        genesisBlock === undefined ? null : undefined,
-                    ),
-                );
-        }
-    }, [genesisBlock]);
-
+    const chainId = Web3State.select.currentChain();
     const [blocknum, setBlocknum] = useState(0);
     const [lastChainUpdate, setLastChainUpdate] = useState(0);
+    const debouncedBlocknum = useDebounce(blocknum, 10);
 
-    const debouncedBlocknum = useDebounce(blocknum, 100);
+    useEffect(() => {
+        setBlocknum(0);
+        ProtocolState.dispatch.getGenesisBlock();
+    }, [genesisBlock, chainId]);
 
     const calculateEpochId = useCallback(
         (blocknum: number) => {
             return genesisBlock
-                ? Math.floor(
-                      (blocknum - genesisBlock) / config.EPOCH_INTERVAL +
-                          config.EPOCH_OFFSET,
+                ? Math.max(
+                      Math.floor(
+                          (blocknum - genesisBlock) / config.EPOCH_INTERVAL +
+                              config.EPOCH_OFFSET,
+                      ),
+                      0,
                   )
                 : null;
         },
@@ -125,7 +78,7 @@ export default () => {
                     const endBlock =
                         calculateEpochStartBlock(calculatedEpoch + 1) - 1;
                     if (startBlock && endBlock) {
-                        ProtocolState.dispatch.setEpoch({
+                        ProtocolState.dispatch.safeSetEpoch({
                             id: '' + calculatedEpoch,
                             startblock: '' + startBlock,
                             endblock: '' + endBlock,
@@ -138,7 +91,10 @@ export default () => {
     );
 
     useEffect(() => {
-        if (!isUndefinedOrNullOrObjectEmpty(library)) {
+        if (
+            !isUndefinedOrNullOrObjectEmpty(library) &&
+            !isUndefinedOrNullOrNotNumber(genesisBlock)
+        ) {
             library
                 .getBlockNumber()
                 .then(updateBlocknum)
@@ -151,7 +107,7 @@ export default () => {
                 library.removeListener('block', updateBlocknum);
             };
         }
-    }, [updateBlocknum, library]);
+    }, [updateBlocknum, library, chainId, genesisBlock]);
 
     useEffect(() => {
         if (!isUndefinedOrNullOrNotNumber(debouncedBlocknum)) {
@@ -178,6 +134,44 @@ export default () => {
             }
         };
     }, [lastChainUpdate, setLastChainUpdate]);
+
+    useEffect(() => {
+        if (!isUndefinedOrNullOrObjectEmpty(library)) {
+            ProtocolState.dispatch.updateStaked();
+
+            const update = (log: any) => {
+                const event = NuggftV1Helper.instance.interface.parseLog(
+                    log,
+                ) as unknown as StakeEvent;
+
+                // const protocol = (args.stake as BigNumber)
+                //     .shr(96)
+                //     .shl(96)
+                //     .xor(args.stake);
+
+                const stakedShares = ethers.BigNumber.from(
+                    event.args.cache,
+                ).shr(96 + 96);
+
+                const stakedEth = ethers.BigNumber.from(event.args.cache)
+                    .shr(96)
+                    .xor(stakedShares.shl(96));
+
+                ProtocolState.dispatch.setStaked({
+                    stakedShares: stakedShares.toString(),
+                    stakedEth: stakedEth.toString(),
+                });
+            };
+
+            const filters = NuggftV1Helper.instance.filters.Stake(null);
+
+            library.on(filters, update);
+
+            return () => {
+                library.removeListener(filters, update);
+            };
+        }
+    }, [library]);
 
     return null;
 };

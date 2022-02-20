@@ -25,5 +25,6 @@ declare namespace NL.Redux.Token {
         | 'EPC:SBL'
         | 'EPC:GBL:0'
         | 'EPC:GBL:1'
-        | 'UNKNOWN';
+        | 'UNKNOWN'
+        | 'GAS_ERROR';
 }

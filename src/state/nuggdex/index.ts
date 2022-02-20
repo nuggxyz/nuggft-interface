@@ -76,7 +76,11 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
                 state,
                 action: PayloadAction<NL.GraphQL.Fragments.Nugg.ListItem>,
             ) => {
-                if (state.recents.indexOf(action.payload) === -1) {
+                if (
+                    !state.recents.find(
+                        (recent) => recent.id === action.payload.id,
+                    )
+                ) {
                     state.recents.push(action.payload);
                 }
             },
@@ -93,6 +97,24 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
                 action: PayloadAction<NL.Redux.NuggDex.Filters>,
             ) => {
                 state.searchFilters = action.payload;
+            },
+            reset: (state) => {
+                state.recents = [];
+                state.myNuggs = [];
+                state.activeNuggs = [];
+                state.allNuggs = [];
+                state.thumbnails = {};
+                state.viewing = 'home';
+                state.success = undefined;
+                state.error = undefined;
+                state.loading = false;
+                state.searchFilters = {
+                    searchValue: '',
+                    sort: {
+                        asc: false,
+                        by: 'id',
+                    },
+                };
             },
         },
         extraReducers: (builder) => {

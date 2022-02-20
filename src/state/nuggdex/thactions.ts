@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import {
     isUndefinedOrNullOrNotObject,
+    isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 import myNuggsQuery from '../wallet/queries/myNuggsQuery';
@@ -36,7 +37,7 @@ const getNuggThumbnail = createAsyncThunk<
             const code = err.data.message.replace(
                 'execution reverted: ',
                 '',
-            ) as NL.Redux.Token.Error;
+            ) as NL.Redux.NuggDex.Error;
             return thunkAPI.rejectWithValue(code);
         }
         return thunkAPI.rejectWithValue('UNKNOWN');

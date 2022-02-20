@@ -1,5 +1,7 @@
 import React, { CSSProperties, FunctionComponent, ReactNode } from 'react';
 
+import Colors from '../../../../lib/colors';
+
 import styles from './Text.styles';
 
 export interface TextProps {

@@ -41,7 +41,10 @@ const query = (
             }
             owner ${idFragment}
             leader ${idFragment}
-            nugg ${idFragment}
+            nugg {
+                id
+                dotnuggRawCache
+            }
         }
     }
 `;

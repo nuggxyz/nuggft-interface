@@ -4,7 +4,7 @@ import { BigNumber } from 'ethers';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 
 import { EthInt } from '../../../../classes/Fraction';
-import NuggFTHelper from '../../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
 import useAsyncState from '../../../../hooks/useAsyncState';
 import {
     isUndefinedOrNullOrObjectEmpty,
@@ -22,12 +22,17 @@ import CurrencyInput from '../../../general/TextInputs/CurrencyInput/CurrencyInp
 import Text from '../../../general/Texts/Text/Text';
 import TokenViewer from '../../TokenViewer';
 import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
+import useHandleError from '../../../../hooks/useHandleError';
+import AnimatedCard from '../../../general/Cards/AnimatedCard/AnimatedCard';
+import FontSize from '../../../../lib/fontSize';
+import Layout from '../../../../lib/layout';
 
 import styles from './LoanInputModal.styles';
 
 type Props = {};
 
 const LoanInputModal: FunctionComponent<Props> = () => {
+    const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = Web3State.select.web3address();
     const toggle = TransactionState.select.toggleCompletedTxn();
@@ -46,74 +51,113 @@ const LoanInputModal: FunctionComponent<Props> = () => {
     }, [type, targetId]);
 
     const userBalance = useAsyncState(
-        () => NuggFTHelper.ethBalance(Web3State.getLibraryOrProvider()),
+        () => NuggftV1Helper.ethBalance(Web3State.getSignerOrProvider()),
         [address, stableId],
     );
 
     const amountFromChain = useAsyncState(
         () =>
-            stableId && stableType === 'PayOffLoan'
-                ? NuggFTHelper.instance
-                      .connect(Web3State.getLibraryOrProvider())
-                      .valueForPayoff(stableId)
-                : NuggFTHelper.instance
-                      .connect(Web3State.getLibraryOrProvider())
-                      .valueForRebalance(stableId),
+            stableId &&
+            (stableType === 'PayOffLoan'
+                ? NuggftV1Helper.instance
+                    //   .connect(Web3State.getSignerOrProvider())
+                      .vfl([stableId])
+                : NuggftV1Helper.instance
+                    //   .connect(Web3State.getSignerOrProvider())
+                      .vfr([stableId])),
         [address, stableId, stableType],
     );
 
-    useEffect(() => {
-        if (!isUndefinedOrNullOrObjectEmpty(amountFromChain)) {
-            setAmount(
-                fromEth(
-                    amountFromChain
-                        .div(10 ** 13)
-                        .add(1)
-                        .mul(10 ** 13),
-                ),
-            );
-        }
-    }, [amountFromChain]);
+    // useEffect(() => {
+    //     if (!isUndefinedOrNullOrObjectEmpty(amountFromChain)) {
+    //         setAmount(
+    //             fromEth(
+    //                 amountFromChain
+    //                     .div(10 ** 13)
+    //                     .add(1)
+    //                     .mul(10 ** 13),
+    //             ),
+    //         );
+    //     }
+    // }, [amountFromChain]);
 
     return (
         <div style={styles.container}>
-            <TokenViewer tokenId={stableId} showLabel labelColor="white" />
+            <Text textStyle={{ color: 'white' }}>{`${
+                stableType === 'PayOffLoan' ? 'Payoff' : 'Extend'
+            } Nugg #${stableId}`}</Text>
+            <AnimatedCard>
+                <TokenViewer tokenId={stableId} labelColor="white" />
+            </AnimatedCard>
             <div style={styles.inputContainer}>
                 <CurrencyInput
+                    warning={swapError && 'Invalid input'}
+                    shouldFocus
                     style={styles.input}
                     styleHeading={styles.heading}
-                    styleInput={styles.inputCurrency}
+                    styleInputContainer={styles.inputCurrency}
                     label="Enter amount"
-                    setValue={setAmount}
+                    setValue={(text: string) => {
+                        setAmount(text);
+                        clearError();
+                    }}
                     value={amount}
                     code
                     className="placeholder-white"
+                    rightToggles={[
+                        <Button
+                            onClick={() =>
+                                setAmount(
+                                    `${fromEth(
+                                        amountFromChain[0]
+                                            .div(10 ** 13)
+                                            .add(1)
+                                            .mul(10 ** 13),
+                                    )}`,
+                                )
+                            }
+                            label="Min"
+                            textStyle={{
+                                fontFamily: Layout.font.inter.bold,
+                                fontSize: FontSize.h6,
+                            }}
+                            buttonStyle={{
+                                borderRadius: Layout.borderRadius.large,
+                                padding: '.2rem .5rem',
+                            }}
+                        />,
+                    ]}
                 />
-                <div style={{ width: '50%' }}>
-                    {userBalance && (
-                        <Text
-                            type="text"
-                            size="small"
-                            textStyle={{ color: 'white', textAlign: 'right' }}
-                            weight="bolder">
-                            You currently have{' '}
-                            {new EthInt(
-                                userBalance
-                                    .div(10 ** 13)
-                                    .add(1)
-                                    .mul(10 ** 13),
-                            ).decimal.toNumber()}{' '}
-                            ETH
-                        </Text>
-                    )}
-                    <Text textStyle={styles.text}>
+            </div>
+            <div
+                style={{
+                    width: '100%',
+                    height: '1rem',
+                    marginBottom: '.5rem',
+                }}>
+                {userBalance && (
+                    <Text
+                        type="text"
+                        size="small"
+                        textStyle={styles.text}
+                        weight="bolder">
+                        You currently have{' '}
+                        {new EthInt(
+                            userBalance
+                                .div(10 ** 13)
+                                .add(1)
+                                .mul(10 ** 13),
+                        ).decimal.toNumber()}{' '}
+                        ETH
+                    </Text>
+                )}
+                {/* <Text textStyle={styles.text}>
                         {`${
                             stableType === 'PayOffLoan'
                                 ? 'Payoff amount'
                                 : 'Extension amount'
                         } is ${amount} ETH`}
-                    </Text>
-                </div>
+                    </Text> */}
             </div>
             <div style={styles.subContainer}>
                 <FeedbackButton
@@ -121,7 +165,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                     buttonStyle={styles.button}
                     label={`${
                         stableType === 'PayOffLoan' ? 'Payoff' : 'Extend'
-                    } Nugg #${stableId}`}
+                    }`}
                     onClick={() =>
                         stableType === 'PayOffLoan'
                             ? WalletState.dispatch.payOffLoan({

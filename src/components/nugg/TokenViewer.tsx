@@ -10,8 +10,11 @@ import React, {
 } from 'react';
 
 import pendingToken from '../../assets/images/pending-token.svg';
-import NuggFTHelper from '../../contracts/NuggFTHelper';
-import { isUndefinedOrNullOrStringEmpty } from '../../lib';
+import NuggftV1Helper from '../../contracts/NuggftV1Helper';
+import {
+    isUndefinedOrNullOrStringEmpty,
+    isUndefinedOrNullOrStringEmptyOrZeroOrStringZero,
+} from '../../lib';
 import AppState from '../../state/app';
 import Text, { TextProps } from '../general/Texts/Text/Text';
 
@@ -41,10 +44,10 @@ const TokenViewer: FunctionComponent<Props> = ({
     useLayoutEffect(() => {
         let unmounted = false;
         const getDotNuggSrc = async () => {
-            if (!isUndefinedOrNullOrStringEmpty(tokenId)) {
+            if (!isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(tokenId)) {
                 const dotNuggData = !isUndefinedOrNullOrStringEmpty(data)
                     ? data
-                    : await NuggFTHelper.optimizedDotNugg(tokenId);
+                    : await NuggftV1Helper.optimizedDotNugg(tokenId);
                 if (
                     !isUndefinedOrNullOrStringEmpty(dotNuggData) &&
                     !unmounted
@@ -76,11 +79,14 @@ const TokenViewer: FunctionComponent<Props> = ({
         //@ts-ignore
         <animated.div style={animatedStyle}>
             <img
+                role="presentation"
                 style={{
                     ...(screenType === 'phone'
                         ? { width: width / 1.2, height: width / 1.2 }
                         : { width: '400px', height: '400px' }),
+                    // width: '100%',
                     ...style,
+                    transform: 'translate3d(0,0,0)',
                 }}
                 src={src}
             />

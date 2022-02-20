@@ -33,7 +33,7 @@ function useRecursiveTimeout<T>(
         }
         if (delay !== null) {
             tick(); //setTimeout(tick, delay);
-            // return () => id && clearTimeout(id);
+            return () => id && clearTimeout(id);
         }
     }, [delay]);
 }

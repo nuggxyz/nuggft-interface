@@ -8,7 +8,7 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 import { toEth } from '../../lib/conversion';
-import NuggFTHelper from '../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import AppState from '../app';
 import Web3State from '../web3';
 
@@ -26,15 +26,15 @@ const initSwap = createAsyncThunk<
     { swapId: string },
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
 >('swap/initSwap', async ({ swapId }, thunkAPI) => {
+    const currentEpoch = thunkAPI.getState().protocol.epoch;
     try {
         invariant(swapId, 'swap id passed as undefined');
         const res = await initSwapQuery(swapId);
         if (!isUndefinedOrNullOrObjectEmpty(res)) {
-            const currentEpoch = thunkAPI.getState().protocol.epoch;
             const status =
                 res.endingEpoch === null
                     ? 'waiting'
-                    : currentEpoch && res.endingEpoch >= +currentEpoch.id
+                    : currentEpoch && +res.endingEpoch >= +currentEpoch.id
                     ? 'ongoing'
                     : 'over';
             return {
@@ -42,12 +42,16 @@ const initSwap = createAsyncThunk<
                 data: { swap: res, status },
             };
         } else {
-            AppState.onRouteUpdate('/');
+            if (currentEpoch && !swapId.includes(currentEpoch.id)) {
+                AppState.onRouteUpdate('/');
+            }
             return thunkAPI.rejectWithValue('UNKNOWN');
         }
     } catch (err) {
         console.log({ err });
-        AppState.onRouteUpdate('/');
+        if (currentEpoch && !swapId.includes(currentEpoch.id)) {
+            AppState.onRouteUpdate('/');
+        }
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&
@@ -101,13 +105,11 @@ const placeOffer = createAsyncThunk<
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
 >('swap/placeOffer', async ({ amount, tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggFTHelper.instance
-            .connect(Web3State.getLibraryOrProvider())
-            .delegate(
-                thunkAPI.getState().web3.web3address,
-                BigNumber.from(tokenId),
-                { value: toEth(amount) },
-            );
+        const _pendingtx = await NuggftV1Helper.instance
+            // .connect(Web3State.getSignerOrProvider())
+            ['offer(uint160)'](BigNumber.from(tokenId), {
+                value: toEth(amount),
+            });
 
         return {
             success: 'SUCCESS',
@@ -118,6 +120,13 @@ const placeOffer = createAsyncThunk<
         };
     } catch (err) {
         console.log({ err });
+        if (
+            !isUndefinedOrNullOrObjectEmpty(err) &&
+            !isUndefinedOrNullOrStringEmpty(err.method) &&
+            err.method === 'estimateGas'
+        ) {
+            return thunkAPI.rejectWithValue('GAS_ERROR');
+        }
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&

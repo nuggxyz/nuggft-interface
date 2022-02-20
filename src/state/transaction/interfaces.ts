@@ -2,7 +2,7 @@ export enum TransactionType {
     TOKEN_APPROVE = 0,
     SWAP_START = 1,
     SWAP_CLAIM = 2,
-    SWAP_DELEGATE = 3,
+    SWAP_OFFER = 3,
     LOAN_TAKE = 4,
     LOAN_REBALANCE = 5,
     LOAN_PAYOFF = 6,
@@ -30,8 +30,8 @@ export interface SwapClaimInfo extends BaseTransactionInfo {
     tokenId: string;
 }
 
-export interface SwapDelegateInfo extends BaseTransactionInfo {
-    type: TransactionType.SWAP_DELEGATE;
+export interface SwapOfferInfo extends BaseTransactionInfo {
+    type: TransactionType.SWAP_OFFER;
     tokenId: string;
     amount: string;
 }
@@ -57,7 +57,7 @@ export type TransactionInfo =
     | TokenApproveInfo
     | SwapStartInfo
     | SwapClaimInfo
-    | SwapDelegateInfo
+    | SwapOfferInfo
     | LoanTakeInfo
     | LoanRebalanceInfo
     | LoanPayoffInfo

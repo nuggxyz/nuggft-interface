@@ -51,7 +51,7 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'stretch',
     },
     button: {
-        padding: '.4rem .7rem',
+        padding: '.4rem 1.5rem',
         borderRadius: 0,
         // marginTop: '.5rem',
         background: 'white',

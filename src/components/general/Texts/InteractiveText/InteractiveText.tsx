@@ -1,3 +1,4 @@
+import { props } from 'bluebird';
 import React, {
     CSSProperties,
     FunctionComponent,
@@ -5,7 +6,7 @@ import React, {
     useState,
 } from 'react';
 
-import Text from '../Text/Text';
+import Text, { TextProps } from '../Text/Text';
 
 import styles from './InteractiveText.styles';
 
@@ -20,7 +21,8 @@ type Props = {
     leftIcon?: JSX.Element;
     rightIcon?: JSX.Element;
     color?: string;
-};
+    hideBorder?: boolean;
+} & Partial<TextProps>;
 
 const InteractiveText: FunctionComponent<Props> = ({
     action,
@@ -33,6 +35,8 @@ const InteractiveText: FunctionComponent<Props> = ({
     leftIcon,
     rightIcon,
     color,
+    hideBorder,
+    ...props
 }) => {
     const [hover, setHover] = useState(false);
 
@@ -70,12 +74,12 @@ const InteractiveText: FunctionComponent<Props> = ({
                 <div>
                     <div style={textStyle}>
                         {leftIcon && leftIcon}
-                        <Text size={textSize} textStyle={styleText}>
+                        <Text size={textSize} textStyle={styleText} {...props}>
                             {children}
                         </Text>
                         {rightIcon && rightIcon}
                     </div>
-                    <div style={borderStyle} />
+                    {!hideBorder && <div style={borderStyle} />}
                 </div>
             </div>
         </>

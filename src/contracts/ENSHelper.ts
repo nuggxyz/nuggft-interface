@@ -8,25 +8,26 @@ import { Address } from '../classes/Address';
 import Web3State from '../state/web3';
 import { EnsResolver__factory } from '../typechain/factories/EnsResolver__factory';
 import { EnsRegistrar } from '../typechain/EnsRegistrar';
+import Web3Config from '../state/web3/Web3Config';
 
 export default class ENSHelper {
     private static _instance_resolver: EnsResolver;
     private static _instance_registrar: EnsRegistrar;
-    private static _signer: ethers.Signer;
+    // private static _signer: ethers.Signer;
     static get signer() {
-        return Web3State.getLibrary() as ethers.providers.Web3Provider;
+        return Web3State.getSignerOrProvider() as ethers.providers.Web3Provider;
     }
     static set signer(_) {
         return;
     }
     static get registrar() {
-        if (isUndefinedOrNullOrObjectEmpty(ENSHelper._instance_registrar)) {
-            ENSHelper._instance_registrar = new Contract(
-                config.ENS,
-                EnsRegistrar__factory.abi,
-                Web3State.getLibrary(),
-            ) as EnsRegistrar;
-        }
+        // if (isUndefinedOrNullOrObjectEmpty(ENSHelper._instance_registrar)) {
+        ENSHelper._instance_registrar = new Contract(
+            Web3Config.activeChain__EnsRegistrar,
+            EnsRegistrar__factory.abi,
+            ENSHelper.signer,
+        ) as EnsRegistrar;
+        // }
         return ENSHelper._instance_registrar;
     }
     /**
@@ -35,7 +36,7 @@ export default class ENSHelper {
      * @param provider provider to use to fetch the data
      */
     private static async resolveContentHash(ensName: string): Promise<string> {
-        const resolver = await this.resolver(ensName, this.signer);
+        const resolver = await this.resolver(ensName, ENSHelper.signer);
         return await resolver.contenthash(namehash(ensName));
     }
     /**
@@ -45,7 +46,7 @@ export default class ENSHelper {
      */
     private static async resolveAddress(ensName: string): Promise<string> {
         try {
-            const resolver = await this.resolver(ensName, this.signer);
+            const resolver = await this.resolver(ensName, ENSHelper.signer);
             const res = await resolver.addr(namehash(ensName));
             if (res && Address.isAddress(res)) return res;
             return undefined;
@@ -67,11 +68,9 @@ export default class ENSHelper {
             ) {
                 const resolver = await this.reverseResolver(
                     address,
-                    this.signer,
+                    ENSHelper.signer,
                 );
-                // console.log(0, { resolver }, { address });
                 const res2 = await resolver.name(address.reverse_namehash);
-                // console.log(0, { res2 });
                 return res2;
             }
         } catch (err) {

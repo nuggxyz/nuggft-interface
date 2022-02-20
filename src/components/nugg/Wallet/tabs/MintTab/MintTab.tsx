@@ -9,7 +9,7 @@ import { Promise } from 'bluebird';
 import { batch } from 'react-redux';
 
 import { EthInt } from '../../../../../classes/Fraction';
-import NuggFTHelper from '../../../../../contracts/NuggFTHelper';
+import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrStringEmpty,
     isUndefinedOrNullOrArrayEmpty,
@@ -45,6 +45,7 @@ import FontSize from '../../../../../lib/fontSize';
 import TokenState from '../../../../../state/token';
 import NuggDexState from '../../../../../state/nuggdex';
 import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
+import Layout from '../../../../../lib/layout';
 
 type Props = {};
 
@@ -99,19 +100,38 @@ const MintTab: FunctionComponent<Props> = () => {
 
     return (
         <div style={styles.container}>
-            {screenType === 'phone' && <AccountViewer />}
-            <div style={{ margin: '.5rem' }}>
-                <div>
+            <div>
+                <div
+                    style={
+                        screenType === 'phone'
+                            ? {
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                              }
+                            : undefined
+                    }>
                     <NumberStatistic
                         style={{
                             alignItems: 'center',
-                            width: '',
                             margin: '0rem',
+                            width: screenType === 'phone' ? '48%' : '100%',
                         }}
                         label="TVL"
                         value={new EthInt(`${+valuePerShare * userShares}`)}
                         image="eth"
                     />
+                    {screenType === 'phone' && (
+                        <div
+                            style={{
+                                background: Colors.transparentWhite,
+                                padding: '12px 10px',
+                                borderRadius: Layout.borderRadius.medium,
+                                width: '48%',
+                            }}>
+                            <AccountViewer />
+                        </div>
+                    )}
                 </div>
                 <div style={swapStyles.statisticContainer}>
                     <TextStatistic
@@ -153,65 +173,10 @@ const MintTab: FunctionComponent<Props> = () => {
                     />
                 </div>
             </div>
-            <FeedbackButton
-                feedbackText="Check Wallet..."
-                buttonStyle={{
-                    ...swapStyles.button,
-                    margin: '0rem',
-                    width: '40%',
-                    marginBottom: '-1.9rem',
-                    alignSelf: 'flex-end',
-                    padding: '.2rem 0rem',
-                }}
-                textStyle={{ color: Colors.nuggRedText, fontSize: FontSize.h6 }}
-                label="Mint a Nugg"
-                onClick={() =>
-                    NuggFTHelper.instance
-                        .connect(Web3State.getLibraryOrProvider())
-                        .minSharePrice()
-                        .then((minPrice) =>
-                            executeQuery(
-                                gql`
-                                    {
-                                        nuggs(
-                                            where: {
-                                                idnum_gt: ${constants.PRE_MINT_STARTING_EPOCH}
-                                                idnum_lt: ${constants.PRE_MINT_ENDING_EPOCH}
-                                            }
-                                            first: 1
-                                            orderDirection: desc
-                                            orderBy: idnum
-                                        ) {
-                                            idnum
-                                        }
-                                    }
-                                `,
-                                'nuggs',
-                            ).then((res) => {
-                                res &&
-                                    res[0].idnum &&
-                                    +res[0].idnum + 1 <
-                                        constants.PRE_MINT_ENDING_EPOCH &&
-                                    NuggFTHelper.instance
-                                        .connect(
-                                            Web3State.getLibraryOrProvider(),
-                                        )
-                                        .mint(+res[0].idnum + 1, {
-                                            value: minPrice,
-                                            gasLimit: 81000,
-                                        })
-                                        .then((_pendingtx) =>
-                                            TransactionState.dispatch.initiate({
-                                                _pendingtx: _pendingtx.hash,
-                                            }),
-                                        );
-                            }),
-                        )
-                        .catch((e) => console.log(e))
-                }
-            />
+
             <InfiniteList
-                labelStyle={{ ...styles.listLabel, paddingTop: '.5rem' }}
+                TitleButton={MintNuggButton}
+                labelStyle={styles.listLabel}
                 data={myNuggs}
                 RenderItem={React.memo(
                     RenderItem,
@@ -270,4 +235,22 @@ const RenderItem: FunctionComponent<
         );
     },
     (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
+);
+
+const MintNuggButton = () => (
+    <FeedbackButton
+        feedbackText="Check Wallet..."
+        buttonStyle={{
+            ...swapStyles.button,
+            margin: '0rem',
+            padding: '.2rem 1rem',
+        }}
+        textStyle={{
+            color: Colors.nuggRedText,
+            fontSize: FontSize.h6,
+            fontFamily: Layout.font.inter.light,
+        }}
+        label="Mint a Nugg"
+        onClick={() => WalletState.dispatch.mintNugg()}
+    />
 );

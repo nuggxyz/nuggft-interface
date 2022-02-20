@@ -1,6 +1,7 @@
 import { NLStyleSheetCreator } from '../../../lib';
 import Colors from '../../../lib/colors';
 import FontSize from '../../../lib/fontSize';
+import globalStyles from '../../../lib/globalStyles';
 import Layout from '../../../lib/layout';
 
 const styles = NLStyleSheetCreator({
@@ -21,8 +22,10 @@ const styles = NLStyleSheetCreator({
     },
     mobile: {
         width: '90%',
-        background: 'transparent',
         boxShadow: 'none',
+        background: Colors.transparentWhite,
+        ...globalStyles.backdropFilter,
+        zIndex: 10000,
     },
 
     bodyContainer: {
@@ -30,7 +33,7 @@ const styles = NLStyleSheetCreator({
         flexDirection: 'column',
         width: '100%',
         // height: '100%',
-        padding: '.75rem',
+        padding: '.5rem 0rem',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -43,6 +46,7 @@ const styles = NLStyleSheetCreator({
         fontFamily: Layout.font.inter.bold,
         fontWeight: 'bold',
         color: 'white',
+        paddingLeft: '.25rem',
     },
     button: {
         borderRadius: Layout.borderRadius.large,
@@ -81,6 +85,7 @@ const styles = NLStyleSheetCreator({
     },
     leadingOfferContainerMobile: {
         display: 'flex',
+        flexDirection: 'row-reverse',
         alignItems: 'center',
         justifyContent: 'space-between',
         zIndex: 2,
@@ -103,6 +108,7 @@ const styles = NLStyleSheetCreator({
         width: '100%',
         marginBottom: '1.5rem',
         zIndex: 1,
+        paddingLeft: '.4rem',
     },
     leadingOffer: {
         paddingRight: '0rem',
@@ -112,6 +118,7 @@ const styles = NLStyleSheetCreator({
         borderRadius: Layout.borderRadius.large,
         background: 'white',
         padding: '.44rem .45rem',
+        margin: '0rem .5rem',
     },
 });
 

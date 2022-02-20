@@ -4,14 +4,13 @@ import Layout from '../../../lib/layout';
 
 const styles = NLStyleSheetCreator({
     button: {
-        color: Colors.nuggBlueText,
+        color: Colors.textColor,
         // background: Colors.nuggBlueTransparent,
         // position: 'absolute',
         // right: '1rem',
         borderRadius: Layout.borderRadius.large,
         // padding: '.6rem 1rem',
         pointerEvents: 'auto',
-        paddingRight: '.5rem',
     },
     textContainer: {
         display: 'flex',

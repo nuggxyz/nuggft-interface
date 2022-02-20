@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { BigNumber } from 'ethers';
 
 import { NLState } from '../NLState';
 
@@ -60,6 +61,7 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
             xnuggUser: undefined,
             nuggftUser: undefined,
             nullUser: undefined,
+            epochIsOver: false,
         });
     }
 
@@ -76,18 +78,86 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
             setCurrentBlock: (state, action: PayloadAction<number>) => {
                 state.currentBlock = action.payload;
             },
-            setGenesisBlock: (state, action: PayloadAction<number>) => {
-                state.genesisBlock = action.payload;
-            },
-            setEpoch: (
+            // setEpoch: (
+            //     state,
+            //     action: PayloadAction<NL.GraphQL.Epoch<NL.GraphQL.Scalars>>,
+            // ) => {
+            //     state.epoch = action.payload;
+            // },
+            setStaked: (
                 state,
-                action: PayloadAction<NL.GraphQL.Epoch<NL.GraphQL.Scalars>>,
+                action: PayloadAction<{
+                    stakedShares: string;
+                    stakedEth: string;
+                }>,
             ) => {
-                state.epoch = action.payload;
+                const perShare =
+                    action.payload.stakedShares === '0'
+                        ? '0'
+                        : BigNumber.from(action.payload.stakedEth)
+                              .div(action.payload.stakedShares)
+                              .toString();
+
+                state.nuggftStakedEth = '' + action.payload.stakedEth;
+                state.nuggftStakedShares = '' + action.payload.stakedShares;
+                state.nuggftStakedEthPerShare = perShare;
+            },
+            setEpochIsOver: (state, action: PayloadAction<boolean>) => {
+                state.epochIsOver = action.payload;
+            },
+            reset: (state) => {
+                state.id = undefined;
+                state.currentBlock = 0;
+                state.init = false;
+                state.epoch = {
+                    endblock: '0',
+                    startblock: '0',
+                    id: '0',
+                    status: undefined,
+                };
+                state.totalSwaps = '0';
+                state.totalUsers = '0';
+                state.totalNuggs = '0';
+                state.totalItems = '0';
+                state.totalItemSwaps = '0';
+                state.genesisBlock = undefined;
+                state.interval = '0';
+                state.xnuggTotalSupply = '0';
+                state.xnuggTotalEth = '0';
+                state.nuggftTotalEth = '0';
+                state.nuggftStakedUsdPerShare = '0';
+                state.nuggftStakedUsd = '0';
+                state.nuggftStakedEthPerShare = '0';
+                state.nuggftStakedEth = '0';
+                state.nuggftStakedShares = '0';
+                state.priceUsdcWeth = '0';
+                state.priceWethXnugg = '0';
+                state.tvlEth = '0';
+                state.tvlUsd = '0';
+                state.defaultActiveNugg = undefined;
+                state.activeNuggs = [];
+                state.activeItems = [];
+                state.error = undefined;
+                state.success = undefined;
+                state.loading = false;
+                state.xnuggUser = undefined;
+                state.nuggftUser = undefined;
+                state.nullUser = undefined;
+                state.epochIsOver = false;
             },
         },
         extraReducers: (builder) =>
             builder
+                .addCase(
+                    thactions.getGenesisBlock.fulfilled,
+                    (state, action) => {
+                        state.genesisBlock = action.payload.data;
+                    },
+                )
+                .addCase(thactions.safeSetEpoch.fulfilled, (state, action) => {
+                    state.epoch = action.payload.data.epoch;
+                    state.epochIsOver = action.payload.data.isOver;
+                })
                 .addCase(
                     thactions.updateProtocol.fulfilled,
                     (state, action) => {
@@ -115,24 +185,24 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
                         state.xnuggUser = data.xnuggUser;
                     },
                 )
-                .addCase(thactions.updateEpoch.fulfilled, (state, action) => {
-                    const data = action.payload.data;
-                    state.epoch = data.epoch;
-                    state.interval = data.interval;
-                    state.genesisBlock = data.genesisBlock;
-                    state.nuggftStakedUsdPerShare =
-                        data.nuggftStakedUsdPerShare;
-                    state.nuggftStakedUsd = data.nuggftStakedUsd;
-                    const totalShares = data.nuggftStakedShares;
-                    const totalEth = data.nuggftStakedEth;
-                    state.nuggftStakedEth = totalEth;
-                    state.nuggftStakedShares = totalShares;
-                    const perShare =
-                        totalShares === '0'
-                            ? '0'
-                            : `${+totalEth / +totalShares}`;
-                    state.nuggftStakedEthPerShare = perShare.split('.')[0];
-                })
+                // .addCase(thactions.updateEpoch.fulfilled, (state, action) => {
+                //     const data = action.payload.data;
+                //     state.epoch = data.epoch;
+                //     state.interval = data.interval;
+                //     state.genesisBlock = data.genesisBlock;
+                //     state.nuggftStakedUsdPerShare =
+                //         data.nuggftStakedUsdPerShare;
+                //     state.nuggftStakedUsd = data.nuggftStakedUsd;
+                //     const totalShares = data.nuggftStakedShares;
+                //     const totalEth = data.nuggftStakedEth;
+                //     state.nuggftStakedEth = totalEth;
+                //     state.nuggftStakedShares = totalShares;
+                //     const perShare =
+                //         totalShares === '0'
+                //             ? '0'
+                //             : `${+totalEth / +totalShares}`;
+                //     state.nuggftStakedEthPerShare = perShare.split('.')[0];
+                // })
                 .addCase(thactions.updateActives.fulfilled, (state, action) => {
                     const data = action.payload.data;
                     state.defaultActiveNugg = data.defaultActiveNugg;

@@ -7,7 +7,7 @@ const styles = NLStyleSheetCreator({
         pointerEvents: 'none',
         position: 'absolute',
         display: 'flex',
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         alignItems: 'flex-start',
         paddingTop: Layout.header.height,
         overflow: 'hidden',
@@ -32,6 +32,7 @@ const styles = NLStyleSheetCreator({
         background: Colors.background,
         justifyContent: 'center',
         overflow: 'hidden',
+        // maxWidth: '300px',
     },
     toastTimer: {
         position: 'absolute',
@@ -50,16 +51,30 @@ const styles = NLStyleSheetCreator({
         boxShadow: Layout.boxShadow.dark,
     },
     visible: {
-        right: '1rem',
+        left: '1rem',
         opacity: 1,
     },
     hidden: {
-        right: '0rem',
+        left: '0rem',
         opacity: 0,
     },
     text: {
         fontFamily: Layout.font.inter.bold,
         fontWeight: 'bold',
+        color: Colors.textColor,
+    },
+    buttonContainer: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+    },
+    button: {
+        height: '100%',
+        flexGrow: 1,
+        borderRadius: 0,
     },
 });
 

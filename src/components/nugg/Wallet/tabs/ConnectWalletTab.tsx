@@ -1,3 +1,4 @@
+import { useWeb3React } from '@web3-react/core';
 import React, { FunctionComponent } from 'react';
 
 import Colors from '../../../../lib/colors';
@@ -11,6 +12,7 @@ import Text from '../../../general/Texts/Text/Text';
 type Props = {};
 
 const ConnectWalletTab: FunctionComponent<Props> = () => {
+    const { activate } = useWeb3React();
     return (
         <div
             style={{
@@ -49,9 +51,9 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                     type="text"
                     size="smaller"
                     textStyle={{ color: Colors.textColor }}>
-                    By connecting a wallet, you agree to Nugg.xyz's Terms of
+                    By connecting a wallet, you agree to nugg.xyz's Terms of
                     Service and acknowledge that you have read and understood
-                    the Nugg.xyz Protocol Disclaimer.
+                    the nugg.xyz Protocol Disclaimer.
                 </Text>
             </div>
             <div
@@ -87,7 +89,7 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                                     />
                                 }
                                 onClick={() =>
-                                    Web3State.safeActivate(
+                                    Web3State.safeActivate(activate)(
                                         walletObject.connector,
                                     )
                                 }

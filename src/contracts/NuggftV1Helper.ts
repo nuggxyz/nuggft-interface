@@ -3,65 +3,59 @@ import { BigNumber, Contract } from 'ethers';
 import gql from 'graphql-tag';
 
 import { Address } from '../classes/Address';
-import config from '../config';
 import {
     cipher,
     isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
     loadFromLocalStorage,
-    loadStringFromLocalStorage,
-    saveStringToLocalStorage,
     saveToLocalStorage,
 } from '../lib';
 import Web3State from '../state/web3';
-import { Svg } from '../classes/Svg';
 import {
-    TokenApproveInfo,
-    TransactionType,
-} from '../state/transaction/interfaces';
-import {
-    DotnuggV1Processor,
-    DotnuggV1Processor__factory,
-    NuggFT,
-    NuggFT__factory,
+    DotnuggV1,
+    DotnuggV1__factory,
+    NuggftV1,
+    NuggftV1__factory,
 } from '../typechain';
 import { executeQuery } from '../graphql/helpers';
-import AppState from '../state/app';
+import Web3Config from '../state/web3/Web3Config';
 
 import ContractHelper from './abstract/ContractHelper';
 
-export default class NuggFTHelper extends ContractHelper {
-    protected static _instance: NuggFT;
-    protected static _dotnugg: DotnuggV1Processor;
+export default class NuggftV1Helper extends ContractHelper {
+    protected static _instance: NuggftV1;
+    protected static _dotnugg: DotnuggV1;
 
     static get instance() {
-        if (isUndefinedOrNullOrObjectEmpty(NuggFTHelper._instance)) {
-            NuggFTHelper._instance = new Contract(
-                config.NUGGFT,
-                NuggFT__factory.abi,
+        if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._instance)) {
+            NuggftV1Helper._instance = new Contract(
+                Web3Config.activeChain__NuggftV1,
+                NuggftV1__factory.abi,
                 // Web3State.getLibraryOrProvider(),
-            ) as NuggFT;
+            ) as NuggftV1;
         }
-        return NuggFTHelper._instance;
+        return NuggftV1Helper._instance.connect(
+            Web3State.getSignerOrProvider(),
+        );
     }
 
     static get dotnugg() {
-        if (isUndefinedOrNullOrObjectEmpty(NuggFTHelper._dotnugg)) {
-            NuggFTHelper._dotnugg = new Contract(
-                config.DOTNUGG_RESOLVER,
-                DotnuggV1Processor__factory.abi,
-                // Web3State.getLibraryOrProvider(),
-            ) as DotnuggV1Processor;
+        if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._dotnugg)) {
+            NuggftV1Helper._dotnugg = new Contract(
+                Web3Config.activeChain__DotnuggV1,
+                DotnuggV1__factory.abi,
+            ) as DotnuggV1;
         }
-        return NuggFTHelper._dotnugg;
+        return NuggftV1Helper._dotnugg.connect(Web3State.getSignerOrProvider());
     }
 
     static reset() {
-        NuggFTHelper._instance = undefined;
+        NuggftV1Helper._instance = undefined;
+        NuggftV1Helper._dotnugg = undefined;
     }
     static set instance(_) {
         return;
     }
+
     public static async ownerOf(tokenId: string): Promise<Address> {
         const res = await this.instance.ownerOf(tokenId);
         try {
@@ -113,20 +107,23 @@ export default class NuggFTHelper extends ContractHelper {
             }
         }
     }
+
     public static async approve(
         spender: Address,
         tokenId: string,
     ): Promise<string> {
         let response = await this.instance
-            .connect(Web3State.getLibraryOrProvider())
+            .connect(Web3State.getSignerOrProvider())
             .approve(spender.hash, tokenId);
         return response.hash;
     }
     public static async sellerApproval(tokenId: string): Promise<boolean> {
         let response = await this.instance
-            .connect(Web3State.getLibraryOrProvider())
+            .connect(Web3State.getSignerOrProvider())
             .getApproved(tokenId);
-        return new Address(response).equals(new Address(config.NUGGFT));
+        return new Address(response).equals(
+            new Address(Web3Config.activeChain__NuggftV1),
+        );
     }
     public static async approval(tokenId: string): Promise<Address> {
         let response = await this.instance.getApproved(tokenId);

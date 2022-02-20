@@ -120,7 +120,7 @@ export class NLState<S> {
                 ...Object.entries(this.thactions),
             ].reduce((dispatches, [name, action]) => {
                 dispatches[name] = (value?: any) =>
-                    store.dispatch<any>(action(value));
+                    store.dispatch(action(value));
                 return dispatches;
             }, {});
         }

@@ -40,7 +40,6 @@ const styles = NLStyleSheetCreator({
         position: 'relative',
         display: 'flex',
         width: '50%',
-        justifyContent: 'space-between',
         alignItems: 'center',
         pointerEvents: 'none',
     },
