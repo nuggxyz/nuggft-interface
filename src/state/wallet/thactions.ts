@@ -91,35 +91,6 @@ const withdraw = createAsyncThunk<
     }
 });
 
-const approveNugg = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
-    { tokenId: string; spender: Address },
-    // adding the root state type to this thaction causes a circular reference
-    { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/approveNugg`, async ({ tokenId, spender }, thunkAPI) => {
-    try {
-        const _pendingtx = await NuggftV1Helper.approve(spender, tokenId);
-        return {
-            success: 'SUCCESS',
-            _pendingtx: _pendingtx,
-        };
-    } catch (err) {
-        console.log({ err });
-        if (
-            !isUndefinedOrNullOrNotObject(err) &&
-            !isUndefinedOrNullOrNotObject(err.data) &&
-            !isUndefinedOrNullOrStringEmpty(err.data.message)
-        ) {
-            const code = err.data.message.replace(
-                'execution reverted: ',
-                '',
-            ) as NL.Redux.Wallet.Error;
-            return thunkAPI.rejectWithValue(code);
-        }
-        return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
-    }
-});
-
 const claim = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
     { tokenId: string },
@@ -130,9 +101,10 @@ const claim = createAsyncThunk<
         //@ts-ignore
         const addr = thunkAPI.getState().web3.web3address;
 
-        const _pendingtx = await NuggftV1Helper.instance
+        const _pendingtx = await NuggftV1Helper.instance[
             // .connect(Web3State.getSignerOrProvider())
-            ['claim(uint160[],address[])']([tokenId], [addr]);
+            'claim(uint160[],address[])'
+        ]([tokenId], [addr]);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -164,15 +136,12 @@ const multiClaim = createAsyncThunk<
         //@ts-ignore
         const addr = thunkAPI.getState().web3.web3address;
 
-        const _pendingtx = await NuggftV1Helper.instance
+        const _pendingtx = await NuggftV1Helper.instance[
             // .connect(Web3State.getSignerOrProvider())
-            ['claim(uint160[],address[])'](
-                tokenIds,
-                new Array(tokenIds.length).fill(addr),
-                {
-                    gasLimit: 500000,
-                },
-            );
+            'claim(uint160[],address[])'
+        ](tokenIds, new Array(tokenIds.length).fill(addr), {
+            gasLimit: 500000,
+        });
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -377,7 +346,6 @@ export default {
     getUserShares,
     withdraw,
     claim,
-    approveNugg,
     initLoan,
     payOffLoan,
     extend,

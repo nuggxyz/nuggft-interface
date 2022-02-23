@@ -116,28 +116,6 @@ export default class NuggftV1Helper extends ContractHelper {
         }
     }
 
-    public static async approve(
-        spender: Address,
-        tokenId: string,
-    ): Promise<string> {
-        let response = await this.instance
-            .connect(Web3State.getSignerOrProvider())
-            .approve(spender.hash, tokenId);
-        return response.hash;
-    }
-    public static async sellerApproval(tokenId: string): Promise<boolean> {
-        let response = await this.instance
-            .connect(Web3State.getSignerOrProvider())
-            .getApproved(tokenId);
-        return new Address(response).equals(
-            new Address(Web3Config.activeChain__NuggftV1),
-        );
-    }
-    public static async approval(tokenId: string): Promise<Address> {
-        let response = await this.instance.getApproved(tokenId);
-        return new Address(response);
-    }
-
     public static async balanceOf(address: Address): Promise<BigNumber> {
         return await this.instance.balanceOf(address.hash);
     }

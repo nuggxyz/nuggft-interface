@@ -59,9 +59,10 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     const check = useAsyncState(
         () =>
             nugg &&
-            NuggftV1Helper.instance
+            NuggftV1Helper.instance[
                 // .connect(Web3State.getSignerOrProvider())
-                ['check(address,uint160)'](address, nugg.id),
+                'check(address,uint160)'
+            ](address, nugg.id),
         [address, nugg],
     );
 
@@ -103,20 +104,6 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             setId(targetId);
         }
     }, [type, targetId]);
-
-    const [isApproved, setIsApproved] = useState(false);
-
-    useEffect(() => {
-        if (
-            !isUndefinedOrNullOrStringEmpty(targetId) &&
-            !isApproved &&
-            stableType === 'StartSale'
-        ) {
-            NuggftV1Helper.sellerApproval(stableId).then((res) =>
-                setIsApproved(res),
-            );
-        } else setIsApproved(true);
-    }, [targetId, toggle, isApproved, stableId, stableType]);
 
     return (
         <div style={styles.container}>
@@ -217,8 +204,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                                       ? 'sell'
                                       : 'place an offer on'
                               } this Nugg`
-                            : isApproved
-                            ? `${
+                            : `${
                                   stableType === 'StartSale'
                                       ? 'Sell Nugg'
                                       : check &&
@@ -228,28 +214,20 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                                       ? 'Update offer'
                                       : 'Place offer'
                               }`
-                            : `Approve Nugg #${stableId || nugg?.id}`
                     }
                     onClick={() =>
-                        isApproved
-                            ? stableType === 'Offer'
-                                ? SwapState.dispatch.placeOffer({
-                                      tokenId: nugg?.id,
-                                      amount: fromEth(
-                                          toEth(amount).sub(
-                                              check.senderCurrentOffer,
-                                          ),
+                        stableType === 'Offer'
+                            ? SwapState.dispatch.placeOffer({
+                                  tokenId: nugg?.id,
+                                  amount: fromEth(
+                                      toEth(amount).sub(
+                                          check.senderCurrentOffer,
                                       ),
-                                  })
-                                : TokenState.dispatch.initSale({
-                                      tokenId: stableId,
-                                      floor: check.nextSwapAmount,
-                                  })
-                            : WalletState.dispatch.approveNugg({
-                                  spender: new Address(
-                                      Web3Config.activeChain__NuggftV1,
                                   ),
+                              })
+                            : TokenState.dispatch.initSale({
                                   tokenId: stableId,
+                                  floor: check.nextSwapAmount,
                               })
                     }
                 />
