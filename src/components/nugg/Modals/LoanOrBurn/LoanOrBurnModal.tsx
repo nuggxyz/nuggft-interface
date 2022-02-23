@@ -38,16 +38,6 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
         }
     }, [type, targetId]);
 
-    const [isApproved, setIsApproved] = useState(false);
-
-    useEffect(() => {
-        if (!isUndefinedOrNullOrStringEmpty(targetId) && !isApproved) {
-            NuggftV1Helper.sellerApproval(targetId).then((res) =>
-                setIsApproved(res),
-            );
-        }
-    }, [targetId, toggle, isApproved]);
-
     return (
         <div style={styles.container}>
             <Text textStyle={styles.textWhite}>
@@ -78,24 +68,13 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                     overrideFeedback
                     feedbackText="Check Wallet..."
                     buttonStyle={styles.button}
-                    label={
-                        isApproved
-                            ? `${stableType === 'Loan' ? 'Loan' : 'Burn'}`
-                            : `Approve Nugg #${stableId}`
-                    }
+                    label={`${stableType === 'Loan' ? 'Loan' : 'Burn'}`}
                     onClick={() =>
-                        isApproved
-                            ? stableType === 'Loan'
-                                ? WalletState.dispatch.initLoan({
-                                      tokenId: stableId,
-                                  })
-                                : WalletState.dispatch.withdraw({
-                                      tokenId: stableId,
-                                  })
-                            : WalletState.dispatch.approveNugg({
-                                  spender: new Address(
-                                      Web3Config.activeChain__NuggftV1,
-                                  ),
+                        stableType === 'Loan'
+                            ? WalletState.dispatch.initLoan({
+                                  tokenId: stableId,
+                              })
+                            : WalletState.dispatch.withdraw({
                                   tokenId: stableId,
                               })
                     }

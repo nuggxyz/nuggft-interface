@@ -16,9 +16,10 @@ const initSale = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error; state: NL.Redux.RootState }
 >(`token/initSale`, async ({ tokenId, floor }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggftV1Helper.instance
+        const _pendingtx = await NuggftV1Helper.instance[
             // .connect(Web3State.getSignerOrProvider())
-            ['sell(uint160,uint96)'](tokenId, floor);
+            'sell(uint160,uint96)'
+        ](tokenId, floor);
 
         return {
             success: 'SUCCESS',

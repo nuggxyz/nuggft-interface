@@ -24,20 +24,6 @@ const BurnModal: FunctionComponent<Props> = () => {
 
     const [selected, setSelected] = useState('');
 
-    const [isApproved, setIsApproved] = useState(false);
-
-    useEffect(() => {
-        setIsApproved(false);
-    }, [selected]);
-
-    useEffect(() => {
-        if (!isUndefinedOrNullOrStringEmpty(selected) && !isApproved) {
-            NuggftV1Helper.sellerApproval(selected).then((res) =>
-                setIsApproved(res),
-            );
-        }
-    }, [selected, toggle, isApproved]);
-
     return (
         <div style={styles.container}>
             <Text textStyle={styles.textWhite}>
@@ -74,23 +60,14 @@ const BurnModal: FunctionComponent<Props> = () => {
                     buttonStyle={styles.button}
                     label={
                         !isUndefinedOrNullOrStringEmpty(selected)
-                            ? isApproved
-                                ? `Withdraw NuggFT #${selected}`
-                                : `Approve NuggFT #${selected}`
+                            ? `Withdraw NuggFT #${selected}`
                             : 'Withdraw'
                     }
                     disabled={isUndefinedOrNullOrStringEmpty(selected)}
                     onClick={() =>
-                        isApproved
-                            ? WalletState.dispatch.withdraw({
-                                  tokenId: selected,
-                              })
-                            : WalletState.dispatch.approveNugg({
-                                  spender: new Address(
-                                      Web3Config.activeChain__DotnuggV1,
-                                  ),
-                                  tokenId: selected,
-                              })
+                        WalletState.dispatch.withdraw({
+                            tokenId: selected,
+                        })
                     }
                 />
             </div>
