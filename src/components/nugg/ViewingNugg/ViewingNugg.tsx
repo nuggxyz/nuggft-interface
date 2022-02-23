@@ -323,7 +323,7 @@ const SwapItem = ({ swap, index }) => {
                             type="text"
                             size="smaller"
                             textStyle={{
-                                color: Colors.nuggBlueText,
+                                color: Colors.textColor,
                             }}>
                             {awaitingBid ? 'On sale by' : 'Purchased from'}
                         </Text>

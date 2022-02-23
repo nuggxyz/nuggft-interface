@@ -69,7 +69,7 @@ const AccountViewer = () => {
                         <Jazzicon address={web3address} size={15} />
                     )}
                 </div>
-                <Text size="smaller" type="text" textStyle={styles.button}>
+                <Text size="smaller" type="code" textStyle={styles.button}>
                     {chain !== 1 && `(${name}) `}
                     {userBalance
                         ? new EthInt(

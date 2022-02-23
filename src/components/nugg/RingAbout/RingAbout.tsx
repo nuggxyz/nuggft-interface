@@ -175,7 +175,12 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                     textStyle={styles.leadingOffer}
                                     value={+fromEth(eth)}
                                 />
-                                <Text textStyle={styles.code}>{leaderEns}</Text>
+                                <Text
+                                    type="text"
+                                    size="smaller"
+                                    textStyle={{ color: Colors.textColor }}>
+                                    {leaderEns}
+                                </Text>
                             </animated.div>
                             {offers.length > 1 && (
                                 <Button
@@ -268,7 +273,12 @@ const OfferRenderItem = ({
     return (
         <div style={styles.offerAmount}>
             <CurrencyText image="eth" value={+fromEth(offer.eth)} />
-            <Text textStyle={styles.code}>{ens}</Text>
+            <Text
+                type="text"
+                size="smaller"
+                textStyle={{ color: Colors.textColor }}>
+                {ens}
+            </Text>
         </div>
     );
 };

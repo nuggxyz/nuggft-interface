@@ -43,7 +43,7 @@ const styles = NLStyleSheetCreator({
         borderRadius: Layout.borderRadius.mediumish,
     },
     text: {
-        fontFamily: Layout.font.inter.regular,
+        fontFamily: Layout.font.sf.regular,
         color: Colors.transparentWhite,
         textAlign: 'center',
         fontSize: FontSize.h6,

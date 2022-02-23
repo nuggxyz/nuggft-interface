@@ -60,10 +60,10 @@ const LoanInputModal: FunctionComponent<Props> = () => {
             stableId &&
             (stableType === 'PayOffLoan'
                 ? NuggftV1Helper.instance
-                    //   .connect(Web3State.getSignerOrProvider())
+                      //   .connect(Web3State.getSignerOrProvider())
                       .vfl([stableId])
                 : NuggftV1Helper.instance
-                    //   .connect(Web3State.getSignerOrProvider())
+                      //   .connect(Web3State.getSignerOrProvider())
                       .vfr([stableId])),
         [address, stableId, stableType],
     );
@@ -118,7 +118,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                             }
                             label="Min"
                             textStyle={{
-                                fontFamily: Layout.font.inter.bold,
+                                fontFamily: Layout.font.sf.bold,
                                 fontSize: FontSize.h6,
                             }}
                             buttonStyle={{

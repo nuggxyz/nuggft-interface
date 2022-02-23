@@ -8,7 +8,7 @@ export interface TextProps {
     children: string | string[] | ReactNode;
     weight?: 'light' | 'regular' | 'bold' | 'bolder';
     size?: 'smaller' | 'small' | 'medium' | 'large' | 'larger' | 'largest';
-    type?: 'title' | 'text';
+    type?: 'title' | 'text' | 'code';
     textStyle?: CSSProperties;
 }
 

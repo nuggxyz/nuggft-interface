@@ -29,16 +29,18 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
         <animated.div style={springStyle}>
             <Text
                 type="text"
-                size="small"
+                size="smaller"
                 weight="bolder"
                 textStyle={{
                     paddingRight: '.6rem',
                     color: Colors.nuggBlueText,
-                    font: Layout.font.inter.bold,
+                    font: Layout.font.sf.bold,
+                    marginTop: '.1rem',
                 }}>
                 FLOOR
             </Text>
             <CurrencyText
+                size="small"
                 image="eth"
                 value={new EthInt(valuePerShare).decimal.toNumber()}
             />

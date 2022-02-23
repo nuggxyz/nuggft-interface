@@ -27,7 +27,7 @@ const styles = NLStyleSheetCreator({
         width: '100%',
     },
     text: {
-        fontFamily: Layout.font.inter.regular,
+        fontFamily: Layout.font.sf.regular,
         color: Colors.nuggBlueText,
         fontWeight: 'lighter',
     },

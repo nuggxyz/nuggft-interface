@@ -104,7 +104,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                                   textStyle={{
                                       color: Colors.nuggRedText,
                                       fontSize: FontSize.h6,
-                                      fontFamily: Layout.font.inter.light,
+                                      fontFamily: Layout.font.sf.light,
                                   }}
                                   label="Reclaim all"
                                   onClick={() =>

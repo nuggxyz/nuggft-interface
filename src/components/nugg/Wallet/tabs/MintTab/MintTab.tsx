@@ -243,12 +243,12 @@ const MintNuggButton = () => (
         buttonStyle={{
             ...swapStyles.button,
             margin: '0rem',
-            padding: '.2rem 1rem',
+            padding: '.2rem .6rem',
         }}
         textStyle={{
             color: Colors.nuggRedText,
             fontSize: FontSize.h6,
-            fontFamily: Layout.font.inter.light,
+            fontFamily: Layout.font.sf.light,
         }}
         label="Mint a Nugg"
         onClick={() => WalletState.dispatch.mintNugg()}

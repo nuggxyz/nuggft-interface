@@ -43,10 +43,12 @@ const styles = NLStyleSheetCreator({
         borderRadius: Layout.borderRadius.mediumish,
     },
     text: {
-        fontFamily: Layout.font.inter.regular,
         color: Colors.transparentWhite,
         textAlign: 'center',
-        fontSize: FontSize.h6,
+        flexDirection: 'row',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 

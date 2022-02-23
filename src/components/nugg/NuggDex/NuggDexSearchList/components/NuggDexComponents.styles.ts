@@ -103,7 +103,7 @@ const styles = NLStyleSheetCreator({
         textAlign: 'center',
     },
     nuggLinkCategoryTitle: {
-        fontFamily: Layout.font.inter.bold,
+        fontFamily: Layout.font.sf.bold,
         fontWeight: 'bold',
         // color: ,
     },

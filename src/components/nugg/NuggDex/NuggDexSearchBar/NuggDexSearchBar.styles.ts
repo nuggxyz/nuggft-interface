@@ -7,7 +7,7 @@ const styles = NLStyleSheetCreator({
         zIndex: 999,
         background: Colors.nuggBlueTransparent,
         borderRadius: Layout.borderRadius.small,
-        fontFamily: Layout.font.inter.regular,
+        fontFamily: Layout.font.sf.regular,
         pointerEvents: 'auto',
     },
     searchBarButton: {

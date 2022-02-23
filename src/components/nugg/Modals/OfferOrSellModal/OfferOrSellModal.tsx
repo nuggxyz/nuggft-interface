@@ -59,9 +59,10 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     const check = useAsyncState(
         () =>
             nugg &&
-            NuggftV1Helper.instance
+            NuggftV1Helper.instance[
                 // .connect(Web3State.getSignerOrProvider())
-                ['check(address,uint160)'](address, nugg.id),
+                'check(address,uint160)'
+            ](address, nugg.id),
         [address, nugg],
     );
 
@@ -159,7 +160,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                             onClick={() => setAmount(`${minOfferAmount}`)}
                             label="Min"
                             textStyle={{
-                                fontFamily: Layout.font.inter.bold,
+                                fontFamily: Layout.font.sf.bold,
                                 fontSize: FontSize.h6,
                             }}
                             buttonStyle={{
@@ -179,17 +180,24 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 {stableType === 'Offer' && userBalance && (
                     <Text
                         type="text"
-                        size="small"
+                        size="smaller"
                         textStyle={styles.text}
                         weight="bolder">
-                        You currently have{' '}
-                        {new EthInt(
-                            userBalance
-                                .div(10 ** 13)
-                                .add(1)
-                                .mul(10 ** 13),
-                        ).decimal.toNumber()}{' '}
-                        ETH
+                        You currently have
+                        <Text
+                            type="code"
+                            size="smaller"
+                            textStyle={{ marginLeft: '.5rem' }}
+                            weight="bolder">
+                            {new EthInt(
+                                userBalance
+                                    .div(10 ** 13)
+
+                                    .add(1)
+                                    .mul(10 ** 13),
+                            ).decimal.toNumber()}{' '}
+                            ETH
+                        </Text>
                     </Text>
                 )}
                 {/* <Text textStyle={styles.text}>

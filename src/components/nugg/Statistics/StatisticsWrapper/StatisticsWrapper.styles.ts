@@ -20,7 +20,7 @@ const styles = NLStyleSheetCreator({
         borderRadius: Layout.borderRadius.medium,
     },
     title: {
-        fontFamily: Layout.font.inter.bold,
+        fontFamily: Layout.font.sf.bold,
         fontWeight: 'bold',
         color: 'white',
     },

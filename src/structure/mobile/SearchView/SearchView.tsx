@@ -105,7 +105,7 @@ const SearchView: FunctionComponent<Props> = () => {
                                 paddingLeft: '0.4rem',
                             }}
                             textStyle={{
-                                fontFamily: Layout.font.inter.light,
+                                fontFamily: Layout.font.sf.light,
                                 color: Colors.nuggBlueText,
                                 fontSize: FontSize.h6,
                             }}

@@ -130,9 +130,10 @@ const claim = createAsyncThunk<
         //@ts-ignore
         const addr = thunkAPI.getState().web3.web3address;
 
-        const _pendingtx = await NuggftV1Helper.instance
+        const _pendingtx = await NuggftV1Helper.instance[
             // .connect(Web3State.getSignerOrProvider())
-            ['claim(uint160[],address[])']([tokenId], [addr]);
+            'claim(uint160[],address[])'
+        ]([tokenId], [addr]);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -164,15 +165,12 @@ const multiClaim = createAsyncThunk<
         //@ts-ignore
         const addr = thunkAPI.getState().web3.web3address;
 
-        const _pendingtx = await NuggftV1Helper.instance
+        const _pendingtx = await NuggftV1Helper.instance[
             // .connect(Web3State.getSignerOrProvider())
-            ['claim(uint160[],address[])'](
-                tokenIds,
-                new Array(tokenIds.length).fill(addr),
-                {
-                    gasLimit: 500000,
-                },
-            );
+            'claim(uint160[],address[])'
+        ](tokenIds, new Array(tokenIds.length).fill(addr), {
+            gasLimit: 500000,
+        });
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -237,7 +235,6 @@ const mintNugg = createAsyncThunk<
                 // .connect(Web3State.getSignerOrProvider())
                 .mint(nuggToMint, {
                     value: nuggPrice,
-                    gasLimit: 85000,
                 });
             return {
                 success: 'SUCCESS',
