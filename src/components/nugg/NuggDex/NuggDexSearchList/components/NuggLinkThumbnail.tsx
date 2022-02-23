@@ -1,6 +1,7 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 import { animated } from 'react-spring';
 
+import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 import useOnHover from '../../../../../hooks/useOnHover';
 import NuggDexState from '../../../../../state/nuggdex';
 import TokenState from '../../../../../state/token';
@@ -33,6 +34,7 @@ const NuggLinkThumbnail: FunctionComponent<{
             style={style}
             onClick={() => {
                 TokenState.dispatch.setNugg(item);
+                NuggftV1Helper.storeNugg(item.id, item.dotnuggRawCache);
                 NuggDexState.dispatch.addToRecents(
                     item,
                     //     {
