@@ -353,3 +353,19 @@ export const smartReplace = <T extends { id: string }>(
 export const toGwei = (num: string): ethers.BigNumber => {
     return ethers.utils.parseUnits(num, 'gwei');
 };
+
+export const safeResetLocalStorage = (keys: string[]) => {
+    const values = [];
+    keys.forEach((key) => {
+        values.push({
+            key,
+            value: loadStringFromLocalStorage(key),
+        });
+    });
+    localStorage.clear();
+    values.forEach((entry) => {
+        if (!isUndefinedOrNullOrStringEmpty(entry.value)) {
+            saveStringToLocalStorage(entry.value, entry.key);
+        }
+    });
+};

@@ -42,7 +42,7 @@ export default class Web3Config {
             DotnuggV1: '0x6039df117f2d6e805d90114809ca3769a2f50ddb',
         },
         [Web3Config.SupportedChainId.GOERLI]: {
-            NuggftV1: '0x5d5f16B48af3fB4f6acbCf3087699d99bd902A40',
+            NuggftV1: '0x7ccd9a783e43845f3ae37e83b4a696b0cfab114c',
             DotnuggV1: '0x9a3b1be8ec7eaf472b22c9c833164297e2940f27',
         },
     };

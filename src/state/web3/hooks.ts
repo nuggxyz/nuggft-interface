@@ -16,6 +16,7 @@ import {
     isUndefinedOrNullOrStringEmpty,
     loadFromLocalStorage,
     loadStringFromLocalStorage,
+    safeResetLocalStorage,
     saveStringToLocalStorage,
     saveToLocalStorage,
 } from '../../lib';
@@ -92,11 +93,7 @@ const useWeb3Listeners = () => {
             Web3State.dispatch.setCurrentChain(
                 BigNumber.from(chainId).toNumber(),
             );
-            const walletconnect = loadStringFromLocalStorage('walletconnect');
-            localStorage.clear();
-            if (!isUndefinedOrNullOrStringEmpty(walletconnect)) {
-                saveStringToLocalStorage(walletconnect, 'walletconnect');
-            }
+            safeResetLocalStorage(['walletconnect', 'ens']);
             NuggftV1Helper.reset();
             GQLHelper.reset();
             batch(() => {
