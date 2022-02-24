@@ -29,6 +29,7 @@ import { fromEth } from '../../../../../lib/conversion';
 import NLStaticImage from '../../../../general/NLStaticImage';
 import FontSize from '../../../../../lib/fontSize';
 import Layout from '../../../../../lib/layout';
+import SocketState from '../../../../../state/socket';
 
 type Props = { isActive?: boolean };
 
@@ -36,7 +37,9 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const address = Web3State.select.web3address();
     const epoch = ProtocolState.select.epoch();
-    const [unclaimedOffers, setUnclaimedOffers] = useState([]);
+    const [unclaimedOffers, setUnclaimedOffers] = useState<
+        NL.GraphQL.Fragments.Offer.Thumbnail[]
+    >([]);
     const [loadingOffers, setLoadingOffers] = useState(false);
 
     const getUnclaimedOffers = useCallback(async () => {
@@ -58,6 +61,13 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
             }, 500);
         }
     }, [address, txnToggle]);
+    const socket = SocketState.select.Claim();
+
+    useEffect(() => {
+        setUnclaimedOffers(
+            unclaimedOffers.filter((x) => x.id.split('-')[0] == socket.tokenId),
+        );
+    }, [socket]);
 
     return (
         <div style={styles.container}>

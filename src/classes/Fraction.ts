@@ -167,7 +167,7 @@ export class EthInt extends Fraction {
         try {
             let bob = new EthInt(0);
             bob.num = value.num;
-            bob.den = value.den;
+            bob.den = value.den.mul(ETH_ONE);
             return bob;
         } catch (err) {
             return EthInt.ZERO;

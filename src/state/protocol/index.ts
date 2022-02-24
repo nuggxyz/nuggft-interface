@@ -235,6 +235,7 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
                 })
                 .addCase(thactions.updateStaked.fulfilled, (state, action) => {
                     const data = action.payload.data;
+
                     state.nuggftStakedUsdPerShare =
                         data.nuggftStakedUsdPerShare;
                     state.nuggftStakedUsd = data.nuggftStakedUsd;

@@ -103,6 +103,17 @@ export default class Web3Config {
         //     .KOVAN]: `https://kovan.infura.io/v3/${Web3Config.INFURA_KEY}`,
     };
 
+    static WSS_URLS = {
+        [Web3Config.SupportedChainId
+            .MAINNET]: `wss://mainnet.infura.io/v3/${Web3Config.INFURA_KEY}`,
+        [Web3Config.SupportedChainId
+            .RINKEBY]: `wss://rinkeby.infura.io/v3/${Web3Config.INFURA_KEY}`,
+        [Web3Config.SupportedChainId
+            .ROPSTEN]: `wss://ropsten.infura.io/v3/${Web3Config.INFURA_KEY}`,
+        [Web3Config.SupportedChainId
+            .GOERLI]: `wss://goerli.infura.io/v3/${Web3Config.INFURA_KEY}`,
+    };
+
     static connectors = {
         network: new NetworkConnector({
             urls: Web3Config.NETWORK_URLS,

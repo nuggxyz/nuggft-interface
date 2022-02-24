@@ -1,7 +1,7 @@
 /** @format */
 
 module.exports = {
-    endOfLine: 'auto',
+    endOfLine: 'lf',
     trailingComma: 'all',
     tabWidth: 4,
     singleQuote: true,

@@ -19,7 +19,6 @@ import useDebounce from '../../hooks/useDebounce';
 import Web3Config from '../web3/Web3Config';
 import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import config from '../../config';
-import { StakeEvent } from '../../typechain/NuggftV1';
 
 import ProtocolState from '.';
 
@@ -136,42 +135,8 @@ export default () => {
     }, [lastChainUpdate, setLastChainUpdate]);
 
     useEffect(() => {
-        if (!isUndefinedOrNullOrObjectEmpty(library)) {
-            ProtocolState.dispatch.updateStaked();
-
-            const update = (log: any) => {
-                const event = NuggftV1Helper.instance.interface.parseLog(
-                    log,
-                ) as unknown as StakeEvent;
-
-                // const protocol = (args.stake as BigNumber)
-                //     .shr(96)
-                //     .shl(96)
-                //     .xor(args.stake);
-
-                const stakedShares = ethers.BigNumber.from(
-                    event.args.cache,
-                ).shr(96 + 96);
-
-                const stakedEth = ethers.BigNumber.from(event.args.cache)
-                    .shr(96)
-                    .xor(stakedShares.shl(96));
-
-                ProtocolState.dispatch.setStaked({
-                    stakedShares: stakedShares.toString(),
-                    stakedEth: stakedEth.toString(),
-                });
-            };
-
-            const filters = NuggftV1Helper.instance.filters.Stake(null);
-
-            library.on(filters, update);
-
-            return () => {
-                library.removeListener(filters, update);
-            };
-        }
-    }, [library]);
+        ProtocolState.dispatch.updateStaked();
+    }, []);
 
     return null;
 };

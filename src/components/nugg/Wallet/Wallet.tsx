@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent, useEffect, useMemo } from 'react';
 
 import AppState from '../../../state/app';
 import Web3State from '../../../state/web3';
