@@ -169,7 +169,7 @@ const MintTab: FunctionComponent<Props> = () => {
             </div>
 
             <InfiniteList
-                TitleButton={() => MintNuggButton(chainId, provider)}
+                TitleButton={() => MintNuggButton(chainId, provider, address)}
                 labelStyle={styles.listLabel}
                 data={myNuggs}
                 RenderItem={React.memo(
@@ -228,7 +228,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Nug
         (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
     );
 
-const MintNuggButton = (chainId: SupportedChainId, provider: Web3Provider) => (
+const MintNuggButton = (chainId: SupportedChainId, provider: Web3Provider, address: string) => (
     <FeedbackButton
         feedbackText="Check Wallet..."
         buttonStyle={{
@@ -242,6 +242,6 @@ const MintNuggButton = (chainId: SupportedChainId, provider: Web3Provider) => (
             fontFamily: Layout.font.sf.light,
         }}
         label="Mint a Nugg"
-        onClick={() => WalletState.dispatch.mintNugg({ chainId, provider })}
+        onClick={() => WalletState.dispatch.mintNugg({ chainId, provider, address })}
     />
 );

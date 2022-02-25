@@ -33,6 +33,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
+    const connector = web3.hook.usePriorityConnector();
 
     const getMyNuggs = useCallback(async () => {
         setLoadingNuggs(true);
@@ -98,6 +99,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                                   label="Reclaim all"
                                   onClick={() =>
                                       WalletState.dispatch.multiClaim({
+                                          address,
                                           provider,
                                           chainId,
                                           tokenIds: myNuggs.map((offer) => (offer as any).nugg.id),

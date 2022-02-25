@@ -88,6 +88,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                                   label="Claim all"
                                   onClick={() =>
                                       WalletState.dispatch.multiClaim({
+                                          address,
                                           chainId,
                                           provider,
                                           tokenIds: unclaimedOffers.map(

@@ -123,20 +123,22 @@ const claim = createAsyncThunk<
 
 const multiClaim = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { tokenIds: string[]; provider: Web3Provider; chainId: SupportedChainId },
+    { tokenIds: string[]; provider: Web3Provider; chainId: SupportedChainId; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/multiClaim`, async ({ tokenIds, provider, chainId }, thunkAPI) => {
+>(`wallet/multiClaim`, async ({ tokenIds, provider, chainId, address }, thunkAPI) => {
     try {
         //@ts-ignore
         const addr = thunkAPI.getState().web3.web3address;
 
-        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract[
-            // .connect(Web3State.getSignerOrProvider())
-            'claim(uint160[],address[])'
-        ](tokenIds, new Array(tokenIds.length).fill(addr), {
-            gasLimit: 500000,
-        });
+        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+            .connect(provider.getSigner(address))
+            [
+                // .connect(Web3State.getSignerOrProvider())
+                'claim(uint160[],address[])'
+            ](tokenIds, new Array(tokenIds.length).fill(addr), {
+                gasLimit: 500000,
+            });
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -160,10 +162,10 @@ const multiClaim = createAsyncThunk<
 
 const mintNugg = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { chainId: SupportedChainId; provider: Web3Provider },
+    { chainId: SupportedChainId; provider: Web3Provider; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/mintNugg`, async ({ chainId, provider }, thunkAPI) => {
+>(`wallet/mintNugg`, async ({ chainId, provider, address }, thunkAPI) => {
     try {
         const latestNugg = await executeQuery(
             chainId,
@@ -199,6 +201,7 @@ const mintNugg = createAsyncThunk<
                 ? constants.PRE_MINT_STARTING_EPOCH + 1
                 : +latestNugg[0].idnum + 1;
             const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+                .connect(provider.getSigner(address))
                 // .connect(Web3State.getSignerOrProvider())
                 .mint(nuggToMint, {
                     value: nuggPrice,
