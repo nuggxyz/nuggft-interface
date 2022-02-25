@@ -1,6 +1,7 @@
 import invariant from 'tiny-invariant';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BigNumber } from 'ethers';
+import { Web3Provider } from '@ethersproject/providers';
 
 import {
     isUndefinedOrNullOrNotObject,
@@ -101,11 +102,11 @@ const pollOffers = createAsyncThunk<
 
 const placeOffer = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { amount: string; tokenId: string },
+    { amount: string; tokenId: string; provider: Web3Provider; chainId: SupportedChainId },
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
->('swap/placeOffer', async ({ amount, tokenId }, thunkAPI) => {
+>('swap/placeOffer', async ({ amount, tokenId, provider, chainId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggftV1Helper.instance[
+        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract[
             // .connect(Web3State.getSignerOrProvider())
             'offer(uint160)'
         ](BigNumber.from(tokenId), {

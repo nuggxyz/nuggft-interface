@@ -33,6 +33,8 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
     const [loadingNuggs, setLoadingNuggs] = useState(false);
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const chainId = config.priority.usePriorityChainId();
+    const provider = config.priority.usePriorityProvider();
+
     const getMyNuggs = useCallback(async () => {
         setLoadingNuggs(true);
         if (!isUndefinedOrNullOrStringEmpty(address)) {
@@ -97,6 +99,8 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                                   label="Reclaim all"
                                   onClick={() =>
                                       WalletState.dispatch.multiClaim({
+                                          provider,
+                                          chainId,
                                           tokenIds: myNuggs.map((offer) => (offer as any).nugg.id),
                                       })
                                   }
@@ -182,7 +186,8 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Swa
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
                     label={`Reclaim`}
-                    onClick={() => WalletState.dispatch.claim({ tokenId: item.nugg.id })}
+                    onClick={() => {}}
+                    // onClick={() => WalletState.dispatch.claim({ tokenId: item.nugg.id })}
                 />
             </div>
         )

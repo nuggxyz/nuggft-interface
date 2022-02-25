@@ -1,6 +1,5 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
-import useDebounce from '../../../hooks/useDebounce';
 import useSetState from '../../../hooks/useSetState';
 import {
     isUndefinedOrNull,
@@ -55,8 +54,7 @@ const TheRing: FunctionComponent<Props> = ({
             !isUndefinedOrNullOrObjectEmpty(endingSwapEpoch) &&
             !isUndefinedOrNullOrObjectEmpty(startingSwapEpoch)
         ) {
-            remaining =
-                +endingSwapEpoch.endblock - +startingSwapEpoch.startblock;
+            remaining = +endingSwapEpoch.endblock - +startingSwapEpoch.startblock;
         }
         if (remaining <= 0) {
             remaining = 0;
@@ -93,11 +91,7 @@ const TheRing: FunctionComponent<Props> = ({
                 blocktime={constants.BLOCKTIME}
                 width={circleWidth}
                 staticColor={
-                    status === 'over'
-                        ? Colors.purple
-                        : status === 'waiting'
-                        ? Colors.green
-                        : ''
+                    status === 'over' ? Colors.purple : status === 'waiting' ? Colors.green : ''
                 }
                 style={{
                     ...styles.circle,

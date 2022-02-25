@@ -5,8 +5,6 @@ import React, {
     SetStateAction,
     useCallback,
     useEffect,
-    useLayoutEffect,
-    useMemo,
     useState,
 } from 'react';
 import { Promise } from 'bluebird';
@@ -14,26 +12,14 @@ import { animated, UseSpringProps } from 'react-spring';
 import { ChevronLeft } from 'react-feather';
 import { batch } from 'react-redux';
 
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
-    ucFirst,
-} from '../../../../../lib';
-import List from '../../../../general/List/List';
+import { isUndefinedOrNullOrStringEmpty, ucFirst } from '../../../../../lib';
 import TransitionText from '../../../../general/Texts/TransitionText/TransitionText';
 import globalStyles from '../../../../../lib/globalStyles';
 import NuggDexState from '../../../../../state/nuggdex';
 import TokenState from '../../../../../state/token';
-import ProtocolState from '../../../../../state/protocol';
-import allNuggsQuery from '../../../../../state/nuggdex/queries/allNuggsQuery';
-import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
-import Web3State from '../../../../../state/web3';
 import AppState from '../../../../../state/app';
-import Colors from '../../../../../lib/colors';
 import usePrevious from '../../../../../hooks/usePrevious';
 import InfiniteList from '../../../../general/List/InfiniteList';
-import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -86,10 +72,7 @@ const NuggList: FunctionComponent<Props> = ({
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (
-            localViewing === 'home' &&
-            !isUndefinedOrNullOrStringEmpty(filters.searchValue)
-        ) {
+        if (localViewing === 'home' && !isUndefinedOrNullOrStringEmpty(filters.searchValue)) {
             setLocalViewing('all nuggs');
         }
     }, [filters.searchValue, setLocalViewing]);

@@ -83,7 +83,7 @@ export default class config {
     }
 
     static connectors = {
-        metamask: initializeConnector<MetaMask>((actions) => new MetaMask(actions)),
+        metamask: initializeConnector<MetaMask>((actions) => new MetaMask(actions, true)),
         walletconnect: initializeConnector<WalletConnect>(
             (actions) =>
                 new WalletConnect(actions, {
@@ -99,7 +99,7 @@ export default class config {
                 }),
         ),
         network: initializeConnector<Network>(
-            (actions) => new Network(actions, config.NETWORK_URLS),
+            (actions) => new Network(actions, config.NETWORK_URLS, true, 5),
             Object.keys(config.NETWORK_URLS).map((chainId) => Number(chainId)),
         ),
     };
@@ -187,7 +187,7 @@ export default class config {
         },
     };
 
-    static ENS_REGISTRAR_ADDRESSES: NL.Redux.Web3.AddressMap = {
+    static ENS_REGISTRAR_ADDRESSES: NL.Redux.Web32.AddressMap = {
         [config.SupportedChainId.MAINNET]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
         [config.SupportedChainId.ROPSTEN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
         [config.SupportedChainId.GOERLI]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',

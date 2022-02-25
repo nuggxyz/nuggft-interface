@@ -3,7 +3,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { NLState } from '../NLState';
 
 import hooks from './hooks';
-import { BaseTransactionInfo } from './interfaces';
 import middlewares from './middlewares';
 import updater from './updater';
 
@@ -14,12 +13,8 @@ export default class TransactionState extends NLState<NL.Redux.Transaction.State
 
     declare static actions: typeof this.instance._slice.actions;
     declare static reducer: typeof this.instance._slice.reducer;
-    declare static select: ApplyFuncToChildren<
-        typeof this.instance._initialState
-    >;
-    declare static dispatch: ApplyDispatchToChildren<
-        typeof this.instance._slice.actions
-    >;
+    declare static select: ApplyFuncToChildren<typeof this.instance._initialState>;
+    declare static dispatch: ApplyDispatchToChildren<typeof this.instance._slice.actions>;
 
     static get instance() {
         if (this._instance === undefined) this._instance = new this();
@@ -72,20 +67,14 @@ export default class TransactionState extends NLState<NL.Redux.Transaction.State
         },
         extraReducers: (builder) =>
             builder
-                .addMatcher(
-                    NLState.isPendingAction(`${this._name}/`),
-                    (state) => {
-                        state.loading = true;
-                        state.success = undefined;
-                        state.error = undefined;
-                    },
-                )
+                .addMatcher(NLState.isPendingAction(`${this._name}/`), (state) => {
+                    state.loading = true;
+                    state.success = undefined;
+                    state.error = undefined;
+                })
                 .addMatcher(
                     NLState.isRejectedAction(`${this._name}/`),
-                    (
-                        state,
-                        action: PayloadAction<NL.Redux.Transaction.Error>,
-                    ) => {
+                    (state, action: PayloadAction<NL.Redux.Transaction.Error>) => {
                         state.loading = false;
                         state.error = action.payload;
                         state.success = undefined;

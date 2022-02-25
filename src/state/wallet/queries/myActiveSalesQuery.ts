@@ -52,7 +52,7 @@ const myActiveSalesQuery = async (
     try {
         const result = (await executeQuery(
             chainId,
-            query(address, orderDirection, searchValue, first, skip),
+            query(address.toLowerCase(), orderDirection, searchValue, first, skip),
             'swaps',
         )) as NL.GraphQL.Fragments.Swap.ThumbnailActiveSales[];
         return !isUndefinedOrNullOrArrayEmpty(result)

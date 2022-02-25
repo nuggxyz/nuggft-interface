@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import { batch } from 'react-redux';
+import { Web3Provider } from '@ethersproject/providers';
 
 import { EthInt } from '../../../../../classes/Fraction';
 import {
@@ -45,6 +46,7 @@ const MintTab: FunctionComponent<Props> = () => {
     const [myNuggs, setMyNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
     const address = config.priority.usePriorityAccount();
+    const provider = config.priority.usePriorityProvider();
 
     const chainId = config.priority.usePriorityChainId();
     const loans = useAsyncState(
@@ -81,7 +83,7 @@ const MintTab: FunctionComponent<Props> = () => {
             setMyNuggs([]);
         }
         setLoadingNuggs(false);
-    }, [address, epoch, myNuggs]);
+    }, [address, epoch, myNuggs, chainId]);
 
     useEffect(() => {
         setLoadingNuggs(true);
@@ -167,7 +169,7 @@ const MintTab: FunctionComponent<Props> = () => {
             </div>
 
             <InfiniteList
-                TitleButton={() => MintNuggButton(chainId)}
+                TitleButton={() => MintNuggButton(chainId, provider)}
                 labelStyle={styles.listLabel}
                 data={myNuggs}
                 RenderItem={React.memo(
@@ -226,7 +228,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Nug
         (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
     );
 
-const MintNuggButton = (chainId: SupportedChainId) => (
+const MintNuggButton = (chainId: SupportedChainId, provider: Web3Provider) => (
     <FeedbackButton
         feedbackText="Check Wallet..."
         buttonStyle={{
@@ -240,6 +242,6 @@ const MintNuggButton = (chainId: SupportedChainId) => (
             fontFamily: Layout.font.sf.light,
         }}
         label="Mint a Nugg"
-        onClick={() => WalletState.dispatch.mintNugg({ chainId })}
+        onClick={() => WalletState.dispatch.mintNugg({ chainId, provider })}
     />
 );

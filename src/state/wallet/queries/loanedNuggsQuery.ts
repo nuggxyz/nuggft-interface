@@ -41,7 +41,7 @@ const loanedNuggsQuery = async (
     try {
         const result = (await executeQuery(
             chainId,
-            query(address, orderDirection, searchValue, first, skip),
+            query(address.toLowerCase(), orderDirection, searchValue, first, skip),
             'user',
         )) as NL.GraphQL.Fragments.User.Bare;
 

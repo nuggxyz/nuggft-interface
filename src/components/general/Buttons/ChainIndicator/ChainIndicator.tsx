@@ -3,7 +3,6 @@ import React, {
     FunctionComponent,
     useCallback,
     useLayoutEffect,
-    useMemo,
     useState,
 } from 'react';
 import { AlertCircle } from 'react-feather';
@@ -16,19 +15,14 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '../../../../lib';
 import ProtocolState from '../../../../state/protocol';
-import Web3State from '../../../../state/web3';
 import AppState from '../../../../state/app';
 import Button from '../Button/Button';
-import Text from '../../Texts/Text/Text';
 import Layout from '../../../../lib/layout';
 import TokenViewer from '../../../nugg/TokenViewer';
-import CurrencyText from '../../Texts/CurrencyText/CurrencyText';
-import { EthInt } from '../../../../classes/Fraction';
-import Colors from '../../../../lib/colors';
 import SwapState from '../../../../state/swap';
+import config from '../../../../state/web32/config';
 
 import styles from './ChainIndicator.styles';
-import ChainIndicatorPulse from './ChainIndicatorPulse';
 
 type Props = {
     onClick?: () => void;
@@ -36,16 +30,13 @@ type Props = {
     textStyle?: CSSProperties;
 };
 
-const ChainIndicator: FunctionComponent<Props> = ({
-    onClick,
-    style,
-    textStyle,
-}) => {
+const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle }) => {
     const epoch = ProtocolState.select.epoch();
-    const connectionWarning = Web3State.select.connectivityWarning();
     const view = AppState.select.view();
     const currentBlock = ProtocolState.select.currentBlock();
     const swapId = SwapState.select.id();
+    const chainId = config.priority.usePriorityChainId();
+    const provider = config.priority.usePriorityProvider();
 
     const [blocksRemaining, setBlocksRemaining] = useState(0);
 
@@ -78,7 +69,7 @@ const ChainIndicator: FunctionComponent<Props> = ({
 
     const LeftIcon = useCallback(
         () =>
-            connectionWarning ? (
+            false ? (
                 <AlertCircle size={24} style={{ paddingRight: 0.5 + 'rem' }} />
             ) : (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -94,7 +85,7 @@ const ChainIndicator: FunctionComponent<Props> = ({
                     />
                 </div>
             ),
-        [connectionWarning, epoch],
+        [provider, epoch],
     );
 
     return (
@@ -108,15 +99,15 @@ const ChainIndicator: FunctionComponent<Props> = ({
                     onClick ||
                     (() =>
                         AppState.onRouteUpdate(
-                            view === 'Search' ||
-                                (swapId && !swapId.includes(epoch.id))
+                            chainId,
+                            view === 'Search' || (swapId && !swapId.includes(epoch.id))
                                 ? '/'
                                 : `/nugg/${epoch.id}`,
                         ))
                 }
                 buttonStyle={{
                     ...styles.button,
-                    ...(connectionWarning ? styles.warning : styles.normal),
+                    ...(provider ? styles.warning : styles.normal),
                     ...style,
                 }}
                 leftIcon={<LeftIcon />}

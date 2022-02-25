@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { isUndefinedOrNullOrNotNumber } from '../../lib';
-import Web3State from '../web3';
-import useDebounce from '../../hooks/useDebounce';
-import Web3Config from '../web3/Web3Config';
+import { isUndefinedOrNullOrObjectEmpty } from '../../lib';
 import poop from '../../config';
 import config from '../web32/config';
 
@@ -13,14 +10,32 @@ export default () => {
     const genesisBlock = ProtocolState.select.genesisBlock();
     const epoch = ProtocolState.select.epoch();
     const chainId = config.priority.usePriorityChainId();
-    const [blocknum, setBlocknum] = useState(0);
+    // const [blocknum, setBlocknum] = useState(0);
     const [lastChainUpdate, setLastChainUpdate] = useState(0);
-    const debouncedBlocknum = useDebounce(blocknum, 10);
+    // const debouncedBlocknum = useDebounce(blocknum, 10);
+    const provider = config.priority.usePriorityProvider();
+    const blocknum = ProtocolState.select.currentBlock();
+
+    const getBlock = useCallback(
+        (epoch: number) => {
+            return genesisBlock
+                ? Math.floor((epoch - poop.EPOCH_OFFSET) * poop.EPOCH_INTERVAL + genesisBlock)
+                : null;
+        },
+        [genesisBlock],
+    );
 
     useEffect(() => {
-        setBlocknum(0);
-        ProtocolState.dispatch.getGenesisBlock();
-    }, [genesisBlock, chainId]);
+        // setBlocknum(0);
+        // console.log({ provider, chainId });
+        if (provider && chainId) {
+            ProtocolState.dispatch.getGenesisBlock({ provider, chainId });
+            async function getit() {
+                ProtocolState.dispatch.setCurrentBlock(await provider.getBlockNumber());
+            }
+            getit();
+        }
+    }, [genesisBlock, chainId, provider]);
 
     const calculateEpochId = useCallback(
         (blocknum: number) => {
@@ -36,29 +51,81 @@ export default () => {
         [genesisBlock],
     );
 
+    const calculateEpochStartBlock = useCallback(
+        (epoch: number) => {
+            return genesisBlock
+                ? Math.floor((epoch - poop.EPOCH_OFFSET) * poop.EPOCH_INTERVAL + genesisBlock)
+                : null;
+        },
+        [genesisBlock],
+    );
+
+    // const updateBlocknum = useCallback(
+    //     (newBlock: number) =>
+    //         setBlocknum((currentBlock) => {
+    //             const blockToSet = Math.max(currentBlock, newBlock);
+    //             const calculatedEpoch = calculateEpochId(blockToSet);
+    //             if (isUndefinedOrNullOrObjectEmpty(epoch) || calculatedEpoch !== +epoch.id) {
+    //                 const startBlock = calculateEpochStartBlock(calculatedEpoch);
+    //                 const endBlock = calculateEpochStartBlock(calculatedEpoch + 1) - 1;
+    //                 if (startBlock && endBlock) {
+    //                     ProtocolState.dispatch.safeSetEpoch({
+    //                         epoch: {
+    //                             id: '' + calculatedEpoch,
+    //                             startblock: '' + startBlock,
+    //                             endblock: '' + endBlock,
+    //                         },
+    //                         chainId,
+    //                     });
+    //                 }
+    //             }
+    //             return blockToSet;
+    //         }),
+    //     [epoch, calculateEpochStartBlock, calculateEpochId, chainId],
+    // );
+
+    // useEffect(() => {
+    //     if (!isUndefinedOrNullOrNotNumber(debouncedBlocknum)) {
+    //         ProtocolState.dispatch.setCurrentBlock(debouncedBlocknum);
+    //         setLastChainUpdate(0);
+    //     }
+    // }, [debouncedBlocknum]);
+
     useEffect(() => {
-        if (!isUndefinedOrNullOrNotNumber(debouncedBlocknum)) {
-            ProtocolState.dispatch.setCurrentBlock(debouncedBlocknum);
-            setLastChainUpdate(0);
+        // const blockToSet = Math.max(currentBlock, newBlock);
+        const calculatedEpoch = calculateEpochId(blocknum);
+        if (isUndefinedOrNullOrObjectEmpty(epoch) || calculatedEpoch !== +epoch.id) {
+            const startBlock = calculateEpochStartBlock(calculatedEpoch);
+            const endBlock = calculateEpochStartBlock(calculatedEpoch + 1) - 1;
+            if (startBlock && endBlock) {
+                ProtocolState.dispatch.safeSetEpoch({
+                    epoch: {
+                        id: '' + calculatedEpoch,
+                        startblock: '' + startBlock,
+                        endblock: '' + endBlock,
+                    },
+                    chainId,
+                });
+            }
         }
-    }, [debouncedBlocknum]);
+    }, [blocknum, epoch, calculateEpochStartBlock, calculateEpochId, chainId]);
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            setLastChainUpdate((lastUpdate) => Web3Config.NETWORK_HEALTH_CHECK_MS + lastUpdate);
-            if (lastChainUpdate > Web3Config.DEFAULT_MS_BEFORE_WARNING) {
-                Web3State.dispatch.setConnectivityWarning(true);
-            } else {
-                Web3State.dispatch.setConnectivityWarning(false);
-            }
-        }, Web3Config.NETWORK_HEALTH_CHECK_MS);
+    // useEffect(() => {
+    //     const timeout = setTimeout(() => {
+    //         setLastChainUpdate((lastUpdate) => config.NETWORK_HEALTH_CHECK_MS + lastUpdate);
+    //         if (lastChainUpdate > config.DEFAULT_MS_BEFORE_WARNING) {
+    //             Web3State.dispatch.setConnectivityWarning(true);
+    //         } else {
+    //             Web3State.dispatch.setConnectivityWarning(false);
+    //         }
+    //     }, config.NETWORK_HEALTH_CHECK_MS);
 
-        return () => {
-            if (timeout) {
-                clearTimeout(timeout);
-            }
-        };
-    }, [lastChainUpdate, setLastChainUpdate]);
+    //     return () => {
+    //         if (timeout) {
+    //             clearTimeout(timeout);
+    //         }
+    //     };
+    // }, [lastChainUpdate, setLastChainUpdate]);
 
     useEffect(() => {
         ProtocolState.dispatch.updateStaked({ chainId });

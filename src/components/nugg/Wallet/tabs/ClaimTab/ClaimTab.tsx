@@ -30,6 +30,8 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const address = config.priority.usePriorityAccount();
     const epoch = ProtocolState.select.epoch();
+    const provider = config.priority.usePriorityProvider();
+
     const [unclaimedOffers, setUnclaimedOffers] = useState<NL.GraphQL.Fragments.Offer.Thumbnail[]>(
         [],
     );
@@ -45,7 +47,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
             setUnclaimedOffers([]);
         }
         setLoadingOffers(false);
-    }, [address, epoch]);
+    }, [address, epoch, chainId]);
 
     useEffect(() => {
         if (isActive) {
@@ -87,6 +89,8 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                                   label="Claim all"
                                   onClick={() =>
                                       WalletState.dispatch.multiClaim({
+                                          chainId,
+                                          provider,
                                           tokenIds: unclaimedOffers.map(
                                               (offer) => (offer as any).swap.nugg.id,
                                           ),
@@ -178,9 +182,12 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
                     buttonStyle={listStyles.renderButton}
                     label={`Claim`}
                     onClick={() =>
-                        WalletState.dispatch.claim({
-                            tokenId: parsedTitle.nugg,
-                        })
+                        // WalletState.dispatch.claim({
+                        //     provider,
+                        //     chainId,
+                        //     tokenId: parsedTitle.nugg,
+                        // })
+                        undefined
                     }
                 />
             </div>

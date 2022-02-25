@@ -16,7 +16,7 @@ const query = (id: string) => gql`
 const userSharesQuery = async (chainId: SupportedChainId, id: string) => {
     const result = (await executeQuery(
         chainId,
-        query(id),
+        query(id.toLowerCase()),
         'user',
     )) as NL.GraphQL.Fragments.User.Bare;
     return !isUndefinedOrNullOrObjectEmpty(result) && !isUndefinedOrNullOrArrayEmpty(result.nuggs)

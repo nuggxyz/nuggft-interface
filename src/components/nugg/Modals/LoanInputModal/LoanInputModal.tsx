@@ -1,22 +1,13 @@
-import { text } from 'stream/consumers';
-
-import { BigNumber } from 'ethers';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 
 import { EthInt } from '../../../../classes/Fraction';
 import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
 import useAsyncState from '../../../../hooks/useAsyncState';
-import {
-    isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '../../../../lib';
+import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import { fromEth } from '../../../../lib/conversion';
 import AppState from '../../../../state/app';
-import SwapState from '../../../../state/swap';
-import TokenState from '../../../../state/token';
 import TransactionState from '../../../../state/transaction';
 import WalletState from '../../../../state/wallet';
-import Web3State from '../../../../state/web3';
 import Button from '../../../general/Buttons/Button/Button';
 import CurrencyInput from '../../../general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '../../../general/Texts/Text/Text';
@@ -26,6 +17,7 @@ import useHandleError from '../../../../hooks/useHandleError';
 import AnimatedCard from '../../../general/Cards/AnimatedCard/AnimatedCard';
 import FontSize from '../../../../lib/fontSize';
 import Layout from '../../../../lib/layout';
+import config from '../../../../state/web32/config';
 
 import styles from './LoanInputModal.styles';
 
@@ -34,13 +26,14 @@ type Props = {};
 const LoanInputModal: FunctionComponent<Props> = () => {
     const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
-    const address = Web3State.select.web3address();
+    const address = config.priority.usePriorityAccount();
     const toggle = TransactionState.select.toggleCompletedTxn();
     const { targetId, type } = AppState.select.modalData();
 
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(targetId);
-
+    const provider = config.priority.usePriorityProvider();
+    const chainId = config.priority.usePriorityChainId();
     useEffect(() => {
         if (!isUndefinedOrNullOrStringEmpty(type)) {
             setType(type);
@@ -51,18 +44,18 @@ const LoanInputModal: FunctionComponent<Props> = () => {
     }, [type, targetId]);
 
     const userBalance = useAsyncState(
-        () => NuggftV1Helper.ethBalance(Web3State.getSignerOrProvider()),
-        [address, stableId],
+        () => provider && address && provider.getBalance(address),
+        [address, provider],
     );
 
     const amountFromChain = useAsyncState(
         () =>
             stableId &&
             (stableType === 'PayOffLoan'
-                ? NuggftV1Helper.instance
+                ? new NuggftV1Helper(chainId, provider).contract
                       //   .connect(Web3State.getSignerOrProvider())
                       .vfl([stableId])
-                : NuggftV1Helper.instance
+                : new NuggftV1Helper(chainId, provider).contract
                       //   .connect(Web3State.getSignerOrProvider())
                       .vfr([stableId])),
         [address, stableId, stableType],
@@ -136,11 +129,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                     marginBottom: '.5rem',
                 }}>
                 {userBalance && (
-                    <Text
-                        type="text"
-                        size="small"
-                        textStyle={styles.text}
-                        weight="bolder">
+                    <Text type="text" size="small" textStyle={styles.text} weight="bolder">
                         You currently have{' '}
                         {new EthInt(
                             userBalance
@@ -163,18 +152,20 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                 <FeedbackButton
                     feedbackText="Check Wallet..."
                     buttonStyle={styles.button}
-                    label={`${
-                        stableType === 'PayOffLoan' ? 'Payoff' : 'Extend'
-                    }`}
+                    label={`${stableType === 'PayOffLoan' ? 'Payoff' : 'Extend'}`}
                     onClick={() =>
                         stableType === 'PayOffLoan'
                             ? WalletState.dispatch.payOffLoan({
                                   tokenId: stableId,
                                   amount: amount,
+                                  chainId,
+                                  provider,
                               })
                             : WalletState.dispatch.extend({
                                   tokenId: stableId,
                                   amount: amount,
+                                  chainId,
+                                  provider,
                               })
                     }
                 />

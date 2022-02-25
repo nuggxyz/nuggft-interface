@@ -16,7 +16,7 @@ const query = (id: string, epoch: string) => gql`
 const unclaimedOffersQuery = async (chainId: SupportedChainId, id: string, epoch?: string) => {
     const result = (await executeQuery(
         chainId,
-        query(id, epoch),
+        query(id.toLowerCase(), epoch),
         'user',
     )) as NL.GraphQL.Fragments.User.Bare;
 

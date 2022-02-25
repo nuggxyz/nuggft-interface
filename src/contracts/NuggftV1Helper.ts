@@ -1,49 +1,31 @@
 import invariant from 'tiny-invariant';
-import { BigNumber } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 import gql from 'graphql-tag';
+import { Web3Provider } from '@ethersproject/providers';
 
 import { Address } from '../classes/Address';
 import { loadFromLocalStorage, saveToLocalStorage } from '../lib';
-import { DotnuggV1, NuggftV1 } from '../typechain';
+import { NuggftV1, NuggftV1__factory } from '../typechain';
 import { executeQuery } from '../graphql/helpers';
+import config, { SupportedChainId } from '../state/web32/config';
 
 import ContractHelper from './abstract/ContractHelper';
 
 export default class NuggftV1Helper extends ContractHelper {
-    protected static _instance: NuggftV1;
-    protected static _dotnugg: DotnuggV1;
+    public contract: NuggftV1;
 
-    // static get instance() {
-    //     if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._instance)) {
-    //         NuggftV1Helper._instance = new Contract(
-    //             Web3Config.activeChain__NuggftV1,
-    //             NuggftV1__factory.abi,
-    //             // Web3State.getLibraryOrProvider(),
-    //         ) as NuggftV1;
-    //     }
-    //     return NuggftV1Helper._instance.connect(Web3State.getSignerOrProvider());
-    // }
-
-    // static get dotnugg() {
-    //     if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._dotnugg)) {
-    //         NuggftV1Helper._dotnugg = new Contract(
-    //             Web3Config.activeChain__DotnuggV1,
-    //             DotnuggV1__factory.abi,
-    //         ) as DotnuggV1;
-    //     }
-    //     return NuggftV1Helper._dotnugg.connect(Web3State.getSignerOrProvider());
-    // }
-
-    static reset() {
-        NuggftV1Helper._instance = undefined;
-        NuggftV1Helper._dotnugg = undefined;
-    }
-    static set instance(_) {
-        return;
+    constructor(chainId: SupportedChainId, provider: Web3Provider) {
+        super();
+        this.contract = new Contract(
+            config.CONTRACTS[chainId].NuggftV1,
+            NuggftV1__factory.abi,
+            provider,
+        ) as NuggftV1;
+        this.contract.connect(provider);
     }
 
-    public static async ownerOf(tokenId: string): Promise<Address> {
-        const res = await this.instance.ownerOf(tokenId);
+    public async ownerOf(tokenId: string): Promise<Address> {
+        const res = await this.contract.ownerOf(tokenId);
         try {
             if (res) return new Address(res);
             else throw new Error('token does not exist');
@@ -101,10 +83,10 @@ export default class NuggftV1Helper extends ContractHelper {
         }
     }
 
-    public static async balanceOf(address: Address): Promise<BigNumber> {
-        return await this.instance.balanceOf(address.hash);
+    public async balanceOf(address: Address): Promise<BigNumber> {
+        return await this.contract.balanceOf(address.hash);
     }
-    public static async ethBalance(signer?: any): Promise<BigNumber> {
-        return (await signer) ? signer.getBalance() : this.instance?.signer?.getBalance();
+    public async ethBalance(signer?: any): Promise<BigNumber> {
+        return (await signer) ? signer.getBalance() : this.contract?.signer?.getBalance();
     }
 }

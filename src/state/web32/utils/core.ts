@@ -181,7 +181,6 @@ export function getPriorityConnector(...initializedConnectors: Res<Connector>[])
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const values = initializedConnectors.map((x, i) => x.hooks.useIsActive());
         const index = values.findIndex((x) => x);
-        console.log(index, initializedConnectors);
         return initializedConnectors[index === -1 ? 0 : index].connector;
     }
 
@@ -310,11 +309,15 @@ function getDerivedHooks({
     return { useAccount, useIsActive };
 }
 
-function useENS(provider?: Web3Provider, accounts?: string[]): (string | null)[] | undefined {
+export function useENS(
+    provider?: Web3Provider,
+    accounts?: string[],
+): (string | null)[] | undefined | [undefined] {
     const [ENSNames, setENSNames] = useState<(string | null)[] | undefined>();
-
     useEffect(() => {
-        if (provider && accounts?.length) {
+        console.log({ accounts });
+
+        if (provider && accounts?.length && accounts[0]) {
             let stale = false;
 
             Promise.all(accounts.map((account) => provider.lookupAddress(account)))

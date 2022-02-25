@@ -22,7 +22,7 @@ const query = (id: string, first: number, skip: number) => gql`
 const historyQuery = async (chainId: SupportedChainId, id: string, first: number, skip: number) => {
     const result = (await executeQuery(
         chainId,
-        query(id, first, skip),
+        query(id.toLowerCase(), first, skip),
         'user',
     )) as NL.GraphQL.Fragments.User.Bare;
 

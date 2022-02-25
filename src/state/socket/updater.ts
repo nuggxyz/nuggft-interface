@@ -1,42 +1,39 @@
-import {
-    InfuraWebSocketProvider,
-    Listener,
-    Log,
-} from '@ethersproject/providers';
+import { InfuraWebSocketProvider, Listener, Log } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
 import { useEffect } from 'react';
 
 import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import { LOSS } from '../../lib/conversion';
 import { StakeEvent, ClaimEvent, OfferEvent } from '../../typechain/NuggftV1';
-import Web3State from '../web3';
+import config from '../web32/config';
+import ProtocolState from '../protocol';
 
 import { formatLog, SocketType } from './interfaces';
 
 import SocketState from '.';
 
 export default () => {
-    const { library } = Web3State.hook.useActiveWeb3React();
-    const address = Web3State.select.web3address();
+    const address = config.priority.usePriorityAccount();
+
+    const provider = config.priority.usePriorityProvider();
+    const chainId = config.priority.usePriorityChainId();
 
     useEffect(() => {
-        if (library) {
+        if (provider) {
+            const helper = new NuggftV1Helper(chainId, provider);
+
             const socket = new InfuraWebSocketProvider(
                 'goerli',
                 'a1625b39cf0047febd415f9b37d8c931',
             );
             const update: Listener = (log: Log) => {
-                let event = NuggftV1Helper.instance.interface.parseLog(log);
+                let event = helper.contract.interface.parseLog(log);
 
                 console.log({ input: log, parsed: event });
 
                 switch (event.name) {
-                    case NuggftV1Helper.instance.interface.events[
-                        'Stake(bytes32)'
-                    ].name: // suck it
-                        const cache = BigNumber.from(
-                            (event as unknown as StakeEvent).args.cache,
-                        );
+                    case helper.contract.interface.events['Stake(bytes32)'].name: // suck it
+                        const cache = BigNumber.from((event as unknown as StakeEvent).args.cache);
 
                         SocketState.dispatch.incomingEvent({
                             type: SocketType.STAKE,
@@ -47,21 +44,15 @@ export default () => {
                         });
 
                         break;
-                    case NuggftV1Helper.instance.interface.events[
-                        'Claim(uint160,address)'
-                    ].name: // suck it more
+                    case helper.contract.interface.events['Claim(uint160,address)'].name: // suck it more
                         SocketState.dispatch.incomingEvent({
                             type: SocketType.CLAIM,
-                            tokenId: (event as unknown as ClaimEvent).args
-                                .tokenId._hex,
+                            tokenId: (event as unknown as ClaimEvent).args.tokenId._hex,
                             ...formatLog(log),
                         });
                         break;
-                    case NuggftV1Helper.instance.interface.events[
-                        'Offer(uint160,bytes32)'
-                    ].name: // suck it more
-                        const offerEvent = (event as unknown as OfferEvent)
-                            .args;
+                    case helper.contract.interface.events['Offer(uint160,bytes32)'].name: // suck it more
+                        const offerEvent = (event as unknown as OfferEvent).args;
                         const offerAgnecy = BigNumber.from(offerEvent.agency);
 
                         SocketState.dispatch.incomingEvent({
@@ -73,9 +64,7 @@ export default () => {
                             ...formatLog(log),
                         });
                         break;
-                    case NuggftV1Helper.instance.interface.events[
-                        'Mint(uint160,uint96)'
-                    ].name: // suck it more
+                    case helper.contract.interface.events['Mint(uint160,uint96)'].name: // suck it more
                         // const mintEvent = (event as unknown as MintEvent).args;
                         // const mintAgnecy = BigNumber.from(mintEvent.);
 
@@ -88,30 +77,23 @@ export default () => {
                         //     },
                         // });
                         break;
+                    // case 'block':
                     default:
                 }
             };
-
-            socket.addListener(
-                NuggftV1Helper.instance.filters.Stake(null),
-                update,
+            socket.addListener('block', (num: number) =>
+                ProtocolState.dispatch.setCurrentBlock(num),
             );
 
-            socket.addListener(
-                NuggftV1Helper.instance.filters.Offer(null, null),
-                update,
-            );
-            address &&
-                socket.addListener(
-                    NuggftV1Helper.instance.filters.Claim(null, address),
-                    update,
-                );
+            socket.addListener(helper.contract.filters.Stake(null), update);
+            socket.addListener(helper.contract.filters.Offer(null, null), update);
+            address && socket.addListener(helper.contract.filters.Claim(null, address), update);
 
             return () => {
                 socket.removeAllListeners();
             };
         }
-    }, [library, address]);
+    }, [provider, address]);
 
     return null;
 };

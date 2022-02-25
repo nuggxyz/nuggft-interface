@@ -1,7 +1,5 @@
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import config from '../state/web32/config';
-import { isUndefinedOrNullOrObjectEmpty } from '../lib';
-import Web3Config from '../state/web3/Web3Config';
 import { SupportedChainId } from '../state/web32/config';
 
 export default class GQLHelper {

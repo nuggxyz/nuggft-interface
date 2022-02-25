@@ -1,3 +1,4 @@
+import { Web3Provider } from '@ethersproject/providers';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BigNumberish } from 'ethers';
 
@@ -8,15 +9,15 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 import AppState from '../app';
-import Web3State from '../web3';
+import { SupportedChainId } from '../web32/config';
 
 const initSale = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
-    { tokenId: string; floor: BigNumberish },
+    { tokenId: string; floor: BigNumberish; chainId: SupportedChainId; provider: Web3Provider },
     { rejectValue: NL.Redux.Wallet.Error; state: NL.Redux.RootState }
->(`token/initSale`, async ({ tokenId, floor }, thunkAPI) => {
+>(`token/initSale`, async ({ tokenId, floor, chainId, provider }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggftV1Helper.instance[
+        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract[
             // .connect(Web3State.getSignerOrProvider())
             'sell(uint160,uint96)'
         ](tokenId, floor);

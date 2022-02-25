@@ -9,22 +9,20 @@ import React, {
 } from 'react';
 import {
     animated,
-    config,
+    config as springConfig,
     useSpring,
     useSpringRef,
     useTransition,
 } from '@react-spring/web';
 
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrObjectEmpty,
-} from '../../../../lib';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '../../../../lib';
 import NuggDexState from '../../../../state/nuggdex';
 import activeNuggsQuery from '../../../../state/nuggdex/queries/activeNuggsQuery';
 import ProtocolState from '../../../../state/protocol';
 import constants from '../../../../lib/constants';
 import allNuggsQuery from '../../../../state/nuggdex/queries/allNuggsQuery';
 import usePrevious from '../../../../hooks/usePrevious';
+import config from '../../../../state/web32/config';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -35,15 +33,11 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const epoch = ProtocolState.select.epoch();
     const prevEpoch = usePrevious(epoch);
     const filters = NuggDexState.select.searchFilters();
+    const chainId = config.priority.usePriorityChainId();
 
-    const [localViewing, setLocalViewing] =
-        useState<NL.Redux.NuggDex.SearchViews>('home');
-    const [allNuggs, setAllNuggs] = useState<
-        NL.GraphQL.Fragments.Nugg.ListItem[]
-    >([]);
-    const [activeNuggs, setActiveNuggs] = useState<
-        NL.GraphQL.Fragments.Nugg.ListItem[]
-    >([]);
+    const [localViewing, setLocalViewing] = useState<NL.Redux.NuggDex.SearchViews>('home');
+    const [allNuggs, setAllNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
+    const [activeNuggs, setActiveNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
     const recents = NuggDexState.select.recents();
 
     const [nuggLinkRef, setNuggLinkRef] = useState<HTMLDivElement>();
@@ -59,9 +53,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     }, [nuggLinkRef, localViewing]);
 
     useEffect(() => {
-        homeRef &&
-            homeRef.current &&
-            setHomeRect(homeRef.current.getBoundingClientRect());
+        homeRef && homeRef.current && setHomeRect(homeRef.current.getBoundingClientRect());
     }, [homeRef]);
 
     const transRef = useSpringRef();
@@ -99,6 +91,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         ) => {
             setLoading && setLoading(true);
             const activeNuggs = await activeNuggsQuery(
+                chainId,
                 filters.sort.by,
                 filters.sort.asc ? 'asc' : 'desc',
                 filters.searchValue,
@@ -107,13 +100,11 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 startFrom,
             );
             if (!isUndefinedOrNullOrArrayEmpty(activeNuggs)) {
-                setResults((res) =>
-                    addToResult ? [...res, ...activeNuggs] : activeNuggs,
-                );
+                setResults((res) => (addToResult ? [...res, ...activeNuggs] : activeNuggs));
             }
             setLoading && setLoading(false);
         },
-        [epoch],
+        [epoch, chainId],
     );
 
     const handleGetAll = useCallback(
@@ -126,18 +117,17 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         ) => {
             setLoading && setLoading(true);
             const allNuggs = await allNuggsQuery(
+                chainId,
                 filters.sort.by,
                 filters.sort.asc ? 'asc' : 'desc',
                 filters.searchValue,
                 constants.NUGGDEX_SEARCH_LIST_CHUNK,
                 startFrom,
             );
-            setResults((res) =>
-                addToResult ? [...res, ...allNuggs] : allNuggs,
-            );
+            setResults((res) => (addToResult ? [...res, ...allNuggs] : allNuggs));
             setLoading && setLoading(false);
         },
-        [],
+        [chainId],
     );
 
     const onScrollEnd = useCallback(
@@ -184,10 +174,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 
     useEffect(() => {
         if (epoch) {
-            localViewing !== 'all nuggs' &&
-                handleGetAll(setAllNuggs, 0, false, filters);
-            localViewing !== 'on sale' &&
-                handleGetActive(setActiveNuggs, 0, false, filters);
+            localViewing !== 'all nuggs' && handleGetAll(setAllNuggs, 0, false, filters);
+            localViewing !== 'on sale' && handleGetActive(setActiveNuggs, 0, false, filters);
         }
     }, [epoch]);
 
@@ -199,29 +187,21 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             ref: transRef,
             keys: null,
             from: {
-                left: nuggLinkRect
-                    ? `${nuggLinkRect.left - homeRect.left}px`
-                    : '0px',
-                top: nuggLinkRect
-                    ? `${nuggLinkRect.top - homeRect.top}px`
-                    : '0px',
+                left: nuggLinkRect ? `${nuggLinkRect.left - homeRect.left}px` : '0px',
+                top: nuggLinkRect ? `${nuggLinkRect.top - homeRect.top}px` : '0px',
                 width: localViewing === 'all nuggs' ? '90%' : '35%',
                 height: '35%',
                 opacity: 0,
             },
             enter: styles.nuggListEnter,
             leave: {
-                left: nuggLinkRect
-                    ? `${nuggLinkRect.left - homeRect.left}px`
-                    : '600px',
-                top: nuggLinkRect
-                    ? `${nuggLinkRect.top - homeRect.top}px`
-                    : '600px',
+                left: nuggLinkRect ? `${nuggLinkRect.left - homeRect.left}px` : '600px',
+                top: nuggLinkRect ? `${nuggLinkRect.top - homeRect.top}px` : '600px',
                 width: localViewing === 'all nuggs' ? '90%' : '30%',
                 height: '30%',
                 opacity: 0,
             },
-            config: config.default,
+            config: springConfig.default,
             onRest: () => setAnimationToggle(!animationToggle),
         },
         [nuggLinkRect, homeRect, animationToggle],

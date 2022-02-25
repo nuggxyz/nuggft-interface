@@ -1,6 +1,3 @@
-import { text } from 'stream/consumers';
-
-import { BigNumber } from 'ethers';
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 
 import { EthInt } from '../../../../classes/Fraction';
@@ -11,25 +8,22 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../../../lib';
-import { fromEth, toEth } from '../../../../lib/conversion';
+import { fromEth } from '../../../../lib/conversion';
 import AppState from '../../../../state/app';
 import SwapState from '../../../../state/swap';
 import TokenState from '../../../../state/token';
 import TransactionState from '../../../../state/transaction';
-import WalletState from '../../../../state/wallet';
-import Web3State from '../../../../state/web3';
 import Button from '../../../general/Buttons/Button/Button';
 import CurrencyInput from '../../../general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '../../../general/Texts/Text/Text';
 import TokenViewer from '../../TokenViewer';
 import constants from '../../../../lib/constants';
 import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
-import { Address } from '../../../../classes/Address';
-import Web3Config from '../../../../state/web3/Web3Config';
 import AnimatedCard from '../../../general/Cards/AnimatedCard/AnimatedCard';
 import Layout from '../../../../lib/layout';
 import FontSize from '../../../../lib/fontSize';
 import useHandleError from '../../../../hooks/useHandleError';
+import config from '../../../../state/web32/config';
 
 import styles from './OfferOrSellModal.styles';
 
@@ -38,19 +32,22 @@ type Props = {};
 const OfferOrSellModal: FunctionComponent<Props> = () => {
     const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
-    const address = Web3State.select.web3address();
+    const address = config.priority.usePriorityAccount();
     const toggle = TransactionState.select.toggleCompletedTxn();
     const nugg = SwapState.select.nugg();
 
+    const provider = config.priority.usePriorityProvider();
+    const chainId = config.priority.usePriorityChainId();
+
     const userBalance = useAsyncState(
-        () => NuggftV1Helper.ethBalance(Web3State.getSignerOrProvider()),
-        [address, nugg],
+        () => provider && provider.getBalance(address),
+        [address, provider, chainId],
     );
 
     // const VFO = useAsyncState(
     //     () =>
     //         nugg &&
-    //         NuggftV1Helper.instance
+    //         new NuggftV1Helper(chainId, provider).contract
     //             .connect(Web3State.getLibraryOrProvider())
     //             ['vfo(address,uint160)'](address, nugg.id),
     //     [address, nugg],
@@ -59,35 +56,16 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     const check = useAsyncState(
         () =>
             nugg &&
-            NuggftV1Helper.instance[
-                // .connect(Web3State.getSignerOrProvider())
-                'check(address,uint160)'
-            ](address, nugg.id),
+            new NuggftV1Helper(chainId, provider).contract['vfo(address,uint160)'](
+                address,
+                nugg.id,
+            ),
         [address, nugg],
     );
 
     const minOfferAmount = useMemo(() => {
         if (!isUndefinedOrNullOrObjectEmpty(check)) {
-            if (!check.senderCurrentOffer.isZero()) {
-                return fromEth(
-                    check?.nextSwapAmount
-                        // .sub(check?.senderCurrentOffer)
-                        .div(10 ** 13)
-                        .add(1)
-                        .mul(10 ** 13),
-                );
-            } else {
-                return Math.max(
-                    +fromEth(
-                        check.nextSwapAmount
-                            // .sub(check.senderCurrentOffer)
-                            .div(10 ** 13)
-                            .add(1)
-                            .mul(10 ** 13),
-                    ),
-                    constants.MIN_OFFER,
-                );
-            }
+            return check;
         }
         return constants.MIN_OFFER;
     }, [check]);
@@ -111,10 +89,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 {stableType === 'StartSale'
                     ? `Sell Nugg #${stableId || nugg?.id}`
                     : `${
-                          check &&
-                          !isUndefinedOrNullOrNumberZero(
-                              check.senderCurrentOffer.toNumber(),
-                          )
+                          check && !isUndefinedOrNullOrNumberZero(check.toNumber())
                               ? 'Change bid for'
                               : 'Bid on'
                       } Nugg #${stableId || nugg?.id}`}
@@ -129,11 +104,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     style={styles.input}
                     styleHeading={styles.heading}
                     styleInputContainer={styles.inputCurrency}
-                    label={
-                        stableType === 'StartSale'
-                            ? 'Enter floor'
-                            : 'Enter amount'
-                    }
+                    label={stableType === 'StartSale' ? 'Enter floor' : 'Enter amount'}
                     setValue={(text: string) => {
                         setAmount(text);
                         clearError();
@@ -164,11 +135,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     marginBottom: '.5rem',
                 }}>
                 {stableType === 'Offer' && userBalance && (
-                    <Text
-                        type="text"
-                        size="smaller"
-                        textStyle={styles.text}
-                        weight="bolder">
+                    <Text type="text" size="smaller" textStyle={styles.text} weight="bolder">
                         You currently have
                         <Text
                             type="code"
@@ -202,39 +169,29 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 <FeedbackButton
                     overrideFeedback
                     feedbackText="Check Wallet..."
-                    disabled={check && !check.canOffer}
+                    // disabled={check && !check.canOffer}
+                    // TODO find better way to do this with vfo
                     buttonStyle={styles.button}
-                    label={
-                        check && !check.canOffer
-                            ? `You cannot ${
-                                  stableType === 'StartSale'
-                                      ? 'sell'
-                                      : 'place an offer on'
-                              } this Nugg`
-                            : `${
-                                  stableType === 'StartSale'
-                                      ? 'Sell Nugg'
-                                      : check &&
-                                        !isUndefinedOrNullOrNumberZero(
-                                            check.senderCurrentOffer.toNumber(),
-                                        )
-                                      ? 'Update offer'
-                                      : 'Place offer'
-                              }`
-                    }
+                    label={`${
+                        stableType === 'StartSale'
+                            ? 'Sell Nugg'
+                            : check && !isUndefinedOrNullOrNumberZero(check.toNumber())
+                            ? 'Update offer'
+                            : 'Place offer'
+                    }`}
                     onClick={() =>
                         stableType === 'Offer'
                             ? SwapState.dispatch.placeOffer({
                                   tokenId: nugg?.id,
-                                  amount: fromEth(
-                                      toEth(amount).sub(
-                                          check.senderCurrentOffer,
-                                      ),
-                                  ),
+                                  amount: fromEth(check),
+                                  chainId,
+                                  provider,
                               })
                             : TokenState.dispatch.initSale({
                                   tokenId: stableId,
-                                  floor: check.nextSwapAmount,
+                                  floor: fromEth(check),
+                                  chainId,
+                                  provider,
                               })
                     }
                 />

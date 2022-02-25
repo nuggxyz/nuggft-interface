@@ -44,11 +44,7 @@ const NuggLinkThumbnail: FunctionComponent<{
                     // }
                 );
             }}>
-            <TokenViewer
-                tokenId={item.id || ''}
-                style={styles.nugg}
-                data={item.dotnuggRawCache}
-            />
+            <TokenViewer tokenId={item.id || ''} style={styles.nugg} data={item.dotnuggRawCache} />
             <Text size="smaller" textStyle={styles.label}>
                 {item.id}
             </Text>

@@ -1,3 +1,4 @@
+import { Web3Provider } from '@ethersproject/providers';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import NuggftV1Helper from '../../contracts/NuggftV1Helper';
@@ -42,6 +43,7 @@ const safeSetEpoch = createAsyncThunk<
         data: {
             epoch: { id: string; startblock: string; endblock: string };
             isOver: boolean;
+            chainId: SupportedChainId;
         };
     },
     { epoch: { id: string; startblock: string; endblock: string }; chainId: SupportedChainId },
@@ -65,6 +67,7 @@ const safeSetEpoch = createAsyncThunk<
                 data: {
                     epoch: res.epoch,
                     isOver: true,
+                    chainId,
                 },
             };
         } else {
@@ -73,6 +76,7 @@ const safeSetEpoch = createAsyncThunk<
                 data: {
                     epoch,
                     isOver: false,
+                    chainId,
                 },
             };
         }
@@ -247,13 +251,13 @@ const getGenesisBlock = createAsyncThunk<
         success: NL.Redux.Protocol.Success;
         data: number;
     },
-    undefined,
+    { chainId: SupportedChainId; provider: Web3Provider },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
->('protocol/getGenesisBlock', async (_, thunkAPI) => {
+>('protocol/getGenesisBlock', async ({ chainId, provider }, thunkAPI) => {
     try {
-        const res = await NuggftV1Helper.instance
+        const res = await new NuggftV1Helper(chainId, provider).contract
             // .connect(Web3State.getSignerOrProvider())
             .genesis();
 

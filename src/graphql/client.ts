@@ -7,8 +7,7 @@ import constants from './constants';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { split, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
-import Web3Config from '../state/web3/Web3Config';
-import Web3State from '../state/web3';
+
 import store, { states } from '../state/store';
 import config, { SupportedChainId } from '../state/web32/config';
 

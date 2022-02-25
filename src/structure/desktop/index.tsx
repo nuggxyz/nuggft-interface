@@ -1,7 +1,6 @@
 import React, { FunctionComponent, Suspense } from 'react';
 import { Helmet } from 'react-helmet';
 
-import Loader from '../../components/general/Loader/Loader';
 import PageContainer from '../../components/nugg/PageLayout/PageContainer/PageContainer';
 import { isUndefinedOrNullOrObjectEmpty } from '../../lib';
 import ProtocolState from '../../state/protocol';

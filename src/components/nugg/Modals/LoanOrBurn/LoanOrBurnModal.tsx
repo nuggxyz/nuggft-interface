@@ -2,21 +2,17 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 
 import AppState from '../../../../state/app';
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
-import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
 import ProtocolState from '../../../../state/protocol';
 import TransactionState from '../../../../state/transaction';
 import TokenViewer from '../../TokenViewer';
-import Button from '../../../general/Buttons/Button/Button';
 import Text from '../../../general/Texts/Text/Text';
 import WalletState from '../../../../state/wallet';
-import TokenState from '../../../../state/token';
 import { fromEth } from '../../../../lib/conversion';
-import { Address } from '../../../../classes/Address';
-import Web3Config from '../../../../state/web3/Web3Config';
 import FontSize from '../../../../lib/fontSize';
 import AnimatedCard from '../../../general/Cards/AnimatedCard/AnimatedCard';
 import Colors from '../../../../lib/colors';
 import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
+import config from '../../../../state/web32/config';
 
 import styles from './LoanOrBurn.styles';
 
@@ -26,6 +22,8 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
     const shareValue = ProtocolState.select.nuggftStakedEthPerShare();
     const toggle = TransactionState.select.toggleCompletedTxn();
     const { targetId, type } = AppState.select.modalData();
+    const chainId = config.priority.usePriorityChainId();
+    const provider = config.priority.usePriorityProvider();
 
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(targetId);
@@ -73,9 +71,13 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                         stableType === 'Loan'
                             ? WalletState.dispatch.initLoan({
                                   tokenId: stableId,
+                                  chainId,
+                                  provider,
                               })
                             : WalletState.dispatch.withdraw({
                                   tokenId: stableId,
+                                  chainId,
+                                  provider,
                               })
                     }
                 />

@@ -1,14 +1,10 @@
-import React, { Fragment, FunctionComponent, useEffect, useState } from 'react';
+import React, { Fragment, FunctionComponent, useState } from 'react';
 
-import { Address } from '../../../../classes/Address';
-import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
 import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
 import { fromEth } from '../../../../lib/conversion';
 import NuggDexState from '../../../../state/nuggdex';
 import ProtocolState from '../../../../state/protocol';
 import TransactionState from '../../../../state/transaction';
-import WalletState from '../../../../state/wallet';
-import Web3Config from '../../../../state/web3/Web3Config';
 import Button from '../../../general/Buttons/Button/Button';
 import Text from '../../../general/Texts/Text/Text';
 import TokenViewer from '../../TokenViewer';
@@ -26,9 +22,7 @@ const BurnModal: FunctionComponent<Props> = () => {
 
     return (
         <div style={styles.container}>
-            <Text textStyle={styles.textWhite}>
-                Select a NuggFT to withdraw
-            </Text>
+            <Text textStyle={styles.textWhite}>Select a NuggFT to withdraw</Text>
             <div style={styles.nuggCarousel}>
                 {myNuggs.map((nugg) => (
                     <Fragment key={nugg}>
@@ -45,9 +39,7 @@ const BurnModal: FunctionComponent<Props> = () => {
                                     labelColor="white"
                                 />
                             }
-                            onClick={() =>
-                                setSelected(nugg === selected ? '' : nugg)
-                            }
+                            onClick={() => setSelected(nugg === selected ? '' : nugg)}
                         />
                     </Fragment>
                 ))}
@@ -64,11 +56,7 @@ const BurnModal: FunctionComponent<Props> = () => {
                             : 'Withdraw'
                     }
                     disabled={isUndefinedOrNullOrStringEmpty(selected)}
-                    onClick={() =>
-                        WalletState.dispatch.withdraw({
-                            tokenId: selected,
-                        })
-                    }
+                    onClick={() => undefined}
                 />
             </div>
         </div>

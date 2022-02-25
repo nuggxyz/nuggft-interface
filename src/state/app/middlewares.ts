@@ -2,15 +2,12 @@ import { Middleware, Dispatch, PayloadAction } from '@reduxjs/toolkit';
 
 import {
     isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrNotNumber,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
     loadFromLocalStorage,
     saveToLocalStorage,
 } from '../../lib';
 import { isUndefinedOrNull } from '../../lib/index';
-import SwapState from '../swap';
-import TokenState from '../token';
 import { NLState } from '../NLState';
 
 import AppState from '.';
@@ -63,11 +60,7 @@ import AppState from '.';
 //         console.log('NOT MOVING ON');
 //     };
 
-const logger: NL.Redux.Middleware<
-    Record<string, unknown>,
-    any,
-    Dispatch<any>
-> =
+const logger: NL.Redux.Middleware<Record<string, unknown>, any, Dispatch<any>> =
     ({ dispatch, getState }) =>
     (next: any) =>
     async (action) => {
@@ -77,12 +70,7 @@ const logger: NL.Redux.Middleware<
         //     'color:  #b3bd2d; font-weight: bold',
         //     getState(),
         // );
-        console.log(
-            '%cAction',
-            'color: #6FAAF7; font-weight: bold',
-            action.type,
-            action.payload,
-        );
+        console.log('%cAction', 'color: #6FAAF7; font-weight: bold', action.type, action.payload);
         let fin = next(action);
         // console.log(
         //     '%cCurrent state:',
@@ -105,9 +93,7 @@ const localStorager: Middleware<{}, any, Dispatch<any>> =
             !isUndefinedOrNull(_._localStorageValue) &&
             !isUndefinedOrNullOrStringEmpty(_._localStorageExpectedType)
         ) {
-            let possibleValue = await loadFromLocalStorage(
-                _._localStorageTarget,
-            );
+            let possibleValue = await loadFromLocalStorage(_._localStorageTarget);
             if (_._localStorageExpectedType === 'array') {
                 if (!isUndefinedOrNullOrArrayEmpty(possibleValue)) {
                     if (possibleValue.indexOf(_._localStorageValue) === -1) {
@@ -141,9 +127,7 @@ const localStorager: Middleware<{}, any, Dispatch<any>> =
             !isUndefinedOrNullOrObjectEmpty(_) &&
             !isUndefinedOrNullOrStringEmpty(_._localStorageTarget)
         ) {
-            let possibleValue = await loadFromLocalStorage(
-                _._localStorageTarget,
-            );
+            let possibleValue = await loadFromLocalStorage(_._localStorageTarget);
             tempAction.payload = possibleValue;
         }
 
@@ -160,22 +144,16 @@ const viewChange: Middleware<{}, any, Dispatch<any>> =
                 const currentToken = getState().token.tokenId;
                 AppState.silentlySetRoute(
                     `#/nugg${
-                        !isUndefinedOrNullOrStringEmpty(currentToken)
-                            ? `/${currentToken}`
-                            : ''
+                        !isUndefinedOrNullOrStringEmpty(currentToken) ? `/${currentToken}` : ''
                     }`,
                 );
             } else {
                 const currentSwap = getState().swap.id;
-                const currentEpoch = !isUndefinedOrNullOrObjectEmpty(
-                    getState().protocol.epoch,
-                )
+                const currentEpoch = !isUndefinedOrNullOrObjectEmpty(getState().protocol.epoch)
                     ? getState().protocol.epoch.id
                     : '';
                 AppState.silentlySetRoute(
-                    (currentEpoch &&
-                        currentSwap &&
-                        currentSwap.includes(currentEpoch)) ||
+                    (currentEpoch && currentSwap && currentSwap.includes(currentEpoch)) ||
                         !currentSwap
                         ? '/'
                         : `#/swap/${currentSwap}`,
