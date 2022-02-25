@@ -1,3 +1,4 @@
+import { InfuraWebSocketProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
 
 import { MetaMask } from './clients/metamask';
@@ -11,7 +12,7 @@ export enum SupportedChainId {
     ROPSTEN = 3,
     RINKEBY = 4,
     GOERLI = 5,
-    KOVAN = 42,
+    // KOVAN = 42,
 }
 
 export function supportedChainIds() {
@@ -25,6 +26,10 @@ export const NETWORK_HEALTH_CHECK_MS = 15 * 1000;
 export const DEFAULT_MS_BEFORE_WARNING = 90 * 1000;
 
 export const INFURA_KEY = 'a1625b39cf0047febd415f9b37d8c931';
+
+export const isValidChainId = (input: number) => {
+    return supportedChainIds().indexOf(input) !== -1;
+};
 
 export const CONTRACTS = {
     [SupportedChainId.MAINNET]: {
@@ -121,42 +126,47 @@ export const SUPPORTED_WALLETS: { [key: string]: NL.Redux.Web32.WalletInfo } = {
     },
 };
 
-export const CHAIN_INFO = {
+export const CHAIN_INFO: {
+    [key in SupportedChainId]: L1ChainInfo;
+} = {
     [SupportedChainId.MAINNET]: {
         docs: 'https://docs.uniswap.org/',
         explorer: 'https://etherscan.io/',
         infoLink: 'https://info.uniswap.org/#/',
-        label: 'Ethereum',
+        name: 'Ethereum',
         logoUrl: 'assets/images/ethereum-logo.png',
         nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+        label: 'mainnet',
     },
     [SupportedChainId.RINKEBY]: {
         docs: 'https://docs.uniswap.org/',
         explorer: 'https://rinkeby.etherscan.io/',
         infoLink: 'https://info.uniswap.org/#/',
-        label: 'Rinkeby',
+        name: 'Rinkeby',
         nativeCurrency: {
             name: 'Rinkeby ETH',
             symbol: 'rinkETH',
             decimals: 18,
         },
+        label: 'rinkeby',
     },
     [SupportedChainId.ROPSTEN]: {
         docs: 'https://docs.uniswap.org/',
         explorer: 'https://ropsten.etherscan.io/',
         infoLink: 'https://info.uniswap.org/#/',
-        label: 'Ropsten',
+        name: 'Ropsten',
         nativeCurrency: {
             name: 'Ropsten ETH',
             symbol: 'ropETH',
             decimals: 18,
         },
+        label: 'ropsten',
     },
     // [SupportedChainId.KOVAN]: {
     //     docs: 'https://docs.uniswap.org/',
     //     explorer: 'https://kovan.etherscan.io/',
     //     infoLink: 'https://info.uniswap.org/#/',
-    //     label: 'Kovan',
+    //     name: 'Kovan',
     //     nativeCurrency: {
     //         name: 'Kovan ETH',
     //         symbol: 'kovETH',
@@ -167,13 +177,18 @@ export const CHAIN_INFO = {
         docs: 'https://docs.uniswap.org/',
         explorer: 'https://goerli.etherscan.io/',
         infoLink: 'https://info.uniswap.org/#/',
-        label: 'Görli',
+        name: 'Görli',
         nativeCurrency: {
             name: 'Görli ETH',
             symbol: 'görETH',
             decimals: 18,
         },
+        label: 'goerli',
     },
+};
+
+export const createInfuraWebSocket = (chainId: SupportedChainId) => {
+    return new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY);
 };
 
 export const ENS_REGISTRAR_ADDRESSES: NL.Redux.Web32.AddressMap = {

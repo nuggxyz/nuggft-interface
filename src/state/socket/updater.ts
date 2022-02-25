@@ -1,11 +1,17 @@
-import { InfuraWebSocketProvider, Listener, Log } from '@ethersproject/providers';
+import {
+    InfuraWebSocketProvider,
+    Listener,
+    Log,
+    TransactionReceipt,
+} from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { LOSS } from '@src/lib/conversion';
 import ProtocolState from '@src/state/protocol';
 import web3 from '@src/web3';
+import TransactionState from '@src/state/transaction';
 
 import { StakeEvent, ClaimEvent, OfferEvent } from '../../typechain/NuggftV1';
 
@@ -15,17 +21,41 @@ import SocketState from '.';
 
 export default () => {
     const address = web3.hook.usePriorityAccount();
-    const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
+    const tx = TransactionState.select.txn();
+
+    const [instance, setInstance] = useState<InfuraWebSocketProvider>(undefined);
+    const [helper, setHelper] = useState<NuggftV1Helper>(undefined);
 
     useEffect(() => {
-        if (provider) {
-            const helper = new NuggftV1Helper(chainId, provider);
+        if (chainId && web3.config.isValidChainId(chainId)) {
+            setInstance(web3.config.createInfuraWebSocket(chainId));
+            setHelper(new NuggftV1Helper(chainId, undefined));
 
-            const socket = new InfuraWebSocketProvider(
-                'goerli',
-                'a1625b39cf0047febd415f9b37d8c931',
-            );
+            return () => {
+                setHelper(undefined);
+                if (instance && instance._wsReady) {
+                    instance.removeAllListeners();
+                    instance.destroy();
+                }
+            };
+        }
+    }, [chainId]);
+
+    useEffect(() => {
+        if (instance && tx) {
+            instance.once(tx, (log: TransactionReceipt) => {
+                console.log({ log });
+                TransactionState.dispatch.finalizeTransaction({
+                    hash: log.transactionHash,
+                    successful: log.status === 1,
+                });
+            });
+        }
+    }, [tx, instance]);
+
+    useEffect(() => {
+        if (instance && helper) {
             const update: Listener = (log: Log) => {
                 let event = helper.contract.interface.parseLog(log);
 
@@ -81,19 +111,15 @@ export default () => {
                     default:
                 }
             };
-            socket.addListener('block', (num: number) =>
+
+            instance.addListener('block', (num: number) =>
                 ProtocolState.dispatch.setCurrentBlock(num),
             );
-
-            socket.addListener(helper.contract.filters.Stake(null), update);
-            socket.addListener(helper.contract.filters.Offer(null, null), update);
-            address && socket.addListener(helper.contract.filters.Claim(null, address), update);
-
-            return () => {
-                socket.removeAllListeners();
-            };
+            instance.addListener(helper.contract.filters.Stake(null), update);
+            instance.addListener(helper.contract.filters.Offer(null, null), update);
+            address && instance.addListener(helper.contract.filters.Claim(null, address), update);
         }
-    }, [provider, address]);
+    }, [instance, helper, address]);
 
     return null;
 };

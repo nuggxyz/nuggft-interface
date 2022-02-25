@@ -190,9 +190,7 @@ const mintNugg = createAsyncThunk<
             'nuggs',
         );
 
-        const nuggPrice = await new NuggftV1Helper(chainId, provider).contract
-            // .connect(Web3State.getSignerOrProvider())
-            .msp();
+        const nuggPrice = await new NuggftV1Helper(chainId, provider).contract.msp();
 
         if (
             isUndefinedOrNullOrArrayEmpty(latestNugg) ||

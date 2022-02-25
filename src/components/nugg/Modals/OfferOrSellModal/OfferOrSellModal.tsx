@@ -73,12 +73,10 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     useEffect(() => {
         if (!check && nugg && address && chainId && provider) {
             async function a() {
-                console.log({ check, nugg, address });
                 const helo = await new NuggftV1Helper(chainId, provider).contract[
                     'check(address,uint160)'
                 ](address, nugg.id);
 
-                console.log({ helo });
                 setCheck(helo);
             }
             a();

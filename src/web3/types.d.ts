@@ -25,18 +25,20 @@ declare namespace NL.Redux.Web32 {
         mobile?: true;
         mobileOnly?: true;
     }
-    interface L1ChainInfo {
-        readonly blockWaitMsBeforeWarning?: number;
-        readonly docs: string;
-        readonly explorer: string;
-        readonly infoLink: string;
-        readonly label: string;
-        readonly logoUrl?: string;
-        readonly rpcUrls?: string[];
-        readonly nativeCurrency: {
-            name: string; // 'Goerli ETH',
-            symbol: string; // 'gorETH',
-            decimals: number; //18,
-        };
-    }
+}
+
+interface L1ChainInfo {
+    readonly blockWaitMsBeforeWarning?: number;
+    readonly docs: string;
+    readonly explorer: string;
+    readonly infoLink: string;
+    readonly label: string;
+    readonly logoUrl?: string;
+    readonly rpcUrls?: string[];
+    readonly nativeCurrency: {
+        name: string; // 'Goerli ETH',
+        symbol: string; // 'gorETH',
+        decimals: number; //18,
+    };
+    readonly name: string;
 }
