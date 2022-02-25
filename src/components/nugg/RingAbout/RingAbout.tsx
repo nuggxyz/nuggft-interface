@@ -10,7 +10,6 @@ import { fromEth } from '@src/lib/conversion';
 import Colors from '@src/lib/colors';
 import usePrevious from '@src/hooks/usePrevious';
 import useSetState from '@src/hooks/useSetState';
-import { useENS } from '@src/web3/core/core';
 import ProtocolState from '@src/state/protocol';
 import AppState from '@src/state/app';
 import SwapState from '@src/state/swap';
@@ -250,7 +249,7 @@ const OfferRenderItem = ({
     index: number;
 }) => {
     // TODO - fix ens
-    const leaderEns = useENS(provider, [offer.user.id]);
+    const leaderEns = web3.hook.usePriorityAnyENSName(provider, offer.user.id);
     return (
         <div style={styles.offerAmount}>
             <CurrencyText image="eth" value={+fromEth(offer.eth)} />

@@ -142,6 +142,18 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         return values[index];
     }
 
+    function useSelectedAnyENSName(
+        connector: Connector,
+        provider: Web3Provider | undefined,
+        account: string,
+    ) {
+        const index = getIndex(connector);
+        const values = initializedConnectors.map((x, i) =>
+            x.hooks.useAnyENSName(i === index ? provider : undefined, account),
+        );
+        return values[index];
+    }
+
     return {
         useSelectedChainId,
         useSelectedAccounts,
@@ -153,6 +165,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         useSelectedENSNames,
         useSelectedENSName,
         useSelectedWeb3React,
+        useSelectedAnyENSName,
     };
 }
 
@@ -175,6 +188,7 @@ export function getPriorityConnector(...initializedConnectors: Res<Connector>[])
         useSelectedENSNames,
         useSelectedENSName,
         useSelectedWeb3React,
+        useSelectedAnyENSName,
     } = getSelectedConnector(...initializedConnectors);
 
     function usePriorityConnector() {
@@ -224,6 +238,9 @@ export function getPriorityConnector(...initializedConnectors: Res<Connector>[])
         return useSelectedWeb3React(usePriorityConnector(), provider);
     }
 
+    function usePriorityAnyENSName(provider: Web3Provider | undefined, account: string) {
+        return useSelectedAnyENSName(usePriorityConnector(), provider, account);
+    }
     return {
         useSelectedChainId,
         useSelectedAccounts,
@@ -235,6 +252,7 @@ export function getPriorityConnector(...initializedConnectors: Res<Connector>[])
         useSelectedENSNames,
         useSelectedENSName,
         useSelectedWeb3React,
+        useSelectedAnyENSName,
         usePriorityConnector,
         usePriorityChainId,
         usePriorityAccounts,
@@ -246,6 +264,7 @@ export function getPriorityConnector(...initializedConnectors: Res<Connector>[])
         usePriorityENSNames,
         usePriorityENSName,
         usePriorityWeb3React,
+        usePriorityAnyENSName,
     };
 }
 
@@ -309,9 +328,9 @@ function getDerivedHooks({
     return { useAccount, useIsActive };
 }
 
-export function useENS(
-    provider?: Web3Provider,
-    accounts?: string[],
+function useENS(
+    provider: Web3Provider,
+    accounts: string[],
 ): (string | null)[] | undefined | [undefined] {
     const [ENSNames, setENSNames] = useState<(string | null)[] | undefined>();
     useEffect(() => {
@@ -381,6 +400,15 @@ function getAugmentedHooks<T extends Connector>(
         return useENS(provider, accounts)?.[0];
     }
 
+    function useAnyENSName(
+        provider: Web3Provider | undefined,
+        account: string,
+    ): (string | null) | undefined {
+        const accounts = useMemo(() => (account === undefined ? undefined : [account]), [account]);
+
+        return useENS(provider, accounts)?.[0];
+    }
+
     // for backwards compatibility only
     function useWeb3React(provider: Web3Provider | undefined) {
         const chainId = useChainId();
@@ -402,5 +430,5 @@ function getAugmentedHooks<T extends Connector>(
         );
     }
 
-    return { useProvider, useENSNames, useENSName, useWeb3React };
+    return { useProvider, useENSNames, useENSName, useWeb3React, useAnyENSName };
 }

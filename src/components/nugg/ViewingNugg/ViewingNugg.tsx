@@ -17,7 +17,6 @@ import Loader from '@src/components/general/Loader/Loader';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import { useENS } from '@src/web3/core/core';
 import web3 from '@src/web3';
 
 import styles from './ViewingNugg.styles';
@@ -269,7 +268,7 @@ const Swaps = ({ chainId, provider, swaps, tokenId, address, owner, MobileBackBu
 
 const SwapItem = ({ provider, swap, index, chainId }) => {
     const awaitingBid = swap.endingEpoch === null;
-    const res = useENS(provider, [swap.owner.id]);
+    const res = web3.hook.usePriorityAnyENSName(provider, swap.owner.id);
     return (
         <Button
             buttonStyle={styles.swap}
