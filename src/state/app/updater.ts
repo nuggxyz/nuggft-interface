@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import config from '../web32/config';
+
 import AppState from '.';
 
 export default () => {
@@ -10,6 +12,8 @@ export default () => {
         });
     };
 
+    const chainId = config.priority.usePriorityChainId();
+
     useEffect(() => {
         resizer();
         window.addEventListener('resize', resizer);
@@ -19,7 +23,7 @@ export default () => {
     }, []);
 
     useEffect(() => {
-        AppState.onRouteUpdate(window.location.hash);
+        AppState.onRouteUpdate(chainId, window.location.hash);
     }, []);
     return null;
 };

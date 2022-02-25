@@ -1,7 +1,6 @@
 import type { Networkish } from '@ethersproject/networks';
 import type { Web3Provider } from '@ethersproject/providers';
 import { useEffect, useMemo, useState } from 'react';
-import { connection } from 'websocket';
 import type { EqualityChecker, UseBoundStore } from 'zustand';
 import create from 'zustand';
 

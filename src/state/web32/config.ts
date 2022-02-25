@@ -1,7 +1,5 @@
 import { ethers } from 'ethers';
 
-import store from '../store';
-
 import { getPriorityConnector, getSelectedConnector, initializeConnector } from './utils/core';
 import { MetaMask } from './utils/metamask';
 import { Network } from './utils/network';
@@ -48,38 +46,6 @@ export default class config {
             DotnuggV1: '0x9a3b1be8ec7eaf472b22c9c833164297e2940f27',
         },
     };
-
-    static get activeChain__NuggftV1() {
-        return this.CONTRACTS[
-            store.getState().web3.web3address
-                ? store.getState().web3.currentChain
-                : config.DEFAULT_CHAIN
-        ].NuggftV1;
-    }
-
-    static get activeChain__GraphEndpoint() {
-        return this.GRAPH_ENPOINTS[
-            store.getState().web3.web3address
-                ? store.getState().web3.currentChain
-                : config.DEFAULT_CHAIN
-        ];
-    }
-
-    static get activeChain__DotnuggV1() {
-        return this.CONTRACTS[
-            store.getState().web3.web3address
-                ? store.getState().web3.currentChain
-                : config.DEFAULT_CHAIN
-        ].DotnuggV1;
-    }
-
-    static get activeChain__EnsRegistrar() {
-        return this.ENS_REGISTRAR_ADDRESSES[
-            store.getState().web3.web3address
-                ? store.getState().web3.currentChain
-                : config.DEFAULT_CHAIN
-        ];
-    }
 
     static GRAPH_ENPOINTS = {
         [config.SupportedChainId

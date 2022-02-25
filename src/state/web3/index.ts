@@ -1,18 +1,11 @@
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { UnsupportedChainIdError } from '@web3-react/core';
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
-import { ethers } from 'ethers';
+import { Web3Provider } from '@ethersproject/providers';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 
-import {
-    isUndefinedOrNull,
-    isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '../../lib';
+import { isUndefinedOrNullOrObjectEmpty } from '../../lib';
 import { NLState } from '../NLState';
-import { Address } from '../../classes/Address';
-import store from '../store';
 
 import middlewares from './middlewares';
 import updater from './updater';
@@ -28,12 +21,8 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
     declare static reducer: typeof this.instance._slice.reducer;
     declare static hook: typeof hooks;
 
-    declare static select: ApplyFuncToChildren<
-        typeof this.instance._initialState
-    >;
-    declare static dispatch: ApplyDispatchToChildren<
-        typeof this.instance._slice.actions
-    >;
+    declare static select: ApplyFuncToChildren<typeof this.instance._initialState>;
+    declare static dispatch: ApplyDispatchToChildren<typeof this.instance._slice.actions>;
 
     static get instance() {
         if (this._instance === undefined) this._instance = new this();
@@ -69,10 +58,7 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
             setWeb3Error: (state, action: PayloadAction<boolean>) => {
                 state.web3error = action.payload;
             },
-            setCurrentChain: (
-                state,
-                action: PayloadAction<SupportedChainId>,
-            ) => {
+            setCurrentChain: (state, action: PayloadAction<SupportedChainId>) => {
                 state.currentChain = action.payload;
             },
         },
@@ -99,15 +85,13 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
             }
 
             if (!isUndefinedOrNullOrObjectEmpty(connector)) {
-                return await activate(connector, undefined, true).catch(
-                    (error) => {
-                        if (error instanceof UnsupportedChainIdError) {
-                            activate(connector);
-                        } else {
-                            Web3State.dispatch.setWeb3Error(true);
-                        }
-                    },
-                );
+                return await activate(connector, undefined, true).catch((error) => {
+                    if (error instanceof UnsupportedChainIdError) {
+                        activate(connector);
+                    } else {
+                        Web3State.dispatch.setWeb3Error(true);
+                    }
+                });
             }
         };
     }
@@ -121,57 +105,49 @@ export default class Web3State extends NLState<NL.Redux.Web3.State> {
         Web3State._networkLibrary = undefined;
     }
 
-    public static getProvider(provider?: any): Web3Provider {
-        const currentChain = store.getState().web3.currentChain;
-        let library: Web3Provider;
-        if (isUndefinedOrNullOrObjectEmpty(provider)) {
-            let networkProvider = Web3Config.connectors.network.provider;
-            if (
-                isUndefinedOrNullOrObjectEmpty(Web3State._networkLibrary) ||
-                networkProvider.chainId !== currentChain
-            ) {
-                Web3State._networkLibrary = new Web3Provider(
-                    networkProvider as any,
-                    !isUndefinedOrNull(networkProvider.chainId)
-                        ? +networkProvider.chainId
-                        : 'any',
-                );
-            }
-            library = Web3State._networkLibrary;
-        } else {
-            if (
-                isUndefinedOrNullOrObjectEmpty(Web3State._library) ||
-                provider.chainId !== currentChain
-            ) {
-                Web3State._library = new Web3Provider(
-                    provider as any,
-                    !isUndefinedOrNull(provider.chainId)
-                        ? +provider.chainId
-                        : 'any',
-                );
-            }
-            library = Web3State._library;
-        }
-        library.pollingInterval = 1000;
-        return library;
-    }
+    // public static getProvider(provider?: any): Web3Provider {
+    //     const currentChain = store.getState().web3.currentChain;
+    //     let library: Web3Provider;
+    //     if (isUndefinedOrNullOrObjectEmpty(provider)) {
+    //         let networkProvider = Web3Config.connectors.network.provider;
+    //         if (
+    //             isUndefinedOrNullOrObjectEmpty(Web3State._networkLibrary) ||
+    //             networkProvider.chainId !== currentChain
+    //         ) {
+    //             Web3State._networkLibrary = new Web3Provider(
+    //                 networkProvider as any,
+    //                 !isUndefinedOrNull(networkProvider.chainId) ? +networkProvider.chainId : 'any',
+    //             );
+    //         }
+    //         library = Web3State._networkLibrary;
+    //     } else {
+    //         if (
+    //             isUndefinedOrNullOrObjectEmpty(Web3State._library) ||
+    //             provider.chainId !== currentChain
+    //         ) {
+    //             Web3State._library = new Web3Provider(
+    //                 provider as any,
+    //                 !isUndefinedOrNull(provider.chainId) ? +provider.chainId : 'any',
+    //             );
+    //         }
+    //         library = Web3State._library;
+    //     }
+    //     library.pollingInterval = 1000;
+    //     return library;
+    // }
 
     public static _walletConnectSigner: any;
 
-    public static getSignerOrProvider():
-        | Web3Provider
-        | ethers.providers.JsonRpcSigner {
-        if (isUndefinedOrNullOrStringEmpty(store.getState().web3.web3address)) {
-            return this.getProvider();
-        }
-        if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
-            return new ethers.providers.Web3Provider(
-                window.ethereum,
-            ).getSigner();
-        } else {
-            return new ethers.providers.Web3Provider(
-                Web3Config.connectors.walletconnect.walletConnectProvider,
-            ).getSigner();
-        }
-    }
+    // public static getSignerOrProvider(): Web3Provider | ethers.providers.JsonRpcSigner {
+    //     if (isUndefinedOrNullOrStringEmpty(store.getState().web3.web3address)) {
+    //         return this.getProvider();
+    //     }
+    //     if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
+    //         return new ethers.providers.Web3Provider(window.ethereum).getSigner();
+    //     } else {
+    //         return new ethers.providers.Web3Provider(
+    //             Web3Config.connectors.walletconnect.walletConnectProvider,
+    //         ).getSigner();
+    //     }
+    // }
 }

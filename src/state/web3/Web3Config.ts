@@ -2,8 +2,6 @@ import { InjectedConnector } from '@web3-react/injected-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { ethers } from 'ethers';
 
-import store from '../store';
-
 import { NetworkConnector } from './connectors/NetworkConnector';
 
 export enum SupportedChainId {
@@ -47,37 +45,37 @@ export default class Web3Config {
         },
     };
 
-    static get activeChain__NuggftV1() {
-        return this.CONTRACTS[
-            store.getState().web3.web3address
-                ? store.getState().web3.currentChain
-                : Web3Config.DEFAULT_CHAIN
-        ].NuggftV1;
-    }
+    // static get activeChain__NuggftV1() {
+    //     return this.CONTRACTS[
+    //         store.getState().web3.web3address
+    //             ? store.getState().web3.currentChain
+    //             : Web3Config.DEFAULT_CHAIN
+    //     ].NuggftV1;
+    // }
 
-    static get activeChain__GraphEndpoint() {
-        return this.GRAPH_ENPOINTS[
-            store.getState().web3.web3address
-                ? store.getState().web3.currentChain
-                : Web3Config.DEFAULT_CHAIN
-        ];
-    }
+    // static get activeChain__GraphEndpoint() {
+    //     return this.GRAPH_ENPOINTS[
+    //         store.getState().web3.web3address
+    //             ? store.getState().web3.currentChain
+    //             : Web3Config.DEFAULT_CHAIN
+    //     ];
+    // }
 
-    static get activeChain__DotnuggV1() {
-        return this.CONTRACTS[
-            store.getState().web3.web3address
-                ? store.getState().web3.currentChain
-                : Web3Config.DEFAULT_CHAIN
-        ].DotnuggV1;
-    }
+    // static get activeChain__DotnuggV1() {
+    //     return this.CONTRACTS[
+    //         store.getState().web3.web3address
+    //             ? store.getState().web3.currentChain
+    //             : Web3Config.DEFAULT_CHAIN
+    //     ].DotnuggV1;
+    // }
 
-    static get activeChain__EnsRegistrar() {
-        return this.ENS_REGISTRAR_ADDRESSES[
-            store.getState().web3.web3address
-                ? store.getState().web3.currentChain
-                : Web3Config.DEFAULT_CHAIN
-        ];
-    }
+    // static get activeChain__EnsRegistrar() {
+    //     return this.ENS_REGISTRAR_ADDRESSES[
+    //         store.getState().web3.web3address
+    //             ? store.getState().web3.currentChain
+    //             : Web3Config.DEFAULT_CHAIN
+    //     ];
+    // }
 
     static GRAPH_ENPOINTS = {
         [Web3Config.SupportedChainId
@@ -110,8 +108,7 @@ export default class Web3Config {
             .RINKEBY]: `wss://rinkeby.infura.io/v3/${Web3Config.INFURA_KEY}`,
         [Web3Config.SupportedChainId
             .ROPSTEN]: `wss://ropsten.infura.io/v3/${Web3Config.INFURA_KEY}`,
-        [Web3Config.SupportedChainId
-            .GOERLI]: `wss://goerli.infura.io/v3/${Web3Config.INFURA_KEY}`,
+        [Web3Config.SupportedChainId.GOERLI]: `wss://goerli.infura.io/v3/${Web3Config.INFURA_KEY}`,
     };
 
     static connectors = {
@@ -204,13 +201,9 @@ export default class Web3Config {
     };
 
     static ENS_REGISTRAR_ADDRESSES: NL.Redux.Web3.AddressMap = {
-        [Web3Config.SupportedChainId.MAINNET]:
-            '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-        [Web3Config.SupportedChainId.ROPSTEN]:
-            '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-        [Web3Config.SupportedChainId.GOERLI]:
-            '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-        [Web3Config.SupportedChainId.RINKEBY]:
-            '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+        [Web3Config.SupportedChainId.MAINNET]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+        [Web3Config.SupportedChainId.ROPSTEN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+        [Web3Config.SupportedChainId.GOERLI]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+        [Web3Config.SupportedChainId.RINKEBY]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
     };
 }

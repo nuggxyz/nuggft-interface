@@ -1,26 +1,20 @@
-import React, {
-    FunctionComponent,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
+import React, { FunctionComponent, SetStateAction, useCallback, useEffect, useState } from 'react';
 
 import NuggList from '../../../components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
 import { isUndefinedOrNullOrArrayEmpty } from '../../../lib';
 import constants from '../../../lib/constants';
 import activeNuggsQuery from '../../../state/nuggdex/queries/activeNuggsQuery';
 import ProtocolState from '../../../state/protocol';
+import config from '../../../state/web32/config';
 
 type Props = {};
 
 const Sales: FunctionComponent<Props> = () => {
     const epoch = ProtocolState.select.epoch();
-    const [activeNuggs, setActiveNuggs] = useState<
-        NL.GraphQL.Fragments.Nugg.ListItem[]
-    >([]);
+    const [activeNuggs, setActiveNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
 
     const [loading, setLoading] = useState(false);
+    const chainId = config.priority.usePriorityChainId();
 
     const handleGetActive = useCallback(
         async (
@@ -32,6 +26,8 @@ const Sales: FunctionComponent<Props> = () => {
         ) => {
             setLoading && setLoading(true);
             const activeNuggs = await activeNuggsQuery(
+                chainId,
+
                 filters ? filters.sort.by : 'id',
                 filters && filters.sort.asc ? 'asc' : 'desc',
                 filters ? filters.searchValue : '',
@@ -40,9 +36,7 @@ const Sales: FunctionComponent<Props> = () => {
                 startFrom,
             );
             if (!isUndefinedOrNullOrArrayEmpty(activeNuggs)) {
-                setResults((res) =>
-                    addToResult ? [...res, ...activeNuggs] : activeNuggs,
-                );
+                setResults((res) => (addToResult ? [...res, ...activeNuggs] : activeNuggs));
             }
             setLoading && setLoading(false);
         },

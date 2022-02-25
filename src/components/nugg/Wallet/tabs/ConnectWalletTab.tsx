@@ -1,10 +1,7 @@
-import { useWeb3React } from '@web3-react/core';
 import React, { FunctionComponent } from 'react';
 
 import Colors from '../../../../lib/colors';
 import Layout from '../../../../lib/layout';
-import Web3State from '../../../../state/web3';
-import Web3Config from '../../../../state/web3/Web3Config';
 import config from '../../../../state/web32/config';
 import Button from '../../../general/Buttons/Button/Button';
 import NLStaticImage from '../../../general/NLStaticImage';
@@ -13,7 +10,6 @@ import Text from '../../../general/Texts/Text/Text';
 type Props = {};
 
 const ConnectWalletTab: FunctionComponent<Props> = () => {
-    const { activate } = useWeb3React();
     return (
         <div
             style={{

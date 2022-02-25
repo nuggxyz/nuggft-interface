@@ -1,10 +1,4 @@
-import React, {
-    FunctionComponent,
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
     isUndefinedOrNullOrArrayEmpty,
@@ -14,8 +8,6 @@ import {
 import ProtocolState from '../../../../../state/protocol';
 import WalletState from '../../../../../state/wallet';
 import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedOffersQuery';
-import Web3State from '../../../../../state/web3';
-import Button from '../../../../general/Buttons/Button/Button';
 import Text from '../../../../general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '../../../../general/List/List';
 import listStyles from '../HistoryTab.styles';
@@ -30,22 +22,24 @@ import NLStaticImage from '../../../../general/NLStaticImage';
 import FontSize from '../../../../../lib/fontSize';
 import Layout from '../../../../../lib/layout';
 import SocketState from '../../../../../state/socket';
+import config from '../../../../../state/web32/config';
 
 type Props = { isActive?: boolean };
 
 const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     const txnToggle = TransactionState.select.toggleCompletedTxn();
-    const address = Web3State.select.web3address();
+    const address = config.priority.usePriorityAccount();
     const epoch = ProtocolState.select.epoch();
-    const [unclaimedOffers, setUnclaimedOffers] = useState<
-        NL.GraphQL.Fragments.Offer.Thumbnail[]
-    >([]);
+    const [unclaimedOffers, setUnclaimedOffers] = useState<NL.GraphQL.Fragments.Offer.Thumbnail[]>(
+        [],
+    );
     const [loadingOffers, setLoadingOffers] = useState(false);
+    const chainId = config.priority.usePriorityChainId();
 
     const getUnclaimedOffers = useCallback(async () => {
         setLoadingOffers(true);
         if (!isUndefinedOrNullOrStringEmpty(address)) {
-            const offersRes = await unclaimedOffersQuery(address, epoch.id);
+            const offersRes = await unclaimedOffersQuery(chainId, address, epoch.id);
             setUnclaimedOffers(offersRes);
         } else {
             setUnclaimedOffers([]);
@@ -64,9 +58,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     const socket = SocketState.select.Claim();
 
     useEffect(() => {
-        setUnclaimedOffers(
-            unclaimedOffers.filter((x) => x.id.split('-')[0] == socket.tokenId),
-        );
+        setUnclaimedOffers(unclaimedOffers.filter((x) => x.id.split('-')[0] == socket.tokenId));
     }, [socket]);
 
     return (
@@ -75,9 +67,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                 data={unclaimedOffers}
                 RenderItem={React.memo(
                     RenderItem,
-                    (prev, props) =>
-                        JSON.stringify(prev.item) ===
-                        JSON.stringify(props.item),
+                    (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
                 )}
                 TitleButton={
                     !isUndefinedOrNullOrArrayEmpty(unclaimedOffers)
@@ -98,8 +88,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                                   onClick={() =>
                                       WalletState.dispatch.multiClaim({
                                           tokenIds: unclaimedOffers.map(
-                                              (offer) =>
-                                                  (offer as any).swap.nugg.id,
+                                              (offer) => (offer as any).swap.nugg.id,
                                           ),
                                       })
                                   }
@@ -122,9 +111,11 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
 
 export default React.memo(ClaimTab);
 
-const RenderItem: FunctionComponent<
-    ListRenderItemProps<NL.GraphQL.Fragments.Offer.Thumbnail>
-> = ({ item, index, extraData }) => {
+const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Offer.Thumbnail>> = ({
+    item,
+    index,
+    extraData,
+}) => {
     const parsedTitle = useMemo(() => {
         if (!isUndefinedOrNullOrObjectEmpty(item)) {
             let parsed = item.id.split('-');
@@ -174,17 +165,10 @@ const RenderItem: FunctionComponent<
                     )}
                     <div>
                         <Text textStyle={listStyles.renderTitle} size="small">
-                            {isWinner
-                                ? `Nugg #${parsedTitle.nugg}`
-                                : `${fromEth(item.eth)} ETH`}
+                            {isWinner ? `Nugg #${parsedTitle.nugg}` : `${fromEth(item.eth)} ETH`}
                         </Text>
-                        <Text
-                            textStyle={{ color: Colors.textColor }}
-                            size="smaller"
-                            type="text">
-                            {isWinner
-                                ? swapText
-                                : `Nugg #${parsedTitle.nugg} | ${swapText}`}
+                        <Text textStyle={{ color: Colors.textColor }} size="smaller" type="text">
+                            {isWinner ? swapText : `Nugg #${parsedTitle.nugg} | ${swapText}`}
                         </Text>
                     </div>
                 </div>

@@ -1,30 +1,18 @@
-import React, {
-    FunctionComponent,
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
-import gql from 'graphql-tag';
-import { Promise } from 'bluebird';
+import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import { batch } from 'react-redux';
 
 import { EthInt } from '../../../../../classes/Fraction';
-import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrStringEmpty,
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
-    toGwei,
 } from '../../../../../lib';
 import constants from '../../../../../lib/constants';
 import ProtocolState from '../../../../../state/protocol';
-import TransactionState from '../../../../../state/transaction';
 import WalletState from '../../../../../state/wallet';
 import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
-import Web3State from '../../../../../state/web3';
 import Button from '../../../../general/Buttons/Button/Button';
-import List, { ListRenderItemProps } from '../../../../general/List/List';
-import NuggListRenderItem from '../../../NuggDex/NuggDexSearchList/components/NuggListRenderItem';
+import { ListRenderItemProps } from '../../../../general/List/List';
 import NumberStatistic from '../../../Statistics/NumberStatistic';
 import TextStatistic from '../../../Statistics/TextStatistic';
 import swapStyles from '../SwapTab.styles';
@@ -39,13 +27,13 @@ import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQue
 import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSalesQuery';
 import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedOffersQuery';
 import TokenViewer from '../../../TokenViewer';
-import { executeQuery } from '../../../../../graphql/helpers';
 import InfiniteList from '../../../../general/List/InfiniteList';
 import FontSize from '../../../../../lib/fontSize';
 import TokenState from '../../../../../state/token';
 import NuggDexState from '../../../../../state/nuggdex';
 import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
 import Layout from '../../../../../lib/layout';
+import config, { SupportedChainId } from '../../../../../state/web32/config';
 
 type Props = {};
 
@@ -53,21 +41,23 @@ const MintTab: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
     const userShares = WalletState.select.userShares();
     const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
-    const address = Web3State.select.web3address();
     const epoch = ProtocolState.select.epoch();
     const [myNuggs, setMyNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
+    const address = config.priority.usePriorityAccount();
+
+    const chainId = config.priority.usePriorityChainId();
     const loans = useAsyncState(
-        () => loanedNuggsQuery(address, 'desc', '', 1000, 0),
-        [address, epoch],
+        () => loanedNuggsQuery(chainId, address, 'desc', '', 1000, 0),
+        [address, epoch, chainId],
     );
     const sales = useAsyncState(
-        () => myActiveSalesQuery(address, 'desc', '', 1000, 0),
-        [address, epoch],
+        () => myActiveSalesQuery(chainId, address, 'desc', '', 1000, 0),
+        [address, epoch, chainId],
     );
 
     const claims = useAsyncState(
-        () => unclaimedOffersQuery(address, epoch?.id),
+        () => unclaimedOffersQuery(chainId, address, epoch?.id),
         [address, epoch],
     );
 
@@ -75,6 +65,8 @@ const MintTab: FunctionComponent<Props> = () => {
         setLoadingNuggs(true);
         if (!isUndefinedOrNullOrStringEmpty(address)) {
             const nuggResult = await myNuggsQuery(
+                chainId,
+
                 address,
                 'desc',
                 '',
@@ -175,14 +167,12 @@ const MintTab: FunctionComponent<Props> = () => {
             </div>
 
             <InfiniteList
-                TitleButton={MintNuggButton}
+                TitleButton={() => MintNuggButton(chainId)}
                 labelStyle={styles.listLabel}
                 data={myNuggs}
                 RenderItem={React.memo(
                     RenderItem,
-                    (prev, props) =>
-                        JSON.stringify(prev.item) ===
-                        JSON.stringify(props.item),
+                    (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
                 )}
                 label="My Nuggs"
                 loading={loadingNuggs}
@@ -200,44 +190,43 @@ const MintTab: FunctionComponent<Props> = () => {
 
 export default MintTab;
 
-const RenderItem: FunctionComponent<
-    ListRenderItemProps<NL.GraphQL.Fragments.Nugg.ListItem>
-> = React.memo(
-    ({ item, extraData, style, index }) => {
-        return (
-            !isUndefinedOrNullOrObjectEmpty(item) && (
-                <Button
-                    key={JSON.stringify(item)}
-                    onClick={() => {
-                        batch(() => {
-                            TokenState.dispatch.setNugg(item);
-                            AppState.dispatch.changeView('Search');
-                            NuggDexState.dispatch.addToRecents(item);
-                        });
-                        AppState.silentlySetRoute(`#/nugg/${item.id}`);
-                    }}
-                    buttonStyle={{ ...styles.listNuggButton, ...style }}
-                    rightIcon={
-                        <>
-                            <TokenViewer
-                                tokenId={item.id || ''}
-                                style={styles.listNugg}
-                                data={item.dotnuggRawCache}
-                            />
+const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Nugg.ListItem>> =
+    React.memo(
+        ({ item, extraData, style, index }) => {
+            return (
+                !isUndefinedOrNullOrObjectEmpty(item) && (
+                    <Button
+                        key={JSON.stringify(item)}
+                        onClick={() => {
+                            batch(() => {
+                                TokenState.dispatch.setNugg(item);
+                                AppState.dispatch.changeView('Search');
+                                NuggDexState.dispatch.addToRecents(item);
+                            });
+                            AppState.silentlySetRoute(`#/nugg/${item.id}`);
+                        }}
+                        buttonStyle={{ ...styles.listNuggButton, ...style }}
+                        rightIcon={
+                            <>
+                                <TokenViewer
+                                    tokenId={item.id || ''}
+                                    style={styles.listNugg}
+                                    data={item.dotnuggRawCache}
+                                />
 
-                            <Text textStyle={{ color: Colors.nuggRedText }}>
-                                Nugg #{item.id || ''}
-                            </Text>
-                        </>
-                    }
-                />
-            )
-        );
-    },
-    (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
-);
+                                <Text textStyle={{ color: Colors.nuggRedText }}>
+                                    Nugg #{item.id || ''}
+                                </Text>
+                            </>
+                        }
+                    />
+                )
+            );
+        },
+        (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
+    );
 
-const MintNuggButton = () => (
+const MintNuggButton = (chainId: SupportedChainId) => (
     <FeedbackButton
         feedbackText="Check Wallet..."
         buttonStyle={{
@@ -251,6 +240,6 @@ const MintNuggButton = () => (
             fontFamily: Layout.font.sf.light,
         }}
         label="Mint a Nugg"
-        onClick={() => WalletState.dispatch.mintNugg()}
+        onClick={() => WalletState.dispatch.mintNugg({ chainId })}
     />
 );

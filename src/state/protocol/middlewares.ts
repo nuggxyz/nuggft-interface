@@ -5,7 +5,6 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
-import SwapState from '../swap';
 import Web3State from '../web3';
 
 import ProtocolState from '.';
@@ -19,9 +18,7 @@ const updateEpochMiddleware: Middleware<
     (next) =>
     async (action: PayloadAction<any>) => {
         if (ProtocolState.isOwnFulfilledAction(action, 'safeSetEpoch')) {
-            const currentEpoch = !isUndefinedOrNullOrObjectEmpty(
-                getState().protocol.epoch,
-            )
+            const currentEpoch = !isUndefinedOrNullOrObjectEmpty(getState().protocol.epoch)
                 ? getState().protocol.epoch.id
                 : '';
             const nextEpoch = action.payload.data.epoch.id;
@@ -29,21 +26,21 @@ const updateEpochMiddleware: Middleware<
             if (
                 !isUndefinedOrNullOrStringEmpty(nextEpoch) &&
                 currentEpoch !== nextEpoch &&
-                (window.location.hash.length <= 2 ||
-                    window.location.hash.includes('/nugg')) &&
-                (isUndefinedOrNullOrNotNumber(currentSwap) ||
-                    currentSwap === +currentEpoch)
+                (window.location.hash.length <= 2 || window.location.hash.includes('/nugg')) &&
+                (isUndefinedOrNullOrNotNumber(currentSwap) || currentSwap === +currentEpoch)
             ) {
-                SwapState.dispatch.initSwap({
-                    swapId: `${nextEpoch}-0`,
-                });
+                // SwapState.dispatch.initSwap({
+                //     swapId: `${nextEpoch}-0`,
+                // });
             }
 
             if (!navigator.onLine) {
                 Web3State.dispatch.setConnectivityWarning(true);
-            } else if (getState().web3.connectivityWarning === true) {
-                Web3State.dispatch.setConnectivityWarning(false);
             }
+            // TODO figure out another way todo this
+            //  else if (getState().web3.connectivityWarning === true) {
+            //     Web3State.dispatch.setConnectivityWarning(false);
+            // }
         }
         return next(action);
     };

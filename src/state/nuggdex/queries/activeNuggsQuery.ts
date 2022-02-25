@@ -1,12 +1,8 @@
 import gql from 'graphql-tag';
 
 import config from '../../../config';
-import { swapNuggId } from '../../../graphql/fragments/swap';
 import { executeQuery } from '../../../graphql/helpers';
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '../../../lib';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '../../../lib';
 
 const query = (
     orderBy: 'eth' | 'id',
@@ -19,11 +15,7 @@ const query = (
     {
         protocol (id: "${config.NUGG_PROTOCOL}") {
             activeNuggs (
-                ${
-                    !isUndefinedOrNullOrStringEmpty(searchValue)
-                        ? `where: {id: ${searchValue}}`
-                        : ''
-                }
+                ${!isUndefinedOrNullOrStringEmpty(searchValue) ? `where: {id: ${searchValue}}` : ''}
                 first: ${first},
                 skip: ${skip},
                 orderBy: idnum,
@@ -55,6 +47,7 @@ const query = (
 // `;
 
 const activeNuggsQuery = async (
+    chainId: number,
     orderBy: 'eth' | 'id',
     orderDirection: 'asc' | 'desc',
     searchValue: string,
@@ -64,14 +57,8 @@ const activeNuggsQuery = async (
 ) => {
     try {
         const result = (await executeQuery(
-            query(
-                orderBy,
-                orderDirection,
-                searchValue,
-                currentEpoch,
-                first,
-                skip,
-            ),
+            chainId,
+            query(orderBy, orderDirection, searchValue, currentEpoch, first, skip),
             'protocol',
         )) as NL.GraphQL.Fragments.Protocol.Actives;
         // const result2 = (await executeQuery(

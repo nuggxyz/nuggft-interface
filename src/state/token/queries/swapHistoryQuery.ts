@@ -2,24 +2,13 @@ import gql from 'graphql-tag';
 
 import { swapThumbnail } from '../../../graphql/fragments/swap';
 import { executeQuery } from '../../../graphql/helpers';
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '../../../lib';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '../../../lib';
+import { SupportedChainId } from '../../web32/config';
 
-const query = (
-    id: string,
-    orderDirection: 'asc' | 'desc',
-    first: number,
-    skip: number,
-) => gql`
+const query = (id: string, orderDirection: 'asc' | 'desc', first: number, skip: number) => gql`
     {
         swaps (
-            ${
-                !isUndefinedOrNullOrStringEmpty(id)
-                    ? `where: {nugg: "${id}"}`
-                    : ''
-            }
+            ${!isUndefinedOrNullOrStringEmpty(id) ? `where: {nugg: "${id}"}` : ''}
             orderBy: id
             orderDirection: ${orderDirection},
             first: ${first},
@@ -29,6 +18,7 @@ const query = (
 `;
 
 const swapHistoryQuery = async (
+    chainId: SupportedChainId,
     id: string,
     orderDirection: 'asc' | 'desc',
     first: number,
@@ -36,6 +26,7 @@ const swapHistoryQuery = async (
 ) => {
     try {
         const result = (await executeQuery(
+            chainId,
             query(id, orderDirection, first, skip),
             'swaps',
         )) as Promise<NL.GraphQL.Fragments.Swap.Thumbnail[]>;

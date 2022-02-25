@@ -4,22 +4,16 @@ import gql from 'graphql-tag';
 import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrBooleanFalse,
     isUndefinedOrNullOrNotObject,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../lib';
 import constants from '../../lib/constants';
-import { Address } from '../../classes/Address';
-import config from '../../config';
-import Web3State from '../web3';
 import AppState from '../app';
 import { toEth } from '../../lib/conversion';
-import Web3Config from '../web3/Web3Config';
+import { SupportedChainId } from '../web3/Web3Config';
 import { executeQuery } from '../../graphql/helpers';
-import { NLRootState } from '../store';
-import { NLState } from '../NLState';
 
 import userSharesQuery from './queries/userSharesQuery';
 
@@ -28,15 +22,15 @@ const getUserShares = createAsyncThunk<
         success: NL.Redux.Wallet.Success;
         data: number;
     },
-    undefined,
+    { chainId: SupportedChainId; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/getUserShares`, async (_, thunkAPI) => {
+>(`wallet/getUserShares`, async ({ chainId, address }, thunkAPI) => {
     try {
         //@ts-ignore
-        const id = thunkAPI.getState().web3.web3address;
+        const id = address;
 
-        const res = await userSharesQuery(id);
+        const res = await userSharesQuery(chainId, id);
 
         return {
             success: 'SUCCESS',
@@ -165,12 +159,13 @@ const multiClaim = createAsyncThunk<
 
 const mintNugg = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    undefined,
+    { chainId: SupportedChainId },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/mintNugg`, async (_, thunkAPI) => {
+>(`wallet/mintNugg`, async ({ chainId }, thunkAPI) => {
     try {
         const latestNugg = await executeQuery(
+            chainId,
             gql`
             {
                 nuggs(

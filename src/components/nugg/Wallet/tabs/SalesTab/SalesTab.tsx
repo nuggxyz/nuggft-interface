@@ -1,10 +1,4 @@
-import React, {
-    FunctionComponent,
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
     isUndefinedOrNullOrArrayEmpty,
@@ -13,18 +7,12 @@ import {
 } from '../../../../../lib';
 import ProtocolState from '../../../../../state/protocol';
 import WalletState from '../../../../../state/wallet';
-import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedOffersQuery';
-import Web3State from '../../../../../state/web3';
-import Button from '../../../../general/Buttons/Button/Button';
 import Text from '../../../../general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '../../../../general/List/List';
 import listStyles from '../HistoryTab.styles';
 import Colors from '../../../../../lib/colors';
-import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import constants from '../../../../../lib/constants';
-import NuggListRenderItem from '../../../NuggDex/NuggDexSearchList/components/NuggListRenderItem';
 import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSalesQuery';
-import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 import styles from '../Tabs.styles';
 import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
 import TransactionState from '../../../../../state/transaction';
@@ -34,20 +22,22 @@ import { fromEth } from '../../../../../lib/conversion';
 import FontSize from '../../../../../lib/fontSize';
 import swapStyles from '../SwapTab.styles';
 import Layout from '../../../../../lib/layout';
+import config from '../../../../../state/web32/config';
 
 type Props = { isActive?: boolean };
 
 const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
-    const address = Web3State.select.web3address();
+    const address = config.priority.usePriorityAccount();
     const epoch = ProtocolState.select.epoch();
     const [myNuggs, setMyNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
     const txnToggle = TransactionState.select.toggleCompletedTxn();
-
+    const chainId = config.priority.usePriorityChainId();
     const getMyNuggs = useCallback(async () => {
         setLoadingNuggs(true);
         if (!isUndefinedOrNullOrStringEmpty(address)) {
             const nuggResult = await myActiveSalesQuery(
+                chainId,
                 address,
                 'desc',
                 '',
@@ -79,9 +69,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                 data={myNuggs}
                 RenderItem={React.memo(
                     RenderItem,
-                    (prev, props) =>
-                        JSON.stringify(prev.item) ===
-                        JSON.stringify(props.item),
+                    (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
                 )}
                 label="Sales"
                 loading={loadingNuggs}
@@ -109,9 +97,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                                   label="Reclaim all"
                                   onClick={() =>
                                       WalletState.dispatch.multiClaim({
-                                          tokenIds: myNuggs.map(
-                                              (offer) => (offer as any).nugg.id,
-                                          ),
+                                          tokenIds: myNuggs.map((offer) => (offer as any).nugg.id),
                                       })
                                   }
                               />
@@ -125,9 +111,11 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
 
 export default React.memo(SalesTab);
 
-const RenderItem: FunctionComponent<
-    ListRenderItemProps<NL.GraphQL.Fragments.Swap.Thumbnail>
-> = ({ item, index, extraData }) => {
+const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Swap.Thumbnail>> = ({
+    item,
+    index,
+    extraData,
+}) => {
     const parsedTitle = useMemo(() => {
         if (!isUndefinedOrNullOrObjectEmpty(item)) {
             let parsed = item.id.split('-');
@@ -145,10 +133,7 @@ const RenderItem: FunctionComponent<
         return item.endingEpoch === null; //item && item.leader.id === extraData[0];
     }, [item]);
 
-    const swapText = useMemo(
-        () => (item.num === '0' ? 'Mint' : `Swap #${item.num}`),
-        [item],
-    );
+    const swapText = useMemo(() => (item.num === '0' ? 'Mint' : `Swap #${item.num}`), [item]);
 
     return (
         !isUndefinedOrNullOrObjectEmpty(item) && (
@@ -181,14 +166,9 @@ const RenderItem: FunctionComponent<
                             size="small"
                             // type="text"
                         >
-                            {isWinner
-                                ? `Nugg #${parsedTitle.nugg}`
-                                : `${fromEth(item.eth)} ETH`}
+                            {isWinner ? `Nugg #${parsedTitle.nugg}` : `${fromEth(item.eth)} ETH`}
                         </Text>
-                        <Text
-                            textStyle={{ color: Colors.textColor }}
-                            size="smaller"
-                            type="text">
+                        <Text textStyle={{ color: Colors.textColor }} size="smaller" type="text">
                             {isWinner
                                 ? item.endingEpoch === null
                                     ? 'Awaiting offer'
@@ -202,9 +182,7 @@ const RenderItem: FunctionComponent<
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
                     label={`Reclaim`}
-                    onClick={() =>
-                        WalletState.dispatch.claim({ tokenId: item.nugg.id })
-                    }
+                    onClick={() => WalletState.dispatch.claim({ tokenId: item.nugg.id })}
                 />
             </div>
         )

@@ -1,19 +1,19 @@
 import { useEffect } from 'react';
 
-import Web3State from '../web3';
 import ProtocolState from '../protocol';
+import config from '../web32/config';
 
 import WalletState from '.';
 
 export default () => {
-    const web3address = Web3State.select.web3address();
+    const address = config.priority.usePriorityAccount();
     const epoch = ProtocolState.select.epoch();
-    const chain = Web3State.select.currentChain();
+    const chainId = config.priority.usePriorityChainId();
 
     useEffect(() => {
-        if (web3address && epoch) {
-            WalletState.dispatch.getUserShares();
+        if (address && epoch) {
+            WalletState.dispatch.getUserShares({ chainId, address });
         }
-    }, [epoch, web3address, chain]);
+    }, [epoch, address, chainId]);
     return null;
 };

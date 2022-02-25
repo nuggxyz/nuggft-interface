@@ -1,22 +1,17 @@
-import React, {
-    FunctionComponent,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
+import React, { FunctionComponent, SetStateAction, useCallback, useEffect, useState } from 'react';
 
 import NuggList from '../../../components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
 import constants from '../../../lib/constants';
 import allNuggsQuery from '../../../state/nuggdex/queries/allNuggsQuery';
+import config from '../../../state/web32/config';
 
 type Props = {};
 
 const AllNuggs: FunctionComponent<Props> = () => {
-    const [allNuggs, setAllNuggs] = useState<
-        NL.GraphQL.Fragments.Nugg.ListItem[]
-    >([]);
+    const [allNuggs, setAllNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
     const [loading, setLoading] = useState(false);
+
+    const chainId = config.priority.usePriorityChainId();
 
     const handleGetAll = useCallback(
         async (
@@ -28,15 +23,14 @@ const AllNuggs: FunctionComponent<Props> = () => {
         ) => {
             setLoading && setLoading(true);
             const allNuggs = await allNuggsQuery(
+                chainId,
                 filters ? filters.sort.by : 'id',
                 filters && filters.sort.asc ? 'asc' : 'desc',
                 filters ? filters.searchValue : '',
                 constants.NUGGDEX_SEARCH_LIST_CHUNK,
                 startFrom,
             );
-            setResults((res) =>
-                addToResult ? [...res, ...allNuggs] : allNuggs,
-            );
+            setResults((res) => (addToResult ? [...res, ...allNuggs] : allNuggs));
             setLoading && setLoading(false);
         },
         [],

@@ -14,14 +14,7 @@ module.exports = {
         ecmaVersion: 12,
         sourceType: 'module',
     },
-    plugins: [
-        'react',
-        '@typescript-eslint',
-        'prettier',
-        'import',
-        'unused-imports',
-        'react-hooks',
-    ],
+    plugins: ['react', '@typescript-eslint', 'prettier', 'import', 'unused-imports', 'react-hooks'],
     rules: {
         '@typescript-eslint/ban-ts-comment': 'off',
         // 'react-hooks/rules-of-hooks': 'error',
@@ -38,7 +31,7 @@ module.exports = {
         ],
         'no-unused-vars': 'off',
         // '@typescript-eslint/no-unused-vars': ['error'],
-        // 'unused-imports/no-unused-imports': 'error',
+        'unused-imports/no-unused-imports': 'error',
         'unused-imports/no-unused-vars': [
             'off',
             {
@@ -62,15 +55,7 @@ module.exports = {
                     },
                 ],
                 'newlines-between': 'always',
-                groups: [
-                    'builtin',
-                    'external',
-                    'internal',
-                    'parent',
-                    'sibling',
-                    'index',
-                    'object',
-                ],
+                groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object'],
             },
         ],
     },

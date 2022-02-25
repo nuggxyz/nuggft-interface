@@ -8,7 +8,6 @@ import {
 } from '../../lib';
 import AppState from '../app';
 import { NLState } from '../NLState';
-import Web3Config from '../web3/Web3Config';
 
 import TransactionState from '.';
 
@@ -34,14 +33,14 @@ export const pending: NL.Redux.Middleware<
                 index: getState().app.toasts.length,
                 loading: true,
                 action: () => {
-                    let win = window.open(
-                        `${
-                            Web3Config.CHAIN_INFO[getState().web3.currentChain]
-                                .explorer
-                        }tx/${action.payload._pendingtx}`,
-                        '_blank',
-                    );
-                    win.focus();
+                    // TODO pass chainId with transaction
+                    // let win = window.open(
+                    //     `${Web3Config.CHAIN_INFO[action.payload._pendingtx].explorer}tx/${
+                    //         action.payload._pendingtx
+                    //     }`,
+                    //     '_blank',
+                    // );
+                    // win.focus();
                 },
             });
             if (!isUndefinedOrNullOrNotFunction(action.payload.callbackFn)) {
@@ -58,9 +57,7 @@ export const pending: NL.Redux.Middleware<
                 //@ts-ignore
                 error: !action.payload.successful,
                 //@ts-ignore
-                title: action.payload.successful
-                    ? 'Successful Transaction'
-                    : 'Transaction Failed',
+                title: action.payload.successful ? 'Successful Transaction' : 'Transaction Failed',
             });
         }
         return next(action);

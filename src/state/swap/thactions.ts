@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { BigNumber, Contract } from 'ethers';
+import { BigNumber } from 'ethers';
 
 import {
     isUndefinedOrNullOrNotObject,
@@ -10,7 +10,7 @@ import {
 import { toEth } from '../../lib/conversion';
 import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import AppState from '../app';
-import Web3State from '../web3';
+import { SupportedChainId } from '../web32/config';
 
 import pollOffersQuery from './queries/pollOffersQuery';
 import initSwapQuery from './queries/initSwapQuery';
@@ -23,13 +23,13 @@ const initSwap = createAsyncThunk<
             status: NL.Redux.Swap.Status;
         };
     },
-    { swapId: string },
+    { swapId: string; chainId: SupportedChainId },
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
->('swap/initSwap', async ({ swapId }, thunkAPI) => {
+>('swap/initSwap', async ({ swapId, chainId }, thunkAPI) => {
     const currentEpoch = thunkAPI.getState().protocol.epoch;
     try {
         invariant(swapId, 'swap id passed as undefined');
-        const res = await initSwapQuery(swapId);
+        const res = await initSwapQuery(chainId, swapId);
         if (!isUndefinedOrNullOrObjectEmpty(res)) {
             const status =
                 res.endingEpoch === null
@@ -43,14 +43,14 @@ const initSwap = createAsyncThunk<
             };
         } else {
             if (currentEpoch && !swapId.includes(currentEpoch.id)) {
-                AppState.onRouteUpdate('/');
+                AppState.onRouteUpdate(chainId, '/');
             }
             return thunkAPI.rejectWithValue('UNKNOWN');
         }
     } catch (err) {
         console.log({ err });
         if (currentEpoch && !swapId.includes(currentEpoch.id)) {
-            AppState.onRouteUpdate('/');
+            AppState.onRouteUpdate(chainId, '/');
         }
         if (
             !isUndefinedOrNullOrNotObject(err) &&
@@ -72,12 +72,12 @@ const pollOffers = createAsyncThunk<
         success: NL.Redux.Swap.Success;
         data: { offers: NL.GraphQL.Fragments.Offer.Bare[]; swapId: string };
     },
-    { swapId: string },
+    { swapId: string; chainId: SupportedChainId },
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
->('swap/pollOffers', async ({ swapId }, thunkAPI) => {
+>('swap/pollOffers', async ({ chainId, swapId }, thunkAPI) => {
     try {
         invariant(swapId, 'swap id passed as undefined');
-        let res = await pollOffersQuery(swapId);
+        let res = await pollOffersQuery(chainId, swapId);
         return {
             success: 'SUCCESS',
             data: { offers: res, swapId },
@@ -105,11 +105,12 @@ const placeOffer = createAsyncThunk<
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
 >('swap/placeOffer', async ({ amount, tokenId }, thunkAPI) => {
     try {
-        const _pendingtx = await NuggftV1Helper.instance
+        const _pendingtx = await NuggftV1Helper.instance[
             // .connect(Web3State.getSignerOrProvider())
-            ['offer(uint160)'](BigNumber.from(tokenId), {
-                value: toEth(amount),
-            });
+            'offer(uint160)'
+        ](BigNumber.from(tokenId), {
+            value: toEth(amount),
+        });
 
         return {
             success: 'SUCCESS',

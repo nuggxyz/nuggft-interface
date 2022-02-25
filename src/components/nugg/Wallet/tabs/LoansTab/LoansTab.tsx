@@ -1,10 +1,4 @@
-import React, {
-    FunctionComponent,
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
 
 import {
     isUndefinedOrNullOrArrayEmpty,
@@ -12,36 +6,34 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '../../../../../lib';
 import ProtocolState from '../../../../../state/protocol';
-import WalletState from '../../../../../state/wallet';
-import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedOffersQuery';
-import Web3State from '../../../../../state/web3';
 import Button from '../../../../general/Buttons/Button/Button';
 import Text from '../../../../general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '../../../../general/List/List';
 import listStyles from '../HistoryTab.styles';
 import Colors from '../../../../../lib/colors';
-import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
 import constants from '../../../../../lib/constants';
 import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQuery';
-import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
 import styles from '../Tabs.styles';
 import AppState from '../../../../../state/app';
 import TransactionState from '../../../../../state/transaction';
 import TokenViewer from '../../../TokenViewer';
+import config from '../../../../../state/web32/config';
 
 type Props = { isActive?: boolean };
 
 const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
-    const address = Web3State.select.web3address();
+    const address = config.priority.usePriorityAccount();
     const epoch = ProtocolState.select.epoch();
     const [loanedNuggs, setLoanedNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
     const txnToggle = TransactionState.select.toggleCompletedTxn();
+    const chainId = config.priority.usePriorityChainId();
 
     const getMyNuggs = useCallback(async () => {
         setLoadingNuggs(true);
         if (!isUndefinedOrNullOrStringEmpty(address)) {
             const nuggResult = await loanedNuggsQuery(
+                chainId,
                 address,
                 'desc',
                 '',
@@ -73,9 +65,7 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
                 data={loanedNuggs}
                 RenderItem={React.memo(
                     RenderItem,
-                    (prev, props) =>
-                        JSON.stringify(prev.item) ===
-                        JSON.stringify(props.item),
+                    (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
                 )}
                 label="Loaned Nuggs"
                 loading={loadingNuggs}
@@ -92,9 +82,11 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
 
 export default React.memo(MyNuggsTab);
 
-const RenderItem: FunctionComponent<
-    ListRenderItemProps<NL.GraphQL.Fragments.Loan.Bare>
-> = ({ item, index, extraData }) => {
+const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Loan.Bare>> = ({
+    item,
+    index,
+    extraData,
+}) => {
     return (
         !isUndefinedOrNullOrObjectEmpty(item) && (
             <div key={index} style={listStyles.render}>
@@ -105,15 +97,10 @@ const RenderItem: FunctionComponent<
                         style={{ width: '60px', height: '50px' }}
                     />
                     <div>
-                        <Text
-                            textStyle={{ color: Colors.nuggRedText }}
-                            size="small">
+                        <Text textStyle={{ color: Colors.nuggRedText }} size="small">
                             Nugg #{item.nugg?.id}
                         </Text>
-                        <Text
-                            type="text"
-                            textStyle={{ color: Colors.textColor }}
-                            size="smaller">
+                        <Text type="text" textStyle={{ color: Colors.textColor }} size="smaller">
                             {+item.endingEpoch - +extraData[0]} epochs remaining
                         </Text>
                     </div>

@@ -1,27 +1,20 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import {
-    isUndefinedOrNullOrNotObject,
-    isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '../../lib';
-import myNuggsQuery from '../wallet/queries/myNuggsQuery';
-import { nuggBare } from '../../graphql/fragments/nugg';
+import { isUndefinedOrNullOrNotObject, isUndefinedOrNullOrStringEmpty } from '../../lib';
+import { SupportedChainId } from '../web32/config';
 
 import getNuggThumbnailQuery from './queries/getNuggThumbnailQuery';
-import activeNuggsQuery from './queries/activeNuggsQuery';
-import allNuggsQuery from './queries/allNuggsQuery';
 
 const getNuggThumbnail = createAsyncThunk<
     {
         success: NL.Redux.NuggDex.Success;
         data: NL.GraphQL.Fragments.Nugg.Thumbnail;
     },
-    { id: string },
+    { id: string; chainId: SupportedChainId },
     { state: NL.Redux.RootState; rejectValue: NL.Redux.NuggDex.Error }
->('nuggdex/getNuggThumbnail', async ({ id }, thunkAPI) => {
+>('nuggdex/getNuggThumbnail', async ({ id, chainId }, thunkAPI) => {
     try {
-        const res = await getNuggThumbnailQuery(id);
+        const res = await getNuggThumbnailQuery(chainId, id);
 
         return {
             success: 'GOT_THUMBNAIL',

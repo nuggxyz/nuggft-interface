@@ -1,12 +1,12 @@
 import gql from 'graphql-tag';
 
-import { idFragment } from '../../../graphql/fragments/general';
 import { executeQuery } from '../../../graphql/helpers';
 import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '../../../lib';
+import { SupportedChainId } from '../../web32/config';
 
 const query = (
     address: string,
@@ -36,6 +36,7 @@ const query = (
 `;
 
 const myNuggsQuery = async (
+    chainId: SupportedChainId,
     address: string,
     orderDirection: 'asc' | 'desc',
     searchValue: string,
@@ -44,6 +45,7 @@ const myNuggsQuery = async (
 ) => {
     try {
         const result = (await executeQuery(
+            chainId,
             query(address, orderDirection, searchValue, first, skip),
             'user',
         )) as NL.GraphQL.Fragments.User.Bare;

@@ -1,12 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+import { useEffect } from 'react';
+import { useWeb3React } from '@web3-react/core';
 
-import {
-    isUndefinedOrNullOrStringEmpty,
-    loadStringFromLocalStorage,
-} from '../../lib';
+import { isUndefinedOrNullOrStringEmpty, loadStringFromLocalStorage } from '../../lib';
 import { NetworkContextName } from '../../config';
-import useAsyncState from '../../hooks/useAsyncState';
 
 import Web3Config from './Web3Config';
 
@@ -14,12 +10,7 @@ import Web3State from '.';
 
 export default () => {
     const { activate: activateNetwork } = useWeb3React(NetworkContextName);
-    const {
-        activate: defaultActivate,
-        account: web3Account,
-        active,
-        library,
-    } = useWeb3React();
+    const { activate: defaultActivate, account: web3Account, active, library } = useWeb3React();
 
     Web3State.hook.useWeb3Listeners();
 
@@ -30,9 +21,7 @@ export default () => {
             const safeActivate = Web3State.safeActivate(defaultActivate);
             if (
                 !window.ethereum &&
-                !isUndefinedOrNullOrStringEmpty(
-                    loadStringFromLocalStorage('walletconnect'),
-                )
+                !isUndefinedOrNullOrStringEmpty(loadStringFromLocalStorage('walletconnect'))
             ) {
                 safeActivate(Web3Config.connectors.walletconnect);
             } else {

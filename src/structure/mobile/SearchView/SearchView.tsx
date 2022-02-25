@@ -1,27 +1,14 @@
-import React, {
-    FunctionComponent,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react';
-import { ChevronLeft } from 'react-feather';
-import { animated, config, useSpring, useTransition } from 'react-spring';
+import React, { FunctionComponent, useMemo } from 'react';
+import { animated, config, useSpring } from 'react-spring';
 import { IoChevronBackOutline } from 'react-icons/io5';
 
 import Button from '../../../components/general/Buttons/Button/Button';
-import TransitionText from '../../../components/general/Texts/TransitionText/TransitionText';
-import NuggList from '../../../components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
 import ViewingNugg from '../../../components/nugg/ViewingNugg/ViewingNugg';
-import { isUndefinedOrNullOrArrayEmpty, ucFirst } from '../../../lib';
 import Colors from '../../../lib/colors';
 import Layout from '../../../lib/layout';
 import TokenState from '../../../state/token';
 import FontSize from '../../../lib/fontSize';
-import HappyTabber, {
-    HappyTabberItem,
-} from '../../../components/general/HappyTabber/HappyTabber';
+import HappyTabber, { HappyTabberItem } from '../../../components/general/HappyTabber/HappyTabber';
 
 import AllNuggs from './AllNuggs';
 import Sales from './Sales';
@@ -90,15 +77,10 @@ const SearchView: FunctionComponent<Props> = () => {
                     MobileBackButton={() => (
                         <Button
                             leftIcon={
-                                <IoChevronBackOutline
-                                    color={Colors.nuggBlueText}
-                                    size="25"
-                                />
+                                <IoChevronBackOutline color={Colors.nuggBlueText} size="25" />
                             }
                             label="Back"
-                            onClick={() =>
-                                TokenState.dispatch.setNugg(undefined)
-                            }
+                            onClick={() => TokenState.dispatch.setNugg(undefined)}
                             buttonStyle={{
                                 background: Colors.nuggBlueTransparent,
                                 borderRadius: Layout.borderRadius.large,

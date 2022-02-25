@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import { isUndefinedOrNullOrObjectEmpty } from '../../lib';
-import Web3State from '../web3';
+import { SupportedChainId } from '../web32/config';
 
 import updateActivesQuery from './queries/updateActivesQuery';
 import updateBlockQuery from './queries/updateBlockQuery';
@@ -18,13 +18,13 @@ const updateProtocol = createAsyncThunk<
         success: NL.Redux.Protocol.Success;
         data: NL.GraphQL.Fragments.Protocol.Full;
     },
-    undefined,
+    { chainId: SupportedChainId },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
->('protocol/updateProtocol', async (_, thunkAPI) => {
+>('protocol/updateProtocol', async ({ chainId }, thunkAPI) => {
     try {
-        const res = await updateProtocolQuery();
+        const res = await updateProtocolQuery(chainId);
 
         return {
             data: res,
@@ -44,13 +44,13 @@ const safeSetEpoch = createAsyncThunk<
             isOver: boolean;
         };
     },
-    { id: string; startblock: string; endblock: string },
+    { epoch: { id: string; startblock: string; endblock: string }; chainId: SupportedChainId },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
->('protocol/safeSetEpoch', async (epoch, thunkAPI) => {
+>('protocol/safeSetEpoch', async ({ epoch, chainId }, thunkAPI) => {
     try {
-        const res = await updateEpochQuery();
+        const res = await updateEpochQuery(chainId);
         //@ts-ignore
         const currentEpoch = thunkAPI.getState().protocol.epoch;
 
@@ -109,13 +109,13 @@ const updatePrices = createAsyncThunk<
         success: NL.Redux.Protocol.Success;
         data: NL.GraphQL.Fragments.Protocol.Prices;
     },
-    undefined,
+    { chainId: SupportedChainId },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
->('protocol/updatePrices', async (_, thunkAPI) => {
+>('protocol/updatePrices', async ({ chainId }, thunkAPI) => {
     try {
-        const res = await updatePricesQuery();
+        const res = await updatePricesQuery(chainId);
 
         return {
             data: res,
@@ -132,13 +132,13 @@ const updateActives = createAsyncThunk<
         success: NL.Redux.Protocol.Success;
         data: NL.GraphQL.Fragments.Protocol.Actives;
     },
-    undefined,
+    { chainId: SupportedChainId },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
->('protocol/updateActives', async (_, thunkAPI) => {
+>('protocol/updateActives', async ({ chainId }, thunkAPI) => {
     try {
-        const res = await updateActivesQuery();
+        const res = await updateActivesQuery(chainId);
 
         return {
             data: res,
@@ -155,13 +155,13 @@ const updateTotals = createAsyncThunk<
         success: NL.Redux.Protocol.Success;
         data: NL.GraphQL.Fragments.Protocol.Totals;
     },
-    undefined,
+    { chainId: SupportedChainId },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
->('protocol/updateTotals', async (_, thunkAPI) => {
+>('protocol/updateTotals', async ({ chainId }, thunkAPI) => {
     try {
-        const res = await updateTotalsQuery();
+        const res = await updateTotalsQuery(chainId);
 
         return {
             data: res,
@@ -178,13 +178,13 @@ const updateUsers = createAsyncThunk<
         success: NL.Redux.Protocol.Success;
         data: NL.GraphQL.Fragments.Protocol.Users;
     },
-    undefined,
+    { chainId: SupportedChainId },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
->('protocol/updateUsersQuery', async (_, thunkAPI) => {
+>('protocol/updateUsersQuery', async ({ chainId }, thunkAPI) => {
     try {
-        const res = await updateUsersQuery();
+        const res = await updateUsersQuery(chainId);
 
         return {
             data: res,
@@ -201,13 +201,13 @@ const updateStaked = createAsyncThunk<
         success: NL.Redux.Protocol.Success;
         data: NL.GraphQL.Fragments.Protocol.Staked;
     },
-    undefined,
+    { chainId: SupportedChainId },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
->('protocol/updateStaked', async (_, thunkAPI) => {
+>('protocol/updateStaked', async ({ chainId }, thunkAPI) => {
     try {
-        const res = await updateStakedQuery();
+        const res = await updateStakedQuery(chainId);
 
         return {
             data: res,
@@ -224,13 +224,13 @@ const updateBlock = createAsyncThunk<
         success: NL.Redux.Protocol.Success;
         data: number;
     },
-    undefined,
+    { chainId: SupportedChainId },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
->('protocol/updateBlock', async (_, thunkAPI) => {
+>('protocol/updateBlock', async ({ chainId }, thunkAPI) => {
     try {
-        const res = await updateBlockQuery();
+        const res = await updateBlockQuery(chainId);
 
         return {
             data: res.block.number,

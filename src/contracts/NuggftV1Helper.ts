@@ -1,23 +1,11 @@
 import invariant from 'tiny-invariant';
-import { BigNumber, Contract } from 'ethers';
+import { BigNumber } from 'ethers';
 import gql from 'graphql-tag';
 
 import { Address } from '../classes/Address';
-import {
-    cipher,
-    isUndefinedOrNullOrObjectEmpty,
-    loadFromLocalStorage,
-    saveToLocalStorage,
-} from '../lib';
-import Web3State from '../state/web3';
-import {
-    DotnuggV1,
-    DotnuggV1__factory,
-    NuggftV1,
-    NuggftV1__factory,
-} from '../typechain';
+import { loadFromLocalStorage, saveToLocalStorage } from '../lib';
+import { DotnuggV1, NuggftV1 } from '../typechain';
 import { executeQuery } from '../graphql/helpers';
-import Web3Config from '../state/web3/Web3Config';
 
 import ContractHelper from './abstract/ContractHelper';
 
@@ -25,28 +13,26 @@ export default class NuggftV1Helper extends ContractHelper {
     protected static _instance: NuggftV1;
     protected static _dotnugg: DotnuggV1;
 
-    static get instance() {
-        if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._instance)) {
-            NuggftV1Helper._instance = new Contract(
-                Web3Config.activeChain__NuggftV1,
-                NuggftV1__factory.abi,
-                // Web3State.getLibraryOrProvider(),
-            ) as NuggftV1;
-        }
-        return NuggftV1Helper._instance.connect(
-            Web3State.getSignerOrProvider(),
-        );
-    }
+    // static get instance() {
+    //     if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._instance)) {
+    //         NuggftV1Helper._instance = new Contract(
+    //             Web3Config.activeChain__NuggftV1,
+    //             NuggftV1__factory.abi,
+    //             // Web3State.getLibraryOrProvider(),
+    //         ) as NuggftV1;
+    //     }
+    //     return NuggftV1Helper._instance.connect(Web3State.getSignerOrProvider());
+    // }
 
-    static get dotnugg() {
-        if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._dotnugg)) {
-            NuggftV1Helper._dotnugg = new Contract(
-                Web3Config.activeChain__DotnuggV1,
-                DotnuggV1__factory.abi,
-            ) as DotnuggV1;
-        }
-        return NuggftV1Helper._dotnugg.connect(Web3State.getSignerOrProvider());
-    }
+    // static get dotnugg() {
+    //     if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._dotnugg)) {
+    //         NuggftV1Helper._dotnugg = new Contract(
+    //             Web3Config.activeChain__DotnuggV1,
+    //             DotnuggV1__factory.abi,
+    //         ) as DotnuggV1;
+    //     }
+    //     return NuggftV1Helper._dotnugg.connect(Web3State.getSignerOrProvider());
+    // }
 
     static reset() {
         NuggftV1Helper._instance = undefined;
@@ -67,21 +53,20 @@ export default class NuggftV1Helper extends ContractHelper {
     }
 
     public static storeNugg(tokenId: string, dotnuggRawCache: string) {
-        const nuggs =
-            loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
+        const nuggs = loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
         nuggs[tokenId] = dotnuggRawCache;
         saveToLocalStorage(nuggs, `${Math.floor(+tokenId / 100)}`, false);
     }
 
-    public static async optimizedDotNugg(tokenId: string) {
+    public static async optimizedDotNugg(chainId: number, tokenId: string) {
         invariant(tokenId, 'OP:TOKEN:URI');
-        let nuggs =
-            loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
+        let nuggs = loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
         if (nuggs[tokenId]) {
             return nuggs[tokenId];
         } else {
             try {
                 let res = await executeQuery(
+                    chainId,
                     gql`
                         {
                             nugg(id: "${tokenId}") {
@@ -120,8 +105,6 @@ export default class NuggftV1Helper extends ContractHelper {
         return await this.instance.balanceOf(address.hash);
     }
     public static async ethBalance(signer?: any): Promise<BigNumber> {
-        return (await signer)
-            ? signer.getBalance()
-            : this.instance?.signer?.getBalance();
+        return (await signer) ? signer.getBalance() : this.instance?.signer?.getBalance();
     }
 }

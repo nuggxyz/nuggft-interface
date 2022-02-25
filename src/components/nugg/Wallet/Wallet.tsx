@@ -1,10 +1,8 @@
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
 
 import AppState from '../../../state/app';
-import Web3State from '../../../state/web3';
 import config from '../../../state/web32/config';
 import HappyTabber, { HappyTabberItem } from '../../general/HappyTabber/HappyTabber';
-import NLStaticImage from '../../general/NLStaticImage';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectWalletTab from './tabs/ConnectWalletTab';
@@ -16,11 +14,10 @@ import styles from './Wallet.styles';
 type Props = {};
 
 const Wallet: FunctionComponent<Props> = () => {
-    const address = Web3State.select.web3address();
     const screenType = AppState.select.screenType();
 
     const chainId = config.priority.usePriorityChainId();
-    const accounts = config.priority.usePriorityAccounts();
+    const account = config.priority.usePriorityAccount();
     const error = config.priority.usePriorityError();
     const isActivating = config.priority.usePriorityIsActivating();
 
@@ -30,12 +27,12 @@ const Wallet: FunctionComponent<Props> = () => {
     const ENSNames = config.priority.usePriorityENSNames(provider);
 
     useEffect(() => {
-        console.log({ chainId, accounts, error, isActivating, isActive, ENSNames });
-    }, [chainId, accounts, error, isActivating, isActive, ENSNames]);
+        console.log({ chainId, account, error, isActivating, isActive, ENSNames });
+    }, [chainId, account, error, isActivating, isActive, ENSNames]);
 
     const happytabs: HappyTabberItem[] = useMemo(
         () => [
-            ...(address
+            ...(account
                 ? [
                       {
                           label: 'Home',
@@ -61,7 +58,7 @@ const Wallet: FunctionComponent<Props> = () => {
                       },
                   ]),
         ],
-        [address],
+        [account],
     );
 
     return (

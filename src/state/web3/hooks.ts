@@ -1,28 +1,21 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber } from 'ethers';
-import { DependencyList, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { batch } from 'react-redux';
 
-import { Address, EnsAddress } from '../../classes/Address';
 import { NetworkContextName } from '../../config';
 import NuggftV1Helper from '../../contracts/NuggftV1Helper';
 import GQLHelper from '../../graphql/GQLHelper';
 import {
     isUndefinedOrNull,
     isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrBooleanFalse,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-    loadFromLocalStorage,
-    loadStringFromLocalStorage,
     safeResetLocalStorage,
-    saveStringToLocalStorage,
-    saveToLocalStorage,
 } from '../../lib';
 import NuggDexState from '../nuggdex';
 import ProtocolState from '../protocol';
-import store from '../store';
 import SwapState from '../swap';
 import TokenState from '../token';
 import TransactionState from '../transaction';
@@ -38,50 +31,50 @@ const useActiveWeb3React = () => {
     return context.active ? context : contextNetwork;
 };
 
-/**
- * Given a name or address, does a lookup to resolve to an address and name
- * @param nameOrAddress ENS name or address
- */
-const useEns = (address: string, deps: DependencyList = []): string => {
-    const [addr, setAddr] = useState('');
+// /**
+//  * Given a name or address, does a lookup to resolve to an address and name
+//  * @param nameOrAddress ENS name or address
+//  */
+// const useEns = (address: string, deps: DependencyList = []): string => {
+//     const [addr, setAddr] = useState('');
 
-    const getData = useCallback(async (address) => {
-        if (address) {
-            if (
-                address === Web3Config.activeChain__NuggftV1 ||
-                address === Address.ZERO.hash
-            ) {
-                setAddr('NuggftV1');
-            } else {
-                let storage = {};
-                if (address === store.getState().web3.web3address) {
-                    storage = loadFromLocalStorage('ens', false) || {};
-                }
-                const ensAddress = new EnsAddress(address);
-                if (!isUndefinedOrNullOrObjectEmpty(storage)) {
-                    setAddr(storage[store.getState().web3.currentChain]);
-                } else {
-                    setAddr(Address.shortenAddress(ensAddress));
-                }
-                await ensAddress.ensureEns();
-                setAddr(ensAddress.short);
-                if (address === store.getState().web3.web3address) {
-                    storage[store.getState().web3.currentChain] =
-                        ensAddress.short;
-                    saveToLocalStorage(storage, 'ens', false);
-                }
-            }
-        } else {
-            setAddr(undefined);
-        }
-    }, deps);
+//     const getData = useCallback(async (address) => {
+//         if (address) {
+//             if (
+//                 address === Web3Config.activeChain__NuggftV1 ||
+//                 address === Address.ZERO.hash
+//             ) {
+//                 setAddr('NuggftV1');
+//             } else {
+//                 let storage = {};
+//                 if (address === store.getState().web3.web3address) {
+//                     storage = loadFromLocalStorage('ens', false) || {};
+//                 }
+//                 const ensAddress = new EnsAddress(address);
+//                 if (!isUndefinedOrNullOrObjectEmpty(storage)) {
+//                     setAddr(storage[store.getState().web3.currentChain]);
+//                 } else {
+//                     setAddr(Address.shortenAddress(ensAddress));
+//                 }
+//                 await ensAddress.ensureEns();
+//                 setAddr(ensAddress.short);
+//                 if (address === store.getState().web3.web3address) {
+//                     storage[store.getState().web3.currentChain] =
+//                         ensAddress.short;
+//                     saveToLocalStorage(storage, 'ens', false);
+//                 }
+//             }
+//         } else {
+//             setAddr(undefined);
+//         }
+//     }, deps);
 
-    useEffect(() => {
-        getData(address);
-    }, [getData, address]);
+//     useEffect(() => {
+//         getData(address);
+//     }, [getData, address]);
 
-    return addr;
-};
+//     return addr;
+// };
 
 const useWeb3Listeners = () => {
     const { library, chainId: connectorChainId } = useWeb3React();
@@ -90,9 +83,7 @@ const useWeb3Listeners = () => {
     const resetState = useCallback((chainId: number | string) => {
         if (!isUndefinedOrNull(chainId)) {
             console.log('RESET');
-            Web3State.dispatch.setCurrentChain(
-                BigNumber.from(chainId).toNumber(),
-            );
+            Web3State.dispatch.setCurrentChain(BigNumber.from(chainId).toNumber());
             safeResetLocalStorage(['walletconnect', 'ens']);
             NuggftV1Helper.reset();
             GQLHelper.reset();
@@ -151,10 +142,7 @@ const useWeb3Listeners = () => {
             return () => {
                 window.ethereum.removeListener('connect', connect);
                 window.ethereum.removeListener('disconnect', disconnect);
-                window.ethereum.removeListener(
-                    'accountChanged',
-                    accountsChanged,
-                );
+                window.ethereum.removeListener('accountChanged', accountsChanged);
                 window.ethereum.removeListener('chainChanged', chainChanged);
                 window.ethereum.removeListener('message', message);
             };
@@ -164,29 +152,18 @@ const useWeb3Listeners = () => {
 
 const useSetWeb3Account = () => {
     const web3address = Web3State.select.web3address();
-    const {
-        activate: defaultActivate,
-        account: web3Account,
-        active,
-        library,
-    } = useWeb3React();
+    const { activate: defaultActivate, account: web3Account, active, library } = useWeb3React();
 
     useEffect(() => {
         if (isUndefinedOrNullOrStringEmpty(web3address)) {
             if (!isUndefinedOrNullOrObjectEmpty(window.ethereum)) {
                 if (
                     !isUndefinedOrNullOrObjectEmpty(window.ethereum._state) &&
-                    !isUndefinedOrNullOrArrayEmpty(
-                        window.ethereum._state.accounts,
-                    )
+                    !isUndefinedOrNullOrArrayEmpty(window.ethereum._state.accounts)
                 ) {
-                    Web3State.dispatch.setWeb3Address(
-                        window.ethereum._state.accounts[0],
-                    );
+                    Web3State.dispatch.setWeb3Address(window.ethereum._state.accounts[0]);
                 } else if (
-                    !isUndefinedOrNullOrObjectEmpty(
-                        window.ethereum.selectedProvider,
-                    ) &&
+                    !isUndefinedOrNullOrObjectEmpty(window.ethereum.selectedProvider) &&
                     !isUndefinedOrNullOrStringEmpty(
                         window.ethereum.selectedProvider.selectedAddress,
                     )
@@ -194,21 +171,14 @@ const useSetWeb3Account = () => {
                     Web3State.dispatch.setWeb3Address(
                         window.ethereum.selectedProvider.selectedAddress,
                     );
-                } else if (
-                    !isUndefinedOrNullOrStringEmpty(
-                        window.ethereum.selectedAddress,
-                    )
-                ) {
-                    Web3State.dispatch.setWeb3Address(
-                        window.ethereum.selectedAddress,
-                    );
+                } else if (!isUndefinedOrNullOrStringEmpty(window.ethereum.selectedAddress)) {
+                    Web3State.dispatch.setWeb3Address(window.ethereum.selectedAddress);
                 } else if (!isUndefinedOrNullOrStringEmpty(web3Account)) {
                     Web3State.dispatch.setWeb3Address(web3Account);
                 }
             } else if (!isUndefinedOrNullOrStringEmpty(web3Account)) {
                 Web3State.dispatch.setWeb3Address(web3Account);
-                Web3State._walletConnectSigner =
-                    library?.getSigner(web3Account);
+                Web3State._walletConnectSigner = library?.getSigner(web3Account);
             }
         }
     }, [web3address, web3Account, library]);
@@ -216,7 +186,6 @@ const useSetWeb3Account = () => {
 
 export default {
     useActiveWeb3React,
-    useEns,
     useWeb3Listeners,
     useSetWeb3Account,
 };

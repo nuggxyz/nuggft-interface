@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Web3Provider } from '@ethersproject/providers';
+import { createSlice } from '@reduxjs/toolkit';
 
 import { NLState } from '../NLState';
 

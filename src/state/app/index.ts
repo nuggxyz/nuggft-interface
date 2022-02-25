@@ -5,16 +5,15 @@ import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-    smartInsert,
     smartInsertIndex,
     smartRemove,
     smartReplace,
 } from '../../lib';
-import Layout from '../../lib/layout';
 import { NLState } from '../NLState';
 import store from '../store';
 import SwapState from '../swap';
 import TokenState from '../token';
+import { SupportedChainId } from '../web32/config';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -28,9 +27,7 @@ class AppState extends NLState<NL.Redux.App.State> {
 
     declare static actions: typeof this.instance._slice.actions;
     declare static reducer: typeof this.instance._slice.reducer;
-    declare static select: ApplyFuncToChildren<
-        typeof this.instance._initialState
-    >;
+    declare static select: ApplyFuncToChildren<typeof this.instance._initialState>;
     declare static dispatch: ApplyDispatchToChildren<
         typeof thactions & typeof this.instance._slice.actions
     >;
@@ -82,26 +79,19 @@ class AppState extends NLState<NL.Redux.App.State> {
                         ? 'tablet'
                         : 'phone';
             },
-            addToastToList: (
-                state,
-                action: PayloadAction<NL.Redux.App.Toast>,
-            ) => {
+            addToastToList: (state, action: PayloadAction<NL.Redux.App.Toast>) => {
                 let temp = state.toasts;
                 state.toasts = smartInsertIndex(temp, action.payload);
             },
             removeToastFromList: (
                 state,
-                action: PayloadAction<
-                    Partial<NL.Redux.App.Toast> & { index: number }
-                >,
+                action: PayloadAction<Partial<NL.Redux.App.Toast> & { index: number }>,
             ) => {
                 state.toasts = smartRemove(state.toasts, action.payload);
             },
             replaceToast: (
                 state,
-                action: PayloadAction<
-                    Partial<NL.Redux.App.Toast> & { id: string }
-                >,
+                action: PayloadAction<Partial<NL.Redux.App.Toast> & { id: string }>,
             ) => {
                 let temp = state.toasts;
                 state.toasts = smartReplace(temp, action.payload);
@@ -114,9 +104,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 }>,
             ) => {
                 state.modalIsOpen = action.payload.name;
-                state.modalData = !isUndefinedOrNullOrObjectEmpty(
-                    action.payload.modalData,
-                )
+                state.modalData = !isUndefinedOrNullOrObjectEmpty(action.payload.modalData)
                     ? action.payload.modalData
                     : {};
             },
@@ -127,10 +115,7 @@ class AppState extends NLState<NL.Redux.App.State> {
             changeView: (state, action: PayloadAction<NL.Redux.App.Views>) => {
                 state.view = action.payload;
             },
-            changeMobileView: (
-                state,
-                action: PayloadAction<NL.Redux.App.MobileViews>,
-            ) => {
+            changeMobileView: (state, action: PayloadAction<NL.Redux.App.MobileViews>) => {
                 state.mobileView = action.payload;
             },
             toggleWallet: (state) => {
@@ -143,7 +128,7 @@ class AppState extends NLState<NL.Redux.App.State> {
         window.location.hash = route;
     }
 
-    public static onRouteUpdate(route: string) {
+    public static onRouteUpdate(chainId: SupportedChainId, route: string) {
         try {
             const swapRoute = route.match(/\/(swap)\/(\d+)\-(\d+)/);
             const tokenRoute = route.match(/\/(nugg)\/(\d+)/);
@@ -154,17 +139,13 @@ class AppState extends NLState<NL.Redux.App.State> {
 
             const currentView = store.getState().app.view;
 
-            const currentEpoch = !isUndefinedOrNullOrObjectEmpty(
-                store.getState().protocol.epoch,
-            )
+            const currentEpoch = !isUndefinedOrNullOrObjectEmpty(store.getState().protocol.epoch)
                 ? store.getState().protocol.epoch.id
                 : '';
 
-            if (
-                route === '/' &&
-                !isUndefinedOrNullOrStringEmpty(currentEpoch)
-            ) {
+            if (route === '/' && !isUndefinedOrNullOrStringEmpty(currentEpoch)) {
                 SwapState.dispatch.initSwap({
+                    chainId,
                     swapId: `${currentEpoch}-0`,
                 });
                 if (screenType === 'phone') {
@@ -179,6 +160,7 @@ class AppState extends NLState<NL.Redux.App.State> {
             ) {
                 console.log(`${swapRoute[2]}-${swapRoute[3]}`);
                 SwapState.dispatch.initSwap({
+                    chainId,
                     swapId: `${swapRoute[2]}-${swapRoute[3]}`,
                 });
                 if (screenType === 'phone') {
@@ -193,6 +175,7 @@ class AppState extends NLState<NL.Redux.App.State> {
             ) {
                 if (!isUndefinedOrNullOrStringEmpty(currentEpoch)) {
                     SwapState.dispatch.initSwap({
+                        chainId,
                         swapId: `${currentEpoch}-0`,
                     });
                 }

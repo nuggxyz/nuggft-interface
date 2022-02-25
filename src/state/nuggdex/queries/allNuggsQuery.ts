@@ -1,12 +1,8 @@
 import gql from 'graphql-tag';
 
-import { idFragment } from '../../../graphql/fragments/general';
-import { swapNuggId } from '../../../graphql/fragments/swap';
 import { executeQuery } from '../../../graphql/helpers';
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '../../../lib';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '../../../lib';
+import { SupportedChainId } from '../../web32/config';
 
 const query = (
     orderBy: 'eth' | 'id',
@@ -17,11 +13,7 @@ const query = (
 ) => gql`
     {
         nuggs(
-            ${
-                !isUndefinedOrNullOrStringEmpty(searchValue)
-                    ? `where: {id: "${searchValue}"},`
-                    : ''
-            }
+            ${!isUndefinedOrNullOrStringEmpty(searchValue) ? `where: {id: "${searchValue}"},` : ''}
             orderBy: idnum,
             orderDirection: ${orderDirection},
             first: ${first},
@@ -34,6 +26,7 @@ const query = (
 `;
 
 const allNuggsQuery = async (
+    chainId: SupportedChainId,
     orderBy: 'eth' | 'id',
     orderDirection: 'asc' | 'desc',
     searchValue: string,
@@ -42,6 +35,7 @@ const allNuggsQuery = async (
 ) => {
     try {
         const result = (await executeQuery(
+            chainId,
             query(orderBy, orderDirection, searchValue, first, skip),
             'nuggs',
         )) as NL.GraphQL.Fragments.Nugg.ListItem[];

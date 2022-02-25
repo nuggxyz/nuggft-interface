@@ -1,32 +1,18 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { gql, useSubscription } from '@apollo/client';
-import { useWeb3React } from '@web3-react/core';
-import { BigNumber, ethers } from 'ethers';
+import { useCallback, useEffect, useState } from 'react';
 
-import useRecursiveTimeout from '../../hooks/useRecursiveTimeout';
-import {
-    isUndefinedOrNullOrNotNumber,
-    isUndefinedOrNullOrNotString,
-    isUndefinedOrNullOrNumberZero,
-    isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '../../lib';
-import constants from '../../lib/constants';
-import { _metaBare } from '../../graphql/fragments/_meta';
-import { client } from '../../graphql/client';
+import { isUndefinedOrNullOrNotNumber } from '../../lib';
 import Web3State from '../web3';
 import useDebounce from '../../hooks/useDebounce';
 import Web3Config from '../web3/Web3Config';
-import NuggftV1Helper from '../../contracts/NuggftV1Helper';
-import config from '../../config';
+import poop from '../../config';
+import config from '../web32/config';
 
 import ProtocolState from '.';
 
 export default () => {
-    const { library } = Web3State.hook.useActiveWeb3React();
     const genesisBlock = ProtocolState.select.genesisBlock();
     const epoch = ProtocolState.select.epoch();
-    const chainId = Web3State.select.currentChain();
+    const chainId = config.priority.usePriorityChainId();
     const [blocknum, setBlocknum] = useState(0);
     const [lastChainUpdate, setLastChainUpdate] = useState(0);
     const debouncedBlocknum = useDebounce(blocknum, 10);
@@ -41,8 +27,7 @@ export default () => {
             return genesisBlock
                 ? Math.max(
                       Math.floor(
-                          (blocknum - genesisBlock) / config.EPOCH_INTERVAL +
-                              config.EPOCH_OFFSET,
+                          (blocknum - genesisBlock) / poop.EPOCH_INTERVAL + poop.EPOCH_OFFSET,
                       ),
                       0,
                   )
@@ -50,63 +35,6 @@ export default () => {
         },
         [genesisBlock],
     );
-
-    const calculateEpochStartBlock = useCallback(
-        (epoch: number) => {
-            return genesisBlock
-                ? Math.floor(
-                      (epoch - config.EPOCH_OFFSET) * config.EPOCH_INTERVAL +
-                          genesisBlock,
-                  )
-                : null;
-        },
-        [genesisBlock],
-    );
-
-    const updateBlocknum = useCallback(
-        (newBlock: number) =>
-            setBlocknum((currentBlock) => {
-                const blockToSet = Math.max(currentBlock, newBlock);
-                const calculatedEpoch = calculateEpochId(blockToSet);
-                if (
-                    isUndefinedOrNullOrObjectEmpty(epoch) ||
-                    calculatedEpoch !== +epoch.id
-                ) {
-                    const startBlock =
-                        calculateEpochStartBlock(calculatedEpoch);
-                    const endBlock =
-                        calculateEpochStartBlock(calculatedEpoch + 1) - 1;
-                    if (startBlock && endBlock) {
-                        ProtocolState.dispatch.safeSetEpoch({
-                            id: '' + calculatedEpoch,
-                            startblock: '' + startBlock,
-                            endblock: '' + endBlock,
-                        });
-                    }
-                }
-                return blockToSet;
-            }),
-        [epoch, calculateEpochStartBlock, calculateEpochId],
-    );
-
-    useEffect(() => {
-        if (
-            !isUndefinedOrNullOrObjectEmpty(library) &&
-            !isUndefinedOrNullOrNotNumber(genesisBlock)
-        ) {
-            library
-                .getBlockNumber()
-                .then(updateBlocknum)
-                .catch((error) =>
-                    console.error('Failed to get block number', error),
-                );
-
-            library.on('block', updateBlocknum);
-            return () => {
-                library.removeListener('block', updateBlocknum);
-            };
-        }
-    }, [updateBlocknum, library, chainId, genesisBlock]);
 
     useEffect(() => {
         if (!isUndefinedOrNullOrNotNumber(debouncedBlocknum)) {
@@ -117,9 +45,7 @@ export default () => {
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-            setLastChainUpdate(
-                (lastUpdate) => Web3Config.NETWORK_HEALTH_CHECK_MS + lastUpdate,
-            );
+            setLastChainUpdate((lastUpdate) => Web3Config.NETWORK_HEALTH_CHECK_MS + lastUpdate);
             if (lastChainUpdate > Web3Config.DEFAULT_MS_BEFORE_WARNING) {
                 Web3State.dispatch.setConnectivityWarning(true);
             } else {
@@ -135,7 +61,7 @@ export default () => {
     }, [lastChainUpdate, setLastChainUpdate]);
 
     useEffect(() => {
-        ProtocolState.dispatch.updateStaked();
+        ProtocolState.dispatch.updateStaked({ chainId });
     }, []);
 
     return null;
