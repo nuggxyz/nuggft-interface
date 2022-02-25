@@ -1,10 +1,7 @@
 declare namespace NL.Redux {
     type RootState = import('./store').NLRootState;
 
-    type Reducer = import('@reduxjs/toolkit').Reducer<
-        import('@reduxjs/toolkit').Action,
-        any
-    >;
+    type Reducer = import('@reduxjs/toolkit').Reducer<import('@reduxjs/toolkit').Action, any>;
 
     type Actions = import('@reduxjs/toolkit').CaseReducerActions<
         import('@reduxjs/toolkit').SliceCaseReducers<any>
@@ -22,9 +19,7 @@ declare namespace NL.Redux {
     type Hook = (any) => any;
     type Hooks = Hook[];
 
-    type Thactions = Dictionary<
-        import('@reduxjs/toolkit').AsyncThunk<any, any, any>
-    >;
+    type Thactions = Dictionary<import('@reduxjs/toolkit').AsyncThunk<any, any, any>>;
 
     type LocalStoragePayload<T> = {
         _localStorageValue?: T;

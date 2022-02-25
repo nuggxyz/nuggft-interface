@@ -69,8 +69,10 @@
         "@babel/plugin-proposal-decorators": "^7.14.5",
         "@babel/plugin-transform-typescript": "^7.16.1",
         "@babel/preset-env": "^7.16.5",
+        "@ethersproject/experimental": "^5.5.0",
         "@ethersproject/providers": "^5.4.5",
         "@loadable/component": "^5.15.2",
+        "@metamask/detect-provider": "^1.2.0",
         "@metamask/jazzicon": "^2.0.0",
         "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
         "@reduxjs/toolkit": "^1.6.1",
@@ -146,9 +148,11 @@
         "tailwindcss": "^3.0.2",
         "terser-webpack-plugin": "^5.2.5",
         "ua-parser-js": "^1.0.2",
+        "walletlink": "^2.5.0",
         "webpack": "^5.64.4",
         "webpack-dev-server": "^4.6.0",
         "webpack-manifest-plugin": "^4.0.2",
-        "workbox-webpack-plugin": "^6.4.1"
+        "workbox-webpack-plugin": "^6.4.1",
+        "zustand": "^3.7.0"
     }
 }

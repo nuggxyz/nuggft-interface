@@ -10,6 +10,7 @@ import Web3State from './web3';
 import SwapState from './swap';
 import NuggDexState from './nuggdex';
 import SocketState from './socket';
+import Web32State from './web32';
 
 export const states = {
     AppState,
@@ -21,6 +22,7 @@ export const states = {
     Web3State,
     NuggDexState,
     SocketState,
+    Web32State,
 };
 
 export const rootReducer = combineReducers({
@@ -33,6 +35,7 @@ export const rootReducer = combineReducers({
     wallet: WalletState.reducer,
     web3: Web3State.reducer,
     socket: SocketState.reducer,
+    web32: Web32State.reducer,
 });
 
 const store = configureStore({
