@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { LOSS } from '@src/lib/conversion';
-import config from '@src/web3/config';
 import ProtocolState from '@src/state/protocol';
+import web3 from '@src/web3';
 
 import { StakeEvent, ClaimEvent, OfferEvent } from '../../typechain/NuggftV1';
 
@@ -14,10 +14,9 @@ import { formatLog, SocketType } from './interfaces';
 import SocketState from '.';
 
 export default () => {
-    const address = config.priority.usePriorityAccount();
-
-    const provider = config.priority.usePriorityProvider();
-    const chainId = config.priority.usePriorityChainId();
+    const address = web3.hook.usePriorityAccount();
+    const provider = web3.hook.usePriorityProvider();
+    const chainId = web3.hook.usePriorityChainId();
 
     useEffect(() => {
         if (provider) {

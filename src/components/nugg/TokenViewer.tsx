@@ -10,8 +10,7 @@ import {
 } from '@src/lib';
 import AppState from '@src/state/app';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
-import config from '@src/web3/config';
-
+import web3 from '@src/web3';
 type Props = {
     tokenId: string;
     style?: CSSProperties;
@@ -30,7 +29,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     data,
 }) => {
     const screenType = AppState.select.screenType();
-    const chainId = config.priority.usePriorityChainId();
+    const chainId = web3.hook.usePriorityChainId();
 
     const { width } = useMemo(() => {
         return { width: window.innerWidth };

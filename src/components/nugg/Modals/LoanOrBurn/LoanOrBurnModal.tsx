@@ -12,7 +12,7 @@ import FontSize from '@src/lib/fontSize';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import Colors from '@src/lib/colors';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
-import config from '@src/web3/config';
+import web3 from '@src/web3';
 
 import styles from './LoanOrBurn.styles';
 
@@ -22,8 +22,8 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
     const shareValue = ProtocolState.select.nuggftStakedEthPerShare();
     const toggle = TransactionState.select.toggleCompletedTxn();
     const { targetId, type } = AppState.select.modalData();
-    const chainId = config.priority.usePriorityChainId();
-    const provider = config.priority.usePriorityProvider();
+    const chainId = web3.hook.usePriorityChainId();
+    const provider = web3.hook.usePriorityProvider();
 
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(targetId);

@@ -2,18 +2,17 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 import poop from '@src/config';
-import config from '@src/web3/config';
+import web3 from '@src/web3';
 
 import ProtocolState from '.';
-
 export default () => {
     const genesisBlock = ProtocolState.select.genesisBlock();
     const epoch = ProtocolState.select.epoch();
-    const chainId = config.priority.usePriorityChainId();
+    const chainId = web3.hook.usePriorityChainId();
     // const [blocknum, setBlocknum] = useState(0);
     const [lastChainUpdate, setLastChainUpdate] = useState(0);
     // const debouncedBlocknum = useDebounce(blocknum, 10);
-    const provider = config.priority.usePriorityProvider();
+    const provider = web3.hook.usePriorityProvider();
     const blocknum = ProtocolState.select.currentBlock();
 
     const getBlock = useCallback(

@@ -23,7 +23,7 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 import Layout from '@src/lib/layout';
 import FontSize from '@src/lib/fontSize';
 import useHandleError from '@src/hooks/useHandleError';
-import config from '@src/web3/config';
+import web3 from '@src/web3';
 
 import styles from './OfferOrSellModal.styles';
 
@@ -32,12 +32,12 @@ type Props = {};
 const OfferOrSellModal: FunctionComponent<Props> = () => {
     const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
-    const address = config.priority.usePriorityAccount();
+    const address = web3.hook.usePriorityAccount();
     const toggle = TransactionState.select.toggleCompletedTxn();
     const nugg = SwapState.select.nugg();
 
-    const provider = config.priority.usePriorityProvider();
-    const chainId = config.priority.usePriorityChainId();
+    const provider = web3.hook.usePriorityProvider();
+    const chainId = web3.hook.usePriorityChainId();
 
     const userBalance = useAsyncState(
         () => provider && provider.getBalance(address),

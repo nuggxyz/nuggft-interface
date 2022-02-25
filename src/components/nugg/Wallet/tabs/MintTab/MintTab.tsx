@@ -34,8 +34,8 @@ import TokenState from '@src/state/token';
 import NuggDexState from '@src/state/nuggdex';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import Layout from '@src/lib/layout';
-import config, { SupportedChainId } from '@src/web3/config';
-
+import { SupportedChainId } from '@src/web3/config';
+import web3 from '@src/web3';
 type Props = {};
 
 const MintTab: FunctionComponent<Props> = () => {
@@ -45,10 +45,10 @@ const MintTab: FunctionComponent<Props> = () => {
     const epoch = ProtocolState.select.epoch();
     const [myNuggs, setMyNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
-    const address = config.priority.usePriorityAccount();
-    const provider = config.priority.usePriorityProvider();
+    const address = web3.hook.usePriorityAccount();
+    const provider = web3.hook.usePriorityProvider();
 
-    const chainId = config.priority.usePriorityChainId();
+    const chainId = web3.hook.usePriorityChainId();
     const loans = useAsyncState(
         () => loanedNuggsQuery(chainId, address, 'desc', '', 1000, 0),
         [address, epoch, chainId],

@@ -14,7 +14,7 @@ declare namespace NL.Redux.Web32 {
     type AddressMap = { [chainId: number]: string };
 
     interface WalletInfo {
-        connector?: import('./utils/core').ResWithStore<T>;
+        connector?: import('./core/core').ResWithStore<T>;
 
         name: string;
         iconURL: string;

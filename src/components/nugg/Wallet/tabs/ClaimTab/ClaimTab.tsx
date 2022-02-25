@@ -22,21 +22,20 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import FontSize from '@src/lib/fontSize';
 import Layout from '@src/lib/layout';
 import SocketState from '@src/state/socket';
-import config from '@src/web3/config';
-
+import web3 from '@src/web3';
 type Props = { isActive?: boolean };
 
 const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     const txnToggle = TransactionState.select.toggleCompletedTxn();
-    const address = config.priority.usePriorityAccount();
+    const address = web3.hook.usePriorityAccount();
     const epoch = ProtocolState.select.epoch();
-    const provider = config.priority.usePriorityProvider();
+    const provider = web3.hook.usePriorityProvider();
 
     const [unclaimedOffers, setUnclaimedOffers] = useState<NL.GraphQL.Fragments.Offer.Thumbnail[]>(
         [],
     );
     const [loadingOffers, setLoadingOffers] = useState(false);
-    const chainId = config.priority.usePriorityChainId();
+    const chainId = web3.hook.usePriorityChainId();
 
     const getUnclaimedOffers = useCallback(async () => {
         setLoadingOffers(true);

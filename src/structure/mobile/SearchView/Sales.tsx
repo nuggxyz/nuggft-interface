@@ -5,7 +5,7 @@ import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import constants from '@src/lib/constants';
 import activeNuggsQuery from '@src/state/nuggdex/queries/activeNuggsQuery';
 import ProtocolState from '@src/state/protocol';
-import config from '@src/web3/config';
+import web3 from '@src/web3';
 
 type Props = {};
 
@@ -14,7 +14,7 @@ const Sales: FunctionComponent<Props> = () => {
     const [activeNuggs, setActiveNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
 
     const [loading, setLoading] = useState(false);
-    const chainId = config.priority.usePriorityChainId();
+    const chainId = web3.hook.usePriorityChainId();
 
     const handleGetActive = useCallback(
         async (

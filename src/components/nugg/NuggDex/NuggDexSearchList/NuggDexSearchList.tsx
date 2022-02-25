@@ -22,7 +22,7 @@ import ProtocolState from '@src/state/protocol';
 import constants from '@src/lib/constants';
 import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
 import usePrevious from '@src/hooks/usePrevious';
-import config from '@src/web3/config';
+import web3 from '@src/web3';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -33,7 +33,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const epoch = ProtocolState.select.epoch();
     const prevEpoch = usePrevious(epoch);
     const filters = NuggDexState.select.searchFilters();
-    const chainId = config.priority.usePriorityChainId();
+    const chainId = web3.hook.usePriorityChainId();
 
     const [localViewing, setLocalViewing] = useState<NL.Redux.NuggDex.SearchViews>('home');
     const [allNuggs, setAllNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);

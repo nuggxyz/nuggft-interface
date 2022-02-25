@@ -9,8 +9,8 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { split, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
 
 import store, { states } from '../state/store';
-import config, { SupportedChainId } from '../web3/config';
-
+import { SupportedChainId } from '../web3/config';
+import web3 from '@src/web3';
 const wsLink = new WebSocketLink({
     uri: constants.MAIN_WEBSOCKET,
     options: {
@@ -46,7 +46,7 @@ export const client = (chainId: SupportedChainId): ApolloClient<any> => {
     return new ApolloClient({
         link: new HttpLink({
             // uri: config.GRAPH_ENPOINTS[store.getState().web3.currentChain],
-            uri: config.GRAPH_ENPOINTS[chainId],
+            uri: web3.config.GRAPH_ENPOINTS[chainId],
             fetch: fetch as any,
         }),
         cache: new InMemoryCache(),

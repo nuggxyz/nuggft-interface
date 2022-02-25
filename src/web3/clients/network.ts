@@ -1,7 +1,7 @@
 import type { Eip1193Bridge } from '@ethersproject/experimental';
 import type { ConnectionInfo } from '@ethersproject/web';
 
-import { Connector, Actions } from './types';
+import { Connector, Actions } from '@src/web3/core/types';
 
 type url = string | ConnectionInfo;
 

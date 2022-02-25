@@ -7,7 +7,7 @@ import {
     AddEthereumChainParameter,
     Provider,
     Actions,
-} from './types';
+} from '@src/web3/core/types';
 
 export class NoMetaMaskError extends Error {
     public constructor() {

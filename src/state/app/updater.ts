@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
 
-import config from '@src/web3/config';
+import web3 from '@src/web3';
 
 import AppState from '.';
-
 export default () => {
     const resizer = () => {
         AppState.dispatch.setWindowDimensions({
@@ -12,7 +11,7 @@ export default () => {
         });
     };
 
-    const chainId = config.priority.usePriorityChainId();
+    const chainId = web3.hook.usePriorityChainId();
 
     useEffect(() => {
         resizer();

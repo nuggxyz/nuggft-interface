@@ -3,15 +3,14 @@ import React, { FunctionComponent, SetStateAction, useCallback, useEffect, useSt
 import NuggList from '@src/components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
 import constants from '@src/lib/constants';
 import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
-import config from '@src/web3/config';
-
+import web3 from '@src/web3';
 type Props = {};
 
 const AllNuggs: FunctionComponent<Props> = () => {
     const [allNuggs, setAllNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const chainId = config.priority.usePriorityChainId();
+    const chainId = web3.hook.usePriorityChainId();
 
     const handleGetAll = useCallback(
         async (

@@ -7,23 +7,23 @@ import Colors from '@src/lib/colors';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { EthInt } from '@src/classes/Fraction';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
-import config from '@src/web3/config';
+import web3 from '@src/web3';
 
 import styles from './AccountViewer.styles';
 
 const AccountViewer = () => {
     const screenType = AppState.select.screenType();
-    const chainId = config.priority.usePriorityChainId();
+    const chainId = web3.hook.usePriorityChainId();
 
     const name = useMemo(() => {
         console.log({ chainId });
-        return chainId && chainId !== -1 ? config.CHAIN_INFO[chainId].label : 'uk';
+        return chainId && chainId !== -1 ? web3.config.CHAIN_INFO[chainId].label : 'uk';
     }, [chainId]);
 
-    const provider = config.priority.usePriorityProvider();
-    const ens = config.priority.usePriorityENSName(provider);
-    const address = config.priority.usePriorityAccount();
-    const connector = config.priority.usePriorityConnector();
+    const provider = web3.hook.usePriorityProvider();
+    const ens = web3.hook.usePriorityENSName(provider);
+    const address = web3.hook.usePriorityAccount();
+    const connector = web3.hook.usePriorityConnector();
 
     const userBalance = useAsyncState(
         () => provider && address && provider.getBalance(address),

@@ -2,11 +2,10 @@ import React, { FunctionComponent } from 'react';
 
 import Colors from '@src/lib/colors';
 import Layout from '@src/lib/layout';
-import config from '@src/web3/config';
 import Button from '@src/components/general/Buttons/Button/Button';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import Text from '@src/components/general/Texts/Text/Text';
-
+import web3 from '@src/web3';
 type Props = {};
 
 const ConnectWalletTab: FunctionComponent<Props> = () => {
@@ -60,7 +59,7 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                     width: '100%',
                     height: '100%',
                 }}>
-                {Object.values(config.SUPPORTED_WALLETS).map((walletObject) =>
+                {Object.values(web3.config.SUPPORTED_WALLETS).map((walletObject) =>
                     walletObject.name !== 'MetaMask' ||
                     (walletObject.name === 'MetaMask' && window.ethereum) ? (
                         <Button

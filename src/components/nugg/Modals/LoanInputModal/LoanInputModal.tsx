@@ -17,7 +17,7 @@ import useHandleError from '@src/hooks/useHandleError';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import FontSize from '@src/lib/fontSize';
 import Layout from '@src/lib/layout';
-import config from '@src/web3/config';
+import web3 from '@src/web3';
 
 import styles from './LoanInputModal.styles';
 
@@ -26,14 +26,14 @@ type Props = {};
 const LoanInputModal: FunctionComponent<Props> = () => {
     const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
-    const address = config.priority.usePriorityAccount();
+    const address = web3.hook.usePriorityAccount();
     const toggle = TransactionState.select.toggleCompletedTxn();
     const { targetId, type } = AppState.select.modalData();
 
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(targetId);
-    const provider = config.priority.usePriorityProvider();
-    const chainId = config.priority.usePriorityChainId();
+    const provider = web3.hook.usePriorityProvider();
+    const chainId = web3.hook.usePriorityChainId();
     useEffect(() => {
         if (!isUndefinedOrNullOrStringEmpty(type)) {
             setType(type);

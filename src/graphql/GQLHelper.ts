@@ -1,5 +1,5 @@
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
-import config from '../web3/config';
+import web3 from '@src/web3';
 import { SupportedChainId } from '../web3/config';
 
 export default class GQLHelper {
@@ -10,7 +10,7 @@ export default class GQLHelper {
         GQLHelper._instance = new ApolloClient({
             link: new HttpLink({
                 // uri: Web3Config.GRAPH_ENPOINTS[store.getState().web3.currentChain],
-                uri: config.GRAPH_ENPOINTS[chainId],
+                uri: web3.config.GRAPH_ENPOINTS[chainId],
                 fetch: fetch as any,
             }),
             cache: new InMemoryCache(),

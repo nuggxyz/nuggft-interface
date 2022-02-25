@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
 
-import config from '@src/web3/config';
 import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
 import AppState from '@src/state/app';
+import web3 from '@src/web3';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectWalletTab from './tabs/ConnectWalletTab';
@@ -10,21 +10,20 @@ import LoansTab from './tabs/LoansTab/LoansTab';
 import MintTab from './tabs/MintTab/MintTab';
 import SalesTab from './tabs/SalesTab/SalesTab';
 import styles from './Wallet.styles';
-
 type Props = {};
 
 const Wallet: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
 
-    const chainId = config.priority.usePriorityChainId();
-    const account = config.priority.usePriorityAccount();
-    const error = config.priority.usePriorityError();
-    const isActivating = config.priority.usePriorityIsActivating();
+    const chainId = web3.hook.usePriorityChainId();
+    const account = web3.hook.usePriorityAccount();
+    const error = web3.hook.usePriorityError();
+    const isActivating = web3.hook.usePriorityIsActivating();
 
-    const isActive = config.priority.usePriorityIsActive();
+    const isActive = web3.hook.usePriorityIsActive();
 
-    const provider = config.priority.usePriorityProvider();
-    const ENSNames = config.priority.usePriorityENSNames(provider);
+    const provider = web3.hook.usePriorityProvider();
+    const ENSNames = web3.hook.usePriorityENSNames(provider);
 
     useEffect(() => {
         console.log({ chainId, account, error, isActivating, isActive, ENSNames });

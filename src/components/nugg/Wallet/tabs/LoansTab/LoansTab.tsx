@@ -17,17 +17,16 @@ import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
 import AppState from '@src/state/app';
 import TransactionState from '@src/state/transaction';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import config from '@src/web3/config';
-
+import web3 from '@src/web3';
 type Props = { isActive?: boolean };
 
 const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
-    const address = config.priority.usePriorityAccount();
+    const address = web3.hook.usePriorityAccount();
     const epoch = ProtocolState.select.epoch();
     const [loanedNuggs, setLoanedNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
     const txnToggle = TransactionState.select.toggleCompletedTxn();
-    const chainId = config.priority.usePriorityChainId();
+    const chainId = web3.hook.usePriorityChainId();
 
     const getMyNuggs = useCallback(async () => {
         setLoadingNuggs(true);

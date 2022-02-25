@@ -10,8 +10,7 @@ import { fromEth } from '@src/lib/conversion';
 import Colors from '@src/lib/colors';
 import usePrevious from '@src/hooks/usePrevious';
 import useSetState from '@src/hooks/useSetState';
-import config from '@src/web3/config';
-import { useENS } from '@src/web3/utils/core';
+import { useENS } from '@src/web3/core/core';
 import ProtocolState from '@src/state/protocol';
 import AppState from '@src/state/app';
 import SwapState from '@src/state/swap';
@@ -21,6 +20,7 @@ import {
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
+import web3 from '@src/web3';
 
 import styles from './RingAbout.styles';
 
@@ -31,15 +31,15 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const eth = SwapState.select.eth();
     const epoch = ProtocolState.select.epoch();
     const endingSwapEpoch = SwapState.select.epoch();
-    const address = config.priority.usePriorityAccount();
+    const address = web3.hook.usePriorityAccount();
     const ethUsd = SwapState.select.ethUsd();
     const leader = SwapState.select.leader();
     const offers = SwapState.select.offers();
     const swapId = SwapState.select.id();
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const prevToggle = usePrevious(txnToggle);
-    const chainId = config.priority.usePriorityChainId();
-    const provider = config.priority.usePriorityProvider();
+    const chainId = web3.hook.usePriorityChainId();
+    const provider = web3.hook.usePriorityProvider();
 
     const status = useSetState(() => {
         return isUndefinedOrNull(endingSwapEpoch) || isUndefinedOrNull(epoch)

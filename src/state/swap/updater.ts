@@ -1,13 +1,13 @@
 import useRecursiveTimeout from '@src/hooks/useRecursiveTimeout';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import constants from '@src/lib/constants';
-import config from '@src/web3/config';
+import web3 from '@src/web3';
 
 import SwapState from '.';
 
 export default () => {
     const swapId = SwapState.select.id();
-    const chainId = config.priority.usePriorityChainId();
+    const chainId = web3.hook.usePriorityChainId();
     // const updateOffer = useCallback((log: any) => {
     //     const { args } = new NuggftV1Helper(chainId, provider).contract.interface.parseLog(log);
 

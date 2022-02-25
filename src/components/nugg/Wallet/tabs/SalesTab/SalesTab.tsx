@@ -22,18 +22,17 @@ import { fromEth } from '@src/lib/conversion';
 import FontSize from '@src/lib/fontSize';
 import swapStyles from '@src/components/nugg/Wallet/tabs/SwapTab.styles';
 import Layout from '@src/lib/layout';
-import config from '@src/web3/config';
-
+import web3 from '@src/web3';
 type Props = { isActive?: boolean };
 
 const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
-    const address = config.priority.usePriorityAccount();
+    const address = web3.hook.usePriorityAccount();
     const epoch = ProtocolState.select.epoch();
     const [myNuggs, setMyNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
     const txnToggle = TransactionState.select.toggleCompletedTxn();
-    const chainId = config.priority.usePriorityChainId();
-    const provider = config.priority.usePriorityProvider();
+    const chainId = web3.hook.usePriorityChainId();
+    const provider = web3.hook.usePriorityProvider();
 
     const getMyNuggs = useCallback(async () => {
         setLoadingNuggs(true);

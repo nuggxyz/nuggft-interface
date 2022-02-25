@@ -20,7 +20,7 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import Layout from '@src/lib/layout';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import SwapState from '@src/state/swap';
-import config from '@src/web3/config';
+import web3 from '@src/web3';
 
 import styles from './ChainIndicator.styles';
 
@@ -35,8 +35,8 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
     const view = AppState.select.view();
     const currentBlock = ProtocolState.select.currentBlock();
     const swapId = SwapState.select.id();
-    const chainId = config.priority.usePriorityChainId();
-    const provider = config.priority.usePriorityProvider();
+    const chainId = web3.hook.usePriorityChainId();
+    const provider = web3.hook.usePriorityProvider();
 
     const [blocksRemaining, setBlocksRemaining] = useState(0);
 

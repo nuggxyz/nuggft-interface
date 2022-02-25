@@ -7,7 +7,7 @@ import {
     ProviderConnectInfo,
     ProviderRpcError,
     AddEthereumChainParameter,
-} from './types';
+} from '@src/web3/core/types';
 
 function parseChainId(chainId: string | number) {
     return typeof chainId === 'number'

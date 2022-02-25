@@ -17,8 +17,8 @@ import Loader from '@src/components/general/Loader/Loader';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import config from '@src/web3/config';
-import { useENS } from '@src/web3/utils/core';
+import { useENS } from '@src/web3/core/core';
+import web3 from '@src/web3';
 
 import styles from './ViewingNugg.styles';
 
@@ -27,13 +27,13 @@ type Props = { MobileBackButton?: () => JSX.Element };
 const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const tokenId = TokenState.select.tokenId();
     const svg = TokenState.select.tokenURI();
-    const address = config.priority.usePriorityAccount();
+    const address = web3.hook.usePriorityAccount();
     const [owner, setOwner] = useState('');
     const [swaps, setSwaps] = useState([]);
     const screenType = AppState.select.screenType();
-    const chainId = config.priority.usePriorityChainId();
-    const provider = config.priority.usePriorityProvider();
-    const ens = config.priority.usePriorityENSName(provider);
+    const chainId = web3.hook.usePriorityChainId();
+    const provider = web3.hook.usePriorityProvider();
+    const ens = web3.hook.usePriorityENSName(provider);
     const [items, setItems] = useState([tokenId]);
 
     useEffect(() => {
