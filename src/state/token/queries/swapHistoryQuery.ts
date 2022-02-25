@@ -1,9 +1,9 @@
 import gql from 'graphql-tag';
 
-import { swapThumbnail } from '../../../graphql/fragments/swap';
-import { executeQuery } from '../../../graphql/helpers';
-import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '../../../lib';
-import { SupportedChainId } from '../../web32/config';
+import { swapThumbnail } from '@src/graphql/fragments/swap';
+import { executeQuery } from '@src/graphql/helpers';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import { SupportedChainId } from '@src/state/web32/config';
 
 const query = (id: string, orderDirection: 'asc' | 'desc', first: number, skip: number) => gql`
     {

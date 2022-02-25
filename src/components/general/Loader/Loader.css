@@ -3,7 +3,6 @@
     animation: Loader 3s linear infinite;
 }
 
-
 @-webkit-keyframes Loader {
     100% {
         -webkit-transform: rotate(360deg);
@@ -12,6 +11,6 @@
 @keyframes Loader {
     100% {
         -webkit-transform: rotate(360deg);
-        transform: rotate(360deg); 
+        transform: rotate(360deg);
     }
 }

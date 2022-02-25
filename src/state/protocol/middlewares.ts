@@ -4,8 +4,8 @@ import {
     isUndefinedOrNullOrNotNumber,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../lib';
-import SwapState from '../swap';
+} from '@src/lib';
+import SwapState from '@src/state/swap';
 
 import ProtocolState from '.';
 

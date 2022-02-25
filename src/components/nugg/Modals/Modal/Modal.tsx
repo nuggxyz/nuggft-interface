@@ -5,15 +5,15 @@ import {
     isUndefinedOrNull,
     isUndefinedOrNullOrStringEmpty,
     isUndefinedOrNullOrNotString,
-} from '../../../../lib';
-import useOnClickOutside from '../../../../hooks/useOnClickOutside';
-import usePrevious from '../../../../hooks/usePrevious';
-import OfferOrSellModal from '../OfferOrSellModal/OfferOrSellModal';
-import AppState from '../../../../state/app';
-import LoanOrBurnModal from '../LoanOrBurn/LoanOrBurnModal';
-import useAnimateOverlay from '../../../../hooks/useAnimateOverlay';
-import WalletModal from '../WalletModal/WalletModal';
-import LoanInputModal from '../LoanInputModal/LoanInputModal';
+} from '@src/lib';
+import useOnClickOutside from '@src/hooks/useOnClickOutside';
+import usePrevious from '@src/hooks/usePrevious';
+import OfferOrSellModal from '@src/components/nugg/Modals/OfferOrSellModal/OfferOrSellModal';
+import AppState from '@src/state/app';
+import LoanOrBurnModal from '@src/components/nugg/Modals/LoanOrBurn/LoanOrBurnModal';
+import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
+import WalletModal from '@src/components/nugg/Modals/WalletModal/WalletModal';
+import LoanInputModal from '@src/components/nugg/Modals/LoanInputModal/LoanInputModal';
 
 import styles from './Modal.styles';
 

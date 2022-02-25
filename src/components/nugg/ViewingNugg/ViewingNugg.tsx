@@ -1,24 +1,24 @@
 import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
 
-import { Address } from '../../../classes/Address';
-import { isUndefinedOrNullOrStringEmpty } from '../../../lib';
-import Colors from '../../../lib/colors';
-import constants from '../../../lib/constants';
-import { fromEth } from '../../../lib/conversion';
-import Layout from '../../../lib/layout';
-import AppState from '../../../state/app';
-import ProtocolState from '../../../state/protocol';
-import TokenState from '../../../state/token';
-import nuggThumbnailQuery from '../../../state/token/queries/nuggThumbnailQuery';
-import swapHistoryQuery from '../../../state/token/queries/swapHistoryQuery';
-import Button from '../../general/Buttons/Button/Button';
-import AnimatedCard from '../../general/Cards/AnimatedCard/AnimatedCard';
-import Loader from '../../general/Loader/Loader';
-import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
-import Text from '../../general/Texts/Text/Text';
-import TokenViewer from '../TokenViewer';
-import config from '../../../state/web32/config';
-import { useENS } from '../../../state/web32/utils/core';
+import { Address } from '@src/classes/Address';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import Colors from '@src/lib/colors';
+import constants from '@src/lib/constants';
+import { fromEth } from '@src/lib/conversion';
+import Layout from '@src/lib/layout';
+import AppState from '@src/state/app';
+import ProtocolState from '@src/state/protocol';
+import TokenState from '@src/state/token';
+import nuggThumbnailQuery from '@src/state/token/queries/nuggThumbnailQuery';
+import swapHistoryQuery from '@src/state/token/queries/swapHistoryQuery';
+import Button from '@src/components/general/Buttons/Button/Button';
+import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
+import Loader from '@src/components/general/Loader/Loader';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import Text from '@src/components/general/Texts/Text/Text';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import config from '@src/state/web32/config';
+import { useENS } from '@src/state/web32/utils/core';
 
 import styles from './ViewingNugg.styles';
 

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { NLState } from '../NLState';
+import { NLState } from '@src/state/NLState';
 
 import hooks from './hooks';
 import middlewares from './middlewares';

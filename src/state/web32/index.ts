@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { NLState } from '../NLState';
+import { NLState } from '@src/state/NLState';
 
 import middlewares from './middlewares';
 import updater from './updater';

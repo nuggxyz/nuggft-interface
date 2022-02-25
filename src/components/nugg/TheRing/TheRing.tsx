@@ -1,20 +1,20 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
-import useSetState from '../../../hooks/useSetState';
+import useSetState from '@src/hooks/useSetState';
 import {
     isUndefinedOrNull,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
-} from '../../../lib';
-import Colors from '../../../lib/colors';
-import constants from '../../../lib/constants';
-import AppState from '../../../state/app';
-import ProtocolState from '../../../state/protocol';
-import SwapState from '../../../state/swap';
-import CircleTimer from '../../general/AnimatedTimers/CircleTimer/CircleTimer';
-import AnimatedCard from '../../general/Cards/AnimatedCard/AnimatedCard';
-import Text from '../../general/Texts/Text/Text';
-import TokenViewer from '../TokenViewer';
+} from '@src/lib';
+import Colors from '@src/lib/colors';
+import constants from '@src/lib/constants';
+import AppState from '@src/state/app';
+import ProtocolState from '@src/state/protocol';
+import SwapState from '@src/state/swap';
+import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
+import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
+import Text from '@src/components/general/Texts/Text/Text';
+import TokenViewer from '@src/components/nugg/TokenViewer';
 
 import styles from './TheRing.styles';
 

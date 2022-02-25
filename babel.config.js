@@ -9,6 +9,23 @@ module.exports = function (api) {
                 },
             ],
             ['@babel/plugin-proposal-decorators', { legacy: true }],
+            [
+                'module-resolver',
+                {
+                    root: ['.'],
+                    extensions: ['.js', '.ts', '.tsx', '.json'],
+                    alias: {
+                        '@src': './src',
+                    },
+                },
+            ],
+            [
+                'wildcard',
+                {
+                    exts: ['js', 'es6', 'es', 'tsx', 'typescript'],
+                },
+            ],
+            ['import-directory'],
         ],
         presets: [
             [

@@ -2,14 +2,14 @@ import React, { FunctionComponent, useCallback, useRef } from 'react';
 import { IoWalletSharp, IoBookSharp } from 'react-icons/io5';
 import { animated, config, useSpring } from 'react-spring';
 
-import Button from '../../../components/general/Buttons/Button/Button';
-import ChainIndicator from '../../../components/general/Buttons/ChainIndicator/ChainIndicator';
-import useSetState from '../../../hooks/useSetState';
-import Colors from '../../../lib/colors';
-import Layout from '../../../lib/layout';
-import AppState from '../../../state/app';
-import ProtocolState from '../../../state/protocol';
-import TokenState from '../../../state/token';
+import Button from '@src/components/general/Buttons/Button/Button';
+import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
+import useSetState from '@src/hooks/useSetState';
+import Colors from '@src/lib/colors';
+import Layout from '@src/lib/layout';
+import AppState from '@src/state/app';
+import ProtocolState from '@src/state/protocol';
+import TokenState from '@src/state/token';
 
 import styles from './BottomBar.styles';
 

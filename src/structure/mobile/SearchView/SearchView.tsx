@@ -2,13 +2,13 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { animated, config, useSpring } from 'react-spring';
 import { IoChevronBackOutline } from 'react-icons/io5';
 
-import Button from '../../../components/general/Buttons/Button/Button';
-import ViewingNugg from '../../../components/nugg/ViewingNugg/ViewingNugg';
-import Colors from '../../../lib/colors';
-import Layout from '../../../lib/layout';
-import TokenState from '../../../state/token';
-import FontSize from '../../../lib/fontSize';
-import HappyTabber, { HappyTabberItem } from '../../../components/general/HappyTabber/HappyTabber';
+import Button from '@src/components/general/Buttons/Button/Button';
+import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
+import Colors from '@src/lib/colors';
+import Layout from '@src/lib/layout';
+import TokenState from '@src/state/token';
+import FontSize from '@src/lib/fontSize';
+import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
 
 import AllNuggs from './AllNuggs';
 import Sales from './Sales';

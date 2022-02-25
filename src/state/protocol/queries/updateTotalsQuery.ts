@@ -1,9 +1,9 @@
 import gql from 'graphql-tag';
 
-import config from '../../../config';
-import { protocolTotals } from '../../../graphql/fragments/protocol';
-import { executeQuery } from '../../../graphql/helpers';
-import { SupportedChainId } from '../../web32/config';
+import config from '@src/config';
+import { protocolTotals } from '@src/graphql/fragments/protocol';
+import { executeQuery } from '@src/graphql/helpers';
+import { SupportedChainId } from '@src/state/web32/config';
 
 const query = () => gql`
 {

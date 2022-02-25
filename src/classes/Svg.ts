@@ -1,6 +1,6 @@
 import { BigNumber, ethers } from 'ethers';
 
-import { isUndefinedOrNullOrStringEmpty } from '../lib';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 
 export class Svg {
     public static decompressA(a: BigNumber): BigNumber {
@@ -8,12 +8,7 @@ export class Svg {
         else return a.mul(36);
     }
 
-    private static getPixelAt = (
-        arr: ethers.BigNumber[],
-        x: number,
-        y: number,
-        width: number,
-    ) => {
+    private static getPixelAt = (arr: ethers.BigNumber[], x: number, y: number, width: number) => {
         const index = x + y * width;
 
         const pix = arr[Math.floor(index / 6)].shr(42 * (index % 6));
@@ -21,9 +16,7 @@ export class Svg {
         const rgb_ = pix.shl(5).and(0xffffff00);
         const color = rgb_.or(a)._hex;
 
-        const val = arr[Math.floor(index / 6)]
-            .shr(42 * (index % 6))
-            .and('0xffffffffff');
+        const val = arr[Math.floor(index / 6)].shr(42 * (index % 6)).and('0xffffffffff');
         const color2 = ethers.utils.hexZeroPad(color, 4).replace('0x', '#');
         return {
             color: color2 === '#00000000' ? 'nope' : color2,
@@ -95,13 +88,7 @@ export class Svg {
                 (prettyPrint ? '\n' : ''),
         );
 
-        const getRekt = (
-            pix: any,
-            x: number,
-            y: number,
-            xlen: number,
-            ylen: number,
-        ): string => {
+        const getRekt = (pix: any, x: number, y: number, xlen: number, ylen: number): string => {
             if (pix.color === 'nope') return '';
             return String(
                 (prettyPrint ? '\t' : '') +
@@ -155,9 +142,7 @@ export class Svg {
 
         for (let i = 1; i < paletteLength + 1; i++) {
             palette.push(
-                ethers.utils
-                    .hexZeroPad(BigNumber.from(data[i])._hex, 4)
-                    .replace('0x', '#'),
+                ethers.utils.hexZeroPad(BigNumber.from(data[i])._hex, 4).replace('0x', '#'),
             );
         }
 
@@ -170,9 +155,7 @@ export class Svg {
             let y = d & 255;
             d >>= 8;
             let xlen = d & 255;
-            rekts.push(
-                `<rect class="_${color}" x="${x}" y="${y}" width="${xlen}" height="1"/>`,
-            );
+            rekts.push(`<rect class="_${color}" x="${x}" y="${y}" width="${xlen}" height="1"/>`);
         }
 
         return `<svg viewbox="0 0 63 63" height="63" width="63" version="1.2" id="Layer_1" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="visible" xml:space="preserve"><style><![CDATA[${palette

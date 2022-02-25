@@ -2,15 +2,15 @@ import { config as springConfig, useSpring } from '@react-spring/core';
 import { animated } from '@react-spring/web';
 import React, { CSSProperties, FunctionComponent, useLayoutEffect, useMemo, useState } from 'react';
 
-import pendingToken from '../../assets/images/pending-token.svg';
-import NuggftV1Helper from '../../contracts/NuggftV1Helper';
+import pendingToken from '@src/assets/images/pending-token.svg';
+import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrStringEmpty,
     isUndefinedOrNullOrStringEmptyOrZeroOrStringZero,
-} from '../../lib';
-import AppState from '../../state/app';
-import Text, { TextProps } from '../general/Texts/Text/Text';
-import config from '../../state/web32/config';
+} from '@src/lib';
+import AppState from '@src/state/app';
+import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
+import config from '@src/state/web32/config';
 
 type Props = {
     tokenId: string;

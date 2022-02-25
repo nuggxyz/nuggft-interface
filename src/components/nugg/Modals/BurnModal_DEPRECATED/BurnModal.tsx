@@ -1,13 +1,13 @@
 import React, { Fragment, FunctionComponent, useState } from 'react';
 
-import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
-import { fromEth } from '../../../../lib/conversion';
-import NuggDexState from '../../../../state/nuggdex';
-import ProtocolState from '../../../../state/protocol';
-import TransactionState from '../../../../state/transaction';
-import Button from '../../../general/Buttons/Button/Button';
-import Text from '../../../general/Texts/Text/Text';
-import TokenViewer from '../../TokenViewer';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import { fromEth } from '@src/lib/conversion';
+import NuggDexState from '@src/state/nuggdex';
+import ProtocolState from '@src/state/protocol';
+import TransactionState from '@src/state/transaction';
+import Button from '@src/components/general/Buttons/Button/Button';
+import Text from '@src/components/general/Texts/Text/Text';
+import TokenViewer from '@src/components/nugg/TokenViewer';
 
 import styles from './BurnModal.styles';
 

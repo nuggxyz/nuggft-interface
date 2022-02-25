@@ -1,6 +1,6 @@
-import Colors from '../../../../lib/colors';
-import Layout from '../../../../lib/layout';
-import { NLStyleSheetCreator } from '../../../../lib/index';
+import Colors from '@src/lib/colors';
+import Layout from '@src/lib/layout';
+import { NLStyleSheetCreator } from '@src/lib/index';
 
 const styles = NLStyleSheetCreator({
     topRight: {

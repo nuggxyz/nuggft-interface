@@ -15,14 +15,14 @@ import {
     useTransition,
 } from '@react-spring/web';
 
-import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '../../../../lib';
-import NuggDexState from '../../../../state/nuggdex';
-import activeNuggsQuery from '../../../../state/nuggdex/queries/activeNuggsQuery';
-import ProtocolState from '../../../../state/protocol';
-import constants from '../../../../lib/constants';
-import allNuggsQuery from '../../../../state/nuggdex/queries/allNuggsQuery';
-import usePrevious from '../../../../hooks/usePrevious';
-import config from '../../../../state/web32/config';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import NuggDexState from '@src/state/nuggdex';
+import activeNuggsQuery from '@src/state/nuggdex/queries/activeNuggsQuery';
+import ProtocolState from '@src/state/protocol';
+import constants from '@src/lib/constants';
+import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
+import usePrevious from '@src/hooks/usePrevious';
+import config from '@src/state/web32/config';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';

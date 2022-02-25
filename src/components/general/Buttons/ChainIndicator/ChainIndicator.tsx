@@ -13,14 +13,14 @@ import {
     isUndefinedOrNullOrNotNumber,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../../../lib';
-import ProtocolState from '../../../../state/protocol';
-import AppState from '../../../../state/app';
-import Button from '../Button/Button';
-import Layout from '../../../../lib/layout';
-import TokenViewer from '../../../nugg/TokenViewer';
-import SwapState from '../../../../state/swap';
-import config from '../../../../state/web32/config';
+} from '@src/lib';
+import ProtocolState from '@src/state/protocol';
+import AppState from '@src/state/app';
+import Button from '@src/components/general/Buttons/Button/Button';
+import Layout from '@src/lib/layout';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import SwapState from '@src/state/swap';
+import config from '@src/state/web32/config';
 
 import styles from './ChainIndicator.styles';
 

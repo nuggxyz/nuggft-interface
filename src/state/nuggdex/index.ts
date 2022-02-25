@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { isUndefinedOrNullOrArrayEmpty } from '../../lib';
-import { NLState } from '../NLState';
+import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
+import { NLState } from '@src/state/NLState';
 
 import hooks from './hooks';
 import middlewares from './middlewares';

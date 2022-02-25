@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useCallback, useMemo } from 'react';
 
-import useOnHover from '../../../../hooks/useOnHover';
-import AppState from '../../../../state/app';
-import Text from '../../Texts/Text/Text';
+import useOnHover from '@src/hooks/useOnHover';
+import AppState from '@src/state/app';
+import Text from '@src/components/general/Texts/Text/Text';
 
 import styles from './Button.styles';
 
@@ -34,24 +34,15 @@ const Button: FunctionComponent<ButtonProps> = ({
     const style = useMemo(() => {
         return {
             ...styles.button,
-            filter:
-                hover && !AppState.isMobile
-                    ? 'brightness(.8)'
-                    : 'brightness(1)',
+            filter: hover && !AppState.isMobile ? 'brightness(.8)' : 'brightness(1)',
             cursor: disabled ? 'not-allowed' : 'pointer',
             ...buttonStyle,
             ...(hover && hoverStyle),
         };
     }, [hover, disabled, buttonStyle, hoverStyle]);
 
-    const RightIcon = useCallback(
-        () => (rightIcon ? rightIcon : null),
-        [rightIcon],
-    );
-    const LeftIcon = useCallback(
-        () => (leftIcon ? leftIcon : null),
-        [leftIcon],
-    );
+    const RightIcon = useCallback(() => (rightIcon ? rightIcon : null), [rightIcon]);
+    const LeftIcon = useCallback(() => (leftIcon ? leftIcon : null), [leftIcon]);
     const Label = useCallback(
         () =>
             label ? (

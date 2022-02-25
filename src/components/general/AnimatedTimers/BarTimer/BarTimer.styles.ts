@@ -1,5 +1,5 @@
-import Colors from '../../../../lib/colors';
-import { NLStyleSheetCreator } from '../../../../lib/index';
+import Colors from '@src/lib/colors';
+import { NLStyleSheetCreator } from '@src/lib/index';
 
 const styles = NLStyleSheetCreator({
     barContainer: {

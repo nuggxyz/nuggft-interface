@@ -1,7 +1,6 @@
-import FontSize from '../../../../lib/fontSize';
-import { NLStyleSheetCreator } from '../../../../lib';
-import Layout from '../../../../lib/layout';
-import Colors from '../../../../lib/colors';
+import FontSize from '@src/lib/fontSize';
+import { NLStyleSheetCreator } from '@src/lib';
+import Layout from '@src/lib/layout';
 
 const styles = NLStyleSheetCreator({
     title: {

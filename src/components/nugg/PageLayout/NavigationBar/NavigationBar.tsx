@@ -1,18 +1,10 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback } from 'react';
 
-import { EthInt } from '../../../../classes/Fraction';
-import useOnHover from '../../../../hooks/useOnHover';
-import Colors from '../../../../lib/colors';
-import Layout from '../../../../lib/layout';
-import AppState from '../../../../state/app';
-import ProtocolState from '../../../../state/protocol';
-import ChainIndicator from '../../../general/Buttons/ChainIndicator/ChainIndicator';
-import AccountViewer from '../../AccountViewer/AccountViewer';
-import CurrencyText from '../../../general/Texts/CurrencyText/CurrencyText';
-import Text from '../../../general/Texts/Text/Text';
-import FloorPrice from '../../FloorPrice';
-import NuggDexSearchBar from '../../NuggDex/NuggDexSearchBar/NuggDexSearchBar';
-import NumberStatistic from '../../Statistics/NumberStatistic';
+import AppState from '@src/state/app';
+import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
+import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
+import FloorPrice from '@src/components/nugg/FloorPrice';
+import NuggDexSearchBar from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar';
 
 import styles from './NavigationBar.styles';
 
@@ -25,10 +17,7 @@ const NavigationBar: FC<Props> = () => {
     const screenType = AppState.select.screenType();
     const view = AppState.select.view();
     const onClick = useCallback(
-        () =>
-            view === 'Search'
-                ? AppState.dispatch.changeView('Swap')
-                : undefined,
+        () => (view === 'Search' ? AppState.dispatch.changeView('Swap') : undefined),
         [view],
     );
 
@@ -53,7 +42,7 @@ const NavigationBar: FC<Props> = () => {
                 }}>
                 <ChainIndicator />
                 {screenType === 'tablet' && (
-                    <div style={{position: 'absolute', marginTop: '0rem'}}>
+                    <div style={{ position: 'absolute', marginTop: '0rem' }}>
                         <FloorPrice />
                     </div>
                 )}
@@ -61,8 +50,7 @@ const NavigationBar: FC<Props> = () => {
             <div
                 style={{
                     ...styles.linkAccountContainer,
-                    justifyContent:
-                        screenType === 'desktop' ? 'space-between' : 'flex-end',
+                    justifyContent: screenType === 'desktop' ? 'space-between' : 'flex-end',
                 }}>
                 {screenType === 'desktop' && <FloorPrice />}
                 <AccountViewer />

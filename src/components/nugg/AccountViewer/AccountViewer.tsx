@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 
-import Jazzicon from '../Jazzicon';
-import Text from '../../general/Texts/Text/Text';
-import AppState from '../../../state/app';
-import Colors from '../../../lib/colors';
-import useAsyncState from '../../../hooks/useAsyncState';
-import { EthInt } from '../../../classes/Fraction';
-import InteractiveText from '../../general/Texts/InteractiveText/InteractiveText';
-import config from '../../../state/web32/config';
+import Jazzicon from '@src/components/nugg/Jazzicon';
+import Text from '@src/components/general/Texts/Text/Text';
+import AppState from '@src/state/app';
+import Colors from '@src/lib/colors';
+import useAsyncState from '@src/hooks/useAsyncState';
+import { EthInt } from '@src/classes/Fraction';
+import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
+import config from '@src/state/web32/config';
 
 import styles from './AccountViewer.styles';
 

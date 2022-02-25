@@ -4,25 +4,25 @@ import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../../../../lib';
-import ProtocolState from '../../../../../state/protocol';
-import WalletState from '../../../../../state/wallet';
-import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedOffersQuery';
-import Text from '../../../../general/Texts/Text/Text';
-import List, { ListRenderItemProps } from '../../../../general/List/List';
-import listStyles from '../HistoryTab.styles';
-import Colors from '../../../../../lib/colors';
-import styles from '../Tabs.styles';
-import swapStyles from '../SwapTab.styles';
-import TransactionState from '../../../../../state/transaction';
-import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
-import TokenViewer from '../../../TokenViewer';
-import { fromEth } from '../../../../../lib/conversion';
-import NLStaticImage from '../../../../general/NLStaticImage';
-import FontSize from '../../../../../lib/fontSize';
-import Layout from '../../../../../lib/layout';
-import SocketState from '../../../../../state/socket';
-import config from '../../../../../state/web32/config';
+} from '@src/lib';
+import ProtocolState from '@src/state/protocol';
+import WalletState from '@src/state/wallet';
+import unclaimedOffersQuery from '@src/state/wallet/queries/unclaimedOffersQuery';
+import Text from '@src/components/general/Texts/Text/Text';
+import List, { ListRenderItemProps } from '@src/components/general/List/List';
+import listStyles from '@src/components/nugg/Wallet/tabs/HistoryTab.styles';
+import Colors from '@src/lib/colors';
+import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
+import swapStyles from '@src/components/nugg/Wallet/tabs/SwapTab.styles';
+import TransactionState from '@src/state/transaction';
+import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import { fromEth } from '@src/lib/conversion';
+import NLStaticImage from '@src/components/general/NLStaticImage';
+import FontSize from '@src/lib/fontSize';
+import Layout from '@src/lib/layout';
+import SocketState from '@src/state/socket';
+import config from '@src/state/web32/config';
 
 type Props = { isActive?: boolean };
 

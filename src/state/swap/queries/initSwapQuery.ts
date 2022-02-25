@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-import { swapBareWithEpoch } from '../../../graphql/fragments/swap';
-import { executeQuery } from '../../../graphql/helpers';
-import { SupportedChainId } from '../../web32/config';
+import { swapBareWithEpoch } from '@src/graphql/fragments/swap';
+import { executeQuery } from '@src/graphql/helpers';
+import { SupportedChainId } from '@src/state/web32/config';
 
 const query = (id: string) => gql`
     {

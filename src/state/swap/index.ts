@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { isUndefinedOrNullOrObjectEmpty } from '../../lib';
-import { NLState } from '../NLState';
+import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import { NLState } from '@src/state/NLState';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -17,9 +17,7 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
     declare static reducer: typeof this.instance._slice.reducer;
     declare static hook: typeof hooks;
 
-    declare static select: ApplyFuncToChildren<
-        typeof this.instance._initialState
-    >;
+    declare static select: ApplyFuncToChildren<typeof this.instance._initialState>;
     declare static dispatch: ApplyDispatchToChildren<
         typeof thactions & typeof this.instance._slice.actions
     >;

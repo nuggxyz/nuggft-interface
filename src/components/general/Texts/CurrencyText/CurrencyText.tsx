@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSpring, animated, config } from 'react-spring';
 
-import Colors from '../../../../lib/colors';
-import NLStaticImage, { NLStaticImageKey } from '../../NLStaticImage';
-import Text, { TextProps } from '../Text/Text';
+import { NLStaticImageKey } from '@src/components/general/NLStaticImage';
+import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 
 import styles from './CurrencyText.styles';
 
@@ -49,17 +48,11 @@ const CurrencyText: React.FC<BalanceProps> = ({
             }}>
             <animated.div className="number" style={{ paddingRight: '.5rem' }}>
                 {spring.val.to((val) =>
-                    isGwei
-                        ? (val * 10 ** 9).toFixed()
-                        : val.toFixed(percent ? 2 : 5),
+                    isGwei ? (val * 10 ** 9).toFixed() : val.toFixed(percent ? 2 : 5),
                 )}
             </animated.div>
             {percent && '%'}
-            {image && (
-                <div style={{ paddingRight: '0rem' }}>
-                    {isGwei ? 'gwei' : 'ETH'}
-                </div>
-            )}
+            {image && <div style={{ paddingRight: '0rem' }}>{isGwei ? 'gwei' : 'ETH'}</div>}
         </Text>
     );
 };

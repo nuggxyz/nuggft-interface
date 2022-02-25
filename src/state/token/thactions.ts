@@ -2,14 +2,14 @@ import { Web3Provider } from '@ethersproject/providers';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BigNumberish } from 'ethers';
 
-import NuggftV1Helper from '../../contracts/NuggftV1Helper';
+import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrNotObject,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../lib';
-import AppState from '../app';
-import { SupportedChainId } from '../web32/config';
+} from '@src/lib';
+import AppState from '@src/state/app';
+import { SupportedChainId } from '@src/state/web32/config';
 
 const initSale = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,

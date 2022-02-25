@@ -1,18 +1,18 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 
-import AppState from '../../../../state/app';
-import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
-import ProtocolState from '../../../../state/protocol';
-import TransactionState from '../../../../state/transaction';
-import TokenViewer from '../../TokenViewer';
-import Text from '../../../general/Texts/Text/Text';
-import WalletState from '../../../../state/wallet';
-import { fromEth } from '../../../../lib/conversion';
-import FontSize from '../../../../lib/fontSize';
-import AnimatedCard from '../../../general/Cards/AnimatedCard/AnimatedCard';
-import Colors from '../../../../lib/colors';
-import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
-import config from '../../../../state/web32/config';
+import AppState from '@src/state/app';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import ProtocolState from '@src/state/protocol';
+import TransactionState from '@src/state/transaction';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import Text from '@src/components/general/Texts/Text/Text';
+import WalletState from '@src/state/wallet';
+import { fromEth } from '@src/lib/conversion';
+import FontSize from '@src/lib/fontSize';
+import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
+import Colors from '@src/lib/colors';
+import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
+import config from '@src/state/web32/config';
 
 import styles from './LoanOrBurn.styles';
 

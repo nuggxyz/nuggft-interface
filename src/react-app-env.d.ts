@@ -104,10 +104,7 @@ interface Array<T> {
     insert<U extends { index: number }>(element: U): Array<U>;
     toggle<U>(element: U, field?: keyof U);
     remove<U extends { index: number }>(element: U): Array<U>;
-    replace<U extends { id: string } | object>(
-        element: U,
-        field?: keyof U,
-    ): Array<U>;
+    replace<U extends { id: string } | object>(element: U, field?: keyof U): Array<U>;
     smartInsert<U>(element: U, field?: keyof U): Array<U>;
 }
 
@@ -131,9 +128,7 @@ namespace NL {
         xNUGG = 2,
     }
 
-    type TransactionResponse =
-        import('@ethersproject/providers').TransactionResponse;
+    type TransactionResponse = import('@ethersproject/providers').TransactionResponse;
 
-    type TransactionReceipt =
-        import('@ethersproject/providers').TransactionReceipt;
+    type TransactionReceipt = import('@ethersproject/providers').TransactionReceipt;
 }

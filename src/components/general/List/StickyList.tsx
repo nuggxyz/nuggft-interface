@@ -1,20 +1,15 @@
-import { AnyARecord } from 'dns';
-
 import React, {
     CSSProperties,
     FunctionComponent,
     PropsWithChildren,
-    useEffect,
     useMemo,
     useRef,
     useState,
 } from 'react';
 import { animated, config, SpringProps, useSpring } from 'react-spring';
 
-import useIsVisible from '../../../hooks/useIsVisible';
-import useMeasure from '../../../hooks/useMeasure';
-import usePrevious from '../../../hooks/usePrevious';
-import { isUndefinedOrNullOrArrayEmpty } from '../../../lib';
+import useMeasure from '@src/hooks/useMeasure';
+import usePrevious from '@src/hooks/usePrevious';
 
 import { ListRenderItemProps } from './List';
 import styles from './List.styles';
@@ -89,11 +84,9 @@ const StickyList: FunctionComponent<PropsWithChildren<Props>> = ({
                                     onClick={() =>
                                         setY({
                                             y:
-                                                item.ref.current.getBoundingClientRect()
-                                                    .top +
+                                                item.ref.current.getBoundingClientRect().top +
                                                 listRef.current.scrollTop -
-                                                listRef.current.offsetHeight /
-                                                    4.7,
+                                                listRef.current.offsetHeight / 4.7,
                                         })
                                     }
                                     isSelected={!current.includes(item.title)}
@@ -210,10 +203,7 @@ const RenderItem = ({
                             <ChildRenderItem
                                 item={childItem}
                                 index={index}
-                                extraData={[
-                                    ...extraData.first(2),
-                                    extraData.last()[parentIndex],
-                                ]}
+                                extraData={[...extraData.first(2), extraData.last()[parentIndex]]}
                             />
                         </React.Fragment>
                     ))}

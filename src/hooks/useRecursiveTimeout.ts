@@ -2,10 +2,7 @@ import { useEffect, useRef } from 'react';
 
 // adapted from https://www.aaron-powell.com/posts/2019-09-23-recursive-settimeout-with-react-hooks/
 
-function useRecursiveTimeout<T>(
-    callback: () => Promise<T> | void,
-    delay: number | null,
-) {
+function useRecursiveTimeout<T>(callback: () => Promise<T> | void, delay: number | null) {
     const savedCallback = useRef(callback);
 
     // Remember the latest callback.

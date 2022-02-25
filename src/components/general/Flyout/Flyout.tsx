@@ -1,11 +1,7 @@
-import React, {
-    CSSProperties,
-    FunctionComponent,
-    PropsWithChildren,
-} from 'react';
+import React, { CSSProperties, FunctionComponent, PropsWithChildren } from 'react';
 import { animated, config, useTransition } from 'react-spring';
 
-import useOnHover from '../../../hooks/useOnHover';
+import useOnHover from '@src/hooks/useOnHover';
 
 import styles from './Flyout.styles';
 
@@ -23,9 +19,7 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
 }) => {
     const [open, setOpen] = React.useState(false);
     const [openRef, openHover] = useOnHover(() => setOpen(true));
-    const [closeRef, closeHover] = useOnHover(() =>
-        setOpen(openHover || closeHover),
-    );
+    const [closeRef, closeHover] = useOnHover(() => setOpen(openHover || closeHover));
 
     const transition = useTransition(open, {
         from: {

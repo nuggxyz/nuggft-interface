@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
-import NuggList from '../../../components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
-import NuggDexState from '../../../state/nuggdex';
+import NuggList from '@src/components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
+import NuggDexState from '@src/state/nuggdex';
 
 type Props = {};
 

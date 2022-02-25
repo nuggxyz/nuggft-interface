@@ -1,14 +1,8 @@
 import { UseSpringProps } from '@react-spring/core';
 import { animated } from '@react-spring/web';
-import React, {
-    CSSProperties,
-    FunctionComponent,
-    SetStateAction,
-    useEffect,
-    useRef,
-} from 'react';
+import React, { CSSProperties, FunctionComponent, SetStateAction, useEffect, useRef } from 'react';
 
-import Text from '../../Texts/Text/Text';
+import Text from '@src/components/general/Texts/Text/Text';
 
 import styles from './TextInput.styles';
 
@@ -107,19 +101,13 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                 </Text>
                 {warning && (
                     <span style={styles.warningContainer}>
-                        <Text
-                            type="text"
-                            size="smaller"
-                            textStyle={styles.warningText}>
+                        <Text type="text" size="smaller" textStyle={styles.warningText}>
                             {warning}
                         </Text>
                     </span>
                 )}
             </div>
-            {leftToggles &&
-                leftToggles.map((Toggle, index) => (
-                    <div key={index}>{Toggle}</div>
-                ))}
+            {leftToggles && leftToggles.map((Toggle, index) => <div key={index}>{Toggle}</div>)}
             <animated.div style={subContainerStyle}>
                 {multi ? (
                     <textarea
@@ -129,9 +117,7 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                         placeholder={placeholder}
                         style={inputStyle}
                         value={value}
-                        onChange={(
-                            value: React.ChangeEvent<HTMLTextAreaElement>,
-                        ) => {
+                        onChange={(value: React.ChangeEvent<HTMLTextAreaElement>) => {
                             setValue(value.target.value);
                         }}
                         disabled={disabled}
@@ -145,9 +131,7 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                         type={type}
                         style={inputStyle}
                         value={value}
-                        onChange={(
-                            value: React.ChangeEvent<HTMLInputElement>,
-                        ) => {
+                        onChange={(value: React.ChangeEvent<HTMLInputElement>) => {
                             setValue(value.target.value);
                         }}
                         pattern={pattern}
@@ -156,9 +140,7 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                     />
                 )}
                 {rightToggles &&
-                    rightToggles.map((Toggle, index) => (
-                        <div key={index}>{Toggle}</div>
-                    ))}
+                    rightToggles.map((Toggle, index) => <div key={index}>{Toggle}</div>)}
             </animated.div>
         </animated.div>
     );

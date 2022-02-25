@@ -1,9 +1,9 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 
-import RingAbout from '../../components/nugg/RingAbout/RingAbout';
-import TheRing from '../../components/nugg/TheRing/TheRing';
-import Wallet from '../../components/nugg/Wallet/Wallet';
-import AppState from '../../state/app';
+import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
+import TheRing from '@src/components/nugg/TheRing/TheRing';
+import Wallet from '@src/components/nugg/Wallet/Wallet';
+import AppState from '@src/state/app';
 
 import styles from './SwapPage.styles';
 

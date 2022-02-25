@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { isUndefinedOrNullOrStringEmpty } from '../lib';
-import SwapState from '../state/swap';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import SwapState from '@src/state/swap';
 
 const useHandleError = (target: string): [boolean, () => void] => {
     const [isError, setIsError] = useState(false);

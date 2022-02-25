@@ -2,19 +2,19 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import gql from 'graphql-tag';
 import { Web3Provider } from '@ethersproject/providers';
 
-import NuggftV1Helper from '../../contracts/NuggftV1Helper';
+import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrNotObject,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../lib';
-import constants from '../../lib/constants';
-import AppState from '../app';
-import { toEth } from '../../lib/conversion';
-import { executeQuery } from '../../graphql/helpers';
-import { SupportedChainId } from '../web32/config';
+} from '@src/lib';
+import constants from '@src/lib/constants';
+import AppState from '@src/state/app';
+import { toEth } from '@src/lib/conversion';
+import { executeQuery } from '@src/graphql/helpers';
+import { SupportedChainId } from '@src/state/web32/config';
 
 import userSharesQuery from './queries/userSharesQuery';
 

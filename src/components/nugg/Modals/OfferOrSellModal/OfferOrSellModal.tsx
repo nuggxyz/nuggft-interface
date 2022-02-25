@@ -1,29 +1,29 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 
-import { EthInt } from '../../../../classes/Fraction';
-import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
-import useAsyncState from '../../../../hooks/useAsyncState';
+import { EthInt } from '@src/classes/Fraction';
+import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
+import useAsyncState from '@src/hooks/useAsyncState';
 import {
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../../../lib';
-import { fromEth } from '../../../../lib/conversion';
-import AppState from '../../../../state/app';
-import SwapState from '../../../../state/swap';
-import TokenState from '../../../../state/token';
-import TransactionState from '../../../../state/transaction';
-import Button from '../../../general/Buttons/Button/Button';
-import CurrencyInput from '../../../general/TextInputs/CurrencyInput/CurrencyInput';
-import Text from '../../../general/Texts/Text/Text';
-import TokenViewer from '../../TokenViewer';
-import constants from '../../../../lib/constants';
-import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
-import AnimatedCard from '../../../general/Cards/AnimatedCard/AnimatedCard';
-import Layout from '../../../../lib/layout';
-import FontSize from '../../../../lib/fontSize';
-import useHandleError from '../../../../hooks/useHandleError';
-import config from '../../../../state/web32/config';
+} from '@src/lib';
+import { fromEth } from '@src/lib/conversion';
+import AppState from '@src/state/app';
+import SwapState from '@src/state/swap';
+import TokenState from '@src/state/token';
+import TransactionState from '@src/state/transaction';
+import Button from '@src/components/general/Buttons/Button/Button';
+import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
+import Text from '@src/components/general/Texts/Text/Text';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import constants from '@src/lib/constants';
+import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
+import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
+import Layout from '@src/lib/layout';
+import FontSize from '@src/lib/fontSize';
+import useHandleError from '@src/hooks/useHandleError';
+import config from '@src/state/web32/config';
 
 import styles from './OfferOrSellModal.styles';
 

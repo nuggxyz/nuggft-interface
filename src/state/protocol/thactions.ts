@@ -1,9 +1,9 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import NuggftV1Helper from '../../contracts/NuggftV1Helper';
-import { isUndefinedOrNullOrObjectEmpty } from '../../lib';
-import { SupportedChainId } from '../web32/config';
+import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
+import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import { SupportedChainId } from '@src/state/web32/config';
 
 import updateActivesQuery from './queries/updateActivesQuery';
 import updateBlockQuery from './queries/updateBlockQuery';

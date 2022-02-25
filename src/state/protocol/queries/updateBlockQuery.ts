@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-import { _metaBare } from '../../../graphql/fragments/_meta';
-import { executeQuery } from '../../../graphql/helpers';
-import { SupportedChainId } from '../../web32/config';
+import { _metaBare } from '@src/graphql/fragments/_meta';
+import { executeQuery } from '@src/graphql/helpers';
+import { SupportedChainId } from '@src/state/web32/config';
 
 const query = () => gql`
 {

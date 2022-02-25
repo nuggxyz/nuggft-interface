@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-import { offerBare } from '../../../graphql/fragments/offer';
-import { executeQuery } from '../../../graphql/helpers';
-import { SupportedChainId } from '../../web32/config';
+import { offerBare } from '@src/graphql/fragments/offer';
+import { executeQuery } from '@src/graphql/helpers';
+import { SupportedChainId } from '@src/state/web32/config';
 
 const query = (id: string) => gql`
     {

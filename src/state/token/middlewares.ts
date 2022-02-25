@@ -1,6 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 
-import AppState from '../app';
+import AppState from '@src/state/app';
 
 import TokenState from '.';
 

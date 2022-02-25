@@ -12,14 +12,14 @@ import { animated, UseSpringProps } from 'react-spring';
 import { ChevronLeft } from 'react-feather';
 import { batch } from 'react-redux';
 
-import { isUndefinedOrNullOrStringEmpty, ucFirst } from '../../../../../lib';
-import TransitionText from '../../../../general/Texts/TransitionText/TransitionText';
-import globalStyles from '../../../../../lib/globalStyles';
-import NuggDexState from '../../../../../state/nuggdex';
-import TokenState from '../../../../../state/token';
-import AppState from '../../../../../state/app';
-import usePrevious from '../../../../../hooks/usePrevious';
-import InfiniteList from '../../../../general/List/InfiniteList';
+import { isUndefinedOrNullOrStringEmpty, ucFirst } from '@src/lib';
+import TransitionText from '@src/components/general/Texts/TransitionText/TransitionText';
+import globalStyles from '@src/lib/globalStyles';
+import NuggDexState from '@src/state/nuggdex';
+import TokenState from '@src/state/token';
+import AppState from '@src/state/app';
+import usePrevious from '@src/hooks/usePrevious';
+import InfiniteList from '@src/components/general/List/InfiniteList';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';

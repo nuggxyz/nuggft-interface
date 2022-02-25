@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
 
-import AppState from '../../../state/app';
-import config from '../../../state/web32/config';
-import HappyTabber, { HappyTabberItem } from '../../general/HappyTabber/HappyTabber';
+import config from '@src/state/web32/config';
+import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
+import AppState from '@src/state/app';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectWalletTab from './tabs/ConnectWalletTab';

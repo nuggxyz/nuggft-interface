@@ -16,9 +16,7 @@ type ApplyDispatchToChildren<T> = {
         : (
               payload:
                   | AnyElementOf<Parameters<T[E]>>
-                  | NL.Redux.LocalStoragePayload<
-                        AnyElementOf<Parameters<T[E]>>
-                    >,
+                  | NL.Redux.LocalStoragePayload<AnyElementOf<Parameters<T[E]>>>,
           ) => import('react').Dispatch<T[E]>;
 };
 

@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import Confetti from 'react-confetti';
 
-import AppState from '../state/app';
-import ProtocolState from '../state/protocol';
-import Desktop from '../structure/desktop';
-import Mobile from '../structure/mobile';
+import AppState from '@src/state/app';
+import ProtocolState from '@src/state/protocol';
+import Desktop from '@src/structure/desktop';
+import Mobile from '@src/structure/mobile';
 
 const IndexPage = () => {
     const type = AppState.select.screenType();
@@ -13,13 +12,7 @@ const IndexPage = () => {
     const { width, height } = AppState.select.dimensions();
     return (
         <>
-            {isOver && (
-                <Confetti
-                    {...{ width, height }}
-                    recycle={false}
-                    numberOfPieces={500}
-                />
-            )}
+            {isOver && <Confetti {...{ width, height }} recycle={false} numberOfPieces={500} />}
             {type === 'phone' ? <Mobile /> : <Desktop />}
         </>
     );

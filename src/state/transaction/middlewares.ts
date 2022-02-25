@@ -5,9 +5,9 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
     shortenTxnHash,
-} from '../../lib';
-import AppState from '../app';
-import { NLState } from '../NLState';
+} from '@src/lib';
+import AppState from '@src/state/app';
+import { NLState } from '@src/state/NLState';
 
 import TransactionState from '.';
 

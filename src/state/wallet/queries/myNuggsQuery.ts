@@ -1,12 +1,12 @@
 import gql from 'graphql-tag';
 
-import { executeQuery } from '../../../graphql/helpers';
+import { executeQuery } from '@src/graphql/helpers';
 import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../../lib';
-import { SupportedChainId } from '../../web32/config';
+} from '@src/lib';
+import { SupportedChainId } from '@src/state/web32/config';
 
 const query = (
     address: string,

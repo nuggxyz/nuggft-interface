@@ -1,14 +1,8 @@
-import React, {
-    CSSProperties,
-    Dispatch,
-    FunctionComponent,
-    SetStateAction,
-} from 'react';
+import React, { CSSProperties, Dispatch, FunctionComponent, SetStateAction } from 'react';
 import { animated, useSpring } from 'react-spring';
 
-import { ucFirst } from '../../../../../lib';
-import NuggDexState from '../../../../../state/nuggdex';
-import Text from '../../../../general/Texts/Text/Text';
+import { ucFirst } from '@src/lib';
+import Text from '@src/components/general/Texts/Text/Text';
 
 import styles from './NuggDexComponents.styles';
 import NuggLinkAnchor from './NuggLinkAnchor';
@@ -45,8 +39,7 @@ const NuggLink: FunctionComponent<Props> = ({
     });
 
     return (
-        <animated.div
-            style={{ ...styles.nuggLinkContainer, ...opacity, ...style }}>
+        <animated.div style={{ ...styles.nuggLinkContainer, ...opacity, ...style }}>
             <animated.div
                 ref={(ref) => localViewing === type && setRef(ref)}
                 style={{
@@ -60,9 +53,7 @@ const NuggLink: FunctionComponent<Props> = ({
                                 index={i}
                                 key={i}
                                 style={{
-                                    ...(limit > 3
-                                        ? styles.nuggLinkThumbnailContainerBig
-                                        : {}),
+                                    ...(limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}),
                                 }}
                             />
                         ),
@@ -70,9 +61,7 @@ const NuggLink: FunctionComponent<Props> = ({
                 <NuggLinkAnchor
                     onClick={() => onClick(type)}
                     style={{
-                        ...(limit > 3
-                            ? styles.nuggLinkThumbnailContainerBig
-                            : {}),
+                        ...(limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}),
                     }}
                 />
             </animated.div>

@@ -6,9 +6,9 @@ import {
     isUndefinedOrNullOrStringEmpty,
     loadFromLocalStorage,
     saveToLocalStorage,
-} from '../../lib';
-import { isUndefinedOrNull } from '../../lib/index';
-import { NLState } from '../NLState';
+} from '@src/lib';
+import { isUndefinedOrNull } from '@src/lib/index';
+import { NLState } from '@src/state/NLState';
 
 import AppState from '.';
 

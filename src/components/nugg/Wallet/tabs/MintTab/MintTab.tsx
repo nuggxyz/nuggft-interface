@@ -2,39 +2,39 @@ import React, { FunctionComponent, useCallback, useEffect, useState } from 'reac
 import { batch } from 'react-redux';
 import { Web3Provider } from '@ethersproject/providers';
 
-import { EthInt } from '../../../../../classes/Fraction';
+import { EthInt } from '@src/classes/Fraction';
 import {
     isUndefinedOrNullOrStringEmpty,
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
-} from '../../../../../lib';
-import constants from '../../../../../lib/constants';
-import ProtocolState from '../../../../../state/protocol';
-import WalletState from '../../../../../state/wallet';
-import myNuggsQuery from '../../../../../state/wallet/queries/myNuggsQuery';
-import Button from '../../../../general/Buttons/Button/Button';
-import { ListRenderItemProps } from '../../../../general/List/List';
-import NumberStatistic from '../../../Statistics/NumberStatistic';
-import TextStatistic from '../../../Statistics/TextStatistic';
-import swapStyles from '../SwapTab.styles';
-import listStyle from '../HistoryTab.styles';
-import Text from '../../../../general/Texts/Text/Text';
-import Colors from '../../../../../lib/colors';
-import AppState from '../../../../../state/app';
-import AccountViewer from '../../../AccountViewer/AccountViewer';
-import styles from '../Tabs.styles';
-import useAsyncState from '../../../../../hooks/useAsyncState';
-import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQuery';
-import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSalesQuery';
-import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedOffersQuery';
-import TokenViewer from '../../../TokenViewer';
-import InfiniteList from '../../../../general/List/InfiniteList';
-import FontSize from '../../../../../lib/fontSize';
-import TokenState from '../../../../../state/token';
-import NuggDexState from '../../../../../state/nuggdex';
-import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
-import Layout from '../../../../../lib/layout';
-import config, { SupportedChainId } from '../../../../../state/web32/config';
+} from '@src/lib';
+import constants from '@src/lib/constants';
+import ProtocolState from '@src/state/protocol';
+import WalletState from '@src/state/wallet';
+import myNuggsQuery from '@src/state/wallet/queries/myNuggsQuery';
+import Button from '@src/components/general/Buttons/Button/Button';
+import { ListRenderItemProps } from '@src/components/general/List/List';
+import NumberStatistic from '@src/components/nugg/Statistics/NumberStatistic';
+import TextStatistic from '@src/components/nugg/Statistics/TextStatistic';
+import swapStyles from '@src/components/nugg/Wallet/tabs/SwapTab.styles';
+import listStyle from '@src/components/nugg/Wallet/tabs/HistoryTab.styles';
+import Text from '@src/components/general/Texts/Text/Text';
+import Colors from '@src/lib/colors';
+import AppState from '@src/state/app';
+import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
+import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
+import useAsyncState from '@src/hooks/useAsyncState';
+import loanedNuggsQuery from '@src/state/wallet/queries/loanedNuggsQuery';
+import myActiveSalesQuery from '@src/state/wallet/queries/myActiveSalesQuery';
+import unclaimedOffersQuery from '@src/state/wallet/queries/unclaimedOffersQuery';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import InfiniteList from '@src/components/general/List/InfiniteList';
+import FontSize from '@src/lib/fontSize';
+import TokenState from '@src/state/token';
+import NuggDexState from '@src/state/nuggdex';
+import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
+import Layout from '@src/lib/layout';
+import config, { SupportedChainId } from '@src/state/web32/config';
 
 type Props = {};
 

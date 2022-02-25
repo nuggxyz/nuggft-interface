@@ -1,9 +1,9 @@
 import gql from 'graphql-tag';
 
-import { idFragment } from '../../../graphql/fragments/general';
-import { executeQuery } from '../../../graphql/helpers';
-import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '../../../lib';
-import { SupportedChainId } from '../../web32/config';
+import { idFragment } from '@src/graphql/fragments/general';
+import { executeQuery } from '@src/graphql/helpers';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import { SupportedChainId } from '@src/state/web32/config';
 
 const query = (id: string) => gql`
     {

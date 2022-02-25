@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-import { nuggThumbnail } from '../../../graphql/fragments/nugg';
-import { executeQuery } from '../../../graphql/helpers';
-import { SupportedChainId } from '../../web32/config';
+import { nuggThumbnail } from '@src/graphql/fragments/nugg';
+import { executeQuery } from '@src/graphql/helpers';
+import { SupportedChainId } from '@src/state/web32/config';
 
 const query = (id: string) => gql`
     {

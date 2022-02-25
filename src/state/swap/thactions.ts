@@ -7,11 +7,11 @@ import {
     isUndefinedOrNullOrNotObject,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../lib';
-import { toEth } from '../../lib/conversion';
-import NuggftV1Helper from '../../contracts/NuggftV1Helper';
-import AppState from '../app';
-import { SupportedChainId } from '../web32/config';
+} from '@src/lib';
+import { toEth } from '@src/lib/conversion';
+import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
+import AppState from '@src/state/app';
+import { SupportedChainId } from '@src/state/web32/config';
 
 import pollOffersQuery from './queries/pollOffersQuery';
 import initSwapQuery from './queries/initSwapQuery';

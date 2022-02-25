@@ -1,4 +1,4 @@
-import { NLStyleSheetCreator } from '../../../lib';
+import { NLStyleSheetCreator } from '@src/lib';
 
 const styles = NLStyleSheetCreator({
     container: {
@@ -16,7 +16,7 @@ const styles = NLStyleSheetCreator({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        position: 'absolute'
+        position: 'absolute',
     },
     ringAbout: {
         width: '100%',

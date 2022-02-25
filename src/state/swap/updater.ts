@@ -1,7 +1,7 @@
-import useRecursiveTimeout from '../../hooks/useRecursiveTimeout';
-import { isUndefinedOrNullOrStringEmpty } from '../../lib';
-import constants from '../../lib/constants';
-import config from '../web32/config';
+import useRecursiveTimeout from '@src/hooks/useRecursiveTimeout';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import constants from '@src/lib/constants';
+import config from '@src/state/web32/config';
 
 import SwapState from '.';
 

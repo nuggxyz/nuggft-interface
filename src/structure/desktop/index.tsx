@@ -1,9 +1,9 @@
 import React, { FunctionComponent, Suspense } from 'react';
 import { Helmet } from 'react-helmet';
 
-import PageContainer from '../../components/nugg/PageLayout/PageContainer/PageContainer';
-import { isUndefinedOrNullOrObjectEmpty } from '../../lib';
-import ProtocolState from '../../state/protocol';
+import PageContainer from '@src/components/nugg/PageLayout/PageContainer/PageContainer';
+import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import ProtocolState from '@src/state/protocol';
 
 const SearchOverlay = React.lazy(() => import('./SearchOverlay'));
 const SwapPage = React.lazy(() => import('./SwapPage'));

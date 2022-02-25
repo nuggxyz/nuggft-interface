@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { isUndefinedOrNullOrObjectEmpty } from '../../lib';
-import poop from '../../config';
-import config from '../web32/config';
+import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import poop from '@src/config';
+import config from '@src/state/web32/config';
 
 import ProtocolState from '.';
 

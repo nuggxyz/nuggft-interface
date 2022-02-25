@@ -1,8 +1,6 @@
 import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrNotNumber,
-    isUndefinedOrNullOrNumberZero,
-    isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from './lib';
 

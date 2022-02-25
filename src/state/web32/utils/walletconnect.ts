@@ -1,7 +1,8 @@
+import type { EventEmitter } from 'node:events';
+
 import type WalletConnectProvider from '@walletconnect/ethereum-provider';
 import type { IWCEthRpcConnectionOptions } from '@walletconnect/types';
 import EventEmitter3 from 'eventemitter3';
-import type { EventEmitter } from 'node:events';
 
 import { Connector, ProviderRpcError, Actions } from './types';
 import { getBestUrl } from './utils';

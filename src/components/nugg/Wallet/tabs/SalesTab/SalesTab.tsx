@@ -4,25 +4,25 @@ import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../../../../lib';
-import ProtocolState from '../../../../../state/protocol';
-import WalletState from '../../../../../state/wallet';
-import Text from '../../../../general/Texts/Text/Text';
-import List, { ListRenderItemProps } from '../../../../general/List/List';
-import listStyles from '../HistoryTab.styles';
-import Colors from '../../../../../lib/colors';
-import constants from '../../../../../lib/constants';
-import myActiveSalesQuery from '../../../../../state/wallet/queries/myActiveSalesQuery';
-import styles from '../Tabs.styles';
-import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
-import TransactionState from '../../../../../state/transaction';
-import TokenViewer from '../../../TokenViewer';
-import NLStaticImage from '../../../../general/NLStaticImage';
-import { fromEth } from '../../../../../lib/conversion';
-import FontSize from '../../../../../lib/fontSize';
-import swapStyles from '../SwapTab.styles';
-import Layout from '../../../../../lib/layout';
-import config from '../../../../../state/web32/config';
+} from '@src/lib';
+import ProtocolState from '@src/state/protocol';
+import WalletState from '@src/state/wallet';
+import Text from '@src/components/general/Texts/Text/Text';
+import List, { ListRenderItemProps } from '@src/components/general/List/List';
+import listStyles from '@src/components/nugg/Wallet/tabs/HistoryTab.styles';
+import Colors from '@src/lib/colors';
+import constants from '@src/lib/constants';
+import myActiveSalesQuery from '@src/state/wallet/queries/myActiveSalesQuery';
+import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
+import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
+import TransactionState from '@src/state/transaction';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import NLStaticImage from '@src/components/general/NLStaticImage';
+import { fromEth } from '@src/lib/conversion';
+import FontSize from '@src/lib/fontSize';
+import swapStyles from '@src/components/nugg/Wallet/tabs/SwapTab.styles';
+import Layout from '@src/lib/layout';
+import config from '@src/state/web32/config';
 
 type Props = { isActive?: boolean };
 

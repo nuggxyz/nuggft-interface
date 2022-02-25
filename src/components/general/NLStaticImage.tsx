@@ -1,9 +1,9 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
-import eth from '../../assets/images/currency/eth.svg';
-import metamask from '../../assets/images/nugg/metamask-full.webp';
-import walletconnect from '../../assets/images/nugg/walletconnect-full.png';
-import nugg from '../../assets/images/nugg/nugg-white.png';
+import eth from '@src/assets/images/currency/eth.svg';
+import metamask from '@src/assets/images/nugg/metamask-full.webp';
+import walletconnect from '@src/assets/images/nugg/walletconnect-full.png';
+import nugg from '@src/assets/images/nugg/nugg-white.png';
 
 type Props = {
     image: NLStaticImageKey;
@@ -25,14 +25,7 @@ const NLStaticImage: FunctionComponent<Props> = ({ image, style }) => {
                     />
                 );
             case 'WalletConnect':
-                return (
-                    <img
-                        src={walletconnect}
-                        height={23.8}
-                        width={149.5}
-                        style={style}
-                    />
-                );
+                return <img src={walletconnect} height={23.8} width={149.5} style={style} />;
             case 'eth':
                 return <img src={eth} height={20} width={20} style={style} />;
             case 'nugg':

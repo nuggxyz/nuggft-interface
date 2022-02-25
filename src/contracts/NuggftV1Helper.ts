@@ -3,11 +3,11 @@ import { BigNumber, Contract } from 'ethers';
 import gql from 'graphql-tag';
 import { Web3Provider } from '@ethersproject/providers';
 
-import { Address } from '../classes/Address';
-import { loadFromLocalStorage, saveToLocalStorage } from '../lib';
-import { NuggftV1, NuggftV1__factory } from '../typechain';
-import { executeQuery } from '../graphql/helpers';
-import config, { SupportedChainId } from '../state/web32/config';
+import { Address } from '@src/classes/Address';
+import { loadFromLocalStorage, saveToLocalStorage } from '@src/lib';
+import { NuggftV1, NuggftV1__factory } from '@src/typechain';
+import { executeQuery } from '@src/graphql/helpers';
+import config, { SupportedChainId } from '@src/state/web32/config';
 
 import ContractHelper from './abstract/ContractHelper';
 

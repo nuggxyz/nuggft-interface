@@ -1,23 +1,23 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 
-import { EthInt } from '../../../../classes/Fraction';
-import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
-import useAsyncState from '../../../../hooks/useAsyncState';
-import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
-import { fromEth } from '../../../../lib/conversion';
-import AppState from '../../../../state/app';
-import TransactionState from '../../../../state/transaction';
-import WalletState from '../../../../state/wallet';
-import Button from '../../../general/Buttons/Button/Button';
-import CurrencyInput from '../../../general/TextInputs/CurrencyInput/CurrencyInput';
-import Text from '../../../general/Texts/Text/Text';
-import TokenViewer from '../../TokenViewer';
-import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
-import useHandleError from '../../../../hooks/useHandleError';
-import AnimatedCard from '../../../general/Cards/AnimatedCard/AnimatedCard';
-import FontSize from '../../../../lib/fontSize';
-import Layout from '../../../../lib/layout';
-import config from '../../../../state/web32/config';
+import { EthInt } from '@src/classes/Fraction';
+import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
+import useAsyncState from '@src/hooks/useAsyncState';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import { fromEth } from '@src/lib/conversion';
+import AppState from '@src/state/app';
+import TransactionState from '@src/state/transaction';
+import WalletState from '@src/state/wallet';
+import Button from '@src/components/general/Buttons/Button/Button';
+import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
+import Text from '@src/components/general/Texts/Text/Text';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
+import useHandleError from '@src/hooks/useHandleError';
+import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
+import FontSize from '@src/lib/fontSize';
+import Layout from '@src/lib/layout';
+import config from '@src/state/web32/config';
 
 import styles from './LoanInputModal.styles';
 

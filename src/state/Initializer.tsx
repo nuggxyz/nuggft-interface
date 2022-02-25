@@ -1,6 +1,6 @@
 import React, { FunctionComponent, ReactChild, useEffect } from 'react';
 
-import { safeResetLocalStorage } from '../lib';
+import { safeResetLocalStorage } from '@src/lib';
 
 import { states } from './store';
 import config from './web32/config';

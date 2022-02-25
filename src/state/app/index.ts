@@ -8,12 +8,12 @@ import {
     smartInsertIndex,
     smartRemove,
     smartReplace,
-} from '../../lib';
-import { NLState } from '../NLState';
-import store from '../store';
-import SwapState from '../swap';
-import TokenState from '../token';
-import { SupportedChainId } from '../web32/config';
+} from '@src/lib';
+import { NLState } from '@src/state/NLState';
+import store from '@src/state/store';
+import SwapState from '@src/state/swap';
+import TokenState from '@src/state/token';
+import { SupportedChainId } from '@src/state/web32/config';
 
 import hooks from './hooks';
 import middlewares from './middlewares';

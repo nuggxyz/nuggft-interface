@@ -1,14 +1,13 @@
 import React, { CSSProperties, FunctionComponent, useEffect } from 'react';
 import { animated, useSpring } from 'react-spring';
 
-import { EthInt, Fraction } from '../../classes/Fraction';
-import Colors from '../../lib/colors';
-import Layout from '../../lib/layout';
-import AppState from '../../state/app';
-import ProtocolState from '../../state/protocol';
-import SocketState from '../../state/socket';
-import CurrencyText from '../general/Texts/CurrencyText/CurrencyText';
-import Text from '../general/Texts/Text/Text';
+import { EthInt, Fraction } from '@src/classes/Fraction';
+import Colors from '@src/lib/colors';
+import Layout from '@src/lib/layout';
+import ProtocolState from '@src/state/protocol';
+import SocketState from '@src/state/socket';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import Text from '@src/components/general/Texts/Text/Text';
 
 type Props = { style?: CSSProperties };
 
@@ -26,16 +25,10 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
         console.log({ socket, shares, staked });
         if (socket !== undefined) {
             setRealTime(
-                EthInt.fromFraction(
-                    new Fraction(socket.staked, socket.shares),
-                ).decimal.toNumber(),
+                EthInt.fromFraction(new Fraction(socket.staked, socket.shares)).decimal.toNumber(),
             );
         } else {
-            setRealTime(
-                EthInt.fromFraction(
-                    new Fraction(staked, shares),
-                ).decimal.toNumber(),
-            );
+            setRealTime(EthInt.fromFraction(new Fraction(staked, shares)).decimal.toNumber());
         }
     }, [socket, staked, shares]);
 

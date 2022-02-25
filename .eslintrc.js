@@ -5,6 +5,12 @@ module.exports = {
         browser: true,
         es2021: true,
     },
+    settings: {
+        'import/resolver': {
+            'babel-module': { allowExistingDirectories: true },
+        },
+        'import/extensions': ['.ts', '.tsx'],
+    },
     extends: ['prettier'],
     parser: '@typescript-eslint/parser',
     parserOptions: {
@@ -14,8 +20,22 @@ module.exports = {
         ecmaVersion: 12,
         sourceType: 'module',
     },
-    plugins: ['react', '@typescript-eslint', 'prettier', 'import', 'unused-imports', 'react-hooks'],
+    plugins: [
+        'react',
+        '@typescript-eslint',
+        'prettier',
+        'import',
+        'unused-imports',
+        'react-hooks',
+        'module-resolver',
+    ],
     rules: {
+        'module-resolver/use-alias': [
+            'error',
+            {
+                extensions: ['.ts', '.tsx'],
+            },
+        ],
         '@typescript-eslint/ban-ts-comment': 'off',
         // 'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'warn',
@@ -41,19 +61,18 @@ module.exports = {
                 argsIgnorePattern: '^_',
             },
         ],
-        // 'import/resolver': {
-        //     'babel-module': {},
-        // },
+        // 'import/resolver': 2,
         'import/order': [
             'warn',
             {
                 pathGroups: [
                     {
-                        pattern: '@src/*',
+                        pattern: '@src/**',
                         group: 'internal',
                         // position: 'after',
                     },
                 ],
+                pathGroupsExcludedImportTypes: ['external'],
                 'newlines-between': 'always',
                 groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object'],
             },

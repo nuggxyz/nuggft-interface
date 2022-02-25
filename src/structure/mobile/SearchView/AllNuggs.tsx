@@ -1,9 +1,9 @@
 import React, { FunctionComponent, SetStateAction, useCallback, useEffect, useState } from 'react';
 
-import NuggList from '../../../components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
-import constants from '../../../lib/constants';
-import allNuggsQuery from '../../../state/nuggdex/queries/allNuggsQuery';
-import config from '../../../state/web32/config';
+import NuggList from '@src/components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
+import constants from '@src/lib/constants';
+import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
+import config from '@src/state/web32/config';
 
 type Props = {};
 

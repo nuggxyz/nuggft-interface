@@ -2,11 +2,12 @@ import { InfuraWebSocketProvider, Listener, Log } from '@ethersproject/providers
 import { BigNumber } from 'ethers';
 import { useEffect } from 'react';
 
-import NuggftV1Helper from '../../contracts/NuggftV1Helper';
-import { LOSS } from '../../lib/conversion';
+import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
+import { LOSS } from '@src/lib/conversion';
+import config from '@src/state/web32/config';
+import ProtocolState from '@src/state/protocol';
+
 import { StakeEvent, ClaimEvent, OfferEvent } from '../../typechain/NuggftV1';
-import config from '../web32/config';
-import ProtocolState from '../protocol';
 
 import { formatLog, SocketType } from './interfaces';
 

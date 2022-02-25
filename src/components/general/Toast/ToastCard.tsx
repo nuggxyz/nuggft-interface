@@ -3,18 +3,14 @@ import { animated } from '@react-spring/web';
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { IoClose, IoOpenOutline } from 'react-icons/io5';
 
-import useOnHover from '../../../hooks/useOnHover';
-import {
-    isUndefinedOrNullOrBooleanFalse,
-    isUndefinedOrNullOrNumberZero,
-} from '../../../lib';
-import Colors from '../../../lib/colors';
-import Layout from '../../../lib/layout';
-import AppState from '../../../state/app';
-import AnimatedBarTimer from '../AnimatedTimers/BarTimer/BarTimer';
-import Button from '../Buttons/Button/Button';
-import Loader from '../Loader/Loader';
-import Text from '../Texts/Text/Text';
+import useOnHover from '@src/hooks/useOnHover';
+import { isUndefinedOrNullOrBooleanFalse, isUndefinedOrNullOrNumberZero } from '@src/lib';
+import Colors from '@src/lib/colors';
+import AppState from '@src/state/app';
+import AnimatedBarTimer from '@src/components/general/AnimatedTimers/BarTimer/BarTimer';
+import Button from '@src/components/general/Buttons/Button/Button';
+import Loader from '@src/components/general/Loader/Loader';
+import Text from '@src/components/general/Texts/Text/Text';
 
 import styles from './Toast.styles';
 
@@ -76,9 +72,7 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
                 <div
                     style={{
                         padding: '.5rem .75rem',
-                        paddingRight: !isUndefinedOrNullOrBooleanFalse(
-                            toast.loading,
-                        )
+                        paddingRight: !isUndefinedOrNullOrBooleanFalse(toast.loading)
                             ? '2rem'
                             : '.75rem',
                     }}>
@@ -94,9 +88,7 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
                     <AnimatedBarTimer
                         duration={toast.duration}
                         style={styles.toastTimer}
-                        color={
-                            toast.error ? Colors.gradient3 : Colors.gradient2
-                        }
+                        color={toast.error ? Colors.gradient3 : Colors.gradient2}
                     />
                 )}
             </animated.div>

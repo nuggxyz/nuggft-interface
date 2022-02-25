@@ -3,24 +3,24 @@ import { ChevronDown, ChevronUp } from 'react-feather';
 import { animated, config as springConfig, useSpring } from 'react-spring';
 import { Web3Provider } from '@ethersproject/providers';
 
-import Text from '../../general/Texts/Text/Text';
-import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
-import SwapState from '../../../state/swap';
-import Button from '../../general/Buttons/Button/Button';
-import AppState from '../../../state/app';
+import Text from '@src/components/general/Texts/Text/Text';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import Button from '@src/components/general/Buttons/Button/Button';
+import { fromEth } from '@src/lib/conversion';
+import Colors from '@src/lib/colors';
+import usePrevious from '@src/hooks/usePrevious';
+import useSetState from '@src/hooks/useSetState';
+import config from '@src/state/web32/config';
+import { useENS } from '@src/state/web32/utils/core';
+import ProtocolState from '@src/state/protocol';
+import AppState from '@src/state/app';
+import SwapState from '@src/state/swap';
+import TransactionState from '@src/state/transaction';
 import {
     isUndefinedOrNull,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrStringEmpty,
-} from '../../../lib';
-import { fromEth } from '../../../lib/conversion';
-import Colors from '../../../lib/colors';
-import TransactionState from '../../../state/transaction';
-import usePrevious from '../../../hooks/usePrevious';
-import useSetState from '../../../hooks/useSetState';
-import ProtocolState from '../../../state/protocol';
-import config from '../../../state/web32/config';
-import { useENS } from '../../../state/web32/utils/core';
+} from '@src/lib';
 
 import styles from './RingAbout.styles';
 

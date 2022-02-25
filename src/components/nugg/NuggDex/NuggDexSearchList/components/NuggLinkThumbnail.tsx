@@ -1,12 +1,12 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 import { animated } from 'react-spring';
 
-import NuggftV1Helper from '../../../../../contracts/NuggftV1Helper';
-import useOnHover from '../../../../../hooks/useOnHover';
-import NuggDexState from '../../../../../state/nuggdex';
-import TokenState from '../../../../../state/token';
-import Text from '../../../../general/Texts/Text/Text';
-import TokenViewer from '../../../TokenViewer';
+import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
+import useOnHover from '@src/hooks/useOnHover';
+import NuggDexState from '@src/state/nuggdex';
+import TokenState from '@src/state/token';
+import Text from '@src/components/general/Texts/Text/Text';
+import TokenViewer from '@src/components/nugg/TokenViewer';
 
 import styles from './NuggDexComponents.styles';
 

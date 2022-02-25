@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-import config from '../../../config';
-import { executeQuery } from '../../../graphql/helpers';
-import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '../../../lib';
+import config from '@src/config';
+import { executeQuery } from '@src/graphql/helpers';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
 
 const query = (
     orderBy: 'eth' | 'id',

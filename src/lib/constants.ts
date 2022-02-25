@@ -5,5 +5,5 @@ export default {
     QUERYTIME: 10000,
     PRE_MINT_STARTING_EPOCH: 500,
     PRE_MINT_ENDING_EPOCH: 3000,
-    MIN_OFFER: 0.0000//5,
+    MIN_OFFER: 0.0, //5,
 };

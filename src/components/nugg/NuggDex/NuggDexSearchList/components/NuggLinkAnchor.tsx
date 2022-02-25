@@ -2,10 +2,9 @@ import React, { CSSProperties, FunctionComponent } from 'react';
 import { animated } from 'react-spring';
 import { Maximize2 } from 'react-feather';
 
-import useOnHover from '../../../../../hooks/useOnHover';
-import Text from '../../../../general/Texts/Text/Text';
-import globalStyles from '../../../../../lib/globalStyles';
-import Colors from '../../../../../lib/colors';
+import useOnHover from '@src/hooks/useOnHover';
+import Text from '@src/components/general/Texts/Text/Text';
+import globalStyles from '@src/lib/globalStyles';
 
 import styles from './NuggDexComponents.styles';
 

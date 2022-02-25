@@ -1,39 +1,21 @@
-import React, {
-    FunctionComponent,
-    memo,
-    useCallback,
-    useEffect,
-    useMemo,
-} from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 
-import {
-    isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '../../../../../lib';
-import Label from '../../../../general/Label/Label';
-import { ListRenderItemProps } from '../../../../general/List/List';
-import TokenState from '../../../../../state/token';
-import TokenViewer from '../../../TokenViewer';
-import Colors from '../../../../../lib/colors';
-import FontSize from '../../../../../lib/fontSize';
+import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import Label from '@src/components/general/Label/Label';
+import { ListRenderItemProps } from '@src/components/general/List/List';
+import TokenState from '@src/state/token';
+import TokenViewer from '@src/components/nugg/TokenViewer';
 
 import styles from './NuggDexComponents.styles';
 
 type Props = ListRenderItemProps<NL.GraphQL.Fragments.Nugg.ListItem>;
 
-const NuggListRenderItem: FunctionComponent<Props> = ({
-    item,
-    index,
-    extraData,
-    action,
-}) => {
+const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, action }) => {
     const selected = TokenState.select.tokenId();
 
     const style = useMemo(() => {
         return {
-            ...(!isUndefinedOrNullOrObjectEmpty(item)
-                ? styles.nuggListRenderItemContainer
-                : {}),
+            ...(!isUndefinedOrNullOrObjectEmpty(item) ? styles.nuggListRenderItemContainer : {}),
             ...(selected === item.id ? styles.selected : {}),
         };
     }, [item, selected]);

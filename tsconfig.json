@@ -14,8 +14,11 @@
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "noEmit": true
-        // "baseUrl": "."
+        "noEmit": true,
+        "baseUrl": ".",
+        "paths": {
+            "@src/*": ["src/*"]
+        }
     },
-    "include": ["src", "test.ts", "index.d.ts", "archive/web3"]
+    "include": ["src", "test.ts", "index.d.ts"]
 }

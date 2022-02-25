@@ -4,20 +4,20 @@ import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../../../../lib';
-import ProtocolState from '../../../../../state/protocol';
-import Button from '../../../../general/Buttons/Button/Button';
-import Text from '../../../../general/Texts/Text/Text';
-import List, { ListRenderItemProps } from '../../../../general/List/List';
-import listStyles from '../HistoryTab.styles';
-import Colors from '../../../../../lib/colors';
-import constants from '../../../../../lib/constants';
-import loanedNuggsQuery from '../../../../../state/wallet/queries/loanedNuggsQuery';
-import styles from '../Tabs.styles';
-import AppState from '../../../../../state/app';
-import TransactionState from '../../../../../state/transaction';
-import TokenViewer from '../../../TokenViewer';
-import config from '../../../../../state/web32/config';
+} from '@src/lib';
+import ProtocolState from '@src/state/protocol';
+import Button from '@src/components/general/Buttons/Button/Button';
+import Text from '@src/components/general/Texts/Text/Text';
+import List, { ListRenderItemProps } from '@src/components/general/List/List';
+import listStyles from '@src/components/nugg/Wallet/tabs/HistoryTab.styles';
+import Colors from '@src/lib/colors';
+import constants from '@src/lib/constants';
+import loanedNuggsQuery from '@src/state/wallet/queries/loanedNuggsQuery';
+import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
+import AppState from '@src/state/app';
+import TransactionState from '@src/state/transaction';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import config from '@src/state/web32/config';
 
 type Props = { isActive?: boolean };
 

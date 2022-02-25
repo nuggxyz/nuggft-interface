@@ -2,14 +2,14 @@ import { useSpring } from '@react-spring/core';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { CornerRightDown, CornerRightUp, Search, X } from 'react-feather';
 
-import useDebounce from '../../../../hooks/useDebounce';
-import usePrevious from '../../../../hooks/usePrevious';
-import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
-import Colors from '../../../../lib/colors';
-import AppState from '../../../../state/app';
-import NuggDexState from '../../../../state/nuggdex';
-import Button from '../../../general/Buttons/Button/Button';
-import TextInput from '../../../general/TextInputs/TextInput/TextInput';
+import useDebounce from '@src/hooks/useDebounce';
+import usePrevious from '@src/hooks/usePrevious';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import Colors from '@src/lib/colors';
+import AppState from '@src/state/app';
+import NuggDexState from '@src/state/nuggdex';
+import Button from '@src/components/general/Buttons/Button/Button';
+import TextInput from '@src/components/general/TextInputs/TextInput/TextInput';
 
 import styles from './NuggDexSearchBar.styles';
 
@@ -74,9 +74,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                 <Button
                     buttonStyle={styles.searchBarButton}
                     onClick={() =>
-                        AppState.dispatch.changeView(
-                            view === 'Search' ? 'Swap' : 'Search',
-                        )
+                        AppState.dispatch.changeView(view === 'Search' ? 'Swap' : 'Search')
                     }
                     rightIcon={<Search style={styles.searchBarIcon} />}
                 />,
@@ -96,15 +94,9 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                                   buttonStyle={styles.filterButton}
                                   rightIcon={
                                       sortAsc ? (
-                                          <CornerRightUp
-                                              size={14}
-                                              color={Colors.nuggBlueText}
-                                          />
+                                          <CornerRightUp size={14} color={Colors.nuggBlueText} />
                                       ) : (
-                                          <CornerRightDown
-                                              size={14}
-                                              color={Colors.nuggBlueText}
-                                          />
+                                          <CornerRightDown size={14} color={Colors.nuggBlueText} />
                                       )
                                   }
                                   onClick={() => setSortAsc(!sortAsc)}
