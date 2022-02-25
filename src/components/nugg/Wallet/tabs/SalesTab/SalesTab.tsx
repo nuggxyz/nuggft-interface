@@ -22,7 +22,7 @@ import { fromEth } from '@src/lib/conversion';
 import FontSize from '@src/lib/fontSize';
 import swapStyles from '@src/components/nugg/Wallet/tabs/SwapTab.styles';
 import Layout from '@src/lib/layout';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 type Props = { isActive?: boolean };
 

@@ -22,7 +22,7 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import FontSize from '@src/lib/fontSize';
 import Layout from '@src/lib/layout';
 import SocketState from '@src/state/socket';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 type Props = { isActive?: boolean };
 

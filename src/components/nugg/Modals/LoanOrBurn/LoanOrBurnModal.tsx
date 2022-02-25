@@ -12,7 +12,7 @@ import FontSize from '@src/lib/fontSize';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import Colors from '@src/lib/colors';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 import styles from './LoanOrBurn.styles';
 

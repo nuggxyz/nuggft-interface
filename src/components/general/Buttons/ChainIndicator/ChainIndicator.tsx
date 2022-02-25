@@ -20,7 +20,7 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import Layout from '@src/lib/layout';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import SwapState from '@src/state/swap';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 import styles from './ChainIndicator.styles';
 

@@ -17,7 +17,7 @@ import useHandleError from '@src/hooks/useHandleError';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import FontSize from '@src/lib/fontSize';
 import Layout from '@src/lib/layout';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 import styles from './LoanInputModal.styles';
 

@@ -9,7 +9,7 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
 import AppState from '@src/state/app';
-import { SupportedChainId } from '@src/state/web32/config';
+import { SupportedChainId } from '@src/web3/config';
 
 const initSale = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,

@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { isUndefinedOrNullOrNotObject, isUndefinedOrNullOrStringEmpty } from '@src/lib';
-import { SupportedChainId } from '@src/state/web32/config';
+import { SupportedChainId } from '@src/web3/config';
 
 import getNuggThumbnailQuery from './queries/getNuggThumbnailQuery';
 

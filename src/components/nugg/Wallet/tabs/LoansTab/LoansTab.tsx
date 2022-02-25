@@ -17,7 +17,7 @@ import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
 import AppState from '@src/state/app';
 import TransactionState from '@src/state/transaction';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 type Props = { isActive?: boolean };
 

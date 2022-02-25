@@ -1,9 +1,9 @@
 import React, { FunctionComponent, ReactChild, useEffect } from 'react';
 
 import { safeResetLocalStorage } from '@src/lib';
+import config from '@src/web3/config';
 
 import { states } from './store';
-import config from './web32/config';
 
 type Props = {
     children: ReactChild | ReactChild[];

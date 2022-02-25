@@ -1,7 +1,7 @@
 import useRecursiveTimeout from '@src/hooks/useRecursiveTimeout';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import constants from '@src/lib/constants';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 import SwapState from '.';
 

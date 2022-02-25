@@ -10,7 +10,7 @@ import {
 } from '@src/lib';
 import AppState from '@src/state/app';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 type Props = {
     tokenId: string;

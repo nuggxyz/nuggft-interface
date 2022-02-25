@@ -3,7 +3,7 @@ import React, { FunctionComponent, SetStateAction, useCallback, useEffect, useSt
 import NuggList from '@src/components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
 import constants from '@src/lib/constants';
 import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 type Props = {};
 

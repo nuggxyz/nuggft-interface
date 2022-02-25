@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
 
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
 import AppState from '@src/state/app';
 

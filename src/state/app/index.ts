@@ -13,7 +13,7 @@ import { NLState } from '@src/state/NLState';
 import store from '@src/state/store';
 import SwapState from '@src/state/swap';
 import TokenState from '@src/state/token';
-import { SupportedChainId } from '@src/state/web32/config';
+import { SupportedChainId } from '@src/web3/config';
 
 import hooks from './hooks';
 import middlewares from './middlewares';

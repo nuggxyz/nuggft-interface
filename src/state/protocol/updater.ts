@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 import poop from '@src/config';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 import ProtocolState from '.';
 

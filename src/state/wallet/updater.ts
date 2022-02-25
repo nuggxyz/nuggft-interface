@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import ProtocolState from '@src/state/protocol';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 import WalletState from '.';
 

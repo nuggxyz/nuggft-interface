@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 import config from '@src/config';
 import { executeQuery } from '@src/graphql/helpers';
-import { SupportedChainId } from '@src/state/web32/config';
+import { SupportedChainId } from '@src/web3/config';
 
 const query = () => gql`
 {

@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import { offerThumbnail } from '@src/graphql/fragments/offer';
 import { executeQuery } from '@src/graphql/helpers';
 import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '@src/lib';
-import { SupportedChainId } from '@src/state/web32/config';
+import { SupportedChainId } from '@src/web3/config';
 
 const query = (id: string, first: number, skip: number) => gql`
     {

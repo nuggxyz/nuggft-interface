@@ -11,7 +11,7 @@ import {
 import { toEth } from '@src/lib/conversion';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import AppState from '@src/state/app';
-import { SupportedChainId } from '@src/state/web32/config';
+import { SupportedChainId } from '@src/web3/config';
 
 import pollOffersQuery from './queries/pollOffersQuery';
 import initSwapQuery from './queries/initSwapQuery';

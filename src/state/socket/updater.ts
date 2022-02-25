@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { LOSS } from '@src/lib/conversion';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 import ProtocolState from '@src/state/protocol';
 
 import { StakeEvent, ClaimEvent, OfferEvent } from '../../typechain/NuggftV1';

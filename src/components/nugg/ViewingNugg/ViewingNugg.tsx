@@ -17,8 +17,8 @@ import Loader from '@src/components/general/Loader/Loader';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import config from '@src/state/web32/config';
-import { useENS } from '@src/state/web32/utils/core';
+import config from '@src/web3/config';
+import { useENS } from '@src/web3/utils/core';
 
 import styles from './ViewingNugg.styles';
 

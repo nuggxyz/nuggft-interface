@@ -1,6 +1,6 @@
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
-import config from '../state/web32/config';
-import { SupportedChainId } from '../state/web32/config';
+import config from '../web3/config';
+import { SupportedChainId } from '../web3/config';
 
 export default class GQLHelper {
     protected static _instance: ApolloClient<NormalizedCacheObject>;

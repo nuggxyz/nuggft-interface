@@ -9,7 +9,6 @@ import TokenState from './token';
 import SwapState from './swap';
 import NuggDexState from './nuggdex';
 import SocketState from './socket';
-import Web32State from './web32';
 
 export const states = {
     AppState,
@@ -20,7 +19,6 @@ export const states = {
     WalletState,
     NuggDexState,
     SocketState,
-    Web32State,
 };
 
 export const rootReducer = combineReducers({
@@ -32,7 +30,6 @@ export const rootReducer = combineReducers({
     token: TokenState.reducer,
     wallet: WalletState.reducer,
     socket: SocketState.reducer,
-    web32: Web32State.reducer,
 });
 
 const store = configureStore({

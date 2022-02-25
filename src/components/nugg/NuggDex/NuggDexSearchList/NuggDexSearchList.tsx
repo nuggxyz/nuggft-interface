@@ -22,7 +22,7 @@ import ProtocolState from '@src/state/protocol';
 import constants from '@src/lib/constants';
 import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
 import usePrevious from '@src/hooks/usePrevious';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 import AppState from '.';
 

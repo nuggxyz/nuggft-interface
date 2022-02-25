@@ -7,7 +7,7 @@ import { Address } from '@src/classes/Address';
 import { loadFromLocalStorage, saveToLocalStorage } from '@src/lib';
 import { NuggftV1, NuggftV1__factory } from '@src/typechain';
 import { executeQuery } from '@src/graphql/helpers';
-import config, { SupportedChainId } from '@src/state/web32/config';
+import config, { SupportedChainId } from '@src/web3/config';
 
 import ContractHelper from './abstract/ContractHelper';
 

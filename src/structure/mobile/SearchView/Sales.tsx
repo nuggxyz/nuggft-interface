@@ -5,7 +5,7 @@ import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import constants from '@src/lib/constants';
 import activeNuggsQuery from '@src/state/nuggdex/queries/activeNuggsQuery';
 import ProtocolState from '@src/state/protocol';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 type Props = {};
 

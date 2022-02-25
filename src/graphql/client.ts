@@ -9,7 +9,7 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { split, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
 
 import store, { states } from '../state/store';
-import config, { SupportedChainId } from '../state/web32/config';
+import config, { SupportedChainId } from '../web3/config';
 
 const wsLink = new WebSocketLink({
     uri: constants.MAIN_WEBSOCKET,

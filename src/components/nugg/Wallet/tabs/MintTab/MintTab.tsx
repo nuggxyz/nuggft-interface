@@ -34,7 +34,7 @@ import TokenState from '@src/state/token';
 import NuggDexState from '@src/state/nuggdex';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import Layout from '@src/lib/layout';
-import config, { SupportedChainId } from '@src/state/web32/config';
+import config, { SupportedChainId } from '@src/web3/config';
 
 type Props = {};
 

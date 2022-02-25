@@ -7,7 +7,7 @@ import Colors from '@src/lib/colors';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { EthInt } from '@src/classes/Fraction';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 
 import styles from './AccountViewer.styles';
 

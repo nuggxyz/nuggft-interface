@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 
 import Colors from '@src/lib/colors';
 import Layout from '@src/lib/layout';
-import config from '@src/state/web32/config';
+import config from '@src/web3/config';
 import Button from '@src/components/general/Buttons/Button/Button';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import Text from '@src/components/general/Texts/Text/Text';

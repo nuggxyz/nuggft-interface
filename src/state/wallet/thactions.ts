@@ -14,7 +14,7 @@ import constants from '@src/lib/constants';
 import AppState from '@src/state/app';
 import { toEth } from '@src/lib/conversion';
 import { executeQuery } from '@src/graphql/helpers';
-import { SupportedChainId } from '@src/state/web32/config';
+import { SupportedChainId } from '@src/web3/config';
 
 import userSharesQuery from './queries/userSharesQuery';
 
