@@ -160,12 +160,14 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                                   amount: amount,
                                   chainId,
                                   provider,
+                                  address,
                               })
                             : WalletState.dispatch.extend({
                                   tokenId: stableId,
                                   amount: amount,
                                   chainId,
                                   provider,
+                                  address,
                               })
                     }
                 />

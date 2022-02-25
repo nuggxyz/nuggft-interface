@@ -24,6 +24,7 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
     const { targetId, type } = AppState.select.modalData();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
+    const address = web3.hook.usePriorityAccount();
 
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(targetId);
@@ -73,11 +74,13 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                                   tokenId: stableId,
                                   chainId,
                                   provider,
+                                  address,
                               })
                             : WalletState.dispatch.withdraw({
                                   tokenId: stableId,
                                   chainId,
                                   provider,
+                                  address,
                               })
                     }
                 />

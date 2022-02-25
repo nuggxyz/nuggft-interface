@@ -56,12 +56,13 @@ const getUserShares = createAsyncThunk<
 
 const withdraw = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
-    { tokenId: string; provider: Web3Provider; chainId: SupportedChainId },
+    { tokenId: string; provider: Web3Provider; chainId: SupportedChainId; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/withdraw`, async ({ tokenId, provider, chainId }, thunkAPI) => {
+>(`wallet/withdraw`, async ({ tokenId, provider, chainId, address }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+            .connect(provider.getSigner(address))
             // .connect(Web3State.getSignerOrProvider())
             .burn(tokenId);
         return {
@@ -88,18 +89,20 @@ const withdraw = createAsyncThunk<
 
 const claim = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { tokenId: string; provider: Web3Provider; chainId: SupportedChainId },
+    { tokenId: string; provider: Web3Provider; chainId: SupportedChainId; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/claim`, async ({ tokenId, provider, chainId }, thunkAPI) => {
+>(`wallet/claim`, async ({ tokenId, provider, chainId, address }, thunkAPI) => {
     try {
         //@ts-ignore
         const addr = thunkAPI.getState().web3.web3address;
 
-        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract[
-            // .connect(Web3State.getSignerOrProvider())
-            'claim(uint160[],address[])'
-        ]([tokenId], [addr]);
+        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+            .connect(provider.getSigner(address))
+            [
+                // .connect(Web3State.getSignerOrProvider())
+                'claim(uint160[],address[])'
+            ]([tokenId], [addr]);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -231,12 +234,13 @@ const mintNugg = createAsyncThunk<
 
 const initLoan = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { tokenId: string; provider: Web3Provider; chainId: SupportedChainId },
+    { tokenId: string; provider: Web3Provider; chainId: SupportedChainId; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/initLoan`, async ({ tokenId, provider, chainId }, thunkAPI) => {
+>(`wallet/initLoan`, async ({ tokenId, provider, chainId, address }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+            .connect(provider.getSigner(address))
             // .connect(Web3State.getSignerOrProvider())
             .loan([tokenId]);
         return {
@@ -263,12 +267,19 @@ const initLoan = createAsyncThunk<
 
 const payOffLoan = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { tokenId: string; amount: string; provider: Web3Provider; chainId: SupportedChainId },
+    {
+        tokenId: string;
+        amount: string;
+        provider: Web3Provider;
+        chainId: SupportedChainId;
+        address: string;
+    },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/payOffLoan`, async ({ tokenId, amount, provider, chainId }, thunkAPI) => {
+>(`wallet/payOffLoan`, async ({ tokenId, amount, provider, chainId, address }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+            .connect(provider.getSigner(address))
             // .connect(Web3State.getSignerOrProvider())
             .liquidate(tokenId, { value: toEth(amount) });
         return {
@@ -302,12 +313,19 @@ const payOffLoan = createAsyncThunk<
 
 const extend = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { tokenId: string; amount: string; provider: Web3Provider; chainId: SupportedChainId },
+    {
+        tokenId: string;
+        amount: string;
+        provider: Web3Provider;
+        chainId: SupportedChainId;
+        address: string;
+    },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/extend`, async ({ tokenId, amount, provider, chainId }, thunkAPI) => {
+>(`wallet/extend`, async ({ tokenId, amount, provider, chainId, address }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+            .connect(provider.getSigner(address))
             // .connect(Web3State.getSignerOrProvider())
             .rebalance([tokenId], { value: toEth(amount) });
 

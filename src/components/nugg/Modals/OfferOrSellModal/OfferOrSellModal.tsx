@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import { BigNumber } from 'ethers';
 
 import { EthInt } from '@src/classes/Fraction';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
@@ -8,7 +9,7 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
-import { fromEth } from '@src/lib/conversion';
+import { fromEth, toEth } from '@src/lib/conversion';
 import AppState from '@src/state/app';
 import SwapState from '@src/state/swap';
 import TokenState from '@src/state/token';
@@ -53,22 +54,70 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     //     [address, nugg],
     // );
 
-    const check = useAsyncState(
-        () =>
-            nugg &&
-            new NuggftV1Helper(chainId, provider).contract['vfo(address,uint160)'](
-                address,
-                nugg.id,
-            ),
-        [address, nugg],
-    );
+    // const check = useAsyncState(
+    //     () =>
+    //         nugg &&
+    //         new NuggftV1Helper(chainId, provider).contract['vfo(address,uint160)'](
+    //             address,
+    //             nugg.id,
+    //         ),
+    //     [address, nugg],
+    // );
+
+    const [check, setCheck] = React.useState<{
+        canOffer: boolean;
+        nextSwapAmount: BigNumber;
+        senderCurrentOffer: BigNumber;
+    }>();
+
+    useEffect(() => {
+        if (!check && nugg && address && chainId && provider) {
+            async function a() {
+                console.log({ check, nugg, address });
+                const helo = await new NuggftV1Helper(chainId, provider).contract[
+                    'check(address,uint160)'
+                ](address, nugg.id);
+
+                console.log({ helo });
+                setCheck(helo);
+            }
+            a();
+        }
+    }, [nugg, address, chainId, provider]);
 
     const minOfferAmount = useMemo(() => {
+        console.log({ check });
         if (!isUndefinedOrNullOrObjectEmpty(check)) {
-            return check;
+            if (!check.nextSwapAmount.isZero()) {
+                return fromEth(
+                    check.nextSwapAmount
+                        // .sub(check?.senderCurrentOffer)
+                        .div(10 ** 13)
+                        .add(1)
+                        .mul(10 ** 13),
+                );
+            } else {
+                return Math.max(
+                    +fromEth(
+                        check.nextSwapAmount
+                            // .sub(check.senderCurrentOffer)
+                            .div(10 ** 13)
+                            .add(1)
+                            .mul(10 ** 13),
+                    ),
+                    constants.MIN_OFFER,
+                );
+            }
         }
         return constants.MIN_OFFER;
-    }, [check]);
+    }, [check, nugg]);
+
+    // const minOfferAmount = useMemo(() => {
+    //     if (!isUndefinedOrNullOrObjectEmpty(check)) {
+    //         return check;
+    //     }
+    //     return constants.MIN_OFFER;
+    // }, [check]);
 
     const { targetId, type } = AppState.select.modalData();
 
@@ -89,7 +138,8 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 {stableType === 'StartSale'
                     ? `Sell Nugg #${stableId || nugg?.id}`
                     : `${
-                          check && !isUndefinedOrNullOrNumberZero(check.toNumber())
+                          check &&
+                          !isUndefinedOrNullOrNumberZero(check.senderCurrentOffer.toNumber())
                               ? 'Change bid for'
                               : 'Bid on'
                       } Nugg #${stableId || nugg?.id}`}
@@ -153,17 +203,15 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                         </Text>
                     </Text>
                 )}
-                {/* <Text textStyle={styles.text}>
-                        {check && check.canOffer
-                            ? `${
-                                  stableType === 'StartSale' ? 'Sale' : 'Offer'
-                              } must be at least ${minOfferAmount} ETH`
-                            : `You cannot ${
-                                  stableType === 'StartSale'
-                                      ? 'sell'
-                                      : 'place an offer on'
-                              } this Nugg`}
-                    </Text> */}
+                <Text textStyle={styles.text}>
+                    {check && check.canOffer
+                        ? `${
+                              stableType === 'StartSale' ? 'Sale' : 'Offer'
+                          } must be at least ${minOfferAmount} ETH`
+                        : `You cannot ${
+                              stableType === 'StartSale' ? 'sell' : 'place an offer on'
+                          } this Nugg`}
+                </Text>
             </div>
             <div style={styles.subContainer}>
                 <FeedbackButton
@@ -175,7 +223,8 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     label={`${
                         stableType === 'StartSale'
                             ? 'Sell Nugg'
-                            : check && !isUndefinedOrNullOrNumberZero(check.toNumber())
+                            : check &&
+                              !isUndefinedOrNullOrNumberZero(check.nextSwapAmount.toNumber())
                             ? 'Update offer'
                             : 'Place offer'
                     }`}
@@ -183,13 +232,14 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                         stableType === 'Offer'
                             ? SwapState.dispatch.placeOffer({
                                   tokenId: nugg?.id,
-                                  amount: fromEth(check),
+                                  amount: fromEth(toEth(amount).sub(check.senderCurrentOffer)),
                                   chainId,
                                   provider,
+                                  address,
                               })
                             : TokenState.dispatch.initSale({
                                   tokenId: stableId,
-                                  floor: fromEth(check),
+                                  floor: check.nextSwapAmount,
                                   chainId,
                                   provider,
                               })

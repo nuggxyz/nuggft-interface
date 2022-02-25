@@ -102,16 +102,24 @@ const pollOffers = createAsyncThunk<
 
 const placeOffer = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { amount: string; tokenId: string; provider: Web3Provider; chainId: SupportedChainId },
+    {
+        amount: string;
+        tokenId: string;
+        provider: Web3Provider;
+        chainId: SupportedChainId;
+        address: string;
+    },
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
->('swap/placeOffer', async ({ amount, tokenId, provider, chainId }, thunkAPI) => {
+>('swap/placeOffer', async ({ amount, tokenId, provider, chainId, address }, thunkAPI) => {
     try {
-        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract[
-            // .connect(Web3State.getSignerOrProvider())
-            'offer(uint160)'
-        ](BigNumber.from(tokenId), {
-            value: toEth(amount),
-        });
+        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+            .connect(provider.getSigner(address))
+            [
+                // .connect(Web3State.getSignerOrProvider())
+                'offer(uint160)'
+            ](BigNumber.from(tokenId), {
+                value: toEth(amount),
+            });
 
         return {
             success: 'SUCCESS',
