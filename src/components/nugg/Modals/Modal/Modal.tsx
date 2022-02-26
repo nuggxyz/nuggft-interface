@@ -18,10 +18,7 @@ import OfferOrSellModal from '../OfferOrSellModal/OfferOrSellModal';
 import AppState from '../../../../state/app';
 import LoanOrBurnModal from '../LoanOrBurn/LoanOrBurnModal';
 import useAnimateOverlay from '../../../../hooks/useAnimateOverlay';
-import BurnModal from '../BurnModal_DEPRECATED/BurnModal';
-import WalletModal from '../WalletModal/WalletModal';
 import LoanInputModal from '../LoanInputModal/LoanInputModal';
-import Colors from '../../../../lib/colors';
 
 import styles from './Modal.styles';
 
@@ -107,7 +104,6 @@ const Modal: FunctionComponent<Props> = () => {
                         <OfferOrSellModal />
                     ) : null}
                     {currentModal === 'LoanOrBurn' ? <LoanOrBurnModal /> : null}
-                    {currentModal === 'Wallet' ? <WalletModal /> : null}
                     {currentModal === 'Loan' ? <LoanInputModal /> : null}
                 </animated.div>
             </div>

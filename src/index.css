@@ -81,13 +81,28 @@ input[type='number'] {
     unicode-range: U+000-5FF;
     src: local('SF-Mono'), url(./fonts/SF-Mono-Light.woff2) format('woff2');
 }
-/*
-@font-face {
-    font-family: 'Inter';
-    unicode-range: U+000-5FF;
-    src: local('Inter'), url(./fonts/sf.woff2) format('woff2');
-}
 
+@font-face {
+    font-family: 'SFProRounded-Light';
+    unicode-range: U+000-5FF;
+    src: local('SF-Pro-Rounded'), url(./fonts/SF-Pro-Rounded-Light.woff2) format('woff2');
+}
+@font-face {
+    font-family: 'SFProRounded-Regular';
+    unicode-range: U+000-5FF;
+    src: local('SFProRounded-Regular'), url(./fonts/SF-Pro-Rounded-Regular.woff2) format('woff2');
+}
+@font-face {
+    font-family: 'SFProRounded-Bold';
+    unicode-range: U+000-5FF;
+    src: local('SFProRounded-Bold'), url(./fonts/SF-Pro-Rounded-Bold.woff2) format('woff2');
+}
+@font-face {
+    font-family: 'SFProRounded-Semibold';
+    unicode-range: U+000-5FF;
+    src: local('SFProRounded-Semibold'), url(./fonts/SF-Pro-Rounded-Semibold.woff2) format('woff2');
+}
+/*
 @font-face {
     font-family: 'Inter-SemiBold';
     unicode-range: U+000-5FF;

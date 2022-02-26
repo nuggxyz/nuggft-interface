@@ -2,9 +2,19 @@ import React, {
     CSSProperties,
     Dispatch,
     FunctionComponent,
+    PropsWithChildren,
     SetStateAction,
+    useCallback,
+    useMemo,
+    useRef,
 } from 'react';
-import { animated, useSpring } from 'react-spring';
+import {
+    animated,
+    config,
+    useSpring,
+    useTransition,
+    WithAnimated,
+} from 'react-spring';
 
 import { ucFirst } from '../../../../../lib';
 import NuggDexState from '../../../../../state/nuggdex';
@@ -16,67 +26,114 @@ import NuggLinkThumbnail from './NuggLinkThumbnail';
 
 type Props = {
     type: NL.Redux.NuggDex.SearchViews;
-    localViewing: NL.Redux.NuggDex.SearchViews;
     previewNuggs: NL.GraphQL.Fragments.Nugg.ListItem[];
-    setRef: Dispatch<SetStateAction<HTMLDivElement>>;
-    onClick: Dispatch<SetStateAction<NL.Redux.NuggDex.SearchViews>>;
-    style?: CSSProperties;
+    style?: CSSProperties | WithAnimated;
     limit?: number;
 };
 
-const NuggLink: FunctionComponent<Props> = ({
+const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
     type,
     previewNuggs,
-    localViewing,
-    setRef,
-    onClick,
     style,
     limit = 3,
+    children,
 }) => {
-    // const viewing = NuggDexState.select.viewing();
-    const opacity = useSpring({
-        opacity: localViewing !== 'home' ? 0 : 1,
-        transform:
-            localViewing !== 'home'
-                ? localViewing !== type
-                    ? 'scale(1)'
-                    : 'scale(1.2)'
-                : 'scale(1)',
+    const ref = useRef<HTMLDivElement>();
+    const viewing = NuggDexState.select.viewing();
+    const toggled = useCallback(
+        (toggVal, notToggVal) => {
+            return viewing !== 'home'
+                ? viewing !== type
+                    ? notToggVal
+                    : toggVal
+                : notToggVal;
+        },
+        [viewing, type],
+    );
+    const { opacityText, zIndex, ...animation } = useSpring({
+        opacity: viewing === 'home' || viewing === type ? 1 : 0,
+        opacityText: viewing === type ? 0 : 1,
+        height: toggled('100%', '45%'),
+        width: toggled('100%', '45%'),
+        zIndex: toggled(1, 0),
+        transform: toggled(
+            `scale(1.2) translate(20px, 40px)`,
+            `scale(1)  translate(0px, 0px)`,
+        ),
     });
 
     return (
         <animated.div
-            style={{ ...styles.nuggLinkContainer, ...opacity, ...style }}>
-            <animated.div
-                ref={(ref) => localViewing === type && setRef(ref)}
-                style={{
-                    ...styles.nuggLinkPreviewContainer,
-                }}>
-                {previewNuggs.first(limit).map(
-                    (nugg, i) =>
-                        nugg && (
-                            <NuggLinkThumbnail
-                                item={nugg}
-                                index={i}
-                                key={i}
-                                style={{
-                                    ...(limit > 3
-                                        ? styles.nuggLinkThumbnailContainerBig
-                                        : {}),
-                                }}
-                            />
-                        ),
-                )}
-                <NuggLinkAnchor
-                    onClick={() => onClick(type)}
+            ref={ref} //(ref) => viewing === type && setRef(ref)}
+            //@ts-ignore
+            style={{
+                ...styles.nuggLinkContainer,
+                ...animation,
+                ...style,
+            }}>
+            <animated.div style={styles.nuggLinkPreviewContainer}>
+                <animated.div
                     style={{
-                        ...(limit > 3
-                            ? styles.nuggLinkThumbnailContainerBig
-                            : {}),
-                    }}
-                />
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        opacity: opacityText,
+                        zIndex: zIndex.to({
+                            range: [0, 1],
+                            output: [1, 0],
+                        }),
+                        ...styles.nuggLinkItemsContainer,
+                    }}>
+                    {previewNuggs
+                        .first(limit)
+                        .map(
+                            (nugg, i) =>
+                                nugg && (
+                                    <NuggLinkThumbnail
+                                        item={nugg}
+                                        index={i}
+                                        key={i}
+                                        style={
+                                            limit > 3
+                                                ? styles.nuggLinkThumbnailContainerBig
+                                                : {}
+                                        }
+                                    />
+                                ),
+                        )}
+                    <NuggLinkAnchor
+                        onClick={() =>
+                            NuggDexState.dispatch.setViewing(
+                                viewing === type ? 'home' : type,
+                            )
+                        }
+                        style={
+                            limit > 3
+                                ? styles.nuggLinkThumbnailContainerBig
+                                : {}
+                        }
+                    />
+                </animated.div>
+                <animated.div
+                    style={{
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        zIndex: zIndex,
+                        opacity: opacityText.to({
+                            range: [0, 1],
+                            output: [1, 0],
+                        }),
+                    }}>
+                    {children}
+                </animated.div>
             </animated.div>
-            <Text size="small" textStyle={styles.nuggLinkCategoryTitle}>
+            <Text
+                size="small"
+                textStyle={{
+                    ...styles.nuggLinkCategoryTitle,
+                    opacity: opacityText,
+                }}>
                 {ucFirst(type)}
             </Text>
         </animated.div>
