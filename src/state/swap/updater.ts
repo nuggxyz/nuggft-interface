@@ -3,7 +3,7 @@ import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import constants from '@src/lib/constants';
 import web3 from '@src/web3';
 
-import SwapState from '.';
+import SwapState from './index';
 
 export default () => {
     const swapId = SwapState.select.id();
