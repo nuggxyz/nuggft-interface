@@ -1,19 +1,12 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
-import { BigNumber } from 'ethers';
 
 import { EthInt } from '@src/classes/Fraction';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
-import {
-    isUndefinedOrNullOrNumberZero,
-    isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '@src/lib';
+import { isUndefinedOrNullOrObjectEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import { fromEth, toEth } from '@src/lib/conversion';
-import AppState from '@src/state/app';
 import SwapState from '@src/state/swap';
 import TokenState from '@src/state/token';
-import TransactionState from '@src/state/transaction';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -25,6 +18,7 @@ import Layout from '@src/lib/layout';
 import FontSize from '@src/lib/fontSize';
 import useHandleError from '@src/hooks/useHandleError';
 import web3 from '@src/web3';
+import state from '@src/state';
 
 import styles from './OfferOrSellModal.styles';
 
@@ -82,7 +76,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         return constants.MIN_OFFER;
     }, [check, nugg]);
 
-    const { targetId, type } = AppState.select.modalData();
+    const { targetId, type } = state.app.select.modalData();
 
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(targetId);
@@ -145,7 +139,8 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     width: '100%',
                     height: '1rem',
                     marginBottom: '.5rem',
-                }}>
+                }}
+            >
                 {stableType === 'Offer' && userBalance && (
                     <Text type="text" size="smaller" textStyle={styles.text} weight="bolder">
                         You currently have
@@ -153,7 +148,8 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                             type="code"
                             size="smaller"
                             textStyle={{ marginLeft: '.5rem' }}
-                            weight="bolder">
+                            weight="bolder"
+                        >
                             {new EthInt(
                                 userBalance
                                     .div(10 ** 13)

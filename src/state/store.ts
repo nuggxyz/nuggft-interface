@@ -22,6 +22,7 @@ export const states = {
 };
 
 export const rootReducer = combineReducers({
+    socket: SocketState.reducer,
     app: AppState.reducer,
     nuggdex: NuggDexState.reducer,
     protocol: ProtocolState.reducer,
@@ -29,7 +30,6 @@ export const rootReducer = combineReducers({
     transaction: TransactionState.reducer,
     token: TokenState.reducer,
     wallet: WalletState.reducer,
-    socket: SocketState.reducer,
 });
 
 const store = configureStore({

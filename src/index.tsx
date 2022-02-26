@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 import './prototypes';
-global.Buffer = global.Buffer || require('buffer').Buffer;
-
 import store from './state/store';
 import './index.css';
 import Initializer from './state/Initializer';
 import Modal from './components/nugg/Modals/Modal/Modal';
 import IndexPage from './pages/Index';
 import ToastContainer from './components/general/Toast/ToastContainer';
+
+global.Buffer = global.Buffer || require('buffer').Buffer;
 
 ReactDOM.render(
     <div style={{ width: '100%', height: '100%' }}>

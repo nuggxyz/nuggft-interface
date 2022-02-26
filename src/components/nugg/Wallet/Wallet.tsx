@@ -1,9 +1,8 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
 import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
-import AppState from '@src/state/app';
-import web3 from '@src/web3';
 import state from '@src/state';
+import web3 from '@src/web3';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectWalletTab from './tabs/ConnectWalletTab';
@@ -16,7 +15,7 @@ type Props = {};
 // const call = ;
 
 const Wallet: FunctionComponent<Props> = () => {
-    const screenType = AppState.select.screenType();
+    const screenType = state.app.select.screenType();
     const account = web3.hook.usePriorityAccount();
 
     state.socket.hook.useBlock((event) => {

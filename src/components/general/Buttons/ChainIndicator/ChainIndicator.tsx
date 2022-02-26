@@ -14,13 +14,12 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
-import ProtocolState from '@src/state/protocol';
-import AppState from '@src/state/app';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Layout from '@src/lib/layout';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import SwapState from '@src/state/swap';
 import web3 from '@src/web3';
+import state from '@src/state';
 
 import styles from './ChainIndicator.styles';
 
@@ -31,13 +30,24 @@ type Props = {
 };
 
 const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle }) => {
-    const epoch = ProtocolState.select.epoch();
-    const view = AppState.select.view();
-    const currentBlock = ProtocolState.select.currentBlock();
+    const epoch = state.protocol.select.epoch();
+    const view = state.app.select.view();
+    const currentBlock = state.protocol.select.currentBlock();
     const swapId = SwapState.select.id();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const error = web3.hook.usePriorityError();
+
+    // const [block, setBlock] = React.useState<number>();
+
+    // state.socket.hook.useBlock((event) => {
+    //     if (currentBlock && event.block > currentBlock) {
+    //         setBlock(event.block);
+    //     }
+    //     console.log('block:', { event });
+    // });
+
+    const block = state.socket.select.Block();
 
     const [blocksRemaining, setBlocksRemaining] = useState(0);
 
@@ -49,14 +59,18 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
             !isUndefinedOrNullOrStringEmpty(epoch.endblock) &&
             !isUndefinedOrNullOrNotNumber(currentBlock)
         ) {
-            remaining = +epoch.endblock - currentBlock;
+            let val = currentBlock;
+            if (block && block.block > currentBlock) {
+                val = block.block;
+            }
+            remaining = +epoch.endblock - val;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
 
         setBlocksRemaining(remaining);
-    }, [currentBlock, epoch]);
+    }, [currentBlock, epoch, block]);
 
     useLayoutEffect(() => {
         getBlocksRemaining();
@@ -99,7 +113,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
                 onClick={
                     onClick ||
                     (() =>
-                        AppState.onRouteUpdate(
+                        state.app.onRouteUpdate(
                             chainId,
                             view === 'Search' || (swapId && !swapId.includes(epoch.id))
                                 ? '/'

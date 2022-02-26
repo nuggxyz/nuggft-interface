@@ -43,13 +43,22 @@ export default () => {
     }, [chainId]);
 
     useEffect(() => {
-        instance &&
+        if (instance) {
+            async function getit() {
+                SocketState.dispatch.incomingEvent({
+                    type: SocketType.BLOCK,
+                    ...formatBlockLog(await instance.getBlockNumber()),
+                });
+            }
+            getit();
+
             instance.on('block', (log: number) => {
                 SocketState.dispatch.incomingEvent({
                     type: SocketType.BLOCK,
                     ...formatBlockLog(log),
                 });
             });
+        }
     }, [instance]);
 
     useEffect(() => {
