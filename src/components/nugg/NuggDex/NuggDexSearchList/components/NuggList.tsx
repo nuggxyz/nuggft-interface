@@ -141,7 +141,7 @@ const NuggList: FunctionComponent<Props> = ({
                     </div>
                 )}
                 <InfiniteList
-                    style={{ zIndex: 0 }}
+                    style={{ zIndex: 0, paddingTop: '2.5rem' }}
                     data={values}
                     RenderItem={NuggListRenderItem}
                     loading={loading}

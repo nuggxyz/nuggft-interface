@@ -70,6 +70,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                 ...styles.nuggLinkContainer,
                 ...animation,
                 ...style,
+                zIndex,
             }}>
             <animated.div style={styles.nuggLinkPreviewContainer}>
                 <animated.div
