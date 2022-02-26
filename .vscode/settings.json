@@ -15,5 +15,12 @@
     "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": false,
     "workbench.tree.indent": 16,
     "gitlens.views.repositories.includeWorkingTree": true,
-    "terminal.integrated.macOptionClickForcesSelection": true
+    "terminal.integrated.macOptionClickForcesSelection": true,
+    "githubIssues.createIssueTriggers": ["TODO", "@todo", "BUG", "FIXME", "ISSUE", "HACK"],
+    "githubPullRequests.queries": [
+        {
+            "label": "Assigned To Me",
+            "query": "is:open assignee:${user}"
+        }
+    ]
 }

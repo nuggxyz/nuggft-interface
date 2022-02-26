@@ -27,7 +27,7 @@ Array.prototype.last = function (count?: number) {
     if (isUndefinedOrNullOrArrayEmpty(this)) {
         return [];
     }
-
+    // TODO: #35 @danny7even this is some crap cheese code
     if (isUndefinedOrNullOrNotNumber(count)) {
         return this[this.length - 1];
     }

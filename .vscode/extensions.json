@@ -4,6 +4,8 @@
         "esbenp.prettier-vscode",
         "eamodio.gitlens",
         "ms-vscode.vscode-typescript-next",
-        "christian-kohler.path-intellisense"
+        "christian-kohler.path-intellisense",
+        "editorconfig.editorconfig",
+        "github.vscode-pull-request-github"
     ]
 }
