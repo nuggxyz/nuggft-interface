@@ -2,9 +2,9 @@
     "name": "nuggft-interface",
     "version": "1.0.0",
     "description": "nuggft web facing application",
-    "main": "index.tsx",
-    "author": "@nuggxyz",
-    "license": "MIT",
+    "main": "webpack/scripts/start.js",
+    "author": "danny7even <danny7even@nugg.xyz>",
+    "license": "AGPL-3.0-or-later",
     "private": true,
     "scripts": {
         "start": "node webpack/scripts/start.js",
@@ -13,12 +13,6 @@
         "serve": "serve -s build",
         "test": "node webpack/scripts/test.js",
         "typechain": "typechain --target ethers-v5 --out-dir src/typechain/ './src/abis/*'"
-    },
-    "eslintConfig": {
-        "extends": [
-            "react-app",
-            "react-app/jest"
-        ]
     },
     "browserslist": {
         "production": [
