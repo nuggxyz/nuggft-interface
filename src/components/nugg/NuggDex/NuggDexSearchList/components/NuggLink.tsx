@@ -1,5 +1,5 @@
 import React, { CSSProperties, Dispatch, FunctionComponent, SetStateAction } from 'react';
-import { animated, useSpring } from 'react-spring';
+import { animated, useSpring } from '@react-spring/web';
 
 import { ucFirst } from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';

@@ -1,5 +1,5 @@
 import React, { CSSProperties, FunctionComponent, useEffect } from 'react';
-import { animated, useSpring } from 'react-spring';
+import { animated, useSpring } from '@react-spring/web';
 
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import Colors from '@src/lib/colors';

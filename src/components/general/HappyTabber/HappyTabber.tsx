@@ -1,5 +1,5 @@
 import React, { CSSProperties, FunctionComponent, useState } from 'react';
-import { animated, useSpring, useTransition, config } from 'react-spring';
+import { animated, useSpring, useTransition, config } from '@react-spring/web';
 
 import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import AppState from '@src/state/app';

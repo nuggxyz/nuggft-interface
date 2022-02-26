@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
-import { animated, config, useSpring } from 'react-spring';
+import { animated, config, useSpring } from '@react-spring/web';
 import { IoChevronBackOutline } from 'react-icons/io5';
 
 import Button from '@src/components/general/Buttons/Button/Button';

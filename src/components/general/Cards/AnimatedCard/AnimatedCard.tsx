@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useRef, useState } from 'react';
-import { animated, config, useSpring } from 'react-spring';
+import { animated, config, useSpring } from '@react-spring/web';
 
 const calc = (x, y, rect) => [
     -(y - rect.top - rect.height / 2) / 5,

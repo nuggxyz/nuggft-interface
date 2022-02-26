@@ -1,5 +1,5 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
-import { animated } from 'react-spring';
+import { animated } from '@react-spring/web';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useOnHover from '@src/hooks/useOnHover';

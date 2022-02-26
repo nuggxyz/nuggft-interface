@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSpring, animated, config } from 'react-spring';
+import { useSpring, animated, config } from '@react-spring/web';
 
 import { NLStaticImageKey } from '@src/components/general/NLStaticImage';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';

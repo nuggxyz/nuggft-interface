@@ -6,7 +6,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import { animated, config, SpringProps, useSpring } from 'react-spring';
+import { animated, config, SpringProps, useSpring } from '@react-spring/web';
 
 import useMeasure from '@src/hooks/useMeasure';
 import usePrevious from '@src/hooks/usePrevious';

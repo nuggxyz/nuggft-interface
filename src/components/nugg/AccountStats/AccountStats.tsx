@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { animated, config, useSpring } from 'react-spring';
+import { animated, config, useSpring } from '@react-spring/web';
 
 import { EthInt } from '@src/classes/Fraction';
 import AppState from '@src/state/app';

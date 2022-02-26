@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useCallback, useRef } from 'react';
 import { IoWalletSharp, IoBookSharp } from 'react-icons/io5';
-import { animated, config, useSpring } from 'react-spring';
+import { animated, config, useSpring } from '@react-spring/web';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';

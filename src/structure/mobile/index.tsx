@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect } from 'react';
-import { animated, config, useSpring } from 'react-spring';
+import { animated, config, useSpring } from '@react-spring/web';
 
 import Colors from '@src/lib/colors';
 import AppState from '@src/state/app';

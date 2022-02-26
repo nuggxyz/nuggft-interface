@@ -1,5 +1,5 @@
 import React, { CSSProperties, FunctionComponent, PropsWithChildren } from 'react';
-import { animated, config, useTransition } from 'react-spring';
+import { animated, config, useTransition } from '@react-spring/web';
 
 import useOnHover from '@src/hooks/useOnHover';
 

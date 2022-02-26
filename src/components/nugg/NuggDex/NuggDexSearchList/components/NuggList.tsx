@@ -8,7 +8,7 @@ import React, {
     useState,
 } from 'react';
 import { Promise } from 'bluebird';
-import { animated, UseSpringProps } from 'react-spring';
+import { animated, UseSpringProps } from '@react-spring/web';
 import { ChevronLeft } from 'react-feather';
 import { batch } from 'react-redux';
 

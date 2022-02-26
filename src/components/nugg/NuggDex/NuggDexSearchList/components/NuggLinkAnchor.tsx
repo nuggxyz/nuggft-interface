@@ -1,5 +1,5 @@
 import React, { CSSProperties, FunctionComponent } from 'react';
-import { animated } from 'react-spring';
+import { animated } from '@react-spring/web';
 import { Maximize2 } from 'react-feather';
 
 import useOnHover from '@src/hooks/useOnHover';

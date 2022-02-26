@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'react-feather';
-import { animated, config as springConfig, useSpring } from 'react-spring';
+import { animated, config as springConfig, useSpring } from '@react-spring/web';
 import { Web3Provider } from '@ethersproject/providers';
 
 import Text from '@src/components/general/Texts/Text/Text';
