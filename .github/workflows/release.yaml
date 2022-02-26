@@ -1,0 +1,31 @@
+name: Release version
+
+# on:
+#     push:
+#         tags:
+#             - 'v*.*.*'
+#     schedule:
+#         - cron: '0 0 * * *'
+#     workflow_dispatch:
+
+env:
+    IS_NIGHTLY: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+
+jobs:
+    test-deploy:
+        runs-on: ubuntu-latest
+        name: A job to test the action-deploy action by deploying a test site
+        steps:
+            - uses: actions/checkout@v2
+            - name: Deploy test site
+              id: deploy
+              uses: fleekhq/action-deploy@v1
+              with:
+                  apiKey: ${{ secrets.FLEEK_API_KEY }}
+            - name: Get the output url
+              run: echo "Deploy url is ${{ steps.deploy.outputs.deployUrl }}"
+            # create release
+            - uses: 'marvinpinto/action-automatic-releases@latest'
+              with:
+                  repo_token: '${{ secrets.GITHUB_TOKEN }}'
+                  prerelease: false
