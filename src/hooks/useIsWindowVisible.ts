@@ -1,14 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { gatsbyDOM } from '@src/lib/index';
-
-const VISIBILITY_STATE_SUPPORTED = gatsbyDOM('document') && 'visibilityState' in document;
+const VISIBILITY_STATE_SUPPORTED = 'visibilityState' in document;
 
 function isWindowVisible() {
-    return (
-        gatsbyDOM('document') &&
-        (!VISIBILITY_STATE_SUPPORTED || document.visibilityState !== 'hidden')
-    );
+    return !VISIBILITY_STATE_SUPPORTED || document.visibilityState !== 'hidden';
 }
 
 export default function useIsWindowVisible(): boolean {
@@ -20,12 +15,10 @@ export default function useIsWindowVisible(): boolean {
     useEffect(() => {
         if (!VISIBILITY_STATE_SUPPORTED) return undefined;
 
-        if (gatsbyDOM('document')) {
-            document.addEventListener('visibilitychange', listener);
-            return () => {
-                document.removeEventListener('visibilitychange', listener);
-            };
-        }
+        document.addEventListener('visibilitychange', listener);
+        return () => {
+            document.removeEventListener('visibilitychange', listener);
+        };
     }, [listener]);
 
     return focused;

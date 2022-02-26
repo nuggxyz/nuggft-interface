@@ -20,6 +20,7 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
 import web3 from '@src/web3';
+import state from '@src/state';
 
 import styles from './RingAbout.styles';
 
@@ -63,6 +64,8 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const [open, setOpen] = useState(false);
 
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader);
+
+    state.socket.hook.useOffer((x) => {});
 
     const hasBids = useMemo(
         () =>
@@ -125,21 +128,24 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                         ['#FFFFFF00', Colors.transparentWhite],
                     ),
                 }),
-            }}>
+            }}
+        >
             <div style={styles.bodyContainer}>
                 <div
                     style={
                         styles[
                             screenType !== 'desktop' ? 'leaderContainerMobile' : 'leaderContainer'
                         ]
-                    }>
+                    }
+                >
                     <Text
                         textStyle={{
                             ...styles.title,
                             ...(screenType === 'phone' && {
                                 color: Colors.nuggBlueText,
                             }),
-                        }}>
+                        }}
+                    >
                         {status === 'ongoing' && hasBids
                             ? 'Highest Offer'
                             : status === 'ongoing' && !hasBids
@@ -156,10 +162,12 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                         ? 'leadingOfferContainerMobile'
                                         : 'leadingOfferContainer'
                                 ]
-                            }>
+                            }
+                        >
                             <animated.div
                                 //@ts-ignore
-                                style={flashStyle}>
+                                style={flashStyle}
+                            >
                                 <CurrencyText
                                     image="eth"
                                     textStyle={styles.leadingOffer}
@@ -168,7 +176,8 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                 <Text
                                     type="text"
                                     size="smaller"
-                                    textStyle={{ color: Colors.textColor }}>
+                                    textStyle={{ color: Colors.textColor }}
+                                >
                                     {leaderEns}
                                 </Text>
                             </animated.div>

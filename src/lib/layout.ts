@@ -1,9 +1,7 @@
-import { gatsbyDOM } from './index';
-
 const Layout = {
     window: {
-        width: gatsbyDOM('window') ? window.innerWidth : 0,
-        height: gatsbyDOM('window') ? window.innerHeight : 0,
+        width: window.innerWidth,
+        height: window.innerHeight,
     },
     header: {
         height: '5rem',

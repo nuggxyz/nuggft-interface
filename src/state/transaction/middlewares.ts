@@ -10,7 +10,7 @@ import AppState from '@src/state/app';
 import { NLState } from '@src/state/NLState';
 import { CHAIN_INFO } from '@src/web3/config';
 
-import * as state from '..';
+import TransactionState from './index';
 
 export const pending: NL.Redux.Middleware<
     Record<string, unknown>,
@@ -24,7 +24,7 @@ export const pending: NL.Redux.Middleware<
             !isUndefinedOrNullOrObjectEmpty(action.payload) &&
             !isUndefinedOrNullOrStringEmpty(action.payload._pendingtx)
         ) {
-            state.default.transaction.dispatch.addTransaction(action.payload._pendingtx);
+            TransactionState.dispatch.addTransaction(action.payload._pendingtx);
             AppState.dispatch.addToastToList({
                 duration: 0,
                 title: 'Pending Transaction',

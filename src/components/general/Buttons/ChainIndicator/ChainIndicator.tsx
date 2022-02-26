@@ -32,7 +32,7 @@ type Props = {
 const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle }) => {
     const epoch = state.protocol.select.epoch();
     const view = state.app.select.view();
-    const currentBlock = state.protocol.select.currentBlock();
+    const blockListener = state.socket.select.Block();
     const swapId = SwapState.select.id();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
@@ -41,13 +41,11 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
     // const [block, setBlock] = React.useState<number>();
 
     // state.socket.hook.useBlock((event) => {
-    //     if (currentBlock && event.block > currentBlock) {
+    //     if (blockListener && event.block > blockListener) {
     //         setBlock(event.block);
     //     }
     //     console.log('block:', { event });
     // });
-
-    const block = state.socket.select.Block();
 
     const [blocksRemaining, setBlocksRemaining] = useState(0);
 
@@ -57,20 +55,16 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
         if (
             !isUndefinedOrNullOrObjectEmpty(epoch) &&
             !isUndefinedOrNullOrStringEmpty(epoch.endblock) &&
-            !isUndefinedOrNullOrNotNumber(currentBlock)
+            !isUndefinedOrNullOrNotNumber(blockListener.block)
         ) {
-            let val = currentBlock;
-            if (block && block.block > currentBlock) {
-                val = block.block;
-            }
-            remaining = +epoch.endblock - val;
+            remaining = +epoch.endblock - blockListener.block;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
 
         setBlocksRemaining(remaining);
-    }, [currentBlock, epoch, block]);
+    }, [blockListener, epoch]);
 
     useLayoutEffect(() => {
         getBlocksRemaining();

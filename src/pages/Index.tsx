@@ -1,15 +1,14 @@
 import * as React from 'react';
 import Confetti from 'react-confetti';
 
-import AppState from '@src/state/app';
-import ProtocolState from '@src/state/protocol';
 import Desktop from '@src/structure/desktop';
 import Mobile from '@src/structure/mobile';
+import state from '@src/state';
 
 const IndexPage = () => {
-    const type = AppState.select.screenType();
-    const isOver = ProtocolState.select.epochIsOver();
-    const { width, height } = AppState.select.dimensions();
+    const type = state.app.select.screenType();
+    const isOver = state.protocol.select.epochIsOver();
+    const { width, height } = state.app.select.dimensions();
     return (
         <>
             {isOver && <Confetti {...{ width, height }} recycle={false} numberOfPieces={500} />}

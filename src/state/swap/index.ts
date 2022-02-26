@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 import { NLState } from '@src/state/NLState';
+import { OfferInfo } from '@src/state/socket/interfaces';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -71,6 +72,30 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
             },
             setStatus: (state, action: PayloadAction<NL.Redux.Swap.Status>) => {
                 state.status = action.payload;
+            },
+            newLeader: (
+                state,
+                action: PayloadAction<{
+                    offer: OfferInfo;
+                    swapId: string;
+                }>,
+            ) => {
+                if (state.id === action.payload.swapId) {
+                    state.offers = [
+                        { user: action.payload.offer.account, eth: action.payload.offer.value },
+                        ...state.offers,
+                    ];
+                    const top = state.offers[0];
+                    if (
+                        !isUndefinedOrNullOrObjectEmpty(top) &&
+                        state.eth &&
+                        +state.eth < +top.eth
+                    ) {
+                        state.eth = top.eth;
+                        state.ethUsd = top.ethUsd;
+                        state.leader = top.user.id;
+                    }
+                }
             },
             setOffers: (
                 state,

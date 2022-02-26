@@ -2,8 +2,7 @@ import React, { FunctionComponent, useEffect } from 'react';
 import { animated, config, useSpring } from '@react-spring/web';
 
 import Colors from '@src/lib/colors';
-import AppState from '@src/state/app';
-import TokenState from '@src/state/token';
+import state from '@src/state';
 
 import BottomBar from './BottomBar/BottomBar';
 import styles from './index.styles';
@@ -24,11 +23,11 @@ const sty = {
 };
 
 const Mobile: FunctionComponent<Props> = () => {
-    const currentView = AppState.select.mobileView();
-    const nugg = TokenState.select.tokenId();
+    const currentView = state.app.select.mobileView();
+    const nugg = state.token.select.tokenId();
     useEffect(() => {
         if (nugg && currentView !== 'Search') {
-            AppState.dispatch.changeMobileView('Search');
+            state.app.dispatch.changeMobileView('Search');
         }
     }, [nugg]);
 
@@ -64,21 +63,25 @@ const Mobile: FunctionComponent<Props> = () => {
                         : currentView === 'Search'
                         ? Colors.gradient2
                         : 'transparent',
-            }}>
+            }}
+        >
             <div style={styles.viewContainer}>
                 <animated.div
                     //@ts-ignore¸
-                    style={wallet}>
+                    style={wallet}
+                >
                     <WalletView />
                 </animated.div>
                 <animated.div
                     //@ts-ignore¸
-                    style={mint}>
+                    style={mint}
+                >
                     <MintView />
                 </animated.div>
                 <animated.div
                     //@ts-ignore¸
-                    style={search}>
+                    style={search}
+                >
                     <SearchView />
                 </animated.div>
             </div>

@@ -10,7 +10,7 @@ export enum SocketType {
 
 export function formatEventLog(log: Log) {
     return {
-        receivedAt: new Date().getDate(),
+        receivedAt: new Date().getTime(),
         txhash: log.transactionHash,
         block: log.blockNumber,
     };
@@ -18,7 +18,7 @@ export function formatEventLog(log: Log) {
 
 export function formatBlockLog(log: number) {
     return {
-        receivedAt: new Date().getDate(),
+        receivedAt: new Date().getTime(),
         txhash: 'block',
         block: log,
     };
