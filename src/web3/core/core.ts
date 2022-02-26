@@ -1,10 +1,10 @@
 import type { Networkish } from '@ethersproject/networks';
 import type { Web3Provider } from '@ethersproject/providers';
-import { Address } from '@src/classes/Address';
-import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import { useEffect, useMemo, useState } from 'react';
 import type { EqualityChecker, UseBoundStore } from 'zustand';
 import create from 'zustand';
+
+import { Address } from '@src/classes/Address';
 
 import { createWeb3ReactStoreAndActions } from './store';
 import { Connector, Web3ReactStore, Web3ReactState, Actions } from './types';
