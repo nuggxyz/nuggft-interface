@@ -12,7 +12,6 @@ export enum SupportedChainId {
     ROPSTEN = 3,
     RINKEBY = 4,
     GOERLI = 5,
-    // KOVAN = 42,
 }
 
 export function supportedChainIds() {
@@ -62,8 +61,6 @@ export const NETWORK_URLS = {
     [SupportedChainId.RINKEBY]: `https://rinkeby.infura.io/v3/${INFURA_KEY}`,
     [SupportedChainId.ROPSTEN]: `https://ropsten.infura.io/v3/${INFURA_KEY}`,
     [SupportedChainId.GOERLI]: `https://goerli.infura.io/v3/${INFURA_KEY}`,
-    // [SupportedChainId
-    //     .KOVAN]: `https://kovan.infura.io/v3/${INFURA_KEY}`,
 };
 
 export const WSS_URLS = {
@@ -162,17 +159,6 @@ export const CHAIN_INFO: {
         },
         label: 'ropsten',
     },
-    // [SupportedChainId.KOVAN]: {
-    //     docs: 'https://docs.uniswap.org/',
-    //     explorer: 'https://kovan.etherscan.io/',
-    //     infoLink: 'https://info.uniswap.org/#/',
-    //     name: 'Kovan',
-    //     nativeCurrency: {
-    //         name: 'Kovan ETH',
-    //         symbol: 'kovETH',
-    //         decimals: 18,
-    //     },
-    // },
     [SupportedChainId.GOERLI]: {
         docs: 'https://docs.uniswap.org/',
         explorer: 'https://goerli.etherscan.io/',
