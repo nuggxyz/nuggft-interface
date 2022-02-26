@@ -12,6 +12,7 @@ const STATE_NAME = 'socket';
 
 class SocketState extends NLState<NL.Redux.Socket.State> {
     declare static _instance: SocketState;
+    declare static hook: typeof hooks;
 
     declare static actions: typeof this.instance._slice.actions;
     declare static reducer: typeof this.instance._slice.reducer;
@@ -31,6 +32,7 @@ class SocketState extends NLState<NL.Redux.Socket.State> {
             Claim: undefined,
             Stake: undefined,
             Mint: undefined,
+            Block: undefined,
         });
     }
 
@@ -51,6 +53,9 @@ class SocketState extends NLState<NL.Redux.Socket.State> {
                         break;
                     case SocketType.CLAIM:
                         state.Claim = action.payload;
+                        break;
+                    case SocketType.BLOCK:
+                        state.Block = action.payload;
                         break;
                 }
             },

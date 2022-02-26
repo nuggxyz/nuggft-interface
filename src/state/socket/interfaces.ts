@@ -5,13 +5,22 @@ export enum SocketType {
     OFFER = 1,
     CLAIM = 2,
     MINT = 3,
+    BLOCK = 4,
 }
 
-export function formatLog(log: Log) {
+export function formatEventLog(log: Log) {
     return {
         receivedAt: new Date().getDate(),
         txhash: log.transactionHash,
         block: log.blockNumber,
+    };
+}
+
+export function formatBlockLog(log: number) {
+    return {
+        receivedAt: new Date().getDate(),
+        txhash: 'block',
+        block: log,
     };
 }
 
@@ -48,4 +57,8 @@ export interface MintInfo extends BaseSocketInfo {
     amount: string;
 }
 
-export type SocketInfo = StakeInfo | OfferInfo | ClaimInfo | MintInfo;
+export interface BlockInfo extends BaseSocketInfo {
+    type: SocketType.BLOCK;
+}
+
+export type SocketInfo = StakeInfo | OfferInfo | ClaimInfo | MintInfo | BlockInfo;

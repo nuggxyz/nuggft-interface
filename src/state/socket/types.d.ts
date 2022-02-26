@@ -4,6 +4,7 @@ declare namespace NL.Redux.Socket {
         Mint: import('./interfaces').MintInfo;
         Stake: import('./interfaces').StakeInfo;
         Claim: import('./interfaces').ClaimInfo;
+        Block: import('./interfaces').BlockInfo;
     }
 
     type Error = 'ERROR';

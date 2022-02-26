@@ -1,8 +1,9 @@
-import React, { FunctionComponent, useEffect, useMemo } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 
 import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
 import AppState from '@src/state/app';
 import web3 from '@src/web3';
+import state from '@src/state';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectWalletTab from './tabs/ConnectWalletTab';
@@ -12,10 +13,16 @@ import SalesTab from './tabs/SalesTab/SalesTab';
 import styles from './Wallet.styles';
 type Props = {};
 
+// const call = ;
+
 const Wallet: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
     const account = web3.hook.usePriorityAccount();
-    const provider = web3.hook.usePriorityProvider();
+
+    state.socket.hook.useBlock((event) => {
+        console.log('block:', { event });
+    });
+
     const happytabs: HappyTabberItem[] = useMemo(
         () => [
             ...(account
@@ -53,7 +60,8 @@ const Wallet: FunctionComponent<Props> = () => {
                 ...styles.wallet,
                 ...(screenType === 'tablet' && { width: '100%' }),
                 ...(screenType === 'phone' && { height: '100%' }),
-            }}>
+            }}
+        >
             <HappyTabber
                 items={happytabs}
                 bodyStyle={screenType === 'phone' ? styles.mobileBody : styles.body}
