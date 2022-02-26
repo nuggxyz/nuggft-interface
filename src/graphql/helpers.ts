@@ -2,9 +2,9 @@ import { isUndefinedOrNullOrObjectEmpty } from '../lib';
 import { client } from './client';
 import GQLHelper from './GQLHelper';
 
-export const executeQuery = async (query: any, tableName: string) => {
+export const executeQuery = async (chainId: number, query: any, tableName: string) => {
     try {
-        const result = await GQLHelper.instance.query({
+        const result = await GQLHelper.instance(chainId).query({
             query,
             fetchPolicy: 'no-cache',
         });

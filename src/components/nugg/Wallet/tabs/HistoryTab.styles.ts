@@ -1,7 +1,7 @@
-import { NLStyleSheetCreator } from '../../../../lib';
-import Colors from '../../../../lib/colors';
-import FontSize from '../../../../lib/fontSize';
-import Layout from '../../../../lib/layout';
+import { NLStyleSheetCreator } from '@src/lib';
+import Colors from '@src/lib/colors';
+import FontSize from '@src/lib/fontSize';
+import Layout from '@src/lib/layout';
 
 const styles = NLStyleSheetCreator({
     container: {
@@ -36,13 +36,14 @@ const styles = NLStyleSheetCreator({
     renderButton: {
         background: Colors.gradient2,
         borderRadius: Layout.borderRadius.large,
+        padding: '.4rem .7rem',
     },
     renderButtonLoan: {
         background: Colors.gradient3,
         borderRadius: Layout.borderRadius.large,
     },
     textWhite: {
-        color: ' white',
+        color: 'white',
         fontSize: FontSize.h6,
     },
     eth: {

@@ -1,15 +1,18 @@
-import FontSize from '../../../../lib/fontSize';
-import { NLStyleSheetCreator } from '../../../../lib';
-import Layout from '../../../../lib/layout';
-import Colors from '../../../../lib/colors';
+import FontSize from '@src/lib/fontSize';
+import { NLStyleSheetCreator } from '@src/lib';
+import Layout from '@src/lib/layout';
 
 const styles = NLStyleSheetCreator({
     title: {
-        fontFamily: Layout.font.montserrat.bold,
+        fontFamily: Layout.font.sf.bold,
         // color: Colors.textColor,
     },
     text: {
-        fontFamily: Layout.font.inter.regular,
+        fontFamily: Layout.font.sf.regular,
+        // color: Colors.textColor,
+    },
+    code: {
+        fontFamily: Layout.font.code.regular,
         // color: Colors.textColor,
     },
     light: {

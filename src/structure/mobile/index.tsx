@@ -1,11 +1,9 @@
 import React, { FunctionComponent, useEffect } from 'react';
-import { animated, config, useSpring, useTransition } from 'react-spring';
+import { animated, config, useSpring } from '@react-spring/web';
 
-import AccountViewer from '../../components/nugg/AccountViewer/AccountViewer';
-import FloorPrice from '../../components/nugg/FloorPrice';
-import Colors from '../../lib/colors';
-import AppState from '../../state/app';
-import TokenState from '../../state/token';
+import Colors from '@src/lib/colors';
+import AppState from '@src/state/app';
+import TokenState from '@src/state/token';
 
 import BottomBar from './BottomBar/BottomBar';
 import styles from './index.styles';

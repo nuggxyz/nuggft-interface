@@ -1,6 +1,6 @@
-import { NLStyleSheetCreator } from '../../../lib';
-import Colors from '../../../lib/colors';
-import Layout from '../../../lib/layout';
+import { NLStyleSheetCreator } from '@src/lib';
+import Colors from '@src/lib/colors';
+import Layout from '@src/lib/layout';
 
 const styles = NLStyleSheetCreator({
     button: {
@@ -27,7 +27,7 @@ const styles = NLStyleSheetCreator({
         width: '100%',
     },
     text: {
-        fontFamily: Layout.font.inter.regular,
+        fontFamily: Layout.font.sf.regular,
         color: Colors.nuggBlueText,
         fontWeight: 'lighter',
     },

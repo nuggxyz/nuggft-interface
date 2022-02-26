@@ -15,10 +15,7 @@ export type NuggJson = {
 };
 
 export const extractDotNuggBase64 = (jsonBase64: string) => {
-    if (
-        !isUndefinedOrNullOrStringEmpty(jsonBase64) &&
-        jsonBase64.includes('json')
-    ) {
+    if (!isUndefinedOrNullOrStringEmpty(jsonBase64) && jsonBase64.includes('json')) {
         try {
             const json = JSON.parse(atob(jsonBase64.split(',')[1])) as NuggJson;
             return json.image.split(',')[1];
@@ -45,9 +42,7 @@ const createPallet = (bytesArr: string[]) => {
     let colorPallet = [];
     for (let i = DOTNUGG_COLOR_PALLET_OFFSET; i < length; i += 4) {
         colorPallet.push(
-            bytesArr
-                .slice(i, i + 4)
-                .reduce((acc, c) => acc + (c.length === 1 ? `0${c}` : c), ''),
+            bytesArr.slice(i, i + 4).reduce((acc, c) => acc + (c.length === 1 ? `0${c}` : c), ''),
         );
     }
     return colorPallet;
@@ -77,9 +72,9 @@ const createSvg = (
     lengths: number[],
     multiplier: number,
 ) => {
-    let svg = `<svg viewBox='0 0 ${width * multiplier} ${
+    let svg = `<svg viewBox='0 0 ${width * multiplier} ${width * multiplier}' width='${
         width * multiplier
-    }' width='${width * multiplier}' height='${
+    }' height='${
         width * multiplier
     }' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>\n`;
     let y = 0,
@@ -102,13 +97,7 @@ const createSvg = (
     return svg;
 };
 
-const getRekt = (
-    color: string,
-    x: number,
-    y: number,
-    length: number,
-    multiplier: number,
-) =>
-    `\t<rect fill='#${color}' x='${x * multiplier}' y='${
-        y * multiplier
-    }' height='${1 * multiplier}' width='${length * multiplier}'/>\n`;
+const getRekt = (color: string, x: number, y: number, length: number, multiplier: number) =>
+    `\t<rect fill='#${color}' x='${x * multiplier}' y='${y * multiplier}' height='${
+        1 * multiplier
+    }' width='${length * multiplier}'/>\n`;

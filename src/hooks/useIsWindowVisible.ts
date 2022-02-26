@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { gatsbyDOM } from './../lib/index';
+import { gatsbyDOM } from '@src/lib/index';
 
-const VISIBILITY_STATE_SUPPORTED =
-    gatsbyDOM('document') && 'visibilityState' in document;
+const VISIBILITY_STATE_SUPPORTED = gatsbyDOM('document') && 'visibilityState' in document;
 
 function isWindowVisible() {
     return (

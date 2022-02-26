@@ -2,8 +2,8 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import Decimal from 'decimal.js-light';
 import numbro from 'numbro';
 
-import { fromEth, toEth, TWO_128, TWO_96 } from './../lib/conversion';
-import { ETH_ONE } from './../lib/conversion';
+import { fromEth, toEth, TWO_128, TWO_96 } from '@src/lib/conversion';
+import { ETH_ONE } from '@src/lib/conversion';
 
 export enum Currency {
     'ETH' = 0,
@@ -31,9 +31,7 @@ export class Fraction {
     }
 
     get decimal() {
-        return new Decimal(this.num.toString()).div(
-            new Decimal(this.den.toString()),
-        );
+        return new Decimal(this.num.toString()).div(new Decimal(this.den.toString()));
     }
 
     get bignumber() {
@@ -79,18 +77,12 @@ export class Fraction {
 
     public multiply(other: Fractionish): Fraction {
         const otherParsed = Fraction.tryParseFraction(other);
-        return new Fraction(
-            this.num.mul(otherParsed.num),
-            this.den.mul(otherParsed.den),
-        );
+        return new Fraction(this.num.mul(otherParsed.num), this.den.mul(otherParsed.den));
     }
 
     public divide(other: Fractionish): Fraction {
         const otherParsed = Fraction.tryParseFraction(other);
-        return new Fraction(
-            this.num.mul(otherParsed.den),
-            this.den.mul(otherParsed.num),
-        );
+        return new Fraction(this.num.mul(otherParsed.den), this.den.mul(otherParsed.num));
     }
 
     public asFraction(): Fraction {
@@ -167,7 +159,7 @@ export class EthInt extends Fraction {
         try {
             let bob = new EthInt(0);
             bob.num = value.num;
-            bob.den = value.den;
+            bob.den = value.den.mul(ETH_ONE);
             return bob;
         } catch (err) {
             return EthInt.ZERO;

@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useCallback } from 'react';
 
-import { escapeRegExp } from '../../../../lib';
-import TextInput, { TextInputProps } from '../TextInput/TextInput';
+import { escapeRegExp } from '@src/lib';
+import TextInput, { TextInputProps } from '@src/components/general/TextInputs/TextInput/TextInput';
 
 interface Props extends TextInputProps {
     prependSymbol?: string | undefined;
@@ -9,17 +9,10 @@ interface Props extends TextInputProps {
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
 
-const CurrencyInput: FunctionComponent<Props> = ({
-    value,
-    setValue,
-    ...props
-}) => {
+const CurrencyInput: FunctionComponent<Props> = ({ value, setValue, ...props }) => {
     const enforcer = useCallback((value: string) => {
         const nextUserInput = value.replace(/,/g, '.');
-        if (
-            nextUserInput === '' ||
-            inputRegex.test(escapeRegExp(nextUserInput))
-        ) {
+        if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
             setValue(nextUserInput);
         }
     }, []);

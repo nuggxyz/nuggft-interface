@@ -1,36 +1,35 @@
 import React, { useMemo } from 'react';
 
-import Web3State from '../../../state/web3';
-import Jazzicon from '../Jazzicon';
-import Text from '../../general/Texts/Text/Text';
-import AppState from '../../../state/app';
-import Web3Config from '../../../state/web3/Web3Config';
-import Colors from '../../../lib/colors';
-import Layout from '../../../lib/layout';
-import useAsyncState from '../../../hooks/useAsyncState';
-import NuggftV1Helper from '../../../contracts/NuggftV1Helper';
-import { fromEth } from '../../../lib/conversion';
-import { EthInt } from '../../../classes/Fraction';
-import InteractiveText from '../../general/Texts/InteractiveText/InteractiveText';
+import Jazzicon from '@src/components/nugg/Jazzicon';
+import Text from '@src/components/general/Texts/Text/Text';
+import AppState from '@src/state/app';
+import Colors from '@src/lib/colors';
+import useAsyncState from '@src/hooks/useAsyncState';
+import { EthInt } from '@src/classes/Fraction';
+import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
+import web3 from '@src/web3';
 
 import styles from './AccountViewer.styles';
 
 const AccountViewer = () => {
     const screenType = AppState.select.screenType();
-    const web3address = Web3State.select.web3address();
-    const chain = Web3State.select.currentChain();
-    const ens = Web3State.hook.useEns(web3address, [chain, web3address]);
+    const chainId = web3.hook.usePriorityChainId();
 
     const name = useMemo(() => {
-        return Web3Config.CHAIN_INFO[chain].label;
-    }, [chain]);
+        return chainId && chainId !== -1 ? web3.config.CHAIN_INFO[chainId].label : 'uk';
+    }, [chainId]);
+
+    const provider = web3.hook.usePriorityProvider();
+    const ens = web3.hook.usePriorityENSName(provider);
+    const address = web3.hook.usePriorityAccount();
+    const connector = web3.hook.usePriorityConnector();
 
     const userBalance = useAsyncState(
-        () => NuggftV1Helper.ethBalance(Web3State.getSignerOrProvider()),
-        [web3address],
+        () => provider && address && provider.getBalance(address),
+        [address, provider, chainId],
     );
 
-    return ens && web3address ? (
+    return ens && address ? (
         <div style={styles.textContainer}>
             <div
                 style={{
@@ -44,11 +43,12 @@ const AccountViewer = () => {
                     <InteractiveText
                         color={Colors.nuggBlueText}
                         action={() => {
-                            let win = window.open(
-                                `${Web3Config.CHAIN_INFO[chain].explorer}address/${web3address}`,
-                                '_blank',
-                            );
-                            win.focus();
+                            // let win = window.open(
+                            //     `${config.CHAIN_INFO[chainId].explorer}address/${address}`,
+                            //     '_blank',
+                            // );
+                            // win.focus();
+                            connector.deactivate();
                         }}
                         size={screenType === 'phone' ? 'small' : 'medium'}
                         type="text"
@@ -65,12 +65,10 @@ const AccountViewer = () => {
                         }}>
                         {ens.toLowerCase()}
                     </InteractiveText>
-                    {screenType === 'phone' && (
-                        <Jazzicon address={web3address} size={15} />
-                    )}
+                    {screenType === 'phone' && <Jazzicon address={address} size={15} />}
                 </div>
-                <Text size="smaller" type="text" textStyle={styles.button}>
-                    {chain !== 1 && `(${name}) `}
+                <Text size="smaller" type="code" textStyle={styles.button}>
+                    {chainId !== 1 && `(${name}) `}
                     {userBalance
                         ? new EthInt(
                               userBalance
@@ -82,9 +80,7 @@ const AccountViewer = () => {
                     ETH
                 </Text>
             </div>
-            {screenType !== 'phone' && (
-                <Jazzicon address={web3address} size={35} />
-            )}
+            {screenType !== 'phone' && <Jazzicon address={address} size={35} />}
         </div>
     ) : null;
 };

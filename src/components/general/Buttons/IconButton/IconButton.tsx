@@ -2,8 +2,8 @@
 
 import React, { CSSProperties, FunctionComponent, useState } from 'react';
 
-import Image from '../../Images/Image/Image';
-import Button from '../Button/Button';
+import Image from '@src/components/general/Images/Image/Image';
+import Button from '@src/components/general/Buttons/Button/Button';
 
 import styles from './IconButton.styles';
 
@@ -13,11 +13,7 @@ type Props = {
     buttonStyle?: CSSProperties;
 };
 
-const IconButton: FunctionComponent<Props> = ({
-    icon,
-    onClick,
-    buttonStyle,
-}) => {
+const IconButton: FunctionComponent<Props> = ({ icon, onClick, buttonStyle }) => {
     const style = {
         ...styles.container,
         ...buttonStyle,
@@ -25,8 +21,7 @@ const IconButton: FunctionComponent<Props> = ({
 
     const [hoverStyle, setHoverStyle] = useState(styles.hoverOff);
 
-    const isHovering = (hover: boolean) =>
-        setHoverStyle(hover ? styles.hoverOn : styles.hoverOff);
+    const isHovering = (hover: boolean) => setHoverStyle(hover ? styles.hoverOn : styles.hoverOff);
 
     return (
         <Button

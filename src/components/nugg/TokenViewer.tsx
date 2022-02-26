@@ -1,23 +1,16 @@
-import { config, useSpring } from '@react-spring/core';
+import { config as springConfig, useSpring } from '@react-spring/core';
 import { animated } from '@react-spring/web';
-import React, {
-    CSSProperties,
-    FunctionComponent,
-    useCallback,
-    useLayoutEffect,
-    useMemo,
-    useState,
-} from 'react';
+import React, { CSSProperties, FunctionComponent, useLayoutEffect, useMemo, useState } from 'react';
 
-import pendingToken from '../../assets/images/pending-token.svg';
-import NuggftV1Helper from '../../contracts/NuggftV1Helper';
+import pendingToken from '@src/assets/images/pending-token.svg';
+import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrStringEmpty,
     isUndefinedOrNullOrStringEmptyOrZeroOrStringZero,
-} from '../../lib';
-import AppState from '../../state/app';
-import Text, { TextProps } from '../general/Texts/Text/Text';
-
+} from '@src/lib';
+import AppState from '@src/state/app';
+import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
+import web3 from '@src/web3';
 type Props = {
     tokenId: string;
     style?: CSSProperties;
@@ -36,6 +29,8 @@ const TokenViewer: FunctionComponent<Props> = ({
     data,
 }) => {
     const screenType = AppState.select.screenType();
+    const chainId = web3.hook.usePriorityChainId();
+
     const { width } = useMemo(() => {
         return { width: window.innerWidth };
     }, []);
@@ -47,11 +42,8 @@ const TokenViewer: FunctionComponent<Props> = ({
             if (!isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(tokenId)) {
                 const dotNuggData = !isUndefinedOrNullOrStringEmpty(data)
                     ? data
-                    : await NuggftV1Helper.optimizedDotNugg(tokenId);
-                if (
-                    !isUndefinedOrNullOrStringEmpty(dotNuggData) &&
-                    !unmounted
-                ) {
+                    : await NuggftV1Helper.optimizedDotNugg(chainId, tokenId);
+                if (!isUndefinedOrNullOrStringEmpty(dotNuggData) && !unmounted) {
                     setSrc(dotNuggData);
                 }
             }
@@ -72,7 +64,7 @@ const TokenViewer: FunctionComponent<Props> = ({
             flexDirection: 'column',
             opacity: tokenId ? 1 : 0,
         },
-        config: config.default,
+        config: springConfig.default,
     });
 
     return (
@@ -104,7 +96,4 @@ const TokenViewer: FunctionComponent<Props> = ({
     );
 };
 
-export default React.memo(
-    TokenViewer,
-    (prev, props) => prev.tokenId === props.tokenId,
-);
+export default React.memo(TokenViewer, (prev, props) => prev.tokenId === props.tokenId);

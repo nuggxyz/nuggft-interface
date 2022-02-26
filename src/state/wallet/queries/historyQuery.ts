@@ -1,11 +1,9 @@
 import gql from 'graphql-tag';
 
-import { offerThumbnail } from '../../../graphql/fragments/offer';
-import { executeQuery } from '../../../graphql/helpers';
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrObjectEmpty,
-} from '../../../lib';
+import { offerThumbnail } from '@src/graphql/fragments/offer';
+import { executeQuery } from '@src/graphql/helpers';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import { SupportedChainId } from '@src/web3/config';
 
 const query = (id: string, first: number, skip: number) => gql`
     {
@@ -21,14 +19,14 @@ const query = (id: string, first: number, skip: number) => gql`
     }
 `;
 
-const historyQuery = async (id: string, first: number, skip: number) => {
+const historyQuery = async (chainId: SupportedChainId, id: string, first: number, skip: number) => {
     const result = (await executeQuery(
-        query(id, first, skip),
+        chainId,
+        query(id.toLowerCase(), first, skip),
         'user',
     )) as NL.GraphQL.Fragments.User.Bare;
 
-    return !isUndefinedOrNullOrObjectEmpty(result) &&
-        !isUndefinedOrNullOrArrayEmpty(result.offers)
+    return !isUndefinedOrNullOrObjectEmpty(result) && !isUndefinedOrNullOrArrayEmpty(result.offers)
         ? (result.offers as NL.GraphQL.Fragments.Offer.Thumbnail[])
         : [];
 };

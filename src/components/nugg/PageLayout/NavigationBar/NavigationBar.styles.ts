@@ -1,7 +1,7 @@
-import { NLStyleSheetCreator } from '../../../../lib';
-import Colors from '../../../../lib/colors';
-import globalStyles from '../../../../lib/globalStyles';
-import Layout from '../../../../lib/layout';
+import { NLStyleSheetCreator } from '@src/lib';
+import Colors from '@src/lib/colors';
+import globalStyles from '@src/lib/globalStyles';
+import Layout from '@src/lib/layout';
 
 const styles = NLStyleSheetCreator({
     navBarContainer: {

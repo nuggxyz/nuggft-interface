@@ -1,9 +1,9 @@
 /** @format */
 
-import { NLStyleSheetCreator } from '../../../../lib';
-import Colors from '../../../../lib/colors';
-import FontSize from '../../../../lib/fontSize';
-import Layout from '../../../../lib/layout';
+import { NLStyleSheetCreator } from '@src/lib';
+import Colors from '@src/lib/colors';
+import FontSize from '@src/lib/fontSize';
+import Layout from '@src/lib/layout';
 
 const styles = NLStyleSheetCreator({
     container: {

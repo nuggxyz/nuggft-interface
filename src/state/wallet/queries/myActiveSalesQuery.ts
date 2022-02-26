@@ -1,16 +1,9 @@
 import gql from 'graphql-tag';
 
-import { idFragment } from '../../../graphql/fragments/general';
-import {
-    swapNuggId,
-    swapThumbnail,
-    swapThumbnailActiveSales,
-} from '../../../graphql/fragments/swap';
-import { executeQuery } from '../../../graphql/helpers';
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '../../../lib';
+import { idFragment } from '@src/graphql/fragments/general';
+import { executeQuery } from '@src/graphql/helpers';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import { SupportedChainId } from '@src/web3/config';
 
 const query = (
     address: string,
@@ -22,9 +15,7 @@ const query = (
     {
         swaps(
             where: {owner: "${address}", ${
-    !isUndefinedOrNullOrStringEmpty(searchValue)
-        ? `nugg_contains: "${searchValue}"`
-        : ''
+    !isUndefinedOrNullOrStringEmpty(searchValue) ? `nugg_contains: "${searchValue}"` : ''
 }},
             orderBy: endingEpoch,
             orderDirection: ${orderDirection},
@@ -50,6 +41,8 @@ const query = (
 `;
 
 const myActiveSalesQuery = async (
+    chainId: SupportedChainId,
+
     address: string,
     orderDirection: 'asc' | 'desc',
     searchValue: string,
@@ -58,13 +51,12 @@ const myActiveSalesQuery = async (
 ) => {
     try {
         const result = (await executeQuery(
-            query(address, orderDirection, searchValue, first, skip),
+            chainId,
+            query(address.toLowerCase(), orderDirection, searchValue, first, skip),
             'swaps',
         )) as NL.GraphQL.Fragments.Swap.ThumbnailActiveSales[];
         return !isUndefinedOrNullOrArrayEmpty(result)
-            ? result.filter(
-                  (swap) => !isUndefinedOrNullOrArrayEmpty(swap.offers),
-              )
+            ? result.filter((swap) => !isUndefinedOrNullOrArrayEmpty(swap.offers))
             : [];
     } catch (e) {
         throw new Error(`activeNuggsQuery: ${e}`);

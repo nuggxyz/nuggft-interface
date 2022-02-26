@@ -1,35 +1,25 @@
-import { title } from 'process';
-
-import React, {
-    FunctionComponent,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'react-feather';
-import { animated, config, useSpring, useTransition } from 'react-spring';
-import { BigNumber } from 'ethers';
+import { animated, config as springConfig, useSpring } from '@react-spring/web';
+import { Web3Provider } from '@ethersproject/providers';
 
-import Text from '../../general/Texts/Text/Text';
-import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
-import SwapState from '../../../state/swap';
-import Button from '../../general/Buttons/Button/Button';
-import AppState from '../../../state/app';
-import Web3State from '../../../state/web3';
+import Text from '@src/components/general/Texts/Text/Text';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import Button from '@src/components/general/Buttons/Button/Button';
+import { fromEth } from '@src/lib/conversion';
+import Colors from '@src/lib/colors';
+import usePrevious from '@src/hooks/usePrevious';
+import useSetState from '@src/hooks/useSetState';
+import ProtocolState from '@src/state/protocol';
+import AppState from '@src/state/app';
+import SwapState from '@src/state/swap';
+import TransactionState from '@src/state/transaction';
 import {
     isUndefinedOrNull,
     isUndefinedOrNullOrNumberZero,
-    isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../../lib';
-import { fromEth } from '../../../lib/conversion';
-import Colors from '../../../lib/colors';
-import TransactionState from '../../../state/transaction';
-import usePrevious from '../../../hooks/usePrevious';
-import NuggftV1Helper from '../../../contracts/NuggftV1Helper';
-import useSetState from '../../../hooks/useSetState';
-import ProtocolState from '../../../state/protocol';
+} from '@src/lib';
+import web3 from '@src/web3';
 
 import styles from './RingAbout.styles';
 
@@ -40,13 +30,15 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const eth = SwapState.select.eth();
     const epoch = ProtocolState.select.epoch();
     const endingSwapEpoch = SwapState.select.epoch();
-    const address = Web3State.select.web3address();
+    const address = web3.hook.usePriorityAccount();
     const ethUsd = SwapState.select.ethUsd();
     const leader = SwapState.select.leader();
     const offers = SwapState.select.offers();
     const swapId = SwapState.select.id();
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const prevToggle = usePrevious(txnToggle);
+    const chainId = web3.hook.usePriorityChainId();
+    const provider = web3.hook.usePriorityProvider();
 
     const status = useSetState(() => {
         return isUndefinedOrNull(endingSwapEpoch) || isUndefinedOrNull(epoch)
@@ -64,13 +56,13 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
             !isUndefinedOrNullOrStringEmpty(swapId) &&
             !swapId.includes('undefined')
         ) {
-            SwapState.dispatch.initSwap({ swapId });
+            SwapState.dispatch.initSwap({ swapId, chainId });
         }
-    }, [status, txnToggle, swapId, prevToggle]);
+    }, [status, txnToggle, swapId, prevToggle, chainId]);
 
     const [open, setOpen] = useState(false);
 
-    const leaderEns = Web3State.hook.useEns(leader, [leader, eth]);
+    const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader);
 
     const hasBids = useMemo(
         () =>
@@ -96,7 +88,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                 ...styles.leadingOfferAmount,
                 background: Colors.transparentWhite,
             },
-            config: config.molasses,
+            config: springConfig.molasses,
         };
     });
 
@@ -138,9 +130,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                 <div
                     style={
                         styles[
-                            screenType !== 'desktop'
-                                ? 'leaderContainerMobile'
-                                : 'leaderContainer'
+                            screenType !== 'desktop' ? 'leaderContainerMobile' : 'leaderContainer'
                         ]
                     }>
                     <Text
@@ -175,21 +165,20 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                     textStyle={styles.leadingOffer}
                                     value={+fromEth(eth)}
                                 />
-                                <Text textStyle={styles.code}>{leaderEns}</Text>
+                                <Text
+                                    type="text"
+                                    size="smaller"
+                                    textStyle={{ color: Colors.textColor }}>
+                                    {leaderEns}
+                                </Text>
                             </animated.div>
                             {offers.length > 1 && (
                                 <Button
                                     rightIcon={
                                         !open ? (
-                                            <ChevronUp
-                                                color={Colors.nuggBlueText}
-                                                size={14}
-                                            />
+                                            <ChevronUp color={Colors.nuggBlueText} size={14} />
                                         ) : (
-                                            <ChevronDown
-                                                color={Colors.nuggBlueText}
-                                                size={14}
-                                            />
+                                            <ChevronDown color={Colors.nuggBlueText} size={14} />
                                         )
                                     }
                                     onClick={() => setOpen(!open)}
@@ -202,23 +191,17 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
             </div>
             {/*//@ts-ignore*/}
             <animated.div style={springStyle}>
-                <Text textStyle={{ marginBottom: '1rem' }}>
-                    Previous offers
-                </Text>
+                <Text textStyle={{ marginBottom: '1rem' }}>Previous offers</Text>
                 {offers.map(
                     (offer, index) =>
                         index !== 0 && (
-                            <OfferRenderItem
-                                {...{ offer, index }}
-                                key={index}
-                            />
+                            <OfferRenderItem {...{ provider, offer, index }} key={index} />
                         ),
                 )}
             </animated.div>
 
             {status !== 'over' &&
-                (screenType === 'phone' ||
-                    !isUndefinedOrNullOrStringEmpty(address)) && (
+                (screenType === 'phone' || !isUndefinedOrNullOrStringEmpty(address)) && (
                     <Button
                         buttonStyle={{
                             ...styles.button,
@@ -233,8 +216,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                             }),
                         }}
                         onClick={() =>
-                            screenType === 'phone' &&
-                            isUndefinedOrNullOrStringEmpty(address)
+                            screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                                 ? AppState.dispatch.changeMobileView('Wallet')
                                 : AppState.dispatch.setModalOpen({
                                       name: 'OfferOrSell',
@@ -244,8 +226,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                   })
                         }
                         label={
-                            screenType === 'phone' &&
-                            isUndefinedOrNullOrStringEmpty(address)
+                            screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                                 ? 'Connect wallet'
                                 : 'Place offer'
                         }
@@ -258,17 +239,21 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 export default React.memo(RingAbout);
 
 const OfferRenderItem = ({
+    provider,
     offer,
     index,
 }: {
+    provider: Web3Provider;
     offer: NL.GraphQL.Fragments.Offer.Bare;
     index: number;
 }) => {
-    const ens = Web3State.hook.useEns(offer.user.id);
+    const leaderEns = web3.hook.usePriorityAnyENSName(provider, offer.user.id);
     return (
         <div style={styles.offerAmount}>
             <CurrencyText image="eth" value={+fromEth(offer.eth)} />
-            <Text textStyle={styles.code}>{ens}</Text>
+            <Text type="text" size="smaller" textStyle={{ color: Colors.textColor }}>
+                {leaderEns}
+            </Text>
         </div>
     );
 };

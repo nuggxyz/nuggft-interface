@@ -1,4 +1,4 @@
-import { NLStyleSheetCreator } from '../../../../lib';
+import { NLStyleSheetCreator } from '@src/lib';
 
 const styles = NLStyleSheetCreator({
     searchListContainer: {
@@ -24,8 +24,6 @@ const styles = NLStyleSheetCreator({
         top: '0px',
         width: '100%',
         height: '100%',
-        opacity: 1,
-        // pointerEvents: 'auto',
     },
 });
 

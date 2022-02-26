@@ -1,7 +1,8 @@
 import gql from 'graphql-tag';
 
-import { swapBare, swapBareWithEpoch } from '../../../graphql/fragments/swap';
-import { executeQuery } from '../../../graphql/helpers';
+import { swapBareWithEpoch } from '@src/graphql/fragments/swap';
+import { executeQuery } from '@src/graphql/helpers';
+import { SupportedChainId } from '@src/web3/config';
 
 const query = (id: string) => gql`
     {
@@ -9,8 +10,9 @@ const query = (id: string) => gql`
     }
 `;
 
-const initSwapQuery = async (id: string) => {
+const initSwapQuery = async (chainId: SupportedChainId, id: string) => {
     return (await executeQuery(
+        chainId,
         query(id),
         'swap',
     )) as Promise<NL.GraphQL.Fragments.Swap.Bare>;

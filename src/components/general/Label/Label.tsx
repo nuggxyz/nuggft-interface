@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-import Text, { TextProps } from '../Texts/Text/Text';
+import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 
 import styles from './Label.styles';
 

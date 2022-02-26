@@ -1,10 +1,8 @@
 import React, { CSSProperties, FC, ReactNode } from 'react';
 
-import Text from '../../../general/Texts/Text/Text';
-import NLStaticImage, {
-    NLStaticImageKey,
-} from '../../../general/NLStaticImage';
-import { isUndefinedOrNullOrStringEmpty } from '../../../../lib';
+import Text from '@src/components/general/Texts/Text/Text';
+import { NLStaticImageKey } from '@src/components/general/NLStaticImage';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 
 import styles from './StatisticsWrapper.styles';
 
@@ -33,7 +31,7 @@ const StatisticsWrapper: FC<StatisticsProps> = ({
             }}>
             {!isUndefinedOrNullOrStringEmpty(label) && (
                 <Text
-                size='small'
+                    size="small"
                     textStyle={{
                         ...styles.title,
                         ...(!transparent && styles.titleRed),

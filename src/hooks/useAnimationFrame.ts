@@ -1,13 +1,10 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-import { isUndefinedOrNullOrNotNumber } from '../lib';
+import { isUndefinedOrNullOrNotNumber } from '@src/lib';
 
 type Props = {};
 
-const useAnimationFrame = (
-    callback: (time: number) => void,
-    dependencyArray: any[] = [],
-) => {
+const useAnimationFrame = (callback: (time: number) => void, dependencyArray: any[] = []) => {
     const previousTime = useRef<number>();
     const previousRequest = useRef<number>();
     const animate = useCallback((time: number) => {

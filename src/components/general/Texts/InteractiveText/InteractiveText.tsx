@@ -1,12 +1,6 @@
-import { props } from 'bluebird';
-import React, {
-    CSSProperties,
-    FunctionComponent,
-    ReactChild,
-    useState,
-} from 'react';
+import React, { CSSProperties, FunctionComponent, ReactChild, useState } from 'react';
 
-import Text, { TextProps } from '../Text/Text';
+import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 
 import styles from './InteractiveText.styles';
 

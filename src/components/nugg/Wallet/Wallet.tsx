@@ -1,11 +1,8 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent, useEffect, useMemo } from 'react';
 
-import AppState from '../../../state/app';
-import Web3State from '../../../state/web3';
-import HappyTabber, {
-    HappyTabberItem,
-} from '../../general/HappyTabber/HappyTabber';
-import NLStaticImage from '../../general/NLStaticImage';
+import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
+import AppState from '@src/state/app';
+import web3 from '@src/web3';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectWalletTab from './tabs/ConnectWalletTab';
@@ -13,16 +10,15 @@ import LoansTab from './tabs/LoansTab/LoansTab';
 import MintTab from './tabs/MintTab/MintTab';
 import SalesTab from './tabs/SalesTab/SalesTab';
 import styles from './Wallet.styles';
-
 type Props = {};
 
 const Wallet: FunctionComponent<Props> = () => {
-    const address = Web3State.select.web3address();
     const screenType = AppState.select.screenType();
-
+    const account = web3.hook.usePriorityAccount();
+    const provider = web3.hook.usePriorityProvider();
     const happytabs: HappyTabberItem[] = useMemo(
         () => [
-            ...(address
+            ...(account
                 ? [
                       {
                           label: 'Home',
@@ -30,21 +26,15 @@ const Wallet: FunctionComponent<Props> = () => {
                       },
                       {
                           label: 'Claims',
-                          comp: ({ isActive }) => (
-                              <ClaimTab isActive={isActive} />
-                          ),
+                          comp: ({ isActive }) => <ClaimTab isActive={isActive} />,
                       },
                       {
                           label: 'Sales',
-                          comp: ({ isActive }) => (
-                              <SalesTab isActive={isActive} />
-                          ),
+                          comp: ({ isActive }) => <SalesTab isActive={isActive} />,
                       },
                       {
                           label: 'Loans',
-                          comp: ({ isActive }) => (
-                              <LoansTab isActive={isActive} />
-                          ),
+                          comp: ({ isActive }) => <LoansTab isActive={isActive} />,
                       },
                   ]
                 : [
@@ -54,7 +44,7 @@ const Wallet: FunctionComponent<Props> = () => {
                       },
                   ]),
         ],
-        [address],
+        [account],
     );
 
     return (
@@ -66,13 +56,9 @@ const Wallet: FunctionComponent<Props> = () => {
             }}>
             <HappyTabber
                 items={happytabs}
-                bodyStyle={
-                    screenType === 'phone' ? styles.mobileBody : styles.body
-                }
+                bodyStyle={screenType === 'phone' ? styles.mobileBody : styles.body}
                 headerTextStyle={
-                    screenType === 'phone'
-                        ? styles.mobileHeaderText
-                        : styles.headerText
+                    screenType === 'phone' ? styles.mobileHeaderText : styles.headerText
                 }
             />
         </div>

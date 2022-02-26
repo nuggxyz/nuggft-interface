@@ -4,9 +4,8 @@ import {
     isUndefinedOrNullOrNotNumber,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../lib';
-import SwapState from '../swap';
-import Web3State from '../web3';
+} from '@src/lib';
+import SwapState from '@src/state/swap';
 
 import ProtocolState from '.';
 
@@ -19,31 +18,32 @@ const updateEpochMiddleware: Middleware<
     (next) =>
     async (action: PayloadAction<any>) => {
         if (ProtocolState.isOwnFulfilledAction(action, 'safeSetEpoch')) {
-            const currentEpoch = !isUndefinedOrNullOrObjectEmpty(
-                getState().protocol.epoch,
-            )
+            const currentEpoch = !isUndefinedOrNullOrObjectEmpty(getState().protocol.epoch)
                 ? getState().protocol.epoch.id
                 : '';
             const nextEpoch = action.payload.data.epoch.id;
             const currentSwap = getState().swap.endingEpoch;
+            console.log(action.payload);
             if (
                 !isUndefinedOrNullOrStringEmpty(nextEpoch) &&
                 currentEpoch !== nextEpoch &&
-                (window.location.hash.length <= 2 ||
-                    window.location.hash.includes('/nugg')) &&
-                (isUndefinedOrNullOrNotNumber(currentSwap) ||
-                    currentSwap === +currentEpoch)
+                (window.location.hash.length <= 2 || window.location.hash.includes('/nugg')) &&
+                (isUndefinedOrNullOrNotNumber(currentSwap) || currentSwap === +currentEpoch) &&
+                action.payload.data.chainId !== undefined
             ) {
                 SwapState.dispatch.initSwap({
+                    chainId: action.payload.data.chainId,
                     swapId: `${nextEpoch}-0`,
                 });
             }
 
-            if (!navigator.onLine) {
-                Web3State.dispatch.setConnectivityWarning(true);
-            } else if (getState().web3.connectivityWarning === true) {
-                Web3State.dispatch.setConnectivityWarning(false);
-            }
+            // if (!navigator.onLine) {
+            //     Web3State.dispatch.setConnectivityWarning(true);
+            // }
+            // TODO figure out another way todo this
+            //  else if (getState().web3.connectivityWarning === true) {
+            //     Web3State.dispatch.setConnectivityWarning(false);
+            // }
         }
         return next(action);
     };

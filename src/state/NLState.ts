@@ -3,7 +3,8 @@ import { AnyAction, isPending, SliceCaseReducers } from '@reduxjs/toolkit';
 import { Slice } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
-import { isUndefinedOrNullOrObjectEmpty } from './../lib/index';
+import { isUndefinedOrNullOrObjectEmpty } from '@src/lib/index';
+
 import store, { NLSelector } from './store';
 
 /* eslint-disable react-hooks/rules-of-hooks */
@@ -24,10 +25,7 @@ export class NLState<S> {
     protected _updater: NL.Redux.Updater;
     protected _slice: Slice<S, SliceCaseReducers<S>, string>;
 
-    protected _isOwnFulfilledAction: (
-        action: AnyAction,
-        suffix: string,
-    ) => boolean;
+    protected _isOwnFulfilledAction: (action: AnyAction, suffix: string) => boolean;
 
     protected constructor(
         name: string,
@@ -47,10 +45,7 @@ export class NLState<S> {
         this._initialState = initialState;
         this._updater = updater;
 
-        this._isOwnFulfilledAction = (
-            action: AnyAction,
-            suffix: string,
-        ): action is AnyAction =>
+        this._isOwnFulfilledAction = (action: AnyAction, suffix: string): action is AnyAction =>
             !NLState.isPendingAction(this._name)(action) &&
             // !NLState.isRejectedAction(this._name)(action) &&
             NLState.hasPrefix(action, this._name) &&
@@ -58,8 +53,7 @@ export class NLState<S> {
     }
 
     static get instance() {
-        if (this._instance === undefined)
-            throw new Error('Should not reach here');
+        if (this._instance === undefined) throw new Error('Should not reach here');
         return this._instance;
     }
 
@@ -93,22 +87,14 @@ export class NLState<S> {
 
     public static get select() {
         if (isUndefinedOrNullOrObjectEmpty(this._selectors)) {
-            this._selectors = Object.keys(this.instance._initialState).reduce(
-                (selectors, key) => {
-                    selectors[key] = (
-                        eqFn?: (prev: any, cur: any) => boolean,
-                    ) =>
-                        useSelector(
-                            createSelector(
-                                NLSelector,
-                                (s) => s[this.instance._name][key],
-                            ),
-                            eqFn,
-                        );
-                    return selectors;
-                },
-                {},
-            );
+            this._selectors = Object.keys(this.instance._initialState).reduce((selectors, key) => {
+                selectors[key] = (eqFn?: (prev: any, cur: any) => boolean) =>
+                    useSelector(
+                        createSelector(NLSelector, (s) => s[this.instance._name][key]),
+                        eqFn,
+                    );
+                return selectors;
+            }, {});
         }
         return this._selectors;
     }
@@ -119,8 +105,7 @@ export class NLState<S> {
                 ...Object.entries(this.actions),
                 ...Object.entries(this.thactions),
             ].reduce((dispatches, [name, action]) => {
-                dispatches[name] = (value?: any) =>
-                    store.dispatch(action(value));
+                dispatches[name] = (value?: any) => store.dispatch(action(value));
                 return dispatches;
             }, {});
         }
@@ -131,20 +116,15 @@ export class NLState<S> {
         return this.instance._isOwnFulfilledAction;
     }
 
-    public static hasPrefix = (action: AnyAction, prefix: string) =>
-        action.type.startsWith(prefix);
+    public static hasPrefix = (action: AnyAction, prefix: string) => action.type.startsWith(prefix);
 
-    public static hasSuffix = (action: AnyAction, suffix: string) =>
-        action.type.includes(suffix);
+    public static hasSuffix = (action: AnyAction, suffix: string) => action.type.includes(suffix);
 
-    public static isPending = (action: AnyAction) =>
-        action.type.endsWith('/pending');
+    public static isPending = (action: AnyAction) => action.type.endsWith('/pending');
 
-    public static isFulfilled = (action: AnyAction) =>
-        action.type.endsWith('/fulfilled');
+    public static isFulfilled = (action: AnyAction) => action.type.endsWith('/fulfilled');
 
-    public static isRejected = (action: AnyAction) =>
-        action.type.endsWith('/rejected');
+    public static isRejected = (action: AnyAction) => action.type.endsWith('/rejected');
 
     public static isPendingAction =
         (prefix: string) =>

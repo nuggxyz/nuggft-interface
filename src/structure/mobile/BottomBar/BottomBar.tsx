@@ -1,25 +1,15 @@
-import React, {
-    FunctionComponent,
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
-import { BookOpen, ChevronLeft, Search } from 'react-feather';
+import React, { FunctionComponent, useCallback, useRef } from 'react';
 import { IoWalletSharp, IoBookSharp } from 'react-icons/io5';
-import { animated, config, useSpring } from 'react-spring';
+import { animated, config, useSpring } from '@react-spring/web';
 
-import Button from '../../../components/general/Buttons/Button/Button';
-import ChainIndicator from '../../../components/general/Buttons/ChainIndicator/ChainIndicator';
-import useSetState from '../../../hooks/useSetState';
-import Colors from '../../../lib/colors';
-import FontSize from '../../../lib/fontSize';
-import Layout from '../../../lib/layout';
-import AppState from '../../../state/app';
-import ProtocolState from '../../../state/protocol';
-import SwapState from '../../../state/swap';
-import TokenState from '../../../state/token';
-import Web3State from '../../../state/web3';
+import Button from '@src/components/general/Buttons/Button/Button';
+import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
+import useSetState from '@src/hooks/useSetState';
+import Colors from '@src/lib/colors';
+import Layout from '@src/lib/layout';
+import AppState from '@src/state/app';
+import ProtocolState from '@src/state/protocol';
+import TokenState from '@src/state/token';
 
 import styles from './BottomBar.styles';
 
@@ -59,9 +49,7 @@ const BottomBar: FunctionComponent<Props> = () => {
             background: Colors.nuggBlueTransparent,
             width: INDEX[mobileView] === 0 ? '200px' : '45px',
             borderRadius: Layout.borderRadius.large,
-            transform: `translate(${
-                INDEX[mobileView] * (width / 2 - 25)
-            }px, 0px)`,
+            transform: `translate(${INDEX[mobileView] * (width / 2 - 25)}px, 0px)`,
         },
         config: config.default,
     });
@@ -94,11 +82,7 @@ const BottomBar: FunctionComponent<Props> = () => {
                     }}
                     leftIcon={
                         <IoBookSharp
-                            color={
-                                mobileView === 'Search'
-                                    ? Colors.nuggBlueText
-                                    : 'white'
-                            }
+                            color={mobileView === 'Search' ? Colors.nuggBlueText : 'white'}
                             size="25"
                         />
                     }
@@ -107,10 +91,7 @@ const BottomBar: FunctionComponent<Props> = () => {
                 <ChainIndicator
                     style={{ background: 'transparent', margin: '.3rem 0rem' }}
                     textStyle={{
-                        color:
-                            mobileView === 'Mint'
-                                ? Colors.nuggBlueText
-                                : 'white',
+                        color: mobileView === 'Mint' ? Colors.nuggBlueText : 'white',
                     }}
                     onClick={mobileView !== 'Mint' && (() => onClick('Mint'))}
                 />
@@ -118,11 +99,7 @@ const BottomBar: FunctionComponent<Props> = () => {
                     onClick={() => onClick('Wallet')}
                     rightIcon={
                         <IoWalletSharp
-                            color={
-                                mobileView === 'Wallet'
-                                    ? Colors.nuggBlueText
-                                    : 'white'
-                            }
+                            color={mobileView === 'Wallet' ? Colors.nuggBlueText : 'white'}
                             size="25"
                         />
                     }

@@ -1,13 +1,13 @@
-import { NLStyleSheetCreator } from '../../../../lib';
-import Colors from '../../../../lib/colors';
-import Layout from '../../../../lib/layout';
+import { NLStyleSheetCreator } from '@src/lib';
+import Colors from '@src/lib/colors';
+import Layout from '@src/lib/layout';
 
 const styles = NLStyleSheetCreator({
     searchBar: {
         zIndex: 999,
         background: Colors.nuggBlueTransparent,
         borderRadius: Layout.borderRadius.small,
-        fontFamily: Layout.font.inter.regular,
+        fontFamily: Layout.font.sf.regular,
         pointerEvents: 'auto',
     },
     searchBarButton: {

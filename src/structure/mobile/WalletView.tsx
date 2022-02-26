@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-import Wallet from '../../components/nugg/Wallet/Wallet';
-import Colors from '../../lib/colors';
+import Wallet from '@src/components/nugg/Wallet/Wallet';
 
 type Props = {};
 

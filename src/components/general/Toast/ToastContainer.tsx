@@ -1,9 +1,9 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent } from 'react';
 import FlipMove from 'react-flip-move';
 
-import { sortByField } from '../../../lib';
-import Layout from '../../../lib/layout';
-import AppState from '../../../state/app';
+import { sortByField } from '@src/lib';
+import Layout from '@src/lib/layout';
+import AppState from '@src/state/app';
 
 import styles from './Toast.styles';
 import ToastCard from './ToastCard';

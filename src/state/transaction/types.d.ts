@@ -11,6 +11,7 @@ declare namespace NL.Redux.Transaction {
     interface PendingMiddlewareTx {
         _pendingtx: string;
         callbackFn?: () => void;
+        chainId: number;
     }
 
     type Success =

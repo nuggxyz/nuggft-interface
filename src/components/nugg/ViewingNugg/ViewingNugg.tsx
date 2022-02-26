@@ -1,32 +1,24 @@
-import React, {
-    FunctionComponent,
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useLayoutEffect, useState } from 'react';
 
-import { Address, EnsAddress } from '../../../classes/Address';
-import config from '../../../config';
-import { isUndefinedOrNullOrStringEmpty } from '../../../lib';
-import Colors from '../../../lib/colors';
-import constants from '../../../lib/constants';
-import { fromEth } from '../../../lib/conversion';
-import Layout from '../../../lib/layout';
-import AppState from '../../../state/app';
-import ProtocolState from '../../../state/protocol';
-import TokenState from '../../../state/token';
-import nuggThumbnailQuery from '../../../state/token/queries/nuggThumbnailQuery';
-import swapHistoryQuery from '../../../state/token/queries/swapHistoryQuery';
-import Web3State from '../../../state/web3';
-import Web3Config from '../../../state/web3/Web3Config';
-import Button from '../../general/Buttons/Button/Button';
-import AnimatedCard from '../../general/Cards/AnimatedCard/AnimatedCard';
-import List from '../../general/List/List';
-import Loader from '../../general/Loader/Loader';
-import CurrencyText from '../../general/Texts/CurrencyText/CurrencyText';
-import Text from '../../general/Texts/Text/Text';
-import TokenViewer from '../TokenViewer';
+import { Address } from '@src/classes/Address';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import Colors from '@src/lib/colors';
+import constants from '@src/lib/constants';
+import { fromEth } from '@src/lib/conversion';
+import Layout from '@src/lib/layout';
+import AppState from '@src/state/app';
+import ProtocolState from '@src/state/protocol';
+import TokenState from '@src/state/token';
+import nuggThumbnailQuery from '@src/state/token/queries/nuggThumbnailQuery';
+import swapHistoryQuery from '@src/state/token/queries/swapHistoryQuery';
+import Button from '@src/components/general/Buttons/Button/Button';
+import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
+import Loader from '@src/components/general/Loader/Loader';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import Text from '@src/components/general/Texts/Text/Text';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import web3 from '@src/web3';
+import { CONTRACTS } from '@src/web3/config';
 
 import styles from './ViewingNugg.styles';
 
@@ -35,45 +27,46 @@ type Props = { MobileBackButton?: () => JSX.Element };
 const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const tokenId = TokenState.select.tokenId();
     const svg = TokenState.select.tokenURI();
-    const address = Web3State.select.web3address();
+    const address = web3.hook.usePriorityAccount();
     const [owner, setOwner] = useState('');
     const [swaps, setSwaps] = useState([]);
     const screenType = AppState.select.screenType();
-
+    const chainId = web3.hook.usePriorityChainId();
+    const provider = web3.hook.usePriorityProvider();
+    const ens = web3.hook.usePriorityAnyENSName(provider, owner);
     const [items, setItems] = useState([tokenId]);
 
     useEffect(() => {
         setItems([items[1], tokenId]);
-    }, [tokenId]);
+    }, [tokenId, chainId]);
 
     const getSwapHistory = useCallback(
         async (addToResult?: boolean, direction = 'desc') => {
             if (tokenId) {
                 const history = await swapHistoryQuery(
+                    chainId,
                     tokenId,
                     direction,
                     constants.NUGGDEX_SEARCH_LIST_CHUNK,
                     addToResult ? swaps.length : 0,
                 );
-                setSwaps((res) =>
-                    addToResult ? [...res, ...history] : history,
-                );
+                setSwaps((res) => (addToResult ? [...res, ...history] : history));
             }
         },
-        [swaps, tokenId],
+        [swaps, tokenId, chainId],
     );
 
     const getThumbnail = useCallback(async () => {
-        const thumbnail = await nuggThumbnailQuery(tokenId);
+        const thumbnail = await nuggThumbnailQuery(chainId, tokenId);
         setOwner(thumbnail?.user?.id);
-    }, [tokenId]);
+    }, [tokenId, chainId]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         setSwaps([]);
         setOwner('');
         getThumbnail();
         getSwapHistory();
-    }, [tokenId]);
+    }, [tokenId, chainId]);
 
     return (
         !isUndefinedOrNullOrStringEmpty(tokenId) && (
@@ -96,6 +89,9 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                     </AnimatedCard>
                     <Swaps
                         {...{
+                            chainId,
+                            provider,
+                            ens,
                             swaps,
                             tokenId,
                             address,
@@ -109,8 +105,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     );
 };
 
-const Swaps = ({ swaps, tokenId, address, owner, MobileBackButton }) => {
-    const ens = Web3State.hook.useEns(owner);
+const Swaps = ({ chainId, provider, swaps, tokenId, address, owner, MobileBackButton, ens }) => {
     const epoch = ProtocolState.select.epoch();
     const filteredSwaps = swaps.filter(
         (swap) => swap.endingEpoch !== null && swap.endingEpoch !== epoch?.id,
@@ -149,7 +144,10 @@ const Swaps = ({ swaps, tokenId, address, owner, MobileBackButton }) => {
                                     display: 'flex',
                                     alignItems: 'center',
                                 }}>
-                                {ens}
+                                {owner === Address.ZERO.hash ||
+                                owner === CONTRACTS[chainId].NuggftV1
+                                    ? 'NuggftV1'
+                                    : ens}
                                 {owner === address && (
                                     <Text
                                         type="text"
@@ -185,16 +183,10 @@ const Swaps = ({ swaps, tokenId, address, owner, MobileBackButton }) => {
                             background: Colors.gradient2Transparent,
                         }}>
                         <Button
-                            textStyle={
-                                MobileBackButton
-                                    ? styles.textBlue
-                                    : styles.textWhite
-                            }
+                            textStyle={MobileBackButton ? styles.textBlue : styles.textWhite}
                             buttonStyle={{
                                 ...styles.button,
-                                background: MobileBackButton
-                                    ? 'white'
-                                    : 'transparent', //Colors.gradient2Transparent,
+                                background: MobileBackButton ? 'white' : 'transparent', //Colors.gradient2Transparent,
                             }}
                             label="Sell"
                             onClick={() =>
@@ -208,16 +200,10 @@ const Swaps = ({ swaps, tokenId, address, owner, MobileBackButton }) => {
                             }
                         />
                         <Button
-                            textStyle={
-                                MobileBackButton
-                                    ? styles.textBlue
-                                    : styles.textWhite
-                            }
+                            textStyle={MobileBackButton ? styles.textBlue : styles.textWhite}
                             buttonStyle={{
                                 ...styles.button,
-                                background: MobileBackButton
-                                    ? 'white'
-                                    : 'transparent', //Colors.gradient2Transparent,
+                                background: MobileBackButton ? 'white' : 'transparent', //Colors.gradient2Transparent,
                             }}
                             label="Loan"
                             onClick={() =>
@@ -234,16 +220,10 @@ const Swaps = ({ swaps, tokenId, address, owner, MobileBackButton }) => {
                             }
                         />
                         <Button
-                            textStyle={
-                                MobileBackButton
-                                    ? styles.textBlue
-                                    : styles.textWhite
-                            }
+                            textStyle={MobileBackButton ? styles.textBlue : styles.textWhite}
                             buttonStyle={{
                                 ...styles.button,
-                                background: MobileBackButton
-                                    ? 'white'
-                                    : 'transparent', //Colors.gradient2Transparent,
+                                background: MobileBackButton ? 'white' : 'transparent', //Colors.gradient2Transparent,
                             }}
                             label="Burn"
                             onClick={() =>
@@ -264,28 +244,24 @@ const Swaps = ({ swaps, tokenId, address, owner, MobileBackButton }) => {
             )}
             <div style={{ padding: '0rem 1rem 1rem 1rem' }}>
                 {swaps.find(
-                    (swap) =>
-                        swap.endingEpoch === null ||
-                        swap.endingEpoch === epoch?.id,
+                    (swap) => swap.endingEpoch === null || swap.endingEpoch === epoch?.id,
                 ) && (
                     <SwapItem
                         swap={swaps.find(
-                            (swap) =>
-                                swap.endingEpoch === null ||
-                                swap.endingEpoch === epoch?.id,
+                            (swap) => swap.endingEpoch === null || swap.endingEpoch === epoch?.id,
                         )}
+                        chainId={chainId}
+                        provider={provider}
                         index={-1}
                     />
                 )}
                 {filteredSwaps.length > 0 && (
-                    <Text textStyle={{ marginTop: '.5rem' }}>
-                        Previous Swaps
-                    </Text>
+                    <Text textStyle={{ marginTop: '.5rem' }}>Previous Swaps</Text>
                 )}
                 <div style={{ overflow: 'scroll' }}>
                     {filteredSwaps.map((swap, index) => (
                         <div key={index}>
-                            <SwapItem {...{ swap, index }} />
+                            <SwapItem {...{ chainId, swap, index, provider }} />
                         </div>
                     ))}
                 </div>
@@ -294,12 +270,13 @@ const Swaps = ({ swaps, tokenId, address, owner, MobileBackButton }) => {
     );
 };
 
-const SwapItem = ({ swap, index }) => {
+const SwapItem = ({ provider, swap, index, chainId }) => {
     const awaitingBid = swap.endingEpoch === null;
+    const ens = web3.hook.usePriorityAnyENSName(provider, swap.leader.id);
     return (
         <Button
             buttonStyle={styles.swap}
-            onClick={() => AppState.onRouteUpdate(`#/swap/${swap.id}`)}
+            onClick={() => AppState.onRouteUpdate(chainId, `#/swap/${swap.id}`)}
             rightIcon={
                 <>
                     <div
@@ -323,7 +300,7 @@ const SwapItem = ({ swap, index }) => {
                             type="text"
                             size="smaller"
                             textStyle={{
-                                color: Colors.nuggBlueText,
+                                color: Colors.textColor,
                             }}>
                             {awaitingBid ? 'On sale by' : 'Purchased from'}
                         </Text>
@@ -331,9 +308,10 @@ const SwapItem = ({ swap, index }) => {
                             textStyle={{
                                 color: 'white',
                             }}>
-                            {swap.owner.id === Address.ZERO.hash
+                            {swap.owner.id === Address.ZERO.hash ||
+                            swap.owner.id === CONTRACTS[chainId].NuggftV1
                                 ? 'NuggftV1'
-                                : new EnsAddress(swap.owner.id).short}
+                                : ens}
                         </Text>
                     </div>
                 </>

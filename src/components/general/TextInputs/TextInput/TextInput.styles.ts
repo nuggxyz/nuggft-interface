@@ -1,6 +1,6 @@
-import Colors from '../../../../lib/colors';
-import FontSize from '../../../../lib/fontSize';
-import { NLStyleSheetCreator } from '../../../../lib/index';
+import Colors from '@src/lib/colors';
+import FontSize from '@src/lib/fontSize';
+import { NLStyleSheetCreator } from '@src/lib/index';
 
 const styles = NLStyleSheetCreator({
     container: {

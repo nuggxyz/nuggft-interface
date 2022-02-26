@@ -1,35 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core';
 
 import './prototypes';
 global.Buffer = global.Buffer || require('buffer').Buffer;
 
 import store from './state/store';
 import './index.css';
-import { NetworkContextName } from './config';
-import Web3State from './state/web3';
 import Initializer from './state/Initializer';
 import Modal from './components/nugg/Modals/Modal/Modal';
 import IndexPage from './pages/Index';
 import ToastContainer from './components/general/Toast/ToastContainer';
 
-const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
-
 ReactDOM.render(
     <div style={{ width: '100%', height: '100%' }}>
         <React.StrictMode>
             <Provider store={store}>
-                <Web3ReactProvider getLibrary={Web3State.getProvider}>
-                    <Web3ProviderNetwork getLibrary={Web3State.getProvider}>
-                        <Initializer>
-                            <ToastContainer />
-                            <Modal />
-                            <IndexPage />
-                        </Initializer>
-                    </Web3ProviderNetwork>
-                </Web3ReactProvider>
+                <Initializer>
+                    <ToastContainer />
+                    <Modal />
+                    <IndexPage />
+                </Initializer>
             </Provider>
         </React.StrictMode>
     </div>,

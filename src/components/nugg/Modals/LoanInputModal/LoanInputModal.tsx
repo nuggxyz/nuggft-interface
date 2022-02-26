@@ -1,31 +1,23 @@
-import { text } from 'stream/consumers';
-
-import { BigNumber } from 'ethers';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 
-import { EthInt } from '../../../../classes/Fraction';
-import NuggftV1Helper from '../../../../contracts/NuggftV1Helper';
-import useAsyncState from '../../../../hooks/useAsyncState';
-import {
-    isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '../../../../lib';
-import { fromEth } from '../../../../lib/conversion';
-import AppState from '../../../../state/app';
-import SwapState from '../../../../state/swap';
-import TokenState from '../../../../state/token';
-import TransactionState from '../../../../state/transaction';
-import WalletState from '../../../../state/wallet';
-import Web3State from '../../../../state/web3';
-import Button from '../../../general/Buttons/Button/Button';
-import CurrencyInput from '../../../general/TextInputs/CurrencyInput/CurrencyInput';
-import Text from '../../../general/Texts/Text/Text';
-import TokenViewer from '../../TokenViewer';
-import FeedbackButton from '../../../general/Buttons/FeedbackButton/FeedbackButton';
-import useHandleError from '../../../../hooks/useHandleError';
-import AnimatedCard from '../../../general/Cards/AnimatedCard/AnimatedCard';
-import FontSize from '../../../../lib/fontSize';
-import Layout from '../../../../lib/layout';
+import { EthInt } from '@src/classes/Fraction';
+import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
+import useAsyncState from '@src/hooks/useAsyncState';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import { fromEth } from '@src/lib/conversion';
+import AppState from '@src/state/app';
+import TransactionState from '@src/state/transaction';
+import WalletState from '@src/state/wallet';
+import Button from '@src/components/general/Buttons/Button/Button';
+import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
+import Text from '@src/components/general/Texts/Text/Text';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
+import useHandleError from '@src/hooks/useHandleError';
+import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
+import FontSize from '@src/lib/fontSize';
+import Layout from '@src/lib/layout';
+import web3 from '@src/web3';
 
 import styles from './LoanInputModal.styles';
 
@@ -34,13 +26,14 @@ type Props = {};
 const LoanInputModal: FunctionComponent<Props> = () => {
     const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
-    const address = Web3State.select.web3address();
+    const address = web3.hook.usePriorityAccount();
     const toggle = TransactionState.select.toggleCompletedTxn();
     const { targetId, type } = AppState.select.modalData();
 
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(targetId);
-
+    const provider = web3.hook.usePriorityProvider();
+    const chainId = web3.hook.usePriorityChainId();
     useEffect(() => {
         if (!isUndefinedOrNullOrStringEmpty(type)) {
             setType(type);
@@ -51,19 +44,19 @@ const LoanInputModal: FunctionComponent<Props> = () => {
     }, [type, targetId]);
 
     const userBalance = useAsyncState(
-        () => NuggftV1Helper.ethBalance(Web3State.getSignerOrProvider()),
-        [address, stableId],
+        () => provider && address && provider.getBalance(address),
+        [address, provider],
     );
 
     const amountFromChain = useAsyncState(
         () =>
             stableId &&
             (stableType === 'PayOffLoan'
-                ? NuggftV1Helper.instance
-                    //   .connect(Web3State.getSignerOrProvider())
+                ? new NuggftV1Helper(chainId, provider).contract
+                      //   .connect(Web3State.getSignerOrProvider())
                       .vfl([stableId])
-                : NuggftV1Helper.instance
-                    //   .connect(Web3State.getSignerOrProvider())
+                : new NuggftV1Helper(chainId, provider).contract
+                      //   .connect(Web3State.getSignerOrProvider())
                       .vfr([stableId])),
         [address, stableId, stableType],
     );
@@ -118,7 +111,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                             }
                             label="Min"
                             textStyle={{
-                                fontFamily: Layout.font.inter.bold,
+                                fontFamily: Layout.font.sf.bold,
                                 fontSize: FontSize.h6,
                             }}
                             buttonStyle={{
@@ -136,11 +129,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                     marginBottom: '.5rem',
                 }}>
                 {userBalance && (
-                    <Text
-                        type="text"
-                        size="small"
-                        textStyle={styles.text}
-                        weight="bolder">
+                    <Text type="text" size="small" textStyle={styles.text} weight="bolder">
                         You currently have{' '}
                         {new EthInt(
                             userBalance
@@ -163,18 +152,22 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                 <FeedbackButton
                     feedbackText="Check Wallet..."
                     buttonStyle={styles.button}
-                    label={`${
-                        stableType === 'PayOffLoan' ? 'Payoff' : 'Extend'
-                    }`}
+                    label={`${stableType === 'PayOffLoan' ? 'Payoff' : 'Extend'}`}
                     onClick={() =>
                         stableType === 'PayOffLoan'
                             ? WalletState.dispatch.payOffLoan({
                                   tokenId: stableId,
                                   amount: amount,
+                                  chainId,
+                                  provider,
+                                  address,
                               })
                             : WalletState.dispatch.extend({
                                   tokenId: stableId,
                                   amount: amount,
+                                  chainId,
+                                  provider,
+                                  address,
                               })
                     }
                 />

@@ -5,10 +5,10 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
     shortenTxnHash,
-} from '../../lib';
-import AppState from '../app';
-import { NLState } from '../NLState';
-import Web3Config from '../web3/Web3Config';
+} from '@src/lib';
+import AppState from '@src/state/app';
+import { NLState } from '@src/state/NLState';
+import {CHAIN_INFO} from '@src/web3/config';
 
 import TransactionState from '.';
 
@@ -33,12 +33,12 @@ export const pending: NL.Redux.Middleware<
                 id: action.payload._pendingtx,
                 index: getState().app.toasts.length,
                 loading: true,
-                action: () => {
+                action: (setClose) => {
+                    // setClose(true);
                     let win = window.open(
-                        `${
-                            Web3Config.CHAIN_INFO[getState().web3.currentChain]
-                                .explorer
-                        }tx/${action.payload._pendingtx}`,
+                        `${CHAIN_INFO[action.payload.chainId].explorer}tx/${
+                            action.payload._pendingtx
+                        }`,
                         '_blank',
                     );
                     win.focus();
@@ -58,9 +58,7 @@ export const pending: NL.Redux.Middleware<
                 //@ts-ignore
                 error: !action.payload.successful,
                 //@ts-ignore
-                title: action.payload.successful
-                    ? 'Successful Transaction'
-                    : 'Transaction Failed',
+                title: action.payload.successful ? 'Successful Transaction' : 'Transaction Failed',
             });
         }
         return next(action);

@@ -1,6 +1,6 @@
-import { NLStyleSheetCreator } from '../../../../../lib';
-import Colors from '../../../../../lib/colors';
-import Layout from '../../../../../lib/layout';
+import { NLStyleSheetCreator } from '@src/lib';
+import Colors from '@src/lib/colors';
+import Layout from '@src/lib/layout';
 
 const styles = NLStyleSheetCreator({
     nuggLinkContainer: {
@@ -10,13 +10,15 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'space-between',
         width: '40%',
         height: '40%',
-        position: 'relative',
     },
     nuggLinkPreviewContainer: {
-        marginBottom: '.5rem',
-        padding: '.5rem',
         background: Colors.transparentGrey,
         borderRadius: Layout.borderRadius.medium,
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+    },
+    nuggLinkItemsContainer: {
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -25,28 +27,21 @@ const styles = NLStyleSheetCreator({
         alignContent: 'space-evenly',
     },
     nuggListContainer: {
-        position: 'absolute',
         width: '100%',
         height: '100%',
-        // pointerEvents: 'none',
+        overflow: 'hidden',
     },
     nuggListTitle: {
         position: 'absolute',
         top: '0rem',
         left: '0rem',
-        // padding: '.5rem',
         width: '100%',
         zIndex: 1,
+        borderTopRightRadius: Layout.borderRadius.medium,
+        borderTopLeftRadius: Layout.borderRadius.medium,
         overflow: 'hidden',
-        // background: Colors.transparentWhite,
     },
     nuggListDefault: {
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        height: 0,
-        width: 0,
-        background: Colors.transparentGrey,
         borderRadius: Layout.borderRadius.medium,
         overflow: 'hidden',
         padding: '0rem 1rem',
@@ -103,9 +98,9 @@ const styles = NLStyleSheetCreator({
         textAlign: 'center',
     },
     nuggLinkCategoryTitle: {
-        fontFamily: Layout.font.inter.bold,
+        fontFamily: Layout.font.sf.bold,
         fontWeight: 'bold',
-        // color: ,
+        marginTop: '.5rem',
     },
 });
 

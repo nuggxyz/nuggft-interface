@@ -7,10 +7,10 @@ import constants from './constants';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { split, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
-import Web3Config from '../state/web3/Web3Config';
-import Web3State from '../state/web3';
-import store, { states } from '../state/store';
 
+import store, { states } from '../state/store';
+import { SupportedChainId } from '../web3/config';
+import web3 from '@src/web3';
 const wsLink = new WebSocketLink({
     uri: constants.MAIN_WEBSOCKET,
     options: {
@@ -40,13 +40,13 @@ const fetchLogger = (url, init) => {
 //     httpLink,
 // );
 
-export const client = (): ApolloClient<any> => {
-    console.log('NEW CLIENT', Web3Config.activeChain__GraphEndpoint);
+export const client = (chainId: SupportedChainId): ApolloClient<any> => {
+    console.log('NEW CLIENT');
     console.trace();
     return new ApolloClient({
         link: new HttpLink({
-            // uri: Web3Config.GRAPH_ENPOINTS[store.getState().web3.currentChain],
-            uri: Web3Config.activeChain__GraphEndpoint,
+            // uri: config.GRAPH_ENPOINTS[store.getState().web3.currentChain],
+            uri: web3.config.GRAPH_ENPOINTS[chainId],
             fetch: fetch as any,
         }),
         cache: new InMemoryCache(),

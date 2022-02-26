@@ -1,11 +1,10 @@
 import React, { CSSProperties, FunctionComponent } from 'react';
-import { animated } from 'react-spring';
+import { animated } from '@react-spring/web';
 import { Maximize2 } from 'react-feather';
 
-import useOnHover from '../../../../../hooks/useOnHover';
-import Text from '../../../../general/Texts/Text/Text';
-import globalStyles from '../../../../../lib/globalStyles';
-import Colors from '../../../../../lib/colors';
+import useOnHover from '@src/hooks/useOnHover';
+import Text from '@src/components/general/Texts/Text/Text';
+import globalStyles from '@src/lib/globalStyles';
 
 import styles from './NuggDexComponents.styles';
 
@@ -27,7 +26,12 @@ const NuggThumbnail: FunctionComponent<Props> = ({ onClick, style }) => {
                 justifyContent: 'space-evenly',
             }}
             onClick={onClick}>
-            <Maximize2 style={{ ...globalStyles.fillWidth, height: '60px' }} />
+            <Maximize2
+                style={{
+                    ...globalStyles.fillWidth,
+                    height: '30px',
+                }}
+            />
             <Text size="smaller" textStyle={styles.label}>
                 MORE
             </Text>

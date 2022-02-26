@@ -1,13 +1,13 @@
 import gql from 'graphql-tag';
 
-import { idFragment } from '../../../graphql/fragments/general';
-import { loanBare } from '../../../graphql/fragments/loan';
-import { executeQuery } from '../../../graphql/helpers';
+import { loanBare } from '@src/graphql/fragments/loan';
+import { executeQuery } from '@src/graphql/helpers';
 import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../../lib';
+} from '@src/lib';
+import { SupportedChainId } from '@src/web3/config';
 
 const query = (
     address: string,
@@ -20,9 +20,7 @@ const query = (
         user(id: "${address}") {
             loans (
                 where: {${
-                    !isUndefinedOrNullOrStringEmpty(searchValue)
-                        ? `id: "${searchValue}"`
-                        : ''
+                    !isUndefinedOrNullOrStringEmpty(searchValue) ? `id: "${searchValue}"` : ''
                 } liquidated: false},
                 first: ${first},
                 skip: ${skip}
@@ -32,6 +30,8 @@ const query = (
 `;
 
 const loanedNuggsQuery = async (
+    chainId: SupportedChainId,
+
     address: string,
     orderDirection: 'asc' | 'desc',
     searchValue: string,
@@ -40,7 +40,8 @@ const loanedNuggsQuery = async (
 ) => {
     try {
         const result = (await executeQuery(
-            query(address, orderDirection, searchValue, first, skip),
+            chainId,
+            query(address.toLowerCase(), orderDirection, searchValue, first, skip),
             'user',
         )) as NL.GraphQL.Fragments.User.Bare;
 

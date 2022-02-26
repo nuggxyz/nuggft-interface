@@ -6,15 +6,14 @@ import React, {
     useMemo,
     useState,
 } from 'react';
-import { animated, config, useSpring } from 'react-spring';
+import { animated, config, useSpring } from '@react-spring/web';
 
 import {
     isUndefinedOrNullOrNotNumber,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrStringEmpty,
-} from '../../../../lib';
-import Colors from '../../../../lib/colors';
-import AppState from '../../../../state/app';
+} from '@src/lib';
+import Colors from '@src/lib/colors';
 
 import styles from './CircleTimer.styles';
 
@@ -41,10 +40,7 @@ const CircleTimer: FunctionComponent<Props> = ({
 }) => {
     // const dimensions = AppState.select.dimensions();
     const timerCircleRadius = useMemo(() => width / 6.5, [width]);
-    const circumference = useMemo(
-        () => timerCircleRadius * TWOPI,
-        [timerCircleRadius],
-    );
+    const circumference = useMemo(() => timerCircleRadius * TWOPI, [timerCircleRadius]);
     // const jumpThreshold = useMemo(
     //     () => ((timerCircleRadius * TWOPI) / duration) * 1.5,
     //     [timerCircleRadius, duration],
@@ -52,19 +48,13 @@ const CircleTimer: FunctionComponent<Props> = ({
     const [stateRemaining, setStateRemaining] = useState(remaining);
 
     useEffect(() => {
-        setStateRemaining(
-            !isUndefinedOrNullOrStringEmpty(staticColor) ? duration : remaining,
-        );
+        setStateRemaining(!isUndefinedOrNullOrStringEmpty(staticColor) ? duration : remaining);
     }, [remaining, duration, staticColor]);
 
     const to = useMemo(() => {
         return !isUndefinedOrNullOrNotNumber(stateRemaining) &&
             !isUndefinedOrNullOrNumberZero(duration)
-            ? Math.abs(
-                  timerCircleRadius *
-                      (TWOPI - (stateRemaining / duration) * TWOPI) +
-                      HALFPI,
-              )
+            ? Math.abs(timerCircleRadius * (TWOPI - (stateRemaining / duration) * TWOPI) + HALFPI)
             : 0;
     }, [stateRemaining, duration, timerCircleRadius]);
 

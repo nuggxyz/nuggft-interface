@@ -1,63 +1,63 @@
-import React, {
-    FunctionComponent,
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../../../../lib';
-import ProtocolState from '../../../../../state/protocol';
-import WalletState from '../../../../../state/wallet';
-import unclaimedOffersQuery from '../../../../../state/wallet/queries/unclaimedOffersQuery';
-import Web3State from '../../../../../state/web3';
-import Button from '../../../../general/Buttons/Button/Button';
-import Text from '../../../../general/Texts/Text/Text';
-import List, { ListRenderItemProps } from '../../../../general/List/List';
-import listStyles from '../HistoryTab.styles';
-import Colors from '../../../../../lib/colors';
-import styles from '../Tabs.styles';
-import swapStyles from '../SwapTab.styles';
-import TransactionState from '../../../../../state/transaction';
-import FeedbackButton from '../../../../general/Buttons/FeedbackButton/FeedbackButton';
-import TokenViewer from '../../../TokenViewer';
-import { fromEth } from '../../../../../lib/conversion';
-import NLStaticImage from '../../../../general/NLStaticImage';
-import FontSize from '../../../../../lib/fontSize';
-import Layout from '../../../../../lib/layout';
-
+} from '@src/lib';
+import ProtocolState from '@src/state/protocol';
+import WalletState from '@src/state/wallet';
+import unclaimedOffersQuery from '@src/state/wallet/queries/unclaimedOffersQuery';
+import Text from '@src/components/general/Texts/Text/Text';
+import List, { ListRenderItemProps } from '@src/components/general/List/List';
+import listStyles from '@src/components/nugg/Wallet/tabs/HistoryTab.styles';
+import Colors from '@src/lib/colors';
+import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
+import swapStyles from '@src/components/nugg/Wallet/tabs/SwapTab.styles';
+import TransactionState from '@src/state/transaction';
+import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import { fromEth } from '@src/lib/conversion';
+import NLStaticImage from '@src/components/general/NLStaticImage';
+import FontSize from '@src/lib/fontSize';
+import Layout from '@src/lib/layout';
+import SocketState from '@src/state/socket';
+import web3 from '@src/web3';
 type Props = { isActive?: boolean };
 
 const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
-    const txnToggle = TransactionState.select.toggleCompletedTxn();
-    const address = Web3State.select.web3address();
+    const address = web3.hook.usePriorityAccount();
     const epoch = ProtocolState.select.epoch();
-    const [unclaimedOffers, setUnclaimedOffers] = useState([]);
+    const provider = web3.hook.usePriorityProvider();
+
+    const [unclaimedOffers, setUnclaimedOffers] = useState<NL.GraphQL.Fragments.Offer.Thumbnail[]>(
+        [],
+    );
     const [loadingOffers, setLoadingOffers] = useState(false);
+    const chainId = web3.hook.usePriorityChainId();
 
     const getUnclaimedOffers = useCallback(async () => {
         setLoadingOffers(true);
         if (!isUndefinedOrNullOrStringEmpty(address)) {
-            const offersRes = await unclaimedOffersQuery(address, epoch.id);
+            const offersRes = await unclaimedOffersQuery(chainId, address, epoch.id);
             setUnclaimedOffers(offersRes);
         } else {
             setUnclaimedOffers([]);
         }
         setLoadingOffers(false);
-    }, [address, epoch]);
+    }, [address, epoch, chainId]);
 
     useEffect(() => {
         if (isActive) {
             setLoadingOffers(true);
-            setTimeout(() => {
-                getUnclaimedOffers();
-            }, 500);
+            getUnclaimedOffers();
         }
-    }, [address, txnToggle]);
+    }, [address]);
+    const socket = SocketState.select.Claim();
+
+    useEffect(() => {
+        setUnclaimedOffers(unclaimedOffers.filter((x) => x.id.split('-')[0] == socket.tokenId));
+    }, [socket]);
 
     return (
         <div style={styles.container}>
@@ -65,9 +65,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                 data={unclaimedOffers}
                 RenderItem={React.memo(
                     RenderItem,
-                    (prev, props) =>
-                        JSON.stringify(prev.item) ===
-                        JSON.stringify(props.item),
+                    (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
                 )}
                 TitleButton={
                     !isUndefinedOrNullOrArrayEmpty(unclaimedOffers)
@@ -77,19 +75,21 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                                   buttonStyle={{
                                       ...swapStyles.button,
                                       margin: '0rem',
-                                      padding: '.2rem 1rem',
+                                      padding: '.2rem .6rem',
                                   }}
                                   textStyle={{
                                       color: Colors.nuggRedText,
                                       fontSize: FontSize.h6,
-                                      fontFamily: Layout.font.inter.light,
+                                      fontFamily: Layout.font.sf.light,
                                   }}
                                   label="Claim all"
                                   onClick={() =>
                                       WalletState.dispatch.multiClaim({
+                                          address,
+                                          chainId,
+                                          provider,
                                           tokenIds: unclaimedOffers.map(
-                                              (offer) =>
-                                                  (offer as any).swap.nugg.id,
+                                              (offer) => (offer as any).swap.nugg.id,
                                           ),
                                       })
                                   }
@@ -103,7 +103,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                 loaderColor="white"
                 loading={loadingOffers}
                 style={listStyles.list}
-                extraData={[address]}
+                extraData={[address, chainId, provider]}
                 listEmptyText="No Nuggs or ETH to claim..."
             />
         </div>
@@ -112,9 +112,11 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
 
 export default React.memo(ClaimTab);
 
-const RenderItem: FunctionComponent<
-    ListRenderItemProps<NL.GraphQL.Fragments.Offer.Thumbnail>
-> = ({ item, index, extraData }) => {
+const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Offer.Thumbnail>> = ({
+    item,
+    index,
+    extraData,
+}) => {
     const parsedTitle = useMemo(() => {
         if (!isUndefinedOrNullOrObjectEmpty(item)) {
             let parsed = item.id.split('-');
@@ -164,17 +166,10 @@ const RenderItem: FunctionComponent<
                     )}
                     <div>
                         <Text textStyle={listStyles.renderTitle} size="small">
-                            {isWinner
-                                ? `Nugg #${parsedTitle.nugg}`
-                                : `${fromEth(item.eth)} ETH`}
+                            {isWinner ? `Nugg #${parsedTitle.nugg}` : `${fromEth(item.eth)} ETH`}
                         </Text>
-                        <Text
-                            textStyle={{ color: Colors.textColor }}
-                            size="smaller"
-                            type="text">
-                            {isWinner
-                                ? swapText
-                                : `Nugg #${parsedTitle.nugg} | ${swapText}`}
+                        <Text textStyle={{ color: Colors.textColor }} size="smaller" type="text">
+                            {isWinner ? swapText : `Nugg #${parsedTitle.nugg} | ${swapText}`}
                         </Text>
                     </div>
                 </div>
@@ -185,7 +180,10 @@ const RenderItem: FunctionComponent<
                     label={`Claim`}
                     onClick={() =>
                         WalletState.dispatch.claim({
+                            provider: extraData[2],
+                            chainId: extraData[1],
                             tokenId: parsedTitle.nugg,
+                            address: extraData[0],
                         })
                     }
                 />

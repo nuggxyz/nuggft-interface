@@ -1,10 +1,9 @@
 import React, { CSSProperties, FunctionComponent, useState } from 'react';
-import { animated, useSpring, useTransition, config } from 'react-spring';
+import { animated, useSpring, useTransition, config } from '@react-spring/web';
 
-import { isUndefinedOrNullOrArrayEmpty } from '../../../lib';
-import Colors from '../../../lib/colors';
-import AppState from '../../../state/app';
-import Text from '../Texts/Text/Text';
+import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
+import AppState from '@src/state/app';
+import Text from '@src/components/general/Texts/Text/Text';
 
 import styles from './HappyTabber.styles';
 
@@ -104,9 +103,7 @@ const HappyTabber: FunctionComponent<Props> = ({
             <div style={styles.body}>
                 {tabFadeTransition((styles, Item) => (
                     //@ts-ignore
-                    <animated.div style={styles}>
-                        {Item && <Item isActive={true} />}
-                    </animated.div>
+                    <animated.div style={styles}>{Item && <Item isActive={true} />}</animated.div>
                 ))}
             </div>
         </div>

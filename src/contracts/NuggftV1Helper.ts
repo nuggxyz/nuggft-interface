@@ -1,63 +1,32 @@
 import invariant from 'tiny-invariant';
 import { BigNumber, Contract } from 'ethers';
 import gql from 'graphql-tag';
+import { Web3Provider } from '@ethersproject/providers';
 
-import { Address } from '../classes/Address';
-import {
-    cipher,
-    isUndefinedOrNullOrObjectEmpty,
-    loadFromLocalStorage,
-    saveToLocalStorage,
-} from '../lib';
-import Web3State from '../state/web3';
-import {
-    DotnuggV1,
-    DotnuggV1__factory,
-    NuggftV1,
-    NuggftV1__factory,
-} from '../typechain';
-import { executeQuery } from '../graphql/helpers';
-import Web3Config from '../state/web3/Web3Config';
+import { Address } from '@src/classes/Address';
+import { loadFromLocalStorage, saveToLocalStorage } from '@src/lib';
+import { NuggftV1, NuggftV1__factory } from '@src/typechain';
+import { executeQuery } from '@src/graphql/helpers';
+import { SupportedChainId } from '@src/web3/config';
+import web3 from '@src/web3';
 
 import ContractHelper from './abstract/ContractHelper';
 
 export default class NuggftV1Helper extends ContractHelper {
-    protected static _instance: NuggftV1;
-    protected static _dotnugg: DotnuggV1;
+    public contract: NuggftV1;
 
-    static get instance() {
-        if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._instance)) {
-            NuggftV1Helper._instance = new Contract(
-                Web3Config.activeChain__NuggftV1,
-                NuggftV1__factory.abi,
-                // Web3State.getLibraryOrProvider(),
-            ) as NuggftV1;
-        }
-        return NuggftV1Helper._instance.connect(
-            Web3State.getSignerOrProvider(),
-        );
+    constructor(chainId: SupportedChainId, provider: Web3Provider) {
+        super();
+        this.contract = new Contract(
+            web3.config.CONTRACTS[chainId].NuggftV1,
+            NuggftV1__factory.abi,
+            provider,
+        ) as NuggftV1;
+        this.contract.connect(provider);
     }
 
-    static get dotnugg() {
-        if (isUndefinedOrNullOrObjectEmpty(NuggftV1Helper._dotnugg)) {
-            NuggftV1Helper._dotnugg = new Contract(
-                Web3Config.activeChain__DotnuggV1,
-                DotnuggV1__factory.abi,
-            ) as DotnuggV1;
-        }
-        return NuggftV1Helper._dotnugg.connect(Web3State.getSignerOrProvider());
-    }
-
-    static reset() {
-        NuggftV1Helper._instance = undefined;
-        NuggftV1Helper._dotnugg = undefined;
-    }
-    static set instance(_) {
-        return;
-    }
-
-    public static async ownerOf(tokenId: string): Promise<Address> {
-        const res = await this.instance.ownerOf(tokenId);
+    public async ownerOf(tokenId: string): Promise<Address> {
+        const res = await this.contract.ownerOf(tokenId);
         try {
             if (res) return new Address(res);
             else throw new Error('token does not exist');
@@ -67,21 +36,20 @@ export default class NuggftV1Helper extends ContractHelper {
     }
 
     public static storeNugg(tokenId: string, dotnuggRawCache: string) {
-        const nuggs =
-            loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
+        const nuggs = loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
         nuggs[tokenId] = dotnuggRawCache;
         saveToLocalStorage(nuggs, `${Math.floor(+tokenId / 100)}`, false);
     }
 
-    public static async optimizedDotNugg(tokenId: string) {
+    public static async optimizedDotNugg(chainId: number, tokenId: string) {
         invariant(tokenId, 'OP:TOKEN:URI');
-        let nuggs =
-            loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
+        let nuggs = loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
         if (nuggs[tokenId]) {
             return nuggs[tokenId];
         } else {
             try {
                 let res = await executeQuery(
+                    chainId,
                     gql`
                         {
                             nugg(id: "${tokenId}") {
@@ -116,34 +84,10 @@ export default class NuggftV1Helper extends ContractHelper {
         }
     }
 
-    public static async approve(
-        spender: Address,
-        tokenId: string,
-    ): Promise<string> {
-        let response = await this.instance
-            .connect(Web3State.getSignerOrProvider())
-            .approve(spender.hash, tokenId);
-        return response.hash;
+    public async balanceOf(address: Address): Promise<BigNumber> {
+        return await this.contract.balanceOf(address.hash);
     }
-    public static async sellerApproval(tokenId: string): Promise<boolean> {
-        let response = await this.instance
-            .connect(Web3State.getSignerOrProvider())
-            .getApproved(tokenId);
-        return new Address(response).equals(
-            new Address(Web3Config.activeChain__NuggftV1),
-        );
-    }
-    public static async approval(tokenId: string): Promise<Address> {
-        let response = await this.instance.getApproved(tokenId);
-        return new Address(response);
-    }
-
-    public static async balanceOf(address: Address): Promise<BigNumber> {
-        return await this.instance.balanceOf(address.hash);
-    }
-    public static async ethBalance(signer?: any): Promise<BigNumber> {
-        return (await signer)
-            ? signer.getBalance()
-            : this.instance?.signer?.getBalance();
+    public async ethBalance(signer?: any): Promise<BigNumber> {
+        return (await signer) ? signer.getBalance() : this.contract?.signer?.getBalance();
     }
 }

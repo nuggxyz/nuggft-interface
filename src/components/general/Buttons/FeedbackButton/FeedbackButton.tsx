@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 
-import Button, { ButtonProps } from '../Button/Button';
+import Button, { ButtonProps } from '@src/components/general/Buttons/Button/Button';
 
 type Props = ButtonProps & {
     feedbackText: string;

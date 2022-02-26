@@ -1,12 +1,12 @@
 import React, { FunctionComponent } from 'react';
-import { animated, config, useSpring } from 'react-spring';
+import { animated, config, useSpring } from '@react-spring/web';
 
-import { EthInt } from '../../../classes/Fraction';
-import AppState from '../../../state/app';
-import ProtocolState from '../../../state/protocol';
-import WalletState from '../../../state/wallet';
-import NumberStatistic from '../Statistics/NumberStatistic';
-import TextStatistic from '../Statistics/TextStatistic';
+import { EthInt } from '@src/classes/Fraction';
+import AppState from '@src/state/app';
+import ProtocolState from '@src/state/protocol';
+import WalletState from '@src/state/wallet';
+import NumberStatistic from '@src/components/nugg/Statistics/NumberStatistic';
+import TextStatistic from '@src/components/nugg/Statistics/TextStatistic';
 
 import styles from './AccountStats.styles';
 
@@ -28,11 +28,7 @@ const AccountStats: FunctionComponent<Props> = () => {
 
     return (
         <animated.div style={containerStyle}>
-            <TextStatistic
-                label="Your shares"
-                value={'' + userShares}
-                transparent
-            />
+            <TextStatistic label="Your shares" value={'' + userShares} transparent />
             <NumberStatistic
                 label="Your worth"
                 value={new EthInt(`${+valuePerShare * userShares}`)}

@@ -1,8 +1,8 @@
 import { animated, config, useSpring } from '@react-spring/web';
 import React, { CSSProperties, FunctionComponent } from 'react';
 
-import useOnHover from '../../../../hooks/useOnHover';
-import Text from '../Text/Text';
+import useOnHover from '@src/hooks/useOnHover';
+import Text from '@src/components/general/Texts/Text/Text';
 
 import styles from './TransitionText.styles';
 
@@ -34,10 +34,7 @@ const TransitionText: FunctionComponent<Props> = ({
         config: config.stiff,
     });
     return (
-        <div
-            ref={ref}
-            onClick={onClick}
-            style={{ ...styles.container, ...style }}>
+        <div ref={ref} onClick={onClick} style={{ ...styles.container, ...style }}>
             {Icon && Icon}
             <animated.div style={{ ...styles.text, ...textStyle }}>
                 <Text>{text}</Text>

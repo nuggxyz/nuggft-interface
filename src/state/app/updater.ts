@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 
-import AppState from '.';
+import web3 from '@src/web3';
 
+import AppState from '.';
 export default () => {
     const resizer = () => {
         AppState.dispatch.setWindowDimensions({
@@ -9,6 +10,8 @@ export default () => {
             width: window.innerWidth,
         });
     };
+
+    const chainId = web3.hook.usePriorityChainId();
 
     useEffect(() => {
         resizer();
@@ -19,7 +22,7 @@ export default () => {
     }, []);
 
     useEffect(() => {
-        AppState.onRouteUpdate(window.location.hash);
+        AppState.onRouteUpdate(chainId, window.location.hash);
     }, []);
     return null;
 };

@@ -1,7 +1,6 @@
 import React, {
     CSSProperties,
     FunctionComponent,
-    RefCallback,
     useCallback,
     useEffect,
     useMemo,
@@ -9,16 +8,10 @@ import React, {
     useState,
 } from 'react';
 
-import Text from '../Texts/Text/Text';
-import Loader from '../Loader/Loader';
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrBooleanFalse,
-    isUndefinedOrNullOrNotFunction,
-} from '../../../lib';
-import useOnScroll from '../../../hooks/useOnScroll';
-import usePrevious from '../../../hooks/usePrevious';
-import useIsVisible from '../../../hooks/useIsVisible';
+import Text from '@src/components/general/Texts/Text/Text';
+import Loader from '@src/components/general/Loader/Loader';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrNotFunction } from '@src/lib';
+import usePrevious from '@src/hooks/usePrevious';
 
 import styles from './List.styles';
 
@@ -88,10 +81,7 @@ const InfiniteList: FunctionComponent<Props> = ({
     }, [windowRef, animationToggle]);
 
     const [scrollTop, setScrollTop] = useState(0);
-    const innerHeight = useMemo(
-        () => data.length * itemHeight,
-        [data, itemHeight],
-    );
+    const innerHeight = useMemo(() => data.length * itemHeight, [data, itemHeight]);
     const startIndex = useMemo(
         () => Math.max(Math.floor(scrollTop / itemHeight) - LIST_PADDING, 0),
         [scrollTop, itemHeight],
@@ -100,8 +90,7 @@ const InfiniteList: FunctionComponent<Props> = ({
         () =>
             Math.min(
                 data.length - 1,
-                Math.floor((scrollTop + windowHeight) / itemHeight) +
-                    LIST_PADDING,
+                Math.floor((scrollTop + windowHeight) / itemHeight) + LIST_PADDING,
             ),
         [scrollTop, data, windowHeight, itemHeight],
     );
@@ -130,10 +119,7 @@ const InfiniteList: FunctionComponent<Props> = ({
                             index={i}
                             extraData={extraData}
                             action={action}
-                            selected={
-                                JSON.stringify(selected) ===
-                                JSON.stringify(data[i])
-                            }
+                            selected={JSON.stringify(selected) === JSON.stringify(data[i])}
                         />
                     </div>,
                 );
@@ -187,16 +173,7 @@ const InfiniteList: FunctionComponent<Props> = ({
                 onScrollEnd && onScrollEnd();
             }
         }
-    }, [
-        scrollTop,
-        items,
-        innerHeight,
-        onScrollEnd,
-        prevEnd,
-        endIndex,
-        loading,
-        itemHeight,
-    ]);
+    }, [scrollTop, items, innerHeight, onScrollEnd, prevEnd, endIndex, loading, itemHeight]);
 
     const _onScroll = (e) => {
         setScrollTop(e.currentTarget.scrollTop);
@@ -229,11 +206,7 @@ const InfiniteList: FunctionComponent<Props> = ({
                         justifyContent: 'center',
                     }}>
                     {!loading && (
-                        <Text
-                            weight="light"
-                            size="small"
-                            type="text"
-                            textStyle={listEmptyStyle}>
+                        <Text weight="light" size="small" type="text" textStyle={listEmptyStyle}>
                             {listEmptyText || 'No items to display...'}
                         </Text>
                     )}
@@ -268,10 +241,7 @@ const InfiniteList: FunctionComponent<Props> = ({
                     }}>
                     {label}
                     {loading && (
-                        <Loader
-                            color={loaderColor || 'black'}
-                            style={{ marginLeft: '.5rem' }}
-                        />
+                        <Loader color={loaderColor || 'black'} style={{ marginLeft: '.5rem' }} />
                     )}
                 </Text>
             ) : null,

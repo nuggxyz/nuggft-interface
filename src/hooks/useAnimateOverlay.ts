@@ -1,8 +1,8 @@
 import { useSpring } from '@react-spring/core';
 import { CSSProperties } from 'react';
 
-import { NLStyleSheetCreator } from '../lib';
-import AppState from '../state/app';
+import { NLStyleSheetCreator } from '@src/lib';
+import AppState from '@src/state/app';
 
 const useAnimateOverlay = (isOpen: boolean, style?: CSSProperties) => {
     const screenType = AppState.select.screenType();

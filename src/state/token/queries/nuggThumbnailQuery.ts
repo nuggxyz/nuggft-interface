@@ -1,7 +1,8 @@
 import gql from 'graphql-tag';
 
-import { nuggThumbnail } from '../../../graphql/fragments/nugg';
-import { executeQuery } from '../../../graphql/helpers';
+import { nuggThumbnail } from '@src/graphql/fragments/nugg';
+import { executeQuery } from '@src/graphql/helpers';
+import { SupportedChainId } from '@src/web3/config';
 
 const query = (id: string) => gql`
     {
@@ -9,9 +10,10 @@ const query = (id: string) => gql`
     }
 `;
 
-const nuggThumbnailQuery = async (id: string) => {
+const nuggThumbnailQuery = async (chainId: SupportedChainId, id: string) => {
     try {
         return (await executeQuery(
+            chainId,
             query(id),
             'nugg',
         )) as Promise<NL.GraphQL.Fragments.Nugg.Thumbnail>;

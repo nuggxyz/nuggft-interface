@@ -1,11 +1,9 @@
 import gql from 'graphql-tag';
 
-import { offerThumbnail } from '../../../graphql/fragments/offer';
-import { executeQuery } from '../../../graphql/helpers';
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrObjectEmpty,
-} from '../../../lib';
+import { offerThumbnail } from '@src/graphql/fragments/offer';
+import { executeQuery } from '@src/graphql/helpers';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import { SupportedChainId } from '@src/web3/config';
 
 const query = (id: string, epoch: string) => gql`
     {
@@ -15,14 +13,14 @@ const query = (id: string, epoch: string) => gql`
     }
 `;
 
-const unclaimedOffersQuery = async (id: string, epoch?: string) => {
+const unclaimedOffersQuery = async (chainId: SupportedChainId, id: string, epoch?: string) => {
     const result = (await executeQuery(
-        query(id, epoch),
+        chainId,
+        query(id.toLowerCase(), epoch),
         'user',
     )) as NL.GraphQL.Fragments.User.Bare;
 
-    return !isUndefinedOrNullOrObjectEmpty(result) &&
-        !isUndefinedOrNullOrArrayEmpty(result.offers)
+    return !isUndefinedOrNullOrObjectEmpty(result) && !isUndefinedOrNullOrArrayEmpty(result.offers)
         ? (result.offers.filter(
               (offer) =>
                   //@ts-ignore

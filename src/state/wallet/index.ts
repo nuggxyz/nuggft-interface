@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { NLState } from '../NLState';
+import { NLState } from '@src/state/NLState';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -14,9 +14,7 @@ export default class WalletState extends NLState<NL.Redux.Wallet.State> {
 
     declare static actions: typeof this.instance._slice.actions;
     declare static reducer: typeof this.instance._slice.reducer;
-    declare static select: ApplyFuncToChildren<
-        typeof this.instance._initialState
-    >;
+    declare static select: ApplyFuncToChildren<typeof this.instance._initialState>;
     declare static dispatch: ApplyDispatchToChildren<
         typeof thactions & typeof this.instance._slice.actions
     >;
@@ -57,14 +55,11 @@ export default class WalletState extends NLState<NL.Redux.Wallet.State> {
                 .addCase(thactions.getUserShares.fulfilled, (state, action) => {
                     state.userShares = action.payload.data;
                 })
-                .addMatcher(
-                    NLState.isPendingAction(`${this._name}/`),
-                    (state) => {
-                        state.loading = true;
-                        state.success = undefined;
-                        state.error = undefined;
-                    },
-                )
+                .addMatcher(NLState.isPendingAction(`${this._name}/`), (state) => {
+                    state.loading = true;
+                    state.success = undefined;
+                    state.error = undefined;
+                })
                 .addMatcher(
                     NLState.isRejectedAction(`${this._name}/`),
                     (state, action: PayloadAction<NL.Redux.Wallet.Error>) => {

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { isUndefinedOrNullOrArrayEmpty } from '../../lib';
-import { NLState } from '../NLState';
+import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
+import { NLState } from '@src/state/NLState';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -17,9 +17,7 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
     declare static reducer: typeof this.instance._slice.reducer;
     declare static hook: typeof hooks;
 
-    declare static select: ApplyFuncToChildren<
-        typeof this.instance._initialState
-    >;
+    declare static select: ApplyFuncToChildren<typeof this.instance._initialState>;
     declare static dispatch: ApplyDispatchToChildren<
         typeof thactions & typeof this.instance._slice.actions
     >;
@@ -32,10 +30,6 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
     constructor() {
         super(STATE_NAME, updater, middlewares, thactions, hooks, {
             recents: [],
-            myNuggs: [],
-            activeNuggs: [],
-            allNuggs: [],
-            thumbnails: {},
             viewing: 'home',
             success: undefined,
             error: undefined,
@@ -60,50 +54,19 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
             clearError: (state) => {
                 state.error = undefined;
             },
-            setViewing: (
-                state,
-                action: PayloadAction<NL.Redux.NuggDex.SearchViews>,
-            ) => {
+            setViewing: (state, action: PayloadAction<NL.Redux.NuggDex.SearchViews>) => {
                 state.viewing = action.payload;
             },
-            setThumbnail: (
-                state,
-                action: PayloadAction<NL.GraphQL.Fragments.Nugg.Thumbnail>,
-            ) => {
-                state.thumbnails[action.payload.id] = action.payload;
-            },
-            addToRecents: (
-                state,
-                action: PayloadAction<NL.GraphQL.Fragments.Nugg.ListItem>,
-            ) => {
-                if (
-                    !state.recents.find(
-                        (recent) => recent.id === action.payload.id,
-                    )
-                ) {
+            addToRecents: (state, action: PayloadAction<NL.GraphQL.Fragments.Nugg.ListItem>) => {
+                if (!state.recents.find((recent) => recent.id === action.payload.id)) {
                     state.recents.push(action.payload);
                 }
             },
-            refillRecents: (
-                state,
-                action: PayloadAction<NL.GraphQL.Fragments.Nugg.ListItem[]>,
-            ) => {
-                state.recents = !isUndefinedOrNullOrArrayEmpty(action.payload)
-                    ? action.payload
-                    : [];
-            },
-            setSearchFilters: (
-                state,
-                action: PayloadAction<NL.Redux.NuggDex.Filters>,
-            ) => {
+            setSearchFilters: (state, action: PayloadAction<NL.Redux.NuggDex.Filters>) => {
                 state.searchFilters = action.payload;
             },
             reset: (state) => {
                 state.recents = [];
-                state.myNuggs = [];
-                state.activeNuggs = [];
-                state.allNuggs = [];
-                state.thumbnails = {};
                 state.viewing = 'home';
                 state.success = undefined;
                 state.error = undefined;
@@ -119,19 +82,6 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
         },
         extraReducers: (builder) => {
             builder
-                // .addCase(thactions.initNuggDex.fulfilled, (state, action) => {
-                //     const data = action.payload.data;
-                //     state.activeNuggs = data.activeNuggs;
-                //     state.myNuggs = data.myNuggs;
-                //     state.allNuggs = data.allNuggs;
-                // })
-                .addCase(
-                    thactions.getNuggThumbnail.fulfilled,
-                    (state, action) => {
-                        state.thumbnails[action.meta.arg.id] =
-                            action.payload.data;
-                    },
-                )
                 .addMatcher(NLState.isPendingAction('nuggdex/'), (state) => {
                     state.loading = true;
                     state.success = undefined;

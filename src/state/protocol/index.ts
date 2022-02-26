@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BigNumber } from 'ethers';
 
-import { NLState } from '../NLState';
+import { NLState } from '@src/state/NLState';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -15,9 +15,7 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
 
     declare static actions: typeof this.instance._slice.actions;
     declare static reducer: typeof this.instance._slice.reducer;
-    declare static select: ApplyFuncToChildren<
-        typeof this.instance._initialState
-    >;
+    declare static select: ApplyFuncToChildren<typeof this.instance._initialState>;
     declare static dispatch: ApplyDispatchToChildren<
         typeof thactions & typeof this.instance._slice.actions
     >;
@@ -148,43 +146,37 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
         },
         extraReducers: (builder) =>
             builder
-                .addCase(
-                    thactions.getGenesisBlock.fulfilled,
-                    (state, action) => {
-                        state.genesisBlock = action.payload.data;
-                    },
-                )
+                .addCase(thactions.getGenesisBlock.fulfilled, (state, action) => {
+                    state.genesisBlock = action.payload.data;
+                })
                 .addCase(thactions.safeSetEpoch.fulfilled, (state, action) => {
                     state.epoch = action.payload.data.epoch;
                     state.epochIsOver = action.payload.data.isOver;
                 })
-                .addCase(
-                    thactions.updateProtocol.fulfilled,
-                    (state, action) => {
-                        const data = action.payload.data;
-                        state.epoch = data.epoch;
-                        state.interval = data.interval;
-                        // state.genesisBlock = data.genesisBlock;
-                        state.defaultActiveNugg = data.defaultActiveNugg;
-                        state.activeItems = data.activeItems;
-                        // state.activeNuggs = data.activeNuggs;
-                        state.xnuggTotalSupply = data.xnuggTotalSupply;
-                        state.xnuggTotalEth = data.xnuggTotalEth;
-                        state.nuggftTotalEth = data.nuggftTotalEth;
-                        state.priceUsdcWeth = data.priceUsdcWeth;
-                        state.priceWethXnugg = data.priceWethXnugg;
-                        state.tvlEth = data.tvlEth;
-                        state.tvlUsd = data.tvlUsd;
-                        state.totalItemSwaps = data.totalItemSwaps;
-                        state.totalItems = data.totalItems;
-                        state.totalUsers = data.totalUsers;
-                        state.totalNuggs = data.totalNuggs;
-                        state.totalSwaps = data.totalSwaps;
-                        state.nuggftUser = data.nuggftUser;
-                        state.nullUser = data.nullUser;
-                        state.xnuggUser = data.xnuggUser;
-                    },
-                )
+                .addCase(thactions.updateProtocol.fulfilled, (state, action) => {
+                    const data = action.payload.data;
+                    state.epoch = data.epoch;
+                    state.interval = data.interval;
+                    // state.genesisBlock = data.genesisBlock;
+                    state.defaultActiveNugg = data.defaultActiveNugg;
+                    state.activeItems = data.activeItems;
+                    // state.activeNuggs = data.activeNuggs;
+                    state.xnuggTotalSupply = data.xnuggTotalSupply;
+                    state.xnuggTotalEth = data.xnuggTotalEth;
+                    state.nuggftTotalEth = data.nuggftTotalEth;
+                    state.priceUsdcWeth = data.priceUsdcWeth;
+                    state.priceWethXnugg = data.priceWethXnugg;
+                    state.tvlEth = data.tvlEth;
+                    state.tvlUsd = data.tvlUsd;
+                    state.totalItemSwaps = data.totalItemSwaps;
+                    state.totalItems = data.totalItems;
+                    state.totalUsers = data.totalUsers;
+                    state.totalNuggs = data.totalNuggs;
+                    state.totalSwaps = data.totalSwaps;
+                    state.nuggftUser = data.nuggftUser;
+                    state.nullUser = data.nullUser;
+                    state.xnuggUser = data.xnuggUser;
+                })
                 // .addCase(thactions.updateEpoch.fulfilled, (state, action) => {
                 //     const data = action.payload.data;
                 //     state.epoch = data.epoch;
@@ -235,30 +227,24 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
                 })
                 .addCase(thactions.updateStaked.fulfilled, (state, action) => {
                     const data = action.payload.data;
-                    state.nuggftStakedUsdPerShare =
-                        data.nuggftStakedUsdPerShare;
+
+                    state.nuggftStakedUsdPerShare = data.nuggftStakedUsdPerShare;
                     state.nuggftStakedUsd = data.nuggftStakedUsd;
                     const totalShares = data.nuggftStakedShares;
                     const totalEth = data.nuggftStakedEth;
                     state.nuggftStakedEth = totalEth;
                     state.nuggftStakedShares = totalShares;
-                    const perShare =
-                        totalShares === '0'
-                            ? '0'
-                            : `${+totalEth / +totalShares}`;
+                    const perShare = totalShares === '0' ? '0' : `${+totalEth / +totalShares}`;
                     state.nuggftStakedEthPerShare = perShare.split('.')[0];
                 })
                 .addCase(thactions.updateBlock.fulfilled, (state, action) => {
                     state.currentBlock = action.payload.data;
                 })
-                .addMatcher(
-                    NLState.isPendingAction(`${this._name}/`),
-                    (state) => {
-                        state.loading = true;
-                        state.success = undefined;
-                        state.error = undefined;
-                    },
-                )
+                .addMatcher(NLState.isPendingAction(`${this._name}/`), (state) => {
+                    state.loading = true;
+                    state.success = undefined;
+                    state.error = undefined;
+                })
                 .addMatcher(
                     NLState.isRejectedAction(`${this._name}/`),
                     (state, action: PayloadAction<NL.Redux.Protocol.Error>) => {

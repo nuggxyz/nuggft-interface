@@ -1,7 +1,4 @@
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '..';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '..';
 
 export const b64ToUint6 = (nChr: number) => {
     return nChr > 64 && nChr < 91
@@ -25,23 +22,12 @@ export const base64ToArr = (sBase64: string, nBlocksSize?: number) => {
             : (nInLen * 3 + 1) >> 2,
         taBytes = new Array(nOutLen);
 
-    for (
-        var nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0;
-        nInIdx < nInLen;
-        nInIdx++
-    ) {
+    for (var nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0; nInIdx < nInLen; nInIdx++) {
         nMod4 = nInIdx & 3;
         nUint24 |= b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << (6 * (3 - nMod4));
         if (nMod4 === 3 || nInLen - nInIdx === 1) {
-            for (
-                nMod3 = 0;
-                nMod3 < 3 && nOutIdx < nOutLen;
-                nMod3++, nOutIdx++
-            ) {
-                taBytes[nOutIdx] = (
-                    (nUint24 >>> ((16 >>> nMod3) & 24)) &
-                    255
-                ).toString(16);
+            for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++, nOutIdx++) {
+                taBytes[nOutIdx] = ((nUint24 >>> ((16 >>> nMod3) & 24)) & 255).toString(16);
             }
             nUint24 = 0;
         }
@@ -60,9 +46,7 @@ export const uint16ToDec = (uint16: string[]) => {
 };
 
 export const swapIdToTokenIdDisplay = (swapId: string) => {
-    const swapArr = !isUndefinedOrNullOrStringEmpty(swapId)
-        ? swapId.split('-')
-        : [];
+    const swapArr = !isUndefinedOrNullOrStringEmpty(swapId) ? swapId.split('-') : [];
     if (!isUndefinedOrNullOrArrayEmpty(swapArr) && swapArr.length > 1) {
         return swapArr[1];
     }

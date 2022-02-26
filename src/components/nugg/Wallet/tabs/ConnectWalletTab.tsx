@@ -1,18 +1,14 @@
-import { useWeb3React } from '@web3-react/core';
 import React, { FunctionComponent } from 'react';
 
-import Colors from '../../../../lib/colors';
-import Layout from '../../../../lib/layout';
-import Web3State from '../../../../state/web3';
-import Web3Config from '../../../../state/web3/Web3Config';
-import Button from '../../../general/Buttons/Button/Button';
-import NLStaticImage from '../../../general/NLStaticImage';
-import Text from '../../../general/Texts/Text/Text';
-
+import Colors from '@src/lib/colors';
+import Layout from '@src/lib/layout';
+import Button from '@src/components/general/Buttons/Button/Button';
+import NLStaticImage from '@src/components/general/NLStaticImage';
+import Text from '@src/components/general/Texts/Text/Text';
+import web3 from '@src/web3';
 type Props = {};
 
 const ConnectWalletTab: FunctionComponent<Props> = () => {
-    const { activate } = useWeb3React();
     return (
         <div
             style={{
@@ -47,13 +43,9 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                     margin: '1.5rem',
                     padding: '1rem',
                 }}>
-                <Text
-                    type="text"
-                    size="smaller"
-                    textStyle={{ color: Colors.textColor }}>
-                    By connecting a wallet, you agree to nugg.xyz's Terms of
-                    Service and acknowledge that you have read and understood
-                    the nugg.xyz Protocol Disclaimer.
+                <Text type="text" size="smaller" textStyle={{ color: Colors.textColor }}>
+                    By connecting a wallet, you agree to nugg.xyz's Terms of Service and acknowledge
+                    that you have read and understood the nugg.xyz Protocol Disclaimer.
                 </Text>
             </div>
             <div
@@ -67,34 +59,28 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                     width: '100%',
                     height: '100%',
                 }}>
-                {Object.values(Web3Config.SUPPORTED_WALLETS).map(
-                    (walletObject) =>
-                        walletObject.name !== 'MetaMask' ||
-                        (walletObject.name === 'MetaMask' &&
-                            window.ethereum) ? (
-                            <Button
-                                key={walletObject.name}
-                                buttonStyle={{
-                                    color: 'white',
-                                    borderRadius: Layout.borderRadius.large,
-                                    padding: '1rem',
-                                    pointerEvents: 'auto',
-                                    background: `${walletObject.color}66`,
-                                    margin: '1rem',
-                                }}
-                                rightIcon={
-                                    <NLStaticImage
-                                        //@ts-ignore
-                                        image={walletObject.name}
-                                    />
-                                }
-                                onClick={() =>
-                                    Web3State.safeActivate(activate)(
-                                        walletObject.connector,
-                                    )
-                                }
-                            />
-                        ) : null,
+                {Object.values(web3.config.SUPPORTED_WALLETS).map((walletObject) =>
+                    walletObject.name !== 'MetaMask' ||
+                    (walletObject.name === 'MetaMask' && window.ethereum) ? (
+                        <Button
+                            key={walletObject.name}
+                            buttonStyle={{
+                                color: 'white',
+                                borderRadius: Layout.borderRadius.large,
+                                padding: '1rem',
+                                pointerEvents: 'auto',
+                                background: `${walletObject.color}66`,
+                                margin: '1rem',
+                            }}
+                            rightIcon={
+                                <NLStaticImage
+                                    //@ts-ignore
+                                    image={walletObject.name}
+                                />
+                            }
+                            onClick={() => walletObject.connector.connector.activate()}
+                        />
+                    ) : null,
                 )}
             </div>
         </div>

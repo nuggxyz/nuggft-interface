@@ -9,22 +9,20 @@ import React, {
 } from 'react';
 import {
     animated,
-    config,
+    config as springConfig,
     useSpring,
     useSpringRef,
     useTransition,
 } from '@react-spring/web';
 
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrObjectEmpty,
-} from '../../../../lib';
-import NuggDexState from '../../../../state/nuggdex';
-import activeNuggsQuery from '../../../../state/nuggdex/queries/activeNuggsQuery';
-import ProtocolState from '../../../../state/protocol';
-import constants from '../../../../lib/constants';
-import allNuggsQuery from '../../../../state/nuggdex/queries/allNuggsQuery';
-import usePrevious from '../../../../hooks/usePrevious';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import NuggDexState from '@src/state/nuggdex';
+import activeNuggsQuery from '@src/state/nuggdex/queries/activeNuggsQuery';
+import ProtocolState from '@src/state/protocol';
+import constants from '@src/lib/constants';
+import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
+import usePrevious from '@src/hooks/usePrevious';
+import web3 from '@src/web3';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -33,11 +31,10 @@ import styles from './NuggDexSearchList.styles';
 type Props = {};
 const NuggDexSearchList: FunctionComponent<Props> = () => {
     const epoch = ProtocolState.select.epoch();
-    const prevEpoch = usePrevious(epoch);
     const filters = NuggDexState.select.searchFilters();
+    const viewing = NuggDexState.select.viewing();
+    const chainId = web3.hook.usePriorityChainId();
 
-    const [localViewing, setLocalViewing] =
-        useState<NL.Redux.NuggDex.SearchViews>('home');
     const [allNuggs, setAllNuggs] = useState<
         NL.GraphQL.Fragments.Nugg.ListItem[]
     >([]);
@@ -46,48 +43,10 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     >([]);
     const recents = NuggDexState.select.recents();
 
-    const [nuggLinkRef, setNuggLinkRef] = useState<HTMLDivElement>();
-    const homeRef = useRef<HTMLDivElement>();
-
-    const [nuggLinkRect, setNuggLinkRect] = useState<any>();
-    const [homeRect, setHomeRect] = useState<any>();
-
-    useEffect(() => {
-        if (!isUndefinedOrNullOrObjectEmpty(nuggLinkRef)) {
-            setNuggLinkRect(nuggLinkRef.getBoundingClientRect());
-        }
-    }, [nuggLinkRef, localViewing]);
-
-    useEffect(() => {
-        homeRef &&
-            homeRef.current &&
-            setHomeRect(homeRef.current.getBoundingClientRect());
-    }, [homeRef]);
-
-    const transRef = useSpringRef();
-
     const animatedStyle = useSpring({
         ...styles.nuggLinksContainer,
-        opacity: localViewing !== 'home' ? 0 : 1,
-        transform: localViewing !== 'home' ? 'scale(0.9)' : 'scale(1)',
+        transform: viewing !== 'home' ? 'scale(0.9)' : 'scale(1)',
     });
-
-    useEffect(() => {
-        nuggLinkRect && transRef.start();
-    }, [nuggLinkRect, transRef]);
-
-    const values = useMemo(() => {
-        switch (localViewing) {
-            case 'all nuggs':
-                return allNuggs;
-            case 'on sale':
-                return activeNuggs;
-            case 'recently viewed':
-                return recents;
-            case 'home':
-                return [];
-        }
-    }, [localViewing, activeNuggs, allNuggs, recents]);
 
     const handleGetActive = useCallback(
         async (
@@ -99,6 +58,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         ) => {
             setLoading && setLoading(true);
             const activeNuggs = await activeNuggsQuery(
+                chainId,
                 filters.sort.by,
                 filters.sort.asc ? 'asc' : 'desc',
                 filters.searchValue,
@@ -107,13 +67,11 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 startFrom,
             );
             if (!isUndefinedOrNullOrArrayEmpty(activeNuggs)) {
-                setResults((res) =>
-                    addToResult ? [...res, ...activeNuggs] : activeNuggs,
-                );
+                setResults((res) => (addToResult ? [...res, ...activeNuggs] : activeNuggs));
             }
             setLoading && setLoading(false);
         },
-        [epoch],
+        [epoch, chainId],
     );
 
     const handleGetAll = useCallback(
@@ -126,154 +84,93 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         ) => {
             setLoading && setLoading(true);
             const allNuggs = await allNuggsQuery(
+                chainId,
                 filters.sort.by,
                 filters.sort.asc ? 'asc' : 'desc',
                 filters.searchValue,
                 constants.NUGGDEX_SEARCH_LIST_CHUNK,
                 startFrom,
             );
-            setResults((res) =>
-                addToResult ? [...res, ...allNuggs] : allNuggs,
-            );
+            setResults((res) => (addToResult ? [...res, ...allNuggs] : allNuggs));
             setLoading && setLoading(false);
         },
-        [],
-    );
-
-    const onScrollEnd = useCallback(
-        ({
-            setLoading,
-            filters,
-            addToList,
-        }: {
-            setLoading?: React.Dispatch<SetStateAction<boolean>>;
-            filters: NL.Redux.NuggDex.Filters;
-            addToList?: boolean;
-        }) => {
-            switch (localViewing) {
-                case 'all nuggs':
-                    return handleGetAll(
-                        setAllNuggs,
-                        addToList ? allNuggs.length : 0,
-                        addToList,
-                        filters,
-                        setLoading,
-                    );
-                case 'on sale':
-                    return handleGetActive(
-                        setActiveNuggs,
-                        addToList ? activeNuggs.length : 0,
-                        addToList,
-                        filters,
-                        setLoading,
-                    );
-                case 'recently viewed':
-                    return () => {};
-            }
-        },
-        [
-            allNuggs,
-            activeNuggs,
-            localViewing,
-            setAllNuggs,
-            setActiveNuggs,
-            handleGetActive,
-            handleGetAll,
-        ],
+        [chainId],
     );
 
     useEffect(() => {
         if (epoch) {
-            localViewing !== 'all nuggs' &&
+            viewing !== 'all nuggs' &&
                 handleGetAll(setAllNuggs, 0, false, filters);
-            localViewing !== 'on sale' &&
+            viewing !== 'on sale' &&
                 handleGetActive(setActiveNuggs, 0, false, filters);
         }
     }, [epoch]);
 
-    const [animationToggle, setAnimationToggle] = useState(false);
-
-    const transitions = useTransition(
-        localViewing,
-        {
-            ref: transRef,
-            keys: null,
-            from: {
-                left: nuggLinkRect
-                    ? `${nuggLinkRect.left - homeRect.left}px`
-                    : '0px',
-                top: nuggLinkRect
-                    ? `${nuggLinkRect.top - homeRect.top}px`
-                    : '0px',
-                width: localViewing === 'all nuggs' ? '90%' : '35%',
-                height: '35%',
-                opacity: 0,
-            },
-            enter: styles.nuggListEnter,
-            leave: {
-                left: nuggLinkRect
-                    ? `${nuggLinkRect.left - homeRect.left}px`
-                    : '600px',
-                top: nuggLinkRect
-                    ? `${nuggLinkRect.top - homeRect.top}px`
-                    : '600px',
-                width: localViewing === 'all nuggs' ? '90%' : '30%',
-                height: '30%',
-                opacity: 0,
-            },
-            config: config.default,
-            onRest: () => setAnimationToggle(!animationToggle),
-        },
-        [nuggLinkRect, homeRect, animationToggle],
-    );
-
     useEffect(() => {
-        if (localViewing === 'home' && filters.searchValue !== '') {
-            setLocalViewing('all nuggs');
+        if (viewing === 'home' && filters.searchValue !== '') {
+            NuggDexState.dispatch.setViewing('all nuggs');
         }
-    }, [filters, localViewing]);
+    }, [filters, viewing]);
 
     return (
-        <div ref={homeRef} style={styles.searchListContainer}>
+        <div style={styles.searchListContainer}>
             <animated.div style={animatedStyle}>
                 <NuggLink
-                    localViewing={localViewing}
-                    onClick={setLocalViewing}
-                    setRef={setNuggLinkRef}
                     type="recently viewed"
                     previewNuggs={recents}
-                />
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                    }}>
+                    <NuggList style={styles.nuggListEnter} values={recents} />
+                </NuggLink>
                 <NuggLink
-                    localViewing={localViewing}
-                    onClick={setLocalViewing}
-                    setRef={setNuggLinkRef}
                     type="on sale"
                     previewNuggs={activeNuggs}
-                />
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                    }}>
+                    <NuggList
+                        style={styles.nuggListEnter}
+                        values={activeNuggs}
+                        onScrollEnd={({ setLoading, filters, addToList }) =>
+                            handleGetActive(
+                                setActiveNuggs,
+                                addToList ? activeNuggs.length : 0,
+                                addToList,
+                                filters,
+                                setLoading,
+                            )
+                        }
+                    />
+                </NuggLink>
                 <NuggLink
-                    localViewing={localViewing}
-                    onClick={setLocalViewing}
-                    setRef={setNuggLinkRef}
+                    style={{
+                        width: '100%',
+                        position: 'absolute',
+                        bottom: 0,
+                    }}
                     type="all nuggs"
                     previewNuggs={allNuggs}
-                    style={{ width: '90%' }}
-                    limit={7}
-                />
+                    limit={7}>
+                    <NuggList
+                        style={styles.nuggListEnter}
+                        values={allNuggs}
+                        onScrollEnd={({ setLoading, filters, addToList }) =>
+                            handleGetAll(
+                                setAllNuggs,
+                                addToList ? allNuggs.length : 0,
+                                addToList,
+                                filters,
+                                setLoading,
+                            )
+                        }
+                    />
+                </NuggLink>
             </animated.div>
-            {transitions[0]((style, i) => {
-                return (
-                    i !== 'home' && (
-                        <NuggList
-                            style={style}
-                            values={values}
-                            setLocalViewing={setLocalViewing}
-                            localViewing={localViewing}
-                            onScrollEnd={onScrollEnd}
-                            animationToggle={animationToggle}
-                        />
-                    )
-                );
-            })}
         </div>
     );
 };

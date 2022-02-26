@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { NLState } from '../NLState';
+import { NLState } from '@src/state/NLState';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -26,9 +26,7 @@ class TokenState extends NLState<NL.Redux.Token.State> {
     declare static reducer: typeof this.instance._slice.reducer;
     declare static hook: typeof hooks;
 
-    declare static select: ApplyFuncToChildren<
-        typeof this.instance._initialState
-    >;
+    declare static select: ApplyFuncToChildren<typeof this.instance._initialState>;
     declare static dispatch: ApplyDispatchToChildren<
         typeof thactions & typeof this.instance._slice.actions
     >;
@@ -60,9 +58,7 @@ class TokenState extends NLState<NL.Redux.Token.State> {
             },
             setNugg: (
                 state,
-                action: PayloadAction<
-                    NL.GraphQL.Fragments.Nugg.ListItem | undefined
-                >,
+                action: PayloadAction<NL.GraphQL.Fragments.Nugg.ListItem | undefined>,
             ) => {
                 if (action.payload) {
                     state.tokenId = action.payload.id;

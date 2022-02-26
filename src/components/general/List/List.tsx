@@ -5,19 +5,18 @@ import React, {
     useCallback,
     useEffect,
     useMemo,
-    useState,
 } from 'react';
 
-import Text from '../Texts/Text/Text';
-import Loader from '../Loader/Loader';
+import Text from '@src/components/general/Texts/Text/Text';
+import Loader from '@src/components/general/Loader/Loader';
 import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrBooleanFalse,
     isUndefinedOrNullOrNotFunction,
-} from '../../../lib';
-import useOnScroll from '../../../hooks/useOnScroll';
-import usePrevious from '../../../hooks/usePrevious';
-import useIsVisible from '../../../hooks/useIsVisible';
+} from '@src/lib';
+import useOnScroll from '@src/hooks/useOnScroll';
+import usePrevious from '@src/hooks/usePrevious';
+import useIsVisible from '@src/hooks/useIsVisible';
 
 import styles from './List.styles';
 
@@ -93,10 +92,7 @@ const List: FunctionComponent<ListProps> = ({
                             index={index}
                             extraData={extraData}
                             action={action}
-                            selected={
-                                JSON.stringify(selected) ===
-                                JSON.stringify(item)
-                            }
+                            selected={JSON.stringify(selected) === JSON.stringify(item)}
                         />
                     ))}
                 </>
@@ -107,11 +103,7 @@ const List: FunctionComponent<ListProps> = ({
                         justifyContent: 'center',
                     }}>
                     {!loading && (
-                        <Text
-                            weight="light"
-                            size="small"
-                            type="text"
-                            textStyle={listEmptyStyle}>
+                        <Text weight="light" size="small" type="text" textStyle={listEmptyStyle}>
                             {listEmptyText || 'No items to display...'}
                         </Text>
                     )}
@@ -135,12 +127,7 @@ const List: FunctionComponent<ListProps> = ({
     );
 
     const Label = useCallback(
-        () =>
-            label ? (
-                <Text textStyle={{ ...styles.label, ...labelStyle }}>
-                    {label}
-                </Text>
-            ) : null,
+        () => (label ? <Text textStyle={{ ...styles.label, ...labelStyle }}>{label}</Text> : null),
         [label, labelStyle],
     );
 
@@ -154,11 +141,7 @@ const List: FunctionComponent<ListProps> = ({
                 <List selected={selected} />
                 <Loading />
                 {!isUndefinedOrNullOrNotFunction(onScrollEnd) && (
-                    <EndOfListAnchor
-                        onScrollEnd={onScrollEnd}
-                        rootRef={ref}
-                        loading={loading}
-                    />
+                    <EndOfListAnchor onScrollEnd={onScrollEnd} rootRef={ref} loading={loading} />
                 )}
             </div>
         </>
@@ -171,11 +154,7 @@ const EndOfListAnchor = ({ rootRef, onScrollEnd, loading }) => {
     const [ref, isVisible] = useIsVisible(rootRef.current, '10px');
     const prevVisible = usePrevious(isVisible);
     useEffect(() => {
-        if (
-            !isUndefinedOrNullOrBooleanFalse(isVisible) &&
-            isVisible !== prevVisible &&
-            !loading
-        ) {
+        if (!isUndefinedOrNullOrBooleanFalse(isVisible) && isVisible !== prevVisible && !loading) {
             onScrollEnd();
         }
     }, [isVisible, prevVisible, loading]);

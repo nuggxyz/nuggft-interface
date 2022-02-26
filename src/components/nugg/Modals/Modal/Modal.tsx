@@ -1,27 +1,19 @@
-import React, {
-    FunctionComponent,
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 import { animated, config, useSpring } from '@react-spring/web';
 
 import {
     isUndefinedOrNull,
     isUndefinedOrNullOrStringEmpty,
     isUndefinedOrNullOrNotString,
-} from '../../../../lib';
-import useOnClickOutside from '../../../../hooks/useOnClickOutside';
-import usePrevious from '../../../../hooks/usePrevious';
-import OfferOrSellModal from '../OfferOrSellModal/OfferOrSellModal';
-import AppState from '../../../../state/app';
-import LoanOrBurnModal from '../LoanOrBurn/LoanOrBurnModal';
-import useAnimateOverlay from '../../../../hooks/useAnimateOverlay';
-import BurnModal from '../BurnModal_DEPRECATED/BurnModal';
-import WalletModal from '../WalletModal/WalletModal';
-import LoanInputModal from '../LoanInputModal/LoanInputModal';
-import Colors from '../../../../lib/colors';
+} from '@src/lib';
+import useOnClickOutside from '@src/hooks/useOnClickOutside';
+import usePrevious from '@src/hooks/usePrevious';
+import OfferOrSellModal from '@src/components/nugg/Modals/OfferOrSellModal/OfferOrSellModal';
+import AppState from '@src/state/app';
+import LoanOrBurnModal from '@src/components/nugg/Modals/LoanOrBurn/LoanOrBurnModal';
+import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
+import WalletModal from '@src/components/nugg/Modals/WalletModal/WalletModal';
+import LoanInputModal from '@src/components/nugg/Modals/LoanInputModal/LoanInputModal';
 
 import styles from './Modal.styles';
 
@@ -36,10 +28,7 @@ const Modal: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
 
     useEffect(() => {
-        if (
-            isUndefinedOrNull(isOpen) &&
-            !isUndefinedOrNullOrStringEmpty(previousOpen)
-        ) {
+        if (isUndefinedOrNull(isOpen) && !isUndefinedOrNullOrStringEmpty(previousOpen)) {
             const timeout = setTimeout(() => setCurrentModal(undefined), 500);
             return () => clearTimeout(timeout);
         } else {
@@ -50,9 +39,7 @@ const Modal: FunctionComponent<Props> = () => {
     const containerStyle = useSpring({
         to: {
             ...styles.container,
-            ...(screenType === 'phone'
-                ? styles.containerMobile
-                : styles.containerFull),
+            ...(screenType === 'phone' ? styles.containerMobile : styles.containerFull),
             transform: isOpen
                 ? screenType === 'phone'
                     ? 'translate(0px, 18px)'
@@ -66,21 +53,15 @@ const Modal: FunctionComponent<Props> = () => {
     const containerBackgroundStyle = useSpring({
         to: {
             ...styles.containerBackground,
-            transform: isOpen
-                ? 'translate(-4px, -4px)'
-                : 'translate(-24px, -24px)',
-            ...(screenType === 'phone'
-                ? styles.containerMobile
-                : styles.containerFull),
+            transform: isOpen ? 'translate(-4px, -4px)' : 'translate(-24px, -24px)',
+            ...(screenType === 'phone' ? styles.containerMobile : styles.containerFull),
             ...data.backgroundStyle,
         },
         config: config.default,
     });
 
     const closeModal = useCallback(
-        () =>
-            !isUndefinedOrNullOrNotString(isOpen) &&
-            AppState.dispatch.setModalClosed(),
+        () => !isUndefinedOrNullOrNotString(isOpen) && AppState.dispatch.setModalClosed(),
         [isOpen],
     );
 
@@ -99,15 +80,10 @@ const Modal: FunctionComponent<Props> = () => {
                         justifyContent: 'center',
                     }),
                 }}>
-                {screenType !== 'phone' && (
-                    <animated.div style={containerBackgroundStyle} />
-                )}
+                {screenType !== 'phone' && <animated.div style={containerBackgroundStyle} />}
                 <animated.div style={containerStyle} ref={node}>
-                    {currentModal === 'OfferOrSell' ? (
-                        <OfferOrSellModal />
-                    ) : null}
+                    {currentModal === 'OfferOrSell' ? <OfferOrSellModal /> : null}
                     {currentModal === 'LoanOrBurn' ? <LoanOrBurnModal /> : null}
-                    {currentModal === 'Wallet' ? <WalletModal /> : null}
                     {currentModal === 'Loan' ? <LoanInputModal /> : null}
                 </animated.div>
             </div>

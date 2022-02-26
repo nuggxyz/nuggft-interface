@@ -1,5 +1,5 @@
-import { NLStyleSheetCreator } from '../../lib';
-import globalStyles from '../../lib/globalStyles';
+import { NLStyleSheetCreator } from '@src/lib';
+import globalStyles from '@src/lib/globalStyles';
 
 const styles = NLStyleSheetCreator({
     container: {

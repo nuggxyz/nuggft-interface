@@ -1,21 +1,20 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
-import useDebounce from '../../../hooks/useDebounce';
-import useSetState from '../../../hooks/useSetState';
+import useSetState from '@src/hooks/useSetState';
 import {
     isUndefinedOrNull,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
-} from '../../../lib';
-import Colors from '../../../lib/colors';
-import constants from '../../../lib/constants';
-import AppState from '../../../state/app';
-import ProtocolState from '../../../state/protocol';
-import SwapState from '../../../state/swap';
-import CircleTimer from '../../general/AnimatedTimers/CircleTimer/CircleTimer';
-import AnimatedCard from '../../general/Cards/AnimatedCard/AnimatedCard';
-import Text from '../../general/Texts/Text/Text';
-import TokenViewer from '../TokenViewer';
+} from '@src/lib';
+import Colors from '@src/lib/colors';
+import constants from '@src/lib/constants';
+import AppState from '@src/state/app';
+import ProtocolState from '@src/state/protocol';
+import SwapState from '@src/state/swap';
+import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
+import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
+import Text from '@src/components/general/Texts/Text/Text';
+import TokenViewer from '@src/components/nugg/TokenViewer';
 
 import styles from './TheRing.styles';
 
@@ -55,8 +54,7 @@ const TheRing: FunctionComponent<Props> = ({
             !isUndefinedOrNullOrObjectEmpty(endingSwapEpoch) &&
             !isUndefinedOrNullOrObjectEmpty(startingSwapEpoch)
         ) {
-            remaining =
-                +endingSwapEpoch.endblock - +startingSwapEpoch.startblock;
+            remaining = +endingSwapEpoch.endblock - +startingSwapEpoch.startblock;
         }
         if (remaining <= 0) {
             remaining = 0;
@@ -93,11 +91,7 @@ const TheRing: FunctionComponent<Props> = ({
                 blocktime={constants.BLOCKTIME}
                 width={circleWidth}
                 staticColor={
-                    status === 'over'
-                        ? Colors.purple
-                        : status === 'waiting'
-                        ? Colors.green
-                        : ''
+                    status === 'over' ? Colors.purple : status === 'waiting' ? Colors.green : ''
                 }
                 style={{
                     ...styles.circle,

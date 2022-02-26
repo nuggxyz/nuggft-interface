@@ -1,13 +1,9 @@
 declare namespace NL.Redux.NuggDex {
     type State = {
         recents: NL.GraphQL.Fragments.Nugg.ListItem[];
-        thumbnails: Dictionary<Thumbnail>;
         success: Success;
         error: Error;
         loading: boolean;
-        activeNuggs: string[];
-        myNuggs: string[];
-        allNuggs: string[];
         viewing: SearchViews;
         searchFilters: Filters;
     };
@@ -24,12 +20,7 @@ declare namespace NL.Redux.NuggDex {
         searchValue: string;
     };
 
-    type SearchViews =
-        | 'home'
-        | 'all nuggs'
-        | 'on sale'
-        | 'my nuggs'
-        | 'recently viewed';
+    type SearchViews = 'home' | 'all nuggs' | 'on sale' | 'my nuggs' | 'recently viewed';
 
     type Success = 'QUERIED_TOKENS_ON_SALE' | 'GOT_THUMBNAIL';
 

@@ -3,7 +3,6 @@ import React, {
     FunctionComponent,
     useCallback,
     useLayoutEffect,
-    useMemo,
     useState,
 } from 'react';
 import { AlertCircle } from 'react-feather';
@@ -14,21 +13,16 @@ import {
     isUndefinedOrNullOrNotNumber,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-} from '../../../../lib';
-import ProtocolState from '../../../../state/protocol';
-import Web3State from '../../../../state/web3';
-import AppState from '../../../../state/app';
-import Button from '../Button/Button';
-import Text from '../../Texts/Text/Text';
-import Layout from '../../../../lib/layout';
-import TokenViewer from '../../../nugg/TokenViewer';
-import CurrencyText from '../../Texts/CurrencyText/CurrencyText';
-import { EthInt } from '../../../../classes/Fraction';
-import Colors from '../../../../lib/colors';
-import SwapState from '../../../../state/swap';
+} from '@src/lib';
+import ProtocolState from '@src/state/protocol';
+import AppState from '@src/state/app';
+import Button from '@src/components/general/Buttons/Button/Button';
+import Layout from '@src/lib/layout';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import SwapState from '@src/state/swap';
+import web3 from '@src/web3';
 
 import styles from './ChainIndicator.styles';
-import ChainIndicatorPulse from './ChainIndicatorPulse';
 
 type Props = {
     onClick?: () => void;
@@ -36,16 +30,14 @@ type Props = {
     textStyle?: CSSProperties;
 };
 
-const ChainIndicator: FunctionComponent<Props> = ({
-    onClick,
-    style,
-    textStyle,
-}) => {
+const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle }) => {
     const epoch = ProtocolState.select.epoch();
-    const connectionWarning = Web3State.select.connectivityWarning();
     const view = AppState.select.view();
     const currentBlock = ProtocolState.select.currentBlock();
     const swapId = SwapState.select.id();
+    const chainId = web3.hook.usePriorityChainId();
+    const provider = web3.hook.usePriorityProvider();
+    const error = web3.hook.usePriorityError();
 
     const [blocksRemaining, setBlocksRemaining] = useState(0);
 
@@ -78,7 +70,7 @@ const ChainIndicator: FunctionComponent<Props> = ({
 
     const LeftIcon = useCallback(
         () =>
-            connectionWarning ? (
+            false ? (
                 <AlertCircle size={24} style={{ paddingRight: 0.5 + 'rem' }} />
             ) : (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -94,7 +86,7 @@ const ChainIndicator: FunctionComponent<Props> = ({
                     />
                 </div>
             ),
-        [connectionWarning, epoch],
+        [provider, epoch],
     );
 
     return (
@@ -108,15 +100,15 @@ const ChainIndicator: FunctionComponent<Props> = ({
                     onClick ||
                     (() =>
                         AppState.onRouteUpdate(
-                            view === 'Search' ||
-                                (swapId && !swapId.includes(epoch.id))
+                            chainId,
+                            view === 'Search' || (swapId && !swapId.includes(epoch.id))
                                 ? '/'
                                 : `/nugg/${epoch.id}`,
                         ))
                 }
                 buttonStyle={{
                     ...styles.button,
-                    ...(connectionWarning ? styles.warning : styles.normal),
+                    ...(error ? styles.warning : styles.normal),
                     ...style,
                 }}
                 leftIcon={<LeftIcon />}
