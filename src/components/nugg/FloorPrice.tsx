@@ -22,7 +22,6 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
     );
 
     useEffect(() => {
-        console.log({ socket, shares, staked });
         if (socket !== undefined) {
             setRealTime(
                 EthInt.fromFraction(new Fraction(socket.staked, socket.shares)).decimal.toNumber(),

@@ -62,8 +62,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const [open, setOpen] = useState(false);
 
-    //TODO figure this out
-    // const leaderEns = useENS(provider, [leader]);
+    const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader);
 
     const hasBids = useMemo(
         () =>
@@ -170,7 +169,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                     type="text"
                                     size="smaller"
                                     textStyle={{ color: Colors.textColor }}>
-                                    {leader}
+                                    {leaderEns}
                                 </Text>
                             </animated.div>
                             {offers.length > 1 && (
@@ -248,13 +247,12 @@ const OfferRenderItem = ({
     offer: NL.GraphQL.Fragments.Offer.Bare;
     index: number;
 }) => {
-    // TODO - fix ens
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, offer.user.id);
     return (
         <div style={styles.offerAmount}>
             <CurrencyText image="eth" value={+fromEth(offer.eth)} />
             <Text type="text" size="smaller" textStyle={{ color: Colors.textColor }}>
-                {leaderEns && leaderEns[0]}
+                {leaderEns}
             </Text>
         </div>
     );

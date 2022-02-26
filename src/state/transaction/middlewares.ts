@@ -8,6 +8,7 @@ import {
 } from '@src/lib';
 import AppState from '@src/state/app';
 import { NLState } from '@src/state/NLState';
+import {CHAIN_INFO} from '@src/web3/config';
 
 import TransactionState from '.';
 
@@ -32,15 +33,15 @@ export const pending: NL.Redux.Middleware<
                 id: action.payload._pendingtx,
                 index: getState().app.toasts.length,
                 loading: true,
-                action: () => {
-                    // TODO pass chainId with transaction
-                    // let win = window.open(
-                    //     `${Web3Config.CHAIN_INFO[action.payload._pendingtx].explorer}tx/${
-                    //         action.payload._pendingtx
-                    //     }`,
-                    //     '_blank',
-                    // );
-                    // win.focus();
+                action: (setClose) => {
+                    // setClose(true);
+                    let win = window.open(
+                        `${CHAIN_INFO[action.payload.chainId].explorer}tx/${
+                            action.payload._pendingtx
+                        }`,
+                        '_blank',
+                    );
+                    win.focus();
                 },
             });
             if (!isUndefinedOrNullOrNotFunction(action.payload.callbackFn)) {

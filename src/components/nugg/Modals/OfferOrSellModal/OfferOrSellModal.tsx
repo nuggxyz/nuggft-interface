@@ -34,7 +34,6 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
-    const toggle = TransactionState.select.toggleCompletedTxn();
     const nugg = SwapState.select.nugg();
 
     const provider = web3.hook.usePriorityProvider();
@@ -45,51 +44,25 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         [address, provider, chainId],
     );
 
-    // const VFO = useAsyncState(
-    //     () =>
-    //         nugg &&
-    //         new NuggftV1Helper(chainId, provider).contract
-    //             .connect(Web3State.getLibraryOrProvider())
-    //             ['vfo(address,uint160)'](address, nugg.id),
-    //     [address, nugg],
-    // );
-
-    // const check = useAsyncState(
-    //     () =>
-    //         nugg &&
-    //         new NuggftV1Helper(chainId, provider).contract['vfo(address,uint160)'](
-    //             address,
-    //             nugg.id,
-    //         ),
-    //     [address, nugg],
-    // );
-
-    const [check, setCheck] = React.useState<{
-        canOffer: boolean;
-        nextSwapAmount: BigNumber;
-        senderCurrentOffer: BigNumber;
-    }>();
-
-    useEffect(() => {
-        if (!check && nugg && address && chainId && provider) {
-            async function a() {
-                const helo = await new NuggftV1Helper(chainId, provider).contract[
-                    'check(address,uint160)'
-                ](address, nugg.id);
-
-                setCheck(helo);
-            }
-            a();
-        }
-    }, [nugg, address, chainId, provider]);
+    const check = useAsyncState(
+        () =>
+            !check &&
+            nugg &&
+            address &&
+            chainId &&
+            provider &&
+            new NuggftV1Helper(chainId, provider).contract['check(address,uint160)'](
+                address,
+                nugg.id,
+            ),
+        [nugg, address, chainId, provider],
+    );
 
     const minOfferAmount = useMemo(() => {
-        console.log({ check });
         if (!isUndefinedOrNullOrObjectEmpty(check)) {
             if (!check.nextSwapAmount.isZero()) {
                 return fromEth(
                     check.nextSwapAmount
-                        // .sub(check?.senderCurrentOffer)
                         .div(10 ** 13)
                         .add(1)
                         .mul(10 ** 13),
@@ -98,7 +71,6 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 return Math.max(
                     +fromEth(
                         check.nextSwapAmount
-                            // .sub(check.senderCurrentOffer)
                             .div(10 ** 13)
                             .add(1)
                             .mul(10 ** 13),
@@ -109,13 +81,6 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         }
         return constants.MIN_OFFER;
     }, [check, nugg]);
-
-    // const minOfferAmount = useMemo(() => {
-    //     if (!isUndefinedOrNullOrObjectEmpty(check)) {
-    //         return check;
-    //     }
-    //     return constants.MIN_OFFER;
-    // }, [check]);
 
     const { targetId, type } = AppState.select.modalData();
 
@@ -136,8 +101,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                 {stableType === 'StartSale'
                     ? `Sell Nugg #${stableId || nugg?.id}`
                     : `${
-                          check &&
-                          !isUndefinedOrNullOrNumberZero(check.senderCurrentOffer.toNumber())
+                          check && check.senderCurrentOffer.toString() !== '0'
                               ? 'Change bid for'
                               : 'Bid on'
                       } Nugg #${stableId || nugg?.id}`}
@@ -201,28 +165,16 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                         </Text>
                     </Text>
                 )}
-                <Text textStyle={styles.text}>
-                    {check && check.canOffer
-                        ? `${
-                              stableType === 'StartSale' ? 'Sale' : 'Offer'
-                          } must be at least ${minOfferAmount} ETH`
-                        : `You cannot ${
-                              stableType === 'StartSale' ? 'sell' : 'place an offer on'
-                          } this Nugg`}
-                </Text>
             </div>
             <div style={styles.subContainer}>
                 <FeedbackButton
                     overrideFeedback
                     feedbackText="Check Wallet..."
-                    // disabled={check && !check.canOffer}
-                    // TODO find better way to do this with vfo
                     buttonStyle={styles.button}
                     label={`${
                         stableType === 'StartSale'
                             ? 'Sell Nugg'
-                            : check &&
-                              !isUndefinedOrNullOrNumberZero(check.nextSwapAmount.toNumber())
+                            : check && check.senderCurrentOffer.toString() !== '0'
                             ? 'Update offer'
                             : 'Place offer'
                     }`}
@@ -240,6 +192,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                                   floor: check.nextSwapAmount,
                                   chainId,
                                   provider,
+                                  address,
                               })
                     }
                 />

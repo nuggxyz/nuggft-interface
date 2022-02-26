@@ -26,7 +26,6 @@ import web3 from '@src/web3';
 type Props = { isActive?: boolean };
 
 const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
-    const txnToggle = TransactionState.select.toggleCompletedTxn();
     const address = web3.hook.usePriorityAccount();
     const epoch = ProtocolState.select.epoch();
     const provider = web3.hook.usePriorityProvider();
@@ -51,11 +50,9 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     useEffect(() => {
         if (isActive) {
             setLoadingOffers(true);
-            setTimeout(() => {
-                getUnclaimedOffers();
-            }, 500);
+            getUnclaimedOffers();
         }
-    }, [address, txnToggle]);
+    }, [address]);
     const socket = SocketState.select.Claim();
 
     useEffect(() => {
@@ -106,7 +103,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                 loaderColor="white"
                 loading={loadingOffers}
                 style={listStyles.list}
-                extraData={[address]}
+                extraData={[address, chainId, provider]}
                 listEmptyText="No Nuggs or ETH to claim..."
             />
         </div>
@@ -182,12 +179,12 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
                     buttonStyle={listStyles.renderButton}
                     label={`Claim`}
                     onClick={() =>
-                        // WalletState.dispatch.claim({
-                        //     provider,
-                        //     chainId,
-                        //     tokenId: parsedTitle.nugg,
-                        // })
-                        undefined
+                        WalletState.dispatch.claim({
+                            provider: extraData[2],
+                            chainId: extraData[1],
+                            tokenId: parsedTitle.nugg,
+                            address: extraData[0],
+                        })
                     }
                 />
             </div>

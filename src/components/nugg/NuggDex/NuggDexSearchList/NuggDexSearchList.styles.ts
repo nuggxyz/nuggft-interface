@@ -24,8 +24,6 @@ const styles = NLStyleSheetCreator({
         top: '0px',
         width: '100%',
         height: '100%',
-        opacity: 1,
-        // pointerEvents: 'auto',
     },
 });
 

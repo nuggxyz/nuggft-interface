@@ -16,7 +16,6 @@ const AccountViewer = () => {
     const chainId = web3.hook.usePriorityChainId();
 
     const name = useMemo(() => {
-        console.log({ chainId });
         return chainId && chainId !== -1 ? web3.config.CHAIN_INFO[chainId].label : 'uk';
     }, [chainId]);
 

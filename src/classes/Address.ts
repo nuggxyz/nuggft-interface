@@ -53,12 +53,24 @@ export class Address implements IAddress {
 
     public static shortenAddress(address: Address, chars = 4): string {
         try {
-            return address.hash
-                ? `${address.hash.substring(0, chars + 2)}...${address.hash.substring(42 - chars)}`
-                : '';
+            return address.hash ? this.shortenAddressHash(address.hash, chars) : '';
         } catch (err) {
-            return undefined;
+            return address.hash ? address.hash : '';
         }
+    }
+
+    public static shortenAddressHash(addressHash: string, chars = 4): string {
+        if (addressHash) {
+            try {
+                return `${addressHash.substring(0, chars + 2)}...${addressHash.substring(
+                    42 - chars,
+                )}`;
+            } catch (e) {
+                console.log(e);
+                return addressHash;
+            }
+        }
+        return addressHash;
     }
 }
 

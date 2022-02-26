@@ -14,21 +14,8 @@ type Props = {};
 
 const Wallet: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
-
-    const chainId = web3.hook.usePriorityChainId();
     const account = web3.hook.usePriorityAccount();
-    const error = web3.hook.usePriorityError();
-    const isActivating = web3.hook.usePriorityIsActivating();
-
-    const isActive = web3.hook.usePriorityIsActive();
-
     const provider = web3.hook.usePriorityProvider();
-    const ENSNames = web3.hook.usePriorityENSNames(provider);
-
-    useEffect(() => {
-        console.log({ chainId, account, error, isActivating, isActive, ENSNames });
-    }, [chainId, account, error, isActivating, isActive, ENSNames]);
-
     const happytabs: HappyTabberItem[] = useMemo(
         () => [
             ...(account

@@ -63,11 +63,11 @@ const withdraw = createAsyncThunk<
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(address))
-            // .connect(Web3State.getSignerOrProvider())
             .burn(tokenId);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
+            chainId,
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {
@@ -94,18 +94,17 @@ const claim = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/claim`, async ({ tokenId, provider, chainId, address }, thunkAPI) => {
     try {
-        //@ts-ignore
-        const addr = thunkAPI.getState().web3.web3address;
-
+        console.log(address);
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(address))
             [
                 // .connect(Web3State.getSignerOrProvider())
                 'claim(uint160[],address[])'
-            ]([tokenId], [addr]);
+            ]([tokenId], [address]);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
+            chainId,
         };
     } catch (err) {
         console.log({ err });
@@ -131,20 +130,18 @@ const multiClaim = createAsyncThunk<
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/multiClaim`, async ({ tokenIds, provider, chainId, address }, thunkAPI) => {
     try {
-        //@ts-ignore
-        const addr = thunkAPI.getState().web3.web3address;
-
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(address))
             [
                 // .connect(Web3State.getSignerOrProvider())
                 'claim(uint160[],address[])'
-            ](tokenIds, new Array(tokenIds.length).fill(addr), {
+            ](tokenIds, new Array(tokenIds.length).fill(address), {
                 gasLimit: 500000,
             });
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
+            chainId,
         };
     } catch (err) {
         console.log({ err });
@@ -210,6 +207,7 @@ const mintNugg = createAsyncThunk<
             return {
                 success: 'SUCCESS',
                 _pendingtx: _pendingtx.hash,
+                chainId,
             };
         }
         return thunkAPI.rejectWithValue('NO_NUGGS_TO_MINT');
@@ -239,11 +237,11 @@ const initLoan = createAsyncThunk<
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(address))
-            // .connect(Web3State.getSignerOrProvider())
             .loan([tokenId]);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
+            chainId,
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {
@@ -283,6 +281,7 @@ const payOffLoan = createAsyncThunk<
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
+            chainId,
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {
@@ -330,6 +329,7 @@ const extend = createAsyncThunk<
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
+            chainId,
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {

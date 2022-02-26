@@ -13,18 +13,24 @@ import { SupportedChainId } from '@src/web3/config';
 
 const initSale = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
-    { tokenId: string; floor: BigNumberish; chainId: SupportedChainId; provider: Web3Provider },
+    {
+        tokenId: string;
+        floor: BigNumberish;
+        chainId: SupportedChainId;
+        provider: Web3Provider;
+        address: string;
+    },
     { rejectValue: NL.Redux.Wallet.Error; state: NL.Redux.RootState }
->(`token/initSale`, async ({ tokenId, floor, chainId, provider }, thunkAPI) => {
+>(`token/initSale`, async ({ tokenId, floor, chainId, provider, address }, thunkAPI) => {
     try {
-        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract[
-            // .connect(Web3State.getSignerOrProvider())
-            'sell(uint160,uint96)'
-        ](tokenId, floor);
+        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+            .connect(provider.getSigner(address))
+            ['sell(uint160,uint96)'](tokenId, floor);
 
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
+            chainId,
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err) {

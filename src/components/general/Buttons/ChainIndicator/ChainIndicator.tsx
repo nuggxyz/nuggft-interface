@@ -37,6 +37,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
     const swapId = SwapState.select.id();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
+    const error = web3.hook.usePriorityError();
 
     const [blocksRemaining, setBlocksRemaining] = useState(0);
 
@@ -107,7 +108,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
                 }
                 buttonStyle={{
                     ...styles.button,
-                    ...(provider ? styles.warning : styles.normal),
+                    ...(error ? styles.warning : styles.normal),
                     ...style,
                 }}
                 leftIcon={<LeftIcon />}

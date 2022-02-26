@@ -27,8 +27,6 @@ import styles from './NuggDexComponents.styles';
 type Props = {
     style: CSSProperties | UseSpringProps;
     values: NL.GraphQL.Fragments.Nugg.ListItem[];
-    setLocalViewing?: Dispatch<SetStateAction<NL.Redux.NuggDex.SearchViews>>;
-    localViewing?: NL.Redux.NuggDex.SearchViews;
     animationToggle?: boolean;
     onScrollEnd?: ({
         setLoading,
@@ -41,53 +39,24 @@ type Props = {
     }) => Promise<void> | (() => void);
 };
 
-const NuggList: FunctionComponent<Props> = ({
-    style,
-    values,
-    setLocalViewing,
-    localViewing,
-    onScrollEnd,
-    animationToggle,
-}) => {
-    // const [images, setImages] = useState([]);
-    // useEffect(() => {
-    //     const get = async () => {
-    //         const list = values.slice(images.length);
-    //         if (list.length > 0) {
-    //             const newNuggs = await Promise.map(list, (nugg) =>
-    //                 NuggftV1Helper.optimizedDotNugg(nugg),
-    //             );
-    //             setImages((old) => [...old, ...newNuggs]);
-    //         }
-    //     };
-    //     (values.length !== images.length ||
-    //         (values.length !== 0 && images.length === 0)) &&
-    //         get();
-    // }, [values, images]);
-
+const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animationToggle }) => {
     const filters = NuggDexState.select.searchFilters();
     const prevFilters = usePrevious(filters);
     const screenType = AppState.select.screenType();
+    const viewing = NuggDexState.select.viewing();
 
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (localViewing === 'home' && !isUndefinedOrNullOrStringEmpty(filters.searchValue)) {
-            setLocalViewing('all nuggs');
+        if (viewing === 'home' && !isUndefinedOrNullOrStringEmpty(filters.searchValue)) {
+            NuggDexState.dispatch.setViewing('all nuggs');
         }
-    }, [filters.searchValue, setLocalViewing]);
+    }, [filters.searchValue]);
 
     const onClick = useCallback((item) => {
         batch(() => {
             TokenState.dispatch.setNugg(item);
-            NuggDexState.dispatch.addToRecents(
-                item,
-                //     {
-                //     _localStorageValue: item,
-                //     _localStorageTarget: 'recents',
-                //     _localStorageExpectedType: 'array',
-                // }
-            );
+            NuggDexState.dispatch.addToRecents(item);
         });
     }, []);
 
@@ -98,17 +67,14 @@ const NuggList: FunctionComponent<Props> = ({
             onScrollEnd({ setLoading, filters, addToList: false });
     }, [filters]);
 
-    useEffect(
-        () => () => {
-            onScrollEnd &&
-                onScrollEnd({
-                    setLoading,
-                    filters: { searchValue: '', sort: { by: 'id', asc: true } },
-                    addToList: false,
-                });
-        },
-        [],
-    );
+    useEffect(() => {
+        onScrollEnd &&
+            onScrollEnd({
+                setLoading,
+                filters: { searchValue: '', sort: { by: 'id', asc: true } },
+                addToList: false,
+            });
+    }, []);
 
     return (
         <div
@@ -135,11 +101,8 @@ const NuggList: FunctionComponent<Props> = ({
                             }}>
                             <TransitionText
                                 Icon={<ChevronLeft />}
-                                style={{
-                                    marginTop: '.12rem',
-                                    // color: Colors.nuggBlueText
-                                }}
-                                text={ucFirst(localViewing)}
+                                style={{ marginTop: '.12rem' }}
+                                text={ucFirst(viewing)}
                                 transitionText="Go back"
                                 onClick={() => {
                                     NuggDexState.dispatch.setSearchFilters({
@@ -149,19 +112,14 @@ const NuggList: FunctionComponent<Props> = ({
                                             by: 'id',
                                         },
                                     });
-                                    setLocalViewing('home');
+                                    NuggDexState.dispatch.setViewing('home');
                                 }}
                             />
                         </div>
                     </div>
                 )}
                 <InfiniteList
-                    style={{
-                        // padding: '1.7rem 1rem',
-                        zIndex: 0,
-                        // position: 'absolute',
-                    }}
-                    // extraData={[images]}/
+                    style={{ zIndex: 0, paddingTop: '2.5rem' }}
                     data={values}
                     RenderItem={NuggListRenderItem}
                     loading={loading}

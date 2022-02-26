@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useLayoutEffect, useState } from 'react';
 
 import { Address } from '@src/classes/Address';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
@@ -18,6 +18,7 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
+import { CONTRACTS } from '@src/web3/config';
 
 import styles from './ViewingNugg.styles';
 
@@ -32,7 +33,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const screenType = AppState.select.screenType();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const ens = web3.hook.usePriorityENSName(provider);
+    const ens = web3.hook.usePriorityAnyENSName(provider, owner);
     const [items, setItems] = useState([tokenId]);
 
     useEffect(() => {
@@ -60,7 +61,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
         setOwner(thumbnail?.user?.id);
     }, [tokenId, chainId]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         setSwaps([]);
         setOwner('');
         getThumbnail();
@@ -143,7 +144,10 @@ const Swaps = ({ chainId, provider, swaps, tokenId, address, owner, MobileBackBu
                                     display: 'flex',
                                     alignItems: 'center',
                                 }}>
-                                {ens}
+                                {owner === Address.ZERO.hash ||
+                                owner === CONTRACTS[chainId].NuggftV1
+                                    ? 'NuggftV1'
+                                    : ens}
                                 {owner === address && (
                                     <Text
                                         type="text"
@@ -268,7 +272,7 @@ const Swaps = ({ chainId, provider, swaps, tokenId, address, owner, MobileBackBu
 
 const SwapItem = ({ provider, swap, index, chainId }) => {
     const awaitingBid = swap.endingEpoch === null;
-    const res = web3.hook.usePriorityAnyENSName(provider, swap.owner.id);
+    const ens = web3.hook.usePriorityAnyENSName(provider, swap.leader.id);
     return (
         <Button
             buttonStyle={styles.swap}
@@ -304,7 +308,10 @@ const SwapItem = ({ provider, swap, index, chainId }) => {
                             textStyle={{
                                 color: 'white',
                             }}>
-                            {swap.owner.id === Address.ZERO.hash ? 'NuggftV1' : res}
+                            {swap.owner.id === Address.ZERO.hash ||
+                            swap.owner.id === CONTRACTS[chainId].NuggftV1
+                                ? 'NuggftV1'
+                                : ens}
                         </Text>
                     </div>
                 </>

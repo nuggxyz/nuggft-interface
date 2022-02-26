@@ -30,7 +30,6 @@ const NuggThumbnail: FunctionComponent<Props> = ({ onClick, style }) => {
                 style={{
                     ...globalStyles.fillWidth,
                     height: '30px',
-                    margin: '15px 0px',
                 }}
             />
             <Text size="smaller" textStyle={styles.label}>

@@ -1,5 +1,7 @@
 import type { Networkish } from '@ethersproject/networks';
 import type { Web3Provider } from '@ethersproject/providers';
+import { Address } from '@src/classes/Address';
+import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import { useEffect, useMemo, useState } from 'react';
 import type { EqualityChecker, UseBoundStore } from 'zustand';
 import create from 'zustand';
@@ -99,7 +101,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
     function useSelectedAccount(connector: Connector) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const values = initializedConnectors.map((x) => x.hooks.useAccount());
-        return values[getIndex(connector)];
+        return values[getIndex(connector)]?.toLowerCase();
     }
 
     function useSelectedIsActive(connector: Connector) {
@@ -113,14 +115,6 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const values = initializedConnectors.map((x, i) =>
             x.hooks.useProvider(network, i === index),
-        );
-        return values[index];
-    }
-
-    function useSelectedENSNames(connector: Connector, provider: Web3Provider | undefined) {
-        const index = getIndex(connector);
-        const values = initializedConnectors.map((x, i) =>
-            x.hooks.useENSNames(i === index ? provider : undefined),
         );
         return values[index];
     }
@@ -162,7 +156,6 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         useSelectedAccount,
         useSelectedIsActive,
         useSelectedProvider,
-        useSelectedENSNames,
         useSelectedENSName,
         useSelectedWeb3React,
         useSelectedAnyENSName,
@@ -185,7 +178,6 @@ export function getPriorityConnector(...initializedConnectors: Res<Connector>[])
         useSelectedAccount,
         useSelectedIsActive,
         useSelectedProvider,
-        useSelectedENSNames,
         useSelectedENSName,
         useSelectedWeb3React,
         useSelectedAnyENSName,
@@ -226,10 +218,6 @@ export function getPriorityConnector(...initializedConnectors: Res<Connector>[])
         return useSelectedProvider(usePriorityConnector(), network);
     }
 
-    function usePriorityENSNames(provider: Web3Provider | undefined) {
-        return useSelectedENSNames(usePriorityConnector(), provider);
-    }
-
     function usePriorityENSName(provider: Web3Provider | undefined) {
         return useSelectedENSName(usePriorityConnector(), provider);
     }
@@ -249,7 +237,6 @@ export function getPriorityConnector(...initializedConnectors: Res<Connector>[])
         useSelectedAccount,
         useSelectedIsActive,
         useSelectedProvider,
-        useSelectedENSNames,
         useSelectedENSName,
         useSelectedWeb3React,
         useSelectedAnyENSName,
@@ -261,7 +248,6 @@ export function getPriorityConnector(...initializedConnectors: Res<Connector>[])
         usePriorityAccount,
         usePriorityIsActive,
         usePriorityProvider,
-        usePriorityENSNames,
         usePriorityENSName,
         usePriorityWeb3React,
         usePriorityAnyENSName,
@@ -328,21 +314,20 @@ function getDerivedHooks({
     return { useAccount, useIsActive };
 }
 
-function useENS(
-    provider: Web3Provider,
-    accounts: string[],
-): (string | null)[] | undefined | [undefined] {
-    const [ENSNames, setENSNames] = useState<(string | null)[] | undefined>();
+function useENS(provider: Web3Provider, account: string): (string | null) | undefined {
+    const [ENSName, setENSName] = useState<string | null | undefined>(
+        Address.shortenAddressHash(account),
+    );
     useEffect(() => {
-        console.log({ accounts });
-
-        if (provider && accounts?.length && accounts[0]) {
+        if (provider && account) {
             let stale = false;
+            setENSName(Address.shortenAddressHash(account));
 
-            Promise.all(accounts.map((account) => provider.lookupAddress(account)))
-                .then((ENSNames) => {
+            provider
+                .lookupAddress(account)
+                .then((result) => {
                     if (!stale) {
-                        setENSNames(ENSNames);
+                        setENSName(result ? result : Address.shortenAddressHash(account));
                     }
                 })
                 .catch((error) => {
@@ -351,12 +336,12 @@ function useENS(
 
             return () => {
                 stale = true;
-                setENSNames(undefined);
+                setENSName(Address.shortenAddressHash(account));
             };
         }
-    }, [provider, accounts]);
+    }, [provider, account]);
 
-    return ENSNames;
+    return ENSName;
 }
 
 function getAugmentedHooks<T extends Connector>(
@@ -388,25 +373,17 @@ function getAugmentedHooks<T extends Connector>(
         }, [providers, enabled, isActive, chainId, accounts, network]);
     }
 
-    function useENSNames(provider: Web3Provider | undefined): (string | null)[] | undefined {
-        const accounts = useAccounts();
-        return useENS(provider, accounts);
-    }
-
-    function useENSName(provider: Web3Provider | undefined): (string | null) | undefined {
+    function useENSName(provider: Web3Provider | undefined): string | null | undefined {
         const account = useAccount();
-        const accounts = useMemo(() => (account === undefined ? undefined : [account]), [account]);
 
-        return useENS(provider, accounts)?.[0];
+        return useENS(provider, account);
     }
 
     function useAnyENSName(
         provider: Web3Provider | undefined,
         account: string,
     ): (string | null) | undefined {
-        const accounts = useMemo(() => (account === undefined ? undefined : [account]), [account]);
-
-        return useENS(provider, accounts)?.[0];
+        return useENS(provider, account);
     }
 
     // for backwards compatibility only
@@ -430,5 +407,5 @@ function getAugmentedHooks<T extends Connector>(
         );
     }
 
-    return { useProvider, useENSNames, useENSName, useWeb3React, useAnyENSName };
+    return { useProvider, useENSName, useWeb3React, useAnyENSName };
 }

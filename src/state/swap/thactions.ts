@@ -124,6 +124,7 @@ const placeOffer = createAsyncThunk<
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
+            chainId,
             callbackFn: () => {
                 AppState.dispatch.setModalClosed();
             },

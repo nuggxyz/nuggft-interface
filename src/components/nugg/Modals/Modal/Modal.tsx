@@ -84,7 +84,6 @@ const Modal: FunctionComponent<Props> = () => {
                 <animated.div style={containerStyle} ref={node}>
                     {currentModal === 'OfferOrSell' ? <OfferOrSellModal /> : null}
                     {currentModal === 'LoanOrBurn' ? <LoanOrBurnModal /> : null}
-                    {currentModal === 'Wallet' ? <WalletModal /> : null}
                     {currentModal === 'Loan' ? <LoanInputModal /> : null}
                 </animated.div>
             </div>
