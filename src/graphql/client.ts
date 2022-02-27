@@ -11,15 +11,6 @@ import { split, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
 import store, { states } from '../state/store';
 import { SupportedChainId } from '../web3/config';
 import web3 from '@src/web3';
-const wsLink = new WebSocketLink({
-    uri: constants.MAIN_WEBSOCKET,
-    options: {
-        reconnect: true,
-        timeout: 30000,
-        minTimeout: 30000,
-        reconnectionAttempts: 100,
-    },
-});
 
 const fetchLogger = (url, init) => {
     console.log(init.body);
@@ -53,12 +44,33 @@ export const client = (chainId: SupportedChainId): ApolloClient<any> => {
     });
 };
 
-export const subs = new ApolloClient({
-    link: wsLink,
-    cache: new InMemoryCache(),
-});
+export const wsclient = (chainId: SupportedChainId): ApolloClient<any> => {
+    console.log('NEW WS CLIENT');
+    console.trace();
+    return new ApolloClient({
+        link: new WebSocketLink({
+            uri: web3.config.GRAPH_WSS_ENDPOINTS[chainId],
+            options: {
+                reconnect: true,
+                timeout: 30000,
+                minTimeout: 30000,
+                reconnectionAttempts: 100,
+            },
+        }),
+        cache: new InMemoryCache(),
+    });
+};
 
-// export const healthClient = new ApolloClient({
+// export const splitLink = split(
+//     ({ query }) => {
+//         const definition = getMainDefinition(query);
+//         return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
+//     },
+//     wsclient,
+//     client,
+// );
+
+// // export const healthClient = new ApolloClient({
 //     link: createHttpLink({
 //         uri: constants.HEALTH_ENDPOINT,
 //         fetch: fetch as any,

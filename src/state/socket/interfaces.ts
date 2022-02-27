@@ -8,19 +8,35 @@ export enum SocketType {
     BLOCK = 4,
 }
 
+export enum SocketClient {
+    INFURA = 0,
+    GRAPH = 1,
+}
+
 export function formatEventLog(log: Log) {
     return {
         receivedAt: new Date().getTime(),
         txhash: log.transactionHash,
         block: log.blockNumber,
+        client: SocketClient.INFURA,
+    };
+}
+
+export function formatGraphEventLog() {
+    return {
+        receivedAt: new Date().getTime(),
+        txhash: undefined,
+        block: undefined,
+        client: SocketClient.GRAPH,
     };
 }
 
 export function formatBlockLog(log: number) {
     return {
         receivedAt: new Date().getTime(),
-        txhash: 'block',
+        txhash: undefined,
         block: log,
+        client: SocketClient.INFURA,
     };
 }
 
@@ -29,6 +45,7 @@ export interface BaseSocketInfo {
     receivedAt: number;
     txhash: string;
     block: number;
+    client: SocketClient;
 }
 
 export interface StakeInfo extends BaseSocketInfo {

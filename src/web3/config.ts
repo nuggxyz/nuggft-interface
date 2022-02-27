@@ -1,6 +1,8 @@
 import { InfuraWebSocketProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
 
+import { wsclient } from '@src/graphql/client';
+
 import { MetaMask } from './clients/metamask';
 import { Network } from './clients/network';
 import { WalletConnect } from './clients/walletconnect';
@@ -54,6 +56,13 @@ export const GRAPH_ENPOINTS = {
     [SupportedChainId.RINKEBY]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby`,
     [SupportedChainId.ROPSTEN]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
     [SupportedChainId.GOERLI]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli`,
+};
+
+export const GRAPH_WSS_ENDPOINTS = {
+    [SupportedChainId.MAINNET]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-mainnet`,
+    [SupportedChainId.RINKEBY]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby`,
+    [SupportedChainId.ROPSTEN]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
+    [SupportedChainId.GOERLI]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli`,
 };
 
 export const NETWORK_URLS = {
@@ -175,6 +184,10 @@ export const CHAIN_INFO: {
 
 export const createInfuraWebSocket = (chainId: SupportedChainId) => {
     return new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY);
+};
+
+export const createGraphWebSocket = (chainId: SupportedChainId) => {
+    return wsclient(chainId);
 };
 
 export const ENS_REGISTRAR_ADDRESSES: NL.Redux.Web32.AddressMap = {

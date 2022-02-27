@@ -5,6 +5,7 @@ declare namespace NL.Redux.Socket {
         Stake: import('./interfaces').StakeInfo;
         Claim: import('./interfaces').ClaimInfo;
         Block: import('./interfaces').BlockInfo;
+        swapsToWatch: string[];
     }
 
     type Error = 'ERROR';
