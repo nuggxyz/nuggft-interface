@@ -13,13 +13,13 @@ type Props = {};
 
 const MintView: FunctionComponent<Props> = () => {
     const { width, height } = AppState.select.dimensions();
-    const nugg = SwapState.select.nugg();
+    const tokenId = SwapState.select.tokenId();
     return (
         <div style={styles.container}>
             <FloorPrice style={{ zIndex: 0, marginTop: '.3rem' }} />
             <div style={styles.ring}>
                 <TheRing circleWidth={Math.min(width * 2.7, height / 0.6)} />
-                {nugg && <Text textStyle={{ marginBottom: '.4rem' }}>Nugg #{nugg.id}</Text>}
+                {tokenId && <Text textStyle={{ marginBottom: '.4rem' }}>Nugg #{tokenId}</Text>}
             </div>
             <div style={styles.ringAbout}>
                 <RingAbout />

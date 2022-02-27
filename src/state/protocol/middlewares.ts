@@ -7,7 +7,7 @@ import {
 } from '@src/lib';
 import SwapState from '@src/state/swap';
 
-import ProtocolState from '.';
+import ProtocolState from './index';
 
 const updateEpochMiddleware: Middleware<
     Record<string, unknown>,
@@ -22,13 +22,14 @@ const updateEpochMiddleware: Middleware<
                 ? getState().protocol.epoch.id
                 : '';
             const nextEpoch = action.payload.data.epoch.id;
-            const currentSwap = getState().swap.endingEpoch;
+            const currentSwap = getState().swap.epoch;
             console.log(action.payload);
             if (
                 !isUndefinedOrNullOrStringEmpty(nextEpoch) &&
                 currentEpoch !== nextEpoch &&
                 (window.location.hash.length <= 2 || window.location.hash.includes('/nugg')) &&
-                (isUndefinedOrNullOrNotNumber(currentSwap) || currentSwap === +currentEpoch) &&
+                (isUndefinedOrNullOrNotNumber(currentSwap) ||
+                    +currentSwap.endblock === +currentEpoch) &&
                 action.payload.data.chainId !== undefined
             ) {
                 SwapState.dispatch.initSwap({

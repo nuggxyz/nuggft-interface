@@ -28,7 +28,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
-    const nugg = SwapState.select.nugg();
+    const tokenId = SwapState.select.tokenId();
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
@@ -41,15 +41,15 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     const check = useAsyncState(
         () =>
             !check &&
-            nugg &&
+            tokenId &&
             address &&
             chainId &&
             provider &&
             new NuggftV1Helper(chainId, provider).contract['check(address,uint160)'](
                 address,
-                nugg.id,
+                tokenId,
             ),
-        [nugg, address, chainId, provider],
+        [tokenId, address, chainId, provider],
     );
 
     const minOfferAmount = useMemo(() => {
@@ -74,7 +74,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             }
         }
         return constants.MIN_OFFER;
-    }, [check, nugg]);
+    }, [check, tokenId]);
 
     const { targetId, type } = state.app.select.modalData();
 
@@ -93,15 +93,15 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
                 {stableType === 'StartSale'
-                    ? `Sell Nugg #${stableId || nugg?.id}`
+                    ? `Sell Nugg #${stableId || tokenId}`
                     : `${
                           check && check.senderCurrentOffer.toString() !== '0'
                               ? 'Change bid for'
                               : 'Bid on'
-                      } Nugg #${stableId || nugg?.id}`}
+                      } Nugg #${stableId || tokenId}`}
             </Text>
             <AnimatedCard>
-                <TokenViewer tokenId={stableId || nugg?.id} />
+                <TokenViewer tokenId={stableId || tokenId} />
             </AnimatedCard>
             <div style={styles.inputContainer}>
                 <CurrencyInput
@@ -177,7 +177,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     onClick={() =>
                         stableType === 'Offer'
                             ? SwapState.dispatch.placeOffer({
-                                  tokenId: nugg?.id,
+                                  tokenId: tokenId,
                                   amount: fromEth(toEth(amount).sub(check.senderCurrentOffer)),
                                   chainId,
                                   provider,

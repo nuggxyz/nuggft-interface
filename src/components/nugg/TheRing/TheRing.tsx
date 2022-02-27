@@ -37,7 +37,7 @@ const TheRing: FunctionComponent<Props> = ({
     const epoch = ProtocolState.select.epoch();
     const endingSwapEpoch = SwapState.select.epoch();
     const startingSwapEpoch = SwapState.select.startingEpoch();
-    const nugg = SwapState.select.nugg();
+    const tokenId = SwapState.select.tokenId();
 
     const status = useSetState(() => {
         return isUndefinedOrNull(endingSwapEpoch)
@@ -102,12 +102,12 @@ const TheRing: FunctionComponent<Props> = ({
             >
                 <AnimatedCard>
                     <TokenViewer
-                        tokenId={(nugg && nugg.id) || ''}
+                        tokenId={(tokenId && tokenId) || ''}
                         // showLabel={screenType !== 'phone'}
                         style={tokenStyle}
                     />
                 </AnimatedCard>
-                {screenType !== 'phone' && <Text>Nugg #{nugg && nugg.id}</Text>}
+                {screenType !== 'phone' && <Text>Nugg #{tokenId && tokenId}</Text>}
             </CircleTimer>
         </div>
     );
