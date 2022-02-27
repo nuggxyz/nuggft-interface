@@ -18,43 +18,37 @@ export default () => {
     const tx = TransactionState.select.txn();
 
     const [instance, setInstance] = useState<InfuraWebSocketProvider>(undefined);
-    const [helper, setHelper] = useState<NuggftV1Helper>(undefined);
 
     useEffect(() => {
         if (chainId && web3.config.isValidChainId(chainId)) {
-            setInstance(web3.config.createInfuraWebSocket(chainId));
-            setHelper(new NuggftV1Helper(chainId, undefined));
+            const _instance = web3.config.createInfuraWebSocket(chainId);
 
-            return () => {
-                setHelper(undefined);
-                if (instance && instance._wsReady) {
-                    instance.removeAllListeners();
-                    instance.destroy();
-                }
-            };
-        }
-    }, [chainId]);
+            setInstance(_instance);
 
-    useEffect(() => {
-        if (instance && helper) {
+            const _helper = new NuggftV1Helper(chainId, undefined);
+
+            const stake__listener = _helper.contract.filters.Stake();
+            const offer__listener = _helper.contract.filters['Offer(uint160,bytes32)'](null, null);
+            const block__listener = 'block';
+
             async function getit() {
-                const blocknum = await instance.getBlockNumber();
+                const blocknum = await _instance.getBlockNumber();
                 SocketState.dispatch.incomingEvent({
                     type: SocketType.BLOCK,
                     ...formatBlockLog(blocknum),
                 });
                 SocketState.dispatch.incomingEvent({
                     type: SocketType.STAKE,
-                    shares: (await helper.contract.connect(instance).shares())._hex,
-                    staked: (await helper.contract.connect(instance).staked())._hex,
-                    proto: (await helper.contract.connect(instance).proto())._hex,
+                    shares: (await _helper.contract.connect(_instance).shares())._hex,
+                    staked: (await _helper.contract.connect(_instance).staked())._hex,
+                    proto: (await _helper.contract.connect(_instance).proto())._hex,
                     ...formatBlockLog(blocknum),
                 });
             }
             getit();
 
-            instance.addListener(helper.contract.filters.Stake(), (log: Log) => {
-                let event = helper.contract.interface.parseLog(log) as unknown as StakeEvent;
+            _instance.on(stake__listener, (log: Log) => {
+                let event = _helper.contract.interface.parseLog(log) as unknown as StakeEvent;
                 const cache = BigNumber.from(event.args.cache);
 
                 SocketState.dispatch.incomingEvent({
@@ -66,46 +60,50 @@ export default () => {
                 });
             });
 
-            instance.addListener(
-                helper.contract.filters['Offer(uint160,bytes32)'](null, null),
-                (log: Log) => {
-                    let event = helper.contract.interface.parseLog(log) as unknown as OfferEvent;
+            _instance.on(offer__listener, (log: Log) => {
+                let event = _helper.contract.interface.parseLog(log) as unknown as OfferEvent;
 
-                    const offerEvent = (event as unknown as OfferEvent).args;
-                    const offerAgnecy = BigNumber.from(offerEvent.agency);
+                const offerEvent = (event as unknown as OfferEvent).args;
+                const offerAgnecy = BigNumber.from(offerEvent.agency);
 
-                    SocketState.dispatch.incomingEvent({
-                        type: SocketType.OFFER,
-                        account: offerAgnecy.mask(160)._hex,
-                        value: offerAgnecy.shr(160).mask(70).mul(LOSS)._hex,
-                        endingEpoch: offerAgnecy.shr(230).mask(24)._hex,
-                        tokenId: offerEvent.tokenId._hex,
-                        ...formatEventLog(log),
-                    });
-                },
-            );
-            instance.addListener('block', (log: number) => {
+                SocketState.dispatch.incomingEvent({
+                    type: SocketType.OFFER,
+                    account: offerAgnecy.mask(160)._hex,
+                    value: offerAgnecy.shr(160).mask(70).mul(LOSS)._hex,
+                    endingEpoch: offerAgnecy.shr(230).mask(24)._hex,
+                    tokenId: offerEvent.tokenId._hex,
+                    ...formatEventLog(log),
+                });
+            });
+            _instance.on(block__listener, (log: number) => {
                 SocketState.dispatch.incomingEvent({
                     type: SocketType.BLOCK,
                     ...formatBlockLog(log),
                 });
             });
+
+            return () => {
+                instance.off(block__listener, () => undefined);
+                instance.off(offer__listener, () => undefined);
+                instance.off(stake__listener, () => undefined);
+                if (instance && instance._wsReady) {
+                    instance.removeAllListeners();
+                    instance.destroy();
+                }
+            };
         }
-    }, [instance, helper]);
+    }, [chainId]);
 
     useEffect(() => {
-        console.log('yoooooo');
-        if (instance && tx) {
-            console.log();
+        if (instance && tx && instance.listeners(tx).length === 0) {
             instance.once(tx, (log: TransactionReceipt) => {
-                console.log({ log });
                 TransactionState.dispatch.finalizeTransaction({
                     hash: log.transactionHash,
                     successful: log.status === 1,
                 });
             });
         }
-    }, [tx, instance]);
+    }, [tx]);
 
     return null;
 };
