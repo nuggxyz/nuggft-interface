@@ -30,6 +30,8 @@ const query = (
             ) {
                 id
                 dotnuggRawCache
+                activeLoan {id}
+                activeSwap {id}
             }
         }
     }

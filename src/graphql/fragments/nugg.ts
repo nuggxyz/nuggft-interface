@@ -43,6 +43,7 @@ export const nuggThumbnail = gql`
             leader ${idFragment}
         }
         activeSwap ${idFragment}
+        activeLoan ${idFragment}
     }
 `;
 

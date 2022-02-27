@@ -44,7 +44,7 @@ const styles = NLStyleSheetCreator({
     nuggListDefault: {
         borderRadius: Layout.borderRadius.medium,
         overflow: 'hidden',
-        padding: '0rem 1rem',
+        // padding: '0rem 1rem',
     },
     nuggListRenderItemContainer: {
         width: '100%',
@@ -53,7 +53,7 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: Layout.borderRadius.mediumish,
+        // borderRadius: Layout.borderRadius.mediumish,
         transition: `background .7s ${Layout.animation}`,
         cursor: 'pointer',
         position: 'relative',

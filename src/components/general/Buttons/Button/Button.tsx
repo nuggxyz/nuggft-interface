@@ -1,8 +1,7 @@
 import React, { FunctionComponent, useCallback, useMemo } from 'react';
 
 import useOnHover from '@src/hooks/useOnHover';
-import AppState from '@src/state/app';
-import Text from '@src/components/general/Texts/Text/Text';
+import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 
 import styles from './Button.styles';
 
@@ -16,25 +15,25 @@ export type ButtonProps = {
     hoverStyle?: React.CSSProperties;
     disabled?: boolean;
     isHovering?: (hover: boolean) => void;
-};
+} & Partial<TextProps>;
 
 const Button: FunctionComponent<ButtonProps> = ({
     onClick,
     label,
     buttonStyle,
-    textStyle,
     rightIcon,
     leftIcon,
     disabled = false,
     isHovering,
     hoverStyle,
+    ...textProps
 }) => {
     const [ref, hover] = useOnHover(isHovering);
 
     const style = useMemo(() => {
         return {
             ...styles.button,
-            filter: hover && !AppState.isMobile ? 'brightness(.8)' : 'brightness(1)',
+            filter: hover ? 'brightness(.8)' : 'brightness(1)',
             cursor: disabled ? 'not-allowed' : 'pointer',
             ...buttonStyle,
             ...(hover && hoverStyle),
@@ -44,13 +43,8 @@ const Button: FunctionComponent<ButtonProps> = ({
     const RightIcon = useCallback(() => (rightIcon ? rightIcon : null), [rightIcon]);
     const LeftIcon = useCallback(() => (leftIcon ? leftIcon : null), [leftIcon]);
     const Label = useCallback(
-        () =>
-            label ? (
-                <Text weight="bold" textStyle={{ ...textStyle }}>
-                    {label}
-                </Text>
-            ) : null,
-        [label, textStyle],
+        () => (label ? <Text {...textProps}>{label}</Text> : null),
+        [label, textProps],
     );
 
     return (

@@ -71,13 +71,13 @@ const TheRing: FunctionComponent<Props> = ({
             !isUndefinedOrNullOrNumberZero(blockListener.block)
         ) {
             remaining = +endingSwapEpoch.endblock - +blockListener.block;
-        }
-        if (remaining <= 0) {
-            remaining = 0;
-            if (+blockListener.block !== 0 && status === 'over') {
-                ProtocolState.dispatch.setEpochIsOver(true);
-            } else {
-                ProtocolState.dispatch.setEpochIsOver(false);
+            if (remaining <= 0) {
+                remaining = 0;
+                if (+blockListener.block !== 0 && status === 'over') {
+                    ProtocolState.dispatch.setEpochIsOver(true);
+                } else {
+                    ProtocolState.dispatch.setEpochIsOver(false);
+                }
             }
         }
 

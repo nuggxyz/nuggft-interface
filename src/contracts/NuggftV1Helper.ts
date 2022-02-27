@@ -62,19 +62,6 @@ export default class NuggftV1Helper extends ContractHelper {
                 if (!res) throw new Error('token does not exist');
                 else {
                     NuggftV1Helper.storeNugg(tokenId, res.dotnuggRawCache);
-                    // const svg = Svg.decodeSvg(res.dotnuggSvgCache);
-                    // nuggs =
-                    //     loadFromLocalStorage(
-                    //         `${Math.floor(+tokenId / 100)}`,
-                    //         false,
-                    //     ) || {};
-                    // nuggs[tokenId] = res.dotnuggRawCache;
-                    // saveToLocalStorage(
-                    //     nuggs,
-                    //     `${Math.floor(+tokenId / 100)}`,
-                    //     false,
-                    // );
-
                     return res.dotnuggRawCache;
                 }
             } catch (err) {

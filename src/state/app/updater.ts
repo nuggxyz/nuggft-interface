@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 
 import web3 from '@src/web3';
-import * as state from '@src/state';
 
 export default () => {
     const resizer = () => {
-        state.default &&
+        import('@src/state').then((state) =>
             state.default.app.dispatch.setWindowDimensions({
                 height: window.innerHeight,
                 width: window.innerWidth,
-            });
+            }),
+        );
     };
 
     const chainId = web3.hook.usePriorityChainId();
@@ -23,7 +23,9 @@ export default () => {
     }, []);
 
     useEffect(() => {
-        state.default && state.default.app.onRouteUpdate(chainId, window.location.hash);
+        import('@src/state').then(
+            (state) => state && state.default.app.onRouteUpdate(chainId, window.location.hash),
+        );
     }, []);
     return null;
 };
