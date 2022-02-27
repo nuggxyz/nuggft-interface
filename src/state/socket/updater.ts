@@ -97,7 +97,7 @@ export default () => {
         console.log('yoooooo');
         if (instance && tx) {
             console.log();
-            instance.once('tx', (log: TransactionReceipt) => {
+            instance.once(tx, (log: TransactionReceipt) => {
                 console.log({ log });
                 TransactionState.dispatch.finalizeTransaction({
                     hash: log.transactionHash,

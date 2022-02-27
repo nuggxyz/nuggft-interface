@@ -38,15 +38,6 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
     const provider = web3.hook.usePriorityProvider();
     const error = web3.hook.usePriorityError();
 
-    // const [block, setBlock] = React.useState<number>();
-
-    // state.socket.hook.useBlock((event) => {
-    //     if (blockListener && event.block > blockListener) {
-    //         setBlock(event.block);
-    //     }
-    //     console.log('block:', { event });
-    // });
-
     const [blocksRemaining, setBlocksRemaining] = useState(0);
 
     const getBlocksRemaining = useCallback(async () => {
@@ -98,6 +89,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
     );
 
     return (
+        // <SVG>
         <animated.div style={springStyle}>
             <Button
                 textStyle={{
