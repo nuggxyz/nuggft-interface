@@ -33,6 +33,7 @@ class SocketState extends NLState<NL.Redux.Socket.State> {
             Stake: undefined,
             Mint: undefined,
             Block: undefined,
+            swapsToWatch: [],
         });
     }
 
@@ -58,6 +59,12 @@ class SocketState extends NLState<NL.Redux.Socket.State> {
                         state.Block = action.payload;
                         break;
                 }
+            },
+            watchASwap: (state, action: PayloadAction<string>) => {
+                state.swapsToWatch = [...state.swapsToWatch, action.payload];
+            },
+            unwatchASwap: (state, action: PayloadAction<string>) => {
+                state.swapsToWatch = state.swapsToWatch.filter((x) => x === action.payload);
             },
         },
     });

@@ -1,29 +1,108 @@
 import { InfuraWebSocketProvider, Log, TransactionReceipt } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
+import { ApolloClient, gql } from '@apollo/client';
+import { Subscription } from 'apollo-client/util/Observable';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { LOSS } from '@src/lib/conversion';
 import web3 from '@src/web3';
 import TransactionState from '@src/state/transaction';
+import { wsclient } from '@src/graphql/client';
 
 import { StakeEvent, OfferEvent } from '../../typechain/NuggftV1';
 
-import { formatBlockLog, formatEventLog, SocketType } from './interfaces';
+import { formatBlockLog, formatEventLog, formatGraphEventLog, SocketType } from './interfaces';
 
 import SocketState from './index';
+
+const COMMENTS_SUBSCRIPTION = gql`
+    subscription OnOffer($tokenId: ID!) {
+        offers(where: { swap_starts_with: $tokenId }) {
+            user {
+                id
+            }
+            eth
+            swap {
+                id
+                epoch {
+                    id
+                }
+                nugg {
+                    id
+                }
+            }
+        }
+    }
+`;
+
+function difference(arr1: string[], arr2: string[]): string[] {
+    let tmp: string[] = [];
+    for (let i = 0; i < arr1.length; i++) {
+        if (!arr2.includes(arr1[i])) {
+            tmp.push(arr1[i]);
+        }
+    }
+    return tmp;
+}
 
 export default () => {
     const chainId = web3.hook.usePriorityChainId();
     const tx = TransactionState.select.txn();
 
     const [instance, setInstance] = useState<InfuraWebSocketProvider>(undefined);
+    const [graphInstance, setGraphInstance] = useState<ApolloClient<WebSocket>>(undefined);
+
+    const [watchingSockets, setWatchingSockets] = useState<Dictionary<Subscription>>({});
+
+    const watching = SocketState.select.swapsToWatch();
+
+    useEffect(() => {
+        let tmp = {};
+
+        let diff = difference(Object.keys(watchingSockets), watching);
+
+        diff.forEach((x) => {
+            watchingSockets[x].unsubscribe();
+        });
+
+        watching.forEach((x) => {
+            if (!watchingSockets[x]) {
+                tmp[x] = graphInstance
+                    .subscribe<{
+                        user: { id: string };
+                        eth: string;
+                        swap: { epoch: { id: string }; nugg: { id: string } };
+                    }>({
+                        query: COMMENTS_SUBSCRIPTION,
+                        variables: { tokenId: x },
+                    })
+                    .subscribe((value) => {
+                        if (value.data) {
+                            SocketState.dispatch.incomingEvent({
+                                type: SocketType.OFFER,
+                                account: value.data.user.id,
+                                value: value.data.eth,
+                                endingEpoch: value.data.swap.epoch.id,
+                                tokenId: value.data.swap.nugg.id,
+                                ...formatGraphEventLog(),
+                            });
+                        }
+                    });
+            }
+        });
+
+        setWatchingSockets(tmp);
+    }, [watching]);
 
     useEffect(() => {
         if (chainId && web3.config.isValidChainId(chainId)) {
             const _instance = web3.config.createInfuraWebSocket(chainId);
+            const _wsinstance = wsclient(chainId);
 
             setInstance(_instance);
+
+            setGraphInstance(_wsinstance);
 
             const _helper = new NuggftV1Helper(chainId, undefined);
 
@@ -83,6 +162,7 @@ export default () => {
             });
 
             return () => {
+                _wsinstance;
                 _instance.off(block__listener, () => undefined);
                 _instance.off(offer__listener, () => undefined);
                 _instance.off(stake__listener, () => undefined);

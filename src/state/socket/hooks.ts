@@ -59,6 +59,7 @@ export const useLiveOffers = (tokenId: string, starting: NL.Redux.Offer[]) => {
     React.useEffect(() => {
         setOffers(starting);
         starting && starting.length > 0 && setLeader(starting[0]);
+        SocketState.dispatch.watchASwap(tokenId);
 
         return () => {
             setOffers(undefined);
