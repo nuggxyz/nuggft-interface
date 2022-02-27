@@ -32,7 +32,6 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const epoch = ProtocolState.select.epoch();
     const endingSwapEpoch = SwapState.select.epoch();
     const address = web3.hook.usePriorityAccount();
-    const ethUsd = SwapState.select.ethUsd();
     const leader = SwapState.select.leader();
     const offers = SwapState.select.offers();
     const swapId = SwapState.select.id();
@@ -65,7 +64,12 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader);
 
-    state.socket.hook.useOffer((x) => {});
+    state.socket.hook.useOffer(
+        (x) => {
+            state.swap.dispatch.newLeader({ offer: x, swapId });
+        },
+        [swapId],
+    );
 
     const hasBids = useMemo(
         () =>

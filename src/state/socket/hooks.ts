@@ -6,7 +6,11 @@ import { BlockInfo, ClaimInfo, MintInfo, OfferInfo, StakeInfo } from './interfac
 
 import SocketState from './index';
 
-function useSocket<SocketInfo>(hook: () => SocketInfo, callback: (info: SocketInfo) => void) {
+function useSocket<SocketInfo>(
+    hook: () => SocketInfo,
+    callback: (info: SocketInfo) => void,
+    deps: any[] = [],
+) {
     const data = hook();
 
     const cb = React.useCallback(callback, [data, callback]);
@@ -18,8 +22,8 @@ function useSocket<SocketInfo>(hook: () => SocketInfo, callback: (info: SocketIn
     return null;
 }
 
-export const useOffer = (callback: (info: OfferInfo) => void) => {
-    return useSocket(SocketState.select.Offer, callback);
+export const useOffer = (callback: (info: OfferInfo) => void, deps?: any[]) => {
+    return useSocket(SocketState.select.Offer, callback, deps);
 };
 
 export const useMint = (callback: (info: MintInfo) => void) => {

@@ -81,18 +81,20 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
                 }>,
             ) => {
                 if (state.id === action.payload.swapId) {
+                    const top = {
+                        user: { id: action.payload.offer.account },
+                        eth: action.payload.offer.value,
+                    };
                     state.offers = [
                         { user: action.payload.offer.account, eth: action.payload.offer.value },
                         ...state.offers,
                     ];
-                    const top = state.offers[0];
                     if (
                         !isUndefinedOrNullOrObjectEmpty(top) &&
                         state.eth &&
                         +state.eth < +top.eth
                     ) {
                         state.eth = top.eth;
-                        state.ethUsd = top.ethUsd;
                         state.leader = top.user.id;
                     }
                 }
