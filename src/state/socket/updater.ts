@@ -163,12 +163,12 @@ export default () => {
 
             return () => {
                 _wsinstance;
-                instance.off(block__listener, () => undefined);
-                instance.off(offer__listener, () => undefined);
-                instance.off(stake__listener, () => undefined);
-                if (instance && instance._wsReady) {
-                    instance.removeAllListeners();
-                    instance.destroy();
+                _instance.off(block__listener, () => undefined);
+                _instance.off(offer__listener, () => undefined);
+                _instance.off(stake__listener, () => undefined);
+                if (_instance && instance._wsReady) {
+                    _instance.removeAllListeners();
+                    _instance.destroy();
                 }
             };
         }

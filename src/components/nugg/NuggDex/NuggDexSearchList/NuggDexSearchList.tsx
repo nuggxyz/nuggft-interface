@@ -1,27 +1,12 @@
-import React, {
-    FunctionComponent,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
-import {
-    animated,
-    config as springConfig,
-    useSpring,
-    useSpringRef,
-    useTransition,
-} from '@react-spring/web';
+import React, { FunctionComponent, SetStateAction, useCallback, useEffect, useState } from 'react';
+import { animated, useSpring } from '@react-spring/web';
 
-import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import NuggDexState from '@src/state/nuggdex';
 import activeNuggsQuery from '@src/state/nuggdex/queries/activeNuggsQuery';
 import ProtocolState from '@src/state/protocol';
 import constants from '@src/lib/constants';
 import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
-import usePrevious from '@src/hooks/usePrevious';
 import web3 from '@src/web3';
 
 import NuggList from './components/NuggList';
@@ -35,12 +20,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const viewing = NuggDexState.select.viewing();
     const chainId = web3.hook.usePriorityChainId();
 
-    const [allNuggs, setAllNuggs] = useState<
-        NL.GraphQL.Fragments.Nugg.ListItem[]
-    >([]);
-    const [activeNuggs, setActiveNuggs] = useState<
-        NL.GraphQL.Fragments.Nugg.ListItem[]
-    >([]);
+    const [allNuggs, setAllNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
+    const [activeNuggs, setActiveNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
     const recents = NuggDexState.select.recents();
 
     const animatedStyle = useSpring({
@@ -99,10 +80,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 
     useEffect(() => {
         if (epoch) {
-            viewing !== 'all nuggs' &&
-                handleGetAll(setAllNuggs, 0, false, filters);
-            viewing !== 'on sale' &&
-                handleGetActive(setActiveNuggs, 0, false, filters);
+            viewing !== 'all nuggs' && handleGetAll(setAllNuggs, 0, false, filters);
+            viewing !== 'on sale' && handleGetActive(setActiveNuggs, 0, false, filters);
         }
     }, [epoch]);
 
@@ -122,7 +101,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         position: 'absolute',
                         top: 0,
                         left: 0,
-                    }}>
+                    }}
+                >
                     <NuggList style={styles.nuggListEnter} values={recents} />
                 </NuggLink>
                 <NuggLink
@@ -132,7 +112,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         position: 'absolute',
                         top: 0,
                         right: 0,
-                    }}>
+                    }}
+                >
                     <NuggList
                         style={styles.nuggListEnter}
                         values={activeNuggs}
@@ -155,7 +136,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     }}
                     type="all nuggs"
                     previewNuggs={allNuggs}
-                    limit={7}>
+                    limit={7}
+                >
                     <NuggList
                         style={styles.nuggListEnter}
                         values={allNuggs}

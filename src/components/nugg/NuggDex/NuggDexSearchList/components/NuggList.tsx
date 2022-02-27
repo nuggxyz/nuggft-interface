@@ -81,12 +81,14 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
             style={{
                 ...styles.nuggListContainer,
                 ...(screenType === 'phone' && { position: 'relative' }),
-            }}>
+            }}
+        >
             <animated.div
                 style={{
                     ...styles.nuggListDefault,
                     ...style,
-                }}>
+                }}
+            >
                 {screenType !== 'phone' && (
                     <div style={styles.nuggListTitle}>
                         <div
@@ -98,7 +100,8 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
                                 padding: '.5rem',
                                 height: '100%',
                                 ...globalStyles.backdropFilter,
-                            }}>
+                            }}
+                        >
                             <TransitionText
                                 Icon={<ChevronLeft />}
                                 style={{ marginTop: '.12rem' }}

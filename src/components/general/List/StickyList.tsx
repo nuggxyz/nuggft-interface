@@ -120,7 +120,8 @@ const StickyList: FunctionComponent<PropsWithChildren<Props>> = ({
                     overflow: 'scroll',
                     ...styleRight,
                 }}
-                ref={listRef}>
+                ref={listRef}
+            >
                 {refData.map((item, index) =>
                     refData[index].items && refData[index].items.length > 0 ? (
                         <React.Fragment key={`list-${index}`}>
@@ -183,7 +184,8 @@ const RenderItem = ({
         <div id={item.title} ref={item.ref}>
             <div
                 // ref={ref}
-                style={styles.sticky}>
+                style={styles.sticky}
+            >
                 <TitleRenderItem
                     title={item.title}
                     setOpen={setOpen}
@@ -196,7 +198,8 @@ const RenderItem = ({
                     opacity,
                     height: open && previous === open ? 'auto' : height,
                     overflow: 'hidden',
-                }}>
+                }}
+            >
                 <animated.div style={{ opacity, y }} ref={ref}>
                     {item.items.map((childItem, index) => (
                         <React.Fragment key={`child-${index}`}>
