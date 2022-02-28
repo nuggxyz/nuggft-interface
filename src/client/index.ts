@@ -1,6 +1,8 @@
 import core from './core';
 import { useSafeLiveOffers, useLiveOffers } from './hooks/useLiveOffers';
+import { useLiveProtocol } from './hooks/useLiveProtocol';
 import { useSafeLiveStake, useLiveStake } from './hooks/useLiveStake';
+import { useLiveNugg } from './hooks/useLiveNugg';
 import updater from './updater';
 
 export default {
@@ -14,4 +16,6 @@ export default {
     useLiveOffers,
     useSafeLiveStake,
     useLiveStake,
+    useLiveNugg,
+    useLiveProtocol,
 };

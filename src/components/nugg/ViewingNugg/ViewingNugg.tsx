@@ -51,6 +51,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
 
     useEffect(() => {
         setItems([items[1], tokenId]);
+        console.log({ status, tokenId });
     }, [tokenId, chainId]);
 
     const getSwapHistory = useCallback(
