@@ -25,6 +25,8 @@ import {
 import web3 from '@src/web3';
 import client from '@src/client';
 import NextSwap from '@src/components/nugg/NextSwap/NextSwap';
+import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
+import { SupportedChainId } from '@src/web3/config';
 
 import styles from './RingAbout.styles';
 
@@ -63,10 +65,6 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     }, [status, txnToggle, swapId, prevToggle, chainId]);
 
     const [open, setOpen] = useState(false);
-
-    // const stateOffers = SwapState.select.offers();
-
-    // const { leader, offers } = state.socket.hook.useLiveOffers(tokenId, stateOffers);
 
     const { offers, leader } = client.hook.useSafeLiveOffers(tokenId);
 
@@ -191,13 +189,16 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                         textStyle={styles.leadingOffer}
                                         value={+fromEth(leader.eth)}
                                     />
-                                    <Text
+                                    <InteractiveText
                                         type="text"
                                         size="smaller"
                                         textStyle={{ color: Colors.textColor }}
+                                        action={function (): void {
+                                            web3.config.gotoEtherscan(chainId, 'tx', leader.txhash);
+                                        }}
                                     >
                                         {leaderEns}
-                                    </Text>
+                                    </InteractiveText>
                                 </animated.div>
                                 {offers.length > 1 && (
                                     <Button
@@ -226,7 +227,10 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                         offers.map(
                             (offer, index) =>
                                 index !== 0 && (
-                                    <OfferRenderItem {...{ provider, offer, index }} key={index} />
+                                    <OfferRenderItem
+                                        {...{ provider, offer, index, chainId }}
+                                        key={index}
+                                    />
                                 ),
                         )}
                 </animated.div>
@@ -272,20 +276,29 @@ export default React.memo(RingAbout);
 
 const OfferRenderItem = ({
     provider,
+    chainId,
     offer,
     index,
 }: {
     provider: Web3Provider;
-    offer: NL.Redux.Swap.Offer;
+    chainId: SupportedChainId;
+    offer: NL.Redux.Swap.Offer & { txhash: string };
     index: number;
 }) => {
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, offer.user);
     return (
         <div style={styles.offerAmount}>
             <CurrencyText image="eth" value={+fromEth(offer.eth)} />
-            <Text type="text" size="smaller" textStyle={{ color: Colors.textColor }}>
+            <InteractiveText
+                type="text"
+                size="smaller"
+                textStyle={{ color: Colors.textColor }}
+                action={function (): void {
+                    web3.config.gotoEtherscan(chainId, 'tx', offer.txhash);
+                }}
+            >
                 {leaderEns}
-            </Text>
+            </InteractiveText>
         </div>
     );
 };

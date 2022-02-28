@@ -11,6 +11,7 @@ const query = gql`
                 id
             }
             eth
+            txhash
             swap {
                 id
                 epoch {
@@ -24,7 +25,7 @@ const query = gql`
     }
 `;
 
-type Offer = { user: string; eth: string };
+type Offer = { user: string; eth: string; txhash: string };
 
 export const useLiveOffers = (tokenId: string) => {
     const apollo = client.live.apollo();
@@ -37,13 +38,14 @@ export const useLiveOffers = (tokenId: string) => {
                 offers: {
                     user: { id: string };
                     eth: string;
+                    txhash: string;
                     swap: { epoch: { id: string }; nugg: { id: string } };
                 }[];
             }>({ query: query, variables: { tokenId } })
             .subscribe((x) => {
                 setOffers(
                     x.data.offers.map((x) => {
-                        return { user: x.user.id, eth: x.eth };
+                        return { user: x.user.id, eth: x.eth, txhash: x.txhash };
                     }),
                 );
             });
@@ -65,7 +67,7 @@ export const useSafeLiveOffers = (tokenId: string) => {
     ////////////////////////////////
     useOffer((x) => {
         if (+x.tokenId === +tokenId) {
-            const input = { user: x.account, eth: x.value };
+            const input = { user: x.account, eth: x.value, txhash: x.txhash };
             merge(input);
         }
     });
