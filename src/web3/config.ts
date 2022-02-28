@@ -183,6 +183,11 @@ export const CHAIN_INFO: {
     },
 };
 
+export const gotoEtherscan = (chainId: SupportedChainId, route: 'tx', value: string) => {
+    let win = window.open(`${CHAIN_INFO[chainId].explorer}${route}/${value}`, '_blank');
+    win.focus();
+};
+
 export const createInfuraWebSocket = (chainId: SupportedChainId) => {
     return new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY);
 };
