@@ -36,7 +36,8 @@ const styles = NLStyleSheetCreator({
     renderButton: {
         background: Colors.gradient2,
         borderRadius: Layout.borderRadius.large,
-        padding: '.4rem .7rem',
+        // padding: '.4rem .7rem',
+        padding: '.2rem .6rem',
     },
     renderButtonLoan: {
         background: Colors.gradient3,
@@ -45,6 +46,7 @@ const styles = NLStyleSheetCreator({
     textWhite: {
         color: 'white',
         fontSize: FontSize.h6,
+        fontFamily: Layout.font.sf.regular,
     },
     eth: {
         background: Colors.gradient2,

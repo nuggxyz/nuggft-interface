@@ -274,7 +274,7 @@ const MintNuggButton = (chainId: SupportedChainId, provider: Web3Provider, addre
         textStyle={{
             color: Colors.nuggRedText,
             fontSize: FontSize.h6,
-            fontFamily: Layout.font.sf.light,
+            fontFamily: Layout.font.sf.regular,
         }}
         label="Mint a Nugg"
         onClick={() => WalletState.dispatch.mintNugg({ chainId, provider, address })}

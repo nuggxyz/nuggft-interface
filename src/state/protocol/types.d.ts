@@ -1,9 +1,8 @@
 declare namespace NL.Redux.Protocol {
-    type State = NL.GraphQL.Fragments.Protocol.Index & {
+    type State = NL.GraphQL.Fragments.Protocol.State & {
         error: Error;
         success: Success;
         loading: boolean;
-        currentBlock: number;
         epochIsOver: boolean;
     };
 
