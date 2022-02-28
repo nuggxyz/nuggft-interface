@@ -3,7 +3,11 @@ declare namespace NL.GraphQL.Fragments.Protocol {
 
     type State = Pick<
         Full,
-        'epoch' | 'genesisBlock' | 'nuggftStakedEthPerShare' | 'nuggftStakedUsdPerShare'
+        | 'epoch'
+        | 'genesisBlock'
+        | 'nuggftStakedEthPerShare'
+        | 'nuggftStakedUsdPerShare'
+        | 'interval'
     >;
 
     type Prices = Pick<

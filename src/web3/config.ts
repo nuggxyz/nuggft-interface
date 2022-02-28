@@ -42,7 +42,7 @@ export const CONTRACTS = {
         DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
     },
     [SupportedChainId.RINKEBY]: {
-        NuggftV1: '0x487E8f8f3E39F21b1a3dBAdbb7249ab3Bdf86164',
+        NuggftV1: '0x8239075908f08b64ab7818ff79652d25ae5301c6',
         DotnuggV1: '0x487E8f8f3E39F21b1a3dBAdbb7249ab3Bdf86164',
     },
     [SupportedChainId.GOERLI]: {

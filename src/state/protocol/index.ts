@@ -35,6 +35,7 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
             success: undefined,
             loading: false,
             epochIsOver: false,
+            interval: undefined,
         });
     }
 
@@ -84,6 +85,9 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
             builder
                 .addCase(thactions.getGenesisBlock.fulfilled, (state, action) => {
                     state.genesisBlock = action.payload.data;
+                })
+                .addCase(thactions.getInterval.fulfilled, (state, action) => {
+                    state.interval = action.payload.data;
                 })
                 .addCase(thactions.safeSetEpoch.fulfilled, (state, action) => {
                     state.epoch = action.payload.data.epoch;

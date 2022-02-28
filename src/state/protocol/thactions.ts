@@ -2,9 +2,10 @@ import { Web3Provider } from '@ethersproject/providers';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
-import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import { isUndefinedOrNullOrObjectEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import { SupportedChainId } from '@src/web3/config';
 
+import getIntervalQuery from './queries/getIntervalQuery';
 import updateEpochQuery from './queries/updateEpochQuery';
 import updateStakedQuery from './queries/updateStakedQuery';
 
@@ -110,8 +111,37 @@ const getGenesisBlock = createAsyncThunk<
     }
 });
 
+const getInterval = createAsyncThunk<
+    {
+        success: NL.Redux.Protocol.Success;
+        data: string;
+    },
+    { chainId: SupportedChainId },
+    {
+        rejectValue: NL.Redux.Protocol.Error;
+    }
+>('protocol/getInterval', async ({ chainId }, thunkAPI) => {
+    try {
+        const res = await getIntervalQuery(chainId);
+        console.log(res);
+
+        if (!isUndefinedOrNullOrStringEmpty(res)) {
+            return {
+                data: res,
+                success: 'SUCCESS',
+            };
+        }
+        console.log('protocol/getInterval');
+        return thunkAPI.rejectWithValue('UNKNOWN');
+    } catch (error) {
+        console.log('protocol/getInterval', error);
+        return thunkAPI.rejectWithValue('UNKNOWN');
+    }
+});
+
 export default {
     updateStaked,
     safeSetEpoch,
     getGenesisBlock,
+    getInterval,
 };

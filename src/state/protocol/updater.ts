@@ -9,40 +9,40 @@ import { isUndefinedOrNullOrNotBigNumber, isUndefinedOrNullOrNotNumber } from '@
 import ProtocolState from './index';
 export default () => {
     const genesisBlock = ProtocolState.select.genesisBlock();
+    const interval = ProtocolState.select.interval();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const blockListener = SocketState.select.Block();
+    
 
     useEffect(() => {
         if (provider && chainId) {
             ProtocolState.dispatch.getGenesisBlock({ provider, chainId });
+            ProtocolState.dispatch.getInterval({ chainId });
         }
     }, [chainId, provider]);
 
     const calculateEpochId = useCallback(
         (blocknum: number) => {
             if (!isUndefinedOrNullOrNotNumber(blocknum)) {
-                return genesisBlock
+                return genesisBlock && interval
                     ? BigNumber.from(blocknum)
                           .sub(genesisBlock)
-                          .div(poop.EPOCH_INTERVAL)
+                          .div(interval)
                           .add(poop.EPOCH_OFFSET)
                     : null;
             }
         },
-        [genesisBlock],
+        [genesisBlock, interval],
     );
 
     const calculateEpochStartBlock = useCallback(
         (epoch: BigNumberish) => {
-            return genesisBlock
-                ? BigNumber.from(epoch)
-                      .sub(poop.EPOCH_OFFSET)
-                      .mul(poop.EPOCH_INTERVAL)
-                      .add(genesisBlock)
+            return genesisBlock && interval
+                ? BigNumber.from(epoch).sub(poop.EPOCH_OFFSET).mul(interval).add(genesisBlock)
                 : null;
         },
-        [genesisBlock],
+        [genesisBlock, interval],
     );
 
     useEffect(() => {
@@ -63,7 +63,7 @@ export default () => {
                 }
             }
         }
-    }, [blockListener, genesisBlock]);
+    }, [blockListener, genesisBlock, interval, chainId]);
 
     useEffect(() => {
         ProtocolState.dispatch.updateStaked({ chainId });
