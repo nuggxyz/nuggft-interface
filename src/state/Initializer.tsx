@@ -2,6 +2,7 @@ import React, { FunctionComponent, ReactChild, useEffect } from 'react';
 
 import { safeResetLocalStorage } from '@src/lib';
 import web3 from '@src/web3';
+import client from '@src/client';
 
 import { states } from './store';
 
@@ -20,12 +21,13 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
         void web3.config.connectors.network.connector.activate();
         void web3.config.connectors.metamask.connector.connectEagerly();
         void web3.config.connectors.walletconnect.connector.connectEagerly();
+        void client.core.actions.startActivation();
     }, []);
 
     return (
         active && (
             <>
-                {Object.values(states).map((state, index) => (
+                {[...Object.values(states), client].map((state, index) => (
                     <state.updater key={index} />
                 ))}
                 {children}

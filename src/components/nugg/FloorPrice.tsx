@@ -1,27 +1,17 @@
 import React, { CSSProperties, FunctionComponent } from 'react';
 import { animated, useSpring } from '@react-spring/web';
+import { BigNumber } from 'ethers';
 
-import { EthInt, Fraction } from '@src/classes/Fraction';
 import Colors from '@src/lib/colors';
 import Layout from '@src/lib/layout';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Text from '@src/components/general/Texts/Text/Text';
-import state from '@src/state';
+import client from '@src/client';
 
 type Props = { style?: CSSProperties };
 
 const FloorPrice: FunctionComponent<Props> = ({ style }) => {
-    const socket = state.socket.select.Stake();
-
-    // const [realtime, setRealTime] = React.useState<number>(0);
-
-    // useEffect(() => {
-    //     if (socket !== undefined) {
-    //         setRealTime(
-    //             EthInt.fromFraction(new Fraction(socket.staked, socket.shares)).decimal.toNumber(),
-    //         );
-    //     }
-    // }, [socket]);
+    const { stake } = client.useSafeLiveStake();
 
     const springStyle = useSpring({
         // zIndex: 1000,
@@ -30,7 +20,7 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
         alignItems: 'center',
         justifyContent: 'center',
         margin: '.3rem 0rem',
-        opacity: socket && socket.shares !== '0x0' ? 1 : 0,
+        opacity: stake && stake.shares !== BigNumber.from(0) ? 1 : 0,
         ...style,
     });
 
@@ -52,13 +42,7 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
             <CurrencyText
                 size="small"
                 image="eth"
-                value={
-                    socket
-                        ? EthInt.fromFraction(
-                              new Fraction(socket.staked, socket.shares),
-                          ).decimal.toNumber()
-                        : 0
-                }
+                value={stake ? stake.eps.decimal.toNumber() : 0}
             />
         </animated.div>
     );

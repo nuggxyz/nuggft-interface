@@ -1,7 +1,8 @@
 import { InfuraWebSocketProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
 
-import { wsclient } from '@src/graphql/client';
+import { buildApolloSplitLink } from '@src/graphql/client';
 
 import { MetaMask } from './clients/metamask';
 import { Network } from './clients/network';
@@ -186,8 +187,11 @@ export const createInfuraWebSocket = (chainId: SupportedChainId) => {
     return new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY);
 };
 
-export const createGraphWebSocket = (chainId: SupportedChainId) => {
-    return wsclient(chainId);
+export const createApolloClient = (chainId: SupportedChainId) => {
+    return new ApolloClient<any>({
+        link: buildApolloSplitLink(GRAPH_ENPOINTS[chainId], GRAPH_WSS_ENDPOINTS[chainId]),
+        cache: new InMemoryCache(),
+    });
 };
 
 export const ENS_REGISTRAR_ADDRESSES: NL.Redux.Web32.AddressMap = {
