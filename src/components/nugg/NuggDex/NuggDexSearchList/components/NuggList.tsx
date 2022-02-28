@@ -12,7 +12,7 @@ import { animated, UseSpringProps } from '@react-spring/web';
 import { ChevronLeft } from 'react-feather';
 import { batch } from 'react-redux';
 
-import { isUndefinedOrNullOrStringEmpty, ucFirst } from '@src/lib';
+import { isUndefinedOrNullOrNotFunction, isUndefinedOrNullOrStringEmpty, ucFirst } from '@src/lib';
 import TransitionText from '@src/components/general/Texts/TransitionText/TransitionText';
 import globalStyles from '@src/lib/globalStyles';
 import NuggDexState from '@src/state/nuggdex';
@@ -68,12 +68,13 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
     }, [filters]);
 
     useEffect(() => {
-        onScrollEnd &&
+        if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
             onScrollEnd({
                 setLoading,
                 filters: { searchValue: '', sort: { by: 'id', asc: true } },
                 addToList: false,
             });
+        }
     }, []);
 
     return (
@@ -127,7 +128,9 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
                     RenderItem={NuggListRenderItem}
                     loading={loading}
                     onScrollEnd={() => {
-                        onScrollEnd({ setLoading, filters, addToList: true });
+                        if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
+                            onScrollEnd({ setLoading, filters, addToList: true });
+                        }
                     }}
                     action={onClick}
                     itemHeight={210}

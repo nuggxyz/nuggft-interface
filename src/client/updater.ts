@@ -28,7 +28,7 @@ export default () => {
                         };
                         nuggftStakedEth: string;
                         nuggftStakedShares: string;
-                        activeNuggs: { id: string }[];
+                        activeNuggs: { id: string; dotnuggRawCache: string }[];
                     };
                 }>({
                     query: gql`
@@ -42,8 +42,9 @@ export default () => {
                                 }
                                 nuggftStakedEth
                                 nuggftStakedShares
-                                activeNuggs {
+                                activeNuggs(orderBy: idnum) {
                                     id
+                                    dotnuggRawCache
                                 }
                             }
                         }
@@ -67,7 +68,9 @@ export default () => {
                             endBlock: +x.data.protocol.epoch.endBlock,
                             status: x.data.protocol.epoch.status,
                         },
-                        activeSwaps: x.data.protocol.activeNuggs.map((x) => x.id),
+                        activeSwaps: x.data.protocol.activeNuggs.map((x) => {
+                            return { id: x.id, dotnuggRawCache: x.dotnuggRawCache };
+                        }),
                     });
                 });
             return () => {

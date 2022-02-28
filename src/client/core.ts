@@ -29,7 +29,7 @@ export interface ClientState extends State {
         id: number;
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
-    activeSwaps: string[];
+    activeSwaps: { id: string; dotnuggRawCache: string }[];
     error: Error | undefined;
     activating: boolean;
 }
@@ -48,7 +48,7 @@ type ClientStateUpdate = {
         id: number;
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
-    activeSwaps?: string[];
+    activeSwaps?: { id: string; dotnuggRawCache: string }[];
     error?: Error;
     activating?: boolean;
 };

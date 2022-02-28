@@ -35,15 +35,9 @@ const NuggLinkThumbnail: FunctionComponent<{
             onClick={() => {
                 TokenState.dispatch.setNugg(item);
                 NuggftV1Helper.storeNugg(item.id, item.dotnuggRawCache);
-                NuggDexState.dispatch.addToRecents(
-                    item,
-                    //     {
-                    //     _localStorageValue: item,
-                    //     _localStorageTarget: 'recents',
-                    //     _localStorageExpectedType: 'array',
-                    // }
-                );
-            }}>
+                NuggDexState.dispatch.addToRecents(item);
+            }}
+        >
             <TokenViewer tokenId={item.id || ''} style={styles.nugg} data={item.dotnuggRawCache} />
             <Text size="smaller" textStyle={styles.label}>
                 {item.id}

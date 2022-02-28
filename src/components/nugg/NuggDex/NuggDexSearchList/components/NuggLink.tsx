@@ -24,7 +24,7 @@ type Props = {
 
 const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
     type,
-    previewNuggs,
+    previewNuggs = [],
     style,
     limit = 3,
     children,

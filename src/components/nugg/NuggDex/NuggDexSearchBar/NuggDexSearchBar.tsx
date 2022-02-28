@@ -27,7 +27,6 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const [sortAsc, setSortAsc] = useState(true);
 
     const previousSearchValue = usePrevious(debouncedValue);
-    const previousSortAsc = usePrevious(sortAsc);
 
     useEffect(() => {
         if (view === 'Search') {
@@ -41,7 +40,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
         } else {
             setSearchValue('');
         }
-    }, [debouncedValue, view, previousSearchValue, sortAsc, previousSortAsc]);
+    }, [debouncedValue, view, previousSearchValue, sortAsc]);
 
     useEffect(() => {
         if (
