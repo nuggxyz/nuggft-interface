@@ -79,6 +79,7 @@ export default () => {
                     })
                     .subscribe((value) => {
                         if (value.data) {
+                            console.log(value.data);
                             SocketState.dispatch.incomingEvent({
                                 type: SocketType.OFFER,
                                 account: value.data.user.id,
@@ -166,7 +167,7 @@ export default () => {
                 _instance.off(block__listener, () => undefined);
                 _instance.off(offer__listener, () => undefined);
                 _instance.off(stake__listener, () => undefined);
-                if (_instance && instance._wsReady) {
+                if (_instance && _instance._wsReady) {
                     _instance.removeAllListeners();
                     _instance.destroy();
                 }

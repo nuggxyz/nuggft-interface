@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 import config from '@src/config';
 
@@ -60,6 +60,12 @@ export const isUndefinedOrNullOrNotNumber = (value: any) => {
 };
 export const isUndefinedOrNullOrNumberZero = (value: any) => {
     return isUndefinedOrNullOrNotNumber(value) || value === 0;
+};
+export const isUndefinedOrNullOrNotBigNumber = (value: any) => {
+    return (
+        isUndefinedOrNullOrObjectEmpty(value) ||
+        isUndefinedOrNullOrBooleanFalse(BigNumber.isBigNumber(value))
+    );
 };
 
 export const toMili = (hours: number, minutes: number, seconds: number) => {

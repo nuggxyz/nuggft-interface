@@ -1,7 +1,9 @@
 declare namespace NL.GraphQL.Fragments.Protocol {
-    type Full = Omit<
-        NL.GraphQL.Protocol<NL.GraphQL.GraphScalars>,
-        '__typename'
+    type Full = Omit<NL.GraphQL.Protocol<NL.GraphQL.GraphScalars>, '__typename'>;
+
+    type State = Pick<
+        Full,
+        'epoch' | 'genesisBlock' | 'nuggftStakedEthPerShare' | 'nuggftStakedUsdPerShare'
     >;
 
     type Prices = Pick<
@@ -31,16 +33,11 @@ declare namespace NL.GraphQL.Fragments.Protocol {
         nuggftStakedShares: string;
     };
 
-    type Epochs = Pick<Full, 'interval' | 'epoch'> &
-        Staked & { genesisBlock: number };
+    type Epochs = Pick<Full, 'interval' | 'epoch'> & Staked & { genesisBlock: number };
 
     type Totals = Pick<
         Full,
-        | 'totalSwaps'
-        | 'totalUsers'
-        | 'totalItemSwaps'
-        | 'totalItems'
-        | 'totalNuggs'
+        'totalSwaps' | 'totalUsers' | 'totalItemSwaps' | 'totalItems' | 'totalNuggs'
     >;
 
     type Users = {
@@ -49,11 +46,5 @@ declare namespace NL.GraphQL.Fragments.Protocol {
         xnuggUser: NL.GraphQL.Fragments.User.Bare;
     };
 
-    type Index = Prices &
-        Actives &
-        Epochs &
-        Totals &
-        Users &
-        Staked &
-        Pick<Full, 'id' | 'init'>;
+    type Index = Prices & Actives & Epochs & Totals & Users & Staked & Pick<Full, 'id' | 'init'>;
 }

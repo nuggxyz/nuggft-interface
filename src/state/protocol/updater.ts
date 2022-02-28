@@ -1,8 +1,10 @@
 import { useCallback, useEffect } from 'react';
+import { BigNumber, BigNumberish } from 'ethers';
 
 import poop from '@src/config';
 import web3 from '@src/web3';
 import SocketState from '@src/state/socket';
+import { isUndefinedOrNullOrNotBigNumber, isUndefinedOrNullOrNotNumber } from '@src/lib';
 
 import ProtocolState from './index';
 export default () => {
@@ -19,22 +21,25 @@ export default () => {
 
     const calculateEpochId = useCallback(
         (blocknum: number) => {
-            return genesisBlock
-                ? Math.max(
-                      Math.floor(
-                          (blocknum - genesisBlock) / poop.EPOCH_INTERVAL + poop.EPOCH_OFFSET,
-                      ),
-                      0,
-                  )
-                : null;
+            if (!isUndefinedOrNullOrNotNumber(blocknum)) {
+                return genesisBlock
+                    ? BigNumber.from(blocknum)
+                          .sub(genesisBlock)
+                          .div(poop.EPOCH_INTERVAL)
+                          .add(poop.EPOCH_OFFSET)
+                    : null;
+            }
         },
         [genesisBlock],
     );
 
     const calculateEpochStartBlock = useCallback(
-        (epoch: number) => {
+        (epoch: BigNumberish) => {
             return genesisBlock
-                ? Math.floor((epoch - poop.EPOCH_OFFSET) * poop.EPOCH_INTERVAL + genesisBlock)
+                ? BigNumber.from(epoch)
+                      .sub(poop.EPOCH_OFFSET)
+                      .mul(poop.EPOCH_INTERVAL)
+                      .add(genesisBlock)
                 : null;
         },
         [genesisBlock],
@@ -42,22 +47,21 @@ export default () => {
 
     useEffect(() => {
         if (blockListener) {
-            // const blockToSet = Math.max(currentBlock, newBlock);
             const calculatedEpoch = calculateEpochId(blockListener.block);
-            // if (isUndefinedOrNullOrObjectEmpty(epoch) || calculatedEpoch !== +epoch.id) {
-            const startBlock = calculateEpochStartBlock(calculatedEpoch);
-            const endBlock = calculateEpochStartBlock(calculatedEpoch + 1) - 1;
-            if (startBlock && endBlock) {
-                ProtocolState.dispatch.safeSetEpoch({
-                    epoch: {
-                        id: '' + calculatedEpoch,
-                        startblock: '' + startBlock,
-                        endblock: '' + endBlock,
-                    },
-                    chainId,
-                });
+            if (!isUndefinedOrNullOrNotBigNumber(calculatedEpoch)) {
+                const startBlock = calculateEpochStartBlock(calculatedEpoch);
+                const endBlock = calculateEpochStartBlock(calculatedEpoch.add(1)).sub(1);
+                if (startBlock && endBlock) {
+                    ProtocolState.dispatch.safeSetEpoch({
+                        epoch: {
+                            id: calculatedEpoch.toString(),
+                            startblock: startBlock.toString(),
+                            endblock: endBlock.toString(),
+                        },
+                        chainId,
+                    });
+                }
             }
-            // }
         }
     }, [blockListener, genesisBlock]);
 
