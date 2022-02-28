@@ -26,8 +26,6 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const debouncedValue = useDebounce(searchValue, 100);
     const [sortAsc, setSortAsc] = useState(filters.sort.asc);
 
-    const previousSearchValue = usePrevious(debouncedValue);
-
     useEffect(() => {
         if (view === 'Search') {
             NuggDexState.dispatch.setSearchFilters({

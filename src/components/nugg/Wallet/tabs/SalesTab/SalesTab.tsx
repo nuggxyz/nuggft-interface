@@ -76,7 +76,7 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                 label="Sales"
                 loading={loadingNuggs}
                 style={listStyles.list}
-                extraData={[address]}
+                extraData={[address, chainId, provider]}
                 listEmptyText="No Nuggs on sale..."
                 labelStyle={styles.listLabel}
                 listEmptyStyle={listStyles.textWhite}
@@ -189,8 +189,14 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Swa
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
                     label={`Reclaim`}
-                    onClick={() => {}}
-                    // onClick={() => WalletState.dispatch.claim({ tokenId: item.nugg.id })}
+                    onClick={() =>
+                        WalletState.dispatch.claim({
+                            tokenId: item.nugg.id,
+                            address: extraData[0],
+                            provider: extraData[2],
+                            chainId: extraData[1],
+                        })
+                    }
                 />
             </div>
         )

@@ -20,6 +20,7 @@ import TokenState from '@src/state/token';
 import AppState from '@src/state/app';
 import usePrevious from '@src/hooks/usePrevious';
 import InfiniteList from '@src/components/general/List/InfiniteList';
+import Loader from '@src/components/general/Loader/Loader';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -61,10 +62,14 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
     }, []);
 
     useEffect(() => {
-        onScrollEnd &&
+        if (
+            !isUndefinedOrNullOrNotFunction(onScrollEnd) &&
             ((prevFilters && prevFilters.searchValue !== filters.searchValue) ||
-                filters.searchValue !== '') &&
+                filters.searchValue !== '' ||
+                prevFilters.sort.asc !== filters.sort.asc)
+        ) {
             onScrollEnd({ setLoading, filters, addToList: false });
+        }
     }, [filters]);
 
     useEffect(() => {
@@ -95,7 +100,7 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
                         <div
                             style={{
                                 display: 'flex',
-                                justifyContent: 'flex-start',
+                                justifyContent: 'space-between',
                                 alignItems: 'center',
                                 width: '100%',
                                 padding: '.5rem',
@@ -119,6 +124,7 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
                                     NuggDexState.dispatch.setViewing('home');
                                 }}
                             />
+                            {loading && <Loader color="black" />}
                         </div>
                     </div>
                 )}
