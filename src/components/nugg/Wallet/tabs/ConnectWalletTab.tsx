@@ -71,10 +71,13 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                             key={walletObject.name}
                             buttonStyle={{
                                 color: 'white',
+                                border: `${walletObject.color}`,
+                                borderWidth: '5px',
+                                borderStyle: 'solid',
                                 borderRadius: Layout.borderRadius.large,
                                 padding: '1rem',
                                 pointerEvents: 'auto',
-                                background: `${walletObject.color}66`,
+                                background: 'white',
                                 margin: '1rem',
                             }}
                             rightIcon={

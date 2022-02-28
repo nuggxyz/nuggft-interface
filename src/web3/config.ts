@@ -125,10 +125,10 @@ export const SUPPORTED_WALLETS: { [key: string]: NL.Redux.Web32.WalletInfo } = {
     WALLET_LINK: {
         connector: connectors.walletlink,
         name: 'Coinbase',
-        iconURL: 'walletConnect',
+        iconURL: 'coinbase',
         description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
         href: null,
-        color: '#4196FC',
+        color: '#1652f0',
         mobile: true,
     },
 };
