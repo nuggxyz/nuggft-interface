@@ -16,6 +16,8 @@ import SwapState from '@src/state/swap';
 import TransactionState from '@src/state/transaction';
 import {
     isUndefinedOrNull,
+    isUndefinedOrNullOrArrayEmpty,
+    isUndefinedOrNullOrBooleanFalse,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
@@ -29,12 +31,9 @@ type Props = {};
 
 const RingAbout: FunctionComponent<Props> = ({}) => {
     const screenType = AppState.select.screenType();
-    // const eth = SwapState.select.eth();
     const epoch = ProtocolState.select.epoch();
     const endingSwapEpoch = SwapState.select.epoch();
     const address = web3.hook.usePriorityAccount();
-    // const leader = SwapState.select.leader();
-    // const offers = SwapState.select.offers();
     const swapId = SwapState.select.id();
     const tokenId = SwapState.select.tokenId();
 
@@ -69,13 +68,6 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const { leader, offers } = state.socket.hook.useLiveOffers(tokenId, stateOffers);
 
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader && leader.user);
-
-    // state.socket.hook.useOffer(
-    //     (x) => {
-    //         if (x.tokenId === tokenId) state.swap.dispatch.newLeader({ offer: x, swapId });
-    //     },
-    //     [swapId],
-    // );
 
     const hasBids = useMemo(
         () =>
@@ -118,6 +110,16 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
             ],
         });
     }, [leader]);
+
+    useEffect(() => {
+        if (
+            !isUndefinedOrNullOrArrayEmpty(offers) &&
+            offers.length <= 1 &&
+            !isUndefinedOrNullOrBooleanFalse(open)
+        ) {
+            setOpen(false);
+        }
+    }, [swapId, open, offers]);
 
     const springStyle = useSpring({
         ...styles.offersContainer,
