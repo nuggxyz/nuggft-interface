@@ -185,7 +185,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                               })
                             : TokenState.dispatch.initSale({
                                   tokenId: stableId,
-                                  floor: check.nextSwapAmount,
+                                  floor: toEth(amount),
                                   chainId,
                                   provider,
                                   address,
