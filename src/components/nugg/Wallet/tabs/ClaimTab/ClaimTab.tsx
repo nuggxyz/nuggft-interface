@@ -14,7 +14,6 @@ import listStyles from '@src/components/nugg/Wallet/tabs/HistoryTab.styles';
 import Colors from '@src/lib/colors';
 import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
 import swapStyles from '@src/components/nugg/Wallet/tabs/SwapTab.styles';
-import TransactionState from '@src/state/transaction';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import { fromEth } from '@src/lib/conversion';
@@ -147,7 +146,8 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
                         display: 'flex',
                         alignItems: 'center',
                         // flexDirection: 'column',
-                    }}>
+                    }}
+                >
                     {isWinner ? (
                         <TokenViewer
                             tokenId={parsedTitle.nugg}

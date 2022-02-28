@@ -148,7 +148,8 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Swa
                         display: 'flex',
                         alignItems: 'center',
                         // flexDirection: 'column',
-                    }}>
+                    }}
+                >
                     {isWinner ? (
                         <TokenViewer
                             tokenId={parsedTitle.nugg}
@@ -183,6 +184,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Swa
                     </div>
                 </div>
                 <FeedbackButton
+                    type="text"
                     feedbackText="Check Wallet..."
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
