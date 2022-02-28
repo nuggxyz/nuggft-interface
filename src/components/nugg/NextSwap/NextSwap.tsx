@@ -7,11 +7,11 @@ type Props = { tokenId: string };
 
 const NextSwap: FunctionComponent<Props> = ({ tokenId }) => {
     const nugg = useLiveNugg((+tokenId + 1).toString());
-    const { activeNuggs } = useLiveProtocol();
+    const { activeSwaps } = useLiveProtocol();
 
     return (
         <div>
-            {activeNuggs.map((x) => (
+            {activeSwaps.map((x) => (
                 <p>{x}</p>
             ))}
         </div>

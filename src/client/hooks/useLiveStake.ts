@@ -22,7 +22,7 @@ type Stake = {
 };
 
 export const useLiveStake = () => {
-    const apollo = client.useApollo();
+    const apollo = client.live.apollo();
 
     const [offers, setStake] = React.useState<Stake>(undefined);
 

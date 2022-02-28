@@ -16,7 +16,6 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import state from '@src/state';
-import client from '@src/client';
 
 import styles from './TheRing.styles';
 
@@ -39,8 +38,6 @@ const TheRing: FunctionComponent<Props> = ({
     const endingSwapEpoch = SwapState.select.epoch();
     const startingSwapEpoch = SwapState.select.startingEpoch();
     const tokenId = SwapState.select.tokenId();
-
-    const stat = client.useLiveNugg(tokenId);
 
     const status = useSetState(() => {
         return isUndefinedOrNull(endingSwapEpoch)

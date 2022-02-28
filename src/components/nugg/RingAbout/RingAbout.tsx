@@ -69,7 +69,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     // const { leader, offers } = state.socket.hook.useLiveOffers(tokenId, stateOffers);
 
-    const { offers, leader } = client.useSafeLiveOffers(tokenId);
+    const { offers, leader } = client.hook.useSafeLiveOffers(tokenId);
 
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader && leader.user);
 

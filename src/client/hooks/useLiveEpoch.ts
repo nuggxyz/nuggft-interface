@@ -22,7 +22,7 @@ type Epoch = {
 };
 
 export const useLiveEpoch = (epochId: string) => {
-    const apollo = client.useApollo();
+    const apollo = client.live.apollo();
 
     const [epoch, setEpoch] = React.useState<Epoch>(undefined);
 
@@ -43,7 +43,7 @@ export const useLiveEpoch = (epochId: string) => {
                         endBlock: string;
                         status: 'OVER' | 'ACTIVE' | 'PENDING';
                     };
-                }>({ query: query, variables: {} })
+                }>({ query: query, variables: { epochId } })
                 .subscribe((x) => {
                     call({
                         id: +x.data.epoch.id,
@@ -56,7 +56,7 @@ export const useLiveEpoch = (epochId: string) => {
                 instance.unsubscribe();
             };
         }
-    }, [apollo]);
+    }, [apollo, epochId]);
 
     return epoch;
 };

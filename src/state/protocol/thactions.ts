@@ -26,7 +26,7 @@ const updateProtocol = createAsyncThunk<
     }
 >('protocol/updateProtocol', async ({ chainId }, thunkAPI) => {
     try {
-        const res = await updateProtocolQuery(client.core.store.getState().apollo);
+        const res = await updateProtocolQuery(client.static.apollo());
 
         return {
             data: res,
@@ -143,7 +143,7 @@ const updateActives = createAsyncThunk<
     }
 >('protocol/updateActives', async ({ chainId }, thunkAPI) => {
     try {
-        const res = await updateActivesQuery(client.core.store.getState().apollo);
+        const res = await updateActivesQuery(client.static.apollo());
 
         return {
             data: res,

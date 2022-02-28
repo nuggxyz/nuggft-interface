@@ -40,20 +40,24 @@ type Epoch = {
 type Swap = {};
 
 export const useLiveProtocol = () => {
-    const apollo = client.useApollo();
+    const apollo = client.live.apollo();
 
-    const [stake, setStake] = React.useState<Stake>(undefined);
-    const [epoch, setEpoch] = React.useState<Epoch>(undefined);
-    const [activeNuggs, setActiveNuggs] = React.useState<string[]>([]);
+    // const [stake, setStake] = React.useState<Stake>(undefined);
+    // const [epoch, setEpoch] = React.useState<Epoch>(undefined);
+    // const [activeNuggs, setActiveNuggs] = React.useState<string[]>([]);
 
-    const call = React.useCallback(
-        (_stake: Stake, _epoch: Epoch, _activeNuggs: string[]) => {
-            if (!stake || stake.eps.lt(_stake.eps)) setStake(_stake);
-            if (!epoch || epoch.id < _epoch.id || epoch.status !== _epoch.status) setEpoch(_epoch);
-            setActiveNuggs(_activeNuggs);
-        },
-        [stake, epoch],
-    );
+    const stake = client.live.stake();
+    const epoch = client.live.epoch();
+    const activeSwaps = client.live.activeSwaps();
+
+    // const call = React.useCallback(
+    //     (_stake: Stake, _epoch: Epoch, _activeNuggs: string[]) => {
+    //         if (!stake || stake.eps.lt(_stake.eps)) setStake(_stake);
+    //         if (!epoch || epoch.id < _epoch.id || epoch.status !== _epoch.status) setEpoch(_epoch);
+    //         setActiveNuggs(_activeNuggs);
+    //     },
+    //     [stake, epoch],
+    // );
 
     React.useEffect(() => {
         if (apollo) {
@@ -76,20 +80,20 @@ export const useLiveProtocol = () => {
 
                     const staked = BigNumber.from(x.data.protocol.nuggftStakedEth);
 
-                    call(
-                        {
+                    client.actions.updateProtocol({
+                        stake: {
                             staked,
                             shares,
                             eps: EthInt.fromFraction(new Fraction(staked, shares)),
                         },
-                        {
+                        epoch: {
                             id: +x.data.protocol.epoch.id,
                             startBlock: +x.data.protocol.epoch.startBlock,
                             endBlock: +x.data.protocol.epoch.endBlock,
                             status: x.data.protocol.epoch.status,
                         },
-                        x.data.protocol.activeNuggs.map((x) => x.id),
-                    );
+                        activeSwaps: x.data.protocol.activeNuggs.map((x) => x.id),
+                    });
                 });
             return () => {
                 instance.unsubscribe();
@@ -97,5 +101,5 @@ export const useLiveProtocol = () => {
         }
     }, [apollo]);
 
-    return { stake, epoch, activeNuggs };
+    return { stake, epoch, activeSwaps };
 };

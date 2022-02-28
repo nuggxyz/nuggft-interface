@@ -19,7 +19,7 @@ type Nugg = {
 export const useLiveNugg = (tokenId: string) => {
     const [nugg, setNugg] = React.useState<Nugg>(undefined);
 
-    const apollo = client.useApollo();
+    const apollo = client.live.apollo();
 
     useEffect(() => {
         if (tokenId) {

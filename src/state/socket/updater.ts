@@ -49,8 +49,8 @@ export default () => {
     const chainId = web3.hook.usePriorityChainId();
     const tx = TransactionState.select.txn();
 
-    const graphInstance = client.useApollo();
-    const instance = client.useInfura();
+    const graphInstance = client.live.apollo();
+    const instance = client.live.infura();
 
     const [init, setInit] = useState(false);
 
