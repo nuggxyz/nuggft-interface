@@ -21,7 +21,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
         void web3.config.connectors.network.connector.activate();
         void web3.config.connectors.metamask.connector.connectEagerly();
         void web3.config.connectors.walletconnect.connector.connectEagerly();
-        void client.core.actions.startActivation();
+        void client.actions.startActivation();
     }, []);
 
     return (

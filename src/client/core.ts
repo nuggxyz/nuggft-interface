@@ -1,9 +1,15 @@
 import { InfuraWebSocketProvider } from '@ethersproject/providers';
 import { ApolloClient } from '@apollo/client';
 import create, { State, StoreApi, UseBoundStore } from 'zustand';
+import { BigNumber } from 'ethers';
+
+import { EthInt } from '@src/classes/Fraction';
 
 const DEFAULT_STATE = {
     infura: undefined,
+    stake: undefined,
+    epoch: undefined,
+    activeSwaps: [],
     apollo: undefined,
     activating: false,
     error: undefined,
@@ -12,27 +18,45 @@ const DEFAULT_STATE = {
 export interface ClientState extends State {
     infura: InfuraWebSocketProvider | undefined;
     apollo: ApolloClient<any> | undefined;
+    stake: {
+        staked: BigNumber;
+        shares: BigNumber;
+        eps: EthInt;
+    };
+    epoch: {
+        startBlock: number;
+        endBlock: number;
+        id: number;
+        status: 'OVER' | 'ACTIVE' | 'PENDING';
+    };
+    activeSwaps: string[];
     error: Error | undefined;
     activating: boolean;
 }
 
-export type ClientStateUpdate =
-    | {
-          infura: InfuraWebSocketProvider;
-          apollo: ApolloClient<any>;
-      }
-    | {
-          infura: InfuraWebSocketProvider;
-          apollo?: never;
-      }
-    | {
-          infura?: never;
-          apollo: ApolloClient<any>;
-      };
+type ClientStateUpdate = {
+    infura?: InfuraWebSocketProvider;
+    apollo?: ApolloClient<any>;
+    stake?: {
+        staked: BigNumber;
+        shares: BigNumber;
+        eps: EthInt;
+    };
+    epoch?: {
+        startBlock: number;
+        endBlock: number;
+        id: number;
+        status: 'OVER' | 'ACTIVE' | 'PENDING';
+    };
+    activeSwaps?: string[];
+    error?: Error;
+    activating?: boolean;
+};
 
 export interface Actions {
     startActivation: () => () => void;
     update: (stateUpdate: ClientStateUpdate) => void;
+    updateProtocol: (stateUpdate: ClientStateUpdate) => void;
     reportError: (error: Error | undefined) => void;
 }
 
@@ -71,6 +95,35 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
     }
 
     /**
+     * Sets activating to true, indicating that an update is in progress.
+     *
+     * @returns cancelActivation - A function that cancels the activation by setting activating to false,
+     * as long as there haven't been any intervening updates.
+     */
+    function updateProtocol(stateUpdate: ClientStateUpdate): void {
+        nullifier++;
+
+        store.setState((existingState): ClientState => {
+            // determine the next chainId and accounts
+            const epoch = stateUpdate.epoch ?? existingState.epoch;
+            const stake = stateUpdate.stake ?? existingState.stake;
+            const infura = stateUpdate.infura ?? existingState.infura;
+            const apollo = stateUpdate.apollo ?? existingState.apollo;
+            const activeSwaps = stateUpdate.activeSwaps ?? existingState.activeSwaps;
+
+            // determine the next error
+            let error = existingState.error;
+
+            // let activating = existingState.activating;
+            // if (activating && (error || (infura && apollo))) {
+            //     activating = false;
+            // }
+
+            return { ...existingState, infura, apollo, epoch, stake, activeSwaps, error };
+        });
+    }
+
+    /**
      * Used to report a `stateUpdate` which is merged with existing state. The first `stateUpdate` that results in chainId
      * and accounts being set will also set activating to false, indicating a successful connection. Similarly, if an
      * error is set, the first `stateUpdate` that results in chainId and accounts being set will clear this error.
@@ -93,7 +146,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                 activating = false;
             }
 
-            return { infura, apollo, activating, error };
+            return { ...existingState, infura, apollo, activating, error };
         });
     }
 
@@ -108,7 +161,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         store.setState(() => ({ ...DEFAULT_STATE, error }));
     }
 
-    return { store, actions: { startActivation, update, reportError } };
+    return { store, actions: { startActivation, update, reportError, updateProtocol } };
 }
 
 export const core = createClientStoreAndActions();

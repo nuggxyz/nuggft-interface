@@ -1,11 +1,80 @@
 import { useEffect } from 'react';
+import React from 'react';
+import { gql } from '@apollo/client';
+import { BigNumber } from 'ethers';
 
 import web3 from '@src/web3';
+import { EthInt, Fraction } from '@src/classes/Fraction';
 
 import core from './core';
 
+import client from './index';
+
 export default () => {
     const chainId = web3.hook.usePriorityChainId();
+
+    const apollo = client.live.apollo();
+
+    React.useEffect(() => {
+        if (apollo) {
+            const instance = apollo
+                .subscribe<{
+                    protocol: {
+                        epoch: {
+                            id: string;
+                            startBlock: string;
+                            endBlock: string;
+                            status: 'OVER' | 'ACTIVE' | 'PENDING';
+                        };
+                        nuggftStakedEth: string;
+                        nuggftStakedShares: string;
+                        activeNuggs: { id: string }[];
+                    };
+                }>({
+                    query: gql`
+                        subscription useLiveProtocol {
+                            protocol(id: "0x42069") {
+                                epoch {
+                                    id
+                                    status
+                                    startblock
+                                    endblock
+                                }
+                                nuggftStakedEth
+                                nuggftStakedShares
+                                activeNuggs {
+                                    id
+                                }
+                            }
+                        }
+                    `,
+                    variables: {},
+                })
+                .subscribe((x) => {
+                    const shares = BigNumber.from(x.data.protocol.nuggftStakedShares);
+
+                    const staked = BigNumber.from(x.data.protocol.nuggftStakedEth);
+
+                    client.actions.updateProtocol({
+                        stake: {
+                            staked,
+                            shares,
+                            eps: EthInt.fromFraction(new Fraction(staked, shares)),
+                        },
+                        epoch: {
+                            id: +x.data.protocol.epoch.id,
+                            startBlock: +x.data.protocol.epoch.startBlock,
+                            endBlock: +x.data.protocol.epoch.endBlock,
+                            status: x.data.protocol.epoch.status,
+                        },
+                        activeSwaps: x.data.protocol.activeNuggs.map((x) => x.id),
+                    });
+                });
+            return () => {
+                instance.unsubscribe();
+            };
+        }
+    }, [apollo]);
 
     useEffect(() => {
         if (chainId && web3.config.isValidChainId(chainId)) {

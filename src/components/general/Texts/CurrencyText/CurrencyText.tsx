@@ -35,7 +35,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
 
     const spring = useSpring({
         val: value,
-        from: { val: 0 },
+        from: { val: value * 0.5 },
         config: config.molasses,
     });
 
@@ -45,10 +45,15 @@ const CurrencyText: React.FC<BalanceProps> = ({
             textStyle={{
                 ...styles.textStyle,
                 ...props.textStyle,
-            }}>
+            }}
+        >
             <animated.div className="number" style={{ paddingRight: '.5rem' }}>
                 {spring.val.to((val) =>
-                    isGwei ? (val * 10 ** 9).toFixed() : val.toFixed(percent ? 2 : 5),
+                    isGwei
+                        ? (val * 10 ** 9).toFixed()
+                        : val > 1
+                        ? val.toPrecision(percent ? 3 : 6)
+                        : val.toFixed(percent ? 2 : 5),
                 )}
             </animated.div>
             {percent && '%'}

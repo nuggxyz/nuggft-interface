@@ -27,7 +27,7 @@ const query = gql`
 type Offer = { user: string; eth: string };
 
 export const useLiveOffers = (tokenId: string) => {
-    const apollo = client.useApollo();
+    const apollo = client.live.apollo();
 
     const [offers, setOffers] = React.useState<Offer[]>([]);
 

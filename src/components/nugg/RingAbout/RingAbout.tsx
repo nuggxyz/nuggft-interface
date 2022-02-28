@@ -24,6 +24,7 @@ import {
 } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
+import NextSwap from '@src/components/nugg/NextSwap/NextSwap';
 
 import styles from './RingAbout.styles';
 
@@ -67,7 +68,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     // const { leader, offers } = state.socket.hook.useLiveOffers(tokenId, stateOffers);
 
-    const { offers, leader } = client.useSafeLiveOffers(tokenId);
+    const { offers, leader } = client.hook.useSafeLiveOffers(tokenId);
 
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader && leader.user);
 
@@ -131,131 +132,139 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     });
 
     return (
-        <animated.div
-            style={{
-                ...styles.container,
-                ...(screenType === 'phone' && {
-                    ...styles.mobile,
-                    background: springStyle.opacity.to(
-                        [0, 1],
-                        ['#FFFFFF00', Colors.transparentWhite],
-                    ),
-                }),
-            }}
-        >
-            <div style={styles.bodyContainer}>
-                <div
-                    style={
-                        styles[
-                            screenType !== 'desktop' ? 'leaderContainerMobile' : 'leaderContainer'
-                        ]
-                    }
-                >
-                    <Text
-                        textStyle={{
-                            ...styles.title,
-                            ...(screenType === 'phone' && {
-                                color: Colors.nuggBlueText,
-                            }),
-                        }}
+        <>
+            <NextSwap tokenId={tokenId} />
+            <animated.div
+                style={{
+                    ...styles.container,
+                    ...(screenType === 'phone' && {
+                        ...styles.mobile,
+                        background: springStyle.opacity.to(
+                            [0, 1],
+                            ['#FFFFFF00', Colors.transparentWhite],
+                        ),
+                    }),
+                }}
+            >
+                <div style={styles.bodyContainer}>
+                    <div
+                        style={
+                            styles[
+                                screenType !== 'desktop'
+                                    ? 'leaderContainerMobile'
+                                    : 'leaderContainer'
+                            ]
+                        }
                     >
-                        {status === 'ongoing' && hasBids
-                            ? 'Highest Offer'
-                            : status === 'ongoing' && !hasBids
-                            ? 'No offers yet...'
-                            : status === 'waiting'
-                            ? 'Place offer to begin auction'
-                            : 'Winner'}
-                    </Text>
-                    {hasBids && status !== 'waiting' && (
-                        <div
-                            style={
-                                styles[
-                                    screenType !== 'desktop'
-                                        ? 'leadingOfferContainerMobile'
-                                        : 'leadingOfferContainer'
-                                ]
-                            }
+                        <Text
+                            textStyle={{
+                                ...styles.title,
+                                ...(screenType === 'phone' && {
+                                    color: Colors.nuggBlueText,
+                                }),
+                            }}
                         >
-                            <animated.div
-                                //@ts-ignore
-                                style={flashStyle}
+                            {status === 'ongoing' && hasBids
+                                ? 'Highest Offer'
+                                : status === 'ongoing' && !hasBids
+                                ? 'No offers yet...'
+                                : status === 'waiting'
+                                ? 'Place offer to begin auction'
+                                : 'Winner'}
+                        </Text>
+                        {hasBids && status !== 'waiting' && (
+                            <div
+                                style={
+                                    styles[
+                                        screenType !== 'desktop'
+                                            ? 'leadingOfferContainerMobile'
+                                            : 'leadingOfferContainer'
+                                    ]
+                                }
                             >
-                                <CurrencyText
-                                    image="eth"
-                                    textStyle={styles.leadingOffer}
-                                    value={+fromEth(leader.eth)}
-                                />
-                                <Text
-                                    type="text"
-                                    size="smaller"
-                                    textStyle={{ color: Colors.textColor }}
+                                <animated.div
+                                    //@ts-ignore
+                                    style={flashStyle}
                                 >
-                                    {leaderEns}
-                                </Text>
-                            </animated.div>
-                            {offers.length > 1 && (
-                                <Button
-                                    rightIcon={
-                                        !open ? (
-                                            <ChevronUp color={Colors.nuggBlueText} size={14} />
-                                        ) : (
-                                            <ChevronDown color={Colors.nuggBlueText} size={14} />
-                                        )
-                                    }
-                                    onClick={() => setOpen(!open)}
-                                    buttonStyle={styles.allOffersButton}
-                                />
-                            )}
-                        </div>
-                    )}
+                                    <CurrencyText
+                                        image="eth"
+                                        textStyle={styles.leadingOffer}
+                                        value={+fromEth(leader.eth)}
+                                    />
+                                    <Text
+                                        type="text"
+                                        size="smaller"
+                                        textStyle={{ color: Colors.textColor }}
+                                    >
+                                        {leaderEns}
+                                    </Text>
+                                </animated.div>
+                                {offers.length > 1 && (
+                                    <Button
+                                        rightIcon={
+                                            !open ? (
+                                                <ChevronUp color={Colors.nuggBlueText} size={14} />
+                                            ) : (
+                                                <ChevronDown
+                                                    color={Colors.nuggBlueText}
+                                                    size={14}
+                                                />
+                                            )
+                                        }
+                                        onClick={() => setOpen(!open)}
+                                        buttonStyle={styles.allOffersButton}
+                                    />
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
-            {/*//@ts-ignore*/}
-            <animated.div style={springStyle}>
-                <Text textStyle={{ marginBottom: '1rem' }}>Previous offers</Text>
-                {offers &&
-                    offers.map(
-                        (offer, index) =>
-                            index !== 0 && (
-                                <OfferRenderItem {...{ provider, offer, index }} key={index} />
-                            ),
+                {/*//@ts-ignore*/}
+                <animated.div style={springStyle}>
+                    <Text textStyle={{ marginBottom: '1rem' }}>Previous offers</Text>
+                    {offers &&
+                        offers.map(
+                            (offer, index) =>
+                                index !== 0 && (
+                                    <OfferRenderItem {...{ provider, offer, index }} key={index} />
+                                ),
+                        )}
+                </animated.div>
+
+                {status !== 'over' &&
+                    (screenType === 'phone' || !isUndefinedOrNullOrStringEmpty(address)) && (
+                        <Button
+                            buttonStyle={{
+                                ...styles.button,
+                                ...(screenType === 'phone' && {
+                                    background: Colors.nuggBlueText,
+                                }),
+                            }}
+                            textStyle={{
+                                ...styles.buttonText,
+                                ...(screenType === 'phone' && {
+                                    color: 'white',
+                                }),
+                            }}
+                            onClick={() =>
+                                screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
+                                    ? AppState.dispatch.changeMobileView('Wallet')
+                                    : AppState.dispatch.setModalOpen({
+                                          name: 'OfferOrSell',
+                                          modalData: {
+                                              type: 'Offer',
+                                          },
+                                      })
+                            }
+                            label={
+                                screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
+                                    ? 'Connect wallet'
+                                    : 'Place offer'
+                            }
+                        />
                     )}
             </animated.div>
-
-            {status !== 'over' &&
-                (screenType === 'phone' || !isUndefinedOrNullOrStringEmpty(address)) && (
-                    <Button
-                        buttonStyle={{
-                            ...styles.button,
-                            ...(screenType === 'phone' && {
-                                background: Colors.nuggBlueText,
-                            }),
-                        }}
-                        textStyle={{
-                            ...styles.buttonText,
-                            ...(screenType === 'phone' && {
-                                color: 'white',
-                            }),
-                        }}
-                        onClick={() =>
-                            screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                                ? AppState.dispatch.changeMobileView('Wallet')
-                                : AppState.dispatch.setModalOpen({
-                                      name: 'OfferOrSell',
-                                      modalData: {
-                                          type: 'Offer',
-                                      },
-                                  })
-                        }
-                        label={
-                            screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                                ? 'Connect wallet'
-                                : 'Place offer'
-                        }
-                    />
-                )}
-        </animated.div>
+        </>
     );
 };
 
