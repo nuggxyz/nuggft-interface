@@ -23,7 +23,7 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
 import web3 from '@src/web3';
-import state from '@src/state';
+import client from '@src/client';
 
 import styles from './RingAbout.styles';
 
@@ -63,9 +63,11 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const [open, setOpen] = useState(false);
 
-    const stateOffers = SwapState.select.offers();
+    // const stateOffers = SwapState.select.offers();
 
-    const { leader, offers } = state.socket.hook.useLiveOffers(tokenId, stateOffers);
+    // const { leader, offers } = state.socket.hook.useLiveOffers(tokenId, stateOffers);
+
+    const { offers, leader } = client.useSafeLiveOffers(tokenId);
 
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader && leader.user);
 
