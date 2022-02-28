@@ -188,10 +188,14 @@ export const createInfuraWebSocket = (chainId: SupportedChainId) => {
 };
 
 export const createApolloClient = (chainId: SupportedChainId) => {
-    return new ApolloClient<any>({
+    const ok = new ApolloClient<any>({
         link: buildApolloSplitLink(GRAPH_ENPOINTS[chainId], GRAPH_WSS_ENDPOINTS[chainId]),
+        // connectToDevTools: true,
+
         cache: new InMemoryCache(),
     });
+    // window.__APOLLO_CLIENT__ = ok;
+    return ok;
 };
 
 export const ENS_REGISTRAR_ADDRESSES: NL.Redux.Web32.AddressMap = {
