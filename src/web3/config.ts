@@ -1,5 +1,8 @@
 import { InfuraWebSocketProvider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+
+import { buildApolloSplitLink } from '@src/graphql/client';
 
 import { MetaMask } from './clients/metamask';
 import { Network } from './clients/network';
@@ -40,8 +43,8 @@ export const CONTRACTS = {
         DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
     },
     [SupportedChainId.RINKEBY]: {
-        NuggftV1: '0x47f7100Fd49A162A08D000202eb68145Aa9CeBaC',
-        DotnuggV1: '0x6039df117f2d6e805d90114809ca3769a2f50ddb',
+        NuggftV1: '0x487E8f8f3E39F21b1a3dBAdbb7249ab3Bdf86164',
+        DotnuggV1: '0x487E8f8f3E39F21b1a3dBAdbb7249ab3Bdf86164',
     },
     [SupportedChainId.GOERLI]: {
         NuggftV1: '0x7ccd9a783e43845f3ae37e83b4a696b0cfab114c',
@@ -54,6 +57,13 @@ export const GRAPH_ENPOINTS = {
     [SupportedChainId.RINKEBY]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby`,
     [SupportedChainId.ROPSTEN]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
     [SupportedChainId.GOERLI]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli`,
+};
+
+export const GRAPH_WSS_ENDPOINTS = {
+    [SupportedChainId.MAINNET]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-mainnet`,
+    [SupportedChainId.RINKEBY]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby`,
+    [SupportedChainId.ROPSTEN]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
+    [SupportedChainId.GOERLI]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli`,
 };
 
 export const NETWORK_URLS = {
@@ -175,6 +185,13 @@ export const CHAIN_INFO: {
 
 export const createInfuraWebSocket = (chainId: SupportedChainId) => {
     return new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY);
+};
+
+export const createApolloClient = (chainId: SupportedChainId) => {
+    return new ApolloClient<any>({
+        link: buildApolloSplitLink(GRAPH_ENPOINTS[chainId], GRAPH_WSS_ENDPOINTS[chainId]),
+        cache: new InMemoryCache(),
+    });
 };
 
 export const ENS_REGISTRAR_ADDRESSES: NL.Redux.Web32.AddressMap = {

@@ -8,9 +8,9 @@ import {
 } from '@src/lib';
 import AppState from '@src/state/app';
 import { NLState } from '@src/state/NLState';
-import {CHAIN_INFO} from '@src/web3/config';
+import { CHAIN_INFO } from '@src/web3/config';
 
-import TransactionState from '.';
+import TransactionState from './index';
 
 export const pending: NL.Redux.Middleware<
     Record<string, unknown>,
@@ -48,6 +48,7 @@ export const pending: NL.Redux.Middleware<
                 action.payload.callbackFn();
             }
         }
+        // console.log(state);
         if (NLState.hasSuffix(action, 'finalizeTransaction')) {
             AppState.dispatch.replaceToast({
                 //@ts-ignore

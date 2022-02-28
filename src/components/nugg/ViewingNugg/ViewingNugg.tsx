@@ -1,11 +1,19 @@
-import React, { FunctionComponent, useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import React, {
+    FunctionComponent,
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useState,
+} from 'react';
+import { Web3Provider } from '@ethersproject/providers';
+import { IoEllipsisHorizontal } from 'react-icons/io5';
 
 import { Address } from '@src/classes/Address';
-import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import { isUndefinedOrNullOrObjectEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import Colors from '@src/lib/colors';
 import constants from '@src/lib/constants';
 import { fromEth } from '@src/lib/conversion';
-import Layout from '@src/lib/layout';
 import AppState from '@src/state/app';
 import ProtocolState from '@src/state/protocol';
 import TokenState from '@src/state/token';
@@ -19,8 +27,12 @@ import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
 import { CONTRACTS } from '@src/web3/config';
+import Flyout from '@src/components/general/Flyout/Flyout';
+import StickyList from '@src/components/general/List/StickyList';
+import state from '@src/state';
 
 import styles from './ViewingNugg.styles';
+import OwnerButtons from './OwnerButtons';
 
 type Props = { MobileBackButton?: () => JSX.Element };
 
@@ -35,6 +47,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const provider = web3.hook.usePriorityProvider();
     const ens = web3.hook.usePriorityAnyENSName(provider, owner);
     const [items, setItems] = useState([tokenId]);
+    const [showMenu, setShowMenu] = useState(false);
 
     useEffect(() => {
         setItems([items[1], tokenId]);
@@ -59,6 +72,10 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const getThumbnail = useCallback(async () => {
         const thumbnail = await nuggThumbnailQuery(chainId, tokenId);
         setOwner(thumbnail?.user?.id);
+        setShowMenu(
+            isUndefinedOrNullOrObjectEmpty(thumbnail?.activeSwap) &&
+                isUndefinedOrNullOrObjectEmpty(thumbnail?.activeLoan),
+        );
     }, [tokenId, chainId]);
 
     useLayoutEffect(() => {
@@ -72,21 +89,34 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
         !isUndefinedOrNullOrStringEmpty(tokenId) && (
             <div
                 style={{
-                    // flexDirection: AppState.isMobile ? 'column' : 'row',
-                    ...styles.wrapper,
-                }}>
+                    ...styles.container,
+                    ...(screenType === 'phone' && { padding: '0rem .5rem' }),
+                }}
+            >
+                {MobileBackButton && (
+                    <div
+                        style={{
+                            position: 'fixed',
+                            top: '1rem',
+                            left: '1rem',
+                            zIndex: 101,
+                        }}
+                    >
+                        <MobileBackButton />
+                    </div>
+                )}
                 <div
-                    style={{
-                        ...styles.container,
-                        ...(screenType === 'phone' && { width: '95%' }),
-                    }}>
-                    <AnimatedCard>
-                        <TokenViewer
-                            tokenId={tokenId}
-                            data={svg}
-                            showLabel={screenType === 'phone'}
-                        />
-                    </AnimatedCard>
+                    style={
+                        screenType == 'phone' ? styles.nuggContainerMobile : styles.nuggContainer
+                    }
+                >
+                    <div style={{ position: 'fixed' }}>
+                        <AnimatedCard>
+                            <TokenViewer tokenId={tokenId} data={svg} />
+                        </AnimatedCard>
+                    </div>
+                </div>
+                <div style={styles.swapsWrapper}>
                     <Swaps
                         {...{
                             chainId,
@@ -96,7 +126,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                             tokenId,
                             address,
                             owner,
-                            MobileBackButton,
+                            showMenu,
                         }}
                     />
                 </div>
@@ -105,28 +135,58 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     );
 };
 
-const Swaps = ({ chainId, provider, swaps, tokenId, address, owner, MobileBackButton, ens }) => {
+type SwapsProps = {
+    chainId: number;
+    provider: Web3Provider;
+    swaps: NL.GraphQL.Fragments.Swap.Thumbnail[];
+    tokenId: string;
+    address: string;
+    owner: string;
+    MobileBackButton?: () => JSX.Element;
+    showMenu?: boolean;
+    ens: string;
+};
+
+const Swaps: FunctionComponent<SwapsProps> = ({
+    chainId,
+    provider,
+    swaps,
+    tokenId,
+    address,
+    owner,
+    showMenu,
+    ens,
+}) => {
     const epoch = ProtocolState.select.epoch();
-    const filteredSwaps = swaps.filter(
-        (swap) => swap.endingEpoch !== null && swap.endingEpoch !== epoch?.id,
-    );
+    const screenType = state.app.select.screenType();
+
+    const listData = useMemo(() => {
+        let activeSwap = undefined;
+        const filteredSwaps = swaps.filter((swap) => {
+            if (swap.endingEpoch !== null && +swap.endingEpoch !== +epoch?.id) {
+                return true;
+            } else {
+                activeSwap = swap;
+                return false;
+            }
+        });
+
+        let res = [];
+        if (!isUndefinedOrNullOrObjectEmpty(activeSwap)) {
+            res.push({ title: 'Ongoing Sale', items: [activeSwap] });
+        }
+        res.push({
+            title: 'Previous Sales',
+            items: filteredSwaps,
+        });
+
+        return res;
+    }, [swaps, epoch]);
 
     return (
-        <div style={styles.swaps}>
+        <div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
             <div style={styles.owner}>
-                {MobileBackButton ? (
-                    <MobileBackButton />
-                ) : (
-                    <Text
-                        textStyle={{
-                            color: 'white',
-                            padding: '1rem',
-                            background: Colors.nuggBlueSemiTransparent,
-                            borderRadius: Layout.borderRadius.small,
-                        }}>
-                        Nugg #{tokenId}
-                    </Text>
-                )}
+                <Text textStyle={styles.nuggId}>Nugg #{tokenId}</Text>
                 <div style={{ marginLeft: '1rem' }}>
                     {owner ? (
                         <>
@@ -135,15 +195,11 @@ const Swaps = ({ chainId, provider, swaps, tokenId, address, owner, MobileBackBu
                                 size="smaller"
                                 textStyle={{
                                     color: Colors.nuggBlueText,
-                                }}>
+                                }}
+                            >
                                 Owner
                             </Text>
-                            <Text
-                                textStyle={{
-                                    color: Colors.nuggBlueText,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                }}>
+                            <Text textStyle={styles.titleText}>
                                 {owner === Address.ZERO.hash ||
                                 owner === CONTRACTS[chainId].NuggftV1
                                     ? 'NuggftV1'
@@ -152,7 +208,8 @@ const Swaps = ({ chainId, provider, swaps, tokenId, address, owner, MobileBackBu
                                     <Text
                                         type="text"
                                         size="smaller"
-                                        textStyle={{ paddingLeft: '.5rem' }}>
+                                        textStyle={{ paddingLeft: '.5rem' }}
+                                    >
                                         (you)
                                     </Text>
                                 )}
@@ -162,161 +219,86 @@ const Swaps = ({ chainId, provider, swaps, tokenId, address, owner, MobileBackBu
                         <Loader color={Colors.nuggBlueText} />
                     )}
                 </div>
-            </div>
-            {owner === address && (
-                <div
-                    style={{
-                        // width: '50%',
-                        display: 'flex',
-                        padding: '.5rem',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}>
-                    <div
-                        style={{
-                            display: 'flex',
-                            borderRadius: Layout.borderRadius.large,
-                            overflow: 'hidden',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            // marginLeft: '1rem',
-                            background: Colors.gradient2Transparent,
-                        }}>
-                        <Button
-                            textStyle={MobileBackButton ? styles.textBlue : styles.textWhite}
-                            buttonStyle={{
-                                ...styles.button,
-                                background: MobileBackButton ? 'white' : 'transparent', //Colors.gradient2Transparent,
-                            }}
-                            label="Sell"
-                            onClick={() =>
-                                AppState.dispatch.setModalOpen({
-                                    name: 'OfferOrSell',
-                                    modalData: {
-                                        targetId: tokenId,
-                                        type: 'StartSale',
-                                    },
-                                })
-                            }
-                        />
-                        <Button
-                            textStyle={MobileBackButton ? styles.textBlue : styles.textWhite}
-                            buttonStyle={{
-                                ...styles.button,
-                                background: MobileBackButton ? 'white' : 'transparent', //Colors.gradient2Transparent,
-                            }}
-                            label="Loan"
-                            onClick={() =>
-                                AppState.dispatch.setModalOpen({
-                                    name: 'LoanOrBurn',
-                                    modalData: {
-                                        targetId: tokenId,
-                                        type: 'Loan',
-                                        backgroundStyle: {
-                                            background: Colors.gradient3,
-                                        },
-                                    },
-                                })
-                            }
-                        />
-                        <Button
-                            textStyle={MobileBackButton ? styles.textBlue : styles.textWhite}
-                            buttonStyle={{
-                                ...styles.button,
-                                background: MobileBackButton ? 'white' : 'transparent', //Colors.gradient2Transparent,
-                            }}
-                            label="Burn"
-                            onClick={() =>
-                                AppState.dispatch.setModalOpen({
-                                    name: 'LoanOrBurn',
-                                    modalData: {
-                                        targetId: tokenId,
-                                        type: 'Burn',
-                                        backgroundStyle: {
-                                            background: Colors.gradient3,
-                                        },
-                                    },
-                                })
-                            }
-                        />
-                    </div>
-                </div>
-            )}
-            <div style={{ padding: '0rem 1rem 1rem 1rem' }}>
-                {swaps.find(
-                    (swap) => swap.endingEpoch === null || swap.endingEpoch === epoch?.id,
-                ) && (
-                    <SwapItem
-                        swap={swaps.find(
-                            (swap) => swap.endingEpoch === null || swap.endingEpoch === epoch?.id,
-                        )}
-                        chainId={chainId}
-                        provider={provider}
-                        index={-1}
-                    />
+                {owner === address && showMenu && (
+                    <Flyout
+                        containerStyle={styles.flyout}
+                        style={{ right: '1rem', top: '2rem' }}
+                        button={
+                            <div style={styles.flyoutButton}>
+                                <IoEllipsisHorizontal color={Colors.white} />
+                            </div>
+                        }
+                    >
+                        <OwnerButtons tokenId={tokenId} />
+                    </Flyout>
                 )}
-                {filteredSwaps.length > 0 && (
-                    <Text textStyle={{ marginTop: '.5rem' }}>Previous Swaps</Text>
-                )}
-                <div style={{ overflow: 'scroll' }}>
-                    {filteredSwaps.map((swap, index) => (
-                        <div key={index}>
-                            <SwapItem {...{ chainId, swap, index, provider }} />
-                        </div>
-                    ))}
-                </div>
             </div>
+            <StickyList
+                data={listData}
+                TitleRenderItem={SwapTitle}
+                ChildRenderItem={SwapItem}
+                extraData={[chainId, provider]}
+                style={{ height: '100%' }}
+                styleRight={styles.stickyList}
+            />
         </div>
     );
 };
 
-const SwapItem = ({ provider, swap, index, chainId }) => {
-    const awaitingBid = swap.endingEpoch === null;
-    const ens = web3.hook.usePriorityAnyENSName(provider, swap.leader.id);
+const SwapTitle = ({ title }) => {
     return (
-        <Button
-            buttonStyle={styles.swap}
-            onClick={() => AppState.onRouteUpdate(chainId, `#/swap/${swap.id}`)}
-            rightIcon={
-                <>
-                    <div
-                        style={{
-                            width: '100%',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            display: 'flex',
-                        }}>
-                        <Text>
-                            {awaitingBid
-                                ? 'Awaiting bid!'
-                                : swap.num === '0'
-                                ? 'Mint'
-                                : `Swap #${swap.num}`}
-                        </Text>
-                        <CurrencyText image="eth" value={+fromEth(swap.eth)} />
-                    </div>
-                    <div>
-                        <Text
-                            type="text"
-                            size="smaller"
-                            textStyle={{
-                                color: Colors.textColor,
-                            }}>
-                            {awaitingBid ? 'On sale by' : 'Purchased from'}
-                        </Text>
-                        <Text
-                            textStyle={{
-                                color: 'white',
-                            }}>
-                            {swap.owner.id === Address.ZERO.hash ||
-                            swap.owner.id === CONTRACTS[chainId].NuggftV1
-                                ? 'NuggftV1'
-                                : ens}
-                        </Text>
-                    </div>
-                </>
-            }
-        />
+        <div style={{ display: 'flex' }}>
+            <Text textStyle={styles.listTitle}>{title}</Text>
+        </div>
+    );
+};
+
+const SwapItem = ({ item, index, extraData }) => {
+    const awaitingBid = item.endingEpoch === null;
+    const ens = web3.hook.usePriorityAnyENSName(extraData[1], item.leader.id);
+    return (
+        <div style={{ padding: '.25rem 1rem' }}>
+            <Button
+                key={index}
+                buttonStyle={styles.swap}
+                onClick={() => AppState.onRouteUpdate(extraData[0], `#/swap/${item.id}`)}
+                rightIcon={
+                    <>
+                        <div style={styles.swapButton}>
+                            <Text>
+                                {awaitingBid
+                                    ? 'Awaiting bid!'
+                                    : item.num === '0'
+                                    ? 'Mint'
+                                    : `Swap #${item.num}`}
+                            </Text>
+                            <CurrencyText image="eth" value={+fromEth(item.eth)} />
+                        </div>
+                        <div>
+                            <Text
+                                type="text"
+                                size="smaller"
+                                textStyle={{
+                                    color: Colors.textColor,
+                                }}
+                            >
+                                {awaitingBid ? 'On sale by' : 'Purchased from'}
+                            </Text>
+                            <Text
+                                textStyle={{
+                                    color: 'white',
+                                }}
+                            >
+                                {item.owner.id === Address.ZERO.hash ||
+                                item.owner.id === CONTRACTS[extraData[0]].NuggftV1
+                                    ? 'NuggftV1'
+                                    : ens}
+                            </Text>
+                        </div>
+                    </>
+                }
+            />
+        </div>
     );
 };
 export default React.memo(ViewingNugg);

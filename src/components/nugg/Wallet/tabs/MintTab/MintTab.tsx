@@ -104,7 +104,8 @@ const MintTab: FunctionComponent<Props> = () => {
                                   alignItems: 'center',
                               }
                             : undefined
-                    }>
+                    }
+                >
                     <NumberStatistic
                         style={{
                             alignItems: 'center',
@@ -122,7 +123,8 @@ const MintTab: FunctionComponent<Props> = () => {
                                 padding: '12px 10px',
                                 borderRadius: Layout.borderRadius.medium,
                                 width: '48%',
-                            }}>
+                            }}
+                        >
                             <AccountViewer />
                         </div>
                     )}
@@ -180,7 +182,6 @@ const MintTab: FunctionComponent<Props> = () => {
                 loading={loadingNuggs}
                 style={listStyle.list}
                 listEmptyStyle={listStyle.textWhite}
-                // extraData={[images]}
                 listEmptyText="You don't have any Nuggs yet!"
                 loaderColor="white"
                 onScrollEnd={getMyNuggs}
@@ -209,17 +210,51 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Nug
                         }}
                         buttonStyle={{ ...styles.listNuggButton, ...style }}
                         rightIcon={
-                            <>
-                                <TokenViewer
-                                    tokenId={item.id || ''}
-                                    style={styles.listNugg}
-                                    data={item.dotnuggRawCache}
-                                />
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    width: '100%',
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <TokenViewer
+                                        tokenId={item.id || ''}
+                                        style={styles.listNugg}
+                                        data={item.dotnuggRawCache}
+                                    />
 
-                                <Text textStyle={{ color: Colors.nuggRedText }}>
-                                    Nugg #{item.id || ''}
-                                </Text>
-                            </>
+                                    <Text textStyle={{ color: Colors.nuggRedText }}>
+                                        Nugg #{item.id || ''}
+                                    </Text>
+                                </div>
+                                {!isUndefinedOrNullOrObjectEmpty(item.activeLoan) ||
+                                !isUndefinedOrNullOrObjectEmpty(item.activeSwap) ? (
+                                    <Text
+                                        textStyle={{
+                                            color: Colors.secondaryColor,
+                                            background: Colors.nuggRedText,
+                                            borderRadius: Layout.borderRadius.large,
+                                            padding: '.1rem .4rem ',
+                                            position: 'absolute',
+                                            top: '-.3rem',
+                                            right: '-.3rem',
+                                        }}
+                                        size="smaller"
+                                        type="text"
+                                    >
+                                        {!isUndefinedOrNullOrObjectEmpty(item.activeLoan)
+                                            ? 'Loaned'
+                                            : 'On sale'}
+                                    </Text>
+                                ) : null}
+                            </div>
                         }
                     />
                 )

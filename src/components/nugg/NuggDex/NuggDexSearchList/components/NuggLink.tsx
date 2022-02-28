@@ -1,22 +1,19 @@
 import React, {
     CSSProperties,
-    Dispatch,
     FunctionComponent,
     PropsWithChildren,
-    SetStateAction,
     useCallback,
-    useMemo,
     useRef,
 } from 'react';
 import { animated, useSpring, WithAnimated } from '@react-spring/web';
 
 import { ucFirst } from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
+import NuggDexState from '@src/state/nuggdex';
 
 import styles from './NuggDexComponents.styles';
 import NuggLinkAnchor from './NuggLinkAnchor';
 import NuggLinkThumbnail from './NuggLinkThumbnail';
-import NuggDexState from '@src/state/nuggdex';
 
 type Props = {
     type: NL.Redux.NuggDex.SearchViews;
@@ -58,7 +55,8 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                 ...animation,
                 ...style,
                 zIndex,
-            }}>
+            }}
+        >
             <animated.div style={styles.nuggLinkPreviewContainer}>
                 <animated.div
                     style={{
@@ -71,7 +69,8 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                             output: [1, 0],
                         }),
                         ...styles.nuggLinkItemsContainer,
-                    }}>
+                    }}
+                >
                     {previewNuggs
                         .first(limit)
                         .map(
@@ -104,7 +103,8 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                             range: [0, 1],
                             output: [1, 0],
                         }),
-                    }}>
+                    }}
+                >
                     {children}
                 </animated.div>
             </animated.div>
@@ -113,7 +113,8 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                 textStyle={{
                     ...styles.nuggLinkCategoryTitle,
                     opacity: opacityText,
-                }}>
+                }}
+            >
                 {ucFirst(type)}
             </Text>
         </animated.div>

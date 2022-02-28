@@ -14,6 +14,7 @@ const styles = NLStyleSheetCreator({
         zIndex: 10000,
         userSelect: 'none',
         pointerEvents: 'auto',
+        overflow: 'hidden',
     },
 });
 

@@ -16,8 +16,10 @@ declare namespace NL.Redux {
     type Dispatch<A> = import('@reduxjs/toolkit').Dispatch<A>;
 
     type Updater = import('react').FC;
-    type Hook = (any) => any;
+    type Hook = (...any) => any;
     type Hooks = Hook[];
+
+    type Offer = { eth: string; user: string };
 
     type Thactions = Dictionary<import('@reduxjs/toolkit').AsyncThunk<any, any, any>>;
 

@@ -3,18 +3,12 @@ import { ethers } from 'ethers';
 
 import config from '@src/config';
 
-export const gatsbyDOM = (
-    variable: 'window' | 'localStorage' | 'sessionStorage' | 'navigator' | 'document',
-) => {
-    if (variable === 'window') return typeof window !== `undefined` ? window : false;
-    else if (variable === 'localStorage')
-        return typeof localStorage !== `undefined` ? localStorage : false;
-    else if (variable === 'sessionStorage')
-        return typeof sessionStorage !== `undefined` ? sessionStorage : false;
-    else if (variable === 'navigator') return typeof navigator !== `undefined` ? navigator : false;
-    else if (variable === 'document') return typeof document !== `undefined` ? document : false;
-    else return false;
-};
+import * as colors from './colors';
+import * as constants from './constants';
+import * as conversion from './conversion';
+import * as fontSize from './fontSize';
+import * as layout from './layout';
+
 // 6287103
 // VERIFICATION
 export const isAnybodyThere = (value: any) => {
@@ -80,8 +74,7 @@ export const NLStyleSheetCreator = <T extends NLStyleSheet>(arg: T): T => {
     return arg;
 };
 
-export const safeNavigate = (url: string) =>
-    gatsbyDOM('window') ? (window.location.href = url) : console.log('no window');
+export const safeNavigate = (url: string) => (window.location.href = url);
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -307,3 +300,5 @@ export const safeResetLocalStorage = (keys: string[]) => {
         }
     });
 };
+
+export { colors, constants, conversion, fontSize, layout };

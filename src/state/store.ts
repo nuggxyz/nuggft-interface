@@ -11,17 +11,18 @@ import NuggDexState from './nuggdex';
 import SocketState from './socket';
 
 export const states = {
-    AppState,
-    SwapState,
-    ProtocolState,
-    TokenState,
-    TransactionState,
-    WalletState,
-    NuggDexState,
-    SocketState,
+    app: AppState,
+    swap: SwapState,
+    protocol: ProtocolState,
+    token: TokenState,
+    transaction: TransactionState,
+    wallet: WalletState,
+    nuggdex: NuggDexState,
+    socket: SocketState,
 };
 
 export const rootReducer = combineReducers({
+    socket: SocketState.reducer,
     app: AppState.reducer,
     nuggdex: NuggDexState.reducer,
     protocol: ProtocolState.reducer,
@@ -29,7 +30,6 @@ export const rootReducer = combineReducers({
     transaction: TransactionState.reducer,
     token: TokenState.reducer,
     wallet: WalletState.reducer,
-    socket: SocketState.reducer,
 });
 
 const store = configureStore({

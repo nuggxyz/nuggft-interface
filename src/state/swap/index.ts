@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 import { NLState } from '@src/state/NLState';
 
 import hooks from './hooks';
@@ -33,16 +32,16 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
             lastUpdated: undefined,
             loading: false,
             success: undefined,
-            eth: undefined,
-            ethUsd: undefined,
+            // eth: undefined,
             id: undefined,
-            leader: undefined,
-            nugg: undefined,
+            // leader: undefined,
+            // nugg: undefined,
             offers: [],
-            owner: undefined,
+            // owner: undefined,
             status: 'waiting',
             epoch: undefined,
             startingEpoch: undefined,
+            tokenId: undefined,
         });
     }
 
@@ -61,65 +60,95 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
                 state.lastUpdated = undefined;
                 state.loading = false;
                 state.success = undefined;
-                state.eth = undefined;
-                state.ethUsd = undefined;
+                state.epoch = undefined;
+                // state.eth = undefined;
+                // state.ethUsd = undefined;
                 state.id = undefined;
-                state.leader = undefined;
-                state.nugg = undefined;
+                // state.leader = undefined;
+                state.tokenId = undefined;
+                // state.nugg = undefined;
                 state.offers = [];
-                state.owner = undefined;
+                // state.owner = undefined;
             },
             setStatus: (state, action: PayloadAction<NL.Redux.Swap.Status>) => {
                 state.status = action.payload;
             },
-            setOffers: (
-                state,
-                action: PayloadAction<{
-                    offers: NL.GraphQL.Fragments.Offer.Bare[];
-                    swapId: string;
-                }>,
-            ) => {
-                if (state.id === action.payload.swapId) {
-                    state.offers = action.payload.offers;
-                    const top = action.payload.offers[0];
-                    if (
-                        !isUndefinedOrNullOrObjectEmpty(top) &&
-                        state.eth &&
-                        +state.eth < +top.eth
-                    ) {
-                        state.eth = top.eth;
-                        state.ethUsd = top.ethUsd;
-                        state.leader = top.user.id;
-                    }
-                }
-            },
-            setLeader: (
-                state,
-                action: PayloadAction<{
-                    eth: string;
-                    tokenId: string;
-                    leader: string;
-                }>,
-            ) => {
-                console.log(action.payload);
-                if (state.id.split('-')[0] === action.payload.tokenId) {
-                    console.log('donnit');
-                    state.eth = action.payload.eth;
-                    state.leader = action.payload.leader;
-                }
-            },
+            // newLeader: (
+            //     state,
+            //     action: PayloadAction<{
+            //         offer: OfferInfo;
+            //         swapId: string;
+            //     }>,
+            // ) => {
+            //     if (state.id === action.payload.swapId) {
+            //         const top = {
+            //             user: { id: action.payload.offer.account },
+            //             eth: action.payload.offer.value,
+            //         };
+            //         state.offers = [
+            //             { user: action.payload.offer.account, eth: action.payload.offer.value },
+            //             ...state.offers,
+            //         ];
+            //         if (
+            //             !isUndefinedOrNullOrObjectEmpty(top) &&
+            //             state.eth &&
+            //             +state.eth < +top.eth
+            //         ) {
+            //             state.eth = top.eth;
+            //             state.leader = top.user.id;
+            //         }
+            //     }
+            // },
+            // setOffers: (
+            //     state,
+            //     action: PayloadAction<{
+            //         offers: NL.GraphQL.Fragments.Offer.Bare[];
+            //         swapId: string;
+            //     }>,
+            // ) => {
+            //     if (state.id === action.payload.swapId) {
+            //         state.offers = action.payload.offers.map((x) => {
+            //             return { eth: x.eth, user: x.user.id };
+            //         });
+            //         // const top = action.payload.offers[0];
+            //         // if (
+            //         //     !isUndefinedOrNullOrObjectEmpty(top) &&
+            //         //     state.eth &&
+            //         //     +state.eth < +top.eth
+            //         // ) {
+            //         //     state.eth = top.eth;
+            //         //     state.ethUsd = top.ethUsd;
+            //         //     state.leader = top.user.id;
+            //         // }
+            //     }
+            // },
+            // setLeader: (
+            //     state,
+            //     action: PayloadAction<{
+            //         eth: string;
+            //         tokenId: string;
+            //         leader: string;
+            //     }>,
+            // ) => {
+            //     console.log(action.payload);
+            //     if (state.id.split('-')[0] === action.payload.tokenId) {
+            //         console.log('donnit');
+            //         state.eth = action.payload.eth;
+            //         state.leader = action.payload.leader;
+            //     }
+            // },
             reset: (state) => {
                 state.error = undefined;
                 state.lastUpdated = undefined;
                 state.loading = false;
                 state.success = undefined;
-                state.eth = undefined;
-                state.ethUsd = undefined;
+                // state.eth = undefined;
+                // state.ethUsd = undefined;
                 state.id = undefined;
-                state.leader = undefined;
-                state.nugg = undefined;
+                // state.leader = undefined;
+                // state.nugg = undefined;
                 state.offers = [];
-                state.owner = undefined;
+                // state.owner = undefined;
                 state.status = 'ongoing';
                 state.epoch = undefined;
                 state.startingEpoch = undefined;
@@ -129,29 +158,23 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
             builder
                 .addCase(thactions.initSwap.fulfilled, (state, action) => {
                     const swap = action.payload.data.swap;
-                    state.nugg = swap.nugg;
-                    state.owner = swap.owner;
-                    state.offers = swap.offers;
+                    // state.nugg = swap.nugg;
+                    // state.owner = swap.owner;
+                    // state.offers = swap.offers;
                     state.id = swap.id;
-                    state.leader = swap.leader.id;
-                    state.eth = swap.eth;
-                    state.ethUsd = swap.ethUsd;
+                    state.tokenId = swap.nugg.id;
+                    // state.leader = swap.leader.id;
+                    // state.eth = swap.eth;
+                    // state.ethUsd = swap.ethUsd;
+                    state.offers = swap.offers.map((x) => {
+                        return { user: x.user.id, eth: x.eth };
+                    });
                     state.lastUpdated = Date.now();
                     state.status = action.payload.data.status;
                     state.epoch = swap.epoch;
                     state.startingEpoch = swap.startingEpoch;
                 })
-                .addCase(thactions.pollOffers.fulfilled, (state, action) => {
-                    if (state.id === action.payload.data.swapId) {
-                        state.offers = action.payload.data.offers;
-                        const top = action.payload.data.offers[0];
-                        if (!isUndefinedOrNullOrObjectEmpty(top)) {
-                            state.eth = top.eth;
-                            state.ethUsd = top.ethUsd;
-                            state.leader = top.user.id;
-                        }
-                    }
-                })
+
                 .addMatcher(NLState.isPendingAction('swap/'), (state) => {
                     state.loading = true;
                     state.success = undefined;

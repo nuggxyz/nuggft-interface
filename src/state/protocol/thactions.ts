@@ -1,6 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
+import client from '@src/client';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 import { SupportedChainId } from '@src/web3/config';
@@ -25,7 +26,7 @@ const updateProtocol = createAsyncThunk<
     }
 >('protocol/updateProtocol', async ({ chainId }, thunkAPI) => {
     try {
-        const res = await updateProtocolQuery(chainId);
+        const res = await updateProtocolQuery(client.core.store.getState().apollo);
 
         return {
             data: res,
@@ -142,7 +143,7 @@ const updateActives = createAsyncThunk<
     }
 >('protocol/updateActives', async ({ chainId }, thunkAPI) => {
     try {
-        const res = await updateActivesQuery(chainId);
+        const res = await updateActivesQuery(client.core.store.getState().apollo);
 
         return {
             data: res,

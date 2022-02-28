@@ -55,7 +55,8 @@ const SearchView: FunctionComponent<Props> = () => {
                     justifyContent: 'center',
                     display: 'flex',
                     background: Colors.gradient2,
-                }}>
+                }}
+            >
                 <HappyTabber
                     items={happytabs}
                     bodyStyle={styles.body}
@@ -72,7 +73,8 @@ const SearchView: FunctionComponent<Props> = () => {
                     display: 'flex',
                     alignItems: 'flex-end',
                     overflow: 'scroll',
-                }}>
+                }}
+            >
                 <ViewingNugg
                     MobileBackButton={() => (
                         <Button
@@ -82,7 +84,7 @@ const SearchView: FunctionComponent<Props> = () => {
                             label="Back"
                             onClick={() => TokenState.dispatch.setNugg(undefined)}
                             buttonStyle={{
-                                background: Colors.nuggBlueTransparent,
+                                background: Colors.transparentWhite,
                                 borderRadius: Layout.borderRadius.large,
                                 paddingLeft: '0.4rem',
                             }}

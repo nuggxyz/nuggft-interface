@@ -2,13 +2,14 @@ import { useEffect } from 'react';
 
 import web3 from '@src/web3';
 
-import AppState from '.';
 export default () => {
     const resizer = () => {
-        AppState.dispatch.setWindowDimensions({
-            height: window.innerHeight,
-            width: window.innerWidth,
-        });
+        import('@src/state').then((state) =>
+            state.default.app.dispatch.setWindowDimensions({
+                height: window.innerHeight,
+                width: window.innerWidth,
+            }),
+        );
     };
 
     const chainId = web3.hook.usePriorityChainId();
@@ -22,7 +23,9 @@ export default () => {
     }, []);
 
     useEffect(() => {
-        AppState.onRouteUpdate(chainId, window.location.hash);
+        import('@src/state').then(
+            (state) => state && state.default.app.onRouteUpdate(chainId, window.location.hash),
+        );
     }, []);
     return null;
 };

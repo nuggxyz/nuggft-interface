@@ -17,9 +17,11 @@ import TransactionState from '@src/state/transaction';
 import {
     isUndefinedOrNull,
     isUndefinedOrNullOrNumberZero,
+    isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
 import web3 from '@src/web3';
+import client from '@src/client';
 
 import styles from './RingAbout.styles';
 
@@ -27,25 +29,25 @@ type Props = {};
 
 const RingAbout: FunctionComponent<Props> = ({}) => {
     const screenType = AppState.select.screenType();
-    const eth = SwapState.select.eth();
+    // const eth = SwapState.select.eth();
     const epoch = ProtocolState.select.epoch();
     const endingSwapEpoch = SwapState.select.epoch();
     const address = web3.hook.usePriorityAccount();
-    const ethUsd = SwapState.select.ethUsd();
-    const leader = SwapState.select.leader();
-    const offers = SwapState.select.offers();
+    // const leader = SwapState.select.leader();
+    // const offers = SwapState.select.offers();
     const swapId = SwapState.select.id();
+    const tokenId = SwapState.select.tokenId();
+
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const prevToggle = usePrevious(txnToggle);
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 
     const status = useSetState(() => {
-        return isUndefinedOrNull(endingSwapEpoch) || isUndefinedOrNull(epoch)
-            ? 'waiting'
-            : +endingSwapEpoch.endblock >= +epoch.endblock
-            ? 'ongoing'
-            : 'over';
+        if (isUndefinedOrNull(endingSwapEpoch) || isUndefinedOrNull(epoch)) return 'waiting';
+        console.log('yoooo', +endingSwapEpoch.endblock, +epoch.endblock);
+
+        return +endingSwapEpoch.endblock >= +epoch.endblock ? 'ongoing' : 'over';
     }, [epoch, endingSwapEpoch]);
 
     useEffect(() => {
@@ -62,14 +64,26 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const [open, setOpen] = useState(false);
 
-    const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader);
+    // const stateOffers = SwapState.select.offers();
+
+    // const { leader, offers } = state.socket.hook.useLiveOffers(tokenId, stateOffers);
+
+    const { offers, leader } = client.useSafeLiveOffers(tokenId);
+
+    const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader && leader.user);
+
+    // state.socket.hook.useOffer(
+    //     (x) => {
+    //         if (x.tokenId === tokenId) state.swap.dispatch.newLeader({ offer: x, swapId });
+    //     },
+    //     [swapId],
+    // );
 
     const hasBids = useMemo(
         () =>
-            !isUndefinedOrNullOrStringEmpty(leader) &&
-            !isUndefinedOrNullOrStringEmpty(eth) &&
-            (status === 'over' || !isUndefinedOrNullOrNumberZero(+eth)),
-        [eth, leader, status],
+            !isUndefinedOrNullOrObjectEmpty(leader) &&
+            (status === 'over' || !isUndefinedOrNullOrNumberZero(+leader.eth)),
+        [leader, status],
     );
 
     const [flashStyle, api] = useSpring(() => {
@@ -105,7 +119,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                 },
             ],
         });
-    }, [eth]);
+    }, [leader]);
 
     const springStyle = useSpring({
         ...styles.offersContainer,
@@ -125,21 +139,24 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                         ['#FFFFFF00', Colors.transparentWhite],
                     ),
                 }),
-            }}>
+            }}
+        >
             <div style={styles.bodyContainer}>
                 <div
                     style={
                         styles[
                             screenType !== 'desktop' ? 'leaderContainerMobile' : 'leaderContainer'
                         ]
-                    }>
+                    }
+                >
                     <Text
                         textStyle={{
                             ...styles.title,
                             ...(screenType === 'phone' && {
                                 color: Colors.nuggBlueText,
                             }),
-                        }}>
+                        }}
+                    >
                         {status === 'ongoing' && hasBids
                             ? 'Highest Offer'
                             : status === 'ongoing' && !hasBids
@@ -156,19 +173,22 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                         ? 'leadingOfferContainerMobile'
                                         : 'leadingOfferContainer'
                                 ]
-                            }>
+                            }
+                        >
                             <animated.div
                                 //@ts-ignore
-                                style={flashStyle}>
+                                style={flashStyle}
+                            >
                                 <CurrencyText
                                     image="eth"
                                     textStyle={styles.leadingOffer}
-                                    value={+fromEth(eth)}
+                                    value={+fromEth(leader.eth)}
                                 />
                                 <Text
                                     type="text"
                                     size="smaller"
-                                    textStyle={{ color: Colors.textColor }}>
+                                    textStyle={{ color: Colors.textColor }}
+                                >
                                     {leaderEns}
                                 </Text>
                             </animated.div>
@@ -192,12 +212,13 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
             {/*//@ts-ignore*/}
             <animated.div style={springStyle}>
                 <Text textStyle={{ marginBottom: '1rem' }}>Previous offers</Text>
-                {offers.map(
-                    (offer, index) =>
-                        index !== 0 && (
-                            <OfferRenderItem {...{ provider, offer, index }} key={index} />
-                        ),
-                )}
+                {offers &&
+                    offers.map(
+                        (offer, index) =>
+                            index !== 0 && (
+                                <OfferRenderItem {...{ provider, offer, index }} key={index} />
+                            ),
+                    )}
             </animated.div>
 
             {status !== 'over' &&
@@ -244,10 +265,10 @@ const OfferRenderItem = ({
     index,
 }: {
     provider: Web3Provider;
-    offer: NL.GraphQL.Fragments.Offer.Bare;
+    offer: NL.Redux.Swap.Offer;
     index: number;
 }) => {
-    const leaderEns = web3.hook.usePriorityAnyENSName(provider, offer.user.id);
+    const leaderEns = web3.hook.usePriorityAnyENSName(provider, offer.user);
     return (
         <div style={styles.offerAmount}>
             <CurrencyText image="eth" value={+fromEth(offer.eth)} />

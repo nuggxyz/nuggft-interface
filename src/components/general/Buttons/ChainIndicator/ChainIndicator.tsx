@@ -14,13 +14,12 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
-import ProtocolState from '@src/state/protocol';
-import AppState from '@src/state/app';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Layout from '@src/lib/layout';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import SwapState from '@src/state/swap';
 import web3 from '@src/web3';
+import state from '@src/state';
 
 import styles from './ChainIndicator.styles';
 
@@ -31,9 +30,9 @@ type Props = {
 };
 
 const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle }) => {
-    const epoch = ProtocolState.select.epoch();
-    const view = AppState.select.view();
-    const currentBlock = ProtocolState.select.currentBlock();
+    const epoch = state.protocol.select.epoch();
+    const view = state.app.select.view();
+    const blockListener = state.socket.select.Block();
     const swapId = SwapState.select.id();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
@@ -47,16 +46,16 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
         if (
             !isUndefinedOrNullOrObjectEmpty(epoch) &&
             !isUndefinedOrNullOrStringEmpty(epoch.endblock) &&
-            !isUndefinedOrNullOrNotNumber(currentBlock)
+            !isUndefinedOrNullOrNotNumber(blockListener.block)
         ) {
-            remaining = +epoch.endblock - currentBlock;
+            remaining = +epoch.endblock - blockListener.block;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
 
         setBlocksRemaining(remaining);
-    }, [currentBlock, epoch]);
+    }, [blockListener, epoch]);
 
     useLayoutEffect(() => {
         getBlocksRemaining();
@@ -90,6 +89,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
     );
 
     return (
+        // <SVG>
         <animated.div style={springStyle}>
             <Button
                 textStyle={{
@@ -99,7 +99,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
                 onClick={
                     onClick ||
                     (() =>
-                        AppState.onRouteUpdate(
+                        state.app.onRouteUpdate(
                             chainId,
                             view === 'Search' || (swapId && !swapId.includes(epoch.id))
                                 ? '/'
