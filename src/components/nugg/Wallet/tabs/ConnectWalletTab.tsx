@@ -12,27 +12,30 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
     return (
         <div
             style={{
-                padding: '1rem',
+                padding: '.25rem',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 flexDirection: 'column',
                 height: '100%',
-            }}>
+            }}
+        >
             <div
                 style={{
                     display: 'flex',
                     alignItems: 'center',
                     width: '100%',
                     justifyContent: 'space-between',
-                }}>
+                }}
+            >
                 <Text
                     size="large"
                     textStyle={{
                         color: 'white',
                         marginRight: '1rem',
-                    }}>
-                    Connect to Nugg.xyz!
+                    }}
+                >
+                    Connect to nuggft!
                 </Text>
                 <NLStaticImage image="nugg" />
             </div>
@@ -42,7 +45,8 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                     borderRadius: Layout.borderRadius.smallish,
                     margin: '1.5rem',
                     padding: '1rem',
-                }}>
+                }}
+            >
                 <Text type="text" size="smaller" textStyle={{ color: Colors.textColor }}>
                     By connecting a wallet, you agree to nugg.xyz's Terms of Service and acknowledge
                     that you have read and understood the nugg.xyz Protocol Disclaimer.
@@ -58,7 +62,8 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                     flexDirection: 'column',
                     width: '100%',
                     height: '100%',
-                }}>
+                }}
+            >
                 {Object.values(web3.config.SUPPORTED_WALLETS).map((walletObject) =>
                     walletObject.name !== 'MetaMask' ||
                     (walletObject.name === 'MetaMask' && window.ethereum) ? (
