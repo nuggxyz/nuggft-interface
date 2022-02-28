@@ -8,23 +8,16 @@
     "private": true,
     "scripts": {
         "start": "node webpack/scripts/start.js",
-        "develop": "node webpack/scripts/start.js",
+        "dev": "yarn start",
+        "develop": "yarn start",
         "build": "node webpack/scripts/build.js",
         "serve": "serve -s build",
         "test": "node webpack/scripts/test.js",
         "typechain": "typechain --target ethers-v5 --out-dir src/typechain/ './src/abis/*'"
     },
     "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
+        "production": [">0.2%", "not dead", "not op_mini all"],
+        "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
     },
     "devDependencies": {
         "@babel/core": "^7.16.0",

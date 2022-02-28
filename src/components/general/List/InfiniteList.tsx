@@ -97,11 +97,16 @@ const InfiniteList: FunctionComponent<Props> = ({
 
     const prevStart = usePrevious(startIndex);
     const prevEnd = usePrevious(endIndex);
+    const prevData = usePrevious(data);
 
     const [items, setItems] = useState([]);
 
     useEffect(() => {
-        if (prevEnd !== endIndex || prevStart !== startIndex) {
+        if (
+            prevEnd !== endIndex ||
+            prevStart !== startIndex ||
+            JSON.stringify(prevData[startIndex]) !== JSON.stringify(data[startIndex])
+        ) {
             let temp = [];
             for (let i = startIndex; i <= endIndex; i++) {
                 temp.push(
@@ -112,7 +117,8 @@ const InfiniteList: FunctionComponent<Props> = ({
                             top: `${i * itemHeight}px`,
                             width: '100%',
                             height: `${itemHeight}px`,
-                        }}>
+                        }}
+                    >
                         <RenderItem
                             item={data[i]}
                             key={JSON.stringify(data[i])}
@@ -134,6 +140,7 @@ const InfiniteList: FunctionComponent<Props> = ({
         RenderItem,
         action,
         data,
+        prevData,
         extraData,
         selected,
         items,
@@ -196,7 +203,8 @@ const InfiniteList: FunctionComponent<Props> = ({
                         position: 'relative',
                         height: `${innerHeight}px`,
                         width: '100%',
-                    }}>
+                    }}
+                >
                     {items}
                 </div>
             ) : (
@@ -204,7 +212,8 @@ const InfiniteList: FunctionComponent<Props> = ({
                     style={{
                         ...styles.container,
                         justifyContent: 'center',
-                    }}>
+                    }}
+                >
                     {!loading && (
                         <Text weight="light" size="small" type="text" textStyle={listEmptyStyle}>
                             {listEmptyText || 'No items to display...'}
@@ -222,7 +231,8 @@ const InfiniteList: FunctionComponent<Props> = ({
                     marginTop: '1rem',
                     height: '1rem',
                     position: 'absolute',
-                }}>
+                }}
+            >
                 {!loading && <Loader color={loaderColor || 'black'} />}
             </div>
         ),
@@ -238,7 +248,8 @@ const InfiniteList: FunctionComponent<Props> = ({
                         ...labelStyle,
                         display: 'flex',
                         alignItems: 'center',
-                    }}>
+                    }}
+                >
                     {label}
                     {loading && (
                         <Loader color={loaderColor || 'black'} style={{ marginLeft: '.5rem' }} />
@@ -262,7 +273,8 @@ const InfiniteList: FunctionComponent<Props> = ({
                     ...containerStyle,
                     overflow: 'scroll',
                 }}
-                onScroll={_onScroll}>
+                onScroll={_onScroll}
+            >
                 <List />
                 {/* <Loading /> */}
             </div>
