@@ -66,7 +66,7 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
             !isUndefinedOrNullOrNotFunction(onScrollEnd) &&
             ((prevFilters && prevFilters.searchValue !== filters.searchValue) ||
                 filters.searchValue !== '' ||
-                prevFilters.sort.asc !== filters.sort.asc)
+                prevFilters?.sort.asc !== filters?.sort.asc)
         ) {
             onScrollEnd({ setLoading, filters, addToList: false });
         }

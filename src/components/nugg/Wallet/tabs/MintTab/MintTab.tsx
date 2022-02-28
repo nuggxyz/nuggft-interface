@@ -25,7 +25,6 @@ import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
 import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
 import useAsyncState from '@src/hooks/useAsyncState';
 import loanedNuggsQuery from '@src/state/wallet/queries/loanedNuggsQuery';
-import myActiveSalesQuery from '@src/state/wallet/queries/myActiveSalesQuery';
 import unclaimedOffersQuery from '@src/state/wallet/queries/unclaimedOffersQuery';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import InfiniteList from '@src/components/general/List/InfiniteList';
@@ -53,16 +52,15 @@ const MintTab: FunctionComponent<Props> = () => {
         () => loanedNuggsQuery(chainId, address, 'desc', '', 1000, 0),
         [address, epoch, chainId],
     );
-    const sales = useAsyncState(
-        () => myActiveSalesQuery(chainId, address, 'desc', '', 1000, 0),
-        [address, epoch, chainId],
-    );
+    // const sales = useAsyncState(
+    //     () => myActiveSalesQuery(chainId, address, 'desc', '', 1000, 0),
+    //     [address, epoch, chainId],
+    // );
 
     const claims = useAsyncState(
         () => unclaimedOffersQuery(chainId, address, epoch?.id),
         [address, epoch],
     );
-
     const getMyNuggs = useCallback(async () => {
         setLoadingNuggs(true);
         if (!isUndefinedOrNullOrStringEmpty(address)) {
@@ -87,9 +85,9 @@ const MintTab: FunctionComponent<Props> = () => {
 
     useEffect(() => {
         setLoadingNuggs(true);
-        setTimeout(() => {
-            getMyNuggs();
-        }, 500);
+        // setTimeout(() => {
+        getMyNuggs();
+        // }, 500);
     }, [address]);
 
     return (
@@ -112,7 +110,7 @@ const MintTab: FunctionComponent<Props> = () => {
                             margin: '0rem',
                             width: screenType === 'phone' ? '48%' : '100%',
                         }}
-                        label="TVL"
+                        label="Balance"
                         value={new EthInt(`${+valuePerShare * userShares}`)}
                         image="eth"
                     />
@@ -134,21 +132,25 @@ const MintTab: FunctionComponent<Props> = () => {
                         label="Nuggs"
                         value={'' + (userShares || 0)}
                         style={{
-                            width: '23%',
+                            width: '31%',
                             marginLeft: '0rem',
                             marginRight: '0rem',
+                            alignItems: 'center',
+                            display: 'flex',
                         }}
                     />
                     <TextStatistic
                         label="Claims"
                         value={'' + (claims?.length || 0)}
                         style={{
-                            width: '23%',
+                            width: '31%',
                             marginLeft: '0rem',
                             marginRight: '0rem',
+                            alignItems: 'center',
+                            display: 'flex',
                         }}
                     />
-                    <TextStatistic
+                    {/* <TextStatistic
                         label="Sales"
                         value={'' + (sales?.length || 0)}
                         style={{
@@ -157,14 +159,16 @@ const MintTab: FunctionComponent<Props> = () => {
                             marginRight: '0rem',
                             fontSize: FontSize.h6,
                         }}
-                    />
+                    /> */}
                     <TextStatistic
                         label="Loans"
                         value={'' + (loans?.length || 0)}
                         style={{
-                            width: '23%',
+                            width: '31%',
                             marginLeft: '0rem',
                             marginRight: '0rem',
+                            alignItems: 'center',
+                            display: 'flex',
                         }}
                     />
                 </div>

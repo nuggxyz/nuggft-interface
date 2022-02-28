@@ -33,6 +33,8 @@ import state from '@src/state';
 
 import styles from './ViewingNugg.styles';
 import OwnerButtons from './OwnerButtons';
+import SaleButtons from './SaleButtons';
+import LoanButtons from './LoanButtons';
 
 type Props = { MobileBackButton?: () => JSX.Element };
 
@@ -47,11 +49,10 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const provider = web3.hook.usePriorityProvider();
     const ens = web3.hook.usePriorityAnyENSName(provider, owner);
     const [items, setItems] = useState([tokenId]);
-    const [showMenu, setShowMenu] = useState(false);
+    const [showMenu, setShowMenu] = useState<'loan' | 'sale'>();
 
     useEffect(() => {
         setItems([items[1], tokenId]);
-        console.log({ status, tokenId });
     }, [tokenId, chainId]);
 
     const getSwapHistory = useCallback(
@@ -74,8 +75,11 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
         const thumbnail = await nuggThumbnailQuery(chainId, tokenId);
         setOwner(thumbnail?.user?.id);
         setShowMenu(
-            isUndefinedOrNullOrObjectEmpty(thumbnail?.activeSwap) &&
-                isUndefinedOrNullOrObjectEmpty(thumbnail?.activeLoan),
+            !isUndefinedOrNullOrObjectEmpty(thumbnail?.activeSwap)
+                ? 'sale'
+                : !isUndefinedOrNullOrObjectEmpty(thumbnail?.activeLoan)
+                ? 'loan'
+                : undefined,
         );
     }, [tokenId, chainId]);
 
@@ -144,7 +148,7 @@ type SwapsProps = {
     address: string;
     owner: string;
     MobileBackButton?: () => JSX.Element;
-    showMenu?: boolean;
+    showMenu?: 'sale' | 'loan';
     ens: string;
 };
 
@@ -220,7 +224,7 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                         <Loader color={Colors.nuggBlueText} />
                     )}
                 </div>
-                {owner === address && showMenu && (
+                {owner === address && (
                     <Flyout
                         containerStyle={styles.flyout}
                         style={{ right: '1rem', top: '2rem' }}
@@ -230,7 +234,13 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                             </div>
                         }
                     >
-                        <OwnerButtons tokenId={tokenId} />
+                        {showMenu === 'sale' ? (
+                            <SaleButtons tokenId={tokenId} />
+                        ) : showMenu === 'loan' ? (
+                            <LoanButtons tokenId={tokenId} />
+                        ) : (
+                            <OwnerButtons tokenId={tokenId} />
+                        )}
                     </Flyout>
                 )}
             </div>

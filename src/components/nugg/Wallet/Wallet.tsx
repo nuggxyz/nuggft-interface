@@ -8,7 +8,6 @@ import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectWalletTab from './tabs/ConnectWalletTab';
 import LoansTab from './tabs/LoansTab/LoansTab';
 import MintTab from './tabs/MintTab/MintTab';
-import SalesTab from './tabs/SalesTab/SalesTab';
 import styles from './Wallet.styles';
 type Props = {};
 
@@ -34,10 +33,10 @@ const Wallet: FunctionComponent<Props> = () => {
                           label: 'Claims',
                           comp: ({ isActive }) => <ClaimTab isActive={isActive} />,
                       },
-                      {
-                          label: 'Sales',
-                          comp: ({ isActive }) => <SalesTab isActive={isActive} />,
-                      },
+                      //   {
+                      //       label: 'Sales',
+                      //       comp: ({ isActive }) => <SalesTab isActive={isActive} />,
+                      //   },
                       {
                           label: 'Loans',
                           comp: ({ isActive }) => <LoansTab isActive={isActive} />,
