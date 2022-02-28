@@ -1,27 +1,20 @@
+// import React, { ReactSVG } from 'react';
+
 // import client from '..';
 
-// enum Status {
-//     NONE = 0,
-//     PRE = 1,
-//     DURING = 2,
-//     POST = 3,
-// }
+// // enum Status {
+// //     NONE = 0,
+// //     PRE = 1,
+// //     DURING = 2,
+// //     POST = 3,
+// // }
 
-// export const useLiveActiveSwap = (tokenId: string) => {
-//     // you want to watch the epoch for the status,
-
-//     /// status = epoch =
-//     const [status, setStatus] = React.useState<Status>(Status.NONE);
-
-//     // watch the nugg for the svg
+// export const useLiveSwap = (swapId: string) => {
 //     const [svg, setSvg] = React.useState<ReactSVG>();
 
-//     const apollo = client.useApollo();
-
-//     const { epoch } = client.useL();
+//     const apollo = client.live.apollo();
 
 //     const getdata = React.useCallback(async () => {
-//         console.log({ tokenId });
 //         if (apollo) {
 //             const instance = apollo
 //                 .subscribe<{
@@ -48,7 +41,6 @@
 //     }, [apollo, tokenId]);
 
 //     useEffect(() => {
-
 //         // if nugg doesnt exist, we wait for it to
 //         // if activeSwap doesnt exist, we wait for it to
 //         // both those in same subscription to nugg

@@ -1,6 +1,5 @@
 import core from './core';
 import { useSafeLiveOffers, useLiveOffers } from './hooks/useLiveOffers';
-import { useLiveProtocol } from './hooks/useLiveProtocol';
 import { useSafeLiveStake } from './hooks/useLiveStake';
 import { useLiveNugg } from './hooks/useLiveNugg';
 import updater from './updater';
@@ -19,7 +18,6 @@ export default {
         useLiveOffers,
         useSafeLiveStake,
         useLiveNugg,
-        useLiveProtocol,
     },
     static: {
         apollo: () => core.store.getState().apollo,
