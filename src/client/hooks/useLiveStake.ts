@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 import { BigNumber } from 'ethers';
 
 import { useStake } from '@src/state/socket/hooks';
-import client from '@src/client/index';
+import client from '@src/client';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 
 const query = gql`

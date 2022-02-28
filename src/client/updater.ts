@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import web3 from '@src/web3';
 
-import client from './index';
+import core from './core';
 
 export default () => {
     const chainId = web3.hook.usePriorityChainId();
@@ -12,7 +12,7 @@ export default () => {
             const apollo = web3.config.createApolloClient(chainId);
             const infura = web3.config.createInfuraWebSocket(chainId);
 
-            client.core.actions.update({
+            core.actions.update({
                 apollo,
                 infura,
             });
@@ -23,7 +23,7 @@ export default () => {
 
                 apollo.stop();
 
-                client.core.actions.update({
+                core.actions.update({
                     apollo: undefined,
                     infura: undefined,
                 });

@@ -24,10 +24,12 @@ const query = gql`
     }
 `;
 
+type Offer = { user: string; eth: string };
+
 export const useLiveOffers = (tokenId: string) => {
     const apollo = client.useApollo();
 
-    const [offers, setOffers] = React.useState<{ user: string; eth: string }[]>([]);
+    const [offers, setOffers] = React.useState<Offer[]>([]);
 
     React.useEffect(() => {
         const instance = apollo
@@ -56,8 +58,8 @@ export const useLiveOffers = (tokenId: string) => {
 export const useSafeLiveOffers = (tokenId: string) => {
     const apolloOffers = useLiveOffers(tokenId);
 
-    const [offers, setOffers] = React.useState<{ user: string; eth: string }[]>([]);
-    const [leader, setLeader] = React.useState<{ user: string; eth: string }>();
+    const [offers, setOffers] = React.useState<Offer[]>([]);
+    const [leader, setLeader] = React.useState<Offer>();
 
     // LOOK #41 @danny7even comment this out if you want to see the effect of the graph subscription
     ////////////////////////////////
@@ -70,7 +72,7 @@ export const useSafeLiveOffers = (tokenId: string) => {
     ////////////////////////////////
 
     const merge = useCallback(
-        (input: { user: string; eth: string }) => {
+        (input: Offer) => {
             const update = mergeUnique(input ? [input] : [], offers).sort((a, b) =>
                 a < b ? -1 : 1,
             );
@@ -82,32 +84,22 @@ export const useSafeLiveOffers = (tokenId: string) => {
     );
 
     React.useEffect(() => {
-        console.log({ offers, apolloOffers });
         const update = mergeUnique(offers, apolloOffers).sort((a, b) => (a < b ? -1 : 1));
-        // if (offers.length === 0 && apolloOffers.length !== 0) {
         setOffers(update);
         if (update.length > 0) {
             setLeader(update[0]);
         }
-        // }
     }, [apolloOffers]);
 
     return { offers, leader };
 };
 
-export function duplicates(arr1: BigInt[]): BigInt[] {
-    return arr1.filter((item, index) => arr1.indexOf(item) !== index);
-}
-
-const mergeUnique = (
-    array1: { user: string; eth: string }[],
-    array2: { user: string; eth: string }[],
-) => {
+const mergeUnique = (array1: Offer[], array2: Offer[]) => {
     let arr = array1.concat(array2);
     let len = arr.length;
 
     let tmp: number;
-    let array3: { user: string; eth: string }[] = [];
+    let array3: Offer[] = [];
     let array5: string[] = [];
 
     while (len--) {
