@@ -1,7 +1,7 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
 import eth from '@src/assets/images/currency/eth.svg';
-import metamask from '@src/assets/images/nugg/metamask-full.webp';
+import metamask from '@src/assets/images/nugg/metamask.png';
 import walletconnect from '@src/assets/images/nugg/walletconnect-full.png';
 import nugg from '@src/assets/images/nugg/nugg-white.png';
 import coinbase from '@src/assets/images/nugg/coinbase.png';
@@ -22,17 +22,31 @@ const NLStaticImage: FunctionComponent<Props> = ({ image, style }) => {
                         src={metamask}
                         height={48}
                         width={128}
-                        style={{ objectFit: 'cover', height: 23.8, ...style }}
+                        style={{ objectFit: 'contain', height: 23.8, ...style }}
                     />
                 );
             case 'WalletConnect':
-                return <img src={walletconnect} height={23.8} width={149.5} style={style} />;
+                return (
+                    <img
+                        src={walletconnect}
+                        height={48}
+                        width={128}
+                        style={{ objectFit: 'contain', height: 23.8, ...style }}
+                    />
+                );
             case 'eth':
                 return <img src={eth} height={20} width={20} style={style} />;
             case 'nugg':
                 return <img src={nugg} height={35} width={35} style={style} />;
             case 'Coinbase':
-                return <img src={coinbase} height={23.8} width={149.5} style={style} />;
+                return (
+                    <img
+                        src={coinbase}
+                        height={48}
+                        width={128}
+                        style={{ objectFit: 'contain', height: 23.8, ...style }}
+                    />
+                );
             default:
                 return null;
         }
