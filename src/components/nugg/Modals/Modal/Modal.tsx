@@ -12,7 +12,6 @@ import OfferOrSellModal from '@src/components/nugg/Modals/OfferOrSellModal/Offer
 import AppState from '@src/state/app';
 import LoanOrBurnModal from '@src/components/nugg/Modals/LoanOrBurn/LoanOrBurnModal';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
-import WalletModal from '@src/components/nugg/Modals/WalletModal/WalletModal';
 import LoanInputModal from '@src/components/nugg/Modals/LoanInputModal/LoanInputModal';
 
 import styles from './Modal.styles';
@@ -79,7 +78,8 @@ const Modal: FunctionComponent<Props> = () => {
                         display: 'flex',
                         justifyContent: 'center',
                     }),
-                }}>
+                }}
+            >
                 {screenType !== 'phone' && <animated.div style={containerBackgroundStyle} />}
                 <animated.div style={containerStyle} ref={node}>
                     {currentModal === 'OfferOrSell' ? <OfferOrSellModal /> : null}

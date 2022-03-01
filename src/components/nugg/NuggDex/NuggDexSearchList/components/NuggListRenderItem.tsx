@@ -24,7 +24,12 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, 
         <div style={style} onClick={() => action(item)}>
             <TokenViewer
                 tokenId={item.id || ''}
-                style={{ height: '200px', width: '200px' }}
+                style={{
+                    height: '200px',
+                    width: '200px',
+                    // objectFit: 'contain',
+                    // overflow: 'visible',
+                }}
                 data={item.dotnuggRawCache}
             />
             <Label text={'Nugg #' + item.id} size="larger" />

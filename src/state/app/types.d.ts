@@ -49,7 +49,8 @@ declare namespace NL.Redux.App {
         | 'OfferOrSell'
         | 'Wallet'
         | 'ExtendLoan'
-        | 'PayOffLoan';
+        | 'PayOffLoan'
+        | 'HappyTipper';
 
     type ModalsData = {
         backgroundStyle?: import('react').CSSProperties;
