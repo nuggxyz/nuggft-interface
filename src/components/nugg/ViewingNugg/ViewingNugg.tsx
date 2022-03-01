@@ -187,6 +187,7 @@ const Swaps: FunctionComponent<SwapsProps> = ({
 
         return res;
     }, [swaps, epoch]);
+    console.log(epoch);
 
     return (
         <div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
@@ -248,7 +249,7 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                 data={listData}
                 TitleRenderItem={SwapTitle}
                 ChildRenderItem={SwapItem}
-                extraData={[chainId, provider]}
+                extraData={[chainId, provider, epoch]}
                 style={{ height: '100%' }}
                 styleRight={styles.stickyList}
             />
@@ -266,6 +267,7 @@ const SwapTitle = ({ title }) => {
 
 const SwapItem = ({ item, index, extraData }) => {
     const awaitingBid = item.endingEpoch === null;
+    console.log(item.endingEpoch, typeof item.endingEpoch, extraData);
     const ens = web3.hook.usePriorityAnyENSName(extraData[1], item.leader.id);
     return (
         <div style={{ padding: '.25rem 1rem' }}>
@@ -293,7 +295,9 @@ const SwapItem = ({ item, index, extraData }) => {
                                     color: Colors.textColor,
                                 }}
                             >
-                                {awaitingBid ? 'On sale by' : 'Purchased from'}
+                                {awaitingBid || item.endingEpoch === extraData[2].id
+                                    ? 'On sale by'
+                                    : 'Purchased from'}
                             </Text>
                             <Text
                                 textStyle={{

@@ -160,6 +160,7 @@ const RenderItem = ({
 }) => {
     const [open, setOpen] = useState(true);
     // const [ref, isVisible] = useIsVisible();
+    console.log('lhjgf',extraData);
 
     // useEffect(() => {
     //     setCurrent((currents: any[]) => {
@@ -206,7 +207,7 @@ const RenderItem = ({
                             <ChildRenderItem
                                 item={childItem}
                                 index={index}
-                                extraData={[...extraData.first(2), extraData.last()[parentIndex]]}
+                                extraData={[...extraData, extraData.last()[parentIndex]]}
                             />
                         </React.Fragment>
                     ))}

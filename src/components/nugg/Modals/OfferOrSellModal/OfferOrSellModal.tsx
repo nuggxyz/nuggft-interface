@@ -52,6 +52,8 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         [tokenId, address, chainId, provider],
     );
 
+    console.log(check);
+
     const minOfferAmount = useMemo(() => {
         if (!isUndefinedOrNullOrObjectEmpty(check)) {
             if (!check.nextSwapAmount.isZero()) {
@@ -165,13 +167,16 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             <div style={styles.subContainer}>
                 <FeedbackButton
                     overrideFeedback
+                    disabled={check && !check.canOffer}
                     feedbackText="Check Wallet..."
                     buttonStyle={styles.button}
                     label={`${
                         stableType === 'StartSale'
                             ? 'Sell Nugg'
                             : check && check.senderCurrentOffer.toString() !== '0'
-                            ? 'Update offer'
+                            ? !check.canOffer
+                                ? 'You cannot offer on this Nugg'
+                                : 'Update offer'
                             : 'Place offer'
                     }`}
                     onClick={() =>
