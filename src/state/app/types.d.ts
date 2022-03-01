@@ -58,6 +58,7 @@ declare namespace NL.Redux.App {
         containerStyle?: import('react').CSSProperties;
         targetId?: string;
         type?: Modals;
+        data?: unknown;
     };
 
     type Error = 'ERROR';

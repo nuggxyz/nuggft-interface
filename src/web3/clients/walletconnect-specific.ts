@@ -6,20 +6,29 @@ import EventEmitter3 from 'eventemitter3';
 import { Connector, ProviderRpcError, Actions } from '@src/web3/core/types';
 import { getBestUrl } from '@src/web3/core/utils';
 import { gotoLink } from '@src/web3/config';
+import AppState from '@src/state/app';
+import store from '@src/state/store';
 
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
 type MockWalletConnectProvider = WalletConnectProvider & EventEmitter;
 
+type WalletConnectSpecificConfig = {
+    info: NL.Web3.WalletInfo;
+};
+
 function parseChainId(chainId: string | number) {
     return typeof chainId === 'string' ? Number.parseInt(chainId) : chainId;
 }
 
-type WalletConnectOptions = Omit<IWCEthRpcConnectionOptions, 'rpc' | 'infuraId' | 'chainId'> & {
+type WalletConnectOptions = Omit<
+    IWCEthRpcConnectionOptions,
+    'rpc' | 'infuraId' | 'chainId' | 'qrcode'
+> & {
     rpc: { [chainId: number]: string | string[] };
-};
+} & WalletConnectSpecificConfig;
 
-type Clients = 'MetaMask' | 'Rainbow' | 'Trust' | 'Ledger' | 'CryptoDotCom';
+// type Clients = 'MetaMask' | 'Rainbow' | 'Trust' | 'Ledger' | 'CryptoDotCom';
 
 const HREF_PATH = 'wc?uri=';
 
@@ -32,23 +41,25 @@ export class WalletConnectSpecific extends Connector {
     private readonly rpc: { [chainId: number]: string[] };
     private eagerConnection?: Promise<void>;
     private treatModalCloseAsError: boolean;
-    private client: Clients;
-    private href: string;
+
     /**
      * @param options - Options to pass to `@walletconnect/ethereum-provider`
      * @param connectEagerly - A flag indicating whether connection should be initiated when the class is constructed.
      */
     constructor(
-        client: Clients,
-        href: string,
+        // client: Clients,
+        // href: string,
         actions: Actions,
         options: WalletConnectOptions,
         connectEagerly = false,
         treatModalCloseAsError = true,
     ) {
         super(actions);
-        this.client = client;
-        this.href = href;
+        // this.client = client;
+
+        // @ts-ignore
+        options.qrcode = false;
+
         if (connectEagerly && typeof window === 'undefined') {
             throw new Error(
                 'connectEagerly = true is invalid for SSR, instead use the connectEagerly method in a useEffect',
@@ -83,10 +94,27 @@ export class WalletConnectSpecific extends Connector {
     };
 
     private URIListener = (_: Error | null, payload: { params: string[] }): void => {
-        const link = this.href + HREF_PATH + encodeURIComponent(payload.params[0]);
+        const uri = this.options.info.href + HREF_PATH + encodeURIComponent(payload.params[0]);
         console.log({ payload });
-        console.log(link);
-        gotoLink(link);
+        const deviced = store.getState().app.screenType;
+
+        console.log(this.options, deviced);
+
+        if (this.options.info.label === 'ledgerlive') {
+            window.open(uri);
+        } else if (deviced === 'desktop' || deviced === 'tablet') {
+            AppState.dispatch.setModalOpen({
+                name: 'QrCode',
+                modalData: {
+                    data: { info: this.options.info, uri },
+                    containerStyle: { backgroundColor: 'white' },
+                },
+            });
+        } else {
+            // deep link via http
+            gotoLink(uri);
+        }
+
         // this.events.emit(URI_AVAILABLE, payload.params[0]);
     };
 
