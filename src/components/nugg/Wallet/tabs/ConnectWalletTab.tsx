@@ -6,6 +6,7 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
+import HappyTipper from '@src/components/general/HappyTipper/HappyTipper';
 type Props = {};
 
 const ConnectWalletTab: FunctionComponent<Props> = () => {
@@ -71,10 +72,13 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                             key={walletObject.name}
                             buttonStyle={{
                                 color: 'white',
+                                border: `${walletObject.color}`,
+                                borderWidth: '5px',
+                                borderStyle: 'solid',
                                 borderRadius: Layout.borderRadius.large,
                                 padding: '1rem',
                                 pointerEvents: 'auto',
-                                background: `${walletObject.color}66`,
+                                background: 'white',
                                 margin: '1rem',
                             }}
                             rightIcon={
@@ -87,6 +91,7 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                         />
                     ) : null,
                 )}
+                <HappyTipper tip="wallet-1" />
             </div>
         </div>
     );

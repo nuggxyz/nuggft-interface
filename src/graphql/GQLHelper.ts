@@ -14,6 +14,7 @@ export default class GQLHelper {
                 fetch: fetch as any,
             }),
             cache: new InMemoryCache(),
+            // connectToDevTools: true,
         });
         // }
         return GQLHelper._instance;

@@ -125,10 +125,10 @@ export const SUPPORTED_WALLETS: { [key: string]: NL.Redux.Web32.WalletInfo } = {
     WALLET_LINK: {
         connector: connectors.walletlink,
         name: 'Coinbase',
-        iconURL: 'walletConnect',
+        iconURL: 'coinbase',
         description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
         href: null,
-        color: '#4196FC',
+        color: '#1652f0',
         mobile: true,
     },
 };
@@ -183,15 +183,24 @@ export const CHAIN_INFO: {
     },
 };
 
+export const gotoEtherscan = (chainId: SupportedChainId, route: 'tx', value: string) => {
+    let win = window.open(`${CHAIN_INFO[chainId].explorer}${route}/${value}`, '_blank');
+    win.focus();
+};
+
 export const createInfuraWebSocket = (chainId: SupportedChainId) => {
     return new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY);
 };
 
 export const createApolloClient = (chainId: SupportedChainId) => {
-    return new ApolloClient<any>({
+    const ok = new ApolloClient<any>({
         link: buildApolloSplitLink(GRAPH_ENPOINTS[chainId], GRAPH_WSS_ENDPOINTS[chainId]),
+        // connectToDevTools: true,
+
         cache: new InMemoryCache(),
     });
+    // window.__APOLLO_CLIENT__ = ok;
+    return ok;
 };
 
 export const ENS_REGISTRAR_ADDRESSES: NL.Redux.Web32.AddressMap = {

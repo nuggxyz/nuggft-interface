@@ -96,6 +96,7 @@ interface Window {
         selectedAddress?: string;
     };
     web3?: Record<string, unknown>;
+    __APOLLO_CLIENT__?: any;
 }
 
 interface Array<T> {
