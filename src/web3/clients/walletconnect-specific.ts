@@ -5,6 +5,7 @@ import EventEmitter3 from 'eventemitter3';
 
 import { Connector, ProviderRpcError, Actions } from '@src/web3/core/types';
 import { getBestUrl } from '@src/web3/core/utils';
+import { gotoLink } from '@src/web3/config';
 
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
@@ -18,7 +19,11 @@ type WalletConnectOptions = Omit<IWCEthRpcConnectionOptions, 'rpc' | 'infuraId' 
     rpc: { [chainId: number]: string | string[] };
 };
 
-export class WalletConnect extends Connector {
+type Clients = 'MetaMask' | 'Rainbow' | 'Trust' | 'Ledger' | 'CryptoDotCom';
+
+const HREF_PATH = 'wc?uri=';
+
+export class WalletConnectSpecific extends Connector {
     /** {@inheritdoc Connector.provider} */
     public provider: MockWalletConnectProvider | undefined = undefined;
     public readonly events = new EventEmitter3();
@@ -27,19 +32,23 @@ export class WalletConnect extends Connector {
     private readonly rpc: { [chainId: number]: string[] };
     private eagerConnection?: Promise<void>;
     private treatModalCloseAsError: boolean;
-
+    private client: Clients;
+    private href: string;
     /**
      * @param options - Options to pass to `@walletconnect/ethereum-provider`
      * @param connectEagerly - A flag indicating whether connection should be initiated when the class is constructed.
      */
     constructor(
+        client: Clients,
+        href: string,
         actions: Actions,
         options: WalletConnectOptions,
         connectEagerly = false,
         treatModalCloseAsError = true,
     ) {
         super(actions);
-
+        this.client = client;
+        this.href = href;
         if (connectEagerly && typeof window === 'undefined') {
             throw new Error(
                 'connectEagerly = true is invalid for SSR, instead use the connectEagerly method in a useEffect',
@@ -74,8 +83,11 @@ export class WalletConnect extends Connector {
     };
 
     private URIListener = (_: Error | null, payload: { params: string[] }): void => {
+        const link = this.href + HREF_PATH + encodeURIComponent(payload.params[0]);
         console.log({ payload });
-        this.events.emit(URI_AVAILABLE, payload.params[0]);
+        console.log(link);
+        gotoLink(link);
+        // this.events.emit(URI_AVAILABLE, payload.params[0]);
     };
 
     private async isomorphicInitialize(chainId = Number(Object.keys(this.rpc)[0])): Promise<void> {

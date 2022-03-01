@@ -7,9 +7,11 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
 import HappyTipper from '@src/components/general/HappyTipper/HappyTipper';
+import state from '@src/state';
 type Props = {};
 
 const ConnectWalletTab: FunctionComponent<Props> = () => {
+    const screenType = state.app.select.screenType();
     return (
         <div
             style={{
@@ -65,32 +67,29 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                     height: '100%',
                 }}
             >
-                {Object.values(web3.config.SUPPORTED_WALLETS).map((walletObject) =>
-                    walletObject.name !== 'MetaMask' ||
-                    (walletObject.name === 'MetaMask' && window.ethereum) ? (
-                        <Button
-                            key={walletObject.name}
-                            buttonStyle={{
-                                color: 'white',
-                                border: `${walletObject.color}`,
-                                borderWidth: '5px',
-                                borderStyle: 'solid',
-                                borderRadius: Layout.borderRadius.large,
-                                padding: '1rem',
-                                pointerEvents: 'auto',
-                                background: 'white',
-                                margin: '1rem',
-                            }}
-                            rightIcon={
-                                <NLStaticImage
-                                    //@ts-ignore
-                                    image={walletObject.name}
-                                />
-                            }
-                            onClick={() => walletObject.connector.connector.activate()}
-                        />
-                    ) : null,
-                )}
+                {Object.values(web3.config.SUPPORTED_WALLETS).map((walletObject) => (
+                    <Button
+                        key={walletObject.name}
+                        buttonStyle={{
+                            color: 'white',
+                            border: `${walletObject.color}`,
+                            borderWidth: '5px',
+                            borderStyle: 'solid',
+                            borderRadius: Layout.borderRadius.large,
+                            padding: '1rem',
+                            pointerEvents: 'auto',
+                            background: 'white',
+                            margin: '1rem',
+                        }}
+                        rightIcon={
+                            <NLStaticImage
+                                //@ts-ignore
+                                image={walletObject.name}
+                            />
+                        }
+                        onClick={() => walletObject.connector.connector.activate()}
+                    />
+                ))}
                 <HappyTipper tip="wallet-1" />
             </div>
         </div>

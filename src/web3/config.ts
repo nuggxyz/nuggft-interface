@@ -9,6 +9,7 @@ import { Network } from './clients/network';
 import { WalletConnect } from './clients/walletconnect';
 import { WalletLink } from './clients/walletlink';
 import { getPriorityConnector, initializeConnector } from './core/core';
+import { WalletConnectSpecific } from './clients/walletconnect-specific';
 
 export enum SupportedChainId {
     MAINNET = 1,
@@ -81,11 +82,45 @@ export const WSS_URLS = {
 };
 
 export const connectors = {
-    metamask: initializeConnector<MetaMask>((actions) => new MetaMask(actions, true)),
-    walletconnect: initializeConnector<WalletConnect>(
+    metamask: window.ethereum
+        ? initializeConnector<MetaMask>((actions) => new MetaMask(actions, true))
+        : initializeConnector<WalletConnectSpecific>(
+              (actions) =>
+                  new WalletConnectSpecific('MetaMask', 'https://metamask.app.link/', actions, {
+                      rpc: NETWORK_URLS,
+                      qrcode: false,
+                  }),
+              Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
+          ),
+    rainbow: initializeConnector<WalletConnectSpecific>(
         (actions) =>
-            new WalletConnect(actions, {
+            new WalletConnectSpecific('Rainbow', 'https://rnbwapp.com/', actions, {
                 rpc: NETWORK_URLS,
+                qrcode: false,
+            }),
+        Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
+    ),
+    ledgerlive: initializeConnector<WalletConnectSpecific>(
+        (actions) =>
+            new WalletConnectSpecific('Ledger', 'ledgerlive://', actions, {
+                rpc: NETWORK_URLS,
+                qrcode: false,
+            }),
+        Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
+    ),
+    trust: initializeConnector<WalletConnectSpecific>(
+        (actions) =>
+            new WalletConnectSpecific('Trust', 'https://link.trustwallet.com/', actions, {
+                rpc: NETWORK_URLS,
+                qrcode: false,
+            }),
+        Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
+    ),
+    croptodotcom: initializeConnector<WalletConnectSpecific>(
+        (actions) =>
+            new WalletConnectSpecific('Trust', 'https://wallet.crypto.com/', actions, {
+                rpc: NETWORK_URLS,
+                qrcode: false,
             }),
         Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
     ),
@@ -96,6 +131,13 @@ export const connectors = {
                 appName: 'NuggftV1',
             }),
     ),
+    walletconnect: initializeConnector<WalletConnect>(
+        (actions) =>
+            new WalletConnect(actions, {
+                rpc: NETWORK_URLS,
+            }),
+        Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
+    ),
     network: initializeConnector<Network>(
         (actions) => new Network(actions, NETWORK_URLS, true, 5),
         Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
@@ -105,6 +147,15 @@ export const connectors = {
 export const priority = getPriorityConnector(...Object.values(connectors).map((x) => x));
 
 export const SUPPORTED_WALLETS: { [key: string]: NL.Redux.Web32.WalletInfo } = {
+    RAINBOW: {
+        connector: connectors.rainbow,
+        name: 'Rainbow',
+        iconURL: 'rainbow',
+        description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
+        href: 'https://rnbwapp.com/',
+        color: 'rgb(0,62,140)',
+        mobile: true,
+    },
     METAMASK: {
         connector: connectors.metamask,
         name: 'MetaMask',
@@ -113,6 +164,43 @@ export const SUPPORTED_WALLETS: { [key: string]: NL.Redux.Web32.WalletInfo } = {
         href: null,
         color: '#E8831D',
     },
+    LEDGER_LIVE: {
+        connector: connectors.ledgerlive,
+        name: 'Ledger',
+        iconURL: 'ledger',
+        description: '',
+        href: 'ledgerlive://',
+        color: '#000',
+        mobile: true,
+    },
+    WALLET_LINK: {
+        connector: connectors.walletlink,
+        name: 'Coinbase',
+        iconURL: 'coinbase',
+        description: 'nope',
+        href: null,
+        color: '#1652f0',
+        mobile: true,
+    },
+    TRUST: {
+        connector: connectors.trust,
+        name: 'Trust',
+        iconURL: 'trust',
+        description: 'nope',
+        href: 'https://link.trustwallet.com/',
+        color: '#3375BB',
+        mobile: true,
+    },
+    CRYPTODOTCOM: {
+        connector: connectors.croptodotcom,
+        name: 'CryptoDotCom',
+        iconURL: 'trust',
+        description: 'nope',
+        href: 'https://link.trustwallet.com/',
+        color: '#002D74',
+        mobile: true,
+    },
+
     WALLET_CONNECT: {
         connector: connectors.walletconnect,
         name: 'WalletConnect',
@@ -122,15 +210,11 @@ export const SUPPORTED_WALLETS: { [key: string]: NL.Redux.Web32.WalletInfo } = {
         color: '#4196FC',
         mobile: true,
     },
-    WALLET_LINK: {
-        connector: connectors.walletlink,
-        name: 'Coinbase',
-        iconURL: 'coinbase',
-        description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
-        href: null,
-        color: '#1652f0',
-        mobile: true,
-    },
+};
+
+export const gotoLink = (link: string) => {
+    let win = window.open(encodeURIComponent(link), '_blank');
+    win.focus();
 };
 
 export const CHAIN_INFO: {
