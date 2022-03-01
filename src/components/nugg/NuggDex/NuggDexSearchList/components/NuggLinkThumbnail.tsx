@@ -31,7 +31,7 @@ const NuggLinkThumbnail: FunctionComponent<{
         <animated.div
             ref={ref as any}
             key={index}
-            style={style}
+            style={{ ...style }}
             onClick={() => {
                 TokenState.dispatch.setNugg(item);
                 NuggftV1Helper.storeNugg(item.id, item.dotnuggRawCache);
@@ -43,8 +43,13 @@ const NuggLinkThumbnail: FunctionComponent<{
                     //     _localStorageExpectedType: 'array',
                     // }
                 );
-            }}>
-            <TokenViewer tokenId={item.id || ''} style={styles.nugg} data={item.dotnuggRawCache} />
+            }}
+        >
+            <TokenViewer
+                tokenId={item.id || ''}
+                style={{ ...styles.nugg }}
+                data={item.dotnuggRawCache}
+            />
             <Text size="smaller" textStyle={styles.label}>
                 {item.id}
             </Text>
