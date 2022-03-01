@@ -91,11 +91,8 @@ const styles = NLStyleSheetCreator({
     },
     nugg: {
         cursor: 'pointer',
-        width: '100%',
-        height: '100%',
-
-        objectFit: 'cover',
-        overflow: 'visible',
+        width: '60px',
+        height: '60px',
     },
     label: {
         textAlign: 'center',
