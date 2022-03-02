@@ -7,7 +7,8 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
 import HappyTipper from '@src/components/general/HappyTipper/HappyTipper';
-import { SupportedConnectors } from '@src/web3/config';
+import { SupportedConnectors } from '@src/web3/core/types';
+
 type Props = {};
 
 const ConnectWalletTab: FunctionComponent<Props> = () => {

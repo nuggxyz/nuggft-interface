@@ -1,7 +1,7 @@
 import type { Eip1193Bridge } from '@ethersproject/experimental';
 import type { ConnectionInfo } from '@ethersproject/web';
 
-import { Connector, Actions } from '@src/web3/core/types';
+import { Connector, Actions, ConnectorInfo } from '@src/web3/core/types';
 
 type url = string | ConnectionInfo;
 
@@ -19,12 +19,13 @@ export class Network extends Connector {
      * @param defaultChainId - The chainId to connect to if connectEagerly is true.
      */
     constructor(
+        info: ConnectorInfo,
         actions: Actions,
         urlMap: { [chainId: number]: url | url[] },
         connectEagerly = false,
         defaultChainId = Number(Object.keys(urlMap)[0]),
     ) {
-        super(actions);
+        super(actions, info);
 
         if (connectEagerly && typeof window === 'undefined') {
             throw new Error(

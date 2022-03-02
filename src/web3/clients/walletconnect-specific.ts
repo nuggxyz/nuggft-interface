@@ -2,8 +2,14 @@ import type { EventEmitter } from 'node:events';
 import type WalletConnectProvider from '@walletconnect/ethereum-provider';
 import type { IWCEthRpcConnectionOptions } from '@walletconnect/types';
 import EventEmitter3 from 'eventemitter3';
+import invariant from 'tiny-invariant';
 
-import { Connector, ProviderRpcError, Actions } from '@src/web3/core/types';
+import {
+    ProviderRpcError,
+    Actions,
+    ConnectorSpecific,
+    ConnectorSpecificInfo,
+} from '@src/web3/core/types';
 import { getBestUrl } from '@src/web3/core/utils';
 import { gotoLink } from '@src/web3/config';
 import AppState from '@src/state/app';
@@ -12,10 +18,6 @@ import store from '@src/state/store';
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
 type MockWalletConnectProvider = WalletConnectProvider & EventEmitter;
-
-type WalletConnectSpecificConfig = {
-    info: NL.Web3.WalletInfo;
-};
 
 function parseChainId(chainId: string | number) {
     return typeof chainId === 'string' ? Number.parseInt(chainId) : chainId;
@@ -26,13 +28,12 @@ type WalletConnectOptions = Omit<
     'rpc' | 'infuraId' | 'chainId' | 'qrcode'
 > & {
     rpc: { [chainId: number]: string | string[] };
-} & WalletConnectSpecificConfig;
-
+};
 // type Clients = 'MetaMask' | 'Rainbow' | 'Trust' | 'Ledger' | 'CryptoDotCom';
 
 const HREF_PATH = 'wc?uri=';
 
-export class WalletConnectSpecific extends Connector {
+export class WalletConnectSpecific extends ConnectorSpecific {
     /** {@inheritdoc Connector.provider} */
     public provider: MockWalletConnectProvider | undefined = undefined;
     public readonly events = new EventEmitter3();
@@ -47,16 +48,14 @@ export class WalletConnectSpecific extends Connector {
      * @param connectEagerly - A flag indicating whether connection should be initiated when the class is constructed.
      */
     constructor(
-        // client: Clients,
-        // href: string,
+        info: ConnectorSpecificInfo,
         actions: Actions,
         options: WalletConnectOptions,
         connectEagerly = false,
         treatModalCloseAsError = true,
     ) {
-        super(actions);
-        // this.client = client;
-
+        super(actions, info);
+        invariant(info.peerurl);
         // @ts-ignore
         options.qrcode = false;
 
@@ -94,19 +93,21 @@ export class WalletConnectSpecific extends Connector {
     };
 
     private URIListener = (_: Error | null, payload: { params: string[] }): void => {
-        const uri = this.options.info.href + HREF_PATH + encodeURIComponent(payload.params[0]);
-        console.log({ payload });
+        // default - just use normal wallet connect flow
+        if (!this.info) this.events.emit(URI_AVAILABLE, payload.params[0]);
+
+        const uri = this.info.href + HREF_PATH + encodeURIComponent(payload.params[0]);
+        // console.log(uri);
         const deviced = store.getState().app.screenType;
 
-        console.log(this.options, deviced);
-
-        if (this.options.info.label === 'ledgerlive') {
+        if (this.info.label === 'ledgerlive') {
+            // deep link via non-http
             window.open(uri);
         } else if (deviced === 'desktop' || deviced === 'tablet') {
             AppState.dispatch.setModalOpen({
                 name: 'QrCode',
                 modalData: {
-                    data: { info: this.options.info, uri },
+                    data: { info: this.info, uri },
                     containerStyle: { backgroundColor: 'white' },
                 },
             });
@@ -114,8 +115,6 @@ export class WalletConnectSpecific extends Connector {
             // deep link via http
             gotoLink(uri);
         }
-
-        // this.events.emit(URI_AVAILABLE, payload.params[0]);
     };
 
     private async isomorphicInitialize(chainId = Number(Object.keys(this.rpc)[0])): Promise<void> {
@@ -139,10 +138,12 @@ export class WalletConnectSpecific extends Connector {
         await (this.eagerConnection = import('@walletconnect/ethereum-provider').then(async (m) => {
             this.provider = new m.default({
                 ...this.options,
+                storageId: this.info.label,
                 chainId,
+
                 rpc: await rpc,
             }) as unknown as MockWalletConnectProvider;
-            // console.log(this.providerd);
+
             this.provider.on('disconnect', this.disconnectListener);
             this.provider.on('chainChanged', this.chainChangedListener);
             this.provider.on('accountsChanged', this.accountsChangedListener);
@@ -156,15 +157,28 @@ export class WalletConnectSpecific extends Connector {
 
         await this.isomorphicInitialize();
 
+        // console.log(this.provider);
+
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (this.provider!.connected) {
             try {
+                if (
+                    this.info.peerurl !== (this.provider as any).signer.connection.wc._peerMeta.url
+                ) {
+                    cancelActivation();
+                    await this.deactivate();
+
+                    return;
+                }
+                // console.log({ prov: this.provider });
                 // for walletconnect, we always use sequential instead of parallel fetches because otherwise
                 // chainId defaults to 1 even if the connecting wallet isn't on mainnet
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const accounts = await this.provider!.request<string[]>({
                     method: 'eth_accounts',
                 });
+
+                // console.log({ accounts });
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const chainId = parseChainId(
                     await this.provider!.request<string | number>({
@@ -180,9 +194,11 @@ export class WalletConnectSpecific extends Connector {
             } catch (error) {
                 console.debug('Could not connect eagerly', error);
                 cancelActivation();
+                await this.deactivate();
             }
         } else {
             cancelActivation();
+            await this.deactivate();
         }
     }
 
@@ -197,6 +213,8 @@ export class WalletConnectSpecific extends Connector {
         if (desiredChainId && this.rpc[desiredChainId] === undefined) {
             throw new Error(`no url(s) provided for desiredChainId ${desiredChainId}`);
         }
+
+        // console.log('yeps');
 
         // this early return clause catches some common cases if we're already connected
         if (this.provider?.connected) {
@@ -241,16 +259,16 @@ export class WalletConnectSpecific extends Connector {
 
             // if we're here, we can try to switch networks, ignoring errors
             const desiredChainIdHex = `0x${desiredChainId.toString(16)}`;
-            return this.provider
-                ?.request<void>({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: desiredChainIdHex }],
-                })
-                .catch(() => void 0);
+            return this.provider?.request<void>({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: desiredChainIdHex }],
+            });
+            // .catch(() => void 0);
         } catch (error) {
             // this condition is a bit of a hack :/
             // if a user triggers the walletconnect modal, closes it, and then tries to connect again,
             // the modal will not trigger. the logic below prevents this from happening
+            // console.log({ hima: error });
             if ((error as Error).message === 'User closed modal') {
                 await this.deactivate(this.treatModalCloseAsError ? (error as Error) : undefined);
             } else {
@@ -261,6 +279,8 @@ export class WalletConnectSpecific extends Connector {
 
     /** {@inheritdoc Connector.deactivate} */
     public async deactivate(error?: Error): Promise<void> {
+        // await this.provider.connector?.killSession();
+
         this.provider?.off('disconnect', this.disconnectListener);
         this.provider?.off('chainChanged', this.chainChangedListener);
         this.provider?.off('accountsChanged', this.accountsChangedListener);
@@ -268,7 +288,15 @@ export class WalletConnectSpecific extends Connector {
             'display_uri',
             this.URIListener,
         );
+
+        await this.eagerConnection;
+        const tran = (this.provider as any)?.signer?.connection?.wc?._transport
+            ?._socket as WebSocket;
+
+        tran?.close(1000, 'ayo');
+
         await this.provider?.disconnect();
+
         this.provider = undefined;
         this.eagerConnection = undefined;
         this.actions.reportError(error);

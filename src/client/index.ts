@@ -12,6 +12,7 @@ export default {
         activeSwaps: () => core.store((state) => state.activeSwaps),
         epoch: () => core.store((state) => state.epoch),
         stake: () => core.store((state) => state.stake),
+        manualPriority: () => core.store((state) => state.manualPriority),
     },
     hook: {
         useSafeLiveOffers,

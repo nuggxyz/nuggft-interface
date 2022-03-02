@@ -4,13 +4,20 @@ import { ApolloClient, InMemoryCache } from '@apollo/client';
 
 import { buildApolloSplitLink } from '@src/graphql/client';
 
-import { Connector } from './core/types';
-import { WalletConnectSpecific } from './clients/walletconnect-specific';
+import {
+    Connector,
+    ConnectorInfo,
+    ConnectorNormalInfo,
+    ConnectorSpecificInfo,
+    ConnectorType,
+    SupportedConnectors,
+} from './core/types';
 import { getPriorityConnector, initializeConnector, ResWithStore } from './core/core';
 import { WalletLink } from './clients/walletlink';
-import { WalletConnect } from './clients/walletconnect';
 import { Network } from './clients/network';
 import { MetaMask } from './clients/metamask';
+import { WalletConnectSpecific } from './clients/walletconnect-specific';
+import { WalletConnect } from './clients/walletconnect';
 
 export enum SupportedChainId {
     MAINNET = 1,
@@ -18,16 +25,6 @@ export enum SupportedChainId {
     RINKEBY = 4,
     GOERLI = 5,
 }
-
-export type SupportedConnectors =
-    | 'metamask'
-    | 'rainbow'
-    | 'ledgerlive'
-    | 'cryptodotcom'
-    | 'trust'
-    | 'coinbase'
-    | 'walletconnect'
-    | 'infura';
 
 export function supportedChainIds() {
     // @ts-ignore
@@ -92,139 +89,167 @@ export const WSS_URLS = {
     [SupportedChainId.GOERLI]: `wss://goerli.infura.io/v3/${INFURA_KEY}`,
 };
 
-export const connector_info: {
-    [key in SupportedConnectors]: NL.Web3.WalletInfo & { label: SupportedConnectors };
-} = {
-    rainbow: {
-        name: 'Rainbow',
-        label: 'rainbow',
-        description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
-        href: 'https://rnbwapp.com/',
-        color: 'rgb(0,62,140)',
-        mobile: true,
-    },
-    metamask: {
-        name: 'MetaMask',
-        label: 'metamask',
-        description: 'Easy-to-use browser extension.',
-        href: 'https://metamask.app.link/',
-        color: '#E8831D',
-    },
-    ledgerlive: {
-        name: 'Ledger',
-        label: 'ledgerlive',
-        description: '',
-        href: 'ledgerlive://',
-        color: '#000',
-        mobile: true,
-    },
-    coinbase: {
-        name: 'Coinbase Wallet',
-        label: 'coinbase',
-        description: 'nope',
-        href: null,
-        color: '#1652f0',
-        mobile: true,
-    },
-    trust: {
-        name: 'Trust Wallet',
-        label: 'trust',
-        description: 'nope',
-        href: 'https://link.trustwallet.com/',
-        color: '#3375BB',
-        mobile: true,
-    },
-    cryptodotcom: {
-        name: 'Crypto.com',
-        label: 'cryptodotcom',
-        description: 'nope',
-        href: 'https://wallet.crypto.com/',
-        color: '#002D74',
-        mobile: true,
-    },
+export const connector_info_rainbow: ConnectorSpecificInfo = {
+    type: ConnectorType.SPECIFIC,
+    name: 'Rainbow',
+    label: 'rainbow',
+    description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
+    href: 'https://rnbwapp.com/',
+    color: 'rgb(0,62,140)',
+    mobile: true,
+    peerurl: 'https://rainbow.me',
+};
 
-    walletconnect: {
-        name: 'WalletConnect',
-        label: 'walletconnect',
-        description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
-        href: null,
-        color: '#4196FC',
-        mobile: true,
-    },
-    infura: {
-        name: 'infura',
-        label: 'infura',
-        description: 'n/a',
-        href: null,
-        color: '#FFFFFF',
-        mobile: true,
-    },
+export const connector_info_metamask: ConnectorInfo = {
+    type: window.ethereum ? ConnectorType.NORMAL : ConnectorType.SPECIFIC,
+    name: 'MetaMask',
+    label: 'metamask',
+    description: 'Easy-to-use browser extension.',
+    href: 'https://metamask.app.link/',
+    color: '#E8831D',
+    peerurl: 'https://metamask.io',
+};
+
+export const connector_info_ledgerlive: ConnectorSpecificInfo = {
+    type: ConnectorType.SPECIFIC,
+    name: 'Ledger',
+    label: 'ledgerlive',
+    description: '',
+    href: 'ledgerlive://',
+    color: '#000',
+    mobile: true,
+    peerurl: 'https://www.ledger.com/',
+};
+
+export const connector_info_trust: ConnectorSpecificInfo = {
+    type: ConnectorType.SPECIFIC,
+    name: 'Trust Wallet',
+    label: 'trust',
+    description: 'nope',
+    href: 'https://link.trustwallet.com/',
+    color: '#3375BB',
+    mobile: true,
+    peerurl: 'https://trustwallet.com/',
+};
+export const connector_info_cryptodotcom: ConnectorSpecificInfo = {
+    type: ConnectorType.SPECIFIC,
+    name: 'Crypto.com',
+    label: 'cryptodotcom',
+    description: 'nope',
+    href: 'https://wallet.crypto.com/',
+    color: '#002D74',
+    mobile: true,
+    peerurl: 'https://crypto.com/',
+};
+
+export const connector_info_coinbase: ConnectorNormalInfo = {
+    type: ConnectorType.NORMAL,
+    name: 'Coinbase Wallet',
+    label: 'coinbase',
+    description: 'nope',
+    href: null,
+    color: '#1652f0',
+    mobile: true,
+};
+export const connector_info_walletconnect: ConnectorNormalInfo = {
+    type: ConnectorType.NORMAL,
+    name: 'WalletConnect',
+    label: 'walletconnect',
+    description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
+    href: null,
+    color: '#4196FC',
+    mobile: true,
+};
+export const connector_info_infura: ConnectorNormalInfo = {
+    type: ConnectorType.NORMAL,
+    name: 'infura',
+    label: 'infura',
+    description: 'n/a',
+    href: null,
+    color: '#FFFFFF',
+    mobile: true,
+};
+
+export const connector_info: {
+    [key in SupportedConnectors]: ConnectorInfo;
+} = {
+    rainbow: connector_info_rainbow,
+    metamask: connector_info_metamask,
+    ledgerlive: connector_info_ledgerlive,
+    trust: connector_info_trust,
+    cryptodotcom: connector_info_cryptodotcom,
+    coinbase: connector_info_coinbase,
+    walletconnect: connector_info_walletconnect,
+    infura: connector_info_infura,
+};
+
+export const peer_urls: string[] = Object.values(connector_info).reduce((prev, curr) => {
+    return [...prev, ...(curr.type === ConnectorType.SPECIFIC ? [curr.peerurl] : [])];
+}, [] as string[]);
+
+export const isSpecificPeer = (provider: any) => {
+    try {
+        if (peer_urls.indexOf(provider.signer.connection.wc._peerMeta.url) !== -1) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch {
+        return false;
+    }
 };
 
 export const connector_instances: { [key in SupportedConnectors]: ResWithStore<Connector> } = {
-    metamask: window.ethereum
-        ? initializeConnector<MetaMask>((actions) => new MetaMask(actions, true))
-        : initializeConnector<WalletConnectSpecific>(
-              (actions) =>
-                  new WalletConnectSpecific(actions, {
-                      info: connector_info.metamask,
-                      rpc: NETWORK_URLS,
-                  }),
-              Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
-          ),
     rainbow: initializeConnector<WalletConnectSpecific>(
         (actions) =>
-            new WalletConnectSpecific(actions, {
+            new WalletConnectSpecific(connector_info_rainbow, actions, {
                 rpc: NETWORK_URLS,
-                info: connector_info.rainbow,
             }),
-        Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
-    ),
-    ledgerlive: initializeConnector<WalletConnectSpecific>(
-        (actions) =>
-            new WalletConnectSpecific(actions, {
-                rpc: NETWORK_URLS,
-                info: connector_info.ledgerlive,
-            }),
-        Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
     ),
     trust: initializeConnector<WalletConnectSpecific>(
         (actions) =>
-            new WalletConnectSpecific(actions, {
-                rpc: NETWORK_URLS,
-                info: connector_info.trust,
-            }),
-        Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
+            new WalletConnectSpecific(connector_info_trust, actions, { rpc: NETWORK_URLS }),
     ),
     cryptodotcom: initializeConnector<WalletConnectSpecific>(
         (actions) =>
-            new WalletConnectSpecific(actions, {
-                rpc: NETWORK_URLS,
-                info: connector_info.cryptodotcom,
-            }),
-        Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
+            new WalletConnectSpecific(connector_info_cryptodotcom, actions, { rpc: NETWORK_URLS }),
+    ),
+    ledgerlive: initializeConnector<WalletConnectSpecific>(
+        (actions) =>
+            new WalletConnectSpecific(connector_info_ledgerlive, actions, { rpc: NETWORK_URLS }),
     ),
     coinbase: initializeConnector<WalletLink>(
         (actions) =>
-            new WalletLink(actions, {
+            new WalletLink(connector_info_coinbase, actions, {
                 url: NETWORK_URLS[1][0],
                 appName: 'NuggftV1',
             }),
     ),
     walletconnect: initializeConnector<WalletConnect>(
         (actions) =>
-            new WalletConnect(actions, {
-                rpc: NETWORK_URLS,
-            }),
-        Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
+            new WalletConnect(connector_info_walletconnect, actions, { rpc: NETWORK_URLS }),
     ),
+    metamask:
+        connector_info.metamask.type === ConnectorType.NORMAL
+            ? initializeConnector<MetaMask>(
+                  (actions) =>
+                      new MetaMask(connector_info_metamask as ConnectorNormalInfo, actions, true),
+              )
+            : initializeConnector<WalletConnectSpecific>(
+                  (actions) =>
+                      new WalletConnectSpecific(
+                          connector_info_metamask as ConnectorSpecificInfo,
+                          actions,
+                          { rpc: NETWORK_URLS },
+                      ),
+              ),
     infura: initializeConnector<Network>(
-        (actions) => new Network(actions, NETWORK_URLS, true, 5),
+        (actions) => new Network(connector_info_infura, actions, NETWORK_URLS, true, 5),
         Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
     ),
 };
 
-export const priority = getPriorityConnector(...Object.values(connector_instances).map((x) => x));
+export const priority = getPriorityConnector(connector_instances);
 
 export const connectors: {
     [key in SupportedConnectors]: NL.Web3.WalletInfo & ResWithStore<Connector>;
@@ -287,7 +312,11 @@ export const CHAIN_INFO: {
     },
 };
 
-export const gotoEtherscan = (chainId: SupportedChainId, route: 'tx', value: string) => {
+export const gotoEtherscan = (
+    chainId: SupportedChainId,
+    route: 'tx' | 'address',
+    value: string,
+) => {
     let win = window.open(`${CHAIN_INFO[chainId].explorer}${route}/${value}`, '_blank');
     win.focus();
 };
@@ -300,7 +329,6 @@ export const createApolloClient = (chainId: SupportedChainId) => {
     const ok = new ApolloClient<any>({
         link: buildApolloSplitLink(GRAPH_ENPOINTS[chainId], GRAPH_WSS_ENDPOINTS[chainId]),
         // connectToDevTools: true,
-
         cache: new InMemoryCache(),
     });
     // window.__APOLLO_CLIENT__ = ok;

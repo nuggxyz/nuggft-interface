@@ -53,6 +53,7 @@ class AppState extends NLState<NL.Redux.App.State> {
             view: 'Swap',
             mobileView: 'Mint',
             walletVisible: false,
+            walletManagerVisable: false,
         });
 
         const parser = new UAParser(window.navigator.userAgent);
@@ -82,6 +83,9 @@ class AppState extends NLState<NL.Redux.App.State> {
             addToastToList: (state, action: PayloadAction<NL.Redux.App.Toast>) => {
                 let temp = state.toasts;
                 state.toasts = smartInsertIndex(temp, action.payload);
+            },
+            toggleWalletManager: (state) => {
+                state.walletManagerVisable = !state.walletManagerVisable;
             },
             removeToastFromList: (
                 state,

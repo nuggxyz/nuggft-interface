@@ -7,6 +7,7 @@ import {
     AddEthereumChainParameter,
     Provider,
     Actions,
+    ConnectorNormalInfo,
 } from '@src/web3/core/types';
 
 export class NoMetaMaskError extends Error {
@@ -30,11 +31,12 @@ export class MetaMask extends Connector {
      * @param options - Options to pass to `@metamask/detect-provider`
      */
     constructor(
+        info: ConnectorNormalInfo,
         actions: Actions,
         connectEagerly = false,
         options?: Parameters<typeof detectEthereumProvider>[0],
     ) {
-        super(actions);
+        super(actions, info);
 
         if (connectEagerly && typeof window === 'undefined') {
             throw new Error(

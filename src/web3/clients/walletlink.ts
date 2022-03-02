@@ -7,6 +7,7 @@ import {
     ProviderConnectInfo,
     ProviderRpcError,
     AddEthereumChainParameter,
+    ConnectorInfo,
 } from '@src/web3/core/types';
 
 function parseChainId(chainId: string | number) {
@@ -32,11 +33,12 @@ export class WalletLink extends Connector {
      * @param connectEagerly - A flag indicating whether connection should be initiated when the class is constructed.
      */
     constructor(
+        info: ConnectorInfo,
         actions: Actions,
         options: WalletLinkOptions & { url: string },
         connectEagerly = false,
     ) {
-        super(actions);
+        super(actions, info);
 
         if (connectEagerly && typeof window === 'undefined') {
             throw new Error(

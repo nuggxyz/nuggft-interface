@@ -1,6 +1,50 @@
 import type { EventEmitter } from 'node:events';
 import type { State, StoreApi } from 'zustand/vanilla';
 
+export type SupportedConnectors =
+    | 'metamask'
+    | 'rainbow'
+    | 'ledgerlive'
+    | 'cryptodotcom'
+    | 'trust'
+    | 'coinbase'
+    | 'walletconnect'
+    | 'infura';
+
+export type SupportedWalletConnectInstances =
+    | 'metamask'
+    | 'rainbow'
+    | 'ledgerlive'
+    | 'cryptodotcom'
+    | 'trust'
+    | 'other';
+
+export enum ConnectorType {
+    NORMAL = 0,
+    SPECIFIC = 1,
+}
+export interface ConnectorBaseInfo {
+    type: ConnectorType;
+    name: string;
+    label: SupportedConnectors;
+    description?: string;
+    href: string | null;
+    color: string;
+    primary?: true;
+    mobile?: true;
+    mobileOnly?: true;
+}
+
+export interface ConnectorNormalInfo extends ConnectorBaseInfo {
+    type: ConnectorType.NORMAL;
+}
+
+export interface ConnectorSpecificInfo extends ConnectorBaseInfo {
+    type: ConnectorType.SPECIFIC;
+    peerurl: string;
+}
+
+export type ConnectorInfo = ConnectorNormalInfo | ConnectorSpecificInfo;
 export interface Web3ReactState extends State {
     chainId: number | undefined;
     accounts: string[] | undefined;
@@ -79,12 +123,15 @@ export abstract class Connector {
 
     protected readonly actions: Actions;
 
+    public info: ConnectorInfo;
+
     /**
      * @param actions - Methods bound to a zustand store that tracks the state of the connector.
      * Actions are used by the connector to report changes in connection status.
      */
-    constructor(actions: Actions) {
+    constructor(actions: Actions, info: ConnectorInfo) {
         this.actions = actions;
+        this.info = info;
     }
 
     /**
@@ -104,4 +151,8 @@ export abstract class Connector {
     public deactivate(...args: unknown[]): Promise<void> | void {
         this.actions.reportError(undefined);
     }
+}
+
+export abstract class ConnectorSpecific extends Connector {
+    public declare info: ConnectorSpecificInfo;
 }

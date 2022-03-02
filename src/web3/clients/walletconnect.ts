@@ -3,7 +3,7 @@ import type WalletConnectProvider from '@walletconnect/ethereum-provider';
 import type { IWCEthRpcConnectionOptions } from '@walletconnect/types';
 import EventEmitter3 from 'eventemitter3';
 
-import { Connector, ProviderRpcError, Actions } from '@src/web3/core/types';
+import { Connector, ProviderRpcError, Actions, ConnectorInfo } from '@src/web3/core/types';
 import { getBestUrl } from '@src/web3/core/utils';
 
 export const URI_AVAILABLE = 'URI_AVAILABLE';
@@ -33,12 +33,13 @@ export class WalletConnect extends Connector {
      * @param connectEagerly - A flag indicating whether connection should be initiated when the class is constructed.
      */
     constructor(
+        info: ConnectorInfo,
         actions: Actions,
         options: WalletConnectOptions,
         connectEagerly = false,
         treatModalCloseAsError = true,
     ) {
-        super(actions);
+        super(actions, info);
 
         if (connectEagerly && typeof window === 'undefined') {
             throw new Error(
@@ -228,6 +229,15 @@ export class WalletConnect extends Connector {
             'display_uri',
             this.URIListener,
         );
+
+        const tran = (this.provider as any)?.signer?.connection?.wc?._transport
+            ?._socket as WebSocket;
+        console.log({ tran });
+        // const ws = tran._socket as WebSocket;
+        // console.log({ ws });
+
+        tran?.close(1000, 'ayo');
+
         await this.provider?.disconnect();
         this.provider = undefined;
         this.eagerConnection = undefined;

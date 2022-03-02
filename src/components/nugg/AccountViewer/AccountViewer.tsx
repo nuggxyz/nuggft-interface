@@ -1,33 +1,25 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import Jazzicon from '@src/components/nugg/Jazzicon';
 import Text from '@src/components/general/Texts/Text/Text';
 import AppState from '@src/state/app';
 import Colors from '@src/lib/colors';
-import useAsyncState from '@src/hooks/useAsyncState';
-import { EthInt } from '@src/classes/Fraction';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
 import web3 from '@src/web3';
+import state from '@src/state';
+import NLStaticImage from '@src/components/general/NLStaticImage';
+import { SupportedChainId } from '@src/web3/config';
 
 import styles from './AccountViewer.styles';
 
 const AccountViewer = () => {
     const screenType = AppState.select.screenType();
-    const chainId = web3.hook.usePriorityChainId();
-
-    const name = useMemo(() => {
-        return chainId && chainId !== -1 ? web3.config.CHAIN_INFO[chainId].label : 'uk';
-    }, [chainId]);
-
+    const chainId = web3.hook.usePriorityChainId() as SupportedChainId;
     const provider = web3.hook.usePriorityProvider();
     const ens = web3.hook.usePriorityENSName(provider);
     const address = web3.hook.usePriorityAccount();
     const connector = web3.hook.usePriorityConnector();
-
-    const userBalance = useAsyncState(
-        () => provider && address && provider.getBalance(address),
-        [address, provider, chainId],
-    );
+    const balance = web3.hook.usePriorityBalance(provider);
 
     return ens && address ? (
         <div style={styles.textContainer}>
@@ -38,17 +30,19 @@ const AccountViewer = () => {
                     justifyContent: 'center',
                     flexDirection: 'column',
                     alignItems: 'flex-end',
-                }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                }}
+            >
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'start',
+                        justifyContent: 'flex-end',
+                    }}
+                >
                     <InteractiveText
                         color={Colors.nuggBlueText}
                         action={() => {
-                            // let win = window.open(
-                            //     `${config.CHAIN_INFO[chainId].explorer}address/${address}`,
-                            //     '_blank',
-                            // );
-                            // win.focus();
-                            connector.deactivate();
+                            state.app.dispatch.toggleWalletManager();
                         }}
                         size={screenType === 'phone' ? 'small' : 'medium'}
                         type="text"
@@ -62,22 +56,20 @@ const AccountViewer = () => {
                                       marginRight: '.4rem',
                                   }
                                 : { color: Colors.nuggBlueText }),
-                        }}>
+                        }}
+                    >
                         {ens.toLowerCase()}
                     </InteractiveText>
+
+                    <NLStaticImage
+                        image={`${connector.info.label}_icon_small`}
+                        style={{ marginLeft: '10px' }}
+                    />
                     {screenType === 'phone' && <Jazzicon address={address} size={15} />}
                 </div>
                 <Text size="smaller" type="code" textStyle={styles.button}>
-                    {chainId !== 1 && `(${name}) `}
-                    {userBalance
-                        ? new EthInt(
-                              userBalance
-                                  .div(10 ** 13)
-                                  .add(1)
-                                  .mul(10 ** 13),
-                          ).decimal.toNumber()
-                        : 0}{' '}
-                    ETH
+                    ( {web3.config.CHAIN_INFO[chainId].label} )
+                    {balance ? balance.decimal.toNumber() : 0} ETH
                 </Text>
             </div>
             {screenType !== 'phone' && <Jazzicon address={address} size={35} />}
