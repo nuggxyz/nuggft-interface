@@ -61,6 +61,12 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
         });
     }, []);
 
+    const _onScrollEnd = useCallback(() => {
+        if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
+            onScrollEnd({ setLoading, filters, addToList: true });
+        }
+    }, [filters, onScrollEnd]);
+
     useEffect(() => {
         if (
             !isUndefinedOrNullOrNotFunction(onScrollEnd) &&
@@ -133,11 +139,7 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
                     data={values}
                     RenderItem={NuggListRenderItem}
                     loading={loading}
-                    onScrollEnd={() => {
-                        if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
-                            onScrollEnd({ setLoading, filters, addToList: true });
-                        }
-                    }}
+                    onScrollEnd={_onScrollEnd}
                     action={onClick}
                     itemHeight={210}
                     animationToggle={animationToggle}

@@ -28,7 +28,8 @@ const SearchOverlay: FunctionComponent<Props> = () => {
                     ...styles.nuggDexContainer,
                     ...(screenType === 'tablet' ? { width: '50%' } : {}),
                 }}
-                onClick={(e) => e.stopPropagation()}>
+                onClick={(e) => e.stopPropagation()}
+            >
                 <NuggDexSearchList />
             </div>
             <div
@@ -36,7 +37,8 @@ const SearchOverlay: FunctionComponent<Props> = () => {
                     ...styles.tokenContainer,
                     ...(screenType === 'tablet' ? { width: '50%' } : {}),
                 }}
-                onClick={(e) => e.stopPropagation()}>
+                onClick={(e) => e.stopPropagation()}
+            >
                 <ViewingNugg />
             </div>
         </animated.div>

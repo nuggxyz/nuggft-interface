@@ -160,7 +160,6 @@ const RenderItem = ({
 }) => {
     const [open, setOpen] = useState(true);
     // const [ref, isVisible] = useIsVisible();
-    console.log('lhjgf',extraData);
 
     // useEffect(() => {
     //     setCurrent((currents: any[]) => {

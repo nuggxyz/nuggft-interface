@@ -147,45 +147,27 @@ const InfiniteList: FunctionComponent<Props> = ({
         itemHeight,
     ]);
 
-    // useEffect(() => {
-    //     if (loading) {
-    //         let i = endIndex - startIndex + 1;
-    //         setItems((items) => [
-    //             ...items,
-    //             <div
-    //                 key="loading"
-    //                 style={{
-    //                     position: 'absolute',
-    //                     top: `${i * itemHeight}px`,
-    //                     width: '100%',
-    //                     height: `${itemHeight}px`,
-    //                     display: 'flex',
-    //                     alignItems: 'center',
-    //                     justifyContent: 'center',
-    //                 }}>
-    //                 <Loader color={loaderColor || 'black'} />
-    //             </div>,
-    //         ]);
-    //     }
-    // }, [loading, loaderColor, itemHeight, endIndex, startIndex]);
-
     useEffect(() => {
         if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
             if (
                 items.length !== 0 &&
                 items.length * itemHeight + scrollTop >= innerHeight &&
                 prevEnd !== endIndex &&
-                !loading
+                !loading &&
+                onScrollEnd
             ) {
-                onScrollEnd && onScrollEnd();
+                onScrollEnd();
             }
         }
     }, [scrollTop, items, innerHeight, onScrollEnd, prevEnd, endIndex, loading, itemHeight]);
 
-    const _onScroll = (e) => {
-        setScrollTop(e.currentTarget.scrollTop);
-        onScroll && onScroll();
-    };
+    const _onScroll = useCallback(
+        (e) => {
+            setScrollTop(e.currentTarget.scrollTop);
+            onScroll && onScroll();
+        },
+        [onScroll],
+    );
     const containerStyle = useMemo(() => {
         return {
             ...styles.container,

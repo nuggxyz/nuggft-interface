@@ -3,6 +3,7 @@ import { useSpring, animated, config } from '@react-spring/web';
 
 import { NLStaticImageKey } from '@src/components/general/NLStaticImage';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
+import usePrevious from '@src/hooks/usePrevious';
 
 import styles from './CurrencyText.styles';
 
@@ -29,13 +30,14 @@ const CurrencyText: React.FC<BalanceProps> = ({
     ...props
 }) => {
     const [isGwei, setIsGwei] = useState(false);
+    const prevValue = usePrevious(value);
     useEffect(() => {
         setIsGwei(value < 0.00001);
     }, [value]);
 
     const spring = useSpring({
         val: value,
-        from: { val: value * 0.5 },
+        from: { val: prevValue ? prevValue : value * 0.5 },
         config: config.molasses,
     });
 

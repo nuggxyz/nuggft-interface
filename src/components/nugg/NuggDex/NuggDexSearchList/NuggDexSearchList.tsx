@@ -77,12 +77,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     );
 
     useEffect(() => {
-        if (epoch) {
-            handleGetAll(setAllNuggs, 0, false, filters);
-        }
-    }, [epoch]);
-
-    useEffect(() => {
         if (viewing === 'home' && filters.searchValue !== '') {
             NuggDexState.dispatch.setViewing('all nuggs');
         }

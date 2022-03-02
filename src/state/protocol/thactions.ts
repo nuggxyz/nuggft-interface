@@ -28,21 +28,7 @@ const safeSetEpoch = createAsyncThunk<
         //@ts-ignore
         const currentEpoch = thunkAPI.getState().protocol.epoch;
 
-        if (
-            !isUndefinedOrNullOrObjectEmpty(currentEpoch) &&
-            !isUndefinedOrNullOrObjectEmpty(res) &&
-            +currentEpoch.id !== +epoch.id &&
-            +res.epoch.id === +epoch.id
-        ) {
-            return {
-                success: 'SUCCESS',
-                data: {
-                    epoch: res.epoch,
-                    isOver: true,
-                    chainId,
-                },
-            };
-        } else {
+        if (isUndefinedOrNullOrObjectEmpty(currentEpoch) || currentEpoch.id !== epoch.id)
             return {
                 success: 'SUCCESS',
                 data: {
@@ -51,7 +37,31 @@ const safeSetEpoch = createAsyncThunk<
                     chainId,
                 },
             };
-        }
+
+        // if (
+        //     !isUndefinedOrNullOrObjectEmpty(currentEpoch) &&
+        //     !isUndefinedOrNullOrObjectEmpty(res) &&
+        //     +currentEpoch.id !== +epoch.id &&
+        //     +res.epoch.id === +epoch.id
+        // ) {
+        //     return {
+        //         success: 'SUCCESS',
+        //         data: {
+        //             epoch: res.epoch,
+        //             isOver: true,
+        //             chainId,
+        //         },
+        //     };
+        // } else {
+        //     return {
+        //         success: 'SUCCESS',
+        //         data: {
+        //             epoch,
+        //             isOver: false,
+        //             chainId,
+        //         },
+        //     };
+        // }
     } catch (error) {
         console.log('protocol/safeSetEpoch', error);
         return thunkAPI.rejectWithValue('UNKNOWN');

@@ -150,3 +150,15 @@ Array.prototype.smartInsert = function <T>(element: T, field?: keyof T) {
     }
     return this;
 };
+
+Array.prototype.smartRemove = function <T>(element: T, field?: keyof T) {
+    const index = this.findIndex((item) =>
+        !isUndefinedOrNullOrStringEmpty(field) ? item[field] === element[field] : item === element,
+    );
+    if (index === -1) {
+        return this;
+    }
+    const temp = [...this];
+    temp.splice(index, 1);
+    return temp;
+};

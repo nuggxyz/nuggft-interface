@@ -15,7 +15,6 @@ import Colors from '@src/lib/colors';
 import constants from '@src/lib/constants';
 import { fromEth } from '@src/lib/conversion';
 import AppState from '@src/state/app';
-import ProtocolState from '@src/state/protocol';
 import TokenState from '@src/state/token';
 import nuggThumbnailQuery from '@src/state/token/queries/nuggThumbnailQuery';
 import swapHistoryQuery from '@src/state/token/queries/swapHistoryQuery';
@@ -30,6 +29,8 @@ import { CONTRACTS } from '@src/web3/config';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import StickyList from '@src/components/general/List/StickyList';
 import state from '@src/state';
+import client from '@src/client';
+import { LiveNugg } from '@src/client/hooks/useLiveNugg';
 
 import styles from './ViewingNugg.styles';
 import OwnerButtons from './OwnerButtons';
@@ -50,6 +51,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const ens = web3.hook.usePriorityAnyENSName(provider, owner);
     const [items, setItems] = useState([tokenId]);
     const [showMenu, setShowMenu] = useState<'loan' | 'sale'>();
+    const nugg = client.hook.useLiveNugg(tokenId);
 
     useEffect(() => {
         setItems([items[1], tokenId]);
@@ -89,6 +91,10 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
         getThumbnail();
         getSwapHistory();
     }, [tokenId, chainId]);
+
+    useEffect(() => {
+        nugg && getThumbnail();
+    }, [nugg]);
 
     return (
         !isUndefinedOrNullOrStringEmpty(tokenId) && (
@@ -132,6 +138,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                             address,
                             owner,
                             showMenu,
+                            nugg,
                         }}
                     />
                 </div>
@@ -150,6 +157,7 @@ type SwapsProps = {
     MobileBackButton?: () => JSX.Element;
     showMenu?: 'sale' | 'loan';
     ens: string;
+    nugg: LiveNugg;
 };
 
 const Swaps: FunctionComponent<SwapsProps> = ({
@@ -161,33 +169,26 @@ const Swaps: FunctionComponent<SwapsProps> = ({
     owner,
     showMenu,
     ens,
+    nugg,
 }) => {
-    const epoch = ProtocolState.select.epoch();
     const screenType = state.app.select.screenType();
+    console.log({ swaps, nugg });
 
     const listData = useMemo(() => {
-        let activeSwap = undefined;
-        const filteredSwaps = swaps.filter((swap) => {
-            if (swap.endingEpoch !== null && +swap.endingEpoch !== +epoch?.id) {
-                return true;
-            } else {
-                activeSwap = swap;
-                return false;
-            }
-        });
-
         let res = [];
-        if (!isUndefinedOrNullOrObjectEmpty(activeSwap)) {
-            res.push({ title: 'Ongoing Sale', items: [activeSwap] });
+        let tempSwaps = [...swaps];
+        if (!isUndefinedOrNullOrStringEmpty(nugg?.activeSwap.id)) {
+            res.push({ title: 'Ongoing Sale', items: [nugg.activeSwap] });
+            //@ts-ignore
+            tempSwaps = tempSwaps.smartRemove(nugg.activeSwap, 'id');
         }
         res.push({
             title: 'Previous Sales',
-            items: filteredSwaps,
+            items: tempSwaps,
         });
 
         return res;
-    }, [swaps, epoch]);
-    console.log(epoch);
+    }, [swaps, nugg]);
 
     return (
         <div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
@@ -249,7 +250,7 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                 data={listData}
                 TitleRenderItem={SwapTitle}
                 ChildRenderItem={SwapItem}
-                extraData={[chainId, provider, epoch]}
+                extraData={[chainId, provider, nugg?.activeSwap?.id]}
                 style={{ height: '100%' }}
                 styleRight={styles.stickyList}
             />
@@ -267,7 +268,6 @@ const SwapTitle = ({ title }) => {
 
 const SwapItem = ({ item, index, extraData }) => {
     const awaitingBid = item.endingEpoch === null;
-    console.log(item.endingEpoch, typeof item.endingEpoch, extraData);
     const ens = web3.hook.usePriorityAnyENSName(extraData[1], item.leader.id);
     return (
         <div style={{ padding: '.25rem 1rem' }}>
@@ -285,7 +285,7 @@ const SwapItem = ({ item, index, extraData }) => {
                                     ? 'Mint'
                                     : `Swap #${item.num}`}
                             </Text>
-                            <CurrencyText image="eth" value={+fromEth(item.eth)} />
+                            <CurrencyText image="eth" value={item.eth ? +fromEth(item.eth) : 0} />
                         </div>
                         <div>
                             <Text
@@ -295,8 +295,10 @@ const SwapItem = ({ item, index, extraData }) => {
                                     color: Colors.textColor,
                                 }}
                             >
-                                {awaitingBid || item.endingEpoch === extraData[2].id
+                                {awaitingBid
                                     ? 'On sale by'
+                                    : item.id === extraData[2]
+                                    ? 'Leader'
                                     : 'Purchased from'}
                             </Text>
                             <Text

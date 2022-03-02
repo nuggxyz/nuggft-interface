@@ -10,6 +10,7 @@ const DEFAULT_STATE = {
     stake: undefined,
     epoch: undefined,
     activeSwaps: [],
+    myNuggs: [],
     apollo: undefined,
     activating: false,
     error: undefined,
@@ -30,6 +31,7 @@ export interface ClientState extends State {
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
     activeSwaps: { id: string; dotnuggRawCache: string }[];
+    myNuggs: NL.GraphQL.Fragments.Nugg.ListItem[];
     error: Error | undefined;
     activating: boolean;
 }
@@ -49,6 +51,7 @@ type ClientStateUpdate = {
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
     activeSwaps?: { id: string; dotnuggRawCache: string }[];
+    myNuggs?: NL.GraphQL.Fragments.Nugg.ListItem[];
     error?: Error;
     activating?: boolean;
 };
@@ -110,6 +113,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             const infura = stateUpdate.infura ?? existingState.infura;
             const apollo = stateUpdate.apollo ?? existingState.apollo;
             const activeSwaps = stateUpdate.activeSwaps ?? existingState.activeSwaps;
+            const myNuggs = stateUpdate.myNuggs ?? existingState.myNuggs;
 
             // determine the next error
             let error = existingState.error;
@@ -119,7 +123,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             //     activating = false;
             // }
 
-            return { ...existingState, infura, apollo, epoch, stake, activeSwaps, error };
+            return { ...existingState, infura, apollo, epoch, stake, activeSwaps, error, myNuggs };
         });
     }
 

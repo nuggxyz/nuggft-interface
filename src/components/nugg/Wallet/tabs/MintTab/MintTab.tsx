@@ -36,6 +36,7 @@ import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/Feedb
 import Layout from '@src/lib/layout';
 import { SupportedChainId } from '@src/web3/config';
 import web3 from '@src/web3';
+import client from '@src/client';
 type Props = {};
 
 const MintTab: FunctionComponent<Props> = () => {
@@ -43,53 +44,21 @@ const MintTab: FunctionComponent<Props> = () => {
     const userShares = WalletState.select.userShares();
     const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
     const epoch = ProtocolState.select.epoch();
-    const [myNuggs, setMyNuggs] = useState([]);
-    const [loadingNuggs, setLoadingNuggs] = useState(false);
     const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
+
+    const nuggs = client.hook.useLiveMyNuggs(address);
 
     const chainId = web3.hook.usePriorityChainId();
     const loans = useAsyncState(
         () => loanedNuggsQuery(chainId, address, 'desc', '', 1000, 0),
         [address, epoch, chainId],
     );
-    // const sales = useAsyncState(
-    //     () => myActiveSalesQuery(chainId, address, 'desc', '', 1000, 0),
-    //     [address, epoch, chainId],
-    // );
 
     const claims = useAsyncState(
         () => unclaimedOffersQuery(chainId, address, epoch?.id),
         [address, epoch],
     );
-    const getMyNuggs = useCallback(async () => {
-        setLoadingNuggs(true);
-        if (!isUndefinedOrNullOrStringEmpty(address)) {
-            const nuggResult = await myNuggsQuery(
-                chainId,
-
-                address,
-                'desc',
-                '',
-                constants.NUGGDEX_SEARCH_LIST_CHUNK,
-                myNuggs.length,
-            );
-
-            if (!isUndefinedOrNullOrArrayEmpty(nuggResult)) {
-                setMyNuggs((res) => [...res, ...nuggResult]);
-            }
-        } else {
-            setMyNuggs([]);
-        }
-        setLoadingNuggs(false);
-    }, [address, epoch, myNuggs, chainId]);
-
-    useEffect(() => {
-        setLoadingNuggs(true);
-        // setTimeout(() => {
-        getMyNuggs();
-        // }, 500);
-    }, [address]);
 
     return (
         <div style={styles.container}>
@@ -151,16 +120,6 @@ const MintTab: FunctionComponent<Props> = () => {
                             display: 'flex',
                         }}
                     />
-                    {/* <TextStatistic
-                        label="Sales"
-                        value={'' + (sales?.length || 0)}
-                        style={{
-                            width: '23%',
-                            marginLeft: '0rem',
-                            marginRight: '0rem',
-                            fontSize: FontSize.h6,
-                        }}
-                    /> */}
                     <TextStatistic
                         label="Loans"
                         value={'' + (loans?.length || 0)}
@@ -178,18 +137,16 @@ const MintTab: FunctionComponent<Props> = () => {
             <InfiniteList
                 TitleButton={() => MintNuggButton(chainId, provider, address)}
                 labelStyle={styles.listLabel}
-                data={myNuggs}
+                data={nuggs}
                 RenderItem={React.memo(
                     RenderItem,
                     (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
                 )}
                 label="My Nuggs"
-                loading={loadingNuggs}
                 style={listStyle.list}
                 listEmptyStyle={listStyle.textWhite}
                 listEmptyText="You don't have any Nuggs yet!"
                 loaderColor="white"
-                onScrollEnd={getMyNuggs}
                 itemHeight={108}
             />
         </div>
