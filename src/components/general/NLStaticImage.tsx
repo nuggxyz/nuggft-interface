@@ -17,14 +17,19 @@ import rainbow from '@src/assets/images/app_logos/rainbow.png';
 import trust from '@src/assets/images/app_logos/trust.svg';
 import ledger from '@src/assets/images/app_logos/ledger.svg';
 import cryptodotcom from '@src/assets/images/app_logos/cryptodotcom.png';
-import { SupportedConnectors } from '@src/web3/config';
+import { SupportedConnectors } from '@src/web3/core/types';
 
 type Props = {
     image: NLStaticImageKey;
     style?: CSSProperties;
 };
 
-export type NLStaticImageKey = 'nugg' | 'eth' | SupportedConnectors | `${SupportedConnectors}_icon`;
+export type NLStaticImageKey =
+    | 'nugg'
+    | 'eth'
+    | SupportedConnectors
+    | `${SupportedConnectors}_icon`
+    | `${SupportedConnectors}_icon_small`;
 
 const StaticAppIcon: FunctionComponent<Props & { icon: string }> = ({ image, style, icon }) => {
     return (
@@ -40,6 +45,26 @@ const StaticAppIcon: FunctionComponent<Props & { icon: string }> = ({ image, sty
         />
     );
 };
+
+const StaticAppIconSmall: FunctionComponent<Props & { icon: string }> = ({
+    image,
+    style,
+    icon,
+}) => {
+    return (
+        <img
+            src={icon}
+            height={19}
+            width={19}
+            style={{
+                borderRadius: '22.5%',
+                objectFit: 'cover',
+                ...style,
+            }}
+        />
+    );
+};
+
 
 const NLStaticImage: FunctionComponent<Props> = (props) => {
     const img = useMemo(() => {
@@ -58,6 +83,20 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                 return StaticAppIcon({ ...props, icon: walletconnect_icon });
             case 'trust_icon':
                 return StaticAppIcon({ ...props, icon: trust_icon });
+            case 'metamask_icon_small':
+                return StaticAppIconSmall({ ...props, icon: metamask_icon });
+            case 'cryptodotcom_icon_small':
+                return StaticAppIconSmall({ ...props, icon: cryptodotcom_icon });
+            case 'ledgerlive_icon_small':
+                return StaticAppIconSmall({ ...props, icon: ledgerlive_icon });
+            case 'coinbase_icon_small':
+                return StaticAppIconSmall({ ...props, icon: coinbase_icon });
+            case 'rainbow_icon_small':
+                return StaticAppIconSmall({ ...props, icon: rainbow_icon });
+            case 'walletconnect_icon_small':
+                return StaticAppIconSmall({ ...props, icon: walletconnect_icon });
+            case 'trust_icon_small':
+                return StaticAppIconSmall({ ...props, icon: trust_icon });
             case 'metamask':
                 return (
                     <img

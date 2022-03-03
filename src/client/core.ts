@@ -4,6 +4,7 @@ import create, { State, StoreApi, UseBoundStore } from 'zustand';
 import { BigNumber } from 'ethers';
 
 import { EthInt } from '@src/classes/Fraction';
+import { SupportedConnectors } from '@src/web3/core/types';
 
 const DEFAULT_STATE = {
     infura: undefined,
@@ -13,11 +14,13 @@ const DEFAULT_STATE = {
     apollo: undefined,
     activating: false,
     error: undefined,
+    manualPriority: undefined,
 };
 
 export interface ClientState extends State {
     infura: InfuraWebSocketProvider | undefined;
     apollo: ApolloClient<any> | undefined;
+    manualPriority: SupportedConnectors;
     stake: {
         staked: BigNumber;
         shares: BigNumber;
@@ -37,6 +40,7 @@ export interface ClientState extends State {
 type ClientStateUpdate = {
     infura?: InfuraWebSocketProvider;
     apollo?: ApolloClient<any>;
+    manualPriority?: SupportedConnectors;
     stake?: {
         staked: BigNumber;
         shares: BigNumber;
@@ -110,6 +114,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             const infura = stateUpdate.infura ?? existingState.infura;
             const apollo = stateUpdate.apollo ?? existingState.apollo;
             const activeSwaps = stateUpdate.activeSwaps ?? existingState.activeSwaps;
+            const manualPriority = stateUpdate.manualPriority ?? existingState.manualPriority;
 
             // determine the next error
             let error = existingState.error;
@@ -119,7 +124,16 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             //     activating = false;
             // }
 
-            return { ...existingState, infura, apollo, epoch, stake, activeSwaps, error };
+            return {
+                ...existingState,
+                manualPriority,
+                infura,
+                apollo,
+                epoch,
+                stake,
+                activeSwaps,
+                error,
+            };
         });
     }
 

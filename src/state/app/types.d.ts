@@ -11,6 +11,7 @@ declare namespace NL.Redux.App {
         view: Views;
         mobileView: MobileViews;
         walletVisible: boolean;
+        walletManagerVisable: boolean;
     }
 
     interface Toast {

@@ -10,47 +10,51 @@ import LoansTab from './tabs/LoansTab/LoansTab';
 import MintTab from './tabs/MintTab/MintTab';
 import SalesTab from './tabs/SalesTab/SalesTab';
 import styles from './Wallet.styles';
+import ManageWalletTab from './tabs/ManageWalletTab';
 type Props = {};
-
-// const call = ;
 
 const Wallet: FunctionComponent<Props> = () => {
     const screenType = state.app.select.screenType();
     const account = web3.hook.usePriorityAccount();
-
-    state.socket.hook.useBlock((event) => {
-        console.log('block:', { event });
-    });
+    const manager = state.app.select.walletManagerVisable();
 
     const happytabs: HappyTabberItem[] = useMemo(
-        () => [
-            ...(account
+        () =>
+            manager
                 ? [
                       {
                           label: 'Home',
-                          comp: ({ isActive }) => <MintTab />,
-                      },
-                      {
-                          label: 'Claims',
-                          comp: ({ isActive }) => <ClaimTab isActive={isActive} />,
-                      },
-                      {
-                          label: 'Sales',
-                          comp: ({ isActive }) => <SalesTab isActive={isActive} />,
-                      },
-                      {
-                          label: 'Loans',
-                          comp: ({ isActive }) => <LoansTab isActive={isActive} />,
+                          comp: ({ isActive }) => <ManageWalletTab />,
                       },
                   ]
                 : [
-                      {
-                          label: 'Home',
-                          comp: ({ isActive }) => <ConnectWalletTab />,
-                      },
-                  ]),
-        ],
-        [account],
+                      ...(account
+                          ? [
+                                {
+                                    label: 'Home',
+                                    comp: ({ isActive }) => <MintTab />,
+                                },
+                                {
+                                    label: 'Claims',
+                                    comp: ({ isActive }) => <ClaimTab isActive={isActive} />,
+                                },
+                                {
+                                    label: 'Sales',
+                                    comp: ({ isActive }) => <SalesTab isActive={isActive} />,
+                                },
+                                {
+                                    label: 'Loans',
+                                    comp: ({ isActive }) => <LoansTab isActive={isActive} />,
+                                },
+                            ]
+                          : [
+                                {
+                                    label: 'Home',
+                                    comp: ({ isActive }) => <ConnectWalletTab />,
+                                },
+                            ]),
+                  ],
+        [account, manager],
     );
 
     return (

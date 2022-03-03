@@ -14,8 +14,6 @@ declare namespace NL.Web3 {
     type AddressMap = { [chainId: number]: string };
 
     interface WalletInfo {
-        // connector?: import('./core/core').ResWithStore<T>;
-
         name: string;
         label: string;
         description: string;
@@ -24,6 +22,8 @@ declare namespace NL.Web3 {
         primary?: true;
         mobile?: true;
         mobileOnly?: true;
+        peerName?: string;
+        peerurl?: string;
     }
 }
 
