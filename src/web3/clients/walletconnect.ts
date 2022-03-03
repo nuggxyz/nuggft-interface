@@ -1,12 +1,11 @@
-import type { EventEmitter } from 'node:events';
 import type WalletConnectProvider from '@walletconnect/ethereum-provider';
 import type { IWCEthRpcConnectionOptions } from '@walletconnect/types';
 import EventEmitter3 from 'eventemitter3';
+import type { EventEmitter } from 'node:events';
 
-import { Connector, ProviderRpcError, Actions, ConnectorInfo } from '@src/web3/core/types';
+import type { Actions, ConnectorInfo, ProviderRpcError } from '@src/web3/core/types';
+import { Connector } from '@src/web3/core/types';
 import { getBestUrl } from '@src/web3/core/utils';
-
-import web3 from '..';
 
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
@@ -77,12 +76,10 @@ export class WalletConnect extends Connector {
     };
 
     private URIListener = (_: Error | null, payload: { params: string[] }): void => {
-        console.log({ payload });
         this.events.emit(URI_AVAILABLE, payload.params[0]);
     };
 
     private async isomorphicInitialize(chainId = Number(Object.keys(this.rpc)[0])): Promise<void> {
-        console.log(this);
         if (this.eagerConnection) return this.eagerConnection;
 
         // because we can only use 1 url per chainId, we need to decide between multiple, where necessary
@@ -106,7 +103,7 @@ export class WalletConnect extends Connector {
                 chainId,
                 rpc: await rpc,
             }) as unknown as MockWalletConnectProvider;
-            console.log('hehehehe', this.provider);
+
             this.provider.on('disconnect', this.disconnectListener);
             this.provider.on('chainChanged', this.chainChangedListener);
             this.provider.on('accountsChanged', this.accountsChangedListener);
@@ -118,26 +115,26 @@ export class WalletConnect extends Connector {
     public async connectEagerly(): Promise<void> {
         const cancelActivation = this.actions.startActivation();
 
+        console.log('A');
+
         await this.isomorphicInitialize();
+
+        console.log('B');
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (this.provider!.connected) {
+            console.log('C');
+
             try {
-                if (web3.config.isSpecificPeer(this.provider)) {
-                    return;
-                }
                 // for walletconnect, we always use sequential instead of parallel fetches because otherwise
                 // chainId defaults to 1 even if the connecting wallet isn't on mainnet
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                const accounts = await this.provider!.request<string[]>({
-                    method: 'eth_accounts',
-                });
+                const accounts = await this.provider!.request<string[]>({ method: 'eth_accounts' });
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const chainId = parseChainId(
-                    await this.provider!.request<string | number>({
-                        method: 'eth_chainId',
-                    }),
+                    await this.provider!.request<string | number>({ method: 'eth_chainId' }),
                 );
+                console.log('D');
 
                 if (accounts.length) {
                     this.actions.update({ chainId, accounts });
@@ -191,9 +188,7 @@ export class WalletConnect extends Connector {
             });
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const chainId = parseChainId(
-                await this.provider!.request<string | number>({
-                    method: 'eth_chainId',
-                }),
+                await this.provider!.request<string | number>({ method: 'eth_chainId' }),
             );
 
             if (!desiredChainId || desiredChainId === chainId) {
@@ -235,15 +230,6 @@ export class WalletConnect extends Connector {
             'display_uri',
             this.URIListener,
         );
-
-        const tran = (this.provider as any)?.signer?.connection?.wc?._transport
-            ?._socket as WebSocket;
-        console.log({ tran });
-        // const ws = tran._socket as WebSocket;
-        // console.log({ ws });
-
-        tran?.close(1000, 'ayo');
-
         await this.provider?.disconnect();
         this.provider = undefined;
         this.eagerConnection = undefined;
