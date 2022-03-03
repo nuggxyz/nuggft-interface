@@ -4,14 +4,14 @@ import QRCode from 'qrcode.react';
 import Text from '@src/components/general/Texts/Text/Text';
 import state from '@src/state';
 import NLStaticImage from '@src/components/general/NLStaticImage';
-import web3 from '@src/web3';
 import { colors } from '@src/lib';
+import { PeerInfo } from '@src/web3/core/interfaces';
 
 import styles from './QrCodeModal.styles';
 type Props = {};
 
 type ModalsData = {
-    data: { info: typeof web3.config.connector_info['metamask']; uri: string };
+    data: { info: PeerInfo; uri: string };
 };
 // declare namespace NL.Redux.App {}
 
@@ -37,7 +37,7 @@ const QrCodeModal: FunctionComponent<Props> = () => {
                 <Text size="larger" textStyle={{ color: colors.default.primaryColor }}>
                     Sign in with {data?.info.name}
                 </Text>
-                <NLStaticImage image={`${data?.info.label}_icon`} />
+                <NLStaticImage image={`${data?.info.peer}_icon`} />
             </div>
 
             <QRCode

@@ -17,19 +17,14 @@ import rainbow from '@src/assets/images/app_logos/rainbow.png';
 import trust from '@src/assets/images/app_logos/trust.svg';
 import ledger from '@src/assets/images/app_logos/ledger.svg';
 import cryptodotcom from '@src/assets/images/app_logos/cryptodotcom.png';
-import { SupportedConnectors } from '@src/web3/core/types';
+import { Peer } from '@src/web3/core/interfaces';
 
 type Props = {
     image: NLStaticImageKey;
     style?: CSSProperties;
 };
 
-export type NLStaticImageKey =
-    | 'nugg'
-    | 'eth'
-    | SupportedConnectors
-    | `${SupportedConnectors}_icon`
-    | `${SupportedConnectors}_icon_small`;
+export type NLStaticImageKey = 'nugg' | 'eth' | Peer | `${Peer}_icon` | `${Peer}_icon_small`;
 
 const StaticAppIcon: FunctionComponent<Props & { icon: string }> = ({ image, style, icon }) => {
     return (
@@ -64,7 +59,6 @@ const StaticAppIconSmall: FunctionComponent<Props & { icon: string }> = ({
         />
     );
 };
-
 
 const NLStaticImage: FunctionComponent<Props> = (props) => {
     const img = useMemo(() => {

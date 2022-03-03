@@ -2,14 +2,14 @@ import gql from 'graphql-tag';
 
 import { _metaBare } from '@src/graphql/fragments/_meta';
 import { executeQuery } from '@src/graphql/helpers';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 const query = () => gql`
 {
     _meta ${_metaBare}
 }`;
 
-const updateBlockQuery = async (chainId: SupportedChainId) => {
+const updateBlockQuery = async (chainId: Chain) => {
     return (await executeQuery(
         chainId,
         query(),

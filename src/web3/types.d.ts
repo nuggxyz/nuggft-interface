@@ -6,7 +6,7 @@ declare namespace NL.Web3 {
         // connectivityWarning: boolean;
         // error?: Error;
         // success?: Success;
-        // currentChain: import('./config').SupportedChainId;
+        // currentChain: import('./config').Chain;
     }
 
     type Error = 'ERROR';

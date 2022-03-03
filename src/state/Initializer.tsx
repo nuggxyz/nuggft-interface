@@ -18,11 +18,13 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        void web3.config.connectors.infura.connector.activate();
+        void web3.config.connector_instances.infura.connector.activate(4);
 
-        Object.values(web3.config.connectors).forEach((x) => {
-            if (x.name !== 'infura') void x.connector.connectEagerly();
-        });
+        void web3.config.connector_instances.metamask?.connector.connectEagerly(4);
+
+        void web3.config.connector_instances.walletconnect.connector.connectEagerly(4);
+        void web3.config.connector_instances.walletlink.connector.connectEagerly(4);
+
         void client.actions.startActivation();
     }, []);
 

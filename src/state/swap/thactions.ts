@@ -11,7 +11,7 @@ import {
 import { toEth } from '@src/lib/conversion';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import AppState from '@src/state/app';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 import pollOffersQuery from './queries/pollOffersQuery';
 import initSwapQuery from './queries/initSwapQuery';
@@ -24,7 +24,7 @@ const initSwap = createAsyncThunk<
             status: NL.Redux.Swap.Status;
         };
     },
-    { swapId: string; chainId: SupportedChainId },
+    { swapId: string; chainId: Chain },
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
 >('swap/initSwap', async ({ swapId, chainId }, thunkAPI) => {
     const currentEpoch = thunkAPI.getState().protocol.epoch;
@@ -73,7 +73,7 @@ const pollOffers = createAsyncThunk<
         success: NL.Redux.Swap.Success;
         data: { offers: NL.GraphQL.Fragments.Offer.Bare[]; swapId: string };
     },
-    { swapId: string; chainId: SupportedChainId },
+    { swapId: string; chainId: Chain },
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }
 >('swap/pollOffers', async ({ chainId, swapId }, thunkAPI) => {
     try {
@@ -106,7 +106,7 @@ const placeOffer = createAsyncThunk<
         amount: string;
         tokenId: string;
         provider: Web3Provider;
-        chainId: SupportedChainId;
+        chainId: Chain;
         address: string;
     },
     { rejectValue: NL.Redux.Swap.Error; state: NL.Redux.RootState }

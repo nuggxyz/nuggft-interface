@@ -4,7 +4,7 @@ import create, { State, StoreApi, UseBoundStore } from 'zustand';
 import { BigNumber } from 'ethers';
 
 import { EthInt } from '@src/classes/Fraction';
-import { SupportedConnectors } from '@src/web3/core/types';
+import { Connector } from '@src/web3/core/interfaces';
 
 const DEFAULT_STATE = {
     infura: undefined,
@@ -20,7 +20,7 @@ const DEFAULT_STATE = {
 export interface ClientState extends State {
     infura: InfuraWebSocketProvider | undefined;
     apollo: ApolloClient<any> | undefined;
-    manualPriority: SupportedConnectors;
+    manualPriority: Connector;
     stake: {
         staked: BigNumber;
         shares: BigNumber;
@@ -40,7 +40,7 @@ export interface ClientState extends State {
 type ClientStateUpdate = {
     infura?: InfuraWebSocketProvider;
     apollo?: ApolloClient<any>;
-    manualPriority?: SupportedConnectors;
+    manualPriority?: Connector;
     stake?: {
         staked: BigNumber;
         shares: BigNumber;

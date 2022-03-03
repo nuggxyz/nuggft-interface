@@ -2,10 +2,9 @@ import React, { FunctionComponent } from 'react';
 
 import Colors from '@src/lib/colors';
 import Layout from '@src/lib/layout';
-import web3 from '@src/web3';
-import { SupportedConnectors } from '@src/web3/core/types';
 
 import Connection from './ManagerTab/Connection';
+
 type Props = {};
 
 const ManageWalletTab: FunctionComponent<Props> = () => {
@@ -33,7 +32,8 @@ const ManageWalletTab: FunctionComponent<Props> = () => {
                     height: '100%',
                 }}
             >
-                {(Object.keys(web3.config.connectors) as SupportedConnectors[]).map(
+                <Connection />
+                {/* {(Object.keys(web3.config.connectors) as SupportedConnectors[]).map(
                     (connector) =>
                         connector !== 'infura' && (
                             <Connection
@@ -41,7 +41,7 @@ const ManageWalletTab: FunctionComponent<Props> = () => {
                                 connector={web3.config.connectors[connector].connector}
                             />
                         ),
-                )}
+                )} */}
                 {/* <div style={{ display: 'flex' }}>
                     {(Object.keys(web3.config.connectors) as SupportedConnectors[]).map(
                         (connector) =>

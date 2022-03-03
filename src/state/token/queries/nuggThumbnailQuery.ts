@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 import { nuggThumbnail } from '@src/graphql/fragments/nugg';
 import { executeQuery } from '@src/graphql/helpers';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 const query = (id: string) => gql`
     {
@@ -10,7 +10,7 @@ const query = (id: string) => gql`
     }
 `;
 
-const nuggThumbnailQuery = async (chainId: SupportedChainId, id: string) => {
+const nuggThumbnailQuery = async (chainId: Chain, id: string) => {
     try {
         return (await executeQuery(
             chainId,

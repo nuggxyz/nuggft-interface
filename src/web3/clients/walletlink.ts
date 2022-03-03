@@ -7,8 +7,8 @@ import {
     ProviderConnectInfo,
     ProviderRpcError,
     AddEthereumChainParameter,
-    ConnectorInfo,
 } from '@src/web3/core/types';
+import { Connector as ConnectorEnum, PeerInfo__WalletLink } from '@src/web3/core/interfaces';
 
 function parseChainId(chainId: string | number) {
     return typeof chainId === 'number'
@@ -33,12 +33,12 @@ export class WalletLink extends Connector {
      * @param connectEagerly - A flag indicating whether connection should be initiated when the class is constructed.
      */
     constructor(
-        info: ConnectorInfo,
+        peer: PeerInfo__WalletLink,
         actions: Actions,
         options: WalletLinkOptions & { url: string },
         connectEagerly = false,
     ) {
-        super(actions, info);
+        super(ConnectorEnum.WalletLink, actions, [peer]);
 
         if (connectEagerly && typeof window === 'undefined') {
             throw new Error(
@@ -65,7 +65,7 @@ export class WalletLink extends Connector {
             this.provider = this.walletLink.makeWeb3Provider(url);
 
             this.provider.on('connect', ({ chainId }: ProviderConnectInfo): void => {
-                this.actions.update({ chainId: parseChainId(chainId) });
+                this.actions.update({ chainId: parseChainId(chainId), peer: this.peers.coinbase });
             });
 
             this.provider.on('disconnect', (error: ProviderRpcError): void => {
@@ -73,11 +73,11 @@ export class WalletLink extends Connector {
             });
 
             this.provider.on('chainChanged', (chainId: string): void => {
-                this.actions.update({ chainId: parseChainId(chainId) });
+                this.actions.update({ chainId: parseChainId(chainId), peer: this.peers.coinbase });
             });
 
             this.provider.on('accountsChanged', (accounts: string[]): void => {
-                this.actions.update({ accounts });
+                this.actions.update({ accounts, peer: this.peers.coinbase });
             });
         }));
     }
@@ -97,7 +97,11 @@ export class WalletLink extends Connector {
             ])
                 .then(([chainId, accounts]) => {
                     if (accounts.length) {
-                        this.actions.update({ chainId: parseChainId(chainId), accounts });
+                        this.actions.update({
+                            chainId: parseChainId(chainId),
+                            accounts,
+                            peer: this.peers.coinbase,
+                        });
                     } else {
                         throw new Error('No accounts returned');
                     }
@@ -173,7 +177,11 @@ export class WalletLink extends Connector {
                 const receivedChainId = parseChainId(chainId);
 
                 if (!desiredChainId || desiredChainId === receivedChainId) {
-                    return this.actions.update({ chainId: receivedChainId, accounts });
+                    return this.actions.update({
+                        chainId: receivedChainId,
+                        accounts,
+                        peer: this.peers.coinbase,
+                    });
                 }
 
                 // if we're here, we can try to switch networks

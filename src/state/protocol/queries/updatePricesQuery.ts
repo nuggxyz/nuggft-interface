@@ -3,14 +3,14 @@ import gql from 'graphql-tag';
 import config from '@src/config';
 import { protocolPrices } from '@src/graphql/fragments/protocol';
 import { executeQuery } from '@src/graphql/helpers';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 const query = () => gql`
 {
     protocol(id: "${config.NUGG_PROTOCOL}") ${protocolPrices}
 }`;
 
-const updatePricesQuery = async (chainId: SupportedChainId) => {
+const updatePricesQuery = async (chainId: Chain) => {
     return (await executeQuery(
         chainId,
         query(),

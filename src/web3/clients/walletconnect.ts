@@ -3,9 +3,13 @@ import type { IWCEthRpcConnectionOptions } from '@walletconnect/types';
 import EventEmitter3 from 'eventemitter3';
 import type { EventEmitter } from 'node:events';
 
-import type { Actions, ConnectorInfo, ProviderRpcError } from '@src/web3/core/types';
+import type { Actions, ProviderRpcError } from '@src/web3/core/types';
 import { Connector } from '@src/web3/core/types';
 import { getBestUrl } from '@src/web3/core/utils';
+import { PeerInfo__WalletConnect, Peer } from '@src/web3/core/interfaces';
+import AppState from '@src/state/app';
+import store from '@src/state/store';
+import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
@@ -19,6 +23,8 @@ type WalletConnectOptions = Omit<IWCEthRpcConnectionOptions, 'rpc' | 'infuraId' 
     rpc: { [chainId: number]: string | string[] };
 };
 
+const HREF_PATH = 'wc?uri=';
+
 export class WalletConnect extends Connector {
     /** {@inheritdoc Connector.provider} */
     public provider: MockWalletConnectProvider | undefined = undefined;
@@ -29,24 +35,28 @@ export class WalletConnect extends Connector {
     private eagerConnection?: Promise<void>;
     private treatModalCloseAsError: boolean;
 
+    private peer_url_lookup: { [_: string]: Peer };
+
+    declare peers: { [key in Peer]?: PeerInfo__WalletConnect };
+
+    private peer_try: Peer;
+
     /**
      * @param options - Options to pass to `@walletconnect/ethereum-provider`
      * @param connectEagerly - A flag indicating whether connection should be initiated when the class is constructed.
      */
     constructor(
-        info: ConnectorInfo,
+        peers: PeerInfo__WalletConnect[],
         actions: Actions,
         options: WalletConnectOptions,
         connectEagerly = false,
         treatModalCloseAsError = true,
     ) {
-        super(actions, info);
+        super(ConnectorEnum.WalletConnect, actions, peers);
 
-        if (connectEagerly && typeof window === 'undefined') {
-            throw new Error(
-                'connectEagerly = true is invalid for SSR, instead use the connectEagerly method in a useEffect',
-            );
-        }
+        this.peer_url_lookup = peers.reduce((prev, curr) => {
+            return { ...prev, [curr.peerurl]: curr.peer };
+        }, {});
 
         const { rpc, ...rest } = options;
         this.rpc = Object.keys(rpc).reduce<{ [chainId: number]: string[] }>(
@@ -68,19 +78,47 @@ export class WalletConnect extends Connector {
     };
 
     private chainChangedListener = (chainId: number | string): void => {
-        this.actions.update({ chainId: parseChainId(chainId) });
+        this.actions.update({ chainId: parseChainId(chainId), peer: this.findPeer() });
     };
 
     private accountsChangedListener = (accounts: string[]): void => {
-        this.actions.update({ accounts });
+        this.actions.update({ accounts, peer: this.findPeer() });
     };
 
     private URIListener = (_: Error | null, payload: { params: string[] }): void => {
-        this.events.emit(URI_AVAILABLE, payload.params[0]);
+        const peer = this.peers[this.peer_try];
+
+        // default - just use normal wallet connect flow
+        if (peer.desktopAction === 'default') this.events.emit(URI_AVAILABLE, payload.params[0]);
+
+        const uri = peer.deeplink_href + HREF_PATH + encodeURIComponent(payload.params[0]);
+        const device = store.getState().app.screenType;
+
+        if (device === 'desktop' || device === 'tablet') {
+            if (peer.desktopAction === 'deeplink') {
+                window.open(uri);
+            } else {
+                AppState.dispatch.setModalOpen({
+                    name: 'QrCode',
+                    modalData: {
+                        data: { info: peer, uri },
+                        containerStyle: { backgroundColor: 'white' },
+                    },
+                });
+            }
+        } else {
+            window.open(uri);
+        }
     };
 
-    private async isomorphicInitialize(chainId = Number(Object.keys(this.rpc)[0])): Promise<void> {
+    private async isomorphicInitialize(
+        chainId = Number(Object.keys(this.rpc)[0]),
+        peerId = Peer.WalletConnect,
+    ): Promise<void> {
+        console.log('b');
         if (this.eagerConnection) return this.eagerConnection;
+
+        const peer = this.peers[peerId];
 
         // because we can only use 1 url per chainId, we need to decide between multiple, where necessary
         const rpc = Promise.all(
@@ -101,6 +139,7 @@ export class WalletConnect extends Connector {
             this.provider = new m.default({
                 ...this.options,
                 chainId,
+                qrcode: peer.desktopAction === 'default',
                 rpc: await rpc,
             }) as unknown as MockWalletConnectProvider;
 
@@ -111,20 +150,37 @@ export class WalletConnect extends Connector {
         }));
     }
 
+    private findPeer(): PeerInfo__WalletConnect {
+        const peerMeta = (this.provider as any)?.signer?.connection?.wc?._peerMeta;
+
+        const res = this.peer_url_lookup[peerMeta.url];
+        console.log({ res, peerMeta });
+
+        if (res === undefined) throw Error('peer not valid');
+
+        const finres = this.peers[res];
+
+        if (finres === undefined) throw Error('peer not valid 2');
+
+        return finres;
+    }
+
+    private findPeerCatchError(): PeerInfo__WalletConnect | undefined {
+        try {
+            return this.findPeer();
+        } catch {
+            return undefined;
+        }
+    }
+
     /** {@inheritdoc Connector.connectEagerly} */
     public async connectEagerly(): Promise<void> {
         const cancelActivation = this.actions.startActivation();
 
-        console.log('A');
-
-        await this.isomorphicInitialize();
-
-        console.log('B');
+        await this.isomorphicInitialize(5);
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (this.provider!.connected) {
-            console.log('C');
-
             try {
                 // for walletconnect, we always use sequential instead of parallel fetches because otherwise
                 // chainId defaults to 1 even if the connecting wallet isn't on mainnet
@@ -134,10 +190,9 @@ export class WalletConnect extends Connector {
                 const chainId = parseChainId(
                     await this.provider!.request<string | number>({ method: 'eth_chainId' }),
                 );
-                console.log('D');
 
                 if (accounts.length) {
-                    this.actions.update({ chainId, accounts });
+                    this.actions.update({ chainId, accounts, peer: this.findPeer() });
                 } else {
                     throw new Error('No accounts returned');
                 }
@@ -157,7 +212,11 @@ export class WalletConnect extends Connector {
      * already connected to this chain, no additional steps will be taken. Otherwise, the user will be prompted to switch
      * to the chain, if their wallet supports it.
      */
-    public async activate(desiredChainId?: number): Promise<void> {
+    public async activate(desiredChainId?: number, desiredPeer?: Peer): Promise<void> {
+        console.log('activate() A');
+
+        this.peer_try = desiredPeer;
+
         if (desiredChainId && this.rpc[desiredChainId] === undefined) {
             throw new Error(`no url(s) provided for desiredChainId ${desiredChainId}`);
         }
@@ -179,7 +238,10 @@ export class WalletConnect extends Connector {
 
         // if we're trying to connect to a specific chain that we're not already initialized for, we have to re-initialize
         if (desiredChainId && desiredChainId !== this.provider?.chainId) await this.deactivate();
-        await this.isomorphicInitialize(desiredChainId);
+        else if (desiredPeer && desiredPeer !== this.findPeerCatchError()?.peer)
+            await this.deactivate();
+
+        await this.isomorphicInitialize(desiredChainId, desiredPeer);
 
         try {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -191,15 +253,21 @@ export class WalletConnect extends Connector {
                 await this.provider!.request<string | number>({ method: 'eth_chainId' }),
             );
 
+            const peer = this.findPeer();
+
             if (!desiredChainId || desiredChainId === chainId) {
-                return this.actions.update({ chainId, accounts });
+                return this.actions.update({ chainId, accounts, peer: this.findPeer() });
+            }
+
+            if (!desiredPeer || desiredPeer === peer.peer) {
+                return this.actions.update({ peer: this.findPeer() });
             }
 
             // because e.g. metamask doesn't support wallet_switchEthereumChain, we have to report connections,
             // even if the chainId isn't necessarily the desired one. this is ok because in e.g. rainbow,
             // we won't report a connection to the wrong chain while the switch is pending because of the re-initialization
             // logic above, which ensures first-time connections are to the correct chain in the first place
-            this.actions.update({ chainId, accounts });
+            this.actions.update({ chainId, accounts, peer: this.findPeer() });
 
             // if we're here, we can try to switch networks, ignoring errors
             const desiredChainIdHex = `0x${desiredChainId.toString(16)}`;

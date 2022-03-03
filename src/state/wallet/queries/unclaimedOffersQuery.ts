@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import { offerThumbnail } from '@src/graphql/fragments/offer';
 import { executeQuery } from '@src/graphql/helpers';
 import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '@src/lib';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 const query = (id: string, epoch: string) => gql`
     {
@@ -13,7 +13,7 @@ const query = (id: string, epoch: string) => gql`
     }
 `;
 
-const unclaimedOffersQuery = async (chainId: SupportedChainId, id: string, epoch?: string) => {
+const unclaimedOffersQuery = async (chainId: Chain, id: string, epoch?: string) => {
     const result = (await executeQuery(
         chainId,
         query(id.toLowerCase(), epoch),
