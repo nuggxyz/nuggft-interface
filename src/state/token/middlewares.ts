@@ -2,7 +2,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 
 import AppState from '@src/state/app';
 
-import TokenState from '.';
+import TokenState from './index';
 
 const onTokenSet: NL.Redux.Middleware<
     Record<string, unknown>,

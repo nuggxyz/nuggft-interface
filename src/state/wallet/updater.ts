@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import ProtocolState from '@src/state/protocol';
 import web3 from '@src/web3';
 
-import WalletState from '.';
+import WalletState from './index';
 export default () => {
     const address = web3.hook.usePriorityAccount();
     const epoch = ProtocolState.select.epoch();

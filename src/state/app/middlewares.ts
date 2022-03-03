@@ -10,7 +10,7 @@ import {
 import { isUndefinedOrNull } from '@src/lib/index';
 import { NLState } from '@src/state/NLState';
 
-import AppState from '.';
+import AppState from './index';
 
 // export const findAndReplaceWith = (value: any) => {
 //     if (!isUndefinedOrNullOrObjectEmpty(value)) {
