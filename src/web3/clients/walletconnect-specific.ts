@@ -99,7 +99,7 @@ export class WalletConnectSpecific extends ConnectorSpecific {
         const uri = this.info.href + HREF_PATH + encodeURIComponent(payload.params[0]);
         const deviced = store.getState().app.screenType;
 
-        if (this.info.label === 'ledgerlive') {
+        if (this.info.label === 'ledgerlive' || deviced === 'phone') {
             // deep link via non-http
             window.open(uri);
         } else if (deviced === 'desktop' || deviced === 'tablet') {
