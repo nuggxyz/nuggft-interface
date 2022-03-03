@@ -2,13 +2,13 @@ import type { EventEmitter } from 'node:events';
 import type { State, StoreApi } from 'zustand/vanilla';
 
 export type SupportedConnectors =
-    | 'metamask'
     | 'rainbow'
     | 'ledgerlive'
     | 'cryptodotcom'
     | 'trust'
     | 'coinbase'
     | 'walletconnect'
+    | 'metamask'
     | 'infura';
 
 export type SupportedWalletConnectInstances =

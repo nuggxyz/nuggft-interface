@@ -6,6 +6,8 @@ import EventEmitter3 from 'eventemitter3';
 import { Connector, ProviderRpcError, Actions, ConnectorInfo } from '@src/web3/core/types';
 import { getBestUrl } from '@src/web3/core/utils';
 
+import web3 from '..';
+
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
 type MockWalletConnectProvider = WalletConnectProvider & EventEmitter;
@@ -80,6 +82,7 @@ export class WalletConnect extends Connector {
     };
 
     private async isomorphicInitialize(chainId = Number(Object.keys(this.rpc)[0])): Promise<void> {
+        console.log(this);
         if (this.eagerConnection) return this.eagerConnection;
 
         // because we can only use 1 url per chainId, we need to decide between multiple, where necessary
@@ -103,7 +106,7 @@ export class WalletConnect extends Connector {
                 chainId,
                 rpc: await rpc,
             }) as unknown as MockWalletConnectProvider;
-            // console.log(this.providerd);
+            console.log('hehehehe', this.provider);
             this.provider.on('disconnect', this.disconnectListener);
             this.provider.on('chainChanged', this.chainChangedListener);
             this.provider.on('accountsChanged', this.accountsChangedListener);
@@ -120,6 +123,9 @@ export class WalletConnect extends Connector {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (this.provider!.connected) {
             try {
+                if (web3.config.isSpecificPeer(this.provider)) {
+                    return;
+                }
                 // for walletconnect, we always use sequential instead of parallel fetches because otherwise
                 // chainId defaults to 1 even if the connecting wallet isn't on mainnet
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

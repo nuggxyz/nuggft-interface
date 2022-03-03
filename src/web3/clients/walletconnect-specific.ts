@@ -10,7 +10,6 @@ import {
     ConnectorSpecific,
     ConnectorSpecificInfo,
 } from '@src/web3/core/types';
-
 import { getBestUrl } from '@src/web3/core/utils';
 import { gotoLink } from '@src/web3/config';
 import AppState from '@src/state/app';
@@ -19,8 +18,6 @@ import store from '@src/state/store';
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
 type MockWalletConnectProvider = WalletConnectProvider & EventEmitter;
-
-
 
 function parseChainId(chainId: string | number) {
     return typeof chainId === 'string' ? Number.parseInt(chainId) : chainId;
@@ -33,12 +30,9 @@ type WalletConnectOptions = Omit<
     rpc: { [chainId: number]: string | string[] };
 };
 
-// type Clients = 'MetaMask' | 'Rainbow' | 'Trust' | 'Ledger' | 'CryptoDotCom';
-
 const HREF_PATH = 'wc?uri=';
 
 export class WalletConnectSpecific extends ConnectorSpecific {
-
     /** {@inheritdoc Connector.provider} */
     public provider: MockWalletConnectProvider | undefined = undefined;
     public readonly events = new EventEmitter3();
@@ -61,7 +55,7 @@ export class WalletConnectSpecific extends ConnectorSpecific {
     ) {
         super(actions, info);
         invariant(info.peerurl);
-          
+
         // @ts-ignore
         options.qrcode = false;
 
@@ -103,19 +97,16 @@ export class WalletConnectSpecific extends ConnectorSpecific {
         if (!this.info) this.events.emit(URI_AVAILABLE, payload.params[0]);
 
         const uri = this.info.href + HREF_PATH + encodeURIComponent(payload.params[0]);
-        // console.log(uri);
         const deviced = store.getState().app.screenType;
 
         if (this.info.label === 'ledgerlive') {
             // deep link via non-http
-
             window.open(uri);
         } else if (deviced === 'desktop' || deviced === 'tablet') {
             AppState.dispatch.setModalOpen({
                 name: 'QrCode',
                 modalData: {
                     data: { info: this.info, uri },
-
                     containerStyle: { backgroundColor: 'white' },
                 },
             });
@@ -123,10 +114,11 @@ export class WalletConnectSpecific extends ConnectorSpecific {
             // deep link via http
             gotoLink(uri);
         }
-
     };
 
     private async isomorphicInitialize(chainId = Number(Object.keys(this.rpc)[0])): Promise<void> {
+        console.log(this);
+
         if (this.eagerConnection) return this.eagerConnection;
 
         // because we can only use 1 url per chainId, we need to decide between multiple, where necessary
@@ -149,9 +141,9 @@ export class WalletConnectSpecific extends ConnectorSpecific {
                 ...this.options,
                 storageId: this.info.label,
                 chainId,
-
                 rpc: await rpc,
             }) as unknown as MockWalletConnectProvider;
+            console.log('hehehehe', this.provider);
 
             this.provider.on('disconnect', this.disconnectListener);
             this.provider.on('chainChanged', this.chainChangedListener);
@@ -165,12 +157,11 @@ export class WalletConnectSpecific extends ConnectorSpecific {
         const cancelActivation = this.actions.startActivation();
 
         await this.isomorphicInitialize();
-
-        // console.log(this.provider);
-
+        console.log({ yoyo: this.info.label, yoyo1: this.provider });
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (this.provider!.connected) {
             try {
+                // console.log({ yoyo: this.provider });
                 if (
                     this.info.peerurl !== (this.provider as any).signer.connection.wc._peerMeta.url
                 ) {
@@ -179,7 +170,6 @@ export class WalletConnectSpecific extends ConnectorSpecific {
 
                     return;
                 }
-                // console.log({ prov: this.provider });
 
                 // for walletconnect, we always use sequential instead of parallel fetches because otherwise
                 // chainId defaults to 1 even if the connecting wallet isn't on mainnet
@@ -208,7 +198,6 @@ export class WalletConnectSpecific extends ConnectorSpecific {
         } else {
             cancelActivation();
             await this.deactivate();
-
         }
     }
 
@@ -223,7 +212,6 @@ export class WalletConnectSpecific extends ConnectorSpecific {
         if (desiredChainId && this.rpc[desiredChainId] === undefined) {
             throw new Error(`no url(s) provided for desiredChainId ${desiredChainId}`);
         }
-
 
         // this early return clause catches some common cases if we're already connected
         if (this.provider?.connected) {
@@ -268,11 +256,12 @@ export class WalletConnectSpecific extends ConnectorSpecific {
 
             // if we're here, we can try to switch networks, ignoring errors
             const desiredChainIdHex = `0x${desiredChainId.toString(16)}`;
-            return this.provider?.request<void>({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: desiredChainIdHex }],
-            }).catch(() => void 0);
-
+            return this.provider
+                ?.request<void>({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: desiredChainIdHex }],
+                })
+                .catch(() => void 0);
         } catch (error) {
             // this condition is a bit of a hack :/
             // if a user triggers the walletconnect modal, closes it, and then tries to connect again,
@@ -288,7 +277,6 @@ export class WalletConnectSpecific extends ConnectorSpecific {
 
     /** {@inheritdoc Connector.deactivate} */
     public async deactivate(error?: Error): Promise<void> {
-
         this.provider?.off('disconnect', this.disconnectListener);
         this.provider?.off('chainChanged', this.chainChangedListener);
         this.provider?.off('accountsChanged', this.accountsChangedListener);
@@ -297,14 +285,13 @@ export class WalletConnectSpecific extends ConnectorSpecific {
             this.URIListener,
         );
 
-        await this.eagerConnection;
+        // await this.eagerConnection;
         const tran = (this.provider as any)?.signer?.connection?.wc?._transport
             ?._socket as WebSocket;
 
         tran?.close(1000, 'ayo');
 
         await this.provider?.disconnect();
-
 
         this.provider = undefined;
         this.eagerConnection = undefined;
