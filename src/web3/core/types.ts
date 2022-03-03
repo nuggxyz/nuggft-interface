@@ -1,52 +1,11 @@
 import type { EventEmitter } from 'node:events';
 import type { State, StoreApi } from 'zustand/vanilla';
 
-export type SupportedConnectors =
-    | 'rainbow'
-    | 'ledgerlive'
-    | 'cryptodotcom'
-    | 'trust'
-    | 'coinbase'
-    | 'walletconnect'
-    | 'metamask'
-    | 'infura';
+import { Connector as ConnectorEnum, PeerInfo, Peer, Chain } from './interfaces';
 
-export type SupportedWalletConnectInstances =
-    | 'metamask'
-    | 'rainbow'
-    | 'ledgerlive'
-    | 'cryptodotcom'
-    | 'trust'
-    | 'other';
-
-export enum ConnectorType {
-    NORMAL = 0,
-    SPECIFIC = 1,
-}
-export interface ConnectorBaseInfo {
-    type: ConnectorType;
-    name: string;
-    label: SupportedConnectors;
-    description?: string;
-    href: string | null;
-    color: string;
-    primary?: true;
-    mobile?: true;
-    mobileOnly?: true;
-}
-
-export interface ConnectorNormalInfo extends ConnectorBaseInfo {
-    type: ConnectorType.NORMAL;
-}
-
-export interface ConnectorSpecificInfo extends ConnectorBaseInfo {
-    type: ConnectorType.SPECIFIC;
-    peerurl: string;
-}
-
-export type ConnectorInfo = ConnectorNormalInfo | ConnectorSpecificInfo;
 export interface Web3ReactState extends State {
-    chainId: number | undefined;
+    chainId: Chain | undefined;
+    peer: PeerInfo | undefined;
     accounts: string[] | undefined;
     activating: boolean;
     error: Error | undefined;
@@ -54,19 +13,7 @@ export interface Web3ReactState extends State {
 
 export type Web3ReactStore = StoreApi<Web3ReactState>;
 
-export type Web3ReactStateUpdate =
-    | {
-          chainId: number;
-          accounts: string[];
-      }
-    | {
-          chainId: number;
-          accounts?: never;
-      }
-    | {
-          chainId?: never;
-          accounts: string[];
-      };
+export type Web3ReactStateUpdate = { chainId?: Chain; accounts?: string[]; peer?: PeerInfo };
 
 export interface Actions {
     startActivation: () => () => void;
@@ -123,15 +70,20 @@ export abstract class Connector {
 
     protected readonly actions: Actions;
 
-    public info: ConnectorInfo;
+    protected readonly connectorType: ConnectorEnum;
+
+    public peers: { [key in Peer]?: PeerInfo };
 
     /**
      * @param actions - Methods bound to a zustand store that tracks the state of the connector.
      * Actions are used by the connector to report changes in connection status.
      */
-    constructor(actions: Actions, info: ConnectorInfo) {
+    constructor(type: ConnectorEnum, actions: Actions, peers: PeerInfo[]) {
         this.actions = actions;
-        this.info = info;
+        this.peers = peers.reduce((prev, curr) => {
+            return { ...prev, [curr.peer]: curr };
+        }, {});
+        this.connectorType = type;
     }
 
     /**
@@ -151,8 +103,4 @@ export abstract class Connector {
     public deactivate(...args: unknown[]): Promise<void> | void {
         this.actions.reportError(undefined);
     }
-}
-
-export abstract class ConnectorSpecific extends Connector {
-    public declare info: ConnectorSpecificInfo;
 }

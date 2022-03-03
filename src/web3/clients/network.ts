@@ -1,7 +1,9 @@
 import type { Eip1193Bridge } from '@ethersproject/experimental';
 import type { ConnectionInfo } from '@ethersproject/web';
 
-import { Connector, Actions, ConnectorInfo } from '@src/web3/core/types';
+import { Connector, Actions } from '@src/web3/core/types';
+import { PeerInfo__Infura } from '@src/web3/core/interfaces';
+import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 
 type url = string | ConnectionInfo;
 
@@ -19,19 +21,19 @@ export class Network extends Connector {
      * @param defaultChainId - The chainId to connect to if connectEagerly is true.
      */
     constructor(
-        info: ConnectorInfo,
+        peer: PeerInfo__Infura,
         actions: Actions,
         urlMap: { [chainId: number]: url | url[] },
         connectEagerly = false,
         defaultChainId = Number(Object.keys(urlMap)[0]),
     ) {
-        super(actions, info);
+        super(ConnectorEnum.Infura, actions, [peer]);
 
-        if (connectEagerly && typeof window === 'undefined') {
-            throw new Error(
-                'connectEagerly = true is invalid for SSR, instead use the activate method in a useEffect',
-            );
-        }
+        // if (connectEagerly && typeof window === 'undefined') {
+        //     throw new Error(
+        //         'connectEagerly = true is invalid for SSR, instead use the activate method in a useEffect',
+        //     );
+        // }
 
         this.urlMap = Object.keys(urlMap).reduce<{ [chainId: number]: url[] }>(
             (accumulator, chainId) => {
@@ -81,7 +83,7 @@ export class Network extends Connector {
         return this.provider
             .request({ method: 'eth_chainId' })
             .then((chainId: number) => {
-                this.actions.update({ chainId, accounts: [] });
+                this.actions.update({ chainId, accounts: [], peer: this.peers.infura });
             })
             .catch((error: Error) => {
                 this.actions.reportError(error);

@@ -6,7 +6,7 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 const query = (
     address: string,
@@ -38,7 +38,7 @@ const query = (
 `;
 
 const myNuggsQuery = async (
-    chainId: SupportedChainId,
+    chainId: Chain,
     address: string,
     orderDirection: 'asc' | 'desc',
     searchValue: string,

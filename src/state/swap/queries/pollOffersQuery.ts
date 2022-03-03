@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 import { offerBare } from '@src/graphql/fragments/offer';
 import { executeQuery } from '@src/graphql/helpers';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 const query = (id: string) => gql`
     {
@@ -12,7 +12,7 @@ const query = (id: string) => gql`
     }
 `;
 
-const pollOffersQuery = async (chainId: SupportedChainId, swapId: string) => {
+const pollOffersQuery = async (chainId: Chain, swapId: string) => {
     return (await executeQuery(chainId, query(swapId), 'swap')).offers as Promise<
         NL.GraphQL.Fragments.Offer.Bare[]
     >;

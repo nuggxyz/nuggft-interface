@@ -7,15 +7,15 @@ import { Address } from '@src/classes/Address';
 import { loadFromLocalStorage, saveToLocalStorage } from '@src/lib';
 import { NuggftV1, NuggftV1__factory } from '@src/typechain';
 import { executeQuery } from '@src/graphql/helpers';
-import { SupportedChainId } from '@src/web3/config';
 import web3 from '@src/web3';
+import { Chain } from '@src/web3/core/interfaces';
 
 import ContractHelper from './abstract/ContractHelper';
 
 export default class NuggftV1Helper extends ContractHelper {
     public contract: NuggftV1;
 
-    constructor(chainId: SupportedChainId, provider: Web3Provider) {
+    constructor(chainId: Chain, provider: Web3Provider) {
         super();
         this.contract = new Contract(
             web3.config.CONTRACTS[chainId].NuggftV1,

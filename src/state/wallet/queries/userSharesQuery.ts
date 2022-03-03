@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import { idFragment } from '@src/graphql/fragments/general';
 import { executeQuery } from '@src/graphql/helpers';
 import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '@src/lib';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 const query = (id: string) => gql`
     {
@@ -13,7 +13,7 @@ const query = (id: string) => gql`
     }
 `;
 
-const userSharesQuery = async (chainId: SupportedChainId, id: string) => {
+const userSharesQuery = async (chainId: Chain, id: string) => {
     const result = (await executeQuery(
         chainId,
         query(id.toLowerCase()),

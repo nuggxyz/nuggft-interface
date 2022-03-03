@@ -9,7 +9,8 @@ import client from '@src/client';
 import { EthInt } from '@src/classes/Fraction';
 
 import { createWeb3ReactStoreAndActions } from './store';
-import { Connector, Web3ReactStore, Web3ReactState, Actions, SupportedConnectors } from './types';
+import { Connector, Web3ReactStore, Web3ReactState, Actions } from './types';
+import { Connector as ConnectorEnum } from './interfaces';
 
 export type Web3ReactHooks = ReturnType<typeof getStateHooks> &
     ReturnType<typeof getDerivedHooks> &
@@ -55,8 +56,8 @@ export function initializeConnector<T extends Connector>(
     return { connector, hooks: { ...stateHooks, ...derivedHooks, ...augmentedHooks }, store };
 }
 
-function computeIsActive({ chainId, accounts, activating, error }: Web3ReactState) {
-    return Boolean(chainId && accounts && !activating && !error);
+function computeIsActive({ chainId, peer, accounts, activating, error }: Web3ReactState) {
+    return Boolean(chainId && peer && accounts && !activating && !error);
 }
 
 /**
@@ -85,6 +86,12 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
     function useSelectedAccounts(connector: Connector) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const values = initializedConnectors.map((x) => x.hooks.useAccounts());
+        return values[getIndex(connector)];
+    }
+
+    function useSelectedPeer(connector: Connector) {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const values = initializedConnectors.map((x) => x.hooks.usePeer());
         return values[getIndex(connector)];
     }
 
@@ -167,6 +174,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         useSelectedWeb3React,
         useSelectedAnyENSName,
         useSelectedBalance,
+        useSelectedPeer,
     };
 }
 
@@ -178,7 +186,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
  * @returns hooks - A variety of convenience hooks that wrap the hooks returned from initializeConnector.
  */
 export function getPriorityConnector(initializedConnectors: {
-    [key in SupportedConnectors]: ResWithStore<Connector>;
+    [key in ConnectorEnum]?: ResWithStore<Connector>;
 }) {
     const {
         useSelectedChainId,
@@ -192,6 +200,7 @@ export function getPriorityConnector(initializedConnectors: {
         useSelectedWeb3React,
         useSelectedAnyENSName,
         useSelectedBalance,
+        useSelectedPeer,
     } = getSelectedConnector(...Object.values(initializedConnectors));
 
     function usePriorityConnector() {
@@ -249,6 +258,10 @@ export function getPriorityConnector(initializedConnectors: {
         return useSelectedBalance(usePriorityConnector(), provider);
     }
 
+    function usePriorityPeer() {
+        return useSelectedPeer(usePriorityConnector());
+    }
+
     return {
         useSelectedChainId,
         useSelectedAccounts,
@@ -273,10 +286,14 @@ export function getPriorityConnector(initializedConnectors: {
         usePriorityAnyENSName,
         useSelectedBalance,
         usePriorityBalance,
+        useSelectedPeer,
+        usePriorityPeer,
     };
 }
 
 const CHAIN_ID = (state: Web3ReactState) => state.chainId;
+const ACTIVE_PEER = (state: Web3ReactState) => state.peer;
+
 const ACCOUNTS = (state: Web3ReactState) => state.accounts;
 const ACCOUNTS_EQUALITY_CHECKER: EqualityChecker<Web3ReactState['accounts']> = (
     oldAccounts,
@@ -294,6 +311,10 @@ function getStateHooks(useConnector: UseBoundStore<Web3ReactState>) {
         return useConnector(CHAIN_ID);
     }
 
+    function usePeer(): Web3ReactState['peer'] {
+        return useConnector(ACTIVE_PEER);
+    }
+
     function useAccounts(): Web3ReactState['accounts'] {
         return useConnector(ACCOUNTS, ACCOUNTS_EQUALITY_CHECKER);
     }
@@ -306,7 +327,7 @@ function getStateHooks(useConnector: UseBoundStore<Web3ReactState>) {
         return useConnector(ERROR);
     }
 
-    return { useChainId, useAccounts, useIsActivating, useError };
+    return { useChainId, usePeer, useAccounts, useIsActivating, useError };
 }
 
 function getDerivedHooks({
@@ -314,6 +335,7 @@ function getDerivedHooks({
     useAccounts,
     useIsActivating,
     useError,
+    usePeer,
 }: ReturnType<typeof getStateHooks>) {
     function useAccount(): string | undefined {
         return useAccounts()?.[0];
@@ -324,9 +346,11 @@ function getDerivedHooks({
         const accounts = useAccounts();
         const activating = useIsActivating();
         const error = useError();
+        const peer = usePeer();
 
         return computeIsActive({
             chainId,
+            peer,
             accounts,
             activating,
             error,

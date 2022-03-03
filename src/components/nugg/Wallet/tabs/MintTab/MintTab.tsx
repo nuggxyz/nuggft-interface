@@ -34,8 +34,8 @@ import TokenState from '@src/state/token';
 import NuggDexState from '@src/state/nuggdex';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import Layout from '@src/lib/layout';
-import { SupportedChainId } from '@src/web3/config';
 import web3 from '@src/web3';
+import { Chain } from '@src/web3/core/interfaces';
 type Props = {};
 
 const MintTab: FunctionComponent<Props> = () => {
@@ -263,7 +263,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Nug
         (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
     );
 
-const MintNuggButton = (chainId: SupportedChainId, provider: Web3Provider, address: string) => (
+const MintNuggButton = (chainId: Chain, provider: Web3Provider, address: string) => (
     <FeedbackButton
         feedbackText="Check Wallet..."
         buttonStyle={{

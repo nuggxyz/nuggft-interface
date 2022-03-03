@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import curriedLighten from 'polished/lib/color/lighten';
 
 import Colors from '@src/lib/colors';
 import Layout from '@src/lib/layout';
@@ -7,7 +8,7 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
 import HappyTipper from '@src/components/general/HappyTipper/HappyTipper';
-import { SupportedConnectors } from '@src/web3/core/types';
+import { layout } from '@src/lib';
 
 type Props = {};
 
@@ -63,37 +64,53 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                     padding: '1rem',
                     display: 'flex',
                     flexDirection: 'column',
-                    width: '100%',
                     height: '100%',
+                    alignItems: 'center',
+                    width: '100%',
+                    overflow: 'scroll',
                 }}
             >
-                {(Object.keys(web3.config.connectors) as SupportedConnectors[]).map((connector) => (
-                    <Button
-                        key={web3.config.connectors[connector].name}
-                        buttonStyle={{
-                            color: 'white',
-                            border: `${web3.config.connectors[connector].color}`,
-                            borderWidth: '5px',
-                            borderStyle: 'solid',
-                            borderRadius: Layout.borderRadius.large,
-                            padding: '1rem',
-                            pointerEvents: 'auto',
-                            background: 'white',
-                            margin: '1rem',
-                        }}
-                        rightIcon={
-                            <NLStaticImage
-                                //@ts-ignore
-                                image={connector}
+                {Object.values(web3.config.peers).map(
+                    (peer) =>
+                        !peer.fallback && (
+                            <Button
+                                key={peer.name}
+                                buttonStyle={{
+                                    width: '225px',
+                                    boxShadow: layout.default.boxShadow.dark,
+                                    color: 'white',
+                                    border: `${curriedLighten(0.1)(peer.color)}`,
+                                    borderWidth: '5px',
+                                    borderStyle: 'solid',
+                                    borderRadius: Layout.borderRadius.large,
+                                    padding: '.5rem',
+                                    pointerEvents: 'auto',
+                                    background: `white`,
+                                    margin: '.5rem',
+                                }}
+                                hoverStyle={
+                                    {
+                                        // background: curriedLighten(0.25)(peer.color),
+                                        // filter: undefined,
+                                    }
+                                }
+                                rightIcon={<NLStaticImage image={peer.peer} />}
+                                onClick={async () => {
+                                    if (
+                                        web3.config.connector_instances[peer.type].store.getState()
+                                            .activating
+                                    )
+                                        await web3.config.connector_instances[
+                                            peer.type
+                                        ].connector.deactivate();
+                                    web3.config.connector_instances[peer.type].connector.activate(
+                                        undefined,
+                                        peer.peer,
+                                    );
+                                }}
                             />
-                        }
-                        onClick={async () => {
-                            if (web3.config.connectors[connector].store.getState().activating)
-                                await web3.config.connectors[connector].connector.deactivate();
-                            web3.config.connectors[connector].connector.activate();
-                        }}
-                    />
-                ))}
+                        ),
+                )}
                 <HappyTipper tip="wallet-1" />
             </div>
         </div>

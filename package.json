@@ -126,6 +126,7 @@
         "graphql": "^16.2.0",
         "identity-obj-proxy": "^3.0.0",
         "numbro": "^2.3.5",
+        "polished": "^4.1.4",
         "prompts": "^2.4.2",
         "qrcode.react": "^1.0.1",
         "react": "^17.0.2",

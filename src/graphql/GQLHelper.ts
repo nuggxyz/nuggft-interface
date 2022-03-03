@@ -1,11 +1,11 @@
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import web3 from '@src/web3';
-import { SupportedChainId } from '../web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 export default class GQLHelper {
     protected static _instance: ApolloClient<NormalizedCacheObject>;
 
-    static instance(chainId: SupportedChainId) {
+    static instance(chainId: Chain) {
         // if (isUndefinedOrNullOrObjectEmpty(GQLHelper._instance)) {
         GQLHelper._instance = new ApolloClient({
             link: new HttpLink({

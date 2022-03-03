@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 import config from '@src/config';
 import { executeQuery } from '@src/graphql/helpers';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 const query = () => gql`
 {
@@ -11,7 +11,7 @@ const query = () => gql`
     }
 }`;
 
-const getIntervalQuery = async (chainId: SupportedChainId) => {
+const getIntervalQuery = async (chainId: Chain) => {
     return (await executeQuery(chainId, query(), 'protocol')).interval as Promise<string>;
 };
 

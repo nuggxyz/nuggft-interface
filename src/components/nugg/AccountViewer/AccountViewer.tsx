@@ -8,18 +8,18 @@ import InteractiveText from '@src/components/general/Texts/InteractiveText/Inter
 import web3 from '@src/web3';
 import state from '@src/state';
 import NLStaticImage from '@src/components/general/NLStaticImage';
-import { SupportedChainId } from '@src/web3/config';
 
 import styles from './AccountViewer.styles';
 
 const AccountViewer = () => {
     const screenType = AppState.select.screenType();
-    const chainId = web3.hook.usePriorityChainId() as SupportedChainId;
+    const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const ens = web3.hook.usePriorityENSName(provider);
     const address = web3.hook.usePriorityAccount();
-    const connector = web3.hook.usePriorityConnector();
     const balance = web3.hook.usePriorityBalance(provider);
+    const peer = web3.hook.usePriorityPeer();
+    const connector = web3.hook.usePriorityConnector();
 
     return ens && address ? (
         <div style={styles.textContainer}>
@@ -42,7 +42,11 @@ const AccountViewer = () => {
                     <InteractiveText
                         color={Colors.nuggBlueText}
                         action={() => {
-                            state.app.dispatch.toggleWalletManager();
+                            if (chainId === 1) {
+                                connector.deactivate();
+                            } else {
+                                state.app.dispatch.toggleWalletManager();
+                            }
                         }}
                         size={screenType === 'phone' ? 'small' : 'medium'}
                         type="text"
@@ -62,7 +66,7 @@ const AccountViewer = () => {
                     </InteractiveText>
 
                     <NLStaticImage
-                        image={`${connector.info.label}_icon_small`}
+                        image={`${peer.peer}_icon_small`}
                         style={{ marginLeft: '10px' }}
                     />
                     {screenType === 'phone' && <Jazzicon address={address} size={15} />}

@@ -13,7 +13,7 @@ import { NLState } from '@src/state/NLState';
 import store from '@src/state/store';
 import SwapState from '@src/state/swap';
 import TokenState from '@src/state/token';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -132,7 +132,7 @@ class AppState extends NLState<NL.Redux.App.State> {
         window.location.hash = route;
     }
 
-    public static onRouteUpdate(chainId: SupportedChainId, route: string) {
+    public static onRouteUpdate(chainId: Chain, route: string) {
         try {
             const swapRoute = route.match(/\/(swap)\/(\d+)\-(\d+)/);
             const tokenRoute = route.match(/\/(nugg)\/(\d+)/);

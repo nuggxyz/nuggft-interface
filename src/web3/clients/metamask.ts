@@ -7,8 +7,9 @@ import {
     AddEthereumChainParameter,
     Provider,
     Actions,
-    ConnectorNormalInfo,
 } from '@src/web3/core/types';
+import { PeerInfo__MetaMask } from '@src/web3/core/interfaces';
+import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 
 export class NoMetaMaskError extends Error {
     public constructor() {
@@ -31,12 +32,12 @@ export class MetaMask extends Connector {
      * @param options - Options to pass to `@metamask/detect-provider`
      */
     constructor(
-        info: ConnectorNormalInfo,
+        peer: PeerInfo__MetaMask,
         actions: Actions,
         connectEagerly = false,
         options?: Parameters<typeof detectEthereumProvider>[0],
     ) {
-        super(actions, info);
+        super(ConnectorEnum.MetaMask, actions, [peer]);
 
         if (connectEagerly && typeof window === 'undefined') {
             throw new Error(
@@ -61,6 +62,7 @@ export class MetaMask extends Connector {
                     this.provider.on('connect', ({ chainId }: ProviderConnectInfo): void => {
                         this.actions.update({
                             chainId: parseChainId(chainId),
+                            peer: this.peers.metamask,
                         });
                     });
 
@@ -71,6 +73,7 @@ export class MetaMask extends Connector {
                     this.provider.on('chainChanged', (chainId: string): void => {
                         this.actions.update({
                             chainId: parseChainId(chainId),
+                            peer: this.peers.metamask,
                         });
                     });
 
@@ -79,7 +82,7 @@ export class MetaMask extends Connector {
                             // handle this edge case by disconnecting
                             this.actions.reportError(undefined);
                         } else {
-                            this.actions.update({ accounts });
+                            this.actions.update({ accounts, peer: this.peers.metamask });
                         }
                     });
                 }
