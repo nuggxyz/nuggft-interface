@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import { NLState } from '@src/state/NLState';
 
 import hooks from './hooks';
@@ -35,6 +34,7 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
             error: undefined,
             loading: false,
             searchFilters: {
+                target: undefined,
                 searchValue: '',
                 sort: {
                     asc: false,
@@ -62,8 +62,8 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
                     state.recents.push(action.payload);
                 }
             },
-            setSearchFilters: (state, action: PayloadAction<NL.Redux.NuggDex.Filters>) => {
-                state.searchFilters = action.payload;
+            setSearchFilters: (state, action: PayloadAction<Partial<NL.Redux.NuggDex.Filters>>) => {
+                state.searchFilters = { ...state.searchFilters, ...action.payload };
             },
             reset: (state) => {
                 state.recents = [];
@@ -72,6 +72,7 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
                 state.error = undefined;
                 state.loading = false;
                 state.searchFilters = {
+                    target: undefined,
                     searchValue: '',
                     sort: {
                         asc: false,

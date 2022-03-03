@@ -23,6 +23,11 @@ type Props = {};
 const NuggDexSearchList: FunctionComponent<Props> = () => {
     const epoch = ProtocolState.select.epoch();
     const filters = NuggDexState.select.searchFilters();
+    const [sortAsc, setSortAsc] = useState({
+        'recently viewed': false,
+        'all nuggs': false,
+        'on sale': false,
+    });
     const viewing = NuggDexState.select.viewing();
     const chainId = web3.hook.usePriorityChainId();
     const _liveActiveNuggs = client.live.activeSwaps();
@@ -33,7 +38,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 let tmp = acc;
                 if (+nugg.id <= +epoch.id) {
                     if (filters.searchValue === '' || filters.searchValue === nugg.id) {
-                        if (filters.sort.asc) {
+                        if (sortAsc['on sale']) {
                             tmp = [...acc, nugg];
                         } else {
                             tmp = [nugg, ...acc];
@@ -42,8 +47,32 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 }
                 return tmp;
             }, []),
-        [epoch, _liveActiveNuggs, filters],
+        [epoch, _liveActiveNuggs, filters, sortAsc],
     );
+    useEffect(() => {
+        if (viewing !== 'home') {
+            setSortAsc((sort) => {
+                // TODO fix this bug somoehow
+                NuggDexState.dispatch.setSearchFilters({
+                    target: viewing,
+                    sort: {
+                        asc: sort[viewing],
+                    },
+                });
+                return sort;
+            });
+        }
+    }, [viewing, setSortAsc]);
+    useEffect(() => {
+        if (filters.target) {
+            setSortAsc((sort) => {
+                return {
+                    ...sort,
+                    [filters.target]: filters.sort.asc,
+                };
+            });
+        }
+    }, [filters]);
     const [allNuggs, setAllNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
     const recents = NuggDexState.select.recents();
 
@@ -76,12 +105,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         [chainId, epoch],
     );
 
-    useEffect(() => {
-        if (viewing === 'home' && filters.searchValue !== '') {
-            NuggDexState.dispatch.setViewing('all nuggs');
-        }
-    }, [filters, viewing]);
-
     return (
         <div style={styles.searchListContainer}>
             <animated.div style={animatedStyle}>
@@ -94,7 +117,11 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         left: 0,
                     }}
                 >
-                    <NuggList style={styles.nuggListEnter} values={recents} />
+                    <NuggList
+                        style={styles.nuggListEnter}
+                        values={recents}
+                        type="recently viewed"
+                    />
                 </NuggLink>
                 <NuggLink
                     type="on sale"
@@ -105,7 +132,11 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         right: 0,
                     }}
                 >
-                    <NuggList style={styles.nuggListEnter} values={liveActiveNuggs} />
+                    <NuggList
+                        style={styles.nuggListEnter}
+                        values={liveActiveNuggs}
+                        type="on sale"
+                    />
                 </NuggLink>
                 <NuggLink
                     style={{
@@ -120,6 +151,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     <NuggList
                         style={styles.nuggListEnter}
                         values={allNuggs}
+                        type="all nuggs"
                         onScrollEnd={({ setLoading, filters, addToList }) =>
                             handleGetAll(
                                 setAllNuggs,

@@ -26,6 +26,7 @@ import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
 
 type Props = {
+    type?: NL.Redux.NuggDex.SearchViews;
     style: CSSProperties | UseSpringProps;
     values: NL.GraphQL.Fragments.Nugg.ListItem[];
     animationToggle?: boolean;
@@ -40,7 +41,13 @@ type Props = {
     }) => Promise<void> | (() => void);
 };
 
-const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animationToggle }) => {
+const NuggList: FunctionComponent<Props> = ({
+    style,
+    values,
+    onScrollEnd,
+    animationToggle,
+    type,
+}) => {
     const filters = NuggDexState.select.searchFilters();
     const prevFilters = usePrevious(filters);
     const screenType = AppState.select.screenType();
@@ -70,19 +77,29 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
     useEffect(() => {
         if (
             !isUndefinedOrNullOrNotFunction(onScrollEnd) &&
+            (!type || filters.target === type) &&
             ((prevFilters && prevFilters.searchValue !== filters.searchValue) ||
                 filters.searchValue !== '' ||
                 prevFilters?.sort.asc !== filters?.sort.asc)
         ) {
             onScrollEnd({ setLoading, filters, addToList: false });
         }
+        // else
+        //     return () => {
+        //         onScrollEnd({
+        //             setLoading,
+        //             filters: { ...filters, searchValue: '' },
+        //             addToList: false,
+        //         });
+        //     };
     }, [filters]);
 
     useEffect(() => {
         if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
             onScrollEnd({
                 setLoading,
-                filters: { searchValue: '', sort: { by: 'id', asc: true } },
+                filters,
+                // filters: { searchValue: '', sort: { by: 'id', asc: true }, target: type },
                 addToList: false,
             });
         }
@@ -121,6 +138,7 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
                                 transitionText="Go back"
                                 onClick={() => {
                                     NuggDexState.dispatch.setSearchFilters({
+                                        target: undefined,
                                         searchValue: '',
                                         sort: {
                                             asc: true,

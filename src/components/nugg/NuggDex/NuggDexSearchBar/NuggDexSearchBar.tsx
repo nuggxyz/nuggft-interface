@@ -22,6 +22,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const prevFilters = usePrevious(filters);
 
     const [searchValue, setSearchValue] = useState('');
+    const [isUserInput, setIsUserInput] = useState(false);
 
     const debouncedValue = useDebounce(searchValue, 100);
     const [sortAsc, setSortAsc] = useState(filters.sort.asc);
@@ -30,15 +31,25 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
         if (view === 'Search') {
             NuggDexState.dispatch.setSearchFilters({
                 searchValue: debouncedValue,
+            });
+        } else {
+            setSearchValue('');
+        }
+    }, [debouncedValue, view]);
+
+    useEffect(() => {
+        if (filters.sort.asc !== sortAsc && isUserInput) {
+            setIsUserInput(false);
+            NuggDexState.dispatch.setSearchFilters({
                 sort: {
                     by: 'id',
                     asc: sortAsc,
                 },
             });
         } else {
-            setSearchValue('');
+            setSortAsc(filters.sort.asc);
         }
-    }, [debouncedValue, view, sortAsc]);
+    }, [sortAsc, filters, isUserInput]);
 
     useEffect(() => {
         if (
@@ -61,6 +72,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
 
     return (
         <TextInput
+            onFocus={() => viewing === 'home' && NuggDexState.dispatch.setViewing('all nuggs')}
             placeholder={`Search ${viewing === 'home' ? 'all nuggs' : viewing}`}
             value={searchValue}
             setValue={setSearchValue}
@@ -96,7 +108,10 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                                           <CornerRightDown size={14} color={Colors.nuggBlueText} />
                                       )
                                   }
-                                  onClick={() => setSortAsc(!sortAsc)}
+                                  onClick={() => {
+                                      setSortAsc(!sortAsc);
+                                      setIsUserInput(true);
+                                  }}
                               />
                           ),
                       ]

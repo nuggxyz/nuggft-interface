@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BigNumber } from 'ethers';
 
 import { NLState } from '@src/state/NLState';
+import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -90,8 +91,10 @@ export default class ProtocolState extends NLState<NL.Redux.Protocol.State> {
                     state.interval = action.payload.data;
                 })
                 .addCase(thactions.safeSetEpoch.fulfilled, (state, action) => {
-                    state.epoch = action.payload.data.epoch;
-                    state.epochIsOver = action.payload.data.isOver;
+                    if (!isUndefinedOrNullOrObjectEmpty(action.payload?.data)) {
+                        state.epoch = action.payload.data.epoch;
+                        state.epochIsOver = action.payload.data.isOver;
+                    }
                 })
                 .addCase(thactions.updateStaked.fulfilled, (state, action) => {
                     const data = action.payload.data;

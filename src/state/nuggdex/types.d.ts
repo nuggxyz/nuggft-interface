@@ -13,11 +13,12 @@ declare namespace NL.Redux.NuggDex {
     };
 
     type Filters = {
-        sort: {
+        target?: SearchViews;
+        sort?: {
             asc: boolean;
             by: 'eth' | 'id';
         };
-        searchValue: string;
+        searchValue?: string;
     };
 
     type SearchViews = 'home' | 'all nuggs' | 'on sale' | 'my nuggs' | 'recently viewed';

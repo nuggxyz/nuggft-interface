@@ -29,6 +29,7 @@ export interface TextInputProps {
     className?: string;
     styleLabel?: CSSProperties;
     shouldFocus?: boolean;
+    onFocus?: () => void;
 }
 
 const TextInput: FunctionComponent<TextInputProps> = ({
@@ -54,6 +55,7 @@ const TextInput: FunctionComponent<TextInputProps> = ({
     className,
     styleLabel,
     shouldFocus,
+    onFocus,
 }) => {
     const inputStyle = {
         ...styles.textInput,
@@ -96,7 +98,8 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                     textStyle={{
                         ...styles.headingText,
                         ...styleLabel,
-                    }}>
+                    }}
+                >
                     {label}
                 </Text>
                 {warning && (
@@ -121,6 +124,7 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                             setValue(value.target.value);
                         }}
                         disabled={disabled}
+                        onFocus={onFocus}
                     />
                 ) : (
                     <input
@@ -137,6 +141,7 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                         pattern={pattern}
                         disabled={disabled}
                         inputMode={inputMode}
+                        onFocus={onFocus}
                     />
                 )}
                 {rightToggles &&

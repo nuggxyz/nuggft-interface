@@ -7,7 +7,6 @@
     "editor.codeActionsOnSave": {
         "source.fixAll": true
     },
-    "typescript.inlayHints.parameterNames.enabled": "all",
     "typescript.tsserver.experimental.enableProjectDiagnostics": true,
     "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": false,
     "workbench.tree.indent": 16,

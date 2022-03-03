@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { IoBagOutline, IoCashOutline, IoTrashBinOutline } from 'react-icons/io5';
+import { IoCashOutline, IoPricetagsOutline, IoTrashBinOutline } from 'react-icons/io5';
 
 import Colors from '@src/lib/colors';
 import state from '@src/state';
@@ -19,7 +19,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 buttonStyle={styles.button}
                 label="Sell"
                 leftIcon={
-                    <IoBagOutline
+                    <IoPricetagsOutline
                         color={Colors.nuggBlueText}
                         size={25}
                         style={{ marginRight: '.75rem' }}
