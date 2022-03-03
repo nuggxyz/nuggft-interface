@@ -98,12 +98,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
 
     return (
         !isUndefinedOrNullOrStringEmpty(tokenId) && (
-            <div
-                style={{
-                    ...styles.container,
-                    ...(screenType === 'phone' && { padding: '0rem .5rem' }),
-                }}
-            >
+            <div style={styles.container}>
                 {MobileBackButton && (
                     <div
                         style={{
@@ -172,7 +167,6 @@ const Swaps: FunctionComponent<SwapsProps> = ({
     nugg,
 }) => {
     const screenType = state.app.select.screenType();
-    console.log({ swaps, nugg });
 
     const listData = useMemo(() => {
         let res = [];
@@ -229,7 +223,7 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                 {owner === address && (
                     <Flyout
                         containerStyle={styles.flyout}
-                        style={{ right: '1rem', top: '2rem' }}
+                        style={{ right: '1.5rem', top: '2rem' }}
                         button={
                             <div style={styles.flyoutButton}>
                                 <IoEllipsisHorizontal color={Colors.white} />
@@ -251,8 +245,8 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                 TitleRenderItem={SwapTitle}
                 ChildRenderItem={SwapItem}
                 extraData={[chainId, provider, nugg?.activeSwap?.id]}
-                style={{ height: '100%' }}
-                styleRight={styles.stickyList}
+                style={styles.stickyList}
+                styleRight={styles.stickyListRight}
             />
         </div>
     );
@@ -268,7 +262,7 @@ const SwapTitle = ({ title }) => {
 
 const SwapItem = ({ item, index, extraData }) => {
     const awaitingBid = item.endingEpoch === null;
-    const ens = web3.hook.usePriorityAnyENSName(extraData[1], item.leader.id);
+    const ens = web3.hook.usePriorityAnyENSName(extraData[1], item.owner.id);
     return (
         <div style={{ padding: '.25rem 1rem' }}>
             <Button
@@ -295,10 +289,8 @@ const SwapItem = ({ item, index, extraData }) => {
                                     color: Colors.textColor,
                                 }}
                             >
-                                {awaitingBid
+                                {awaitingBid || item.id === extraData[2]
                                     ? 'On sale by'
-                                    : item.id === extraData[2]
-                                    ? 'Leader'
                                     : 'Purchased from'}
                             </Text>
                             <Text

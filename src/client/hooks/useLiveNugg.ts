@@ -86,7 +86,6 @@ export const useLiveNugg = (tokenId: string) => {
                     variables: { tokenId },
                 })
                 .subscribe((x) => {
-                    console.log({ x });
                     if (x.data.nugg) {
                         setNugg({
                             activeSwap: {
