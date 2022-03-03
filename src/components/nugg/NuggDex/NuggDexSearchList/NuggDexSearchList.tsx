@@ -4,6 +4,7 @@ import React, {
     useCallback,
     useEffect,
     useMemo,
+    useRef,
     useState,
 } from 'react';
 import { animated, useSpring } from '@react-spring/web';
@@ -28,6 +29,10 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         'all nuggs': false,
         'on sale': false,
     });
+    const _sortAsc = useRef(sortAsc);
+    useEffect(() => {
+        _sortAsc.current = sortAsc;
+    });
     const viewing = NuggDexState.select.viewing();
     const chainId = web3.hook.usePriorityChainId();
     const _liveActiveNuggs = client.live.activeSwaps();
@@ -50,18 +55,12 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         [epoch, _liveActiveNuggs, filters, sortAsc],
     );
     useEffect(() => {
-        if (viewing !== 'home') {
-            setSortAsc((sort) => {
-                // TODO fix this bug somoehow
-                NuggDexState.dispatch.setSearchFilters({
-                    target: viewing,
-                    sort: {
-                        asc: sort[viewing],
-                    },
-                });
-                return sort;
-            });
-        }
+        NuggDexState.dispatch.setSearchFilters({
+            target: viewing,
+            sort: {
+                asc: _sortAsc.current[viewing],
+            },
+        });
     }, [viewing, setSortAsc]);
     useEffect(() => {
         if (filters.target) {
