@@ -19,12 +19,23 @@ import { MetaMask } from './clients/metamask';
 import { WalletConnectSpecific } from './clients/walletconnect-specific';
 import { WalletConnect } from './clients/walletconnect';
 
+
 export enum SupportedChainId {
     MAINNET = 1,
     ROPSTEN = 3,
     RINKEBY = 4,
     GOERLI = 5,
 }
+
+export type SupportedConnectors =
+    | 'metamask'
+    | 'rainbow'
+    | 'ledgerlive'
+    | 'cryptodotcom'
+    | 'trust'
+    | 'coinbase'
+    | 'walletconnect'
+    | 'infura';
 
 export function supportedChainIds() {
     // @ts-ignore
@@ -203,7 +214,9 @@ export const connector_instances: { [key in SupportedConnectors]: ResWithStore<C
     rainbow: initializeConnector<WalletConnectSpecific>(
         (actions) =>
             new WalletConnectSpecific(connector_info_rainbow, actions, {
+
                 rpc: NETWORK_URLS,
+                info: connector_info.rainbow,
             }),
     ),
     trust: initializeConnector<WalletConnectSpecific>(
@@ -217,6 +230,7 @@ export const connector_instances: { [key in SupportedConnectors]: ResWithStore<C
     ledgerlive: initializeConnector<WalletConnectSpecific>(
         (actions) =>
             new WalletConnectSpecific(connector_info_ledgerlive, actions, { rpc: NETWORK_URLS }),
+
     ),
     coinbase: initializeConnector<WalletLink>(
         (actions) =>
@@ -250,6 +264,7 @@ export const connector_instances: { [key in SupportedConnectors]: ResWithStore<C
 };
 
 export const priority = getPriorityConnector(connector_instances);
+
 
 export const connectors: {
     [key in SupportedConnectors]: NL.Web3.WalletInfo & ResWithStore<Connector>;

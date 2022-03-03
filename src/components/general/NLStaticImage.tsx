@@ -65,6 +65,7 @@ const StaticAppIconSmall: FunctionComponent<Props & { icon: string }> = ({
     );
 };
 
+
 const NLStaticImage: FunctionComponent<Props> = (props) => {
     const img = useMemo(() => {
         switch (props.image) {

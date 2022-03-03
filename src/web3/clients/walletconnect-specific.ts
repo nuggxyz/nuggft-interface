@@ -10,6 +10,7 @@ import {
     ConnectorSpecific,
     ConnectorSpecificInfo,
 } from '@src/web3/core/types';
+
 import { getBestUrl } from '@src/web3/core/utils';
 import { gotoLink } from '@src/web3/config';
 import AppState from '@src/state/app';
@@ -18,6 +19,8 @@ import store from '@src/state/store';
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
 type MockWalletConnectProvider = WalletConnectProvider & EventEmitter;
+
+
 
 function parseChainId(chainId: string | number) {
     return typeof chainId === 'string' ? Number.parseInt(chainId) : chainId;
@@ -29,11 +32,13 @@ type WalletConnectOptions = Omit<
 > & {
     rpc: { [chainId: number]: string | string[] };
 };
+
 // type Clients = 'MetaMask' | 'Rainbow' | 'Trust' | 'Ledger' | 'CryptoDotCom';
 
 const HREF_PATH = 'wc?uri=';
 
 export class WalletConnectSpecific extends ConnectorSpecific {
+
     /** {@inheritdoc Connector.provider} */
     public provider: MockWalletConnectProvider | undefined = undefined;
     public readonly events = new EventEmitter3();
@@ -56,6 +61,7 @@ export class WalletConnectSpecific extends ConnectorSpecific {
     ) {
         super(actions, info);
         invariant(info.peerurl);
+          
         // @ts-ignore
         options.qrcode = false;
 
@@ -102,12 +108,14 @@ export class WalletConnectSpecific extends ConnectorSpecific {
 
         if (this.info.label === 'ledgerlive') {
             // deep link via non-http
+
             window.open(uri);
         } else if (deviced === 'desktop' || deviced === 'tablet') {
             AppState.dispatch.setModalOpen({
                 name: 'QrCode',
                 modalData: {
                     data: { info: this.info, uri },
+
                     containerStyle: { backgroundColor: 'white' },
                 },
             });
@@ -115,6 +123,7 @@ export class WalletConnectSpecific extends ConnectorSpecific {
             // deep link via http
             gotoLink(uri);
         }
+
     };
 
     private async isomorphicInitialize(chainId = Number(Object.keys(this.rpc)[0])): Promise<void> {
@@ -171,6 +180,7 @@ export class WalletConnectSpecific extends ConnectorSpecific {
                     return;
                 }
                 // console.log({ prov: this.provider });
+
                 // for walletconnect, we always use sequential instead of parallel fetches because otherwise
                 // chainId defaults to 1 even if the connecting wallet isn't on mainnet
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -178,7 +188,6 @@ export class WalletConnectSpecific extends ConnectorSpecific {
                     method: 'eth_accounts',
                 });
 
-                // console.log({ accounts });
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const chainId = parseChainId(
                     await this.provider!.request<string | number>({
@@ -199,6 +208,7 @@ export class WalletConnectSpecific extends ConnectorSpecific {
         } else {
             cancelActivation();
             await this.deactivate();
+
         }
     }
 
@@ -214,7 +224,6 @@ export class WalletConnectSpecific extends ConnectorSpecific {
             throw new Error(`no url(s) provided for desiredChainId ${desiredChainId}`);
         }
 
-        // console.log('yeps');
 
         // this early return clause catches some common cases if we're already connected
         if (this.provider?.connected) {
@@ -262,13 +271,13 @@ export class WalletConnectSpecific extends ConnectorSpecific {
             return this.provider?.request<void>({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: desiredChainIdHex }],
-            });
-            // .catch(() => void 0);
+            }).catch(() => void 0);
+
         } catch (error) {
             // this condition is a bit of a hack :/
             // if a user triggers the walletconnect modal, closes it, and then tries to connect again,
             // the modal will not trigger. the logic below prevents this from happening
-            // console.log({ hima: error });
+
             if ((error as Error).message === 'User closed modal') {
                 await this.deactivate(this.treatModalCloseAsError ? (error as Error) : undefined);
             } else {
@@ -279,7 +288,6 @@ export class WalletConnectSpecific extends ConnectorSpecific {
 
     /** {@inheritdoc Connector.deactivate} */
     public async deactivate(error?: Error): Promise<void> {
-        // await this.provider.connector?.killSession();
 
         this.provider?.off('disconnect', this.disconnectListener);
         this.provider?.off('chainChanged', this.chainChangedListener);
@@ -296,6 +304,7 @@ export class WalletConnectSpecific extends ConnectorSpecific {
         tran?.close(1000, 'ayo');
 
         await this.provider?.disconnect();
+
 
         this.provider = undefined;
         this.eagerConnection = undefined;
