@@ -4,6 +4,7 @@ import GQLHelper from './GQLHelper';
 
 export const executeQuery = async (chainId: number, query: any, tableName: string) => {
     try {
+        console.log({ chainId, query, tableName });
         const result = await GQLHelper.instance(chainId).query({
             query,
             fetchPolicy: 'no-cache',

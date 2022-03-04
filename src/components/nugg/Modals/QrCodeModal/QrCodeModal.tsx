@@ -21,8 +21,6 @@ type ModalsData = {
 const QrCodeModal: FunctionComponent<Props> = () => {
     const { data } = state.app.select.modalData() as ModalsData;
 
-    // const provider = web3.config.connectors[data.info.label];
-
     return data?.uri ? (
         <div style={{ padding: '20px', ...styles.container }}>
             <div
@@ -39,14 +37,15 @@ const QrCodeModal: FunctionComponent<Props> = () => {
                 </Text>
                 <NLStaticImage image={`${data?.info.peer}_icon`} />
             </div>
-
-            <QRCode
-                value={data?.uri || ''}
-                size={400}
-                style={{ padding: '10px' }}
-                fgColor={colors.default.primaryColor}
-                numOctaves={3}
-            />
+            <div>
+                <QRCode
+                    value={data?.uri || ''}
+                    size={400}
+                    style={{ padding: '10px' }}
+                    fgColor={colors.default.primaryColor}
+                    numOctaves={3}
+                />
+            </div>
         </div>
     ) : null;
 };
