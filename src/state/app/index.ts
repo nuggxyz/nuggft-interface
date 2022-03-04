@@ -185,7 +185,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 }
                 TokenState.dispatch.setNugg({
                     id: tokenRoute[2],
-                    dotnuggRawCache: '',
+                    dotnuggRawCache: undefined,
                 });
                 if (screenType === 'phone') {
                     AppState.dispatch.changeMobileView('Search');

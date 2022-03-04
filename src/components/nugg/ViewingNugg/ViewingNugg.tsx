@@ -113,7 +113,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 >
                     <div style={{ position: 'fixed' }}>
                         <AnimatedCard>
-                            <TokenViewer tokenId={tokenId} data={svg} />
+                            <TokenViewer tokenId={tokenId} data={svg} showcase />
                         </AnimatedCard>
                     </div>
                 </div>

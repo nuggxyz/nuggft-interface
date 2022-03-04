@@ -6,7 +6,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Address } from '@src/classes/Address';
 import { loadFromLocalStorage, saveToLocalStorage } from '@src/lib';
 import { NuggftV1, NuggftV1__factory } from '@src/typechain';
-import { executeQuery } from '@src/graphql/helpers';
+import { executeQuery3 } from '@src/graphql/helpers';
 import web3 from '@src/web3';
 import { Chain } from '@src/web3/core/interfaces';
 
@@ -41,32 +41,32 @@ export default class NuggftV1Helper extends ContractHelper {
         saveToLocalStorage(nuggs, `${Math.floor(+tokenId / 100)}`, false);
     }
 
-    public static async optimizedDotNugg(chainId: number, tokenId: string) {
+    public static async optimizedDotNugg(tokenId: string) {
         invariant(tokenId, 'OP:TOKEN:URI');
         let nuggs = loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
         if (nuggs[tokenId]) {
             return nuggs[tokenId];
         } else {
             try {
-                let res = await executeQuery(
-                    chainId,
+                let res = await executeQuery3<{ nugg: { dotnuggRawCache: Base64EncodedSvg } }>(
                     gql`
-                        {
-                            nugg(id: "${tokenId}") {
+                        query OptimizedDotNugg($tokenId: ID!) {
+                            nugg(id: $tokenId) {
                                 dotnuggRawCache
                             }
                         }
                     `,
-                    'nugg',
+                    {
+                        tokenId,
+                    },
                 );
                 if (!res) throw new Error('token does not exist');
                 else {
-                    NuggftV1Helper.storeNugg(tokenId, res.dotnuggRawCache);
-                    return res.dotnuggRawCache;
+                    NuggftV1Helper.storeNugg(tokenId, res.nugg.dotnuggRawCache);
+                    return res.nugg.dotnuggRawCache;
                 }
             } catch (err) {
                 console.log({ tokenId, err });
-                // console.log('optimizedDotNugg:', err);
             }
         }
     }

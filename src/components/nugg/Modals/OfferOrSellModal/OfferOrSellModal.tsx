@@ -101,7 +101,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                       } Nugg #${stableId || tokenId}`}
             </Text>
             <AnimatedCard>
-                <TokenViewer tokenId={stableId || tokenId} />
+                <TokenViewer tokenId={stableId || tokenId} showcase />
             </AnimatedCard>
             <div style={styles.inputContainer}>
                 <CurrencyInput
