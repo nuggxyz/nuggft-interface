@@ -2,7 +2,6 @@ import { config as springConfig, useSpring } from '@react-spring/core';
 import { animated } from '@react-spring/web';
 import React, { CSSProperties, FunctionComponent, useLayoutEffect, useMemo, useState } from 'react';
 
-import pendingToken from '@src/assets/images/pending-token.svg';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import {
     isUndefinedOrNullOrStringEmpty,
@@ -11,13 +10,16 @@ import {
 import AppState from '@src/state/app';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
+
+import DangerouslySetNugg from './DangerouslySetNugg';
 type Props = {
     tokenId: string;
     style?: CSSProperties;
     showLabel?: boolean;
     labelColor?: string;
     textProps?: Omit<TextProps, 'children'>;
-    data?: string;
+    data?: Base64EncodedSvg;
+    showcase?: boolean;
 };
 
 const TokenViewer: FunctionComponent<Props> = ({
@@ -27,14 +29,16 @@ const TokenViewer: FunctionComponent<Props> = ({
     labelColor,
     textProps,
     data,
+    showcase = false,
 }) => {
     const screenType = AppState.select.screenType();
     const chainId = web3.hook.usePriorityChainId();
+    // const app = state.app.select.userAgent()
 
     const { width } = useMemo(() => {
         return { width: window.innerWidth };
     }, []);
-    const [src, setSrc] = useState<any>(pendingToken);
+    const [src, setSrc] = useState<Base64EncodedSvg>();
 
     useLayoutEffect(() => {
         let unmounted = false;
@@ -42,7 +46,7 @@ const TokenViewer: FunctionComponent<Props> = ({
             if (!isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(tokenId)) {
                 const dotNuggData = !isUndefinedOrNullOrStringEmpty(data)
                     ? data
-                    : await NuggftV1Helper.optimizedDotNugg(chainId, tokenId);
+                    : await NuggftV1Helper.optimizedDotNugg(tokenId);
                 if (!isUndefinedOrNullOrStringEmpty(dotNuggData) && !unmounted) {
                     setSrc(dotNuggData);
                 }
@@ -70,7 +74,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     return (
         //@ts-ignore
         <animated.div style={animatedStyle}>
-            <img
+            <div
                 role="presentation"
                 style={{
                     ...(screenType === 'phone'
@@ -80,15 +84,19 @@ const TokenViewer: FunctionComponent<Props> = ({
                     ...style,
                     transform: 'translate3d(0,0,0)',
                 }}
-                src={src}
-            />
+            >
+                {src && (
+                    <DangerouslySetNugg imageUri={src} size={showcase ? 'showcase' : 'thumbnail'} />
+                )}
+            </div>
             {showLabel && (
                 <Text
                     textStyle={{
                         textAlign: 'center',
                         color: labelColor ? labelColor : 'black',
                     }}
-                    {...textProps}>
+                    {...textProps}
+                >
                     Nugg #{tokenId}
                 </Text>
             )}

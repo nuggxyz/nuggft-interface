@@ -16,7 +16,7 @@ declare namespace NL.GraphQL.Fragments.Nugg {
 
     type ListItem = {
         id: string;
-        dotnuggRawCache: string;
+        dotnuggRawCache: Base64EncodedSvg;
         activeLoan?: { id: string };
         activeSwap?: { id: string };
     };

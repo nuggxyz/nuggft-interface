@@ -80,7 +80,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                 stableType === 'PayOffLoan' ? 'Payoff' : 'Extend'
             } Nugg #${stableId}`}</Text>
             <AnimatedCard>
-                <TokenViewer tokenId={stableId} labelColor="white" />
+                <TokenViewer tokenId={stableId} labelColor="white" showcase />
             </AnimatedCard>
             <div style={styles.inputContainer}>
                 <CurrencyInput
@@ -127,7 +127,8 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                     width: '100%',
                     height: '1rem',
                     marginBottom: '.5rem',
-                }}>
+                }}
+            >
                 {userBalance && (
                     <Text type="text" size="small" textStyle={styles.text} weight="bolder">
                         You currently have{' '}
