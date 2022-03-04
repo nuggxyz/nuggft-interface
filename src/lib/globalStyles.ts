@@ -19,7 +19,6 @@ const globalStyles = NLStyleSheetCreator({
     },
     backdropFilter: {
         backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
     },
 });
 
