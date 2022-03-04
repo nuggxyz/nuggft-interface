@@ -50,7 +50,8 @@ const styles = NLStyleSheetCreator({
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
-        position: 'absolute',
+        // commented out to fix issue #67 - "my nuggs list"
+        // position: 'absolute',
         alignItems: 'flex-start',
         zIndex: 0,
     },
