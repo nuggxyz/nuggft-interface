@@ -1,5 +1,5 @@
 import invariant from 'tiny-invariant';
-import { BigNumber, Contract } from 'ethers';
+import { Contract } from 'ethers';
 import gql from 'graphql-tag';
 import { Web3Provider } from '@ethersproject/providers';
 
@@ -69,12 +69,5 @@ export default class NuggftV1Helper extends ContractHelper {
                 // console.log('optimizedDotNugg:', err);
             }
         }
-    }
-
-    public async balanceOf(address: Address): Promise<BigNumber> {
-        return await this.contract.balanceOf(address.hash);
-    }
-    public async ethBalance(signer?: any): Promise<BigNumber> {
-        return (await signer) ? signer.getBalance() : this.contract?.signer?.getBalance();
     }
 }

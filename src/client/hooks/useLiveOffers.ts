@@ -33,25 +33,27 @@ export const useLiveOffers = (tokenId: string) => {
     const [offers, setOffers] = React.useState<Offer[]>([]);
 
     React.useEffect(() => {
-        const instance = apollo
-            .subscribe<{
-                offers: {
-                    user: { id: string };
-                    eth: string;
-                    txhash: string;
-                    swap: { epoch: { id: string }; nugg: { id: string } };
-                }[];
-            }>({ query: query, variables: { tokenId } })
-            .subscribe((x) => {
-                setOffers(
-                    x.data.offers.map((x) => {
-                        return { user: x.user.id, eth: x.eth, txhash: x.txhash };
-                    }),
-                );
-            });
-        return () => {
-            instance.unsubscribe();
-        };
+        if (tokenId) {
+            const instance = apollo
+                .subscribe<{
+                    offers: {
+                        user: { id: string };
+                        eth: string;
+                        txhash: string;
+                        swap: { epoch: { id: string }; nugg: { id: string } };
+                    }[];
+                }>({ query: query, variables: { tokenId } })
+                .subscribe((x) => {
+                    setOffers(
+                        x.data.offers.map((x) => {
+                            return { user: x.user.id, eth: x.eth, txhash: x.txhash };
+                        }),
+                    );
+                });
+            return () => {
+                instance.unsubscribe();
+            };
+        }
     }, [tokenId, apollo]);
 
     return offers;

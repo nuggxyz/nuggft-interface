@@ -115,7 +115,6 @@ export class WalletConnect extends Connector {
         chainId = Number(Object.keys(this.rpc)[0]),
         peerId = Peer.WalletConnect,
     ): Promise<void> {
-        console.log('b');
         if (this.eagerConnection) return this.eagerConnection;
 
         const peer = this.peers[peerId];
@@ -139,7 +138,7 @@ export class WalletConnect extends Connector {
             this.provider = new m.default({
                 ...this.options,
                 chainId,
-                qrcode: peer.desktopAction === 'default',
+                qrcode: peer ? peer.desktopAction === 'default' : false,
                 rpc: await rpc,
             }) as unknown as MockWalletConnectProvider;
 
@@ -153,10 +152,9 @@ export class WalletConnect extends Connector {
     private findPeer(): PeerInfo__WalletConnect {
         const peerMeta = (this.provider as any)?.signer?.connection?.wc?._peerMeta;
 
-        const res = this.peer_url_lookup[peerMeta.url];
-        console.log({ res, peerMeta });
+        let res = this.peer_url_lookup[peerMeta.url];
 
-        if (res === undefined) throw Error('peer not valid');
+        if (res === undefined) return this.peers.walletconnect;
 
         const finres = this.peers[res];
 

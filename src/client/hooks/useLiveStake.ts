@@ -8,7 +8,7 @@ import { EthInt, Fraction } from '@src/classes/Fraction';
 
 const query = gql`
     subscription useLiveStake {
-        protocol {
+        protocol(id: "0x42069") {
             nuggftStakedEth
             nuggftStakedShares
         }
