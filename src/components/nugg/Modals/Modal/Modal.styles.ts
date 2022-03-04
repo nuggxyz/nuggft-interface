@@ -30,7 +30,8 @@ const styles = NLStyleSheetCreator({
     container: {
         background: Colors.transparentDarkGrey,
         backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
+        // commented out to fix issue #64
+        // WebkitBackdropFilter: 'blur(20px)',
         transition: `.2s all ${Layout.animation}`,
         display: 'flex',
         flexDirection: 'row',
