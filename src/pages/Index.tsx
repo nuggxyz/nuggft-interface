@@ -11,7 +11,7 @@ const IndexPage = () => {
     const { width, height } = state.app.select.dimensions();
     return (
         <>
-            {isOver && <Confetti {...{ width, height }} recycle={false} numberOfPieces={500} />}
+            {/* {isOver && <Confetti {...{ width, height }} recycle={false} numberOfPieces={500} />} */}
             {type === 'phone' ? <Mobile /> : <Desktop />}
         </>
     );

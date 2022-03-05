@@ -12,9 +12,8 @@ import { animated, UseSpringProps } from '@react-spring/web';
 import { ChevronLeft } from 'react-feather';
 import { batch } from 'react-redux';
 
-import { isUndefinedOrNullOrStringEmpty, ucFirst } from '@src/lib';
+import { isUndefinedOrNullOrNotFunction, ucFirst } from '@src/lib';
 import TransitionText from '@src/components/general/Texts/TransitionText/TransitionText';
-import globalStyles from '@src/lib/globalStyles';
 import NuggDexState from '@src/state/nuggdex';
 import TokenState from '@src/state/token';
 import AppState from '@src/state/app';
@@ -25,6 +24,7 @@ import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
 
 type Props = {
+    type?: NL.Redux.NuggDex.SearchViews;
     style: CSSProperties | UseSpringProps;
     values: NL.GraphQL.Fragments.Nugg.ListItem[];
     animationToggle?: boolean;
@@ -39,19 +39,26 @@ type Props = {
     }) => Promise<void> | (() => void);
 };
 
-const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animationToggle }) => {
+const NuggList: FunctionComponent<Props> = ({
+    style,
+    values,
+    onScrollEnd,
+    animationToggle,
+    type,
+}) => {
     const filters = NuggDexState.select.searchFilters();
     const prevFilters = usePrevious(filters);
     const screenType = AppState.select.screenType();
     const viewing = NuggDexState.select.viewing();
+    const previousViewing = usePrevious(viewing);
 
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        if (viewing === 'home' && !isUndefinedOrNullOrStringEmpty(filters.searchValue)) {
-            NuggDexState.dispatch.setViewing('all nuggs');
-        }
-    }, [filters.searchValue]);
+    // useEffect(() => {
+    //     if (viewing === 'home' && !isUndefinedOrNullOrStringEmpty(filters.searchValue)) {
+    //         NuggDexState.dispatch.setViewing('all nuggs');
+    //     }
+    // }, [filters.searchValue]);
 
     const onClick = useCallback((item) => {
         batch(() => {
@@ -60,20 +67,34 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
         });
     }, []);
 
-    useEffect(() => {
-        onScrollEnd &&
-            ((prevFilters && prevFilters.searchValue !== filters.searchValue) ||
-                filters.searchValue !== '') &&
-            onScrollEnd({ setLoading, filters, addToList: false });
-    }, [filters]);
+    const _onScrollEnd = useCallback(() => {
+        if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
+            onScrollEnd({ setLoading, filters, addToList: true });
+        }
+    }, [filters, onScrollEnd]);
 
     useEffect(() => {
-        onScrollEnd &&
+        if (
+            !isUndefinedOrNullOrNotFunction(onScrollEnd) &&
+            (!type || filters.target === type) &&
+            // () &&
+            ((prevFilters && prevFilters.searchValue !== filters.searchValue) ||
+                filters.searchValue !== '' ||
+                prevFilters?.sort.asc !== filters?.sort.asc)
+        ) {
+            console.log({ filters, viewing });
+            onScrollEnd({ setLoading, filters, addToList: false });
+        }
+    }, [filters, prevFilters]);
+
+    useEffect(() => {
+        if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
             onScrollEnd({
                 setLoading,
-                filters: { searchValue: '', sort: { by: 'id', asc: true } },
+                filters,
                 addToList: false,
             });
+        }
     }, []);
 
     return (
@@ -90,45 +111,34 @@ const NuggList: FunctionComponent<Props> = ({ style, values, onScrollEnd, animat
                 }}
             >
                 {screenType !== 'phone' && (
-                    <div style={styles.nuggListTitle}>
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'flex-start',
-                                alignItems: 'center',
-                                width: '100%',
-                                padding: '.5rem',
-                                height: '100%',
-                                ...globalStyles.backdropFilter,
-                            }}
-                        >
-                            <TransitionText
-                                Icon={<ChevronLeft />}
-                                style={{ marginTop: '.12rem' }}
-                                text={ucFirst(viewing)}
-                                transitionText="Go back"
-                                onClick={() => {
-                                    NuggDexState.dispatch.setSearchFilters({
-                                        searchValue: '',
-                                        sort: {
-                                            asc: true,
-                                            by: 'id',
-                                        },
-                                    });
-                                    NuggDexState.dispatch.setViewing('home');
-                                }}
-                            />
-                        </div>
-                    </div>
+                    <TransitionText
+                        Icon={
+                            <div style={{ marginTop: '.25rem' }}>
+                                <ChevronLeft />
+                            </div>
+                        }
+                        style={styles.nuggListTitle}
+                        text={ucFirst(viewing)}
+                        transitionText="Go back"
+                        onClick={() => {
+                            NuggDexState.dispatch.setSearchFilters({
+                                target: undefined,
+                                searchValue: '',
+                                sort: {
+                                    asc: true,
+                                    by: 'id',
+                                },
+                            });
+                            NuggDexState.dispatch.setViewing('home');
+                        }}
+                    />
                 )}
                 <InfiniteList
-                    style={{ zIndex: 0, paddingTop: '2.5rem' }}
+                    style={{ zIndex: 0, overflow: 'hidden', position: 'relative' }}
                     data={values}
                     RenderItem={NuggListRenderItem}
                     loading={loading}
-                    onScrollEnd={() => {
-                        onScrollEnd({ setLoading, filters, addToList: true });
-                    }}
+                    onScrollEnd={_onScrollEnd}
                     action={onClick}
                     itemHeight={210}
                     animationToggle={animationToggle}

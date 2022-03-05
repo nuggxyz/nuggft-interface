@@ -21,9 +21,8 @@ const updateEpochMiddleware: Middleware<
             const currentEpoch = !isUndefinedOrNullOrObjectEmpty(getState().protocol.epoch)
                 ? getState().protocol.epoch.id
                 : '';
-            const nextEpoch = action.payload.data.epoch.id;
+            const nextEpoch = action.payload?.data?.epoch?.id;
             const currentSwap = getState().swap.epoch;
-            console.log(action.payload);
             if (
                 !isUndefinedOrNullOrStringEmpty(nextEpoch) &&
                 currentEpoch !== nextEpoch &&

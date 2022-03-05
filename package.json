@@ -8,7 +8,8 @@
     "private": true,
     "scripts": {
         "start": "node webpack/scripts/start.js",
-        "develop": "node webpack/scripts/develop.js",
+        "dev": "yarn start",
+        "webpack:develop": "node webpack/scripts/develop.js",
         "build": "node webpack/scripts/build.js",
         "serve": "serve -s build",
         "test": "node webpack/scripts/test.js",

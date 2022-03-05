@@ -11,6 +11,7 @@ const DEFAULT_STATE = {
     stake: undefined,
     epoch: undefined,
     activeSwaps: [],
+    myNuggs: [],
     apollo: undefined,
     activating: false,
     error: undefined,
@@ -32,7 +33,8 @@ export interface ClientState extends State {
         id: number;
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
-    activeSwaps: string[];
+    activeSwaps: { id: string; dotnuggRawCache: string }[];
+    myNuggs: NL.GraphQL.Fragments.Nugg.ListItem[];
     error: Error | undefined;
     activating: boolean;
 }
@@ -52,7 +54,8 @@ type ClientStateUpdate = {
         id: number;
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
-    activeSwaps?: string[];
+    activeSwaps?: { id: string; dotnuggRawCache: string }[];
+    myNuggs?: NL.GraphQL.Fragments.Nugg.ListItem[];
     error?: Error;
     activating?: boolean;
 };
@@ -114,6 +117,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             const infura = stateUpdate.infura ?? existingState.infura;
             const apollo = stateUpdate.apollo ?? existingState.apollo;
             const activeSwaps = stateUpdate.activeSwaps ?? existingState.activeSwaps;
+            const myNuggs = stateUpdate.myNuggs ?? existingState.myNuggs;
             const manualPriority = stateUpdate.manualPriority ?? existingState.manualPriority;
 
             // determine the next error
@@ -127,6 +131,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             return {
                 ...existingState,
                 manualPriority,
+                myNuggs,
                 infura,
                 apollo,
                 epoch,

@@ -12,7 +12,7 @@ const NextSwap: FunctionComponent<Props> = ({ tokenId }) => {
     const nugg = client.hook.useLiveNugg(activeTokenId);
 
     React.useEffect(() => {
-        if (activeSwaps.includes((+tokenId + 1).toString())) {
+        if (activeSwaps.find((swap) => swap.id === (+tokenId + 1).toString())) {
             setActiveTokenId((+tokenId + 1).toString());
         }
     }, [activeSwaps]);

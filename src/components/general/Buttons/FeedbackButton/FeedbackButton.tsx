@@ -34,8 +34,9 @@ const FeedbackButton: FunctionComponent<Props> = ({
     return (
         <Button
             {...props}
-            // disabled={clicked || disabled}
+            disabled={clicked || disabled}
             label={clicked ? feedback : label}
+            buttonStyle={{ ...props.buttonStyle, pointerEvents: disabled ? 'none' : 'auto' }}
             onClick={() => {
                 setClicked(true);
                 onClick();

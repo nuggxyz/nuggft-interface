@@ -3,21 +3,30 @@ import React, { ReactSVG, useEffect } from 'react';
 
 import client from '..';
 
-type Nugg = {
+export type LiveNugg = {
     activeSwap: {
         id: string;
         epoch: {
+            id: number;
             startBlock: number;
             endBlock: number;
-            id: number;
             status: 'OVER' | 'ACTIVE' | 'PENDING';
         };
+        eth: string;
+        leader: {
+            id: string;
+        };
+        owner: {
+            id: string;
+        };
+        endingEpoch: number;
+        num: string;
     };
     svg: ReactSVG;
 };
 
 export const useLiveNugg = (tokenId: string) => {
-    const [nugg, setNugg] = React.useState<Nugg>(undefined);
+    const [nugg, setNugg] = React.useState<LiveNugg>(undefined);
 
     const apollo = client.live.apollo();
 
@@ -36,6 +45,15 @@ export const useLiveNugg = (tokenId: string) => {
                                 endblock: string;
                                 status: 'OVER' | 'ACTIVE' | 'PENDING';
                             };
+                            eth: string;
+                            leader: {
+                                id: string;
+                            };
+                            owner: {
+                                id: string;
+                            };
+                            endingEpoch: number;
+                            num: string;
                         };
                     };
                 }>({
@@ -52,6 +70,15 @@ export const useLiveNugg = (tokenId: string) => {
                                         endblock
                                         status
                                     }
+                                    eth
+                                    leader {
+                                        id
+                                    }
+                                    owner {
+                                        id
+                                    }
+                                    endingEpoch
+                                    num
                                 }
                             }
                         }
@@ -62,13 +89,22 @@ export const useLiveNugg = (tokenId: string) => {
                     if (x.data.nugg) {
                         setNugg({
                             activeSwap: {
-                                id: x.data.nugg.activeSwap.id,
+                                id: x.data.nugg.activeSwap?.id,
                                 epoch: {
-                                    id: +x.data.nugg.activeSwap.epoch.id,
-                                    startBlock: +x.data.nugg.activeSwap.epoch.startblock,
-                                    endBlock: +x.data.nugg.activeSwap.epoch.endblock,
-                                    status: x.data.nugg.activeSwap.epoch.status,
+                                    id: +x.data.nugg.activeSwap?.epoch?.id,
+                                    startBlock: +x.data.nugg.activeSwap?.epoch?.startblock,
+                                    endBlock: +x.data.nugg.activeSwap?.epoch?.endblock,
+                                    status: x.data.nugg.activeSwap?.epoch?.status,
                                 },
+                                eth: x.data.nugg.activeSwap?.eth,
+                                leader: {
+                                    id: x.data.nugg.activeSwap?.leader?.id,
+                                },
+                                owner: {
+                                    id: x.data.nugg.activeSwap?.owner?.id,
+                                },
+                                endingEpoch: x.data.nugg.activeSwap?.endingEpoch,
+                                num: x.data.nugg.activeSwap?.num,
                             },
                             svg: x.data.nugg.dotnuggRawCache as any,
                         });

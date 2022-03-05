@@ -3,6 +3,7 @@ import React, {
     FunctionComponent,
     PropsWithChildren,
     useCallback,
+    useMemo,
     useRef,
 } from 'react';
 import { animated, useSpring, WithAnimated } from '@react-spring/web';
@@ -10,6 +11,7 @@ import { animated, useSpring, WithAnimated } from '@react-spring/web';
 import { ucFirst } from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
 import NuggDexState from '@src/state/nuggdex';
+import constants from '@src/lib/constants';
 
 import styles from './NuggDexComponents.styles';
 import NuggLinkAnchor from './NuggLinkAnchor';
@@ -24,9 +26,9 @@ type Props = {
 
 const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
     type,
-    previewNuggs,
+    previewNuggs = [],
     style,
-    limit = 3,
+    limit = constants.NUGGDEX_DEFAULT_PREVIEW_COUNT,
     children,
 }) => {
     const ref = useRef<HTMLDivElement>();
@@ -44,7 +46,25 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
         width: toggled('100%', '45%'),
         zIndex: toggled(1, 0),
         transform: toggled(`scale(1.2) translate(20px, 40px)`, `scale(1)  translate(0px, 0px)`),
+        delay: constants.ANIMATION_DELAY,
+        // config: constants.ANIMATION_CONFIG,
     });
+
+    const previewNuggsStable = useMemo(() => {
+        return previewNuggs
+            .first(limit)
+            .map(
+                (nugg, i) =>
+                    nugg && (
+                        <NuggLinkThumbnail
+                            item={nugg}
+                            index={i}
+                            key={i}
+                            style={limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}}
+                        />
+                    ),
+            );
+    }, [previewNuggs, limit]);
 
     return (
         <animated.div
@@ -71,21 +91,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                         ...styles.nuggLinkItemsContainer,
                     }}
                 >
-                    {previewNuggs
-                        .first(limit)
-                        .map(
-                            (nugg, i) =>
-                                nugg && (
-                                    <NuggLinkThumbnail
-                                        item={nugg}
-                                        index={i}
-                                        key={i}
-                                        style={
-                                            limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}
-                                        }
-                                    />
-                                ),
-                        )}
+                    {previewNuggsStable}
                     <NuggLinkAnchor
                         onClick={() =>
                             NuggDexState.dispatch.setViewing(viewing === type ? 'home' : type)

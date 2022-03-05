@@ -188,4 +188,5 @@ export default {
     localStorager,
     viewChange,
     rejectedThactions,
+    // logger
 };

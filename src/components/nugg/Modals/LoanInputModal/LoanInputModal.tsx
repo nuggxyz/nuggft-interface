@@ -55,10 +55,14 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                 ? new NuggftV1Helper(chainId, provider).contract
                       //   .connect(Web3State.getSignerOrProvider())
                       .vfl([stableId])
+                      .then((v) => {
+                          console.log('fuck', v);
+                          return v;
+                      })
                 : new NuggftV1Helper(chainId, provider).contract
                       //   .connect(Web3State.getSignerOrProvider())
                       .vfr([stableId])),
-        [address, stableId, stableType],
+        [address, stableId, stableType, chainId, provider],
     );
 
     // useEffect(() => {

@@ -29,7 +29,7 @@ const styles = NLStyleSheetCreator({
         zIndex: 100,
     },
     nuggContainerMobile: {
-        position: 'absolute',
+        position: 'relative',
         height: '400px',
         width: '400px',
         top: 0,
@@ -56,7 +56,7 @@ const styles = NLStyleSheetCreator({
         position: 'relative',
     },
     swapsWrapper: {
-        height: '50%',
+        height: '40%',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -68,13 +68,19 @@ const styles = NLStyleSheetCreator({
         marginTop: '1rem',
         width: '80%',
         position: 'relative',
+        maxHeight: '100%',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
     },
     swapsMobile: {
-        position: 'absolute',
-        bottom: 0,
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        maxHeight: '100%',
         borderRadius: Layout.borderRadius.mediumish,
+        overflow: 'hidden',
         background: Colors.transparentGrey,
-        marginTop: '1rem',
         width: '95%',
     },
     swap: {
@@ -116,11 +122,14 @@ const styles = NLStyleSheetCreator({
         width: '100%',
         overflow: 'hidden',
     },
-    stickyList: {
+    stickyListRight: {
         width: '100%',
-        height: '100%',
-        maxHeight: '300px',
         paddingBottom: '.75rem',
+        overflow: 'scroll',
+    },
+    stickyList: {
+        height: '100%',
+        overflow: 'hidden',
     },
     swapButton: {
         width: '100%',

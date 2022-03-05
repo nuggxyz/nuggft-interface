@@ -94,30 +94,13 @@ const StickyList: FunctionComponent<PropsWithChildren<Props>> = ({
                                     numberOfItems={refData[index].items.length}
                                 />
                             </React.Fragment>
-                        ) : // <div
-                        //     onClick={() => {
-                        //         setY({
-                        //             y:
-                        //                 item.ref.current.getBoundingClientRect()
-                        //                     .top +
-                        //                 listRef.current.scrollTop -
-                        //                 261,
-                        //         });
-                        //     }}
-                        //     style={{
-                        //         background: !current.includes(item.title)
-                        //             ? 'red'
-                        //             : 'transparent',
-                        //     }}>
-                        //     {item.title}
-                        // </div>
-                        null,
+                        ) : null,
                     )}
             </div>
             <div
                 style={{
-                    height: '100%',
-                    overflow: 'scroll',
+                    // height: '100%',
+                    // overflow: 'scroll',
                     ...styleRight,
                 }}
                 ref={listRef}
@@ -159,17 +142,6 @@ const RenderItem = ({
     index: parentIndex,
 }) => {
     const [open, setOpen] = useState(true);
-    // const [ref, isVisible] = useIsVisible();
-
-    // useEffect(() => {
-    //     setCurrent((currents: any[]) => {
-    //         if (!isVisible) {
-    //             return currents.insert(item.title);
-    //         } else {
-    //             return currents.remove(item.title);
-    //         }
-    //     });
-    // }, [isVisible]);
     const [ref, { height: viewHeight }] = useMeasure();
     const previous = usePrevious(open);
     const { opacity, height, y } = useSpring({
@@ -182,10 +154,7 @@ const RenderItem = ({
     });
     return (
         <div id={item.title} ref={item.ref}>
-            <div
-                // ref={ref}
-                style={styles.sticky}
-            >
+            <div style={styles.sticky}>
                 <TitleRenderItem
                     title={item.title}
                     setOpen={setOpen}
@@ -206,7 +175,7 @@ const RenderItem = ({
                             <ChildRenderItem
                                 item={childItem}
                                 index={index}
-                                extraData={[...extraData.first(2), extraData.last()[parentIndex]]}
+                                extraData={[...extraData, extraData.last()[parentIndex]]}
                             />
                         </React.Fragment>
                     ))}

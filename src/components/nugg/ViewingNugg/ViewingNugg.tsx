@@ -15,7 +15,6 @@ import Colors from '@src/lib/colors';
 import constants from '@src/lib/constants';
 import { fromEth } from '@src/lib/conversion';
 import AppState from '@src/state/app';
-import ProtocolState from '@src/state/protocol';
 import TokenState from '@src/state/token';
 import nuggThumbnailQuery from '@src/state/token/queries/nuggThumbnailQuery';
 import swapHistoryQuery from '@src/state/token/queries/swapHistoryQuery';
@@ -30,9 +29,13 @@ import { CONTRACTS } from '@src/web3/config';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import StickyList from '@src/components/general/List/StickyList';
 import state from '@src/state';
+import client from '@src/client';
+import { LiveNugg } from '@src/client/hooks/useLiveNugg';
 
 import styles from './ViewingNugg.styles';
 import OwnerButtons from './OwnerButtons';
+import SaleButtons from './SaleButtons';
+import LoanButtons from './LoanButtons';
 
 type Props = { MobileBackButton?: () => JSX.Element };
 
@@ -47,11 +50,11 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const provider = web3.hook.usePriorityProvider();
     const ens = web3.hook.usePriorityAnyENSName(provider, owner);
     const [items, setItems] = useState([tokenId]);
-    const [showMenu, setShowMenu] = useState(false);
+    const [showMenu, setShowMenu] = useState<'loan' | 'sale'>();
+    const nugg = client.hook.useLiveNugg(tokenId);
 
     useEffect(() => {
         setItems([items[1], tokenId]);
-        console.log({ status, tokenId });
     }, [tokenId, chainId]);
 
     const getSwapHistory = useCallback(
@@ -74,8 +77,11 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
         const thumbnail = await nuggThumbnailQuery(chainId, tokenId);
         setOwner(thumbnail?.user?.id);
         setShowMenu(
-            isUndefinedOrNullOrObjectEmpty(thumbnail?.activeSwap) &&
-                isUndefinedOrNullOrObjectEmpty(thumbnail?.activeLoan),
+            !isUndefinedOrNullOrObjectEmpty(thumbnail?.activeSwap)
+                ? 'sale'
+                : !isUndefinedOrNullOrObjectEmpty(thumbnail?.activeLoan)
+                ? 'loan'
+                : undefined,
         );
     }, [tokenId, chainId]);
 
@@ -86,14 +92,16 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
         getSwapHistory();
     }, [tokenId, chainId]);
 
+    useEffect(() => {
+        if (!isUndefinedOrNullOrObjectEmpty(nugg)) {
+            getThumbnail();
+            getSwapHistory();
+        }
+    }, [nugg]);
+
     return (
         !isUndefinedOrNullOrStringEmpty(tokenId) && (
-            <div
-                style={{
-                    ...styles.container,
-                    ...(screenType === 'phone' && { padding: '0rem .5rem' }),
-                }}
-            >
+            <div style={styles.container}>
                 {MobileBackButton && (
                     <div
                         style={{
@@ -128,6 +136,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                             address,
                             owner,
                             showMenu,
+                            nugg,
                         }}
                     />
                 </div>
@@ -144,8 +153,9 @@ type SwapsProps = {
     address: string;
     owner: string;
     MobileBackButton?: () => JSX.Element;
-    showMenu?: boolean;
+    showMenu?: 'sale' | 'loan';
     ens: string;
+    nugg: LiveNugg;
 };
 
 const Swaps: FunctionComponent<SwapsProps> = ({
@@ -157,32 +167,25 @@ const Swaps: FunctionComponent<SwapsProps> = ({
     owner,
     showMenu,
     ens,
+    nugg,
 }) => {
-    const epoch = ProtocolState.select.epoch();
     const screenType = state.app.select.screenType();
 
     const listData = useMemo(() => {
-        let activeSwap = undefined;
-        const filteredSwaps = swaps.filter((swap) => {
-            if (swap.endingEpoch !== null && +swap.endingEpoch !== +epoch?.id) {
-                return true;
-            } else {
-                activeSwap = swap;
-                return false;
-            }
-        });
-
         let res = [];
-        if (!isUndefinedOrNullOrObjectEmpty(activeSwap)) {
-            res.push({ title: 'Ongoing Sale', items: [activeSwap] });
+        let tempSwaps = [...swaps];
+        if (!isUndefinedOrNullOrStringEmpty(nugg?.activeSwap.id)) {
+            res.push({ title: 'Ongoing Sale', items: [nugg.activeSwap] });
+            //@ts-ignore
+            tempSwaps = tempSwaps.smartRemove(nugg.activeSwap, 'id');
         }
         res.push({
             title: 'Previous Sales',
-            items: filteredSwaps,
+            items: tempSwaps,
         });
 
         return res;
-    }, [swaps, epoch]);
+    }, [swaps, nugg]);
 
     return (
         <div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
@@ -220,17 +223,23 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                         <Loader color={Colors.nuggBlueText} />
                     )}
                 </div>
-                {owner === address && showMenu && (
+                {owner === address && (
                     <Flyout
                         containerStyle={styles.flyout}
-                        style={{ right: '1rem', top: '2rem' }}
+                        style={{ right: '1.5rem', top: '2rem' }}
                         button={
                             <div style={styles.flyoutButton}>
                                 <IoEllipsisHorizontal color={Colors.white} />
                             </div>
                         }
                     >
-                        <OwnerButtons tokenId={tokenId} />
+                        {showMenu === 'sale' ? (
+                            <SaleButtons tokenId={tokenId} />
+                        ) : showMenu === 'loan' ? (
+                            <LoanButtons tokenId={tokenId} />
+                        ) : (
+                            <OwnerButtons tokenId={tokenId} />
+                        )}
                     </Flyout>
                 )}
             </div>
@@ -238,9 +247,9 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                 data={listData}
                 TitleRenderItem={SwapTitle}
                 ChildRenderItem={SwapItem}
-                extraData={[chainId, provider]}
-                style={{ height: '100%' }}
-                styleRight={styles.stickyList}
+                extraData={[chainId, provider, nugg?.activeSwap?.id]}
+                style={styles.stickyList}
+                styleRight={styles.stickyListRight}
             />
         </div>
     );
@@ -256,7 +265,7 @@ const SwapTitle = ({ title }) => {
 
 const SwapItem = ({ item, index, extraData }) => {
     const awaitingBid = item.endingEpoch === null;
-    const ens = web3.hook.usePriorityAnyENSName(extraData[1], item.leader.id);
+    const ens = web3.hook.usePriorityAnyENSName(extraData[1], item.owner.id);
     return (
         <div style={{ padding: '.25rem 1rem' }}>
             <Button
@@ -273,7 +282,7 @@ const SwapItem = ({ item, index, extraData }) => {
                                     ? 'Mint'
                                     : `Swap #${item.num}`}
                             </Text>
-                            <CurrencyText image="eth" value={+fromEth(item.eth)} />
+                            <CurrencyText image="eth" value={item.eth ? +fromEth(item.eth) : 0} />
                         </div>
                         <div>
                             <Text
@@ -283,7 +292,11 @@ const SwapItem = ({ item, index, extraData }) => {
                                     color: Colors.textColor,
                                 }}
                             >
-                                {awaitingBid ? 'On sale by' : 'Purchased from'}
+                                {awaitingBid || item.id === extraData[2]
+                                    ? 'On sale by'
+                                    : item.leader.id === item.owner.id
+                                    ? 'Reclaimed by'
+                                    : 'Purchased from'}
                             </Text>
                             <Text
                                 textStyle={{

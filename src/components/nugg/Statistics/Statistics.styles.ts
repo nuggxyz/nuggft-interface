@@ -5,7 +5,7 @@ import Layout from '@src/lib/layout';
 const styles = NLStyleSheetCreator({
     value: {
         fontFamily: Layout.font.code.regular,
-        marginLeft: '.5rem',
+        // marginLeft: '.5rem',
         fontSize: FontSize.h4,
     },
 });

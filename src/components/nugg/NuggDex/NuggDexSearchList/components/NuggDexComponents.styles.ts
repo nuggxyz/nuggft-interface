@@ -1,5 +1,6 @@
 import { NLStyleSheetCreator } from '@src/lib';
 import Colors from '@src/lib/colors';
+import globalStyles from '@src/lib/globalStyles';
 import Layout from '@src/lib/layout';
 
 const styles = NLStyleSheetCreator({
@@ -33,18 +34,21 @@ const styles = NLStyleSheetCreator({
     },
     nuggListTitle: {
         position: 'absolute',
-        top: '0rem',
-        left: '0rem',
-        width: '100%',
+        top: '1rem',
+        left: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         zIndex: 1,
-        borderTopRightRadius: Layout.borderRadius.medium,
-        borderTopLeftRadius: Layout.borderRadius.medium,
-        overflow: 'hidden',
+        borderRadius: Layout.borderRadius.large,
+        background: Colors.transparentGrey2,
+        paddingRight: '.7rem',
+        ...globalStyles.backdropFilter,
     },
     nuggListDefault: {
         borderRadius: Layout.borderRadius.medium,
         overflow: 'hidden',
-        // padding: '0rem 1rem',
+        WebkitMaskImage: '-webkit-radial-gradient(white, black)',
     },
     nuggListRenderItemContainer: {
         width: '100%',
@@ -53,10 +57,10 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        // borderRadius: Layout.borderRadius.mediumish,
         transition: `background .7s ${Layout.animation}`,
         cursor: 'pointer',
         position: 'relative',
+        overflow: 'hidden',
     },
     nuggListRenderItemNugg: {
         display: 'flex',

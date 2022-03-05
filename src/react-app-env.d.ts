@@ -109,6 +109,7 @@ interface Array<T> {
     remove<U extends { index: number }>(element: U): Array<U>;
     replace<U extends { id: string } | object>(element: U, field?: keyof U): Array<U>;
     smartInsert<U>(element: U, field?: keyof U): Array<U>;
+    smartRemove<U>(element: U, field?: keyof U): Array<U>;
 }
 
 namespace NL {

@@ -72,7 +72,6 @@ const SearchView: FunctionComponent<Props> = () => {
                     height: '100%',
                     display: 'flex',
                     alignItems: 'flex-end',
-                    overflow: 'scroll',
                 }}
             >
                 <ViewingNugg
@@ -81,12 +80,12 @@ const SearchView: FunctionComponent<Props> = () => {
                             leftIcon={
                                 <IoChevronBackOutline color={Colors.nuggBlueText} size="25" />
                             }
-                            label="Back"
+                            // label="Back"
                             onClick={() => TokenState.dispatch.setNugg(undefined)}
                             buttonStyle={{
                                 background: Colors.transparentWhite,
                                 borderRadius: Layout.borderRadius.large,
-                                paddingLeft: '0.4rem',
+                                padding: '0.4rem',
                             }}
                             textStyle={{
                                 fontFamily: Layout.font.sf.light,

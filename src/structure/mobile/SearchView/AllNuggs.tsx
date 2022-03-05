@@ -4,9 +4,11 @@ import NuggList from '@src/components/nugg/NuggDex/NuggDexSearchList/components/
 import constants from '@src/lib/constants';
 import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
 import web3 from '@src/web3';
+import ProtocolState from '@src/state/protocol';
 type Props = {};
 
 const AllNuggs: FunctionComponent<Props> = () => {
+    const epoch = ProtocolState.select.epoch();
     const [allNuggs, setAllNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -28,11 +30,12 @@ const AllNuggs: FunctionComponent<Props> = () => {
                 filters ? filters.searchValue : '',
                 constants.NUGGDEX_SEARCH_LIST_CHUNK,
                 startFrom,
+                +epoch.id,
             );
             setResults((res) => (addToResult ? [...res, ...allNuggs] : allNuggs));
             setLoading && setLoading(false);
         },
-        [],
+        [epoch, chainId],
     );
 
     const onScrollEnd = useCallback(

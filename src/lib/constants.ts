@@ -6,4 +6,13 @@ export default {
     PRE_MINT_STARTING_EPOCH: 500,
     PRE_MINT_ENDING_EPOCH: 3000,
     MIN_OFFER: 0.03, //5,
+    ANIMATION_DELAY: 100,
+    ANIMATION_CONFIG: {
+        precision: 0.001,
+        frequency: 1.1,
+        damping: 0.9,
+        clamp: true,
+    },
+    NUGGDEX_ALLNUGGS_PREVIEW_COUNT: 7,
+    NUGGDEX_DEFAULT_PREVIEW_COUNT: 3
 };

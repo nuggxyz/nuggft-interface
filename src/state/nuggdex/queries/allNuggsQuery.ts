@@ -10,10 +10,13 @@ const query = (
     searchValue: string,
     first: number,
     skip: number,
+    epoch: number,
 ) => gql`
     {
         nuggs(
-            ${!isUndefinedOrNullOrStringEmpty(searchValue) ? `where: {id: "${searchValue}"},` : ''}
+            where: {idnum_lte: ${epoch} ${
+    !isUndefinedOrNullOrStringEmpty(searchValue) ? `,id: "${searchValue}"` : ''
+}},
             orderBy: idnum,
             orderDirection: ${orderDirection},
             first: ${first},
@@ -32,11 +35,12 @@ const allNuggsQuery = async (
     searchValue: string,
     first: number,
     skip: number,
+    epoch: number,
 ) => {
     try {
         const result = (await executeQuery(
             chainId,
-            query(orderBy, orderDirection, searchValue, first, skip),
+            query(orderBy, orderDirection, searchValue, first, skip, epoch),
             'nuggs',
         )) as NL.GraphQL.Fragments.Nugg.ListItem[];
         return !isUndefinedOrNullOrArrayEmpty(result) ? result : [];
