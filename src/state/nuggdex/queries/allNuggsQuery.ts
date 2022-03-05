@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 import { executeQuery } from '@src/graphql/helpers';
 import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 const query = (
     orderBy: 'eth' | 'id',
@@ -29,7 +29,7 @@ const query = (
 `;
 
 const allNuggsQuery = async (
-    chainId: SupportedChainId,
+    chainId: Chain,
     orderBy: 'eth' | 'id',
     orderDirection: 'asc' | 'desc',
     searchValue: string,

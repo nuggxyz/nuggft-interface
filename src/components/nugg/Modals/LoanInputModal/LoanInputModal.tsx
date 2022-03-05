@@ -84,7 +84,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                 stableType === 'PayOffLoan' ? 'Payoff' : 'Extend'
             } Nugg #${stableId}`}</Text>
             <AnimatedCard>
-                <TokenViewer tokenId={stableId} labelColor="white" />
+                <TokenViewer tokenId={stableId} labelColor="white" showcase />
             </AnimatedCard>
             <div style={styles.inputContainer}>
                 <CurrencyInput

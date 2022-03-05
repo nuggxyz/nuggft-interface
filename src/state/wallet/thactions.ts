@@ -14,7 +14,7 @@ import constants from '@src/lib/constants';
 import AppState from '@src/state/app';
 import { toEth } from '@src/lib/conversion';
 import { executeQuery } from '@src/graphql/helpers';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 import userSharesQuery from './queries/userSharesQuery';
 
@@ -23,7 +23,7 @@ const getUserShares = createAsyncThunk<
         success: NL.Redux.Wallet.Success;
         data: number;
     },
-    { chainId: SupportedChainId; address: string },
+    { chainId: Chain; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/getUserShares`, async ({ chainId, address }, thunkAPI) => {
@@ -56,7 +56,7 @@ const getUserShares = createAsyncThunk<
 
 const withdraw = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
-    { tokenId: string; provider: Web3Provider; chainId: SupportedChainId; address: string },
+    { tokenId: string; provider: Web3Provider; chainId: Chain; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/withdraw`, async ({ tokenId, provider, chainId, address }, thunkAPI) => {
@@ -89,7 +89,7 @@ const withdraw = createAsyncThunk<
 
 const claim = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { tokenId: string; provider: Web3Provider; chainId: SupportedChainId; address: string },
+    { tokenId: string; provider: Web3Provider; chainId: Chain; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/claim`, async ({ tokenId, provider, chainId, address }, thunkAPI) => {
@@ -125,7 +125,7 @@ const claim = createAsyncThunk<
 
 const multiClaim = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { tokenIds: string[]; provider: Web3Provider; chainId: SupportedChainId; address: string },
+    { tokenIds: string[]; provider: Web3Provider; chainId: Chain; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/multiClaim`, async ({ tokenIds, provider, chainId, address }, thunkAPI) => {
@@ -162,7 +162,7 @@ const multiClaim = createAsyncThunk<
 
 const mintNugg = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { chainId: SupportedChainId; provider: Web3Provider; address: string },
+    { chainId: Chain; provider: Web3Provider; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/mintNugg`, async ({ chainId, provider, address }, thunkAPI) => {
@@ -230,7 +230,7 @@ const mintNugg = createAsyncThunk<
 
 const initLoan = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { tokenId: string; provider: Web3Provider; chainId: SupportedChainId; address: string },
+    { tokenId: string; provider: Web3Provider; chainId: Chain; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
 >(`wallet/initLoan`, async ({ tokenId, provider, chainId, address }, thunkAPI) => {
@@ -267,7 +267,7 @@ const payOffLoan = createAsyncThunk<
         tokenId: string;
         amount: string;
         provider: Web3Provider;
-        chainId: SupportedChainId;
+        chainId: Chain;
         address: string;
     },
     // adding the root state type to this thaction causes a circular reference
@@ -314,7 +314,7 @@ const extend = createAsyncThunk<
         tokenId: string;
         amount: string;
         provider: Web3Provider;
-        chainId: SupportedChainId;
+        chainId: Chain;
         address: string;
     },
     // adding the root state type to this thaction causes a circular reference

@@ -13,7 +13,7 @@ import { NLState } from '@src/state/NLState';
 import store from '@src/state/store';
 import SwapState from '@src/state/swap';
 import TokenState from '@src/state/token';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -53,6 +53,7 @@ class AppState extends NLState<NL.Redux.App.State> {
             view: 'Swap',
             mobileView: 'Mint',
             walletVisible: false,
+            walletManagerVisable: false,
         });
 
         const parser = new UAParser(window.navigator.userAgent);
@@ -82,6 +83,9 @@ class AppState extends NLState<NL.Redux.App.State> {
             addToastToList: (state, action: PayloadAction<NL.Redux.App.Toast>) => {
                 let temp = state.toasts;
                 state.toasts = smartInsertIndex(temp, action.payload);
+            },
+            toggleWalletManager: (state) => {
+                state.walletManagerVisable = !state.walletManagerVisable;
             },
             removeToastFromList: (
                 state,
@@ -128,7 +132,7 @@ class AppState extends NLState<NL.Redux.App.State> {
         window.location.hash = route;
     }
 
-    public static onRouteUpdate(chainId: SupportedChainId, route: string) {
+    public static onRouteUpdate(chainId: Chain, route: string) {
         try {
             const swapRoute = route.match(/\/(swap)\/(\d+)\-(\d+)/);
             const tokenRoute = route.match(/\/(nugg)\/(\d+)/);
@@ -181,7 +185,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 }
                 TokenState.dispatch.setNugg({
                     id: tokenRoute[2],
-                    dotnuggRawCache: '',
+                    dotnuggRawCache: undefined,
                 });
                 if (screenType === 'phone') {
                     AppState.dispatch.changeMobileView('Search');

@@ -11,6 +11,7 @@ declare namespace NL.Redux.App {
         view: Views;
         mobileView: MobileViews;
         walletVisible: boolean;
+        walletManagerVisable: boolean;
     }
 
     interface Toast {
@@ -50,13 +51,15 @@ declare namespace NL.Redux.App {
         | 'Wallet'
         | 'ExtendLoan'
         | 'PayOffLoan'
-        | 'HappyTipper';
+        | 'HappyTipper'
+        | 'QrCode';
 
     type ModalsData = {
         backgroundStyle?: import('react').CSSProperties;
         containerStyle?: import('react').CSSProperties;
         targetId?: string;
         type?: Modals;
+        data?: unknown;
     };
 
     type Error = 'ERROR';

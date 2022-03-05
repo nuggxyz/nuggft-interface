@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 
-import { EthInt } from '@src/classes/Fraction';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { isUndefinedOrNullOrObjectEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
@@ -33,10 +32,12 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
 
-    const userBalance = useAsyncState(
-        () => provider && provider.getBalance(address),
-        [address, provider, chainId],
-    );
+    // const userBalance = useAsyncState(
+    //     () => provider && provider.getBalance(address),
+    //     [address, provider, chainId],
+    // );
+
+    const userBalance = web3.hook.usePriorityBalance(provider);
 
     const check = useAsyncState(
         () =>
@@ -103,7 +104,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                       } Nugg #${stableId || tokenId}`}
             </Text>
             <AnimatedCard>
-                <TokenViewer tokenId={stableId || tokenId} />
+                <TokenViewer tokenId={stableId || tokenId} showcase />
             </AnimatedCard>
             <div style={styles.inputContainer}>
                 <CurrencyInput
@@ -152,14 +153,7 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                             textStyle={{ marginLeft: '.5rem' }}
                             weight="bolder"
                         >
-                            {new EthInt(
-                                userBalance
-                                    .div(10 ** 13)
-
-                                    .add(1)
-                                    .mul(10 ** 13),
-                            ).decimal.toNumber()}{' '}
-                            ETH
+                            {userBalance.decimal.toNumber()} ETH
                         </Text>
                     </Text>
                 )}

@@ -14,6 +14,7 @@ export default {
         myNuggs: () => core.store((state) => state.myNuggs),
         epoch: () => core.store((state) => state.epoch),
         stake: () => core.store((state) => state.stake),
+        manualPriority: () => core.store((state) => state.manualPriority),
     },
     hook: {
         useSafeLiveOffers,

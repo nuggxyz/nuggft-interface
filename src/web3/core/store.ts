@@ -43,6 +43,7 @@ function validateAccount(account: string): string {
 
 const DEFAULT_STATE = {
     chainId: undefined,
+    peer: undefined,
     accounts: undefined,
     activating: false,
     error: undefined,
@@ -105,6 +106,7 @@ export function createWeb3ReactStoreAndActions(
             // determine the next chainId and accounts
             const chainId = stateUpdate.chainId ?? existingState.chainId;
             const accounts = stateUpdate.accounts ?? existingState.accounts;
+            const peer = stateUpdate.peer ?? existingState.peer;
 
             // determine the next error
             let error = existingState.error;
@@ -136,7 +138,7 @@ export function createWeb3ReactStoreAndActions(
                 activating = false;
             }
 
-            return { chainId, accounts, activating, error };
+            return { chainId, peer, accounts, activating, error };
         });
     }
 

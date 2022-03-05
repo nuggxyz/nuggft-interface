@@ -9,14 +9,14 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
 import AppState from '@src/state/app';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 const initSale = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
     {
         tokenId: string;
         floor: BigNumberish;
-        chainId: SupportedChainId;
+        chainId: Chain;
         provider: Web3Provider;
         address: string;
     },

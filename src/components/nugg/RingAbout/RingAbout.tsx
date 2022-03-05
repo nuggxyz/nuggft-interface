@@ -26,7 +26,7 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import NextSwap from '@src/components/nugg/NextSwap/NextSwap';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 import styles from './RingAbout.styles';
 
@@ -281,7 +281,7 @@ const OfferRenderItem = ({
     index,
 }: {
     provider: Web3Provider;
-    chainId: SupportedChainId;
+    chainId: Chain;
     offer: NL.Redux.Swap.Offer & { txhash: string };
     index: number;
 }) => {

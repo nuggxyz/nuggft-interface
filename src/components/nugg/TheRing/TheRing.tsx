@@ -101,11 +101,7 @@ const TheRing: FunctionComponent<Props> = ({
                 }}
             >
                 <AnimatedCard>
-                    <TokenViewer
-                        tokenId={(tokenId && tokenId) || ''}
-                        // showLabel={screenType !== 'phone'}
-                        style={tokenStyle}
-                    />
+                    <TokenViewer tokenId={(tokenId && tokenId) || ''} style={tokenStyle} showcase />
                 </AnimatedCard>
                 {screenType !== 'phone' && <Text>Nugg #{tokenId && tokenId}</Text>}
             </CircleTimer>

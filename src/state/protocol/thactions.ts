@@ -3,7 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { isUndefinedOrNullOrObjectEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
-import { SupportedChainId } from '@src/web3/config';
+import { Chain } from '@src/web3/core/interfaces';
 
 import getIntervalQuery from './queries/getIntervalQuery';
 import updateEpochQuery from './queries/updateEpochQuery';
@@ -15,10 +15,10 @@ const safeSetEpoch = createAsyncThunk<
         data?: {
             epoch: { id: string; startblock: string; endblock: string };
             isOver: boolean;
-            chainId: SupportedChainId;
+            chainId: Chain;
         };
     },
-    { epoch: { id: string; startblock: string; endblock: string }; chainId: SupportedChainId },
+    { epoch: { id: string; startblock: string; endblock: string }; chainId: Chain },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
@@ -78,7 +78,7 @@ const updateStaked = createAsyncThunk<
         success: NL.Redux.Protocol.Success;
         data: NL.GraphQL.Fragments.Protocol.Staked;
     },
-    { chainId: SupportedChainId },
+    { chainId: Chain },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
@@ -101,7 +101,7 @@ const getGenesisBlock = createAsyncThunk<
         success: NL.Redux.Protocol.Success;
         data: string;
     },
-    { chainId: SupportedChainId; provider: Web3Provider },
+    { chainId: Chain; provider: Web3Provider },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }
@@ -131,7 +131,7 @@ const getInterval = createAsyncThunk<
         success: NL.Redux.Protocol.Success;
         data: string;
     },
-    { chainId: SupportedChainId },
+    { chainId: Chain },
     {
         rejectValue: NL.Redux.Protocol.Error;
     }

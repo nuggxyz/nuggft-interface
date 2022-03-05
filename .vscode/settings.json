@@ -7,10 +7,12 @@
     "editor.codeActionsOnSave": {
         "source.fixAll": true
     },
-    "typescript.tsserver.experimental.enableProjectDiagnostics": true,
-    "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": false,
+    "typescript.inlayHints.parameterNames.enabled": "all",
+    "typescript.inlayHints.variableTypes.enabled": false,
+    "typescript.implementationsCodeLens.enabled": false,
+    "gitlens.codeLens.enabled": false,
+    "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": true,
     "workbench.tree.indent": 16,
-    "gitlens.views.repositories.includeWorkingTree": true,
     "terminal.integrated.macOptionClickForcesSelection": true,
     "githubIssues.createIssueTriggers": ["TODO", "LOOK", "BUG", "FIXME", "ISSUE", "HACK"],
     "githubPullRequests.queries": [

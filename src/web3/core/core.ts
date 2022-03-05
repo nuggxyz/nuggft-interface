@@ -5,9 +5,12 @@ import type { EqualityChecker, UseBoundStore } from 'zustand';
 import create from 'zustand';
 
 import { Address } from '@src/classes/Address';
+import client from '@src/client';
+import { EthInt } from '@src/classes/Fraction';
 
 import { createWeb3ReactStoreAndActions } from './store';
 import { Connector, Web3ReactStore, Web3ReactState, Actions } from './types';
+import { Connector as ConnectorEnum } from './interfaces';
 
 export type Web3ReactHooks = ReturnType<typeof getStateHooks> &
     ReturnType<typeof getDerivedHooks> &
@@ -53,8 +56,8 @@ export function initializeConnector<T extends Connector>(
     return { connector, hooks: { ...stateHooks, ...derivedHooks, ...augmentedHooks }, store };
 }
 
-function computeIsActive({ chainId, accounts, activating, error }: Web3ReactState) {
-    return Boolean(chainId && accounts && !activating && !error);
+function computeIsActive({ chainId, peer, accounts, activating, error }: Web3ReactState) {
+    return Boolean(chainId && peer && accounts && !activating && !error);
 }
 
 /**
@@ -83,6 +86,12 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
     function useSelectedAccounts(connector: Connector) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const values = initializedConnectors.map((x) => x.hooks.useAccounts());
+        return values[getIndex(connector)];
+    }
+
+    function useSelectedPeer(connector: Connector) {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const values = initializedConnectors.map((x) => x.hooks.usePeer());
         return values[getIndex(connector)];
     }
 
@@ -148,6 +157,11 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         return values[index];
     }
 
+    function useSelectedBalance(connector: Connector, provider: Web3Provider | undefined) {
+        const account = useSelectedAccount(connector);
+        return useBalance(provider, account);
+    }
+
     return {
         useSelectedChainId,
         useSelectedAccounts,
@@ -159,6 +173,8 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         useSelectedENSName,
         useSelectedWeb3React,
         useSelectedAnyENSName,
+        useSelectedBalance,
+        useSelectedPeer,
     };
 }
 
@@ -169,7 +185,9 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
  * @param initializedConnectors - Two or more [connector, hooks] arrays, as returned from initializeConnector.
  * @returns hooks - A variety of convenience hooks that wrap the hooks returned from initializeConnector.
  */
-export function getPriorityConnector(...initializedConnectors: Res<Connector>[]) {
+export function getPriorityConnector(initializedConnectors: {
+    [key in ConnectorEnum]?: ResWithStore<Connector>;
+}) {
     const {
         useSelectedChainId,
         useSelectedAccounts,
@@ -181,13 +199,19 @@ export function getPriorityConnector(...initializedConnectors: Res<Connector>[])
         useSelectedENSName,
         useSelectedWeb3React,
         useSelectedAnyENSName,
-    } = getSelectedConnector(...initializedConnectors);
+        useSelectedBalance,
+        useSelectedPeer,
+    } = getSelectedConnector(...Object.values(initializedConnectors));
 
     function usePriorityConnector() {
+        const manualPriority = client.live.manualPriority();
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        const values = initializedConnectors.map((x, i) => x.hooks.useIsActive());
+        const values = Object.values(initializedConnectors).map((x, i) => x.hooks.useIsActive());
         const index = values.findIndex((x) => x);
-        return initializedConnectors[index === -1 ? 0 : index].connector;
+
+        return manualPriority
+            ? initializedConnectors[manualPriority].connector
+            : Object.values(initializedConnectors)[index === -1 ? 0 : index].connector;
     }
 
     function usePriorityChainId() {
@@ -229,6 +253,15 @@ export function getPriorityConnector(...initializedConnectors: Res<Connector>[])
     function usePriorityAnyENSName(provider: Web3Provider | undefined, account: string) {
         return useSelectedAnyENSName(usePriorityConnector(), provider, account);
     }
+
+    function usePriorityBalance(provider: Web3Provider | undefined) {
+        return useSelectedBalance(usePriorityConnector(), provider);
+    }
+
+    function usePriorityPeer() {
+        return useSelectedPeer(usePriorityConnector());
+    }
+
     return {
         useSelectedChainId,
         useSelectedAccounts,
@@ -251,10 +284,16 @@ export function getPriorityConnector(...initializedConnectors: Res<Connector>[])
         usePriorityENSName,
         usePriorityWeb3React,
         usePriorityAnyENSName,
+        useSelectedBalance,
+        usePriorityBalance,
+        useSelectedPeer,
+        usePriorityPeer,
     };
 }
 
 const CHAIN_ID = (state: Web3ReactState) => state.chainId;
+const ACTIVE_PEER = (state: Web3ReactState) => state.peer;
+
 const ACCOUNTS = (state: Web3ReactState) => state.accounts;
 const ACCOUNTS_EQUALITY_CHECKER: EqualityChecker<Web3ReactState['accounts']> = (
     oldAccounts,
@@ -272,6 +311,10 @@ function getStateHooks(useConnector: UseBoundStore<Web3ReactState>) {
         return useConnector(CHAIN_ID);
     }
 
+    function usePeer(): Web3ReactState['peer'] {
+        return useConnector(ACTIVE_PEER);
+    }
+
     function useAccounts(): Web3ReactState['accounts'] {
         return useConnector(ACCOUNTS, ACCOUNTS_EQUALITY_CHECKER);
     }
@@ -284,7 +327,7 @@ function getStateHooks(useConnector: UseBoundStore<Web3ReactState>) {
         return useConnector(ERROR);
     }
 
-    return { useChainId, useAccounts, useIsActivating, useError };
+    return { useChainId, usePeer, useAccounts, useIsActivating, useError };
 }
 
 function getDerivedHooks({
@@ -292,6 +335,7 @@ function getDerivedHooks({
     useAccounts,
     useIsActivating,
     useError,
+    usePeer,
 }: ReturnType<typeof getStateHooks>) {
     function useAccount(): string | undefined {
         return useAccounts()?.[0];
@@ -302,9 +346,11 @@ function getDerivedHooks({
         const accounts = useAccounts();
         const activating = useIsActivating();
         const error = useError();
+        const peer = usePeer();
 
         return computeIsActive({
             chainId,
+            peer,
             accounts,
             activating,
             error,
@@ -314,6 +360,33 @@ function getDerivedHooks({
     return { useAccount, useIsActive };
 }
 
+function useBalance(provider: Web3Provider | undefined, account: string) {
+    const [balance, setBalance] = useState<EthInt>();
+    useEffect(() => {
+        if (provider && account) {
+            let stale = false;
+            setBalance(new EthInt(0));
+
+            provider
+                .getBalance(account)
+                .then((result) => {
+                    if (!stale) {
+                        setBalance(new EthInt(result));
+                    }
+                })
+                .catch((error) => {
+                    console.debug('Could not fetch ENS names', error);
+                });
+
+            return () => {
+                stale = true;
+                setBalance(new EthInt(0));
+            };
+        }
+    }, [provider, account]);
+    return balance;
+}
+
 function useENS(provider: Web3Provider, account: string): (string | null) | undefined {
     const [ENSName, setENSName] = useState<string | null | undefined>(
         Address.shortenAddressHash(account),
@@ -321,7 +394,6 @@ function useENS(provider: Web3Provider, account: string): (string | null) | unde
     useEffect(() => {
         if (provider && account) {
             let stale = false;
-            setENSName(Address.shortenAddressHash(account));
 
             provider
                 .lookupAddress(account)
@@ -331,6 +403,8 @@ function useENS(provider: Web3Provider, account: string): (string | null) | unde
                     }
                 })
                 .catch((error) => {
+                    setENSName(Address.shortenAddressHash(account));
+
                     console.debug('Could not fetch ENS names', error);
                 });
 

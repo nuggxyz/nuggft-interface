@@ -16,8 +16,7 @@ const sockPath = process.env.WDS_SOCKET_PATH; // default: '/ws'
 const sockPort = process.env.WDS_SOCKET_PORT;
 
 module.exports = function (proxy, allowedHost) {
-    const disableFirewall =
-        !proxy || process.env.DANGEROUSLY_DISABLE_HOST_CHECK === 'true';
+    const disableFirewall = !proxy || process.env.DANGEROUSLY_DISABLE_HOST_CHECK === 'true';
     return {
         // WebpackDevServer 2.4.3 introduced a security fix that prevents remote
         // websites from potentially accessing local content through DNS rebinding:
@@ -123,9 +122,7 @@ module.exports = function (proxy, allowedHost) {
             // We do this in development to avoid hitting the production cache if
             // it used the same host and port.
             // https://github.com/facebook/create-react-app/issues/2272#issuecomment-302832432
-            devServer.app.use(
-                noopServiceWorkerMiddleware(paths.publicUrlOrPath),
-            );
+            devServer.app.use(noopServiceWorkerMiddleware(paths.publicUrlOrPath));
         },
     };
 };

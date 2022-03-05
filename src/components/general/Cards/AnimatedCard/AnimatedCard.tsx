@@ -18,7 +18,8 @@ const AnimatedCard: FunctionComponent<React.PropsWithChildren<{}>> = ({ children
             style={{
                 zIndex: 1,
                 cursor: 'none',
-            }}>
+            }}
+        >
             <animated.div
                 style={{
                     transform: props.xys.to(trans),
@@ -26,7 +27,8 @@ const AnimatedCard: FunctionComponent<React.PropsWithChildren<{}>> = ({ children
                 onMouseLeave={() => set([0, 0, 1])}
                 onMouseMove={(e) =>
                     set(calc(e.clientX, e.clientY, ref.current.getBoundingClientRect()))
-                }>
+                }
+            >
                 {children}
             </animated.div>
         </div>

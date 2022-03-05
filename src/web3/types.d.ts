@@ -1,4 +1,4 @@
-declare namespace NL.Redux.Web32 {
+declare namespace NL.Web3 {
     interface State {
         // web3address: string;
         // web3error: boolean;
@@ -6,7 +6,7 @@ declare namespace NL.Redux.Web32 {
         // connectivityWarning: boolean;
         // error?: Error;
         // success?: Success;
-        // currentChain: import('./config').SupportedChainId;
+        // currentChain: import('./config').Chain;
     }
 
     type Error = 'ERROR';
@@ -14,16 +14,16 @@ declare namespace NL.Redux.Web32 {
     type AddressMap = { [chainId: number]: string };
 
     interface WalletInfo {
-        connector?: import('./core/core').ResWithStore<T>;
-
         name: string;
-        iconURL: string;
+        label: string;
         description: string;
         href: string | null;
         color: string;
         primary?: true;
         mobile?: true;
         mobileOnly?: true;
+        peerName?: string;
+        peerurl?: string;
     }
 }
 

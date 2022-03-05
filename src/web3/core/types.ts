@@ -1,8 +1,11 @@
 import type { EventEmitter } from 'node:events';
 import type { State, StoreApi } from 'zustand/vanilla';
 
+import { Connector as ConnectorEnum, PeerInfo, Peer, Chain } from './interfaces';
+
 export interface Web3ReactState extends State {
-    chainId: number | undefined;
+    chainId: Chain | undefined;
+    peer: PeerInfo | undefined;
     accounts: string[] | undefined;
     activating: boolean;
     error: Error | undefined;
@@ -10,19 +13,7 @@ export interface Web3ReactState extends State {
 
 export type Web3ReactStore = StoreApi<Web3ReactState>;
 
-export type Web3ReactStateUpdate =
-    | {
-          chainId: number;
-          accounts: string[];
-      }
-    | {
-          chainId: number;
-          accounts?: never;
-      }
-    | {
-          chainId?: never;
-          accounts: string[];
-      };
+export type Web3ReactStateUpdate = { chainId?: Chain; accounts?: string[]; peer?: PeerInfo };
 
 export interface Actions {
     startActivation: () => () => void;
@@ -79,12 +70,20 @@ export abstract class Connector {
 
     protected readonly actions: Actions;
 
+    protected readonly connectorType: ConnectorEnum;
+
+    public peers: { [key in Peer]?: PeerInfo };
+
     /**
      * @param actions - Methods bound to a zustand store that tracks the state of the connector.
      * Actions are used by the connector to report changes in connection status.
      */
-    constructor(actions: Actions) {
+    constructor(type: ConnectorEnum, actions: Actions, peers: PeerInfo[]) {
         this.actions = actions;
+        this.peers = peers.reduce((prev, curr) => {
+            return { ...prev, [curr.peer]: curr };
+        }, {});
+        this.connectorType = type;
     }
 
     /**
