@@ -29,6 +29,8 @@ export const isValidChainId = (input: number) => {
     return supportedChainIds().indexOf(input) !== -1;
 };
 
+export const FEATURE_NAMES = ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Hold', 'Neck'];
+
 export const CONTRACTS = {
     [Chain.MAINNET]: {
         NuggftV1: ethers.constants.AddressZero,
@@ -39,7 +41,7 @@ export const CONTRACTS = {
         DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0x0753c5e82de6208537e91fa2805d7abe9e2514ba',
+        NuggftV1: '0xa330e77ad823b6b2525f5d32b3120fd6b3fde639', //0x3f1c9c4ae47809d284592845e4ced13a6e352421
         DotnuggV1: '0x8239075908f08b64ab7818ff79652d25ae5301c6',
     },
     [Chain.GOERLI]: {

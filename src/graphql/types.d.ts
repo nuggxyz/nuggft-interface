@@ -108,6 +108,9 @@ declare namespace NL.GraphQL {
         __typename?: 'Item';
         id: T['ID'];
         count: T['BigNumber'];
+        activeSwap?: Maybe<ItemSwap<T>>;
+
+        swaps: Array<ItemSwap<T>>;
     };
 
     type NuggItem<T extends Scalars> = {
@@ -150,6 +153,7 @@ declare namespace NL.GraphQL {
         ethUsd: T['EthInt'];
         owner: User<T>;
         leader: User<T>;
+        num: T['BigNumber'];
     };
 
     type User<T extends Scalars> = {
@@ -174,6 +178,7 @@ declare namespace NL.GraphQL {
         endingEpoch: T['BigNumber'];
         eth: T['EthInt'];
         ethUsd: T['EthInt'];
+        num: T['BigNumber'];
         owner: Nugg<T>;
         leader?: Maybe<Nugg<T>>;
     };

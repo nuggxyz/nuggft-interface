@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import { idFragment } from './general';
 import { itemOfferBare } from './itemOffer';
+import { swapThumbnail } from './swap';
 // import { nuggItemFull } from './nuggItem';
 // import { protocolFull } from './protocol';
 // import { swapFull, swapThumbnail } from './swap';
@@ -35,15 +36,16 @@ export const nuggThumbnail = gql`
         id
         user ${idFragment}
         items ${idFragment}
-        swaps (first: 1, orderBy: id, orderDirection: desc) {
-            id
-            eth
-            ethUsd
-            owner ${idFragment}
-            leader ${idFragment}
-        }
+        swaps (orderBy: id, orderDirection: desc) ${swapThumbnail}
         activeSwap ${idFragment}
         activeLoan ${idFragment}
+    }
+`;
+
+export const nuggUser = gql`
+    {
+        id
+        user ${idFragment}
     }
 `;
 

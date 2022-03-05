@@ -1,5 +1,8 @@
 import gql from 'graphql-tag';
-import { itemFull } from './item';
+import { idFragment } from './general';
+import { itemFull, itemThumbnail } from './item';
+import { itemSwapThumbnail } from './itemSwap';
+import { swapThumbnail } from './swap';
 // import { itemSwapFull } from './itemSwap';
 // import { nuggFull } from './nugg';
 // import { protocolFull } from './protocol';
@@ -15,3 +18,12 @@ import { itemFull } from './item';
 //         swaps ${itemSwapFull}
 //     }
 // `;
+
+export const nuggItemThumbnail = gql`
+    {
+        id
+        nugg ${idFragment}
+        swaps (orderBy: id, orderDirection: desc) ${itemSwapThumbnail}
+        activeSwap ${idFragment}
+    }
+`;

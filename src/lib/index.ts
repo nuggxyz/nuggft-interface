@@ -2,6 +2,7 @@ import { getAddress } from '@ethersproject/address';
 import { BigNumber, ethers } from 'ethers';
 
 import config from '@src/config';
+// import { FEATURE_NAMES } from '@src/web3/config';
 
 import * as colors from './colors';
 import * as constants from './constants';
@@ -305,6 +306,17 @@ export const safeResetLocalStorage = (keys: string[]) => {
             saveStringToLocalStorage(entry.value, entry.key);
         }
     });
+};
+
+export const parseTokenId = (itemId: string) => {
+    if (itemId.startsWith(constants.default.ID_PREFIX_ITEM)) {
+        let num = +itemId.replace(constants.default.ID_PREFIX_ITEM, '');
+        return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Hold', 'Neck'][num >> 8]} #${
+            num & 0xff
+        }`;
+    } else {
+        return itemId;
+    }
 };
 
 export { colors, constants, conversion, fontSize, layout };

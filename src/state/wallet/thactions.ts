@@ -131,7 +131,7 @@ const multiClaim = createAsyncThunk<
 >(`wallet/multiClaim`, async ({ tokenIds, provider, chainId, address }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
-            .connect(provider.getSigner(address))
+            // .connect(provider.getSigner(address))
             [
                 // .connect(Web3State.getSignerOrProvider())
                 'claim(uint160[],address[])'

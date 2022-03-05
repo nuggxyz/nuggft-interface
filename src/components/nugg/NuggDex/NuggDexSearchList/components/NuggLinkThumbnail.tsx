@@ -7,6 +7,7 @@ import NuggDexState from '@src/state/nuggdex';
 import TokenState from '@src/state/token';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
+import { parseTokenId } from '@src/lib';
 
 import styles from './NuggDexComponents.styles';
 
@@ -38,9 +39,13 @@ const NuggLinkThumbnail: FunctionComponent<{
                 NuggDexState.dispatch.addToRecents(item);
             }}
         >
-            <TokenViewer tokenId={item.id || ''} style={styles.nugg} data={item.dotnuggRawCache} />
+            <TokenViewer
+                tokenId={parseTokenId(item.id)}
+                style={styles.nugg}
+                data={item.dotnuggRawCache}
+            />
             <Text size="smaller" textStyle={styles.label}>
-                {item.id}
+                {parseTokenId(item.id)}
             </Text>
         </animated.div>
     );

@@ -1,7 +1,7 @@
 declare namespace NL.GraphQL.Fragments.Swap {
     type Full = Omit<NL.GraphQL.Swap<NL.GraphQL.GraphScalars>, '__typename'>;
 
-    type Bare = Pick<Full, 'id' | 'eth' | 'ethUsd'> & {
+    type Bare = Pick<Full, 'id' | 'eth' | 'ethUsd' | 'num'> & {
         owner: NL.GraphQL.Fragments.General.Id;
         leader: NL.GraphQL.Fragments.General.Id;
         offers: NL.GraphQL.Fragments.Offer.Bare[];
@@ -13,11 +13,11 @@ declare namespace NL.GraphQL.Fragments.Swap {
 
     type Thumbnail = Omit<Bare, 'offers'> & {
         nugg: NL.GraphQL.Fragments.General.Id;
-        num: string;
+        // num: string;
     };
     type ThumbnailActiveSales = Omit<Bare, 'offers'> & {
         nugg: NL.GraphQL.Fragments.General.Id;
-        num: string;
+        // num: string;
         offers: NL.GraphQL.Fragments.General.Id[];
     };
 

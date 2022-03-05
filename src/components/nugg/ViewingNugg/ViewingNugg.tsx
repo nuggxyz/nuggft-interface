@@ -10,14 +10,17 @@ import { Web3Provider } from '@ethersproject/providers';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 
 import { Address } from '@src/classes/Address';
-import { isUndefinedOrNullOrObjectEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import {
+    isUndefinedOrNullOrObjectEmpty,
+    isUndefinedOrNullOrStringEmpty,
+    parseTokenId,
+} from '@src/lib';
 import Colors from '@src/lib/colors';
 import constants from '@src/lib/constants';
 import { fromEth } from '@src/lib/conversion';
 import AppState from '@src/state/app';
 import TokenState from '@src/state/token';
 import nuggThumbnailQuery from '@src/state/token/queries/nuggThumbnailQuery';
-import swapHistoryQuery from '@src/state/token/queries/swapHistoryQuery';
 import Button from '@src/components/general/Buttons/Button/Button';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import Loader from '@src/components/general/Loader/Loader';
@@ -31,6 +34,7 @@ import StickyList from '@src/components/general/List/StickyList';
 import state from '@src/state';
 import client from '@src/client';
 import { LiveNugg } from '@src/client/hooks/useLiveNugg';
+import { LiveItem } from '@src/client/hooks/useLiveItem';
 
 import styles from './ViewingNugg.styles';
 import OwnerButtons from './OwnerButtons';
@@ -49,55 +53,58 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const ens = web3.hook.usePriorityAnyENSName(provider, owner);
-    const [items, setItems] = useState([tokenId]);
     const [showMenu, setShowMenu] = useState<'loan' | 'sale'>();
-    const nugg = client.hook.useLiveNugg(tokenId);
-
-    useEffect(() => {
-        setItems([items[1], tokenId]);
-    }, [tokenId, chainId]);
-
-    const getSwapHistory = useCallback(
-        async (addToResult?: boolean, direction = 'desc') => {
-            if (tokenId) {
-                const history = await swapHistoryQuery(
-                    chainId,
-                    tokenId,
-                    direction,
-                    constants.NUGGDEX_SEARCH_LIST_CHUNK,
-                    addToResult ? swaps.length : 0,
-                );
-                setSwaps((res) => (addToResult ? [...res, ...history] : history));
-            }
-        },
-        [swaps, tokenId, chainId],
+    const tokenIsItem = useMemo(
+        () => tokenId && tokenId.startsWith(constants.ID_PREFIX_ITEM),
+        [tokenId],
     );
 
+    const token = client.hook.useLiveToken(tokenId);
+
+    // const getSwapHistory = useCallback(
+    //     async (addToResult?: boolean, direction = 'desc') => {
+    //         if (tokenId) {
+    //             const history = await swapHistoryQuery(
+    //                 chainId,
+    //                 tokenId,
+    //                 direction,
+    //                 constants.NUGGDEX_SEARCH_LIST_CHUNK,
+    //                 addToResult ? swaps.length : 0,
+    //                 tokenIsItem,
+    //             );
+    //             setSwaps((res) => (addToResult ? [...res, ...history] : history));
+    //         }
+    //     },
+    //     [swaps, tokenId, chainId, tokenIsItem],
+    // );
+
     const getThumbnail = useCallback(async () => {
-        const thumbnail = await nuggThumbnailQuery(chainId, tokenId);
-        setOwner(thumbnail?.user?.id);
-        setShowMenu(
-            !isUndefinedOrNullOrObjectEmpty(thumbnail?.activeSwap)
-                ? 'sale'
-                : !isUndefinedOrNullOrObjectEmpty(thumbnail?.activeLoan)
-                ? 'loan'
-                : undefined,
-        );
-    }, [tokenId, chainId]);
+        const thumbnail = await nuggThumbnailQuery(chainId, tokenId, tokenIsItem);
+        if (thumbnail) {
+            console.log({ thumbnail });
+            setSwaps(thumbnail?.swaps);
+            setOwner(thumbnail?.user?.id);
+            setShowMenu(
+                !isUndefinedOrNullOrObjectEmpty(thumbnail?.activeSwap)
+                    ? 'sale'
+                    : !isUndefinedOrNullOrObjectEmpty(thumbnail?.activeLoan)
+                    ? 'loan'
+                    : undefined,
+            );
+        }
+    }, [tokenId, chainId, tokenIsItem]);
 
     useLayoutEffect(() => {
         setSwaps([]);
         setOwner('');
         getThumbnail();
-        getSwapHistory();
     }, [tokenId, chainId]);
 
     useEffect(() => {
-        if (!isUndefinedOrNullOrObjectEmpty(nugg)) {
+        if (!isUndefinedOrNullOrObjectEmpty(token)) {
             getThumbnail();
-            getSwapHistory();
         }
-    }, [nugg]);
+    }, [token]);
 
     return (
         !isUndefinedOrNullOrStringEmpty(tokenId) && (
@@ -136,7 +143,8 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                             address,
                             owner,
                             showMenu,
-                            nugg,
+                            token,
+                            tokenIsItem,
                         }}
                     />
                 </div>
@@ -155,7 +163,8 @@ type SwapsProps = {
     MobileBackButton?: () => JSX.Element;
     showMenu?: 'sale' | 'loan';
     ens: string;
-    nugg: LiveNugg;
+    token: LiveNugg | LiveItem;
+    tokenIsItem: boolean;
 };
 
 const Swaps: FunctionComponent<SwapsProps> = ({
@@ -167,17 +176,37 @@ const Swaps: FunctionComponent<SwapsProps> = ({
     owner,
     showMenu,
     ens,
-    nugg,
+    token,
+    tokenIsItem,
 }) => {
     const screenType = state.app.select.screenType();
 
     const listData = useMemo(() => {
         let res = [];
         let tempSwaps = [...swaps];
-        if (!isUndefinedOrNullOrStringEmpty(nugg?.activeSwap.id)) {
-            res.push({ title: 'Ongoing Sale', items: [nugg.activeSwap] });
+        if (!isUndefinedOrNullOrStringEmpty(token?.activeSwap.id)) {
+            res.push({ title: 'Ongoing Sale', items: [token.activeSwap] });
             //@ts-ignore
-            tempSwaps = tempSwaps.smartRemove(nugg.activeSwap, 'id');
+            tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'id');
+        }
+        if (
+            !isUndefinedOrNullOrObjectEmpty(swaps.find((swap) => swap.endingEpoch === null)) &&
+            tokenIsItem
+        ) {
+            let tempTemp = [];
+            let waiting = tempSwaps.reduce((acc, swap) => {
+                if (swap.endingEpoch === null) {
+                    acc.push(swap);
+                } else {
+                    tempTemp.push(swap);
+                }
+                return acc;
+            }, []);
+            tempSwaps = tempTemp;
+            res.push({
+                title: 'Awaiting An Offer',
+                items: waiting,
+            });
         }
         res.push({
             title: 'Previous Sales',
@@ -185,12 +214,15 @@ const Swaps: FunctionComponent<SwapsProps> = ({
         });
 
         return res;
-    }, [swaps, nugg]);
+    }, [swaps, token, tokenIsItem]);
 
     return (
         <div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
             <div style={styles.owner}>
-                <Text textStyle={styles.nuggId}>Nugg #{tokenId}</Text>
+                <Text textStyle={styles.nuggId}>
+                    {tokenIsItem ? '' : 'Nugg #'}
+                    {parseTokenId(tokenId)}
+                </Text>
                 <div style={{ marginLeft: '1rem' }}>
                     {owner ? (
                         <>
@@ -207,6 +239,8 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                                 {owner === Address.ZERO.hash ||
                                 owner === CONTRACTS[chainId].NuggftV1
                                     ? 'NuggftV1'
+                                    : tokenIsItem
+                                    ? `Nugg #${owner}`
                                     : ens}
                                 {owner === address && (
                                     <Text
@@ -247,7 +281,7 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                 data={listData}
                 TitleRenderItem={SwapTitle}
                 ChildRenderItem={SwapItem}
-                extraData={[chainId, provider, nugg?.activeSwap?.id]}
+                extraData={[chainId, provider, token?.activeSwap?.id, tokenIsItem]}
                 style={styles.stickyList}
                 styleRight={styles.stickyListRight}
             />
@@ -264,7 +298,8 @@ const SwapTitle = ({ title }) => {
 };
 
 const SwapItem = ({ item, index, extraData }) => {
-    const awaitingBid = item.endingEpoch === null;
+    console.log({ item });
+    const awaitingBid = item?.endingEpoch === null;
     const ens = web3.hook.usePriorityAnyENSName(extraData[1], item.owner.id);
     return (
         <div style={{ padding: '.25rem 1rem' }}>
@@ -306,6 +341,8 @@ const SwapItem = ({ item, index, extraData }) => {
                                 {item.owner.id === Address.ZERO.hash ||
                                 item.owner.id === CONTRACTS[extraData[0]].NuggftV1
                                     ? 'NuggftV1'
+                                    : extraData[3]
+                                    ? `Nugg #${item.owner.id}`
                                     : ens}
                             </Text>
                         </div>

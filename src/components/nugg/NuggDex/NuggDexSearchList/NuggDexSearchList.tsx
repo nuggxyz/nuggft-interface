@@ -28,6 +28,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         'recently viewed': false,
         'all nuggs': false,
         'on sale': false,
+        'items on sale': false,
     });
     const _sortAsc = useRef(sortAsc);
     useEffect(() => {
@@ -36,7 +37,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const viewing = NuggDexState.select.viewing();
     const chainId = web3.hook.usePriorityChainId();
     const _liveActiveNuggs = client.live.activeSwaps();
-
     const liveActiveNuggs = useMemo(
         () =>
             _liveActiveNuggs.reduce((acc, nugg) => {
@@ -48,6 +48,22 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         } else {
                             tmp = [nugg, ...acc];
                         }
+                    }
+                }
+                return tmp;
+            }, []),
+        [epoch, _liveActiveNuggs, filters, sortAsc],
+    );
+    const _liveActiveItems = client.live.activeItems();
+    const liveActiveItems = useMemo(
+        () =>
+            _liveActiveItems.reduce((acc, item) => {
+                let tmp = acc;
+                if (filters.searchValue === '' || filters.searchValue === item.id) {
+                    if (sortAsc['items on sale']) {
+                        tmp = [...acc, item];
+                    } else {
+                        tmp = [item, ...acc];
                     }
                 }
                 return tmp;
@@ -149,14 +165,30 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     />
                 </NuggLink>
                 <NuggLink
+                    type="items on sale"
+                    previewNuggs={liveActiveItems}
                     style={{
-                        width: '100%',
                         position: 'absolute',
+                        bottom: 0,
+                        right: 0,
+                    }}
+                >
+                    <NuggList
+                        style={styles.nuggListEnter}
+                        values={liveActiveItems}
+                        type="on sale"
+                    />
+                </NuggLink>
+                <NuggLink
+                    style={{
+                        // width: '100%',
+                        position: 'absolute',
+                        left: 0,
                         bottom: 0,
                     }}
                     type="all nuggs"
                     previewNuggs={allNuggsPreview}
-                    limit={constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT}
+                    // limit={constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT}
                 >
                     <NuggList
                         style={styles.nuggListEnter}

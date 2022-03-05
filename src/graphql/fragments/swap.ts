@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 import { epochFull } from './epoch';
 import { idFragment } from './general';
 import { itemOfferBare } from './itemOffer';
+import { nuggThumbnail, nuggUser } from './nugg';
 // import { nuggBare, nuggFull } from './nugg';
 // import { offerBare, offerFull } from './offer';
 // import { userFull } from './user';
