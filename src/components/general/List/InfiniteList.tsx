@@ -207,18 +207,25 @@ const InfiniteList: FunctionComponent<Props> = ({
     );
 
     const Loading = useCallback(
-        () => (
-            <div
-                style={{
-                    marginTop: '1rem',
-                    height: '1rem',
-                    position: 'absolute',
-                }}
-            >
-                {!loading && <Loader color={loaderColor || 'black'} />}
-            </div>
-        ),
-        [loading, loaderColor],
+        () =>
+            loading && (
+                <div
+                    style={{
+                        marginTop: '1rem',
+                        // height: '1rem',
+                        position: 'absolute',
+                        top: `${(endIndex + 1) * itemHeight}px`,
+                        width: '100%',
+                        height: `${itemHeight}px`,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Loader color={loaderColor || 'black'} />
+                </div>
+            ),
+        [loading, loaderColor, itemHeight, endIndex],
     );
 
     const Label = useCallback(
@@ -258,7 +265,7 @@ const InfiniteList: FunctionComponent<Props> = ({
                 onScroll={_onScroll}
             >
                 <List />
-                {/* <Loading /> */}
+                <Loading />
             </div>
         </>
     );
