@@ -29,6 +29,7 @@ export default () => {
                         nuggftStakedEth: string;
                         nuggftStakedShares: string;
                         activeNuggs: { id: string; dotnuggRawCache: string }[];
+                        activeItems: { id: string; dotnuggRawCache: string }[];
                     };
                 }>({
                     query: gql`
@@ -43,6 +44,10 @@ export default () => {
                                 nuggftStakedEth
                                 nuggftStakedShares
                                 activeNuggs(orderBy: idnum) {
+                                    id
+                                    dotnuggRawCache
+                                }
+                                activeItems {
                                     id
                                     dotnuggRawCache
                                 }
@@ -69,6 +74,9 @@ export default () => {
                             status: x.data.protocol.epoch.status,
                         },
                         activeSwaps: x.data.protocol.activeNuggs.map((x) => {
+                            return { id: x.id, dotnuggRawCache: x.dotnuggRawCache };
+                        }),
+                        activeItems: x.data.protocol.activeItems.map((x) => {
                             return { id: x.id, dotnuggRawCache: x.dotnuggRawCache };
                         }),
                     });
