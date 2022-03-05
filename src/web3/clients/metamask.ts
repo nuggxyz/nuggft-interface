@@ -105,6 +105,7 @@ export class MetaMask extends Connector {
                     this.actions.update({
                         chainId: parseChainId(chainId),
                         accounts,
+                        peer: this.peers.metamask,
                     });
                 } else {
                     throw new Error('No accounts returned');
