@@ -54,7 +54,7 @@ const myNuggsQuery = async (
 
         return !isUndefinedOrNullOrObjectEmpty(result) &&
             !isUndefinedOrNullOrArrayEmpty(result.nuggs)
-            ? (result.nuggs as NL.GraphQL.Fragments.Nugg.ListItem[])
+            ? (result.nuggs as any as NL.GraphQL.Fragments.Nugg.ListItem[])
             : [];
     } catch (e) {
         throw new Error(`myNuggsQuery: ${e}`);

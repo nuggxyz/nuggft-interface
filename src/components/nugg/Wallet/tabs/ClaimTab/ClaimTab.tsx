@@ -39,6 +39,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
         setLoadingOffers(true);
         if (!isUndefinedOrNullOrStringEmpty(address)) {
             const offersRes = await unclaimedOffersQuery(chainId, address, epoch.id);
+            console.log(offersRes);
             setUnclaimedOffers(offersRes);
         } else {
             setUnclaimedOffers([]);
@@ -116,6 +117,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
     index,
     extraData,
 }) => {
+    console.log({ item });
     const parsedTitle = useMemo(() => {
         if (!isUndefinedOrNullOrObjectEmpty(item)) {
             let parsed = item.id.split('-');
@@ -183,7 +185,8 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
                             provider: extraData[2],
                             chainId: extraData[1],
                             tokenId: parsedTitle.nugg,
-                            address: extraData[0],
+                            //@ts-ignore
+                            address: item._addr ? item._addr : extraData[0],
                         })
                     }
                 />
