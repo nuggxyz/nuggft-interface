@@ -21,7 +21,13 @@ declare namespace NL.Redux.NuggDex {
         searchValue?: string;
     };
 
-    type SearchViews = 'home' | 'all nuggs' | 'on sale' | 'my nuggs' | 'recently viewed';
+    type SearchViews =
+        | 'home'
+        | 'all nuggs'
+        | 'on sale'
+        | 'my nuggs'
+        | 'recently viewed'
+        | 'items on sale';
 
     type Success = 'QUERIED_TOKENS_ON_SALE' | 'GOT_THUMBNAIL';
 

@@ -1,6 +1,6 @@
 declare namespace NL.Redux.Token {
     type State = {
-        tokenId?: string;
+        tokenId?: string | import('@src/lib/constants').ITEM_ID;
         tokenURI?: ReactSVG;
         success: Success;
         error: Error;

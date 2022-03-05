@@ -1,10 +1,11 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
-import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import { isUndefinedOrNullOrObjectEmpty, parseTokenId } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import { ListRenderItemProps } from '@src/components/general/List/List';
 import TokenState from '@src/state/token';
 import TokenViewer from '@src/components/nugg/TokenViewer';
+import constants from '@src/lib/constants';
 
 import styles from './NuggDexComponents.styles';
 
@@ -12,6 +13,10 @@ type Props = ListRenderItemProps<NL.GraphQL.Fragments.Nugg.ListItem>;
 
 const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, action }) => {
     const selected = TokenState.select.tokenId();
+    const isNuggItem = useMemo(
+        () => item && item.id && item.id.startsWith(constants.ID_PREFIX_ITEM),
+        [item],
+    );
 
     const style = useMemo(() => {
         return {
@@ -23,7 +28,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, 
     return (
         <div style={style} onClick={() => action(item)}>
             <TokenViewer
-                tokenId={item.id || ''}
+                tokenId={parseTokenId(item.id) || ''}
                 style={{
                     height: '200px',
                     width: '200px',
@@ -32,7 +37,10 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, 
                 }}
                 data={item.dotnuggRawCache}
             />
-            <Label text={'Nugg #' + item.id} size="larger" />
+            <Label
+                text={!isNuggItem ? `Nugg #${parseTokenId(item.id)}` : `${parseTokenId(item.id)}`}
+                size="larger"
+            />
         </div>
     );
 };

@@ -4,6 +4,8 @@ import { useSafeLiveStake } from './hooks/useLiveStake';
 import { useLiveNugg } from './hooks/useLiveNugg';
 import { useLiveMyNuggs } from './hooks/useLiveMyNuggs';
 import updater from './updater';
+import { useLiveToken } from './hooks/useLiveToken';
+import { useLiveItem } from './hooks/useLiveItem';
 
 export default {
     ...core,
@@ -22,6 +24,8 @@ export default {
         useLiveOffers,
         useSafeLiveStake,
         useLiveNugg,
+        useLiveToken,
+        useLiveItem,
         useLiveMyNuggs,
     },
     static: {

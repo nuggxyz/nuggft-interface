@@ -5,6 +5,7 @@ import { BigNumber } from 'ethers';
 
 import web3 from '@src/web3';
 import { EthInt, Fraction } from '@src/classes/Fraction';
+import constants from '@src/lib/constants';
 
 import core from './core';
 
@@ -29,7 +30,7 @@ export default () => {
                         nuggftStakedEth: string;
                         nuggftStakedShares: string;
                         activeNuggs: { id: string; dotnuggRawCache: string }[];
-                        activeItems: { id: string; dotnuggRawCache: string }[];
+                        activeNuggItems: { item: { id: string; dotnuggRawCache: string } }[];
                     };
                 }>({
                     query: gql`
@@ -47,9 +48,11 @@ export default () => {
                                     id
                                     dotnuggRawCache
                                 }
-                                activeItems {
-                                    id
-                                    dotnuggRawCache
+                                activeNuggItems {
+                                    item {
+                                        id
+                                        dotnuggRawCache
+                                    }
                                 }
                             }
                         }
@@ -76,8 +79,11 @@ export default () => {
                         activeSwaps: x.data.protocol.activeNuggs.map((x) => {
                             return { id: x.id, dotnuggRawCache: x.dotnuggRawCache };
                         }),
-                        activeItems: x.data.protocol.activeItems.map((x) => {
-                            return { id: x.id, dotnuggRawCache: x.dotnuggRawCache };
+                        activeItems: x.data.protocol.activeNuggItems.map((x) => {
+                            return {
+                                id: `${constants.ID_PREFIX_ITEM}${x.item.id}`,
+                                dotnuggRawCache: x.item.dotnuggRawCache,
+                            };
                         }),
                     });
                 });

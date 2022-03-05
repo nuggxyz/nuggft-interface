@@ -394,6 +394,7 @@ function useENS(provider: Web3Provider, account: string): (string | null) | unde
     useEffect(() => {
         if (provider && account) {
             let stale = false;
+            setENSName(Address.shortenAddressHash(account));
 
             provider
                 .lookupAddress(account)
@@ -410,7 +411,6 @@ function useENS(provider: Web3Provider, account: string): (string | null) | unde
 
             return () => {
                 stale = true;
-                setENSName(Address.shortenAddressHash(account));
             };
         }
     }, [provider, account]);
