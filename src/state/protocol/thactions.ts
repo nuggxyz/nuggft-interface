@@ -12,7 +12,7 @@ import updateStakedQuery from './queries/updateStakedQuery';
 const safeSetEpoch = createAsyncThunk<
     {
         success: NL.Redux.Protocol.Success;
-        data: {
+        data?: {
             epoch: { id: string; startblock: string; endblock: string };
             isOver: boolean;
             chainId: SupportedChainId;
@@ -28,7 +28,7 @@ const safeSetEpoch = createAsyncThunk<
         //@ts-ignore
         const currentEpoch = thunkAPI.getState().protocol.epoch;
 
-        if (isUndefinedOrNullOrObjectEmpty(currentEpoch) || currentEpoch.id !== epoch.id)
+        if (isUndefinedOrNullOrObjectEmpty(currentEpoch) || currentEpoch.id !== epoch.id) {
             return {
                 success: 'SUCCESS',
                 data: {
@@ -37,6 +37,11 @@ const safeSetEpoch = createAsyncThunk<
                     chainId,
                 },
             };
+        } else {
+            return {
+                success: 'SUCCESS',
+            };
+        }
 
         // if (
         //     !isUndefinedOrNullOrObjectEmpty(currentEpoch) &&

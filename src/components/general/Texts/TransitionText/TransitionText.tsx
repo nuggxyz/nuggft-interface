@@ -11,6 +11,7 @@ type Props = {
     transitionText: string;
     onClick: () => void;
     style?: CSSProperties;
+    textStyle?: CSSProperties;
     Icon?: React.ReactElement;
 };
 
@@ -19,29 +20,31 @@ const TransitionText: FunctionComponent<Props> = ({
     transitionText,
     onClick,
     style,
+    textStyle,
     Icon,
 }) => {
     const [ref, isHovering] = useOnHover();
 
-    const textStyle = useSpring({
+    const textStyleAnimated = useSpring({
         opacity: isHovering ? 0 : 1,
-        paddingLeft: Icon ? '1.5rem' : '0rem',
         config: config.stiff,
     });
-    const transitionTextStyle = useSpring({
+    const transitionTextStyleAnimated = useSpring({
         opacity: isHovering ? 1 : 0,
-        paddingLeft: Icon ? '1.5rem' : '0rem',
         config: config.stiff,
     });
     return (
         <div ref={ref} onClick={onClick} style={{ ...styles.container, ...style }}>
             {Icon && Icon}
-            <animated.div style={{ ...styles.text, ...textStyle }}>
-                <Text>{text}</Text>
-            </animated.div>
-            <animated.div style={{ ...styles.text, ...transitionTextStyle }}>
-                <Text>{transitionText}</Text>
-            </animated.div>
+            <div style={{ ...styles.textContainer, ...textStyle }}>
+                <Text textStyle={styles.hidden}>{isHovering ? transitionText : text}</Text>
+                <animated.div style={{ ...styles.text, ...textStyleAnimated }}>
+                    <Text>{text}</Text>
+                </animated.div>
+                <animated.div style={{ ...styles.text, ...transitionTextStyleAnimated }}>
+                    <Text>{transitionText}</Text>
+                </animated.div>
+            </div>
         </div>
     );
 };

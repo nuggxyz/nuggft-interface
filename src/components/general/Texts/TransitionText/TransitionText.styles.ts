@@ -1,10 +1,24 @@
 import { NLStyleSheetCreator } from '@src/lib';
 
 const styles = NLStyleSheetCreator({
-    container: { display: 'flex', alignItems: 'center' },
-    text: {
-        position: 'absolute',
+    container: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         cursor: 'pointer',
+    },
+    textContainer: {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        position: 'relative',
+    },
+    hidden: {
+        pointerEvents: 'none',
+        visibility: 'hidden',
+    },
+    text: {
+        position: 'fixed',
+        whiteSpace: 'nowrap',
     },
 });
 

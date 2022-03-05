@@ -93,7 +93,10 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     }, [tokenId, chainId]);
 
     useEffect(() => {
-        nugg && getThumbnail();
+        if (!isUndefinedOrNullOrObjectEmpty(nugg)) {
+            getThumbnail();
+            getSwapHistory();
+        }
     }, [nugg]);
 
     return (
@@ -291,6 +294,8 @@ const SwapItem = ({ item, index, extraData }) => {
                             >
                                 {awaitingBid || item.id === extraData[2]
                                     ? 'On sale by'
+                                    : item.leader.id === item.owner.id
+                                    ? 'Reclaimed by'
                                     : 'Purchased from'}
                             </Text>
                             <Text

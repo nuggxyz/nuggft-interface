@@ -73,11 +73,22 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         }
     }, [filters]);
     const [allNuggs, setAllNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
+    const [allNuggsPreview, setAllNuggsPreview] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>(
+        [],
+    );
     const recents = NuggDexState.select.recents();
+
+    useEffect(() => {
+        if (allNuggs.length >= constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT) {
+            setAllNuggsPreview(allNuggs.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT));
+        }
+    }, [allNuggs]);
 
     const animatedStyle = useSpring({
         ...styles.nuggLinksContainer,
         transform: viewing !== 'home' ? 'scale(0.9)' : 'scale(1)',
+        // config: constants.ANIMATION_CONFIG,
+        delay: constants.ANIMATION_DELAY,
     });
 
     const handleGetAll = useCallback(
@@ -144,8 +155,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         bottom: 0,
                     }}
                     type="all nuggs"
-                    previewNuggs={allNuggs}
-                    limit={7}
+                    previewNuggs={allNuggsPreview}
+                    limit={constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT}
                 >
                     <NuggList
                         style={styles.nuggListEnter}
