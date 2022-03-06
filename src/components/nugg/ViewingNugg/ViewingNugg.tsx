@@ -1,11 +1,4 @@
-import React, {
-    FunctionComponent,
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useMemo,
-    useState,
-} from 'react';
+import React, { FunctionComponent, useMemo, useState } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 
@@ -13,14 +6,11 @@ import { Address } from '@src/classes/Address';
 import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
-    parseTokenId,
+    parseTokenIdSmart,
 } from '@src/lib';
 import Colors from '@src/lib/colors';
-import constants from '@src/lib/constants';
 import { fromEth } from '@src/lib/conversion';
 import AppState from '@src/state/app';
-import TokenState from '@src/state/token';
-import nuggThumbnailQuery from '@src/state/token/queries/nuggThumbnailQuery';
 import Button from '@src/components/general/Buttons/Button/Button';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import Loader from '@src/components/general/Loader/Loader';
@@ -35,6 +25,7 @@ import state from '@src/state';
 import client from '@src/client';
 import { LiveNugg } from '@src/client/hooks/useLiveNugg';
 import { LiveItem } from '@src/client/hooks/useLiveItem';
+import { Route } from '@src/client/router';
 
 import styles from './ViewingNugg.styles';
 import OwnerButtons from './OwnerButtons';
@@ -44,70 +35,23 @@ import LoanButtons from './LoanButtons';
 type Props = { MobileBackButton?: () => JSX.Element };
 
 const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
-    const tokenId = TokenState.select.tokenId();
-    const svg = TokenState.select.tokenURI();
+    const { lastView } = client.router.useRouter();
+
     const address = web3.hook.usePriorityAccount();
-    const [owner, setOwner] = useState('');
-    const [swaps, setSwaps] = useState([]);
+
     const screenType = AppState.select.screenType();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const ens = web3.hook.usePriorityAnyENSName(provider, owner);
     const [showMenu, setShowMenu] = useState<'loan' | 'sale'>();
-    const tokenIsItem = useMemo(
-        () => tokenId && tokenId.startsWith(constants.ID_PREFIX_ITEM),
-        [tokenId],
-    );
 
-    const token = client.hook.useLiveToken(tokenId);
+    const tokenIsItem = useMemo(() => lastView && lastView?.type === Route.ViewItem, [lastView]);
 
-    // const getSwapHistory = useCallback(
-    //     async (addToResult?: boolean, direction = 'desc') => {
-    //         if (tokenId) {
-    //             const history = await swapHistoryQuery(
-    //                 chainId,
-    //                 tokenId,
-    //                 direction,
-    //                 constants.NUGGDEX_SEARCH_LIST_CHUNK,
-    //                 addToResult ? swaps.length : 0,
-    //                 tokenIsItem,
-    //             );
-    //             setSwaps((res) => (addToResult ? [...res, ...history] : history));
-    //         }
-    //     },
-    //     [swaps, tokenId, chainId, tokenIsItem],
-    // );
+    const token = client.hook.useLiveToken(lastView?.tokenId);
 
-    const getThumbnail = useCallback(async () => {
-        const thumbnail = await nuggThumbnailQuery(chainId, tokenId, tokenIsItem);
-        if (thumbnail) {
-            console.log({ thumbnail });
-            setSwaps(thumbnail?.swaps);
-            setOwner(thumbnail?.user?.id);
-            setShowMenu(
-                !isUndefinedOrNullOrObjectEmpty(thumbnail?.activeSwap)
-                    ? 'sale'
-                    : !isUndefinedOrNullOrObjectEmpty(thumbnail?.activeLoan)
-                    ? 'loan'
-                    : undefined,
-            );
-        }
-    }, [tokenId, chainId, tokenIsItem]);
-
-    useLayoutEffect(() => {
-        setSwaps([]);
-        setOwner('');
-        getThumbnail();
-    }, [tokenId, chainId]);
-
-    useEffect(() => {
-        if (!isUndefinedOrNullOrObjectEmpty(token)) {
-            getThumbnail();
-        }
-    }, [token]);
+    const ens = web3.hook.usePriorityAnyENSName(provider, (token as LiveNugg)?.owner);
 
     return (
-        !isUndefinedOrNullOrStringEmpty(tokenId) && (
+        !isUndefinedOrNullOrStringEmpty(lastView?.tokenId) && (
             <div style={styles.container}>
                 {MobileBackButton && (
                     <div
@@ -128,7 +72,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 >
                     <div style={{ position: 'fixed' }}>
                         <AnimatedCard>
-                            <TokenViewer tokenId={tokenId} data={svg} showcase />
+                            <TokenViewer tokenId={lastView?.tokenId} showcase />
                         </AnimatedCard>
                     </div>
                 </div>
@@ -138,10 +82,8 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                             chainId,
                             provider,
                             ens,
-                            swaps,
-                            tokenId,
+                            tokenId: lastView?.tokenId,
                             address,
-                            owner,
                             showMenu,
                             token,
                             tokenIsItem,
@@ -156,10 +98,8 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
 type SwapsProps = {
     chainId: number;
     provider: Web3Provider;
-    swaps: NL.GraphQL.Fragments.Swap.Thumbnail[];
     tokenId: string;
     address: string;
-    owner: string;
     MobileBackButton?: () => JSX.Element;
     showMenu?: 'sale' | 'loan';
     ens: string;
@@ -170,10 +110,8 @@ type SwapsProps = {
 const Swaps: FunctionComponent<SwapsProps> = ({
     chainId,
     provider,
-    swaps,
     tokenId,
     address,
-    owner,
     showMenu,
     ens,
     token,
@@ -183,14 +121,16 @@ const Swaps: FunctionComponent<SwapsProps> = ({
 
     const listData = useMemo(() => {
         let res = [];
-        let tempSwaps = [...swaps];
+        let tempSwaps = token?.swaps ? [...token.swaps] : [];
         if (!isUndefinedOrNullOrStringEmpty(token?.activeSwap.id)) {
-            res.push({ title: 'Ongoing Sale', items: [token.activeSwap] });
+            res.push({ title: 'Ongoing Sale', items: [token?.activeSwap] });
             //@ts-ignore
-            tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'id');
+            tempSwaps = tempSwaps.smartRemove(token?.activeSwap, 'id');
         }
         if (
-            !isUndefinedOrNullOrObjectEmpty(swaps.find((swap) => swap.endingEpoch === null)) &&
+            !isUndefinedOrNullOrObjectEmpty(
+                token?.swaps.find((swap) => swap.endingEpoch === null),
+            ) &&
             tokenIsItem
         ) {
             let tempTemp = [];
@@ -214,14 +154,14 @@ const Swaps: FunctionComponent<SwapsProps> = ({
         });
 
         return res;
-    }, [swaps, token, tokenIsItem]);
+    }, [token, tokenIsItem]);
 
     return (
         <div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
             <div style={styles.owner}>
-                <Text textStyle={styles.nuggId}>{parseTokenId(tokenId, true)}</Text>
+                <Text textStyle={styles.nuggId}>{parseTokenIdSmart(tokenId)}</Text>
                 <div style={{ marginLeft: '1rem' }}>
-                    {owner ? (
+                    {token?.type === 'nugg' ? (
                         <>
                             <Text
                                 type="text"
@@ -233,13 +173,11 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                                 Owner
                             </Text>
                             <Text textStyle={styles.titleText}>
-                                {owner === Address.ZERO.hash ||
-                                owner === CONTRACTS[chainId].NuggftV1
+                                {token?.owner === Address.ZERO.hash ||
+                                token?.owner === CONTRACTS[chainId].NuggftV1
                                     ? 'NuggftV1'
-                                    : tokenIsItem
-                                    ? `Nugg #${owner}`
                                     : ens}
-                                {owner === address && (
+                                {token?.owner === address && (
                                     <Text
                                         type="text"
                                         size="smaller"
@@ -254,7 +192,7 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                         <Loader color={Colors.nuggBlueText} />
                     )}
                 </div>
-                {owner === address && (
+                {token?.type !== 'item' && token?.owner === address && (
                     <Flyout
                         containerStyle={styles.flyout}
                         style={{ right: '1.5rem', top: '2rem' }}
@@ -278,7 +216,7 @@ const Swaps: FunctionComponent<SwapsProps> = ({
                 data={listData}
                 TitleRenderItem={SwapTitle}
                 ChildRenderItem={SwapItem}
-                extraData={[chainId, provider, token?.activeSwap?.id, tokenIsItem]}
+                extraData={[chainId, provider, token?.activeSwap?.id, tokenIsItem, tokenId]}
                 style={styles.stickyList}
                 styleRight={styles.stickyListRight}
             />
@@ -303,7 +241,7 @@ const SwapItem = ({ item, index, extraData }) => {
             <Button
                 key={index}
                 buttonStyle={styles.swap}
-                onClick={() => AppState.onRouteUpdate(extraData[0], `#/swap/${item.id}`)}
+                onClick={() => client.actions.routeTo(extraData[4], false)}
                 rightIcon={
                     <>
                         <div style={styles.swapButton}>

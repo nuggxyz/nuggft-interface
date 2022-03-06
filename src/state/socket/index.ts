@@ -29,6 +29,7 @@ class SocketState extends NLState<NL.Redux.Socket.State> {
     constructor() {
         super(STATE_NAME, updater, middlewares, thactions, hooks, {
             Offer: undefined,
+            ItemOffer: undefined,
             Claim: undefined,
             Stake: undefined,
             Mint: undefined,
@@ -48,6 +49,9 @@ class SocketState extends NLState<NL.Redux.Socket.State> {
                         break;
                     case SocketType.OFFER:
                         state.Offer = action.payload;
+                        break;
+                    case SocketType.ITEM_OFFER:
+                        state.ItemOffer = action.payload;
                         break;
                     case SocketType.MINT:
                         state.Mint = action.payload;

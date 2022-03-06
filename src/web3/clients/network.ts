@@ -29,12 +29,6 @@ export class Network extends Connector {
     ) {
         super(ConnectorEnum.Infura, actions, [peer]);
 
-        // if (connectEagerly && typeof window === 'undefined') {
-        //     throw new Error(
-        //         'connectEagerly = true is invalid for SSR, instead use the activate method in a useEffect',
-        //     );
-        // }
-
         this.urlMap = Object.keys(urlMap).reduce<{ [chainId: number]: url[] }>(
             (accumulator, chainId) => {
                 const urls = urlMap[Number(chainId)];

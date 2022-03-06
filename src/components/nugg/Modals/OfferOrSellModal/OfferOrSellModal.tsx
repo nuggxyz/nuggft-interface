@@ -4,8 +4,6 @@ import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { isUndefinedOrNullOrObjectEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import { fromEth, toEth } from '@src/lib/conversion';
-import SwapState from '@src/state/swap';
-import TokenState from '@src/state/token';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -18,16 +16,19 @@ import FontSize from '@src/lib/fontSize';
 import useHandleError from '@src/hooks/useHandleError';
 import web3 from '@src/web3';
 import state from '@src/state';
+import { TokenId } from '@src/client/router';
+import WalletState from '@src/state/wallet';
 
 import styles from './OfferOrSellModal.styles';
 
-type Props = {};
+type Props = {
+    tokenId: TokenId;
+};
 
-const OfferOrSellModal: FunctionComponent<Props> = () => {
+const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
     const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
-    const tokenId = SwapState.select.tokenId();
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
@@ -69,6 +70,32 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         }
     }, [type, targetId]);
 
+    // const sell = React.useCallback(async () => {
+    //     const nuggft = new NuggftV1Helper(chainId, provider);
+    //     await nuggft.contract.estimateGas['sell(uint160,uint96)'](stableId, toEth(amount))
+    //         .then((x) => {
+    //             console.log({ x });
+    //         })
+    //         .catch((err) => {
+    //             console.log({ err });
+    //         });
+    // }, []);
+
+    // const offer = React.useCallback(async () => {
+    //     const nuggft = new NuggftV1Helper(chainId, provider);
+    //     await nuggft.contract.estimateGas['offer(uint160)'](tokenId, {
+    //         value: BigNumber.from(
+    //             toEth(amount === '' ? '0' : amount).sub(check.senderCurrentOffer),
+    //         ),
+    //     })
+    //         .then((H) => {
+    //             console.log({ H });
+    //         })
+    //         .catch((G) => {
+    //             // G.error.error.data;
+    //             console.log(G.error.error.data);
+    //         });
+    // }, [chainId, tokenId, check, amount]);
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
@@ -152,14 +179,14 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
                     }`}
                     onClick={() =>
                         stableType === 'Offer'
-                            ? SwapState.dispatch.placeOffer({
+                            ? WalletState.dispatch.placeOffer({
                                   tokenId: tokenId,
                                   amount: fromEth(toEth(amount).sub(check.senderCurrentOffer)),
                                   chainId,
                                   provider,
                                   address,
                               })
-                            : TokenState.dispatch.initSale({
+                            : WalletState.dispatch.initSale({
                                   tokenId: stableId,
                                   floor: toEth(amount),
                                   chainId,

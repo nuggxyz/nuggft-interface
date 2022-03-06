@@ -5,7 +5,6 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
-import ProtocolState from '@src/state/protocol';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
@@ -18,11 +17,12 @@ import AppState from '@src/state/app';
 import TransactionState from '@src/state/transaction';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
+import client from '@src/client';
 type Props = { isActive?: boolean };
 
 const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
     const address = web3.hook.usePriorityAccount();
-    const epoch = ProtocolState.select.epoch();
+    const epoch = client.live.epoch();
     const [loanedNuggs, setLoanedNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
     const txnToggle = TransactionState.select.toggleCompletedTxn();

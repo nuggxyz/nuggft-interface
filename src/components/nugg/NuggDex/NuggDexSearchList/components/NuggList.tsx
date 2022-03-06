@@ -15,10 +15,10 @@ import { batch } from 'react-redux';
 import { isUndefinedOrNullOrNotFunction, ucFirst } from '@src/lib';
 import TransitionText from '@src/components/general/Texts/TransitionText/TransitionText';
 import NuggDexState from '@src/state/nuggdex';
-import TokenState from '@src/state/token';
 import AppState from '@src/state/app';
 import usePrevious from '@src/hooks/usePrevious';
 import InfiniteList from '@src/components/general/List/InfiniteList';
+import client from '@src/client';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -54,15 +54,11 @@ const NuggList: FunctionComponent<Props> = ({
 
     const [loading, setLoading] = useState(false);
 
-    // useEffect(() => {
-    //     if (viewing === 'home' && !isUndefinedOrNullOrStringEmpty(filters.searchValue)) {
-    //         NuggDexState.dispatch.setViewing('all nuggs');
-    //     }
-    // }, [filters.searchValue]);
+    const router = client.router.useRouter();
 
-    const onClick = useCallback((item) => {
+    const onClick = useCallback((item: typeof values[0]) => {
         batch(() => {
-            TokenState.dispatch.setNugg(item);
+            router.routeTo(item?.id, true);
             NuggDexState.dispatch.addToRecents(item);
         });
     }, []);

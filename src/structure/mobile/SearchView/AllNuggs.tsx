@@ -4,11 +4,11 @@ import NuggList from '@src/components/nugg/NuggDex/NuggDexSearchList/components/
 import constants from '@src/lib/constants';
 import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
 import web3 from '@src/web3';
-import ProtocolState from '@src/state/protocol';
+import client from '@src/client';
 type Props = {};
 
 const AllNuggs: FunctionComponent<Props> = () => {
-    const epoch = ProtocolState.select.epoch();
+    const epoch = client.live.epoch();
     const [allNuggs, setAllNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
     const [loading, setLoading] = useState(false);
 

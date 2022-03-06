@@ -8,8 +8,7 @@ import useSetState from '@src/hooks/useSetState';
 import Colors from '@src/lib/colors';
 import Layout from '@src/lib/layout';
 import AppState from '@src/state/app';
-import ProtocolState from '@src/state/protocol';
-import TokenState from '@src/state/token';
+import client from '@src/client';
 
 import styles from './BottomBar.styles';
 
@@ -22,12 +21,12 @@ const INDEX = {
 type Props = {};
 
 const BottomBar: FunctionComponent<Props> = () => {
-    const nuggSelected = TokenState.select.tokenId();
+    const { lastView } = client.router.useRouter();
     const mobileView = AppState.select.mobileView();
     const onClick = useCallback((view: NL.Redux.App.MobileViews) => {
         AppState.dispatch.changeMobileView(view);
     }, []);
-    const epoch = ProtocolState.select.epoch();
+    const epoch = client.live.epoch();
     const ref = useRef<HTMLDivElement>();
 
     const width = useSetState(
@@ -65,7 +64,8 @@ const BottomBar: FunctionComponent<Props> = () => {
                         justifyContent: 'center',
                         height: '100%',
                         alignItems: 'center',
-                    }}>
+                    }}
+                >
                     <animated.div
                         //@ts-ignore
                         style={selectionIndicatorSpring}
@@ -73,8 +73,8 @@ const BottomBar: FunctionComponent<Props> = () => {
                 </div>
                 <Button
                     onClick={() =>
-                        nuggSelected && mobileView === 'Search'
-                            ? TokenState.dispatch.setNugg(undefined)
+                        lastView?.tokenId && mobileView === 'Search'
+                            ? client.actions.toggleView()
                             : onClick('Search')
                     }
                     hoverStyle={{

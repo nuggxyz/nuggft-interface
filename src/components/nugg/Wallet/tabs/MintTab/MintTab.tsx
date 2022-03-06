@@ -1,18 +1,9 @@
-import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
-import { batch } from 'react-redux';
+import React, { FunctionComponent } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
 import { IoSearch } from 'react-icons/io5';
 
-import { EthInt } from '@src/classes/Fraction';
-import {
-    isUndefinedOrNullOrStringEmpty,
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrObjectEmpty,
-} from '@src/lib';
-import constants from '@src/lib/constants';
-import ProtocolState from '@src/state/protocol';
+import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 import WalletState from '@src/state/wallet';
-import myNuggsQuery from '@src/state/wallet/queries/myNuggsQuery';
 import Button from '@src/components/general/Buttons/Button/Button';
 import { ListRenderItemProps } from '@src/components/general/List/List';
 import NumberStatistic from '@src/components/nugg/Statistics/NumberStatistic';
@@ -30,8 +21,6 @@ import unclaimedOffersQuery from '@src/state/wallet/queries/unclaimedOffersQuery
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import InfiniteList from '@src/components/general/List/InfiniteList';
 import FontSize from '@src/lib/fontSize';
-import TokenState from '@src/state/token';
-import NuggDexState from '@src/state/nuggdex';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import Layout from '@src/lib/layout';
 import web3 from '@src/web3';
@@ -42,8 +31,10 @@ type Props = {};
 const MintTab: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
     const userShares = WalletState.select.userShares();
-    const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
-    const epoch = ProtocolState.select.epoch();
+
+    const stake = client.live.stake();
+    const epoch = client.live.epoch();
+
     const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
 
@@ -81,7 +72,7 @@ const MintTab: FunctionComponent<Props> = () => {
                             width: screenType === 'phone' ? '48%' : '100%',
                         }}
                         label="Balance"
-                        value={new EthInt(`${+valuePerShare * userShares}`)}
+                        value={stake ? stake.eps.multiply(userShares).decimal.toNumber() : 0}
                         image="eth"
                     />
                     {screenType === 'phone' && (
@@ -183,7 +174,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Nug
                             />
 
                             <Text textStyle={{ color: Colors.nuggRedText }}>
-                                Nugg #{item.id || ''}
+                                Nugg {item.id || ''}
                             </Text>
                         </div>
                         {!isUndefinedOrNullOrObjectEmpty(item.activeLoan) ||
@@ -209,12 +200,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Nug
                         <Button
                             key={JSON.stringify(item)}
                             onClick={() => {
-                                batch(() => {
-                                    TokenState.dispatch.setNugg(item);
-                                    AppState.dispatch.changeView('Search');
-                                    NuggDexState.dispatch.addToRecents(item);
-                                });
-                                AppState.silentlySetRoute(`#/nugg/${item.id}`);
+                                client.actions.routeTo(item.id, true);
                             }}
                             buttonStyle={{
                                 borderRadius: Layout.borderRadius.large,

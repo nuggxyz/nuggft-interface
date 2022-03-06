@@ -6,7 +6,6 @@ import {
     isUndefinedOrNullOrStringEmpty,
     parseTokenId,
 } from '@src/lib';
-import ProtocolState from '@src/state/protocol';
 import WalletState from '@src/state/wallet';
 import unclaimedOffersQuery from '@src/state/wallet/queries/unclaimedOffersQuery';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -24,11 +23,12 @@ import Layout from '@src/lib/layout';
 import SocketState from '@src/state/socket';
 import web3 from '@src/web3';
 import constants from '@src/lib/constants';
+import client from '@src/client';
 type Props = { isActive?: boolean };
 
 const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     const address = web3.hook.usePriorityAccount();
-    const epoch = ProtocolState.select.epoch();
+    const epoch = client.live.epoch();
     const provider = web3.hook.usePriorityProvider();
 
     const [unclaimedOffers, setUnclaimedOffers] = useState<NL.GraphQL.Fragments.Offer.Thumbnail[]>(
@@ -40,8 +40,8 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     const getUnclaimedOffers = useCallback(async () => {
         setLoadingOffers(true);
         if (!isUndefinedOrNullOrStringEmpty(address)) {
-            const offersRes = await unclaimedOffersQuery(chainId, address, epoch.id);
-            console.log(offersRes);
+            const offersRes = await unclaimedOffersQuery(chainId, address, epoch.id.toString());
+            console.log({ offersRes });
             setUnclaimedOffers(offersRes);
         } else {
             setUnclaimedOffers([]);
@@ -55,6 +55,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
             getUnclaimedOffers();
         }
     }, [address]);
+
     const socket = SocketState.select.Claim();
 
     // useEffect(() => {

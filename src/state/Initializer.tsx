@@ -23,7 +23,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
         void web3.config.connector_instances.walletconnect.connector.connectEagerly();
         void web3.config.connector_instances.walletlink.connector.connectEagerly();
 
-        void web3.config.connector_instances.infura.connector.activate();
+        void web3.config.connector_instances.infura.connector.activate(4);
 
         void client.actions.startActivation();
     }, []);

@@ -6,9 +6,9 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
 import Colors from '@src/lib/colors';
 import Layout from '@src/lib/layout';
-import TokenState from '@src/state/token';
 import FontSize from '@src/lib/fontSize';
 import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
+import client from '@src/client';
 
 import AllNuggs from './AllNuggs';
 import Sales from './Sales';
@@ -18,7 +18,7 @@ import styles from './SearchView.styles';
 type Props = {};
 
 const SearchView: FunctionComponent<Props> = () => {
-    const selected = TokenState.select.tokenId();
+    const { isViewOpen } = client.router.useRouter();
 
     const happytabs: HappyTabberItem[] = useMemo(
         () => [
@@ -39,7 +39,7 @@ const SearchView: FunctionComponent<Props> = () => {
     );
 
     const { opacity } = useSpring({
-        opacity: selected ? 1 : 0,
+        opacity: isViewOpen ? 1 : 0,
         config: config.default,
     });
 
@@ -51,7 +51,7 @@ const SearchView: FunctionComponent<Props> = () => {
                     position: 'absolute',
                     width: '100%',
                     height: '100%',
-                    pointerEvents: !selected ? 'auto' : 'none',
+                    pointerEvents: !isViewOpen ? 'auto' : 'none',
                     justifyContent: 'center',
                     display: 'flex',
                     background: Colors.gradient2,
@@ -67,7 +67,7 @@ const SearchView: FunctionComponent<Props> = () => {
                 style={{
                     opacity,
                     position: 'fixed',
-                    pointerEvents: selected ? 'auto' : 'none',
+                    pointerEvents: isViewOpen ? 'auto' : 'none',
                     width: '100%',
                     height: '100%',
                     display: 'flex',
@@ -81,7 +81,7 @@ const SearchView: FunctionComponent<Props> = () => {
                                 <IoChevronBackOutline color={Colors.nuggBlueText} size="25" />
                             }
                             // label="Back"
-                            onClick={() => TokenState.dispatch.setNugg(undefined)}
+                            onClick={() => client.actions.toggleView()}
                             buttonStyle={{
                                 background: Colors.transparentWhite,
                                 borderRadius: Layout.borderRadius.large,

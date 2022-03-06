@@ -1,15 +1,11 @@
 import { config as springConfig, useSpring } from '@react-spring/core';
 import { animated } from '@react-spring/web';
-import React, { CSSProperties, FunctionComponent, useLayoutEffect, useMemo, useState } from 'react';
+import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
-import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
-import {
-    isUndefinedOrNullOrStringEmpty,
-    isUndefinedOrNullOrStringEmptyOrZeroOrStringZero,
-} from '@src/lib';
 import AppState from '@src/state/app';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
+import client from '@src/client';
 
 import DangerouslySetNugg from './DangerouslySetNugg';
 type Props = {
@@ -38,25 +34,8 @@ const TokenViewer: FunctionComponent<Props> = ({
     const { width } = useMemo(() => {
         return { width: window.innerWidth };
     }, []);
-    const [src, setSrc] = useState<Base64EncodedSvg>();
 
-    useLayoutEffect(() => {
-        let unmounted = false;
-        const getDotNuggSrc = async () => {
-            if (!isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(tokenId)) {
-                const dotNuggData = !isUndefinedOrNullOrStringEmpty(data)
-                    ? data
-                    : await NuggftV1Helper.optimizedDotNugg(tokenId);
-                if (!isUndefinedOrNullOrStringEmpty(dotNuggData) && !unmounted) {
-                    setSrc(dotNuggData);
-                }
-            }
-        };
-        getDotNuggSrc();
-        return () => {
-            unmounted = true;
-        };
-    }, [tokenId, data]);
+    const src = client.hook.useDotnugg(tokenId);
 
     const animatedStyle = useSpring({
         to: {

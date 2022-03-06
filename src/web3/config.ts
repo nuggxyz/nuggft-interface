@@ -6,7 +6,12 @@ import { buildApolloSplitLink } from '@src/graphql/client';
 
 import { Connector } from './core/types';
 import { Chain, Connector as ConnectorEnum } from './core/interfaces';
-import { getPriorityConnector, initializeConnector, ResWithStore } from './core/core';
+import {
+    getNetworkConnector,
+    getPriorityConnector,
+    initializeConnector,
+    ResWithStore,
+} from './core/core';
 import { WalletLink } from './clients/walletlink';
 import { Network } from './clients/network';
 import { MetaMask } from './clients/metamask';
@@ -18,7 +23,7 @@ export function supportedChainIds() {
     return Object.values<number>(Chain);
 }
 
-export const DEFAULT_CHAIN = 5;
+export const DEFAULT_CHAIN = 4;
 
 export const NETWORK_HEALTH_CHECK_MS = 15 * 1000;
 export const DEFAULT_MS_BEFORE_WARNING = 90 * 1000;
@@ -230,6 +235,8 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
 };
 
 export const priority = getPriorityConnector(connector_instances);
+
+export const network = getNetworkConnector(connector_instances);
 
 // export const connectors: {
 //     [key in Connector]: NL.Web3.WalletInfo & ResWithStore<Connector>;

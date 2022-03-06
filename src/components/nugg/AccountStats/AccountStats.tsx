@@ -3,10 +3,10 @@ import { animated, config, useSpring } from '@react-spring/web';
 
 import { EthInt } from '@src/classes/Fraction';
 import AppState from '@src/state/app';
-import ProtocolState from '@src/state/protocol';
 import WalletState from '@src/state/wallet';
 import NumberStatistic from '@src/components/nugg/Statistics/NumberStatistic';
 import TextStatistic from '@src/components/nugg/Statistics/TextStatistic';
+import client from '@src/client';
 
 import styles from './AccountStats.styles';
 
@@ -14,7 +14,7 @@ type Props = {};
 
 const AccountStats: FunctionComponent<Props> = () => {
     const userShares = WalletState.select.userShares();
-    const valuePerShare = ProtocolState.select.nuggftStakedEthPerShare();
+    const stake = client.live.stake();
 
     const walletVisible = AppState.select.walletVisible();
 
@@ -31,7 +31,7 @@ const AccountStats: FunctionComponent<Props> = () => {
             <TextStatistic label="Your shares" value={'' + userShares} transparent />
             <NumberStatistic
                 label="Your worth"
-                value={new EthInt(`${+valuePerShare * userShares}`)}
+                value={new EthInt(`${stake ? +stake.eps * userShares : 0}`)}
                 transparent
                 image="eth"
             />

@@ -10,7 +10,6 @@ import React, {
 import { animated, useSpring } from '@react-spring/web';
 
 import NuggDexState from '@src/state/nuggdex';
-import ProtocolState from '@src/state/protocol';
 import constants from '@src/lib/constants';
 import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
 import web3 from '@src/web3';
@@ -22,7 +21,7 @@ import styles from './NuggDexSearchList.styles';
 
 type Props = {};
 const NuggDexSearchList: FunctionComponent<Props> = () => {
-    const epoch = ProtocolState.select.epoch();
+    const epoch = client.live.epoch();
     const filters = NuggDexState.select.searchFilters();
     const [sortAsc, setSortAsc] = useState({
         'recently viewed': false,

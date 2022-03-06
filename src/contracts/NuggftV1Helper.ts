@@ -44,26 +44,36 @@ export default class NuggftV1Helper extends ContractHelper {
     public static async optimizedDotNugg(tokenId: string) {
         invariant(tokenId, 'OP:TOKEN:URI');
         let nuggs = loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
+
+        const isItem = tokenId.includes('item-');
+
         if (nuggs[tokenId]) {
             return nuggs[tokenId];
         } else {
             try {
-                let res = await executeQuery3<{ nugg: { dotnuggRawCache: Base64EncodedSvg } }>(
+                let res = await executeQuery3<{
+                    [key in 'nugg' | 'item']?: { dotnuggRawCache: Base64EncodedSvg };
+                }>(
                     gql`
                         query OptimizedDotNugg($tokenId: ID!) {
-                            nugg(id: $tokenId) {
+                            ${isItem ? 'item' : 'nugg'}(id: $tokenId) {
                                 dotnuggRawCache
                             }
                         }
                     `,
                     {
-                        tokenId,
+                        tokenId: tokenId.replace('item-', ''),
                     },
                 );
                 if (!res) throw new Error('token does not exist');
                 else {
-                    NuggftV1Helper.storeNugg(tokenId, res.nugg.dotnuggRawCache);
-                    return res.nugg.dotnuggRawCache;
+                    if (!isItem) {
+                        NuggftV1Helper.storeNugg(tokenId, res.nugg.dotnuggRawCache);
+                        return res.nugg.dotnuggRawCache;
+                    } else {
+                        NuggftV1Helper.storeNugg(tokenId, res.item.dotnuggRawCache);
+                        return res.item.dotnuggRawCache;
+                    }
                 }
             } catch (err) {
                 console.log({ tokenId, err });

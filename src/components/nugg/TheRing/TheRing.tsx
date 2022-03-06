@@ -5,17 +5,16 @@ import {
     isUndefinedOrNull,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
+    parseTokenIdSmart,
 } from '@src/lib';
 import Colors from '@src/lib/colors';
 import constants from '@src/lib/constants';
 import AppState from '@src/state/app';
-import ProtocolState from '@src/state/protocol';
-import SwapState from '@src/state/swap';
 import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import state from '@src/state';
+import client from '@src/client';
 
 import styles from './TheRing.styles';
 
@@ -33,58 +32,49 @@ const TheRing: FunctionComponent<Props> = ({
     tokenStyle,
 }) => {
     const screenType = AppState.select.screenType();
-    const blockListener = state.socket.select.Block();
-    const epoch = ProtocolState.select.epoch();
-    const endingSwapEpoch = SwapState.select.epoch();
-    const startingSwapEpoch = SwapState.select.startingEpoch();
-    const tokenId = SwapState.select.tokenId();
+    const blocknum = client.live.blocknum();
+    const epoch = client.live.epoch();
+
+    const { lastSwap } = client.router.useRouter();
+
+    const token = client.hook.useLiveToken(lastSwap?.tokenId);
 
     const status = useSetState(() => {
-        return isUndefinedOrNull(endingSwapEpoch)
+        console.log({ token });
+        return isUndefinedOrNull(token?.activeSwap?.epoch)
             ? 'waiting'
             : epoch &&
-              +endingSwapEpoch.endblock >= +epoch.endblock &&
-              blockListener.block !== +endingSwapEpoch.endblock
+              +token.activeSwap.epoch.endblock >= +epoch.endblock &&
+              blocknum !== +token.activeSwap.epoch.endblock
             ? 'ongoing'
             : 'over';
-    }, [epoch, endingSwapEpoch, blockListener]);
+    }, [epoch, token?.activeSwap?.epoch, blocknum]);
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
-        if (
-            !isUndefinedOrNullOrObjectEmpty(endingSwapEpoch) &&
-            !isUndefinedOrNullOrObjectEmpty(startingSwapEpoch)
-        ) {
-            remaining = +endingSwapEpoch.endblock - +startingSwapEpoch.startblock;
+        if (!isUndefinedOrNullOrObjectEmpty(token?.activeSwap?.epoch)) {
+            remaining = +token.activeSwap.epoch.endblock - +token.activeSwap.epoch.startblock;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
         return remaining;
-    }, [endingSwapEpoch, startingSwapEpoch]);
+    }, [token?.activeSwap?.epoch]);
 
     const blocksRemaining = useMemo(() => {
         let remaining = 0;
 
         if (
-            !isUndefinedOrNullOrObjectEmpty(endingSwapEpoch) &&
-            !isUndefinedOrNullOrNumberZero(blockListener.block)
+            !isUndefinedOrNullOrObjectEmpty(token?.activeSwap?.epoch) &&
+            !isUndefinedOrNullOrNumberZero(blocknum)
         ) {
-            remaining = +endingSwapEpoch.endblock - +blockListener.block;
-            if (remaining <= 0) {
-                remaining = 0;
-                if (+blockListener.block !== 0 && status === 'over') {
-                    ProtocolState.dispatch.setEpochIsOver(true);
-                } else {
-                    ProtocolState.dispatch.setEpochIsOver(false);
-                }
-            }
+            remaining = +token.activeSwap.epoch.endblock - +blocknum;
         }
 
         return remaining;
-    }, [blockListener, endingSwapEpoch, status]);
+    }, [blocknum, token?.activeSwap?.epoch, status]);
 
-    return (
+    return lastSwap ? (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
             <CircleTimer
                 duration={blockDuration}
@@ -101,11 +91,13 @@ const TheRing: FunctionComponent<Props> = ({
                 }}
             >
                 <AnimatedCard>
-                    <TokenViewer tokenId={(tokenId && tokenId) || ''} style={tokenStyle} showcase />
+                    <TokenViewer tokenId={lastSwap.tokenId} style={tokenStyle} showcase />
                 </AnimatedCard>
-                {screenType !== 'phone' && <Text>Nugg #{tokenId && tokenId}</Text>}
+                {screenType !== 'phone' && <Text>{parseTokenIdSmart(lastSwap.tokenId)}</Text>}
             </CircleTimer>
         </div>
+    ) : (
+        <></>
     );
 };
 

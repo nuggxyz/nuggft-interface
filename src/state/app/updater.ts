@@ -22,8 +22,8 @@ export default () => {
         };
     }, []);
 
-    useEffect(() => {
-        AppState.onRouteUpdate(chainId, window.location.hash);
-    }, []);
+    // useEffect(() => {
+    //     AppState.onRouteUpdate(chainId, window.location.hash);
+    // }, []);
     return null;
 };

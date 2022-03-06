@@ -3,6 +3,7 @@ import { animated, config, useSpring } from '@react-spring/web';
 
 import Colors from '@src/lib/colors';
 import state from '@src/state';
+import client from '@src/client';
 
 import BottomBar from './BottomBar/BottomBar';
 import styles from './index.styles';
@@ -24,12 +25,12 @@ const sty = {
 
 const Mobile: FunctionComponent<Props> = () => {
     const currentView = state.app.select.mobileView();
-    const nugg = state.token.select.tokenId();
+    const { lastView } = client.router.useRouter();
     useEffect(() => {
-        if (nugg && currentView !== 'Search') {
+        if (lastView?.tokenId && currentView !== 'Search') {
             state.app.dispatch.changeMobileView('Search');
         }
-    }, [nugg]);
+    }, [lastView?.tokenId]);
 
     const wallet = useSpring({
         opacity: currentView === 'Wallet' ? 1 : 0,

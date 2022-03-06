@@ -139,27 +139,27 @@ const viewChange: Middleware<{}, any, Dispatch<any>> =
     (next: any) =>
     async (action: PayloadAction<NL.Redux.App.Views>) => {
         const go = next(action);
-        if (AppState.isOwnFulfilledAction(action, 'changeView')) {
-            if (action.payload === 'Search') {
-                const currentToken = getState().token.tokenId;
-                AppState.silentlySetRoute(
-                    `#/nugg${
-                        !isUndefinedOrNullOrStringEmpty(currentToken) ? `/${currentToken}` : ''
-                    }`,
-                );
-            } else {
-                const currentSwap = getState().swap.id;
-                const currentEpoch = !isUndefinedOrNullOrObjectEmpty(getState().protocol.epoch)
-                    ? getState().protocol.epoch.id
-                    : '';
-                AppState.silentlySetRoute(
-                    (currentEpoch && currentSwap && currentSwap.includes(currentEpoch)) ||
-                        !currentSwap
-                        ? '/'
-                        : `#/swap/${currentSwap}`,
-                );
-            }
-        }
+        // if (AppState.isOwnFulfilledAction(action, 'changeView')) {
+        //     if (action.payload === 'Search') {
+        //         const currentToken = getState().token.tokenId;
+        //         AppState.silentlySetRoute(
+        //             `#/nugg${
+        //                 !isUndefinedOrNullOrStringEmpty(currentToken) ? `/${currentToken}` : ''
+        //             }`,
+        //         );
+        //     } else {
+        //         const currentSwap = getState().swap.id;
+        //         const currentEpoch = !isUndefinedOrNullOrObjectEmpty(getState().protocol.epoch)
+        //             ? getState().protocol.epoch.id
+        //             : '';
+        //         AppState.silentlySetRoute(
+        //             (currentEpoch && currentSwap && currentSwap.includes(currentEpoch)) ||
+        //                 !currentSwap
+        //                 ? '/'
+        //                 : `#/swap/${currentSwap}`,
+        //         );
+        //     }
+        // }
 
         return go;
     };

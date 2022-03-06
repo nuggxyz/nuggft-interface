@@ -185,6 +185,106 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
  * @param initializedConnectors - Two or more [connector, hooks] arrays, as returned from initializeConnector.
  * @returns hooks - A variety of convenience hooks that wrap the hooks returned from initializeConnector.
  */
+export function getNetworkConnector(initializedConnectors: {
+    [key in ConnectorEnum]?: ResWithStore<Connector>;
+}) {
+    const {
+        useSelectedChainId,
+        useSelectedAccounts,
+        useSelectedIsActivating,
+        useSelectedError,
+        useSelectedAccount,
+        useSelectedIsActive,
+        useSelectedProvider,
+        useSelectedENSName,
+        useSelectedWeb3React,
+        useSelectedAnyENSName,
+        useSelectedBalance,
+        useSelectedPeer,
+    } = getSelectedConnector(...Object.values(initializedConnectors));
+
+    function useNetworkConnector() {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const values = Object.values(initializedConnectors).map(
+            (x, i) => x.hooks.usePeer()?.fallback,
+        );
+        const index = values.findIndex((x) => x);
+
+        return Object.values(initializedConnectors)[index === -1 ? 0 : index].connector;
+    }
+
+    function useNetworkChainId() {
+        return useSelectedChainId(useNetworkConnector());
+    }
+
+    function useNetworkAccounts() {
+        return useSelectedAccounts(useNetworkConnector());
+    }
+
+    function useNetworkIsActivating() {
+        return useSelectedIsActivating(useNetworkConnector());
+    }
+
+    function useNetworkError() {
+        return useSelectedError(useNetworkConnector());
+    }
+
+    function useNetworkAccount() {
+        return useSelectedAccount(useNetworkConnector());
+    }
+
+    function useNetworkIsActive() {
+        return useSelectedIsActive(useNetworkConnector());
+    }
+
+    function useNetworkProvider(network?: Networkish) {
+        return useSelectedProvider(useNetworkConnector(), network);
+    }
+
+    function useNetworkENSName(provider: Web3Provider | undefined) {
+        return useSelectedENSName(useNetworkConnector(), provider);
+    }
+
+    function useNetworkWeb3React(provider: Web3Provider | undefined) {
+        return useSelectedWeb3React(useNetworkConnector(), provider);
+    }
+
+    function useNetworkAnyENSName(provider: Web3Provider | undefined, account: string) {
+        return useSelectedAnyENSName(useNetworkConnector(), provider, account);
+    }
+
+    function useNetworkBalance(provider: Web3Provider | undefined) {
+        return useSelectedBalance(useNetworkConnector(), provider);
+    }
+
+    function useNetworkPeer() {
+        return useSelectedPeer(useNetworkConnector());
+    }
+
+    return {
+        useNetworkConnector,
+        useNetworkChainId,
+        useNetworkAccounts,
+        useNetworkIsActivating,
+        useNetworkError,
+        useNetworkAccount,
+        useNetworkIsActive,
+        useNetworkProvider,
+        useNetworkENSName,
+        useNetworkWeb3React,
+        useNetworkAnyENSName,
+        useNetworkBalance,
+        useNetworkPeer,
+    };
+}
+
+/**
+ * Creates a variety of convenience `hooks` that return data associated with the first of the `initializedConnectors`
+ * that is active.
+ *
+ * @param initializedConnectors - Two or more [connector, hooks] arrays, as returned from initializeConnector.
+ * @returns hooks - A variety of convenience hooks that wrap the hooks returned from initializeConnector.
+ */
 export function getPriorityConnector(initializedConnectors: {
     [key in ConnectorEnum]?: ResWithStore<Connector>;
 }) {

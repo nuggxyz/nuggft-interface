@@ -156,24 +156,24 @@ class SwapState extends NLState<NL.Redux.Swap.State> {
         },
         extraReducers: (builder) => {
             builder
-                .addCase(thactions.initSwap.fulfilled, (state, action) => {
-                    const swap = action.payload.data.swap;
-                    // state.nugg = swap.nugg;
-                    // state.owner = swap.owner;
-                    // state.offers = swap.offers;
-                    state.id = swap.id;
-                    state.tokenId = swap.nugg.id;
-                    // state.leader = swap.leader.id;
-                    // state.eth = swap.eth;
-                    // state.ethUsd = swap.ethUsd;
-                    state.offers = swap.offers.map((x) => {
-                        return { user: x.user.id, eth: x.eth };
-                    });
-                    state.lastUpdated = Date.now();
-                    state.status = action.payload.data.status;
-                    state.epoch = swap.epoch;
-                    state.startingEpoch = swap.startingEpoch;
-                })
+                // .addCase(thactions.initSwap.fulfilled, (state, action) => {
+                //     const swap = action.payload.data.swap;
+                //     // state.nugg = swap.nugg;
+                //     // state.owner = swap.owner;
+                //     // state.offers = swap.offers;
+                //     state.id = swap.id;
+                //     state.tokenId = swap.nugg.id;
+                //     // state.leader = swap.leader.id;
+                //     // state.eth = swap.eth;
+                //     // state.ethUsd = swap.ethUsd;
+                //     state.offers = swap.offers.map((x) => {
+                //         return { user: x.user.id, eth: x.eth };
+                //     });
+                //     state.lastUpdated = Date.now();
+                //     state.status = action.payload.data.status;
+                //     state.epoch = swap.epoch;
+                //     state.startingEpoch = swap.startingEpoch;
+                // })
 
                 .addMatcher(NLState.isPendingAction('swap/'), (state) => {
                     state.loading = true;

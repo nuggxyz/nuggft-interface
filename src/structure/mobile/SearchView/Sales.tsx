@@ -4,13 +4,13 @@ import NuggList from '@src/components/nugg/NuggDex/NuggDexSearchList/components/
 import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import constants from '@src/lib/constants';
 import activeNuggsQuery from '@src/state/nuggdex/queries/activeNuggsQuery';
-import ProtocolState from '@src/state/protocol';
 import web3 from '@src/web3';
+import client from '@src/client';
 
 type Props = {};
 
 const Sales: FunctionComponent<Props> = () => {
-    const epoch = ProtocolState.select.epoch();
+    const epoch = client.live.epoch();
     const [activeNuggs, setActiveNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
 
     const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ const Sales: FunctionComponent<Props> = () => {
                 filters ? filters.sort.by : 'id',
                 filters && filters.sort.asc ? 'asc' : 'desc',
                 filters ? filters.searchValue : '',
-                epoch.id,
+                epoch?.id.toString(),
                 constants.NUGGDEX_SEARCH_LIST_CHUNK,
                 startFrom,
             );

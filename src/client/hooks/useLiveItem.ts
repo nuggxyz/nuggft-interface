@@ -1,31 +1,19 @@
 import { gql } from '@apollo/client';
-import React, { ReactSVG, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import constants from '@src/lib/constants';
 
 import client from '..';
 
-export type LiveItem = {
-    activeSwap: {
-        id: string;
-        epoch: {
-            id: number;
-            startBlock: number;
-            endBlock: number;
-            status: 'OVER' | 'ACTIVE' | 'PENDING';
-        };
-        eth: string;
-        leader: {
-            id: string;
-        };
-        owner: {
-            id: string;
-        };
-        endingEpoch: number;
-        num: string;
-    };
-    svg: ReactSVG;
-};
+import { LiveSwap, swapgql } from './useLiveNugg';
+
+export interface LiveItem {
+    type: 'item';
+    activeSwap: LiveSwap;
+    // svg: ReactSVG;
+    swaps: LiveSwap[];
+    count: number;
+}
 
 export const useLiveItem = (tokenId: string) => {
     const [item, setItem] = React.useState<LiveItem>(undefined);
@@ -38,50 +26,20 @@ export const useLiveItem = (tokenId: string) => {
                 .subscribe<{
                     item: {
                         id: string;
-                        dotnuggRawCache: string;
-                        activeSwap: {
-                            id: string;
-                            epoch: {
-                                id: string;
-                                startblock: string;
-                                endblock: string;
-                                status: 'OVER' | 'ACTIVE' | 'PENDING';
-                            };
-                            eth: string;
-                            leader: {
-                                id: string;
-                            };
-                            owner: {
-                                id: string;
-                            };
-                            endingEpoch: number;
-                            num: string;
-                        };
+                        count: number;
+                        // dotnuggRawCache: string;
+                        activeSwap: LiveSwap;
+                        swaps: LiveSwap[];
                     };
                 }>({
                     query: gql`
                         subscription useLiveItem($tokenId: ID!) {
                             item(id: $tokenId) {
                                 id
-                                dotnuggRawCache
-                                activeSwap {
-                                    id
-                                    epoch {
-                                        id
-                                        startblock
-                                        endblock
-                                        status
-                                    }
-                                    eth
-                                    leader {
-                                        id
-                                    }
-                                    owner {
-                                        id
-                                    }
-                                    endingEpoch
-                                    num
-                                }
+                                count
+                                # dotnuggRawCache
+                                activeSwap ${swapgql('item')}
+                                swaps ${swapgql('item')}
                             }
                         }
                     `,
@@ -91,12 +49,34 @@ export const useLiveItem = (tokenId: string) => {
                     console.log({ x });
                     if (x.data.item) {
                         setItem({
+                            type: 'item',
+                            count: x.data.item.count,
+                            swaps: x.data.item.swaps.map((y) => {
+                                return {
+                                    id: y?.id,
+                                    epoch: {
+                                        id: +y?.epoch?.id,
+                                        startblock: +y?.epoch?.startblock,
+                                        endblock: +y?.epoch?.endblock,
+                                        status: y?.epoch?.status,
+                                    },
+                                    eth: y?.eth,
+                                    leader: {
+                                        id: y?.leader?.id,
+                                    },
+                                    owner: {
+                                        id: y?.owner?.id,
+                                    },
+                                    endingEpoch: y?.endingEpoch,
+                                    num: y?.num,
+                                };
+                            }),
                             activeSwap: {
                                 id: x.data.item.activeSwap?.id,
                                 epoch: {
                                     id: +x.data.item.activeSwap?.epoch?.id,
-                                    startBlock: +x.data.item.activeSwap?.epoch?.startblock,
-                                    endBlock: +x.data.item.activeSwap?.epoch?.endblock,
+                                    startblock: +x.data.item.activeSwap?.epoch?.startblock,
+                                    endblock: +x.data.item.activeSwap?.epoch?.endblock,
                                     status: x.data.item.activeSwap?.epoch?.status,
                                 },
                                 eth: x.data.item.activeSwap?.eth,
@@ -109,7 +89,7 @@ export const useLiveItem = (tokenId: string) => {
                                 endingEpoch: x.data.item.activeSwap?.endingEpoch,
                                 num: x.data.item.activeSwap?.num,
                             },
-                            svg: x.data.item.dotnuggRawCache as any,
+                            // svg: x.data.item.dotnuggRawCache as any,
                         });
                     }
                 });

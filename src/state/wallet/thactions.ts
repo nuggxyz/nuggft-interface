@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import gql from 'graphql-tag';
 import { Web3Provider } from '@ethersproject/providers';
+import { BigNumber, BigNumberish } from 'ethers';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import {
@@ -17,6 +18,102 @@ import { executeQuery } from '@src/graphql/helpers';
 import { Chain } from '@src/web3/core/interfaces';
 
 import userSharesQuery from './queries/userSharesQuery';
+
+const placeOffer = createAsyncThunk<
+    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
+    {
+        amount: string;
+        tokenId: string;
+        provider: Web3Provider;
+        chainId: Chain;
+        address: string;
+    },
+    { rejectValue: NL.Redux.Swap.Error }
+>('wallet/placeOffer', async ({ amount, tokenId, provider, chainId, address }, thunkAPI) => {
+    try {
+        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+            .connect(provider.getSigner(address))
+            ['offer(uint160)'](BigNumber.from(tokenId), {
+                value: toEth(amount),
+            });
+
+        return {
+            success: 'SUCCESS',
+            _pendingtx: _pendingtx.hash,
+            chainId,
+            callbackFn: () => {
+                AppState.dispatch.setModalClosed();
+            },
+        };
+    } catch (err) {
+        console.log({ err });
+        if (
+            !isUndefinedOrNullOrObjectEmpty(err) &&
+            !isUndefinedOrNullOrStringEmpty(err.method) &&
+            err.method === 'estimateGas'
+        ) {
+            return thunkAPI.rejectWithValue('GAS_ERROR');
+        }
+        if (
+            !isUndefinedOrNullOrNotObject(err) &&
+            !isUndefinedOrNullOrNotObject(err.data) &&
+            !isUndefinedOrNullOrStringEmpty(err.data.message)
+        ) {
+            const code = err.data.message.replace(
+                'execution reverted: ',
+                '',
+            ) as NL.Redux.Swap.Error;
+            return thunkAPI.rejectWithValue(code);
+        }
+        return thunkAPI.rejectWithValue('UNKNOWN');
+    }
+});
+
+const initSale = createAsyncThunk<
+    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
+    {
+        tokenId: string;
+        floor: BigNumberish;
+        chainId: Chain;
+        provider: Web3Provider;
+        address: string;
+    },
+    { rejectValue: NL.Redux.Wallet.Error }
+>(`wallet/initSale`, async ({ tokenId, floor, chainId, provider, address }, thunkAPI) => {
+    try {
+        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+            .connect(provider.getSigner(address))
+            ['sell(uint160,uint96)'](tokenId, floor);
+
+        return {
+            success: 'SUCCESS',
+            _pendingtx: _pendingtx.hash,
+            chainId,
+            callbackFn: () => AppState.dispatch.setModalClosed(),
+        };
+    } catch (err) {
+        console.log({ err });
+        if (
+            !isUndefinedOrNullOrObjectEmpty(err) &&
+            !isUndefinedOrNullOrStringEmpty(err.method) &&
+            err.method === 'estimateGas'
+        ) {
+            return thunkAPI.rejectWithValue('GAS_ERROR');
+        }
+        if (
+            !isUndefinedOrNullOrNotObject(err) &&
+            !isUndefinedOrNullOrNotObject(err.data) &&
+            !isUndefinedOrNullOrStringEmpty(err.data.message)
+        ) {
+            const code = err.data.message.replace(
+                'execution reverted: ',
+                '',
+            ) as NL.Redux.Wallet.Error;
+            return thunkAPI.rejectWithValue(code);
+        }
+        return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
+    }
+});
 
 const getUserShares = createAsyncThunk<
     {
@@ -377,4 +474,6 @@ export default {
     extend,
     multiClaim,
     mintNugg,
+    initSale,
+    placeOffer,
 };

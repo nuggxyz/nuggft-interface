@@ -2,24 +2,23 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 
 import AppState from '@src/state/app';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
-import ProtocolState from '@src/state/protocol';
 import TransactionState from '@src/state/transaction';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import Text from '@src/components/general/Texts/Text/Text';
 import WalletState from '@src/state/wallet';
-import { fromEth } from '@src/lib/conversion';
 import FontSize from '@src/lib/fontSize';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import Colors from '@src/lib/colors';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import web3 from '@src/web3';
+import client from '@src/client';
 
 import styles from './LoanOrBurn.styles';
 
 type Props = {};
 
 const LoanOrBurnModal: FunctionComponent<Props> = () => {
-    const shareValue = ProtocolState.select.nuggftStakedEthPerShare();
+    const stake = client.live.stake();
     const toggle = TransactionState.select.toggleCompletedTxn();
     const { targetId, type } = AppState.select.modalData();
     const chainId = web3.hook.usePriorityChainId();
@@ -56,12 +55,13 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                             ...styles.text,
                             color: Colors.nuggRedText,
                             fontSize: FontSize.h5,
-                        }}>
+                        }}
+                    >
                         This cannot be undone
                     </Text>
                 )}
                 <Text type="text" textStyle={styles.text}>
-                    You will receive {(+fromEth(shareValue)).toFixed(4)} ETH
+                    You will receive {+stake?.eps.decimal.toFixed(4)} ETH
                 </Text>
                 <FeedbackButton
                     overrideFeedback

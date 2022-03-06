@@ -5,6 +5,7 @@ import NuggDexSearchList from '@src/components/nugg/NuggDex/NuggDexSearchList/Nu
 import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import AppState from '@src/state/app';
+import client from '@src/client';
 
 import styles from './SearchOverlay.styles';
 
@@ -12,12 +13,14 @@ type Props = {};
 
 const SearchOverlay: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
-    const view = AppState.select.view();
+
+    const router = client.router.useRouter();
+
     const onClick = useCallback(
-        () => (view === 'Search' ? AppState.dispatch.changeView('Swap') : undefined),
-        [view],
+        () => (router.isViewOpen ? router.toggleView() : undefined),
+        [router.isViewOpen],
     );
-    const style = useAnimateOverlay(view === 'Search', {
+    const style = useAnimateOverlay(router.isViewOpen, {
         zIndex: 997,
         ...styles.container,
     });

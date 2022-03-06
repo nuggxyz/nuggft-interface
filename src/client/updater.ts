@@ -8,6 +8,7 @@ import { EthInt, Fraction } from '@src/classes/Fraction';
 import constants from '@src/lib/constants';
 
 import core from './core';
+import { useBlockUpdater } from './update/useBlockUpdater';
 
 import client from './index';
 
@@ -15,6 +16,9 @@ export default () => {
     const chainId = web3.hook.usePriorityChainId();
 
     const apollo = client.live.apollo();
+    const infura = client.live.infura();
+
+    useBlockUpdater();
 
     React.useEffect(() => {
         if (apollo) {
@@ -72,8 +76,8 @@ export default () => {
                         },
                         epoch: {
                             id: +x.data.protocol.epoch.id,
-                            startBlock: +x.data.protocol.epoch.startBlock,
-                            endBlock: +x.data.protocol.epoch.endBlock,
+                            startblock: +x.data.protocol.epoch.startBlock,
+                            endblock: +x.data.protocol.epoch.endBlock,
                             status: x.data.protocol.epoch.status,
                         },
                         activeSwaps: x.data.protocol.activeNuggs.map((x) => {
@@ -98,7 +102,7 @@ export default () => {
             const apollo = web3.config.createApolloClient(chainId);
             const infura = web3.config.createInfuraWebSocket(chainId);
 
-            core.actions.update({
+            core.actions.updateProtocol({
                 apollo,
                 infura,
             });
@@ -109,7 +113,7 @@ export default () => {
 
                 apollo.stop();
 
-                core.actions.update({
+                core.actions.updateProtocol({
                     apollo: undefined,
                     infura: undefined,
                 });

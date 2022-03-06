@@ -10,6 +10,7 @@ import AppState from '@src/state/app';
 import NuggDexState from '@src/state/nuggdex';
 import Button from '@src/components/general/Buttons/Button/Button';
 import TextInput from '@src/components/general/TextInputs/TextInput/TextInput';
+import client from '@src/client';
 
 import styles from './NuggDexSearchBar.styles';
 
@@ -18,6 +19,8 @@ type Props = {};
 const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const viewing = NuggDexState.select.viewing();
     const view = AppState.select.view();
+
+    const { isViewOpen } = client.router.useRouter();
     const filters = NuggDexState.select.searchFilters();
     const prevFilters = usePrevious(filters);
 
@@ -28,14 +31,14 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const [sortAsc, setSortAsc] = useState(filters.sort.asc);
 
     useEffect(() => {
-        if (view === 'Search') {
+        if (isViewOpen) {
             NuggDexState.dispatch.setSearchFilters({
                 searchValue: debouncedValue,
             });
         } else {
             setSearchValue('');
         }
-    }, [debouncedValue, view]);
+    }, [debouncedValue, view, isViewOpen]);
 
     useEffect(() => {
         if (filters.sort.asc !== sortAsc && isUserInput) {
@@ -62,13 +65,14 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     }, [filters]);
 
     const styleInput = useSpring({
-        width: view === 'Search' ? '100%' : '0%',
+        width: isViewOpen ? '100%' : '0%',
     });
     const style = useSpring({
         ...styles.searchBar,
-        margin: view === 'Search' ? '0% 5% 0% 5%' : '0% 100% 0% 0%',
-        borderRadius: view === 'Search' ? '7px' : '20px',
+        margin: isViewOpen ? '0% 5% 0% 5%' : '0% 100% 0% 0%',
+        borderRadius: isViewOpen ? '7px' : '20px',
     });
+    const router = client.router.useRouter();
 
     return (
         <TextInput
@@ -82,14 +86,12 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
             leftToggles={[
                 <Button
                     buttonStyle={styles.searchBarButton}
-                    onClick={() =>
-                        AppState.dispatch.changeView(view === 'Search' ? 'Swap' : 'Search')
-                    }
+                    onClick={() => router.toggleView()}
                     rightIcon={<Search style={styles.searchBarIcon} />}
                 />,
             ]}
             rightToggles={
-                view === 'Search'
+                isViewOpen
                     ? [
                           !isUndefinedOrNullOrStringEmpty(searchValue) && (
                               <Button

@@ -7,7 +7,7 @@ import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrObjectEmpty } from '@
 import { Chain } from '@src/web3/core/interfaces';
 import { itemOfferBare } from '@src/graphql/fragments/itemOffer';
 
-const query = (id: string, epoch: string) => gql`
+const query = (id: string) => gql`
     {
         user(id: "${id}") {
             offers (where: { claimed: false}) ${offerThumbnail}
@@ -22,7 +22,7 @@ const query = (id: string, epoch: string) => gql`
 const unclaimedOffersQuery = async (chainId: Chain, address: string, epoch?: string) => {
     const result = (await executeQuery(
         chainId,
-        query(address.toLowerCase(), epoch),
+        query(address.toLowerCase()),
         'user',
     )) as NL.GraphQL.Fragments.User.Bare;
 

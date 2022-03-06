@@ -9,17 +9,11 @@ import { AlertCircle } from 'react-feather';
 import { useSpring } from '@react-spring/core';
 import { animated } from '@react-spring/web';
 
-import {
-    isUndefinedOrNullOrNotNumber,
-    isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Layout from '@src/lib/layout';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import SwapState from '@src/state/swap';
 import web3 from '@src/web3';
-import state from '@src/state';
+import client from '@src/client';
 
 import styles from './ChainIndicator.styles';
 
@@ -30,32 +24,25 @@ type Props = {
 };
 
 const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle }) => {
-    const epoch = state.protocol.select.epoch();
-    const view = state.app.select.view();
-    const blockListener = state.socket.select.Block();
-    const swapId = SwapState.select.id();
-    const chainId = web3.hook.usePriorityChainId();
+    const epoch = client.live.epoch();
+    const blocknum = client.live.blocknum();
     const provider = web3.hook.usePriorityProvider();
     const error = web3.hook.usePriorityError();
-
+    const router = client.router.useRouter();
     const [blocksRemaining, setBlocksRemaining] = useState(0);
 
     const getBlocksRemaining = useCallback(async () => {
         let remaining = 0;
 
-        if (
-            !isUndefinedOrNullOrObjectEmpty(epoch) &&
-            !isUndefinedOrNullOrStringEmpty(epoch.endblock) &&
-            !isUndefinedOrNullOrNotNumber(blockListener.block)
-        ) {
-            remaining = +epoch.endblock - blockListener.block;
+        if (epoch && blocknum) {
+            remaining = epoch.endblock - blocknum;
         }
         if (remaining <= 0) {
             remaining = 0;
         }
 
         setBlocksRemaining(remaining);
-    }, [blockListener, epoch]);
+    }, [blocknum, epoch]);
 
     useLayoutEffect(() => {
         getBlocksRemaining();
@@ -75,7 +62,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     {/* <ChainIndicatorPulse /> */}
                     <TokenViewer
-                        tokenId={epoch?.id || ''}
+                        tokenId={epoch?.id.toString()}
                         style={{
                             width: '37px',
                             height: '37px',
@@ -96,16 +83,9 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
                     fontFamily: Layout.font.code.regular,
                     ...textStyle,
                 }}
-                onClick={
-                    onClick ||
-                    (() =>
-                        state.app.onRouteUpdate(
-                            chainId,
-                            view === 'Search' || (swapId && !swapId.includes(epoch.id))
-                                ? '/'
-                                : `/nugg/${epoch.id}`,
-                        ))
-                }
+                onClick={() => {
+                    router.routeTo(epoch.id.toString(), false);
+                }}
                 buttonStyle={{
                     ...styles.button,
                     ...(error ? styles.warning : styles.normal),

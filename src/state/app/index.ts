@@ -2,18 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import UAParser from 'ua-parser-js';
 
 import {
-    isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
     smartInsertIndex,
     smartRemove,
     smartReplace,
 } from '@src/lib';
 import { NLState } from '@src/state/NLState';
-import store from '@src/state/store';
-import SwapState from '@src/state/swap';
-import TokenState from '@src/state/token';
-import { Chain } from '@src/web3/core/interfaces';
 
 import hooks from './hooks';
 import middlewares from './middlewares';
@@ -132,76 +126,92 @@ class AppState extends NLState<NL.Redux.App.State> {
         window.location.hash = route;
     }
 
-    public static onRouteUpdate(chainId: Chain, route: string) {
-        try {
-            const swapRoute = route.match(/\/(swap)\/(\d+)\-(\d+)/);
-            const tokenRoute = route.match(/\/(nugg)\/(\d+)/);
+    // public static onRouteUpdate(chainId: Chain, route: string) {
+    //     try {
+    //         const swapRoute = route.match(/\/(swap)\/(\d+)\-(\d+)/);
+    //         const tokenRoute = route.match(/\/(nugg)\/(\d+)/);
+    //         const itemRoute = route.match(/\/(item)\/(\d)\/(\d+)/);
 
-            const soloTokenRoute = route.match(/\/(nugg)((?=\/)\/|.*)/);
+    //         const soloTokenRoute = route.match(/\/(nugg)((?=\/)\/|.*)/);
 
-            const screenType = store.getState().app.screenType;
+    //         const screenType = store.getState().app.screenType;
 
-            const currentView = store.getState().app.view;
+    //         const currentView = store.getState().app.view;
 
-            const currentEpoch = !isUndefinedOrNullOrObjectEmpty(store.getState().protocol.epoch)
-                ? store.getState().protocol.epoch.id
-                : '';
+    //         const currentEpoch = !isUndefinedOrNullOrObjectEmpty(store.getState().protocol.epoch)
+    //             ? store.getState().protocol.epoch.id
+    //             : '';
 
-            if (route === '/' && !isUndefinedOrNullOrStringEmpty(currentEpoch)) {
-                SwapState.dispatch.initSwap({
-                    chainId,
-                    swapId: `${currentEpoch}-0`,
-                });
-                if (screenType === 'phone') {
-                    AppState.dispatch.changeMobileView('Mint');
-                } else if (currentView !== 'Swap') {
-                    AppState.dispatch.changeView('Swap');
-                }
-            } else if (
-                !isUndefinedOrNullOrArrayEmpty(swapRoute) &&
-                swapRoute.length === 4 &&
-                swapRoute[1] === 'swap'
-            ) {
-                console.log(`${swapRoute[2]}-${swapRoute[3]}`);
-                SwapState.dispatch.initSwap({
-                    chainId,
-                    swapId: `${swapRoute[2]}-${swapRoute[3]}`,
-                });
-                if (screenType === 'phone') {
-                    AppState.dispatch.changeMobileView('Mint');
-                } else if (currentView !== 'Swap') {
-                    AppState.dispatch.changeView('Swap');
-                }
-            } else if (
-                !isUndefinedOrNullOrArrayEmpty(tokenRoute) &&
-                tokenRoute.length === 3 &&
-                tokenRoute[1] === 'nugg'
-            ) {
-                if (!isUndefinedOrNullOrStringEmpty(currentEpoch)) {
-                    SwapState.dispatch.initSwap({
-                        chainId,
-                        swapId: `${currentEpoch}-0`,
-                    });
-                }
-                TokenState.dispatch.setNugg({
-                    id: tokenRoute[2],
-                    dotnuggRawCache: undefined,
-                });
-                if (screenType === 'phone') {
-                    AppState.dispatch.changeMobileView('Search');
-                } else if (currentView !== 'Search') {
-                    AppState.dispatch.changeView('Search');
-                }
-            } else if (!isUndefinedOrNullOrArrayEmpty(soloTokenRoute)) {
-                if (currentView !== 'Search') {
-                    AppState.dispatch.changeView('Search');
-                }
-            }
-            AppState.silentlySetRoute(route);
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    //         if (route === '/' && !isUndefinedOrNullOrStringEmpty(currentEpoch)) {
+    //             SwapState.dispatch.initSwap({
+    //                 chainId,
+    //                 swapId: `${currentEpoch}-0`,
+    //             });
+    //             if (screenType === 'phone') {
+    //                 AppState.dispatch.changeMobileView('Mint');
+    //             } else if (currentView !== 'Swap') {
+    //                 AppState.dispatch.changeView('Swap');
+    //             }
+    //         } else if (
+    //             !isUndefinedOrNullOrArrayEmpty(itemRoute) &&
+    //             itemRoute.length === 5 &&
+    //             itemRoute[1] === 'item'
+    //         ) {
+    //             console.log(`${swapRoute[2]}-${swapRoute[3]}`);
+    //             SwapState.dispatch.initSwap({
+    //                 chainId,
+    //                 swapId: `${swapRoute[2]}-${swapRoute[3]}`,
+    //             });
+    //             if (screenType === 'phone') {
+    //                 AppState.dispatch.changeMobileView('Mint');
+    //             } else if (currentView !== 'Swap') {
+    //                 AppState.dispatch.changeView('Swap');
+    //             }
+    //         } else if (
+    //             !isUndefinedOrNullOrArrayEmpty(swapRoute) &&
+    //             swapRoute.length === 4 &&
+    //             swapRoute[1] === 'swap'
+    //         ) {
+    //             console.log(`${swapRoute[2]}-${swapRoute[3]}`);
+    //             SwapState.dispatch.initSwap({
+    //                 chainId,
+    //                 swapId: `${swapRoute[2]}-${swapRoute[3]}`,
+    //             });
+    //             if (screenType === 'phone') {
+    //                 AppState.dispatch.changeMobileView('Mint');
+    //             } else if (currentView !== 'Swap') {
+    //                 AppState.dispatch.changeView('Swap');
+    //             }
+    //         } else if (
+    //             !isUndefinedOrNullOrArrayEmpty(tokenRoute) &&
+    //             tokenRoute.length === 3 &&
+    //             tokenRoute[1] === 'nugg'
+    //         ) {
+    //             if (!isUndefinedOrNullOrStringEmpty(currentEpoch)) {
+    //                 SwapState.dispatch.initSwap({
+    //                     chainId,
+    //                     swapId: `${currentEpoch}-0`,
+    //                 });
+    //             }
+    //             TokenState.dispatch.setNugg({
+    //                 id: tokenRoute[2],
+    //                 dotnuggRawCache: undefined,
+    //             });
+    //             if (screenType === 'phone') {
+    //                 AppState.dispatch.changeMobileView('Search');
+    //             } else if (currentView !== 'Search') {
+    //                 AppState.dispatch.changeView('Search');
+    //             }
+    //         } else if (!isUndefinedOrNullOrArrayEmpty(soloTokenRoute)) {
+    //             if (currentView !== 'Search') {
+    //                 AppState.dispatch.changeView('Search');
+    //             }
+    //         }
+    //         AppState.silentlySetRoute(route);
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
 }
 
 export default AppState;

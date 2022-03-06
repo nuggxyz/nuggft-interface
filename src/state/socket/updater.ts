@@ -1,7 +1,6 @@
 import { Log, TransactionReceipt } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
-import { gql } from '@apollo/client';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { LOSS } from '@src/lib/conversion';
@@ -9,44 +8,15 @@ import web3 from '@src/web3';
 import TransactionState from '@src/state/transaction';
 import client from '@src/client';
 
-import { StakeEvent, OfferEvent } from '../../typechain/NuggftV1';
+import { StakeEvent, OfferEvent, OfferItemEvent } from '../../typechain/NuggftV1';
 
 import { formatBlockLog, formatEventLog, SocketType } from './interfaces';
 
 import SocketState from './index';
 
-const COMMENTS_SUBSCRIPTION = gql`
-    subscription OnOffer($tokenId: ID!) {
-        offers(where: { swap_starts_with: $tokenId }) {
-            user {
-                id
-            }
-            eth
-            swap {
-                id
-                epoch {
-                    id
-                }
-                nugg {
-                    id
-                }
-            }
-        }
-    }
-`;
-
-function difference(arr1: string[], arr2: string[]): string[] {
-    let tmp: string[] = [];
-    for (let i = 0; i < arr1.length; i++) {
-        if (!arr2.includes(arr1[i])) {
-            tmp.push(arr1[i]);
-        }
-    }
-    return tmp;
-}
-
 export default () => {
     const chainId = web3.hook.usePriorityChainId();
+
     const tx = TransactionState.select.txn();
 
     const graphInstance = client.live.apollo();
@@ -65,6 +35,9 @@ export default () => {
                     null,
                     null,
                 );
+                const itemoffer__listener = _helper.contract.filters[
+                    'OfferItem(uint160,bytes2,bytes32)'
+                ](null, null);
                 const block__listener = 'block';
 
                 async function getit() {
@@ -108,6 +81,24 @@ export default () => {
                         value: offerAgnecy.shr(160).mask(70).mul(LOSS)._hex,
                         endingEpoch: offerAgnecy.shr(230).mask(24)._hex,
                         tokenId: offerEvent.tokenId._hex,
+                        ...formatEventLog(log),
+                    });
+                });
+
+                instance.on(itemoffer__listener, (log: Log) => {
+                    let event = _helper.contract.interface.parseLog(
+                        log,
+                    ) as unknown as OfferItemEvent;
+
+                    const offerEvent = (event as unknown as OfferItemEvent).args;
+                    const offerAgnecy = BigNumber.from(offerEvent.agency);
+
+                    SocketState.dispatch.incomingEvent({
+                        type: SocketType.OFFER,
+                        account: offerAgnecy.mask(160)._hex,
+                        value: offerAgnecy.shr(160).mask(70).mul(LOSS)._hex,
+                        endingEpoch: offerAgnecy.shr(230).mask(24)._hex,
+                        tokenId: 'item-' + Number('0x' + offerEvent.itemId),
                         ...formatEventLog(log),
                     });
                 });

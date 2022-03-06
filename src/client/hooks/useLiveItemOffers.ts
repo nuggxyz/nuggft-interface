@@ -5,48 +5,38 @@ import { useOffer } from '@src/state/socket/hooks';
 import client from '@src/client/index';
 
 const query = gql`
-    subscription useLiveOffers($tokenId: ID!) {
-        offers(where: { swap_starts_with: $tokenId }, orderBy: eth, orderDirection: desc) {
-            user {
+    subscription useLiveItemOffers($tokenId: ID!) {
+        itemOffers(where: { swap_starts_with: $tokenId }, orderBy: eth, orderDirection: desc) {
+            nugg {
                 id
             }
             eth
             txhash
-            swap {
-                id
-                epoch {
-                    id
-                }
-                nugg {
-                    id
-                }
-            }
         }
     }
 `;
 
 type Offer = { user: string; eth: string; txhash: string };
 
-export const useLiveOffers = (tokenId: string) => {
+export const useLiveItemOffers = (tokenId: string) => {
     const apollo = client.live.apollo();
 
-    const [offers, setOffers] = React.useState<Offer[]>([]);
+    const [itemOffers, setOffers] = React.useState<Offer[]>([]);
 
     React.useEffect(() => {
         if (tokenId) {
             const instance = apollo
                 .subscribe<{
-                    offers: {
-                        user: { id: string };
+                    itemOffers: {
+                        nugg: { id: string };
                         eth: string;
                         txhash: string;
-                        swap: { epoch: { id: string }; nugg: { id: string } };
                     }[];
                 }>({ query: query, variables: { tokenId } })
                 .subscribe((x) => {
                     setOffers(
-                        x.data.offers.map((x) => {
-                            return { user: x.user.id, eth: x.eth, txhash: x.txhash };
+                        x.data.itemOffers.map((x) => {
+                            return { user: x.nugg.id, eth: x.eth, txhash: x.txhash };
                         }),
                     );
                 });
@@ -57,11 +47,11 @@ export const useLiveOffers = (tokenId: string) => {
         }
     }, [tokenId, apollo]);
 
-    return offers;
+    return itemOffers;
 };
 
-export const useSafeLiveOffers = (tokenId: string) => {
-    const apolloOffers = useLiveOffers(tokenId);
+export const useSafeLiveItemOffers = (tokenId: string) => {
+    const apolloItemOffers = useLiveItemOffers(tokenId);
 
     const [offers, setOffers] = React.useState<Offer[]>([]);
     const [leader, setLeader] = React.useState<Offer>();
@@ -89,12 +79,12 @@ export const useSafeLiveOffers = (tokenId: string) => {
     );
 
     React.useEffect(() => {
-        const update = mergeUnique(offers, apolloOffers).sort((a, b) => (a < b ? -1 : 1));
+        const update = mergeUnique(offers, apolloItemOffers).sort((a, b) => (a < b ? -1 : 1));
         setOffers(update);
         if (update.length > 0) {
             setLeader(update[0]);
         }
-    }, [apolloOffers]);
+    }, [apolloItemOffers]);
 
     React.useEffect(() => {
         setOffers([]);

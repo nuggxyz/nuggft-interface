@@ -10,9 +10,7 @@ import { fromEth } from '@src/lib/conversion';
 import Colors from '@src/lib/colors';
 import usePrevious from '@src/hooks/usePrevious';
 import useSetState from '@src/hooks/useSetState';
-import ProtocolState from '@src/state/protocol';
 import AppState from '@src/state/app';
-import SwapState from '@src/state/swap';
 import TransactionState from '@src/state/transaction';
 import {
     isUndefinedOrNull,
@@ -21,10 +19,10 @@ import {
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
+    parseTokenIdSmart,
 } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
-import NextSwap from '@src/components/nugg/NextSwap/NextSwap';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
 import { Chain } from '@src/web3/core/interfaces';
 
@@ -34,11 +32,12 @@ type Props = {};
 
 const RingAbout: FunctionComponent<Props> = ({}) => {
     const screenType = AppState.select.screenType();
-    const epoch = ProtocolState.select.epoch();
-    const endingSwapEpoch = SwapState.select.epoch();
+    const epoch = client.live.epoch();
+
     const address = web3.hook.usePriorityAccount();
-    const swapId = SwapState.select.id();
-    const tokenId = SwapState.select.tokenId();
+
+    const { lastSwap } = client.router.useRouter();
+    const token = client.hook.useLiveToken(lastSwap?.tokenId);
 
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const prevToggle = usePrevious(txnToggle);
@@ -46,27 +45,15 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const provider = web3.hook.usePriorityProvider();
 
     const status = useSetState(() => {
-        if (isUndefinedOrNull(endingSwapEpoch) || isUndefinedOrNull(epoch)) return 'waiting';
-        console.log('yoooo', +endingSwapEpoch.endblock, +epoch.endblock);
+        if (isUndefinedOrNull(token?.activeSwap?.endingEpoch) || isUndefinedOrNull(epoch))
+            return 'waiting';
 
-        return +endingSwapEpoch.endblock >= +epoch.endblock ? 'ongoing' : 'over';
-    }, [epoch, endingSwapEpoch]);
-
-    useEffect(() => {
-        if (
-            status === 'waiting' &&
-            prevToggle !== undefined &&
-            prevToggle !== txnToggle &&
-            !isUndefinedOrNullOrStringEmpty(swapId) &&
-            !swapId.includes('undefined')
-        ) {
-            SwapState.dispatch.initSwap({ swapId, chainId });
-        }
-    }, [status, txnToggle, swapId, prevToggle, chainId]);
+        return +token?.activeSwap?.epoch.endblock >= +epoch.endblock ? 'ongoing' : 'over';
+    }, [epoch, token?.activeSwap?.endingEpoch]);
 
     const [open, setOpen] = useState(false);
 
-    const { offers, leader } = client.hook.useSafeLiveOffers(tokenId);
+    const { offers, leader } = client.hook.useSafeTokenOffers(lastSwap?.tokenId);
 
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader && leader.user);
 
@@ -120,7 +107,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
         ) {
             setOpen(false);
         }
-    }, [swapId, open, offers]);
+    }, [open, offers]);
 
     const springStyle = useSpring({
         ...styles.offersContainer,
@@ -131,7 +118,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     return (
         <>
-            <NextSwap tokenId={tokenId} />
+            {/* <NextSwap tokenId={tokenId} /> */}
             <animated.div
                 style={{
                     ...styles.container,
@@ -162,13 +149,13 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                 }),
                             }}
                         >
-                            {status === 'ongoing' && hasBids
+                            {(status === 'ongoing' && hasBids
                                 ? 'Highest Offer'
                                 : status === 'ongoing' && !hasBids
                                 ? 'No offers yet...'
                                 : status === 'waiting'
                                 ? 'Place offer to begin auction'
-                                : 'Winner'}
+                                : 'Winner ') + parseTokenIdSmart(lastSwap?.tokenId)}
                         </Text>
                         {hasBids && status !== 'waiting' && (
                             <div
@@ -257,6 +244,9 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                           name: 'OfferOrSell',
                                           modalData: {
                                               type: 'Offer',
+                                              data: {
+                                                  tokenId: lastSwap?.tokenId,
+                                              },
                                           },
                                       })
                             }

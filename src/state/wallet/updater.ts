@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 
-import ProtocolState from '@src/state/protocol';
 import web3 from '@src/web3';
+import client from '@src/client';
 
 import WalletState from './index';
 export default () => {
     const address = web3.hook.usePriorityAccount();
-    const epoch = ProtocolState.select.epoch();
+    const epoch = client.live.epoch();
     const chainId = web3.hook.usePriorityChainId();
 
     useEffect(() => {

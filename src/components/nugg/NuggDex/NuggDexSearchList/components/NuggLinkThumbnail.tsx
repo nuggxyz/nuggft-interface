@@ -4,10 +4,10 @@ import { animated } from '@react-spring/web';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useOnHover from '@src/hooks/useOnHover';
 import NuggDexState from '@src/state/nuggdex';
-import TokenState from '@src/state/token';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import { parseTokenId } from '@src/lib';
+import { parseTokenIdSmart } from '@src/lib';
+import client from '@src/client';
 
 import styles from './NuggDexComponents.styles';
 
@@ -17,16 +17,16 @@ const NuggLinkThumbnail: FunctionComponent<{
     style?: CSSProperties;
 }> = ({ item, index, style: customStyle }) => {
     const [ref, isHovering] = useOnHover();
-    const selected = TokenState.select.tokenId();
+    const lastView = client.live.lastView();
 
     const style = useMemo(() => {
         return {
             ...styles.nuggLinkThumbnailContainer,
             ...(isHovering ? styles.hover : {}),
-            ...(selected === item.id ? styles.selected : {}),
+            ...(lastView?.tokenId === item.id ? styles.selected : {}),
             ...customStyle,
         };
-    }, [item, isHovering, selected, customStyle]);
+    }, [item, isHovering, lastView?.tokenId, customStyle]);
 
     return (
         <animated.div
@@ -34,14 +34,14 @@ const NuggLinkThumbnail: FunctionComponent<{
             key={index}
             style={{ ...style }}
             onClick={() => {
-                TokenState.dispatch.setNugg(item);
                 NuggftV1Helper.storeNugg(item.id, item.dotnuggRawCache);
                 NuggDexState.dispatch.addToRecents(item);
+                client.actions.routeTo(item?.id, true);
             }}
         >
-            <TokenViewer tokenId={item.id} style={styles.nugg} data={item.dotnuggRawCache} />
+            <TokenViewer tokenId={item.id} style={styles.nugg} />
             <Text size="smaller" textStyle={styles.label}>
-                {parseTokenId(item.id)}
+                {parseTokenIdSmart(item.id)}
             </Text>
         </animated.div>
     );

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { BlockInfo, ClaimInfo, MintInfo, OfferInfo, StakeInfo } from './interfaces';
+import { BlockInfo, ClaimInfo, ItemOfferInfo, MintInfo, OfferInfo, StakeInfo } from './interfaces';
 
 import SocketState from './index';
 
@@ -24,6 +24,10 @@ function useSocket<SocketInfo>(
 
 export const useOffer = (callback: (info: OfferInfo) => void) => {
     return useSocket(SocketState.select.Offer, callback);
+};
+
+export const useItemOffer = (callback: (info: ItemOfferInfo) => void) => {
+    return useSocket(SocketState.select.ItemOffer, callback);
 };
 
 export const useMint = (callback: (info: MintInfo) => void) => {
@@ -59,10 +63,38 @@ export const useLiveOffers = (tokenId: string, starting: NL.Redux.Offer[]) => {
     React.useEffect(() => {
         setOffers(starting);
         starting && starting.length > 0 && setLeader(starting[0]);
-        SocketState.dispatch.watchASwap(tokenId);
+        // SocketState.dispatch.watchASwap(tokenId);
 
         return () => {
             setOffers(undefined);
+            setLeader(undefined);
+        };
+    }, [tokenId, starting]);
+
+    return { leader, offers };
+};
+
+export const useLiveItemOffers = (tokenId: string, starting: NL.Redux.Offer[]) => {
+    const [leader, setLeader] = React.useState<NL.Redux.Offer>(undefined);
+
+    const [offers, setItemOffers] = React.useState<NL.Redux.Offer[]>(undefined);
+
+    useItemOffer((x) => {
+        if (+x.tokenId === +tokenId) {
+            const input = { user: x.nugg, eth: x.value };
+
+            setLeader(input);
+            setItemOffers([input, ...(offers ? offers : []).filter((y) => y.user !== x.nugg)]);
+        }
+    });
+
+    React.useEffect(() => {
+        setItemOffers(starting);
+        starting && starting.length > 0 && setLeader(starting[0]);
+        // SocketState.dispatch.watchASwap(tokenId);
+
+        return () => {
+            setItemOffers(undefined);
             setLeader(undefined);
         };
     }, [tokenId, starting]);

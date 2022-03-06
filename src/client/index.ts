@@ -6,6 +6,9 @@ import { useLiveMyNuggs } from './hooks/useLiveMyNuggs';
 import updater from './updater';
 import { useLiveToken } from './hooks/useLiveToken';
 import { useLiveItem } from './hooks/useLiveItem';
+import { useLiveItemOffers, useSafeLiveItemOffers } from './hooks/useLiveItemOffers';
+import useDotnugg from './hooks/useDotnugg';
+import router from './router';
 
 export default {
     ...core,
@@ -17,6 +20,12 @@ export default {
         myNuggs: () => core.store((state) => state.myNuggs),
         epoch: () => core.store((state) => state.epoch),
         stake: () => core.store((state) => state.stake),
+        route: () => core.store((state) => state.route),
+        lastSwap: () => core.store((state) => state.lastSwap),
+        lastView: () => core.store((state) => state.lastView),
+        isViewOpen: () => core.store((state) => state.isViewOpen),
+        blocknum: () => core.store((state) => state.blocknum),
+
         manualPriority: () => core.store((state) => state.manualPriority),
     },
     hook: {
@@ -27,6 +36,13 @@ export default {
         useLiveToken,
         useLiveItem,
         useLiveMyNuggs,
+        useLiveItemOffers,
+        useSafeLiveItemOffers,
+        useSafeTokenOffers: (tokenId: string) =>
+            tokenId?.includes('item-')
+                ? useSafeLiveItemOffers(tokenId)
+                : useSafeLiveOffers(tokenId),
+        useDotnugg,
     },
     static: {
         apollo: () => core.store.getState().apollo,
@@ -36,7 +52,8 @@ export default {
         myNuggs: () => core.store.getState().myNuggs,
         epoch: () => core.store.getState().epoch,
         stake: () => core.store.getState().stake,
+        route: () => core.store.getState().route,
     },
-
+    router,
     updater,
 };

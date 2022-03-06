@@ -5,7 +5,6 @@ import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
-import ProtocolState from '@src/state/protocol';
 import Text from '@src/components/general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import listStyles from '@src/components/nugg/Wallet/tabs/HistoryTab.styles';
@@ -13,17 +12,17 @@ import Colors from '@src/lib/colors';
 import constants from '@src/lib/constants';
 import myActiveSalesQuery from '@src/state/wallet/queries/myActiveSalesQuery';
 import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
-import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import TransactionState from '@src/state/transaction';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import { fromEth } from '@src/lib/conversion';
 import web3 from '@src/web3';
+import client from '@src/client';
 type Props = { isActive?: boolean };
 
 const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
     const address = web3.hook.usePriorityAccount();
-    const epoch = ProtocolState.select.epoch();
+    const epoch = client.live.epoch();
     const [myNuggs, setMyNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
     const txnToggle = TransactionState.select.toggleCompletedTxn();

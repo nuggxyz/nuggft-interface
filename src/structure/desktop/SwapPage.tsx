@@ -11,6 +11,7 @@ type Props = {};
 
 const SwapPage: FunctionComponent<Props> = () => {
     const screen = AppState.select.screenType();
+
     return (
         <div style={styles.container}>
             {screen === 'tablet' ? (

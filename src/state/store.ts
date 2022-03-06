@@ -4,8 +4,6 @@ import { useDispatch } from 'react-redux';
 import WalletState from './wallet';
 import AppState from './app';
 import TransactionState from './transaction';
-import ProtocolState from './protocol';
-import TokenState from './token';
 import SwapState from './swap';
 import NuggDexState from './nuggdex';
 import SocketState from './socket';
@@ -13,8 +11,6 @@ import SocketState from './socket';
 export const states = {
     app: AppState,
     swap: SwapState,
-    protocol: ProtocolState,
-    token: TokenState,
     transaction: TransactionState,
     wallet: WalletState,
     nuggdex: NuggDexState,
@@ -25,10 +21,8 @@ export const rootReducer = combineReducers({
     socket: SocketState.reducer,
     app: AppState.reducer,
     nuggdex: NuggDexState.reducer,
-    protocol: ProtocolState.reducer,
     swap: SwapState.reducer,
     transaction: TransactionState.reducer,
-    token: TokenState.reducer,
     wallet: WalletState.reducer,
 });
 

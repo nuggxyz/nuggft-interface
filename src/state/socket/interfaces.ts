@@ -6,6 +6,8 @@ export enum SocketType {
     CLAIM = 2,
     MINT = 3,
     BLOCK = 4,
+    ITEM_OFFER = 5,
+    ITEM_CLAIM = 6,
 }
 
 export enum SocketClient {
@@ -63,9 +65,22 @@ export interface OfferInfo extends BaseSocketInfo {
     endingEpoch: string;
 }
 
+export interface ItemOfferInfo extends BaseSocketInfo {
+    type: SocketType.ITEM_OFFER;
+    tokenId: `item-${string}`;
+    value: string;
+    nugg: string;
+    endingEpoch: string;
+}
+
 export interface ClaimInfo extends BaseSocketInfo {
     type: SocketType.CLAIM;
     tokenId: string;
+}
+
+export interface ItemClaimInfo extends BaseSocketInfo {
+    type: SocketType.ITEM_CLAIM;
+    tokenId: `item-${string}`;
 }
 
 export interface MintInfo extends BaseSocketInfo {
@@ -78,4 +93,11 @@ export interface BlockInfo extends BaseSocketInfo {
     type: SocketType.BLOCK;
 }
 
-export type SocketInfo = StakeInfo | OfferInfo | ClaimInfo | MintInfo | BlockInfo;
+export type SocketInfo =
+    | StakeInfo
+    | OfferInfo
+    | ClaimInfo
+    | MintInfo
+    | BlockInfo
+    | ItemClaimInfo
+    | ItemOfferInfo;

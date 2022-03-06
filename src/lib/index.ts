@@ -319,4 +319,24 @@ export const parseTokenId = (itemId: string, long?: boolean) => {
     }
 };
 
+export const parseTokenIdSmart = (itemId: string) => {
+    if (!itemId) return '';
+    if (itemId.startsWith(constants.default.ID_PREFIX_ITEM)) {
+        let num = +itemId.replace(constants.default.ID_PREFIX_ITEM, '');
+        return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Hold', 'Neck'][num >> 8]} ${
+            num & 0xff
+        }`;
+    } else {
+        return 'Nugg ' + itemId;
+    }
+};
+
+export const parseItmeIdToNum = (itemId: `item-${string}`) => {
+    const num = +itemId.replace('item-', '');
+    return {
+        feature: num >> 8,
+        position: num & 0xff,
+    };
+};
+
 export { colors, constants, conversion, fontSize, layout };

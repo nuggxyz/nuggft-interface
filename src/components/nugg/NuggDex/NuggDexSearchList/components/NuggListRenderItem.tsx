@@ -3,16 +3,16 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { isUndefinedOrNullOrObjectEmpty, parseTokenId } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import { ListRenderItemProps } from '@src/components/general/List/List';
-import TokenState from '@src/state/token';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import constants from '@src/lib/constants';
+import client from '@src/client';
 
 import styles from './NuggDexComponents.styles';
 
 type Props = ListRenderItemProps<NL.GraphQL.Fragments.Nugg.ListItem>;
 
 const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, action }) => {
-    const selected = TokenState.select.tokenId();
+    const lastView = client.live.lastView();
     const isNuggItem = useMemo(
         () => item && item.id && item.id.startsWith(constants.ID_PREFIX_ITEM),
         [item],
@@ -21,9 +21,9 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, 
     const style = useMemo(() => {
         return {
             ...(!isUndefinedOrNullOrObjectEmpty(item) ? styles.nuggListRenderItemContainer : {}),
-            ...(selected === item.id ? styles.selected : {}),
+            ...(lastView?.tokenId === item.id ? styles.selected : {}),
         };
-    }, [item, selected]);
+    }, [item, lastView?.tokenId]);
 
     return (
         <div style={style} onClick={() => action(item)}>
@@ -35,7 +35,6 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, 
                     // objectFit: 'contain',
                     // overflow: 'visible',
                 }}
-                data={item.dotnuggRawCache}
             />
             <Label text={parseTokenId(item.id, true)} size="larger" />
         </div>
