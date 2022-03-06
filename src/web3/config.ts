@@ -35,18 +35,26 @@ export const CONTRACTS = {
     [Chain.MAINNET]: {
         NuggftV1: ethers.constants.AddressZero,
         DotnuggV1: ethers.constants.AddressZero,
+        Genesis: 0,
+        Interval: 0,
     },
     [Chain.ROPSTEN]: {
         NuggftV1: '0x420690c1b1519a32fa36768dc2cefe128160a9b7',
         DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
+        Genesis: 333,
+        Interval: 32,
     },
     [Chain.RINKEBY]: {
         NuggftV1: '0x0753c5e82de6208537e91fa2805d7abe9e2514ba', //0x3f1c9c4ae47809d284592845e4ced13a6e352421
         DotnuggV1: '0x8239075908f08b64ab7818ff79652d25ae5301c6',
+        Genesis: 10276896,
+        Interval: 32,
     },
     [Chain.GOERLI]: {
         NuggftV1: '0x7ccd9a783e43845f3ae37e83b4a696b0cfab114c',
         DotnuggV1: '0x9a3b1be8ec7eaf472b22c9c833164297e2940f27',
+        Genesis: 333,
+        Interval: 32,
     },
 };
 
