@@ -26,6 +26,9 @@ export const itemOfferBare = gql`
         ethUsd
         owner ${idFragment}
         leader ${idFragment}
+        sellingItem {
+            dotnuggRawCache
+        }
     }
     nugg ${idFragment}
     eth

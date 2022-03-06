@@ -4,6 +4,7 @@ import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
+    parseTokenId,
 } from '@src/lib';
 import ProtocolState from '@src/state/protocol';
 import WalletState from '@src/state/wallet';
@@ -22,6 +23,7 @@ import FontSize from '@src/lib/fontSize';
 import Layout from '@src/lib/layout';
 import SocketState from '@src/state/socket';
 import web3 from '@src/web3';
+import constants from '@src/lib/constants';
 type Props = { isActive?: boolean };
 
 const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
@@ -55,9 +57,9 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     }, [address]);
     const socket = SocketState.select.Claim();
 
-    useEffect(() => {
-        setUnclaimedOffers(unclaimedOffers.filter((x) => x.id.split('-')[0] == socket.tokenId));
-    }, [socket]);
+    // useEffect(() => {
+    //     setUnclaimedOffers(unclaimedOffers.filter((x) => x.id.split('-')[0] == socket.tokenId));
+    // }, [socket]);
 
     return (
         <div style={styles.container}>
@@ -83,16 +85,23 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                                       fontFamily: Layout.font.sf.light,
                                   }}
                                   label="Claim all"
-                                  onClick={() =>
+                                  onClick={() => {
+                                      let addresses = [],
+                                          tokenIds = [];
+                                      unclaimedOffers.forEach((unclaimedOffer) => {
+                                          tokenIds.push(unclaimedOffer.swap.nugg.id);
+                                          addresses.push(
+                                              unclaimedOffer._addr ? unclaimedOffer._addr : address,
+                                          );
+                                      });
                                       WalletState.dispatch.multiClaim({
-                                          address,
+                                          addresses,
+                                          senderAddress: address,
                                           chainId,
                                           provider,
-                                          tokenIds: unclaimedOffers.map(
-                                              (offer) => (offer as any).swap.nugg.id,
-                                          ),
-                                      })
-                                  }
+                                          tokenIds,
+                                      });
+                                  }}
                               />
                           )
                         : undefined
@@ -117,27 +126,35 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
     index,
     extraData,
 }) => {
-    console.log({ item });
+    const isNuggItem = useMemo(() => !isUndefinedOrNullOrStringEmpty(item?._addr), [item]);
     const parsedTitle = useMemo(() => {
         if (!isUndefinedOrNullOrObjectEmpty(item)) {
             let parsed = item.id.split('-');
             if (!isUndefinedOrNullOrArrayEmpty(parsed)) {
                 return {
-                    nugg: parsed[0],
+                    nugg: isNuggItem ? `${constants.ID_PREFIX_ITEM}${parsed[0]}` : parsed[0],
                     swap: parsed[1],
                 };
             }
         }
         return { swap: '', nugg: '' };
-    }, [item]);
+    }, [item, isNuggItem]);
 
     const isWinner = useMemo(() => {
         return item && extraData[0] === item.swap.leader.id;
     }, [item, extraData]);
 
+    console.log(item);
+
     const swapText = useMemo(
-        () => (item.swap.num === '0' ? 'Mint' : `Swap #${item.swap.num}`),
-        [item],
+        () =>
+            item.swap.num === '0'
+                ? 'Mint'
+                : isNuggItem
+                ? //@ts-ignore
+                  `For Nugg #${item.swap.leader.itemNuggId}`
+                : `Swap #${item.swap.num}`,
+        [item, isNuggItem],
     );
 
     return (
@@ -168,10 +185,14 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
                     )}
                     <div>
                         <Text textStyle={listStyles.renderTitle} size="small">
-                            {isWinner ? `Nugg #${parsedTitle.nugg}` : `${fromEth(item.eth)} ETH`}
+                            {isWinner
+                                ? `${parseTokenId(parsedTitle.nugg, true)}`
+                                : `${fromEth(item.eth)} ETH`}
                         </Text>
                         <Text textStyle={{ color: Colors.textColor }} size="smaller" type="text">
-                            {isWinner ? swapText : `Nugg #${parsedTitle.nugg} | ${swapText}`}
+                            {isWinner
+                                ? swapText
+                                : `${parseTokenId(parsedTitle.nugg, true)} | ${swapText}`}
                         </Text>
                     </div>
                 </div>
@@ -180,15 +201,21 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
                     label={`Claim`}
-                    onClick={() =>
+                    onClick={() => {
+                        console.log({
+                            provider: extraData[2],
+                            chainId: extraData[1],
+                            tokenId: isNuggItem ? item.swap.nugg.id : parsedTitle.nugg,
+                            address: item._addr ? item._addr : extraData[0],
+                        });
                         WalletState.dispatch.claim({
                             provider: extraData[2],
                             chainId: extraData[1],
-                            tokenId: parsedTitle.nugg,
-                            //@ts-ignore
-                            address: item._addr ? item._addr : extraData[0],
-                        })
-                    }
+                            tokenId: isNuggItem ? item.swap.nugg.id : parsedTitle.nugg,
+                            address: item._addr ? item._addr : undefined,
+                            senderAddress: extraData[0],
+                        });
+                    }}
                 />
             </div>
         )

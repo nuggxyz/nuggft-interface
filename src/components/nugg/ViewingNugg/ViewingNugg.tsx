@@ -219,10 +219,7 @@ const Swaps: FunctionComponent<SwapsProps> = ({
     return (
         <div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
             <div style={styles.owner}>
-                <Text textStyle={styles.nuggId}>
-                    {tokenIsItem ? '' : 'Nugg #'}
-                    {parseTokenId(tokenId)}
-                </Text>
+                <Text textStyle={styles.nuggId}>{parseTokenId(tokenId, true)}</Text>
                 <div style={{ marginLeft: '1rem' }}>
                     {owner ? (
                         <>

@@ -28,7 +28,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, 
     return (
         <div style={style} onClick={() => action(item)}>
             <TokenViewer
-                tokenId={parseTokenId(item.id) || ''}
+                tokenId={item.id || ''}
                 style={{
                     height: '200px',
                     width: '200px',
@@ -37,10 +37,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, 
                 }}
                 data={item.dotnuggRawCache}
             />
-            <Label
-                text={!isNuggItem ? `Nugg #${parseTokenId(item.id)}` : `${parseTokenId(item.id)}`}
-                size="larger"
-            />
+            <Label text={parseTokenId(item.id, true)} size="larger" />
         </div>
     );
 };

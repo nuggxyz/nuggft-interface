@@ -53,8 +53,6 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
         [tokenId, address, chainId, provider],
     );
 
-    console.log(check);
-
     const minOfferAmount = useMemo(() => {
         if (!isUndefinedOrNullOrObjectEmpty(check)) {
             if (!check.nextSwapAmount.isZero()) {

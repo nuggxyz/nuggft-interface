@@ -12,16 +12,17 @@ const query = (id: string, epoch: string) => gql`
         user(id: "${id}") {
             offers (where: { claimed: false}) ${offerThumbnail}
             nuggs {
+                id
                 offers (where: { claimed: false}) ${itemOfferBare}
             }
         }
     }
 `;
 
-const unclaimedOffersQuery = async (chainId: Chain, id: string, epoch?: string) => {
+const unclaimedOffersQuery = async (chainId: Chain, address: string, epoch?: string) => {
     const result = (await executeQuery(
         chainId,
-        query(id.toLowerCase(), epoch),
+        query(address.toLowerCase(), epoch),
         'user',
     )) as NL.GraphQL.Fragments.User.Bare;
 
@@ -41,7 +42,21 @@ const unclaimedOffersQuery = async (chainId: Chain, id: string, epoch?: string) 
                       let id = BigNumber.from(idArr[1]).shl(24).or(idArr[0]);
                       return {
                           ...offer,
-                          nugg: { id },
+                          swap: {
+                              ...offer.swap,
+                              nugg: {
+                                  dotnuggRawCache: offer.swap.sellingItem.dotnuggRawCache,
+                                  id,
+                              },
+                              leader: {
+                                  id:
+                                      nugg.id === offer.swap.leader.id
+                                          ? address
+                                          : offer.swap.leader.id,
+                                  itemNuggId: offer.swap.leader.id,
+                              },
+                          },
+                          id: `${idArr[1]}-${idArr[2]}`,
                           _addr: ethers.utils.hexZeroPad(BigNumber.from(idArr[3])._hex, 20),
                       };
                   }),

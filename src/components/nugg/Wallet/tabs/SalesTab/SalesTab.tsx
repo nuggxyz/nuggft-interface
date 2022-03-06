@@ -6,7 +6,6 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
 import ProtocolState from '@src/state/protocol';
-import WalletState from '@src/state/wallet';
 import Text from '@src/components/general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import listStyles from '@src/components/nugg/Wallet/tabs/HistoryTab.styles';
@@ -19,9 +18,6 @@ import TransactionState from '@src/state/transaction';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import { fromEth } from '@src/lib/conversion';
-import FontSize from '@src/lib/fontSize';
-import swapStyles from '@src/components/nugg/Wallet/tabs/SwapTab.styles';
-import Layout from '@src/lib/layout';
 import web3 from '@src/web3';
 type Props = { isActive?: boolean };
 
@@ -81,34 +77,34 @@ const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
                 labelStyle={styles.listLabel}
                 listEmptyStyle={listStyles.textWhite}
                 loaderColor="white"
-                TitleButton={
-                    !isUndefinedOrNullOrArrayEmpty(myNuggs)
-                        ? () => (
-                              <FeedbackButton
-                                  feedbackText="Check Wallet..."
-                                  buttonStyle={{
-                                      ...swapStyles.button,
-                                      margin: '0rem',
-                                      padding: '.2rem 1rem',
-                                  }}
-                                  textStyle={{
-                                      color: Colors.nuggRedText,
-                                      fontSize: FontSize.h6,
-                                      fontFamily: Layout.font.sf.light,
-                                  }}
-                                  label="Reclaim all"
-                                  onClick={() =>
-                                      WalletState.dispatch.multiClaim({
-                                          address,
-                                          provider,
-                                          chainId,
-                                          tokenIds: myNuggs.map((offer) => (offer as any).nugg.id),
-                                      })
-                                  }
-                              />
-                          )
-                        : undefined
-                }
+                // TitleButton={
+                //     !isUndefinedOrNullOrArrayEmpty(myNuggs)
+                //         ? () => (
+                //               <FeedbackButton
+                //                   feedbackText="Check Wallet..."
+                //                   buttonStyle={{
+                //                       ...swapStyles.button,
+                //                       margin: '0rem',
+                //                       padding: '.2rem 1rem',
+                //                   }}
+                //                   textStyle={{
+                //                       color: Colors.nuggRedText,
+                //                       fontSize: FontSize.h6,
+                //                       fontFamily: Layout.font.sf.light,
+                //                   }}
+                //                   label="Reclaim all"
+                //                   onClick={() =>
+                //                       WalletState.dispatch.multiClaim({
+                //                           address,
+                //                           provider,
+                //                           chainId,
+                //                           tokenIds: myNuggs.map((offer) => (offer as any).nugg.id),
+                //                       })
+                //                   }
+                //               />
+                //           )
+                //         : undefined
+                // }
             />
         </div>
     );
@@ -183,21 +179,21 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Swa
                         </Text>
                     </div>
                 </div>
-                <FeedbackButton
+                {/* <FeedbackButton
                     type="text"
                     feedbackText="Check Wallet..."
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButton}
                     label={`Reclaim`}
-                    onClick={() =>
-                        WalletState.dispatch.claim({
-                            tokenId: item.nugg.id,
-                            address: extraData[0],
-                            provider: extraData[2],
-                            chainId: extraData[1],
-                        })
-                    }
-                />
+                    // onClick={() =>
+                    //     WalletState.dispatch.claim({
+                    //         tokenId: item.nugg.id,
+                    //         address: extraData[0],
+                    //         provider: extraData[2],
+                    //         chainId: extraData[1],
+                    //     })
+                    // }
+                /> */}
             </div>
         )
     );
