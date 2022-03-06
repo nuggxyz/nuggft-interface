@@ -106,7 +106,7 @@ const claim = createAsyncThunk<
             [
                 // .connect(Web3State.getSignerOrProvider())
                 'claim(uint160[],address[])'
-            ]([tokenId], [address]);
+            ]([tokenId], [address ? address : senderAddress]);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,

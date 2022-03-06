@@ -311,7 +311,7 @@ export const safeResetLocalStorage = (keys: string[]) => {
 export const parseTokenId = (itemId: string, long?: boolean) => {
     if (itemId.startsWith(constants.default.ID_PREFIX_ITEM)) {
         let num = +itemId.replace(constants.default.ID_PREFIX_ITEM, '');
-        return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Hold', 'Neck'][num >> 8]} ${
+        return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][num >> 8]} ${
             long ? '#' : ''
         }${num & 0xff}`;
     } else {

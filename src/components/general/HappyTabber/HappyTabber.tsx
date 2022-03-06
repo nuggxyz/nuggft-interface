@@ -4,6 +4,7 @@ import { animated, useSpring, useTransition, config } from '@react-spring/web';
 import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import AppState from '@src/state/app';
 import Text from '@src/components/general/Texts/Text/Text';
+import useMeasure from '@src/hooks/useMeasure';
 
 import styles from './HappyTabber.styles';
 
@@ -18,9 +19,11 @@ type Props = {
     containerStyle?: CSSProperties;
     bodyStyle?: CSSProperties;
     headerTextStyle?: CSSProperties;
+    selectionIndicatorStyle?: CSSProperties;
+    headerContainerStyle?: CSSProperties;
 };
 
-const WIDTH = 350;
+// const WIDTH = 350;
 
 const HappyTabber: FunctionComponent<Props> = ({
     items,
@@ -28,12 +31,16 @@ const HappyTabber: FunctionComponent<Props> = ({
     containerStyle,
     bodyStyle,
     headerTextStyle,
+    selectionIndicatorStyle,
+    headerContainerStyle,
 }) => {
     const [activeIndex, setActiveIndex] = useState(defaultActiveIndex);
     const screenType = AppState.select.screenType();
 
+    const [headerRef, { width: WIDTH }] = useMeasure();
+
     const selectionIndicatorSpring = useSpring({
-        from: { x: 0, opacity: 1, ...styles.selectionIndicator },
+        from: { x: 0, opacity: 1, ...styles.selectionIndicator, ...selectionIndicatorStyle },
         to: {
             opacity: 1,
             x: activeIndex * ((WIDTH - 8) / items.length),
@@ -65,12 +72,14 @@ const HappyTabber: FunctionComponent<Props> = ({
         >
             {!isUndefinedOrNullOrArrayEmpty(items) && items.length > 1 && (
                 <div
+                    ref={headerRef}
                     style={{
                         ...styles.header,
                         ...(screenType === 'phone'
-                            ? { marginTop: '.5rem' }
-                            : { marginBottom: '.5rem' }),
-                        width: `${WIDTH}px`,
+                            ? { paddingTop: '.5rem' }
+                            : { paddingBottom: '.5rem' }),
+                        width: '100%',
+                        ...headerContainerStyle,
                     }}
                 >
                     <animated.div
@@ -104,7 +113,7 @@ const HappyTabber: FunctionComponent<Props> = ({
                     ))}
                 </div>
             )}
-            <div style={{ ...bodyStyle,...styles.body,  }}>
+            <div style={{ ...bodyStyle, ...styles.body }}>
                 {tabFadeTransition((styles, Item) => (
                     //@ts-ignore
                     <animated.div style={styles}>{Item && <Item isActive={true} />}</animated.div>
