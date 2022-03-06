@@ -45,7 +45,7 @@ export const CONTRACTS = {
         Interval: 32,
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0x0753c5e82de6208537e91fa2805d7abe9e2514ba', //0x3f1c9c4ae47809d284592845e4ced13a6e352421
+        NuggftV1: '0xA330e77aD823B6b2525F5D32B3120Fd6b3FDE639', //0x3f1c9c4ae47809d284592845e4ced13a6e352421
         DotnuggV1: '0x8239075908f08b64ab7818ff79652d25ae5301c6',
         Genesis: 10276896,
         Interval: 32,

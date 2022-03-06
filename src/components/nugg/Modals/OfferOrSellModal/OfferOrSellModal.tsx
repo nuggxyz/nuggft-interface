@@ -32,15 +32,11 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
 
-    // const userBalance = useAsyncState(
-    //     () => provider && provider.getBalance(address),
-    //     [address, provider, chainId],
-    // );
-
     const userBalance = web3.hook.usePriorityBalance(provider);
 
-    const check = useAsyncState(
-        () =>
+    const check = useAsyncState(() => {
+        console.log({ check, tokenId, address, chainId, provider });
+        return (
             !check &&
             tokenId &&
             address &&
@@ -49,32 +45,13 @@ const OfferOrSellModal: FunctionComponent<Props> = () => {
             new NuggftV1Helper(chainId, provider).contract['check(address,uint160)'](
                 address,
                 tokenId,
-            ),
-        [tokenId, address, chainId, provider],
-    );
-
-    console.log(check);
+            )
+        );
+    }, [tokenId, address, chainId, provider]);
 
     const minOfferAmount = useMemo(() => {
         if (!isUndefinedOrNullOrObjectEmpty(check)) {
-            if (!check.nextSwapAmount.isZero()) {
-                return fromEth(
-                    check.nextSwapAmount
-                        .div(10 ** 13)
-                        .add(1)
-                        .mul(10 ** 13),
-                );
-            } else {
-                return Math.max(
-                    +fromEth(
-                        check.nextSwapAmount
-                            .div(10 ** 13)
-                            .add(1)
-                            .mul(10 ** 13),
-                    ),
-                    constants.MIN_OFFER,
-                );
-            }
+            return fromEth(check.nextSwapAmount);
         }
         return constants.MIN_OFFER;
     }, [check, tokenId]);
