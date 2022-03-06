@@ -35,7 +35,16 @@ export const nuggThumbnail = gql`
     {
         id
         user ${idFragment}
-        items ${idFragment}
+        items {
+            activeSwap {
+                id
+            }
+            item {
+                id
+                dotnuggRawCache
+                feature
+            }
+        }
         swaps (orderBy: id, orderDirection: desc) ${swapThumbnail}
         activeSwap ${idFragment}
         activeLoan ${idFragment}

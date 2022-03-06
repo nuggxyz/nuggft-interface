@@ -69,6 +69,7 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'center',
         alignItems: 'center',
         height: '90%',
+        width: '40%',
         paddingRight: '2rem',
         position: 'absolute',
         right: 0,

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 import React, { ReactSVG, useEffect } from 'react';
 
-import constants from '@src/lib/constants';
+import { extractItemId } from '@src/lib';
 
 import client from '..';
 
@@ -85,7 +85,7 @@ export const useLiveItem = (tokenId: string) => {
                             }
                         }
                     `,
-                    variables: { tokenId: tokenId.replace(constants.ID_PREFIX_ITEM, '') },
+                    variables: { tokenId: extractItemId(tokenId) },
                 })
                 .subscribe((x) => {
                     console.log({ x });

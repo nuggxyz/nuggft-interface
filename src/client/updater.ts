@@ -5,7 +5,7 @@ import { BigNumber } from 'ethers';
 
 import web3 from '@src/web3';
 import { EthInt, Fraction } from '@src/classes/Fraction';
-import constants from '@src/lib/constants';
+import { createItemId } from '@src/lib';
 
 import core from './core';
 
@@ -81,7 +81,7 @@ export default () => {
                         }),
                         activeItems: x.data.protocol.activeNuggItems.map((x) => {
                             return {
-                                id: `${constants.ID_PREFIX_ITEM}${x.item.id}`,
+                                id: createItemId(x.item.id),
                                 dotnuggRawCache: x.item.dotnuggRawCache,
                             };
                         }),

@@ -10,6 +10,7 @@ import { IoEllipsisHorizontal } from 'react-icons/io5';
 
 import { Address } from '@src/classes/Address';
 import {
+    isUndefined,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
     parseTokenId,
@@ -44,7 +45,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const address = web3.hook.usePriorityAccount();
     const [owner, setOwner] = useState('');
     const [swaps, setSwaps] = useState<NL.GraphQL.Fragments.Swap.Thumbnail[]>([]);
-    const [items, setItems] = useState<NL.GraphQL.Fragments.NuggItem.Thumbnail[]>([]);
+    const [items, setItems] = useState<NL.GraphQL.Fragments.Item.Thumbnail[]>([]);
     const screenType = AppState.select.screenType();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
@@ -62,6 +63,11 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
         if (thumbnail) {
             console.log({ thumbnail });
             setSwaps(thumbnail?.swaps);
+            setItems(
+                thumbnail?.items?.map((nuggItem) => {
+                    return { ...nuggItem.item, activeSwap: nuggItem.activeSwap };
+                }),
+            );
             setOwner(thumbnail?.user?.id);
             setShowMenu(
                 !isUndefinedOrNullOrObjectEmpty(thumbnail?.activeSwap)
@@ -85,25 +91,26 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
         }
     }, [token]);
 
-    const happyTabs = useMemo(
-        () => [
+    const happyTabs = useMemo(() => {
+        return [
             {
                 label: 'Swaps',
                 comp: ({ isActive }) => (
                     <SwapList {...{ chainId, provider, token, tokenIsItem, swaps }} />
                 ),
             },
-            ...(address === owner
+            ...(address === owner && isUndefined(showMenu)
                 ? [
                       {
                           label: 'Items',
-                          comp: ({ isActive }) => <ItemList />,
+                          comp: ({ isActive }) => (
+                              <ItemList {...{ items, chainId, provider, address, tokenId }} />
+                          ),
                       },
                   ]
                 : []),
-        ],
-        [owner, address, chainId, provider, token, tokenIsItem, swaps],
-    );
+        ];
+    }, [owner, address, chainId, provider, token, tokenIsItem, swaps, items, showMenu, tokenId]);
 
     return (
         !isUndefinedOrNullOrStringEmpty(tokenId) && (
@@ -190,6 +197,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                             )}
                         </div>
                         <HappyTabber
+                            defaultActiveIndex={0}
                             items={happyTabs}
                             bodyStyle={styles.stickyList}
                             headerContainerStyle={{

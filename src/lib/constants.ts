@@ -16,10 +16,7 @@ export default {
     NUGGDEX_ALLNUGGS_PREVIEW_COUNT: 7,
     NUGGDEX_DEFAULT_PREVIEW_COUNT: 3,
     ID_PREFIX_ITEM: 'item-',
+    FEATURE_BASE: 0,
 };
 
 export type ITEM_ID = `item-${string}`;
-export function ID_PREFIX_ITEM(ID_PREFIX_ITEM: any,arg1: string) {
-    throw new Error('Function not implemented.');
-}
-

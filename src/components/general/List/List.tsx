@@ -116,44 +116,45 @@ const List: FunctionComponent<ListProps> = ({
     );
 
     const Loading = useCallback(
-        () => (
-            <div
-                style={{
-                    marginTop: '1rem',
-                    height: '1rem',
-                    position: 'relative',
-                }}
-            >
-                {loading && <Loader color={loaderColor || 'black'} />}
-            </div>
-        ),
+        () =>
+            loading && (
+                <div
+                    style={{
+                        marginTop: '1rem',
+                        height: '1rem',
+                        position: 'relative',
+                    }}
+                >
+                    <Loader color={loaderColor || 'black'} />
+                </div>
+            ),
         [loading, loaderColor],
     );
 
     const Label = useCallback(
         () =>
             label ? (
-                <div style={styles.title}>
-                    <Text textStyle={{ ...styles.label, ...labelStyle }}>{label}</Text>
-                    <div
-                        style={{
-                            marginLeft: '.5rem',
-                            position: 'relative',
-                        }}
-                    >
-                        {titleLoading && <Loader color={loaderColor || 'black'} />}
+                <div style={styles.labelContainer}>
+                    <div style={styles.title}>
+                        <Text textStyle={{ ...styles.label, ...labelStyle }}>{label}</Text>
+                        <div
+                            style={{
+                                marginLeft: '.5rem',
+                                position: 'relative',
+                            }}
+                        >
+                            {titleLoading && <Loader color={loaderColor || 'black'} />}
+                        </div>
                     </div>
+                    <div style={{ marginTop: '-2px' }}>{TitleButton && <TitleButton />}</div>
                 </div>
             ) : null,
-        [label, labelStyle],
+        [label, labelStyle, TitleButton, titleLoading, loaderColor],
     );
 
     return (
         <>
-            <div style={styles.labelContainer}>
-                <Label />
-                <div style={{ marginTop: '-2px' }}>{TitleButton && <TitleButton />}</div>
-            </div>
+            <Label />
             <div style={containerStyle} ref={ref}>
                 <List selected={selected} />
                 <Loading />

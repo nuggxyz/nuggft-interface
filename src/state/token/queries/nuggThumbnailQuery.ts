@@ -3,8 +3,8 @@ import gql from 'graphql-tag';
 import { nuggThumbnail } from '@src/graphql/fragments/nugg';
 import { executeQuery3 } from '@src/graphql/helpers';
 import { Chain } from '@src/web3/core/interfaces';
-import constants from '@src/lib/constants';
 import { itemThumbnail } from '@src/graphql/fragments/item';
+import { extractItemId } from '@src/lib';
 
 const query = gql`
     query nuggThumbnail($id: ID!) {
@@ -23,13 +23,14 @@ const nuggThumbnailQuery = async (chainId: Chain, id: string, isItem: boolean) =
         let res: NL.GraphQL.Fragments.Nugg.Thumbnail;
         if (isItem) {
             let tmp = (
-                await executeQuery3<{ item: NL.GraphQL.Fragments.Item.Thumbnail }>(itemQuery, {
-                    id: id.replace(constants.ID_PREFIX_ITEM, ''),
+                await executeQuery3<{ item: NL.GraphQL.Fragments.Item.ThumbnailFull }>(itemQuery, {
+                    id: extractItemId(id),
                 })
             ).item;
-
-            //@ts-ignore
-            res = { user: tmp.swaps[0].owner, ...tmp } as NL.GraphQL.Fragments.Nugg.Thumbnail;
+            res = {
+                user: tmp.swaps[0].owner,
+                ...tmp,
+            } as unknown as NL.GraphQL.Fragments.Nugg.Thumbnail;
         } else {
             res = (
                 await executeQuery3<{ nugg: NL.GraphQL.Fragments.Nugg.Thumbnail }>(query, { id })

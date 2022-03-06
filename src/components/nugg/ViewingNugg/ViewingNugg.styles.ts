@@ -146,6 +146,25 @@ const styles = NLStyleSheetCreator({
         margin: '.25rem 0rem',
         ...globalStyles.backdropFilter,
     },
+    listItemSvg: {
+        height: '100px',
+        width: '100px',
+    },
+    itemListItem: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginBottom: '.5em',
+    },
+    itemListButton: {
+        borderRadius: Layout.borderRadius.medium,
+        background: Colors.gradient2Transparent,
+    },
+    itemListButtonText: {
+        color: Colors.white,
+        marginLeft: '.5rem',
+    },
 });
 
 export default styles;

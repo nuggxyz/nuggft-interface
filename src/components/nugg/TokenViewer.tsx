@@ -4,12 +4,14 @@ import React, { CSSProperties, FunctionComponent, useLayoutEffect, useMemo, useS
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import {
+    extractItemId,
     isUndefinedOrNullOrStringEmpty,
     isUndefinedOrNullOrStringEmptyOrZeroOrStringZero,
 } from '@src/lib';
 import AppState from '@src/state/app';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
+import constants from '@src/lib/constants';
 
 import DangerouslySetNugg from './DangerouslySetNugg';
 type Props = {
@@ -46,6 +48,8 @@ const TokenViewer: FunctionComponent<Props> = ({
             if (!isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(tokenId)) {
                 const dotNuggData = !isUndefinedOrNullOrStringEmpty(data)
                     ? data
+                    : tokenId.startsWith(constants.ID_PREFIX_ITEM)
+                    ? await NuggftV1Helper.optimizedDotNuggItem(extractItemId(tokenId))
                     : await NuggftV1Helper.optimizedDotNugg(tokenId);
                 if (!isUndefinedOrNullOrStringEmpty(dotNuggData) && !unmounted) {
                     setSrc(dotNuggData);

@@ -3,7 +3,7 @@ declare namespace NL.GraphQL.Fragments.Nugg {
 
     type Bare = Pick<Full, 'id'> & {
         user: NL.GraphQL.Fragments.General.Id;
-        items: NL.GraphQL.Fragments.General.Id[];
+        items: NL.GraphQL.Fragments.NuggItem.Thumbnail[];
         swaps: NL.GraphQL.Fragments.General.Id[];
         activeSwap: NL.GraphQL.Fragments.General.Id;
         activeLoan: NL.GraphQL.Fragments.General.Id;

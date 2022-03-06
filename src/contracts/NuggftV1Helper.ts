@@ -35,17 +35,22 @@ export default class NuggftV1Helper extends ContractHelper {
         }
     }
 
-    public static storeNugg(tokenId: string, dotnuggRawCache: string) {
-        const nuggs = loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
+    private static loadNugg(tokenId: string, prefix?: string) {
+        const nuggs = loadFromLocalStorage(`${prefix}${Math.floor(+tokenId / 100)}`, false) || {};
+        return { nugg: nuggs[tokenId], nuggs: nuggs };
+    }
+
+    public static storeNugg(tokenId: string, dotnuggRawCache: string, prefix?: string) {
+        const nuggs = NuggftV1Helper.loadNugg(tokenId).nuggs;
         nuggs[tokenId] = dotnuggRawCache;
-        saveToLocalStorage(nuggs, `${Math.floor(+tokenId / 100)}`, false);
+        saveToLocalStorage(nuggs, `${prefix}${Math.floor(+tokenId / 100)}`, false);
     }
 
     public static async optimizedDotNugg(tokenId: string) {
         invariant(tokenId, 'OP:TOKEN:URI');
-        let nuggs = loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
-        if (nuggs[tokenId]) {
-            return nuggs[tokenId];
+        let nugg = NuggftV1Helper.loadNugg(tokenId).nugg;
+        if (nugg) {
+            return nugg;
         } else {
             try {
                 let res = await executeQuery3<{ nugg: { dotnuggRawCache: Base64EncodedSvg } }>(
@@ -64,6 +69,36 @@ export default class NuggftV1Helper extends ContractHelper {
                 else {
                     NuggftV1Helper.storeNugg(tokenId, res.nugg.dotnuggRawCache);
                     return res.nugg.dotnuggRawCache;
+                }
+            } catch (err) {
+                console.log({ tokenId, err });
+            }
+        }
+    }
+
+    public static async optimizedDotNuggItem(tokenId: string) {
+        invariant(tokenId, 'OP:TOKEN:URI');
+        let nugg = NuggftV1Helper.loadNugg(tokenId, 'i').nugg;
+        if (nugg) {
+            return nugg;
+        } else {
+            try {
+                let res = await executeQuery3<{ item: { dotnuggRawCache: Base64EncodedSvg } }>(
+                    gql`
+                        query OptimizedDotNugg($tokenId: ID!) {
+                            item(id: $tokenId) {
+                                dotnuggRawCache
+                            }
+                        }
+                    `,
+                    {
+                        tokenId,
+                    },
+                );
+                if (!res) throw new Error('token does not exist');
+                else {
+                    NuggftV1Helper.storeNugg(tokenId, res.item.dotnuggRawCache, 'i');
+                    return res.item.dotnuggRawCache;
                 }
             } catch (err) {
                 console.log({ tokenId, err });

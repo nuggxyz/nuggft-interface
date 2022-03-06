@@ -1,4 +1,4 @@
-import React, { CSSProperties, FunctionComponent, useState } from 'react';
+import React, { CSSProperties, FunctionComponent, useEffect, useState } from 'react';
 import { animated, useSpring, useTransition, config } from '@react-spring/web';
 
 import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
@@ -35,6 +35,11 @@ const HappyTabber: FunctionComponent<Props> = ({
     headerContainerStyle,
 }) => {
     const [activeIndex, setActiveIndex] = useState(defaultActiveIndex);
+    useEffect(() => {
+        if (activeIndex >= items.length) {
+            setActiveIndex(defaultActiveIndex);
+        }
+    }, [items, activeIndex]);
     const screenType = AppState.select.screenType();
 
     const [headerRef, { width: WIDTH }] = useMeasure();
@@ -43,7 +48,7 @@ const HappyTabber: FunctionComponent<Props> = ({
         from: { x: 0, opacity: 1, ...styles.selectionIndicator, ...selectionIndicatorStyle },
         to: {
             opacity: 1,
-            x: activeIndex * ((WIDTH - 8) / items.length),
+            x: activeIndex * (WIDTH / items.length),
         },
         config: config.default,
     });

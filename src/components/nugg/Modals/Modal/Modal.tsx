@@ -14,6 +14,7 @@ import LoanOrBurnModal from '@src/components/nugg/Modals/LoanOrBurn/LoanOrBurnMo
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import LoanInputModal from '@src/components/nugg/Modals/LoanInputModal/LoanInputModal';
 import QrCodeModal from '@src/components/nugg/Modals/QrCodeModal/QrCodeModal';
+import SellNuggOrItemModal from '@src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal';
 
 import styles from './Modal.styles';
 
@@ -87,6 +88,7 @@ const Modal: FunctionComponent<Props> = () => {
                     {currentModal === 'LoanOrBurn' ? <LoanOrBurnModal /> : null}
                     {currentModal === 'Loan' ? <LoanInputModal /> : null}
                     {currentModal === 'QrCode' ? <QrCodeModal /> : null}
+                    {currentModal === 'SellNuggOrItemModal' ? <SellNuggOrItemModal /> : null}
                 </animated.div>
             </div>
         </animated.div>
