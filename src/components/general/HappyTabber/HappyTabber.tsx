@@ -43,7 +43,7 @@ const HappyTabber: FunctionComponent<Props> = ({
 
     const tabFadeTransition = useTransition(items[activeIndex]?.comp, {
         from: {
-            ...bodyStyle,
+            padding: 'inherit',
             opacity: 0,
             position: 'absolute',
             height: '100%',
@@ -61,7 +61,8 @@ const HappyTabber: FunctionComponent<Props> = ({
                 ...styles.wrapperContainer,
                 ...(screenType === 'phone' && styles.wrapperMobile),
                 minWidth: screenType === 'phone' ? '100%' : `${WIDTH}px`,
-            }}>
+            }}
+        >
             {!isUndefinedOrNullOrArrayEmpty(items) && items.length > 1 && (
                 <div
                     style={{
@@ -70,7 +71,8 @@ const HappyTabber: FunctionComponent<Props> = ({
                             ? { marginTop: '.5rem' }
                             : { marginBottom: '.5rem' }),
                         width: `${WIDTH}px`,
-                    }}>
+                    }}
+                >
                     <animated.div
                         style={{
                             width: `${(WIDTH - 8) / items.length}px`,
@@ -84,7 +86,8 @@ const HappyTabber: FunctionComponent<Props> = ({
                                 width: `${WIDTH / items.length}px`,
                                 ...styles.headerTextContainer,
                             }}
-                            onClick={() => setActiveIndex(index)}>
+                            onClick={() => setActiveIndex(index)}
+                        >
                             <Text
                                 textStyle={{
                                     ...headerTextStyle,
@@ -93,14 +96,15 @@ const HappyTabber: FunctionComponent<Props> = ({
                                         : screenType === 'phone'
                                         ? styles.headerTextMobile
                                         : styles.headerText),
-                                }}>
+                                }}
+                            >
                                 {item.label}
                             </Text>
                         </div>
                     ))}
                 </div>
             )}
-            <div style={styles.body}>
+            <div style={{ ...bodyStyle,...styles.body,  }}>
                 {tabFadeTransition((styles, Item) => (
                     //@ts-ignore
                     <animated.div style={styles}>{Item && <Item isActive={true} />}</animated.div>

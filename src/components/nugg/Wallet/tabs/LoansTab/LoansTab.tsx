@@ -67,7 +67,7 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
                     (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
                 )}
                 label="Loaned Nuggs"
-                loading={loadingNuggs}
+                titleLoading={loadingNuggs}
                 style={listStyles.list}
                 extraData={[epoch?.id || '0']}
                 listEmptyText="You haven't loaned any nuggs yet!"

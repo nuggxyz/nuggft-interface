@@ -37,7 +37,7 @@ const styles = NLStyleSheetCreator({
     button: {
         background: 'white',
         borderRadius: Layout.borderRadius.large,
-        margin: '.5rem',
+        // margin: '.5rem',
     },
     whiteText: {
         color: 'white',

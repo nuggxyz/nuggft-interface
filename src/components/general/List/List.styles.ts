@@ -37,6 +37,11 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'space-between',
         marginBottom: '.5rem',
     },
+    title: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     sticky: {
         position: 'sticky',
         top: 0,

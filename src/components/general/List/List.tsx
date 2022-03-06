@@ -49,6 +49,7 @@ export type ListProps = {
     listEmptyStyle?: CSSProperties;
     loaderColor?: string;
     TitleButton?: FunctionComponent;
+    titleLoading?: boolean;
     // itemHeight: number;
 };
 
@@ -70,6 +71,7 @@ const List: FunctionComponent<ListProps> = ({
     loaderColor,
     listEmptyStyle,
     TitleButton,
+    titleLoading,
 }) => {
     const ref = useOnScroll(onScroll);
     const containerStyle = useMemo(() => {
@@ -101,7 +103,8 @@ const List: FunctionComponent<ListProps> = ({
                     style={{
                         ...styles.container,
                         justifyContent: 'center',
-                    }}>
+                    }}
+                >
                     {!loading && (
                         <Text weight="light" size="small" type="text" textStyle={listEmptyStyle}>
                             {listEmptyText || 'No items to display...'}
@@ -119,7 +122,8 @@ const List: FunctionComponent<ListProps> = ({
                     marginTop: '1rem',
                     height: '1rem',
                     position: 'relative',
-                }}>
+                }}
+            >
                 {loading && <Loader color={loaderColor || 'black'} />}
             </div>
         ),
@@ -127,7 +131,20 @@ const List: FunctionComponent<ListProps> = ({
     );
 
     const Label = useCallback(
-        () => (label ? <Text textStyle={{ ...styles.label, ...labelStyle }}>{label}</Text> : null),
+        () =>
+            label ? (
+                <div style={styles.title}>
+                    <Text textStyle={{ ...styles.label, ...labelStyle }}>{label}</Text>
+                    <div
+                        style={{
+                            marginLeft: '.5rem',
+                            position: 'relative',
+                        }}
+                    >
+                        {titleLoading && <Loader color={loaderColor || 'black'} />}
+                    </div>
+                </div>
+            ) : null,
         [label, labelStyle],
     );
 
@@ -135,7 +152,7 @@ const List: FunctionComponent<ListProps> = ({
         <>
             <div style={styles.labelContainer}>
                 <Label />
-                {TitleButton && <TitleButton />}
+                <div style={{ marginTop: '-2px' }}>{TitleButton && <TitleButton />}</div>
             </div>
             <div style={containerStyle} ref={ref}>
                 <List selected={selected} />

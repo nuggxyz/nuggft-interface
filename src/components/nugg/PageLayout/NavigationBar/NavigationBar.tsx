@@ -37,13 +37,18 @@ const NavigationBar: FC<Props> = () => {
             <div
                 style={{
                     whiteSpace: 'nowrap',
-                    // display: 'flex',
-                    alignItems: 'center',
+                    position: 'relative',
                 }}
             >
                 <ChainIndicator />
                 {screenType === 'tablet' && (
-                    <div style={{ position: 'absolute', marginTop: '0rem' }}>
+                    <div
+                        style={{
+                            position: 'absolute',
+                            marginTop: '0rem',
+                            width: '100%',
+                        }}
+                    >
                         <FloorPrice />
                     </div>
                 )}
