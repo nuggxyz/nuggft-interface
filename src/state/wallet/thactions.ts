@@ -89,14 +89,20 @@ const withdraw = createAsyncThunk<
 
 const claim = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { tokenId: string; provider: Web3Provider; chainId: Chain; address: string },
+    {
+        tokenId: string;
+        provider: Web3Provider;
+        chainId: Chain;
+        address?: string;
+        senderAddress: string;
+    },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/claim`, async ({ tokenId, provider, chainId, address }, thunkAPI) => {
+>(`wallet/claim`, async ({ tokenId, provider, chainId, address, senderAddress }, thunkAPI) => {
     try {
         console.log(address);
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
-            .connect(provider.getSigner(address))
+            .connect(provider.getSigner(senderAddress))
             [
                 // .connect(Web3State.getSignerOrProvider())
                 'claim(uint160[],address[])'
@@ -125,40 +131,46 @@ const claim = createAsyncThunk<
 
 const multiClaim = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
-    { tokenIds: string[]; provider: Web3Provider; chainId: Chain; address: string },
+    {
+        tokenIds: string[];
+        provider: Web3Provider;
+        chainId: Chain;
+        senderAddress: string;
+        addresses: string[];
+    },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/multiClaim`, async ({ tokenIds, provider, chainId, address }, thunkAPI) => {
-    try {
-        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
-            // .connect(provider.getSigner(address))
-            [
-                // .connect(Web3State.getSignerOrProvider())
-                'claim(uint160[],address[])'
-            ](tokenIds, new Array(tokenIds.length).fill(address), {
-                gasLimit: 500000,
-            });
-        return {
-            success: 'SUCCESS',
-            _pendingtx: _pendingtx.hash,
-            chainId,
-        };
-    } catch (err) {
-        console.log({ err });
-        if (
-            !isUndefinedOrNullOrNotObject(err) &&
-            !isUndefinedOrNullOrNotObject(err.data) &&
-            !isUndefinedOrNullOrStringEmpty(err.data.message)
-        ) {
-            const code = err.data.message.replace(
-                'execution reverted: ',
-                '',
-            ) as NL.Redux.Wallet.Error;
-            return thunkAPI.rejectWithValue(code);
+>(
+    `wallet/multiClaim`,
+    async ({ tokenIds, provider, chainId, senderAddress, addresses }, thunkAPI) => {
+        try {
+            const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+                .connect(provider.getSigner(senderAddress))
+                ['claim(uint160[],address[])'](tokenIds, addresses, {
+                    gasLimit: 500000,
+                });
+            return {
+                success: 'SUCCESS',
+                _pendingtx: _pendingtx.hash,
+                chainId,
+            };
+        } catch (err) {
+            console.log({ err });
+            if (
+                !isUndefinedOrNullOrNotObject(err) &&
+                !isUndefinedOrNullOrNotObject(err.data) &&
+                !isUndefinedOrNullOrStringEmpty(err.data.message)
+            ) {
+                const code = err.data.message.replace(
+                    'execution reverted: ',
+                    '',
+                ) as NL.Redux.Wallet.Error;
+                return thunkAPI.rejectWithValue(code);
+            }
+            return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
         }
-        return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
-    }
-});
+    },
+);
 
 const mintNugg = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,

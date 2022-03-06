@@ -39,11 +39,7 @@ const NuggLinkThumbnail: FunctionComponent<{
                 NuggDexState.dispatch.addToRecents(item);
             }}
         >
-            <TokenViewer
-                tokenId={parseTokenId(item.id)}
-                style={styles.nugg}
-                data={item.dotnuggRawCache}
-            />
+            <TokenViewer tokenId={item.id} style={styles.nugg} data={item.dotnuggRawCache} />
             <Text size="smaller" textStyle={styles.label}>
                 {parseTokenId(item.id)}
             </Text>

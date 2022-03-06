@@ -7,5 +7,6 @@ declare namespace NL.GraphQL.Fragments.Offer {
 
     type Thumbnail = Bare & {
         swap: NL.GraphQL.Fragments.Swap.Thumbnail;
+        _addr?: string
     };
 }
