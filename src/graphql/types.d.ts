@@ -109,8 +109,9 @@ declare namespace NL.GraphQL {
         id: T['ID'];
         count: T['BigNumber'];
         activeSwap?: Maybe<ItemSwap<T>>;
-
+        dotnuggRawCache?: Base64EncodedSvg;
         swaps: Array<ItemSwap<T>>;
+        feature: T['BigNumber'];
     };
 
     type NuggItem<T extends Scalars> = {

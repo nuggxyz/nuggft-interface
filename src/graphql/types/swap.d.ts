@@ -7,11 +7,15 @@ declare namespace NL.GraphQL.Fragments.Swap {
         offers: NL.GraphQL.Fragments.Offer.Bare[];
         nugg: NL.GraphQL.Fragments.Nugg.Bare;
         endingEpoch?: number;
-        epoch: { endblock: string; startblock: string };
+        epoch: { endblock: string | number; startblock: string | number };
         startingEpoch: { endblock: string; startblock: string };
     };
 
-    type Thumbnail = Omit<Bare, 'offers'> & {
+    type Thumbnail = Omit<Bare, 'offers' | 'ethUsd' | 'startingEpoch' | 'nugg'> & {
+        // nugg: NL.GraphQL.Fragments.General.Id;
+        // num: string;
+    };
+    type Thumbnail2 = Omit<Bare, 'offers' | 'ethUsd' | 'startingEpoch'> & {
         nugg: NL.GraphQL.Fragments.General.Id;
         // num: string;
     };

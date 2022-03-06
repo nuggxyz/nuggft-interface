@@ -15,7 +15,12 @@ const globalStyles = NLStyleSheetCreator({
     centered: {
         display: 'flex',
         justifyContent: 'center',
-        alignContent: 'center',
+        alignItems: 'center',
+    },
+    centeredSpaceBetween: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     backdropFilter: {
         backdropFilter: 'blur(20px)',

@@ -14,7 +14,6 @@ function DangerouslySetNugg({
     // Buffer.from is the modern version of the below atob code
     // let svg = atob(data.replace('data:image/svg+xml;base64,', ''));
     let bug = Buffer.from(imageUri.replace('data:image/svg+xml;base64,', ''), 'base64');
-    console.log(AppState.userAgent.browser.name);
     return (
         <div
             style={{

@@ -5,8 +5,7 @@ import Colors from '@src/lib/colors';
 import state from '@src/state';
 import Button from '@src/components/general/Buttons/Button/Button';
 import web3 from '@src/web3';
-
-import styles from './ViewingNugg.styles';
+import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
 
 type Props = { tokenId: string };
 

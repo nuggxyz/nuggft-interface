@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
+    createItemId,
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
@@ -22,7 +23,6 @@ import FontSize from '@src/lib/fontSize';
 import Layout from '@src/lib/layout';
 import SocketState from '@src/state/socket';
 import web3 from '@src/web3';
-import constants from '@src/lib/constants';
 import client from '@src/client';
 type Props = { isActive?: boolean };
 
@@ -57,10 +57,6 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     }, [address]);
 
     const socket = SocketState.select.Claim();
-
-    // useEffect(() => {
-    //     setUnclaimedOffers(unclaimedOffers.filter((x) => x.id.split('-')[0] == socket.tokenId));
-    // }, [socket]);
 
     return (
         <div style={styles.container}>
@@ -133,7 +129,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
             let parsed = item.id.split('-');
             if (!isUndefinedOrNullOrArrayEmpty(parsed)) {
                 return {
-                    nugg: isNuggItem ? `${constants.ID_PREFIX_ITEM}${parsed[0]}` : parsed[0],
+                    nugg: isNuggItem ? createItemId(parsed[0]) : parsed[0],
                     swap: parsed[1],
                 };
             }
@@ -144,8 +140,6 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
     const isWinner = useMemo(() => {
         return item && extraData[0] === item.swap.leader.id;
     }, [item, extraData]);
-
-    console.log(item);
 
     const swapText = useMemo(
         () =>
@@ -203,12 +197,6 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
                     buttonStyle={listStyles.renderButton}
                     label={`Claim`}
                     onClick={() => {
-                        console.log({
-                            provider: extraData[2],
-                            chainId: extraData[1],
-                            tokenId: isNuggItem ? item.swap.nugg.id : parsedTitle.nugg,
-                            address: item._addr ? item._addr : extraData[0],
-                        });
                         WalletState.dispatch.claim({
                             provider: extraData[2],
                             chainId: extraData[1],

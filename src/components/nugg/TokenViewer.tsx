@@ -6,10 +6,11 @@ import AppState from '@src/state/app';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
 import client from '@src/client';
+import { TokenId } from '@src/client/router';
 
 import DangerouslySetNugg from './DangerouslySetNugg';
 type Props = {
-    tokenId: string;
+    tokenId: TokenId;
     style?: CSSProperties;
     showLabel?: boolean;
     labelColor?: string;

@@ -42,14 +42,22 @@ export const swapgql = (type: 'item' | 'nugg') => gql`
         leader {
             id
         }
-        ${type === 'nugg' ? `nugg { id }` : `sellingItem {id}`}
     }
 `;
+
+export interface LiveNuggItem {
+    id: string;
+    activeSwap: string;
+    feature: number;
+    position: number;
+}
 
 export interface LiveNugg {
     type: 'nugg';
     activeLoan: boolean;
     activeSwap: LiveSwap;
+    items: LiveNuggItem[];
+
     // svg: ReactSVG;
     owner: string;
     swaps: LiveSwap[];
@@ -68,6 +76,18 @@ export const useLiveNugg = (tokenId: string) => {
                         id: string;
                         user: { id: string };
                         // dotnuggRawCache: string;
+                        items: {
+                            id: string;
+                            activeSwap: {
+                                id: string;
+                            };
+                            item: {
+                                id: string;
+                                // dotnuggRawCache
+                                feature: number;
+                                position: number;
+                            };
+                        }[];
                         activeSwap: LiveSwap;
                         swaps: LiveSwap[];
                         activeLoan: { id: string };
@@ -84,6 +104,15 @@ export const useLiveNugg = (tokenId: string) => {
                                 }
                                 items {
                                     id
+                                    activeSwap {
+                                        id
+                                    }
+                                    item {
+                                        id
+                                        dotnuggRawCache
+                                        feature
+                                        position
+                                    }
                                 }
                                 activeLoan {
                                     id
@@ -100,7 +129,15 @@ export const useLiveNugg = (tokenId: string) => {
                         setNugg({
                             type: 'nugg',
                             activeLoan: !!x.data.nugg.activeLoan?.id,
-                            owner: x.data.nugg.user.id,
+                            owner: x.data.nugg.user?.id,
+                            items: x.data.nugg.items.map((y) => {
+                                return {
+                                    id: y?.id,
+                                    activeSwap: y?.activeSwap?.id,
+                                    feature: y?.item.feature,
+                                    position: y?.item.position,
+                                };
+                            }),
                             swaps: x.data.nugg.swaps.map((y) => {
                                 return {
                                     id: y?.id,

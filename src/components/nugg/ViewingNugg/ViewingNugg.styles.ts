@@ -68,7 +68,7 @@ const styles = NLStyleSheetCreator({
         marginTop: '1rem',
         width: '80%',
         position: 'relative',
-        maxHeight: '100%',
+        height: '100%',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -77,7 +77,7 @@ const styles = NLStyleSheetCreator({
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
-        maxHeight: '100%',
+        height: '100%',
         borderRadius: Layout.borderRadius.mediumish,
         overflow: 'hidden',
         background: Colors.transparentGrey,
@@ -129,6 +129,7 @@ const styles = NLStyleSheetCreator({
     },
     stickyList: {
         height: '100%',
+        width: '100%',
         overflow: 'hidden',
     },
     swapButton: {
@@ -144,6 +145,25 @@ const styles = NLStyleSheetCreator({
         borderBottomRightRadius: Layout.borderRadius.large,
         margin: '.25rem 0rem',
         ...globalStyles.backdropFilter,
+    },
+    listItemSvg: {
+        height: '100px',
+        width: '100px',
+    },
+    itemListItem: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginBottom: '.5em',
+    },
+    itemListButton: {
+        borderRadius: Layout.borderRadius.medium,
+        background: Colors.gradient2Transparent,
+    },
+    itemListButtonText: {
+        color: Colors.white,
+        marginLeft: '.5rem',
     },
 });
 

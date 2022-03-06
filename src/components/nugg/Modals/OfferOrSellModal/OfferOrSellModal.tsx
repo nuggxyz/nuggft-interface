@@ -36,7 +36,6 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
     const userBalance = web3.hook.usePriorityBalance(provider);
 
     const check = useAsyncState(() => {
-        console.log({ check, tokenId, address, chainId, provider });
         return (
             !check &&
             tokenId &&

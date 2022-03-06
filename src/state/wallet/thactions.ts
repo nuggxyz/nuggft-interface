@@ -73,17 +73,27 @@ const initSale = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
     {
         tokenId: string;
+        itemId?: string;
         floor: BigNumberish;
         chainId: Chain;
         provider: Web3Provider;
         address: string;
     },
     { rejectValue: NL.Redux.Wallet.Error }
->(`wallet/initSale`, async ({ tokenId, floor, chainId, provider, address }, thunkAPI) => {
+>(`wallet/initSale`, async ({ tokenId, floor, chainId, provider, address, itemId }, thunkAPI) => {
     try {
-        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
-            .connect(provider.getSigner(address))
-            ['sell(uint160,uint96)'](tokenId, floor);
+        let _pendingtx;
+
+        console.log({ tokenId, itemId, floor });
+        if (itemId) {
+            _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+                .connect(provider.getSigner(address))
+                ['sell(uint160,uint16,uint96)'](tokenId, itemId, floor);
+        } else {
+            _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+                .connect(provider.getSigner(address))
+                ['sell(uint160,uint96)'](tokenId, floor);
+        }
 
         return {
             success: 'SUCCESS',
@@ -203,7 +213,7 @@ const claim = createAsyncThunk<
             [
                 // .connect(Web3State.getSignerOrProvider())
                 'claim(uint160[],address[])'
-            ]([tokenId], [address]);
+            ]([tokenId], [address ? address : senderAddress]);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,

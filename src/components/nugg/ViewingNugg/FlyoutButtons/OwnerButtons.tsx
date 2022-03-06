@@ -1,19 +1,14 @@
 import React, { FunctionComponent } from 'react';
-import { IoHourglassOutline, IoPricetagOutline } from 'react-icons/io5';
+import { IoCashOutline, IoPricetagsOutline, IoTrashBinOutline } from 'react-icons/io5';
 
 import Colors from '@src/lib/colors';
 import state from '@src/state';
 import Button from '@src/components/general/Buttons/Button/Button';
-import web3 from '@src/web3';
-
-import styles from './ViewingNugg.styles';
+import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
 
 type Props = { tokenId: string };
 
-const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
-    const chainId = web3.hook.usePriorityChainId();
-    const provider = web3.hook.usePriorityProvider();
-    const address = web3.hook.usePriorityAccount();
+const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
     return (
         <div style={styles.ownerButtonContainer}>
             <Button
@@ -21,9 +16,9 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 size="medium"
                 type="text"
                 buttonStyle={styles.button}
-                label="Extend"
+                label="Sell"
                 leftIcon={
-                    <IoHourglassOutline
+                    <IoPricetagsOutline
                         color={Colors.nuggBlueText}
                         size={25}
                         style={{ marginRight: '.75rem' }}
@@ -31,12 +26,35 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
                 onClick={() =>
                     state.app.dispatch.setModalOpen({
-                        name: 'Loan',
+                        name: 'OfferOrSell',
                         modalData: {
                             targetId: tokenId,
-                            type: 'ExtendLoan',
+                            type: 'StartSale',
+                        },
+                    })
+                }
+            />
+            <Button
+                textStyle={styles.textBlack}
+                size="medium"
+                type="text"
+                buttonStyle={styles.button}
+                label="Loan"
+                leftIcon={
+                    <IoCashOutline
+                        color={Colors.nuggBlueText}
+                        size={25}
+                        style={{ marginRight: '.75rem' }}
+                    />
+                }
+                onClick={() =>
+                    state.app.dispatch.setModalOpen({
+                        name: 'LoanOrBurn',
+                        modalData: {
+                            targetId: tokenId,
+                            type: 'Loan',
                             backgroundStyle: {
-                                background: Colors.gradient3,
+                                background: Colors.gradient2,
                             },
                         },
                     })
@@ -47,20 +65,20 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 size="medium"
                 type="text"
                 buttonStyle={styles.button}
-                label="Pay off"
+                label="Burn"
                 leftIcon={
-                    <IoPricetagOutline
-                        color={Colors.nuggBlueText}
+                    <IoTrashBinOutline
+                        color={Colors.nuggRedText}
                         size={25}
                         style={{ marginRight: '.75rem' }}
                     />
                 }
                 onClick={() =>
                     state.app.dispatch.setModalOpen({
-                        name: 'Loan',
+                        name: 'LoanOrBurn',
                         modalData: {
                             targetId: tokenId,
-                            type: 'PayOffLoan',
+                            type: 'Burn',
                             backgroundStyle: {
                                 background: Colors.gradient3,
                             },
@@ -72,4 +90,4 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
     );
 };
 
-export default LoanButtons;
+export default OwnerButtons;

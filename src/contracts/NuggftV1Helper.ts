@@ -35,20 +35,25 @@ export default class NuggftV1Helper extends ContractHelper {
         }
     }
 
-    public static storeNugg(tokenId: string, dotnuggRawCache: string) {
-        const nuggs = loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
+    private static loadNugg(tokenId: string, prefix?: string) {
+        const nuggs = loadFromLocalStorage(`${prefix}${Math.floor(+tokenId / 100)}`, false) || {};
+        return { nugg: nuggs[tokenId], nuggs: nuggs as any[] };
+    }
+
+    public static storeNugg(tokenId: string, dotnuggRawCache: string, prefix?: string) {
+        const nuggs = NuggftV1Helper.loadNugg(tokenId).nuggs;
         nuggs[tokenId] = dotnuggRawCache;
-        saveToLocalStorage(nuggs, `${Math.floor(+tokenId / 100)}`, false);
+        saveToLocalStorage(nuggs, `${prefix}${Math.floor(+tokenId / 100)}`, false);
     }
 
     public static async optimizedDotNugg(tokenId: string) {
         invariant(tokenId, 'OP:TOKEN:URI');
-        let nuggs = loadFromLocalStorage(`${Math.floor(+tokenId / 100)}`, false) || {};
+        let { nugg } = NuggftV1Helper.loadNugg(tokenId, 'i');
 
         const isItem = tokenId.includes('item-');
 
-        if (nuggs[tokenId]) {
-            return nuggs[tokenId];
+        if (nugg) {
+            return nugg;
         } else {
             try {
                 let res = await executeQuery3<{

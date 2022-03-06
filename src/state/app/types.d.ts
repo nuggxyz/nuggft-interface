@@ -45,6 +45,8 @@ declare namespace NL.Redux.App {
         | 'Burn'
         | 'Offer'
         | 'StartSale'
+        | 'StartItemSale'
+        | 'SellNuggOrItemModal'
         | 'Loan'
         | 'LoanOrBurn'
         | 'OfferOrSell'

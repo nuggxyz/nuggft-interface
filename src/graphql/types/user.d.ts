@@ -3,6 +3,6 @@ declare namespace NL.GraphQL.Fragments.User {
 
     type Bare = Pick<Full, 'ethin' | 'ethout' | 'id' | 'xnugg' | 'loans'> & {
         nuggs: (NL.GraphQL.Fragments.General.Id & { offers: any })[];
-        offers: NL.GraphQL.Fragments.General.Id[];
+        offers: NL.GraphQL.Fragments.Offer.Thumbnail[];
     };
 }
