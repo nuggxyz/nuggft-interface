@@ -101,7 +101,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                 labelStyle={styles.listLabel}
                 listEmptyStyle={listStyles.textWhite}
                 loaderColor="white"
-                loading={loadingOffers}
+                titleLoading={loadingOffers}
                 style={listStyles.list}
                 extraData={[address, chainId, provider]}
                 listEmptyText="No Nuggs or ETH to claim..."
