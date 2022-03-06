@@ -8,12 +8,11 @@ import { isUndefinedOrNullOrNotBigNumber, isUndefinedOrNullOrNotNumber } from '@
 
 import ProtocolState from './index';
 export default () => {
-    const genesisBlock = ProtocolState.select.genesisBlock();
-    const interval = ProtocolState.select.interval();
+    // const genesisBlock = ProtocolState.select.genesisBlock();
+    // const interval = ProtocolState.select.interval();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const blockListener = SocketState.select.Block();
-    
 
     useEffect(() => {
         if (provider && chainId) {
@@ -22,28 +21,21 @@ export default () => {
         }
     }, [chainId, provider]);
 
-    const calculateEpochId = useCallback(
-        (blocknum: number) => {
-            if (!isUndefinedOrNullOrNotNumber(blocknum)) {
-                return genesisBlock && interval
-                    ? BigNumber.from(blocknum)
-                          .sub(genesisBlock)
-                          .div(interval)
-                          .add(poop.EPOCH_OFFSET)
-                    : null;
-            }
-        },
-        [genesisBlock, interval],
-    );
+    const calculateEpochId = useCallback((blocknum: number) => {
+        if (!isUndefinedOrNullOrNotNumber(blocknum)) {
+            return BigNumber.from(blocknum)
+                .sub(web3.config.CONTRACTS[chainId].Genesis)
+                .div(web3.config.CONTRACTS[chainId].Interval)
+                .add(poop.EPOCH_OFFSET);
+        }
+    }, []);
 
-    const calculateEpochStartBlock = useCallback(
-        (epoch: BigNumberish) => {
-            return genesisBlock && interval
-                ? BigNumber.from(epoch).sub(poop.EPOCH_OFFSET).mul(interval).add(genesisBlock)
-                : null;
-        },
-        [genesisBlock, interval],
-    );
+    const calculateEpochStartBlock = useCallback((epoch: BigNumberish) => {
+        return BigNumber.from(epoch)
+            .sub(poop.EPOCH_OFFSET)
+            .mul(web3.config.CONTRACTS[chainId].Interval)
+            .add(web3.config.CONTRACTS[chainId].Genesis);
+    }, []);
 
     useEffect(() => {
         if (blockListener) {
@@ -63,7 +55,7 @@ export default () => {
                 }
             }
         }
-    }, [blockListener, genesisBlock, interval, chainId]);
+    }, [blockListener, chainId]);
 
     useEffect(() => {
         ProtocolState.dispatch.updateStaked({ chainId });
