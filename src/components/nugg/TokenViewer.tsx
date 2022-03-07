@@ -4,7 +4,6 @@ import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
 import AppState from '@src/state/app';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
-import web3 from '@src/web3';
 import client from '@src/client';
 import { TokenId } from '@src/client/router';
 
@@ -29,14 +28,14 @@ const TokenViewer: FunctionComponent<Props> = ({
     showcase = false,
 }) => {
     const screenType = AppState.select.screenType();
-    const chainId = web3.hook.usePriorityChainId();
+    // const chainId = web3.hook.usePriorityChainId();
     // const app = state.app.select.userAgent()
 
     const { width } = useMemo(() => {
         return { width: window.innerWidth };
     }, []);
 
-    const src = client.hook.useDotnugg(tokenId);
+    const src = client.hook.useDotnugg(tokenId, data);
 
     const animatedStyle = useSpring({
         to: {

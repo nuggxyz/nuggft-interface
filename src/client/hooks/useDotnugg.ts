@@ -6,24 +6,29 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
 
-const useDotnugg = (tokenId: string) => {
+const useDotnugg = (tokenId: string, data?: Base64EncodedSvg) => {
     const [src, setSrc] = useState<Base64EncodedSvg>();
 
     useLayoutEffect(() => {
-        let unmounted = false;
-        const getDotNuggSrc = async () => {
-            if (!isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(tokenId)) {
-                const data = await NuggftV1Helper.optimizedDotNugg(tokenId);
-                if (!isUndefinedOrNullOrStringEmpty(data) && !unmounted) {
-                    setSrc(data);
+        if (data) setSrc(data);
+        else {
+            let unmounted = false;
+
+            const getDotNuggSrc = async () => {
+                if (!isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(tokenId)) {
+                    const data = await NuggftV1Helper.optimizedDotNugg(tokenId);
+                    if (!isUndefinedOrNullOrStringEmpty(data) && !unmounted) {
+                        setSrc(data);
+                    }
                 }
-            }
-        };
-        getDotNuggSrc();
-        return () => {
-            unmounted = true;
-        };
-    }, [tokenId]);
+            };
+            getDotNuggSrc();
+
+            return () => {
+                unmounted = true;
+            };
+        }
+    }, [tokenId, data]);
 
     return src;
 };
