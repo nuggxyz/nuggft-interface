@@ -35,6 +35,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, 
                     // objectFit: 'contain',
                     // overflow: 'visible',
                 }}
+                data={item.dotnuggRawCache}
             />
             <Label text={parseTokenId(item.id, true)} size="larger" />
         </div>
