@@ -25,6 +25,7 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
 import { Chain } from '@src/web3/core/interfaces';
+import { Route } from '@src/client/router';
 
 import styles from './RingAbout.styles';
 
@@ -37,6 +38,9 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const address = web3.hook.usePriorityAccount();
 
     const lastSwap__tokenId = client.live.lastSwap__tokenId();
+    const lastSwap__type = client.live.lastSwap__type();
+    const lastSwap = client.live.lastSwap();
+    console.log({ lastSwap, lastSwap__tokenId });
 
     const token = client.hook.useLiveToken(lastSwap__tokenId);
 
@@ -241,12 +245,16 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                 screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                                     ? AppState.dispatch.changeMobileView('Wallet')
                                     : AppState.dispatch.setModalOpen({
-                                          name: 'OfferOrSell',
+                                          name: 'OfferModal',
                                           modalData: {
-                                              type: 'Offer',
-                                              data: {
-                                                  tokenId: lastSwap__tokenId,
-                                              },
+                                              targetId: lastSwap__tokenId,
+                                              type:
+                                                  lastSwap__type === Route.SwapItem
+                                                      ? 'OfferItem'
+                                                      : 'OfferNugg',
+                                            //   data: {
+                                            //       tokenId: lastSwap__tokenId,
+                                            //   },
                                           },
                                       })
                             }

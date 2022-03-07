@@ -52,7 +52,7 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
-                {`${stableType === 'StartSale' ? 'Sell' : 'Sell Item:'} ${parseTokenId(
+                {`${stableType === 'SellNugg' ? 'Sell' : 'Sell Item:'} ${parseTokenId(
                     stableId,
                     true,
                 )}`}
@@ -76,7 +76,7 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
                     code
                     className="placeholder-white"
                     rightToggles={[
-                        stableType === 'StartSale' ? (
+                        stableType === 'SellNugg' ? (
                             <Button
                                 onClick={() => setAmount(nuggFloor.decimal.toPrecision(5))}
                                 label="Min"
@@ -96,16 +96,15 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
                     disabled={isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount)}
                     feedbackText="Check Wallet..."
                     buttonStyle={styles.button}
-                    label={`${stableType === 'StartSale' ? 'Sell Nugg' : 'Sell Item'}`}
+                    label={`${stableType === 'SellNugg' ? 'Sell Nugg' : 'Sell Item'}`}
                     onClick={() =>
                         WalletState.dispatch.initSale({
-                            tokenId: stableType === 'StartSale' ? stableId : tokenId,
+                            tokenId: stableType === 'SellNugg' ? stableId : tokenId,
                             floor: toEth(amount),
                             chainId,
                             provider,
                             address,
-                            itemId:
-                                stableType === 'StartSale' ? undefined : extractItemId(stableId),
+                            itemId: stableType === 'SellNugg' ? undefined : extractItemId(stableId),
                         })
                     }
                 />

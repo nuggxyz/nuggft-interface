@@ -99,7 +99,7 @@ export class WalletConnect extends Connector {
                 window.open(uri);
             } else {
                 AppState.dispatch.setModalOpen({
-                    name: 'QrCode',
+                    name: 'QrCodeModal',
                     modalData: {
                         data: { info: peer, uri },
                         containerStyle: { backgroundColor: 'white' },

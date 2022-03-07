@@ -51,7 +51,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
     const amountFromChain = useAsyncState(
         () =>
             stableId &&
-            (stableType === 'PayOffLoan'
+            (stableType === 'PayoffLoan'
                 ? new NuggftV1Helper(chainId, provider).contract
                       //   .connect(Web3State.getSignerOrProvider())
                       .vfl([stableId])
@@ -81,7 +81,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>{`${
-                stableType === 'PayOffLoan' ? 'Payoff' : 'Extend'
+                stableType === 'PayoffLoan' ? 'Payoff' : 'Extend'
             } Nugg #${stableId}`}</Text>
             <AnimatedCard>
                 <TokenViewer tokenId={stableId} labelColor="white" showcase />
@@ -157,9 +157,9 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                 <FeedbackButton
                     feedbackText="Check Wallet..."
                     buttonStyle={styles.button}
-                    label={`${stableType === 'PayOffLoan' ? 'Payoff' : 'Extend'}`}
+                    label={`${stableType === 'PayoffLoan' ? 'Payoff' : 'Extend'}`}
                     onClick={() =>
-                        stableType === 'PayOffLoan'
+                        stableType === 'PayoffLoan'
                             ? WalletState.dispatch.payOffLoan({
                                   tokenId: stableId,
                                   amount: amount,

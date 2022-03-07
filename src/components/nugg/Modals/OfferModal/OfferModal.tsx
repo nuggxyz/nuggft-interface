@@ -2,7 +2,11 @@ import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
-import { isUndefinedOrNullOrObjectEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import {
+    isUndefinedOrNullOrObjectEmpty,
+    isUndefinedOrNullOrStringEmpty,
+    parseTokenId,
+} from '@src/lib';
 import { fromEth, toEth } from '@src/lib/conversion';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
@@ -18,17 +22,19 @@ import web3 from '@src/web3';
 import state from '@src/state';
 import { TokenId } from '@src/client/router';
 import WalletState from '@src/state/wallet';
+import client from '@src/client';
 
-import styles from './OfferOrSellModal.styles';
+import styles from './OfferModal.styles';
 
 type Props = {
     tokenId: TokenId;
 };
 
-const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
+const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
     const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
+    const myNuggs = client.hook.useLiveMyNuggs(address);
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
@@ -98,17 +104,16 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
-                {stableType === 'StartSale'
-                    ? `Sell Nugg #${stableId || tokenId}`
-                    : `${
-                          check && check.senderCurrentOffer.toString() !== '0'
-                              ? 'Change bid for'
-                              : 'Bid on'
-                      } Nugg #${stableId || tokenId}`}
+                {`${
+                    check && check.senderCurrentOffer.toString() !== '0'
+                        ? 'Change bid for'
+                        : 'Bid on'
+                } ${parseTokenId(stableId)}`}
             </Text>
             <AnimatedCard>
-                <TokenViewer tokenId={stableId || tokenId} showcase />
+                <TokenViewer tokenId={stableId} showcase />
             </AnimatedCard>
+            {stableType === 'OfferItem' && <div></div>}
             <div style={styles.inputContainer}>
                 <CurrencyInput
                     warning={swapError && 'Invalid input'}
@@ -116,7 +121,7 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
                     style={styles.input}
                     styleHeading={styles.heading}
                     styleInputContainer={styles.inputCurrency}
-                    label={stableType === 'StartSale' ? 'Enter floor' : 'Enter amount'}
+                    label="Enter amount"
                     setValue={(text: string) => {
                         setAmount(text);
                         clearError();
@@ -147,7 +152,7 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
                     marginBottom: '.5rem',
                 }}
             >
-                {stableType === 'Offer' && userBalance && (
+                {userBalance && (
                     <Text type="text" size="smaller" textStyle={styles.text} weight="bolder">
                         You currently have
                         <Text
@@ -164,34 +169,24 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
             <div style={styles.subContainer}>
                 <FeedbackButton
                     overrideFeedback
-                    disabled={check && !check.canOffer}
+                    disabled={!check || !check.canOffer}
                     feedbackText="Check Wallet..."
                     buttonStyle={styles.button}
                     label={`${
-                        stableType === 'StartSale'
-                            ? 'Sell Nugg'
-                            : check && check.senderCurrentOffer.toString() !== '0'
+                        check && check.senderCurrentOffer.toString() !== '0'
                             ? !check.canOffer
-                                ? 'You cannot offer on this Nugg'
+                                ? 'You cannot place an offer'
                                 : 'Update offer'
                             : 'Place offer'
                     }`}
                     onClick={() =>
-                        stableType === 'Offer'
-                            ? WalletState.dispatch.placeOffer({
-                                  tokenId: tokenId,
-                                  amount: fromEth(toEth(amount).sub(check.senderCurrentOffer)),
-                                  chainId,
-                                  provider,
-                                  address,
-                              })
-                            : WalletState.dispatch.initSale({
-                                  tokenId: stableId,
-                                  floor: toEth(amount),
-                                  chainId,
-                                  provider,
-                                  address,
-                              })
+                        WalletState.dispatch.placeOffer({
+                            tokenId: tokenId,
+                            amount: fromEth(toEth(amount).sub(check.senderCurrentOffer)),
+                            chainId,
+                            provider,
+                            address,
+                        })
                     }
                 />
             </div>
@@ -199,4 +194,4 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
     );
 };
 
-export default OfferOrSellModal;
+export default OfferModal;
