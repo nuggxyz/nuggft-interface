@@ -20,7 +20,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const viewing = NuggDexState.select.viewing();
     const view = AppState.select.view();
 
-    const isViewOpen = client.live.isViewOpen;
+    const isViewOpen = client.live.isViewOpen();
     const filters = NuggDexState.select.searchFilters();
     const prevFilters = usePrevious(filters);
 

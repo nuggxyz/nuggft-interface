@@ -17,6 +17,8 @@ import web3 from '@src/web3';
 import state from '@src/state';
 import { TokenId } from '@src/client/router';
 import WalletState from '@src/state/wallet';
+import Button from '@src/components/general/Buttons/Button/Button';
+import client from '@src/client';
 
 import styles from './SellNuggOrItemModal.styles';
 
@@ -28,6 +30,7 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
     const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
+    const nuggFloor = client.static.stake().eps;
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
@@ -36,6 +39,7 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
 
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(targetId);
+
     useEffect(() => {
         if (!isUndefinedOrNullOrStringEmpty(type)) {
             setType(type);
@@ -48,7 +52,10 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
-                {`${type === 'StartSale' ? 'Sell' : 'Sell Item:'} ${parseTokenId(stableId, true)}`}
+                {`${stableType === 'StartSale' ? 'Sell' : 'Sell Item:'} ${parseTokenId(
+                    stableId,
+                    true,
+                )}`}
             </Text>
             <AnimatedCard>
                 <TokenViewer tokenId={stableId} showcase />
@@ -68,16 +75,21 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
                     value={amount}
                     code
                     className="placeholder-white"
-                    rightToggles={[<Text type="code">ETH</Text>]}
+                    rightToggles={[
+                        stableType === 'StartSale' ? (
+                            <Button
+                                onClick={() => setAmount(nuggFloor.decimal.toPrecision(5))}
+                                label="Min"
+                                size="small"
+                                buttonStyle={styles.minButton}
+                            />
+                        ) : (
+                            <Text type="code">ETH</Text>
+                        ),
+                    ]}
                 />
             </div>
-            <div
-                style={{
-                    width: '100%',
-                    height: '1rem',
-                    marginBottom: '.5rem',
-                }}
-            ></div>
+            <div style={styles.break} />
             <div style={styles.subContainer}>
                 <FeedbackButton
                     overrideFeedback

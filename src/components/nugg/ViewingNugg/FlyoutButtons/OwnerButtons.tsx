@@ -26,7 +26,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
                 onClick={() =>
                     state.app.dispatch.setModalOpen({
-                        name: 'OfferOrSell',
+                        name: 'SellNuggOrItemModal',
                         modalData: {
                             targetId: tokenId,
                             type: 'StartSale',

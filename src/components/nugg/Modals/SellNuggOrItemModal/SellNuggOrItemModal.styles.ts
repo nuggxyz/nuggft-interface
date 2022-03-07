@@ -41,6 +41,13 @@ const styles = NLStyleSheetCreator({
         padding: '.3rem .6rem',
         borderRadius: Layout.borderRadius.mediumish,
     },
+    break: {
+        height: '1.5rem',
+    },
+    minButton: {
+        borderRadius: Layout.borderRadius.large,
+        padding: '.2rem .5rem',
+    },
 });
 
 export default styles;
