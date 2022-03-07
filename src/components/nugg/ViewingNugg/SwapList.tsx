@@ -94,14 +94,12 @@ const SwapItem = ({ item, index, extraData }) => {
     const awaitingBid = item?.endingEpoch === null;
     const ens = web3.hook.usePriorityAnyENSName(extraData[1], item.owner.id);
 
-    const router = client.router.useRouter();
-
     return (
         <div style={{ padding: '.25rem 1rem' }}>
             <Button
                 key={index}
                 buttonStyle={styles.swap}
-                onClick={() => router.routeTo(extraData[4], false)}
+                onClick={() => client.actions.routeTo(extraData[4], false)}
                 rightIcon={
                     <>
                         <div style={styles.swapButton}>

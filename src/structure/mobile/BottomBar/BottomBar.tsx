@@ -21,7 +21,7 @@ const INDEX = {
 type Props = {};
 
 const BottomBar: FunctionComponent<Props> = () => {
-    const { lastView } = client.router.useRouter();
+    const lastView__tokenId = client.live.lastView__tokenId();
     const mobileView = AppState.select.mobileView();
     const onClick = useCallback((view: NL.Redux.App.MobileViews) => {
         AppState.dispatch.changeMobileView(view);
@@ -73,7 +73,7 @@ const BottomBar: FunctionComponent<Props> = () => {
                 </div>
                 <Button
                     onClick={() =>
-                        lastView?.tokenId && mobileView === 'Search'
+                        lastView__tokenId && mobileView === 'Search'
                             ? client.actions.toggleView()
                             : onClick('Search')
                     }

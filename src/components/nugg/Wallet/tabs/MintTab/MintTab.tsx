@@ -33,7 +33,7 @@ const MintTab: FunctionComponent<Props> = () => {
     const userShares = WalletState.select.userShares();
 
     const stake = client.live.stake();
-    const epoch = client.live.epoch();
+    const epoch__id = client.live.epoch__id();
 
     const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
@@ -43,12 +43,12 @@ const MintTab: FunctionComponent<Props> = () => {
     const chainId = web3.hook.usePriorityChainId();
     const loans = useAsyncState(
         () => loanedNuggsQuery(chainId, address, 'desc', '', 1000, 0),
-        [address, epoch, chainId],
+        [address, epoch__id, chainId],
     );
 
     const claims = useAsyncState(
-        () => unclaimedOffersQuery(chainId, address, epoch?.id),
-        [address, epoch],
+        () => unclaimedOffersQuery(chainId, address, epoch__id),
+        [address, epoch__id],
     );
 
     return (

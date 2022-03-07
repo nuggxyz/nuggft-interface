@@ -25,12 +25,12 @@ const sty = {
 
 const Mobile: FunctionComponent<Props> = () => {
     const currentView = state.app.select.mobileView();
-    const { lastView } = client.router.useRouter();
+    const lastView__tokenId = client.live.lastView__tokenId();
     useEffect(() => {
-        if (lastView?.tokenId && currentView !== 'Search') {
+        if (lastView__tokenId && currentView !== 'Search') {
             state.app.dispatch.changeMobileView('Search');
         }
-    }, [lastView?.tokenId]);
+    }, [lastView__tokenId]);
 
     const wallet = useSpring({
         opacity: currentView === 'Wallet' ? 1 : 0,

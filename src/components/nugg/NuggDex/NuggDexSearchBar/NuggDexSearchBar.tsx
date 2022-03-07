@@ -20,7 +20,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const viewing = NuggDexState.select.viewing();
     const view = AppState.select.view();
 
-    const { isViewOpen } = client.router.useRouter();
+    const isViewOpen = client.live.isViewOpen;
     const filters = NuggDexState.select.searchFilters();
     const prevFilters = usePrevious(filters);
 
@@ -72,7 +72,6 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
         margin: isViewOpen ? '0% 5% 0% 5%' : '0% 100% 0% 0%',
         borderRadius: isViewOpen ? '7px' : '20px',
     });
-    const router = client.router.useRouter();
 
     return (
         <TextInput
@@ -86,7 +85,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
             leftToggles={[
                 <Button
                     buttonStyle={styles.searchBarButton}
-                    onClick={() => router.toggleView()}
+                    onClick={() => client.actions.toggleView()}
                     rightIcon={<Search style={styles.searchBarIcon} />}
                 />,
             ]}

@@ -1,5 +1,3 @@
-import client from './index';
-
 export enum Route {
     SwapItem,
     ViewItem,
@@ -22,6 +20,8 @@ export enum Feature {
 interface BaseRoute {
     type: Route;
 }
+export type ViewRoute = Route.ViewItem | Route.ViewNugg;
+export type SwapRoute = Route.SwapItem | Route.SwapNugg;
 
 export type ItemId = `item-${string | number}`;
 export type NuggId = string;
@@ -95,16 +95,27 @@ export function parseRoute(route: string): Routes {
     return { type: Route.Home };
 }
 
-export const useRouter = () => {
-    const route = client.live.route();
-    const lastSwap = client.live.lastSwap();
-    const lastView = client.live.lastView();
-    const isViewOpen = client.live.isViewOpen();
+// export const useRouter = () => {
+//     const route = client.live.route();
+//     const lastSwap = client.live.lastSwap();
+//     const lastView = client.live.lastView();
+//     const lastSwap__tokenId = client.live.lastSwap__tokenId();
+//     const lastView__tokenId = client.live.lastView__tokenId();
+//     const isViewOpen = client.live.isViewOpen();
 
-    const toggleView = client.actions.toggleView;
-    const routeTo = client.actions.routeTo;
+//     const toggleView = client.actions.toggleView;
+//     const routeTo = client.actions.routeTo;
 
-    return { route, lastSwap, lastView, isViewOpen, toggleView, routeTo };
-};
+//     return {
+//         route,
+//         lastSwap,
+//         lastView,
+//         isViewOpen,
+//         toggleView,
+//         routeTo,
+//         lastSwap__tokenId,
+//         lastView__tokenId,
+//     };
+// };
 
-export default { useRouter, parseRoute };
+export default { parseRoute };

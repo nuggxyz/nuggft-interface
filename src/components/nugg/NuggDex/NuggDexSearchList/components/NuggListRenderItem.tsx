@@ -12,7 +12,7 @@ import styles from './NuggDexComponents.styles';
 type Props = ListRenderItemProps<NL.GraphQL.Fragments.Nugg.ListItem>;
 
 const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, action }) => {
-    const lastView = client.live.lastView();
+    const lastView__tokenId = client.live.lastView__tokenId();
     const isNuggItem = useMemo(
         () => item && item.id && item.id.startsWith(constants.ID_PREFIX_ITEM),
         [item],
@@ -21,9 +21,9 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, 
     const style = useMemo(() => {
         return {
             ...(!isUndefinedOrNullOrObjectEmpty(item) ? styles.nuggListRenderItemContainer : {}),
-            ...(lastView?.tokenId === item.id ? styles.selected : {}),
+            ...(lastView__tokenId === item.id ? styles.selected : {}),
         };
-    }, [item, lastView?.tokenId]);
+    }, [item, lastView__tokenId]);
 
     return (
         <div style={style} onClick={() => action(item)}>

@@ -10,7 +10,7 @@ import client from '@src/client';
 type Props = {};
 
 const Sales: FunctionComponent<Props> = () => {
-    const epoch = client.live.epoch();
+    const epoch__id = client.live.epoch__id();
     const [activeNuggs, setActiveNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
 
     const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ const Sales: FunctionComponent<Props> = () => {
                 filters ? filters.sort.by : 'id',
                 filters && filters.sort.asc ? 'asc' : 'desc',
                 filters ? filters.searchValue : '',
-                epoch?.id.toString(),
+                epoch__id?.toString(),
                 constants.NUGGDEX_SEARCH_LIST_CHUNK,
                 startFrom,
             );
@@ -40,7 +40,7 @@ const Sales: FunctionComponent<Props> = () => {
             }
             setLoading && setLoading(false);
         },
-        [epoch],
+        [epoch__id],
     );
 
     const onScrollEnd = useCallback(

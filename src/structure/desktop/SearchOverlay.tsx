@@ -14,13 +14,13 @@ type Props = {};
 const SearchOverlay: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
 
-    const router = client.router.useRouter();
+    const isViewOpen = client.live.isViewOpen();
 
     const onClick = useCallback(
-        () => (router.isViewOpen ? router.toggleView() : undefined),
-        [router.isViewOpen],
+        () => (isViewOpen ? client.actions.toggleView() : undefined),
+        [isViewOpen],
     );
-    const style = useAnimateOverlay(router.isViewOpen, {
+    const style = useAnimateOverlay(isViewOpen, {
         zIndex: 997,
         ...styles.container,
     });

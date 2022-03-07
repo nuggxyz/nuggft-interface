@@ -9,15 +9,20 @@ import { parseItmeIdToNum } from '@src/lib';
 import web3 from '@src/web3';
 import config from '@src/config';
 
-import { parseRoute, Route, SwapRoutes, ViewRoutes } from './router';
+import { parseRoute, Route, SwapRoute, SwapRoutes, TokenId, ViewRoute, ViewRoutes } from './router';
 
 const DEFAULT_STATE = {
     infura: undefined,
     stake: undefined,
     epoch: undefined,
+    epoch__id: undefined,
     route: undefined,
     lastView: undefined,
     lastSwap: undefined,
+    lastView__tokenId: undefined,
+    lastSwap__tokenId: undefined,
+    lastView__type: undefined,
+    lastSwap__type: undefined,
     isViewOpen: false,
     activeSwaps: [],
     activeItems: [],
@@ -37,11 +42,16 @@ export interface ClientState extends State {
     lastView: ViewRoutes;
     lastSwap: SwapRoutes;
     isViewOpen: boolean;
+    lastView__tokenId: TokenId;
+    lastSwap__tokenId: TokenId;
+    lastView__type: ViewRoute;
+    lastSwap__type: SwapRoute;
     stake: {
         staked: BigNumber;
         shares: BigNumber;
         eps: EthInt;
     };
+    epoch__id: number;
     epoch: {
         startblock: number;
         endblock: number;
@@ -166,7 +176,8 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                 }
             }
 
-            if (!existingState.epoch?.id || epochId !== existingState.epoch?.id) {
+            if (!existingState.epoch__id || epochId !== existingState.epoch__id) {
+                existingState.epoch__id = epochId;
                 existingState.epoch = {
                     id: epochId,
                     startblock: calculateStartBlock(epochId, chainId),
@@ -223,13 +234,21 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         store.setState((existingState): ClientState => {
             let route = '#/';
 
-            let { lastView, lastSwap, isViewOpen } = existingState;
+            let {
+                lastView,
+                lastSwap,
+                isViewOpen,
+                lastView__tokenId,
+                lastSwap__tokenId,
+                lastView__type,
+                lastSwap__type,
+            } = existingState;
 
             const isItem = tokenId?.includes('item-');
 
             if (view) {
                 route += 'view/';
-                isViewOpen = true;
+                existingState.isViewOpen = true;
             } else {
                 isViewOpen = false;
             }
@@ -240,12 +259,16 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                 route += num.feature + '/';
                 route += num.position;
                 if (view) {
+                    lastView__tokenId = tokenId;
+                    lastView__type = Route.ViewItem;
                     lastView = {
                         type: Route.ViewItem,
                         tokenId: tokenId as `item-${string}`,
                         ...num,
                     };
                 } else {
+                    lastSwap__tokenId = tokenId;
+                    lastSwap__type = Route.SwapItem;
                     lastSwap = {
                         type: Route.SwapItem,
                         tokenId: tokenId as `item-${string}`,
@@ -255,12 +278,16 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             } else {
                 route += 'nugg/' + tokenId;
                 if (view) {
+                    lastView__tokenId = tokenId;
+                    lastView__type = Route.ViewNugg;
                     lastView = {
                         type: Route.ViewNugg,
                         tokenId: tokenId as string,
                         idnum: +tokenId,
                     };
                 } else {
+                    lastSwap__tokenId = tokenId;
+                    lastSwap__type = Route.SwapNugg;
                     lastSwap = {
                         type: Route.SwapNugg,
                         tokenId: tokenId as string,
@@ -273,7 +300,17 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                 window.location.replace(route);
             }
 
-            return { ...existingState, route, lastView, lastSwap, isViewOpen };
+            return {
+                ...existingState,
+                ...(route === existingState.route ? {} : { route }),
+                ...(lastView__tokenId === existingState.lastView__tokenId
+                    ? {}
+                    : { lastView, lastView__tokenId, lastView__type }),
+                ...(lastSwap__tokenId === existingState.lastSwap__tokenId
+                    ? {}
+                    : { lastSwap, lastSwap__tokenId, lastSwap__type }),
+                ...(isViewOpen === existingState.isViewOpen ? {} : { isViewOpen }),
+            };
         });
     }
 

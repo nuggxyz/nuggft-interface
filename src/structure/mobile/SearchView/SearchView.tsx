@@ -18,7 +18,7 @@ import styles from './SearchView.styles';
 type Props = {};
 
 const SearchView: FunctionComponent<Props> = () => {
-    const { isViewOpen } = client.router.useRouter();
+    const isViewOpen = client.live.isViewOpen();
 
     const happytabs: HappyTabberItem[] = useMemo(
         () => [

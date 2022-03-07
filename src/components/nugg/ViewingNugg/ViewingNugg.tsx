@@ -27,7 +27,8 @@ import ItemList from './ItemList';
 type Props = { MobileBackButton?: () => JSX.Element };
 
 const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
-    const { lastView } = client.router.useRouter();
+    const lastView__tokenId = client.live.lastView__tokenId();
+    const lastView__type = client.live.lastView__type();
 
     const address = web3.hook.usePriorityAccount();
 
@@ -35,9 +36,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 
-    const tokenIsItem = useMemo(() => lastView && lastView?.type === Route.ViewItem, [lastView]);
-
-    const token = client.hook.useLiveToken(lastView?.tokenId);
+    const token = client.hook.useLiveToken(lastView__tokenId);
 
     const ens = web3.hook.usePriorityAnyENSName(provider, (token as LiveNugg)?.owner);
 
@@ -51,9 +50,9 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                             chainId,
                             provider,
                             token,
-                            tokenIsItem,
+                            tokenIsItem: lastView__type === Route.ViewItem,
                             swaps: token?.swaps,
-                            tokenId: lastView?.tokenId,
+                            tokenId: lastView__tokenId,
                         }}
                     />
                 ),
@@ -69,7 +68,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                       chainId,
                                       provider,
                                       address,
-                                      tokenId: lastView?.tokenId,
+                                      tokenId: lastView__tokenId,
                                   }}
                               />
                           ),
@@ -77,10 +76,10 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                   ]
                 : []),
         ];
-    }, [token, address, chainId, provider, token, tokenIsItem, lastView]);
+    }, [token, address, chainId, provider, token, lastView__tokenId, lastView__type]);
     console.log({ token });
     return (
-        !isUndefinedOrNullOrStringEmpty(lastView?.tokenId) && (
+        !isUndefinedOrNullOrStringEmpty(lastView__tokenId) && (
             <div style={styles.container}>
                 {MobileBackButton && (
                     <div
@@ -101,7 +100,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 >
                     <div style={{ position: 'fixed' }}>
                         <AnimatedCard>
-                            <TokenViewer tokenId={lastView?.tokenId} showcase />
+                            <TokenViewer tokenId={lastView__tokenId} showcase />
                         </AnimatedCard>
                     </div>
                 </div>
@@ -109,7 +108,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                     <div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
                         <div style={styles.owner}>
                             <Text textStyle={styles.nuggId}>
-                                {parseTokenIdSmart(lastView?.tokenId)}
+                                {parseTokenIdSmart(lastView__tokenId)}
                             </Text>
                             <div style={{ marginLeft: '1rem' }}>
                                 {token?.type === 'nugg' &&
@@ -128,7 +127,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                 {token?.owner === Address.ZERO.hash ||
                                                 token?.owner === CONTRACTS[chainId].NuggftV1
                                                     ? 'NuggftV1'
-                                                    : tokenIsItem
+                                                    : lastView__type === Route.ViewItem
                                                     ? `Nugg #${token?.owner}`
                                                     : ens}
                                                 {token?.owner === address && (
@@ -157,11 +156,11 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                     }
                                 >
                                     {token?.activeSwap?.id ? (
-                                        <SaleButtons tokenId={lastView?.tokenId} />
+                                        <SaleButtons tokenId={lastView__tokenId} />
                                     ) : token?.activeLoan ? (
-                                        <LoanButtons tokenId={lastView?.tokenId} />
+                                        <LoanButtons tokenId={lastView__tokenId} />
                                     ) : (
-                                        <OwnerButtons tokenId={lastView?.tokenId} />
+                                        <OwnerButtons tokenId={lastView__tokenId} />
                                     )}
                                 </Flyout>
                             )}

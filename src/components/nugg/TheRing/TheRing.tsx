@@ -35,9 +35,9 @@ const TheRing: FunctionComponent<Props> = ({
     const blocknum = client.live.blocknum();
     const epoch = client.live.epoch();
 
-    const { lastSwap } = client.router.useRouter();
+    const lastSwap__tokenId = client.live.lastSwap__tokenId();
 
-    const token = client.hook.useLiveToken(lastSwap?.tokenId);
+    const token = client.hook.useLiveToken(lastSwap__tokenId);
 
     const status = useSetState(() => {
         console.log({ token });
@@ -74,7 +74,7 @@ const TheRing: FunctionComponent<Props> = ({
         return remaining;
     }, [blocknum, token?.activeSwap?.epoch, status]);
 
-    return lastSwap ? (
+    return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
             <CircleTimer
                 duration={blockDuration}
@@ -91,13 +91,11 @@ const TheRing: FunctionComponent<Props> = ({
                 }}
             >
                 <AnimatedCard>
-                    <TokenViewer tokenId={lastSwap.tokenId} style={tokenStyle} showcase />
+                    <TokenViewer tokenId={lastSwap__tokenId} style={tokenStyle} showcase />
                 </AnimatedCard>
-                {screenType !== 'phone' && <Text>{parseTokenIdSmart(lastSwap.tokenId)}</Text>}
+                {screenType !== 'phone' && <Text>{parseTokenIdSmart(lastSwap__tokenId)}</Text>}
             </CircleTimer>
         </div>
-    ) : (
-        <></>
     );
 };
 
