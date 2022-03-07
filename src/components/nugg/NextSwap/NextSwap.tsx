@@ -2,35 +2,30 @@ import React, { FunctionComponent } from 'react';
 
 import client from '@src/client';
 
-type Props = { tokenId: string };
+type Props = {};
 
-const NextSwap: FunctionComponent<Props> = ({ tokenId }) => {
-    const activeSwaps = client.live.activeSwaps();
+const NextSwap: FunctionComponent<Props> = () => {
+    const epoch__id = client.live.epoch__id();
 
-    const [activeTokenId, setActiveTokenId] = React.useState<string>();
+    const [on, setOn] = React.useState(true);
 
-    const nugg = client.hook.useLiveNugg(activeTokenId);
+    const abc = React.useCallback(
+        (tokenId: string) => {
+            if (on) {
+                setTimeout(() => {
+                    client.actions.routeTo(tokenId, false);
+                }, 10000);
+            }
+        },
+        [on],
+    );
 
     React.useEffect(() => {
-        if (activeSwaps.find((swap) => swap.id === (+tokenId + 1).toString())) {
-            setActiveTokenId((+tokenId + 1).toString());
-        }
-    }, [activeSwaps]);
+        abc(epoch__id.toString());
+        console.log(epoch__id);
+    }, [epoch__id]);
 
-    return (
-        <div>
-            {/* {activeSwaps.map((x) => (
-                <p>{x}</p>
-            ))} */}
-            <div>
-                {nugg && activeTokenId ? (
-                    <p> swap for nugg {activeTokenId} starting soon </p>
-                ) : (
-                    <p> next swap not ready </p>
-                )}
-            </div>
-        </div>
-    );
+    return <div></div>;
 };
 
 export default NextSwap;
