@@ -9,6 +9,7 @@ import client from '@src/client';
 import useOnHover from '@src/hooks/useOnHover';
 import Text from '@src/components/general/Texts/Text/Text';
 import Layout from '@src/lib/layout';
+import NextSwap from '@src/components/nugg/NextSwap/NextSwap';
 
 import styles from './ChainIndicator.styles';
 
@@ -49,40 +50,43 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
     }, [hover]);
 
     return (
-        <animated.div style={springStyle}>
-            <div
-                ref={ref}
-                onClick={() => {
-                    client.actions.routeTo(epoch.id.toString(), false);
-                }}
-                style={style2}
-            >
-                {error ? (
-                    <AlertCircle size={24} style={{ paddingRight: 0.5 + 'rem' }} />
-                ) : (
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <TokenViewer
-                            tokenId={epoch__id.toString()}
-                            style={{
-                                width: '37px',
-                                height: '37px',
-                                marginTop: '0.2rem',
-                                margin: '0rem .5rem 0rem 0rem',
-                            }}
-                        />
-                    </div>
-                )}
-
-                <Text
-                    textStyle={{
-                        fontFamily: Layout.font.code.regular,
-                        ...textStyle,
+        <div style={{ display: 'flex' }}>
+            <animated.div style={springStyle}>
+                <div
+                    ref={ref}
+                    onClick={() => {
+                        client.actions.routeTo(epoch.id.toString(), false);
                     }}
+                    style={style2}
                 >
-                    {epoch__id + ' | ' + (epoch__endblock - blocknum)}
-                </Text>
-            </div>
-        </animated.div>
+                    {error ? (
+                        <AlertCircle size={24} style={{ paddingRight: 0.5 + 'rem' }} />
+                    ) : (
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <TokenViewer
+                                tokenId={epoch__id.toString()}
+                                style={{
+                                    width: '37px',
+                                    height: '37px',
+                                    marginTop: '0.2rem',
+                                    margin: '0rem .5rem 0rem 0rem',
+                                }}
+                            />
+                        </div>
+                    )}
+
+                    <Text
+                        textStyle={{
+                            fontFamily: Layout.font.code.regular,
+                            ...textStyle,
+                        }}
+                    >
+                        {epoch__id + ' | ' + (epoch__endblock - blocknum)}
+                    </Text>
+                </div>
+            </animated.div>
+            <NextSwap />
+        </div>
     );
 };
 

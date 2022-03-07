@@ -9,7 +9,7 @@ import { parseItmeIdToNum } from '@src/lib';
 import web3 from '@src/web3';
 import config from '@src/config';
 
-import { parseRoute, Route, SwapRoutes, ViewRoutes } from './router';
+import { parseRoute, Route, SwapRoutes, ViewRoutes, TokenId } from './router';
 
 const DEFAULT_STATE: ClientState = {
     infura: undefined,
@@ -46,6 +46,16 @@ const DEFAULT_STATE: ClientState = {
     manualPriority: undefined,
 };
 
+export interface SwapData {
+    id: TokenId;
+    tokenId: TokenId;
+    type: 'nugg' | 'item';
+    dotnuggRawCache: Base64EncodedSvg;
+    eth: EthInt;
+    started: boolean;
+    endingEpoch: number;
+}
+
 export interface ClientState extends State {
     infura: InfuraWebSocketProvider | undefined;
     apollo: ApolloClient<any> | undefined;
@@ -71,8 +81,8 @@ export interface ClientState extends State {
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
     blocknum: number;
-    activeSwaps: { id: string; dotnuggRawCache: string }[];
-    activeItems: { id: string; dotnuggRawCache: string }[];
+    activeSwaps: SwapData[];
+    activeItems: SwapData[];
     myNuggs: NL.GraphQL.Fragments.Nugg.ListItem[];
     error: Error | undefined;
     activating: boolean;
@@ -97,8 +107,8 @@ type ClientStateUpdate = {
     // lastView: ViewRoutes;
     // lastSwap: SwapRoutes;
     // isViewOpen: boolean;
-    activeSwaps?: { id: string; dotnuggRawCache: string }[];
-    activeItems?: { id: string; dotnuggRawCache: string }[];
+    activeSwaps?: SwapData[];
+    activeItems?: SwapData[];
     myNuggs?: NL.GraphQL.Fragments.Nugg.ListItem[];
     error?: Error;
     activating?: boolean;
@@ -159,6 +169,8 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
      * as long as there haven't been any intervening updates.
      */
     function updateBlocknum(blocknum: number, chainId: Chain) {
+        blocknum++;
+
         const epochId = calculateEpochId(blocknum, chainId);
 
         store.setState((existingState): ClientState => {
