@@ -14,15 +14,15 @@ type Props = {};
 
 const MintView: FunctionComponent<Props> = () => {
     const { width, height } = AppState.select.dimensions();
-    const { lastSwap } = client.router.useRouter();
+    const lastSwap__tokenId = client.live.lastSwap__tokenId();
     return (
         <div style={styles.container}>
             <FloorPrice style={{ zIndex: 0, marginTop: '.3rem' }} />
             <div style={styles.ring}>
                 <TheRing circleWidth={Math.min(width * 2.7, height / 0.6)} />
-                {lastSwap?.tokenId && (
+                {lastSwap__tokenId && (
                     <Text textStyle={{ marginBottom: '.4rem' }}>
-                        {parseTokenIdSmart(lastSwap?.tokenId)}
+                        {parseTokenIdSmart(lastSwap__tokenId)}
                     </Text>
                 )}
             </div>

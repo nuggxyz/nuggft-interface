@@ -1,19 +1,14 @@
-import React, {
-    CSSProperties,
-    FunctionComponent,
-    useCallback,
-    useLayoutEffect,
-    useState,
-} from 'react';
+import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 import { AlertCircle } from 'react-feather';
 import { useSpring } from '@react-spring/core';
 import { animated } from '@react-spring/web';
 
-import Button from '@src/components/general/Buttons/Button/Button';
-import Layout from '@src/lib/layout';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
 import client from '@src/client';
+import useOnHover from '@src/hooks/useOnHover';
+import Text from '@src/components/general/Texts/Text/Text';
+import Layout from '@src/lib/layout';
 
 import styles from './ChainIndicator.styles';
 
@@ -24,76 +19,69 @@ type Props = {
 };
 
 const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle }) => {
+    const epoch__id = client.live.epoch__id();
+    const epoch__endblock = client.live.epoch__endblock();
+
     const epoch = client.live.epoch();
+
     const blocknum = client.live.blocknum();
     const provider = web3.hook.usePriorityProvider();
     const error = web3.hook.usePriorityError();
-    const router = client.router.useRouter();
-    const [blocksRemaining, setBlocksRemaining] = useState(0);
-
-    const getBlocksRemaining = useCallback(async () => {
-        let remaining = 0;
-
-        if (epoch && blocknum) {
-            remaining = epoch.endblock - blocknum;
-        }
-        if (remaining <= 0) {
-            remaining = 0;
-        }
-
-        setBlocksRemaining(remaining);
-    }, [blocknum, epoch]);
-
-    useLayoutEffect(() => {
-        getBlocksRemaining();
-    }, [getBlocksRemaining]);
 
     const springStyle = useSpring({
         display: 'flex',
         alignItems: 'center',
-        opacity: epoch && +epoch.id ? 1 : 0,
+        opacity: epoch__id ? 1 : 0,
     });
 
-    const LeftIcon = useCallback(
-        () =>
-            false ? (
-                <AlertCircle size={24} style={{ paddingRight: 0.5 + 'rem' }} />
-            ) : (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    {/* <ChainIndicatorPulse /> */}
-                    <TokenViewer
-                        tokenId={epoch?.id.toString()}
-                        style={{
-                            width: '37px',
-                            height: '37px',
-                            marginTop: '0.2rem',
-                            margin: '0rem .5rem 0rem 0rem',
-                        }}
-                    />
-                </div>
-            ),
-        [provider, epoch],
-    );
+    const [ref, hover] = useOnHover(() => undefined);
+
+    const style2 = useMemo(() => {
+        return {
+            ...(hover ? { filter: 'brightness(.8)' } : {}),
+            ...{
+                ...styles.buttonDefault,
+                ...styles.button,
+                ...(error ? styles.warning : styles.normal),
+                ...style,
+            },
+        };
+    }, [hover]);
 
     return (
-        // <SVG>
         <animated.div style={springStyle}>
-            <Button
-                textStyle={{
-                    fontFamily: Layout.font.code.regular,
-                    ...textStyle,
-                }}
+            <div
+                ref={ref}
                 onClick={() => {
-                    router.routeTo(epoch.id.toString(), false);
+                    client.actions.routeTo(epoch.id.toString(), false);
                 }}
-                buttonStyle={{
-                    ...styles.button,
-                    ...(error ? styles.warning : styles.normal),
-                    ...style,
-                }}
-                leftIcon={<LeftIcon />}
-                label={epoch?.id + ' | ' + blocksRemaining}
-            />
+                style={style2}
+            >
+                {error ? (
+                    <AlertCircle size={24} style={{ paddingRight: 0.5 + 'rem' }} />
+                ) : (
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <TokenViewer
+                            tokenId={epoch__id.toString()}
+                            style={{
+                                width: '37px',
+                                height: '37px',
+                                marginTop: '0.2rem',
+                                margin: '0rem .5rem 0rem 0rem',
+                            }}
+                        />
+                    </div>
+                )}
+
+                <Text
+                    textStyle={{
+                        fontFamily: Layout.font.code.regular,
+                        ...textStyle,
+                    }}
+                >
+                    {epoch__id + ' | ' + (epoch__endblock - blocknum)}
+                </Text>
+            </div>
         </animated.div>
     );
 };

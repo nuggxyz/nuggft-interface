@@ -17,16 +17,16 @@ const NuggLinkThumbnail: FunctionComponent<{
     style?: CSSProperties;
 }> = ({ item, index, style: customStyle }) => {
     const [ref, isHovering] = useOnHover();
-    const lastView = client.live.lastView();
+    const lastView__tokenId = client.live.lastView__tokenId();
 
     const style = useMemo(() => {
         return {
             ...styles.nuggLinkThumbnailContainer,
             ...(isHovering ? styles.hover : {}),
-            ...(lastView?.tokenId === item.id ? styles.selected : {}),
+            ...(lastView__tokenId === item.id ? styles.selected : {}),
             ...customStyle,
         };
-    }, [item, isHovering, lastView?.tokenId, customStyle]);
+    }, [item, isHovering, lastView__tokenId, customStyle]);
 
     return (
         <animated.div

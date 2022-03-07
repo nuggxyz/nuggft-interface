@@ -19,13 +19,19 @@ export default {
         activeItems: () => core.store((state) => state.activeItems),
         myNuggs: () => core.store((state) => state.myNuggs),
         epoch: () => core.store((state) => state.epoch),
+        epoch__id: () => core.store((state) => state.epoch__id ?? 0),
+        epoch__endblock: () => core.store((state) => state.epoch?.endblock),
+
         stake: () => core.store((state) => state.stake),
         route: () => core.store((state) => state.route),
         lastSwap: () => core.store((state) => state.lastSwap),
         lastView: () => core.store((state) => state.lastView),
         isViewOpen: () => core.store((state) => state.isViewOpen),
         blocknum: () => core.store((state) => state.blocknum),
-
+        lastSwap__tokenId: () => core.store((state) => state.lastSwap__tokenId),
+        lastView__tokenId: () => core.store((state) => state.lastView__tokenId),
+        lastSwap__type: () => core.store((state) => state.lastSwap__type),
+        lastView__type: () => core.store((state) => state.lastView__type),
         manualPriority: () => core.store((state) => state.manualPriority),
     },
     hook: {

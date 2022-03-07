@@ -36,8 +36,9 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const address = web3.hook.usePriorityAccount();
 
-    const { lastSwap } = client.router.useRouter();
-    const token = client.hook.useLiveToken(lastSwap?.tokenId);
+    const lastSwap__tokenId = client.live.lastSwap__tokenId();
+
+    const token = client.hook.useLiveToken(lastSwap__tokenId);
 
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const prevToggle = usePrevious(txnToggle);
@@ -53,7 +54,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const [open, setOpen] = useState(false);
 
-    const { offers, leader } = client.hook.useSafeTokenOffers(lastSwap?.tokenId);
+    const { offers, leader } = client.hook.useSafeTokenOffers(lastSwap__tokenId);
 
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader && leader.user);
 
@@ -155,7 +156,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                 ? 'No offers yet...'
                                 : status === 'waiting'
                                 ? 'Place offer to begin auction'
-                                : 'Winner ') + parseTokenIdSmart(lastSwap?.tokenId)}
+                                : 'Winner ') + parseTokenIdSmart(lastSwap__tokenId)}
                         </Text>
                         {hasBids && status !== 'waiting' && (
                             <div
@@ -245,7 +246,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                           modalData: {
                                               type: 'Offer',
                                               data: {
-                                                  tokenId: lastSwap?.tokenId,
+                                                  tokenId: lastSwap__tokenId,
                                               },
                                           },
                                       })

@@ -22,7 +22,7 @@ type Props = { isActive?: boolean };
 
 const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
     const address = web3.hook.usePriorityAccount();
-    const epoch = client.live.epoch();
+    const epoch__id = client.live.epoch__id();
     const [loanedNuggs, setLoanedNuggs] = useState([]);
     const [loadingNuggs, setLoadingNuggs] = useState(false);
     const txnToggle = TransactionState.select.toggleCompletedTxn();
@@ -47,7 +47,7 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
             setLoanedNuggs([]);
         }
         setLoadingNuggs(false);
-    }, [address, epoch, loanedNuggs]);
+    }, [address, epoch__id, loanedNuggs]);
 
     useEffect(() => {
         if (isActive) {
@@ -69,7 +69,7 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
                 label="Loaned Nuggs"
                 titleLoading={loadingNuggs}
                 style={listStyles.list}
-                extraData={[epoch?.id || '0']}
+                extraData={[epoch__id || '0']}
                 listEmptyText="You haven't loaned any nuggs yet!"
                 labelStyle={styles.listLabel}
                 listEmptyStyle={listStyles.textWhite}

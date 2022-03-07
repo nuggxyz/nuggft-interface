@@ -54,11 +54,9 @@ const NuggList: FunctionComponent<Props> = ({
 
     const [loading, setLoading] = useState(false);
 
-    const router = client.router.useRouter();
-
     const onClick = useCallback((item: typeof values[0]) => {
         batch(() => {
-            router.routeTo(item?.id, true);
+            client.actions.routeTo(item?.id, true);
             NuggDexState.dispatch.addToRecents(item);
         });
     }, []);

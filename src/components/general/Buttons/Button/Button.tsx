@@ -50,7 +50,7 @@ const Button: FunctionComponent<ButtonProps> = ({
     return (
         <div ref={ref} onClick={disabled ? undefined : onClick} style={style}>
             <LeftIcon />
-            <Label />
+            {label ? <Text {...textProps}>{label}</Text> : null}
             <RightIcon />
         </div>
     );
