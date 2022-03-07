@@ -248,7 +248,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
 
             if (view) {
                 route += 'view/';
-                existingState.isViewOpen = true;
+                isViewOpen = true;
             } else {
                 isViewOpen = false;
             }
