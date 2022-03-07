@@ -25,7 +25,6 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
 import { Chain } from '@src/web3/core/interfaces';
-import NextSwap from '@src/components/nugg/NextSwap/NextSwap';
 
 import styles from './RingAbout.styles';
 
@@ -120,7 +119,6 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     return (
         <>
-            <NextSwap />
             <animated.div
                 style={{
                     ...styles.container,

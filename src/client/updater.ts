@@ -7,8 +7,9 @@ import web3 from '@src/web3';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import { createItemId } from '@src/lib';
 
-import core from './core';
+import core, { SwapData } from './core';
 import { useBlockUpdater } from './update/useBlockUpdater';
+import { TokenId } from './router';
 
 import client from './index';
 
@@ -33,13 +34,42 @@ export default () => {
                         };
                         nuggftStakedEth: string;
                         nuggftStakedShares: string;
-                        activeNuggs: { id: string; dotnuggRawCache: string }[];
-                        activeNuggItems: { item: { id: string; dotnuggRawCache: string } }[];
+                        activeNuggs: {
+                            id: string;
+                            dotnuggRawCache: Base64EncodedSvg;
+                            activeSwap: {
+                                eth: string;
+                                endingEpoch: string | null;
+                            };
+                        }[];
+                        activeNuggItems: {
+                            activeSwap: {
+                                sellingNuggItem: {
+                                    item: {
+                                        id: string;
+                                        dotnuggRawCache: Base64EncodedSvg;
+                                    };
+                                };
+                                eth: string;
+                                endingEpoch: string | null;
+                            };
+                        }[];
+                        activeItems: {
+                            id: string;
+                            activeSwap: {
+                                sellingItem: {
+                                    dotnuggRawCache: Base64EncodedSvg;
+                                };
+                                eth: string;
+                                endingEpoch: string | null;
+                            };
+                        }[];
                     };
                 }>({
                     query: gql`
                         subscription useLiveProtocol {
                             protocol(id: "0x42069") {
+                                id
                                 epoch {
                                     id
                                     status
@@ -51,11 +81,35 @@ export default () => {
                                 activeNuggs(orderBy: idnum) {
                                     id
                                     dotnuggRawCache
+                                    activeSwap {
+                                        id
+                                        eth
+                                        endingEpoch
+                                    }
                                 }
                                 activeNuggItems {
-                                    item {
+                                    id
+                                    activeSwap {
                                         id
-                                        dotnuggRawCache
+                                        sellingNuggItem {
+                                            item {
+                                                id
+                                                dotnuggRawCache
+                                            }
+                                        }
+                                        eth
+                                        endingEpoch
+                                    }
+                                }
+                                activeItems {
+                                    id
+                                    activeSwap {
+                                        id
+                                        sellingItem {
+                                            dotnuggRawCache
+                                        }
+                                        eth
+                                        endingEpoch
                                     }
                                 }
                             }
@@ -67,7 +121,7 @@ export default () => {
                     const shares = BigNumber.from(x.data.protocol.nuggftStakedShares);
 
                     const staked = BigNumber.from(x.data.protocol.nuggftStakedEth);
-
+                    console.log({ x });
                     client.actions.updateProtocol({
                         stake: {
                             staked,
@@ -81,14 +135,45 @@ export default () => {
                             status: x.data.protocol.epoch.status,
                         },
                         activeSwaps: x.data.protocol.activeNuggs.map((x) => {
-                            return { id: x.id, dotnuggRawCache: x.dotnuggRawCache };
-                        }),
-                        activeItems: x.data.protocol.activeNuggItems.map((x) => {
                             return {
-                                id: createItemId(x.item.id),
-                                dotnuggRawCache: x.item.dotnuggRawCache,
+                                id: x.id as TokenId,
+                                tokenId: x.id as TokenId,
+                                dotnuggRawCache: x.dotnuggRawCache,
+                                eth: new EthInt(x.activeSwap?.eth),
+                                started: !!x.activeSwap?.endingEpoch,
+                                endingEpoch: +x.activeSwap?.endingEpoch,
+                                type: 'nugg',
                             };
                         }),
+                        activeItems: mergeUnique([
+                            ...x.data.protocol.activeItems.map((x) => {
+                                return {
+                                    id: createItemId(x.id) as TokenId,
+                                    tokenId: createItemId(x.id) as TokenId,
+                                    dotnuggRawCache: x.activeSwap.sellingItem.dotnuggRawCache,
+                                    eth: new EthInt(x.activeSwap?.eth),
+                                    started: !!x.activeSwap.endingEpoch,
+                                    endingEpoch: +x.activeSwap?.endingEpoch,
+                                    type: 'item' as 'item',
+                                };
+                            }),
+                            ...x.data.protocol.activeNuggItems.map((x) => {
+                                return {
+                                    id: createItemId(
+                                        x.activeSwap.sellingNuggItem.item.id,
+                                    ) as TokenId,
+                                    tokenId: createItemId(
+                                        x.activeSwap.sellingNuggItem.item.id,
+                                    ) as TokenId,
+                                    dotnuggRawCache:
+                                        x.activeSwap.sellingNuggItem.item.dotnuggRawCache,
+                                    eth: new EthInt(x.activeSwap?.eth),
+                                    started: !!x.activeSwap.endingEpoch,
+                                    endingEpoch: +x.activeSwap?.endingEpoch,
+                                    type: 'item' as 'item',
+                                };
+                            }),
+                        ]),
                     });
                 });
             return () => {
@@ -122,4 +207,29 @@ export default () => {
     }, [chainId]);
 
     return null;
+};
+
+const mergeUnique = (arr: SwapData[]) => {
+    let len = arr.length;
+
+    let tmp: number;
+    let array3: SwapData[] = [];
+    let array5: string[] = [];
+
+    while (len--) {
+        let itm = arr[len];
+        if ((tmp = array5.indexOf(itm.tokenId)) === -1) {
+            array3.unshift(itm);
+            array5.unshift(itm.tokenId);
+        } else {
+            if (+array3[tmp].eth < +itm.eth) {
+                array3[tmp] = itm;
+                array5[tmp] = itm.tokenId;
+            }
+        }
+    }
+
+    console.log({ array3, arr });
+
+    return array3;
 };
