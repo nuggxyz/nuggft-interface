@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import { Web3Provider } from '@ethersproject/providers';
 
 import { Address } from '@src/classes/Address';
-import { loadFromLocalStorage, saveToLocalStorage } from '@src/lib';
+import { extractItemId, loadFromLocalStorage, saveToLocalStorage } from '@src/lib';
 import { NuggftV1, NuggftV1__factory } from '@src/typechain';
 import { executeQuery3 } from '@src/graphql/helpers';
 import web3 from '@src/web3';
@@ -35,12 +35,12 @@ export default class NuggftV1Helper extends ContractHelper {
         }
     }
 
-    private static loadNugg(tokenId: string, prefix?: string) {
+    private static loadNugg(tokenId: string, prefix: string = '') {
         const nuggs = loadFromLocalStorage(`${prefix}${Math.floor(+tokenId / 100)}`, false) || {};
         return { nugg: nuggs[tokenId], nuggs: nuggs as any[] };
     }
 
-    public static storeNugg(tokenId: string, dotnuggRawCache: string, prefix?: string) {
+    public static storeNugg(tokenId: string, dotnuggRawCache: string, prefix: string = '') {
         const nuggs = NuggftV1Helper.loadNugg(tokenId).nuggs;
         nuggs[tokenId] = dotnuggRawCache;
         saveToLocalStorage(nuggs, `${prefix}${Math.floor(+tokenId / 100)}`, false);
@@ -51,6 +51,8 @@ export default class NuggftV1Helper extends ContractHelper {
         let { nugg } = NuggftV1Helper.loadNugg(tokenId, 'i');
 
         const isItem = tokenId.includes('item-');
+
+        tokenId = extractItemId(tokenId);
 
         if (nugg) {
             return nugg;
@@ -76,7 +78,7 @@ export default class NuggftV1Helper extends ContractHelper {
                         NuggftV1Helper.storeNugg(tokenId, res.nugg.dotnuggRawCache);
                         return res.nugg.dotnuggRawCache;
                     } else {
-                        NuggftV1Helper.storeNugg(tokenId, res.item.dotnuggRawCache);
+                        NuggftV1Helper.storeNugg(tokenId, res.item.dotnuggRawCache, 'i');
                         return res.item.dotnuggRawCache;
                     }
                 }
