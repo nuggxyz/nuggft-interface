@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import React from 'react';
 import { gql } from '@apollo/client';
 import { BigNumber } from 'ethers';
@@ -7,7 +6,7 @@ import web3 from '@src/web3';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import { createItemId } from '@src/lib';
 
-import core, { SwapData } from './core';
+import { SwapData } from './core';
 import { useBlockUpdater } from './update/useBlockUpdater';
 import { TokenId } from './router';
 
@@ -93,6 +92,7 @@ export default () => {
                                     activeSwap {
                                         id
                                         sellingNuggItem {
+                                            id
                                             item {
                                                 id
                                                 dotnuggRawCache
@@ -107,6 +107,7 @@ export default () => {
                                     activeSwap {
                                         id
                                         sellingItem {
+                                            id
                                             dotnuggRawCache
                                         }
                                         eth
@@ -117,12 +118,13 @@ export default () => {
                         }
                     `,
                     variables: {},
+                    fetchPolicy: 'cache-first',
                 })
                 .subscribe((x) => {
                     const shares = BigNumber.from(x.data.protocol.nuggftStakedShares);
 
                     const staked = BigNumber.from(x.data.protocol.nuggftStakedEth);
-                    console.log({ x });
+
                     client.actions.updateProtocol({
                         stake: {
                             staked,
@@ -185,30 +187,6 @@ export default () => {
         }
     }, [apollo]);
 
-    useEffect(() => {
-        if (chainId && web3.config.isValidChainId(chainId)) {
-            const apollo = web3.config.createApolloClient(chainId);
-            const infura = web3.config.createInfuraWebSocket(chainId);
-
-            core.actions.updateProtocol({
-                apollo,
-                infura,
-            });
-
-            return () => {
-                infura.removeAllListeners();
-                infura.destroy();
-
-                apollo.stop();
-
-                core.actions.updateProtocol({
-                    apollo: undefined,
-                    infura: undefined,
-                });
-            };
-        }
-    }, [chainId]);
-
     return null;
 };
 
@@ -231,8 +209,6 @@ const mergeUnique = (arr: SwapData[]) => {
             }
         }
     }
-
-    console.log({ array3, arr });
 
     return array3;
 };

@@ -22,7 +22,6 @@ interface BaseRoute {
 }
 export type ViewRoute = Route.ViewItem | Route.ViewNugg;
 export type SwapRoute = Route.SwapItem | Route.SwapNugg;
-
 export type ItemId = `item-${string | number}`;
 export type NuggId = string;
 export type TokenId = ItemId | NuggId;
@@ -34,7 +33,7 @@ interface ItemData {
 }
 
 interface NuggData {
-    tokenId: `${string}`;
+    tokenId: string;
     idnum: number;
 }
 
@@ -47,7 +46,7 @@ export interface SwapItemRoute extends BaseRoute, ItemData {
 }
 export interface SwapNuggRoute extends BaseRoute, NuggData {
     type: Route.SwapNugg;
-    tokenId: `${string}`;
+    tokenId: NuggId;
     idnum: number;
 }
 
@@ -63,6 +62,7 @@ export interface ViewItemRoute extends BaseRoute, ItemData {
 
 export type ViewRoutes = ViewItemRoute | ViewNuggRoute;
 export type SwapRoutes = SwapItemRoute | SwapNuggRoute;
+export type NonHomeRoutes = ViewRoutes | SwapRoutes;
 
 export type Routes = SwapRoutes | HomeRoute | ViewRoutes;
 
@@ -83,7 +83,6 @@ export function parseRoute(route: string): Routes {
 
     if (ItemRegex.test(route)) {
         const arr = ItemRegex.exec(route);
-        console.log({ arr });
         const feature = +arr[1];
         const position = +arr[2];
         const tokenId: ItemId = `item-${((feature << 8) | position).toString()}`;

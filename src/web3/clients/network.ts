@@ -4,6 +4,7 @@ import type { ConnectionInfo } from '@ethersproject/web';
 import { Connector, Actions } from '@src/web3/core/types';
 import { PeerInfo__Infura } from '@src/web3/core/interfaces';
 import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
+import { DEFAULT_CHAIN } from '@src/web3/config';
 
 type url = string | ConnectionInfo;
 
@@ -25,7 +26,7 @@ export class Network extends Connector {
         actions: Actions,
         urlMap: { [chainId: number]: url | url[] },
         connectEagerly = false,
-        defaultChainId = Number(Object.keys(urlMap)[0]),
+        defaultChainId = DEFAULT_CHAIN,
     ) {
         super(ConnectorEnum.Infura, actions, [peer]);
 
@@ -37,6 +38,7 @@ export class Network extends Connector {
             },
             {},
         );
+
         this.defaultChainId = defaultChainId;
 
         if (connectEagerly) void this.activate();

@@ -21,7 +21,7 @@ export default {
             core.store((state) => state.activeItems.find((item) => item.id.includes(id))),
         myNuggs: () => core.store((state) => state.myNuggs),
         epoch: () => core.store((state) => state.epoch),
-        epoch__id: () => core.store((state) => state.epoch__id ?? 0),
+        epoch__id: () => core.store((state) => state.epoch__id),
         epoch__endblock: () => core.store((state) => state.epoch?.endblock),
 
         stake: () => core.store((state) => state.stake),

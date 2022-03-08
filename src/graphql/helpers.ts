@@ -5,7 +5,6 @@ import GQLHelper from './GQLHelper';
 
 export const executeQuery = async (chainId: number, query: any, tableName: string) => {
     try {
-        console.log({ chainId, query, tableName });
         const result = await GQLHelper.instance(chainId).query({
             query,
             fetchPolicy: 'no-cache',
@@ -46,7 +45,7 @@ export const executeQuery3 = async <T>(query: DocumentNode, variables: object) =
     try {
         const result = await client.static.apollo().query<T>({
             query,
-            fetchPolicy: 'no-cache',
+            fetchPolicy: 'cache-first',
             canonizeResults: true,
             notifyOnNetworkStatusChange: true,
             variables: variables,

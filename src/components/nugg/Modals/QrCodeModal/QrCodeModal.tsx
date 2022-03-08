@@ -21,7 +21,15 @@ type ModalsData = {
 const QrCodeModal: FunctionComponent<Props> = () => {
     const { data } = state.app.select.modalData() as ModalsData;
 
-    return data?.uri ? (
+    const [hack, setHack] = React.useState<typeof data>(data);
+
+    React.useEffect(() => {
+        if (!data) {
+            setHack(data);
+        }
+    }, [data]);
+
+    return (
         <div style={{ padding: '20px', ...styles.container }}>
             <div
                 style={{
@@ -33,21 +41,21 @@ const QrCodeModal: FunctionComponent<Props> = () => {
                 }}
             >
                 <Text size="larger" textStyle={{ color: colors.default.primaryColor }}>
-                    Sign in with {data?.info.name}
+                    Sign in with {hack?.info.name}
                 </Text>
-                <NLStaticImage image={`${data?.info.peer}_icon`} />
+                <NLStaticImage image={`${hack?.info.peer}_icon`} />
             </div>
             <div>
                 <QRCode
-                    value={data?.uri || ''}
+                    value={hack?.uri || ''}
                     size={400}
+                    level={'Q'}
                     style={{ padding: '10px' }}
                     fgColor={colors.default.primaryColor}
-                    numOctaves={3}
                 />
             </div>
         </div>
-    ) : null;
+    );
 };
 
 export default QrCodeModal;

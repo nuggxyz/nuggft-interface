@@ -1,3 +1,5 @@
+import curriedLighten from 'polished/lib/color/lighten';
+
 const Colors = {
     primaryColor: '#25292e',
     secondaryColor: '#FFFFFF',
@@ -50,6 +52,17 @@ const Colors = {
         grey: '#788796',
         lightGrey: 'rgba(0, 0, 0, 0.1)',
     },
+};
+
+export const gradify = (col: string) => {
+    // console.log(
+    //     `radial-gradient(50% 50% at 50% 50%, ${curriedLighten(0.01)(col)} 0%, ${curriedLighten(
+    //         0.01,
+    //     )(col)} 100%)'`,
+    // );
+    return `linear-gradient(128.17deg, ${curriedLighten(0.01)(col)}-14.78%, ${curriedLighten(0.01)(
+        col,
+    )} 0%, ${curriedLighten(0.01)(col)} 110.05%)'`;
 };
 
 export default Colors;

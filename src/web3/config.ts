@@ -229,7 +229,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
           }
         : {}),
     infura: initializeConnector<Network>(
-        (actions) => new Network(peer_infura, actions, NETWORK_URLS, true, 5),
+        (actions) => new Network(peer_infura, actions, NETWORK_URLS, true),
         Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
     ),
 };
@@ -311,10 +311,10 @@ export const createInfuraWebSocket = (chainId: Chain) => {
 export const createApolloClient = (chainId: Chain) => {
     const ok = new ApolloClient<any>({
         link: buildApolloSplitLink(GRAPH_ENPOINTS[chainId], GRAPH_WSS_ENDPOINTS[chainId]),
-        // connectToDevTools: true,
+        connectToDevTools: true,
         cache: new InMemoryCache(),
     });
-    // window.__APOLLO_CLIENT__ = ok;
+    window.__APOLLO_CLIENT__ = ok;
     return ok;
 };
 

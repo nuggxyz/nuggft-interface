@@ -2,6 +2,7 @@ import type WalletConnectProvider from '@walletconnect/ethereum-provider';
 import type { IWCEthRpcConnectionOptions } from '@walletconnect/types';
 import EventEmitter3 from 'eventemitter3';
 import type { EventEmitter } from 'node:events';
+import curriedLighten from 'polished/lib/color/lighten';
 
 import type { Actions, ProviderRpcError } from '@src/web3/core/types';
 import { Connector } from '@src/web3/core/types';
@@ -103,6 +104,7 @@ export class WalletConnect extends Connector {
                     modalData: {
                         data: { info: peer, uri },
                         containerStyle: { backgroundColor: 'white' },
+                        backgroundStyle: { background: curriedLighten(0.1)(peer.color) },
                     },
                 });
             }
@@ -211,8 +213,6 @@ export class WalletConnect extends Connector {
      * to the chain, if their wallet supports it.
      */
     public async activate(desiredChainId?: number, desiredPeer?: Peer): Promise<void> {
-        console.log('activate() A');
-
         this.peer_try = desiredPeer;
 
         if (desiredChainId && this.rpc[desiredChainId] === undefined) {

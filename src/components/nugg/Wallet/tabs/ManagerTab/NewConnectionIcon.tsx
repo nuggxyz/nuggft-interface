@@ -8,15 +8,10 @@ type Props = {
 };
 
 const NewConnectionIcon: FunctionComponent<Props> = ({ connector }) => {
-    const chainId = web3.hook.useSelectedChainId(connector);
     const provider = web3.hook.useSelectedProvider(connector);
 
-    const ens = web3.hook.useSelectedENSName(connector, provider);
-    const address = web3.hook.useSelectedAccount(connector);
     const isActive = web3.hook.useSelectedIsActive(connector);
     const isActivating = web3.hook.useSelectedIsActivating(connector);
-
-    const priority_connector = web3.hook.usePriorityConnector();
 
     return !isActive ? (
         <div
@@ -29,7 +24,6 @@ const NewConnectionIcon: FunctionComponent<Props> = ({ connector }) => {
                 width: '100%',
             }}
             onClick={async () => {
-                console.log('yep');
                 if (isActivating) {
                     await connector.deactivate();
                 }
