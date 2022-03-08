@@ -1,13 +1,14 @@
 import { InfuraWebSocketProvider } from '@ethersproject/providers';
-import { ApolloClient } from '@apollo/client';
+import { ApolloClient, gql } from '@apollo/client';
 import create, { State, StoreApi, UseBoundStore } from 'zustand';
 import { BigNumber, BigNumberish } from 'ethers';
 
 import { EthInt } from '@src/classes/Fraction';
 import { Chain, Connector } from '@src/web3/core/interfaces';
-import { parseItmeIdToNum } from '@src/lib';
+import { extractItemId, parseItmeIdToNum } from '@src/lib';
 import web3 from '@src/web3';
 import config from '@src/config';
+import { executeQuery3 } from '@src/graphql/helpers';
 
 import { parseRoute, Route, SwapRoutes, ViewRoutes, TokenId } from './router';
 
@@ -15,7 +16,7 @@ const DEFAULT_STATE: ClientState = {
     infura: undefined,
     stake: undefined,
     epoch: undefined,
-    epoch__id: undefined,
+    epoch__id: 0,
     route: undefined,
     lastView: {
         feature: undefined,
@@ -122,6 +123,10 @@ export interface Actions {
     routeTo: (tokenId: `item-${string}` | string, view: boolean) => void;
     reportError: (error: Error | undefined) => void;
     toggleView: () => void;
+    updateClients: (
+        stateUpdate: Pick<ClientStateUpdate, 'infura' | 'apollo'>,
+        chainId: Chain,
+    ) => Promise<void>;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
@@ -148,8 +153,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
     function startActivation(): () => void {
         const nullifierCached = ++nullifier;
 
-        console.log(parseRoute(window.location.hash));
-
         store.setState({
             ...DEFAULT_STATE,
             activating: true,
@@ -163,6 +166,35 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         };
     }
 
+    async function checkVaildRouteOnStartup(): Promise<void> {
+        let route = parseRoute(window.location.hash);
+
+        if (route.type !== Route.Home) {
+            const check = await executeQuery3<{
+                nugg: { id: string };
+                item: { id: string };
+            }>(
+                gql`
+                    query Check($tokenId: ID!) {
+                        nugg(id: $tokenId) {
+                            id
+                        }
+                        item(id: $tokenId) {
+                            id
+                        }
+                    }
+                `,
+                { tokenId: extractItemId(route.tokenId) },
+            );
+
+            if (route.type === Route.SwapNugg || route.type === Route.ViewNugg) {
+                if (check.nugg === null) window.location.hash = '#/';
+            } else if (route.type === Route.SwapItem || route.type === Route.ViewItem) {
+                if (check.item === null) window.location.hash = '#/';
+            }
+        }
+    }
+
     /**
      * Sets activating to true, indicating that an update is in progress.
      *
@@ -170,8 +202,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
      * as long as there haven't been any intervening updates.
      */
     function updateBlocknum(blocknum: number, chainId: Chain) {
-        blocknum++;
-
         const epochId = calculateEpochId(blocknum, chainId);
 
         store.setState((existingState): ClientState => {
@@ -200,7 +230,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                     };
                 }
             }
-
             if (!existingState.epoch__id || epochId !== existingState.epoch__id) {
                 existingState.epoch__id = epochId;
                 existingState.epoch = {
@@ -335,32 +364,44 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         });
     }
 
-    // /**
-    //  * Used to report a `stateUpdate` which is merged with existing state. The first `stateUpdate` that results in chainId
-    //  * and accounts being set will also set activating to false, indicating a successful connection. Similarly, if an
-    //  * error is set, the first `stateUpdate` that results in chainId and accounts being set will clear this error.
-    //  *
-    //  * @param stateUpdate - The state update to report.
-    //  */
-    // function update(stateUpdate: ClientStateUpdate): void {
-    //     nullifier++;
+    /**
+     * Used to report a `stateUpdate` which is merged with existing state. The first `stateUpdate` that results in chainId
+     * and accounts being set will also set activating to false, indicating a successful connection. Similarly, if an
+     * error is set, the first `stateUpdate` that results in chainId and accounts being set will clear this error.
+     *
+     * @param stateUpdate - The state update to report.
+     */
+    async function updateClients(
+        stateUpdate: Pick<ClientStateUpdate, 'infura' | 'apollo'>,
+        chainId: Chain,
+    ): Promise<void> {
+        nullifier++;
 
-    //     store.setState((existingState): ClientState => {
-    //         // determine the next chainId and accounts
-    //         const infura = stateUpdate.infura ?? existingState.infura;
-    //         const apollo = stateUpdate.apollo ?? existingState.apollo;
+        store.setState((existingState): ClientState => {
+            // determine the next chainId and accounts
+            const infura = stateUpdate.infura ?? existingState.infura;
+            const apollo = stateUpdate.apollo ?? existingState.apollo;
 
-    //         // determine the next error
-    //         let error = existingState.error;
+            // determine the next error
+            let error = existingState.error;
 
-    //         let activating = existingState.activating;
-    //         if (activating && (error || (infura && apollo))) {
-    //             activating = false;
-    //         }
+            let activating = existingState.activating;
+            if (activating && (error || (infura && apollo))) {
+                activating = false;
+            }
 
-    //         return { ...existingState, infura, apollo, activating, error };
-    //     });
-    // }
+            return { ...existingState, infura, apollo, activating, error };
+        });
+
+        if (!store.getState().route && stateUpdate.infura) {
+            const blocknum = stateUpdate.infura.getBlockNumber();
+
+            let awaited: number;
+            await Promise.all([(awaited = await blocknum), await checkVaildRouteOnStartup()]);
+
+            updateBlocknum(awaited, chainId);
+        }
+    }
 
     // /**
     //  * Used to report an `error`, which clears all existing state.
@@ -383,6 +424,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
     return {
         store,
         actions: {
+            updateClients,
             startActivation,
             updateBlocknum,
             reportError,

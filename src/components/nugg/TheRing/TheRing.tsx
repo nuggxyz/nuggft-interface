@@ -40,7 +40,6 @@ const TheRing: FunctionComponent<Props> = ({
     const token = client.hook.useLiveToken(lastSwap__tokenId);
 
     const status = useSetState(() => {
-        console.log({ token });
         return isUndefinedOrNull(token?.activeSwap?.epoch)
             ? 'waiting'
             : epoch &&

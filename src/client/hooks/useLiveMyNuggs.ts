@@ -35,7 +35,6 @@ export const useLiveMyNuggs = (userId: string) => {
                     variables: { userId },
                 })
                 .subscribe((x) => {
-                    console.log({ x });
                     if (x.data.user.nuggs) {
                         setMyNuggs(x.data.user.nuggs);
                     }

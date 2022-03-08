@@ -9,7 +9,7 @@
     },
     "typescript.inlayHints.parameterNames.enabled": "all",
     "typescript.inlayHints.variableTypes.enabled": false,
-    "typescript.implementationsCodeLens.enabled": false,
+    "typescript.implementationsCodeLens.enabled": true,
     "gitlens.codeLens.enabled": false,
     "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": true,
     "workbench.tree.indent": 16,

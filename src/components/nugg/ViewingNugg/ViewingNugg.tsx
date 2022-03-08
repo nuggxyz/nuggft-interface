@@ -77,7 +77,6 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 : []),
         ];
     }, [token, address, chainId, provider, token, lastView__tokenId, lastView__type]);
-    console.log({ token });
     return (
         !isUndefinedOrNullOrStringEmpty(lastView__tokenId) && (
             <div style={styles.container}>

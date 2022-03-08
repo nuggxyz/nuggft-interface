@@ -25,7 +25,6 @@ export default () => {
     const [init, setInit] = useState(false);
 
     useEffect(() => {
-        console.log({ instance });
         if (chainId && web3.config.isValidChainId(chainId) && !init) {
             if (instance && graphInstance) {
                 const _helper = new NuggftV1Helper(chainId, undefined);

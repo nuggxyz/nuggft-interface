@@ -31,7 +31,7 @@ const Modal: FunctionComponent<Props> = () => {
 
     useEffect(() => {
         if (isUndefinedOrNull(isOpen) && !isUndefinedOrNullOrStringEmpty(previousOpen)) {
-            const timeout = setTimeout(() => setCurrentModal(undefined), 500);
+            const timeout = setTimeout(() => setCurrentModal(undefined), 1000);
             return () => clearTimeout(timeout);
         } else {
             setCurrentModal(isOpen);
@@ -51,13 +51,11 @@ const Modal: FunctionComponent<Props> = () => {
         },
         config: config.default,
     });
-
     const containerBackgroundStyle = useSpring({
         to: {
             ...styles.containerBackground,
             transform: isOpen ? 'translate(-4px, -4px)' : 'translate(-24px, -24px)',
             ...(screenType === 'phone' ? styles.containerMobile : styles.containerFull),
-            ...data.backgroundStyle,
         },
         config: config.default,
     });
@@ -83,7 +81,11 @@ const Modal: FunctionComponent<Props> = () => {
                     }),
                 }}
             >
-                {screenType !== 'phone' && <animated.div style={containerBackgroundStyle} />}
+                {screenType !== 'phone' && (
+                    <animated.div
+                        style={{ ...containerBackgroundStyle, ...data.backgroundStyle }}
+                    />
+                )}
                 <animated.div style={containerStyle} ref={node}>
                     {currentModal === 'OfferModal' ? (
                         <OfferModal tokenId={(data.data as { tokenId: TokenId })?.tokenId} />

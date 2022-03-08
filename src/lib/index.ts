@@ -23,6 +23,7 @@ export const isAnybodyThere = (value: any) => {
 export const isUndefined = (value: any) => {
     return typeof value === 'undefined';
 };
+
 export const isUndefinedOrNull = (value: any) => {
     return isUndefined(value) || value === null;
 };

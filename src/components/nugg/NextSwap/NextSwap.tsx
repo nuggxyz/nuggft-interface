@@ -23,6 +23,8 @@ const NextSwap: FunctionComponent<Props> = () => {
 
     const epoch__id = client.live.epoch__id();
 
+    const [prevEpochId, setPrevEpochId] = React.useState<number>(0);
+
     const lastSwap__tokenId = client.live.lastSwap__tokenId();
     const [on, setOn] = React.useState(true);
     const [open, setOpen] = React.useState(true);
@@ -38,6 +40,7 @@ const NextSwap: FunctionComponent<Props> = () => {
                     client.actions.routeTo(tokenId, false);
                     setWaiting(false);
                     setQueue(undefined);
+
                     if (auto) {
                         // setQueue()
                     }
@@ -48,7 +51,10 @@ const NextSwap: FunctionComponent<Props> = () => {
     );
 
     React.useEffect(() => {
-        abc(epoch__id.toString());
+        if (prevEpochId !== 0) {
+            abc(epoch__id.toString());
+        }
+        setPrevEpochId(epoch__id);
     }, [epoch__id]);
 
     const springStyle = useSpring({

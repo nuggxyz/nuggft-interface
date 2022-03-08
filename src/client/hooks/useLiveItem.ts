@@ -46,7 +46,6 @@ export const useLiveItem = (tokenId: string) => {
                     variables: { tokenId: extractItemId(tokenId) },
                 })
                 .subscribe((x) => {
-                    console.log({ x });
                     if (x.data.item) {
                         setItem({
                             type: 'item',
