@@ -45,7 +45,7 @@ export const executeQuery3 = async <T>(query: DocumentNode, variables: object) =
     try {
         const result = await client.static.apollo().query<T>({
             query,
-            fetchPolicy: 'cache-first',
+            fetchPolicy: 'no-cache',
             canonizeResults: true,
             notifyOnNetworkStatusChange: true,
             variables: variables,
