@@ -1,6 +1,7 @@
 import React, {
     CSSProperties,
     FunctionComponent,
+    LegacyRef,
     RefCallback,
     useCallback,
     useEffect,
@@ -23,27 +24,27 @@ import styles from './List.styles';
 export type ListRenderItemProps<T> = {
     item: T;
     extraData?: any[];
-    action?: any;
-    onScrollEnd?: any;
+    action?: (() => void) | React.Dispatch<React.SetStateAction<any>>;
+    onScrollEnd?: () => void;
     index: number;
-    rootRef?: any;
+    rootRef?: LegacyRef<HTMLDivElement>;
     selected?: boolean;
     style?: CSSProperties;
 };
 
-export type ListProps = {
-    data: any[];
-    RenderItem: FunctionComponent<ListRenderItemProps<any>>;
+export type ListProps<T> = {
+    data: T[];
+    RenderItem: FunctionComponent<ListRenderItemProps<T>>;
     loading?: boolean;
     extraData?: any[];
-    action?: any;
-    onScrollEnd?: any;
+    action?: (() => void) | React.Dispatch<React.SetStateAction<any>> | any;
+    onScrollEnd?: () => void;
     label?: string;
     border?: boolean;
     horizontal?: boolean;
     style?: CSSProperties;
     onScroll?: RefCallback<any>;
-    selected?: any;
+    selected?: T;
     listEmptyText?: string;
     labelStyle?: CSSProperties;
     listEmptyStyle?: CSSProperties;
@@ -53,7 +54,7 @@ export type ListProps = {
     // itemHeight: number;
 };
 
-const List: FunctionComponent<ListProps> = ({
+const List = <T,>({
     data = [],
     RenderItem,
     loading = false,
@@ -72,7 +73,7 @@ const List: FunctionComponent<ListProps> = ({
     listEmptyStyle,
     TitleButton,
     titleLoading,
-}) => {
+}: ListProps<T>) => {
     const ref = useOnScroll(onScroll);
     const containerStyle = useMemo(() => {
         return {

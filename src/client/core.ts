@@ -53,6 +53,7 @@ export interface SwapData {
     dotnuggRawCache: Base64EncodedSvg;
     eth: EthInt;
     started: boolean;
+    sellingNugg?: string;
     endingEpoch: number;
 }
 

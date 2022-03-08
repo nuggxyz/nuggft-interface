@@ -43,6 +43,7 @@ export default () => {
                             };
                         }[];
                         activeNuggItems: {
+                            id: string;
                             activeSwap: {
                                 sellingNuggItem: {
                                     item: {
@@ -153,6 +154,7 @@ export default () => {
                                     dotnuggRawCache: x.activeSwap.sellingItem.dotnuggRawCache,
                                     eth: new EthInt(x.activeSwap?.eth),
                                     started: !!x.activeSwap.endingEpoch,
+                                    sellingNugg: '',
                                     endingEpoch: +x.activeSwap?.endingEpoch,
                                     type: 'item' as 'item',
                                 };
@@ -169,6 +171,7 @@ export default () => {
                                         x.activeSwap.sellingNuggItem.item.dotnuggRawCache,
                                     eth: new EthInt(x.activeSwap?.eth),
                                     started: !!x.activeSwap.endingEpoch,
+                                    sellingNugg: x.id.split('-')[0],
                                     endingEpoch: +x.activeSwap?.endingEpoch,
                                     type: 'item' as 'item',
                                 };

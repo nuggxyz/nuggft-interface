@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import client from '..';
 
 export const useLiveMyNuggs = (userId: string) => {
-    const [myNuggs, setMyNuggs] = React.useState<NL.GraphQL.Fragments.Nugg.ListItem[]>(undefined);
+    const [myNuggs, setMyNuggs] = React.useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
 
     const apollo = client.live.apollo();
 

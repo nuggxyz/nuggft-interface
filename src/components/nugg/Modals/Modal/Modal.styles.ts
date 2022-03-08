@@ -42,7 +42,7 @@ const styles = NLStyleSheetCreator({
         width: '100%',
         transform: 'translate(1.5rem, 1.5rem)',
     },
-    containerFull: { width: '100%', minWidth: '630px' },
+    containerFull: { width: '630px' },
     containerMobile: {
         width: '90%',
         maxHeight: '100%',
