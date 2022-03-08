@@ -1,4 +1,4 @@
-import { InfuraWebSocketProvider } from '@ethersproject/providers';
+import { WebSocketProvider } from '@ethersproject/providers';
 import { ApolloClient, gql } from '@apollo/client';
 import create, { State, StoreApi, UseBoundStore } from 'zustand';
 import { BigNumber, BigNumberish } from 'ethers';
@@ -39,6 +39,7 @@ const DEFAULT_STATE: ClientState = {
     isViewOpen: false,
     activeSwaps: [],
     activeItems: [],
+    activeOffers: {},
     myNuggs: [],
     apollo: undefined,
     activating: false,
@@ -58,8 +59,14 @@ export interface SwapData {
     endingEpoch: number;
 }
 
+export interface OfferData {
+    user: string;
+    eth: EthInt;
+    txhash: string;
+}
+
 export interface ClientState extends State {
-    infura: InfuraWebSocketProvider | undefined;
+    infura: WebSocketProvider | undefined;
     apollo: ApolloClient<any> | undefined;
     manualPriority: Connector;
     route: string;
@@ -83,6 +90,7 @@ export interface ClientState extends State {
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
     blocknum: number;
+    activeOffers: Dictionary<OfferData[]>;
     activeSwaps: SwapData[];
     activeItems: SwapData[];
     myNuggs: NL.GraphQL.Fragments.Nugg.ListItem[];
@@ -91,7 +99,7 @@ export interface ClientState extends State {
 }
 
 type ClientStateUpdate = {
-    infura?: InfuraWebSocketProvider;
+    infura?: WebSocketProvider;
     apollo?: ApolloClient<any>;
     manualPriority?: Connector;
     // route?: string;
@@ -127,6 +135,8 @@ export interface Actions {
         stateUpdate: Pick<ClientStateUpdate, 'infura' | 'apollo'>,
         chainId: Chain,
     ) => Promise<void>;
+
+    updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
@@ -284,6 +294,33 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         });
     }
 
+    /**
+     * Sets activating to true, indicating that an update is in progress.
+     *
+     * @returns cancelActivation - A function that cancels the activation by setting activating to false,
+     * as long as there haven't been any intervening updates.
+     */
+    function updateOffers(tokenId: TokenId, offers: OfferData[]): void {
+        store.setState((existingState): ClientState => {
+            // determine the next chainId and accounts
+
+            let updates = {
+                ...existingState,
+                activeOffers: {
+                    ...existingState.activeOffers,
+                    [tokenId]: mergeUnique([
+                        ...offers,
+                        ...(existingState.activeOffers[tokenId] ?? []),
+                    ]),
+                },
+            };
+
+            console.log({ existingState, updates });
+
+            return updates;
+        });
+    }
+
     function routeTo(tokenId: string | `item-${string}`, view: boolean): void {
         store.setState((existingState): ClientState => {
             let route = '#/';
@@ -431,6 +468,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             updateProtocol,
             routeTo,
             toggleView,
+            updateOffers,
         },
     };
 }
@@ -453,4 +491,27 @@ const calculateEpochId = (blocknum: number, chainId: Chain) => {
         .div(web3.config.CONTRACTS[chainId].Interval)
         .add(config.EPOCH_OFFSET)
         .toNumber();
+};
+
+const mergeUnique = (arr: OfferData[]) => {
+    let len = arr.length;
+
+    let tmp: number;
+    let array3: OfferData[] = [];
+    let array5: string[] = [];
+
+    while (len--) {
+        let itm = arr[len];
+        if ((tmp = array5.indexOf(itm.user)) === -1) {
+            array3.unshift(itm);
+            array5.unshift(itm.user);
+        } else {
+            if (array3[tmp].eth.lt(itm.eth)) {
+                array3[tmp] = itm;
+                array5[tmp] = itm.user;
+            }
+        }
+    }
+
+    return array3;
 };

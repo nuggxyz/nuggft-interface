@@ -9,6 +9,7 @@ import { createItemId } from '@src/lib';
 import { SwapData } from './core';
 import { useBlockUpdater } from './update/useBlockUpdater';
 import { TokenId } from './router';
+import { useLiveOffers } from './hooks/useLiveOffers';
 
 import client from './index';
 
@@ -18,7 +19,11 @@ export default () => {
     const apollo = client.live.apollo();
     const infura = client.live.infura();
 
+    const lastSwap__tokneId = client.live.lastSwap__tokenId();
+
     useBlockUpdater();
+
+    useLiveOffers(lastSwap__tokneId);
 
     React.useEffect(() => {
         if (apollo) {

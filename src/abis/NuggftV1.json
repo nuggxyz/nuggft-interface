@@ -24,6 +24,31 @@
         "stateMutability": "view"
     },
     {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint160",
+                "name": "tokenId",
+                "type": "uint160"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes32",
+                "name": "agency",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes32",
+                "name": "proof",
+                "type": "bytes32"
+            }
+        ],
+        "name": "OfferMint",
+        "type": "event"
+    },
+    {
         "type": "function",
         "name": "approve",
         "inputs": [

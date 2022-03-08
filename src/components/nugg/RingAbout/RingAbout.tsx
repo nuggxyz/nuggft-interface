@@ -6,7 +6,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import Text from '@src/components/general/Texts/Text/Text';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Button from '@src/components/general/Buttons/Button/Button';
-import { fromEth } from '@src/lib/conversion';
 import Colors from '@src/lib/colors';
 import usePrevious from '@src/hooks/usePrevious';
 import useSetState from '@src/hooks/useSetState';
@@ -16,8 +15,6 @@ import {
     isUndefinedOrNull,
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrBooleanFalse,
-    isUndefinedOrNullOrNumberZero,
-    isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
     parseTokenIdSmart,
 } from '@src/lib';
@@ -26,6 +23,7 @@ import client from '@src/client';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
 import { Chain } from '@src/web3/core/interfaces';
 import { Route } from '@src/client/router';
+import { OfferData } from '@src/client/core';
 
 import styles from './RingAbout.styles';
 
@@ -57,16 +55,19 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const [open, setOpen] = useState(false);
 
-    const { offers, leader } = client.hook.useSafeTokenOffers(lastSwap__tokenId);
+    const offers = client.live.offers(lastSwap__tokenId);
+
+    const leader = useMemo(() => {
+        console.log({ offers });
+        if (offers?.length > 0) return offers[0];
+        else return undefined;
+    }, [offers]);
+
+    // const { offers, leader } = client.hook.useSafeTokenOffers(lastSwap__tokenId);
 
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader && leader.user);
 
-    const hasBids = useMemo(
-        () =>
-            !isUndefinedOrNullOrObjectEmpty(leader) &&
-            (status === 'over' || !isUndefinedOrNullOrNumberZero(+leader.eth)),
-        [leader, status],
-    );
+    const hasBids = useMemo(() => !!leader, [leader]);
 
     const [flashStyle, api] = useSpring(() => {
         return {
@@ -177,7 +178,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                     <CurrencyText
                                         image="eth"
                                         textStyle={styles.leadingOffer}
-                                        value={+fromEth(leader.eth)}
+                                        value={leader.eth.decimal.toNumber()}
                                     />
                                     <InteractiveText
                                         type="text"
@@ -279,13 +280,13 @@ const OfferRenderItem = ({
 }: {
     provider: Web3Provider;
     chainId: Chain;
-    offer: NL.Redux.Swap.Offer & { txhash: string };
+    offer: OfferData;
     index: number;
 }) => {
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, offer.user);
     return (
         <div style={styles.offerAmount}>
-            <CurrencyText image="eth" value={+fromEth(offer.eth)} />
+            <CurrencyText image="eth" value={offer.eth.decimal.toNumber()} />
             <InteractiveText
                 type="text"
                 size="smaller"
