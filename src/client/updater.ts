@@ -118,7 +118,7 @@ export default () => {
                         }
                     `,
                     variables: {},
-                    fetchPolicy: 'cache-first',
+                    // fetchPolicy: 'cache-first',
                 })
                 .subscribe((x) => {
                     const shares = BigNumber.from(x.data.protocol.nuggftStakedShares);

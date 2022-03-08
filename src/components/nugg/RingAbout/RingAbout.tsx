@@ -40,7 +40,6 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const lastSwap__tokenId = client.live.lastSwap__tokenId();
     const lastSwap__type = client.live.lastSwap__type();
     const lastSwap = client.live.lastSwap();
-    console.log({ lastSwap, lastSwap__tokenId });
 
     const token = client.hook.useLiveToken(lastSwap__tokenId);
 
@@ -252,9 +251,9 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                                   lastSwap__type === Route.SwapItem
                                                       ? 'OfferItem'
                                                       : 'OfferNugg',
-                                            //   data: {
-                                            //       tokenId: lastSwap__tokenId,
-                                            //   },
+                                              //   data: {
+                                              //       tokenId: lastSwap__tokenId,
+                                              //   },
                                           },
                                       })
                             }
