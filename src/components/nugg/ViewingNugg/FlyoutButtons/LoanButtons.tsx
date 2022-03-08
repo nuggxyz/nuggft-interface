@@ -30,7 +30,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
                 onClick={() =>
                     state.app.dispatch.setModalOpen({
-                        name: 'Loan',
+                        name: 'LoanInputModal',
                         modalData: {
                             targetId: tokenId,
                             type: 'ExtendLoan',
@@ -56,10 +56,10 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
                 onClick={() =>
                     state.app.dispatch.setModalOpen({
-                        name: 'Loan',
+                        name: 'LoanInputModal',
                         modalData: {
                             targetId: tokenId,
-                            type: 'PayOffLoan',
+                            type: 'PayoffLoan',
                             backgroundStyle: {
                                 background: Colors.gradient3,
                             },

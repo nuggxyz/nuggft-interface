@@ -26,10 +26,10 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
                 onClick={() =>
                     state.app.dispatch.setModalOpen({
-                        name: 'OfferOrSell',
+                        name: 'SellNuggOrItemModal',
                         modalData: {
                             targetId: tokenId,
-                            type: 'StartSale',
+                            type: 'SellNugg',
                         },
                     })
                 }
@@ -49,10 +49,10 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
                 onClick={() =>
                     state.app.dispatch.setModalOpen({
-                        name: 'LoanOrBurn',
+                        name: 'LoanOrBurnModal',
                         modalData: {
                             targetId: tokenId,
-                            type: 'Loan',
+                            type: 'LoanNugg',
                             backgroundStyle: {
                                 background: Colors.gradient2,
                             },
@@ -75,10 +75,10 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
                 onClick={() =>
                     state.app.dispatch.setModalOpen({
-                        name: 'LoanOrBurn',
+                        name: 'LoanOrBurnModal',
                         modalData: {
                             targetId: tokenId,
-                            type: 'Burn',
+                            type: 'BurnNugg',
                             backgroundStyle: {
                                 background: Colors.gradient3,
                             },

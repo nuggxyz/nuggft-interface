@@ -8,9 +8,9 @@ import {
 } from '@src/lib';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import usePrevious from '@src/hooks/usePrevious';
-import OfferOrSellModal from '@src/components/nugg/Modals/OfferOrSellModal/OfferOrSellModal';
+import OfferModal from '@src/components/nugg/Modals/OfferModal/OfferModal';
 import AppState from '@src/state/app';
-import LoanOrBurnModal from '@src/components/nugg/Modals/LoanOrBurn/LoanOrBurnModal';
+import LoanOrBurnModal from '@src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import LoanInputModal from '@src/components/nugg/Modals/LoanInputModal/LoanInputModal';
 import QrCodeModal from '@src/components/nugg/Modals/QrCodeModal/QrCodeModal';
@@ -24,7 +24,7 @@ type Props = {};
 const Modal: FunctionComponent<Props> = () => {
     const isOpen = AppState.select.modalIsOpen();
     const data = AppState.select.modalData();
-    const [currentModal, setCurrentModal] = useState<NL.Redux.App.Modals>();
+    const [currentModal, setCurrentModal] = useState<NL.Redux.App.ModalNames>();
     const previousOpen = usePrevious(isOpen);
     const node = useRef<HTMLDivElement>();
     const screenType = AppState.select.screenType();
@@ -85,12 +85,12 @@ const Modal: FunctionComponent<Props> = () => {
             >
                 {screenType !== 'phone' && <animated.div style={containerBackgroundStyle} />}
                 <animated.div style={containerStyle} ref={node}>
-                    {currentModal === 'OfferOrSell' ? (
-                        <OfferOrSellModal tokenId={(data.data as { tokenId: TokenId })?.tokenId} />
+                    {currentModal === 'OfferModal' ? (
+                        <OfferModal tokenId={(data.data as { tokenId: TokenId })?.tokenId} />
                     ) : null}
-                    {currentModal === 'LoanOrBurn' ? <LoanOrBurnModal /> : null}
-                    {currentModal === 'Loan' ? <LoanInputModal /> : null}
-                    {currentModal === 'QrCode' ? <QrCodeModal /> : null}
+                    {currentModal === 'LoanOrBurnModal' ? <LoanOrBurnModal /> : null}
+                    {currentModal === 'LoanInputModal' ? <LoanInputModal /> : null}
+                    {currentModal === 'QrCodeModal' ? <QrCodeModal /> : null}
                     {currentModal === 'SellNuggOrItemModal' ? (
                         <SellNuggOrItemModal
                             tokenId={(data.data as { tokenId: TokenId })?.tokenId}

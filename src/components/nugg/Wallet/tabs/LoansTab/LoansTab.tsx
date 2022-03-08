@@ -114,7 +114,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Loa
                         label={`Extend`}
                         onClick={() =>
                             AppState.dispatch.setModalOpen({
-                                name: 'Loan',
+                                name: 'LoanInputModal',
                                 modalData: {
                                     targetId: item.nugg.id,
                                     type: 'ExtendLoan',
@@ -131,10 +131,10 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Loa
                         label={`Pay off`}
                         onClick={() =>
                             AppState.dispatch.setModalOpen({
-                                name: 'Loan',
+                                name: 'LoanInputModal',
                                 modalData: {
                                     targetId: item.nugg.id,
-                                    type: 'PayOffLoan',
+                                    type: 'PayoffLoan',
                                     backgroundStyle: {
                                         background: Colors.gradient3,
                                     },

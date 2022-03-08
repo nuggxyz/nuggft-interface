@@ -13,7 +13,7 @@ import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/Feedb
 import web3 from '@src/web3';
 import client from '@src/client';
 
-import styles from './LoanOrBurn.styles';
+import styles from './LoanOrBurnModal.styles';
 
 type Props = {};
 
@@ -39,14 +39,14 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
     return (
         <div style={styles.container}>
             <Text textStyle={styles.textWhite}>
-                {stableType === 'Loan' ? 'Loan' : 'Burn'} Nugg #{stableId}
+                {stableType === 'LoanNugg' ? 'Loan' : 'Burn'} Nugg #{stableId}
             </Text>
             <AnimatedCard>
                 <TokenViewer tokenId={stableId} />
             </AnimatedCard>
 
             <div style={{ width: '100%' }}>
-                {stableType === 'Burn' && (
+                {stableType === 'BurnNugg' && (
                     <Text
                         type="text"
                         size="medium"
@@ -67,9 +67,9 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                     overrideFeedback
                     feedbackText="Check Wallet..."
                     buttonStyle={styles.button}
-                    label={`${stableType === 'Loan' ? 'Loan' : 'Burn'}`}
+                    label={`${stableType === 'LoanNugg' ? 'Loan' : 'Burn'}`}
                     onClick={() =>
-                        stableType === 'Loan'
+                        stableType === 'LoanNugg'
                             ? WalletState.dispatch.initLoan({
                                   tokenId: stableId,
                                   chainId,

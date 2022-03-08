@@ -94,13 +94,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 let temp = state.toasts;
                 state.toasts = smartReplace(temp, action.payload);
             },
-            setModalOpen: (
-                state,
-                action: PayloadAction<{
-                    name: NL.Redux.App.Modals;
-                    modalData?: NL.Redux.App.ModalsData;
-                }>,
-            ) => {
+            setModalOpen: (state, action: PayloadAction<NL.Redux.App.Modals>) => {
                 state.modalIsOpen = action.payload.name;
                 state.modalData = !isUndefinedOrNullOrObjectEmpty(action.payload.modalData)
                     ? action.payload.modalData

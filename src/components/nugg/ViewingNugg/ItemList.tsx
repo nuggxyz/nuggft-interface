@@ -67,7 +67,7 @@ const Item: FC<ListRenderItemProps<LiveNuggItem>> = ({ item, extraData }) => {
                                 name: 'SellNuggOrItemModal',
                                 modalData: {
                                     targetId: createItemId((item.feature << 8) | item.position),
-                                    type: 'StartItemSale',
+                                    type: 'SellItem',
                                     data: {
                                         tokenId: extraData[3],
                                     },

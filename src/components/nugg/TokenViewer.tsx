@@ -6,6 +6,7 @@ import AppState from '@src/state/app';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
 import { TokenId } from '@src/client/router';
+import { parseTokenId } from '@src/lib';
 
 import DangerouslySetNugg from './DangerouslySetNugg';
 type Props = {
@@ -16,6 +17,7 @@ type Props = {
     textProps?: Omit<TextProps, 'children'>;
     data?: Base64EncodedSvg;
     showcase?: boolean;
+    labelLong?: boolean;
 };
 
 const TokenViewer: FunctionComponent<Props> = ({
@@ -26,6 +28,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     textProps,
     data,
     showcase = false,
+    labelLong = false,
 }) => {
     const screenType = AppState.select.screenType();
     // const chainId = web3.hook.usePriorityChainId();
@@ -76,7 +79,7 @@ const TokenViewer: FunctionComponent<Props> = ({
                     }}
                     {...textProps}
                 >
-                    Nugg #{tokenId}
+                    {parseTokenId(tokenId, labelLong)}
                 </Text>
             )}
         </animated.div>

@@ -1,14 +1,13 @@
-import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import React, { FC, FunctionComponent, useEffect, useState } from 'react';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
-import { isUndefinedOrNullOrObjectEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import { extractItemId, isUndefinedOrNullOrStringEmpty, parseTokenId } from '@src/lib';
 import { fromEth, toEth } from '@src/lib/conversion';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import constants from '@src/lib/constants';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import Layout from '@src/lib/layout';
@@ -18,43 +17,28 @@ import web3 from '@src/web3';
 import state from '@src/state';
 import { TokenId } from '@src/client/router';
 import WalletState from '@src/state/wallet';
+import client from '@src/client';
+import List from '@src/components/general/List/List';
+import { ListRenderItemProps } from '@src/components/general/List/InfiniteList';
+import Colors from '@src/lib/colors';
 
-import styles from './OfferOrSellModal.styles';
+import styles from './OfferModal.styles';
 
 type Props = {
     tokenId: TokenId;
 };
 
-const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
+const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
     const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
+    const myNuggs = client.hook.useLiveMyNuggs(address);
+    const [selectedNuggForItem, setSelectedNugg] = useState<NL.GraphQL.Fragments.Nugg.ListItem>();
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
 
     const userBalance = web3.hook.usePriorityBalance(provider);
-
-    const check = useAsyncState(() => {
-        return (
-            !check &&
-            tokenId &&
-            address &&
-            chainId &&
-            provider &&
-            new NuggftV1Helper(chainId, provider).contract['check(address,uint160)'](
-                address,
-                tokenId,
-            )
-        );
-    }, [tokenId, address, chainId, provider]);
-
-    const minOfferAmount = useMemo(() => {
-        if (!isUndefinedOrNullOrObjectEmpty(check)) {
-            return fromEth(check.nextSwapAmount);
-        }
-        return constants.MIN_OFFER;
-    }, [check, tokenId]);
 
     const { targetId, type } = state.app.select.modalData();
 
@@ -69,6 +53,29 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
         }
     }, [type, targetId]);
 
+    const activeItem = client.live.activeNuggItem(stableId);
+
+    const check = useAsyncState(() => {
+        if (stableId && address && chainId && provider) {
+            if (stableType === 'OfferNugg') {
+                return new NuggftV1Helper(chainId, provider).contract['check(address,uint160)'](
+                    address,
+                    stableId,
+                );
+            } else if (stableType === 'OfferItem' && activeItem && selectedNuggForItem) {
+                return new NuggftV1Helper(chainId, provider).contract[
+                    'check(uint160,uint160,uint16)'
+                ](selectedNuggForItem.id, activeItem.sellingNugg, extractItemId(stableId));
+            }
+        }
+    }, [stableId, address, chainId, provider, stableType, selectedNuggForItem, activeItem]);
+
+    // const minOfferAmount = useMemo(() => {
+    //     if (!isUndefinedOrNullOrObjectEmpty(check)) {
+    //         return fromEth(check.nextSwapAmount);
+    //     }
+    //     return constants.MIN_OFFER;
+    // }, [check, tokenId]);
     // const sell = React.useCallback(async () => {
     //     const nuggft = new NuggftV1Helper(chainId, provider);
     //     await nuggft.contract.estimateGas['sell(uint160,uint96)'](stableId, toEth(amount))
@@ -98,17 +105,39 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
-                {stableType === 'StartSale'
-                    ? `Sell Nugg #${stableId || tokenId}`
-                    : `${
-                          check && check.senderCurrentOffer.toString() !== '0'
-                              ? 'Change bid for'
-                              : 'Bid on'
-                      } Nugg #${stableId || tokenId}`}
+                {`${
+                    check && check.senderCurrentOffer.toString() !== '0'
+                        ? 'Change offer for'
+                        : 'Offer on'
+                } ${parseTokenId(stableId, true)}`}
             </Text>
             <AnimatedCard>
-                <TokenViewer tokenId={stableId || tokenId} showcase />
+                <TokenViewer
+                    tokenId={stableId}
+                    showcase
+                    style={stableType === 'OfferItem' ? { height: '350px', width: '350px' } : {}}
+                />
             </AnimatedCard>
+            {stableType === 'OfferItem' && (
+                <List
+                    label="Pick a nugg to offer on this item"
+                    labelStyle={{
+                        color: 'white',
+                    }}
+                    data={myNuggs}
+                    RenderItem={MyNuggRenderItem}
+                    horizontal
+                    action={setSelectedNugg}
+                    selected={selectedNuggForItem}
+                    style={{
+                        width: '100%',
+                        background: Colors.transparentLightGrey,
+                        height: '140px',
+                        padding: '0rem .4rem',
+                        borderRadius: Layout.borderRadius.medium,
+                    }}
+                />
+            )}
             <div style={styles.inputContainer}>
                 <CurrencyInput
                     warning={swapError && 'Invalid input'}
@@ -116,7 +145,7 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
                     style={styles.input}
                     styleHeading={styles.heading}
                     styleInputContainer={styles.inputCurrency}
-                    label={stableType === 'StartSale' ? 'Enter floor' : 'Enter amount'}
+                    label="Enter amount"
                     setValue={(text: string) => {
                         setAmount(text);
                         clearError();
@@ -126,7 +155,8 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
                     className="placeholder-white"
                     rightToggles={[
                         <Button
-                            onClick={() => setAmount(`${minOfferAmount}`)}
+                            onClick={() => setAmount(check ? fromEth(check.nextSwapAmount) : '')}
+                            disabled={stableType === 'OfferItem' && !selectedNuggForItem}
                             label="Min"
                             textStyle={{
                                 fontFamily: Layout.font.sf.bold,
@@ -147,7 +177,7 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
                     marginBottom: '.5rem',
                 }}
             >
-                {stableType === 'Offer' && userBalance && (
+                {userBalance && (
                     <Text type="text" size="smaller" textStyle={styles.text} weight="bolder">
                         You currently have
                         <Text
@@ -164,34 +194,30 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
             <div style={styles.subContainer}>
                 <FeedbackButton
                     overrideFeedback
-                    disabled={check && !check.canOffer}
+                    disabled={!check || !check.canOffer}
                     feedbackText="Check Wallet..."
                     buttonStyle={styles.button}
                     label={`${
-                        stableType === 'StartSale'
-                            ? 'Sell Nugg'
-                            : check && check.senderCurrentOffer.toString() !== '0'
+                        check && check.senderCurrentOffer.toString() !== '0'
                             ? !check.canOffer
-                                ? 'You cannot offer on this Nugg'
+                                ? 'You cannot place an offer'
                                 : 'Update offer'
                             : 'Place offer'
                     }`}
                     onClick={() =>
-                        stableType === 'Offer'
-                            ? WalletState.dispatch.placeOffer({
-                                  tokenId: tokenId,
-                                  amount: fromEth(toEth(amount).sub(check.senderCurrentOffer)),
-                                  chainId,
-                                  provider,
-                                  address,
-                              })
-                            : WalletState.dispatch.initSale({
-                                  tokenId: stableId,
-                                  floor: toEth(amount),
-                                  chainId,
-                                  provider,
-                                  address,
-                              })
+                        WalletState.dispatch.placeOffer({
+                            tokenId: stableId,
+                            amount: fromEth(toEth(amount).sub(check.senderCurrentOffer)),
+                            chainId,
+                            provider,
+                            address,
+                            buyingTokenId:
+                                stableType === 'OfferItem' &&
+                                selectedNuggForItem &&
+                                selectedNuggForItem.id,
+                            sellingTokenId:
+                                stableType === 'OfferItem' && activeItem && activeItem.sellingNugg,
+                        })
                     }
                 />
             </div>
@@ -199,4 +225,31 @@ const OfferOrSellModal: FunctionComponent<Props> = ({ tokenId }) => {
     );
 };
 
-export default OfferOrSellModal;
+const MyNuggRenderItem: FC<ListRenderItemProps<NL.GraphQL.Fragments.Nugg.ListItem>> = ({
+    item,
+    index,
+    extraData,
+    selected,
+    action,
+}) => {
+    return (
+        <Button
+            buttonStyle={{
+                background: selected ? Colors.transparentGrey2 : Colors.transparent,
+                borderRadius: Layout.borderRadius.medium,
+                transition: '.2s background ease',
+            }}
+            rightIcon={
+                <TokenViewer
+                    tokenId={item.id}
+                    style={{ width: '80px', height: '80px' }}
+                    data={item.dotnuggRawCache}
+                    showLabel
+                />
+            }
+            onClick={() => action(item)}
+        />
+    );
+};
+
+export default OfferModal;

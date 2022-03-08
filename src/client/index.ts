@@ -17,6 +17,8 @@ export default {
         infura: () => core.store((state) => state.infura),
         activeSwaps: () => core.store((state) => state.activeSwaps),
         activeItems: () => core.store((state) => state.activeItems),
+        activeNuggItem: (id: string) =>
+            core.store((state) => state.activeItems.find((item) => item.id.includes(id))),
         myNuggs: () => core.store((state) => state.myNuggs),
         epoch: () => core.store((state) => state.epoch),
         epoch__id: () => core.store((state) => state.epoch__id ?? 0),

@@ -5,6 +5,7 @@ import { BigNumber, BigNumberish } from 'ethers';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import {
+    extractItemId,
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrNotObject,
     isUndefinedOrNullOrNumberZero,
@@ -27,47 +28,69 @@ const placeOffer = createAsyncThunk<
         provider: Web3Provider;
         chainId: Chain;
         address: string;
+        buyingTokenId?: string;
+        sellingTokenId?: string;
     },
     { rejectValue: NL.Redux.Swap.Error }
->('wallet/placeOffer', async ({ amount, tokenId, provider, chainId, address }, thunkAPI) => {
-    try {
-        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
-            .connect(provider.getSigner(address))
-            ['offer(uint160)'](BigNumber.from(tokenId), {
-                value: toEth(amount),
-            });
+>(
+    'wallet/placeOffer',
+    async (
+        { amount, tokenId, provider, chainId, address, buyingTokenId, sellingTokenId },
+        thunkAPI,
+    ) => {
+        try {
+            let _pendingtx;
+            if (buyingTokenId && sellingTokenId) {
+                _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+                    .connect(provider.getSigner(address))
+                    ['offer(uint160,uint160,uint16)'](
+                        buyingTokenId,
+                        sellingTokenId,
+                        BigNumber.from(extractItemId(tokenId)),
+                        {
+                            value: toEth(amount),
+                        },
+                    );
+            } else {
+                _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+                    .connect(provider.getSigner(address))
+                    ['offer(uint160)'](BigNumber.from(tokenId), {
+                        value: toEth(amount),
+                    });
+            }
 
-        return {
-            success: 'SUCCESS',
-            _pendingtx: _pendingtx.hash,
-            chainId,
-            callbackFn: () => {
-                AppState.dispatch.setModalClosed();
-            },
-        };
-    } catch (err) {
-        console.log({ err });
-        if (
-            !isUndefinedOrNullOrObjectEmpty(err) &&
-            !isUndefinedOrNullOrStringEmpty(err.method) &&
-            err.method === 'estimateGas'
-        ) {
-            return thunkAPI.rejectWithValue('GAS_ERROR');
+            return {
+                success: 'SUCCESS',
+                _pendingtx: _pendingtx.hash,
+                chainId,
+                callbackFn: () => {
+                    AppState.dispatch.setModalClosed();
+                },
+            };
+        } catch (err) {
+            console.log({ err });
+            if (
+                !isUndefinedOrNullOrObjectEmpty(err) &&
+                !isUndefinedOrNullOrStringEmpty(err.method) &&
+                err.method === 'estimateGas'
+            ) {
+                return thunkAPI.rejectWithValue('GAS_ERROR');
+            }
+            if (
+                !isUndefinedOrNullOrNotObject(err) &&
+                !isUndefinedOrNullOrNotObject(err.data) &&
+                !isUndefinedOrNullOrStringEmpty(err.data.message)
+            ) {
+                const code = err.data.message.replace(
+                    'execution reverted: ',
+                    '',
+                ) as NL.Redux.Swap.Error;
+                return thunkAPI.rejectWithValue(code);
+            }
+            return thunkAPI.rejectWithValue('UNKNOWN');
         }
-        if (
-            !isUndefinedOrNullOrNotObject(err) &&
-            !isUndefinedOrNullOrNotObject(err.data) &&
-            !isUndefinedOrNullOrStringEmpty(err.data.message)
-        ) {
-            const code = err.data.message.replace(
-                'execution reverted: ',
-                '',
-            ) as NL.Redux.Swap.Error;
-            return thunkAPI.rejectWithValue(code);
-        }
-        return thunkAPI.rejectWithValue('UNKNOWN');
-    }
-});
+    },
+);
 
 const initSale = createAsyncThunk<
     NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
