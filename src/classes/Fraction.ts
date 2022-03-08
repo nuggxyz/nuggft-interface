@@ -140,6 +140,19 @@ export class EthInt extends Fraction {
         super(BigNumber.from(value), ETH_ONE);
     }
 
+    public static fromNuggftV1Agency(value: string): EthInt {
+        return new EthInt(BigNumber.from(value).shr(160).mask(70).mul(100000000));
+    }
+
+    public static fromNuggftV1Stake(cache: string) {
+        const bn = BigNumber.from(cache);
+        return {
+            shares: bn.shr(192),
+            staked: bn.shr(96).mask(96),
+            eps: EthInt.fromFraction(new Fraction(bn.shr(96).mask(96), bn.shr(192))),
+        };
+    }
+
     public static tryParseFrac(value: Fractionish): EthInt {
         return Fraction.tryParseFraction(value) as EthInt;
     }
@@ -156,6 +169,17 @@ export class EthInt extends Fraction {
     }
 
     public static fromFraction(value: Fraction): EthInt {
+        try {
+            let bob = new EthInt(0);
+            bob.num = value.num;
+            bob.den = value.den.mul(ETH_ONE);
+            return bob;
+        } catch (err) {
+            return EthInt.ZERO;
+        }
+    }
+
+    public static fromFractionRaw(value: Fraction): EthInt {
         try {
             let bob = new EthInt(0);
             bob.num = value.num;

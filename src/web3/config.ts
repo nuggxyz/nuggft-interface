@@ -1,4 +1,8 @@
-import { InfuraWebSocketProvider } from '@ethersproject/providers';
+import {
+    AlchemyWebSocketProvider,
+    InfuraWebSocketProvider,
+    WebSocketProvider,
+} from '@ethersproject/providers';
 import { ethers } from 'ethers';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 
@@ -13,22 +17,23 @@ import {
     ResWithStore,
 } from './core/core';
 import { WalletLink } from './clients/walletlink';
-import { Network } from './clients/network';
 import { MetaMask } from './clients/metamask';
 import { WalletConnect } from './clients/walletconnect';
 import { Peer, PeerInfo, PeerInfo__WalletConnect } from './core/interfaces';
+import { Network } from './clients/network';
 
 export function supportedChainIds() {
     // @ts-ignore
     return Object.values<number>(Chain);
 }
 
-export const DEFAULT_CHAIN = 4;
+export const DEFAULT_CHAIN = Chain.RINKEBY;
 
 export const NETWORK_HEALTH_CHECK_MS = 15 * 1000;
 export const DEFAULT_MS_BEFORE_WARNING = 90 * 1000;
 
 export const INFURA_KEY = 'a1625b39cf0047febd415f9b37d8c931';
+export const ALCHEMY_KEY = 'QuvT3tDt0pPE676Br4w2mhCws6vfnMlA';
 
 export const isValidChainId = (input: number) => {
     return supportedChainIds().indexOf(input) !== -1;
@@ -77,18 +82,32 @@ export const GRAPH_WSS_ENDPOINTS = {
     [Chain.GOERLI]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli`,
 };
 
-export const NETWORK_URLS = {
+export const INFURA_URLS = {
     [Chain.MAINNET]: `https://mainnet.infura.io/v3/${INFURA_KEY}`,
     [Chain.RINKEBY]: `https://rinkeby.infura.io/v3/${INFURA_KEY}`,
     [Chain.ROPSTEN]: `https://ropsten.infura.io/v3/${INFURA_KEY}`,
     [Chain.GOERLI]: `https://goerli.infura.io/v3/${INFURA_KEY}`,
 };
 
-export const WSS_URLS = {
+export const ALCHEMY_URLS = {
+    [Chain.MAINNET]: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+    [Chain.RINKEBY]: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+    [Chain.ROPSTEN]: `https://eth-ropsten.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+    [Chain.GOERLI]: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+};
+
+export const INFURA_WSS_URLS = {
     [Chain.MAINNET]: `wss://mainnet.infura.io/v3/${INFURA_KEY}`,
     [Chain.RINKEBY]: `wss://rinkeby.infura.io/v3/${INFURA_KEY}`,
     [Chain.ROPSTEN]: `wss://ropsten.infura.io/v3/${INFURA_KEY}`,
     [Chain.GOERLI]: `wss://goerli.infura.io/v3/${INFURA_KEY}`,
+};
+
+export const ALCHEMY_WSS_URLS = {
+    [Chain.MAINNET]: `wss://eth-mainnet.ws.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+    [Chain.RINKEBY]: `wss://eth-rinkeby.ws.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+    [Chain.ROPSTEN]: `wss://eth-ropsten.ws.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+    [Chain.GOERLI]: `wss://eth-goerli.ws.alchemyapi.io/v2/${ALCHEMY_KEY}`,
 };
 
 export const peer_rainbow: PeerInfo = {
@@ -203,7 +222,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
     walletlink: initializeConnector<WalletLink>(
         (actions) =>
             new WalletLink(peer_coinbase, actions, {
-                url: NETWORK_URLS[1][0],
+                url: INFURA_URLS[1][0],
                 appName: 'NuggftV1',
             }),
     ),
@@ -218,7 +237,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                     peer_trust,
                 ],
                 actions,
-                { rpc: NETWORK_URLS },
+                { rpc: INFURA_URLS },
             ),
     ),
     ...(peer_metamask.type === ConnectorEnum.MetaMask
@@ -229,20 +248,21 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
           }
         : {}),
     infura: initializeConnector<Network>(
-        (actions) => new Network(peer_infura, actions, NETWORK_URLS, true),
-        Object.keys(NETWORK_URLS).map((chainId) => Number(chainId)),
+        (actions) =>
+            new Network(
+                peer_infura,
+                actions,
+                supportedChainIds().reduce((prev, curr) => {
+                    return { ...prev, [curr]: [INFURA_URLS[curr], ALCHEMY_URLS[curr]] };
+                }, {}),
+            ),
+        supportedChainIds(),
     ),
 };
 
 export const priority = getPriorityConnector(connector_instances);
 
 export const network = getNetworkConnector(connector_instances);
-
-// export const connectors: {
-//     [key in Connector]: NL.Web3.WalletInfo & ResWithStore<Connector>;
-// } = Object.keys(connector_instances).reduce((prev, curr) => {
-//     return { ...prev, [curr]: { ...connector_instances[curr], ...connector_info[curr] } };
-// }, {} as any);
 
 export const gotoLink = (link: string) => {
     let win = window.open(encodeURIComponent(link), '_blank');
@@ -255,7 +275,7 @@ export const CHAIN_INFO: {
     [Chain.MAINNET]: {
         docs: 'https://docs.uniswap.org/',
         explorer: 'https://etherscan.io/',
-        infoLink: 'https://info.uniswap.org/#/',
+        infoLink: 'https://nugg.xyz/',
         name: 'Ethereum',
         logoUrl: 'assets/images/ethereum-logo.png',
         nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
@@ -264,7 +284,7 @@ export const CHAIN_INFO: {
     [Chain.RINKEBY]: {
         docs: 'https://docs.uniswap.org/',
         explorer: 'https://rinkeby.etherscan.io/',
-        infoLink: 'https://info.uniswap.org/#/',
+        infoLink: 'https://nugg.xyz/testing',
         name: 'Rinkeby',
         nativeCurrency: {
             name: 'Rinkeby ETH',
@@ -276,7 +296,7 @@ export const CHAIN_INFO: {
     [Chain.ROPSTEN]: {
         docs: 'https://docs.uniswap.org/',
         explorer: 'https://ropsten.etherscan.io/',
-        infoLink: 'https://info.uniswap.org/#/',
+        infoLink: 'https://nugg.xyz/testing',
         name: 'Ropsten',
         nativeCurrency: {
             name: 'Ropsten ETH',
@@ -288,7 +308,7 @@ export const CHAIN_INFO: {
     [Chain.GOERLI]: {
         docs: 'https://docs.uniswap.org/',
         explorer: 'https://goerli.etherscan.io/',
-        infoLink: 'https://info.uniswap.org/#/',
+        infoLink: 'https://nugg.xyz/testing',
         name: 'Görli',
         nativeCurrency: {
             name: 'Görli ETH',
@@ -304,8 +324,12 @@ export const gotoEtherscan = (chainId: Chain, route: 'tx' | 'address', value: st
     win.focus();
 };
 
-export const createInfuraWebSocket = (chainId: Chain) => {
+export const createInfuraWebSocket = (chainId: Chain): WebSocketProvider => {
     return new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY);
+};
+
+export const createAlchemyWebSocket = (chainId: Chain): WebSocketProvider => {
+    return new AlchemyWebSocketProvider(CHAIN_INFO[chainId].label, ALCHEMY_KEY);
 };
 
 export const createApolloClient = (chainId: Chain) => {

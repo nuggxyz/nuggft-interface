@@ -1,5 +1,7 @@
 import type { Eip1193Bridge } from '@ethersproject/experimental';
 import type { ConnectionInfo } from '@ethersproject/web';
+import { FallbackProviderConfig } from '@ethersproject/providers';
+import { constants, VoidSigner } from 'ethers';
 
 import { Connector, Actions } from '@src/web3/core/types';
 import { PeerInfo__Infura } from '@src/web3/core/interfaces';
@@ -60,8 +62,18 @@ export class Network extends Connector {
             const providers = urls.map((url) => new JsonRpcProvider(url, chainId));
 
             return new Eip1193Bridge(
-                providers[0].getSigner(),
-                providers.length === 1 ? providers[0] : new FallbackProvider(providers),
+                new VoidSigner(constants.AddressZero),
+                providers.length === 1
+                    ? providers[0]
+                    : new FallbackProvider(
+                          providers.map((x, i) => {
+                              return {
+                                  provider: x,
+                                  stallTimeout: 500,
+                                  priority: i,
+                              } as FallbackProviderConfig;
+                          }),
+                      ),
             );
         }));
     }

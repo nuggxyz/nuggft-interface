@@ -1,5 +1,7 @@
+import { useCallback } from 'react';
+
 import core from './core';
-import { useSafeLiveOffers, useLiveOffers } from './hooks/useLiveOffers';
+import { useLiveOffers } from './hooks/useLiveOffers';
 import { useSafeLiveStake } from './hooks/useLiveStake';
 import { useLiveNugg } from './hooks/useLiveNugg';
 import { useLiveMyNuggs } from './hooks/useLiveMyNuggs';
@@ -9,6 +11,7 @@ import { useLiveItem } from './hooks/useLiveItem';
 import { useLiveItemOffers, useSafeLiveItemOffers } from './hooks/useLiveItemOffers';
 import useDotnugg from './hooks/useDotnugg';
 import router from './router';
+import { TokenId } from './router';
 
 export default {
     ...core,
@@ -35,9 +38,11 @@ export default {
         lastSwap__type: () => core.store((state) => state.lastSwap.type),
         lastView__type: () => core.store((state) => state.lastView.type),
         manualPriority: () => core.store((state) => state.manualPriority),
+        offers2: (tokenId: TokenId) => core.store((state) => state.activeOffers[tokenId]),
+        offers: (tokenId: TokenId) =>
+            core.store(useCallback((state) => state.activeOffers[tokenId], [tokenId])),
     },
     hook: {
-        useSafeLiveOffers,
         useLiveOffers,
         useSafeLiveStake,
         useLiveNugg,
@@ -47,9 +52,7 @@ export default {
         useLiveItemOffers,
         useSafeLiveItemOffers,
         useSafeTokenOffers: (tokenId: string) =>
-            tokenId?.includes('item-')
-                ? useSafeLiveItemOffers(tokenId)
-                : useSafeLiveOffers(tokenId),
+            tokenId?.includes('item-') ? useSafeLiveItemOffers(tokenId) : useLiveOffers(tokenId),
         useDotnugg,
     },
     static: {

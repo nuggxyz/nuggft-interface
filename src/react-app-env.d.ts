@@ -102,6 +102,7 @@ interface Window {
 }
 
 interface Array<T> {
+    shuffle();
     first(count?: number): Array<T>;
     last(count?: number): Array<T>;
     insert<U extends { index: number }>(element: U): Array<U>;

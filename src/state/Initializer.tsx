@@ -13,7 +13,7 @@ type Props = {
 };
 
 const Initializer: FunctionComponent<Props> = ({ children }) => {
-    const active = web3.hook.usePriorityIsActive();
+    const active = web3.hook.useNetworkIsActive();
     const chainId = web3.hook.usePriorityChainId();
     const epochId = client.live.epoch__id();
 
@@ -35,7 +35,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
     useEffect(() => {
         if (chainId && web3.config.isValidChainId(chainId)) {
             const apollo = web3.config.createApolloClient(chainId);
-            const infura = web3.config.createInfuraWebSocket(chainId);
+            const infura = web3.config.createAlchemyWebSocket(chainId);
 
             core.actions.updateClients(
                 {
@@ -63,8 +63,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
     }, [chainId]);
 
     return (
-        active &&
-        epochId && (
+        active && (
             <>
                 {[...Object.values(states), client].map((state, index) => (
                     <state.updater key={index} />
