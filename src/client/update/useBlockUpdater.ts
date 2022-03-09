@@ -14,12 +14,14 @@ export const useBlockUpdater = () => {
     const infura = client.live.infura();
     const chainId = web3.hook.usePriorityChainId();
 
+    const address = web3.hook.usePriorityAccount();
+
     React.useEffect(() => {
         if (infura) {
-            const go = async () => {
-                client.actions.updateBlocknum(await infura.getBlockNumber(), chainId);
-            };
-            go();
+            // const go = async () => {
+            //     client.actions.updateBlocknum(await infura.getBlockNumber(), chainId);
+            // };
+            // go();
             infura.on('block', (log: number) => {
                 client.actions.updateBlocknum(log, chainId);
             });
@@ -29,16 +31,17 @@ export const useBlockUpdater = () => {
             const globalEvent = {
                 address: nuggft.address,
                 topics: [
-                    // ...nuggft.filters.Stake().topics,
-                    // ...nuggft.filters.Offer().topics,
-                    // ...nuggft.filters.OfferItem().topics,
+                    // ...nuggft.filters['Stake(bytes32)']().topics,
+                    // ...nuggft.filters['OfferMint(uint160,bytes32,bytes32)']().topics,
+                    // ...nuggft.filters['Offer(uint160,bytes32)']().topics,
+                    // ...nuggft.filters['OfferItem(uint160,bytes2,bytes32)']().topics,
+                    // ...nuggft.filters['Claim(uint160,address)'](null, address).topics,
+                    // ...nuggft.filters['ClaimItem(uint160,bytes2,uint160)'](null, null, null),
                 ],
             };
 
             infura.on(globalEvent, (log: Log) => {
                 let event = nuggft.interface.parseLog(log);
-
-                console.log({ event, log });
 
                 switch (event.signature) {
                     case 'Stake(bytes32)': {
@@ -63,6 +66,10 @@ export const useBlockUpdater = () => {
                                 txhash: typedEvent.transactionHash,
                             },
                         ]);
+                        break;
+                    case 'Claim(uint160,address)':
+                    case 'ClaimItem(uint160,bytes2,uint160)':
+                        break;
                 }
             });
             return () => {
@@ -70,7 +77,5 @@ export const useBlockUpdater = () => {
                 infura.off('block', () => undefined);
             };
         }
-    }, [infura, chainId]);
-
-    React.useEffect(() => {}, []);
+    }, [infura, chainId, address]);
 };
