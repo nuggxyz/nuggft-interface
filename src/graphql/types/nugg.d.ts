@@ -19,5 +19,6 @@ declare namespace NL.GraphQL.Fragments.Nugg {
         dotnuggRawCache: Base64EncodedSvg;
         activeLoan?: { id: string };
         activeSwap?: { id: string };
+        offers?: { id: string }[];
     };
 }

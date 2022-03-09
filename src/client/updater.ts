@@ -5,6 +5,7 @@ import { BigNumber } from 'ethers';
 import web3 from '@src/web3';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import { createItemId } from '@src/lib';
+import constants from '@src/lib/constants';
 
 import { SwapData } from './core';
 import { useBlockUpdater } from './update/useBlockUpdater';
@@ -178,7 +179,7 @@ export default () => {
                                         x.activeSwap.sellingNuggItem.item.dotnuggRawCache,
                                     eth: new EthInt(x.activeSwap?.eth),
                                     started: !!x.activeSwap.endingEpoch,
-                                    sellingNugg: x.id.split('-')[0],
+                                    sellingNugg: x.id.split('-')[constants.ITEM_NUGG_POS],
                                     endingEpoch: +x.activeSwap?.endingEpoch,
                                     type: 'item' as 'item',
                                 };

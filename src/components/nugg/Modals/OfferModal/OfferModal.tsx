@@ -1,8 +1,13 @@
-import React, { FC, FunctionComponent, useEffect, useState } from 'react';
+import React, { FC, FunctionComponent, useEffect, useMemo, useState } from 'react';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
-import { extractItemId, isUndefinedOrNullOrStringEmpty, parseTokenId } from '@src/lib';
+import {
+    extractItemId,
+    isUndefinedOrNullOrArrayEmpty,
+    isUndefinedOrNullOrStringEmpty,
+    parseTokenId,
+} from '@src/lib';
 import { fromEth, toEth } from '@src/lib/conversion';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
@@ -32,7 +37,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
     const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
-    const myNuggs = client.hook.useLiveMyNuggs(address);
+
     const [selectedNuggForItem, setSelectedNugg] = useState<NL.GraphQL.Fragments.Nugg.ListItem>();
 
     const provider = web3.hook.usePriorityProvider();
@@ -44,6 +49,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
 
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(targetId);
+
     useEffect(() => {
         if (!isUndefinedOrNullOrStringEmpty(type)) {
             setType(type);
@@ -52,6 +58,18 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
             setId(targetId);
         }
     }, [type, targetId]);
+
+    const _myNuggs = client.hook.useLiveMyNuggs(address, extractItemId(targetId));
+    const myNuggs = useMemo(
+        () => _myNuggs.filter((nugg) => !(nugg.activeLoan || nugg.activeSwap)),
+        [_myNuggs],
+    );
+    useEffect(() => {
+        const prevBidder = myNuggs.find((nugg) => !isUndefinedOrNullOrArrayEmpty(nugg.offers));
+        if (prevBidder) {
+            setSelectedNugg(prevBidder);
+        }
+    }, [myNuggs]);
 
     const activeItem = client.live.activeNuggItem(stableId);
 
@@ -70,38 +88,6 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
         }
     }, [stableId, address, chainId, provider, stableType, selectedNuggForItem, activeItem]);
 
-    // const minOfferAmount = useMemo(() => {
-    //     if (!isUndefinedOrNullOrObjectEmpty(check)) {
-    //         return fromEth(check.nextSwapAmount);
-    //     }
-    //     return constants.MIN_OFFER;
-    // }, [check, tokenId]);
-    // const sell = React.useCallback(async () => {
-    //     const nuggft = new NuggftV1Helper(chainId, provider);
-    //     await nuggft.contract.estimateGas['sell(uint160,uint96)'](stableId, toEth(amount))
-    //         .then((x) => {
-    //             console.log({ x });
-    //         })
-    //         .catch((err) => {
-    //             console.log({ err });
-    //         });
-    // }, []);
-
-    // const offer = React.useCallback(async () => {
-    //     const nuggft = new NuggftV1Helper(chainId, provider);
-    //     await nuggft.contract.estimateGas['offer(uint160)'](tokenId, {
-    //         value: BigNumber.from(
-    //             toEth(amount === '' ? '0' : amount).sub(check.senderCurrentOffer),
-    //         ),
-    //     })
-    //         .then((H) => {
-    //             console.log({ H });
-    //         })
-    //         .catch((G) => {
-    //             // G.error.error.data;
-    //             console.log(G.error.error.data);
-    //         });
-    // }, [chainId, tokenId, check, amount]);
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
