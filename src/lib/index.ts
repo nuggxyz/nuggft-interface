@@ -337,7 +337,7 @@ export const parseTokenIdSmart = (itemId: string) => {
     if (!itemId) return '';
     if (itemId.startsWith(constants.default.ID_PREFIX_ITEM)) {
         let num = +itemId.replace(constants.default.ID_PREFIX_ITEM, '');
-        return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Hold', 'Neck'][num >> 8]} ${
+        return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][num >> 8]} ${
             num & 0xff
         }`;
     } else {
@@ -359,10 +359,14 @@ export const padToAddress = (id: string) => {
 
 export const formatItemSwapIdForSend = (id: string | string[]) => {
     let arr = id;
+
+    console.log({ arr });
     if (!isUndefinedOrNullOrStringEmpty(id)) {
         arr = (id as string).split('-');
     }
-    return BigNumber.from(arr[1]).shl(24).or(arr[0]);
+    return BigNumber.from(arr[constants.default.ITEM_ID_POS])
+        .shl(24)
+        .or(arr[constants.default.ITEM_NUGG_POS]);
 };
 
 export { colors, constants, conversion, fontSize, layout };

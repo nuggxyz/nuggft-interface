@@ -10,6 +10,7 @@ import {
 } from '@src/lib';
 import { Chain } from '@src/web3/core/interfaces';
 import { itemOfferBare } from '@src/graphql/fragments/itemOffer';
+import constants from '@src/lib/constants';
 
 const query = (id: string) => gql`
     {
@@ -29,7 +30,6 @@ const unclaimedOffersQuery = async (chainId: Chain, address: string, epoch?: str
         query(address.toLowerCase()),
         'user',
     )) as NL.GraphQL.Fragments.User.Bare;
-
     return !isUndefinedOrNullOrObjectEmpty(result) && !isUndefinedOrNullOrArrayEmpty(result.offers)
         ? [
               ...(result.offers.filter(
@@ -38,7 +38,6 @@ const unclaimedOffersQuery = async (chainId: Chain, address: string, epoch?: str
               ...result.nuggs.flatMap((nugg) =>
                   nugg.offers.reduce((acc, offer) => {
                       if (offer.swap.endingEpoch !== null) {
-                          // 2-1041-0-51
                           let idArr = offer.id.split('-');
                           let id = formatItemSwapIdForSend(idArr);
                           acc.push({
@@ -57,7 +56,9 @@ const unclaimedOffersQuery = async (chainId: Chain, address: string, epoch?: str
                                       itemNuggId: offer.swap.leader.id,
                                   },
                               },
-                              id: `${idArr[1]}-${idArr[2]}`,
+                              id: `${idArr[constants.ITEM_ID_POS]}-${
+                                  idArr[constants.ITEM_NUGG_POS]
+                              }`,
                               _addr: padToAddress(idArr[3]),
                           });
                       }

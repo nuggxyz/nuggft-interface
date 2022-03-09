@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 
 import client from '..';
 
-export const useLiveMyNuggs = (userId: string) => {
+export const useLiveMyNuggs = (userId: string, itemSwap?: string) => {
     const [myNuggs, setMyNuggs] = React.useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
 
     const apollo = client.live.apollo();
@@ -17,7 +17,7 @@ export const useLiveMyNuggs = (userId: string) => {
                     };
                 }>({
                     query: gql`
-                        subscription useLiveMyNuggs($userId: ID!) {
+                        subscription useLiveMyNuggs($userId: ID!, $itemSwap: String) {
                             user(id: $userId) {
                                 nuggs {
                                     id
@@ -28,11 +28,14 @@ export const useLiveMyNuggs = (userId: string) => {
                                     activeSwap {
                                         id
                                     }
+                                    offers(where: { swap_contains: $itemSwap }) {
+                                        id
+                                    }
                                 }
                             }
                         }
                     `,
-                    variables: { userId },
+                    variables: { userId, itemSwap },
                 })
                 .subscribe((x) => {
                     if (x.data.user.nuggs) {

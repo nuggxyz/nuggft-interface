@@ -16,6 +16,7 @@ import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrBooleanFalse,
     isUndefinedOrNullOrStringEmpty,
+    parseTokenId,
     parseTokenIdSmart,
 } from '@src/lib';
 import web3 from '@src/web3';
@@ -24,6 +25,7 @@ import InteractiveText from '@src/components/general/Texts/InteractiveText/Inter
 import { Chain } from '@src/web3/core/interfaces';
 import { Route } from '@src/client/router';
 import { OfferData } from '@src/client/core';
+import constants from '@src/lib/constants';
 
 import styles from './RingAbout.styles';
 
@@ -38,8 +40,12 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const lastSwap__tokenId = client.live.lastSwap__tokenId();
     const lastSwap__type = client.live.lastSwap__type();
     const lastSwap = client.live.lastSwap();
-
     const token = client.hook.useLiveToken(lastSwap__tokenId);
+
+    const isItemSwap = useMemo(
+        () => lastSwap__tokenId?.includes(constants.ID_PREFIX_ITEM),
+        [lastSwap__tokenId],
+    );
 
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const prevToggle = usePrevious(txnToggle);
@@ -219,7 +225,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                             (offer, index) =>
                                 index !== 0 && (
                                     <OfferRenderItem
-                                        {...{ provider, offer, index, chainId }}
+                                        {...{ provider, offer, index, chainId, isItemSwap }}
                                         key={index}
                                     />
                                 ),
@@ -277,13 +283,17 @@ const OfferRenderItem = ({
     chainId,
     offer,
     index,
+    isItemSwap,
 }: {
     provider: Web3Provider;
     chainId: Chain;
     offer: OfferData;
     index: number;
+    isItemSwap: boolean;
 }) => {
-    const leaderEns = web3.hook.usePriorityAnyENSName(provider, offer.user);
+    const leader = isItemSwap
+        ? parseTokenId(offer.user)
+        : web3.hook.usePriorityAnyENSName(provider, offer.user);
     return (
         <div style={styles.offerAmount}>
             <CurrencyText image="eth" value={offer.eth.decimal.toNumber()} />
@@ -295,7 +305,7 @@ const OfferRenderItem = ({
                     web3.config.gotoEtherscan(chainId, 'tx', offer.txhash);
                 }}
             >
-                {leaderEns}
+                {leader}
             </InteractiveText>
         </div>
     );
