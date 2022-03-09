@@ -1,35 +1,26 @@
-import { useState, useLayoutEffect } from 'react';
+import gql from 'graphql-tag';
 
-import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
-import {
-    isUndefinedOrNullOrStringEmptyOrZeroOrStringZero,
-    isUndefinedOrNullOrStringEmpty,
-} from '@src/lib';
+import { useFastQuery } from '@src/graphql/helpers';
 
-const useDotnugg = (tokenId: string, data?: Base64EncodedSvg) => {
-    const [src, setSrc] = useState<Base64EncodedSvg>();
-
-    useLayoutEffect(() => {
-        if (data) setSrc(data);
-        else {
-            let unmounted = false;
-
-            const getDotNuggSrc = async () => {
-                if (!isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(tokenId)) {
-                    const data = await NuggftV1Helper.optimizedDotNugg(tokenId);
-                    if (!isUndefinedOrNullOrStringEmpty(data) && !unmounted) {
-                        setSrc(data);
-                    }
+export const useDotnugg = (tokenId: string) => {
+    return useFastQuery<
+        {
+            [key in 'nugg' | 'item']?: { dotnuggRawCache: Base64EncodedSvg };
+        },
+        Base64EncodedSvg
+    >(
+        gql`
+            query OptimizedDotNugg($tokenId: ID!) {
+                ${tokenId?.startsWith('item-') ? 'item' : 'nugg'}(id: $tokenId) {
+                    dotnuggRawCache
                 }
-            };
-            getDotNuggSrc();
-
-            return () => {
-                unmounted = true;
-            };
-        }
-    }, [tokenId, data]);
-
-    return src;
+            }
+        `,
+        {
+            tokenId: tokenId?.replace('item-', ''),
+        },
+        (x) => x?.data[tokenId?.startsWith('item-') ? 'item' : 'nugg']?.dotnuggRawCache,
+    );
 };
+
 export default useDotnugg;

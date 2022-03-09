@@ -110,8 +110,8 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                 {parseTokenIdSmart(lastView__tokenId)}
                             </Text>
                             <div style={{ marginLeft: '1rem' }}>
-                                {token?.type === 'nugg' &&
-                                    (token?.owner ? (
+                                {token?.type === 'nugg' ? (
+                                    token?.owner ? (
                                         <>
                                             <Text
                                                 type="text"
@@ -142,7 +142,16 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                         </>
                                     ) : (
                                         <Loader color={Colors.nuggBlueText} />
-                                    ))}
+                                    )
+                                ) : (
+                                    <Text
+                                        type="text"
+                                        size="smaller"
+                                        textStyle={{ paddingLeft: '.5rem' }}
+                                    >
+                                        owned by {token?.count} nuggs
+                                    </Text>
+                                )}
                             </div>
                             {token?.type === 'nugg' && token?.owner === address && (
                                 <Flyout

@@ -1742,6 +1742,11 @@
                 "name": "value",
                 "type": "uint96",
                 "indexed": false
+            },
+            {
+                "name": "proof",
+                "type": "bytes32",
+                "indexed": false
             }
         ],
         "anonymous": false

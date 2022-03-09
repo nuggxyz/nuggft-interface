@@ -38,7 +38,7 @@ const TokenViewer: FunctionComponent<Props> = ({
         return { width: window.innerWidth };
     }, []);
 
-    const src = client.hook.useDotnugg(tokenId, data);
+    const src = client.hook.useDotnugg(tokenId);
 
     const animatedStyle = useSpring({
         to: {
