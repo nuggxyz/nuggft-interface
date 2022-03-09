@@ -180,21 +180,21 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         let route = parseRoute(window.location.hash);
 
         if (route.type !== Route.Home) {
+            const tokenId = extractItemId(route.tokenId);
+            const isItem = tokenId.startsWith('item-');
             const check = await executeQuery3<{
-                nugg: { id: string };
-                item: { id: string };
+                nugg?: { id: string };
+                item?: { id: string };
             }>(
                 gql`
                     query Check($tokenId: ID!) {
-                        nugg(id: $tokenId) {
+                        ${isItem ? 'item' : 'nugg'}(id: $tokenId) {
                             id
                         }
-                        item(id: $tokenId) {
-                            id
-                        }
+
                     }
                 `,
-                { tokenId: extractItemId(route.tokenId) },
+                { tokenId: tokenId },
             );
 
             if (route.type === Route.SwapNugg || route.type === Route.ViewNugg) {
@@ -513,5 +513,5 @@ const mergeUnique = (arr: OfferData[]) => {
         }
     }
 
-    return array3;
+    return array3.sort((a, b) => (a.eth.gt(b.eth) ? -1 : 1));
 };

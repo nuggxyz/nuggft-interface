@@ -21,12 +21,16 @@ export default {
         activeSwaps: () => core.store((state) => state.activeSwaps),
         activeItems: () => core.store((state) => state.activeItems),
         activeNuggItem: (id: string) =>
-            core.store((state) => state.activeItems.find((item) => item.id.includes(id))),
+            core.store(
+                useCallback(
+                    (state) => state.activeItems.find((item) => item.id.includes(id)),
+                    [id],
+                ),
+            ),
         myNuggs: () => core.store((state) => state.myNuggs),
         epoch: () => core.store((state) => state.epoch),
         epoch__id: () => core.store((state) => state.epoch__id),
         epoch__endblock: () => core.store((state) => state.epoch?.endblock),
-
         stake: () => core.store((state) => state.stake),
         route: () => core.store((state) => state.route),
         lastSwap: () => core.store((state) => state.lastSwap),
@@ -38,7 +42,6 @@ export default {
         lastSwap__type: () => core.store((state) => state.lastSwap.type),
         lastView__type: () => core.store((state) => state.lastView.type),
         manualPriority: () => core.store((state) => state.manualPriority),
-        offers2: (tokenId: TokenId) => core.store((state) => state.activeOffers[tokenId]),
         offers: (tokenId: TokenId) =>
             core.store(useCallback((state) => state.activeOffers[tokenId], [tokenId])),
     },

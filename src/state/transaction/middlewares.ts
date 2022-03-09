@@ -1,5 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 
+import client from '@src/client';
 import {
     isUndefinedOrNullOrNotFunction,
     isUndefinedOrNullOrObjectEmpty,
@@ -25,6 +26,17 @@ export const pending: NL.Redux.Middleware<
             !isUndefinedOrNullOrStringEmpty(action.payload._pendingtx)
         ) {
             TransactionState.dispatch.addTransaction(action.payload._pendingtx);
+
+            void client.static
+                .infura()
+                .waitForTransaction(action.payload._pendingtx, 1, 600000)
+                .then((x) =>
+                    TransactionState.dispatch.finalizeTransaction({
+                        hash: x.transactionHash,
+                        successful: x.status === 1,
+                    }),
+                );
+
             AppState.dispatch.addToastToList({
                 duration: 0,
                 title: 'Pending Transaction',
