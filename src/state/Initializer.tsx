@@ -63,7 +63,8 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
     }, [chainId]);
 
     return (
-        active && (
+        active &&
+        epochId && (
             <>
                 {[...Object.values(states), client].map((state, index) => (
                     <state.updater key={index} />

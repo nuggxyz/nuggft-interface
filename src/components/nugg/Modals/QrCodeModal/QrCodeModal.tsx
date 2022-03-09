@@ -24,10 +24,10 @@ const QrCodeModal: FunctionComponent<Props> = () => {
     const [hack, setHack] = React.useState<typeof data>(data);
 
     React.useEffect(() => {
-        if (!data) {
+        if (!data && !hack) {
             setHack(data);
         }
-    }, [data]);
+    }, [data, hack]);
 
     return (
         <div style={{ padding: '20px', ...styles.container }}>

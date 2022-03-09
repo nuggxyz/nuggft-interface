@@ -85,7 +85,7 @@ export default () => {
                                 nuggftStakedShares
                                 activeNuggs(orderBy: idnum) {
                                     id
-                                    dotnuggRawCache
+                                    # dotnuggRawCache
                                     activeSwap {
                                         id
                                         eth
@@ -100,7 +100,7 @@ export default () => {
                                             id
                                             item {
                                                 id
-                                                dotnuggRawCache
+                                                # dotnuggRawCache
                                             }
                                         }
                                         eth
@@ -113,7 +113,7 @@ export default () => {
                                         id
                                         sellingItem {
                                             id
-                                            dotnuggRawCache
+                                            # dotnuggRawCache
                                         }
                                         eth
                                         endingEpoch
@@ -123,7 +123,7 @@ export default () => {
                         }
                     `,
                     variables: {},
-                    // fetchPolicy: 'cache-first',
+                    fetchPolicy: 'standby',
                 })
                 .subscribe((x) => {
                     const shares = BigNumber.from(x.data.protocol.nuggftStakedShares);
