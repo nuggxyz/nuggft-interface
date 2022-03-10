@@ -14,9 +14,9 @@ const query = (
 ) => gql`
     {
         nuggs(
-            where: {idnum_lte: ${epoch} ${
-    !isUndefinedOrNullOrStringEmpty(searchValue) ? `,id: "${searchValue}"` : ''
-}},
+            where: { ${
+                !isUndefinedOrNullOrStringEmpty(searchValue) ? `,id: "${searchValue}"` : ''
+            }},
             orderBy: idnum,
             orderDirection: ${orderDirection},
             first: ${first},
