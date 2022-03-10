@@ -215,6 +215,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         const epochId = calculateEpochId(blocknum, chainId);
 
         store.setState((existingState): ClientState => {
+            console.log('ypyoyo');
             if (!existingState.route) {
                 let parsed = parseRoute(window.location.hash);
                 if (parsed.type === Route.Home) {
@@ -224,6 +225,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                         idnum: epochId,
                     };
                 }
+                console.log({ parsed });
                 if (parsed.type === Route.SwapNugg || parsed.type === Route.SwapItem) {
                     existingState = { ...existingState, lastSwap: parsed, isViewOpen: false };
                 } else {
@@ -232,7 +234,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
 
                 existingState.route = window.location.hash;
 
-                if (!existingState.lastSwap) {
+                if (!existingState.lastSwap.tokenId) {
                     existingState.lastSwap = {
                         type: Route.SwapNugg,
                         tokenId: epochId.toString(),
@@ -240,6 +242,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                     };
                 }
             }
+
             if (!existingState.epoch__id || epochId !== existingState.epoch__id) {
                 existingState.epoch__id = epochId;
                 existingState.epoch = {
