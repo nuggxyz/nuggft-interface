@@ -5,10 +5,10 @@ import { BigNumber } from 'ethers';
 import web3 from '@src/web3';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { EthInt } from '@src/classes/Fraction';
-import { NuggId } from '@src/client/router';
+import { ItemId, NuggId } from '@src/client/router';
+import { InterfacedEvent } from '@src/interfaces/events';
 
 import client from '..';
-import { StakeEvent, OfferEvent } from '../../typechain/NuggftV1';
 
 export const useBlockUpdater = () => {
     const infura = client.live.infura();
@@ -18,10 +18,6 @@ export const useBlockUpdater = () => {
 
     React.useEffect(() => {
         if (infura) {
-            // const go = async () => {
-            //     client.actions.updateBlocknum(await infura.getBlockNumber(), chainId);
-            // };
-            // go();
             infura.on('block', (log: number) => {
                 client.actions.updateBlocknum(log, chainId);
             });
@@ -41,34 +37,55 @@ export const useBlockUpdater = () => {
             };
 
             infura.on(globalEvent, (log: Log) => {
-                let event = nuggft.interface.parseLog(log);
+                let event = nuggft.interface.parseLog(log) as unknown as InterfacedEvent;
 
-                switch (event.signature) {
-                    case 'Stake(bytes32)': {
-                        let typedEvent = event as unknown as StakeEvent;
+                console.log({ event });
 
+                switch (event.name) {
+                    case 'Offer':
+                    case 'OfferMint':
+                    case 'OfferItem':
+                    case 'Stake': {
                         client.actions.updateProtocol({
-                            stake: EthInt.fromNuggftV1Stake(typedEvent.args.cache),
+                            stake: EthInt.fromNuggftV1Stake(
+                                event.name === 'Stake' ? event.args.cache : event.args.stake,
+                            ),
                         });
                         break;
                     }
-                    case 'Offer(uint160,bytes32)':
-                    case 'OfferMint(uint160,bytes32,bytes32)':
-                    case 'OfferItem(uint160,bytes32,bytes32)':
-                        let typedEvent = event as unknown as OfferEvent;
+                }
 
-                        const agency = BigNumber.from(typedEvent.args.agency);
+                switch (event.name) {
+                    case 'Offer':
+                    case 'OfferMint': {
+                        const agency = BigNumber.from(event.args.agency);
 
-                        client.actions.updateOffers(typedEvent.args.tokenId.toString() as NuggId, [
+                        client.actions.updateOffers(event.args.tokenId.toString() as NuggId, [
                             {
-                                eth: EthInt.fromNuggftV1Agency(typedEvent.args.agency),
+                                eth: EthInt.fromNuggftV1Agency(event.args.agency),
                                 user: agency.mask(160)._hex,
-                                txhash: typedEvent.transactionHash,
+                                txhash: event.transactionHash,
                             },
                         ]);
                         break;
-                    case 'Claim(uint160,address)':
-                    case 'ClaimItem(uint160,bytes2,uint160)':
+                    }
+                    case 'OfferItem': {
+                        const agency = BigNumber.from(event.args.agency);
+
+                        client.actions.updateOffers(
+                            ('item-' + Number(event.args.itemId).toString()) as ItemId,
+                            [
+                                {
+                                    eth: EthInt.fromNuggftV1Agency(event.args.agency),
+                                    user: agency.mask(160)._hex,
+                                    txhash: event.transactionHash,
+                                },
+                            ],
+                        );
+                        break;
+                    }
+                    case 'Claim':
+                    case 'ClaimItem':
                         break;
                 }
             });

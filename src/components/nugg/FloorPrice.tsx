@@ -11,7 +11,7 @@ import client from '@src/client';
 type Props = { style?: CSSProperties };
 
 const FloorPrice: FunctionComponent<Props> = ({ style }) => {
-    const { stake } = client.hook.useSafeLiveStake();
+    const stake = client.live.stake();
 
     const springStyle = useSpring({
         // zIndex: 1000,
