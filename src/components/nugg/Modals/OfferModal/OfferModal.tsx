@@ -92,9 +92,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
                 {`${
-                    check && check.senderCurrentOffer.toString() !== '0'
-                        ? 'Change offer for'
-                        : 'Offer on'
+                    check && check.current.toString() !== '0' ? 'Change offer for' : 'Offer on'
                 } ${parseTokenId(stableId, true)}`}
             </Text>
             <AnimatedCard>
@@ -141,7 +139,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
                     className="placeholder-white"
                     rightToggles={[
                         <Button
-                            onClick={() => setAmount(check ? fromEth(check.nextSwapAmount) : '')}
+                            onClick={() => setAmount(check ? fromEth(check.next) : '')}
                             disabled={stableType === 'OfferItem' && !selectedNuggForItem}
                             label="Min"
                             textStyle={{
@@ -184,7 +182,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
                     feedbackText="Check Wallet..."
                     buttonStyle={styles.button}
                     label={`${
-                        check && check.senderCurrentOffer.toString() !== '0'
+                        check && check.current.toString() !== '0'
                             ? !check.canOffer
                                 ? 'You cannot place an offer'
                                 : 'Update offer'
@@ -193,7 +191,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
                     onClick={() =>
                         WalletState.dispatch.placeOffer({
                             tokenId: stableId,
-                            amount: fromEth(toEth(amount).sub(check.senderCurrentOffer)),
+                            amount: fromEth(toEth(amount).sub(check.current)),
                             chainId,
                             provider,
                             address,
