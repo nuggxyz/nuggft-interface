@@ -32,10 +32,12 @@ type Props = {
         setLoading,
         filters,
         addToList,
+        desiredSize,
     }: {
         setLoading?: React.Dispatch<SetStateAction<boolean>>;
         filters: NL.Redux.NuggDex.Filters;
         addToList?: boolean;
+        desiredSize?: number;
     }) => Promise<void> | (() => void);
 };
 
@@ -61,25 +63,27 @@ const NuggList: FunctionComponent<Props> = ({
         });
     }, []);
 
-    const _onScrollEnd = useCallback(() => {
-        if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
-            onScrollEnd({ setLoading, filters, addToList: true });
-        }
-    }, [filters, onScrollEnd]);
+    const _onScrollEnd = useCallback(
+        (addToList: boolean = true, desiredSize?: number) => {
+            if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
+                onScrollEnd({ setLoading, filters, addToList, desiredSize });
+            }
+        },
+        [filters, onScrollEnd],
+    );
 
     useEffect(() => {
         if (
             !isUndefinedOrNullOrNotFunction(onScrollEnd) &&
             (!type || filters.target === type) &&
-            // () &&
             ((prevFilters && prevFilters.searchValue !== filters.searchValue) ||
                 filters.searchValue !== '' ||
-                prevFilters?.sort.asc !== filters?.sort.asc)
+                (prevFilters?.sort.asc !== filters?.sort.asc &&
+                    prevFilters?.target === filters.target))
         ) {
-            console.log({ filters, viewing });
-            onScrollEnd({ setLoading, filters, addToList: false });
+            onScrollEnd({ setLoading, filters, addToList: false, desiredSize: values.length });
         }
-    }, [filters, prevFilters]);
+    }, [filters, prevFilters, values]);
 
     useEffect(() => {
         if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {

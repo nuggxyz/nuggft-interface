@@ -53,7 +53,6 @@ const styles = NLStyleSheetCreator({
     nuggListRenderItemContainer: {
         width: '100%',
         height: '200px',
-        marginTop: '10px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

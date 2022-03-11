@@ -10,7 +10,7 @@ import React, {
 
 import Text from '@src/components/general/Texts/Text/Text';
 import Loader from '@src/components/general/Loader/Loader';
-import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrNotFunction } from '@src/lib';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrNotFunction, range } from '@src/lib';
 import usePrevious from '@src/hooks/usePrevious';
 
 import styles from './List.styles';
@@ -49,7 +49,7 @@ type Props = {
     titleLoading?: boolean;
 };
 
-const LIST_PADDING = 2;
+const LIST_PADDING = 4;
 
 const InfiniteList: FunctionComponent<Props> = ({
     data = [],
@@ -74,7 +74,7 @@ const InfiniteList: FunctionComponent<Props> = ({
     titleLoading,
 }) => {
     const windowRef = useRef<HTMLDivElement>();
-    const [windowHeight, setWindowHeight] = useState(100);
+    const [windowHeight, setWindowHeight] = useState(0);
 
     useEffect(() => {
         if (windowRef.current) {
@@ -96,7 +96,6 @@ const InfiniteList: FunctionComponent<Props> = ({
             ),
         [scrollTop, data, windowHeight, itemHeight],
     );
-
     const prevStart = usePrevious(startIndex);
     const prevEnd = usePrevious(endIndex);
     const prevData = usePrevious(data);
@@ -107,32 +106,41 @@ const InfiniteList: FunctionComponent<Props> = ({
         if (
             prevEnd !== endIndex ||
             prevStart !== startIndex ||
-            JSON.stringify(prevData[startIndex]) !== JSON.stringify(data[startIndex])
+            JSON.stringify(prevData) !== JSON.stringify(data)
         ) {
-            let temp = [];
-            for (let i = startIndex; i <= endIndex; i++) {
-                temp.push(
-                    <div
-                        key={JSON.stringify(data[i])}
-                        style={{
-                            position: 'absolute',
-                            top: `${i * itemHeight}px`,
-                            width: '100%',
-                            height: `${itemHeight}px`,
-                        }}
-                    >
-                        <RenderItem
-                            item={data[i]}
-                            key={JSON.stringify(data[i])}
-                            index={i}
-                            extraData={extraData}
-                            action={action}
-                            selected={JSON.stringify(selected) === JSON.stringify(data[i])}
-                        />
-                    </div>,
-                );
-            }
-            setItems(temp);
+            setItems((items) => {
+                range(startIndex, endIndex).forEach((i) => {
+                    if (
+                        !items[i - startIndex] ||
+                        items[i - startIndex].key !== JSON.stringify(data[i])
+                    ) {
+                        items[i - startIndex] = (
+                            <div
+                                key={`infinite-${i}`}
+                                style={{
+                                    position: 'absolute',
+                                    top: `${i * itemHeight}px`,
+                                    width: '100%',
+                                    height: `${itemHeight}px`,
+                                }}
+                            >
+                                <RenderItem
+                                    item={data[i]}
+                                    index={i}
+                                    extraData={extraData}
+                                    action={action}
+                                    selected={JSON.stringify(selected) === JSON.stringify(data[i])}
+                                />
+                            </div>
+                        );
+                    }
+                });
+                const diff = endIndex - startIndex + 1;
+                if (diff !== items.length) {
+                    range(0, diff).forEach(() => items.pop());
+                }
+                return items;
+            });
         }
     }, [
         endIndex,
@@ -214,7 +222,6 @@ const InfiniteList: FunctionComponent<Props> = ({
                 <div
                     style={{
                         marginTop: '1rem',
-                        // height: '1rem',
                         position: 'absolute',
                         top: `${(endIndex + 1) * itemHeight}px`,
                         width: '100%',
