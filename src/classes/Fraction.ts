@@ -4,6 +4,7 @@ import numbro from 'numbro';
 
 import { fromEth, toEth, TWO_128, TWO_96 } from '@src/lib/conversion';
 import { ETH_ONE } from '@src/lib/conversion';
+import { toGwei } from '@src/lib/index';
 
 export enum Currency {
     'ETH' = 0,
@@ -155,6 +156,10 @@ export class EthInt extends Fraction {
 
     public static tryParseFrac(value: Fractionish): EthInt {
         return Fraction.tryParseFraction(value) as EthInt;
+    }
+
+    public static fromGwei(value: BigNumberish): EthInt {
+        return new EthInt(toGwei(value.toString()));
     }
 
     public static fromEthDecimal(value: number): EthInt {

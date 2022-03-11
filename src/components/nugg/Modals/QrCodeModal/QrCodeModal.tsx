@@ -4,7 +4,7 @@ import QRCode from 'qrcode.react';
 import Text from '@src/components/general/Texts/Text/Text';
 import state from '@src/state';
 import NLStaticImage from '@src/components/general/NLStaticImage';
-import { colors } from '@src/lib';
+import lib from '@src/lib';
 import { PeerInfo } from '@src/web3/core/interfaces';
 
 import styles from './QrCodeModal.styles';
@@ -40,7 +40,7 @@ const QrCodeModal: FunctionComponent<Props> = () => {
                     width: '400px',
                 }}
             >
-                <Text size="larger" textStyle={{ color: colors.default.primaryColor }}>
+                <Text size="larger" textStyle={{ color: lib.colors.primaryColor }}>
                     Sign in with {hack?.info.name}
                 </Text>
                 <NLStaticImage image={`${hack?.info.peer}_icon`} />
@@ -51,7 +51,7 @@ const QrCodeModal: FunctionComponent<Props> = () => {
                     size={400}
                     level={'Q'}
                     style={{ padding: '10px' }}
-                    fgColor={colors.default.primaryColor}
+                    fgColor={lib.colors.primaryColor}
                 />
             </div>
         </div>

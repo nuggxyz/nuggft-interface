@@ -26,6 +26,7 @@ import { Chain } from '@src/web3/core/interfaces';
 import { Route } from '@src/client/router';
 import { OfferData } from '@src/client/core';
 import constants from '@src/lib/constants';
+import TxViewer from '@src/components/general/Texts/TxViewer/TxViewer';
 
 import styles from './RingAbout.styles';
 
@@ -71,7 +72,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     // const { offers, leader } = client.hook.useSafeTokenOffers(lastSwap__tokenId);
 
-    const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader && leader.user);
+    // const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader && leader.user);
 
     const hasBids = useMemo(() => !!leader, [leader]);
 
@@ -186,16 +187,13 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                         textStyle={styles.leadingOffer}
                                         value={leader.eth.decimal.toNumber()}
                                     />
-                                    <InteractiveText
-                                        type="text"
+                                    <TxViewer
                                         size="smaller"
                                         textStyle={{ color: Colors.textColor }}
-                                        action={function (): void {
-                                            web3.config.gotoEtherscan(chainId, 'tx', leader.txhash);
-                                        }}
-                                    >
-                                        {leaderEns}
-                                    </InteractiveText>
+                                        address={leader && leader.user}
+                                        // route={'tx'}
+                                        hash={leader && leader.txhash}
+                                    />
                                 </animated.div>
                                 {offers.length > 1 && (
                                     <Button

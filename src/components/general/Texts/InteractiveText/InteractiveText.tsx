@@ -1,16 +1,17 @@
 import React, { CSSProperties, FunctionComponent, ReactChild, useState } from 'react';
 
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
+import { SimpleSizes } from '@src/lib/layout';
 
 import styles from './InteractiveText.styles';
 
-type Props = {
+export type InteractiveTextProps = {
     action: () => void;
     children: string | string[] | ReactChild | ReactChild[];
     isActive?: boolean;
     style?: CSSProperties;
     styleText?: CSSProperties;
-    textSize?: 'smaller' | 'small' | 'medium' | 'large' | 'larger' | 'largest';
+    textSize?: SimpleSizes;
     badge?: number | string;
     leftIcon?: JSX.Element;
     rightIcon?: JSX.Element;
@@ -18,7 +19,7 @@ type Props = {
     hideBorder?: boolean;
 } & Partial<TextProps>;
 
-const InteractiveText: FunctionComponent<Props> = ({
+const InteractiveText: FunctionComponent<InteractiveTextProps> = ({
     action,
     children,
     isActive = false,
@@ -64,7 +65,8 @@ const InteractiveText: FunctionComponent<Props> = ({
                 style={customStyle}
                 onClick={action}
                 onMouseEnter={() => setHover(true)}
-                onMouseLeave={() => setHover(false)}>
+                onMouseLeave={() => setHover(false)}
+            >
                 <div>
                     <div style={textStyle}>
                         {leftIcon && leftIcon}

@@ -3,7 +3,7 @@ import React, { CSSProperties, FunctionComponent } from 'react';
 import AppState from '@src/state/app';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
-import { colors } from '@src/lib';
+import lib from '@src/lib';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
 
 import Flyout from './components/Flyout';
@@ -63,7 +63,7 @@ const HappyTipper: FunctionComponent<Props> = ({ tip }) => {
                 <Button
                     onClick={undefined}
                     label={content.getRandomSlang()}
-                    buttonStyle={{ background: colors.default.gradient3 }}
+                    buttonStyle={{ background: lib.colors.gradient3 }}
                     textStyle={{ color: 'white' }}
                 />
             </div>

@@ -4,13 +4,12 @@ import { animated, config, useSpring } from '@react-spring/web';
 import { ChevronUp } from 'react-feather';
 
 import client from '@src/client';
-import { colors, layout } from '@src/lib';
+import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import { SwapData } from '@src/client/core';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-import Colors from '@src/lib/colors';
 import FontSize from '@src/lib/fontSize';
 import styles2 from '@src/components/nugg/RingAbout/RingAbout.styles';
 import AppState from '@src/state/app';
@@ -58,9 +57,9 @@ const NextSwap: FunctionComponent<Props> = () => {
     }, [epoch__id]);
 
     const springStyle = useSpring({
-        background: colors.default.transparentGrey,
+        background: lib.colors.transparentGrey,
         width: '100%',
-        borderRadius: layout.default.borderRadius.mediumish,
+        borderRadius: lib.layout.borderRadius.mediumish,
         height: open ? '150px' : '0px',
         opacity: open ? 1 : 0,
         padding: open ? '0.75rem' : '0rem',
@@ -84,7 +83,7 @@ const NextSwap: FunctionComponent<Props> = () => {
                         alignItems: 'center',
                         height: 30,
                         background: 'white',
-                        borderRadius: layout.default.borderRadius.large,
+                        borderRadius: lib.layout.borderRadius.large,
                     }}
                 >
                     {queue && <Text textStyle={{ marginLeft: '10px' }}> {queue.tokenId}</Text>}
@@ -96,12 +95,12 @@ const NextSwap: FunctionComponent<Props> = () => {
                             width: 30,
                             height: 30,
                             background: 'white',
-                            borderRadius: layout.default.borderRadius.large,
+                            borderRadius: lib.layout.borderRadius.large,
                             ...styles,
                         }}
                     >
                         <HiOutlineRefresh
-                            color={waiting ? colors.default.red : colors.default.nuggBlueText}
+                            color={waiting ? lib.colors.red : lib.colors.nuggBlueText}
                         />
                     </animated.div>
                 </div>
@@ -111,7 +110,7 @@ const NextSwap: FunctionComponent<Props> = () => {
                     style={{
                         background: springStyle.opacity.to(
                             [0, 1],
-                            ['#FFFFFF00', colors.default.transparentWhite],
+                            ['#FFFFFF00', lib.colors.transparentWhite],
                         ),
                         display: 'flex',
                         justifyContent: 'center',
@@ -164,13 +163,13 @@ const NextSwap: FunctionComponent<Props> = () => {
                                     width: 30,
                                     height: 30,
                                     background: 'white',
-                                    borderRadius: layout.default.borderRadius.large,
+                                    borderRadius: lib.layout.borderRadius.large,
                                     ...styles,
                                 }}
                             >
                                 <HiOutlineRefresh
                                     color={
-                                        waiting ? colors.default.red : colors.default.nuggBlueText
+                                        waiting ? lib.colors.red : lib.colors.nuggBlueText
                                     }
                                 />
                             </animated.div>
@@ -179,17 +178,17 @@ const NextSwap: FunctionComponent<Props> = () => {
                             <Button
                                 rightIcon={
                                     open ? (
-                                        <ChevronUp color={colors.default.nuggBlueText} size={14} />
+                                        <ChevronUp color={lib.colors.nuggBlueText} size={14} />
                                     ) : (
                                         <ChevronDown
-                                            color={colors.default.nuggBlueText}
+                                            color={lib.colors.nuggBlueText}
                                             size={14}
                                         />
                                     )
                                 }
                                 onClick={() => setOpen(!open)}
                                 buttonStyle={{
-                                    borderRadius: layout.default.borderRadius.large,
+                                    borderRadius: lib.layout.borderRadius.large,
                                     background: 'white',
                                     padding: '.44rem .45rem',
                                     margin: '0rem .5rem',
@@ -205,15 +204,15 @@ const NextSwap: FunctionComponent<Props> = () => {
                             <Button
                                 buttonStyle={{
                                     background: 'white',
-                                    borderRadius: layout.default.borderRadius.large,
+                                    borderRadius: lib.layout.borderRadius.large,
                                     margin: '0rem',
                                     padding: '.2rem .6rem',
                                     height: '30px',
                                 }}
                                 textStyle={{
-                                    color: Colors.nuggRedText,
+                                    color: lib.colors.nuggRedText,
                                     fontSize: FontSize.h6,
-                                    fontFamily: layout.default.font.sf.regular,
+                                    fontFamily: lib.layout.font.sf.regular,
                                 }}
                                 label="auto"
                                 onClick={() => setAuto(!auto)}
@@ -272,7 +271,7 @@ const SwapRenderItem = ({
             {swap.tokenId !== '' ? (
                 <TokenViewer tokenId={swap.tokenId} style={{ width: '40px', height: '40px' }} />
             ) : (
-                <ChevronUp color={colors.default.nuggBlueText} size={14} />
+                <ChevronUp color={lib.colors.nuggBlueText} size={14} />
             )}
             <Text type="text" size="smaller">
                 {swap.tokenId}
@@ -280,14 +279,14 @@ const SwapRenderItem = ({
             <Button
                 buttonStyle={{
                     background: 'white',
-                    borderRadius: layout.default.borderRadius.large,
+                    borderRadius: lib.layout.borderRadius.large,
                     margin: '0rem',
                     padding: '.2rem .6rem',
                 }}
                 textStyle={{
-                    color: Colors.nuggRedText,
+                    color: lib.colors.nuggRedText,
                     fontSize: FontSize.h6,
-                    fontFamily: layout.default.font.sf.regular,
+                    fontFamily: lib.layout.font.sf.regular,
                 }}
                 label="queue"
                 onClick={() => setQueue(swap)}

@@ -8,7 +8,7 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
 import HappyTipper from '@src/components/general/HappyTipper/HappyTipper';
-import { layout } from '@src/lib';
+import lib from '@src/lib';
 
 type Props = {};
 
@@ -77,7 +77,7 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                                 key={peer.name}
                                 buttonStyle={{
                                     width: '225px',
-                                    boxShadow: layout.default.boxShadow.dark,
+                                    boxShadow: lib.layout.boxShadow.dark,
                                     color: 'white',
                                     border: `${curriedLighten(0.1)(peer.color)}`,
                                     borderWidth: '5px',

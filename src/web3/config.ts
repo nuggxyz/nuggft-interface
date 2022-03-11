@@ -13,6 +13,7 @@ import { Chain, Connector as ConnectorEnum } from './core/interfaces';
 import {
     getNetworkConnector,
     getPriorityConnector,
+    getSelectedConnector,
     initializeConnector,
     ResWithStore,
 } from './core/core';
@@ -263,6 +264,8 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
 export const priority = getPriorityConnector(connector_instances);
 
 export const network = getNetworkConnector(connector_instances);
+
+export const selected = getSelectedConnector();
 
 export const gotoLink = (link: string) => {
     let win = window.open(encodeURIComponent(link), '_blank');

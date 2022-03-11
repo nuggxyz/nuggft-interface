@@ -64,7 +64,7 @@ export const useBlockUpdater = () => {
                             {
                                 eth: EthInt.fromNuggftV1Agency(event.args.agency),
                                 user: agency.mask(160)._hex,
-                                txhash: event.transactionHash,
+                                txhash: log.transactionHash,
                             },
                         ]);
                         break;
@@ -78,7 +78,7 @@ export const useBlockUpdater = () => {
                                 {
                                     eth: EthInt.fromNuggftV1Agency(event.args.agency),
                                     user: agency.mask(160)._hex,
-                                    txhash: event.transactionHash,
+                                    txhash: log.transactionHash,
                                 },
                             ],
                         );
