@@ -27,6 +27,20 @@ export default {
                 ),
             ),
         myNuggs: () => core.store((state) => state.myNuggs),
+        myLoans: () =>
+            core.store((state) =>
+                state.myLoans.sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1)),
+            ),
+
+        myUnclaimedNuggOffers: () => core.store((state) => state.myUnclaimedNuggOffers),
+        myUnclaimedItemOffers: () => core.store((state) => state.myUnclaimedItemOffers),
+        myUnclaimedOffers: () =>
+            core.store((state) =>
+                [...state.myUnclaimedItemOffers, ...state.myUnclaimedNuggOffers].sort((a, b) =>
+                    a.endingEpoch < b.endingEpoch ? -1 : 1,
+                ),
+            ),
+
         epoch: () => core.store((state) => state.epoch),
         epoch__id: () => core.store((state) => state.epoch__id),
         epoch__endblock: () => core.store((state) => state.epoch?.endblock),
@@ -62,6 +76,8 @@ export default {
         activeSwaps: () => core.store.getState().activeSwaps,
         activeItems: () => core.store.getState().activeItems,
         myNuggs: () => core.store.getState().myNuggs,
+        myLoans: () => core.store.getState().myLoans,
+
         epoch: () => core.store.getState().epoch,
         stake: () => core.store.getState().stake,
         route: () => core.store.getState().route,

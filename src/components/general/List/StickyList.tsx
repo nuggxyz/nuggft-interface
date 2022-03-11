@@ -1,11 +1,4 @@
-import React, {
-    CSSProperties,
-    FunctionComponent,
-    PropsWithChildren,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import React, { CSSProperties, FunctionComponent, useMemo, useRef, useState } from 'react';
 import { animated, config, SpringProps, useSpring } from '@react-spring/web';
 
 import useMeasure from '@src/hooks/useMeasure';
@@ -14,12 +7,12 @@ import usePrevious from '@src/hooks/usePrevious';
 import { ListRenderItemProps } from './List';
 import styles from './List.styles';
 
-type Props = {
-    data: { title: any; items: any[] }[];
-    ChildRenderItem: FunctionComponent<ListRenderItemProps<any>>;
+type Props<T, B> = {
+    data: { title: any; items: T[] }[];
+    ChildRenderItem: FunctionComponent<ListRenderItemProps<T, B>>;
     TitleRenderItem: FunctionComponent<{
         title: any;
-        extraData?: any[];
+        extraData?: B[];
         open?: boolean;
         setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
     }>;
@@ -29,14 +22,14 @@ type Props = {
         onClick: () => void;
         numberOfItems: number;
     }>;
-    extraData: any[];
+    extraData: B[];
     style?: CSSProperties | SpringProps;
     styleLeft?: CSSProperties;
     styleRight?: CSSProperties;
-    Children?: FunctionComponent<any>;
+    children?: FunctionComponent<any>;
 };
 
-const StickyList: FunctionComponent<PropsWithChildren<Props>> = ({
+const StickyList = <T extends unknown, B extends unknown>({
     data,
     ChildRenderItem,
     TitleRenderItem,
@@ -47,7 +40,7 @@ const StickyList: FunctionComponent<PropsWithChildren<Props>> = ({
     styleRight,
     children,
     ...props
-}) => {
+}: Props<T, B>) => {
     const refData = useMemo(
         () =>
             data.map((item) => {

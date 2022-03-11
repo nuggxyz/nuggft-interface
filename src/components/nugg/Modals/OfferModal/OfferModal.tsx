@@ -208,7 +208,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
     );
 };
 
-const MyNuggRenderItem: FC<ListRenderItemProps<MyNuggsData>> = ({
+const MyNuggRenderItem: FC<ListRenderItemProps<MyNuggsData, undefined>> = ({
     item,
     index,
     extraData,

@@ -15,9 +15,6 @@ import Colors from '@src/lib/colors';
 import AppState from '@src/state/app';
 import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
 import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
-import useAsyncState from '@src/hooks/useAsyncState';
-import loanedNuggsQuery from '@src/state/wallet/queries/loanedNuggsQuery';
-import unclaimedOffersQuery from '@src/state/wallet/queries/unclaimedOffersQuery';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import InfiniteList from '@src/components/general/List/InfiniteList';
 import FontSize from '@src/lib/fontSize';
@@ -32,24 +29,14 @@ type Props = {};
 const MintTab: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
 
-    const stake = client.live.stake();
-    const epoch__id = client.live.epoch__id();
-
     const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
-
-    const nuggs = client.live.myNuggs();
-
     const chainId = web3.hook.usePriorityChainId();
-    const loans = useAsyncState(
-        () => loanedNuggsQuery(chainId, address, 'desc', '', 1000, 0),
-        [address, epoch__id, chainId],
-    );
 
-    const claims = useAsyncState(
-        () => unclaimedOffersQuery(chainId, address, epoch__id),
-        [address, epoch__id],
-    );
+    const stake = client.live.stake();
+    const nuggs = client.live.myNuggs();
+    const loans = client.live.myLoans();
+    const unclaimedOffers = client.live.myUnclaimedOffers();
 
     return (
         <div style={styles.container}>
@@ -102,7 +89,7 @@ const MintTab: FunctionComponent<Props> = () => {
                     />
                     <TextStatistic
                         label="Claims"
-                        value={'' + (claims?.length || 0)}
+                        value={'' + unclaimedOffers.length}
                         style={{
                             width: '31%',
                             marginLeft: '0rem',
@@ -146,7 +133,7 @@ const MintTab: FunctionComponent<Props> = () => {
 
 export default MintTab;
 
-const RenderItem: FunctionComponent<ListRenderItemProps<MyNuggsData>> = React.memo(
+const RenderItem: FunctionComponent<ListRenderItemProps<MyNuggsData, undefined>> = React.memo(
     ({ item, extraData, style, index }) => {
         return (
             !isUndefinedOrNullOrObjectEmpty(item) && (

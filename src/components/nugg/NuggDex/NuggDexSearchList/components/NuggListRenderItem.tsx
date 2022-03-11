@@ -9,7 +9,7 @@ import client from '@src/client';
 
 import styles from './NuggDexComponents.styles';
 
-type Props = ListRenderItemProps<NL.GraphQL.Fragments.Nugg.ListItem>;
+type Props = ListRenderItemProps<NL.GraphQL.Fragments.Nugg.ListItem, undefined>;
 
 const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, action }) => {
     const lastView__tokenId = client.live.lastView__tokenId();

@@ -15,22 +15,22 @@ import usePrevious from '@src/hooks/usePrevious';
 
 import styles from './List.styles';
 
-export type ListRenderItemProps<T> = {
+export interface ListRenderItemProps<T, B> {
     item: T;
-    extraData?: any[];
+    extraData?: B[];
     action?: any;
     onScrollEnd?: any;
     index: number;
     rootRef?: any;
     selected?: boolean;
     style?: CSSProperties;
-};
+}
 
-type Props = {
-    data: any[];
-    RenderItem: FunctionComponent<ListRenderItemProps<any>>;
+interface Props<T, B> {
+    data: T[];
+    RenderItem: FunctionComponent<ListRenderItemProps<T, B>>;
     loading?: boolean;
-    extraData?: any[];
+    extraData?: B[];
     action?: any;
     onScrollEnd?: any;
     label?: string;
@@ -47,11 +47,11 @@ type Props = {
     animationToggle?: boolean;
     TitleButton?: FunctionComponent;
     titleLoading?: boolean;
-};
+}
 
 const LIST_PADDING = 4;
 
-const InfiniteList: FunctionComponent<Props> = ({
+const InfiniteList = <T extends unknown, B extends unknown>({
     data = [],
     RenderItem,
     loading = false,
@@ -72,7 +72,7 @@ const InfiniteList: FunctionComponent<Props> = ({
     animationToggle,
     TitleButton,
     titleLoading,
-}) => {
+}: Props<T, B>) => {
     const windowRef = useRef<HTMLDivElement>();
     const [windowHeight, setWindowHeight] = useState(0);
 

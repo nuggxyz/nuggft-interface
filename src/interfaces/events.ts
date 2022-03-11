@@ -1,6 +1,8 @@
+import {} from '../typechain/NuggftV1';
 import {
     ClaimEvent,
     ClaimItemEvent,
+    LoanEvent,
     MintEvent,
     OfferEvent,
     OfferItemEvent,
@@ -8,6 +10,8 @@ import {
     StakeEvent,
     TransferEvent,
     TransferItemEvent,
+    LiquidateEvent,
+    RebalanceEvent,
 } from '../typechain/NuggftV1';
 
 enum EventNames {
@@ -20,6 +24,9 @@ enum EventNames {
     ClaimItem = 'ClaimItem',
     Transfer = 'Transfer',
     TransferItem = 'TransferItem',
+    Loan = 'Loan',
+    Rebalance = 'Rebalance',
+    Liquidate = 'Liquidate',
 }
 
 interface BaseEvent {
@@ -30,6 +37,16 @@ interface Mint extends MintEvent, BaseEvent {
     name: EventNames.Mint;
 }
 
+interface Loan extends LoanEvent, BaseEvent {
+    name: EventNames.Loan;
+}
+
+interface Rebalance extends RebalanceEvent, BaseEvent {
+    name: EventNames.Rebalance;
+}
+interface Liquidate extends LiquidateEvent, BaseEvent {
+    name: EventNames.Liquidate;
+}
 interface Offer extends OfferEvent, BaseEvent {
     name: EventNames.Offer;
 }
@@ -71,4 +88,7 @@ export type InterfacedEvent =
     | Stake
     | Offer
     | Transfer
-    | TransferItem;
+    | TransferItem
+    | Liquidate
+    | Loan
+    | Rebalance;

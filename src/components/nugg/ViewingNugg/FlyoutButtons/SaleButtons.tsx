@@ -12,7 +12,7 @@ type Props = { tokenId: string };
 const SaleButtons: FunctionComponent<Props> = ({ tokenId }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const address = web3.hook.usePriorityAccount();
+    const sender = web3.hook.usePriorityAccount();
     return (
         <div style={styles.ownerButtonContainer}>
             <Button
@@ -31,7 +31,7 @@ const SaleButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 onClick={() =>
                     state.wallet.dispatch.claim({
                         tokenId: tokenId,
-                        senderAddress: address,
+                        sender,
                         provider,
                         chainId,
                     })

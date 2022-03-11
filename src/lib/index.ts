@@ -9,6 +9,7 @@ import constants from './constants';
 import * as conversion from './conversion';
 import fontSize from './fontSize';
 import layout from './layout';
+import parse from './parse';
 
 // 6287103
 // VERIFICATION
@@ -391,4 +392,4 @@ export const rangeEnd = (start: number, end: number) => {
         .map((_, idx) => start + 1 + idx);
 };
 
-export default { colors, constants, conversion, fontSize, layout };
+export default { colors, constants, conversion, fontSize, layout, parse };

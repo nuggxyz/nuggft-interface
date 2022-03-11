@@ -1,62 +1,22 @@
-import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '@src/lib';
+import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import listStyles from '@src/components/nugg/Wallet/tabs/HistoryTab.styles';
 import Colors from '@src/lib/colors';
-import constants from '@src/lib/constants';
-import loanedNuggsQuery from '@src/state/wallet/queries/loanedNuggsQuery';
 import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
 import AppState from '@src/state/app';
-import TransactionState from '@src/state/transaction';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import web3 from '@src/web3';
 import client from '@src/client';
+import { LoanData } from '@src/client/core';
 type Props = { isActive?: boolean };
 
 const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
-    const address = web3.hook.usePriorityAccount();
     const epoch__id = client.live.epoch__id();
-    const [loanedNuggs, setLoanedNuggs] = useState([]);
-    const [loadingNuggs, setLoadingNuggs] = useState(false);
-    const txnToggle = TransactionState.select.toggleCompletedTxn();
-    const chainId = web3.hook.usePriorityChainId();
 
-    const getMyNuggs = useCallback(async () => {
-        setLoadingNuggs(true);
-        if (!isUndefinedOrNullOrStringEmpty(address)) {
-            const nuggResult = await loanedNuggsQuery(
-                chainId,
-                address,
-                'desc',
-                '',
-                constants.NUGGDEX_SEARCH_LIST_CHUNK,
-                loanedNuggs.length,
-            );
-
-            if (!isUndefinedOrNullOrArrayEmpty(nuggResult)) {
-                setLoanedNuggs((res) => [...res, ...nuggResult]);
-            }
-        } else {
-            setLoanedNuggs([]);
-        }
-        setLoadingNuggs(false);
-    }, [address, epoch__id, loanedNuggs]);
-
-    useEffect(() => {
-        if (isActive) {
-            setLoadingNuggs(true);
-            setTimeout(() => {
-                getMyNuggs();
-            }, 500);
-        }
-    }, [address, txnToggle]);
+    const loanedNuggs = client.live.myLoans();
 
     return (
         <div style={styles.container}>
@@ -67,9 +27,9 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
                     (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
                 )}
                 label="Loaned Nuggs"
-                titleLoading={loadingNuggs}
+                // titleLoading={loadingNuggs}
                 style={listStyles.list}
-                extraData={[epoch__id || '0']}
+                extraData={epoch__id}
                 listEmptyText="You haven't loaned any nuggs yet!"
                 labelStyle={styles.listLabel}
                 listEmptyStyle={listStyles.textWhite}
@@ -81,7 +41,7 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
 
 export default React.memo(MyNuggsTab);
 
-const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Loan.Bare>> = ({
+const RenderItem: FunctionComponent<ListRenderItemProps<LoanData, number>> = ({
     item,
     index,
     extraData,
@@ -91,16 +51,16 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Loa
             <div key={index} style={listStyles.render}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <TokenViewer
-                        tokenId={item.nugg.id}
+                        tokenId={item.nugg}
                         data={(item as any).nugg.dotnuggRawCache}
                         style={{ width: '60px', height: '50px' }}
                     />
                     <div>
                         <Text textStyle={{ color: Colors.nuggRedText }} size="small">
-                            Nugg #{item.nugg?.id}
+                            Nugg {item.nugg}
                         </Text>
                         <Text type="text" textStyle={{ color: Colors.textColor }} size="smaller">
-                            {+item.endingEpoch - +extraData[0]} epochs remaining
+                            {+item.endingEpoch - +extraData} epochs remaining
                         </Text>
                     </div>
                 </div>
@@ -116,7 +76,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Loa
                             AppState.dispatch.setModalOpen({
                                 name: 'LoanInputModal',
                                 modalData: {
-                                    targetId: item.nugg.id,
+                                    targetId: item.nugg,
                                     type: 'ExtendLoan',
                                     backgroundStyle: {
                                         background: Colors.gradient3,
@@ -133,7 +93,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Loa
                             AppState.dispatch.setModalOpen({
                                 name: 'LoanInputModal',
                                 modalData: {
-                                    targetId: item.nugg.id,
+                                    targetId: item.nugg,
                                     type: 'PayoffLoan',
                                     backgroundStyle: {
                                         background: Colors.gradient3,
