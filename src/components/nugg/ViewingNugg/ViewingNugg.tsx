@@ -98,7 +98,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 >
                     <div style={{ position: 'fixed' }}>
                         <AnimatedCard>
-                            <TokenViewer tokenId={lastView__tokenId} showcase />
+                            <TokenViewer tokenId={lastView__tokenId} showcase disableOnClick />
                         </AnimatedCard>
                     </div>
                 </div>

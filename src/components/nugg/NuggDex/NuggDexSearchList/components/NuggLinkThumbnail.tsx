@@ -40,7 +40,7 @@ const NuggLinkThumbnail: FunctionComponent<{
                 client.actions.routeTo(item?.id, true);
             }}
         >
-            <TokenViewer tokenId={item.id} style={styles.nugg} />
+            <TokenViewer tokenId={item.id} style={styles.nugg} disableOnClick />
             <Text size="smaller" textStyle={styles.label}>
                 {parseTokenIdSmart(item.id)}
             </Text>
