@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 
-import { Address } from '@src/classes/Address';
 import { isUndefinedOrNullOrStringEmpty, parseTokenIdSmart } from '@src/lib';
 import Colors from '@src/lib/colors';
 import AppState from '@src/state/app';
@@ -10,12 +9,12 @@ import Loader from '@src/components/general/Loader/Loader';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
-import { CONTRACTS } from '@src/web3/config';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import client from '@src/client';
 import { LiveNugg } from '@src/client/hooks/useLiveNugg';
 import { Route } from '@src/client/router';
 import HappyTabber from '@src/components/general/HappyTabber/HappyTabber';
+import AddressViewer from '@src/components/general/Texts/AddressViewer/AddressViewer';
 
 import styles from './ViewingNugg.styles';
 import OwnerButtons from './FlyoutButtons/OwnerButtons';
@@ -122,13 +121,20 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                             >
                                                 Owner
                                             </Text>
+                                            <AddressViewer
+                                                address={token?.owner}
+                                                textStyle={styles.titleText}
+                                                param={token?.owner}
+                                                route={'address'}
+                                                size="medium"
+                                            />
                                             <Text textStyle={styles.titleText}>
-                                                {token?.owner === Address.ZERO.hash ||
+                                                {/* {token?.owner === Address.ZERO.hash ||
                                                 token?.owner === CONTRACTS[chainId].NuggftV1
                                                     ? 'NuggftV1'
                                                     : lastView__type === Route.ViewItem
                                                     ? `Nugg #${token?.owner}`
-                                                    : ens}
+                                                    : ens} */}
                                                 {token?.owner === address && (
                                                     <Text
                                                         type="text"

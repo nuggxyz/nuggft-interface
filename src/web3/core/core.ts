@@ -7,10 +7,11 @@ import create from 'zustand';
 import { Address } from '@src/classes/Address';
 import client from '@src/client';
 import { EthInt } from '@src/classes/Fraction';
+import { CONTRACTS } from '@src/web3/config';
 
 import { createWeb3ReactStoreAndActions } from './store';
 import { Connector, Web3ReactStore, Web3ReactState, Actions } from './types';
-import { Connector as ConnectorEnum } from './interfaces';
+import { Connector as ConnectorEnum, Chain } from './interfaces';
 
 export type Web3ReactHooks = ReturnType<typeof getStateHooks> &
     ReturnType<typeof getDerivedHooks> &
@@ -524,31 +525,39 @@ function useBalance(provider: Web3Provider | undefined, account: string) {
     return balance;
 }
 
-function useENS(provider: Web3Provider, account: string): (string | null) | undefined {
+function useENS(
+    provider: Web3Provider,
+    account: string,
+    chainId: Chain,
+): (string | null) | undefined {
     const [ENSName, setENSName] = useState<string | null | undefined>(
         Address.shortenAddressHash(account),
     );
     useEffect(() => {
         if (provider && account) {
-            let stale = false;
-            setENSName(Address.shortenAddressHash(account));
+            if (account === Address.ZERO.hash) setENSName('black-hole');
+            else if (account.toLowerCase() === CONTRACTS[chainId].NuggftV1.toLowerCase())
+                setENSName('nuggftv1.nugg.xyz');
+            else {
+                let stale = false;
+                setENSName(Address.shortenAddressHash(account));
+                provider
+                    .lookupAddress(account)
+                    .then((result) => {
+                        if (!stale) {
+                            setENSName(result ? result : Address.shortenAddressHash(account));
+                        }
+                    })
+                    .catch((error) => {
+                        setENSName(Address.shortenAddressHash(account));
 
-            provider
-                .lookupAddress(account)
-                .then((result) => {
-                    if (!stale) {
-                        setENSName(result ? result : Address.shortenAddressHash(account));
-                    }
-                })
-                .catch((error) => {
-                    setENSName(Address.shortenAddressHash(account));
+                        console.debug('Could not fetch ENS names', error);
+                    });
 
-                    console.debug('Could not fetch ENS names', error);
-                });
-
-            return () => {
-                stale = true;
-            };
+                return () => {
+                    stale = true;
+                };
+            }
         }
     }, [provider, account]);
 
@@ -586,15 +595,18 @@ function getAugmentedHooks<T extends Connector>(
 
     function useENSName(provider: Web3Provider | undefined): string | null | undefined {
         const account = useAccount();
+        const chainId = useChainId();
 
-        return useENS(provider, account);
+        return useENS(provider, account, chainId);
     }
 
     function useAnyENSName(
         provider: Web3Provider | undefined,
         account: string,
     ): (string | null) | undefined {
-        return useENS(provider, account);
+        const chainId = useChainId();
+
+        return useENS(provider, account, chainId);
     }
 
     // for backwards compatibility only
