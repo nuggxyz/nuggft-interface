@@ -9,16 +9,17 @@ import constants from '@src/lib/constants';
 
 import { SwapData } from './core';
 import { useBlockUpdater } from './update/useBlockUpdater';
-import { TokenId } from './router';
+import { ItemId, NuggId, TokenId } from './router';
 import { useLiveOffers } from './hooks/useLiveOffers';
 
 import client from './index';
 
 export default () => {
-    const chainId = web3.hook.usePriorityChainId();
+    const address = web3.hook.usePriorityAccount();
 
     const apollo = client.live.apollo();
     const infura = client.live.infura();
+    const epoch = client.live.epoch();
 
     const lastSwap__tokneId = client.live.lastSwap__tokenId();
 
@@ -192,6 +193,71 @@ export default () => {
             };
         }
     }, [apollo]);
+
+    React.useEffect(() => {
+        if (address) {
+            const instance = apollo
+                .subscribe<{
+                    nuggs: {
+                        id: NuggId;
+                        // dotnuggRawCache: Base64EncodedSvg;
+                        activeLoan: { id: string } | undefined;
+                        activeSwap: { id: string } | undefined;
+                        offers: {
+                            id: string;
+                            swap: { endingEpoch: string; sellingItem: { id: ItemId } };
+                        }[];
+                    }[];
+                }>({
+                    query: gql`
+                        subscription useLiveMyNuggs($address: ID!) {
+                            nuggs(where: { user: $address }) {
+                                id
+                                # dotnuggRawCache
+                                activeLoan {
+                                    id
+                                }
+                                activeSwap {
+                                    id
+                                }
+                                offers(where: { claimed: false }) {
+                                    id
+                                    swap {
+                                        sellingItem {
+                                            id
+                                        }
+                                        endingEpoch
+                                    }
+                                }
+                            }
+                        }
+                    `,
+                    variables: { address: address.toLowerCase() },
+                })
+                .subscribe((x) => {
+                    if (x.data.nuggs) {
+                        client.actions.updateMyNuggs(
+                            x.data.nuggs.map((x) => {
+                                return {
+                                    tokenId: x.id,
+                                    activeLoan: !!x.activeLoan,
+                                    activeSwap: !!x.activeSwap,
+                                    unclaimedOffers: x.offers.map((y) => {
+                                        return {
+                                            itemId: y.swap.sellingItem.id,
+                                            endingEpoch: +y.swap.endingEpoch,
+                                        };
+                                    }),
+                                };
+                            }),
+                        );
+                    }
+                });
+            return () => {
+                instance.unsubscribe();
+            };
+        }
+    }, [apollo, address]);
 
     return null;
 };

@@ -41,6 +41,7 @@ const Button: FunctionComponent<ButtonProps> = ({
     }, [hover, disabled, buttonStyle, hoverStyle]);
 
     const RightIcon = useCallback(() => (rightIcon ? rightIcon : null), [rightIcon]);
+
     const LeftIcon = useCallback(() => (leftIcon ? leftIcon : null), [leftIcon]);
     const Label = useCallback(
         () => (label ? <Text {...textProps}>{label}</Text> : null),

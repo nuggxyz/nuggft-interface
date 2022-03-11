@@ -10,7 +10,7 @@ import web3 from '@src/web3';
 import config from '@src/config';
 import { executeQuery3 } from '@src/graphql/helpers';
 
-import { parseRoute, Route, SwapRoutes, ViewRoutes, TokenId } from './router';
+import { parseRoute, Route, SwapRoutes, ViewRoutes, TokenId, ItemId, NuggId } from './router';
 
 const DEFAULT_STATE: ClientState = {
     infura: undefined,
@@ -32,10 +32,7 @@ const DEFAULT_STATE: ClientState = {
         tokenId: undefined,
         type: undefined,
     },
-    // lastView__tokenId: undefined,
-    // lastSwap__tokenId: undefined,
-    // lastView__type: undefined,
-    // lastSwap__type: undefined,
+
     isViewOpen: false,
     activeSwaps: [],
     activeItems: [],
@@ -65,6 +62,14 @@ export interface OfferData {
     txhash: string;
 }
 
+export interface MyNuggsData {
+    activeLoan: boolean;
+    activeSwap: boolean;
+    // svg: Base64EncodedSvg;
+    tokenId: NuggId;
+    unclaimedOffers: { itemId: ItemId; endingEpoch: number }[];
+}
+
 export interface ClientState extends State {
     infura: WebSocketProvider | undefined;
     apollo: ApolloClient<any> | undefined;
@@ -73,10 +78,6 @@ export interface ClientState extends State {
     lastView: ViewRoutes;
     lastSwap: SwapRoutes;
     isViewOpen: boolean;
-    // lastView__tokenId: TokenId;
-    // lastSwap__tokenId: TokenId;
-    // lastView__type: ViewRoute;
-    // lastSwap__type: SwapRoute;
     stake: {
         staked: BigNumber;
         shares: BigNumber;
@@ -93,7 +94,7 @@ export interface ClientState extends State {
     activeOffers: Dictionary<OfferData[]>;
     activeSwaps: SwapData[];
     activeItems: SwapData[];
-    myNuggs: NL.GraphQL.Fragments.Nugg.ListItem[];
+    myNuggs: MyNuggsData[];
     error: Error | undefined;
     activating: boolean;
 }
@@ -114,9 +115,6 @@ type ClientStateUpdate = {
         id: number;
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
-    // lastView: ViewRoutes;
-    // lastSwap: SwapRoutes;
-    // isViewOpen: boolean;
     activeSwaps?: SwapData[];
     activeItems?: SwapData[];
     myNuggs?: NL.GraphQL.Fragments.Nugg.ListItem[];
@@ -135,7 +133,7 @@ export interface Actions {
         stateUpdate: Pick<ClientStateUpdate, 'infura' | 'apollo'>,
         chainId: Chain,
     ) => Promise<void>;
-
+    updateMyNuggs: (data: MyNuggsData[]) => void;
     updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;
 }
 
@@ -265,6 +263,25 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
      * @returns cancelActivation - A function that cancels the activation by setting activating to false,
      * as long as there haven't been any intervening updates.
      */
+    function updateMyNuggs(stateUpdate: MyNuggsData[]): void {
+        nullifier++;
+
+        store.setState((existingState): ClientState => {
+            const myNuggs = stateUpdate ?? existingState.myNuggs;
+
+            return {
+                ...existingState,
+                myNuggs,
+            };
+        });
+    }
+
+    /**
+     * Sets activating to true, indicating that an update is in progress.
+     *
+     * @returns cancelActivation - A function that cancels the activation by setting activating to false,
+     * as long as there haven't been any intervening updates.
+     */
     function updateProtocol(stateUpdate: ClientStateUpdate): void {
         nullifier++;
 
@@ -276,7 +293,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             const apollo = stateUpdate.apollo ?? existingState.apollo;
             const activeSwaps = stateUpdate.activeSwaps ?? existingState.activeSwaps;
             const activeItems = stateUpdate.activeItems ?? existingState.activeItems;
-            const myNuggs = stateUpdate.myNuggs ?? existingState.myNuggs;
             const manualPriority = stateUpdate.manualPriority ?? existingState.manualPriority;
 
             // determine the next error
@@ -285,7 +301,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             return {
                 ...existingState,
                 manualPriority,
-                myNuggs,
                 infura,
                 apollo,
                 // epoch,
@@ -472,6 +487,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             routeTo,
             toggleView,
             updateOffers,
+            updateMyNuggs,
         },
     };
 }

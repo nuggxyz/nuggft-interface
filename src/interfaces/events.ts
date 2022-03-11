@@ -6,6 +6,8 @@ import {
     OfferItemEvent,
     OfferMintEvent,
     StakeEvent,
+    TransferEvent,
+    TransferItemEvent,
 } from '../typechain/NuggftV1';
 
 enum EventNames {
@@ -16,6 +18,8 @@ enum EventNames {
     Stake = 'Stake',
     Claim = 'Claim',
     ClaimItem = 'ClaimItem',
+    Transfer = 'Transfer',
+    TransferItem = 'TransferItem',
 }
 
 interface BaseEvent {
@@ -50,4 +54,21 @@ interface Stake extends StakeEvent, BaseEvent {
     name: EventNames.Stake;
 }
 
-export type InterfacedEvent = Mint | OfferMint | OfferItem | Claim | ClaimItem | Stake | Offer;
+interface Transfer extends TransferEvent, BaseEvent {
+    name: EventNames.Transfer;
+}
+
+interface TransferItem extends TransferItemEvent, BaseEvent {
+    name: EventNames.TransferItem;
+}
+
+export type InterfacedEvent =
+    | Mint
+    | OfferMint
+    | OfferItem
+    | Claim
+    | ClaimItem
+    | Stake
+    | Offer
+    | Transfer
+    | TransferItem;

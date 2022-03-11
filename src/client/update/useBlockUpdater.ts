@@ -84,7 +84,20 @@ export const useBlockUpdater = () => {
                         );
                         break;
                     }
-                    case 'Claim':
+                    case 'Transfer': {
+                        if (event.args._to === address) {
+                            client.actions.updateMyNuggs([
+                                {
+                                    tokenId: event.args._tokenId.toString() as NuggId,
+                                    activeLoan: false,
+                                    activeSwap: false,
+                                    unclaimedOffers: [],
+                                },
+                                ...client.static.myNuggs(),
+                            ]);
+                        }
+                        break;
+                    }
                     case 'ClaimItem':
                         break;
                 }
