@@ -43,4 +43,6 @@ const Layout = {
     },
 };
 
+export type SimpleSizes = 'small' | 'medium' | 'large' | 'larger' | 'smaller' | 'largest';
+
 export default Layout;

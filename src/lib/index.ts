@@ -4,11 +4,11 @@ import { BigNumber, ethers } from 'ethers';
 import config from '@src/config';
 // import { FEATURE_NAMES } from '@src/web3/config';
 
-import * as colors from './colors';
-import * as constants from './constants';
+import colors from './colors';
+import constants from './constants';
 import * as conversion from './conversion';
-import * as fontSize from './fontSize';
-import * as layout from './layout';
+import fontSize from './fontSize';
+import layout from './layout';
 
 // 6287103
 // VERIFICATION
@@ -310,21 +310,19 @@ export const safeResetLocalStorage = (keys: string[]) => {
 };
 
 export const createItemId = (itemId: string | number) => {
-    return `${constants.default.ID_PREFIX_ITEM}${itemId
-        .toString()
-        .replace(constants.default.ID_PREFIX_ITEM, '')}`;
+    return `${constants.ID_PREFIX_ITEM}${itemId.toString().replace(constants.ID_PREFIX_ITEM, '')}`;
 };
 
 export const extractItemId = (itemId: string) => {
-    if (itemId && itemId.startsWith(constants.default.ID_PREFIX_ITEM)) {
-        return itemId.replace(constants.default.ID_PREFIX_ITEM, '');
+    if (itemId && itemId.startsWith(constants.ID_PREFIX_ITEM)) {
+        return itemId.replace(constants.ID_PREFIX_ITEM, '');
     }
     return itemId;
 };
 
 export const parseTokenId = (itemId: string, long?: boolean) => {
-    if (itemId && itemId.startsWith(constants.default.ID_PREFIX_ITEM)) {
-        let num = +itemId.replace(constants.default.ID_PREFIX_ITEM, '');
+    if (itemId && itemId.startsWith(constants.ID_PREFIX_ITEM)) {
+        let num = +itemId.replace(constants.ID_PREFIX_ITEM, '');
         return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][num >> 8]} ${
             long ? '#' : ''
         }${num & 0xff}`;
@@ -335,8 +333,8 @@ export const parseTokenId = (itemId: string, long?: boolean) => {
 
 export const parseTokenIdSmart = (itemId: string) => {
     if (!itemId) return '';
-    if (itemId.startsWith(constants.default.ID_PREFIX_ITEM)) {
-        let num = +itemId.replace(constants.default.ID_PREFIX_ITEM, '');
+    if (itemId.startsWith(constants.ID_PREFIX_ITEM)) {
+        let num = +itemId.replace(constants.ID_PREFIX_ITEM, '');
         return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][num >> 8]} ${
             num & 0xff
         }`;
@@ -364,9 +362,7 @@ export const formatItemSwapIdForSend = (id: string | string[]) => {
     if (!isUndefinedOrNullOrStringEmpty(id)) {
         arr = (id as string).split('-');
     }
-    return BigNumber.from(arr[constants.default.ITEM_ID_POS])
-        .shl(24)
-        .or(arr[constants.default.ITEM_NUGG_POS]);
+    return BigNumber.from(arr[constants.ITEM_ID_POS]).shl(24).or(arr[constants.ITEM_NUGG_POS]);
 };
 
-export { colors, constants, conversion, fontSize, layout };
+export default { colors, constants, conversion, fontSize, layout };

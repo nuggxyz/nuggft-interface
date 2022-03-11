@@ -8,7 +8,7 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import useOnHover from '@src/hooks/useOnHover';
 import Text from '@src/components/general/Texts/Text/Text';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 import NextSwap from '@src/components/nugg/NextSwap/NextSwap';
 
 import styles from './ChainIndicator.styles';
@@ -77,7 +77,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
 
                     <Text
                         textStyle={{
-                            fontFamily: Layout.font.code.regular,
+                            fontFamily: lib.layout.font.code.regular,
                             ...textStyle,
                         }}
                     >

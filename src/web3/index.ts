@@ -10,7 +10,7 @@ const web3 = {
     core,
     ...interfaces,
     clients,
-    hook: { ...config.priority, ...config.network },
+    hook: { ...config.priority, ...config.network, ...config.selected },
 };
 
 export default web3;

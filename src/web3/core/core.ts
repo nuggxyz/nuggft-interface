@@ -1,5 +1,5 @@
 import type { Networkish } from '@ethersproject/networks';
-import type { Web3Provider } from '@ethersproject/providers';
+import type { TransactionReceipt, Web3Provider } from '@ethersproject/providers';
 import { useEffect, useMemo, useState } from 'react';
 import type { EqualityChecker, UseBoundStore } from 'zustand';
 import create from 'zustand';
@@ -162,6 +162,11 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         return useBalance(provider, account);
     }
 
+    function useSelectedTx(connector: Connector, hash: string) {
+        const provider = useSelectedProvider(connector);
+        return useTx(provider, hash);
+    }
+
     return {
         useSelectedChainId,
         useSelectedAccounts,
@@ -175,6 +180,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         useSelectedAnyENSName,
         useSelectedBalance,
         useSelectedPeer,
+        useSelectedTx,
     };
 }
 
@@ -201,6 +207,7 @@ export function getNetworkConnector(initializedConnectors: {
         useSelectedAnyENSName,
         useSelectedBalance,
         useSelectedPeer,
+        useSelectedTx,
     } = getSelectedConnector(...Object.values(initializedConnectors));
 
     function useNetworkConnector() {
@@ -261,6 +268,10 @@ export function getNetworkConnector(initializedConnectors: {
         return useSelectedPeer(useNetworkConnector());
     }
 
+    function useNetworkTx(hash: string) {
+        return useSelectedTx(useNetworkConnector(), hash);
+    }
+
     return {
         useNetworkConnector,
         useNetworkChainId,
@@ -275,6 +286,7 @@ export function getNetworkConnector(initializedConnectors: {
         useNetworkAnyENSName,
         useNetworkBalance,
         useNetworkPeer,
+        useNetworkTx,
     };
 }
 
@@ -301,6 +313,7 @@ export function getPriorityConnector(initializedConnectors: {
         useSelectedAnyENSName,
         useSelectedBalance,
         useSelectedPeer,
+        useSelectedTx,
     } = getSelectedConnector(...Object.values(initializedConnectors));
 
     function usePriorityConnector() {
@@ -362,17 +375,11 @@ export function getPriorityConnector(initializedConnectors: {
         return useSelectedPeer(usePriorityConnector());
     }
 
+    function usePriorityTx(hash: string) {
+        return useSelectedTx(usePriorityConnector(), hash);
+    }
+
     return {
-        useSelectedChainId,
-        useSelectedAccounts,
-        useSelectedIsActivating,
-        useSelectedError,
-        useSelectedAccount,
-        useSelectedIsActive,
-        useSelectedProvider,
-        useSelectedENSName,
-        useSelectedWeb3React,
-        useSelectedAnyENSName,
         usePriorityConnector,
         usePriorityChainId,
         usePriorityAccounts,
@@ -386,8 +393,9 @@ export function getPriorityConnector(initializedConnectors: {
         usePriorityAnyENSName,
         useSelectedBalance,
         usePriorityBalance,
-        useSelectedPeer,
+        // useSelectedPeer,
         usePriorityPeer,
+        usePriorityTx,
     };
 }
 
@@ -458,6 +466,35 @@ function getDerivedHooks({
     }
 
     return { useAccount, useIsActive };
+}
+
+function useTx(provider: Web3Provider, hash: string) {
+    const [data, setData] = useState<TransactionReceipt>();
+
+    useEffect(() => {
+        if (provider && hash) {
+            // let stale = false;
+
+            provider
+                .getTransactionReceipt(hash)
+                .then(async (result) => {
+                    // if (!stale) {
+                    console.log({ result });
+
+                    setData(result);
+                    // }
+                })
+                .catch((error) => {
+                    console.debug('Could not fetch Tx Data', error);
+                });
+
+            return () => {
+                // stale = true;
+                setData(undefined);
+            };
+        }
+    }, [provider, hash]);
+    return data;
 }
 
 function useBalance(provider: Web3Provider | undefined, account: string) {
