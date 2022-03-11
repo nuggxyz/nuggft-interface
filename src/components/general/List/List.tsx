@@ -21,7 +21,7 @@ import useIsVisible from '@src/hooks/useIsVisible';
 
 import styles from './List.styles';
 
-export type ListRenderItemProps<T> = {
+export interface ListRenderItemProps<T extends unknown> {
     item: T;
     extraData?: any[];
     action?: (() => void) | React.Dispatch<React.SetStateAction<any>>;
@@ -30,10 +30,9 @@ export type ListRenderItemProps<T> = {
     rootRef?: LegacyRef<HTMLDivElement>;
     selected?: boolean;
     style?: CSSProperties;
-};
+}
 
-export type ListProps<T> = {
-    data: T[];
+export interface ListProps<T extends unknown> {
     RenderItem: FunctionComponent<ListRenderItemProps<T>>;
     loading?: boolean;
     extraData?: any[];
@@ -52,10 +51,11 @@ export type ListProps<T> = {
     TitleButton?: FunctionComponent;
     titleLoading?: boolean;
     // itemHeight: number;
-};
+    data: T[];
+}
 
-const List = <T,>({
-    data = [],
+const List = <T extends unknown>({
+    data,
     RenderItem,
     loading = false,
     extraData,
@@ -167,7 +167,7 @@ const List = <T,>({
     );
 };
 
-export default React.memo(List);
+export default React.memo(List) as typeof List;
 
 const EndOfListAnchor = ({ rootRef, onScrollEnd, loading }) => {
     const [ref, isVisible] = useIsVisible(rootRef.current, '10px');
