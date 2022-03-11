@@ -365,4 +365,30 @@ export const formatItemSwapIdForSend = (id: string | string[]) => {
     return BigNumber.from(arr[constants.ITEM_ID_POS]).shl(24).or(arr[constants.ITEM_NUGG_POS]);
 };
 
+export const range = (start: number, end: number) => {
+    if (end < start) {
+        return [];
+    }
+    return Array(end - start + 1)
+        .fill(0)
+        .map((_, idx) => start + idx);
+};
+
+export const rangeStart = (start: number, end: number) => {
+    if (end < start) {
+        return [];
+    }
+    return Array(end - start)
+        .fill(0)
+        .map((_, idx) => start + idx);
+};
+export const rangeEnd = (start: number, end: number) => {
+    if (end < start) {
+        return [];
+    }
+    return Array(end - start)
+        .fill(0)
+        .map((_, idx) => start + 1 + idx);
+};
+
 export default { colors, constants, conversion, fontSize, layout };

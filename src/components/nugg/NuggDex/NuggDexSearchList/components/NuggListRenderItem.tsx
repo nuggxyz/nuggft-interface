@@ -21,23 +21,23 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, 
     const style = useMemo(() => {
         return {
             ...(!isUndefinedOrNullOrObjectEmpty(item) ? styles.nuggListRenderItemContainer : {}),
-            ...(lastView__tokenId === item.id ? styles.selected : {}),
+            ...(lastView__tokenId === item?.id ? styles.selected : {}),
         };
     }, [item, lastView__tokenId]);
 
     return (
         <div style={style} onClick={() => action(item)}>
             <TokenViewer
-                tokenId={item.id || ''}
+                tokenId={item?.id || ''}
                 style={{
                     height: '200px',
                     width: '200px',
                     // objectFit: 'contain',
                     // overflow: 'visible',
                 }}
-                data={item.dotnuggRawCache}
+                // data={item.dotnuggRawCache}
             />
-            <Label text={parseTokenId(item.id, true)} size="larger" />
+            <Label text={parseTokenId(item?.id, true)} size="larger" />
         </div>
     );
 };

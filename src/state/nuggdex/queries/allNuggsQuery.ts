@@ -23,7 +23,6 @@ const query = (
             skip: ${skip}
         ) {
             id
-            dotnuggRawCache
         }
     }
 `;

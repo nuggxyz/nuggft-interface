@@ -102,7 +102,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const animatedStyle = useSpring({
         ...styles.nuggLinksContainer,
         transform: viewing !== 'home' ? 'scale(0.9)' : 'scale(1)',
-        // config: constants.ANIMATION_CONFIG,
         delay: constants.ANIMATION_DELAY,
     });
 
@@ -113,6 +112,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             addToResult: boolean = false,
             filters: NL.Redux.NuggDex.Filters,
             setLoading?: React.Dispatch<SetStateAction<boolean>>,
+            desiredSize?: number,
         ) => {
             setLoading && setLoading(true);
             const allNuggs = await allNuggsQuery(
@@ -120,7 +120,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 filters.sort.by,
                 filters.sort.asc ? 'asc' : 'desc',
                 filters.searchValue,
-                constants.NUGGDEX_SEARCH_LIST_CHUNK,
+                desiredSize ? desiredSize : constants.NUGGDEX_SEARCH_LIST_CHUNK,
                 startFrom,
                 +epoch.id,
             );
@@ -143,6 +143,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     }}
                 >
                     <NuggList
+                        animationToggle={viewing === 'recently viewed'}
                         style={styles.nuggListEnter}
                         values={recents}
                         type="recently viewed"
@@ -158,6 +159,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     }}
                 >
                     <NuggList
+                        animationToggle={viewing === 'on sale'}
                         style={styles.nuggListEnter}
                         values={liveActiveNuggs}
                         type="on sale"
@@ -173,6 +175,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     }}
                 >
                     <NuggList
+                        animationToggle={viewing === 'items on sale'}
                         style={styles.nuggListEnter}
                         values={liveActiveItems}
                         type="on sale"
@@ -190,16 +193,18 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     // limit={constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT}
                 >
                     <NuggList
+                        animationToggle={viewing === 'all nuggs'}
                         style={styles.nuggListEnter}
                         values={allNuggs}
                         type="all nuggs"
-                        onScrollEnd={({ setLoading, filters, addToList }) =>
+                        onScrollEnd={({ setLoading, filters, addToList, desiredSize }) =>
                             handleGetAll(
                                 setAllNuggs,
                                 addToList ? allNuggs.length : 0,
                                 addToList,
                                 filters,
                                 setLoading,
+                                desiredSize,
                             )
                         }
                     />
