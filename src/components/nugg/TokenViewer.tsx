@@ -7,6 +7,7 @@ import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
 import { TokenId } from '@src/client/router';
 import { parseTokenId } from '@src/lib';
+import useOnHover from '@src/hooks/useOnHover';
 
 import DangerouslySetNugg from './DangerouslySetNugg';
 type Props = {
@@ -18,6 +19,7 @@ type Props = {
     data?: Base64EncodedSvg;
     showcase?: boolean;
     labelLong?: boolean;
+    disableOnClick?: boolean;
 };
 
 const TokenViewer: FunctionComponent<Props> = ({
@@ -29,6 +31,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     data,
     showcase = false,
     labelLong = false,
+    disableOnClick = false,
 }) => {
     const screenType = AppState.select.screenType();
     // const chainId = web3.hook.usePriorityChainId();
@@ -39,6 +42,8 @@ const TokenViewer: FunctionComponent<Props> = ({
     }, []);
 
     const src = client.hook.useDotnugg(tokenId);
+
+    const [hoverRef, isHovering] = useOnHover();
 
     const animatedStyle = useSpring({
         to: {
@@ -58,6 +63,14 @@ const TokenViewer: FunctionComponent<Props> = ({
         <animated.div style={animatedStyle}>
             <div
                 role="presentation"
+                onClick={
+                    disableOnClick
+                        ? undefined
+                        : () => {
+                              client.actions.routeTo(tokenId, true);
+                          }
+                }
+                ref={hoverRef}
                 style={{
                     ...(screenType === 'phone'
                         ? { width: width / 1.2, height: width / 1.2 }
@@ -65,6 +78,7 @@ const TokenViewer: FunctionComponent<Props> = ({
                     // width: '100%',
                     ...style,
                     transform: 'translate3d(0,0,0)',
+                    ...(isHovering ? { cursor: 'pointer' } : {}),
                 }}
             >
                 {src && (
