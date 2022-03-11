@@ -474,23 +474,23 @@ function useTx(provider: Web3Provider, hash: string) {
 
     useEffect(() => {
         if (provider && hash) {
-            // let stale = false;
+            let stale = false;
 
             provider
                 .getTransactionReceipt(hash)
                 .then(async (result) => {
-                    // if (!stale) {
-                    console.log({ result });
+                    if (!stale) {
+                        console.log({ result });
 
-                    setData(result);
-                    // }
+                        setData(result);
+                    }
                 })
                 .catch((error) => {
                     console.debug('Could not fetch Tx Data', error);
                 });
 
             return () => {
-                // stale = true;
+                stale = true;
                 setData(undefined);
             };
         }
@@ -559,7 +559,7 @@ function useENS(
                 };
             }
         }
-    }, [provider, account]);
+    }, [provider, account, chainId]);
 
     return ENSName;
 }
