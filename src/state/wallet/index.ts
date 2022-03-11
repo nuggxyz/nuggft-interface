@@ -52,9 +52,7 @@ export default class WalletState extends NLState<NL.Redux.Wallet.State> {
         },
         extraReducers: (builder) =>
             builder
-                .addCase(thactions.getUserShares.fulfilled, (state, action) => {
-                    state.userShares = action.payload.data;
-                })
+
                 .addMatcher(NLState.isPendingAction(`${this._name}/`), (state) => {
                     state.loading = true;
                     state.success = undefined;

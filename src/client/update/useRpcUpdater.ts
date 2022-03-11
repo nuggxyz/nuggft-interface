@@ -7,13 +7,13 @@ import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { EthInt } from '@src/classes/Fraction';
 import { ItemId, NuggId } from '@src/client/router';
 import { InterfacedEvent } from '@src/interfaces/events';
+import lib from '@src/lib';
 
 import client from '..';
 
-export const useBlockUpdater = () => {
+export const useRpcUpdater = () => {
     const infura = client.live.infura();
     const chainId = web3.hook.usePriorityChainId();
-
     const address = web3.hook.usePriorityAccount();
 
     React.useEffect(() => {
@@ -26,14 +26,7 @@ export const useBlockUpdater = () => {
 
             const globalEvent = {
                 address: nuggft.address,
-                topics: [
-                    // ...nuggft.filters['Stake(bytes32)']().topics,
-                    // ...nuggft.filters['OfferMint(uint160,bytes32,bytes32)']().topics,
-                    // ...nuggft.filters['Offer(uint160,bytes32)']().topics,
-                    // ...nuggft.filters['OfferItem(uint160,bytes2,bytes32)']().topics,
-                    // ...nuggft.filters['Claim(uint160,address)'](null, address).topics,
-                    // ...nuggft.filters['ClaimItem(uint160,bytes2,uint160)'](null, null, null),
-                ],
+                topics: [],
             };
 
             infura.on(globalEvent, (log: Log) => {
@@ -85,25 +78,63 @@ export const useBlockUpdater = () => {
                         break;
                     }
                     case 'Transfer': {
-                        if (event.args._to === address) {
-                            client.actions.updateMyNuggs([
-                                {
-                                    tokenId: event.args._tokenId.toString() as NuggId,
-                                    activeLoan: false,
-                                    activeSwap: false,
-                                    unclaimedOffers: [],
-                                },
-                                ...client.static.myNuggs(),
-                            ]);
+                        if (event.args._to.toLowerCase() === address.toLowerCase()) {
+                            client.actions.addNugg({
+                                tokenId: event.args._tokenId.toString() as NuggId,
+                                activeLoan: false,
+                                activeSwap: false,
+                                unclaimedOffers: [],
+                            });
+                        }
+
+                        break;
+                    }
+                    case 'Loan': {
+                        const agency = lib.parse.agency(event.args.agency);
+                        if (agency.address === address) {
+                            client.actions.addLoan({
+                                startingEpoch: agency.epoch.toNumber(),
+                                endingEpoch: agency.epoch.add(1024).toNumber(),
+                                eth: agency.eth,
+                                nugg: event.args.tokenId.toString() as NuggId,
+                            });
                         }
                         break;
                     }
-                    case 'ClaimItem':
+                    case 'Rebalance': {
+                        const agency = lib.parse.agency(event.args.agency);
+                        if (agency.address === address) {
+                            client.actions.updateLoan({
+                                startingEpoch: agency.epoch.toNumber(),
+                                endingEpoch: agency.epoch.add(1024).toNumber(),
+                                eth: agency.eth,
+                                nugg: event.args.tokenId.toString() as NuggId,
+                            });
+                        }
                         break;
+                    }
+                    case 'Liquidate':
+                        {
+                            client.actions.removeLoan(event.args.tokenId.toString());
+                        }
+                        break;
+                    case 'Claim': {
+                        if (event.args.account === address) {
+                            client.actions.removeNuggClaim(event.args.tokenId.toString());
+                        }
+                        break;
+                    }
+                    case 'ClaimItem': {
+                        client.actions.removeItemClaimIfMine(
+                            event.args.buyerTokenId.toString(),
+                            ('item-' + BigNumber.from(event.args.itemId).toString()) as ItemId,
+                        );
+                        break;
+                    }
                 }
             });
             return () => {
-                infura.off(globalEvent);
+                infura.off(globalEvent, () => undefined);
                 infura.off('block', () => undefined);
             };
         }

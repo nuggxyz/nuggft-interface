@@ -21,9 +21,9 @@ import useIsVisible from '@src/hooks/useIsVisible';
 
 import styles from './List.styles';
 
-export interface ListRenderItemProps<T extends unknown> {
+export interface ListRenderItemProps<T extends unknown, B extends unknown> {
     item: T;
-    extraData?: any[];
+    extraData?: B;
     action?: (() => void) | React.Dispatch<React.SetStateAction<any>>;
     onScrollEnd?: () => void;
     index: number;
@@ -32,10 +32,10 @@ export interface ListRenderItemProps<T extends unknown> {
     style?: CSSProperties;
 }
 
-export interface ListProps<T extends unknown> {
-    RenderItem: FunctionComponent<ListRenderItemProps<T>>;
+export interface ListProps<T extends unknown, B extends unknown> {
+    RenderItem: FunctionComponent<ListRenderItemProps<T, B>>;
     loading?: boolean;
-    extraData?: any[];
+    extraData?: B;
     action?: (() => void) | React.Dispatch<React.SetStateAction<any>> | any;
     onScrollEnd?: () => void;
     label?: string;
@@ -54,7 +54,7 @@ export interface ListProps<T extends unknown> {
     data: T[];
 }
 
-const List = <T extends unknown>({
+const List = <T extends unknown, B extends unknown>({
     data,
     RenderItem,
     loading = false,
@@ -73,7 +73,7 @@ const List = <T extends unknown>({
     listEmptyStyle,
     TitleButton,
     titleLoading,
-}: ListProps<T>) => {
+}: ListProps<T, B>) => {
     const ref = useOnScroll(onScroll);
     const containerStyle = useMemo(() => {
         return {

@@ -1,18 +1,11 @@
-import { useEffect } from 'react';
-
-import web3 from '@src/web3';
-import client from '@src/client';
-
-import WalletState from './index';
 export default () => {
-    const address = web3.hook.usePriorityAccount();
-    const epoch = client.live.epoch();
-    const chainId = web3.hook.usePriorityChainId();
-
-    useEffect(() => {
-        if (address && epoch) {
-            WalletState.dispatch.getUserShares({ chainId, address });
-        }
-    }, [epoch, address, chainId]);
+    // const address = web3.hook.usePriorityAccount();
+    // const epoch = client.live.epoch();
+    // const chainId = web3.hook.usePriorityChainId();
+    // useEffect(() => {
+    //     if (address && epoch) {
+    //         WalletState.dispatch.getUserShares({ chainId, address });
+    //     }
+    // }, [epoch, address, chainId]);
     return null;
 };

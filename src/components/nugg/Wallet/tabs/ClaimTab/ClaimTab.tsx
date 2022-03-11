@@ -1,14 +1,7 @@
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 
-import {
-    createItemId,
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
-    parseTokenId,
-} from '@src/lib';
+import { isUndefinedOrNullOrObjectEmpty, parseTokenId } from '@src/lib';
 import WalletState from '@src/state/wallet';
-import unclaimedOffersQuery from '@src/state/wallet/queries/unclaimedOffersQuery';
 import Text from '@src/components/general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import listStyles from '@src/components/nugg/Wallet/tabs/HistoryTab.styles';
@@ -17,57 +10,32 @@ import styles from '@src/components/nugg/Wallet/tabs/Tabs.styles';
 import swapStyles from '@src/components/nugg/Wallet/tabs/SwapTab.styles';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import { fromEth } from '@src/lib/conversion';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import FontSize from '@src/lib/fontSize';
 import Layout from '@src/lib/layout';
-import SocketState from '@src/state/socket';
 import web3 from '@src/web3';
 import client from '@src/client';
+import { DefaultExtraData, UnclaimedOffer } from '@src/client/core';
 type Props = { isActive?: boolean };
 
 const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
-    const address = web3.hook.usePriorityAccount();
-    const epoch = client.live.epoch();
+    const sender = web3.hook.usePriorityAccount();
+    const epoch = client.live.epoch__id();
     const provider = web3.hook.usePriorityProvider();
 
-    const [unclaimedOffers, setUnclaimedOffers] = useState<NL.GraphQL.Fragments.Offer.Thumbnail[]>(
-        [],
-    );
-    const [loadingOffers, setLoadingOffers] = useState(false);
     const chainId = web3.hook.usePriorityChainId();
 
-    const getUnclaimedOffers = useCallback(async () => {
-        setLoadingOffers(true);
-        if (!isUndefinedOrNullOrStringEmpty(address)) {
-            const offersRes = await unclaimedOffersQuery(chainId, address, epoch.id.toString());
-            console.log({ offersRes });
-            setUnclaimedOffers(offersRes);
-        } else {
-            setUnclaimedOffers([]);
-        }
-        setLoadingOffers(false);
-    }, [address, epoch, chainId]);
-
-    useEffect(() => {
-        if (isActive) {
-            setLoadingOffers(true);
-            getUnclaimedOffers();
-        }
-    }, [address]);
-
-    const socket = SocketState.select.Claim();
+    const unclaimedOffers = client.live.myUnclaimedOffers();
 
     return (
         <div style={styles.container}>
             <List
-                data={unclaimedOffers}
-                RenderItem={React.memo(
-                    RenderItem,
-                    (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
-                )}
+                data={unclaimedOffers
+                    .filter((x) => x.endingEpoch < epoch)
+                    .sort((a, b) => (a.endingEpoch > b.endingEpoch ? -1 : 1))}
+                RenderItem={React.memo(RenderItem)}
                 TitleButton={
-                    !isUndefinedOrNullOrArrayEmpty(unclaimedOffers)
+                    unclaimedOffers.filter((x) => x.endingEpoch < epoch).length > 0
                         ? () => (
                               <FeedbackButton
                                   feedbackText="Check Wallet..."
@@ -85,15 +53,13 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                                   onClick={() => {
                                       let addresses = [],
                                           tokenIds = [];
-                                      unclaimedOffers.forEach((unclaimedOffer) => {
-                                          tokenIds.push(unclaimedOffer.swap.nugg.id);
-                                          addresses.push(
-                                              unclaimedOffer._addr ? unclaimedOffer._addr : address,
-                                          );
+                                      unclaimedOffers.forEach((x) => {
+                                          tokenIds.push(x.claimParams.tokenId);
+                                          addresses.push(x.claimParams.address);
                                       });
                                       WalletState.dispatch.multiClaim({
                                           addresses,
-                                          senderAddress: address,
+                                          sender,
                                           chainId,
                                           provider,
                                           tokenIds,
@@ -107,9 +73,8 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                 labelStyle={styles.listLabel}
                 listEmptyStyle={listStyles.textWhite}
                 loaderColor="white"
-                titleLoading={loadingOffers}
                 style={listStyles.list}
-                extraData={[address, chainId, provider]}
+                extraData={{ sender, chainId, provider }}
                 listEmptyText="No Nuggs or ETH to claim..."
             />
         </div>
@@ -118,38 +83,18 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
 
 export default React.memo(ClaimTab);
 
-const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Offer.Thumbnail>> = ({
+const RenderItem: FunctionComponent<ListRenderItemProps<UnclaimedOffer, DefaultExtraData>> = ({
     item,
     index,
     extraData,
 }) => {
-    const isNuggItem = useMemo(() => !isUndefinedOrNullOrStringEmpty(item?._addr), [item]);
-    const parsedTitle = useMemo(() => {
-        if (!isUndefinedOrNullOrObjectEmpty(item)) {
-            let parsed = item.id.split('-');
-            if (!isUndefinedOrNullOrArrayEmpty(parsed)) {
-                return {
-                    nugg: isNuggItem ? createItemId(parsed[0]) : parsed[0],
-                    swap: parsed[1],
-                };
-            }
-        }
-        return { swap: '', nugg: '' };
-    }, [item, isNuggItem]);
-
-    const isWinner = useMemo(() => {
-        return item && extraData[0] === item.swap.leader.id;
-    }, [item, extraData]);
-
     const swapText = useMemo(
         () =>
-            item.swap.num === '0'
-                ? 'Mint'
-                : isNuggItem
+            item.type === 'item'
                 ? //@ts-ignore
-                  `For Nugg #${item.swap.leader.itemNuggId}`
-                : `Swap #${item.swap.num}`,
-        [item, isNuggItem],
+                  `For Nugg #${item.nugg}`
+                : `From epoch ${item.endingEpoch}`,
+        [item],
     );
 
     return (
@@ -162,10 +107,9 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
                         // flexDirection: 'column',
                     }}
                 >
-                    {isWinner ? (
+                    {item.leader ? (
                         <TokenViewer
-                            tokenId={parsedTitle.nugg}
-                            data={(item as any).swap.nugg.dotnuggRawCache}
+                            tokenId={item.tokenId}
                             style={{ width: '60px', height: '50px' }}
                         />
                     ) : (
@@ -180,14 +124,14 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
                     )}
                     <div>
                         <Text textStyle={listStyles.renderTitle} size="small">
-                            {isWinner
-                                ? `${parseTokenId(parsedTitle.nugg, true)}`
-                                : `${fromEth(item.eth)} ETH`}
+                            {item.leader
+                                ? `${parseTokenId(item.tokenId, true)}`
+                                : `${item.eth.num} ETH`}
                         </Text>
                         <Text textStyle={{ color: Colors.textColor }} size="smaller" type="text">
-                            {isWinner
+                            {item.leader
                                 ? swapText
-                                : `${parseTokenId(parsedTitle.nugg, true)} | ${swapText}`}
+                                : `${parseTokenId(item.tokenId, true)} | ${swapText}`}
                         </Text>
                     </div>
                 </div>
@@ -197,12 +141,13 @@ const RenderItem: FunctionComponent<ListRenderItemProps<NL.GraphQL.Fragments.Off
                     buttonStyle={listStyles.renderButton}
                     label={`Claim`}
                     onClick={() => {
+                        console.log({
+                            ...item.claimParams,
+                            ...extraData,
+                        });
                         WalletState.dispatch.claim({
-                            provider: extraData[2],
-                            chainId: extraData[1],
-                            tokenId: isNuggItem ? item.swap.nugg.id : parsedTitle.nugg,
-                            address: item._addr ? item._addr : undefined,
-                            senderAddress: extraData[0],
+                            ...item.claimParams,
+                            ...extraData,
                         });
                     }}
                 />

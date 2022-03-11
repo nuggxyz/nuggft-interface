@@ -1,4 +1,4 @@
-import { WebSocketProvider } from '@ethersproject/providers';
+import { Web3Provider, WebSocketProvider } from '@ethersproject/providers';
 import { ApolloClient, gql } from '@apollo/client';
 import create, { State, StoreApi, UseBoundStore } from 'zustand';
 import { BigNumber, BigNumberish } from 'ethers';
@@ -32,12 +32,14 @@ const DEFAULT_STATE: ClientState = {
         tokenId: undefined,
         type: undefined,
     },
-
     isViewOpen: false,
     activeSwaps: [],
     activeItems: [],
     activeOffers: {},
     myNuggs: [],
+    myUnclaimedNuggOffers: [],
+    myUnclaimedItemOffers: [],
+    myLoans: [],
     apollo: undefined,
     activating: false,
     blocknum: undefined,
@@ -56,6 +58,18 @@ export interface SwapData {
     endingEpoch: number;
 }
 
+export interface LoanData {
+    endingEpoch: number;
+    eth: EthInt;
+    nugg: NuggId;
+    startingEpoch: number;
+}
+export interface DefaultExtraData {
+    sender: string;
+    chainId: Chain;
+    provider: Web3Provider;
+}
+
 export interface OfferData {
     user: string;
     eth: EthInt;
@@ -69,6 +83,36 @@ export interface MyNuggsData {
     tokenId: NuggId;
     unclaimedOffers: { itemId: ItemId; endingEpoch: number }[];
 }
+export interface BaseUnclaimedOffer {
+    type: 'nugg' | 'item';
+    tokenId: NuggId | ItemId;
+    endingEpoch: number;
+    eth: EthInt;
+    leader: boolean;
+    claimParams: {
+        address: string;
+        tokenId: string;
+    };
+}
+export interface UnclaimedNuggOffer extends BaseUnclaimedOffer {
+    type: 'nugg';
+    tokenId: NuggId;
+    claimParams: {
+        address: string;
+        tokenId: NuggId;
+    };
+}
+export interface UnclaimedItemOffer extends BaseUnclaimedOffer {
+    type: 'item';
+    tokenId: ItemId;
+    nugg: NuggId;
+    claimParams: {
+        address: NuggId;
+        tokenId: string;
+    };
+}
+
+export type UnclaimedOffer = UnclaimedNuggOffer | UnclaimedItemOffer;
 
 export interface ClientState extends State {
     infura: WebSocketProvider | undefined;
@@ -95,6 +139,9 @@ export interface ClientState extends State {
     activeSwaps: SwapData[];
     activeItems: SwapData[];
     myNuggs: MyNuggsData[];
+    myUnclaimedNuggOffers: UnclaimedNuggOffer[];
+    myUnclaimedItemOffers: UnclaimedItemOffer[];
+    myLoans: LoanData[];
     error: Error | undefined;
     activating: boolean;
 }
@@ -117,9 +164,12 @@ type ClientStateUpdate = {
     };
     activeSwaps?: SwapData[];
     activeItems?: SwapData[];
-    myNuggs?: NL.GraphQL.Fragments.Nugg.ListItem[];
     error?: Error;
     activating?: boolean;
+    myNuggs?: MyNuggsData[];
+    myUnclaimedNuggOffers?: UnclaimedNuggOffer[];
+    myUnclaimedItemOffers?: UnclaimedItemOffer[];
+    myLoans?: LoanData[];
 };
 
 export interface Actions {
@@ -133,8 +183,19 @@ export interface Actions {
         stateUpdate: Pick<ClientStateUpdate, 'infura' | 'apollo'>,
         chainId: Chain,
     ) => Promise<void>;
-    updateMyNuggs: (data: MyNuggsData[]) => void;
+
     updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;
+
+    removeLoan: (tokenId: NuggId) => void;
+    removeNuggClaim: (tokenId: NuggId) => void;
+    removeItemClaimIfMine: (buyingNuggId: NuggId, itemId: ItemId) => void;
+    addNuggClaim: (update: UnclaimedNuggOffer) => void;
+    addItemClaim: (update: UnclaimedItemOffer) => void;
+    addLoan: (update: LoanData) => void;
+    updateLoan: (update: LoanData) => void;
+
+    addNugg: (update: MyNuggsData) => void;
+    removeNugg: (tokenId: NuggId) => void;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
@@ -189,7 +250,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                         ${isItem ? 'item' : 'nugg'}(id: $tokenId) {
                             id
                         }
-
                     }
                 `,
                 { tokenId: tokenId },
@@ -213,7 +273,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         const epochId = calculateEpochId(blocknum, chainId);
 
         store.setState((existingState): ClientState => {
-            console.log('ypyoyo');
             if (!existingState.route) {
                 let parsed = parseRoute(window.location.hash);
                 if (parsed.type === Route.Home) {
@@ -263,25 +322,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
      * @returns cancelActivation - A function that cancels the activation by setting activating to false,
      * as long as there haven't been any intervening updates.
      */
-    function updateMyNuggs(stateUpdate: MyNuggsData[]): void {
-        nullifier++;
-
-        store.setState((existingState): ClientState => {
-            const myNuggs = stateUpdate ?? existingState.myNuggs;
-
-            return {
-                ...existingState,
-                myNuggs,
-            };
-        });
-    }
-
-    /**
-     * Sets activating to true, indicating that an update is in progress.
-     *
-     * @returns cancelActivation - A function that cancels the activation by setting activating to false,
-     * as long as there haven't been any intervening updates.
-     */
     function updateProtocol(stateUpdate: ClientStateUpdate): void {
         nullifier++;
 
@@ -294,7 +334,13 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             const activeSwaps = stateUpdate.activeSwaps ?? existingState.activeSwaps;
             const activeItems = stateUpdate.activeItems ?? existingState.activeItems;
             const manualPriority = stateUpdate.manualPriority ?? existingState.manualPriority;
+            const myNuggs = stateUpdate.myNuggs ?? existingState.myNuggs;
+            const myLoans = stateUpdate.myLoans ?? existingState.myLoans;
 
+            const myUnclaimedNuggOffers =
+                stateUpdate.myUnclaimedNuggOffers ?? existingState.myUnclaimedNuggOffers;
+            const myUnclaimedItemOffers =
+                stateUpdate.myUnclaimedItemOffers ?? existingState.myUnclaimedItemOffers;
             // determine the next error
             let error = existingState.error;
 
@@ -303,11 +349,99 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                 manualPriority,
                 infura,
                 apollo,
-                // epoch,
+                myNuggs,
+                myUnclaimedNuggOffers,
+                myUnclaimedItemOffers,
+                myLoans,
                 stake,
                 activeSwaps,
                 activeItems,
                 error,
+            };
+        });
+    }
+
+    function removeLoan(tokenId: NuggId): void {
+        store.setState((existingState): ClientState => {
+            return {
+                ...existingState,
+                myLoans: existingState.myLoans.filter((x) => x.nugg !== tokenId),
+            };
+        });
+    }
+
+    function removeNugg(tokenId: NuggId): void {
+        store.setState((existingState): ClientState => {
+            return {
+                ...existingState,
+                myNuggs: existingState.myNuggs.filter((x) => x.tokenId !== tokenId),
+            };
+        });
+    }
+
+    function removeNuggClaim(tokenId: NuggId): void {
+        store.setState((existingState): ClientState => {
+            return {
+                ...existingState,
+                myUnclaimedNuggOffers: existingState.myUnclaimedNuggOffers.filter(
+                    (x) => x.tokenId !== tokenId,
+                ),
+            };
+        });
+    }
+
+    function removeItemClaimIfMine(nuggId: NuggId, itemId: ItemId): void {
+        store.setState((existingState): ClientState => {
+            return {
+                ...existingState,
+                myUnclaimedItemOffers: existingState.myUnclaimedItemOffers.filter(
+                    (x) => x.nugg !== nuggId || x.tokenId !== itemId,
+                ),
+            };
+        });
+    }
+
+    function addNuggClaim(update: UnclaimedNuggOffer): void {
+        store.setState((existingState): ClientState => {
+            return {
+                ...existingState,
+                myUnclaimedNuggOffers: [update, ...existingState.myUnclaimedNuggOffers],
+            };
+        });
+    }
+
+    function addItemClaim(update: UnclaimedItemOffer): void {
+        store.setState((existingState): ClientState => {
+            return {
+                ...existingState,
+                myUnclaimedItemOffers: [update, ...existingState.myUnclaimedItemOffers],
+            };
+        });
+    }
+
+    function addLoan(update: LoanData): void {
+        store.setState((existingState): ClientState => {
+            return {
+                ...existingState,
+                myLoans: [update, ...existingState.myLoans],
+            };
+        });
+    }
+
+    function updateLoan(update: LoanData): void {
+        store.setState((existingState): ClientState => {
+            return {
+                ...existingState,
+                myLoans: [update, ...existingState.myLoans.filter((x) => x.nugg !== update.nugg)],
+            };
+        });
+    }
+
+    function addNugg(update: MyNuggsData): void {
+        store.setState((existingState): ClientState => {
+            return {
+                ...existingState,
+                myNuggs: [update, ...existingState.myNuggs],
             };
         });
     }
@@ -320,8 +454,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
      */
     function updateOffers(tokenId: TokenId, offers: OfferData[]): void {
         store.setState((existingState): ClientState => {
-            // determine the next chainId and accounts
-
             let updates = {
                 ...existingState,
                 activeOffers: {
@@ -487,7 +619,15 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             routeTo,
             toggleView,
             updateOffers,
-            updateMyNuggs,
+            removeLoan,
+            removeNuggClaim,
+            removeItemClaimIfMine,
+            addNuggClaim,
+            addItemClaim,
+            addLoan,
+            addNugg,
+            removeNugg,
+            updateLoan,
         },
     };
 }

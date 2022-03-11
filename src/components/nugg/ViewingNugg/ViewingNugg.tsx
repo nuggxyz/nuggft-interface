@@ -11,7 +11,6 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import client from '@src/client';
-import { LiveNugg } from '@src/client/hooks/useLiveNugg';
 import { Route } from '@src/client/router';
 import HappyTabber from '@src/components/general/HappyTabber/HappyTabber';
 import AddressViewer from '@src/components/general/Texts/AddressViewer/AddressViewer';
@@ -29,15 +28,13 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const lastView__tokenId = client.live.lastView__tokenId();
     const lastView__type = client.live.lastView__type();
 
-    const address = web3.hook.usePriorityAccount();
+    const sender = web3.hook.usePriorityAccount();
 
     const screenType = AppState.select.screenType();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 
     const token = client.hook.useLiveToken(lastView__tokenId);
-
-    const ens = web3.hook.usePriorityAnyENSName(provider, (token as LiveNugg)?.owner);
 
     const happyTabs = useMemo(() => {
         return [
@@ -56,7 +53,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                     />
                 ),
             },
-            ...(token?.type === 'nugg' && address === token?.owner && !token?.activeSwap?.id
+            ...(token?.type === 'nugg' && sender === token?.owner && !token?.activeSwap?.id
                 ? [
                       {
                           label: 'Items',
@@ -66,7 +63,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                       items: token?.items,
                                       chainId,
                                       provider,
-                                      address,
+                                      sender,
                                       tokenId: lastView__tokenId,
                                   }}
                               />
@@ -75,7 +72,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                   ]
                 : []),
         ];
-    }, [token, address, chainId, provider, token, lastView__tokenId, lastView__type]);
+    }, [token, sender, chainId, provider, token, lastView__tokenId, lastView__type]);
     return (
         !isUndefinedOrNullOrStringEmpty(lastView__tokenId) && (
             <div style={styles.container}>
@@ -135,7 +132,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                     : lastView__type === Route.ViewItem
                                                     ? `Nugg #${token?.owner}`
                                                     : ens} */}
-                                                {token?.owner === address && (
+                                                {token?.owner === sender && (
                                                     <Text
                                                         type="text"
                                                         size="smaller"
@@ -159,7 +156,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                     </Text>
                                 )}
                             </div>
-                            {token?.type === 'nugg' && token?.owner === address && (
+                            {token?.type === 'nugg' && token?.owner === sender && (
                                 <Flyout
                                     containerStyle={styles.flyout}
                                     style={{ right: '1.5rem', top: '2rem' }}
