@@ -8,7 +8,7 @@ import updater from './updater';
 import { useLiveToken } from './hooks/useLiveToken';
 import { useLiveItem } from './hooks/useLiveItem';
 import { useLiveItemOffers, useSafeLiveItemOffers } from './hooks/useLiveItemOffers';
-import useDotnugg from './hooks/useDotnugg';
+import { useDotnugg, useDotnuggCacheOnly } from './hooks/useDotnugg';
 import router from './router';
 import { TokenId } from './router';
 
@@ -69,6 +69,7 @@ export default {
         useSafeTokenOffers: (tokenId: string) =>
             tokenId?.includes('item-') ? useSafeLiveItemOffers(tokenId) : useLiveOffers(tokenId),
         useDotnugg,
+        useDotnuggCacheOnly,
     },
     static: {
         apollo: () => core.store.getState().apollo,

@@ -7,12 +7,9 @@ import Text from '@src/components/general/Texts/Text/Text';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Colors from '@src/lib/colors';
-import usePrevious from '@src/hooks/usePrevious';
-import useSetState from '@src/hooks/useSetState';
 import AppState from '@src/state/app';
 import TransactionState from '@src/state/transaction';
 import {
-    isUndefinedOrNull,
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrBooleanFalse,
     isUndefinedOrNullOrStringEmpty,
@@ -21,12 +18,12 @@ import {
 } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
-import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
-import { Chain } from '@src/web3/core/interfaces';
 import { Route } from '@src/client/router';
-import { OfferData } from '@src/client/core';
 import constants from '@src/lib/constants';
 import TxViewer from '@src/components/general/Texts/TxViewer/TxViewer';
+import { OfferData } from '@src/client/core';
+import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
+import { Chain } from '@src/web3/core/interfaces';
 
 import styles from './RingAbout.styles';
 
@@ -34,14 +31,12 @@ type Props = {};
 
 const RingAbout: FunctionComponent<Props> = ({}) => {
     const screenType = AppState.select.screenType();
-    const epoch = client.live.epoch();
 
     const address = web3.hook.usePriorityAccount();
 
     const lastSwap__tokenId = client.live.lastSwap__tokenId();
     const lastSwap__type = client.live.lastSwap__type();
-    const lastSwap = client.live.lastSwap();
-    const token = client.hook.useLiveToken(lastSwap__tokenId);
+    const { token, epoch, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
 
     const isItemSwap = useMemo(
         () => lastSwap__tokenId?.includes(constants.ID_PREFIX_ITEM),
@@ -49,16 +44,8 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     );
 
     const txnToggle = TransactionState.select.toggleCompletedTxn();
-    const prevToggle = usePrevious(txnToggle);
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-
-    const status = useSetState(() => {
-        if (isUndefinedOrNull(token?.activeSwap?.endingEpoch) || isUndefinedOrNull(epoch))
-            return 'waiting';
-
-        return +token?.activeSwap?.epoch.endblock >= +epoch.endblock ? 'ongoing' : 'over';
-    }, [epoch, token?.activeSwap?.endingEpoch]);
 
     const [open, setOpen] = useState(false);
 
@@ -69,10 +56,6 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
         if (offers?.length > 0) return offers[0];
         else return undefined;
     }, [offers]);
-
-    // const { offers, leader } = client.hook.useSafeTokenOffers(lastSwap__tokenId);
-
-    // const leaderEns = web3.hook.usePriorityAnyENSName(provider, leader && leader.user);
 
     const hasBids = useMemo(() => !!leader, [leader]);
 
@@ -127,8 +110,8 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
         opacity: open ? 1 : 0,
         padding: open ? '0.75rem' : '0rem',
     });
-
-    return (
+    console.log({ lifecycle });
+    return lifecycle !== 'stands' ? (
         <>
             <animated.div
                 style={{
@@ -160,13 +143,15 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                 }),
                             }}
                         >
-                            {(status === 'ongoing' && hasBids
+                            {(lifecycle === 'deck' || lifecycle === 'bat') && hasBids
                                 ? 'Highest Offer'
-                                : status === 'ongoing' && !hasBids
+                                : (lifecycle === 'deck' || lifecycle === 'bat') && !hasBids
                                 ? 'No offers yet...'
-                                : status === 'waiting'
+                                : lifecycle === 'bench'
                                 ? 'Place offer to begin auction'
-                                : 'Winner ') + parseTokenIdSmart(lastSwap__tokenId)}
+                                : lifecycle === 'shower'
+                                ? 'Winner ' + parseTokenIdSmart(lastSwap__tokenId)
+                                : 'oops shouldnt be here'}
                         </Text>
                         {hasBids && status !== 'waiting' && (
                             <div
@@ -271,11 +256,12 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                     )}
             </animated.div>
         </>
+    ) : (
+        <></>
     );
 };
 
 export default React.memo(RingAbout);
-
 const OfferRenderItem = ({
     provider,
     chainId,

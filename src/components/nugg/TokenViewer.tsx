@@ -20,6 +20,7 @@ type Props = {
     showcase?: boolean;
     labelLong?: boolean;
     disableOnClick?: boolean;
+    checkForUpdates?: boolean;
 };
 
 const TokenViewer: FunctionComponent<Props> = ({
@@ -32,16 +33,17 @@ const TokenViewer: FunctionComponent<Props> = ({
     showcase = false,
     labelLong = false,
     disableOnClick = false,
+    checkForUpdates = false,
 }) => {
     const screenType = AppState.select.screenType();
-    // const chainId = web3.hook.usePriorityChainId();
-    // const app = state.app.select.userAgent()
 
     const { width } = useMemo(() => {
         return { width: window.innerWidth };
     }, []);
 
-    const src = client.hook.useDotnugg(tokenId);
+    const src = checkForUpdates
+        ? client.hook.useDotnugg(tokenId)
+        : client.hook.useDotnuggCacheOnly(tokenId);
 
     const [hoverRef, isHovering] = useOnHover();
 

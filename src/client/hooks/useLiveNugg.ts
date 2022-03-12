@@ -98,7 +98,7 @@ export const useLiveNugg = (tokenId: string) => {
                             nugg(id: $tokenId) {
                                 id
                                 # dotnuggRawCache
-                                id
+                                # id
                                 user {
                                     id
                                 }

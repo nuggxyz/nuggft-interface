@@ -22,7 +22,7 @@ type Props<T, B> = {
         onClick: () => void;
         numberOfItems: number;
     }>;
-    extraData: B[];
+    extraData: B;
     style?: CSSProperties | SpringProps;
     styleLeft?: CSSProperties;
     styleRight?: CSSProperties;
@@ -106,11 +106,9 @@ const StickyList = <T extends unknown, B extends unknown>({
                                     item,
                                     TitleRenderItem,
                                     ChildRenderItem,
-                                    extraData: [
-                                        ...extraData,
-                                        animating,
-                                        refData.map((item) => item.title),
-                                    ],
+                                    extraData,
+                                    animating,
+                                    refData: refData.map((item) => item.title),
                                     setCurrent,
                                     index,
                                 }}
@@ -131,6 +129,8 @@ const RenderItem = ({
     TitleRenderItem,
     ChildRenderItem,
     extraData,
+    animating,
+    refData,
     setCurrent,
     index: parentIndex,
 }) => {
@@ -168,7 +168,10 @@ const RenderItem = ({
                             <ChildRenderItem
                                 item={childItem}
                                 index={index}
-                                extraData={[...extraData, extraData.last()[parentIndex]]}
+                                {...animating}
+                                {...refData}
+
+                                // extraData={[...extraData, extraData.last()[parentIndex]]}
                             />
                         </React.Fragment>
                     ))}
