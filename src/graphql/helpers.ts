@@ -18,7 +18,7 @@ export const executeQuery = async (chainId: number, query: any, tableName: strin
         ) {
             return result.data[tableName];
         }
-    } catch (error) {
+    } catch (error: any) {
         throw new Error(error.message);
     }
 };
@@ -37,14 +37,18 @@ export const executeQuery2 = async (client: ApolloClient<any>, query: any, table
         ) {
             return result.data[tableName];
         }
-    } catch (error) {
+    } catch (error: any) {
         throw new Error(error.message);
     }
 };
 
 export const executeQuery3 = async <T>(query: DocumentNode, variables: object) => {
     try {
-        const result = await client.static.apollo().query<T>({
+        const check = client.static.apollo();
+
+        if (check === undefined) throw new Error('executeQuery3 | apollo is undefined');
+
+        const result = await check.query<T>({
             query,
             fetchPolicy: 'no-cache',
             canonizeResults: true,
@@ -56,14 +60,18 @@ export const executeQuery3 = async <T>(query: DocumentNode, variables: object) =
             return result.data;
         }
         throw new Error('executeQuery3 failed');
-    } catch (error) {
+    } catch (error: any) {
         throw new Error(error.message);
     }
 };
 
 export const executeQuery4 = async <T>(query: DocumentNode, variables: object) => {
     try {
-        const result = await client.static.apollo().query<T>({
+        const check = client.static.apollo();
+
+        if (check === undefined) throw new Error('executeQuery4 | apollo is undefined');
+
+        const result = await check.query<T>({
             query,
             // @ts-ignore
             // fetchPolicy: 'cache-and-network',
@@ -77,13 +85,17 @@ export const executeQuery4 = async <T>(query: DocumentNode, variables: object) =
             return result.data;
         }
         throw new Error('executeQuery3 failed');
-    } catch (error) {
+    } catch (error: any) {
         throw new Error(error.message);
     }
 };
 
 export const executeQuery5 = <T>(query: DocumentNode, variables: object) => {
-    return client.static.apollo().watchQuery<T>({
+    const check = client.static.apollo();
+
+    if (check === undefined) throw new Error('executeQuery5 | apollo is undefined');
+
+    return check.watchQuery<T>({
         query,
         // @ts-ignore
         fetchPolicy: 'cache-and-network',
@@ -94,7 +106,11 @@ export const executeQuery5 = <T>(query: DocumentNode, variables: object) => {
 };
 
 export const executeQuery6 = <T>(query: DocumentNode, variables: object) => {
-    return client.static.apollo().watchQuery<T>({
+    const check = client.static.apollo();
+
+    if (check === undefined) throw new Error('executeQuery6 | apollo is undefined');
+
+    return check.watchQuery<T>({
         query,
         fetchPolicy: 'cache-first',
         canonizeResults: true,
@@ -126,7 +142,7 @@ export const useFasterQuery = <T, R>(
     variables: object,
     formatter: (res: ApolloQueryResult<T>) => R,
 ) => {
-    const [src, setSrc] = useState<R>(undefined);
+    const [src, setSrc] = useState<R | undefined>(undefined);
 
     const cb = React.useCallback(
         (x) => {
@@ -153,7 +169,7 @@ export const useFastQuery = <T, R>(
     variables: object,
     formatter: (res: ApolloQueryResult<T>) => R,
 ) => {
-    const [src, setSrc] = useState<R>(undefined);
+    const [src, setSrc] = useState<R | undefined>(undefined);
 
     const cb = React.useCallback(
         (x) => {

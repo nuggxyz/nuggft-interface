@@ -1,9 +1,14 @@
 import { gql } from '@apollo/client';
 import React, { useEffect } from 'react';
 
+import { EthInt } from '@src/classes/Fraction';
+
 import client from '..';
 
-export type LiveSwap = {
+import { LiveItemSwap } from './useLiveItem';
+
+export interface LiveSwapBase {
+    type: 'nugg' | 'item';
     id: string;
     epoch: {
         id: number;
@@ -11,16 +16,19 @@ export type LiveSwap = {
         endblock: number;
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
-    eth: string;
-    leader: {
-        id: string;
-    };
-    owner: {
-        id: string;
-    };
-    endingEpoch: number;
-    num: string;
-};
+    eth: EthInt;
+    leader: string;
+    owner: string;
+    endingEpoch: number | null;
+    num: number;
+}
+
+export interface LiveNuggSwap extends LiveSwapBase {
+    type: 'nugg';
+    isActive: boolean;
+}
+
+export type LiveSwap = LiveNuggSwap | LiveItemSwap;
 
 export const swapgql = (type: 'item' | 'nugg') => gql`
     {
@@ -55,21 +63,21 @@ export interface LiveNuggItem {
 export interface LiveNugg {
     type: 'nugg';
     activeLoan: boolean;
-    activeSwap: LiveSwap;
+    activeSwap?: LiveNuggSwap;
     items: LiveNuggItem[];
 
     // svg: ReactSVG;
     owner: string;
-    swaps: LiveSwap[];
+    swaps: LiveNuggSwap[];
 }
 
-export const useLiveNugg = (tokenId: string) => {
-    const [nugg, setNugg] = React.useState<LiveNugg>(undefined);
+export const useLiveNugg = (tokenId: string | undefined) => {
+    const [nugg, setNugg] = React.useState<LiveNugg>();
 
     const apollo = client.live.apollo();
 
     useEffect(() => {
-        if (tokenId) {
+        if (tokenId && apollo) {
             const instance = apollo
                 .subscribe<{
                     nugg: {
@@ -88,8 +96,42 @@ export const useLiveNugg = (tokenId: string) => {
                                 position: number;
                             };
                         }[];
-                        activeSwap: LiveSwap;
-                        swaps: LiveSwap[];
+                        activeSwap?: {
+                            id: string;
+                            epoch: {
+                                id: string;
+                                startblock: string;
+                                endblock: string;
+                                status: 'OVER' | 'ACTIVE' | 'PENDING';
+                            };
+                            eth: string;
+                            leader: {
+                                id: string;
+                            };
+                            owner: {
+                                id: string;
+                            };
+                            endingEpoch: string | null;
+                            num: string;
+                        };
+                        swaps: {
+                            id: string;
+                            epoch: {
+                                id: string;
+                                startblock: string;
+                                endblock: string;
+                                status: 'OVER' | 'ACTIVE' | 'PENDING';
+                            };
+                            eth: string;
+                            leader: {
+                                id: string;
+                            };
+                            owner: {
+                                id: string;
+                            };
+                            endingEpoch: string | null;
+                            num: string;
+                        }[];
                         activeLoan: { id: string };
                     };
                 }>({
@@ -125,7 +167,7 @@ export const useLiveNugg = (tokenId: string) => {
                     variables: { tokenId },
                 })
                 .subscribe((x) => {
-                    if (x.data.nugg) {
+                    if (x.data && x.data.nugg) {
                         setNugg({
                             type: 'nugg',
                             activeLoan: !!x.data.nugg.activeLoan?.id,
@@ -140,6 +182,7 @@ export const useLiveNugg = (tokenId: string) => {
                             }),
                             swaps: x.data.nugg.swaps.map((y) => {
                                 return {
+                                    type: 'nugg',
                                     id: y?.id,
                                     epoch: {
                                         id: +y?.epoch?.id,
@@ -147,35 +190,38 @@ export const useLiveNugg = (tokenId: string) => {
                                         endblock: +y?.epoch?.endblock,
                                         status: y?.epoch?.status,
                                     },
-                                    eth: y?.eth,
-                                    leader: {
-                                        id: y?.leader?.id,
-                                    },
-                                    owner: {
-                                        id: y?.owner?.id,
-                                    },
-                                    endingEpoch: y?.endingEpoch,
-                                    num: y?.num,
+                                    eth: new EthInt(y?.eth),
+                                    leader: y?.leader?.id,
+                                    owner: y?.owner?.id,
+                                    endingEpoch: y && y.endingEpoch ? +y?.endingEpoch : null,
+                                    num: +y?.num,
+                                    isActive: x.data?.nugg.activeSwap?.id === y?.id,
                                 };
                             }),
-                            activeSwap: {
-                                id: x.data.nugg.activeSwap?.id,
-                                epoch: {
-                                    id: +x.data.nugg.activeSwap?.epoch?.id,
-                                    startblock: +x.data.nugg.activeSwap?.epoch?.startblock,
-                                    endblock: +x.data.nugg.activeSwap?.epoch?.endblock,
-                                    status: x.data.nugg.activeSwap?.epoch?.status,
-                                },
-                                eth: x.data.nugg.activeSwap?.eth,
-                                leader: {
-                                    id: x.data.nugg.activeSwap?.leader?.id,
-                                },
-                                owner: {
-                                    id: x.data.nugg.activeSwap?.owner?.id,
-                                },
-                                endingEpoch: x.data.nugg.activeSwap?.endingEpoch,
-                                num: x.data.nugg.activeSwap?.num,
-                            },
+                            activeSwap: x.data.nugg.activeSwap
+                                ? {
+                                      type: 'nugg',
+                                      id: x.data.nugg.activeSwap?.id,
+                                      epoch: {
+                                          id: +x.data.nugg.activeSwap?.epoch?.id,
+                                          startblock: +x.data.nugg.activeSwap?.epoch?.startblock,
+                                          endblock: +x.data.nugg.activeSwap?.epoch?.endblock,
+                                          status: x.data.nugg.activeSwap?.epoch?.status,
+                                      },
+                                      eth: new EthInt(x.data.nugg.activeSwap?.eth),
+                                      leader: x.data.nugg.activeSwap?.leader?.id,
+
+                                      owner: x.data.nugg.activeSwap?.owner?.id,
+
+                                      endingEpoch:
+                                          x.data.nugg.activeSwap &&
+                                          x.data.nugg.activeSwap?.endingEpoch
+                                              ? +x.data.nugg.activeSwap?.endingEpoch
+                                              : null,
+                                      num: +x.data.nugg.activeSwap?.num,
+                                      isActive: true,
+                                  }
+                                : undefined,
                             // svg: x.data.nugg.dotnuggRawCache as any,
                         });
                     }

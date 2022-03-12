@@ -114,65 +114,73 @@ export default () => {
                     fetchPolicy: 'standby',
                 })
                 .subscribe((x) => {
-                    const shares = BigNumber.from(x.data.protocol.nuggftStakedShares);
+                    if (x.data) {
+                        const shares = BigNumber.from(x.data.protocol.nuggftStakedShares);
 
-                    const staked = BigNumber.from(x.data.protocol.nuggftStakedEth);
+                        const staked = BigNumber.from(x.data.protocol.nuggftStakedEth);
 
-                    client.actions.updateProtocol({
-                        stake: {
-                            staked,
-                            shares,
-                            eps: EthInt.fromFraction(new Fraction(staked, shares)),
-                        },
-                        epoch: {
-                            id: +x.data.protocol.epoch.id,
-                            startblock: +x.data.protocol.epoch.startBlock,
-                            endblock: +x.data.protocol.epoch.endBlock,
-                            status: x.data.protocol.epoch.status,
-                        },
-                        activeSwaps: x.data.protocol.activeNuggs.map((x) => {
-                            return {
-                                id: x.id as TokenId,
-                                tokenId: x.id as TokenId,
-                                dotnuggRawCache: x.dotnuggRawCache,
-                                eth: new EthInt(x.activeSwap?.eth),
-                                started: !!x.activeSwap?.endingEpoch,
-                                endingEpoch: +x.activeSwap?.endingEpoch,
-                                type: 'nugg',
-                            };
-                        }),
-                        activeItems: mergeUnique([
-                            ...x.data.protocol.activeItems.map((x) => {
+                        client.actions.updateProtocol({
+                            stake: {
+                                staked,
+                                shares,
+                                eps: EthInt.fromFraction(new Fraction(staked, shares)),
+                            },
+                            epoch: {
+                                id: +x.data.protocol.epoch.id,
+                                startblock: +x.data.protocol.epoch.startBlock,
+                                endblock: +x.data.protocol.epoch.endBlock,
+                                status: x.data.protocol.epoch.status,
+                            },
+                            activeSwaps: x.data.protocol.activeNuggs.map((x) => {
                                 return {
-                                    id: createItemId(x.id) as TokenId,
-                                    tokenId: createItemId(x.id) as TokenId,
-                                    dotnuggRawCache: x.activeSwap.sellingItem.dotnuggRawCache,
+                                    id: x.id as TokenId,
+                                    tokenId: x.id as TokenId,
+                                    dotnuggRawCache: x.dotnuggRawCache,
                                     eth: new EthInt(x.activeSwap?.eth),
-                                    started: !!x.activeSwap.endingEpoch,
-                                    sellingNugg: '',
-                                    endingEpoch: +x.activeSwap?.endingEpoch,
-                                    type: 'item' as 'item',
+                                    started: !!x.activeSwap?.endingEpoch,
+                                    endingEpoch:
+                                        x.activeSwap && x.activeSwap?.endingEpoch
+                                            ? +x.activeSwap?.endingEpoch
+                                            : 0,
+                                    type: 'nugg',
+                                    isCurrent: true,
                                 };
                             }),
-                            ...x.data.protocol.activeNuggItems.map((x) => {
-                                return {
-                                    id: createItemId(
-                                        x.activeSwap.sellingNuggItem.item.id,
-                                    ) as TokenId,
-                                    tokenId: createItemId(
-                                        x.activeSwap.sellingNuggItem.item.id,
-                                    ) as TokenId,
-                                    dotnuggRawCache:
-                                        x.activeSwap.sellingNuggItem.item.dotnuggRawCache,
-                                    eth: new EthInt(x.activeSwap?.eth),
-                                    started: !!x.activeSwap.endingEpoch,
-                                    sellingNugg: x.id.split('-')[constants.ITEM_NUGG_POS],
-                                    endingEpoch: +x.activeSwap?.endingEpoch,
-                                    type: 'item' as 'item',
-                                };
-                            }),
-                        ]),
-                    });
+                            activeItems: mergeUnique([
+                                ...x.data.protocol.activeItems.map((x) => {
+                                    return {
+                                        id: createItemId(x.id) as TokenId,
+                                        tokenId: createItemId(x.id) as TokenId,
+                                        dotnuggRawCache: x.activeSwap.sellingItem.dotnuggRawCache,
+                                        eth: new EthInt(x.activeSwap?.eth),
+                                        started: !!x.activeSwap.endingEpoch,
+                                        sellingNugg: '',
+                                        endingEpoch: +x.activeSwap.endingEpoch!,
+                                        type: 'item' as 'item',
+                                        isCurrent: true,
+                                    };
+                                }),
+                                ...x.data.protocol.activeNuggItems.map((x) => {
+                                    return {
+                                        id: createItemId(
+                                            x.activeSwap.sellingNuggItem.item.id,
+                                        ) as TokenId,
+                                        tokenId: createItemId(
+                                            x.activeSwap.sellingNuggItem.item.id,
+                                        ) as TokenId,
+                                        dotnuggRawCache:
+                                            x.activeSwap.sellingNuggItem.item.dotnuggRawCache,
+                                        eth: new EthInt(x.activeSwap?.eth),
+                                        started: !!x.activeSwap.endingEpoch,
+                                        sellingNugg: x.id.split('-')[constants.ITEM_NUGG_POS],
+                                        endingEpoch: +x.activeSwap.endingEpoch!,
+                                        type: 'item' as 'item',
+                                        isCurrent: true,
+                                    };
+                                }),
+                            ]),
+                        });
+                    }
                 });
             return () => {
                 instance.unsubscribe();
@@ -181,7 +189,7 @@ export default () => {
     }, [apollo]);
 
     React.useEffect(() => {
-        if (address) {
+        if (address && apollo) {
             const instance = apollo
                 .subscribe<{
                     user: {
@@ -190,7 +198,7 @@ export default () => {
                             eth: string;
                             swap: {
                                 id: string;
-                                endingEpoch: number;
+                                endingEpoch: string | null;
                                 leader: {
                                     id: string;
                                 };
@@ -207,7 +215,7 @@ export default () => {
                                 id: string;
                                 eth: string;
                                 swap: {
-                                    endingEpoch: string;
+                                    endingEpoch: string | null;
                                     sellingItem: { id: ItemId };
                                     sellingNuggItem: {
                                         nugg: {
@@ -222,7 +230,7 @@ export default () => {
                         }[];
                         loans: {
                             id: string;
-                            endingEpoch: string;
+                            endingEpoch: string | null;
                             eth: string;
                             nugg: {
                                 id: NuggId;
@@ -296,7 +304,8 @@ export default () => {
                     variables: { address: address.toLowerCase() },
                 })
                 .subscribe((x) => {
-                    x.data.user &&
+                    x.data &&
+                        x.data.user &&
                         client.actions.updateProtocol({
                             myNuggs: x.data.user.nuggs.map((x) => {
                                 return {
@@ -306,7 +315,10 @@ export default () => {
                                     unclaimedOffers: x.offers.map((y) => {
                                         return {
                                             itemId: y.swap.sellingItem.id,
-                                            endingEpoch: +y.swap.endingEpoch,
+                                            endingEpoch:
+                                                y && y.swap && y.swap.endingEpoch
+                                                    ? +y.swap.endingEpoch
+                                                    : null,
                                         };
                                     }),
                                 };
@@ -314,7 +326,10 @@ export default () => {
                             myUnclaimedNuggOffers: x.data.user.offers.map((x) => {
                                 return {
                                     tokenId: x.swap.nugg.id,
-                                    endingEpoch: +x.swap.endingEpoch,
+                                    endingEpoch:
+                                        x && x.swap && x.swap.endingEpoch
+                                            ? +x.swap.endingEpoch
+                                            : null,
                                     eth: new EthInt(x.eth),
                                     type: 'nugg',
                                     leader:
@@ -331,7 +346,10 @@ export default () => {
                                         // console.log(y.swap.sellingItem.id);
                                         return {
                                             tokenId: ('item-' + y.swap.sellingItem.id) as ItemId,
-                                            endingEpoch: +y.swap.endingEpoch,
+                                            endingEpoch:
+                                                y && y.swap && y.swap.endingEpoch
+                                                    ? +y.swap.endingEpoch
+                                                    : null,
                                             eth: new EthInt(y.eth),
                                             type: 'item' as 'item',
                                             leader: y.swap.leader.id === x.id,
@@ -349,7 +367,7 @@ export default () => {
                                 .flat(),
                             myLoans: x.data.user.loans.map((x) => {
                                 return {
-                                    endingEpoch: +x.endingEpoch,
+                                    endingEpoch: +x.endingEpoch!,
                                     eth: new EthInt(x.eth),
                                     nugg: x.nugg.id,
                                     startingEpoch: +x.epoch.id,

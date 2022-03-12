@@ -7,7 +7,6 @@
         "skipLibCheck": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "strict": false,
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,
         "module": "esNext",
@@ -18,8 +17,9 @@
         "baseUrl": ".",
         "paths": {
             "@src/*": ["src/*"]
-        }
+        },
+        "strict": true
     },
-    "include": ["src", "test.ts", "index.d.ts"],
+    "include": ["src", "test.ts", "index.d.ts", "archive/interfaces.ts"],
     "exclude": ["node_modules"]
 }

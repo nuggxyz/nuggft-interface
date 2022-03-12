@@ -23,7 +23,7 @@ const Wallet: FunctionComponent<Props> = () => {
                 ? [
                       {
                           label: 'Home',
-                          comp: ({ isActive }) => <ManageWalletTab />,
+                          comp: ({ isActive }: { isActive: boolean }) => <ManageWalletTab />,
                       },
                   ]
                 : [
@@ -31,11 +31,13 @@ const Wallet: FunctionComponent<Props> = () => {
                           ? [
                                 {
                                     label: 'Home',
-                                    comp: ({ isActive }) => <MintTab />,
+                                    comp: ({ isActive }: { isActive: boolean }) => <MintTab />,
                                 },
                                 {
                                     label: 'Claims',
-                                    comp: ({ isActive }) => <ClaimTab isActive={isActive} />,
+                                    comp: ({ isActive }: { isActive: boolean }) => (
+                                        <ClaimTab isActive={isActive} />
+                                    ),
                                 },
                                 // {
                                 //     label: 'Sales',
@@ -43,13 +45,17 @@ const Wallet: FunctionComponent<Props> = () => {
                                 // },
                                 {
                                     label: 'Loans',
-                                    comp: ({ isActive }) => <LoansTab isActive={isActive} />,
+                                    comp: ({ isActive }: { isActive: boolean }) => (
+                                        <LoansTab isActive={isActive} />
+                                    ),
                                 },
                             ]
                           : [
                                 {
                                     label: 'Home',
-                                    comp: ({ isActive }) => <ConnectWalletTab />,
+                                    comp: ({ isActive }: { isActive: boolean }) => (
+                                        <ConnectWalletTab />
+                                    ),
                                 },
                             ]),
                   ],

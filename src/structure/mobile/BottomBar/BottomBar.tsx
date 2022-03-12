@@ -27,9 +27,9 @@ const BottomBar: FunctionComponent<Props> = () => {
         AppState.dispatch.changeMobileView(view);
     }, []);
     const epoch = client.live.epoch();
-    const ref = useRef<HTMLDivElement>();
+    const ref = useRef<HTMLDivElement>(null);
 
-    const width = useSetState(
+    const width = useSetState<number>(
         () => {
             return ref.current ? ref.current.clientWidth : 0;
         },
@@ -48,7 +48,7 @@ const BottomBar: FunctionComponent<Props> = () => {
             background: Colors.nuggBlueTransparent,
             width: INDEX[mobileView] === 0 ? '200px' : '45px',
             borderRadius: Layout.borderRadius.large,
-            transform: `translate(${INDEX[mobileView] * (width / 2 - 25)}px, 0px)`,
+            transform: `translate(${INDEX[mobileView] * ((width || 0) / 2 - 25)}px, 0px)`,
         },
         config: config.default,
     });
@@ -93,7 +93,7 @@ const BottomBar: FunctionComponent<Props> = () => {
                     textStyle={{
                         color: mobileView === 'Mint' ? Colors.nuggBlueText : 'white',
                     }}
-                    onClick={mobileView !== 'Mint' && (() => onClick('Mint'))}
+                    onClick={mobileView !== 'Mint' ? () => onClick('Mint') : undefined}
                 />
                 <Button
                     onClick={() => onClick('Wallet')}

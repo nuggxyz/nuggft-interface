@@ -126,16 +126,16 @@ export const uuidv4 = () => {
     });
 };
 
-export const unCamelize = (text: string) => {
-    const firstWord = `${text.substr(0, 1).toUpperCase()}${
-        text.substring(1).match(/([a-z])+/g)[0]
-    }`;
-    return `${firstWord}${text
-        .substring(firstWord.length)
-        .match(/([A-Z])*([a-z])*/g)
-        .map((occurence) => ` ${occurence}`)
-        .join('')}`;
-};
+// export const unCamelize = (text: string) => {
+//     const firstWord = `${text.substr(0, 1).toUpperCase()}${
+//         text.substring(1).match(/([a-z])+/g)[0]
+//     }`;
+//     return `${firstWord}${text
+//         .substring(firstWord.length)
+//         .match(/([A-Z])*([a-z])*/g)
+//         .map((occurence) => ` ${occurence}`)
+//         .join('')}`;
+// };
 
 export const cipher = (text: string) => {
     let textToChars = (text: any) => text.split('').map((c: any) => c.charCodeAt(0));
@@ -146,18 +146,18 @@ export const cipher = (text: string) => {
     return text.split('').map(textToChars).map(applySaltToChar).map(byteHex).join('');
 };
 
-const decipher = (encoded: string) => {
-    let textToChars = (text: any) => text.split('').map((c: any) => c.charCodeAt(0));
-    let applySaltToChar = (code: any) =>
-        textToChars(config.SALT).reduce((a: any, b: any) => a ^ b, code);
+// const decipher = (encoded: string) => {
+//     let textToChars = (text: any) => text.split('').map((c: any) => c.charCodeAt(0));
+//     let applySaltToChar = (code: any) =>
+//         textToChars(config.SALT).reduce((a: any, b: any) => a ^ b, code);
 
-    return encoded
-        .match(/.{1,2}/g)
-        .map((hex) => parseInt(hex, 16))
-        .map(applySaltToChar)
-        .map((charCode) => String.fromCharCode(charCode))
-        .join('');
-};
+//     return encoded
+//         .match(/.{1,2}/g)
+//         .map((hex) => parseInt(hex, 16))
+//         .map(applySaltToChar)
+//         .map((charCode) => String.fromCharCode(charCode))
+//         .join('');
+// };
 
 export const loadFromLocalStorage = (target: string, encrypt = true) => {
     try {
@@ -166,7 +166,7 @@ export const loadFromLocalStorage = (target: string, encrypt = true) => {
         if (serializedObject === null) {
             return undefined;
         }
-        let res = JSON.parse(encrypt ? decipher(serializedObject) : serializedObject);
+        let res = JSON.parse(encrypt ? serializedObject : serializedObject);
         return res;
     } catch (e) {
         console.log(e);
@@ -210,14 +210,14 @@ export const smartInsert = <
 >(
     array: T[],
     element: T,
-) => {
-    if (isUndefinedOrNullOrArrayEmpty(array)) {
+): T[] => {
+    if (array === undefined) {
         return [element];
     }
     if (element.index === array.length) {
         return [...array, element];
     }
-    return array.reduce((acc, elem) => {
+    return array.reduce((acc: T[], elem) => {
         if (elem.index === element.index) {
             acc.push(element);
             elem.index++;
@@ -226,7 +226,7 @@ export const smartInsert = <
             elem.index++;
         }
         acc.push(elem);
-        return acc;
+        return [...acc, elem];
     }, []);
 };
 
@@ -238,13 +238,13 @@ export const smartInsertIndex = <
     array: T[],
     element: T,
 ) => {
-    if (isUndefinedOrNullOrArrayEmpty(array)) {
+    if (array === undefined) {
         return [element];
     }
     if (element.index === array.length) {
         return [...array, element];
     }
-    return array.reduce((acc, elem) => {
+    return array.reduce((acc: T[], elem) => {
         if (elem.index === element.index) {
             acc.push(element);
             elem.index++;
@@ -258,10 +258,10 @@ export const smartInsertIndex = <
 };
 
 export const smartRemove = <T extends { index: number }>(array: T[], element: T) => {
-    if (isUndefinedOrNullOrArrayEmpty(array)) {
+    if (array === undefined) {
         return [];
     }
-    return array.reduce((acc, elem) => {
+    return array.reduce((acc: T[], elem) => {
         if (elem.index === element.index) {
             return acc;
         }
@@ -274,10 +274,10 @@ export const smartRemove = <T extends { index: number }>(array: T[], element: T)
 };
 
 export const smartReplace = <T extends { id: string }>(array: T[], element: T) => {
-    if (isUndefinedOrNullOrArrayEmpty(array)) {
+    if (array === undefined) {
         return [];
     }
-    return array.reduce((acc, elem) => {
+    return array.reduce((acc: T[], elem) => {
         if (elem.id === element.id) {
             acc.push({
                 ...elem,
@@ -295,7 +295,7 @@ export const toGwei = (num: string): ethers.BigNumber => {
 };
 
 export const safeResetLocalStorage = (keys: string[]) => {
-    const values = [];
+    const values: { key: string; value: string | null | undefined }[] = [];
     keys.forEach((key) => {
         values.push({
             key,
@@ -304,7 +304,7 @@ export const safeResetLocalStorage = (keys: string[]) => {
     });
     localStorage.clear();
     values.forEach((entry) => {
-        if (!isUndefinedOrNullOrStringEmpty(entry.value)) {
+        if (entry.value !== undefined && entry.value !== null) {
             saveStringToLocalStorage(entry.value, entry.key);
         }
     });

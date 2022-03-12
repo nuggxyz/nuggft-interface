@@ -12,11 +12,11 @@ Array.prototype.shuffle = function () {
 };
 
 Array.prototype.first = function (count?: number) {
-    if (isUndefinedOrNullOrArrayEmpty(this)) {
+    if (!this || this === []) {
         return [];
     }
 
-    if (isUndefinedOrNullOrNotNumber(count)) {
+    if (count === undefined) {
         return this[0];
     }
 
@@ -31,11 +31,11 @@ Array.prototype.first = function (count?: number) {
 };
 
 Array.prototype.last = function (count?: number) {
-    if (isUndefinedOrNullOrArrayEmpty(this)) {
+    if (!this || this === []) {
         return [];
     }
     // TODO: #35 @danny7even this is some crap cheese code
-    if (isUndefinedOrNullOrNotNumber(count)) {
+    if (count === undefined) {
         return this[this.length - 1];
     }
 
@@ -121,10 +121,7 @@ Array.prototype.remove = function <T extends { index: number }>(element: T) {
     }, []);
 };
 
-Array.prototype.replace = function <T extends { id: string } | object>(
-    element: T,
-    field?: keyof T,
-) {
+Array.prototype.replace = function <T extends { id: string } | object>(element: T, field: keyof T) {
     if (isUndefinedOrNullOrArrayEmpty(this)) {
         return [];
     }
@@ -148,9 +145,7 @@ Array.prototype.replace = function <T extends { id: string } | object>(
 Array.prototype.smartInsert = function <T>(element: T, field?: keyof T) {
     if (
         !this.find((item) =>
-            !isUndefinedOrNullOrStringEmpty(field)
-                ? item[field] === element[field]
-                : item === element,
+            field !== undefined ? item[field] === element[field] : item === element,
         )
     ) {
         return [...this, element];
@@ -160,7 +155,7 @@ Array.prototype.smartInsert = function <T>(element: T, field?: keyof T) {
 
 Array.prototype.smartRemove = function <T>(element: T, field?: keyof T) {
     const index = this.findIndex((item) =>
-        !isUndefinedOrNullOrStringEmpty(field) ? item[field] === element[field] : item === element,
+        field !== undefined ? item[field] === element[field] : item === element,
     );
     if (index === -1) {
         return this;

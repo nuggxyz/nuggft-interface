@@ -11,7 +11,7 @@ type Props = {
 };
 
 const AnimatedBarTimer: FunctionComponent<Props> = ({ duration, color, style }) => {
-    const ref = useRef<HTMLDivElement>();
+    const ref = useRef<HTMLDivElement>(null);
     let time = duration;
     useAnimationFrame(
         (t) => {
@@ -27,7 +27,8 @@ const AnimatedBarTimer: FunctionComponent<Props> = ({ duration, color, style }) 
             style={{
                 ...styles.barContainer,
                 ...(!isUndefinedOrNullOrObjectEmpty(style) ? style : {}),
-            }}>
+            }}
+        >
             <div
                 style={{
                     ...styles.timer,

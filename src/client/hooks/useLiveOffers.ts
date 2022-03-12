@@ -4,12 +4,13 @@ import { gql } from '@apollo/client';
 import client from '@src/client/index';
 import { EthInt } from '@src/classes/Fraction';
 import { extractItemId } from '@src/lib/index';
+import { TokenId } from '@src/client/router';
 
-export const useLiveOffers = (tokenId: string) => {
+export const useLiveOffers = (tokenId: TokenId | undefined) => {
     const apollo = client.live.apollo();
 
     React.useEffect(() => {
-        if (tokenId) {
+        if (tokenId && apollo) {
             const isItem = tokenId.startsWith('item-');
             const instance = apollo
                 .subscribe<{
@@ -59,24 +60,26 @@ export const useLiveOffers = (tokenId: string) => {
                     variables: { tokenId: extractItemId(tokenId) },
                 })
                 .subscribe((x) => {
-                    client.actions.updateOffers(
-                        tokenId,
-                        isItem
-                            ? x.data.itemOffers!.map((x) => {
-                                  return {
-                                      eth: new EthInt(x.eth),
-                                      user: x.nugg.id,
-                                      txhash: x.txhash,
-                                  };
-                              })
-                            : x.data.offers!.map((x) => {
-                                  return {
-                                      eth: new EthInt(x.eth),
-                                      user: x.user.id,
-                                      txhash: x.txhash,
-                                  };
-                              }),
-                    );
+                    if (x.data) {
+                        client.actions.updateOffers(
+                            tokenId,
+                            isItem
+                                ? x.data.itemOffers!.map((x) => {
+                                      return {
+                                          eth: new EthInt(x.eth),
+                                          user: x.nugg.id,
+                                          txhash: x.txhash,
+                                      };
+                                  })
+                                : x.data.offers!.map((x) => {
+                                      return {
+                                          eth: new EthInt(x.eth),
+                                          user: x.user.id,
+                                          txhash: x.txhash,
+                                      };
+                                  }),
+                        );
+                    }
                 });
             return () => {
                 instance.unsubscribe();

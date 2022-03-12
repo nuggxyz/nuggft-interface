@@ -38,7 +38,7 @@ const MintTab: FunctionComponent<Props> = () => {
     const loans = client.live.myLoans();
     const unclaimedOffers = client.live.myUnclaimedOffers();
 
-    return (
+    return chainId && provider && address ? (
         <div style={styles.container}>
             <div>
                 <div
@@ -116,27 +116,26 @@ const MintTab: FunctionComponent<Props> = () => {
                 TitleButton={() => MintNuggButton(chainId, provider, address)}
                 labelStyle={styles.listLabel}
                 data={nuggs}
-                RenderItem={React.memo(
-                    RenderItem,
-                    (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
-                )}
+                extraData={undefined}
+                RenderItem={RenderItem}
                 label="My Nuggs"
                 style={listStyle.list}
                 listEmptyStyle={listStyle.textWhite}
                 listEmptyText="You don't have any Nuggs yet!"
                 loaderColor="white"
                 itemHeight={108}
+                action={() => undefined}
             />
         </div>
-    );
+    ) : null;
 };
 
 export default MintTab;
 
-const RenderItem: FunctionComponent<ListRenderItemProps<MyNuggsData, undefined>> = React.memo(
-    ({ item, extraData, style, index }) => {
-        return (
-            !isUndefinedOrNullOrObjectEmpty(item) && (
+const RenderItem: FunctionComponent<ListRenderItemProps<MyNuggsData, undefined, undefined>> =
+    React.memo(
+        ({ item, extraData, style, index }) => {
+            return item ? (
                 <div
                     style={{
                         ...styles.listNuggButton,
@@ -196,11 +195,10 @@ const RenderItem: FunctionComponent<ListRenderItemProps<MyNuggsData, undefined>>
                         rightIcon={<IoSearch color={Colors.white} />}
                     />
                 </div>
-            )
-        );
-    },
-    (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
-);
+            ) : null;
+        },
+        (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
+    );
 
 const MintNuggButton = (chainId: Chain, provider: Web3Provider, address: string) => (
     <FeedbackButton

@@ -22,7 +22,7 @@ export default ({ address, hash, textStyle, size }: Props) => {
 
     const ens = web3.hook.usePriorityAnyENSName(provider, address);
 
-    return (
+    return chainId && ens ? (
         <div
             style={{
                 width: '100%',
@@ -53,5 +53,5 @@ export default ({ address, hash, textStyle, size }: Props) => {
                 </>
             )}
         </div>
-    );
+    ) : null;
 };

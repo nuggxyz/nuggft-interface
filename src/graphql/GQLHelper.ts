@@ -3,7 +3,7 @@ import web3 from '@src/web3';
 import { Chain } from '@src/web3/core/interfaces';
 
 export default class GQLHelper {
-    protected static _instance: ApolloClient<NormalizedCacheObject>;
+    protected static _instance: ApolloClient<NormalizedCacheObject> | undefined;
 
     static instance(chainId: Chain) {
         // if (isUndefinedOrNullOrObjectEmpty(GQLHelper._instance)) {

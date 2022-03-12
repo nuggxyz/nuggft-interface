@@ -1,10 +1,6 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
-import lib, {
-    isUndefinedOrNullOrNumberZero,
-    isUndefinedOrNullOrObjectEmpty,
-    parseTokenIdSmart,
-} from '@src/lib';
+import lib, { parseTokenIdSmart } from '@src/lib';
 import constants from '@src/lib/constants';
 import AppState from '@src/state/app';
 import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
@@ -31,14 +27,14 @@ const TheRing: FunctionComponent<Props> = ({
     const screenType = AppState.select.screenType();
     const blocknum = client.live.blocknum();
 
-    const lastSwap__tokenId = client.live.lastSwap__tokenId();
-    const { token, epoch, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
+    const lastSwap = client.live.lastSwap();
+    const { token, epoch, lifecycle } = client.hook.useLiveToken(lastSwap?.tokenId);
 
     // console.log({ token, lifecycle });
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
-        if (!isUndefinedOrNullOrObjectEmpty(token?.activeSwap?.epoch)) {
+        if (token?.activeSwap?.epoch) {
             remaining = +token.activeSwap.epoch.endblock - +token.activeSwap.epoch.startblock;
         }
         if (remaining <= 0) {
@@ -50,17 +46,14 @@ const TheRing: FunctionComponent<Props> = ({
     const blocksRemaining = useMemo(() => {
         let remaining = 0;
 
-        if (
-            !isUndefinedOrNullOrObjectEmpty(token?.activeSwap?.epoch) &&
-            !isUndefinedOrNullOrNumberZero(blocknum)
-        ) {
+        if (token?.activeSwap?.epoch && blocknum) {
             remaining = +token.activeSwap.epoch.endblock - +blocknum;
         }
 
         return remaining;
-    }, [blocknum, token?.activeSwap?.epoch, status]);
+    }, [blocknum, token?.activeSwap?.epoch]);
 
-    return (
+    return lastSwap ? (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
             <CircleTimer
                 duration={blockDuration}
@@ -85,12 +78,16 @@ const TheRing: FunctionComponent<Props> = ({
                 }}
             >
                 <AnimatedCard>
-                    <TokenViewer tokenId={lastSwap__tokenId} style={tokenStyle} showcase />
+                    <TokenViewer tokenId={lastSwap.tokenId} style={tokenStyle} showcase />
                 </AnimatedCard>
-                {screenType !== 'phone' && <Text>{parseTokenIdSmart(lastSwap__tokenId)}</Text>}
+                {screenType !== 'phone' ? (
+                    <Text>{parseTokenIdSmart(lastSwap.tokenId)}</Text>
+                ) : (
+                    <></>
+                )}
             </CircleTimer>
         </div>
-    );
+    ) : null;
 };
 
 export default React.memo(TheRing);

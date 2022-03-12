@@ -17,7 +17,7 @@ export const useRpcUpdater = () => {
     const address = web3.hook.usePriorityAccount();
 
     React.useEffect(() => {
-        if (infura) {
+        if (infura && chainId) {
             infura.on('block', (log: number) => {
                 client.actions.updateBlocknum(log, chainId);
             });
@@ -78,7 +78,7 @@ export const useRpcUpdater = () => {
                         break;
                     }
                     case 'Transfer': {
-                        if (event.args._to.toLowerCase() === address.toLowerCase()) {
+                        if (address && event.args._to.toLowerCase() === address.toLowerCase()) {
                             client.actions.addNugg({
                                 tokenId: event.args._tokenId.toString() as NuggId,
                                 activeLoan: false,

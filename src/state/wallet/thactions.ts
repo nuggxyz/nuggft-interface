@@ -18,7 +18,7 @@ import { executeQuery } from '@src/graphql/helpers';
 import { Chain } from '@src/web3/core/interfaces';
 
 const placeOffer = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
+    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
     {
         amount: string;
         tokenId: string;
@@ -28,7 +28,7 @@ const placeOffer = createAsyncThunk<
         buyingTokenId?: string;
         sellingTokenId?: string;
     },
-    { rejectValue: NL.Redux.Swap.Error }
+    { rejectValue: NL.Redux.Wallet.Error }
 >(
     'wallet/placeOffer',
     async (
@@ -64,13 +64,8 @@ const placeOffer = createAsyncThunk<
                     AppState.dispatch.setModalClosed();
                 },
             };
-        } catch (err) {
-            console.log({ err });
-            if (
-                !isUndefinedOrNullOrObjectEmpty(err) &&
-                !isUndefinedOrNullOrStringEmpty(err.method) &&
-                err.method === 'estimateGas'
-            ) {
+        } catch (err: any) {
+            if (err !== undefined && err.method !== undefined && err.method === 'estimateGas') {
                 return thunkAPI.rejectWithValue('GAS_ERROR');
             }
             if (
@@ -81,7 +76,7 @@ const placeOffer = createAsyncThunk<
                 const code = err.data.message.replace(
                     'execution reverted: ',
                     '',
-                ) as NL.Redux.Swap.Error;
+                ) as NL.Redux.Wallet.Error;
                 return thunkAPI.rejectWithValue(code);
             }
             return thunkAPI.rejectWithValue('UNKNOWN');
@@ -121,7 +116,7 @@ const initSale = createAsyncThunk<
             chainId,
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
-    } catch (err) {
+    } catch (err: any) {
         console.log({ err });
         if (
             !isUndefinedOrNullOrObjectEmpty(err) &&
@@ -161,7 +156,7 @@ const withdraw = createAsyncThunk<
             chainId,
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
-    } catch (err) {
+    } catch (err: any) {
         console.log({ err });
         if (
             !isUndefinedOrNullOrNotObject(err) &&
@@ -179,7 +174,7 @@ const withdraw = createAsyncThunk<
 });
 
 const claim = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
+    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
     {
         tokenId: string;
         provider: Web3Provider;
@@ -194,16 +189,13 @@ const claim = createAsyncThunk<
         console.log(address);
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(sender))
-            [
-                // .connect(Web3State.getSignerOrProvider())
-                'claim(uint160[],address[])'
-            ]([tokenId], [address ? address : sender]);
+            ['claim(uint160[],address[])']([tokenId], [address ? address : sender]);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
         };
-    } catch (err) {
+    } catch (err: any) {
         console.log({ err });
         if (
             !isUndefinedOrNullOrNotObject(err) &&
@@ -221,7 +213,7 @@ const claim = createAsyncThunk<
 });
 
 const multiClaim = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
+    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
     {
         tokenIds: string[];
         provider: Web3Provider;
@@ -243,7 +235,7 @@ const multiClaim = createAsyncThunk<
             _pendingtx: _pendingtx.hash,
             chainId,
         };
-    } catch (err) {
+    } catch (err: any) {
         console.log({ err });
         if (
             !isUndefinedOrNullOrNotObject(err) &&
@@ -261,7 +253,7 @@ const multiClaim = createAsyncThunk<
 });
 
 const mintNugg = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
+    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
     { chainId: Chain; provider: Web3Provider; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
@@ -311,7 +303,7 @@ const mintNugg = createAsyncThunk<
             };
         }
         return thunkAPI.rejectWithValue('NO_NUGGS_TO_MINT');
-    } catch (err) {
+    } catch (err: any) {
         console.log({ err });
         if (
             !isUndefinedOrNullOrNotObject(err) &&
@@ -329,7 +321,7 @@ const mintNugg = createAsyncThunk<
 });
 
 const initLoan = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
+    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
     { tokenId: string; provider: Web3Provider; chainId: Chain; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: NL.Redux.Wallet.Error }
@@ -344,7 +336,7 @@ const initLoan = createAsyncThunk<
             chainId,
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
-    } catch (err) {
+    } catch (err: any) {
         console.log({ err });
         if (
             !isUndefinedOrNullOrNotObject(err) &&
@@ -362,7 +354,7 @@ const initLoan = createAsyncThunk<
 });
 
 const payOffLoan = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
+    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
     {
         tokenId: string;
         amount: string;
@@ -384,7 +376,7 @@ const payOffLoan = createAsyncThunk<
             chainId,
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
-    } catch (err) {
+    } catch (err: any) {
         console.log({ err });
         if (
             !isUndefinedOrNullOrObjectEmpty(err) &&
@@ -409,7 +401,7 @@ const payOffLoan = createAsyncThunk<
 });
 
 const extend = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Swap.Success>,
+    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
     {
         tokenId: string;
         amount: string;
@@ -432,7 +424,7 @@ const extend = createAsyncThunk<
             chainId,
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
-    } catch (err) {
+    } catch (err: any) {
         console.log({ err });
         if (
             !isUndefinedOrNullOrObjectEmpty(err) &&

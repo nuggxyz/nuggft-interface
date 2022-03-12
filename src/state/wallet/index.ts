@@ -25,6 +25,7 @@ export default class WalletState extends NLState<NL.Redux.Wallet.State> {
     }
 
     constructor() {
+        // @ts-ignore
         super(STATE_NAME, updater, middlewares, thactions, hooks, {
             error: undefined,
             success: undefined,

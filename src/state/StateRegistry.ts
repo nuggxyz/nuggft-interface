@@ -6,7 +6,7 @@ export class StateRegistry {
     _middlewares: Middleware[] = [];
 
     constructor() {
-        this._emitChange = null;
+        this._emitChange = () => null;
         this._reducers = {
             temp: (state = null) => state,
         };

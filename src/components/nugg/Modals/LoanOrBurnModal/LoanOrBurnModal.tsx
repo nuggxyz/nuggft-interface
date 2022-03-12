@@ -36,7 +36,7 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
         }
     }, [type, targetId]);
 
-    return (
+    return stableId && chainId && provider && address ? (
         <div style={styles.container}>
             <Text textStyle={styles.textWhite}>
                 {stableType === 'LoanNugg' ? 'Loan' : 'Burn'} Nugg #{stableId}
@@ -60,9 +60,11 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                         This cannot be undone
                     </Text>
                 )}
+
                 <Text type="text" textStyle={styles.text}>
-                    You will receive {+stake?.eps.decimal.toFixed(4)} ETH
+                    {stake ? `You will receive ${+stake.eps.decimal.toFixed(4)} ETH` : null}
                 </Text>
+
                 <FeedbackButton
                     overrideFeedback
                     feedbackText="Check Wallet..."
@@ -86,7 +88,7 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                 />
             </div>
         </div>
-    );
+    ) : null;
 };
 
 export default LoanOrBurnModal;

@@ -4,9 +4,7 @@ import { useFastQuery, useFasterQuery } from '@src/graphql/helpers';
 
 export const useDotnugg = (tokenId: string) => {
     return useFastQuery<
-        {
-            [key in 'nugg' | 'item']?: { dotnuggRawCache: Base64EncodedSvg };
-        },
+        { [key in 'nugg' | 'item']?: { dotnuggRawCache: Base64EncodedSvg } },
         Base64EncodedSvg
     >(
         gql`
@@ -19,7 +17,11 @@ export const useDotnugg = (tokenId: string) => {
         {
             tokenId: tokenId?.replace('item-', ''),
         },
-        (x) => x?.data[tokenId?.startsWith('item-') ? 'item' : 'nugg']?.dotnuggRawCache,
+        (x) => {
+            if (x.data.nugg !== undefined) return x.data.nugg.dotnuggRawCache;
+            if (x.data.item !== undefined) return x.data.item.dotnuggRawCache;
+            throw new Error('useDotnugg | no value returned');
+        },
     );
 };
 
@@ -40,6 +42,10 @@ export const useDotnuggCacheOnly = (tokenId: string) => {
         {
             tokenId: tokenId?.replace('item-', ''),
         },
-        (x) => x?.data[tokenId?.startsWith('item-') ? 'item' : 'nugg']?.dotnuggRawCache,
+        (x) => {
+            if (x.data.nugg !== undefined) return x.data.nugg.dotnuggRawCache;
+            if (x.data.item !== undefined) return x.data.item.dotnuggRawCache;
+            throw new Error('useDotnugg | no value returned');
+        },
     );
 };

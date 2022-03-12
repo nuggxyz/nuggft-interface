@@ -40,7 +40,7 @@ export class WalletConnect extends Connector {
 
     declare peers: { [key in Peer]?: PeerInfo__WalletConnect };
 
-    private peer_try: Peer;
+    private peer_try?: Peer;
 
     /**
      * @param options - Options to pass to `@walletconnect/ethereum-provider`
@@ -56,7 +56,7 @@ export class WalletConnect extends Connector {
         super(ConnectorEnum.WalletConnect, actions, peers);
 
         this.peer_url_lookup = peers.reduce((prev, curr) => {
-            return { ...prev, [curr.peerurl]: curr.peer };
+            return { ...prev, ...(curr.peerurl && { [curr.peerurl]: curr.peer }) };
         }, {});
 
         const { rpc, ...rest } = options;
@@ -87,29 +87,34 @@ export class WalletConnect extends Connector {
     };
 
     private URIListener = (_: Error | null, payload: { params: string[] }): void => {
-        const peer = this.peers[this.peer_try];
+        const peer = this.peer_try && this.peers[this.peer_try];
 
-        // default - just use normal wallet connect flow
-        if (peer.desktopAction === 'default') this.events.emit(URI_AVAILABLE, payload.params[0]);
+        if (peer) {
+            // default - just use normal wallet connect flow
+            if (peer.desktopAction === 'default')
+                this.events.emit(URI_AVAILABLE, payload.params[0]);
 
-        const uri = peer.deeplink_href + HREF_PATH + encodeURIComponent(payload.params[0]);
-        const device = store.getState().app.screenType;
+            const uri = peer.deeplink_href + HREF_PATH + encodeURIComponent(payload.params[0]);
+            const device = store.getState().app.screenType;
 
-        if (device === 'desktop' || device === 'tablet') {
-            if (peer.desktopAction === 'deeplink') {
-                window.open(uri);
+            if (device === 'desktop' || device === 'tablet') {
+                if (peer.desktopAction === 'deeplink') {
+                    window.open(uri);
+                } else {
+                    AppState.dispatch.setModalOpen({
+                        name: 'QrCodeModal',
+                        modalData: {
+                            data: { info: peer, uri },
+                            containerStyle: { backgroundColor: 'white' },
+                            backgroundStyle: { background: curriedLighten(0.1)(peer.color) },
+                        },
+                    });
+                }
             } else {
-                AppState.dispatch.setModalOpen({
-                    name: 'QrCodeModal',
-                    modalData: {
-                        data: { info: peer, uri },
-                        containerStyle: { backgroundColor: 'white' },
-                        backgroundStyle: { background: curriedLighten(0.1)(peer.color) },
-                    },
-                });
+                window.open(uri);
             }
         } else {
-            window.open(uri);
+            throw new Error('web3:clients:walletconnect:URIListener | peer does not exist');
         }
     };
 
@@ -156,7 +161,12 @@ export class WalletConnect extends Connector {
 
         let res = this.peer_url_lookup[peerMeta.url];
 
-        if (res === undefined) return this.peers.walletconnect;
+        if (res === undefined) {
+            if (this.peers.walletconnect !== undefined) return this.peers.walletconnect;
+            throw new Error(
+                'web3:clients:walletconnect:findPeer | walletconnect peer does not exist',
+            );
+        }
 
         const finres = this.peers[res];
 

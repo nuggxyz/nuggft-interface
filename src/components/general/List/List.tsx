@@ -10,21 +10,17 @@ import React, {
 
 import Text from '@src/components/general/Texts/Text/Text';
 import Loader from '@src/components/general/Loader/Loader';
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrBooleanFalse,
-    isUndefinedOrNullOrNotFunction,
-} from '@src/lib';
+import { isUndefinedOrNullOrNotFunction } from '@src/lib';
 import useOnScroll from '@src/hooks/useOnScroll';
 import usePrevious from '@src/hooks/usePrevious';
 import useIsVisible from '@src/hooks/useIsVisible';
 
 import styles from './List.styles';
 
-export interface ListRenderItemProps<T extends unknown, B extends unknown> {
+export interface ListRenderItemProps<T extends unknown, B extends unknown, A extends unknown> {
     item: T;
-    extraData?: B;
-    action?: (() => void) | React.Dispatch<React.SetStateAction<any>>;
+    extraData: B;
+    action: (arg: A) => void;
     onScrollEnd?: () => void;
     index: number;
     rootRef?: LegacyRef<HTMLDivElement>;
@@ -32,11 +28,11 @@ export interface ListRenderItemProps<T extends unknown, B extends unknown> {
     style?: CSSProperties;
 }
 
-export interface ListProps<T extends unknown, B extends unknown> {
-    RenderItem: FunctionComponent<ListRenderItemProps<T, B>>;
+export interface ListProps<T extends unknown, B extends unknown, A extends unknown> {
+    RenderItem: FunctionComponent<ListRenderItemProps<T, B, A>>;
     loading?: boolean;
-    extraData?: B;
-    action?: (() => void) | React.Dispatch<React.SetStateAction<any>> | any;
+    extraData: B;
+    action: (arg: A) => void;
     onScrollEnd?: () => void;
     label?: string;
     border?: boolean;
@@ -54,7 +50,7 @@ export interface ListProps<T extends unknown, B extends unknown> {
     data: T[];
 }
 
-const List = <T extends unknown, B extends unknown>({
+const List = <T extends unknown, B extends unknown, A extends unknown>({
     data,
     RenderItem,
     loading = false,
@@ -73,7 +69,7 @@ const List = <T extends unknown, B extends unknown>({
     listEmptyStyle,
     TitleButton,
     titleLoading,
-}: ListProps<T, B>) => {
+}: ListProps<T, B, A>) => {
     const ref = useOnScroll(onScroll);
     const containerStyle = useMemo(() => {
         return {
@@ -86,7 +82,7 @@ const List = <T extends unknown, B extends unknown>({
 
     const List = useCallback(
         ({ selected }) =>
-            !isUndefinedOrNullOrArrayEmpty(data) ? (
+            data ? (
                 <>
                     {data.map((item, index) => (
                         <RenderItem
@@ -118,7 +114,7 @@ const List = <T extends unknown, B extends unknown>({
 
     const Loading = useCallback(
         () =>
-            loading && (
+            loading ? (
                 <div
                     style={{
                         marginTop: '1rem',
@@ -128,7 +124,7 @@ const List = <T extends unknown, B extends unknown>({
                 >
                     <Loader color={loaderColor || 'black'} />
                 </div>
-            ),
+            ) : null,
         [loading, loaderColor],
     );
 
@@ -169,14 +165,22 @@ const List = <T extends unknown, B extends unknown>({
 
 export default React.memo(List) as typeof List;
 
-const EndOfListAnchor = ({ rootRef, onScrollEnd, loading }) => {
+const EndOfListAnchor = ({
+    rootRef,
+    onScrollEnd,
+    loading,
+}: {
+    rootRef: React.RefObject<HTMLDivElement>;
+    onScrollEnd: (() => void) | undefined;
+    loading: boolean;
+}) => {
     const [ref, isVisible] = useIsVisible(rootRef.current, '10px');
     const prevVisible = usePrevious(isVisible);
     useEffect(() => {
-        if (!isUndefinedOrNullOrBooleanFalse(isVisible) && isVisible !== prevVisible && !loading) {
-            onScrollEnd();
+        if (isVisible && isVisible !== prevVisible && !loading) {
+            onScrollEnd && onScrollEnd();
         }
-    }, [isVisible, prevVisible, loading]);
+    }, [isVisible, prevVisible, loading, onScrollEnd]);
 
     return <div ref={ref} key="NUGGNUGGNUGGNUGGNUGG" />;
 };

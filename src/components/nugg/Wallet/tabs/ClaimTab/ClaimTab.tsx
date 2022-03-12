@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
-import { isUndefinedOrNullOrObjectEmpty, parseTokenId } from '@src/lib';
+import { parseTokenId } from '@src/lib';
 import WalletState from '@src/state/wallet';
 import Text from '@src/components/general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
@@ -20,22 +20,24 @@ type Props = { isActive?: boolean };
 
 const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     const sender = web3.hook.usePriorityAccount();
-    const epoch = client.live.epoch__id();
+    const epoch = client.live.epoch();
     const provider = web3.hook.usePriorityProvider();
 
     const chainId = web3.hook.usePriorityChainId();
 
     const unclaimedOffers = client.live.myUnclaimedOffers();
 
-    return (
+    return sender && chainId && provider && epoch ? (
         <div style={styles.container}>
             <List
                 data={unclaimedOffers
-                    .filter((x) => x.endingEpoch < epoch)
-                    .sort((a, b) => (a.endingEpoch > b.endingEpoch ? -1 : 1))}
+                    .filter((x) => x.endingEpoch !== null && x.endingEpoch < epoch.id)
+                    .sort((a, b) => (a.endingEpoch ?? 0 > (b.endingEpoch ?? 0) ? -1 : 1))}
                 RenderItem={React.memo(RenderItem)}
                 TitleButton={
-                    unclaimedOffers.filter((x) => x.endingEpoch < epoch).length > 0
+                    unclaimedOffers.filter(
+                        (x) => x.endingEpoch !== null && x.endingEpoch < epoch.id,
+                    ).length > 0
                         ? () => (
                               <FeedbackButton
                                   feedbackText="Check Wallet..."
@@ -51,8 +53,8 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                                   }}
                                   label="Claim all"
                                   onClick={() => {
-                                      let addresses = [],
-                                          tokenIds = [];
+                                      let addresses: string[] = [],
+                                          tokenIds: string[] = [];
                                       unclaimedOffers.forEach((x) => {
                                           tokenIds.push(x.claimParams.tokenId);
                                           addresses.push(x.claimParams.address);
@@ -76,18 +78,19 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                 style={listStyles.list}
                 extraData={{ sender, chainId, provider }}
                 listEmptyText="No Nuggs or ETH to claim..."
+                action={() => undefined}
             />
         </div>
+    ) : (
+        <></>
     );
 };
 
 export default React.memo(ClaimTab);
 
-const RenderItem: FunctionComponent<ListRenderItemProps<UnclaimedOffer, DefaultExtraData>> = ({
-    item,
-    index,
-    extraData,
-}) => {
+const RenderItem: FunctionComponent<
+    ListRenderItemProps<UnclaimedOffer, DefaultExtraData, undefined>
+> = ({ item, index, extraData }) => {
     const swapText = useMemo(
         () =>
             item.type === 'item'
@@ -97,61 +100,58 @@ const RenderItem: FunctionComponent<ListRenderItemProps<UnclaimedOffer, DefaultE
         [item],
     );
 
-    return (
-        !isUndefinedOrNullOrObjectEmpty(item) && (
-            <div key={index} style={listStyles.render}>
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        // flexDirection: 'column',
-                    }}
-                >
-                    {item.leader ? (
-                        <TokenViewer
-                            tokenId={item.tokenId}
-                            style={{ width: '60px', height: '50px' }}
-                        />
-                    ) : (
-                        <NLStaticImage
-                            image="eth"
-                            style={{
-                                width: '60px',
-                                height: '30px',
-                                margin: '.6rem 0rem',
-                            }}
-                        />
-                    )}
-                    <div>
-                        <Text textStyle={listStyles.renderTitle} size="small">
-                            {item.leader
-                                ? `${parseTokenId(item.tokenId, true)}`
-                                : `${item.eth.num} ETH`}
-                        </Text>
-                        <Text textStyle={{ color: Colors.textColor }} size="smaller" type="text">
-                            {item.leader
-                                ? swapText
-                                : `${parseTokenId(item.tokenId, true)} | ${swapText}`}
-                        </Text>
-                    </div>
+    return item ? (
+        <div key={index} style={listStyles.render}>
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    // flexDirection: 'column',
+                }}
+            >
+                {item.leader ? (
+                    <TokenViewer tokenId={item.tokenId} style={{ width: '60px', height: '50px' }} />
+                ) : (
+                    <NLStaticImage
+                        image="eth"
+                        style={{
+                            width: '60px',
+                            height: '30px',
+                            margin: '.6rem 0rem',
+                        }}
+                    />
+                )}
+                <div>
+                    <Text textStyle={listStyles.renderTitle} size="small">
+                        {item.leader
+                            ? `${parseTokenId(item.tokenId, true)}`
+                            : `${item.eth.num} ETH`}
+                    </Text>
+                    <Text textStyle={{ color: Colors.textColor }} size="smaller" type="text">
+                        {item.leader
+                            ? swapText
+                            : `${parseTokenId(item.tokenId, true)} | ${swapText}`}
+                    </Text>
                 </div>
-                <FeedbackButton
-                    feedbackText="Check Wallet..."
-                    textStyle={listStyles.textWhite}
-                    buttonStyle={listStyles.renderButton}
-                    label={`Claim`}
-                    onClick={() => {
-                        console.log({
-                            ...item.claimParams,
-                            ...extraData,
-                        });
-                        WalletState.dispatch.claim({
-                            ...item.claimParams,
-                            ...extraData,
-                        });
-                    }}
-                />
             </div>
-        )
+            <FeedbackButton
+                feedbackText="Check Wallet..."
+                textStyle={listStyles.textWhite}
+                buttonStyle={listStyles.renderButton}
+                label={`Claim`}
+                onClick={() => {
+                    console.log({
+                        ...item.claimParams,
+                        ...extraData,
+                    });
+                    WalletState.dispatch.claim({
+                        ...item.claimParams,
+                        ...extraData,
+                    });
+                }}
+            />
+        </div>
+    ) : (
+        <></>
     );
 };

@@ -21,7 +21,7 @@ const AccountViewer = () => {
     const peer = web3.hook.usePriorityPeer();
     const connector = web3.hook.usePriorityConnector();
 
-    return ens && address ? (
+    return ens && address && chainId && peer ? (
         <div style={styles.textContainer}>
             <div
                 style={{

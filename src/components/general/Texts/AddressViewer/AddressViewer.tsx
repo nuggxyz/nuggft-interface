@@ -19,7 +19,7 @@ export default ({ address, route, param, textStyle, size }: Props) => {
 
     const ens = web3.hook.usePriorityAnyENSName(provider, address);
 
-    return (
+    return chainId && ens && provider ? (
         <InteractiveText
             type="text"
             size={size}
@@ -30,5 +30,5 @@ export default ({ address, route, param, textStyle, size }: Props) => {
         >
             {ens}
         </InteractiveText>
-    );
+    ) : null;
 };

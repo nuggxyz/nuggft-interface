@@ -28,7 +28,6 @@
             "last 1 safari version"
         ]
     },
-
     "devDependencies": {
         "@babel/core": "^7.16.0",
         "@babel/eslint-parser": "^7.14.9",
@@ -40,6 +39,7 @@
         "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
         "@svgr/webpack": "^5.5.0",
         "@typechain/ethers-v5": "^7.1.0",
+        "@types/": "metamask/jazzicon",
         "@types/bluebird": "^3.5.36",
         "@types/chai": "^4.2.21",
         "@types/mocha": "^9.0.0",
@@ -110,6 +110,7 @@
         "@metamask/jazzicon": "^2.0.0",
         "@react-spring/web": "^9.4.3",
         "@reduxjs/toolkit": "^1.6.1",
+        "@types/lodash": "^4.14.179",
         "@types/qrcode.react": "^1.0.2",
         "@walletconnect/ethereum-provider": "^1.7.1",
         "@walletconnect/types": "^1.7.1",

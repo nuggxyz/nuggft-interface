@@ -19,34 +19,37 @@ type NuggLifeCyle =
     | 'egg'; //   [nugg     ] a token that will be minting in the next epoch --- SAME AS DECK, BUT NON OFFERABLE
 
 export const useLiveToken = (
-    tokenId: string | ITEM_ID,
-): { token: LiveNugg | LiveItem; lifecycle: NuggLifeCyle; epoch: number } => {
-    const epoch = client.live.epoch__id();
+    tokenId: string | ITEM_ID | undefined,
+): {
+    token: LiveNugg | LiveItem | undefined;
+    lifecycle: NuggLifeCyle;
+    epoch: number | undefined;
+} => {
+    const epoch = client.live.epoch();
 
-    const token =
-        tokenId && tokenId.startsWith(constants.ID_PREFIX_ITEM)
-            ? useLiveItem(tokenId)
-            : useLiveNugg(tokenId);
+    const token = tokenId?.startsWith(constants.ID_PREFIX_ITEM)
+        ? useLiveItem(tokenId)
+        : useLiveNugg(tokenId);
 
     const lifecycle = React.useMemo(() => {
-        if (token) {
-            if (!token.activeSwap.id) {
+        if (token && epoch !== undefined) {
+            if (!token.activeSwap?.id) {
                 if (token.type === 'item' && token.swaps.length > 0) return 'tryout';
                 return 'stands';
             }
 
             if (!token.activeSwap.endingEpoch) return 'bench';
-            if (+token.activeSwap.endingEpoch === epoch + 1) {
+            if (+token.activeSwap.endingEpoch === epoch.id + 1) {
                 if (token.type === 'nugg' && token.owner === Address.ZERO.hash) {
                     return 'egg';
                 }
                 return 'deck';
             }
-            if (+token.activeSwap.endingEpoch === epoch) return 'bat';
+            if (+token.activeSwap.endingEpoch === epoch.id) return 'bat';
             return 'shower';
         }
         return 'stands';
     }, [epoch, token]);
 
-    return { token, lifecycle, epoch };
+    return { token, lifecycle, epoch: epoch?.id };
 };

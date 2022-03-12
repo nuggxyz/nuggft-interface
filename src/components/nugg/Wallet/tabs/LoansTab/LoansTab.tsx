@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from 'react';
 
-import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
@@ -14,7 +13,7 @@ import { LoanData } from '@src/client/core';
 type Props = { isActive?: boolean };
 
 const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
-    const epoch__id = client.live.epoch__id();
+    const epoch = client.live.epoch();
 
     const loanedNuggs = client.live.myLoans();
 
@@ -29,11 +28,12 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
                 label="Loaned Nuggs"
                 // titleLoading={loadingNuggs}
                 style={listStyles.list}
-                extraData={epoch__id}
+                extraData={epoch?.id}
                 listEmptyText="You haven't loaned any nuggs yet!"
                 labelStyle={styles.listLabel}
                 listEmptyStyle={listStyles.textWhite}
                 loaderColor="white"
+                action={() => undefined}
             />
         </div>
     );
@@ -41,69 +41,67 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
 
 export default React.memo(MyNuggsTab);
 
-const RenderItem: FunctionComponent<ListRenderItemProps<LoanData, number>> = ({
-    item,
-    index,
-    extraData,
-}) => {
-    return (
-        !isUndefinedOrNullOrObjectEmpty(item) && (
-            <div key={index} style={listStyles.render}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <TokenViewer
-                        tokenId={item.nugg}
-                        data={(item as any).nugg.dotnuggRawCache}
-                        style={{ width: '60px', height: '50px' }}
-                    />
-                    <div>
-                        <Text textStyle={{ color: Colors.nuggRedText }} size="small">
-                            Nugg {item.nugg}
-                        </Text>
-                        <Text type="text" textStyle={{ color: Colors.textColor }} size="smaller">
-                            {+item.endingEpoch - +extraData} epochs remaining
-                        </Text>
-                    </div>
-                </div>
+const RenderItem: FunctionComponent<
+    ListRenderItemProps<LoanData, number | undefined, undefined>
+> = ({ item, index, extraData: epochId }) => {
+    return item ? (
+        <div key={index} style={listStyles.render}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <TokenViewer
+                    tokenId={item.nugg}
+                    data={(item as any).nugg.dotnuggRawCache}
+                    style={{ width: '60px', height: '50px' }}
+                />
                 <div>
-                    <Button
-                        textStyle={listStyles.textWhite}
-                        buttonStyle={{
-                            ...listStyles.renderButtonLoan,
-                            marginBottom: '.3rem',
-                        }}
-                        label={`Extend`}
-                        onClick={() =>
-                            AppState.dispatch.setModalOpen({
-                                name: 'LoanInputModal',
-                                modalData: {
-                                    targetId: item.nugg,
-                                    type: 'ExtendLoan',
-                                    backgroundStyle: {
-                                        background: Colors.gradient3,
-                                    },
-                                },
-                            })
-                        }
-                    />
-                    <Button
-                        textStyle={listStyles.textWhite}
-                        buttonStyle={listStyles.renderButtonLoan}
-                        label={`Pay off`}
-                        onClick={() =>
-                            AppState.dispatch.setModalOpen({
-                                name: 'LoanInputModal',
-                                modalData: {
-                                    targetId: item.nugg,
-                                    type: 'PayoffLoan',
-                                    backgroundStyle: {
-                                        background: Colors.gradient3,
-                                    },
-                                },
-                            })
-                        }
-                    />
+                    <Text textStyle={{ color: Colors.nuggRedText }} size="small">
+                        Nugg {item.nugg}
+                    </Text>
+                    <Text type="text" textStyle={{ color: Colors.textColor }} size="smaller">
+                        {epochId && `${+item.endingEpoch - +epochId} epochs remaining`}
+                    </Text>
                 </div>
             </div>
-        )
+            <div>
+                <Button
+                    textStyle={listStyles.textWhite}
+                    buttonStyle={{
+                        ...listStyles.renderButtonLoan,
+                        marginBottom: '.3rem',
+                    }}
+                    label={`Extend`}
+                    onClick={() =>
+                        AppState.dispatch.setModalOpen({
+                            name: 'LoanInputModal',
+                            modalData: {
+                                targetId: item.nugg,
+                                type: 'ExtendLoan',
+                                backgroundStyle: {
+                                    background: Colors.gradient3,
+                                },
+                            },
+                        })
+                    }
+                />
+                <Button
+                    textStyle={listStyles.textWhite}
+                    buttonStyle={listStyles.renderButtonLoan}
+                    label={`Pay off`}
+                    onClick={() =>
+                        AppState.dispatch.setModalOpen({
+                            name: 'LoanInputModal',
+                            modalData: {
+                                targetId: item.nugg,
+                                type: 'PayoffLoan',
+                                backgroundStyle: {
+                                    background: Colors.gradient3,
+                                },
+                            },
+                        })
+                    }
+                />
+            </div>
+        </div>
+    ) : (
+        <></>
     );
 };

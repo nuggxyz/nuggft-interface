@@ -23,7 +23,7 @@ export class NLState<S> {
     protected _name: string;
     protected _initialState: S;
     protected _updater: NL.Redux.Updater;
-    protected _slice: Slice<S, SliceCaseReducers<S>, string>;
+    protected _slice: Slice<S, SliceCaseReducers<S>, string> | undefined;
 
     protected _isOwnFulfilledAction: (action: AnyAction, suffix: string) => boolean;
 
@@ -62,6 +62,8 @@ export class NLState<S> {
     }
 
     public static get reducer() {
+        if (this.instance._slice === undefined)
+            throw new Error('NLState:reducer | this.instance._slice is undefined');
         return this.instance._slice.reducer;
     }
 
@@ -74,6 +76,8 @@ export class NLState<S> {
     }
 
     protected static get actions() {
+        if (this.instance._slice === undefined)
+            throw new Error('NLState:actions | this.instance._slice is undefined');
         return this.instance._slice.actions;
     }
 
@@ -85,11 +89,14 @@ export class NLState<S> {
         return this.instance._hooks;
     }
 
+    // @ts-ignore
     public static get select() {
         if (isUndefinedOrNullOrObjectEmpty(this._selectors)) {
             this._selectors = Object.keys(this.instance._initialState).reduce((selectors, key) => {
+                // @ts-ignore
                 selectors[key] = (eqFn?: (prev: any, cur: any) => boolean) =>
                     useSelector(
+                        // @ts-ignore
                         createSelector(NLSelector, (s) => s[this.instance._name][key]),
                         eqFn,
                     );
@@ -105,6 +112,7 @@ export class NLState<S> {
                 ...Object.entries(this.actions),
                 ...Object.entries(this.thactions),
             ].reduce((dispatches, [name, action]) => {
+                // @ts-ignore
                 dispatches[name] = (value?: any) => store.dispatch(action(value));
                 return dispatches;
             }, {});

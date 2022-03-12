@@ -26,7 +26,7 @@ const Modal: FunctionComponent<Props> = () => {
     const data = AppState.select.modalData();
     const [currentModal, setCurrentModal] = useState<NL.Redux.App.ModalNames>();
     const previousOpen = usePrevious(isOpen);
-    const node = useRef<HTMLDivElement>();
+    const node = useRef<HTMLDivElement>(null);
     const screenType = AppState.select.screenType();
 
     useEffect(() => {

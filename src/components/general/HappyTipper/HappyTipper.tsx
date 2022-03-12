@@ -10,7 +10,7 @@ import Flyout from './components/Flyout';
 import content from './content';
 
 export type HappyTipperItem = {
-    comp?: ({ isActive: boolean }) => JSX.Element;
+    comp?: ({ isActive }: { isActive: boolean }) => JSX.Element;
 };
 
 type Props = {

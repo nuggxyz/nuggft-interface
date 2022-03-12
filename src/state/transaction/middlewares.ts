@@ -2,7 +2,6 @@ import { PayloadAction } from '@reduxjs/toolkit';
 
 import client from '@src/client';
 import {
-    isUndefinedOrNullOrNotFunction,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
     shortenTxnHash,
@@ -27,10 +26,10 @@ export const pending: NL.Redux.Middleware<
         ) {
             TransactionState.dispatch.addTransaction(action.payload._pendingtx);
 
-            void client.static
-                .infura()
-                .waitForTransaction(action.payload._pendingtx, 1, 600000)
-                .then((x) =>
+            const check = client.static.infura();
+
+            check &&
+                void check.waitForTransaction(action.payload._pendingtx, 1, 600000).then((x) =>
                     TransactionState.dispatch.finalizeTransaction({
                         hash: x.transactionHash,
                         successful: x.status === 1,
@@ -53,10 +52,10 @@ export const pending: NL.Redux.Middleware<
                         }`,
                         '_blank',
                     );
-                    win.focus();
+                    win && win.focus();
                 },
             });
-            if (!isUndefinedOrNullOrNotFunction(action.payload.callbackFn)) {
+            if (action.payload.callbackFn !== undefined) {
                 action.payload.callbackFn();
             }
         }

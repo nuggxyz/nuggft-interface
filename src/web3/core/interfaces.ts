@@ -73,8 +73,8 @@ export interface PeerInfo__WalletConnect extends PeerBaseInfo {
         | Peer.LedgerLive
         | Peer.WalletConnect;
     desktopAction: 'qrcode' | 'deeplink' | 'default';
-    deeplink_href: string;
-    peerurl: string;
+    deeplink_href: string | null;
+    peerurl: string | null;
     injected: false;
     fallback: false;
 }

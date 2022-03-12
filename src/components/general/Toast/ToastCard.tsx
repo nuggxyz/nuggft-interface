@@ -75,7 +75,8 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
                         paddingRight: !isUndefinedOrNullOrBooleanFalse(toast.loading)
                             ? '2rem'
                             : '.75rem',
-                    }}>
+                    }}
+                >
                     <Text>{toast.title}</Text>
                     <Text size="smaller" textStyle={styles.text}>
                         {toast.message}
@@ -96,16 +97,18 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
                 style={{
                     opacity: animatedS.opacity.to([0, 1], [1, 0]),
                     ...styles.buttonContainer,
-                }}>
+                }}
+            >
                 <Button
                     buttonStyle={styles.button}
                     onClick={() => setClose(true)}
                     rightIcon={<IoClose size={30} />}
                 />
-                {toast.action && (
+                {toast.action !== undefined && (
                     <Button
                         buttonStyle={styles.button}
-                        onClick={() => toast.action(setClose)}
+                        // idk why but we need both checks for toast action here
+                        onClick={() => toast.action !== undefined && toast.action(setClose)}
                         rightIcon={<IoOpenOutline size={30} />}
                     />
                 )}

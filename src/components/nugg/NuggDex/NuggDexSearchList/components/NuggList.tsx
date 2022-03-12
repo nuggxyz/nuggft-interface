@@ -65,9 +65,7 @@ const NuggList: FunctionComponent<Props> = ({
 
     const _onScrollEnd = useCallback(
         (addToList: boolean = true, desiredSize?: number) => {
-            if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
-                onScrollEnd({ setLoading, filters, addToList, desiredSize });
-            }
+            onScrollEnd && onScrollEnd({ setLoading, filters, addToList, desiredSize });
         },
         [filters, onScrollEnd],
     );
@@ -78,21 +76,22 @@ const NuggList: FunctionComponent<Props> = ({
             (!type || filters.target === type) &&
             ((prevFilters && prevFilters.searchValue !== filters.searchValue) ||
                 filters.searchValue !== '' ||
-                (prevFilters?.sort.asc !== filters?.sort.asc &&
+                ((prevFilters && prevFilters.sort && prevFilters?.sort.asc) !==
+                    (filters && filters.sort && filters?.sort.asc) &&
                     prevFilters?.target === filters.target))
         ) {
-            onScrollEnd({ setLoading, filters, addToList: false, desiredSize: values.length });
+            onScrollEnd &&
+                onScrollEnd({ setLoading, filters, addToList: false, desiredSize: values.length });
         }
     }, [filters, prevFilters, values]);
 
     useEffect(() => {
-        if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
+        onScrollEnd &&
             onScrollEnd({
                 setLoading,
                 filters,
                 addToList: false,
             });
-        }
     }, []);
 
     return (
@@ -138,6 +137,7 @@ const NuggList: FunctionComponent<Props> = ({
                     loading={loading}
                     onScrollEnd={_onScrollEnd}
                     action={onClick}
+                    extraData={undefined}
                     itemHeight={210}
                     animationToggle={animationToggle}
                 />

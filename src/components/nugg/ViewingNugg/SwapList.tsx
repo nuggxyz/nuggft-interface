@@ -11,11 +11,11 @@ import StickyList from '@src/components/general/List/StickyList';
 import web3 from '@src/web3';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-import { fromEth } from '@src/lib/conversion';
 import client from '@src/client';
 import { ListRenderItemProps } from '@src/components/general/List/List';
 import { Chain } from '@src/web3/core/interfaces';
 import { TokenId } from '@src/client/router';
+import lib from '@src/lib';
 
 import styles from './ViewingNugg.styles';
 
@@ -24,24 +24,29 @@ type SwapListProps = {};
 const SwapList: FunctionComponent<SwapListProps> = ({}) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const lastView__tokenId = client.live.lastView__tokenId();
+    const lastView = client.live.lastView();
+    const blocknum = client.live.blocknum();
 
-    const { token, epoch } = client.hook.useLiveToken(lastView__tokenId);
+    const { token, epoch } = client.hook.useLiveToken(lastView?.tokenId);
 
     const listData = useMemo(() => {
+        console.log({ token });
         let res = [];
         let tempSwaps = token?.swaps ? [...token?.swaps] : [];
-        if (token?.activeSwap.id) {
+        if (token && token.activeSwap && token.activeSwap.id) {
             res.push({ title: 'Ongoing Sale', items: [token.activeSwap] });
             //@ts-ignore
             tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'id');
         }
         if (
-            token?.swaps?.find((swap) => swap.endingEpoch === null) &&
-            lastView__tokenId.startsWith('item-')
+            token &&
+            lastView &&
+            (token?.swaps as LiveSwap[]).find((swap) => swap.endingEpoch === null) &&
+            lastView.tokenId.startsWith('item-')
         ) {
-            let tempTemp = [];
-            let waiting = tempSwaps.reduce((acc, swap) => {
+            console.log({ res2: res });
+            let tempTemp: LiveSwap[] = [];
+            let waiting = tempSwaps.reduce((acc: LiveSwap[], swap) => {
                 if (swap.endingEpoch === null) {
                     acc.push(swap);
                 } else {
@@ -59,23 +64,24 @@ const SwapList: FunctionComponent<SwapListProps> = ({}) => {
             title: 'Previous Sales',
             items: tempSwaps,
         });
+        console.log({ res3: res, chainId, provider, lastView, epoch, token });
 
         return res;
-    }, [token]);
+    }, [token, lastView, chainId, provider, lastView, epoch, token]);
 
-    return (
+    return chainId && provider && lastView && epoch && token && blocknum ? (
         <StickyList
             data={listData}
             TitleRenderItem={SwapTitle}
-            ChildRenderItem={SwapItem}
-            extraData={{ chainId, provider, token, epoch, tokenId: lastView__tokenId }}
+            ChildRenderItem={React.memo(SwapItem)}
+            extraData={{ chainId, provider, token, epoch, tokenId: lastView.tokenId, blocknum }}
             style={styles.stickyList}
             styleRight={styles.stickyListRight}
         />
-    );
+    ) : null;
 };
 
-const SwapTitle = ({ title }) => {
+const SwapTitle = ({ title }: { title: string }) => {
     return (
         <div style={{ display: 'flex' }}>
             <Text textStyle={styles.listTitle}>{title}</Text>
@@ -92,28 +98,45 @@ const SwapItem: FunctionComponent<
             token: LiveNugg | LiveItem;
             epoch: number;
             tokenId: TokenId;
-        }
+            blocknum: number;
+        },
+        undefined
     >
 > = ({ item, index, extraData }) => {
-    const awaitingBid = item?.endingEpoch === null;
-    const ens = web3.hook.usePriorityAnyENSName(extraData?.provider, item.owner.id);
+    const awaitingBid = item.endingEpoch === null;
+    const ens = web3.hook.usePriorityAnyENSName(extraData?.provider, item.owner);
 
-    const blocknum = client.live.blocknum();
     return (
         <div style={{ padding: '.25rem 1rem' }}>
             <Button
                 key={index}
-                buttonStyle={styles.swap}
+                buttonStyle={{
+                    ...styles.swap,
+                    background:
+                        item.epoch.id < extraData.epoch
+                            ? lib.colors.gradient
+                            : item.endingEpoch
+                            ? lib.colors.gradient3
+                            : lib.colors.gradient2,
+                }}
                 onClick={() => client.actions.routeTo(extraData.tokenId, false)}
                 rightIcon={
                     <>
-                        <div style={styles.swapButton}>
+                        <div
+                            style={{
+                                ...styles.swapButton,
+                            }}
+                        >
                             <Text>
-                                {awaitingBid
+                                {item.epoch.id < extraData.epoch
+                                    ? 'Swap is over'
+                                    : !item.endingEpoch
                                     ? 'Awaiting bid!'
-                                    : `Swap ending in ${item.epoch.endblock - blocknum} blocks`}
+                                    : `Swap ending in ${
+                                          item.epoch.endblock - extraData.blocknum
+                                      } blocks`}
                             </Text>
-                            <CurrencyText image="eth" value={+fromEth(item.eth)} />
+                            <CurrencyText image="eth" value={item.eth.decimal.toNumber()} />
                         </div>
                         <div>
                             <Text
@@ -125,7 +148,7 @@ const SwapItem: FunctionComponent<
                             >
                                 {awaitingBid
                                     ? 'On sale by'
-                                    : item.leader.id === item.owner.id
+                                    : item.leader === item.owner
                                     ? 'Reclaimed by'
                                     : 'Purchased from'}
                             </Text>
@@ -134,11 +157,11 @@ const SwapItem: FunctionComponent<
                                     color: 'white',
                                 }}
                             >
-                                {item.owner.id === Address.ZERO.hash ||
-                                item.owner.id === CONTRACTS[extraData?.chainId]?.NuggftV1
+                                {item.owner === Address.ZERO.hash ||
+                                item.owner === CONTRACTS[extraData?.chainId]?.NuggftV1
                                     ? 'NuggftV1'
                                     : extraData?.token
-                                    ? `Nugg #${item.owner.id}`
+                                    ? `Nugg #${item.owner}`
                                     : ens}
                             </Text>
                         </div>

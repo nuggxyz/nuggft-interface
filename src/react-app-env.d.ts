@@ -1,8 +1,16 @@
 /// <reference types="node" />
-/// <reference types="react" />
 /// <reference types="react-dom" />
+/// <reference types="react" />
 
 declare type Base64EncodedSvg = `data:image/svg+xml;base64,${string}`;
+
+declare namespace React {
+    type UnsafeDependencyList = any[];
+}
+
+declare module '@metamask/jazzicon' {
+    export default function (diameter: number, seed: number): HTMLElement;
+}
 
 declare namespace NodeJS {
     interface ProcessEnv {

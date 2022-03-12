@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
+import { BigNumber } from '@ethersproject/bignumber';
 
-import { EthInt } from '@src/classes/Fraction';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
@@ -13,7 +13,6 @@ import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/Curr
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
-import useHandleError from '@src/hooks/useHandleError';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import FontSize from '@src/lib/fontSize';
 import Layout from '@src/lib/layout';
@@ -24,7 +23,7 @@ import styles from './LoanInputModal.styles';
 type Props = {};
 
 const LoanInputModal: FunctionComponent<Props> = () => {
-    const [swapError, clearError] = useHandleError('GAS_ERROR');
+    // const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
     const toggle = TransactionState.select.toggleCompletedTxn();
@@ -43,42 +42,28 @@ const LoanInputModal: FunctionComponent<Props> = () => {
         }
     }, [type, targetId]);
 
-    const userBalance = useAsyncState(
-        () => provider && address && provider.getBalance(address),
-        [address, provider],
-    );
+    const userBalance = web3.hook.usePriorityBalance(provider);
 
-    const amountFromChain = useAsyncState(
+    const amountFromChain = useAsyncState<BigNumber[]>(
         () =>
-            stableId &&
-            (stableType === 'PayoffLoan'
-                ? new NuggftV1Helper(chainId, provider).contract
-                      //   .connect(Web3State.getSignerOrProvider())
-                      .vfl([stableId])
-                      .then((v) => {
-                          console.log('fuck', v);
+            stableId && chainId && provider
+                ? stableType === 'PayoffLoan'
+                    ? new NuggftV1Helper(chainId, provider).contract.vfl([stableId]).then((v) => {
                           return v;
                       })
-                : new NuggftV1Helper(chainId, provider).contract
-                      //   .connect(Web3State.getSignerOrProvider())
-                      .vfr([stableId])),
+                    : new NuggftV1Helper(chainId, provider).contract.vfr([stableId]).then((v) => {
+                          return v;
+                      })
+                : new Promise((resolve, reject) => resolve([])),
         [address, stableId, stableType, chainId, provider],
     );
 
-    // useEffect(() => {
-    //     if (!isUndefinedOrNullOrObjectEmpty(amountFromChain)) {
-    //         setAmount(
-    //             fromEth(
-    //                 amountFromChain
-    //                     .div(10 ** 13)
-    //                     .add(1)
-    //                     .mul(10 ** 13),
-    //             ),
-    //         );
-    //     }
-    // }, [amountFromChain]);
-
-    return (
+    return stableId &&
+        amountFromChain &&
+        amountFromChain.length > 0 &&
+        chainId &&
+        provider &&
+        address ? (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>{`${
                 stableType === 'PayoffLoan' ? 'Payoff' : 'Extend'
@@ -88,7 +73,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
             </AnimatedCard>
             <div style={styles.inputContainer}>
                 <CurrencyInput
-                    warning={swapError && 'Invalid input'}
+                    // warning={swapError && 'Invalid input'}
                     shouldFocus
                     style={styles.input}
                     styleHeading={styles.heading}
@@ -96,7 +81,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                     label="Enter amount"
                     setValue={(text: string) => {
                         setAmount(text);
-                        clearError();
+                        // clearError();
                     }}
                     value={amount}
                     code
@@ -133,18 +118,11 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                     marginBottom: '.5rem',
                 }}
             >
-                {userBalance && (
+                {userBalance ? (
                     <Text type="text" size="small" textStyle={styles.text} weight="bolder">
-                        You currently have{' '}
-                        {new EthInt(
-                            userBalance
-                                .div(10 ** 13)
-                                .add(1)
-                                .mul(10 ** 13),
-                        ).decimal.toNumber()}{' '}
-                        ETH
+                        You currently have {userBalance.num} ETH
                     </Text>
-                )}
+                ) : null}
                 {/* <Text textStyle={styles.text}>
                         {`${
                             stableType === 'PayOffLoan'
@@ -178,7 +156,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                 />
             </div>
         </div>
-    );
+    ) : null;
 };
 
 export default LoanInputModal;

@@ -1,24 +1,31 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-import { isUndefinedOrNullOrNotNumber } from '@src/lib';
-
 type Props = {};
 
-const useAnimationFrame = (callback: (time: number) => void, dependencyArray: any[] = []) => {
+const useAnimationFrame = (
+    callback: (time: number) => void,
+    dependencyArray: React.DependencyList,
+) => {
     const previousTime = useRef<number>();
     const previousRequest = useRef<number>();
-    const animate = useCallback((time: number) => {
-        if (!isUndefinedOrNullOrNotNumber(previousTime.current)) {
-            const deltaTime = time - previousTime.current;
-            callback(deltaTime);
-        }
-        previousTime.current = time;
-        previousRequest.current = requestAnimationFrame(animate);
-    }, dependencyArray);
+
+    const animate = useCallback(
+        (time: number) => {
+            if (previousTime.current !== undefined) {
+                const deltaTime = time - previousTime.current;
+                callback(deltaTime);
+            }
+            previousTime.current = time;
+            previousRequest.current = requestAnimationFrame(animate);
+        },
+        [...dependencyArray, callback],
+    );
 
     useEffect(() => {
         previousRequest.current = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(previousRequest.current);
+        return () => {
+            previousRequest.current !== undefined && cancelAnimationFrame(previousRequest.current);
+        };
         // @ts-ignore
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [animate]);

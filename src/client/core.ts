@@ -18,20 +18,8 @@ const DEFAULT_STATE: ClientState = {
     epoch: undefined,
     epoch__id: 0,
     route: undefined,
-    lastView: {
-        feature: undefined,
-        idnum: undefined,
-        position: undefined,
-        tokenId: undefined,
-        type: undefined,
-    },
-    lastSwap: {
-        feature: undefined,
-        idnum: undefined,
-        position: undefined,
-        tokenId: undefined,
-        type: undefined,
-    },
+    lastView: undefined,
+    lastSwap: undefined,
     isViewOpen: false,
     activeSwaps: [],
     activeItems: [],
@@ -55,7 +43,8 @@ export interface SwapData {
     eth: EthInt;
     started: boolean;
     sellingNugg?: string;
-    endingEpoch: number;
+    endingEpoch: number | null;
+    isCurrent: boolean;
 }
 
 export interface LoanData {
@@ -81,12 +70,12 @@ export interface MyNuggsData {
     activeSwap: boolean;
     // svg: Base64EncodedSvg;
     tokenId: NuggId;
-    unclaimedOffers: { itemId: ItemId; endingEpoch: number }[];
+    unclaimedOffers: { itemId: ItemId; endingEpoch: number | null }[];
 }
 export interface BaseUnclaimedOffer {
     type: 'nugg' | 'item';
     tokenId: NuggId | ItemId;
-    endingEpoch: number;
+    endingEpoch: number | null;
     eth: EthInt;
     leader: boolean;
     claimParams: {
@@ -114,27 +103,31 @@ export interface UnclaimedItemOffer extends BaseUnclaimedOffer {
 
 export type UnclaimedOffer = UnclaimedNuggOffer | UnclaimedItemOffer;
 
+export type StakeData = {
+    staked: BigNumber;
+    shares: BigNumber;
+    eps: EthInt;
+};
+
+export type EpochData = {
+    startblock: number;
+    endblock: number;
+    id: number;
+    status: 'OVER' | 'ACTIVE' | 'PENDING';
+};
+
 export interface ClientState extends State {
     infura: WebSocketProvider | undefined;
     apollo: ApolloClient<any> | undefined;
-    manualPriority: Connector;
-    route: string;
-    lastView: ViewRoutes;
-    lastSwap: SwapRoutes;
+    manualPriority: Connector | undefined;
+    route: string | undefined;
+    lastView: ViewRoutes | undefined;
+    lastSwap: SwapRoutes | undefined;
     isViewOpen: boolean;
-    stake: {
-        staked: BigNumber;
-        shares: BigNumber;
-        eps: EthInt;
-    };
-    epoch__id: number;
-    epoch: {
-        startblock: number;
-        endblock: number;
-        id: number;
-        status: 'OVER' | 'ACTIVE' | 'PENDING';
-    };
-    blocknum: number;
+    stake: StakeData | undefined;
+    epoch__id: number | undefined;
+    epoch: EpochData | undefined;
+    blocknum: number | undefined;
     activeOffers: Dictionary<OfferData[]>;
     activeSwaps: SwapData[];
     activeItems: SwapData[];
@@ -291,7 +284,9 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
 
                 existingState.route = window.location.hash;
 
-                if (!existingState.lastSwap.tokenId) {
+                console.log(existingState);
+
+                if (!existingState.lastSwap) {
                     existingState.lastSwap = {
                         type: Route.SwapNugg,
                         tokenId: epochId.toString(),
@@ -300,8 +295,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                 }
             }
 
-            if (!existingState.epoch__id || epochId !== existingState.epoch__id) {
-                existingState.epoch__id = epochId;
+            if (!existingState.epoch || epochId !== existingState.epoch.id) {
                 existingState.epoch = {
                     id: epochId,
                     startblock: calculateStartBlock(epochId, chainId),
@@ -544,8 +538,16 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             return {
                 ...existingState,
                 ...(route === existingState.route ? {} : { route }),
-                ...(lastView.tokenId === existingState.lastView.tokenId ? {} : { lastView }),
-                ...(lastSwap.tokenId === existingState.lastSwap.tokenId ? {} : { lastSwap }),
+                ...(lastView &&
+                existingState.lastView &&
+                lastView.tokenId === existingState.lastView.tokenId
+                    ? {}
+                    : { lastView }),
+                ...(lastSwap &&
+                existingState.lastSwap &&
+                lastSwap.tokenId === existingState.lastSwap.tokenId
+                    ? {}
+                    : { lastSwap }),
                 ...(isViewOpen === existingState.isViewOpen ? {} : { isViewOpen }),
             };
         });

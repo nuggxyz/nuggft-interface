@@ -1,8 +1,6 @@
 import { RefCallback, useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
 
-import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
-
 function useOnScroll(
     callback?: RefCallback<{
         previousScrollTop: number;
@@ -10,7 +8,7 @@ function useOnScroll(
     }>,
 ) {
     const [, setScrollPosition] = useState(0);
-    const ref = useRef<HTMLDivElement>();
+    const ref = useRef<HTMLDivElement>(null);
     let previousScrollTop = 0;
 
     function handleDocumentScroll() {
@@ -28,11 +26,12 @@ function useOnScroll(
     const handleDocumentScrollThrottled = throttle(handleDocumentScroll, 250);
 
     useEffect(() => {
-        let current = !isUndefinedOrNullOrObjectEmpty(ref.current) ? ref.current : document;
+        let current = ref.current !== undefined && ref.current !== null ? ref.current : document;
         current.addEventListener('scroll', handleDocumentScrollThrottled);
 
         return () => current.removeEventListener('scroll', handleDocumentScrollThrottled);
-    }, []);
+        // LOGIC CHANGE
+    }, [ref, handleDocumentScrollThrottled]);
 
     return ref;
 }

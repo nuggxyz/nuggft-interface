@@ -1,7 +1,7 @@
 import { Contract } from '@ethersproject/contracts';
 
 export default class ContractHelper {
-    protected static _instance: Contract;
+    protected static _instance: Contract | undefined;
 
     constructor() {
         if (new.target === ContractHelper) {

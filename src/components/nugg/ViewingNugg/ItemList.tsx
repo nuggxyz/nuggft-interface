@@ -39,11 +39,12 @@ const ItemList: FunctionComponent<Props> = ({ items, chainId, provider, sender, 
             data={sortByField(items, 'feature', false)}
             RenderItem={Item}
             extraData={{ sender, provider, chainId, tokenId }}
+            action={() => undefined}
         />
     );
 };
 
-const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData>> = ({ item, extraData }) => {
+const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData, undefined>> = ({ item, extraData }) => {
     return (
         <div style={styles.itemListItem}>
             <div style={{ ...globalStyles.centeredSpaceBetween }}>
@@ -70,7 +71,7 @@ const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData>> = ({ item, extraDat
                                     targetId: createItemId((item.feature << 8) | item.position),
                                     type: 'SellItem',
                                     data: {
-                                        tokenId: extraData[3],
+                                        tokenId: extraData.tokenId,
                                     },
                                 },
                             });
