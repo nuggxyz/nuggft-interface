@@ -2,7 +2,7 @@
 
 import React, { FunctionComponent } from 'react';
 import './ChainIndicatorPulse.css';
-type Props = {};
+type Props = Record<string, never>;
 
 const ChainIndicatorPulse: FunctionComponent<Props> = () => {
     return <div className="blob"></div>;

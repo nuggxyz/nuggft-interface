@@ -7,7 +7,7 @@ import { EthInt, Fraction } from '@src/classes/Fraction';
 import { createItemId } from '@src/lib';
 import constants from '@src/lib/constants';
 import { padToAddress } from '@src/lib/index';
-import { ItemId, NuggId, TokenId } from '@src/client/router';
+import { ItemId, NuggId } from '@src/client/router';
 import client from '@src/client/index';
 import { SwapData } from '@src/client/core';
 
@@ -133,8 +133,8 @@ export default () => {
                             },
                             activeSwaps: x.data.protocol.activeNuggs.map((x) => {
                                 return {
-                                    id: x.id as TokenId,
-                                    tokenId: x.id as TokenId,
+                                    id: x.id,
+                                    tokenId: x.id,
                                     dotnuggRawCache: x.dotnuggRawCache,
                                     eth: new EthInt(x.activeSwap?.eth),
                                     started: !!x.activeSwap?.endingEpoch,
@@ -149,32 +149,28 @@ export default () => {
                             activeItems: mergeUnique([
                                 ...x.data.protocol.activeItems.map((x) => {
                                     return {
-                                        id: createItemId(x.id) as TokenId,
-                                        tokenId: createItemId(x.id) as TokenId,
+                                        id: createItemId(x.id),
+                                        tokenId: createItemId(x.id),
                                         dotnuggRawCache: x.activeSwap.sellingItem.dotnuggRawCache,
                                         eth: new EthInt(x.activeSwap?.eth),
                                         started: !!x.activeSwap.endingEpoch,
                                         sellingNugg: '',
                                         endingEpoch: +x.activeSwap.endingEpoch!,
-                                        type: 'item' as 'item',
+                                        type: 'item' as const,
                                         isCurrent: true,
                                     };
                                 }),
                                 ...x.data.protocol.activeNuggItems.map((x) => {
                                     return {
-                                        id: createItemId(
-                                            x.activeSwap.sellingNuggItem.item.id,
-                                        ) as TokenId,
-                                        tokenId: createItemId(
-                                            x.activeSwap.sellingNuggItem.item.id,
-                                        ) as TokenId,
+                                        id: createItemId(x.activeSwap.sellingNuggItem.item.id),
+                                        tokenId: createItemId(x.activeSwap.sellingNuggItem.item.id),
                                         dotnuggRawCache:
                                             x.activeSwap.sellingNuggItem.item.dotnuggRawCache,
                                         eth: new EthInt(x.activeSwap?.eth),
                                         started: !!x.activeSwap.endingEpoch,
                                         sellingNugg: x.id.split('-')[constants.ITEM_NUGG_POS],
                                         endingEpoch: +x.activeSwap.endingEpoch!,
-                                        type: 'item' as 'item',
+                                        type: 'item' as const,
                                         isCurrent: true,
                                     };
                                 }),
@@ -351,7 +347,7 @@ export default () => {
                                                     ? +y.swap.endingEpoch
                                                     : null,
                                             eth: new EthInt(y.eth),
-                                            type: 'item' as 'item',
+                                            type: 'item' as const,
                                             leader: y.swap.leader.id === x.id,
                                             nugg: x.id,
                                             claimParams: {
@@ -387,11 +383,11 @@ const mergeUnique = (arr: SwapData[]) => {
     let len = arr.length;
 
     let tmp: number;
-    let array3: SwapData[] = [];
-    let array5: string[] = [];
+    const array3: SwapData[] = [];
+    const array5: string[] = [];
 
     while (len--) {
-        let itm = arr[len];
+        const itm = arr[len];
         if ((tmp = array5.indexOf(itm.tokenId)) === -1) {
             array3.unshift(itm);
             array5.unshift(itm.tokenId);

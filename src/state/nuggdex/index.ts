@@ -9,7 +9,7 @@ import updater from './updater';
 
 const STATE_NAME = 'nuggdex';
 
-class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
+class NuggDexState extends NLState<NuggDexStateType> {
     declare static _instance: NuggDexState;
 
     declare static actions: typeof this.instance._slice.actions;
@@ -54,7 +54,7 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
             clearError: (state) => {
                 state.error = undefined;
             },
-            setViewing: (state, action: PayloadAction<NL.Redux.NuggDex.SearchViews>) => {
+            setViewing: (state, action: PayloadAction<NuggDexSearchViews>) => {
                 state.viewing = action.payload;
             },
             addToRecents: (state, action: PayloadAction<NL.GraphQL.Fragments.Nugg.ListItem>) => {
@@ -65,7 +65,7 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
                     state.recents.push(action.payload);
                 }
             },
-            setSearchFilters: (state, action: PayloadAction<Partial<NL.Redux.NuggDex.Filters>>) => {
+            setSearchFilters: (state, action: PayloadAction<Partial<NuggDexFilters>>) => {
                 state.searchFilters = { ...state.searchFilters, ...action.payload };
             },
             reset: (state) => {
@@ -93,7 +93,7 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
                 })
                 .addMatcher(
                     NLState.isRejectedAction('nuggdex/'),
-                    (state, action: PayloadAction<NL.Redux.NuggDex.Error>) => {
+                    (state, action: PayloadAction<NuggDexError>) => {
                         state.loading = false;
                         state.error = action.payload;
                         state.success = undefined;
@@ -104,7 +104,7 @@ class NuggDexState extends NLState<NL.Redux.NuggDex.State> {
                     (
                         state,
                         action: PayloadAction<{
-                            success: NL.Redux.NuggDex.Success;
+                            success: NuggDexSuccess;
                         }>,
                     ) => {
                         state.loading = false;

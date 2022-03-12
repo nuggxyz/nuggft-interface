@@ -10,9 +10,10 @@ import AppState from '@src/state/app';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
 import { LoanData } from '@src/client/core';
-type Props = { isActive?: boolean };
 
-const LoansTab: FunctionComponent<Props> = ({ isActive }) => {
+type Props = Record<string, never>;
+
+const LoansTab: FunctionComponent<Props> = () => {
     const epoch__id = client.live.epoch.id();
 
     const loanedNuggs = client.live.myLoans();
@@ -49,7 +50,7 @@ const RenderItem: FunctionComponent<
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <TokenViewer
                     tokenId={item.nugg}
-                    data={(item as any).nugg.dotnuggRawCache}
+                    // data={(item.nugg.dotnuggRawCache}
                     style={{ width: '60px', height: '50px' }}
                 />
                 <div>

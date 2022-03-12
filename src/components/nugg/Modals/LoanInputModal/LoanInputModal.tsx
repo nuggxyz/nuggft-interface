@@ -6,7 +6,6 @@ import useAsyncState from '@src/hooks/useAsyncState';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import { fromEth } from '@src/lib/conversion';
 import AppState from '@src/state/app';
-import TransactionState from '@src/state/transaction';
 import WalletState from '@src/state/wallet';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
@@ -20,13 +19,12 @@ import web3 from '@src/web3';
 
 import styles from './LoanInputModal.styles';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const LoanInputModal: FunctionComponent<Props> = () => {
     // const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
-    const toggle = TransactionState.select.toggleCompletedTxn();
     const { targetId, type } = AppState.select.modalData();
 
     const [stableType, setType] = useState(type);
@@ -54,7 +52,7 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                     : new NuggftV1Helper(chainId, provider).contract.vfr([stableId]).then((v) => {
                           return v;
                       })
-                : new Promise((resolve, reject) => resolve([])),
+                : new Promise((resolve) => resolve([])),
         [address, stableId, stableType, chainId, provider],
     );
 

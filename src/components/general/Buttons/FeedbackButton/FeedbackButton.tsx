@@ -2,16 +2,16 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 
 import Button, { ButtonProps } from '@src/components/general/Buttons/Button/Button';
 
-type Props = ButtonProps & {
+type Props = {
     feedbackText: string;
     timeout?: number;
     overrideFeedback?: boolean;
     label: string;
-};
+    onClick: () => void;
+} & Omit<ButtonProps, 'onClick'>;
 
 const FeedbackButton: FunctionComponent<Props> = ({
     feedbackText,
-    onClick,
     disabled,
     label,
     timeout = 10000,
@@ -40,7 +40,7 @@ const FeedbackButton: FunctionComponent<Props> = ({
             buttonStyle={props.buttonStyle}
             onClick={() => {
                 setClicked(true);
-                onClick();
+                props.onClick && props.onClick();
             }}
         />
     );

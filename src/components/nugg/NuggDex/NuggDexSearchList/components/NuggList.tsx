@@ -24,7 +24,7 @@ import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
 
 type Props = {
-    type?: NL.Redux.NuggDex.SearchViews;
+    type?: NuggDexSearchViews;
     style: CSSProperties | UseSpringProps;
     values: NL.GraphQL.Fragments.Nugg.ListItem[];
     animationToggle?: boolean;
@@ -35,7 +35,7 @@ type Props = {
         desiredSize,
     }: {
         setLoading?: React.Dispatch<SetStateAction<boolean>>;
-        filters: NL.Redux.NuggDex.Filters;
+        filters: NuggDexFilters;
         addToList?: boolean;
         desiredSize?: number;
     }) => Promise<void> | (() => void);
@@ -49,10 +49,10 @@ const NuggList: FunctionComponent<Props> = ({
     type,
 }) => {
     const filters = NuggDexState.select.searchFilters();
+
     const prevFilters = usePrevious(filters);
     const screenType = AppState.select.screenType();
     const viewing = NuggDexState.select.viewing();
-    const previousViewing = usePrevious(viewing);
 
     const [loading, setLoading] = useState(false);
 
@@ -64,7 +64,7 @@ const NuggList: FunctionComponent<Props> = ({
     }, []);
 
     const _onScrollEnd = useCallback(
-        (addToList: boolean = true, desiredSize?: number) => {
+        ({ addToList, desiredSize }: { addToList: boolean; desiredSize?: number }) => {
             onScrollEnd && onScrollEnd({ setLoading, filters, addToList, desiredSize });
         },
         [filters, onScrollEnd],

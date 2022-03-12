@@ -8,7 +8,7 @@ import lib from '@src/lib';
 import { PeerInfo } from '@src/web3/core/interfaces';
 
 import styles from './QrCodeModal.styles';
-type Props = {};
+type Props = Record<string, never>;
 
 type ModalsData = {
     data: { info: PeerInfo; uri: string };

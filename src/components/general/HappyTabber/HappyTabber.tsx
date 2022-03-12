@@ -16,7 +16,7 @@ export type HappyTabberItem = {
 type Props = {
     items: HappyTabberItem[];
     defaultActiveIndex?: number;
-    containerStyle?: CSSProperties;
+    // containerStyle?: CSSProperties;
     bodyStyle?: CSSProperties;
     headerTextStyle?: CSSProperties;
     selectionIndicatorStyle?: CSSProperties;
@@ -28,7 +28,7 @@ type Props = {
 const HappyTabber: FunctionComponent<Props> = ({
     items,
     defaultActiveIndex = 0,
-    containerStyle,
+    // containerStyle,
     bodyStyle,
     headerTextStyle,
     selectionIndicatorStyle,

@@ -17,23 +17,23 @@ import useIsVisible from '@src/hooks/useIsVisible';
 
 import styles from './List.styles';
 
-export interface ListRenderItemProps<T extends unknown, B extends unknown, A extends unknown> {
+export interface ListRenderItemProps<T, B, A> {
     item: T;
     extraData: B;
     action: (arg: A) => void;
-    onScrollEnd?: () => void;
+    onScrollEnd?: () => () => void;
     index: number;
     rootRef?: LegacyRef<HTMLDivElement>;
     selected?: boolean;
     style?: CSSProperties;
 }
 
-export interface ListProps<T extends unknown, B extends unknown, A extends unknown> {
+export interface ListProps<T, B, A> {
     RenderItem: FunctionComponent<ListRenderItemProps<T, B, A>>;
     loading?: boolean;
     extraData: B;
     action: (arg: A) => void;
-    onScrollEnd?: () => void;
+    onScrollEnd?: () => () => void;
     label?: string;
     border?: boolean;
     horizontal?: boolean;
@@ -50,7 +50,7 @@ export interface ListProps<T extends unknown, B extends unknown, A extends unkno
     data: T[];
 }
 
-const List = <T extends unknown, B extends unknown, A extends unknown>({
+const List = <T, B, A>({
     data,
     RenderItem,
     loading = false,

@@ -1,9 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrNotNumber,
     isUndefinedOrNullOrStringEmpty,
 } from './lib';
-
+// @ts-ignore
 Array.prototype.shuffle = function () {
     for (let i = this.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -11,12 +16,12 @@ Array.prototype.shuffle = function () {
     }
 };
 
-Array.prototype.first = function (count?: number) {
+Array.prototype.first = function (count: number) {
     if (!this || this === []) {
         return [];
     }
 
-    if (count === undefined) {
+    if (count === undefined && this.length > 0) {
         return this[0];
     }
 

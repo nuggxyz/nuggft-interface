@@ -8,7 +8,7 @@ import AppState from '@src/state/app';
 import styles from './Toast.styles';
 import ToastCard from './ToastCard';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const ToastContainer: FunctionComponent<Props> = () => {
     const toasts = AppState.select.toasts();
@@ -19,7 +19,8 @@ const ToastContainer: FunctionComponent<Props> = () => {
                 style={{ zIndex: 1000 }}
                 enterAnimation="none"
                 leaveAnimation="none"
-                easing={Layout.animation}>
+                easing={Layout.animation}
+            >
                 {sortByField([...toasts], 'index', false).map((toast) => (
                     <div key={toast.id}>
                         <ToastCard toast={toast} />

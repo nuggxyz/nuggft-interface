@@ -2,7 +2,6 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 
 import AppState from '@src/state/app';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
-import TransactionState from '@src/state/transaction';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import Text from '@src/components/general/Texts/Text/Text';
 import WalletState from '@src/state/wallet';
@@ -15,11 +14,11 @@ import client from '@src/client';
 
 import styles from './LoanOrBurnModal.styles';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const LoanOrBurnModal: FunctionComponent<Props> = () => {
     const stake__eps = client.live.stake.eps();
-    const toggle = TransactionState.select.toggleCompletedTxn();
+
     const { targetId, type } = AppState.select.modalData();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();

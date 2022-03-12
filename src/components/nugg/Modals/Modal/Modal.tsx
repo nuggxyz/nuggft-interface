@@ -19,12 +19,12 @@ import SellNuggOrItemModal from '@src/components/nugg/Modals/SellNuggOrItemModal
 
 import styles from './Modal.styles';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const Modal: FunctionComponent<Props> = () => {
     const isOpen = AppState.select.modalIsOpen();
     const data = AppState.select.modalData();
-    const [currentModal, setCurrentModal] = useState<NL.Redux.App.ModalNames>();
+    const [currentModal, setCurrentModal] = useState<ModalNames>();
     const previousOpen = usePrevious(isOpen);
     const node = useRef<HTMLDivElement>(null);
     const screenType = AppState.select.screenType();
@@ -65,7 +65,7 @@ const Modal: FunctionComponent<Props> = () => {
         [isOpen],
     );
 
-    const style = useAnimateOverlay(!isUndefinedOrNullOrStringEmpty(isOpen));
+    const style: CSSPropertiesAnimated = useAnimateOverlay(isOpen ? true : false);
 
     useOnClickOutside(node, closeModal);
 

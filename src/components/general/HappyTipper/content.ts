@@ -19,7 +19,7 @@ const tips: {
 };
 
 const gotoLink = (link: TipLink) => {
-    let win = window.open(link, '_blank');
+    const win = window.open(link, '_blank');
     win && win.focus();
 };
 

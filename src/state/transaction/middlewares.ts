@@ -15,11 +15,11 @@ import TransactionState from './index';
 export const pending: NL.Redux.Middleware<
     Record<string, unknown>,
     NL.Redux.RootState,
-    NL.Redux.Dispatch<any>
+    NL.Redux.Dispatch<unknown>
 > =
     ({ getState }) =>
     (next) =>
-    async (action: PayloadAction<NL.Redux.Transaction.PendingMiddlewareTx>) => {
+    (action: PayloadAction<PendingMiddlewareTx>) => {
         if (
             !isUndefinedOrNullOrObjectEmpty(action.payload) &&
             !isUndefinedOrNullOrStringEmpty(action.payload._pendingtx)
@@ -44,9 +44,8 @@ export const pending: NL.Redux.Middleware<
                 id: action.payload._pendingtx,
                 index: getState().app.toasts.length,
                 loading: true,
-                action: (setClose) => {
-                    // setClose(true);
-                    let win = window.open(
+                action: () => {
+                    const win = window.open(
                         `${CHAIN_INFO[action.payload.chainId].explorer}tx/${
                             action.payload._pendingtx
                         }`,
@@ -63,7 +62,7 @@ export const pending: NL.Redux.Middleware<
         if (NLState.hasSuffix(action, 'finalizeTransaction')) {
             AppState.dispatch.replaceToast({
                 //@ts-ignore
-                id: action.payload.hash,
+                id: action.payload._pendingtx,
                 //@ts-ignore
                 duration: action.payload.successful ? 5000 : 0,
                 loading: false,

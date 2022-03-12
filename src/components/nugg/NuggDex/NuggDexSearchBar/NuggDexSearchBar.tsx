@@ -13,7 +13,7 @@ import client from '@src/client';
 
 import styles from './NuggDexSearchBar.styles';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const viewing = NuggDexState.select.viewing();
@@ -21,6 +21,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
 
     const isViewOpen = client.live.isViewOpen();
     const filters = NuggDexState.select.searchFilters();
+
     const prevFilters = usePrevious(filters);
 
     const [searchValue, setSearchValue] = useState('');

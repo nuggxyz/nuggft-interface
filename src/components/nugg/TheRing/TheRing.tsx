@@ -28,7 +28,7 @@ const TheRing: FunctionComponent<Props> = ({
     const blocknum = client.live.blocknum();
 
     const lastSwap__tokenId = client.live.lastSwap.tokenId();
-    const { token, epoch, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
+    const { token, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
 
     // console.log({ token, lifecycle });
 

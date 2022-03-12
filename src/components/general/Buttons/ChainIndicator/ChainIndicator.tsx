@@ -14,17 +14,16 @@ import NextSwap from '@src/components/nugg/NextSwap/NextSwap';
 import styles from './ChainIndicator.styles';
 
 type Props = {
-    onClick?: () => void;
     style?: CSSProperties;
     textStyle?: CSSProperties;
+    onClick?: () => void;
 };
 
-const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle }) => {
+const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick }) => {
     const epoch__id = client.live.epoch.id();
     const epoch__endblock = client.live.epoch.endblock();
 
     const blocknum = client.live.blocknum();
-    const provider = web3.hook.usePriorityProvider();
     const error = web3.hook.usePriorityError();
 
     const springStyle = useSpring({
@@ -53,12 +52,13 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
                 <div
                     ref={ref}
                     onClick={() => {
+                        onClick && onClick();
                         client.actions.routeTo(epoch__id!.toString(), false);
                     }}
                     style={style2}
                 >
                     {error ? (
-                        <AlertCircle size={24} style={{ paddingRight: 0.5 + 'rem' }} />
+                        <AlertCircle size={24} style={{ paddingRight: `${0.5}rem` }} />
                     ) : (
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             {epoch__id ? (
@@ -82,7 +82,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
                                 ...textStyle,
                             }}
                         >
-                            {epoch__id + ' | ' + (epoch__endblock - blocknum)}
+                            {`${epoch__id} | ${epoch__endblock - blocknum}`}
                         </Text>
                     ) : null}
                 </div>

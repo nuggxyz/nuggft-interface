@@ -10,35 +10,35 @@ import React, {
 
 import Text from '@src/components/general/Texts/Text/Text';
 import Loader from '@src/components/general/Loader/Loader';
-import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrNotFunction, range } from '@src/lib';
+import { isUndefinedOrNullOrArrayEmpty, range } from '@src/lib';
 import usePrevious from '@src/hooks/usePrevious';
 
 import styles from './List.styles';
 
-export interface ListRenderItemProps<T extends unknown, B extends unknown, A extends unknown> {
+export interface InfiniteListRenderItemProps<T, B, A> {
     item: T;
     extraData: B;
     action: (arg: A) => void;
-    onScrollEnd?: any;
+    onScrollEnd?: (arg: any) => void;
     index: number;
-    rootRef?: any;
+    rootRef?: unknown;
     selected?: boolean;
     style?: CSSProperties;
 }
 
-interface Props<T extends unknown, B extends unknown, A extends unknown> {
+interface Props<T, B, A> {
     data: T[];
-    RenderItem: FunctionComponent<ListRenderItemProps<T, B, A>>;
+    RenderItem: FunctionComponent<InfiniteListRenderItemProps<T, B, A>>;
     loading?: boolean;
     extraData: B;
     action: (arg: A) => void;
-    onScrollEnd?: any;
+    onScrollEnd?: (arg: any) => void;
     label?: string;
     border?: boolean;
     horizontal?: boolean;
     style?: CSSProperties;
     onScroll?: () => void;
-    selected?: any;
+    selected?: unknown;
     listEmptyText?: string;
     labelStyle?: CSSProperties;
     listEmptyStyle?: CSSProperties;
@@ -51,7 +51,7 @@ interface Props<T extends unknown, B extends unknown, A extends unknown> {
 
 const LIST_PADDING = 4;
 
-const InfiniteList = <T extends unknown, B extends unknown, A extends unknown>({
+const InfiniteList = <T, B, A>({
     data,
     RenderItem,
     loading = false,
@@ -158,22 +158,21 @@ const InfiniteList = <T extends unknown, B extends unknown, A extends unknown>({
     ]);
 
     useEffect(() => {
-        if (!isUndefinedOrNullOrNotFunction(onScrollEnd)) {
+        if (onScrollEnd) {
             if (
                 items.length !== 0 &&
                 items.length * itemHeight + scrollTop >= innerHeight &&
                 prevEnd !== endIndex &&
-                !loading &&
-                onScrollEnd
+                !loading
             ) {
-                onScrollEnd();
+                void onScrollEnd({});
             }
         }
     }, [scrollTop, items, innerHeight, onScrollEnd, prevEnd, endIndex, loading, itemHeight]);
 
     const _onScroll = useCallback(
-        (e) => {
-            setScrollTop(e.currentTarget.scrollTop);
+        (e: { currentTarget: { scrollTop: number } }) => {
+            setScrollTop(e.currentTarget?.scrollTop);
             onScroll && onScroll();
         },
         [onScroll],

@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { createSelector } from 'reselect';
 import { AnyAction, isPending, SliceCaseReducers } from '@reduxjs/toolkit';
 import { Slice } from '@reduxjs/toolkit';
@@ -12,13 +16,13 @@ import store, { NLSelector } from './store';
 export class NLState<S> {
     protected static _instance: NLState<any>;
 
-    private static _selectors: {};
-    private static _dispatches: {};
+    private static _selectors: unknown;
+    private static _dispatches: unknown;
 
     private _thactions: NL.Redux.Thactions;
     private _middlewares: NL.Redux.Middlewares;
 
-    protected _hooks: {};
+    protected _hooks: Dictionary<NL.Redux.Hook>;
 
     protected _name: string;
     protected _initialState: S;
@@ -46,6 +50,7 @@ export class NLState<S> {
         this._updater = updater;
 
         this._isOwnFulfilledAction = (action: AnyAction, suffix: string): action is AnyAction =>
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             !NLState.isPendingAction(this._name)(action) &&
             // !NLState.isRejectedAction(this._name)(action) &&
             NLState.hasPrefix(action, this._name) &&

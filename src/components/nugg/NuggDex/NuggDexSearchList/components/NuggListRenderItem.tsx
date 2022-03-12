@@ -4,17 +4,17 @@ import { isUndefinedOrNullOrObjectEmpty, parseTokenId } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
-import { ListRenderItemProps } from '@src/components/general/List/InfiniteList';
+import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
 
 import styles from './NuggDexComponents.styles';
 
-type Props = ListRenderItemProps<
+type Props = InfiniteListRenderItemProps<
     NL.GraphQL.Fragments.Nugg.ListItem,
     undefined,
     NL.GraphQL.Fragments.Nugg.ListItem
 >;
 
-const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, action }) => {
+const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
     const lastView__tokenId = client.live.lastView.tokenId();
 
     const style = useMemo(() => {

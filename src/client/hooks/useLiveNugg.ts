@@ -30,7 +30,7 @@ export interface LiveNuggSwap extends LiveSwapBase {
 
 export type LiveSwap = LiveNuggSwap | LiveItemSwap;
 
-export const swapgql = (type: 'item' | 'nugg') => gql`
+export const swapgql = () => gql`
     {
         id
         endingEpoch
@@ -159,8 +159,8 @@ export const useLiveNugg = (tokenId: string | undefined) => {
                                 activeLoan {
                                     id
                                 }
-                                swaps ${swapgql('nugg')}
-                                activeSwap ${swapgql('nugg')}
+                                swaps ${swapgql()}
+                                activeSwap ${swapgql()}
                             }
                         }
                     `,

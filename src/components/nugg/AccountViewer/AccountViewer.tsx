@@ -43,7 +43,7 @@ const AccountViewer = () => {
                         color={Colors.nuggBlueText}
                         action={() => {
                             if (chainId === 1) {
-                                connector.deactivate();
+                                void connector.deactivate();
                             } else {
                                 state.app.dispatch.toggleWalletManager();
                             }

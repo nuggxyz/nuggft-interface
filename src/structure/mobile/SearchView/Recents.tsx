@@ -3,7 +3,7 @@ import React, { FunctionComponent } from 'react';
 import NuggList from '@src/components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
 import NuggDexState from '@src/state/nuggdex';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const Recents: FunctionComponent<Props> = () => {
     const recents = NuggDexState.select.recents();

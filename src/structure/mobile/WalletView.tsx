@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 
 import Wallet from '@src/components/nugg/Wallet/Wallet';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const WalletView: FunctionComponent<Props> = () => {
     return (
@@ -14,7 +14,8 @@ const WalletView: FunctionComponent<Props> = () => {
                 width: '100%',
                 height: '100%',
                 padding: '0rem .5rem',
-            }}>
+            }}
+        >
             <Wallet />
         </div>
     );

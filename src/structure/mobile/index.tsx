@@ -11,7 +11,7 @@ import MintView from './MintView/MintView';
 import SearchView from './SearchView/SearchView';
 import WalletView from './WalletView';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const sty = {
     position: 'absolute',

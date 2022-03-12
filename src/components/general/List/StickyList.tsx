@@ -29,7 +29,7 @@ type Props<T, B, A> = {
     children?: FunctionComponent<any>;
 };
 
-const StickyList = <T extends unknown, B extends unknown, A extends unknown>({
+const StickyList = <T, B, A>({
     data,
     ChildRenderItem,
     TitleRenderItem,
@@ -54,11 +54,11 @@ Props<T, B, A>) => {
     const [animating, setAnimating] = useState(false);
     const listRef = useRef<HTMLDivElement>(null);
 
-    const [y, setY] = useSpring(
+    const [, setY] = useSpring(
         () => ({
             immediate: false,
             y: 0,
-            onChange: (props) => {
+            onChange: (props: { value: { y: number } }) => {
                 listRef.current && listRef.current.scroll(0, props.value.y);
             },
             config: config.default,
@@ -67,7 +67,7 @@ Props<T, B, A>) => {
         }),
         [listRef],
     );
-    const [current, setCurrent] = useState(refData?.map((item) => item.title));
+    const [current] = useState(refData?.map((item) => item.title));
 
     return listRef ? (
         <animated.div style={{ display: 'flex', ...style }}>
@@ -155,7 +155,7 @@ type RenderProps<T, B, A> = {
     refData: string[];
 };
 
-const RenderItem = <T extends unknown, B extends unknown, A extends unknown>({
+const RenderItem = <T, B, A>({
     item,
     TitleRenderItem,
     ChildRenderItem,

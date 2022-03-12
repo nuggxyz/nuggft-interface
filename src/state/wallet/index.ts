@@ -9,7 +9,7 @@ import updater from './updater';
 
 export const STATE_NAME = 'wallet';
 
-export default class WalletState extends NLState<NL.Redux.Wallet.State> {
+export default class WalletState extends NLState<WalletStateType> {
     declare static _instance: WalletState;
 
     declare static actions: typeof this.instance._slice.actions;
@@ -61,7 +61,7 @@ export default class WalletState extends NLState<NL.Redux.Wallet.State> {
                 })
                 .addMatcher(
                     NLState.isRejectedAction(`${this._name}/`),
-                    (state, action: PayloadAction<NL.Redux.Wallet.Error>) => {
+                    (state, action: PayloadAction<WalletError>) => {
                         state.loading = false;
                         state.error = action.payload;
                         state.success = undefined;
@@ -72,7 +72,7 @@ export default class WalletState extends NLState<NL.Redux.Wallet.State> {
                     (
                         state,
                         action: PayloadAction<{
-                            success: NL.Redux.Wallet.Success;
+                            success: WalletSuccess;
                         }>,
                     ) => {
                         state.loading = false;

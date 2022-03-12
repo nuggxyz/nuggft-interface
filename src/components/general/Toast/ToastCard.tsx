@@ -15,7 +15,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import styles from './Toast.styles';
 
 type Props = {
-    toast: NL.Redux.App.Toast;
+    toast: AppStateToast;
 };
 
 const ToastCard: FunctionComponent<Props> = ({ toast }) => {
@@ -24,7 +24,7 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
 
     useEffect(() => {
         if (!isUndefinedOrNullOrNumberZero(toast.duration)) {
-            let id = setTimeout(() => setClose(true), toast.duration);
+            const id = setTimeout(() => setClose(true), toast.duration);
             return () => clearTimeout(id);
         }
     }, [toast.duration]);
@@ -32,7 +32,7 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
     useEffect(() => {
         if (close) {
             setHidden(true);
-            let id = setTimeout(() => {
+            const id = setTimeout(() => {
                 AppState.dispatch.removeToastFromList({
                     index: toast.index,
                 });
@@ -42,7 +42,7 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
     }, [close]);
 
     useEffect(() => {
-        let id = setTimeout(() => setHidden(false), 500);
+        const id = setTimeout(() => setHidden(false), 500);
         return () => clearTimeout(id);
     }, [toast]);
 

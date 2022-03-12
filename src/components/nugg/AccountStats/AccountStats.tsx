@@ -2,17 +2,12 @@ import React, { FunctionComponent } from 'react';
 import { animated, config, useSpring } from '@react-spring/web';
 
 import AppState from '@src/state/app';
-import WalletState from '@src/state/wallet';
-import client from '@src/client';
 
 import styles from './AccountStats.styles';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const AccountStats: FunctionComponent<Props> = () => {
-    const userShares = WalletState.select.userShares();
-    const stake__eps = client.live.stake.eps();
-
     const walletVisible = AppState.select.walletVisible();
 
     const containerStyle = useSpring({

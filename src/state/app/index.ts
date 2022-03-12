@@ -16,7 +16,7 @@ import updater from './updater';
 
 const STATE_NAME = 'app';
 
-class AppState extends NLState<NL.Redux.App.State> {
+class AppState extends NLState<AppStateType> {
     declare static _instance: AppState;
 
     declare static actions: typeof this.instance._slice.actions;
@@ -74,8 +74,8 @@ class AppState extends NLState<NL.Redux.App.State> {
                         ? 'tablet'
                         : 'phone';
             },
-            addToastToList: (state, action: PayloadAction<NL.Redux.App.Toast>) => {
-                let temp = state.toasts;
+            addToastToList: (state, action: PayloadAction<AppStateToast>) => {
+                const temp = state.toasts;
                 state.toasts = smartInsertIndex(temp, action.payload);
             },
             toggleWalletManager: (state) => {
@@ -83,20 +83,20 @@ class AppState extends NLState<NL.Redux.App.State> {
             },
             removeToastFromList: (
                 state,
-                action: PayloadAction<Partial<NL.Redux.App.Toast> & { index: number }>,
+                action: PayloadAction<Partial<AppStateToast> & { index: number }>,
             ) => {
                 // @ts-ignore
                 state.toasts = smartRemove(state.toasts, action.payload);
             },
             replaceToast: (
                 state,
-                action: PayloadAction<Partial<NL.Redux.App.Toast> & { id: string }>,
+                action: PayloadAction<Partial<AppStateToast> & { id: string }>,
             ) => {
-                let temp = state.toasts;
+                const temp = state.toasts;
                 // @ts-ignore
                 state.toasts = smartReplace(temp, action.payload);
             },
-            setModalOpen: (state, action: PayloadAction<NL.Redux.App.Modals>) => {
+            setModalOpen: (state, action: PayloadAction<Modals>) => {
                 state.modalIsOpen = action.payload.name;
                 state.modalData = !isUndefinedOrNullOrObjectEmpty(action.payload.modalData)
                     ? action.payload.modalData
@@ -106,10 +106,10 @@ class AppState extends NLState<NL.Redux.App.State> {
                 state.modalIsOpen = undefined;
                 state.modalData = {};
             },
-            changeView: (state, action: PayloadAction<NL.Redux.App.Views>) => {
+            changeView: (state, action: PayloadAction<AppStateViews>) => {
                 state.view = action.payload;
             },
-            changeMobileView: (state, action: PayloadAction<NL.Redux.App.MobileViews>) => {
+            changeMobileView: (state, action: PayloadAction<AppStateMobileViews>) => {
                 state.mobileView = action.payload;
             },
             toggleWallet: (state) => {

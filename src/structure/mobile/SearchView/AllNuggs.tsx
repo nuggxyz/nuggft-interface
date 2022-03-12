@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const AllNuggs: FunctionComponent<Props> = () => {
     // const epoch = client.live.epoch();

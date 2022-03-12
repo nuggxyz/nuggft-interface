@@ -25,7 +25,9 @@ export interface LiveItemSwap extends LiveSwapBase {
     isTryout: boolean;
 }
 
-export interface LiveActiveItemSwap extends LiveItemSwap {}
+export interface LiveActiveItemSwap extends LiveItemSwap {
+    count: number;
+}
 
 export interface LiveItem {
     type: 'item';
@@ -90,8 +92,8 @@ export const useLiveItem = (tokenId: string | undefined) => {
                             item(id: $tokenId) {
                                 id
                                 count
-                                activeSwap ${swapgql('item')}
-                                swaps ${swapgql('item')}
+                                activeSwap ${swapgql()}
+                                swaps ${swapgql()}
                             }
                         }
                     `,
@@ -121,6 +123,7 @@ export const useLiveItem = (tokenId: string | undefined) => {
                                 };
                             }),
                             activeSwap: {
+                                count: 1,
                                 type: 'item',
                                 id: x.data.item.activeSwap?.id,
                                 epoch: {

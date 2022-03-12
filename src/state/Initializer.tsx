@@ -49,7 +49,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
             const apollo = web3.config.createApolloClient(chainId);
             const infura = web3.config.createAlchemyWebSocket(chainId);
 
-            core.actions.updateClients(
+            void core.actions.updateClients(
                 {
                     apollo,
                     infura,
@@ -59,11 +59,11 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
 
             return () => {
                 infura.removeAllListeners();
-                infura.destroy();
+                void infura.destroy();
 
                 apollo.stop();
 
-                core.actions.updateClients(
+                void core.actions.updateClients(
                     {
                         apollo: undefined,
                         infura: undefined,

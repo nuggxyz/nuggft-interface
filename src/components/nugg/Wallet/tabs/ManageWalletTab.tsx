@@ -5,7 +5,7 @@ import Layout from '@src/lib/layout';
 
 import Connection from './ManagerTab/Connection';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const ManageWalletTab: FunctionComponent<Props> = () => {
     return (

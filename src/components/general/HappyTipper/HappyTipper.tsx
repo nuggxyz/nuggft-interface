@@ -1,6 +1,5 @@
 import React, { CSSProperties, FunctionComponent } from 'react';
 
-import AppState from '@src/state/app';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import lib from '@src/lib';
@@ -21,10 +20,10 @@ type Props = {
     headerTextStyle?: CSSProperties;
 };
 
-const WIDTH = 350;
+// const WIDTH = 350;
 
 const HappyTipper: FunctionComponent<Props> = ({ tip }) => {
-    const screenType = AppState.select.screenType();
+    // const screenType = AppState.select.screenType();
 
     return (
         <Flyout
