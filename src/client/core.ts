@@ -138,11 +138,10 @@ export interface ClientState extends State {
     error: Error | undefined;
     activating: boolean;
 }
-type CS = ClientState;
 
 type ClientStateUpdate = {
     infura?: WebSocketProvider;
-    apollo?: ApolloClient<any>;
+    apollo?: ApolloClient<unknown>;
     manualPriority?: Connector;
     // route?: string;
     stake?: {
@@ -230,7 +229,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
     }
 
     async function checkVaildRouteOnStartup(): Promise<void> {
-        let route = parseRoute(window.location.hash);
+        const route = parseRoute(window.location.hash);
 
         if (route.type !== Route.Home) {
             const tokenId = extractItemId(route.tokenId);
@@ -337,7 +336,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             const myUnclaimedItemOffers =
                 stateUpdate.myUnclaimedItemOffers ?? existingState.myUnclaimedItemOffers;
             // determine the next error
-            let error = existingState.error;
+            const error = existingState.error;
 
             return {
                 ...existingState,
@@ -449,7 +448,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
      */
     function updateOffers(tokenId: TokenId, offers: OfferData[]): void {
         store.setState((existingState): ClientState => {
-            let updates = {
+            const updates = {
                 ...existingState,
                 activeOffers: {
                     ...existingState.activeOffers,
@@ -492,7 +491,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             if (isItem) {
                 route += 'item/';
                 const num = parseItmeIdToNum(tokenId as `item-${string}`);
-                route += num.feature + '/';
+                route += `${num.feature}/`;
                 route += num.position;
                 if (view) {
                     // lastView__tokenId = tokenId;
@@ -518,7 +517,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                     // lastView__type = Route.ViewNugg;
                     lastView = {
                         type: Route.ViewNugg,
-                        tokenId: tokenId as string,
+                        tokenId: tokenId,
                         idnum: +tokenId,
                     };
                 } else {
@@ -526,7 +525,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                     // lastSwap__type = Route.SwapNugg;
                     lastSwap = {
                         type: Route.SwapNugg,
-                        tokenId: tokenId as string,
+                        tokenId: tokenId,
                         idnum: +tokenId,
                     };
                 }
@@ -573,7 +572,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             const apollo = stateUpdate.apollo ?? existingState.apollo;
 
             // determine the next error
-            let error = existingState.error;
+            const error = existingState.error;
 
             let activating = existingState.activating;
             if (activating && (error || (infura && apollo))) {
@@ -659,11 +658,11 @@ const mergeUnique = (arr: OfferData[]) => {
     let len = arr.length;
 
     let tmp: number;
-    let array3: OfferData[] = [];
-    let array5: string[] = [];
+    const array3: OfferData[] = [];
+    const array5: string[] = [];
 
     while (len--) {
-        let itm = arr[len];
+        const itm = arr[len];
         if ((tmp = array5.indexOf(itm.user)) === -1) {
             array3.unshift(itm);
             array5.unshift(itm.user);

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const useTimeout = (callback: () => void, timeout: number, deps?: React.DependencyList) => {
     useEffect(() => {

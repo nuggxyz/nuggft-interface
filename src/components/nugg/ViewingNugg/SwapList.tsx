@@ -19,9 +19,9 @@ import lib from '@src/lib';
 
 import styles from './ViewingNugg.styles';
 
-type SwapListProps = {};
+type Props = Record<string, never>;
 
-const SwapList: FunctionComponent<SwapListProps> = ({}) => {
+const SwapList: FunctionComponent<Props> = () => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const lastView__tokenId = client.live.lastView.tokenId();
@@ -30,12 +30,10 @@ const SwapList: FunctionComponent<SwapListProps> = ({}) => {
     const { token, epoch } = client.hook.useLiveToken(lastView__tokenId);
 
     const listData = useMemo(() => {
-        console.log({ token });
-        let res = [];
-        let tempSwaps = token?.swaps ? [...token?.swaps] : [];
+        const res = [];
+        let tempSwaps = token?.swaps ? [...token.swaps] : [];
         if (token && token.activeSwap && token.activeSwap.id) {
             res.push({ title: 'Ongoing Sale', items: [token.activeSwap] });
-            //@ts-ignore
             tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'id');
         }
         if (
@@ -45,8 +43,8 @@ const SwapList: FunctionComponent<SwapListProps> = ({}) => {
             lastView__tokenId.startsWith('item-')
         ) {
             console.log({ res2: res });
-            let tempTemp: LiveSwap[] = [];
-            let waiting = tempSwaps.reduce((acc: LiveSwap[], swap) => {
+            const tempTemp: LiveSwap[] = [];
+            const waiting = tempSwaps.reduce((acc: LiveSwap[], swap) => {
                 if (swap.endingEpoch === null) {
                     acc.push(swap);
                 } else {
@@ -67,7 +65,7 @@ const SwapList: FunctionComponent<SwapListProps> = ({}) => {
         console.log({ res3: res, chainId, provider, lastView__tokenId, epoch, token });
 
         return res;
-    }, [token, lastView__tokenId, chainId, provider, epoch, token]);
+    }, [token, lastView__tokenId, chainId, provider, epoch]);
 
     return chainId && provider && epoch && token && blocknum && lastView__tokenId ? (
         <StickyList

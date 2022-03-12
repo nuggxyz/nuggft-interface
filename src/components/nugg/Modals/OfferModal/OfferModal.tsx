@@ -18,7 +18,7 @@ import state from '@src/state';
 import { TokenId } from '@src/client/router';
 import WalletState from '@src/state/wallet';
 import client from '@src/client';
-import { ListRenderItemProps } from '@src/components/general/List/InfiniteList';
+import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
 import Colors from '@src/lib/colors';
 import { MyNuggsData } from '@src/client/core';
 import List from '@src/components/general/List/List';
@@ -110,7 +110,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
                 });
             }
         }
-        return new Promise((resolve, reject) =>
+        return new Promise((resolve) =>
             resolve({ canOffer: undefined, next: undefined, curr: undefined }),
         );
     }, [stableId, address, chainId, provider, stableType, selectedNuggForItem, activeItem]);
@@ -143,7 +143,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
                         color: 'white',
                     }}
                     extraData={undefined}
-                    RenderItem={MyNuggRenderItem}
+                    RenderItem={React.memo(MyNuggRenderItem)}
                     horizontal
                     action={setSelectedNugg}
                     selected={selectedNuggForItem}
@@ -250,10 +250,9 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
     ) : null;
 };
 
-const MyNuggRenderItem: FC<ListRenderItemProps<MyNuggsData, undefined, MyNuggsData>> = ({
+const MyNuggRenderItem: FC<InfiniteListRenderItemProps<MyNuggsData, undefined, MyNuggsData>> = ({
     item,
-    index,
-    extraData,
+
     selected,
     action,
 }) => {
@@ -277,9 +276,5 @@ const MyNuggRenderItem: FC<ListRenderItemProps<MyNuggsData, undefined, MyNuggsDa
         />
     );
 };
-
-const MemoRenderItem = React.memo(MyNuggRenderItem, (prev, curr) => {
-    return prev.item.tokenId === curr.item.tokenId && prev.selected === curr.selected;
-});
 
 export default OfferModal;

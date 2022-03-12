@@ -1,6 +1,6 @@
-import { LegacyRef, RefCallback, useEffect, useRef, useState } from 'react';
+import { Ref, RefCallback, useEffect, useRef, useState } from 'react';
 
-const useOnHover = (callback?: RefCallback<any>): [LegacyRef<HTMLDivElement>, boolean] => {
+const useOnHover = (callback?: RefCallback<unknown>): [Ref<HTMLDivElement>, boolean] => {
     const ref = useRef<HTMLDivElement>(null);
     const [isHovering, setIsHovering] = useState(false);
 

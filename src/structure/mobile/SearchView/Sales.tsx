@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const Sales: FunctionComponent<Props> = () => {
     // const epoch__id = client.live.epoch__id();

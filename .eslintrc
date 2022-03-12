@@ -9,14 +9,20 @@
         },
         "import/extensions": [".ts", ".tsx"]
     },
-    "extends": ["prettier"],
+    "extends": [
+        "prettier",
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true
         },
         "ecmaVersion": 12,
-        "sourceType": "module"
+        "sourceType": "module",
+        "project": ["./tsconfig.json"]
     },
     "plugins": [
         "react",
@@ -38,7 +44,7 @@
         "react-hooks/exhaustive-deps": "warn",
         "react/prop-types": "off",
         "react/display-name": "off",
-        "@typescript-eslint/explicit-module-boundary-types": "off",
+        // "@typescript-eslint/explicit-module-boundary-types": "on",
         "prettier/prettier": "warn",
         "react/jsx-filename-extension": [
             1,
@@ -47,7 +53,7 @@
             }
         ],
         "no-unused-vars": "off",
-        // "@typescript-eslint/no-unused-vars": ["error"],
+        "@typescript-eslint/no-unused-vars": ["error"],
         "unused-imports/no-unused-imports": "warn",
         "unused-imports/no-unused-vars": [
             "off",

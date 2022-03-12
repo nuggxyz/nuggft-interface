@@ -1,7 +1,6 @@
 import { getAddress } from '@ethersproject/address';
 import { BigNumber, ethers } from 'ethers';
 
-import config from '@src/config';
 // import { FEATURE_NAMES } from '@src/web3/config';
 
 import colors from './colors';
@@ -13,7 +12,7 @@ import parse from './parse';
 
 // 6287103
 // VERIFICATION
-export const isAnybodyThere = (value: any) => {
+export const isAnybodyThere = (value: unknown) => {
     try {
         if (!isUndefinedOrNull(value)) return true;
         return false;
@@ -21,50 +20,50 @@ export const isAnybodyThere = (value: any) => {
         return false;
     }
 };
-export const isUndefined = (value: any) => {
+export const isUndefined = (value: unknown) => {
     return typeof value === 'undefined';
 };
 
-export const isUndefinedOrNull = (value: any) => {
+export const isUndefinedOrNull = (value: unknown) => {
     return isUndefined(value) || value === null;
 };
-export const isUndefinedOrNullOrNotArray = (value: any) => {
+export const isUndefinedOrNullOrNotArray = (value: unknown) => {
     return isUndefinedOrNull(value) || !Array.isArray(value);
 };
-export const isUndefinedOrNullOrArrayEmpty = (value: any) => {
-    return isUndefinedOrNullOrNotArray(value) || value.length === 0;
+export const isUndefinedOrNullOrArrayEmpty = (value: unknown) => {
+    return isUndefinedOrNullOrNotArray(value) || (Array.isArray(value) && value.length === 0);
 };
-export const isUndefinedOrNullOrNotObject = (value: any) => {
+export const isUndefinedOrNullOrNotObject = (value: unknown) => {
     return isUndefinedOrNull(value) || typeof value !== 'object';
 };
-export const isUndefinedOrNullOrObjectEmpty = (value: any) => {
+export const isUndefinedOrNullOrObjectEmpty = (value: unknown) => {
     return isUndefinedOrNullOrNotObject(value) || Object.getOwnPropertyNames(value).length === 0;
 };
-export const isUndefinedOrNullOrNotString = (value: any) => {
+export const isUndefinedOrNullOrNotString = (value: unknown) => {
     return isUndefinedOrNull(value) || typeof value !== 'string';
 };
-export const isUndefinedOrNullOrStringEmpty = (value: any) => {
+export const isUndefinedOrNullOrStringEmpty = (value: unknown) => {
     return isUndefinedOrNullOrNotString(value) || value === '';
 };
-export const isUndefinedOrNullOrStringEmptyOrZeroOrStringZero = (value: any) => {
+export const isUndefinedOrNullOrStringEmptyOrZeroOrStringZero = (value: unknown) => {
     return isUndefinedOrNullOrNotString(value) || value === '' || value === 0 || value === '0';
 };
-export const isUndefinedOrNullOrNotBoolean = (value: any) => {
+export const isUndefinedOrNullOrNotBoolean = (value: unknown) => {
     return isUndefinedOrNull(value) || typeof value !== 'boolean';
 };
-export const isUndefinedOrNullOrBooleanFalse = (value: any) => {
+export const isUndefinedOrNullOrBooleanFalse = (value: unknown) => {
     return isUndefinedOrNullOrNotBoolean(value) || value === false;
 };
-export const isUndefinedOrNullOrNotFunction = (value: any) => {
+export const isUndefinedOrNullOrNotFunction = (value: unknown) => {
     return isUndefinedOrNull(value) || typeof value !== 'function';
 };
-export const isUndefinedOrNullOrNotNumber = (value: any) => {
+export const isUndefinedOrNullOrNotNumber = (value: unknown) => {
     return isUndefinedOrNull(value) || typeof value !== 'number' || isNaN(value);
 };
-export const isUndefinedOrNullOrNumberZero = (value: any) => {
+export const isUndefinedOrNullOrNumberZero = (value: unknown) => {
     return isUndefinedOrNullOrNotNumber(value) || value === 0;
 };
-export const isUndefinedOrNullOrNotBigNumber = (value: any) => {
+export const isUndefinedOrNullOrNotBigNumber = (value: unknown) => {
     return (
         isUndefinedOrNullOrObjectEmpty(value) ||
         isUndefinedOrNullOrBooleanFalse(BigNumber.isBigNumber(value))
@@ -86,7 +85,7 @@ export const NLStyleSheetCreator = <T extends NLStyleSheet>(arg: T): T => {
 export const safeNavigate = (url: string) => (window.location.href = url);
 
 // returns the checksummed address if the address is valid, otherwise returns false
-export function isAddress(value: any): string | false {
+export function isAddress(value: string): string | false {
     try {
         return getAddress(value);
     } catch {
@@ -111,7 +110,7 @@ export function escapeRegExp(string: string): string {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-export const sortByField = <T>(array: T[], field: keyof T, asc: boolean = true) => {
+export const sortByField = <T>(array: T[], field: keyof T, asc = true) => {
     const compare = (a: T, b: T) => {
         return asc ? (a[field] < b[field] ? 1 : -1) : a[field] > b[field] ? 1 : -1;
     };
@@ -120,7 +119,7 @@ export const sortByField = <T>(array: T[], field: keyof T, asc: boolean = true) 
 
 export const uuidv4 = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        let r = (Math.random() * 16) | 0,
+        const r = (Math.random() * 16) | 0,
             v = c == 'x' ? r : (r & 0x3) | 0x8;
         return v.toString(16);
     });
@@ -137,14 +136,14 @@ export const uuidv4 = () => {
 //         .join('')}`;
 // };
 
-export const cipher = (text: string) => {
-    let textToChars = (text: any) => text.split('').map((c: any) => c.charCodeAt(0));
-    let byteHex = (n: any) => ('0' + Number(n).toString(16)).substr(-2);
-    let applySaltToChar = (code: any) =>
-        textToChars(config.SALT).reduce((a: any, b: any) => a ^ b, code);
+// export const cipher = (text: string) => {
+//     const textToChars = (text: any) => text.split('').map((c: any) => c.charCodeAt(0));
+//     const byteHex = (n: any) => ('0' + Number(n).toString(16)).substr(-2);
+//     const applySaltToChar = (code: any) =>
+//         textToChars(config.SALT).reduce((a: any, b: any) => a ^ b, code);
 
-    return text.split('').map(textToChars).map(applySaltToChar).map(byteHex).join('');
-};
+//     return text.split('').map(textToChars).map(applySaltToChar).map(byteHex).join('');
+// };
 
 // const decipher = (encoded: string) => {
 //     let textToChars = (text: any) => text.split('').map((c: any) => c.charCodeAt(0));
@@ -159,31 +158,31 @@ export const cipher = (text: string) => {
 //         .join('');
 // };
 
-export const loadFromLocalStorage = (target: string, encrypt = true) => {
-    try {
-        const serializedObject = localStorage.getItem(target);
+// export const loadFromLocalStorage = (target: string, encrypt = true) => {
+//     try {
+//         const serializedObject = localStorage.getItem(target);
 
-        if (serializedObject === null) {
-            return undefined;
-        }
-        let res = JSON.parse(encrypt ? serializedObject : serializedObject);
-        return res;
-    } catch (e) {
-        console.log(e);
-        return undefined;
-    }
-};
+//         if (serializedObject === null) {
+//             return undefined;
+//         }
+//         const res = JSON.parse(encrypt ? serializedObject : serializedObject);
+//         return res;
+//     } catch (e) {
+//         console.log(e);
+//         return undefined;
+//     }
+// };
 
-export const saveToLocalStorage = (obj: object, target: string = 'tokens', encrypt = true) => {
-    try {
-        const serializedObject = encrypt ? cipher(JSON.stringify(obj)) : JSON.stringify(obj);
-        localStorage.setItem(target, serializedObject);
-    } catch (e) {
-        console.log('saveToLocalStorage', e);
-    }
-};
+// export const saveToLocalStorage = (obj: object, target = 'tokens', encrypt = true) => {
+//     try {
+//         const serializedObject = encrypt ? cipher(JSON.stringify(obj)) : JSON.stringify(obj);
+//         localStorage.setItem(target, serializedObject);
+//     } catch (e) {
+//         console.log('saveToLocalStorage', e);
+//     }
+// };
 
-export const saveStringToLocalStorage = (str: string, target: string = 'tokens') => {
+export const saveStringToLocalStorage = (str: string, target = 'tokens') => {
     try {
         localStorage.setItem(target, str);
     } catch (e) {
@@ -191,7 +190,7 @@ export const saveStringToLocalStorage = (str: string, target: string = 'tokens')
     }
 };
 
-export const loadStringFromLocalStorage = (target: string = 'tokens') => {
+export const loadStringFromLocalStorage = (target = 'tokens') => {
     try {
         return localStorage.getItem(target);
     } catch (e) {
@@ -323,7 +322,7 @@ export const extractItemId = (itemId: string) => {
 
 export const parseTokenId = (itemId: string, long?: boolean) => {
     if (itemId && itemId.startsWith(constants.ID_PREFIX_ITEM)) {
-        let num = +itemId.replace(constants.ID_PREFIX_ITEM, '');
+        const num = +itemId.replace(constants.ID_PREFIX_ITEM, '');
         return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][num >> 8]} ${
             long ? '#' : ''
         }${num & 0xff}`;
@@ -335,7 +334,7 @@ export const parseTokenId = (itemId: string, long?: boolean) => {
 export const parseTokenIdSmart = (itemId: string) => {
     if (!itemId) return '';
     if (itemId.startsWith(constants.ID_PREFIX_ITEM)) {
-        let num = +itemId.replace(constants.ID_PREFIX_ITEM, '');
+        const num = +itemId.replace(constants.ID_PREFIX_ITEM, '');
         return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][num >> 8]} ${
             num & 0xff
         }`;

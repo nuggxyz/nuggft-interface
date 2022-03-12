@@ -10,7 +10,7 @@ import LoansTab from './tabs/LoansTab/LoansTab';
 import MintTab from './tabs/MintTab/MintTab';
 import styles from './Wallet.styles';
 import ManageWalletTab from './tabs/ManageWalletTab';
-type Props = {};
+type Props = Record<string, never>;
 
 const Wallet: FunctionComponent<Props> = () => {
     const screenType = state.app.select.screenType();
@@ -23,7 +23,7 @@ const Wallet: FunctionComponent<Props> = () => {
                 ? [
                       {
                           label: 'Home',
-                          comp: ({ isActive }: { isActive: boolean }) => <ManageWalletTab />,
+                          comp: () => <ManageWalletTab />,
                       },
                   ]
                 : [
@@ -31,31 +31,22 @@ const Wallet: FunctionComponent<Props> = () => {
                           ? [
                                 {
                                     label: 'Home',
-                                    comp: ({ isActive }: { isActive: boolean }) => <MintTab />,
+                                    comp: () => <MintTab />,
                                 },
                                 {
                                     label: 'Claims',
-                                    comp: ({ isActive }: { isActive: boolean }) => (
-                                        <ClaimTab isActive={isActive} />
-                                    ),
+                                    comp: () => <ClaimTab />,
                                 },
-                                // {
-                                //     label: 'Sales',
-                                //     comp: ({ isActive }) => <SalesTab isActive={isActive} />,
-                                // },
+
                                 {
                                     label: 'Loans',
-                                    comp: ({ isActive }: { isActive: boolean }) => (
-                                        <LoansTab isActive={isActive} />
-                                    ),
+                                    comp: () => <LoansTab />,
                                 },
                             ]
                           : [
                                 {
                                     label: 'Home',
-                                    comp: ({ isActive }: { isActive: boolean }) => (
-                                        <ConnectWalletTab />
-                                    ),
+                                    comp: () => <ConnectWalletTab />,
                                 },
                             ]),
                   ],

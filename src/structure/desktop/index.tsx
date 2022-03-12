@@ -6,7 +6,7 @@ import PageContainer from '@src/components/nugg/PageLayout/PageContainer/PageCon
 const SearchOverlay = React.lazy(() => import('./SearchOverlay'));
 const SwapPage = React.lazy(() => import('./SwapPage'));
 
-type Props = {};
+type Props = Record<string, never>;
 
 const Desktop: FunctionComponent<Props> = () => {
     return (

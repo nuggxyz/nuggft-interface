@@ -10,7 +10,7 @@ import web3 from '@src/web3';
 import HappyTipper from '@src/components/general/HappyTipper/HappyTipper';
 import lib from '@src/lib';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const ConnectWalletTab: FunctionComponent<Props> = () => {
     return (
@@ -101,7 +101,7 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                                     if (check) {
                                         if (check.store.getState().activating)
                                             await check.connector.deactivate();
-                                        check.connector.activate(undefined, peer.peer);
+                                        void check.connector.activate(undefined, peer.peer);
                                     }
                                 }}
                             />

@@ -6,7 +6,6 @@ import Label from '@src/components/general/Label/Label';
 import {
     createItemId,
     formatItemSwapIdForSend,
-    isUndefinedOrNullOrStringEmpty,
     padToAddress,
     parseTokenId,
     sortByField,
@@ -25,6 +24,7 @@ import styles from './ViewingNugg.styles';
 
 interface ExtraData extends DefaultExtraData {
     tokenId: string;
+    isOwner: boolean;
 }
 
 interface Props extends ExtraData {
@@ -32,13 +32,20 @@ interface Props extends ExtraData {
     tokenId: string;
 }
 
-const ItemList: FunctionComponent<Props> = ({ items, chainId, provider, sender, tokenId }) => {
+const ItemList: FunctionComponent<Props> = ({
+    items,
+    chainId,
+    provider,
+    sender,
+    tokenId,
+    isOwner,
+}) => {
     return (
         <List
             style={{ padding: '1rem' }}
             data={sortByField(items, 'feature', false)}
             RenderItem={Item}
-            extraData={{ sender, provider, chainId, tokenId }}
+            extraData={{ sender, provider, chainId, tokenId, isOwner }}
             action={() => undefined}
         />
     );
@@ -52,12 +59,14 @@ const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData, undefined>> = ({ ite
                     tokenId={createItemId((item.feature << 8) | item.position)}
                     style={styles.listItemSvg}
                     // data={item.dotnuggRawCache}
+                    disableOnClick
                 />
 
                 <Label text={parseTokenId(createItemId((item.feature << 8) | item.position))} />
             </div>
             {+item.feature !== constants.FEATURE_BASE &&
-                (isUndefinedOrNullOrStringEmpty(item.activeSwap) ? (
+                extraData.isOwner &&
+                (!item.activeSwap ? (
                     <Button
                         label="Sell"
                         buttonStyle={styles.itemListButton}

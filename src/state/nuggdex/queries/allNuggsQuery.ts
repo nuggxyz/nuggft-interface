@@ -39,8 +39,9 @@ const allNuggsQuery = async (
             'nuggs',
         )) as NL.GraphQL.Fragments.Nugg.ListItem[];
         return !isUndefinedOrNullOrArrayEmpty(result) ? result : [];
-    } catch (e) {
-        throw new Error(`allNuggsQuery: ${e}`);
+    } catch (e: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        throw new Error('allnuggsquery ${e}');
     }
 };
 

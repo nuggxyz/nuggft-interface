@@ -15,7 +15,7 @@ import Sales from './Sales';
 import Recents from './Recents';
 import styles from './SearchView.styles';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const SearchView: FunctionComponent<Props> = () => {
     const isViewOpen = client.live.isViewOpen();

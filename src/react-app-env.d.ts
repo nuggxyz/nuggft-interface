@@ -1,12 +1,14 @@
 /// <reference types="node" />
 /// <reference types="react-dom" />
-/// <reference types="react" />
+import('react');
 
 declare type Base64EncodedSvg = `data:image/svg+xml;base64,${string}`;
 
 declare namespace React {
     type UnsafeDependencyList = any[];
 }
+
+declare type CSSPropertiesAnimated = import('@react-spring/web').AnimatedProps<unknown>;
 
 declare module '@metamask/jazzicon' {
     export default function (diameter: number, seed: number): HTMLElement;
@@ -121,27 +123,25 @@ interface Array<T> {
     smartRemove<U>(element: U, field?: keyof U): Array<U>;
 }
 
-namespace NL {
-    type Address = import('./classes/Address').Address;
-    type AddressSigner = import('./classes/Address').AddressSigner;
-    type EthInt = import('./classes/Fraction').EthInt;
-    type PairInt = import('./classes/Fraction').PairInt;
+type Address = import('./classes/Address').Address;
+type AddressSigner = import('./classes/Address').AddressSigner;
+type EthInt = import('./classes/Fraction').EthInt;
+type PairInt = import('./classes/Fraction').PairInt;
 
-    type Fraction = import('./classes/Fraction').Fraction;
-    type Fraction2x96 = import('./classes/Fraction').Fraction2x96;
-    type Fraction2x128 = import('./classes/Fraction').Fraction2x128;
+type Fraction = import('./classes/Fraction').Fraction;
+type Fraction2x96 = import('./classes/Fraction').Fraction2x96;
+type Fraction2x128 = import('./classes/Fraction').Fraction2x128;
 
-    type Fractionish = import('./classes/Fraction').Fractionish;
-    type BigNumber = import('ethers').BigNumber;
-    type BigNumberish = import('ethers').BigNumberish;
+type Fractionish = import('./classes/Fraction').Fractionish;
+type BigNumber = import('ethers').BigNumber;
+type BigNumberish = import('ethers').BigNumberish;
 
-    enum Currency {
-        ETH = 0,
-        WETH = 1,
-        xNUGG = 2,
-    }
-
-    type TransactionResponse = import('@ethersproject/providers').TransactionResponse;
-
-    type TransactionReceipt = import('@ethersproject/providers').TransactionReceipt;
+declare enum Currency {
+    ETH = 0,
+    WETH = 1,
+    xNUGG = 2,
 }
+
+type TransactionResponse = import('@ethersproject/providers').TransactionResponse;
+
+type TransactionReceipt = import('@ethersproject/providers').TransactionReceipt;

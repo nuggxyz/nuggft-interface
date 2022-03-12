@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const useAnimationFrame = (
     callback: (time: number) => void,

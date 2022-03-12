@@ -20,11 +20,11 @@ import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
 import styles from './NuggDexSearchList.styles';
 
-type Props = {};
+type Props = Record<string, never>;
 const NuggDexSearchList: FunctionComponent<Props> = () => {
     const epoch__id = client.live.epoch.id();
     const filters = NuggDexState.select.searchFilters();
-    const [sortAsc, setSortAsc] = useState<{ [key in NL.Redux.NuggDex.SearchViews]: boolean }>({
+    const [sortAsc, setSortAsc] = useState<{ [key in NuggDexSearchViews]: boolean }>({
         'recently viewed': false,
         'all nuggs': false,
         'on sale': false,
@@ -63,7 +63,10 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         () =>
             _liveActiveItems.reduce((acc: SwapData[], item) => {
                 let tmp = acc;
-                if (filters.searchValue === '' || filters.searchValue === item.id) {
+                if (
+                    filters.searchValue &&
+                    (filters.searchValue === '' || filters.searchValue === item.id)
+                ) {
                     if (sortAsc['items on sale']) {
                         tmp = [...acc, item];
                     } else {
@@ -83,7 +86,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         });
     }, [viewing, setSortAsc]);
     useEffect(() => {
-        if (filters.target) {
+        if (filters?.target) {
             setSortAsc((sort) => {
                 return {
                     ...sort,
@@ -116,8 +119,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         async (
             setResults: React.Dispatch<React.SetStateAction<NL.GraphQL.Fragments.Nugg.ListItem[]>>,
             startFrom: number,
-            addToResult: boolean = false,
-            filters: NL.Redux.NuggDex.Filters,
+            addToResult = false,
+            filters: NuggDexFilters,
             setLoading?: React.Dispatch<SetStateAction<boolean>>,
             desiredSize?: number,
         ) => {

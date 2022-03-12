@@ -1,4 +1,4 @@
-const useHandleError = (target: string) => {
+const useHandleError = () => {
     // const [isError, setIsError] = useState(false);
     // const swapError = SwapState.select.error();
     // useEffect(() => {

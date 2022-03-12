@@ -38,25 +38,20 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
         return [
             {
                 label: 'Swaps',
-                comp: ({ isActive }: { isActive: boolean }) => <SwapList />,
+                comp: () => <SwapList />,
             },
-            ...(provider &&
-            chainId &&
-            token &&
-            token.type === 'nugg' &&
-            sender === token?.owner &&
-            lastView__tokenId &&
-            !token?.activeSwap?.id
+            ...(provider && chainId && token && token.type === 'nugg' && sender && lastView__tokenId
                 ? [
                       {
                           label: 'Items',
-                          comp: ({ isActive }: { isActive: boolean }) => (
+                          comp: () => (
                               <ItemList
                                   {...{
                                       items: token?.items,
                                       chainId,
                                       provider,
                                       sender,
+                                      isOwner: sender === token.owner && !token?.activeSwap?.id,
                                       tokenId: lastView__tokenId,
                                   }}
                               />

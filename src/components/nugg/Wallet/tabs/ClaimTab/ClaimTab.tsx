@@ -16,9 +16,10 @@ import Layout from '@src/lib/layout';
 import web3 from '@src/web3';
 import client from '@src/client';
 import { DefaultExtraData, UnclaimedOffer } from '@src/client/core';
-type Props = { isActive?: boolean };
 
-const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
+type Props = Record<string, never>;
+
+const ClaimTab: FunctionComponent<Props> = () => {
     const sender = web3.hook.usePriorityAccount();
     const epoch__id = client.live.epoch.id();
     const provider = web3.hook.usePriorityProvider();
@@ -53,7 +54,7 @@ const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
                                   }}
                                   label="Claim all"
                                   onClick={() => {
-                                      let addresses: string[] = [],
+                                      const addresses: string[] = [],
                                           tokenIds: string[] = [];
                                       unclaimedOffers.forEach((x) => {
                                           tokenIds.push(x.claimParams.tokenId);
@@ -96,7 +97,7 @@ const RenderItem: FunctionComponent<
             item.type === 'item'
                 ? //@ts-ignore
                   `For Nugg #${item.nugg}`
-                : `From epoch ${item.endingEpoch}`,
+                : `From epoch ${item.endingEpoch !== null ? item.endingEpoch : ''}`,
         [item],
     );
 
@@ -125,7 +126,7 @@ const RenderItem: FunctionComponent<
                     <Text textStyle={listStyles.renderTitle} size="small">
                         {item.leader
                             ? `${parseTokenId(item.tokenId, true)}`
-                            : `${item.eth.num} ETH`}
+                            : `${item.eth.decimal.toNumber()} ETH`}
                     </Text>
                     <Text textStyle={{ color: Colors.textColor }} size="smaller" type="text">
                         {item.leader

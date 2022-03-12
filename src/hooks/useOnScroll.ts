@@ -26,7 +26,7 @@ function useOnScroll(
     const handleDocumentScrollThrottled = throttle(handleDocumentScroll, 250);
 
     useEffect(() => {
-        let current = ref.current !== undefined && ref.current !== null ? ref.current : document;
+        const current = ref.current !== undefined && ref.current !== null ? ref.current : document;
         current.addEventListener('scroll', handleDocumentScrollThrottled);
 
         return () => current.removeEventListener('scroll', handleDocumentScrollThrottled);

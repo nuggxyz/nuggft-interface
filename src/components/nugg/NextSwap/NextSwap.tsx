@@ -14,7 +14,7 @@ import FontSize from '@src/lib/fontSize';
 import styles2 from '@src/components/nugg/RingAbout/RingAbout.styles';
 import AppState from '@src/state/app';
 import Flyout from '@src/components/general/Flyout/Flyout';
-type Props = {};
+type Props = Record<string, never>;
 
 const NextSwap: FunctionComponent<Props> = () => {
     const activeswaps = client.live.activeSwaps();
@@ -25,26 +25,25 @@ const NextSwap: FunctionComponent<Props> = () => {
     const [prevEpochId, setPrevEpochId] = React.useState<number>(0);
 
     const lastSwap__tokenId = client.live.lastSwap.tokenId();
-    const [on, setOn] = React.useState(true);
-    const [open, setOpen] = React.useState(true);
+    const [on] = React.useState(true);
+    const [open] = React.useState(true);
     const [waiting, setWaiting] = React.useState(false);
     const [queue, setQueue] = React.useState<SwapData>();
     const [auto, setAuto] = React.useState<boolean>(true);
 
     const abc = React.useCallback(
         (tokenId: string) => {
-            if (on) {
-                setWaiting(true);
-                setTimeout(() => {
-                    client.actions.routeTo(tokenId, false);
-                    setWaiting(false);
-                    setQueue(undefined);
+            setWaiting(true);
+            setTimeout(() => {
+                on;
+                client.actions.routeTo(tokenId, false);
+                setWaiting(false);
+                setQueue(undefined);
 
-                    if (auto) {
-                        // setQueue()
-                    }
-                }, 5000);
-            }
+                if (auto) {
+                    // setQueue()
+                }
+            }, 5000);
         },
         [on],
     );
@@ -250,7 +249,6 @@ export default NextSwap;
 
 const SwapRenderItem = ({
     swap,
-    index,
     setQueue,
 }: {
     swap: SwapData;

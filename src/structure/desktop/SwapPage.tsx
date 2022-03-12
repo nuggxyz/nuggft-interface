@@ -7,7 +7,7 @@ import AppState from '@src/state/app';
 
 import styles from './SwapPage.styles';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const SwapPage: FunctionComponent<Props> = () => {
     const screen = AppState.select.screenType();
@@ -33,7 +33,6 @@ const SwapPage: FunctionComponent<Props> = () => {
                 <>
                     <div style={styles.secondaryContainer}>
                         <div style={styles.innerContainer}>
-                            {' '}
                             <RingAbout />
                         </div>
                         <div style={styles.innerContainer}>
@@ -41,7 +40,6 @@ const SwapPage: FunctionComponent<Props> = () => {
                         </div>
                     </div>
                     <div style={styles.theRingContainer}>
-                        {' '}
                         <TheRing />
                     </div>
                 </>

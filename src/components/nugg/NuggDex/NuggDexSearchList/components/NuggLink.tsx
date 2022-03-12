@@ -18,7 +18,7 @@ import NuggLinkAnchor from './NuggLinkAnchor';
 import NuggLinkThumbnail from './NuggLinkThumbnail';
 
 type Props = {
-    type: NL.Redux.NuggDex.SearchViews;
+    type: NuggDexSearchViews;
     previewNuggs: NL.GraphQL.Fragments.Nugg.ListItem[];
     style?: CSSProperties | WithAnimated;
     limit?: number;
@@ -34,7 +34,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
     const ref = useRef<HTMLDivElement>(null);
     const viewing = NuggDexState.select.viewing();
     const toggled = useCallback(
-        (toggVal, notToggVal) => {
+        (toggVal: string | number, notToggVal: string | number) => {
             return viewing !== 'home' ? (viewing !== type ? notToggVal : toggVal) : notToggVal;
         },
         [viewing, type],

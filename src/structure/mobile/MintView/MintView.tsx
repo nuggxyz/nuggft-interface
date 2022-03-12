@@ -10,7 +10,7 @@ import { parseTokenIdSmart } from '@src/lib';
 
 import styles from './MintView.styles';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const MintView: FunctionComponent<Props> = () => {
     const { width, height } = AppState.select.dimensions();

@@ -8,7 +8,7 @@ import updater from './updater';
 
 const STATE_NAME = 'transaction';
 
-export default class TransactionState extends NLState<NL.Redux.Transaction.State> {
+export default class TransactionState extends NLState<TransactionStateType> {
     declare static _instance: TransactionState;
 
     declare static actions: typeof this.instance._slice.actions;
@@ -44,7 +44,10 @@ export default class TransactionState extends NLState<NL.Redux.Transaction.State
             clearTransaction: (state) => {
                 state.txn = '';
             },
-            initiate: (_, __: PayloadAction<{ _pendingtx: any }>) => {},
+            initiate: (_, __: PayloadAction<{ _pendingtx: unknown }>) => {
+                __;
+            },
+
             addTransaction: (state, action: PayloadAction<string>) => {
                 state.txn = action.payload;
             },
@@ -56,6 +59,7 @@ export default class TransactionState extends NLState<NL.Redux.Transaction.State
                 }>,
             ) => {
                 state.toggleCompletedTxn = !state.toggleCompletedTxn;
+                _;
             },
             reset: (state) => {
                 state.txn = '';
@@ -74,7 +78,7 @@ export default class TransactionState extends NLState<NL.Redux.Transaction.State
                 })
                 .addMatcher(
                     NLState.isRejectedAction(`${this._name}/`),
-                    (state, action: PayloadAction<NL.Redux.Transaction.Error>) => {
+                    (state, action: PayloadAction<TransactionStateError>) => {
                         state.loading = false;
                         state.error = action.payload;
                         state.success = undefined;
@@ -85,7 +89,7 @@ export default class TransactionState extends NLState<NL.Redux.Transaction.State
                     (
                         state,
                         action: PayloadAction<{
-                            success: NL.Redux.Transaction.Success;
+                            success: TransactionStateSuccess;
                         }>,
                     ) => {
                         state.loading = false;

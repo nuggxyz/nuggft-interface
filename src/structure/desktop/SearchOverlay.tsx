@@ -9,7 +9,7 @@ import client from '@src/client';
 
 import styles from './SearchOverlay.styles';
 
-type Props = {};
+type Props = Record<string, never>;
 
 const SearchOverlay: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();

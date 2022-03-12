@@ -23,9 +23,9 @@ import { LiveNugg } from '@src/client/hooks/useLiveNugg';
 
 import styles from './RingAbout.styles';
 
-type Props = {};
+type Props = Record<string, never>;
 
-const RingAbout: FunctionComponent<Props> = ({}) => {
+const RingAbout: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
 
     const address = web3.hook.usePriorityAccount();
@@ -33,7 +33,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     const lastSwap__tokenId = client.live.lastSwap.tokenId();
     const lastSwap__type = client.live.lastSwap.type();
 
-    const { token, epoch, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
+    const { token, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
 
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
@@ -264,7 +264,6 @@ const OfferRenderItem = ({
     chainId,
     offer,
     token,
-    index,
 }: {
     provider: Web3Provider;
     chainId: Chain;

@@ -29,7 +29,7 @@ const NuggLinkThumbnail: FunctionComponent<{
 
     return (
         <animated.div
-            ref={ref as any}
+            ref={ref}
             key={index}
             style={{ ...style }}
             onClick={() => {

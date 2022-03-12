@@ -1,3 +1,5 @@
+/* eslint-disable no-unexpected-multiline */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import gql from 'graphql-tag';
 import { Web3Provider } from '@ethersproject/providers';
@@ -18,7 +20,7 @@ import { executeQuery } from '@src/graphql/helpers';
 import { Chain } from '@src/web3/core/interfaces';
 
 const placeOffer = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
+    TxThunkSuccess<WalletSuccess>,
     {
         amount: string;
         tokenId: string;
@@ -28,7 +30,7 @@ const placeOffer = createAsyncThunk<
         buyingTokenId?: string;
         sellingTokenId?: string;
     },
-    { rejectValue: NL.Redux.Wallet.Error }
+    { rejectValue: WalletError }
 >(
     'wallet/placeOffer',
     async (
@@ -65,18 +67,17 @@ const placeOffer = createAsyncThunk<
                 },
             };
         } catch (err: any) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (err !== undefined && err.method !== undefined && err.method === 'estimateGas') {
                 return thunkAPI.rejectWithValue('GAS_ERROR');
             }
-            if (
-                !isUndefinedOrNullOrNotObject(err) &&
-                !isUndefinedOrNullOrNotObject(err.data) &&
-                !isUndefinedOrNullOrStringEmpty(err.data.message)
-            ) {
-                const code = err.data.message.replace(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            if (err && err.data && err.data.message) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                const code = (err.data.message as string).replace(
                     'execution reverted: ',
                     '',
-                ) as NL.Redux.Wallet.Error;
+                ) as WalletError;
                 return thunkAPI.rejectWithValue(code);
             }
             return thunkAPI.rejectWithValue('UNKNOWN');
@@ -85,7 +86,7 @@ const placeOffer = createAsyncThunk<
 );
 
 const initSale = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
+    TxThunkSuccess<WalletSuccess>,
     {
         tokenId: string;
         itemId?: string;
@@ -94,7 +95,7 @@ const initSale = createAsyncThunk<
         provider: Web3Provider;
         address: string;
     },
-    { rejectValue: NL.Redux.Wallet.Error }
+    { rejectValue: WalletError }
 >(`wallet/initSale`, async ({ tokenId, floor, chainId, provider, address, itemId }, thunkAPI) => {
     try {
         let _pendingtx;
@@ -111,40 +112,37 @@ const initSale = createAsyncThunk<
         }
 
         return {
-            success: 'SUCCESS',
+            success: 'SUCCESS' as WalletSuccess,
             _pendingtx: _pendingtx.hash,
             chainId,
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err: any) {
-        console.log({ err });
-        if (
-            !isUndefinedOrNullOrObjectEmpty(err) &&
-            !isUndefinedOrNullOrStringEmpty(err.method) &&
-            err.method === 'estimateGas'
-        ) {
-            return thunkAPI.rejectWithValue('GAS_ERROR');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        if (err && err.method && err.method === 'estimateGas') {
+            return thunkAPI.rejectWithValue('GAS_ERROR' as WalletError);
         }
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&
             !isUndefinedOrNullOrStringEmpty(err.data.message)
         ) {
-            const code = err.data.message.replace(
+            const code = (err.data.message as string).replace(
                 'execution reverted: ',
                 '',
-            ) as NL.Redux.Wallet.Error;
+            ) as WalletError;
             return thunkAPI.rejectWithValue(code);
         }
-        return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
+        return thunkAPI.rejectWithValue('GAS_ERROR');
     }
 });
 
 const withdraw = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
+    TxThunkSuccess<WalletSuccess>,
     { tokenId: string; provider: Web3Provider; chainId: Chain; address: string },
     // adding the root state type to this thaction causes a circular reference
-    { rejectValue: NL.Redux.Wallet.Error }
+    { rejectValue: WalletError }
 >(`wallet/withdraw`, async ({ tokenId, provider, chainId, address }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
@@ -157,16 +155,16 @@ const withdraw = createAsyncThunk<
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err: any) {
-        console.log({ err });
+        console.log({ err: err as string });
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&
             !isUndefinedOrNullOrStringEmpty(err.data.message)
         ) {
-            const code = err.data.message.replace(
+            const code = (err.data.message as string).replace(
                 'execution reverted: ',
                 '',
-            ) as NL.Redux.Wallet.Error;
+            ) as WalletError;
             return thunkAPI.rejectWithValue(code);
         }
         return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
@@ -174,7 +172,7 @@ const withdraw = createAsyncThunk<
 });
 
 const claim = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
+    TxThunkSuccess<WalletSuccess>,
     {
         tokenId: string;
         provider: Web3Provider;
@@ -183,7 +181,7 @@ const claim = createAsyncThunk<
         sender: string;
     },
     // adding the root state type to this thaction causes a circular reference
-    { rejectValue: NL.Redux.Wallet.Error }
+    { rejectValue: WalletError }
 >(`wallet/claim`, async ({ tokenId, provider, chainId, sender, address }, thunkAPI) => {
     try {
         console.log(address);
@@ -196,16 +194,16 @@ const claim = createAsyncThunk<
             chainId,
         };
     } catch (err: any) {
-        console.log({ err });
+        console.log({ err: err as string });
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&
             !isUndefinedOrNullOrStringEmpty(err.data.message)
         ) {
-            const code = err.data.message.replace(
+            const code = (err.data.message as string).replace(
                 'execution reverted: ',
                 '',
-            ) as NL.Redux.Wallet.Error;
+            ) as WalletError;
             return thunkAPI.rejectWithValue(code);
         }
         return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
@@ -213,7 +211,7 @@ const claim = createAsyncThunk<
 });
 
 const multiClaim = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
+    TxThunkSuccess<WalletSuccess>,
     {
         tokenIds: string[];
         provider: Web3Provider;
@@ -222,7 +220,7 @@ const multiClaim = createAsyncThunk<
         addresses: string[];
     },
     // adding the root state type to this thaction causes a circular reference
-    { rejectValue: NL.Redux.Wallet.Error }
+    { rejectValue: WalletError }
 >(`wallet/multiClaim`, async ({ tokenIds, provider, chainId, sender, addresses }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
@@ -236,16 +234,16 @@ const multiClaim = createAsyncThunk<
             chainId,
         };
     } catch (err: any) {
-        console.log({ err });
+        console.log({ err: err as string });
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&
             !isUndefinedOrNullOrStringEmpty(err.data.message)
         ) {
-            const code = err.data.message.replace(
+            const code = (err.data.message as string).replace(
                 'execution reverted: ',
                 '',
-            ) as NL.Redux.Wallet.Error;
+            ) as WalletError;
             return thunkAPI.rejectWithValue(code);
         }
         return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
@@ -253,12 +251,14 @@ const multiClaim = createAsyncThunk<
 });
 
 const mintNugg = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
+    TxThunkSuccess<WalletSuccess>,
     { chainId: Chain; provider: Web3Provider; address: string },
     // adding the root state type to this thaction causes a circular reference
-    { rejectValue: NL.Redux.Wallet.Error }
+    { rejectValue: WalletError }
 >(`wallet/mintNugg`, async ({ chainId, provider, address }, thunkAPI) => {
     try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const latestNugg = await executeQuery(
             chainId,
             gql`
@@ -304,16 +304,16 @@ const mintNugg = createAsyncThunk<
         }
         return thunkAPI.rejectWithValue('NO_NUGGS_TO_MINT');
     } catch (err: any) {
-        console.log({ err });
+        console.log({ err: err as string });
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&
             !isUndefinedOrNullOrStringEmpty(err.data.message)
         ) {
-            const code = err.data.message.replace(
+            const code = (err.data.message as string).replace(
                 'execution reverted: ',
                 '',
-            ) as NL.Redux.Wallet.Error;
+            ) as WalletError;
             return thunkAPI.rejectWithValue(code);
         }
         return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
@@ -321,10 +321,10 @@ const mintNugg = createAsyncThunk<
 });
 
 const initLoan = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
+    TxThunkSuccess<WalletSuccess>,
     { tokenId: string; provider: Web3Provider; chainId: Chain; address: string },
     // adding the root state type to this thaction causes a circular reference
-    { rejectValue: NL.Redux.Wallet.Error }
+    { rejectValue: WalletError }
 >(`wallet/initLoan`, async ({ tokenId, provider, chainId, address }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
@@ -337,16 +337,16 @@ const initLoan = createAsyncThunk<
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err: any) {
-        console.log({ err });
+        console.log({ err: err as string });
         if (
             !isUndefinedOrNullOrNotObject(err) &&
             !isUndefinedOrNullOrNotObject(err.data) &&
             !isUndefinedOrNullOrStringEmpty(err.data.message)
         ) {
-            const code = err.data.message.replace(
+            const code = (err.data.message as string).replace(
                 'execution reverted: ',
                 '',
-            ) as NL.Redux.Wallet.Error;
+            ) as WalletError;
             return thunkAPI.rejectWithValue(code);
         }
         return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
@@ -354,7 +354,7 @@ const initLoan = createAsyncThunk<
 });
 
 const payOffLoan = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
+    TxThunkSuccess<WalletSuccess>,
     {
         tokenId: string;
         amount: string;
@@ -363,7 +363,7 @@ const payOffLoan = createAsyncThunk<
         address: string;
     },
     // adding the root state type to this thaction causes a circular reference
-    { rejectValue: NL.Redux.Wallet.Error }
+    { rejectValue: WalletError }
 >(`wallet/payOffLoan`, async ({ tokenId, amount, provider, chainId, address }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
@@ -377,7 +377,7 @@ const payOffLoan = createAsyncThunk<
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err: any) {
-        console.log({ err });
+        console.log({ err: err as string });
         if (
             !isUndefinedOrNullOrObjectEmpty(err) &&
             !isUndefinedOrNullOrStringEmpty(err.method) &&
@@ -390,10 +390,10 @@ const payOffLoan = createAsyncThunk<
             !isUndefinedOrNullOrNotObject(err.data) &&
             !isUndefinedOrNullOrStringEmpty(err.data.message)
         ) {
-            const code = err.data.message.replace(
+            const code = (err.data.message as string).replace(
                 'execution reverted: ',
                 '',
-            ) as NL.Redux.Wallet.Error;
+            ) as WalletError;
             return thunkAPI.rejectWithValue(code);
         }
         return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');
@@ -401,7 +401,7 @@ const payOffLoan = createAsyncThunk<
 });
 
 const extend = createAsyncThunk<
-    NL.Redux.Transaction.TxThunkSuccess<NL.Redux.Wallet.Success>,
+    TxThunkSuccess<WalletSuccess>,
     {
         tokenId: string;
         amount: string;
@@ -410,7 +410,7 @@ const extend = createAsyncThunk<
         address: string;
     },
     // adding the root state type to this thaction causes a circular reference
-    { rejectValue: NL.Redux.Wallet.Error }
+    { rejectValue: WalletError }
 >(`wallet/extend`, async ({ tokenId, amount, provider, chainId, address }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
@@ -425,7 +425,7 @@ const extend = createAsyncThunk<
             callbackFn: () => AppState.dispatch.setModalClosed(),
         };
     } catch (err: any) {
-        console.log({ err });
+        console.log({ err: err as string });
         if (
             !isUndefinedOrNullOrObjectEmpty(err) &&
             !isUndefinedOrNullOrStringEmpty(err.method) &&
@@ -438,10 +438,10 @@ const extend = createAsyncThunk<
             !isUndefinedOrNullOrNotObject(err.data) &&
             !isUndefinedOrNullOrStringEmpty(err.data.message)
         ) {
-            const code = err.data.message.replace(
+            const code = (err.data.message as string).replace(
                 'execution reverted: ',
                 '',
-            ) as NL.Redux.Wallet.Error;
+            ) as WalletError;
             return thunkAPI.rejectWithValue(code);
         }
         return thunkAPI.rejectWithValue('ERROR_LINKING_ACCOUNT');

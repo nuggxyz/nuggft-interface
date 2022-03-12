@@ -18,12 +18,12 @@ const INDEX = {
     Wallet: 1,
 };
 
-type Props = {};
+type Props = Record<string, never>;
 
 const BottomBar: FunctionComponent<Props> = () => {
     const lastView__tokenId = client.live.lastView.tokenId();
     const mobileView = AppState.select.mobileView();
-    const onClick = useCallback((view: NL.Redux.App.MobileViews) => {
+    const onClick = useCallback((view: AppStateMobileViews) => {
         AppState.dispatch.changeMobileView(view);
     }, []);
     const ref = useRef<HTMLDivElement>(null);
@@ -92,7 +92,7 @@ const BottomBar: FunctionComponent<Props> = () => {
                     textStyle={{
                         color: mobileView === 'Mint' ? Colors.nuggBlueText : 'white',
                     }}
-                    onClick={mobileView !== 'Mint' ? () => onClick('Mint') : undefined}
+                    onClick={mobileView !== 'Mint' ? () => onClick('Mint') : () => undefined}
                 />
                 <Button
                     onClick={() => onClick('Wallet')}
