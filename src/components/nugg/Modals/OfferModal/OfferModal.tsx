@@ -38,7 +38,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
-    const epoch = client.live.epoch();
+    const epoch__id = client.live.epoch.id();
 
     const userBalance = web3.hook.usePriorityBalance(provider);
 
@@ -58,17 +58,17 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
         [_myNuggs],
     );
     useEffect(() => {
-        if (epoch?.id) {
+        if (epoch__id) {
             const prevBidder = myNuggs.find((nugg) =>
                 nugg.unclaimedOffers.find(
-                    (offer) => (offer.endingEpoch ?? 0) <= epoch.id && offer.itemId === tokenId,
+                    (offer) => (offer.endingEpoch ?? 0) <= epoch__id && offer.itemId === tokenId,
                 ),
             );
             if (prevBidder) {
                 setSelectedNugg(prevBidder);
             }
         }
-    }, [myNuggs, epoch?.id, tokenId]);
+    }, [myNuggs, epoch__id, tokenId]);
 
     const activeItem = stableId && client.live.activeNuggItem(stableId);
 

@@ -3,7 +3,6 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { isUndefinedOrNullOrObjectEmpty, parseTokenId } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import constants from '@src/lib/constants';
 import client from '@src/client';
 import { ListRenderItemProps } from '@src/components/general/List/InfiniteList';
 
@@ -16,11 +15,7 @@ type Props = ListRenderItemProps<
 >;
 
 const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, action }) => {
-    const lastView__tokenId = client.live.lastView__tokenId();
-    const isNuggItem = useMemo(
-        () => item && item.id && item.id.startsWith(constants.ID_PREFIX_ITEM),
-        [item],
-    );
+    const lastView__tokenId = client.live.lastView.tokenId();
 
     const style = useMemo(() => {
         return {

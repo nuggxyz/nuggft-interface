@@ -21,6 +21,7 @@ const SwapPage: FunctionComponent<Props> = () => {
                             <TheRing circleWidth={1100} />
                         </div>
                         <div style={styles.tabletRingAbout}>
+                            {' '}
                             <RingAbout />
                         </div>
                     </div>
@@ -32,6 +33,7 @@ const SwapPage: FunctionComponent<Props> = () => {
                 <>
                     <div style={styles.secondaryContainer}>
                         <div style={styles.innerContainer}>
+                            {' '}
                             <RingAbout />
                         </div>
                         <div style={styles.innerContainer}>
@@ -39,6 +41,7 @@ const SwapPage: FunctionComponent<Props> = () => {
                         </div>
                     </div>
                     <div style={styles.theRingContainer}>
+                        {' '}
                         <TheRing />
                     </div>
                 </>

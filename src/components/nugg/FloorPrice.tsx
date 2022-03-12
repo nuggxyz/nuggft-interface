@@ -11,7 +11,8 @@ import client from '@src/client';
 type Props = { style?: CSSProperties };
 
 const FloorPrice: FunctionComponent<Props> = ({ style }) => {
-    const stake = client.live.stake();
+    const stake__eps = client.live.stake.eps();
+    const stake__shares = client.live.stake.shares();
 
     const springStyle = useSpring({
         // zIndex: 1000,
@@ -20,7 +21,7 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
         alignItems: 'center',
         justifyContent: 'center',
         margin: '.3rem 0rem',
-        opacity: stake && stake.shares !== BigNumber.from(0) ? 1 : 0,
+        opacity: stake__shares !== BigNumber.from(0) ? 1 : 0,
         ...style,
     });
 
@@ -39,11 +40,7 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
             >
                 FLOOR
             </Text>
-            <CurrencyText
-                size="small"
-                image="eth"
-                value={stake ? stake.eps.decimal.toNumber() : 0}
-            />
+            <CurrencyText size="small" image="eth" value={stake__eps?.decimal.toNumber() || 0} />
         </animated.div>
     );
 };

@@ -12,8 +12,8 @@ import client from '@src/client';
 import { LoanData } from '@src/client/core';
 type Props = { isActive?: boolean };
 
-const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
-    const epoch = client.live.epoch();
+const LoansTab: FunctionComponent<Props> = ({ isActive }) => {
+    const epoch__id = client.live.epoch.id();
 
     const loanedNuggs = client.live.myLoans();
 
@@ -28,7 +28,7 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
                 label="Loaned Nuggs"
                 // titleLoading={loadingNuggs}
                 style={listStyles.list}
-                extraData={epoch?.id}
+                extraData={epoch__id}
                 listEmptyText="You haven't loaned any nuggs yet!"
                 labelStyle={styles.listLabel}
                 listEmptyStyle={listStyles.textWhite}
@@ -39,7 +39,7 @@ const MyNuggsTab: FunctionComponent<Props> = ({ isActive }) => {
     );
 };
 
-export default React.memo(MyNuggsTab);
+export default React.memo(LoansTab);
 
 const RenderItem: FunctionComponent<
     ListRenderItemProps<LoanData, number | undefined, undefined>

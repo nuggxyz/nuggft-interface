@@ -10,7 +10,6 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import Button from '@src/components/general/Buttons/Button/Button';
 import Colors from '@src/lib/colors';
 import AppState from '@src/state/app';
-import TransactionState from '@src/state/transaction';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
@@ -31,17 +30,17 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const address = web3.hook.usePriorityAccount();
 
-    const lastSwap = client.live.lastSwap();
+    const lastSwap__tokenId = client.live.lastSwap.tokenId();
+    const lastSwap__type = client.live.lastSwap.type();
 
-    const { token, epoch, lifecycle } = client.hook.useLiveToken(lastSwap?.tokenId);
+    const { token, epoch, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
 
-    const txnToggle = TransactionState.select.toggleCompletedTxn();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 
     const [open, setOpen] = useState(false);
 
-    const offers = client.live.offers(lastSwap?.tokenId);
+    const offers = client.live.offers(lastSwap__tokenId);
 
     const leader = useMemo(() => {
         if (offers.length > 0) return offers[0];
@@ -97,8 +96,6 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
         opacity: open ? 1 : 0,
         padding: open ? '0.75rem' : '0rem',
     });
-
-    console.log({ lifecycle });
 
     return lifecycle !== 'stands' ? (
         <>
@@ -226,17 +223,17 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                         onClick={() =>
                             screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                                 ? AppState.dispatch.changeMobileView('Wallet')
-                                : lastSwap &&
+                                : lastSwap__tokenId &&
                                   AppState.dispatch.setModalOpen({
                                       name: 'OfferModal',
                                       modalData: {
-                                          targetId: lastSwap.tokenId,
+                                          targetId: lastSwap__tokenId,
                                           type:
-                                              lastSwap.type === Route.SwapItem
+                                              lastSwap__type === Route.SwapItem
                                                   ? 'OfferItem'
                                                   : 'OfferNugg',
                                           data: {
-                                              tokenId: lastSwap.tokenId,
+                                              tokenId: lastSwap__tokenId,
                                           },
                                       },
                                   })

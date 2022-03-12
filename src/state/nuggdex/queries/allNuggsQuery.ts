@@ -5,12 +5,10 @@ import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '@
 import { Chain } from '@src/web3/core/interfaces';
 
 const query = (
-    orderBy: 'eth' | 'id',
     orderDirection: 'asc' | 'desc',
     searchValue: string,
     first: number,
     skip: number,
-    epoch: number,
 ) => gql`
     {
         nuggs(
@@ -29,17 +27,15 @@ const query = (
 
 const allNuggsQuery = async (
     chainId: Chain,
-    orderBy: 'eth' | 'id',
     orderDirection: 'asc' | 'desc',
     searchValue: string,
     first: number,
     skip: number,
-    epoch: number,
 ) => {
     try {
         const result = (await executeQuery(
             chainId,
-            query(orderBy, orderDirection, searchValue, first, skip, epoch),
+            query(orderDirection, searchValue, first, skip),
             'nuggs',
         )) as NL.GraphQL.Fragments.Nugg.ListItem[];
         return !isUndefinedOrNullOrArrayEmpty(result) ? result : [];

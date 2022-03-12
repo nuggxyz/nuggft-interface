@@ -12,7 +12,7 @@ import { executeQuery3 } from '@src/graphql/helpers';
 
 import { parseRoute, Route, SwapRoutes, ViewRoutes, TokenId, ItemId, NuggId } from './router';
 
-const DEFAULT_STATE: ClientState = {
+export const DEFAULT_STATE: ClientState = {
     infura: undefined,
     stake: undefined,
     epoch: undefined,
@@ -138,6 +138,7 @@ export interface ClientState extends State {
     error: Error | undefined;
     activating: boolean;
 }
+type CS = ClientState;
 
 type ClientStateUpdate = {
     infura?: WebSocketProvider;

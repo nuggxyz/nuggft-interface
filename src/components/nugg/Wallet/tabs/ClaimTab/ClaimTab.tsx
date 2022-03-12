@@ -20,23 +20,23 @@ type Props = { isActive?: boolean };
 
 const ClaimTab: FunctionComponent<Props> = ({ isActive }) => {
     const sender = web3.hook.usePriorityAccount();
-    const epoch = client.live.epoch();
+    const epoch__id = client.live.epoch.id();
     const provider = web3.hook.usePriorityProvider();
 
     const chainId = web3.hook.usePriorityChainId();
 
     const unclaimedOffers = client.live.myUnclaimedOffers();
 
-    return sender && chainId && provider && epoch ? (
+    return sender && chainId && provider ? (
         <div style={styles.container}>
             <List
                 data={unclaimedOffers
-                    .filter((x) => x.endingEpoch !== null && x.endingEpoch < epoch.id)
+                    .filter((x) => x.endingEpoch !== null && epoch__id && x.endingEpoch < epoch__id)
                     .sort((a, b) => (a.endingEpoch ?? 0 > (b.endingEpoch ?? 0) ? -1 : 1))}
                 RenderItem={React.memo(RenderItem)}
                 TitleButton={
                     unclaimedOffers.filter(
-                        (x) => x.endingEpoch !== null && x.endingEpoch < epoch.id,
+                        (x) => x.endingEpoch !== null && epoch__id && x.endingEpoch < epoch__id,
                     ).length > 0
                         ? () => (
                               <FeedbackButton

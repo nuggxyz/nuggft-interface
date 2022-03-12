@@ -20,11 +20,11 @@ const NextSwap: FunctionComponent<Props> = () => {
     const activeswaps = client.live.activeSwaps();
     const screenType = AppState.select.screenType();
 
-    const epoch = client.live.epoch();
+    const epoch__id = client.live.epoch.id();
 
     const [prevEpochId, setPrevEpochId] = React.useState<number>(0);
 
-    const lastSwap__tokenId = client.live.lastSwap__tokenId();
+    const lastSwap__tokenId = client.live.lastSwap.tokenId();
     const [on, setOn] = React.useState(true);
     const [open, setOpen] = React.useState(true);
     const [waiting, setWaiting] = React.useState(false);
@@ -50,13 +50,13 @@ const NextSwap: FunctionComponent<Props> = () => {
     );
 
     React.useEffect(() => {
-        if (epoch) {
-            if (prevEpochId !== 0 && epoch) {
-                abc(epoch.id.toString());
+        if (epoch__id) {
+            if (prevEpochId !== 0 && epoch__id) {
+                abc(epoch__id.toString());
             }
-            setPrevEpochId(epoch.id);
+            setPrevEpochId(epoch__id);
         }
-    }, [epoch, abc, prevEpochId]);
+    }, [epoch__id, abc, prevEpochId]);
 
     const springStyle = useSpring({
         background: lib.colors.transparentGrey,

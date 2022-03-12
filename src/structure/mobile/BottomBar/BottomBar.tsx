@@ -21,12 +21,11 @@ const INDEX = {
 type Props = {};
 
 const BottomBar: FunctionComponent<Props> = () => {
-    const lastView__tokenId = client.live.lastView__tokenId();
+    const lastView__tokenId = client.live.lastView.tokenId();
     const mobileView = AppState.select.mobileView();
     const onClick = useCallback((view: NL.Redux.App.MobileViews) => {
         AppState.dispatch.changeMobileView(view);
     }, []);
-    const epoch = client.live.epoch();
     const ref = useRef<HTMLDivElement>(null);
 
     const width = useSetState<number>(

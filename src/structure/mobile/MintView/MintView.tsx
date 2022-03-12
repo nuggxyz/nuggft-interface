@@ -14,7 +14,7 @@ type Props = {};
 
 const MintView: FunctionComponent<Props> = () => {
     const { width, height } = AppState.select.dimensions();
-    const lastSwap__tokenId = client.live.lastSwap__tokenId();
+    const lastSwap__tokenId = client.live.lastSwap.tokenId();
     return (
         <div style={styles.container}>
             <FloorPrice style={{ zIndex: 0, marginTop: '.3rem' }} />

@@ -33,7 +33,7 @@ const MintTab: FunctionComponent<Props> = () => {
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
 
-    const stake = client.live.stake();
+    const stake__eps = client.live.stake.eps();
     const nuggs = client.live.myNuggs();
     const loans = client.live.myLoans();
     const unclaimedOffers = client.live.myUnclaimedOffers();
@@ -52,16 +52,18 @@ const MintTab: FunctionComponent<Props> = () => {
                             : undefined
                     }
                 >
-                    <NumberStatistic
-                        style={{
-                            alignItems: 'center',
-                            margin: '0rem',
-                            width: screenType === 'phone' ? '48%' : '100%',
-                        }}
-                        label="Balance"
-                        value={stake ? stake.eps.multiply(nuggs.length).decimal.toNumber() : 0}
-                        image="eth"
-                    />
+                    {stake__eps && (
+                        <NumberStatistic
+                            style={{
+                                alignItems: 'center',
+                                margin: '0rem',
+                                width: screenType === 'phone' ? '48%' : '100%',
+                            }}
+                            label="Balance"
+                            value={stake__eps.multiply(nuggs.length).decimal.toNumber()}
+                            image="eth"
+                        />
+                    )}
                     {screenType === 'phone' && (
                         <div
                             style={{

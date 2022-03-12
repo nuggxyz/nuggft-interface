@@ -16,7 +16,7 @@ const NuggLinkThumbnail: FunctionComponent<{
     style?: CSSProperties;
 }> = ({ item, index, style: customStyle }) => {
     const [ref, isHovering] = useOnHover();
-    const lastView__tokenId = client.live.lastView__tokenId();
+    const lastView__tokenId = client.live.lastView.tokenId();
 
     const style = useMemo(() => {
         return {

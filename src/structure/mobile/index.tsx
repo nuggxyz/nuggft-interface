@@ -25,7 +25,7 @@ const sty = {
 
 const Mobile: FunctionComponent<Props> = () => {
     const currentView = state.app.select.mobileView();
-    const lastView__tokenId = client.live.lastView__tokenId();
+    const lastView__tokenId = client.live.lastView.tokenId();
     useEffect(() => {
         if (lastView__tokenId && currentView !== 'Search') {
             state.app.dispatch.changeMobileView('Search');

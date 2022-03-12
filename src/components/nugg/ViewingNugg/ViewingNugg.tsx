@@ -24,7 +24,7 @@ import ItemList from './ItemList';
 type Props = { MobileBackButton?: () => JSX.Element };
 
 const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
-    const lastView = client.live.lastView();
+    const lastView__tokenId = client.live.lastView.tokenId();
 
     const sender = web3.hook.usePriorityAccount();
 
@@ -32,16 +32,9 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 
-    const { token } = client.hook.useLiveToken(lastView?.tokenId);
+    const { token } = client.hook.useLiveToken(lastView__tokenId);
 
     const happyTabs = useMemo(() => {
-        console.log({
-            provider,
-            chainId,
-            token,
-            sender,
-            lastView,
-        });
         return [
             {
                 label: 'Swaps',
@@ -52,8 +45,8 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
             token &&
             token.type === 'nugg' &&
             sender === token?.owner &&
-            !token?.activeSwap?.id &&
-            lastView
+            lastView__tokenId &&
+            !token?.activeSwap?.id
                 ? [
                       {
                           label: 'Items',
@@ -64,7 +57,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                       chainId,
                                       provider,
                                       sender,
-                                      tokenId: lastView.tokenId,
+                                      tokenId: lastView__tokenId,
                                   }}
                               />
                           ),
@@ -72,8 +65,8 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                   ]
                 : []),
         ];
-    }, [token, sender, chainId, provider, lastView]);
-    return lastView && token ? (
+    }, [token, sender, chainId, provider, lastView__tokenId]);
+    return token ? (
         <div style={styles.container}>
             {MobileBackButton && (
                 <div
@@ -90,14 +83,18 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
             <div style={screenType == 'phone' ? styles.nuggContainerMobile : styles.nuggContainer}>
                 <div style={{ position: 'fixed' }}>
                     <AnimatedCard>
-                        <TokenViewer tokenId={lastView.tokenId} showcase disableOnClick />
+                        {lastView__tokenId && (
+                            <TokenViewer tokenId={lastView__tokenId} showcase disableOnClick />
+                        )}
                     </AnimatedCard>
                 </div>
             </div>
             <div style={styles.swapsWrapper}>
                 <div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
                     <div style={styles.owner}>
-                        <Text textStyle={styles.nuggId}>{parseTokenIdSmart(lastView.tokenId)}</Text>
+                        <Text textStyle={styles.nuggId}>
+                            {lastView__tokenId && parseTokenIdSmart(lastView__tokenId)}
+                        </Text>
                         <div style={{ marginLeft: '1rem' }}>
                             {token.type === 'nugg' ? (
                                 token.owner ? (
@@ -153,13 +150,14 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                     </div>
                                 }
                             >
-                                {token?.activeSwap?.id ? (
-                                    <SaleButtons tokenId={lastView.tokenId} />
-                                ) : token?.activeLoan ? (
-                                    <LoanButtons tokenId={lastView.tokenId} />
-                                ) : (
-                                    <OwnerButtons tokenId={lastView.tokenId} />
-                                )}
+                                {lastView__tokenId &&
+                                    (token?.activeSwap?.id ? (
+                                        <SaleButtons tokenId={lastView__tokenId} />
+                                    ) : token?.activeLoan ? (
+                                        <LoanButtons tokenId={lastView__tokenId} />
+                                    ) : (
+                                        <OwnerButtons tokenId={lastView__tokenId} />
+                                    ))}
                             </Flyout>
                         )}
                     </div>

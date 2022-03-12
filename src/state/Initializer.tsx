@@ -15,7 +15,7 @@ type Props = {
 const Initializer: FunctionComponent<Props> = ({ children }) => {
     const active = web3.hook.useNetworkIsActive();
     const chainId = web3.hook.usePriorityChainId();
-    const epoch = client.live.epoch();
+    const epoch = client.live.epoch.id();
 
     useEffect(() => {
         safeResetLocalStorage(['walletconnect', 'ens']);
@@ -74,12 +74,12 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
         }
     }, [chainId]);
 
-    return active && epoch ? (
+    return active ? (
         <>
             {[...Object.values(states), client].map((state, index) => (
                 <state.updater key={index} />
             ))}
-            {children}
+            {epoch && children}
         </>
     ) : (
         <></>

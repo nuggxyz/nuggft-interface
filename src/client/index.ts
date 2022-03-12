@@ -12,9 +12,52 @@ import { TokenId } from './router';
 
 export default {
     ...core,
+
+    exists: {
+        lastSwap: () => core.store((state) => state.lastView?.tokenId !== undefined),
+        lastView: () => core.store((state) => state.lastView?.tokenId !== undefined),
+    },
+
     live: {
+        //////// simple ////////
         apollo: () => core.store((state) => state.apollo),
         infura: () => core.store((state) => state.infura),
+
+        epoch: {
+            id: () => core.store((state) => state.epoch?.id),
+            startblock: () => core.store((state) => state.epoch?.startblock),
+            endblock: () => core.store((state) => state.epoch?.endblock),
+            status: () => core.store((state) => state.epoch?.status),
+        },
+
+        lastSwap: {
+            tokenId: () => core.store((state) => state.lastSwap?.tokenId),
+            type: () => core.store((state) => state.lastSwap?.type),
+        },
+
+        lastView: {
+            tokenId: () => core.store((state) => state.lastView?.tokenId),
+            type: () => core.store((state) => state.lastView?.type),
+        },
+        stake: {
+            eps: () => core.store((state) => state.stake?.eps),
+            shares: () => core.store((state) => state.stake?.shares),
+            staked: () => core.store((state) => state.stake?.staked),
+        },
+
+        route: () => core.store((state) => state.route),
+        isViewOpen: () => core.store((state) => state.isViewOpen),
+        blocknum: () => core.store((state) => state.blocknum),
+        manualPriority: () => core.store((state) => state.manualPriority),
+
+        //////// complex ////////
+        offers: (tokenId: TokenId | undefined) =>
+            core.store(
+                useCallback(
+                    (state) => (tokenId ? state.activeOffers[tokenId] ?? [] : []),
+                    [tokenId],
+                ),
+            ),
         activeSwaps: () => core.store((state) => state.activeSwaps),
         activeItems: () => core.store((state) => state.activeItems),
         activeNuggItem: (id: string) =>
@@ -36,27 +79,6 @@ export default {
             core.store((state) =>
                 [...state.myUnclaimedItemOffers, ...state.myUnclaimedNuggOffers].sort((a, b) =>
                     a.endingEpoch ?? 0 < (b.endingEpoch ?? 0) ? -1 : 1,
-                ),
-            ),
-        epoch: () => core.store((state) => state.epoch),
-        epoch__id: () => core.store((state) => state.epoch__id),
-        epoch__endblock: () => core.store((state) => state.epoch?.endblock),
-        stake: () => core.store((state) => state.stake),
-        route: () => core.store((state) => state.route),
-        lastSwap: () => core.store((state) => state.lastSwap),
-        lastView: () => core.store((state) => state.lastView),
-        isViewOpen: () => core.store((state) => state.isViewOpen),
-        blocknum: () => core.store((state) => state.blocknum),
-        lastSwap__tokenId: () => core.store((state) => state.lastSwap?.tokenId),
-        lastView__tokenId: () => core.store((state) => state.lastView?.tokenId),
-        lastSwap__type: () => core.store((state) => state.lastSwap?.type),
-        lastView__type: () => core.store((state) => state.lastView?.type),
-        manualPriority: () => core.store((state) => state.manualPriority),
-        offers: (tokenId: TokenId | undefined) =>
-            core.store(
-                useCallback(
-                    (state) => (tokenId ? state.activeOffers[tokenId] ?? [] : []),
-                    [tokenId],
                 ),
             ),
     },

@@ -24,10 +24,10 @@ type SwapListProps = {};
 const SwapList: FunctionComponent<SwapListProps> = ({}) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const lastView = client.live.lastView();
+    const lastView__tokenId = client.live.lastView.tokenId();
     const blocknum = client.live.blocknum();
 
-    const { token, epoch } = client.hook.useLiveToken(lastView?.tokenId);
+    const { token, epoch } = client.hook.useLiveToken(lastView__tokenId);
 
     const listData = useMemo(() => {
         console.log({ token });
@@ -40,9 +40,9 @@ const SwapList: FunctionComponent<SwapListProps> = ({}) => {
         }
         if (
             token &&
-            lastView &&
+            lastView__tokenId &&
             (token?.swaps as LiveSwap[]).find((swap) => swap.endingEpoch === null) &&
-            lastView.tokenId.startsWith('item-')
+            lastView__tokenId.startsWith('item-')
         ) {
             console.log({ res2: res });
             let tempTemp: LiveSwap[] = [];
@@ -64,17 +64,17 @@ const SwapList: FunctionComponent<SwapListProps> = ({}) => {
             title: 'Previous Sales',
             items: tempSwaps,
         });
-        console.log({ res3: res, chainId, provider, lastView, epoch, token });
+        console.log({ res3: res, chainId, provider, lastView__tokenId, epoch, token });
 
         return res;
-    }, [token, lastView, chainId, provider, lastView, epoch, token]);
+    }, [token, lastView__tokenId, chainId, provider, epoch, token]);
 
-    return chainId && provider && lastView && epoch && token && blocknum ? (
+    return chainId && provider && epoch && token && blocknum && lastView__tokenId ? (
         <StickyList
             data={listData}
             TitleRenderItem={SwapTitle}
             ChildRenderItem={React.memo(SwapItem)}
-            extraData={{ chainId, provider, token, epoch, tokenId: lastView.tokenId, blocknum }}
+            extraData={{ chainId, provider, token, epoch, tokenId: lastView__tokenId, blocknum }}
             style={styles.stickyList}
             styleRight={styles.stickyListRight}
         />

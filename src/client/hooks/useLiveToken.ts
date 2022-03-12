@@ -25,7 +25,7 @@ export const useLiveToken = (
     lifecycle: NuggLifeCyle;
     epoch: number | undefined;
 } => {
-    const epoch = client.live.epoch();
+    const epoch = client.live.epoch.id();
 
     const token = tokenId?.startsWith(constants.ID_PREFIX_ITEM)
         ? useLiveItem(tokenId)
@@ -39,17 +39,17 @@ export const useLiveToken = (
             }
 
             if (!token.activeSwap.endingEpoch) return 'bench';
-            if (+token.activeSwap.endingEpoch === epoch.id + 1) {
+            if (+token.activeSwap.endingEpoch === epoch + 1) {
                 if (token.type === 'nugg' && token.owner === Address.ZERO.hash) {
                     return 'egg';
                 }
                 return 'deck';
             }
-            if (+token.activeSwap.endingEpoch === epoch.id) return 'bat';
+            if (+token.activeSwap.endingEpoch === epoch) return 'bat';
             return 'shower';
         }
         return 'stands';
     }, [epoch, token]);
 
-    return { token, lifecycle, epoch: epoch?.id };
+    return { token, lifecycle, epoch: epoch };
 };

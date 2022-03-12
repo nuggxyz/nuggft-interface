@@ -22,7 +22,7 @@ import styles from './NuggDexSearchList.styles';
 
 type Props = {};
 const NuggDexSearchList: FunctionComponent<Props> = () => {
-    const epoch = client.live.epoch();
+    const epoch__id = client.live.epoch.id();
     const filters = NuggDexState.select.searchFilters();
     const [sortAsc, setSortAsc] = useState<{ [key in NL.Redux.NuggDex.SearchViews]: boolean }>({
         'recently viewed': false,
@@ -44,7 +44,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         () =>
             _liveActiveNuggs.reduce((acc: SwapData[], nugg) => {
                 let tmp = acc;
-                if (epoch && +nugg.id <= +epoch.id) {
+                if (epoch__id && +nugg.id <= +epoch__id) {
                     if (filters.searchValue === '' || filters.searchValue === nugg.id) {
                         if (sortAsc['on sale']) {
                             tmp = [...acc, nugg];
@@ -55,7 +55,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 }
                 return tmp;
             }, []),
-        [epoch, _liveActiveNuggs, filters, sortAsc],
+        [epoch__id, _liveActiveNuggs, filters, sortAsc],
     );
 
     const _liveActiveItems = client.live.activeItems();
@@ -121,22 +121,21 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             setLoading?: React.Dispatch<SetStateAction<boolean>>,
             desiredSize?: number,
         ) => {
-            if (chainId && epoch) {
+            if (chainId) {
                 setLoading && setLoading(true);
                 const allNuggs = await allNuggsQuery(
                     chainId,
-                    filters.sort && filters.sort.by ? filters.sort.by : 'eth',
+                    // filters.sort && filters.sort.by ? filters.sort.by : 'eth',
                     filters.sort && filters.sort.asc ? 'asc' : 'desc',
                     filters.searchValue ? filters.searchValue : '',
                     desiredSize ? desiredSize : constants.NUGGDEX_SEARCH_LIST_CHUNK,
                     startFrom,
-                    +epoch.id,
                 );
                 setResults((res) => (addToResult ? [...res, ...allNuggs] : allNuggs));
                 setLoading && setLoading(false);
             }
         },
-        [chainId, epoch],
+        [chainId],
     );
 
     return (

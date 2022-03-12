@@ -1,15 +1,13 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 
-import web3 from '@src/web3';
-import client from '@src/client';
 type Props = {};
 
 const AllNuggs: FunctionComponent<Props> = () => {
-    const epoch = client.live.epoch();
-    const [allNuggs, setAllNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
-    const [loading, setLoading] = useState(false);
+    // const epoch = client.live.epoch();
+    // const [allNuggs, setAllNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
+    // const [loading, setLoading] = useState(false);
 
-    const chainId = web3.hook.usePriorityChainId();
+    // const chainId = web3.hook.usePriorityChainId();
 
     // const handleGetAll = useCallback(
     //     async (

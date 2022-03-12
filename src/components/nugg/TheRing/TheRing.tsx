@@ -27,8 +27,8 @@ const TheRing: FunctionComponent<Props> = ({
     const screenType = AppState.select.screenType();
     const blocknum = client.live.blocknum();
 
-    const lastSwap = client.live.lastSwap();
-    const { token, epoch, lifecycle } = client.hook.useLiveToken(lastSwap?.tokenId);
+    const lastSwap__tokenId = client.live.lastSwap.tokenId();
+    const { token, epoch, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
 
     // console.log({ token, lifecycle });
 
@@ -53,7 +53,7 @@ const TheRing: FunctionComponent<Props> = ({
         return remaining;
     }, [blocknum, token?.activeSwap?.epoch]);
 
-    return lastSwap ? (
+    return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
             <CircleTimer
                 duration={blockDuration}
@@ -77,17 +77,21 @@ const TheRing: FunctionComponent<Props> = ({
                     flexDirection: 'column',
                 }}
             >
-                <AnimatedCard>
-                    <TokenViewer tokenId={lastSwap.tokenId} style={tokenStyle} showcase />
-                </AnimatedCard>
-                {screenType !== 'phone' ? (
-                    <Text>{parseTokenIdSmart(lastSwap.tokenId)}</Text>
-                ) : (
-                    <></>
+                {lastSwap__tokenId && (
+                    <>
+                        <AnimatedCard>
+                            <TokenViewer tokenId={lastSwap__tokenId} style={tokenStyle} showcase />
+                        </AnimatedCard>
+                        {screenType !== 'phone' ? (
+                            <Text>{parseTokenIdSmart(lastSwap__tokenId)}</Text>
+                        ) : (
+                            <></>
+                        )}
+                    </>
                 )}
             </CircleTimer>
         </div>
-    ) : null;
+    );
 };
 
 export default React.memo(TheRing);

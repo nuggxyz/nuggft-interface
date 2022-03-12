@@ -18,7 +18,7 @@ import styles from './LoanOrBurnModal.styles';
 type Props = {};
 
 const LoanOrBurnModal: FunctionComponent<Props> = () => {
-    const stake = client.live.stake();
+    const stake__eps = client.live.stake.eps();
     const toggle = TransactionState.select.toggleCompletedTxn();
     const { targetId, type } = AppState.select.modalData();
     const chainId = web3.hook.usePriorityChainId();
@@ -62,7 +62,7 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                 )}
 
                 <Text type="text" textStyle={styles.text}>
-                    {stake ? `You will receive ${+stake.eps.decimal.toFixed(4)} ETH` : null}
+                    {stake__eps ? `You will receive ${+stake__eps.decimal.toFixed(4)} ETH` : null}
                 </Text>
 
                 <FeedbackButton

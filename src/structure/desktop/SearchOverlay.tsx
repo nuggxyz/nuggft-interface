@@ -24,6 +24,7 @@ const SearchOverlay: FunctionComponent<Props> = () => {
         zIndex: 997,
         ...styles.container,
     });
+    console.log({ isViewOpen });
     return (
         <animated.div style={{ ...styles.container, ...style }} onClick={onClick}>
             <div
