@@ -296,64 +296,66 @@ export default () => {
                     variables: { address: address.toLowerCase() },
                 })
                 .subscribe((x) => {
-                    client.actions.updateProtocol({
-                        myNuggs: x.data.user.nuggs.map((x) => {
-                            return {
-                                tokenId: x.id,
-                                activeLoan: !!x.activeLoan,
-                                activeSwap: !!x.activeSwap,
-                                unclaimedOffers: x.offers.map((y) => {
-                                    return {
-                                        itemId: y.swap.sellingItem.id,
-                                        endingEpoch: +y.swap.endingEpoch,
-                                    };
-                                }),
-                            };
-                        }),
-                        myUnclaimedNuggOffers: x.data.user.offers.map((x) => {
-                            return {
-                                tokenId: x.swap.nugg.id,
-                                endingEpoch: +x.swap.endingEpoch,
-                                eth: new EthInt(x.eth),
-                                type: 'nugg',
-                                leader: x.swap.leader.id.toLowerCase() === address.toLowerCase(),
-                                claimParams: {
-                                    address,
+                    x.data.user &&
+                        client.actions.updateProtocol({
+                            myNuggs: x.data.user.nuggs.map((x) => {
+                                return {
+                                    tokenId: x.id,
+                                    activeLoan: !!x.activeLoan,
+                                    activeSwap: !!x.activeSwap,
+                                    unclaimedOffers: x.offers.map((y) => {
+                                        return {
+                                            itemId: y.swap.sellingItem.id,
+                                            endingEpoch: +y.swap.endingEpoch,
+                                        };
+                                    }),
+                                };
+                            }),
+                            myUnclaimedNuggOffers: x.data.user.offers.map((x) => {
+                                return {
                                     tokenId: x.swap.nugg.id,
-                                },
-                            };
-                        }),
-                        myUnclaimedItemOffers: x.data.user.nuggs
-                            .map((x) => {
-                                return x.offers.map((y) => {
-                                    // console.log(y.swap.sellingItem.id);
-                                    return {
-                                        tokenId: ('item-' + y.swap.sellingItem.id) as ItemId,
-                                        endingEpoch: +y.swap.endingEpoch,
-                                        eth: new EthInt(y.eth),
-                                        type: 'item' as 'item',
-                                        leader: y.swap.leader.id === x.id,
-                                        nugg: x.id,
-                                        claimParams: {
-                                            address: padToAddress(x.id),
-                                            tokenId: BigNumber.from(+y.swap.sellingItem.id)
-                                                .shl(24)
-                                                .or(+y.swap.sellingNuggItem.nugg.id)
-                                                .toString(),
-                                        },
-                                    };
-                                });
-                            })
-                            .flat(),
-                        myLoans: x.data.user.loans.map((x) => {
-                            return {
-                                endingEpoch: +x.endingEpoch,
-                                eth: new EthInt(x.eth),
-                                nugg: x.nugg.id,
-                                startingEpoch: +x.epoch.id,
-                            };
-                        }),
-                    });
+                                    endingEpoch: +x.swap.endingEpoch,
+                                    eth: new EthInt(x.eth),
+                                    type: 'nugg',
+                                    leader:
+                                        x.swap.leader.id.toLowerCase() === address.toLowerCase(),
+                                    claimParams: {
+                                        address,
+                                        tokenId: x.swap.nugg.id,
+                                    },
+                                };
+                            }),
+                            myUnclaimedItemOffers: x.data.user.nuggs
+                                .map((x) => {
+                                    return x.offers.map((y) => {
+                                        // console.log(y.swap.sellingItem.id);
+                                        return {
+                                            tokenId: ('item-' + y.swap.sellingItem.id) as ItemId,
+                                            endingEpoch: +y.swap.endingEpoch,
+                                            eth: new EthInt(y.eth),
+                                            type: 'item' as 'item',
+                                            leader: y.swap.leader.id === x.id,
+                                            nugg: x.id,
+                                            claimParams: {
+                                                address: padToAddress(x.id),
+                                                tokenId: BigNumber.from(+y.swap.sellingItem.id)
+                                                    .shl(24)
+                                                    .or(+y.swap.sellingNuggItem.nugg.id)
+                                                    .toString(),
+                                            },
+                                        };
+                                    });
+                                })
+                                .flat(),
+                            myLoans: x.data.user.loans.map((x) => {
+                                return {
+                                    endingEpoch: +x.endingEpoch,
+                                    eth: new EthInt(x.eth),
+                                    nugg: x.nugg.id,
+                                    startingEpoch: +x.epoch.id,
+                                };
+                            }),
+                        });
                 });
             return () => {
                 instance.unsubscribe();

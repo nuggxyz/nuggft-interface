@@ -39,11 +39,14 @@ const CurrencyText: React.FC<BalanceProps> = ({
         !forceGwei && setIsGwei(value < 0.00001);
     }, [value, forceGwei]);
 
-    const spring = useSpring({
-        val: value,
-        from: { val: prevValue ? prevValue : value * 0.5 },
-        config: config.molasses,
-    });
+    const [spring] = useSpring(
+        {
+            val: value,
+            from: { val: prevValue ? prevValue : value * 0.5 },
+            config: config.molasses,
+        },
+        [prevValue, value],
+    );
 
     return (
         <Text

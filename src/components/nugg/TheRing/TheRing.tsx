@@ -1,13 +1,10 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
-import useSetState from '@src/hooks/useSetState';
-import {
-    isUndefinedOrNull,
+import lib, {
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrObjectEmpty,
     parseTokenIdSmart,
 } from '@src/lib';
-import Colors from '@src/lib/colors';
 import constants from '@src/lib/constants';
 import AppState from '@src/state/app';
 import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
@@ -33,21 +30,11 @@ const TheRing: FunctionComponent<Props> = ({
 }) => {
     const screenType = AppState.select.screenType();
     const blocknum = client.live.blocknum();
-    const epoch = client.live.epoch();
 
     const lastSwap__tokenId = client.live.lastSwap__tokenId();
+    const { token, epoch, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
 
-    const token = client.hook.useLiveToken(lastSwap__tokenId);
-
-    const status = useSetState(() => {
-        return isUndefinedOrNull(token?.activeSwap?.epoch)
-            ? 'waiting'
-            : epoch &&
-              +token.activeSwap.epoch.endblock >= +epoch.endblock &&
-              blocknum !== +token.activeSwap.epoch.endblock
-            ? 'ongoing'
-            : 'over';
-    }, [epoch, token?.activeSwap?.epoch, blocknum]);
+    // console.log({ token, lifecycle });
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
@@ -81,7 +68,15 @@ const TheRing: FunctionComponent<Props> = ({
                 blocktime={constants.BLOCKTIME}
                 width={circleWidth}
                 staticColor={
-                    status === 'over' ? Colors.purple : status === 'waiting' ? Colors.green : ''
+                    lifecycle === 'stands'
+                        ? lib.colors.darkerGray
+                        : lifecycle === 'bench'
+                        ? lib.colors.nuggGold
+                        : lifecycle === 'deck'
+                        ? lib.colors.green
+                        : lifecycle === 'bat'
+                        ? ''
+                        : 'purple'
                 }
                 style={{
                     ...styles.circle,

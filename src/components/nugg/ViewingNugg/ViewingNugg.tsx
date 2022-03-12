@@ -11,7 +11,6 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import client from '@src/client';
-import { Route } from '@src/client/router';
 import HappyTabber from '@src/components/general/HappyTabber/HappyTabber';
 import AddressViewer from '@src/components/general/Texts/AddressViewer/AddressViewer';
 
@@ -34,24 +33,13 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 
-    const token = client.hook.useLiveToken(lastView__tokenId);
+    const { token } = client.hook.useLiveToken(lastView__tokenId);
 
     const happyTabs = useMemo(() => {
         return [
             {
                 label: 'Swaps',
-                comp: ({ isActive }) => (
-                    <SwapList
-                        {...{
-                            chainId,
-                            provider,
-                            token,
-                            tokenIsItem: lastView__type === Route.ViewItem,
-                            swaps: token?.swaps,
-                            tokenId: lastView__tokenId,
-                        }}
-                    />
-                ),
+                comp: ({ isActive }) => <SwapList />,
             },
             ...(token?.type === 'nugg' && sender === token?.owner && !token?.activeSwap?.id
                 ? [
