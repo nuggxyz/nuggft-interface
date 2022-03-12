@@ -323,9 +323,13 @@ export function getPriorityConnector(initializedConnectors: {
         const values = Object.values(initializedConnectors).map((x, i) => x.hooks.useIsActive());
         const index = values.findIndex((x) => x);
 
-        return manualPriority
-            ? initializedConnectors[manualPriority].connector
-            : Object.values(initializedConnectors)[index === -1 ? 0 : index].connector;
+        const check = manualPriority && initializedConnectors[manualPriority];
+
+        if (check !== undefined) {
+            return check.connector;
+        } else {
+            return Object.values(initializedConnectors)[index === -1 ? 0 : index].connector;
+        }
     }
 
     function usePriorityChainId() {
@@ -469,7 +473,7 @@ function getDerivedHooks({
     return { useAccount, useIsActive };
 }
 
-function useTx(provider: Web3Provider, hash: string) {
+function useTx(provider: Web3Provider | undefined, hash: string) {
     const [data, setData] = useState<TransactionReceipt>();
 
     useEffect(() => {
@@ -498,7 +502,7 @@ function useTx(provider: Web3Provider, hash: string) {
     return data;
 }
 
-function useBalance(provider: Web3Provider | undefined, account: string) {
+function useBalance(provider: Web3Provider | undefined, account: string | undefined) {
     const [balance, setBalance] = useState<EthInt>();
     useEffect(() => {
         if (provider && account) {
@@ -526,15 +530,15 @@ function useBalance(provider: Web3Provider | undefined, account: string) {
 }
 
 function useENS(
-    provider: Web3Provider,
-    account: string,
-    chainId: Chain,
+    provider: Web3Provider | undefined,
+    account: string | undefined,
+    chainId: Chain | undefined,
 ): (string | null) | undefined {
     const [ENSName, setENSName] = useState<string | null | undefined>(
-        Address.shortenAddressHash(account),
+        account ? Address.shortenAddressHash(account) : '',
     );
     useEffect(() => {
-        if (provider && account) {
+        if (provider && account && chainId) {
             if (account === Address.ZERO.hash) setENSName('black-hole');
             else if (account.toLowerCase() === CONTRACTS[chainId].NuggftV1.toLowerCase())
                 setENSName('nuggftv1.nugg.xyz');

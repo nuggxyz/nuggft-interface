@@ -1,9 +1,9 @@
 export class timer {
-    private _start: Date;
+    private _start: Date | undefined;
 
-    private _end: Date;
+    private _end: Date | undefined;
 
-    private _name: string;
+    private _name: string | undefined;
 
     private static _map: Dictionary<timer> = {};
 
@@ -24,7 +24,7 @@ export class timer {
     }
 
     private calc() {
-        const dtime = this._end.getMilliseconds() - this._start.getMilliseconds();
+        const dtime = this._end!.getMilliseconds() - this._start!.getMilliseconds();
         console.info(`Execution time for ${this._name}: %dms`, dtime);
     }
 }

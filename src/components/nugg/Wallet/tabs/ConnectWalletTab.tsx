@@ -96,17 +96,13 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                                 }
                                 rightIcon={<NLStaticImage image={peer.peer} />}
                                 onClick={async () => {
-                                    if (
-                                        web3.config.connector_instances[peer.type].store.getState()
-                                            .activating
-                                    )
-                                        await web3.config.connector_instances[
-                                            peer.type
-                                        ].connector.deactivate();
-                                    web3.config.connector_instances[peer.type].connector.activate(
-                                        undefined,
-                                        peer.peer,
-                                    );
+                                    const check = web3.config.connector_instances[peer.type];
+
+                                    if (check) {
+                                        if (check.store.getState().activating)
+                                            await check.connector.deactivate();
+                                        check.connector.activate(undefined, peer.peer);
+                                    }
                                 }}
                             />
                         ),

@@ -1,3 +1,5 @@
+// @ts-strict
+
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'react-feather';
 import { animated, config as springConfig, useSpring } from '@react-spring/web';
@@ -9,21 +11,16 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import Colors from '@src/lib/colors';
 import AppState from '@src/state/app';
 import TransactionState from '@src/state/transaction';
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrBooleanFalse,
-    isUndefinedOrNullOrStringEmpty,
-    parseTokenId,
-    parseTokenIdSmart,
-} from '@src/lib';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
 import { Route } from '@src/client/router';
-import constants from '@src/lib/constants';
 import TxViewer from '@src/components/general/Texts/TxViewer/TxViewer';
 import { OfferData } from '@src/client/core';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
 import { Chain } from '@src/web3/core/interfaces';
+import { LiveItem } from '@src/client/hooks/useLiveItem';
+import { LiveNugg } from '@src/client/hooks/useLiveNugg';
 
 import styles from './RingAbout.styles';
 
@@ -34,14 +31,9 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const address = web3.hook.usePriorityAccount();
 
-    const lastSwap__tokenId = client.live.lastSwap__tokenId();
-    const lastSwap__type = client.live.lastSwap__type();
-    const { token, epoch, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
+    const lastSwap = client.live.lastSwap();
 
-    const isItemSwap = useMemo(
-        () => lastSwap__tokenId?.includes(constants.ID_PREFIX_ITEM),
-        [lastSwap__tokenId],
-    );
+    const { token, epoch, lifecycle } = client.hook.useLiveToken(lastSwap?.tokenId);
 
     const txnToggle = TransactionState.select.toggleCompletedTxn();
     const chainId = web3.hook.usePriorityChainId();
@@ -49,11 +41,10 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
 
     const [open, setOpen] = useState(false);
 
-    const offers = client.live.offers(lastSwap__tokenId);
+    const offers = client.live.offers(lastSwap?.tokenId);
 
     const leader = useMemo(() => {
-        console.log({ offers });
-        if (offers?.length > 0) return offers[0];
+        if (offers.length > 0) return offers[0];
         else return undefined;
     }, [offers]);
 
@@ -95,11 +86,7 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
     }, [leader]);
 
     useEffect(() => {
-        if (
-            !isUndefinedOrNullOrArrayEmpty(offers) &&
-            offers.length <= 1 &&
-            !isUndefinedOrNullOrBooleanFalse(open)
-        ) {
+        if (offers && offers.length <= 1 && open) {
             setOpen(false);
         }
     }, [open, offers]);
@@ -110,7 +97,9 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
         opacity: open ? 1 : 0,
         padding: open ? '0.75rem' : '0rem',
     });
+
     console.log({ lifecycle });
+
     return lifecycle !== 'stands' ? (
         <>
             <animated.div
@@ -150,10 +139,10 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                 : lifecycle === 'bench'
                                 ? 'Place offer to begin auction'
                                 : lifecycle === 'shower'
-                                ? 'Winner ' + parseTokenIdSmart(lastSwap__tokenId)
+                                ? 'Winner '
                                 : 'oops shouldnt be here'}
                         </Text>
-                        {hasBids && status !== 'waiting' && (
+                        {hasBids && (
                             <div
                                 style={
                                     styles[
@@ -163,23 +152,26 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                                     ]
                                 }
                             >
-                                <animated.div
-                                    //@ts-ignore
-                                    style={flashStyle}
-                                >
-                                    <CurrencyText
-                                        image="eth"
-                                        textStyle={styles.leadingOffer}
-                                        value={leader.eth.decimal.toNumber()}
-                                    />
-                                    <TxViewer
-                                        size="smaller"
-                                        textStyle={{ color: Colors.textColor }}
-                                        address={leader && leader.user}
-                                        // route={'tx'}
-                                        hash={leader && leader.txhash}
-                                    />
-                                </animated.div>
+                                {leader ? (
+                                    <animated.div
+                                        //@ts-ignore
+                                        style={flashStyle}
+                                    >
+                                        <CurrencyText
+                                            image="eth"
+                                            textStyle={styles.leadingOffer}
+                                            value={leader.eth.decimal.toNumber()}
+                                        />
+                                        <TxViewer
+                                            size="smaller"
+                                            textStyle={{ color: Colors.textColor }}
+                                            address={leader && leader.user}
+                                            hash={leader && leader.txhash}
+                                        />
+                                    </animated.div>
+                                ) : (
+                                    <></>
+                                )}
                                 {offers.length > 1 && (
                                     <Button
                                         rightIcon={
@@ -204,61 +196,69 @@ const RingAbout: FunctionComponent<Props> = ({}) => {
                 <animated.div style={springStyle}>
                     <Text textStyle={{ marginBottom: '1rem' }}>Previous offers</Text>
                     {offers &&
+                        provider &&
+                        chainId &&
                         offers.map(
                             (offer, index) =>
                                 index !== 0 && (
                                     <OfferRenderItem
-                                        {...{ provider, offer, index, chainId, isItemSwap }}
+                                        {...{ provider, offer, index, chainId, token }}
                                         key={index}
                                     />
                                 ),
                         )}
                 </animated.div>
 
-                {status !== 'over' &&
-                    (screenType === 'phone' || !isUndefinedOrNullOrStringEmpty(address)) && (
-                        <Button
-                            buttonStyle={{
-                                ...styles.button,
-                                ...(screenType === 'phone' && {
-                                    background: Colors.nuggBlueText,
-                                }),
-                            }}
-                            textStyle={{
-                                ...styles.buttonText,
-                                ...(screenType === 'phone' && {
-                                    color: 'white',
-                                }),
-                            }}
-                            onClick={() =>
-                                screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                                    ? AppState.dispatch.changeMobileView('Wallet')
-                                    : AppState.dispatch.setModalOpen({
-                                          name: 'OfferModal',
-                                          modalData: {
-                                              targetId: lastSwap__tokenId,
-                                              type:
-                                                  lastSwap__type === Route.SwapItem
-                                                      ? 'OfferItem'
-                                                      : 'OfferNugg',
-                                              //   data: {
-                                              //       tokenId: lastSwap__tokenId,
-                                              //   },
+                {lifecycle !== 'shower' && (screenType === 'phone' || address) && (
+                    <Button
+                        buttonStyle={{
+                            ...styles.button,
+                            ...(screenType === 'phone' && {
+                                background: Colors.nuggBlueText,
+                            }),
+                        }}
+                        textStyle={{
+                            ...styles.buttonText,
+                            ...(screenType === 'phone' && {
+                                color: 'white',
+                            }),
+                        }}
+                        onClick={() =>
+                            screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
+                                ? AppState.dispatch.changeMobileView('Wallet')
+                                : lastSwap &&
+                                  AppState.dispatch.setModalOpen({
+                                      name: 'OfferModal',
+                                      modalData: {
+                                          targetId: lastSwap.tokenId,
+                                          type:
+                                              lastSwap.type === Route.SwapItem
+                                                  ? 'OfferItem'
+                                                  : 'OfferNugg',
+                                          data: {
+                                              tokenId: lastSwap.tokenId,
                                           },
-                                      })
-                            }
-                            label={
-                                screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                                    ? 'Connect wallet'
-                                    : 'Place offer'
-                            }
-                        />
-                    )}
+                                      },
+                                  })
+                        }
+                        label={
+                            screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
+                                ? 'Connect wallet'
+                                : 'Place offer'
+                        }
+                    />
+                )}
             </animated.div>
         </>
-    ) : (
-        <></>
-    );
+    ) : token ? (
+        <>
+            {token.type === 'item' ? (
+                <Text>this item is owned by ___ nuggs and is not currently for sale</Text>
+            ) : (
+                <Text>This nugg is happily owned by {token.owner}</Text>
+            )}
+        </>
+    ) : null;
 };
 
 export default React.memo(RingAbout);
@@ -266,31 +266,36 @@ const OfferRenderItem = ({
     provider,
     chainId,
     offer,
+    token,
     index,
-    isItemSwap,
 }: {
     provider: Web3Provider;
     chainId: Chain;
     offer: OfferData;
+    token: LiveNugg | LiveItem | undefined;
     index: number;
-    isItemSwap: boolean;
 }) => {
-    const leader = isItemSwap
-        ? parseTokenId(offer.user)
-        : web3.hook.usePriorityAnyENSName(provider, offer.user);
+    const leader =
+        !token || token.type === 'item'
+            ? undefined
+            : web3.hook.usePriorityAnyENSName(provider, offer.user);
     return (
         <div style={styles.offerAmount}>
             <CurrencyText image="eth" value={offer.eth.decimal.toNumber()} />
-            <InteractiveText
-                type="text"
-                size="smaller"
-                textStyle={{ color: Colors.textColor }}
-                action={function (): void {
-                    web3.config.gotoEtherscan(chainId, 'tx', offer.txhash);
-                }}
-            >
-                {leader}
-            </InteractiveText>
+            {leader ? (
+                <InteractiveText
+                    type="text"
+                    size="smaller"
+                    textStyle={{ color: Colors.textColor }}
+                    action={function (): void {
+                        web3.config.gotoEtherscan(chainId, 'tx', offer.txhash);
+                    }}
+                >
+                    {leader}
+                </InteractiveText>
+            ) : (
+                <></>
+            )}
         </div>
     );
 };

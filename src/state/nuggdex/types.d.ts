@@ -1,8 +1,8 @@
 declare namespace NL.Redux.NuggDex {
     type State = {
         recents: NL.GraphQL.Fragments.Nugg.ListItem[];
-        success: Success;
-        error: Error;
+        success: Success | undefined;
+        error: Error | undefined;
         loading: boolean;
         viewing: SearchViews;
         searchFilters: Filters;
@@ -16,7 +16,7 @@ declare namespace NL.Redux.NuggDex {
         target?: SearchViews;
         sort?: {
             asc: boolean;
-            by: 'eth' | 'id';
+            by?: 'eth' | 'id';
         };
         searchValue?: string;
     };

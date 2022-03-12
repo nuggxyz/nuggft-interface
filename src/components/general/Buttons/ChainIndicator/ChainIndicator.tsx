@@ -20,9 +20,6 @@ type Props = {
 };
 
 const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle }) => {
-    const epoch__id = client.live.epoch__id();
-    const epoch__endblock = client.live.epoch__endblock();
-
     const epoch = client.live.epoch();
 
     const blocknum = client.live.blocknum();
@@ -32,7 +29,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
     const springStyle = useSpring({
         display: 'flex',
         alignItems: 'center',
-        opacity: epoch__id ? 1 : 0,
+        opacity: epoch ? 1 : 0,
     });
 
     const [ref, hover] = useOnHover(() => undefined);
@@ -47,7 +44,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
                 ...style,
             },
         };
-    }, [hover]);
+    }, [hover, error, style]);
 
     return (
         <div style={{ display: 'flex' }}>
@@ -55,7 +52,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
                 <div
                     ref={ref}
                     onClick={() => {
-                        client.actions.routeTo(epoch.id.toString(), false);
+                        client.actions.routeTo(epoch!.id.toString(), false);
                     }}
                     style={style2}
                 >
@@ -63,26 +60,30 @@ const ChainIndicator: FunctionComponent<Props> = ({ onClick, style, textStyle })
                         <AlertCircle size={24} style={{ paddingRight: 0.5 + 'rem' }} />
                     ) : (
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <TokenViewer
-                                tokenId={epoch__id.toString()}
-                                style={{
-                                    width: '37px',
-                                    height: '37px',
-                                    marginTop: '0.2rem',
-                                    margin: '0rem .5rem 0rem 0rem',
-                                }}
-                            />
+                            {epoch ? (
+                                <TokenViewer
+                                    tokenId={epoch.id.toString()}
+                                    style={{
+                                        width: '37px',
+                                        height: '37px',
+                                        marginTop: '0.2rem',
+                                        margin: '0rem .5rem 0rem 0rem',
+                                    }}
+                                />
+                            ) : null}
                         </div>
                     )}
 
-                    <Text
-                        textStyle={{
-                            fontFamily: lib.layout.font.code.regular,
-                            ...textStyle,
-                        }}
-                    >
-                        {epoch__id + ' | ' + (epoch__endblock - blocknum)}
-                    </Text>
+                    {epoch && blocknum ? (
+                        <Text
+                            textStyle={{
+                                fontFamily: lib.layout.font.code.regular,
+                                ...textStyle,
+                            }}
+                        >
+                            {epoch.id + ' | ' + (epoch.endblock - blocknum)}
+                        </Text>
+                    ) : null}
                 </div>
             </animated.div>
             <NextSwap />

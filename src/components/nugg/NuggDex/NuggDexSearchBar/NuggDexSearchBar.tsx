@@ -4,7 +4,6 @@ import { CornerRightDown, CornerRightUp, Search, X } from 'react-feather';
 
 import useDebounce from '@src/hooks/useDebounce';
 import usePrevious from '@src/hooks/usePrevious';
-import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import Colors from '@src/lib/colors';
 import AppState from '@src/state/app';
 import NuggDexState from '@src/state/nuggdex';
@@ -28,7 +27,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const [isUserInput, setIsUserInput] = useState(false);
 
     const debouncedValue = useDebounce(searchValue, 100);
-    const [sortAsc, setSortAsc] = useState(filters.sort.asc);
+    const [sortAsc, setSortAsc] = useState(filters && filters.sort && filters.sort.asc);
 
     useEffect(() => {
         if (isViewOpen) {
@@ -41,16 +40,18 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     }, [debouncedValue, view, isViewOpen]);
 
     useEffect(() => {
-        if (filters.sort.asc !== sortAsc && isUserInput) {
-            setIsUserInput(false);
-            NuggDexState.dispatch.setSearchFilters({
-                sort: {
-                    by: 'id',
-                    asc: sortAsc,
-                },
-            });
-        } else {
-            setSortAsc(filters.sort.asc);
+        if (filters && filters.sort) {
+            if (sortAsc && filters.sort.asc !== sortAsc && isUserInput) {
+                setIsUserInput(false);
+                NuggDexState.dispatch.setSearchFilters({
+                    sort: {
+                        by: 'id',
+                        asc: sortAsc,
+                    },
+                });
+            } else {
+                setSortAsc(filters.sort.asc);
+            }
         }
     }, [sortAsc, filters, isUserInput]);
 
@@ -92,29 +93,39 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
             rightToggles={
                 isViewOpen
                     ? [
-                          !isUndefinedOrNullOrStringEmpty(searchValue) && (
-                              <Button
-                                  buttonStyle={styles.searchBarButton}
-                                  onClick={() => setSearchValue('')}
-                                  rightIcon={<X style={styles.searchBarIcon} />}
-                              />
-                          ),
-                          viewing !== 'home' && (
-                              <Button
-                                  buttonStyle={styles.filterButton}
-                                  rightIcon={
-                                      sortAsc ? (
-                                          <CornerRightUp size={14} color={Colors.nuggBlueText} />
-                                      ) : (
-                                          <CornerRightDown size={14} color={Colors.nuggBlueText} />
-                                      )
-                                  }
-                                  onClick={() => {
-                                      setSortAsc(!sortAsc);
-                                      setIsUserInput(true);
-                                  }}
-                              />
-                          ),
+                          ...(searchValue
+                              ? [
+                                    <Button
+                                        buttonStyle={styles.searchBarButton}
+                                        onClick={() => setSearchValue('')}
+                                        rightIcon={<X style={styles.searchBarIcon} />}
+                                    />,
+                                ]
+                              : []),
+                          ...(viewing !== 'home'
+                              ? [
+                                    <Button
+                                        buttonStyle={styles.filterButton}
+                                        rightIcon={
+                                            sortAsc ? (
+                                                <CornerRightUp
+                                                    size={14}
+                                                    color={Colors.nuggBlueText}
+                                                />
+                                            ) : (
+                                                <CornerRightDown
+                                                    size={14}
+                                                    color={Colors.nuggBlueText}
+                                                />
+                                            )
+                                        }
+                                        onClick={() => {
+                                            setSortAsc(!sortAsc);
+                                            setIsUserInput(true);
+                                        }}
+                                    />,
+                                ]
+                              : []),
                       ]
                     : []
             }

@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 
 const useIsVisible = (
-    root = undefined,
+    root: HTMLElement | null,
     rootMargin = '0px',
     threshold = 0,
-): [React.MutableRefObject<HTMLDivElement>, boolean] => {
-    const ref = useRef<HTMLDivElement>();
+): [React.RefObject<HTMLDivElement>, boolean] => {
+    const ref = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
     useEffect(() => {
         const current = ref.current;

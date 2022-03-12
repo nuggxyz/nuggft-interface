@@ -15,10 +15,10 @@ import usePrevious from '@src/hooks/usePrevious';
 
 import styles from './List.styles';
 
-export interface ListRenderItemProps<T, B> {
+export interface ListRenderItemProps<T extends unknown, B extends unknown, A extends unknown> {
     item: T;
-    extraData?: B[];
-    action?: any;
+    extraData: B;
+    action: (arg: A) => void;
     onScrollEnd?: any;
     index: number;
     rootRef?: any;
@@ -26,12 +26,12 @@ export interface ListRenderItemProps<T, B> {
     style?: CSSProperties;
 }
 
-interface Props<T, B> {
+interface Props<T extends unknown, B extends unknown, A extends unknown> {
     data: T[];
-    RenderItem: FunctionComponent<ListRenderItemProps<T, B>>;
+    RenderItem: FunctionComponent<ListRenderItemProps<T, B, A>>;
     loading?: boolean;
-    extraData?: B[];
-    action?: any;
+    extraData: B;
+    action: (arg: A) => void;
     onScrollEnd?: any;
     label?: string;
     border?: boolean;
@@ -51,8 +51,8 @@ interface Props<T, B> {
 
 const LIST_PADDING = 4;
 
-const InfiniteList = <T extends unknown, B extends unknown>({
-    data = [],
+const InfiniteList = <T extends unknown, B extends unknown, A extends unknown>({
+    data,
     RenderItem,
     loading = false,
     extraData,
@@ -72,8 +72,8 @@ const InfiniteList = <T extends unknown, B extends unknown>({
     animationToggle,
     TitleButton,
     titleLoading,
-}: Props<T, B>) => {
-    const windowRef = useRef<HTMLDivElement>();
+}: Props<T, B, A>) => {
+    const windowRef = useRef<HTMLDivElement>(null);
     const [windowHeight, setWindowHeight] = useState(0);
 
     useEffect(() => {
@@ -100,7 +100,7 @@ const InfiniteList = <T extends unknown, B extends unknown>({
     const prevEnd = usePrevious(endIndex);
     const prevData = usePrevious(data);
 
-    const [items, setItems] = useState([]);
+    const [items, setItems] = useState<JSX.Element[]>([]);
 
     useEffect(() => {
         if (
@@ -218,7 +218,7 @@ const InfiniteList = <T extends unknown, B extends unknown>({
 
     const Loading = useCallback(
         () =>
-            loading && (
+            loading ? (
                 <div
                     style={{
                         marginTop: '1rem',
@@ -233,7 +233,7 @@ const InfiniteList = <T extends unknown, B extends unknown>({
                 >
                     <Loader color={loaderColor || 'black'} />
                 </div>
-            ),
+            ) : null,
         [loading, loaderColor, itemHeight, endIndex],
     );
 
@@ -280,4 +280,4 @@ const InfiniteList = <T extends unknown, B extends unknown>({
     );
 };
 
-export default React.memo(InfiniteList);
+export default React.memo(InfiniteList) as typeof InfiniteList;

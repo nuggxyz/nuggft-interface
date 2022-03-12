@@ -10,7 +10,7 @@ import styles from './HappyTabber.styles';
 
 export type HappyTabberItem = {
     label: string;
-    comp: ({ isActive: boolean }) => JSX.Element;
+    comp: ({ isActive }: { isActive: boolean }) => JSX.Element;
 };
 
 type Props = {

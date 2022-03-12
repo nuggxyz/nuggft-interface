@@ -77,14 +77,14 @@ export function parseRoute(route: string): Routes {
 
     if (NuggRegex.test(route)) {
         const arr = NuggRegex.exec(route);
-        const tokenId: NuggId = arr[1];
+        const tokenId: NuggId = arr![1];
         return { type: view ? Route.ViewNugg : Route.SwapNugg, tokenId, idnum: +tokenId };
     }
 
     if (ItemRegex.test(route)) {
         const arr = ItemRegex.exec(route);
-        const feature = +arr[1];
-        const position = +arr[2];
+        const feature = +arr![1];
+        const position = +arr![2];
         const tokenId: ItemId = `item-${((feature << 8) | position).toString()}`;
         return { type: view ? Route.ViewItem : Route.SwapItem, tokenId, feature, position };
     }

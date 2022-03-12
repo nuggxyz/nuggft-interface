@@ -2,7 +2,7 @@ import React, { FC, useEffect, useRef } from 'react';
 import jazziconer from '@metamask/jazzicon';
 
 const Jazzicon: FC<{ address: string; size: number }> = ({ address, size = 35 }) => {
-    const ref = useRef<HTMLDivElement>();
+    const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const current = ref.current;

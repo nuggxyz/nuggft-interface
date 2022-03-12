@@ -31,7 +31,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
     limit = constants.NUGGDEX_DEFAULT_PREVIEW_COUNT,
     children,
 }) => {
-    const ref = useRef<HTMLDivElement>();
+    const ref = useRef<HTMLDivElement>(null);
     const viewing = NuggDexState.select.viewing();
     const toggled = useCallback(
         (toggVal, notToggVal) => {

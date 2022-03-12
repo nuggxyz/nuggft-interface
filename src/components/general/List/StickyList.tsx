@@ -7,12 +7,12 @@ import usePrevious from '@src/hooks/usePrevious';
 import { ListRenderItemProps } from './List';
 import styles from './List.styles';
 
-type Props<T, B> = {
-    data: { title: any; items: T[] }[];
-    ChildRenderItem: FunctionComponent<ListRenderItemProps<T, B>>;
+type Props<T, B, A> = {
+    data: { title: string; items: T[] }[];
+    ChildRenderItem: FunctionComponent<ListRenderItemProps<T, B, A>>;
     TitleRenderItem: FunctionComponent<{
-        title: any;
-        extraData?: B[];
+        title: string;
+        extraData: B;
         open?: boolean;
         setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
     }>;
@@ -29,7 +29,7 @@ type Props<T, B> = {
     children?: FunctionComponent<any>;
 };
 
-const StickyList = <T extends unknown, B extends unknown>({
+const StickyList = <T extends unknown, B extends unknown, A extends unknown>({
     data,
     ChildRenderItem,
     TitleRenderItem,
@@ -39,8 +39,8 @@ const StickyList = <T extends unknown, B extends unknown>({
     styleLeft,
     styleRight,
     children,
-    ...props
-}: Props<T, B>) => {
+}: // ...props
+Props<T, B, A>) => {
     const refData = useMemo(
         () =>
             data.map((item) => {
@@ -52,21 +52,24 @@ const StickyList = <T extends unknown, B extends unknown>({
         [data],
     );
     const [animating, setAnimating] = useState(false);
-    const listRef = useRef<HTMLDivElement>();
+    const listRef = useRef<HTMLDivElement>(null);
 
-    const [y, setY] = useSpring(() => ({
-        immediate: false,
-        y: 0,
-        onChange: (props) => {
-            listRef.current.scroll(0, props.value.y);
-        },
-        config: config.default,
-        onStart: () => setAnimating(true),
-        onRest: () => setAnimating(false),
-    }));
+    const [y, setY] = useSpring(
+        () => ({
+            immediate: false,
+            y: 0,
+            onChange: (props) => {
+                listRef.current && listRef.current.scroll(0, props.value.y);
+            },
+            config: config.default,
+            onStart: () => setAnimating(true),
+            onRest: () => setAnimating(false),
+        }),
+        [listRef],
+    );
     const [current, setCurrent] = useState(refData?.map((item) => item.title));
 
-    return (
+    return listRef ? (
         <animated.div style={{ display: 'flex', ...style }}>
             <div style={styleLeft}>
                 {FeatureRenderItem &&
@@ -77,9 +80,13 @@ const StickyList = <T extends unknown, B extends unknown>({
                                     onClick={() =>
                                         setY({
                                             y:
-                                                item.ref.current.getBoundingClientRect().top +
-                                                listRef.current.scrollTop -
-                                                listRef.current.offsetHeight / 4.7,
+                                                (item.ref.current
+                                                    ? item.ref.current.getBoundingClientRect().top
+                                                    : 0) +
+                                                (listRef.current
+                                                    ? listRef.current.scrollTop -
+                                                      listRef.current.offsetHeight / 4.7
+                                                    : 0),
                                         })
                                     }
                                     isSelected={!current.includes(item.title)}
@@ -109,8 +116,8 @@ const StickyList = <T extends unknown, B extends unknown>({
                                     extraData,
                                     animating,
                                     refData: refData.map((item) => item.title),
-                                    setCurrent,
-                                    index,
+                                    // setCurrent,
+                                    // index,
                                 }}
                             />
                         </React.Fragment>
@@ -119,21 +126,43 @@ const StickyList = <T extends unknown, B extends unknown>({
             </div>
             {children && children}
         </animated.div>
-    );
+    ) : null;
 };
 
 export default StickyList;
 
-const RenderItem = ({
+type RenderProps<T, B, A> = {
+    ChildRenderItem: FunctionComponent<ListRenderItemProps<T, B, A>>;
+    TitleRenderItem: FunctionComponent<{
+        title: string;
+        extraData: B;
+        open?: boolean;
+        setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+    }>;
+    FeatureRenderItem?: FunctionComponent<{
+        feature: string;
+        isSelected: boolean;
+        onClick: () => void;
+        numberOfItems: number;
+    }>;
+    extraData: B;
+    animating: boolean;
+    item: {
+        ref: React.RefObject<HTMLDivElement>;
+        title: string;
+        items: T[];
+    };
+    refData: string[];
+};
+
+const RenderItem = <T extends unknown, B extends unknown, A extends unknown>({
     item,
     TitleRenderItem,
     ChildRenderItem,
     extraData,
     animating,
     refData,
-    setCurrent,
-    index: parentIndex,
-}) => {
+}: RenderProps<T, B, A>) => {
     const [open, setOpen] = useState(true);
     const [ref, { height: viewHeight }] = useMeasure();
     const previous = usePrevious(open);
@@ -168,9 +197,10 @@ const RenderItem = ({
                             <ChildRenderItem
                                 item={childItem}
                                 index={index}
+                                extraData={extraData}
                                 {...animating}
                                 {...refData}
-
+                                action={() => undefined}
                                 // extraData={[...extraData, extraData.last()[parentIndex]]}
                             />
                         </React.Fragment>

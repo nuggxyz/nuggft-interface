@@ -6,7 +6,7 @@ declare namespace NL.Redux.App {
         };
         screenType: 'desktop' | 'tablet' | 'phone';
         toasts: Toast[];
-        modalIsOpen: ModalNames;
+        modalIsOpen: ModalNames | undefined;
         modalData: ModalsData;
         view: Views;
         mobileView: MobileViews;

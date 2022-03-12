@@ -25,7 +25,7 @@ import { Network } from './clients/network';
 
 export function supportedChainIds() {
     // @ts-ignore
-    return Object.values<number>(Chain);
+    return Object.values<Chain>(Chain);
 }
 
 export const DEFAULT_CHAIN = Chain.RINKEBY;
@@ -269,7 +269,7 @@ export const selected = getSelectedConnector();
 
 export const gotoLink = (link: string) => {
     let win = window.open(encodeURIComponent(link), '_blank');
-    win.focus();
+    win !== null && win.focus();
 };
 
 export const CHAIN_INFO: {
@@ -324,7 +324,7 @@ export const CHAIN_INFO: {
 
 export const gotoEtherscan = (chainId: Chain, route: 'tx' | 'address', value: string) => {
     let win = window.open(`${CHAIN_INFO[chainId].explorer}${route}/${value}`, '_blank');
-    win.focus();
+    win !== null && win.focus();
 };
 
 export const createInfuraWebSocket = (chainId: Chain): WebSocketProvider => {

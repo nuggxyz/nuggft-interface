@@ -6,6 +6,7 @@ type Props = ButtonProps & {
     feedbackText: string;
     timeout?: number;
     overrideFeedback?: boolean;
+    label: string;
 };
 
 const FeedbackButton: FunctionComponent<Props> = ({
@@ -14,7 +15,7 @@ const FeedbackButton: FunctionComponent<Props> = ({
     disabled,
     label,
     timeout = 10000,
-    overrideFeedback,
+    overrideFeedback = false,
     ...props
 }) => {
     const [clicked, setClicked] = useState(false);

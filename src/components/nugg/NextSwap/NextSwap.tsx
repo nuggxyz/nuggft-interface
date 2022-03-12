@@ -20,7 +20,7 @@ const NextSwap: FunctionComponent<Props> = () => {
     const activeswaps = client.live.activeSwaps();
     const screenType = AppState.select.screenType();
 
-    const epoch__id = client.live.epoch__id();
+    const epoch = client.live.epoch();
 
     const [prevEpochId, setPrevEpochId] = React.useState<number>(0);
 
@@ -50,11 +50,13 @@ const NextSwap: FunctionComponent<Props> = () => {
     );
 
     React.useEffect(() => {
-        if (prevEpochId !== 0) {
-            abc(epoch__id.toString());
+        if (epoch) {
+            if (prevEpochId !== 0 && epoch) {
+                abc(epoch.id.toString());
+            }
+            setPrevEpochId(epoch.id);
         }
-        setPrevEpochId(epoch__id);
-    }, [epoch__id]);
+    }, [epoch, abc, prevEpochId]);
 
     const springStyle = useSpring({
         background: lib.colors.transparentGrey,
@@ -253,7 +255,7 @@ const SwapRenderItem = ({
 }: {
     swap: SwapData;
     index: number;
-    setQueue: React.Dispatch<React.SetStateAction<SwapData>>;
+    setQueue: React.Dispatch<React.SetStateAction<SwapData | undefined>>;
 }) => {
     return (
         <div

@@ -1,7 +1,7 @@
 declare namespace NL.Redux.Wallet {
     interface State {
-        error: Error;
-        success: Success;
+        error: Error | undefined;
+        success: Success | undefined;
         loading: boolean;
         userShares: number;
     }

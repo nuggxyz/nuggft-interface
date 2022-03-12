@@ -15,19 +15,31 @@ type Props = {
 const Initializer: FunctionComponent<Props> = ({ children }) => {
     const active = web3.hook.useNetworkIsActive();
     const chainId = web3.hook.usePriorityChainId();
-    const epochId = client.live.epoch__id();
+    const epoch = client.live.epoch();
 
     useEffect(() => {
         safeResetLocalStorage(['walletconnect', 'ens']);
     }, []);
 
     useEffect(() => {
-        void web3.config.connector_instances.metamask?.connector.connectEagerly(Chain.RINKEBY);
+        [
+            web3.config.connector_instances.metamask,
+            web3.config.connector_instances.walletconnect,
+            web3.config.connector_instances.walletlink,
+        ].forEach(
+            (x) =>
+                x !== undefined &&
+                x.connector &&
+                x.connector.connectEagerly &&
+                void x.connector.connectEagerly(Chain.RINKEBY),
+        );
 
-        void web3.config.connector_instances.walletconnect.connector.connectEagerly(Chain.RINKEBY);
-        void web3.config.connector_instances.walletlink.connector.connectEagerly(Chain.RINKEBY);
+        const infura = web3.config.connector_instances.infura;
 
-        void web3.config.connector_instances.infura.connector.activate(Chain.RINKEBY);
+        if (infura !== undefined)
+            infura.connector &&
+                infura.connector.activate &&
+                void infura.connector.activate(Chain.RINKEBY);
 
         void client.actions.startActivation();
     }, []);
@@ -62,16 +74,15 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
         }
     }, [chainId]);
 
-    return (
-        active &&
-        epochId && (
-            <>
-                {[...Object.values(states), client].map((state, index) => (
-                    <state.updater key={index} />
-                ))}
-                {children}
-            </>
-        )
+    return active && epoch ? (
+        <>
+            {[...Object.values(states), client].map((state, index) => (
+                <state.updater key={index} />
+            ))}
+            {children}
+        </>
+    ) : (
+        <></>
     );
 };
 

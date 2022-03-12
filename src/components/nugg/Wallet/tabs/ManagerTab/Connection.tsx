@@ -16,11 +16,10 @@ const Connection: FunctionComponent<Props> = () => {
     const ens = web3.hook.usePriorityENSName(provider);
     const address = web3.hook.usePriorityAccount();
     const isActive = web3.hook.usePriorityIsActive();
-    const isActivating = web3.hook.usePriorityIsActivating();
 
     const peer = web3.hook.usePriorityPeer();
 
-    return isActive ? (
+    return isActive && ens && chainId && peer && address ? (
         <div
             style={{
                 padding: '.25rem',
@@ -36,14 +35,7 @@ const Connection: FunctionComponent<Props> = () => {
             <InteractiveText action={() => web3.config.gotoEtherscan(chainId, 'address', address)}>
                 {ens}
             </InteractiveText>
-            {/* {priority_connector.info.label !== connector.info.label && (
-                <Button
-                    label="Switch To"
-                    onClick={() =>
-                        client.actions.updateProtocol({ manualPriority: connector.info.label })
-                    }
-                />
-            )} */}
+
             <Button
                 label="Disconnect"
                 onClick={() => {

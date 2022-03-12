@@ -85,6 +85,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 state,
                 action: PayloadAction<Partial<NL.Redux.App.Toast> & { index: number }>,
             ) => {
+                // @ts-ignore
                 state.toasts = smartRemove(state.toasts, action.payload);
             },
             replaceToast: (
@@ -92,6 +93,7 @@ class AppState extends NLState<NL.Redux.App.State> {
                 action: PayloadAction<Partial<NL.Redux.App.Toast> & { id: string }>,
             ) => {
                 let temp = state.toasts;
+                // @ts-ignore
                 state.toasts = smartReplace(temp, action.payload);
             },
             setModalOpen: (state, action: PayloadAction<NL.Redux.App.Modals>) => {

@@ -22,5 +22,6 @@
             "query": "is:open assignee:${user}"
         }
     ],
-    "git.enableCommitSigning": true
+    "git.enableCommitSigning": true,
+    "typescript.tsdk": "node_modules/typescript/lib"
 }

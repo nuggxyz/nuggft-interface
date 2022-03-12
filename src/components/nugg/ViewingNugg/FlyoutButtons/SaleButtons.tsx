@@ -13,7 +13,7 @@ const SaleButtons: FunctionComponent<Props> = ({ tokenId }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const sender = web3.hook.usePriorityAccount();
-    return (
+    return sender && provider && chainId ? (
         <div style={styles.ownerButtonContainer}>
             <Button
                 textStyle={styles.textBlack}
@@ -38,7 +38,7 @@ const SaleButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
             />
         </div>
-    );
+    ) : null;
 };
 
 export default SaleButtons;

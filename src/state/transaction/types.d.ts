@@ -3,15 +3,15 @@ declare namespace NL.Redux.Transaction {
     type State = {
         txn: string;
         toggleCompletedTxn: boolean;
-        success: Success;
-        error: Error;
+        success: Success | undefined;
+        error: Error | undefined;
         loading: boolean;
     };
 
     interface PendingMiddlewareTx {
         _pendingtx: string;
         callbackFn?: () => void;
-        chainId: number;
+        chainId: import('./../../web3/core/interfaces').Chain;
     }
 
     type Success =

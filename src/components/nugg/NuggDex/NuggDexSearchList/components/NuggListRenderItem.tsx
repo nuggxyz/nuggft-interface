@@ -2,14 +2,18 @@ import React, { FunctionComponent, useMemo } from 'react';
 
 import { isUndefinedOrNullOrObjectEmpty, parseTokenId } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
-import { ListRenderItemProps } from '@src/components/general/List/List';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import constants from '@src/lib/constants';
 import client from '@src/client';
+import { ListRenderItemProps } from '@src/components/general/List/InfiniteList';
 
 import styles from './NuggDexComponents.styles';
 
-type Props = ListRenderItemProps<NL.GraphQL.Fragments.Nugg.ListItem, undefined>;
+type Props = ListRenderItemProps<
+    NL.GraphQL.Fragments.Nugg.ListItem,
+    undefined,
+    NL.GraphQL.Fragments.Nugg.ListItem
+>;
 
 const NuggListRenderItem: FunctionComponent<Props> = ({ item, index, extraData, action }) => {
     const lastView__tokenId = client.live.lastView__tokenId();
@@ -46,4 +50,4 @@ export default React.memo(
         JSON.stringify(prevProps.item) === JSON.stringify(props.item) &&
         prevProps.selected === props.selected &&
         JSON.stringify(prevProps.action) === JSON.stringify(props.action),
-);
+) as typeof NuggListRenderItem;

@@ -2,34 +2,87 @@ import { gql } from '@apollo/client';
 import React, { useEffect } from 'react';
 
 import { extractItemId } from '@src/lib';
+import { EthInt } from '@src/classes/Fraction';
 
 import client from '..';
 
-import { LiveSwap, swapgql } from './useLiveNugg';
+import { swapgql, LiveSwapBase } from './useLiveNugg';
+
+export interface LiveItemSwap extends LiveSwapBase {
+    type: 'item';
+    id: string;
+    epoch: {
+        id: number;
+        startblock: number;
+        endblock: number;
+        status: 'OVER' | 'ACTIVE' | 'PENDING';
+    };
+    eth: EthInt;
+    leader: string;
+    owner: string;
+    endingEpoch: number | null;
+    num: number;
+    isTryout: boolean;
+}
+
+export interface LiveActiveItemSwap extends LiveItemSwap {}
 
 export interface LiveItem {
     type: 'item';
-    activeSwap: LiveSwap;
-    // svg: ReactSVG;
-    swaps: LiveSwap[];
+    activeSwap?: LiveActiveItemSwap;
+    swaps: LiveItemSwap[];
     count: number;
 }
 
-export const useLiveItem = (tokenId: string) => {
-    const [item, setItem] = React.useState<LiveItem>(undefined);
+export const useLiveItem = (tokenId: string | undefined) => {
+    const [item, setItem] = React.useState<LiveItem>();
 
     const apollo = client.live.apollo();
 
     useEffect(() => {
-        if (tokenId) {
+        if (apollo && tokenId) {
             const instance = apollo
                 .subscribe<{
                     item: {
                         id: string;
                         count: number;
                         // dotnuggRawCache: string;
-                        activeSwap: LiveSwap;
-                        swaps: LiveSwap[];
+                        activeSwap: {
+                            id: string;
+                            epoch: {
+                                id: string;
+                                startblock: string;
+                                endblock: string;
+                                status: 'OVER' | 'ACTIVE' | 'PENDING';
+                            };
+                            eth: string;
+                            leader: {
+                                id: string;
+                            };
+                            owner: {
+                                id: string;
+                            };
+                            endingEpoch: string | null;
+                            num: string;
+                        };
+                        swaps: {
+                            id: string;
+                            epoch: {
+                                id: string;
+                                startblock: string;
+                                endblock: string;
+                                status: 'OVER' | 'ACTIVE' | 'PENDING';
+                            };
+                            eth: string;
+                            leader: {
+                                id: string;
+                            };
+                            owner: {
+                                id: string;
+                            };
+                            endingEpoch: string | null;
+                            num: string;
+                        }[];
                     };
                 }>({
                     query: gql`
@@ -37,7 +90,6 @@ export const useLiveItem = (tokenId: string) => {
                             item(id: $tokenId) {
                                 id
                                 count
-                                # dotnuggRawCache
                                 activeSwap ${swapgql('item')}
                                 swaps ${swapgql('item')}
                             }
@@ -46,12 +98,13 @@ export const useLiveItem = (tokenId: string) => {
                     variables: { tokenId: extractItemId(tokenId) },
                 })
                 .subscribe((x) => {
-                    if (x.data.item) {
+                    if (x.data && x.data.item) {
                         setItem({
                             type: 'item',
                             count: x.data.item.count,
                             swaps: x.data.item.swaps.map((y) => {
                                 return {
+                                    type: 'item',
                                     id: y?.id,
                                     epoch: {
                                         id: +y?.epoch?.id,
@@ -59,18 +112,16 @@ export const useLiveItem = (tokenId: string) => {
                                         endblock: +y?.epoch?.endblock,
                                         status: y?.epoch?.status,
                                     },
-                                    eth: y?.eth,
-                                    leader: {
-                                        id: y?.leader?.id,
-                                    },
-                                    owner: {
-                                        id: y?.owner?.id,
-                                    },
-                                    endingEpoch: y?.endingEpoch,
-                                    num: y?.num,
+                                    eth: new EthInt(y?.eth),
+                                    leader: y?.leader?.id,
+                                    owner: y?.owner?.id,
+                                    endingEpoch: y && y.endingEpoch ? +y.endingEpoch : null,
+                                    num: +y?.num,
+                                    isTryout: y && y.endingEpoch === null,
                                 };
                             }),
                             activeSwap: {
+                                type: 'item',
                                 id: x.data.item.activeSwap?.id,
                                 epoch: {
                                     id: +x.data.item.activeSwap?.epoch?.id,
@@ -78,15 +129,17 @@ export const useLiveItem = (tokenId: string) => {
                                     endblock: +x.data.item.activeSwap?.epoch?.endblock,
                                     status: x.data.item.activeSwap?.epoch?.status,
                                 },
-                                eth: x.data.item.activeSwap?.eth,
-                                leader: {
-                                    id: x.data.item.activeSwap?.leader?.id,
-                                },
-                                owner: {
-                                    id: x.data.item.activeSwap?.owner?.id,
-                                },
-                                endingEpoch: x.data.item.activeSwap?.endingEpoch,
-                                num: x.data.item.activeSwap?.num,
+                                eth: new EthInt(x.data.item.activeSwap?.eth),
+                                leader: x.data.item.activeSwap?.leader?.id,
+
+                                owner: x.data.item.activeSwap?.owner?.id,
+
+                                endingEpoch:
+                                    x.data.item.activeSwap && x.data.item.activeSwap.endingEpoch
+                                        ? +x.data.item.activeSwap.endingEpoch
+                                        : null,
+                                num: +x.data.item.activeSwap?.num,
+                                isTryout: false,
                             },
                             // svg: x.data.item.dotnuggRawCache as any,
                         });

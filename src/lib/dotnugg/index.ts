@@ -4,9 +4,8 @@ import {
     DOTNUGG_COLOR_KEYS_INDEX_OFFSET,
     DOTNUGG_COLOR_PALLET_OFFSET,
     DOTNUGG_LENGTHS_INDEX_OFFSET,
-    DOTNUGG_WIDTH_OFFSET,
 } from './constants';
-import { base64ToArr, uint16ToDec } from './util';
+import { uint16ToDec } from './util';
 
 export type NuggJson = {
     name: string;
@@ -26,16 +25,16 @@ export const extractDotNuggBase64 = (jsonBase64: string) => {
     }
 };
 
-export const dotnuggToSvg = (dnString: string, multiplier: number = 10) => {
-    if (!isUndefinedOrNullOrStringEmpty(dnString)) {
-        const arr = base64ToArr(dnString);
-        const width = parseInt(arr[DOTNUGG_WIDTH_OFFSET], 16);
-        const colorPallet = createPallet(arr);
-        const colorKeys = createColorKeys(arr);
-        const lengths = createLengths(arr);
-        return createSvg(width, colorPallet, colorKeys, lengths, multiplier);
-    }
-};
+// export const dotnuggToSvg = (dnString: string, multiplier: number = 10) => {
+//     if (!isUndefinedOrNullOrStringEmpty(dnString)) {
+//         const arr = base64ToArr(dnString);
+//         const width = parseInt(arr[DOTNUGG_WIDTH_OFFSET], 16);
+//         const colorPallet = createPallet(arr);
+//         const colorKeys = createColorKeys(arr);
+//         const lengths = createLengths(arr);
+//         return createSvg(width, colorPallet, colorKeys, lengths, multiplier);
+//     }
+// };
 
 const createPallet = (bytesArr: string[]) => {
     const length = uint16ToDec(bytesArr.slice(DOTNUGG_COLOR_KEYS_INDEX_OFFSET));
@@ -54,16 +53,16 @@ const createColorKeys = (bytesArr: string[]) => {
     return bytesArr.slice(start, end).map((key) => parseInt(key, 16));
 };
 
-const createLengths = (bytesArr: string[]) => {
-    const start = uint16ToDec(bytesArr.slice(DOTNUGG_LENGTHS_INDEX_OFFSET));
-    const end = bytesArr.length;
-    return bytesArr.slice(start, end).reduce((acc, merged) => {
-        let one = parseInt(merged, 16) >> 4;
-        let two = ~(one << 4) & parseInt(merged, 16);
-        acc.push(one + 1, two + 1);
-        return acc;
-    }, []);
-};
+// const createLengths = (bytesArr: string[]) => {
+//     const start = uint16ToDec(bytesArr.slice(DOTNUGG_LENGTHS_INDEX_OFFSET));
+//     const end = bytesArr.length;
+//     return bytesArr.slice(start, end).reduce((acc, merged) => {
+//         let one = parseInt(merged, 16) >> 4;
+//         let two = ~(one << 4) & parseInt(merged, 16);
+//         acc.push(one + 1, two + 1);
+//         return acc;
+//     }, []);
+// };
 
 const createSvg = (
     width: number,
