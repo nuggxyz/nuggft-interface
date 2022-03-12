@@ -213,9 +213,7 @@ export function getNetworkConnector(initializedConnectors: {
 
     function useNetworkConnector() {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        const values = Object.values(initializedConnectors).map(
-            (x, i) => x.hooks.usePeer()?.fallback,
-        );
+        const values = Object.values(initializedConnectors).map((x) => x.hooks.usePeer()?.fallback);
         const index = values.findIndex((x) => x);
 
         return Object.values(initializedConnectors)[index === -1 ? 0 : index].connector;
@@ -320,7 +318,7 @@ export function getPriorityConnector(initializedConnectors: {
     function usePriorityConnector() {
         const manualPriority = client.live.manualPriority();
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        const values = Object.values(initializedConnectors).map((x, i) => x.hooks.useIsActive());
+        const values = Object.values(initializedConnectors).map((x) => x.hooks.useIsActive());
         const index = values.findIndex((x) => x);
 
         const check = manualPriority && initializedConnectors[manualPriority];
@@ -482,7 +480,7 @@ function useTx(provider: Web3Provider | undefined, hash: string) {
 
             provider
                 .getTransactionReceipt(hash)
-                .then(async (result) => {
+                .then((result) => {
                     if (!stale) {
                         console.log({ result });
 

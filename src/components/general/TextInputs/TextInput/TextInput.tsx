@@ -9,7 +9,7 @@ import styles from './TextInput.styles';
 export interface TextInputProps {
     label?: string;
     value: string;
-    setValue: React.Dispatch<SetStateAction<string>> | any;
+    setValue: React.Dispatch<SetStateAction<string>> | ((value: string) => void);
     disabled?: boolean;
     warning?: string;
     style?: React.CSSProperties | UseSpringProps;

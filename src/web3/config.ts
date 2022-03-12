@@ -268,7 +268,7 @@ export const network = getNetworkConnector(connector_instances);
 export const selected = getSelectedConnector();
 
 export const gotoLink = (link: string) => {
-    let win = window.open(encodeURIComponent(link), '_blank');
+    const win = window.open(encodeURIComponent(link), '_blank');
     win !== null && win.focus();
 };
 
@@ -323,7 +323,7 @@ export const CHAIN_INFO: {
 };
 
 export const gotoEtherscan = (chainId: Chain, route: 'tx' | 'address', value: string) => {
-    let win = window.open(`${CHAIN_INFO[chainId].explorer}${route}/${value}`, '_blank');
+    const win = window.open(`${CHAIN_INFO[chainId].explorer}${route}/${value}`, '_blank');
     win !== null && win.focus();
 };
 

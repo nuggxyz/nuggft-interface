@@ -1,10 +1,11 @@
-import React, { FunctionComponent, useCallback } from 'react';
+import React, { FunctionComponent, SetStateAction, useCallback } from 'react';
 
 import { escapeRegExp } from '@src/lib';
 import TextInput, { TextInputProps } from '@src/components/general/TextInputs/TextInput/TextInput';
 
 interface Props extends TextInputProps {
     prependSymbol?: string | undefined;
+    setValue: React.Dispatch<SetStateAction<string>>;
 }
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group

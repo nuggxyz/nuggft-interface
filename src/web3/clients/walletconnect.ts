@@ -89,12 +89,12 @@ export class WalletConnect extends Connector {
     private URIListener = (_: Error | null, payload: { params: string[] }): void => {
         const peer = this.peer_try && this.peers[this.peer_try];
 
-        if (peer) {
+        if (peer && peer.deeplink_href) {
             // default - just use normal wallet connect flow
             if (peer.desktopAction === 'default')
                 this.events.emit(URI_AVAILABLE, payload.params[0]);
 
-            const uri = peer.deeplink_href + HREF_PATH + encodeURIComponent(payload.params[0]);
+            const uri = `${peer.deeplink_href}${HREF_PATH}${encodeURIComponent(payload.params[0])}`;
             const device = store.getState().app.screenType;
 
             if (device === 'desktop' || device === 'tablet') {
@@ -157,9 +157,21 @@ export class WalletConnect extends Connector {
     }
 
     private findPeer(): PeerInfo__WalletConnect {
-        const peerMeta = (this.provider as any)?.signer?.connection?.wc?._peerMeta;
+        const peerMeta = (
+            this.provider as unknown as {
+                signer?: {
+                    connection?: {
+                        wc?: {
+                            _peerMeta: {
+                                url: string;
+                            };
+                        };
+                    };
+                };
+            }
+        )?.signer?.connection?.wc?._peerMeta;
 
-        let res = this.peer_url_lookup[peerMeta.url];
+        const res = peerMeta ? this.peer_url_lookup[peerMeta.url] : undefined;
 
         if (res === undefined) {
             if (this.peers.walletconnect !== undefined) return this.peers.walletconnect;

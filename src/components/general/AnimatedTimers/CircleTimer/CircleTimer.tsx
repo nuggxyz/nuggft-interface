@@ -38,6 +38,7 @@ const CircleTimer: FunctionComponent<Props> = ({
     style,
     width,
 }) => {
+    blocktime;
     // const dimensions = AppState.select.dimensions();
     const timerCircleRadius = useMemo(() => width / 6.5, [width]);
     const circumference = useMemo(() => timerCircleRadius * TWOPI, [timerCircleRadius]);
@@ -108,7 +109,8 @@ const CircleTimer: FunctionComponent<Props> = ({
                 height="100%"
                 width="100%"
                 filter={`drop-shadow(-10px 0px 15px ${shadowColor})`}
-                style={styles.svgTransition}>
+                style={styles.svgTransition}
+            >
                 <animated.circle
                     cx="50%"
                     cy="50%"

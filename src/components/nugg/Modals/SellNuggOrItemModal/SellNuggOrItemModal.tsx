@@ -63,10 +63,7 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
                         styleHeading={styles.heading}
                         styleInputContainer={styles.inputCurrency}
                         label="Enter floor"
-                        setValue={(text: string) => {
-                            setAmount(text);
-                            // clearError();
-                        }}
+                        setValue={setAmount}
                         value={amount}
                         code
                         className="placeholder-white"

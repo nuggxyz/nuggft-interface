@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-type Props = Record<string, never>;
-
 const useAnimationFrame = (
     callback: (time: number) => void,
     dependencyArray: React.DependencyList,
@@ -18,6 +16,8 @@ const useAnimationFrame = (
             previousTime.current = time;
             previousRequest.current = requestAnimationFrame(animate);
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         [...dependencyArray, callback],
     );
 

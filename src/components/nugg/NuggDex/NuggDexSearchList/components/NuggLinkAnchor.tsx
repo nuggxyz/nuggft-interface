@@ -18,14 +18,15 @@ const NuggThumbnail: FunctionComponent<Props> = ({ onClick, style }) => {
 
     return (
         <animated.div
-            ref={ref as any}
+            ref={ref}
             style={{
                 ...styles.nuggLinkThumbnailContainer,
                 ...(isHovering ? styles.hover : {}),
                 ...style,
                 justifyContent: 'space-evenly',
             }}
-            onClick={onClick}>
+            onClick={onClick}
+        >
             <Maximize2
                 style={{
                     ...globalStyles.fillWidth,

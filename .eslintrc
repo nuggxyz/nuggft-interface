@@ -18,11 +18,14 @@
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaFeatures": {
-            "jsx": true
+            "tsx": true,
+            "experimentalObjectRestSpread": true,
+            "impliedStrict": true,
+            "binaryLiterals": true
         },
-        "ecmaVersion": 12,
+        "ecmaVersion": "latest",
         "sourceType": "module",
-        "project": ["./tsconfig.json"]
+        "project": ["./tsconfig.json", "webpack.config.js"]
     },
     "plugins": [
         "react",
@@ -49,7 +52,7 @@
         "react/jsx-filename-extension": [
             1,
             {
-                "extensions": [".js", ".jsx", ".ts", ".tsx"]
+                "extensions": [".ts", ".tsx"]
             }
         ],
         "no-unused-vars": "off",

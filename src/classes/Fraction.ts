@@ -99,8 +99,9 @@ export class Fraction {
             return new Fraction(fractionish);
 
         try {
-            let unsafe = fractionish as any;
-            if (unsafe.num && unsafe.den) return fractionish as Fraction;
+            const unsafe = fractionish as unknown;
+            if ((unsafe as Fraction).num && (unsafe as Fraction).den)
+                return fractionish as Fraction;
             else {
                 console.log({ unsafe });
                 throw new Error('Could not parse fraction');
@@ -175,7 +176,7 @@ export class EthInt extends Fraction {
 
     public static fromFraction(value: Fraction): EthInt {
         try {
-            let bob = new EthInt(0);
+            const bob = new EthInt(0);
             bob.num = value.num;
             bob.den = value.den.mul(ETH_ONE);
             return bob;
@@ -186,7 +187,7 @@ export class EthInt extends Fraction {
 
     public static fromFractionRaw(value: Fraction): EthInt {
         try {
-            let bob = new EthInt(0);
+            const bob = new EthInt(0);
             bob.num = value.num;
             bob.den = value.den.mul(ETH_ONE);
             return bob;
@@ -198,9 +199,9 @@ export class EthInt extends Fraction {
     // using a currency library here in case we want to add more in future
     public formatDollarAmount() {
         // round = true, // digits = 2, // num: number | undefined,
-        let num = this.decimal.toNumber();
-        let digits = 4;
-        let round = true;
+        const num = this.decimal.toNumber();
+        const digits = 4;
+        const round = true;
 
         if (num === 0) return '$0.00';
         if (!num) return '-';
@@ -223,8 +224,8 @@ export class EthInt extends Fraction {
 
     // using a currency library here in case we want to add more in future
     public formatAmount() {
-        let num = this.decimal.toNumber();
-        let digits = 3;
+        const num = this.decimal.toNumber();
+        const digits = 3;
 
         if (num === 0) return '0';
         if (!num) return '-';

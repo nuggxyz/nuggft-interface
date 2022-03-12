@@ -16,7 +16,7 @@ type Props = {
     showLabel?: boolean;
     labelColor?: string;
     textProps?: Omit<TextProps, 'children'>;
-    data?: Base64EncodedSvg;
+    // data?: Base64EncodedSvg;
     showcase?: boolean;
     labelLong?: boolean;
     disableOnClick?: boolean;
@@ -29,7 +29,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     showLabel,
     labelColor,
     textProps,
-    data,
+    // data,
     showcase = false,
     labelLong = false,
     disableOnClick = false,

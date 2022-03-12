@@ -1,4 +1,4 @@
-'use strict';
+'strict';
 
 const fs = require('fs');
 const path = require('path');
@@ -183,6 +183,7 @@ module.exports = function (webpackEnv) {
     };
 
     return {
+        experiments: { topLevelAwait: true },
         target: ['browserslist'],
         mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
         // Stop compilation early in production
