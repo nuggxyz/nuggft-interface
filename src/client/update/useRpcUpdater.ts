@@ -5,7 +5,7 @@ import { BigNumber } from 'ethers';
 import web3 from '@src/web3';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { EthInt } from '@src/classes/Fraction';
-import { ItemId, NuggId } from '@src/client/router';
+import { ItemId } from '@src/client/router';
 import { InterfacedEvent } from '@src/interfaces/events';
 import lib from '@src/lib';
 
@@ -30,7 +30,7 @@ export const useRpcUpdater = () => {
             };
 
             infura.on(globalEvent, (log: Log) => {
-                let event = nuggft.interface.parseLog(log) as unknown as InterfacedEvent;
+                const event = nuggft.interface.parseLog(log) as unknown as InterfacedEvent;
 
                 console.log({ event });
 
@@ -53,7 +53,7 @@ export const useRpcUpdater = () => {
                     case 'OfferMint': {
                         const agency = BigNumber.from(event.args.agency);
 
-                        client.actions.updateOffers(event.args.tokenId.toString() as NuggId, [
+                        client.actions.updateOffers(event.args.tokenId.toString(), [
                             {
                                 eth: EthInt.fromNuggftV1Agency(event.args.agency),
                                 user: agency.mask(160)._hex,
@@ -80,7 +80,7 @@ export const useRpcUpdater = () => {
                     case 'Transfer': {
                         if (address && event.args._to.toLowerCase() === address.toLowerCase()) {
                             client.actions.addNugg({
-                                tokenId: event.args._tokenId.toString() as NuggId,
+                                tokenId: event.args._tokenId.toString(),
                                 activeLoan: false,
                                 activeSwap: false,
                                 unclaimedOffers: [],
@@ -96,7 +96,7 @@ export const useRpcUpdater = () => {
                                 startingEpoch: agency.epoch.toNumber(),
                                 endingEpoch: agency.epoch.add(1024).toNumber(),
                                 eth: agency.eth,
-                                nugg: event.args.tokenId.toString() as NuggId,
+                                nugg: event.args.tokenId.toString(),
                             });
                         }
                         break;
@@ -108,7 +108,7 @@ export const useRpcUpdater = () => {
                                 startingEpoch: agency.epoch.toNumber(),
                                 endingEpoch: agency.epoch.add(1024).toNumber(),
                                 eth: agency.eth,
-                                nugg: event.args.tokenId.toString() as NuggId,
+                                nugg: event.args.tokenId.toString(),
                             });
                         }
                         break;

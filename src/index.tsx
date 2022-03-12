@@ -10,7 +10,7 @@ import Modal from './components/nugg/Modals/Modal/Modal';
 import IndexPage from './pages/Index';
 import ToastContainer from './components/general/Toast/ToastContainer';
 
-global.Buffer = global.Buffer || require('buffer').Buffer;
+global.Buffer = global.Buffer || (await import('buffer')).Buffer;
 
 ReactDOM.render(
     <div style={{ width: '100%', height: '100%' }}>

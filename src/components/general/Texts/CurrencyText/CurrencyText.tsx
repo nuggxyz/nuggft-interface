@@ -12,9 +12,9 @@ type PartialText = Partial<TextProps>;
 interface BalanceProps extends PartialText {
     value: number;
     decimals?: number;
-    unit?: string;
-    prefix?: string;
-    duration?: number;
+    // unit?: string;
+    // prefix?: string;
+    // duration?: number;
     percent?: boolean;
     image?: NLStaticImageKey;
     forceGwei?: boolean;
@@ -24,9 +24,9 @@ interface BalanceProps extends PartialText {
 const CurrencyText: React.FC<BalanceProps> = ({
     value,
     decimals = 1,
-    unit = '',
-    prefix = '',
-    duration = 2,
+    // unit = '',
+    // prefix = '',
+    // duration = 2,
     percent = false,
     forceGwei = false,
     showUnit = true,

@@ -43,12 +43,9 @@ const Button: FunctionComponent<ButtonProps> = ({
     const RightIcon = useCallback(() => (rightIcon ? rightIcon : null), [rightIcon]);
 
     const LeftIcon = useCallback(() => (leftIcon ? leftIcon : null), [leftIcon]);
-    const Label = useCallback(
-        () => (label ? <Text {...textProps}>{label}</Text> : null),
-        [label, textProps],
-    );
 
     return (
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         <div ref={ref} onClick={disabled ? undefined : onClick} style={style}>
             <LeftIcon />
             {label ? <Text {...textProps}>{label}</Text> : null}

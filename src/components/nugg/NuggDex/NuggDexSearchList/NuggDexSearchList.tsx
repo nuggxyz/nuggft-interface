@@ -63,16 +63,14 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         () =>
             _liveActiveItems.reduce((acc: SwapData[], item) => {
                 let tmp = acc;
-                if (
-                    filters.searchValue &&
-                    (filters.searchValue === '' || filters.searchValue === item.id)
-                ) {
-                    if (sortAsc['items on sale']) {
-                        tmp = [...acc, item];
-                    } else {
-                        tmp = [item, ...acc];
-                    }
+                // @danny7even is this needed?
+                // if (filters.searchValue && filters.searchValue === item.id) {
+                if (sortAsc['items on sale']) {
+                    tmp = [...acc, item];
+                } else {
+                    tmp = [item, ...acc];
                 }
+                // }
                 return tmp;
             }, []),
         [filters, sortAsc, _liveActiveItems],
@@ -85,6 +83,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             },
         });
     }, [viewing, setSortAsc]);
+
     useEffect(() => {
         if (filters?.target) {
             setSortAsc((sort) => {

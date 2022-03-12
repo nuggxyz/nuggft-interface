@@ -164,10 +164,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
                     styleHeading={styles.heading}
                     styleInputContainer={styles.inputCurrency}
                     label="Enter amount"
-                    setValue={(text: string) => {
-                        setAmount(text);
-                        // clearError();
-                    }}
+                    setValue={setAmount}
                     value={amount}
                     code
                     className="placeholder-white"

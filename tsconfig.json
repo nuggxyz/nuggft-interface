@@ -3,6 +3,7 @@
         "jsx": "react",
         "target": "esNext",
         "lib": ["dom", "dom.iterable", "esnext"],
+        "allowJs": true,
         "skipLibCheck": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
@@ -19,6 +20,6 @@
         },
         "strict": true
     },
-    "include": ["src", "test.ts", "index.d.ts", "archive/interfaces.ts"],
-    "exclude": ["node_modules"]
+    "include": ["src"],
+    "exclude": ["node_modules", "webpack.config.js"]
 }

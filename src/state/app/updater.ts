@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
 
-import web3 from '@src/web3';
-
 import AppState from './index';
 
 export default () => {
@@ -11,8 +9,6 @@ export default () => {
             width: window.innerWidth,
         });
     };
-
-    const chainId = web3.hook.usePriorityChainId();
 
     useEffect(() => {
         resizer();

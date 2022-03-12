@@ -26,7 +26,7 @@ type Props = {
 
 export type NLStaticImageKey = 'nugg' | 'eth' | Peer | `${Peer}_icon` | `${Peer}_icon_small`;
 
-const StaticAppIcon: FunctionComponent<Props & { icon: string }> = ({ image, style, icon }) => {
+const StaticAppIcon: FunctionComponent<Props & { icon: string }> = ({ style, icon }) => {
     return (
         <img
             src={icon}
@@ -41,11 +41,7 @@ const StaticAppIcon: FunctionComponent<Props & { icon: string }> = ({ image, sty
     );
 };
 
-const StaticAppIconSmall: FunctionComponent<Props & { icon: string }> = ({
-    image,
-    style,
-    icon,
-}) => {
+const StaticAppIconSmall: FunctionComponent<Props & { icon: string }> = ({ style, icon }) => {
     return (
         <img
             src={icon}
