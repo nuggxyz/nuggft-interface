@@ -21,6 +21,7 @@ import NuggLink from './components/NuggLink';
 import styles from './NuggDexSearchList.styles';
 
 type Props = Record<string, never>;
+
 const NuggDexSearchList: FunctionComponent<Props> = () => {
     const epoch__id = client.live.epoch.id();
     const filters = NuggDexState.select.searchFilters();
@@ -118,7 +119,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         async (
             setResults: React.Dispatch<React.SetStateAction<NL.GraphQL.Fragments.Nugg.ListItem[]>>,
             startFrom: number,
-            // eslint-disable-next-line default-param-last
+            // eslint-disable-next-line  @typescript-eslint/default-param-last
             addToResult = false,
             _filters: NuggDexFilters,
             setLoading?: React.Dispatch<SetStateAction<boolean>>,

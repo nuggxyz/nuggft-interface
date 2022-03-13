@@ -61,11 +61,11 @@ export default {
             ),
         activeSwaps: () => core.store((state) => state.activeSwaps),
         activeItems: () => core.store((state) => state.activeItems),
-        activeNuggItem: (id: string) =>
+        activeNuggItem: (id: string | undefined) =>
             core.store(
                 // eslint-disable-next-line react-hooks/rules-of-hooks
                 useCallback(
-                    (state) => state.activeItems.find((item) => item.id.includes(id)),
+                    (state) => id && state.activeItems.find((item) => item.id.includes(id)),
                     [id],
                 ),
             ),

@@ -13,6 +13,7 @@ import Flyout from '@src/components/general/Flyout/Flyout';
 import client from '@src/client';
 import HappyTabber from '@src/components/general/HappyTabber/HappyTabber';
 import AddressViewer from '@src/components/general/Texts/AddressViewer/AddressViewer';
+import { LiveNugg } from '@src/client/hooks/useLiveNugg';
 
 import styles from './ViewingNugg.styles';
 import OwnerButtons from './FlyoutButtons/OwnerButtons';
@@ -20,11 +21,14 @@ import SaleButtons from './FlyoutButtons/SaleButtons';
 import LoanButtons from './FlyoutButtons/LoanButtons';
 import SwapList from './SwapList';
 import ItemList from './ItemList';
+import NuggAbout from './NuggAbout';
+import ItemAbout from './ItemAbout';
 
 type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
 
 const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
-    const lastView__tokenId = client.live.lastView.tokenId();
+    const tokenId = client.live.lastView.tokenId();
+    const epoch = client.live.epoch.id();
 
     const sender = web3.hook.usePriorityAccount();
 
@@ -32,7 +36,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 
-    const { token } = client.hook.useLiveToken(lastView__tokenId);
+    const { token } = client.hook.useLiveToken(tokenId);
 
     const happyTabs = useMemo(() => {
         return [
@@ -40,7 +44,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 label: 'Swaps',
                 comp: React.memo(SwapList),
             },
-            ...(provider && chainId && token && token.type === 'nugg' && sender && lastView__tokenId
+            ...(provider && chainId && token && token.type === 'nugg' && sender && tokenId
                 ? [
                       {
                           label: 'Items',
@@ -51,15 +55,15 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                   provider={provider}
                                   sender={sender}
                                   isOwner={sender === token.owner && !token?.activeSwap?.id}
-                                  tokenId={lastView__tokenId}
+                                  tokenId={tokenId}
                               />
                           )),
                       },
                   ]
                 : []),
         ];
-    }, [token, sender, chainId, provider, lastView__tokenId]);
-    return token ? (
+    }, [token, sender, chainId, provider, tokenId]);
+    return provider && epoch && tokenId && token ? (
         <div style={styles.container}>
             {MobileBackButton && (
                 <div
@@ -76,17 +80,31 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
             <div style={screenType === 'phone' ? styles.nuggContainerMobile : styles.nuggContainer}>
                 <div style={{ position: 'fixed' }}>
                     <AnimatedCard>
-                        {lastView__tokenId && (
-                            <TokenViewer tokenId={lastView__tokenId} showcase disableOnClick />
-                        )}
+                        {tokenId && <TokenViewer tokenId={tokenId} showcase disableOnClick />}
                     </AnimatedCard>
                 </div>
             </div>
+
+            <div style={{ width: '80%' }}>
+                {token.type === 'item' && (
+                    <ItemAbout token={token} tokenId={tokenId} epoch={epoch} />
+                )}
+
+                {token.type === 'nugg' && token.activeSwap !== undefined && (
+                    <NuggAbout
+                        tokenId={tokenId}
+                        token={token as Required<LiveNugg>}
+                        epoch={epoch}
+                        provider={provider}
+                    />
+                )}
+            </div>
+
             <div style={styles.swapsWrapper}>
                 <div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
                     <div style={styles.owner}>
                         <Text textStyle={styles.nuggId}>
-                            {lastView__tokenId && parseTokenIdSmart(lastView__tokenId)}
+                            {tokenId && parseTokenIdSmart(tokenId)}
                         </Text>
                         <div style={{ marginLeft: '1rem' }}>
                             {/* eslint-disable-next-line no-nested-ternary */}
@@ -108,6 +126,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                             param={token.owner}
                                             route="address"
                                             size="medium"
+                                            isNugg={false}
                                         />
                                         <Text textStyle={styles.titleText}>
                                             {token?.owner === sender && (
@@ -134,6 +153,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                 </Text>
                             )}
                         </div>
+
                         {token.type === 'nugg' && token.owner === sender && (
                             <Flyout
                                 containerStyle={styles.flyout}
@@ -144,18 +164,19 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                     </div>
                                 }
                             >
-                                {lastView__tokenId &&
+                                {tokenId &&
                                     // eslint-disable-next-line no-nested-ternary
                                     (token?.activeSwap?.id ? (
-                                        <SaleButtons tokenId={lastView__tokenId} />
+                                        <SaleButtons tokenId={tokenId} />
                                     ) : token?.activeLoan ? (
-                                        <LoanButtons tokenId={lastView__tokenId} />
+                                        <LoanButtons tokenId={tokenId} />
                                     ) : (
-                                        <OwnerButtons tokenId={lastView__tokenId} />
+                                        <OwnerButtons tokenId={tokenId} />
                                     ))}
                             </Flyout>
                         )}
                     </div>
+
                     <HappyTabber
                         defaultActiveIndex={0}
                         items={happyTabs}

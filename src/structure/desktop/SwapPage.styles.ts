@@ -72,8 +72,8 @@ const styles = NLStyleSheetCreator({
         height: '90%',
         width: '40%',
         paddingRight: '2rem',
-        position: 'absolute',
-        right: 0,
+        // position: 'absolute',
+        // right: 0,
     },
 });
 

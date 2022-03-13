@@ -42,7 +42,9 @@ const CurrencyText: React.FC<BalanceProps> = ({
     const [spring] = useSpring(
         {
             val: value,
-            from: { val: prevValue || value * 0.5 },
+            from: {
+                val: prevValue || value * 0.5,
+            },
             config: config.molasses,
         },
         [prevValue, value],
@@ -72,4 +74,4 @@ const CurrencyText: React.FC<BalanceProps> = ({
     );
 };
 
-export default React.memo(CurrencyText);
+export default React.memo(CurrencyText, (prev, curr) => prev.value === curr.value);

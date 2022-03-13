@@ -59,7 +59,8 @@ const NuggList: FunctionComponent<Props> = ({
     const onClick = useCallback((item: typeof values[0]) => {
         batch(() => {
             client.actions.routeTo(item?.id, true);
-            NuggDexState.dispatch.addToRecents(item);
+            // @ts-ignore
+            NuggDexState.dispatch.addToRecents({ ...item, eth: undefined });
         });
     }, []);
 
