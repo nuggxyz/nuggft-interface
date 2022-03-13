@@ -1,7 +1,8 @@
-import { getAddress } from '@ethersproject/address';
 import { BigNumber, ethers } from 'ethers';
 
 // import { FEATURE_NAMES } from '@src/web3/config';
+
+import lodash from '@src/lib/lodash';
 
 import colors from './colors';
 import constants from './constants';
@@ -12,14 +13,7 @@ import parse from './parse';
 
 // 6287103
 // VERIFICATION
-export const isAnybodyThere = (value: unknown) => {
-    try {
-        if (!isUndefinedOrNull(value)) return true;
-        return false;
-    } catch {
-        return false;
-    }
-};
+
 export const isUndefined = (value: unknown) => {
     return typeof value === 'undefined';
 };
@@ -58,7 +52,7 @@ export const isUndefinedOrNullOrNotFunction = (value: unknown) => {
     return isUndefinedOrNull(value) || typeof value !== 'function';
 };
 export const isUndefinedOrNullOrNotNumber = (value: unknown) => {
-    return isUndefinedOrNull(value) || typeof value !== 'number' || isNaN(value);
+    return isUndefinedOrNull(value) || typeof value !== 'number' || Number.isNaN(value);
 };
 export const isUndefinedOrNullOrNumberZero = (value: unknown) => {
     return isUndefinedOrNullOrNotNumber(value) || value === 0;
@@ -74,6 +68,7 @@ export const toMili = (hours: number, minutes: number, seconds: number) => {
     return (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
 };
 
+// eslint-disable-next-line no-promise-executor-return
 export const wait = (timeout: number) => new Promise((resolve) => setTimeout(resolve, timeout));
 
 export const uc = (text: string) => `${text.substring(0, 1).toUpperCase()}${text.substring(1)}`;
@@ -82,12 +77,13 @@ export const NLStyleSheetCreator = <T extends NLStyleSheet>(arg: T): T => {
     return arg;
 };
 
+// eslint-disable-next-line no-return-assign
 export const safeNavigate = (url: string) => (window.location.href = url);
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: string): string | false {
     try {
-        return getAddress(value);
+        return ethers.utils.getAddress(value);
     } catch {
         return false;
     }
@@ -112,6 +108,7 @@ export function escapeRegExp(string: string): string {
 
 export const sortByField = <T>(array: T[], field: keyof T, asc = true) => {
     const compare = (a: T, b: T) => {
+        // eslint-disable-next-line no-nested-ternary
         return asc ? (a[field] < b[field] ? 1 : -1) : a[field] > b[field] ? 1 : -1;
     };
     return array.sort(compare);
@@ -119,8 +116,8 @@ export const sortByField = <T>(array: T[], field: keyof T, asc = true) => {
 
 export const uuidv4 = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = (Math.random() * 16) | 0,
-            v = c == 'x' ? r : (r & 0x3) | 0x8;
+        const r = (Math.random() * 16) | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
         return v.toString(16);
     });
 };
@@ -195,6 +192,7 @@ export const loadStringFromLocalStorage = (target = 'tokens') => {
         return localStorage.getItem(target);
     } catch (e) {
         console.log(e);
+        return undefined;
     }
 };
 
@@ -219,9 +217,11 @@ export const smartInsert = <
     return array.reduce((acc: T[], elem) => {
         if (elem.index === element.index) {
             acc.push(element);
+            // eslint-disable-next-line
             elem.index++;
         }
         if (elem.index >= element.index) {
+            // eslint-disable-next-line
             elem.index++;
         }
         acc.push(elem);
@@ -246,9 +246,11 @@ export const smartInsertIndex = <
     return array.reduce((acc: T[], elem) => {
         if (elem.index === element.index) {
             acc.push(element);
+            // eslint-disable-next-line
             elem.index++;
         }
         if (elem.index >= element.index) {
+            // eslint-disable-next-line
             elem.index++;
         }
         acc.push(elem);
@@ -265,6 +267,7 @@ export const smartRemove = <T extends { index: number }>(array: T[], element: T)
             return acc;
         }
         if (elem.index > element.index) {
+            // eslint-disable-next-line
             elem.index--;
         }
         acc.push(elem);
@@ -326,9 +329,8 @@ export const parseTokenId = (itemId: string, long?: boolean) => {
         return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][num >> 8]} ${
             long ? '#' : ''
         }${num & 0xff}`;
-    } else {
-        return `${long ? 'Nugg #' : ''}${itemId}`;
     }
+    return `${long ? 'Nugg #' : ''}${itemId}`;
 };
 
 export const parseTokenIdSmart = (itemId: string) => {
@@ -338,9 +340,8 @@ export const parseTokenIdSmart = (itemId: string) => {
         return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][num >> 8]} ${
             num & 0xff
         }`;
-    } else {
-        return 'Nugg ' + itemId;
     }
+    return `Nugg ${itemId}`;
 };
 
 export const parseItmeIdToNum = (itemId: `item-${string}`) => {
@@ -391,4 +392,4 @@ export const rangeEnd = (start: number, end: number) => {
         .map((_, idx) => start + 1 + idx);
 };
 
-export default { colors, constants, conversion, fontSize, layout, parse };
+export default { colors, constants, conversion, fontSize, layout, parse, lodash };

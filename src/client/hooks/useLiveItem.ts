@@ -1,11 +1,13 @@
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 import React, { useEffect } from 'react';
 
 import { extractItemId } from '@src/lib';
 import { EthInt } from '@src/classes/Fraction';
 
+// eslint-disable-next-line import/no-cycle
 import client from '..';
 
+// eslint-disable-next-line import/no-cycle
 import { swapgql, LiveSwapBase } from './useLiveNugg';
 
 export interface LiveItemSwap extends LiveSwapBase {
@@ -109,16 +111,16 @@ export const useLiveItem = (tokenId: string | undefined) => {
                                     type: 'item',
                                     id: y?.id,
                                     epoch: {
-                                        id: +y?.epoch?.id,
-                                        startblock: +y?.epoch?.startblock,
-                                        endblock: +y?.epoch?.endblock,
+                                        id: Number(y?.epoch?.id ?? 0),
+                                        startblock: Number(y?.epoch?.startblock),
+                                        endblock: Number(y?.epoch?.endblock),
                                         status: y?.epoch?.status,
                                     },
                                     eth: new EthInt(y?.eth),
                                     leader: y?.leader?.id,
                                     owner: y?.owner?.id,
                                     endingEpoch: y && y.endingEpoch ? +y.endingEpoch : null,
-                                    num: +y?.num,
+                                    num: Number(y?.num),
                                     isTryout: y && y.endingEpoch === null,
                                 };
                             }),
@@ -126,15 +128,17 @@ export const useLiveItem = (tokenId: string | undefined) => {
                                 ? {
                                       count: 1,
                                       type: 'item',
-                                      id: x.data.item.activeSwap.id,
+                                      id: x.data.item.activeSwap?.id,
                                       epoch: {
-                                          id: +x.data.item.activeSwap.epoch?.id,
-                                          startblock: +x.data.item.activeSwap.epoch?.startblock,
-                                          endblock: +x.data.item.activeSwap.epoch?.endblock,
-                                          status: x.data.item.activeSwap.epoch?.status,
+                                          id: Number(x.data.item.activeSwap?.epoch?.id),
+                                          startblock: Number(
+                                              x.data.item.activeSwap?.epoch?.startblock,
+                                          ),
+                                          endblock: Number(x.data.item.activeSwap?.epoch?.endblock),
+                                          status: x.data.item.activeSwap?.epoch?.status,
                                       },
-                                      eth: new EthInt(x.data.item.activeSwap.eth),
-                                      leader: x.data.item.activeSwap.leader?.id,
+                                      eth: new EthInt(x.data.item.activeSwap?.eth),
+                                      leader: x.data.item.activeSwap?.leader?.id,
 
                                       owner: x.data.item.activeSwap.owner?.id,
 
@@ -143,7 +147,7 @@ export const useLiveItem = (tokenId: string | undefined) => {
                                           x.data.item.activeSwap.endingEpoch
                                               ? +x.data.item.activeSwap.endingEpoch
                                               : null,
-                                      num: +x.data.item.activeSwap.num,
+                                      num: Number(x.data.item.activeSwap?.num),
                                       isTryout: false,
                                   }
                                 : undefined,
@@ -154,6 +158,7 @@ export const useLiveItem = (tokenId: string | undefined) => {
                 instance.unsubscribe();
             };
         }
+        return () => undefined;
     }, [apollo, tokenId]);
 
     return item;

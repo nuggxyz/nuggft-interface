@@ -7,130 +7,6 @@ import usePrevious from '@src/hooks/usePrevious';
 import { ListRenderItemProps } from './List';
 import styles from './List.styles';
 
-type Props<T, B, A> = {
-    data: { title: string; items: T[] }[];
-    ChildRenderItem: FunctionComponent<ListRenderItemProps<T, B, A>>;
-    TitleRenderItem: FunctionComponent<{
-        title: string;
-        extraData: B;
-        open?: boolean;
-        setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-    }>;
-    FeatureRenderItem?: FunctionComponent<{
-        feature: string;
-        isSelected: boolean;
-        onClick: () => void;
-        numberOfItems: number;
-    }>;
-    extraData: B;
-    style?: CSSProperties | SpringProps;
-    styleLeft?: CSSProperties;
-    styleRight?: CSSProperties;
-    children?: FunctionComponent<any>;
-};
-
-const StickyList = <T, B, A>({
-    data,
-    ChildRenderItem,
-    TitleRenderItem,
-    FeatureRenderItem,
-    extraData,
-    style,
-    styleLeft,
-    styleRight,
-    children,
-}: // ...props
-Props<T, B, A>) => {
-    const refData = useMemo(
-        () =>
-            data.map((item) => {
-                return {
-                    ...item,
-                    ref: React.createRef<HTMLDivElement>(),
-                };
-            }),
-        [data],
-    );
-    const [animating, setAnimating] = useState(false);
-    const listRef = useRef<HTMLDivElement>(null);
-
-    const [, setY] = useSpring(
-        () => ({
-            immediate: false,
-            y: 0,
-            onChange: (props: { value: { y: number } }) => {
-                listRef.current && listRef.current.scroll(0, props.value.y);
-            },
-            config: config.default,
-            onStart: () => setAnimating(true),
-            onRest: () => setAnimating(false),
-        }),
-        [listRef],
-    );
-    const [current] = useState(refData?.map((item) => item.title));
-
-    return listRef ? (
-        <animated.div style={{ display: 'flex', ...style }}>
-            <div style={styleLeft}>
-                {FeatureRenderItem &&
-                    refData.map((item, index) =>
-                        refData[index].items.length > 0 ? (
-                            <React.Fragment key={`feature-${index}`}>
-                                <FeatureRenderItem
-                                    onClick={() =>
-                                        setY({
-                                            y:
-                                                (item.ref.current
-                                                    ? item.ref.current.getBoundingClientRect().top
-                                                    : 0) +
-                                                (listRef.current
-                                                    ? listRef.current.scrollTop -
-                                                      listRef.current.offsetHeight / 4.7
-                                                    : 0),
-                                        })
-                                    }
-                                    isSelected={!current.includes(item.title)}
-                                    feature={item.title}
-                                    numberOfItems={refData[index].items.length}
-                                />
-                            </React.Fragment>
-                        ) : null,
-                    )}
-            </div>
-            <div
-                style={{
-                    // height: '100%',
-                    // overflow: 'scroll',
-                    ...styleRight,
-                }}
-                ref={listRef}
-            >
-                {refData.map((item, index) =>
-                    refData[index].items && refData[index].items.length > 0 ? (
-                        <React.Fragment key={`list-${index}`}>
-                            <RenderItem
-                                {...{
-                                    item,
-                                    TitleRenderItem,
-                                    ChildRenderItem,
-                                    extraData,
-                                    animating,
-                                    refData: refData.map((item) => item.title),
-                                    // setCurrent,
-                                    // index,
-                                }}
-                            />
-                        </React.Fragment>
-                    ) : null,
-                )}
-            </div>
-            {children && children}
-        </animated.div>
-    ) : null;
-};
-
-export default StickyList;
-
 type RenderProps<T, B, A> = {
     ChildRenderItem: FunctionComponent<ListRenderItemProps<T, B, A>>;
     TitleRenderItem: FunctionComponent<{
@@ -193,6 +69,7 @@ const RenderItem = <T, B, A>({
             >
                 <animated.div style={{ opacity, y }} ref={ref}>
                     {item.items.map((childItem, index) => (
+                        // eslint-disable-next-line react/no-array-index-key
                         <React.Fragment key={`child-${index}`}>
                             <ChildRenderItem
                                 item={childItem}
@@ -210,3 +87,123 @@ const RenderItem = <T, B, A>({
         </div>
     );
 };
+
+type Props<T, B, A> = {
+    data: { title: string; items: T[] }[];
+    ChildRenderItem: FunctionComponent<ListRenderItemProps<T, B, A>>;
+    TitleRenderItem: FunctionComponent<{
+        title: string;
+        extraData: B;
+        open?: boolean;
+        setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+    }>;
+    FeatureRenderItem?: FunctionComponent<{
+        feature: string;
+        isSelected: boolean;
+        onClick: () => void;
+        numberOfItems: number;
+    }>;
+    extraData: B;
+    style?: CSSProperties | SpringProps;
+    styleLeft?: CSSProperties;
+    styleRight?: CSSProperties;
+    children?: FunctionComponent<any>;
+};
+
+const StickyList = <T, B, A>({
+    data,
+    ChildRenderItem,
+    TitleRenderItem,
+    FeatureRenderItem,
+    extraData,
+    style,
+    styleLeft,
+    styleRight,
+    children,
+}: // ...props
+Props<T, B, A>) => {
+    const refData = useMemo(
+        () =>
+            data.map((item) => {
+                return {
+                    ...item,
+                    ref: React.createRef<HTMLDivElement>(),
+                };
+            }),
+        [data],
+    );
+    const [animating, setAnimating] = useState(false);
+    const listRef = useRef<HTMLDivElement>(null);
+
+    const [, setY] = useSpring(
+        () => ({
+            immediate: false,
+            y: 0,
+            onChange: (props: { value: { y: number } }) => {
+                if (listRef.current) listRef.current.scroll(0, props.value.y);
+            },
+            config: config.default,
+            onStart: () => setAnimating(true),
+            onRest: () => setAnimating(false),
+        }),
+        [listRef],
+    );
+    const [current] = useState(refData?.map((item) => item.title));
+
+    return listRef ? (
+        <animated.div style={{ display: 'flex', ...style }}>
+            <div style={styleLeft}>
+                {FeatureRenderItem &&
+                    refData.map((item, index) =>
+                        refData[index].items.length > 0 ? (
+                            <React.Fragment key={`feature-${item.title}`}>
+                                <FeatureRenderItem
+                                    onClick={() =>
+                                        setY({
+                                            y:
+                                                (item.ref.current
+                                                    ? item.ref.current.getBoundingClientRect().top
+                                                    : 0) +
+                                                (listRef.current
+                                                    ? listRef.current.scrollTop -
+                                                      listRef.current.offsetHeight / 4.7
+                                                    : 0),
+                                        })
+                                    }
+                                    isSelected={!current.includes(item.title)}
+                                    feature={item.title}
+                                    numberOfItems={refData[index].items.length}
+                                />
+                            </React.Fragment>
+                        ) : null,
+                    )}
+            </div>
+            <div
+                style={{
+                    // height: '100%',
+                    // overflow: 'scroll',
+                    ...styleRight,
+                }}
+                ref={listRef}
+            >
+                {refData.map((item, index) =>
+                    refData[index].items && refData[index].items.length > 0 ? (
+                        <React.Fragment key={`list-${item.title}`}>
+                            <RenderItem
+                                item={item}
+                                TitleRenderItem={TitleRenderItem}
+                                ChildRenderItem={ChildRenderItem}
+                                extraData={extraData}
+                                animating={animating}
+                                refData={refData.map((_item) => _item.title)}
+                            />
+                        </React.Fragment>
+                    ) : null,
+                )}
+            </div>
+            {children && children}
+        </animated.div>
+    ) : null;
+};
+
+export default StickyList;

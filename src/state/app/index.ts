@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-use-before-define */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import UAParser from 'ua-parser-js';
 
@@ -10,8 +12,10 @@ import {
 import { NLState } from '@src/state/NLState';
 
 import hooks from './hooks';
+// eslint-disable-next-line import/no-cycle
 import middlewares from './middlewares';
 import thactions from './thactions';
+// eslint-disable-next-line import/no-cycle
 import updater from './updater';
 
 const STATE_NAME = 'app';
@@ -20,8 +24,11 @@ class AppState extends NLState<AppStateType> {
     declare static _instance: AppState;
 
     declare static actions: typeof this.instance._slice.actions;
+
     declare static reducer: typeof this.instance._slice.reducer;
+
     declare static select: ApplyFuncToChildren<typeof this.instance._initialState>;
+
     declare static dispatch: ApplyDispatchToChildren<
         typeof thactions & typeof this.instance._slice.actions
     >;
@@ -32,6 +39,7 @@ class AppState extends NLState<AppStateType> {
     }
 
     static userAgent: UAParser.IResult;
+
     static isMobile: boolean;
 
     constructor() {
@@ -68,6 +76,7 @@ class AppState extends NLState<AppStateType> {
             ) => {
                 state.dimensions = action.payload;
                 state.screenType =
+                    // eslint-disable-next-line no-nested-ternary
                     action.payload.width > 1300
                         ? 'desktop'
                         : action.payload.width > 750

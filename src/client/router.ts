@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-shadow
 export enum Route {
     SwapItem,
     ViewItem,
@@ -6,6 +7,7 @@ export enum Route {
     Home,
 }
 
+// eslint-disable-next-line no-shadow
 export enum Feature {
     Base,
     Eyes,
@@ -68,7 +70,7 @@ export type Routes = SwapRoutes | HomeRoute | ViewRoutes;
 
 export const NuggRegex = /\/nugg\/(\d+)/;
 export const ItemRegex = /\/item\/(\d)\/(\d+)/;
-export const ViewRegex = new RegExp(`#/view/`);
+export const ViewRegex = /#\/view\//;
 
 export function parseRoute(route: string): Routes {
     if (route === '#/') return { type: Route.Home };

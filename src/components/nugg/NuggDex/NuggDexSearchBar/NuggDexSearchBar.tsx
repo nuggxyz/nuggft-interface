@@ -1,4 +1,4 @@
-import { useSpring } from '@react-spring/core';
+import { useSpring } from '@react-spring/web';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { CornerRightDown, CornerRightUp, Search, X } from 'react-feather';
 

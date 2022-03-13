@@ -25,8 +25,88 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import { Chain } from '@src/web3/core/interfaces';
 import { MyNuggsData } from '@src/client/core';
-import undefined from '@src/lib/dotnugg/util';
+
 type Props = Record<string, never>;
+
+const RenderItem: FunctionComponent<
+    InfiniteListRenderItemProps<MyNuggsData, undefined, unknown>
+> = ({ item, style }) => {
+    return item ? (
+        <div
+            style={{
+                ...styles.listNuggButton,
+                ...style,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+            }}
+        >
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                }}
+            >
+                <TokenViewer
+                    tokenId={item.tokenId || ''}
+                    style={styles.listNugg}
+                    // data={item.dotnuggRawCache}
+                />
+
+                <Text textStyle={{ color: Colors.nuggRedText }}>Nugg {item.tokenId || ''}</Text>
+            </div>
+            {!isUndefinedOrNullOrObjectEmpty(item.activeLoan) ||
+            !isUndefinedOrNullOrObjectEmpty(item.activeSwap) ? (
+                <Text
+                    textStyle={{
+                        color: Colors.secondaryColor,
+                        background: Colors.nuggRedText,
+                        borderRadius: Layout.borderRadius.large,
+                        padding: '.1rem .4rem ',
+                        position: 'absolute',
+                        top: '-.3rem',
+                        right: '-.3rem',
+                    }}
+                    size="smaller"
+                    type="text"
+                >
+                    {!isUndefinedOrNullOrObjectEmpty(item.activeLoan) ? 'Loaned' : 'On sale'}
+                </Text>
+            ) : null}
+            <Button
+                key={JSON.stringify(item)}
+                onClick={() => {
+                    client.actions.routeTo(item.tokenId, true);
+                }}
+                buttonStyle={{
+                    borderRadius: Layout.borderRadius.large,
+                    padding: '.5rem .5rem',
+                    background: Colors.gradient3Transparent,
+                }}
+                rightIcon={<IoSearch color={Colors.white} />}
+            />
+        </div>
+    ) : null;
+};
+
+const MintNuggButton = (chainId: Chain, provider: Web3Provider, address: string) => (
+    <FeedbackButton
+        feedbackText="Check Wallet..."
+        buttonStyle={{
+            ...swapStyles.button,
+            margin: '0rem',
+            padding: '.2rem .6rem',
+        }}
+        textStyle={{
+            color: Colors.nuggRedText,
+            fontSize: FontSize.h6,
+            fontFamily: Layout.font.sf.regular,
+        }}
+        label="Mint a Nugg"
+        onClick={() => WalletState.dispatch.mintNugg({ chainId, provider, address })}
+    />
+);
 
 const MintTab: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
@@ -140,83 +220,3 @@ const MintTab: FunctionComponent<Props> = () => {
 };
 
 export default MintTab;
-
-const RenderItem: FunctionComponent<
-    InfiniteListRenderItemProps<MyNuggsData, undefined, unknown>
-> = ({ item, style }) => {
-    return item ? (
-        <div
-            style={{
-                ...styles.listNuggButton,
-                ...style,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '100%',
-            }}
-        >
-            <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                }}
-            >
-                <TokenViewer
-                    tokenId={item.tokenId || ''}
-                    style={styles.listNugg}
-                    // data={item.dotnuggRawCache}
-                />
-
-                <Text textStyle={{ color: Colors.nuggRedText }}>Nugg {item.tokenId || ''}</Text>
-            </div>
-            {!isUndefinedOrNullOrObjectEmpty(item.activeLoan) ||
-            !isUndefinedOrNullOrObjectEmpty(item.activeSwap) ? (
-                <Text
-                    textStyle={{
-                        color: Colors.secondaryColor,
-                        background: Colors.nuggRedText,
-                        borderRadius: Layout.borderRadius.large,
-                        padding: '.1rem .4rem ',
-                        position: 'absolute',
-                        top: '-.3rem',
-                        right: '-.3rem',
-                    }}
-                    size="smaller"
-                    type="text"
-                >
-                    {!isUndefinedOrNullOrObjectEmpty(item.activeLoan) ? 'Loaned' : 'On sale'}
-                </Text>
-            ) : null}
-            <Button
-                key={JSON.stringify(item)}
-                onClick={() => {
-                    client.actions.routeTo(item.tokenId, true);
-                }}
-                buttonStyle={{
-                    borderRadius: Layout.borderRadius.large,
-                    padding: '.5rem .5rem',
-                    background: Colors.gradient3Transparent,
-                }}
-                rightIcon={<IoSearch color={Colors.white} />}
-            />
-        </div>
-    ) : null;
-};
-
-const MintNuggButton = (chainId: Chain, provider: Web3Provider, address: string) => (
-    <FeedbackButton
-        feedbackText="Check Wallet..."
-        buttonStyle={{
-            ...swapStyles.button,
-            margin: '0rem',
-            padding: '.2rem .6rem',
-        }}
-        textStyle={{
-            color: Colors.nuggRedText,
-            fontSize: FontSize.h6,
-            fontFamily: Layout.font.sf.regular,
-        }}
-        label="Mint a Nugg"
-        onClick={() => WalletState.dispatch.mintNugg({ chainId, provider, address })}
-    />
-);

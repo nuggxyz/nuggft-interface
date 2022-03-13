@@ -33,12 +33,13 @@ const CircleTimer: FunctionComponent<Props> = ({
     children,
     duration,
     remaining,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     blocktime,
     staticColor,
     style,
     width,
 }) => {
-    blocktime;
+    // blocktime;
     // const dimensions = AppState.select.dimensions();
     const timerCircleRadius = useMemo(() => width / 6.5, [width]);
     const circumference = useMemo(() => timerCircleRadius * TWOPI, [timerCircleRadius]);
@@ -96,7 +97,8 @@ const CircleTimer: FunctionComponent<Props> = ({
         }
         if (percent <= 0.1) {
             return Colors.nuggRedText;
-        } else if (percent <= 0.25) {
+        }
+        if (percent <= 0.25) {
             return Colors.nuggGold;
         }
         return Colors.nuggBlueText;

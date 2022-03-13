@@ -1,6 +1,6 @@
 import curriedLighten from 'polished/lib/color/lighten';
 
-const Colors: Dictionary<string> = {
+const Colors = {
     primaryColor: '#25292e',
     secondaryColor: '#FFFFFF',
     white: '#FFF',

@@ -1,5 +1,5 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { BigNumber } from '@ethersproject/bignumber';
+import React, { useEffect, useState } from 'react';
+import { BigNumber } from 'ethers';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
@@ -21,8 +21,7 @@ import styles from './LoanInputModal.styles';
 
 type Props = Record<string, never>;
 
-const LoanInputModal: FunctionComponent<Props> = () => {
-    // const [swapError, clearError] = useHandleError('GAS_ERROR');
+const LoanInputModal: React.FunctionComponent<Props> = () => {
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
     const { targetId, type } = AppState.select.modalData();
@@ -42,19 +41,23 @@ const LoanInputModal: FunctionComponent<Props> = () => {
 
     const userBalance = web3.hook.usePriorityBalance(provider);
 
-    const amountFromChain = useAsyncState<BigNumber[]>(
-        () =>
-            stableId && chainId && provider
-                ? stableType === 'PayoffLoan'
-                    ? new NuggftV1Helper(chainId, provider).contract.vfl([stableId]).then((v) => {
-                          return v;
-                      })
-                    : new NuggftV1Helper(chainId, provider).contract.vfr([stableId]).then((v) => {
-                          return v;
-                      })
-                : new Promise((resolve) => resolve([])),
-        [address, stableId, stableType, chainId, provider],
-    );
+    const amountFromChain = useAsyncState<BigNumber[]>(() => {
+        if (stableId && chainId && provider) {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            if (stableType === 'PayoffLoan') {
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                return new NuggftV1Helper(chainId, provider).contract.vfl([stableId]).then((v) => {
+                    return v;
+                });
+            }
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            return new NuggftV1Helper(chainId, provider).contract.vfr([stableId]).then((v) => {
+                return v;
+            });
+        }
+        // eslint-disable-next-line no-promise-executor-return
+        return new Promise((resolve) => resolve([]));
+    }, [address, stableId, stableType, chainId, provider]);
 
     return stableId &&
         amountFromChain &&
@@ -135,14 +138,14 @@ const LoanInputModal: FunctionComponent<Props> = () => {
                         stableType === 'PayoffLoan'
                             ? WalletState.dispatch.payOffLoan({
                                   tokenId: stableId,
-                                  amount: amount,
+                                  amount,
                                   chainId,
                                   provider,
                                   address,
                               })
                             : WalletState.dispatch.extend({
                                   tokenId: stableId,
-                                  amount: amount,
+                                  amount,
                                   chainId,
                                   provider,
                                   address,

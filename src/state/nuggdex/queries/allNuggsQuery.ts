@@ -41,6 +41,7 @@ const allNuggsQuery = async (
         return !isUndefinedOrNullOrArrayEmpty(result) ? result : [];
     } catch (e: any) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        // eslint-disable-next-line no-template-curly-in-string
         throw new Error('allnuggsquery ${e}');
     }
 };

@@ -36,7 +36,7 @@ const BottomBar: FunctionComponent<Props> = () => {
         0,
     );
 
-    const selectionIndicatorSpring = useSpring({
+    const selectionIndicatorSpring: CSSPropertiesAnimated = useSpring({
         from: {
             opacity: 0,
             position: 'absolute',
@@ -65,10 +65,7 @@ const BottomBar: FunctionComponent<Props> = () => {
                         alignItems: 'center',
                     }}
                 >
-                    <animated.div
-                        //@ts-ignore
-                        style={selectionIndicatorSpring}
-                    />
+                    <animated.div style={selectionIndicatorSpring} />
                 </div>
                 <Button
                     onClick={() =>

@@ -19,84 +19,13 @@ import { DefaultExtraData, UnclaimedOffer } from '@src/client/core';
 
 type Props = Record<string, never>;
 
-const ClaimTab: FunctionComponent<Props> = () => {
-    const sender = web3.hook.usePriorityAccount();
-    const epoch__id = client.live.epoch.id();
-    const provider = web3.hook.usePriorityProvider();
-
-    const chainId = web3.hook.usePriorityChainId();
-
-    const unclaimedOffers = client.live.myUnclaimedOffers();
-
-    return sender && chainId && provider ? (
-        <div style={styles.container}>
-            <List
-                data={unclaimedOffers
-                    .filter((x) => x.endingEpoch !== null && epoch__id && x.endingEpoch < epoch__id)
-                    .sort((a, b) => (a.endingEpoch ?? 0 > (b.endingEpoch ?? 0) ? -1 : 1))}
-                RenderItem={React.memo(RenderItem)}
-                TitleButton={
-                    unclaimedOffers.filter(
-                        (x) => x.endingEpoch !== null && epoch__id && x.endingEpoch < epoch__id,
-                    ).length > 0
-                        ? () => (
-                              <FeedbackButton
-                                  feedbackText="Check Wallet..."
-                                  buttonStyle={{
-                                      ...swapStyles.button,
-                                      margin: '0rem',
-                                      padding: '.2rem .6rem',
-                                  }}
-                                  textStyle={{
-                                      color: Colors.nuggRedText,
-                                      fontSize: FontSize.h6,
-                                      fontFamily: Layout.font.sf.light,
-                                  }}
-                                  label="Claim all"
-                                  onClick={() => {
-                                      const addresses: string[] = [],
-                                          tokenIds: string[] = [];
-                                      unclaimedOffers.forEach((x) => {
-                                          tokenIds.push(x.claimParams.tokenId);
-                                          addresses.push(x.claimParams.address);
-                                      });
-                                      WalletState.dispatch.multiClaim({
-                                          addresses,
-                                          sender,
-                                          chainId,
-                                          provider,
-                                          tokenIds,
-                                      });
-                                  }}
-                              />
-                          )
-                        : undefined
-                }
-                label="Claims"
-                labelStyle={styles.listLabel}
-                listEmptyStyle={listStyles.textWhite}
-                loaderColor="white"
-                style={listStyles.list}
-                extraData={{ sender, chainId, provider }}
-                listEmptyText="No Nuggs or ETH to claim..."
-                action={() => undefined}
-            />
-        </div>
-    ) : (
-        <></>
-    );
-};
-
-export default React.memo(ClaimTab);
-
 const RenderItem: FunctionComponent<
     ListRenderItemProps<UnclaimedOffer, DefaultExtraData, undefined>
 > = ({ item, index, extraData }) => {
     const swapText = useMemo(
         () =>
             item.type === 'item'
-                ? //@ts-ignore
-                  `For Nugg #${item.nugg}`
+                ? `For Nugg #${item.nugg}`
                 : `From epoch ${item.endingEpoch !== null ? item.endingEpoch : ''}`,
         [item],
     );
@@ -139,12 +68,8 @@ const RenderItem: FunctionComponent<
                 feedbackText="Check Wallet..."
                 textStyle={listStyles.textWhite}
                 buttonStyle={listStyles.renderButton}
-                label={`Claim`}
+                label="Claim"
                 onClick={() => {
-                    console.log({
-                        ...item.claimParams,
-                        ...extraData,
-                    });
                     WalletState.dispatch.claim({
                         ...item.claimParams,
                         ...extraData,
@@ -152,7 +77,73 @@ const RenderItem: FunctionComponent<
                 }}
             />
         </div>
-    ) : (
-        <></>
-    );
+    ) : null;
 };
+
+const ClaimTab: FunctionComponent<Props> = () => {
+    const sender = web3.hook.usePriorityAccount();
+    const epoch__id = client.live.epoch.id();
+    const provider = web3.hook.usePriorityProvider();
+
+    const chainId = web3.hook.usePriorityChainId();
+
+    const unclaimedOffers = client.live.myUnclaimedOffers();
+
+    return sender && chainId && provider ? (
+        <div style={styles.container}>
+            <List
+                data={unclaimedOffers
+                    .filter((x) => x.endingEpoch !== null && epoch__id && x.endingEpoch < epoch__id)
+                    .sort((a, b) => (a.endingEpoch ?? (b.endingEpoch ?? 0) < 0 ? -1 : 1))}
+                RenderItem={React.memo(RenderItem)}
+                TitleButton={
+                    unclaimedOffers.filter(
+                        (x) => x.endingEpoch !== null && epoch__id && x.endingEpoch < epoch__id,
+                    ).length > 0
+                        ? React.memo(() => (
+                              <FeedbackButton
+                                  feedbackText="Check Wallet..."
+                                  buttonStyle={{
+                                      ...swapStyles.button,
+                                      margin: '0rem',
+                                      padding: '.2rem .6rem',
+                                  }}
+                                  textStyle={{
+                                      color: Colors.nuggRedText,
+                                      fontSize: FontSize.h6,
+                                      fontFamily: Layout.font.sf.light,
+                                  }}
+                                  label="Claim all"
+                                  onClick={() => {
+                                      const addresses: string[] = [];
+                                      const tokenIds: string[] = [];
+                                      unclaimedOffers.forEach((x) => {
+                                          tokenIds.push(x.claimParams.tokenId);
+                                          addresses.push(x.claimParams.address);
+                                      });
+                                      WalletState.dispatch.multiClaim({
+                                          addresses,
+                                          sender,
+                                          chainId,
+                                          provider,
+                                          tokenIds,
+                                      });
+                                  }}
+                              />
+                          ))
+                        : () => null
+                }
+                label="Claims"
+                labelStyle={styles.listLabel}
+                listEmptyStyle={listStyles.textWhite}
+                loaderColor="white"
+                style={listStyles.list}
+                extraData={{ sender, chainId, provider }}
+                listEmptyText="No Nuggs or ETH to claim..."
+                action={() => undefined}
+            />
+        </div>
+    ) : null;
+};
+
+export default React.memo(ClaimTab);

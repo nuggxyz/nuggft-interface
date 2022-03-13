@@ -45,15 +45,16 @@ const Modal: FunctionComponent<Props> = () => {
         if (isUndefinedOrNull(isOpen) && !isUndefinedOrNullOrStringEmpty(previousOpen)) {
             const timeout = setTimeout(() => setCurrentModal(undefined), 1000);
             return () => clearTimeout(timeout);
-        } else {
-            setCurrentModal(isOpen);
         }
+        setCurrentModal(isOpen);
+        return () => undefined;
     }, [isOpen, previousOpen]);
 
     const containerStyle = useSpring({
         to: {
             ...styles.container,
             ...(screenType === 'phone' ? styles.containerMobile : styles.containerFull),
+            // eslint-disable-next-line no-nested-ternary
             transform: isOpen
                 ? screenType === 'phone'
                     ? 'translate(0px, 18px)'
@@ -76,7 +77,7 @@ const Modal: FunctionComponent<Props> = () => {
         [isOpen],
     );
 
-    const style: CSSPropertiesAnimated = useAnimateOverlay(isOpen ? true : false);
+    const style: CSSPropertiesAnimated = useAnimateOverlay(!!isOpen);
 
     useOnClickOutside(node, closeModal);
     return (

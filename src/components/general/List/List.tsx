@@ -50,6 +50,26 @@ export interface ListProps<T, B, A> {
     data: T[];
 }
 
+const EndOfListAnchor = ({
+    rootRef,
+    onScrollEnd,
+    loading,
+}: {
+    rootRef: React.RefObject<HTMLDivElement>;
+    onScrollEnd: (() => void) | undefined;
+    loading: boolean;
+}) => {
+    const [ref, isVisible] = useIsVisible(rootRef.current, '10px');
+    const prevVisible = usePrevious(isVisible);
+    useEffect(() => {
+        if (isVisible && isVisible !== prevVisible && !loading) {
+            if (onScrollEnd) onScrollEnd();
+        }
+    }, [isVisible, prevVisible, loading, onScrollEnd]);
+
+    return <div ref={ref} key="NUGGNUGGNUGGNUGGNUGG" />;
+};
+
 const List = <T, B, A>({
     data,
     RenderItem,
@@ -80,8 +100,8 @@ const List = <T, B, A>({
         };
     }, [border, horizontal, style]);
 
-    const List = useCallback(
-        ({ selected }: { selected?: T }) =>
+    const ListCallback = useCallback(
+        ({ selected: _selected }: { selected?: T }) =>
             data ? (
                 <>
                     {data.map((item, index) => (
@@ -91,7 +111,7 @@ const List = <T, B, A>({
                             index={index}
                             extraData={extraData}
                             action={action}
-                            selected={JSON.stringify(selected) === JSON.stringify(item)}
+                            selected={JSON.stringify(_selected) === JSON.stringify(item)}
                         />
                     ))}
                 </>
@@ -153,7 +173,7 @@ const List = <T, B, A>({
         <>
             <Label />
             <div style={containerStyle} ref={ref}>
-                <List selected={selected} />
+                <ListCallback selected={selected} />
                 <Loading />
                 {!isUndefinedOrNullOrNotFunction(onScrollEnd) && (
                     <EndOfListAnchor onScrollEnd={onScrollEnd} rootRef={ref} loading={loading} />
@@ -164,23 +184,3 @@ const List = <T, B, A>({
 };
 
 export default React.memo(List) as typeof List;
-
-const EndOfListAnchor = ({
-    rootRef,
-    onScrollEnd,
-    loading,
-}: {
-    rootRef: React.RefObject<HTMLDivElement>;
-    onScrollEnd: (() => void) | undefined;
-    loading: boolean;
-}) => {
-    const [ref, isVisible] = useIsVisible(rootRef.current, '10px');
-    const prevVisible = usePrevious(isVisible);
-    useEffect(() => {
-        if (isVisible && isVisible !== prevVisible && !loading) {
-            onScrollEnd && onScrollEnd();
-        }
-    }, [isVisible, prevVisible, loading, onScrollEnd]);
-
-    return <div ref={ref} key="NUGGNUGGNUGGNUGGNUGG" />;
-};

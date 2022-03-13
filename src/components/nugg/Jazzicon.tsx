@@ -5,7 +5,7 @@ const Jazzicon: FC<{ address: string; size: number }> = ({ address, size = 35 })
     const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const current = ref.current;
+        const { current } = ref;
         if (current && address) {
             const jazzman = jazziconer(size, parseInt(address.slice(2, 10), 16));
             current.appendChild(jazzman);
@@ -14,11 +14,13 @@ const Jazzicon: FC<{ address: string; size: number }> = ({ address, size = 35 })
                 try {
                     current.removeChild(jazzman);
                 } catch (e) {
-                    console.log('jazzman', e);
+                    // console.log('jazzman', e);
                 }
             };
         }
-    }, [ref, address]);
+
+        return () => undefined;
+    }, [ref, address, size]);
 
     return <div ref={ref} style={{ height: `${size}px`, width: `${size}px` }} />;
 };

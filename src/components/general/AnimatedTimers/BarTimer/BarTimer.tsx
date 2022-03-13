@@ -4,6 +4,7 @@ import useAnimationFrame from '@src/hooks/useAnimationFrame';
 import { isUndefinedOrNullOrObjectEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
 
 import styles from './BarTimer.styles';
+
 type Props = {
     duration: number;
     style?: CSSProperties;

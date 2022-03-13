@@ -108,13 +108,14 @@ const InfiniteList = <T, B, A>({
             prevStart !== startIndex ||
             JSON.stringify(prevData) !== JSON.stringify(data)
         ) {
-            setItems((items) => {
+            setItems((_items) => {
                 range(startIndex, endIndex).forEach((i) => {
                     if (
-                        !items[i - startIndex] ||
-                        items[i - startIndex].key !== JSON.stringify(data[i])
+                        !_items[i - startIndex] ||
+                        _items[i - startIndex].key !== JSON.stringify(data[i])
                     ) {
-                        items[i - startIndex] = (
+                        // eslint-disable-next-line no-param-reassign
+                        _items[i - startIndex] = (
                             <div
                                 key={`infinite-${i}`}
                                 style={{
@@ -136,10 +137,10 @@ const InfiniteList = <T, B, A>({
                     }
                 });
                 const diff = endIndex - startIndex + 1;
-                if (diff !== items.length) {
-                    range(0, diff).forEach(() => items.pop());
+                if (diff !== _items.length) {
+                    range(0, diff).forEach(() => _items.pop());
                 }
-                return items;
+                return _items;
             });
         }
     }, [
@@ -173,7 +174,7 @@ const InfiniteList = <T, B, A>({
     const _onScroll = useCallback(
         (e: { currentTarget: { scrollTop: number } }) => {
             setScrollTop(e.currentTarget?.scrollTop);
-            onScroll && onScroll();
+            if (onScroll) onScroll();
         },
         [onScroll],
     );

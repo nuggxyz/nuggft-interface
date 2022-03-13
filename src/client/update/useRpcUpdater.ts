@@ -9,9 +9,10 @@ import { ItemId } from '@src/client/router';
 import { InterfacedEvent } from '@src/interfaces/events';
 import lib from '@src/lib';
 
+// eslint-disable-next-line import/no-cycle
 import client from '..';
 
-export const useRpcUpdater = () => {
+export default () => {
     const infura = client.live.infura();
     const chainId = web3.hook.usePriorityChainId();
     const address = web3.hook.usePriorityAccount();
@@ -34,6 +35,7 @@ export const useRpcUpdater = () => {
 
                 console.log({ event });
 
+                // eslint-disable-next-line default-case
                 switch (event.name) {
                     case 'Offer':
                     case 'OfferMint':
@@ -48,6 +50,7 @@ export const useRpcUpdater = () => {
                     }
                 }
 
+                // eslint-disable-next-line default-case
                 switch (event.name) {
                     case 'Offer':
                     case 'OfferMint': {
@@ -66,7 +69,7 @@ export const useRpcUpdater = () => {
                         const agency = BigNumber.from(event.args.agency);
 
                         client.actions.updateOffers(
-                            ('item-' + Number(event.args.itemId).toString()) as ItemId,
+                            `item-${Number(event.args.itemId).toString()}` as ItemId,
                             [
                                 {
                                     eth: EthInt.fromNuggftV1Agency(event.args.agency),
@@ -114,9 +117,7 @@ export const useRpcUpdater = () => {
                         break;
                     }
                     case 'Liquidate':
-                        {
-                            client.actions.removeLoan(event.args.tokenId.toString());
-                        }
+                        client.actions.removeLoan(event.args.tokenId.toString());
                         break;
                     case 'Claim': {
                         if (event.args.account === address) {
@@ -127,7 +128,7 @@ export const useRpcUpdater = () => {
                     case 'ClaimItem': {
                         client.actions.removeItemClaimIfMine(
                             event.args.buyerTokenId.toString(),
-                            ('item-' + BigNumber.from(event.args.itemId).toString()) as ItemId,
+                            `item-${BigNumber.from(event.args.itemId).toString()}` as ItemId,
                         );
                         break;
                     }
@@ -138,5 +139,6 @@ export const useRpcUpdater = () => {
                 infura.off('block', () => undefined);
             };
         }
+        return () => undefined;
     }, [infura, chainId, address]);
 };

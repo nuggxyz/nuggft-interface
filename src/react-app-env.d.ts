@@ -8,7 +8,7 @@ declare namespace React {
     type UnsafeDependencyList = any[];
 }
 
-declare type CSSPropertiesAnimated = import('@react-spring/web').AnimatedProps<unknown>;
+declare type CSSPropertiesAnimated = import('@react-spring/web').PickAnimated<CSSProperties>;
 
 declare module '@metamask/jazzicon' {
     export default function (diameter: number, seed: number): HTMLElement;
@@ -57,7 +57,7 @@ declare module '*.webp' {
 }
 
 declare module '*.svg' {
-    import * as React from 'react';
+    // import * as React from 'react';
 
     export const ReactComponent: React.FunctionComponent<
         React.SVGProps<SVGSVGElement> & { title?: string }
@@ -135,12 +135,6 @@ type Fraction2x128 = import('./classes/Fraction').Fraction2x128;
 type Fractionish = import('./classes/Fraction').Fractionish;
 type BigNumber = import('ethers').BigNumber;
 type BigNumberish = import('ethers').BigNumberish;
-
-declare enum Currency {
-    ETH = 0,
-    WETH = 1,
-    xNUGG = 2,
-}
 
 type TransactionResponse = import('@ethersproject/providers').TransactionResponse;
 

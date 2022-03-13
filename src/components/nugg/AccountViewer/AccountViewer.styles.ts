@@ -41,7 +41,7 @@ const styles = NLStyleSheetCreator({
     },
     statusConnected: {
         backgroundColor: Colors.transparentWhite,
-        border: '3px solid ' + Colors.nuggBlueText,
+        border: `3px solid ${Colors.nuggBlueText}`,
         color: Colors.nuggBlueText,
         fontWeight: 'normal',
     },
@@ -55,7 +55,7 @@ const styles = NLStyleSheetCreator({
     },
     statusError: {
         backgroundColor: Colors.red,
-        border: '1px solid ' + Colors.red,
+        border: `1px solid ${Colors.red}`,
         color: 'white',
         fontWeight: 'normal',
         display: 'flex',

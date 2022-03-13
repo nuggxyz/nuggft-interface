@@ -1,5 +1,5 @@
 import React, { CSSProperties, FunctionComponent, ReactNode } from 'react';
-import { animated, AnimatedProps } from '@react-spring/web'
+import { animated, PickAnimated } from '@react-spring/web';
 
 import styles from './Text.styles';
 
@@ -8,7 +8,7 @@ export interface TextProps {
     weight?: 'light' | 'regular' | 'bold' | 'bolder';
     size?: 'smaller' | 'small' | 'medium' | 'large' | 'larger' | 'largest';
     type?: 'title' | 'text' | 'code';
-    textStyle?: CSSProperties | AnimatedProps<CSSProperties>;
+    textStyle?: PickAnimated<CSSProperties>;
 }
 
 const Text: FunctionComponent<TextProps> = ({

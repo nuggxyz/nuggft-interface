@@ -68,6 +68,7 @@ export function createWeb3ReactStoreAndActions(
      * as long as there haven't been any intervening updates.
      */
     function startActivation(): () => void {
+        // eslint-disable-next-line no-plusplus
         const nullifierCached = ++nullifier;
 
         store.setState({ ...DEFAULT_STATE, activating: true });
@@ -96,10 +97,12 @@ export function createWeb3ReactStoreAndActions(
         // validate accounts statically, independent of existing state
         if (stateUpdate.accounts !== undefined) {
             for (let i = 0; i < stateUpdate.accounts.length; i++) {
+                // eslint-disable-next-line no-param-reassign
                 stateUpdate.accounts[i] = validateAccount(stateUpdate.accounts[i]);
             }
         }
 
+        // eslint-disable-next-line no-plusplus
         nullifier++;
 
         store.setState((existingState): Web3ReactState => {
@@ -109,7 +112,7 @@ export function createWeb3ReactStoreAndActions(
             const peer = stateUpdate.peer ?? existingState.peer;
 
             // determine the next error
-            let error = existingState.error;
+            let { error } = existingState;
             if (chainId && allowedChainIds) {
                 // if we have a chainId allowlist and a chainId, we need to ensure it's allowed
                 const chainIdError = ensureChainIdIsAllowed(chainId, allowedChainIds);
@@ -133,7 +136,7 @@ export function createWeb3ReactStoreAndActions(
             }
 
             // ensure that the activating flag is cleared when appropriate
-            let activating = existingState.activating;
+            let { activating } = existingState;
             if (activating && (error || (chainId && accounts))) {
                 activating = false;
             }

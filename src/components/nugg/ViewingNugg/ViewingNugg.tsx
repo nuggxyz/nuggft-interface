@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent, MemoExoticComponent, useMemo } from 'react';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 
 import { parseTokenIdSmart } from '@src/lib';
@@ -21,7 +21,7 @@ import LoanButtons from './FlyoutButtons/LoanButtons';
 import SwapList from './SwapList';
 import ItemList from './ItemList';
 
-type Props = { MobileBackButton?: () => JSX.Element };
+type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
 
 const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const lastView__tokenId = client.live.lastView.tokenId();
@@ -38,24 +38,22 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
         return [
             {
                 label: 'Swaps',
-                comp: () => <SwapList />,
+                comp: React.memo(SwapList),
             },
             ...(provider && chainId && token && token.type === 'nugg' && sender && lastView__tokenId
                 ? [
                       {
                           label: 'Items',
-                          comp: () => (
+                          comp: React.memo(() => (
                               <ItemList
-                                  {...{
-                                      items: token?.items,
-                                      chainId,
-                                      provider,
-                                      sender,
-                                      isOwner: sender === token.owner && !token?.activeSwap?.id,
-                                      tokenId: lastView__tokenId,
-                                  }}
+                                  items={token?.items}
+                                  chainId={chainId}
+                                  provider={provider}
+                                  sender={sender}
+                                  isOwner={sender === token.owner && !token?.activeSwap?.id}
+                                  tokenId={lastView__tokenId}
                               />
-                          ),
+                          )),
                       },
                   ]
                 : []),
@@ -75,7 +73,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                     <MobileBackButton />
                 </div>
             )}
-            <div style={screenType == 'phone' ? styles.nuggContainerMobile : styles.nuggContainer}>
+            <div style={screenType === 'phone' ? styles.nuggContainerMobile : styles.nuggContainer}>
                 <div style={{ position: 'fixed' }}>
                     <AnimatedCard>
                         {lastView__tokenId && (
@@ -91,6 +89,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                             {lastView__tokenId && parseTokenIdSmart(lastView__tokenId)}
                         </Text>
                         <div style={{ marginLeft: '1rem' }}>
+                            {/* eslint-disable-next-line no-nested-ternary */}
                             {token.type === 'nugg' ? (
                                 token.owner ? (
                                     <>
@@ -107,7 +106,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                             address={token.owner}
                                             textStyle={styles.titleText}
                                             param={token.owner}
-                                            route={'address'}
+                                            route="address"
                                             size="medium"
                                         />
                                         <Text textStyle={styles.titleText}>
@@ -146,6 +145,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                 }
                             >
                                 {lastView__tokenId &&
+                                    // eslint-disable-next-line no-nested-ternary
                                     (token?.activeSwap?.id ? (
                                         <SaleButtons tokenId={lastView__tokenId} />
                                     ) : token?.activeLoan ? (

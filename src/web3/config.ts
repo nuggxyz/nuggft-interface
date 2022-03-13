@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import {
     AlchemyWebSocketProvider,
     InfuraWebSocketProvider,
@@ -9,7 +10,13 @@ import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { buildApolloSplitLink } from '@src/graphql/client';
 
 import { Connector } from './core/types';
-import { Chain, Connector as ConnectorEnum } from './core/interfaces';
+import {
+    Chain,
+    Connector as ConnectorEnum,
+    Peer,
+    PeerInfo,
+    PeerInfo__WalletConnect,
+} from './core/interfaces';
 import {
     getNetworkConnector,
     getPriorityConnector,
@@ -20,7 +27,6 @@ import {
 import { WalletLink } from './clients/walletlink';
 import { MetaMask } from './clients/metamask';
 import { WalletConnect } from './clients/walletconnect';
-import { Peer, PeerInfo, PeerInfo__WalletConnect } from './core/interfaces';
 import { Network } from './clients/network';
 
 export function supportedChainIds() {
@@ -56,7 +62,7 @@ export const CONTRACTS = {
         Interval: 32,
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0xd94979f338081e32b74a5d84e402c619d4b30255', //0x3f1c9c4ae47809d284592845e4ced13a6e352421
+        NuggftV1: '0xd94979f338081e32b74a5d84e402c619d4b30255', // 0x3f1c9c4ae47809d284592845e4ced13a6e352421
         DotnuggV1: '0x8239075908f08b64ab7818ff79652d25ae5301c6',
         Genesis: 10305984,
         Interval: 32,
@@ -244,7 +250,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
     ...(peer_metamask.type === ConnectorEnum.MetaMask
         ? {
               metamask: initializeConnector<MetaMask>(
-                  (actions) => new MetaMask(peer_metamask, actions, true),
+                  (actions) => new MetaMask(peer_metamask, actions, undefined, true),
               ),
           }
         : {}),
@@ -269,7 +275,7 @@ export const selected = getSelectedConnector();
 
 export const gotoLink = (link: string) => {
     const win = window.open(encodeURIComponent(link), '_blank');
-    win !== null && win.focus();
+    if (win) win.focus();
 };
 
 export const CHAIN_INFO: {
@@ -324,7 +330,7 @@ export const CHAIN_INFO: {
 
 export const gotoEtherscan = (chainId: Chain, route: 'tx' | 'address', value: string) => {
     const win = window.open(`${CHAIN_INFO[chainId].explorer}${route}/${value}`, '_blank');
-    win !== null && win.focus();
+    if (win) win.focus();
 };
 
 export const createInfuraWebSocket = (chainId: Chain): WebSocketProvider => {

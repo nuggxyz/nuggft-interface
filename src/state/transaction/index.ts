@@ -1,19 +1,25 @@
+/* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { NLState } from '@src/state/NLState';
 
 import hooks from './hooks';
+// eslint-disable-next-line import/no-cycle
 import middlewares from './middlewares';
 import updater from './updater';
 
 const STATE_NAME = 'transaction';
 
 export default class TransactionState extends NLState<TransactionStateType> {
+    // eslint-disable-next-line no-use-before-define
     declare static _instance: TransactionState;
 
     declare static actions: typeof this.instance._slice.actions;
+
     declare static reducer: typeof this.instance._slice.reducer;
+
     declare static select: ApplyFuncToChildren<typeof this.instance._initialState>;
+
     declare static dispatch: ApplyDispatchToChildren<typeof this.instance._slice.actions>;
 
     static get instance() {
@@ -45,6 +51,7 @@ export default class TransactionState extends NLState<TransactionStateType> {
                 state.txn = '';
             },
             initiate: (_, __: PayloadAction<{ _pendingtx: unknown }>) => {
+                // eslint-disable-next-line no-unused-expressions
                 __;
             },
 
@@ -59,6 +66,7 @@ export default class TransactionState extends NLState<TransactionStateType> {
                 }>,
             ) => {
                 state.toggleCompletedTxn = !state.toggleCompletedTxn;
+                // eslint-disable-next-line no-unused-expressions
                 _;
             },
             reset: (state) => {

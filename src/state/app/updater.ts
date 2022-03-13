@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+// eslint-disable-next-line import/no-cycle
 import AppState from './index';
 
 export default () => {

@@ -1,5 +1,5 @@
 import { animated, config, useSpring } from '@react-spring/web';
-import React, { CSSProperties, FunctionComponent } from 'react';
+import React, { CSSProperties } from 'react';
 
 import useOnHover from '@src/hooks/useOnHover';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -15,14 +15,7 @@ type Props = {
     Icon?: React.ReactElement;
 };
 
-const TransitionText: FunctionComponent<Props> = ({
-    text,
-    transitionText,
-    onClick,
-    style,
-    textStyle,
-    Icon,
-}) => {
+const TransitionText = ({ text, transitionText, onClick, style, textStyle, Icon }: Props) => {
     const [ref, isHovering] = useOnHover();
 
     const textStyleAnimated = useSpring({
@@ -34,7 +27,13 @@ const TransitionText: FunctionComponent<Props> = ({
         config: config.stiff,
     });
     return (
-        <div ref={ref} onClick={onClick} style={{ ...styles.container, ...style }}>
+        <div
+            aria-hidden="true"
+            role="button"
+            ref={ref}
+            onClick={onClick}
+            style={{ ...styles.container, ...style }}
+        >
             {Icon && Icon}
             <div style={{ ...styles.textContainer, ...textStyle }}>
                 <Text textStyle={styles.hidden}>{isHovering ? transitionText : text}</Text>

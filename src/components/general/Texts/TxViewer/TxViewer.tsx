@@ -13,7 +13,7 @@ type Props = {
     size: SimpleSizes;
 };
 
-export default ({ address, hash, textStyle, size }: Props) => {
+const TxViewer = ({ address, hash, textStyle, size }: Props) => {
     const chainId = web3.hook.usePriorityChainId();
 
     const provider = web3.hook.usePriorityProvider();
@@ -35,7 +35,7 @@ export default ({ address, hash, textStyle, size }: Props) => {
                 type="text"
                 size={size}
                 textStyle={{ ...textStyle, marginTop: '5px' }}
-                action={function (): void {
+                action={() => {
                     web3.config.gotoEtherscan(chainId, 'tx', hash);
                 }}
             >
@@ -47,11 +47,13 @@ export default ({ address, hash, textStyle, size }: Props) => {
                     <CurrencyText
                         decimals={0}
                         size="smaller"
-                        forceGwei={true}
+                        forceGwei
                         value={EthInt.fromGwei(tx.gasUsed).decimal.toNumber()}
-                    ></CurrencyText>
+                    />
                 </>
             )}
         </div>
     ) : null;
 };
+
+export default TxViewer;

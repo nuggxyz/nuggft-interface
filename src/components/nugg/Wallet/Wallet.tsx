@@ -10,6 +10,7 @@ import LoansTab from './tabs/LoansTab/LoansTab';
 import MintTab from './tabs/MintTab/MintTab';
 import styles from './Wallet.styles';
 import ManageWalletTab from './tabs/ManageWalletTab';
+
 type Props = Record<string, never>;
 
 const Wallet: FunctionComponent<Props> = () => {
@@ -23,7 +24,7 @@ const Wallet: FunctionComponent<Props> = () => {
                 ? [
                       {
                           label: 'Home',
-                          comp: () => <ManageWalletTab />,
+                          comp: React.memo(ManageWalletTab),
                       },
                   ]
                 : [
@@ -31,22 +32,22 @@ const Wallet: FunctionComponent<Props> = () => {
                           ? [
                                 {
                                     label: 'Home',
-                                    comp: () => <MintTab />,
+                                    comp: React.memo(MintTab),
                                 },
                                 {
                                     label: 'Claims',
-                                    comp: () => <ClaimTab />,
+                                    comp: ClaimTab,
                                 },
 
                                 {
                                     label: 'Loans',
-                                    comp: () => <LoansTab />,
+                                    comp: LoansTab,
                                 },
                             ]
                           : [
                                 {
                                     label: 'Home',
-                                    comp: () => <ConnectWalletTab />,
+                                    comp: React.memo(ConnectWalletTab),
                                 },
                             ]),
                   ],

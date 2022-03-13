@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-shadow
 export enum TransactionType {
     TOKEN_APPROVE = 0,
     SWAP_START = 1,

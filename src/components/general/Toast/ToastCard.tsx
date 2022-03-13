@@ -1,5 +1,4 @@
-import { useSpring } from '@react-spring/core';
-import { animated } from '@react-spring/web';
+import { useSpring, animated } from '@react-spring/web';
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { IoClose, IoOpenOutline } from 'react-icons/io5';
 
@@ -27,6 +26,7 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
             const id = setTimeout(() => setClose(true), toast.duration);
             return () => clearTimeout(id);
         }
+        return () => undefined;
     }, [toast.duration]);
 
     useEffect(() => {
@@ -39,6 +39,7 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
             }, 500);
             return () => clearTimeout(id);
         }
+        return () => undefined;
     }, [close]);
 
     useEffect(() => {

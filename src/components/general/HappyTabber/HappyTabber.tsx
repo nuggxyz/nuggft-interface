@@ -1,4 +1,4 @@
-import React, { CSSProperties, FunctionComponent, useEffect, useState } from 'react';
+import React, { CSSProperties, NamedExoticComponent, useEffect, useState } from 'react';
 import { animated, useSpring, useTransition, config } from '@react-spring/web';
 
 import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
@@ -8,12 +8,12 @@ import useMeasure from '@src/hooks/useMeasure';
 
 import styles from './HappyTabber.styles';
 
-export type HappyTabberItem = {
+export interface HappyTabberItem {
     label: string;
-    comp: ({ isActive }: { isActive: boolean }) => JSX.Element;
-};
+    comp: NamedExoticComponent<any>;
+}
 
-type Props = {
+interface Props {
     items: HappyTabberItem[];
     defaultActiveIndex?: number;
     // containerStyle?: CSSProperties;
@@ -21,11 +21,11 @@ type Props = {
     headerTextStyle?: CSSProperties;
     selectionIndicatorStyle?: CSSProperties;
     headerContainerStyle?: CSSProperties;
-};
+}
 
 // const WIDTH = 350;
 
-const HappyTabber: FunctionComponent<Props> = ({
+const HappyTabber = ({
     items,
     defaultActiveIndex = 0,
     // containerStyle,
@@ -33,12 +33,13 @@ const HappyTabber: FunctionComponent<Props> = ({
     headerTextStyle,
     selectionIndicatorStyle,
     headerContainerStyle,
-}) => {
+}: Props) => {
     const [activeIndex, setActiveIndex] = useState(defaultActiveIndex);
     useEffect(() => {
         if (activeIndex >= items.length) {
             setActiveIndex(defaultActiveIndex);
         }
+        return () => undefined;
     }, [items, activeIndex]);
     const screenType = AppState.select.screenType();
 
@@ -95,16 +96,19 @@ const HappyTabber: FunctionComponent<Props> = ({
                     />
                     {items.map((item, index) => (
                         <div
-                            key={index}
+                            key={`item-${item.label}`}
                             style={{
                                 width: `${WIDTH / items.length}px`,
                                 ...styles.headerTextContainer,
                             }}
+                            aria-hidden="true"
+                            role="button"
                             onClick={() => setActiveIndex(index)}
                         >
                             <Text
                                 textStyle={{
                                     ...headerTextStyle,
+                                    // eslint-disable-next-line no-nested-ternary
                                     ...(index === activeIndex
                                         ? styles.headerTextBold
                                         : screenType === 'phone'
@@ -119,9 +123,9 @@ const HappyTabber: FunctionComponent<Props> = ({
                 </div>
             )}
             <div style={{ ...bodyStyle, ...styles.body }}>
-                {tabFadeTransition((styles, Item) => (
-                    //@ts-ignore
-                    <animated.div style={styles}>{Item && <Item isActive={true} />}</animated.div>
+                {tabFadeTransition((_styles, Item) => (
+                    // @ts-ignore
+                    <animated.div style={_styles}>{Item && <Item isActive />}</animated.div>
                 ))}
             </div>
         </div>

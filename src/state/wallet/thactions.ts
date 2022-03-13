@@ -1,9 +1,9 @@
 /* eslint-disable no-unexpected-multiline */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import gql from 'graphql-tag';
 import { Web3Provider } from '@ethersproject/providers';
 import { BigNumber, BigNumberish } from 'ethers';
+import { gql } from '@apollo/client/core';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import {
@@ -187,7 +187,7 @@ const claim = createAsyncThunk<
         console.log(address);
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(sender))
-            ['claim(uint160[],address[])']([tokenId], [address ? address : sender]);
+            ['claim(uint160[],address[])']([tokenId], [address || sender]);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,

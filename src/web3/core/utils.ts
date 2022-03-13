@@ -1,11 +1,14 @@
-export async function getBestUrl(urls: string[]): Promise<string> {
+// eslint-disable-next-line import/prefer-default-export
+export const getBestUrl = async (urls: string[]): Promise<string> => {
     // if we only have 1 url, it's the best!
     if (urls.length === 1) return urls[0];
 
     const [HttpConnection, JsonRpcProvider] = await Promise.all([
         import('@walletconnect/jsonrpc-http-connection').then(
+            // eslint-disable-next-line no-shadow
             ({ HttpConnection }) => HttpConnection,
         ),
+        // eslint-disable-next-line no-shadow
         import('@walletconnect/jsonrpc-provider').then(({ JsonRpcProvider }) => JsonRpcProvider),
     ]);
 
@@ -22,7 +25,7 @@ export async function getBestUrl(urls: string[]): Promise<string> {
                 .catch(() => false)
                 .then((success) => {
                     // if we already resolved, return
-                    if (resolved) return;
+                    if (resolved) return undefined;
 
                     // store the result of the call
                     successes[i] = success;
@@ -43,13 +46,14 @@ export async function getBestUrl(urls: string[]): Promise<string> {
                             successes[prospectiveIndex] &&
                             new Array<number>(prospectiveIndex)
                                 .fill(0)
-                                .every((_, j) => successes[j] === false)
+                                .every((a, j) => successes[j] === false)
                         ) {
                             resolved = true;
                             resolve(urls[prospectiveIndex]);
                         }
                     });
+                    return undefined;
                 });
         });
     });
-}
+};

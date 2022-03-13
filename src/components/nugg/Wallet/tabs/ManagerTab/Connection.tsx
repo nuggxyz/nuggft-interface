@@ -5,6 +5,7 @@ import web3 from '@src/web3';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
 import Button from '@src/components/general/Buttons/Button/Button';
 import state from '@src/state';
+
 type Props = Record<string, never>;
 
 const Connection: FunctionComponent<Props> = () => {

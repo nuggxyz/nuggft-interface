@@ -52,8 +52,8 @@ const ConnectWalletTab: FunctionComponent<Props> = () => {
                 }}
             >
                 <Text type="text" size="smaller" textStyle={{ color: Colors.textColor }}>
-                    By connecting a wallet, you agree to nugg.xyz's Terms of Service and acknowledge
-                    that you have read and understood the nugg.xyz Protocol Disclaimer.
+                    {`By connecting a wallet, you agree to nugg.xyz's Terms of Service and acknowledge
+                    that you have read and understood the nugg.xyz Protocol Disclaimer.`}
                 </Text>
             </div>
             <div

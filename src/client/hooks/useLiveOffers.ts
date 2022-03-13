@@ -1,12 +1,12 @@
 import React from 'react';
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 
 import client from '@src/client/index';
 import { EthInt } from '@src/classes/Fraction';
 import { extractItemId } from '@src/lib/index';
 import { TokenId } from '@src/client/router';
 
-export const useLiveOffers = (tokenId: TokenId | undefined) => {
+const useLiveOffers = (tokenId: TokenId | undefined) => {
     const apollo = client.live.apollo();
 
     React.useEffect(() => {
@@ -64,18 +64,18 @@ export const useLiveOffers = (tokenId: TokenId | undefined) => {
                         client.actions.updateOffers(
                             tokenId,
                             isItem
-                                ? x.data.itemOffers!.map((x) => {
+                                ? x.data.itemOffers!.map((z) => {
                                       return {
-                                          eth: new EthInt(x.eth),
-                                          user: x.nugg.id,
-                                          txhash: x.txhash,
+                                          eth: new EthInt(z.eth),
+                                          user: z.nugg.id,
+                                          txhash: z.txhash,
                                       };
                                   })
-                                : x.data.offers!.map((x) => {
+                                : x.data.offers!.map((z) => {
                                       return {
-                                          eth: new EthInt(x.eth),
-                                          user: x.user.id,
-                                          txhash: x.txhash,
+                                          eth: new EthInt(z.eth),
+                                          user: z.user.id,
+                                          txhash: z.txhash,
                                       };
                                   }),
                         );
@@ -85,7 +85,10 @@ export const useLiveOffers = (tokenId: TokenId | undefined) => {
                 instance.unsubscribe();
             };
         }
+        return () => undefined;
     }, [tokenId, apollo]);
 
-    return;
+    return null;
 };
+
+export default useLiveOffers;

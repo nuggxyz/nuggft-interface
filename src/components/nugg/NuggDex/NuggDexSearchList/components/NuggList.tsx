@@ -65,7 +65,7 @@ const NuggList: FunctionComponent<Props> = ({
 
     const _onScrollEnd = useCallback(
         ({ addToList, desiredSize }: { addToList: boolean; desiredSize?: number }) => {
-            onScrollEnd && onScrollEnd({ setLoading, filters, addToList, desiredSize });
+            if (onScrollEnd) void onScrollEnd({ setLoading, filters, addToList, desiredSize });
         },
         [filters, onScrollEnd],
     );
@@ -80,14 +80,19 @@ const NuggList: FunctionComponent<Props> = ({
                     (filters && filters.sort && filters?.sort.asc) &&
                     prevFilters?.target === filters.target))
         ) {
-            onScrollEnd &&
-                onScrollEnd({ setLoading, filters, addToList: false, desiredSize: values.length });
+            if (onScrollEnd)
+                void onScrollEnd({
+                    setLoading,
+                    filters,
+                    addToList: false,
+                    desiredSize: values.length,
+                });
         }
     }, [filters, prevFilters, values]);
 
     useEffect(() => {
-        onScrollEnd &&
-            onScrollEnd({
+        if (onScrollEnd)
+            void onScrollEnd({
                 setLoading,
                 filters,
                 addToList: false,

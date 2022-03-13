@@ -1,4 +1,4 @@
-import React, { CSSProperties, FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -15,9 +15,9 @@ export type HappyTipperItem = {
 type Props = {
     tip: keyof typeof content.tips;
 
-    containerStyle?: CSSProperties;
-    bodyStyle?: CSSProperties;
-    headerTextStyle?: CSSProperties;
+    // containerStyle?: CSSProperties;
+    // bodyStyle?: CSSProperties;
+    // headerTextStyle?: CSSProperties;
 };
 
 // const WIDTH = 350;
@@ -32,7 +32,7 @@ const HappyTipper: FunctionComponent<Props> = ({ tip }) => {
                 <Button
                     buttonStyle={{ background: 'transparent' }}
                     textStyle={{ fontSize: '15px' }}
-                    onClick={undefined}
+                    onClick={() => undefined}
                     label={content.tips[tip].label}
                 />
             }
@@ -60,7 +60,7 @@ const HappyTipper: FunctionComponent<Props> = ({ tip }) => {
                     learn more
                 </InteractiveText>
                 <Button
-                    onClick={undefined}
+                    onClick={() => undefined}
                     label={content.getRandomSlang()}
                     buttonStyle={{ background: lib.colors.gradient3 }}
                     textStyle={{ color: 'white' }}

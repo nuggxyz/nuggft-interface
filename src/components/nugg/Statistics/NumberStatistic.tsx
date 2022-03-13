@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { FC, useMemo } from 'react';
 import Decimal from 'decimal.js-light';
 

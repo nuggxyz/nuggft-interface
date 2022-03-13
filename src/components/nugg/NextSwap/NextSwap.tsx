@@ -14,6 +14,7 @@ import FontSize from '@src/lib/fontSize';
 import styles2 from '@src/components/nugg/RingAbout/RingAbout.styles';
 import AppState from '@src/state/app';
 import Flyout from '@src/components/general/Flyout/Flyout';
+
 type Props = Record<string, never>;
 
 const NextSwap: FunctionComponent<Props> = () => {
@@ -35,7 +36,6 @@ const NextSwap: FunctionComponent<Props> = () => {
         (tokenId: string) => {
             setWaiting(true);
             setTimeout(() => {
-                on;
                 client.actions.routeTo(tokenId, false);
                 setWaiting(false);
                 setQueue(undefined);
@@ -106,56 +106,56 @@ const NextSwap: FunctionComponent<Props> = () => {
                     </animated.div>
                 </div>
             }
-            children={
-                <animated.div
-                    style={{
-                        background: springStyle.opacity.to(
-                            [0, 1],
-                            ['#FFFFFF00', lib.colors.transparentWhite],
-                        ),
-                        display: 'flex',
-                        justifyContent: 'center',
-                        paddingLeft: '5px',
-                        paddingRight: '15px',
+        >
+            <animated.div
+                style={{
+                    background: springStyle.opacity.to(
+                        [0, 1],
+                        ['#FFFFFF00', lib.colors.transparentWhite],
+                    ),
+                    display: 'flex',
+                    justifyContent: 'center',
+                    paddingLeft: '5px',
+                    paddingRight: '15px',
 
-                        marginBottom: '10px',
-                        flexDirection: 'column',
+                    marginBottom: '10px',
+                    flexDirection: 'column',
+                }}
+            >
+                <div
+                    style={{
+                        ...styles2[
+                            screenType !== 'desktop'
+                                ? 'leadingOfferContainerMobile'
+                                : 'leadingOfferContainer'
+                        ],
+                        width: '250px',
                     }}
                 >
-                    <div
-                        style={{
-                            ...styles2[
-                                screenType !== 'desktop'
-                                    ? 'leadingOfferContainerMobile'
-                                    : 'leadingOfferContainer'
-                            ],
-                            width: '250px',
-                        }}
-                    >
-                        {queue && (
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'flex-start',
-                                    width: '100%',
-                                    marginBottom: '1.5rem',
-                                    zIndex: 1,
-                                    paddingLeft: '.4rem',
-                                }}
-                            >
-                                <TokenViewer
-                                    tokenId={queue.tokenId}
-                                    style={{ width: '40px', height: '40px' }}
-                                />
-                                <Text type="text" size="smaller">
-                                    {queue.tokenId}
-                                </Text>
-                            </div>
-                        )}
+                    {queue && (
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'flex-start',
+                                width: '100%',
+                                marginBottom: '1.5rem',
+                                zIndex: 1,
+                                paddingLeft: '.4rem',
+                            }}
+                        >
+                            <TokenViewer
+                                tokenId={queue.tokenId}
+                                style={{ width: '40px', height: '40px' }}
+                            />
+                            <Text type="text" size="smaller">
+                                {queue.tokenId}
+                            </Text>
+                        </div>
+                    )}
 
-                        {/* {auto && (
+                    {/* {auto && (
                             <animated.div
                                 style={{
                                     display: 'flex',
@@ -197,51 +197,47 @@ const NextSwap: FunctionComponent<Props> = () => {
                                 }}
                             />
                         )} */}
+                </div>
+
+                <animated.div style={springStyle}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Text textStyle={{ marginBottom: '1rem' }}>Up Next</Text>
+                        <Button
+                            buttonStyle={{
+                                background: 'white',
+                                borderRadius: lib.layout.borderRadius.large,
+                                margin: '0rem',
+                                padding: '.2rem .6rem',
+                                height: '30px',
+                            }}
+                            textStyle={{
+                                color: lib.colors.nuggRedText,
+                                fontSize: FontSize.h6,
+                                fontFamily: lib.layout.font.sf.regular,
+                            }}
+                            label="auto"
+                            onClick={() => setAuto(!auto)}
+                        />
                     </div>
 
-                    <animated.div style={springStyle}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Text textStyle={{ marginBottom: '1rem' }}>Up Next</Text>
-                            <Button
-                                buttonStyle={{
-                                    background: 'white',
-                                    borderRadius: lib.layout.borderRadius.large,
-                                    margin: '0rem',
-                                    padding: '.2rem .6rem',
-                                    height: '30px',
-                                }}
-                                textStyle={{
-                                    color: lib.colors.nuggRedText,
-                                    fontSize: FontSize.h6,
-                                    fontFamily: lib.layout.font.sf.regular,
-                                }}
-                                label="auto"
-                                onClick={() => setAuto(!auto)}
-                            />
-                        </div>
-
-                        {activeswaps &&
-                            activeswaps.map(
-                                (swap, index) =>
-                                    swap.started &&
-                                    swap.tokenId !== lastSwap__tokenId && (
-                                        <SwapRenderItem
-                                            {...{ swap, index, setQueue }}
-                                            key={index}
-                                        />
-                                    ),
-                            )}
-                    </animated.div>
-                    {/* <animated.div style={springStyle}>
-                <Text textStyle={{ marginBottom: '1rem' }}>Not Started</Text>
-                {activeswaps &&
-                    activeswaps.map((swap, index) => (
-                        <SwapRenderItem {...{ swap, index }} key={index} />
-                    ))}
-            </animated.div> */}
+                    {activeswaps &&
+                        activeswaps.map(
+                            (swap, index) =>
+                                swap.started &&
+                                swap.tokenId !== lastSwap__tokenId && (
+                                    // eslint-disable-next-line no-use-before-define
+                                    <SwapRenderItem
+                                        swap={swap}
+                                        index={index}
+                                        setQueue={setQueue}
+                                        // eslint-disable-next-line react/no-array-index-key
+                                        key={index}
+                                    />
+                                ),
+                        )}
                 </animated.div>
-            }
-        />
+            </animated.div>
+        </Flyout>
     );
 };
 
@@ -252,6 +248,7 @@ const SwapRenderItem = ({
     setQueue,
 }: {
     swap: SwapData;
+    // eslint-disable-next-line react/no-unused-prop-types
     index: number;
     setQueue: React.Dispatch<React.SetStateAction<SwapData | undefined>>;
 }) => {

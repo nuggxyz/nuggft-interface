@@ -12,7 +12,7 @@ type Props = {
     size: SimpleSizes;
 };
 
-export default ({ address, route, param, textStyle, size }: Props) => {
+const AddressViewer = ({ address, route, param, textStyle, size }: Props) => {
     const chainId = web3.hook.usePriorityChainId();
 
     const provider = web3.hook.usePriorityProvider();
@@ -24,7 +24,7 @@ export default ({ address, route, param, textStyle, size }: Props) => {
             type="text"
             size={size}
             textStyle={{ ...textStyle }}
-            action={function (): void {
+            action={() => {
                 web3.config.gotoEtherscan(chainId, route, param);
             }}
         >
@@ -32,3 +32,5 @@ export default ({ address, route, param, textStyle, size }: Props) => {
         </InteractiveText>
     ) : null;
 };
+
+export default AddressViewer;

@@ -1,14 +1,14 @@
+/* eslint-disable import/no-cycle */
 import { useCallback } from 'react';
 
+// eslint-disable-next-line import/no-named-as-default
 import core from './core';
-import { useLiveOffers } from './hooks/useLiveOffers';
 import { useLiveNugg } from './hooks/useLiveNugg';
 import updater from './updater';
-import { useLiveToken } from './hooks/useLiveToken';
 import { useLiveItem } from './hooks/useLiveItem';
 import { useDotnugg, useDotnuggCacheOnly } from './hooks/useDotnugg';
-import router from './router';
-import { TokenId } from './router';
+import router, { TokenId } from './router';
+import useLiveToken from './hooks/useLiveToken';
 
 export default {
     ...core,
@@ -19,7 +19,7 @@ export default {
     },
 
     live: {
-        //////// simple ////////
+        /// ///// simple ////////
         apollo: () => core.store((state) => state.apollo),
         infura: () => core.store((state) => state.infura),
 
@@ -50,9 +50,10 @@ export default {
         blocknum: () => core.store((state) => state.blocknum),
         manualPriority: () => core.store((state) => state.manualPriority),
 
-        //////// complex ////////
+        /// ///// complex ////////
         offers: (tokenId: TokenId | undefined) =>
             core.store(
+                // eslint-disable-next-line react-hooks/rules-of-hooks
                 useCallback(
                     (state) => (tokenId ? state.activeOffers[tokenId] ?? [] : []),
                     [tokenId],
@@ -62,6 +63,7 @@ export default {
         activeItems: () => core.store((state) => state.activeItems),
         activeNuggItem: (id: string) =>
             core.store(
+                // eslint-disable-next-line react-hooks/rules-of-hooks
                 useCallback(
                     (state) => state.activeItems.find((item) => item.id.includes(id)),
                     [id],
@@ -78,15 +80,14 @@ export default {
         myUnclaimedOffers: () =>
             core.store((state) =>
                 [...state.myUnclaimedItemOffers, ...state.myUnclaimedNuggOffers].sort((a, b) =>
-                    a.endingEpoch ?? 0 < (b.endingEpoch ?? 0) ? -1 : 1,
+                    a.endingEpoch ?? (b.endingEpoch ?? 0) > 0 ? -1 : 1,
                 ),
             ),
     },
     hook: {
-        useLiveOffers,
         useLiveNugg,
-        useLiveToken,
         useLiveItem,
+        useLiveToken,
         useDotnugg,
         useDotnuggCacheOnly,
     },

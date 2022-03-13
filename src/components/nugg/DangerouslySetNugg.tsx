@@ -2,15 +2,15 @@ import React, { CSSProperties } from 'react';
 
 import AppState from '@src/state/app';
 
-function DangerouslySetNugg({
+const DangerouslySetNugg = ({
     imageUri,
     size,
-    styles = {},
+    styles,
 }: {
     imageUri: Base64EncodedSvg;
     styles?: CSSProperties;
     size: 'thumbnail' | 'showcase';
-}) {
+}) => {
     // Buffer.from is the modern version of the below atob code
     // let svg = atob(data.replace('data:image/svg+xml;base64,', ''));
     const bug = Buffer.from(imageUri.replace('data:image/svg+xml;base64,', ''), 'base64');
@@ -27,6 +27,6 @@ function DangerouslySetNugg({
             dangerouslySetInnerHTML={{ __html: bug.toString('utf8') }}
         />
     );
-}
+};
 
 export default DangerouslySetNugg;

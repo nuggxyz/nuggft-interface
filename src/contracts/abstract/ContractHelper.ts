@@ -14,7 +14,7 @@ export default class ContractHelper {
     }
 
     static set instance(_) {
-        return;
+        // return _;
     }
 
     static reset() {

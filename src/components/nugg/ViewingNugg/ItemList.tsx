@@ -32,25 +32,6 @@ interface Props extends ExtraData {
     tokenId: string;
 }
 
-const ItemList: FunctionComponent<Props> = ({
-    items,
-    chainId,
-    provider,
-    sender,
-    tokenId,
-    isOwner,
-}) => {
-    return (
-        <List
-            style={{ padding: '1rem' }}
-            data={sortByField(items, 'feature', false)}
-            RenderItem={Item}
-            extraData={{ sender, provider, chainId, tokenId, isOwner }}
-            action={() => undefined}
-        />
-    );
-};
-
 const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData, undefined>> = ({ item, extraData }) => {
     return (
         <div style={styles.itemListItem}>
@@ -103,6 +84,25 @@ const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData, undefined>> = ({ ite
                     />
                 ))}
         </div>
+    );
+};
+
+const ItemList: FunctionComponent<Props> = ({
+    items,
+    chainId,
+    provider,
+    sender,
+    tokenId,
+    isOwner,
+}) => {
+    return (
+        <List
+            style={{ padding: '1rem' }}
+            data={sortByField(items, 'feature', false)}
+            RenderItem={Item}
+            extraData={{ sender, provider, chainId, tokenId, isOwner }}
+            action={() => undefined}
+        />
     );
 };
 

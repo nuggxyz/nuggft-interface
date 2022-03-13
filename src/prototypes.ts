@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-extend-native */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -82,9 +84,8 @@ Array.prototype.insert = function <T extends { index: number }>(element: T) {
     if (typeof element === 'string') {
         if (this.indexOf(element) !== -1) {
             return this;
-        } else {
-            return [...this, element];
         }
+        return [...this, element];
     }
     if (element.index === this.length) {
         return [...this, element];

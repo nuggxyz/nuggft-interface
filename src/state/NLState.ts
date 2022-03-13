@@ -3,8 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { createSelector } from 'reselect';
-import { AnyAction, isPending, SliceCaseReducers } from '@reduxjs/toolkit';
-import { Slice } from '@reduxjs/toolkit';
+import { AnyAction, isPending, SliceCaseReducers, Slice } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
 import { isUndefinedOrNullOrObjectEmpty } from '@src/lib/index';
@@ -13,20 +12,27 @@ import store, { NLSelector } from './store';
 
 /* eslint-disable react-hooks/rules-of-hooks */
 
+// eslint-disable-next-line import/prefer-default-export
 export class NLState<S> {
+    // eslint-disable-next-line no-use-before-define
     protected static _instance: NLState<any>;
 
     private static _selectors: unknown;
+
     private static _dispatches: unknown;
 
     private _thactions: NL.Redux.Thactions;
+
     private _middlewares: NL.Redux.Middlewares;
 
     protected _hooks: Dictionary<NL.Redux.Hook>;
 
     protected _name: string;
+
     protected _initialState: S;
+
     protected _updater: NL.Redux.Updater;
+
     protected _slice: Slice<S, SliceCaseReducers<S>, string> | undefined;
 
     protected _isOwnFulfilledAction: (action: AnyAction, suffix: string) => boolean;
@@ -99,6 +105,7 @@ export class NLState<S> {
         if (isUndefinedOrNullOrObjectEmpty(this._selectors)) {
             this._selectors = Object.keys(this.instance._initialState).reduce((selectors, key) => {
                 // @ts-ignore
+                // eslint-disable-next-line no-param-reassign
                 selectors[key] = (eqFn?: (prev: any, cur: any) => boolean) =>
                     useSelector(
                         // @ts-ignore
@@ -118,6 +125,7 @@ export class NLState<S> {
                 ...Object.entries(this.thactions),
             ].reduce((dispatches, [name, action]) => {
                 // @ts-ignore
+                // eslint-disable-next-line no-param-reassign
                 dispatches[name] = (value?: any) => store.dispatch(action(value));
                 return dispatches;
             }, {});

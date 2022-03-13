@@ -21,6 +21,101 @@ import styles from './ViewingNugg.styles';
 
 type Props = Record<string, never>;
 
+const SwapTitle = ({ title }: { title: string }) => {
+    return (
+        <div style={{ display: 'flex' }}>
+            <Text textStyle={styles.listTitle}>{title}</Text>
+        </div>
+    );
+};
+
+const SwapItem: FunctionComponent<
+    ListRenderItemProps<
+        LiveSwap,
+        {
+            chainId: Chain;
+            provider: Web3Provider;
+            token: LiveNugg | LiveItem;
+            epoch: number;
+            tokenId: TokenId;
+            blocknum: number;
+        },
+        undefined
+    >
+> = ({ item, index, extraData }) => {
+    const awaitingBid = item.endingEpoch === null;
+    const ens = web3.hook.usePriorityAnyENSName(extraData?.provider, item.owner);
+
+    return (
+        <div style={{ padding: '.25rem 1rem' }}>
+            <Button
+                key={index}
+                buttonStyle={{
+                    ...styles.swap,
+                    background:
+                        // eslint-disable-next-line no-nested-ternary
+                        item.epoch.id < extraData.epoch
+                            ? lib.colors.gradient
+                            : item.endingEpoch
+                            ? lib.colors.gradient3
+                            : lib.colors.gradient2,
+                }}
+                onClick={() => client.actions.routeTo(extraData.tokenId, false)}
+                rightIcon={
+                    <>
+                        <div
+                            style={{
+                                ...styles.swapButton,
+                            }}
+                        >
+                            <Text>
+                                {/* eslint-disable-next-line no-nested-ternary */}
+                                {item.epoch.id < extraData.epoch
+                                    ? 'Swap is over'
+                                    : !item.endingEpoch
+                                    ? 'Awaiting bid!'
+                                    : `Swap ending in ${
+                                          item.epoch.endblock - extraData.blocknum
+                                      } blocks`}
+                            </Text>
+                            <CurrencyText image="eth" value={item.eth.decimal.toNumber()} />
+                        </div>
+                        <div>
+                            <Text
+                                type="text"
+                                size="smaller"
+                                textStyle={{
+                                    color: Colors.textColor,
+                                }}
+                            >
+                                {/* eslint-disable-next-line no-nested-ternary */}
+                                {awaitingBid
+                                    ? 'On sale by'
+                                    : item.leader === item.owner
+                                    ? 'Reclaimed by'
+                                    : 'Purchased from'}
+                            </Text>
+                            <Text
+                                textStyle={{
+                                    color: 'white',
+                                }}
+                            >
+                                {/* eslint-disable-next-line no-nested-ternary */}
+                                {item.owner === Address.ZERO.hash ||
+                                item.owner === CONTRACTS[extraData?.chainId]?.NuggftV1
+                                    ? 'NuggftV1'
+                                    : extraData?.token
+                                    ? `Nugg #${item.owner}`
+                                    : ens}
+                            </Text>
+                        </div>
+                    </>
+                }
+            />
+        </div>
+    );
+};
+
 const SwapList: FunctionComponent<Props> = () => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
@@ -78,94 +173,4 @@ const SwapList: FunctionComponent<Props> = () => {
     ) : null;
 };
 
-const SwapTitle = ({ title }: { title: string }) => {
-    return (
-        <div style={{ display: 'flex' }}>
-            <Text textStyle={styles.listTitle}>{title}</Text>
-        </div>
-    );
-};
-
-const SwapItem: FunctionComponent<
-    ListRenderItemProps<
-        LiveSwap,
-        {
-            chainId: Chain;
-            provider: Web3Provider;
-            token: LiveNugg | LiveItem;
-            epoch: number;
-            tokenId: TokenId;
-            blocknum: number;
-        },
-        undefined
-    >
-> = ({ item, index, extraData }) => {
-    const awaitingBid = item.endingEpoch === null;
-    const ens = web3.hook.usePriorityAnyENSName(extraData?.provider, item.owner);
-
-    return (
-        <div style={{ padding: '.25rem 1rem' }}>
-            <Button
-                key={index}
-                buttonStyle={{
-                    ...styles.swap,
-                    background:
-                        item.epoch.id < extraData.epoch
-                            ? lib.colors.gradient
-                            : item.endingEpoch
-                            ? lib.colors.gradient3
-                            : lib.colors.gradient2,
-                }}
-                onClick={() => client.actions.routeTo(extraData.tokenId, false)}
-                rightIcon={
-                    <>
-                        <div
-                            style={{
-                                ...styles.swapButton,
-                            }}
-                        >
-                            <Text>
-                                {item.epoch.id < extraData.epoch
-                                    ? 'Swap is over'
-                                    : !item.endingEpoch
-                                    ? 'Awaiting bid!'
-                                    : `Swap ending in ${
-                                          item.epoch.endblock - extraData.blocknum
-                                      } blocks`}
-                            </Text>
-                            <CurrencyText image="eth" value={item.eth.decimal.toNumber()} />
-                        </div>
-                        <div>
-                            <Text
-                                type="text"
-                                size="smaller"
-                                textStyle={{
-                                    color: Colors.textColor,
-                                }}
-                            >
-                                {awaitingBid
-                                    ? 'On sale by'
-                                    : item.leader === item.owner
-                                    ? 'Reclaimed by'
-                                    : 'Purchased from'}
-                            </Text>
-                            <Text
-                                textStyle={{
-                                    color: 'white',
-                                }}
-                            >
-                                {item.owner === Address.ZERO.hash ||
-                                item.owner === CONTRACTS[extraData?.chainId]?.NuggftV1
-                                    ? 'NuggftV1'
-                                    : extraData?.token
-                                    ? `Nugg #${item.owner}`
-                                    : ens}
-                            </Text>
-                        </div>
-                    </>
-                }
-            />
-        </div>
-    );
-};
 export default SwapList;

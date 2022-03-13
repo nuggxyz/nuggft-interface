@@ -1,7 +1,6 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 import { AlertCircle } from 'react-feather';
-import { useSpring } from '@react-spring/core';
-import { animated } from '@react-spring/web';
+import { useSpring, animated } from '@react-spring/web';
 
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
@@ -51,8 +50,10 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
             <animated.div style={springStyle}>
                 <div
                     ref={ref}
+                    aria-hidden="true"
+                    role="button"
                     onClick={() => {
-                        onClick && onClick();
+                        if (onClick) onClick();
                         client.actions.routeTo(epoch__id!.toString(), false);
                     }}
                     style={style2}

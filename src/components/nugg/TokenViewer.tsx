@@ -1,5 +1,4 @@
-import { config as springConfig, useSpring } from '@react-spring/core';
-import { animated } from '@react-spring/web';
+import { config as springConfig, useSpring, animated } from '@react-spring/web';
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
 import AppState from '@src/state/app';
@@ -10,6 +9,7 @@ import { parseTokenId } from '@src/lib';
 import useOnHover from '@src/hooks/useOnHover';
 
 import DangerouslySetNugg from './DangerouslySetNugg';
+
 type Props = {
     tokenId: TokenId;
     style?: CSSProperties;
@@ -61,7 +61,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     });
 
     return (
-        //@ts-ignore
+        // @ts-ignore
         <animated.div style={animatedStyle}>
             <div
                 role="presentation"
@@ -91,7 +91,7 @@ const TokenViewer: FunctionComponent<Props> = ({
                 <Text
                     textStyle={{
                         textAlign: 'center',
-                        color: labelColor ? labelColor : 'black',
+                        color: labelColor || 'black',
                     }}
                     {...textProps}
                 >

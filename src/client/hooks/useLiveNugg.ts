@@ -1,10 +1,12 @@
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 import React, { useEffect } from 'react';
 
 import { EthInt } from '@src/classes/Fraction';
 
+// eslint-disable-next-line import/no-cycle
 import client from '..';
 
+// eslint-disable-next-line import/no-cycle
 import { LiveItemSwap } from './useLiveItem';
 
 export interface LiveSwapBase {
@@ -185,16 +187,16 @@ export const useLiveNugg = (tokenId: string | undefined) => {
                                     type: 'nugg',
                                     id: y?.id,
                                     epoch: {
-                                        id: +y?.epoch?.id,
-                                        startblock: +y?.epoch?.startblock,
-                                        endblock: +y?.epoch?.endblock,
+                                        id: Number(y?.epoch?.id),
+                                        startblock: Number(y?.epoch?.startblock),
+                                        endblock: Number(y?.epoch?.endblock),
                                         status: y?.epoch?.status,
                                     },
                                     eth: new EthInt(y?.eth),
                                     leader: y?.leader?.id,
                                     owner: y?.owner?.id,
-                                    endingEpoch: y && y.endingEpoch ? +y?.endingEpoch : null,
-                                    num: +y?.num,
+                                    endingEpoch: y && y.endingEpoch ? Number(y?.endingEpoch) : null,
+                                    num: Number(y?.num),
                                     isActive: x.data?.nugg.activeSwap?.id === y?.id,
                                 };
                             }),
@@ -203,9 +205,11 @@ export const useLiveNugg = (tokenId: string | undefined) => {
                                       type: 'nugg',
                                       id: x.data.nugg.activeSwap?.id,
                                       epoch: {
-                                          id: +x.data.nugg.activeSwap?.epoch?.id,
-                                          startblock: +x.data.nugg.activeSwap?.epoch?.startblock,
-                                          endblock: +x.data.nugg.activeSwap?.epoch?.endblock,
+                                          id: Number(x.data.nugg.activeSwap?.epoch?.id),
+                                          startblock: Number(
+                                              x.data.nugg.activeSwap?.epoch?.startblock,
+                                          ),
+                                          endblock: Number(x.data.nugg.activeSwap?.epoch?.endblock),
                                           status: x.data.nugg.activeSwap?.epoch?.status,
                                       },
                                       eth: new EthInt(x.data.nugg.activeSwap?.eth),
@@ -216,9 +220,9 @@ export const useLiveNugg = (tokenId: string | undefined) => {
                                       endingEpoch:
                                           x.data.nugg.activeSwap &&
                                           x.data.nugg.activeSwap?.endingEpoch
-                                              ? +x.data.nugg.activeSwap?.endingEpoch
+                                              ? Number(x.data.nugg.activeSwap?.endingEpoch)
                                               : null,
-                                      num: +x.data.nugg.activeSwap?.num,
+                                      num: Number(x.data.nugg.activeSwap?.num),
                                       isActive: true,
                                   }
                                 : undefined,
@@ -230,6 +234,7 @@ export const useLiveNugg = (tokenId: string | undefined) => {
                 instance.unsubscribe();
             };
         }
+        return () => undefined;
     }, [apollo, tokenId]);
 
     return nugg;

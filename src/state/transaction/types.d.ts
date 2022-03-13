@@ -3,7 +3,9 @@ type base = import('./interfaces').BaseTransactionInfo;
 type TransactionStateType = {
     txn: string;
     toggleCompletedTxn: boolean;
+    // eslint-disable-next-line no-use-before-define
     success: TransactionStateSuccess | undefined;
+    // eslint-disable-next-line no-use-before-define
     error: TransactionStateError | undefined;
     loading: boolean;
 };

@@ -4,18 +4,20 @@ import { FallbackProviderConfig } from '@ethersproject/providers';
 import { constants, VoidSigner } from 'ethers';
 
 import { Connector, Actions } from '@src/web3/core/types';
-import { PeerInfo__Infura } from '@src/web3/core/interfaces';
-import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
+import { PeerInfo__Infura, Connector as ConnectorEnum } from '@src/web3/core/interfaces';
+// eslint-disable-next-line import/no-cycle
 import { DEFAULT_CHAIN } from '@src/web3/config';
 
-type url = string | ConnectionInfo;
+export type url = string | ConnectionInfo;
 
 export class Network extends Connector {
     /** {@inheritdoc Connector.provider} */
     public provider: Eip1193Bridge | undefined = undefined;
 
     private urlMap: Record<number, url[]>;
+
     private defaultChainId: number;
+
     private providerCache: Record<number, Promise<Eip1193Bridge> | undefined> = {};
 
     /**
@@ -50,16 +52,19 @@ export class Network extends Connector {
         if (this.providerCache[chainId])
             return this.providerCache[chainId] as Promise<Eip1193Bridge>;
 
+        // eslint-disable-next-line no-return-assign
         return (this.providerCache[chainId] = Promise.all([
             import('@ethersproject/providers').then(({ JsonRpcProvider, FallbackProvider }) => ({
                 JsonRpcProvider,
                 FallbackProvider,
             })),
+            // eslint-disable-next-line no-shadow
             import('@ethersproject/experimental').then(({ Eip1193Bridge }) => Eip1193Bridge),
+            // eslint-disable-next-line no-shadow
         ]).then(([{ JsonRpcProvider, FallbackProvider }, Eip1193Bridge]) => {
             const urls = this.urlMap[chainId];
 
-            const providers = urls.map((url) => new JsonRpcProvider(url, chainId));
+            const providers = urls.map((_url) => new JsonRpcProvider(_url, chainId));
 
             return new Eip1193Bridge(
                 new VoidSigner(constants.AddressZero),

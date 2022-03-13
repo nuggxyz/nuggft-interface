@@ -1,5 +1,6 @@
 import { RefCallback, useEffect, useRef, useState } from 'react';
-import { throttle } from 'lodash';
+
+import lib from '@src/lib';
 
 function useOnScroll(
     callback?: RefCallback<{
@@ -20,10 +21,10 @@ function useOnScroll(
             return currentScrollTop;
         });
 
-        callback && callback({ previousScrollTop, currentScrollTop });
+        if (callback) callback({ previousScrollTop, currentScrollTop });
     }
 
-    const handleDocumentScrollThrottled = throttle(handleDocumentScroll, 250);
+    const handleDocumentScrollThrottled = lib.lodash.throttle(handleDocumentScroll, 250);
 
     useEffect(() => {
         const current = ref.current !== undefined && ref.current !== null ? ref.current : document;

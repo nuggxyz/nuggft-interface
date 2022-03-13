@@ -3,6 +3,7 @@ import { Middleware, Dispatch, PayloadAction } from '@reduxjs/toolkit';
 import { NLState } from '@src/state/NLState';
 import { NLRootState } from '@src/state/store';
 
+// eslint-disable-next-line import/no-cycle
 import AppState from './index';
 
 // export const findAndReplaceWith = (value: any) => {

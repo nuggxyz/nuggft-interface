@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { NLState } from '@src/state/NLState';
@@ -10,11 +11,15 @@ import updater from './updater';
 export const STATE_NAME = 'wallet';
 
 export default class WalletState extends NLState<WalletStateType> {
+    // eslint-disable-next-line no-use-before-define
     declare static _instance: WalletState;
 
     declare static actions: typeof this.instance._slice.actions;
+
     declare static reducer: typeof this.instance._slice.reducer;
+
     declare static select: ApplyFuncToChildren<typeof this.instance._initialState>;
+
     declare static dispatch: ApplyDispatchToChildren<
         typeof thactions & typeof this.instance._slice.actions
     >;

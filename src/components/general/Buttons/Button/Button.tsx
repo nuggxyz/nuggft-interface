@@ -6,7 +6,7 @@ import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import styles from './Button.styles';
 
 export type ButtonProps = {
-    onClick: any | (() => void);
+    onClick: () => void;
     label?: string;
     buttonStyle?: React.CSSProperties;
     textStyle?: React.CSSProperties;
@@ -40,13 +40,19 @@ const Button: FunctionComponent<ButtonProps> = ({
         };
     }, [hover, disabled, buttonStyle, hoverStyle]);
 
-    const RightIcon = useCallback(() => (rightIcon ? rightIcon : null), [rightIcon]);
+    const RightIcon = useCallback(() => rightIcon || null, [rightIcon]);
 
-    const LeftIcon = useCallback(() => (leftIcon ? leftIcon : null), [leftIcon]);
+    const LeftIcon = useCallback(() => leftIcon || null, [leftIcon]);
 
     return (
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        <div ref={ref} onClick={disabled ? undefined : onClick} style={style}>
+        <div
+            aria-hidden="true"
+            role="button"
+            ref={ref}
+            onClick={disabled ? undefined : onClick}
+            style={style}
+        >
             <LeftIcon />
             {label ? <Text {...textProps}>{label}</Text> : null}
             <RightIcon />

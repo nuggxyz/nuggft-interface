@@ -8,7 +8,7 @@ const useIsVisible = (
     const ref = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
     useEffect(() => {
-        const current = ref.current;
+        const { current } = ref;
         const observer = new IntersectionObserver(
             ([entry]) => {
                 setIsVisible(entry.isIntersecting);
@@ -23,7 +23,7 @@ const useIsVisible = (
             observer.observe(current);
         }
         return () => {
-            current && observer.unobserve(current);
+            if (current) observer.unobserve(current);
         };
     }, []);
     return [ref, isVisible];

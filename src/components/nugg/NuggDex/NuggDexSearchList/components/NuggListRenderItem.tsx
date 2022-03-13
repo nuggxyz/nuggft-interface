@@ -25,7 +25,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
     }, [item, lastView__tokenId]);
 
     return (
-        <div style={style} onClick={() => action(item)}>
+        <div aria-hidden="true" role="button" style={style} onClick={() => action(item)}>
             <TokenViewer
                 tokenId={item?.id || ''}
                 style={{

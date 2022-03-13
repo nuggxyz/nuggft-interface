@@ -39,8 +39,8 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
     const [stableId, setId] = useState<TokenId | undefined>(targetId);
 
     useEffect(() => {
-        type && setType(type);
-        targetId && setId(targetId);
+        if (type) setType(type);
+        if (targetId) setId(targetId);
     }, [type, targetId]);
 
     return stableId && chainId && provider && address ? (

@@ -1,30 +1,26 @@
+// eslint-disable-next-line max-classes-per-file
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import Decimal from 'decimal.js-light';
 import numbro from 'numbro';
 
-import { fromEth, toEth, TWO_128, TWO_96 } from '@src/lib/conversion';
-import { ETH_ONE } from '@src/lib/conversion';
+import { fromEth, toEth, TWO_128, TWO_96, ETH_ONE } from '@src/lib/conversion';
 import { toGwei } from '@src/lib/index';
 
-export enum Currency {
-    'ETH' = 0,
-    'WETH' = 1,
-    'xNUGG' = 2,
-}
-
+// eslint-disable-next-line no-use-before-define
 export type Fractionish = BigNumberish | Fraction;
 
 export class Fraction {
     public num: BigNumber;
+
     public den: BigNumber;
 
     public static ZERO = new Fraction(BigNumber.from(0));
+
     public static ONE = new Fraction(BigNumber.from(1));
 
     constructor(num: BigNumberish, den: BigNumberish = BigNumber.from(1)) {
         this.num = BigNumber.from(num);
         this.den = BigNumber.from(den);
-        return this;
     }
 
     get rat() {
@@ -102,10 +98,9 @@ export class Fraction {
             const unsafe = fractionish as unknown;
             if ((unsafe as Fraction).num && (unsafe as Fraction).den)
                 return fractionish as Fraction;
-            else {
-                console.log({ unsafe });
-                throw new Error('Could not parse fraction');
-            }
+
+            console.log({ unsafe });
+            throw new Error('Could not parse fraction');
         } catch (e) {
             throw new Error('Could not parse fraction');
         }
@@ -123,19 +118,10 @@ export class Fraction2x96 extends Fraction {
         super(BigNumber.from(num), TWO_96);
     }
 }
-export class PairInt {
-    public eth: EthInt;
-    public usd: EthInt;
-
-    constructor(eth: BigNumberish, usd: BigNumberish) {
-        this.eth = new EthInt(eth);
-        this.usd = new EthInt(usd);
-        return this;
-    }
-}
 
 export class EthInt extends Fraction {
     public static ZERO = new EthInt(BigNumber.from(0));
+
     public static ONE = new EthInt(BigNumber.from(1));
 
     constructor(value: BigNumberish) {
@@ -166,6 +152,7 @@ export class EthInt extends Fraction {
     public static fromEthDecimal(value: number): EthInt {
         return new EthInt(toEth(value.toFixed(18)));
     }
+
     public static fromEthDecimalString(value: string): EthInt {
         return new EthInt(fromEth(value));
     }
@@ -242,5 +229,16 @@ export class EthInt extends Fraction {
             trimMantissa: false,
             // totalLength: num > 1000 ? 2 : digits,
         });
+    }
+}
+
+export class PairInt {
+    public eth: EthInt;
+
+    public usd: EthInt;
+
+    constructor(eth: BigNumberish, usd: BigNumberish) {
+        this.eth = new EthInt(eth);
+        this.usd = new EthInt(usd);
     }
 }
