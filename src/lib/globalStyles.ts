@@ -25,6 +25,9 @@ const globalStyles = NLStyleSheetCreator({
     backdropFilter: {
         backdropFilter: 'blur(20px)',
     },
+    firefoxBlur: {
+        filter: 'blur(20px)',
+    },
 });
 
 export default globalStyles;

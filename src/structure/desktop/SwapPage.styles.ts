@@ -7,6 +7,7 @@ const styles = NLStyleSheetCreator({
         alignItems: 'center',
         width: '100%',
         height: '100%',
+        // filter: 'blur(20px)'
     },
     theRingContainer: {
         display: 'flex',

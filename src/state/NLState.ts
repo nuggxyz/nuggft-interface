@@ -90,7 +90,7 @@ export class NLState<S> {
         return this.instance._thactions;
     }
 
-    protected static get hook() {
+    public static get hook() {
         return this.instance._hooks;
     }
 

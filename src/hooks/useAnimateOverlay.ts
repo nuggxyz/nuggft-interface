@@ -39,9 +39,9 @@ const styles = NLStyleSheetCreator({
         alignItems: 'center',
 
         background: 'transparent',
-        backdropFilter: 'blur(10px)',
+        // backdropFilter: 'blur(10px)',
         // @danny7even this seemed to cause problems with issue #67 - but it didnt solve any
-        WebkitBackdropFilter: 'blur(10px)',
+        // WebkitBackdropFilter: 'blur(10px)',
         overflow: 'hidden',
         zIndex: 999,
     },

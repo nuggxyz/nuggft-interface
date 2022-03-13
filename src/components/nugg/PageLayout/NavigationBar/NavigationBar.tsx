@@ -1,10 +1,12 @@
 import React, { FC, useCallback } from 'react';
+import { animated } from '@react-spring/web';
 
 import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
 import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
 import FloorPrice from '@src/components/nugg/FloorPrice';
 import NuggDexSearchBar from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar';
 import state from '@src/state';
+import useFirefoxBlur from '@src/hooks/useFirefoxBlur';
 
 import styles from './NavigationBar.styles';
 
@@ -21,15 +23,10 @@ const NavigationBar: FC<Props> = () => {
         [view],
     );
 
-    // const backgroundStyle = useMemo(() => {
-    //     return {
-    //         ...styles.navBarBackground,
-    //         ...(isHovering && view === 'Search' ? styles.navBarHover : {}),
-    //     };
-    // }, [view, isHovering]);
+    const container = useFirefoxBlur(['modal'], styles.navBarContainer);
 
     return (
-        <div style={styles.navBarContainer}>
+        <animated.div style={container}>
             <div style={styles.navBarBackground} onClick={onClick} />
             <div style={styles.searchBarContainer}>
                 <NuggDexSearchBar />
@@ -62,7 +59,7 @@ const NavigationBar: FC<Props> = () => {
                 {screenType === 'desktop' && <FloorPrice />}
                 <AccountViewer />
             </div>
-        </div>
+        </animated.div>
     );
 };
 

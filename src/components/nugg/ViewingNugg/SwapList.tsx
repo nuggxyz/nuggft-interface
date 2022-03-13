@@ -62,7 +62,6 @@ const SwapList: FunctionComponent<Props> = () => {
             title: 'Previous Sales',
             items: tempSwaps,
         });
-        console.log({ res3: res, chainId, provider, lastView__tokenId, epoch, token });
 
         return res;
     }, [token, lastView__tokenId, chainId, provider, epoch]);
