@@ -208,7 +208,7 @@ export interface Actions {
     startActivation: () => () => void;
     updateBlocknum: (blocknum: number, chainId: Chain) => void;
     updateProtocol: (stateUpdate: ClientStateUpdate) => void;
-    routeTo: (tokenId: `item-${string}` | string, view: boolean) => void;
+    routeTo: (tokenId: TokenId, view: boolean) => void;
     reportError: (error: Error | undefined) => void;
     toggleView: () => void;
     updateClients: (

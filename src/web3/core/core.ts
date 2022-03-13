@@ -150,7 +150,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
 
     function useSelectedAnyENSName(
         connector: Connector,
-        provider: Web3Provider | undefined,
+        provider: Web3Provider | 'nugg' | undefined,
         account: string,
     ) {
         const index = getIndex(connector);
@@ -257,7 +257,7 @@ export function getNetworkConnector(initializedConnectors: {
         return useSelectedWeb3React(useNetworkConnector(), provider);
     }
 
-    function useNetworkAnyENSName(provider: Web3Provider | undefined, account: string) {
+    function useNetworkAnyENSName(provider: Web3Provider | 'nugg' | undefined, account: string) {
         return useSelectedAnyENSName(useNetworkConnector(), provider, account);
     }
 
@@ -367,7 +367,7 @@ export function getPriorityConnector(initializedConnectors: {
         return useSelectedWeb3React(usePriorityConnector(), provider);
     }
 
-    function usePriorityAnyENSName(provider: Web3Provider | undefined, account: string) {
+    function usePriorityAnyENSName(provider: Web3Provider | 'nugg' | undefined, account: string) {
         return useSelectedAnyENSName(usePriorityConnector(), provider, account);
     }
 
@@ -483,8 +483,6 @@ function useTx(provider: Web3Provider | undefined, hash: string) {
                 .getTransactionReceipt(hash)
                 .then((result) => {
                     if (!stale) {
-                        console.log({ result });
-
                         setData(result);
                     }
                 })
@@ -531,7 +529,7 @@ function useBalance(provider: Web3Provider | undefined, account: string | undefi
 }
 
 function useENS(
-    provider: Web3Provider | undefined,
+    provider: Web3Provider | 'nugg' | undefined,
     account: string | undefined,
     chainId: Chain | undefined,
 ): (string | null) | undefined {
@@ -541,6 +539,7 @@ function useENS(
     useEffect(() => {
         if (provider && account && chainId) {
             if (account === Address.ZERO.hash) setENSName('black-hole');
+            if (provider === 'nugg') setENSName(`Nugg ${account}`);
             else if (account.toLowerCase() === CONTRACTS[chainId].NuggftV1.toLowerCase())
                 setENSName('nuggftv1.nugg.xyz');
             else {
@@ -608,7 +607,7 @@ function getAugmentedHooks<T extends Connector>(
     }
 
     function useAnyENSName(
-        provider: Web3Provider | undefined,
+        provider: Web3Provider | 'nugg' | undefined,
         account: string,
     ): (string | null) | undefined {
         const chainId = useChainId();

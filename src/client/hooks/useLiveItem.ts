@@ -1,8 +1,10 @@
 import gql from 'graphql-tag';
 import React, { useEffect } from 'react';
 
-import { extractItemId } from '@src/lib';
 import { EthInt } from '@src/classes/Fraction';
+// eslint-disable-next-line import/no-cycle
+import { NuggId } from '@src/client/router';
+import { extractItemId } from '@src/lib';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
@@ -30,12 +32,18 @@ export interface LiveItemSwap extends LiveSwapBase {
 export interface LiveActiveItemSwap extends LiveItemSwap {
     count: number;
 }
-
+export type TryoutData = { nugg: NuggId; eth: EthInt };
 export interface LiveItem {
     type: 'item';
     activeSwap?: LiveActiveItemSwap;
     swaps: LiveItemSwap[];
     count: number;
+    tryout: {
+        count: number;
+        swaps: TryoutData[];
+        max?: TryoutData;
+        min?: TryoutData;
+    };
 }
 
 export const useLiveItem = (tokenId: string | undefined) => {
@@ -50,7 +58,6 @@ export const useLiveItem = (tokenId: string | undefined) => {
                     item: {
                         id: string;
                         count: number;
-                        // dotnuggRawCache: string;
                         activeSwap: {
                             id: string;
                             epoch: {
@@ -103,8 +110,8 @@ export const useLiveItem = (tokenId: string | undefined) => {
                 })
                 .subscribe((x) => {
                     if (x.data && x.data.item) {
-                        setItem({
-                            type: 'item',
+                        const tmp: Omit<LiveItem, 'tryout'> = {
+                            type: 'item' as const,
                             count: x.data.item.count,
                             swaps: x.data.item.swaps.map((y) => {
                                 return {
@@ -127,7 +134,7 @@ export const useLiveItem = (tokenId: string | undefined) => {
                             activeSwap: x.data.item.activeSwap
                                 ? {
                                       count: 1,
-                                      type: 'item',
+                                      type: 'item' as const,
                                       id: x.data.item.activeSwap?.id,
                                       epoch: {
                                           id: Number(x.data.item.activeSwap?.epoch?.id),
@@ -151,6 +158,36 @@ export const useLiveItem = (tokenId: string | undefined) => {
                                       isTryout: false,
                                   }
                                 : undefined,
+                        };
+
+                        const tryout = tmp.swaps.reduce(
+                            (prev: LiveItem['tryout'] | undefined, curr) => {
+                                const swap: TryoutData = {
+                                    nugg: curr.owner,
+                                    eth: curr.eth,
+                                };
+                                if (!prev)
+                                    return {
+                                        min: swap,
+                                        max: swap,
+                                        count: 1,
+                                        swaps: [swap],
+                                    };
+                                return {
+                                    min: !prev.min || prev.min.eth.gt(curr.eth) ? swap : prev.min,
+                                    max: !prev.max || prev.max.eth.lt(curr.eth) ? swap : prev.max,
+                                    count: prev.count + 1,
+                                    swaps: [swap, ...prev.swaps].sort((a, b) =>
+                                        a.eth.gt(b.eth) ? 1 : -1,
+                                    ),
+                                };
+                            },
+                            undefined,
+                        ) ?? { count: 0, min: undefined, max: undefined, swaps: [] };
+
+                        setItem({
+                            ...tmp,
+                            tryout,
                         });
                     }
                 });

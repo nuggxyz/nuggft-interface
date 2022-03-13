@@ -47,7 +47,9 @@
         "no-underscore-dangle": "off",
         "@typescript-eslint/camelcase": "off",
         "@typescript-eslint/no-plusplus": 0,
+        "no-plusplus": 0,
         "@typescript-eslint/naming-convention": "off",
+        "@typescript-eslint/no-use-before-define": "off",
         "module-resolver/use-alias": [
             "error",
             {

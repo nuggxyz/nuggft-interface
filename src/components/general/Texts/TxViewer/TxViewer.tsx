@@ -11,16 +11,17 @@ type Props = {
     hash: string;
     textStyle: CSSProperties;
     size: SimpleSizes;
+    isNugg: boolean;
 };
 
-const TxViewer = ({ address, hash, textStyle, size }: Props) => {
+const TxViewer = ({ address, hash, textStyle, size, isNugg }: Props) => {
     const chainId = web3.hook.usePriorityChainId();
 
     const provider = web3.hook.usePriorityProvider();
 
     const tx = web3.hook.usePriorityTx(hash);
 
-    const ens = web3.hook.usePriorityAnyENSName(provider, address);
+    const ens = web3.hook.usePriorityAnyENSName(isNugg ? 'nugg' : provider, address);
 
     return chainId && ens ? (
         <div

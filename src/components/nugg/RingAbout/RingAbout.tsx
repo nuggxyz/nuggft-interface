@@ -11,7 +11,7 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import Button from '@src/components/general/Buttons/Button/Button';
 import Colors from '@src/lib/colors';
 import AppState from '@src/state/app';
-import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
 import { Route } from '@src/client/router';
@@ -21,6 +21,7 @@ import InteractiveText from '@src/components/general/Texts/InteractiveText/Inter
 import { Chain } from '@src/web3/core/interfaces';
 import { LiveItem } from '@src/client/hooks/useLiveItem';
 import { LiveNugg } from '@src/client/hooks/useLiveNugg';
+import { Lifecycle } from '@src/client/hooks/useLiveToken';
 
 import styles from './RingAbout.styles';
 
@@ -31,17 +32,17 @@ const RingAbout: FunctionComponent<Props> = () => {
 
     const address = web3.hook.usePriorityAccount();
 
-    const lastSwap__tokenId = client.live.lastSwap.tokenId();
-    const lastSwap__type = client.live.lastSwap.type();
+    const tokenId = client.live.lastSwap.tokenId();
+    const type = client.live.lastSwap.type();
 
-    const { token, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
+    const { token, lifecycle } = client.hook.useLiveToken(tokenId);
 
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 
     const [open, setOpen] = useState(false);
 
-    const offers = client.live.offers(lastSwap__tokenId);
+    const offers = client.live.offers(tokenId);
 
     const leader = useMemo(() => {
         if (offers.length > 0) return offers[0];
@@ -98,7 +99,9 @@ const RingAbout: FunctionComponent<Props> = () => {
         padding: open ? '0.75rem' : '0rem',
     });
 
-    return lifecycle !== 'stands' ? (
+    console.log({ lifecycle });
+
+    return type !== undefined && tokenId && lifecycle !== 'stands' ? (
         <animated.div
             style={{
                 ...styles.container,
@@ -119,64 +122,148 @@ const RingAbout: FunctionComponent<Props> = () => {
                         ]
                     }
                 >
-                    <Text
-                        textStyle={{
-                            ...styles.title,
-                            ...(screenType === 'phone' && {
-                                color: Colors.nuggBlueText,
-                            }),
-                        }}
-                    >
-                        {(lifecycle === 'deck' || lifecycle === 'bat') && hasBids
-                            ? 'Highest Offer'
-                            : (lifecycle === 'deck' || lifecycle === 'bat') && !hasBids
-                            ? 'No offers yet...'
-                            : lifecycle === 'bench'
-                            ? 'Place offer to begin auction'
-                            : lifecycle === 'shower'
-                            ? 'Winner '
-                            : 'oops shouldnt be here'}
-                    </Text>
-                    {hasBids && (
+                    {lifecycle === Lifecycle.Tryout &&
+                    token?.type === 'item' &&
+                    token.tryout.min &&
+                    token.tryout.max ? (
                         <div
-                            style={
-                                styles[
-                                    screenType !== 'desktop'
-                                        ? 'leadingOfferContainerMobile'
-                                        : 'leadingOfferContainer'
-                                ]
-                            }
+                            onClick={() => client.actions.routeTo(tokenId, false)}
+                            aria-hidden="true"
+                            role="button"
+                            style={{
+                                padding: '.25rem 1rem',
+                            }}
                         >
-                            {leader ? (
-                                <animated.div
-                                    // @ts-ignore
-                                    style={flashStyle}
+                            <div
+                                style={{
+                                    background: lib.colors.gradient2Transparent,
+                                    padding: '.5rem 1rem',
+                                    borderRadius: lib.layout.borderRadius.mediumish,
+                                    // postion: 'relative',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'flex-start',
+                                    justifyContent: 'stretch',
+                                    width: '100%',
+                                    // background: lib.colors.gradient2,
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        width: '100%',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        display: 'flex',
+                                    }}
                                 >
-                                    <CurrencyText
-                                        image="eth"
-                                        textStyle={styles.leadingOffer}
-                                        value={leader.eth.decimal.toNumber()}
-                                    />
-                                    <TxViewer
-                                        size="smaller"
-                                        textStyle={{ color: Colors.textColor }}
-                                        address={leader && leader.user}
-                                        hash={leader && leader.txhash}
-                                    />
-                                </animated.div>
-                            ) : null}
-                            {offers.length > 1 && (
-                                <Button
-                                    rightIcon={
-                                        !open ? (
-                                            <ChevronUp color={Colors.nuggBlueText} size={14} />
-                                        ) : (
-                                            <ChevronDown color={Colors.nuggBlueText} size={14} />
-                                        )
+                                    <Text textStyle={{ color: lib.colors.primaryColor }}>
+                                        {/* eslint-disable-next-line no-nested-ternary */}
+                                        {`On sale by ${token.tryout.count} Nugg${
+                                            token.tryout.count > 1 ? 's' : ''
+                                        }`}
+                                    </Text>
+                                    {token.tryout.min.eth.eq(token.tryout.max.eth) ? (
+                                        <div>
+                                            <div style={{ display: 'flex' }}>
+                                                <CurrencyText
+                                                    image="eth"
+                                                    value={token.tryout.min.eth.decimal.toNumber()}
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <div style={{ display: 'flex' }}>
+                                                <CurrencyText
+                                                    image="eth"
+                                                    value={token.tryout.min.eth.decimal.toNumber()}
+                                                />
+                                                <Text textStyle={{ marginLeft: '5px' }}>Min</Text>
+                                            </div>
+                                            <div style={{ display: 'flex' }}>
+                                                <CurrencyText
+                                                    image="eth"
+                                                    value={token.tryout.max.eth.decimal.toNumber()}
+                                                />
+                                                <Text textStyle={{ marginLeft: '5px' }}>Max</Text>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div>
+                            <Text
+                                textStyle={{
+                                    ...styles.title,
+                                    ...(screenType === 'phone' && {
+                                        color: Colors.nuggBlueText,
+                                    }),
+                                }}
+                            >
+                                {(lifecycle === Lifecycle.Deck || lifecycle === Lifecycle.Bat) &&
+                                hasBids
+                                    ? 'Highest Offer'
+                                    : (lifecycle === Lifecycle.Deck ||
+                                          lifecycle === Lifecycle.Bat) &&
+                                      !hasBids
+                                    ? 'No offers yet...'
+                                    : lifecycle === Lifecycle.Bench
+                                    ? 'Place offer to begin auction'
+                                    : lifecycle === Lifecycle.Shower
+                                    ? 'Winner '
+                                    : 'oops shouldnt be here'}
+                            </Text>
+                            {hasBids && (
+                                <div
+                                    style={
+                                        styles[
+                                            screenType !== 'desktop'
+                                                ? 'leadingOfferContainerMobile'
+                                                : 'leadingOfferContainer'
+                                        ]
                                     }
-                                    onClick={() => setOpen(!open)}
-                                    buttonStyle={styles.allOffersButton}
-                                />
+                                >
+                                    {leader ? (
+                                        <animated.div
+                                            // @ts-ignore
+                                            style={flashStyle}
+                                        >
+                                            <CurrencyText
+                                                image="eth"
+                                                textStyle={styles.leadingOffer}
+                                                value={leader.eth.decimal.toNumber()}
+                                            />
+                                            <TxViewer
+                                                size="smaller"
+                                                textStyle={{ color: Colors.textColor }}
+                                                address={leader && leader.user}
+                                                hash={leader && leader.txhash}
+                                                isNugg={type === Route.SwapItem}
+                                            />
+                                        </animated.div>
+                                    ) : null}
+                                    {offers.length > 1 && (
+                                        <Button
+                                            rightIcon={
+                                                !open ? (
+                                                    <ChevronUp
+                                                        color={Colors.nuggBlueText}
+                                                        size={14}
+                                                    />
+                                                ) : (
+                                                    <ChevronDown
+                                                        color={Colors.nuggBlueText}
+                                                        size={14}
+                                                    />
+                                                )
+                                            }
+                                            onClick={() => setOpen(!open)}
+                                            buttonStyle={styles.allOffersButton}
+                                        />
+                                    )}
+                                </div>
                             )}
                         </div>
                     )}
@@ -222,17 +309,16 @@ const RingAbout: FunctionComponent<Props> = () => {
                     onClick={() =>
                         screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                             ? AppState.dispatch.changeMobileView('Wallet')
-                            : lastSwap__tokenId &&
+                            : tokenId &&
                               AppState.dispatch.setModalOpen({
                                   name: 'OfferModal',
                                   modalData: {
-                                      targetId: lastSwap__tokenId,
-                                      type:
-                                          lastSwap__type === Route.SwapItem
-                                              ? 'OfferItem'
-                                              : 'OfferNugg',
+                                      targetId: tokenId,
+                                      type: type === Route.SwapItem ? 'OfferItem' : 'OfferNugg',
                                       data: {
-                                          tokenId: lastSwap__tokenId,
+                                          tokenId,
+                                          token,
+                                          mustPickNuggToBuyFrom: lifecycle === 'tryout',
                                       },
                                   },
                               })
@@ -258,6 +344,7 @@ const RingAbout: FunctionComponent<Props> = () => {
 };
 
 export default React.memo(RingAbout);
+
 const OfferRenderItem = ({
     provider,
     chainId,
