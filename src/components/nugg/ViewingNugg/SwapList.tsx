@@ -29,6 +29,22 @@ const SwapTitle = ({ title }: { title: string }) => {
     );
 };
 
+const SwapDesc = ({ item }: { item: LiveSwap }) => {
+    const epoch = client.live.epoch.id();
+    const blocknum = client.live.blocknum();
+
+    return epoch && blocknum ? (
+        <Text>
+            {/* eslint-disable-next-line no-nested-ternary */}
+            {item.epoch.id < epoch
+                ? 'Swap is over'
+                : !item.endingEpoch
+                ? 'Awaiting bid!'
+                : `Swap ending in ${item.epoch.endblock - blocknum} blocks`}
+        </Text>
+    ) : null;
+};
+
 const SwapItem: FunctionComponent<
     ListRenderItemProps<
         LiveSwap,
@@ -38,7 +54,6 @@ const SwapItem: FunctionComponent<
             token: LiveNugg | LiveItem;
             epoch: number;
             tokenId: TokenId;
-            blocknum: number;
         },
         undefined
     >
@@ -69,16 +84,7 @@ const SwapItem: FunctionComponent<
                                 ...styles.swapButton,
                             }}
                         >
-                            <Text>
-                                {/* eslint-disable-next-line no-nested-ternary */}
-                                {item.epoch.id < extraData.epoch
-                                    ? 'Swap is over'
-                                    : !item.endingEpoch
-                                    ? 'Awaiting bid!'
-                                    : `Swap ending in ${
-                                          item.epoch.endblock - extraData.blocknum
-                                      } blocks`}
-                            </Text>
+                            <SwapDesc item={item} />
                             <CurrencyText image="eth" value={item.eth.decimal.toNumber()} />
                         </div>
                         <div>
@@ -121,7 +127,6 @@ const SwapList: FunctionComponent<Props> = () => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const tokenId = client.live.lastView.tokenId();
-    const blocknum = client.live.blocknum();
 
     const { token, epoch } = client.hook.useLiveToken(tokenId);
 
@@ -161,12 +166,12 @@ const SwapList: FunctionComponent<Props> = () => {
         return res;
     }, [token, tokenId, chainId, provider, epoch]);
 
-    return chainId && provider && epoch && token && blocknum && tokenId ? (
+    return chainId && provider && epoch && token && tokenId ? (
         <StickyList
             data={listData}
             TitleRenderItem={SwapTitle}
             ChildRenderItem={React.memo(SwapItem)}
-            extraData={{ chainId, provider, token, epoch, tokenId, blocknum }}
+            extraData={{ chainId, provider, token, epoch, tokenId }}
             style={styles.stickyList}
             styleRight={styles.stickyListRight}
         />
