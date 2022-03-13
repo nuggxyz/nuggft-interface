@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 // @ts-strict
 
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
@@ -44,7 +45,7 @@ const RingAbout: FunctionComponent<Props> = () => {
 
     const leader = useMemo(() => {
         if (offers.length > 0) return offers[0];
-        else return undefined;
+        return undefined;
     }, [offers]);
 
     const hasBids = useMemo(() => !!leader, [leader]);
@@ -98,156 +99,154 @@ const RingAbout: FunctionComponent<Props> = () => {
     });
 
     return lifecycle !== 'stands' ? (
-        <>
-            <animated.div
-                style={{
-                    ...styles.container,
-                    ...(screenType === 'phone' && {
-                        ...styles.mobile,
-                        background: springStyle.opacity.to(
-                            [0, 1],
-                            ['#FFFFFF00', Colors.transparentWhite],
-                        ),
-                    }),
-                }}
-            >
-                <div style={styles.bodyContainer}>
-                    <div
-                        style={
-                            styles[
-                                screenType !== 'desktop'
-                                    ? 'leaderContainerMobile'
-                                    : 'leaderContainer'
-                            ]
-                        }
-                    >
-                        <Text
-                            textStyle={{
-                                ...styles.title,
-                                ...(screenType === 'phone' && {
-                                    color: Colors.nuggBlueText,
-                                }),
-                            }}
-                        >
-                            {(lifecycle === 'deck' || lifecycle === 'bat') && hasBids
-                                ? 'Highest Offer'
-                                : (lifecycle === 'deck' || lifecycle === 'bat') && !hasBids
-                                ? 'No offers yet...'
-                                : lifecycle === 'bench'
-                                ? 'Place offer to begin auction'
-                                : lifecycle === 'shower'
-                                ? 'Winner '
-                                : 'oops shouldnt be here'}
-                        </Text>
-                        {hasBids && (
-                            <div
-                                style={
-                                    styles[
-                                        screenType !== 'desktop'
-                                            ? 'leadingOfferContainerMobile'
-                                            : 'leadingOfferContainer'
-                                    ]
-                                }
-                            >
-                                {leader ? (
-                                    <animated.div
-                                        //@ts-ignore
-                                        style={flashStyle}
-                                    >
-                                        <CurrencyText
-                                            image="eth"
-                                            textStyle={styles.leadingOffer}
-                                            value={leader.eth.decimal.toNumber()}
-                                        />
-                                        <TxViewer
-                                            size="smaller"
-                                            textStyle={{ color: Colors.textColor }}
-                                            address={leader && leader.user}
-                                            hash={leader && leader.txhash}
-                                        />
-                                    </animated.div>
-                                ) : (
-                                    <></>
-                                )}
-                                {offers.length > 1 && (
-                                    <Button
-                                        rightIcon={
-                                            !open ? (
-                                                <ChevronUp color={Colors.nuggBlueText} size={14} />
-                                            ) : (
-                                                <ChevronDown
-                                                    color={Colors.nuggBlueText}
-                                                    size={14}
-                                                />
-                                            )
-                                        }
-                                        onClick={() => setOpen(!open)}
-                                        buttonStyle={styles.allOffersButton}
-                                    />
-                                )}
-                            </div>
-                        )}
-                    </div>
-                </div>
-                {/*//@ts-ignore*/}
-                <animated.div style={springStyle}>
-                    <Text textStyle={{ marginBottom: '1rem' }}>Previous offers</Text>
-                    {offers &&
-                        provider &&
-                        chainId &&
-                        offers.map(
-                            (offer, index) =>
-                                index !== 0 && (
-                                    <OfferRenderItem
-                                        {...{ provider, offer, index, chainId, token }}
-                                        key={index}
-                                    />
-                                ),
-                        )}
-                </animated.div>
-
-                {lifecycle !== 'shower' && (screenType === 'phone' || address) && (
-                    <Button
-                        buttonStyle={{
-                            ...styles.button,
-                            ...(screenType === 'phone' && {
-                                background: Colors.nuggBlueText,
-                            }),
-                        }}
+        <animated.div
+            style={{
+                ...styles.container,
+                ...(screenType === 'phone' && {
+                    ...styles.mobile,
+                    background: springStyle.opacity.to(
+                        [0, 1],
+                        ['#FFFFFF00', Colors.transparentWhite],
+                    ),
+                }),
+            }}
+        >
+            <div style={styles.bodyContainer}>
+                <div
+                    style={
+                        styles[
+                            screenType !== 'desktop' ? 'leaderContainerMobile' : 'leaderContainer'
+                        ]
+                    }
+                >
+                    <Text
                         textStyle={{
-                            ...styles.buttonText,
+                            ...styles.title,
                             ...(screenType === 'phone' && {
-                                color: 'white',
+                                color: Colors.nuggBlueText,
                             }),
                         }}
-                        onClick={() =>
-                            screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                                ? AppState.dispatch.changeMobileView('Wallet')
-                                : lastSwap__tokenId &&
-                                  AppState.dispatch.setModalOpen({
-                                      name: 'OfferModal',
-                                      modalData: {
-                                          targetId: lastSwap__tokenId,
-                                          type:
-                                              lastSwap__type === Route.SwapItem
-                                                  ? 'OfferItem'
-                                                  : 'OfferNugg',
-                                          data: {
-                                              tokenId: lastSwap__tokenId,
-                                          },
-                                      },
-                                  })
-                        }
-                        label={
-                            screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                                ? 'Connect wallet'
-                                : 'Place offer'
-                        }
-                    />
-                )}
+                    >
+                        {(lifecycle === 'deck' || lifecycle === 'bat') && hasBids
+                            ? 'Highest Offer'
+                            : (lifecycle === 'deck' || lifecycle === 'bat') && !hasBids
+                            ? 'No offers yet...'
+                            : lifecycle === 'bench'
+                            ? 'Place offer to begin auction'
+                            : lifecycle === 'shower'
+                            ? 'Winner '
+                            : 'oops shouldnt be here'}
+                    </Text>
+                    {hasBids && (
+                        <div
+                            style={
+                                styles[
+                                    screenType !== 'desktop'
+                                        ? 'leadingOfferContainerMobile'
+                                        : 'leadingOfferContainer'
+                                ]
+                            }
+                        >
+                            {leader ? (
+                                <animated.div
+                                    // @ts-ignore
+                                    style={flashStyle}
+                                >
+                                    <CurrencyText
+                                        image="eth"
+                                        textStyle={styles.leadingOffer}
+                                        value={leader.eth.decimal.toNumber()}
+                                    />
+                                    <TxViewer
+                                        size="smaller"
+                                        textStyle={{ color: Colors.textColor }}
+                                        address={leader && leader.user}
+                                        hash={leader && leader.txhash}
+                                    />
+                                </animated.div>
+                            ) : null}
+                            {offers.length > 1 && (
+                                <Button
+                                    rightIcon={
+                                        !open ? (
+                                            <ChevronUp color={Colors.nuggBlueText} size={14} />
+                                        ) : (
+                                            <ChevronDown color={Colors.nuggBlueText} size={14} />
+                                        )
+                                    }
+                                    onClick={() => setOpen(!open)}
+                                    buttonStyle={styles.allOffersButton}
+                                />
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
+            {/* //@ts-ignore */}
+            <animated.div style={springStyle}>
+                <Text textStyle={{ marginBottom: '1rem' }}>Previous offers</Text>
+                {offers &&
+                    provider &&
+                    chainId &&
+                    offers.map(
+                        (offer, index) =>
+                            index !== 0 && (
+                                // eslint-disable-next-line no-use-before-define
+                                <OfferRenderItem
+                                    // eslint-disable-next-line react/no-array-index-key
+                                    key={index}
+                                    provider={provider}
+                                    offer={offer}
+                                    // index={index}
+                                    chainId={chainId}
+                                    token={token}
+                                />
+                            ),
+                    )}
             </animated.div>
-        </>
+
+            {lifecycle !== 'shower' && (screenType === 'phone' || address) && (
+                <Button
+                    buttonStyle={{
+                        ...styles.button,
+                        ...(screenType === 'phone' && {
+                            background: Colors.nuggBlueText,
+                        }),
+                    }}
+                    textStyle={{
+                        ...styles.buttonText,
+                        ...(screenType === 'phone' && {
+                            color: 'white',
+                        }),
+                    }}
+                    onClick={() =>
+                        screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
+                            ? AppState.dispatch.changeMobileView('Wallet')
+                            : lastSwap__tokenId &&
+                              AppState.dispatch.setModalOpen({
+                                  name: 'OfferModal',
+                                  modalData: {
+                                      targetId: lastSwap__tokenId,
+                                      type:
+                                          lastSwap__type === Route.SwapItem
+                                              ? 'OfferItem'
+                                              : 'OfferNugg',
+                                      data: {
+                                          tokenId: lastSwap__tokenId,
+                                      },
+                                  },
+                              })
+                    }
+                    label={
+                        screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
+                            ? 'Connect wallet'
+                            : 'Place offer'
+                    }
+                />
+            )}
+        </animated.div>
     ) : token ? (
+        // eslint-disable-next-line react/jsx-no-useless-fragment
         <>
             {token.type === 'item' ? (
                 <Text>this item is owned by ___ nuggs and is not currently for sale</Text>
@@ -269,7 +268,7 @@ const OfferRenderItem = ({
     chainId: Chain;
     offer: OfferData;
     token: LiveNugg | LiveItem | undefined;
-    index: number;
+    // index: number;
 }) => {
     const leader =
         !token || token.type === 'item'
@@ -283,15 +282,13 @@ const OfferRenderItem = ({
                     type="text"
                     size="smaller"
                     textStyle={{ color: Colors.textColor }}
-                    action={function (): void {
+                    action={() => {
                         web3.config.gotoEtherscan(chainId, 'tx', offer.txhash);
                     }}
                 >
                     {leader}
                 </InteractiveText>
-            ) : (
-                <></>
-            )}
+            ) : null}
         </div>
     );
 };

@@ -24,10 +24,9 @@ const useAnimationFrame = (
     useEffect(() => {
         previousRequest.current = requestAnimationFrame(animate);
         return () => {
-            previousRequest.current !== undefined && cancelAnimationFrame(previousRequest.current);
+            if (previousRequest.current !== undefined)
+                cancelAnimationFrame(previousRequest.current);
         };
-        // @ts-ignore
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [animate]);
 };
 

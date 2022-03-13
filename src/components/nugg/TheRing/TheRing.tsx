@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
 import lib, { parseTokenIdSmart } from '@src/lib';
@@ -82,10 +83,8 @@ const TheRing: FunctionComponent<Props> = ({
                         <AnimatedCard>
                             <TokenViewer tokenId={lastSwap__tokenId} style={tokenStyle} showcase />
                         </AnimatedCard>
-                        {screenType !== 'phone' ? (
+                        {screenType !== 'phone' && (
                             <Text>{parseTokenIdSmart(lastSwap__tokenId)}</Text>
-                        ) : (
-                            <></>
                         )}
                     </>
                 )}

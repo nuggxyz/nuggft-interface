@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-shadow
 export enum Chain {
     MAINNET = 1,
     ROPSTEN = 3,
@@ -23,12 +24,14 @@ export type SupportedWalletConnectInstances =
     | 'trust'
     | 'other';
 
+// eslint-disable-next-line no-shadow
 export enum Devices {
     Mobile,
     Desktop,
     Both,
 }
 
+// eslint-disable-next-line no-shadow
 export enum Connector {
     WalletConnect = 'walletconnect',
     MetaMask = 'metamask',
@@ -36,6 +39,7 @@ export enum Connector {
     Infura = 'infura',
 }
 
+// eslint-disable-next-line no-shadow
 export enum Peer {
     MetaMask = 'metamask',
     Rainbow = 'rainbow',

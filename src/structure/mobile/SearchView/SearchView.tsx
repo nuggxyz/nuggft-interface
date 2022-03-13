@@ -24,15 +24,15 @@ const SearchView: FunctionComponent<Props> = () => {
         () => [
             {
                 label: 'All',
-                comp: () => <AllNuggs />,
+                comp: React.memo(AllNuggs),
             },
             {
                 label: 'Sales',
-                comp: () => <Sales />,
+                comp: React.memo(Sales),
             },
             {
                 label: 'Recents',
-                comp: () => <Recents />,
+                comp: React.memo(Recents),
             },
         ],
         [],
@@ -75,7 +75,7 @@ const SearchView: FunctionComponent<Props> = () => {
                 }}
             >
                 <ViewingNugg
-                    MobileBackButton={() => (
+                    MobileBackButton={React.memo(() => (
                         <Button
                             leftIcon={
                                 <IoChevronBackOutline color={Colors.nuggBlueText} size="25" />
@@ -93,7 +93,7 @@ const SearchView: FunctionComponent<Props> = () => {
                                 fontSize: FontSize.h6,
                             }}
                         />
-                    )}
+                    ))}
                 />
             </animated.div>
         </>

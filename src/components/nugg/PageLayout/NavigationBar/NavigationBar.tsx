@@ -27,7 +27,12 @@ const NavigationBar: FC<Props> = () => {
 
     return (
         <animated.div style={container}>
-            <div style={styles.navBarBackground} onClick={onClick} />
+            <div
+                role="button"
+                aria-hidden="true"
+                style={styles.navBarBackground}
+                onClick={onClick}
+            />
             <div style={styles.searchBarContainer}>
                 <NuggDexSearchBar />
             </div>

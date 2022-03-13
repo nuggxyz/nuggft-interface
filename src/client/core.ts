@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { Web3Provider, WebSocketProvider } from '@ethersproject/providers';
 import { ApolloClient, gql } from '@apollo/client';
 import create, { State, StoreApi, UseBoundStore } from 'zustand';
@@ -12,27 +13,48 @@ import { executeQuery3 } from '@src/graphql/helpers';
 
 import { parseRoute, Route, SwapRoutes, ViewRoutes, TokenId, ItemId, NuggId } from './router';
 
-export const DEFAULT_STATE: ClientState = {
-    infura: undefined,
-    stake: undefined,
-    epoch: undefined,
-    epoch__id: 0,
-    route: undefined,
-    lastView: undefined,
-    lastSwap: undefined,
-    isViewOpen: false,
-    activeSwaps: [],
-    activeItems: [],
-    activeOffers: {},
-    myNuggs: [],
-    myUnclaimedNuggOffers: [],
-    myUnclaimedItemOffers: [],
-    myLoans: [],
-    apollo: undefined,
-    activating: false,
-    blocknum: undefined,
-    error: undefined,
-    manualPriority: undefined,
+export interface OfferData {
+    user: string;
+    eth: EthInt;
+    txhash: string;
+}
+
+const calculateStartBlock = (epoch: BigNumberish, chainId: Chain) => {
+    return BigNumber.from(epoch)
+        .sub(config.EPOCH_OFFSET)
+        .mul(web3.config.CONTRACTS[chainId].Interval)
+        .add(web3.config.CONTRACTS[chainId].Genesis)
+        .toNumber();
+};
+
+const calculateEpochId = (blocknum: number, chainId: Chain) => {
+    return BigNumber.from(blocknum)
+        .sub(web3.config.CONTRACTS[chainId].Genesis)
+        .div(web3.config.CONTRACTS[chainId].Interval)
+        .add(config.EPOCH_OFFSET)
+        .toNumber();
+};
+
+const mergeUnique = (arr: OfferData[]) => {
+    let len = arr.length;
+
+    let tmp: number;
+    const array3: OfferData[] = [];
+    const array5: string[] = [];
+
+    while (len--) {
+        const itm = arr[len];
+        // eslint-disable-next-line no-cond-assign
+        if ((tmp = array5.indexOf(itm.user)) === -1) {
+            array3.unshift(itm);
+            array5.unshift(itm.user);
+        } else if (array3[tmp].eth.lt(itm.eth)) {
+            array3[tmp] = itm;
+            array5[tmp] = itm.user;
+        }
+    }
+
+    return array3.sort((a, b) => (a.eth.gt(b.eth) ? -1 : 1));
 };
 
 export interface SwapData {
@@ -57,12 +79,6 @@ export interface DefaultExtraData {
     sender: string;
     chainId: Chain;
     provider: Web3Provider;
-}
-
-export interface OfferData {
-    user: string;
-    eth: EthInt;
-    txhash: string;
 }
 
 export interface MyNuggsData {
@@ -138,6 +154,29 @@ export interface ClientState extends State {
     error: Error | undefined;
     activating: boolean;
 }
+
+export const DEFAULT_STATE: ClientState = {
+    infura: undefined,
+    stake: undefined,
+    epoch: undefined,
+    epoch__id: 0,
+    route: undefined,
+    lastView: undefined,
+    lastSwap: undefined,
+    isViewOpen: false,
+    activeSwaps: [],
+    activeItems: [],
+    activeOffers: {},
+    myNuggs: [],
+    myUnclaimedNuggOffers: [],
+    myUnclaimedItemOffers: [],
+    myLoans: [],
+    apollo: undefined,
+    activating: false,
+    blocknum: undefined,
+    error: undefined,
+    manualPriority: undefined,
+};
 
 type ClientStateUpdate = {
     infura?: WebSocketProvider;
@@ -245,7 +284,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                         }
                     }
                 `,
-                { tokenId: tokenId },
+                { tokenId },
             );
 
             if (route.type === Route.SwapNugg || route.type === Route.ViewNugg) {
@@ -336,7 +375,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             const myUnclaimedItemOffers =
                 stateUpdate.myUnclaimedItemOffers ?? existingState.myUnclaimedItemOffers;
             // determine the next error
-            const error = existingState.error;
+            const { error } = existingState;
 
             return {
                 ...existingState,
@@ -511,13 +550,13 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                     };
                 }
             } else {
-                route += 'nugg/' + tokenId;
+                route += `nugg/${tokenId}`;
                 if (view) {
                     // lastView__tokenId = tokenId;
                     // lastView__type = Route.ViewNugg;
                     lastView = {
                         type: Route.ViewNugg,
-                        tokenId: tokenId,
+                        tokenId,
                         idnum: +tokenId,
                     };
                 } else {
@@ -525,7 +564,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                     // lastSwap__type = Route.SwapNugg;
                     lastSwap = {
                         type: Route.SwapNugg,
-                        tokenId: tokenId,
+                        tokenId,
                         idnum: +tokenId,
                     };
                 }
@@ -572,9 +611,9 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             const apollo = stateUpdate.apollo ?? existingState.apollo;
 
             // determine the next error
-            const error = existingState.error;
+            const { error } = existingState;
 
-            let activating = existingState.activating;
+            let { activating } = existingState;
             if (activating && (error || (infura && apollo))) {
                 activating = false;
             }
@@ -604,8 +643,8 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
     }
 
     const toggleView = () => {
-        const isViewOpen = store.getState().isViewOpen;
-        const lastSwap = store.getState().lastSwap;
+        const { isViewOpen } = store.getState();
+        const { lastSwap } = store.getState();
         if (lastSwap) routeTo(lastSwap.tokenId, !isViewOpen);
         else routeTo('', !isViewOpen);
     };
@@ -634,45 +673,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
     };
 }
 
-export const core = createClientStoreAndActions();
+const core = createClientStoreAndActions();
 
 export default core;
-
-const calculateStartBlock = (epoch: BigNumberish, chainId: Chain) => {
-    return BigNumber.from(epoch)
-        .sub(config.EPOCH_OFFSET)
-        .mul(web3.config.CONTRACTS[chainId].Interval)
-        .add(web3.config.CONTRACTS[chainId].Genesis)
-        .toNumber();
-};
-
-const calculateEpochId = (blocknum: number, chainId: Chain) => {
-    return BigNumber.from(blocknum)
-        .sub(web3.config.CONTRACTS[chainId].Genesis)
-        .div(web3.config.CONTRACTS[chainId].Interval)
-        .add(config.EPOCH_OFFSET)
-        .toNumber();
-};
-
-const mergeUnique = (arr: OfferData[]) => {
-    let len = arr.length;
-
-    let tmp: number;
-    const array3: OfferData[] = [];
-    const array5: string[] = [];
-
-    while (len--) {
-        const itm = arr[len];
-        if ((tmp = array5.indexOf(itm.user)) === -1) {
-            array3.unshift(itm);
-            array5.unshift(itm.user);
-        } else {
-            if (array3[tmp].eth.lt(itm.eth)) {
-                array3[tmp] = itm;
-                array5[tmp] = itm.user;
-            }
-        }
-    }
-
-    return array3.sort((a, b) => (a.eth.gt(b.eth) ? -1 : 1));
-};

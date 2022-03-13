@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { getAddress } from '@ethersproject/address';
+import { ethers } from 'ethers';
 import { namehash } from 'ethers/lib/utils';
 import invariant from 'tiny-invariant';
 
@@ -15,10 +15,9 @@ export class Address implements IAddress {
     public static NULL = new Address('0x0000000000000000000000000000000000000069');
 
     constructor(address: string) {
-        const addr = getAddress(address);
+        const addr = ethers.utils.getAddress(address);
         invariant(!!addr, 'INVALID:ADDRESS');
         this._hash = addr;
-        return this;
     }
 
     get hash() {
@@ -30,7 +29,7 @@ export class Address implements IAddress {
     }
 
     get reverse_namehash() {
-        return namehash(this.hash.substr(2) + '.addr.reverse');
+        return namehash(`${this.hash.substr(2)}.addr.reverse`);
     }
 
     get short() {
@@ -39,7 +38,7 @@ export class Address implements IAddress {
 
     public static isAddress(other: string): boolean {
         try {
-            return !!getAddress(other);
+            return !!ethers.utils.getAddress(other);
         } catch (err) {
             return false;
         }

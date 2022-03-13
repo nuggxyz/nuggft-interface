@@ -31,6 +31,8 @@ const SearchOverlay: FunctionComponent<Props> = () => {
     return (
         <animated.div style={{ ...styles.container, ...style, ...modalStyle }} onClick={onClick}>
             <div
+                aria-hidden="true"
+                role="button"
                 style={{
                     ...styles.nuggDexContainer,
                     ...(screenType === 'tablet' ? { width: '50%' } : {}),
@@ -40,6 +42,8 @@ const SearchOverlay: FunctionComponent<Props> = () => {
                 <NuggDexSearchList />
             </div>
             <div
+                aria-hidden="true"
+                role="button"
                 style={{
                     ...styles.tokenContainer,
                     ...(screenType === 'tablet' ? { width: '50%' } : {}),

@@ -38,7 +38,7 @@ function useMeasure<E extends Element = Element>(): UseMeasureResult<E> {
     );
 
     useLayoutEffect(() => {
-        if (!element) return;
+        if (!element) return () => undefined;
         observer.observe(element);
         return () => {
             observer.disconnect();

@@ -1,6 +1,4 @@
-import { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
-import Layout from '@src/lib/layout';
+import lib, { NLStyleSheetCreator } from '@src/lib';
 
 const styles = NLStyleSheetCreator({
     container: {
@@ -15,7 +13,7 @@ const styles = NLStyleSheetCreator({
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        width: '100%', //'430px',
+        width: '100%', // '430px',
         height: '80%',
         position: 'relative',
         // position: 'absolute',
@@ -23,13 +21,13 @@ const styles = NLStyleSheetCreator({
         pointerEvents: 'auto',
     },
     body: {
-        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadowNuggPink}`,
-        borderRadius: Layout.borderRadius.medium,
-        background: Colors.gradient3,
+        boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggPink}`,
+        borderRadius: lib.layout.borderRadius.medium,
+        background: lib.colors.gradient3,
         padding: '.75rem',
     },
     headerText: {
-        color: Colors.nuggRedText,
+        color: lib.colors.nuggRedText,
     },
     mobileBody: {
         padding: '.5rem .4rem 0rem .4rem',

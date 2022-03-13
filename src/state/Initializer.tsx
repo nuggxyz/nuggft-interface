@@ -4,6 +4,7 @@ import { safeResetLocalStorage } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
 import { Chain } from '@src/web3/core/interfaces';
+// eslint-disable-next-line import/no-named-as-default
 import core from '@src/client/core';
 
 import { states } from './store';
@@ -26,20 +27,15 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
             web3.config.connector_instances.metamask,
             web3.config.connector_instances.walletconnect,
             web3.config.connector_instances.walletlink,
-        ].forEach(
-            (x) =>
-                x !== undefined &&
-                x.connector &&
-                x.connector.connectEagerly &&
-                void x.connector.connectEagerly(Chain.RINKEBY),
-        );
+        ].forEach((x) => {
+            if (x !== undefined && x.connector && x.connector.connectEagerly)
+                void x.connector.connectEagerly(Chain.RINKEBY);
+        });
 
-        const infura = web3.config.connector_instances.infura;
+        const { infura } = web3.config.connector_instances;
 
-        if (infura !== undefined)
-            infura.connector &&
-                infura.connector.activate &&
-                void infura.connector.activate(Chain.RINKEBY);
+        if (infura !== undefined && infura.connector && infura.connector.activate)
+            void infura.connector.activate(Chain.RINKEBY);
 
         void client.actions.startActivation();
     }, []);
@@ -72,18 +68,18 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
                 );
             };
         }
+        return () => undefined;
     }, [chainId]);
 
     return active ? (
         <>
             {[...Object.values(states), client].map((state, index) => (
+                // eslint-disable-next-line react/no-array-index-key
                 <state.updater key={index} />
             ))}
             {epoch && children}
         </>
-    ) : (
-        <></>
-    );
+    ) : null;
 };
 
 export default Initializer;

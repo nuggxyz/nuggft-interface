@@ -3,9 +3,10 @@ import React from 'react';
 import client from '@src/client';
 import web3 from '@src/web3';
 
-import { useRpcUpdater } from './update/useRpcUpdater';
-import { useLiveOffers } from './hooks/useLiveOffers';
+// eslint-disable-next-line import/no-cycle
+import useRpcUpdater from './update/useRpcUpdater';
 import useGraphUpdater from './update/useGraphUpdater';
+import useLiveOffers from './hooks/useLiveOffers';
 
 export default () => {
     const address = web3.hook.usePriorityAccount();

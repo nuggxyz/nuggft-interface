@@ -1,12 +1,5 @@
-import React, {
-    CSSProperties,
-    FunctionComponent,
-    PropsWithChildren,
-    useCallback,
-    useMemo,
-    useRef,
-} from 'react';
-import { animated, useSpring, WithAnimated } from '@react-spring/web';
+import React, { FunctionComponent, PropsWithChildren, useCallback, useMemo, useRef } from 'react';
+import { animated, useSpring } from '@react-spring/web';
 
 import { ucFirst } from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -20,7 +13,7 @@ import NuggLinkThumbnail from './NuggLinkThumbnail';
 type Props = {
     type: NuggDexSearchViews;
     previewNuggs: NL.GraphQL.Fragments.Nugg.ListItem[];
-    style?: CSSProperties | WithAnimated;
+    style?: CSSPropertiesAnimated;
     limit?: number;
 };
 
@@ -35,6 +28,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
     const viewing = NuggDexState.select.viewing();
     const toggled = useCallback(
         (toggVal: string | number, notToggVal: string | number) => {
+            // eslint-disable-next-line no-nested-ternary
             return viewing !== 'home' ? (viewing !== type ? notToggVal : toggVal) : notToggVal;
         },
         [viewing, type],
@@ -59,7 +53,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                         <NuggLinkThumbnail
                             item={nugg}
                             index={i}
-                            key={i}
+                            key={nugg.id}
                             style={limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}}
                         />
                     ),
@@ -69,7 +63,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
     return (
         <animated.div
             ref={ref}
-            //@ts-ignore
+            // @ts-ignore
             style={{
                 ...styles.nuggLinkContainer,
                 ...animation,
@@ -104,7 +98,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                         position: 'absolute',
                         width: '100%',
                         height: '100%',
-                        zIndex: zIndex,
+                        zIndex,
                         opacity: opacityText.to({
                             range: [0, 1],
                             output: [1, 0],

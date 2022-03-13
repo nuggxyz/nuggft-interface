@@ -11,7 +11,7 @@ type Props = Record<string, never>;
 const Desktop: FunctionComponent<Props> = () => {
     return (
         <PageContainer>
-            <Helmet></Helmet>
+            <Helmet />
             <Suspense fallback={<div />}>
                 <SearchOverlay />
                 <SwapPage />

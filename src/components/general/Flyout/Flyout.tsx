@@ -1,5 +1,5 @@
 import React, { CSSProperties, FunctionComponent, PropsWithChildren } from 'react';
-import { animated, config, useTransition } from '@react-spring/web';
+import { animated, AnimatedProps, config, useTransition } from '@react-spring/web';
 
 import useOnHover from '@src/hooks/useOnHover';
 
@@ -7,7 +7,7 @@ import styles from './Flyout.styles';
 
 type Props = {
     button: JSX.Element;
-    style?: CSSProperties;
+    style?: AnimatedProps<any>;
     containerStyle?: CSSProperties;
 };
 
@@ -39,19 +39,20 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
 
     return (
         <div style={containerStyle} ref={openRef}>
-            <div onClick={() => setOpen(false)}>{button}</div>
+            <div aria-hidden="true" role="button" onClick={() => setOpen(false)}>
+                {button}
+            </div>
             {transition(
-                (animatedStyle, open) =>
-                    open && (
-                        <animated.div
-                            //@ts-ignore
-                            style={animatedStyle}>
+                (animatedStyle: AnimatedProps<any>, _open) =>
+                    _open && (
+                        <animated.div style={animatedStyle}>
                             <div
                                 ref={closeRef}
                                 style={{
                                     ...styles.container,
                                     ...style,
-                                }}>
+                                }}
+                            >
                                 {children}
                             </div>
                         </animated.div>

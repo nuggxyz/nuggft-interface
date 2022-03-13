@@ -39,14 +39,13 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
 
     return (
         <div style={containerStyle} ref={openRef}>
-            <div onClick={() => setOpen(false)}>{button}</div>
+            <div role="button" aria-hidden="true" onClick={() => setOpen(false)}>
+                {button}
+            </div>
             {transition(
-                (animatedStyle, open) =>
-                    open && (
-                        <animated.div
-                            //@ts-ignore
-                            style={animatedStyle}
-                        >
+                (animatedStyle: CSSPropertiesAnimated, _open) =>
+                    _open && (
+                        <animated.div style={animatedStyle}>
                             <div
                                 ref={closeRef}
                                 style={{

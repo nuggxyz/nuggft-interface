@@ -10,7 +10,7 @@ import {
 } from '@src/web3/core/types';
 import { Connector as ConnectorEnum, PeerInfo__WalletLink } from '@src/web3/core/interfaces';
 
-function parseChainId(chainId: string | number) {
+export function parseChainId(chainId: string | number) {
     return typeof chainId === 'number'
         ? chainId
         : Number.parseInt(chainId, chainId.startsWith('0x') ? 16 : 10);
@@ -21,6 +21,7 @@ export class WalletLink extends Connector {
     public provider: ReturnType<WalletLinkInstance['makeWeb3Provider']> | undefined = undefined;
 
     private readonly options: WalletLinkOptions & { url: string };
+
     private eagerConnection?: Promise<void>;
 
     /**
@@ -80,6 +81,7 @@ export class WalletLink extends Connector {
                 this.actions.update({ accounts, peer: this.peers.coinbase });
             });
         }));
+        return undefined;
     }
 
     /** {@inheritdoc Connector.connectEagerly} */
@@ -110,9 +112,9 @@ export class WalletLink extends Connector {
                     console.debug('Could not connect eagerly', error);
                     cancelActivation();
                 });
-        } else {
-            cancelActivation();
         }
+        cancelActivation();
+        return undefined;
     }
 
     /**
@@ -134,7 +136,8 @@ export class WalletLink extends Connector {
 
         if (this.connected) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            if (!desiredChainId || desiredChainId === parseChainId(this.provider!.chainId)) return;
+            if (!desiredChainId || desiredChainId === parseChainId(this.provider!.chainId))
+                return undefined;
 
             const desiredChainIdHex = `0x${desiredChainId.toString(16)}`;
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -155,9 +158,8 @@ export class WalletLink extends Connector {
                                 { ...desiredChainIdOrChainParameters, chainId: desiredChainIdHex },
                             ],
                         });
-                    } else {
-                        throw error;
                     }
+                    throw error;
                 })
                 .catch((error: ProviderRpcError) => {
                     this.actions.reportError(error);
@@ -207,9 +209,8 @@ export class WalletLink extends Connector {
                                     },
                                 ],
                             });
-                        } else {
-                            throw error;
                         }
+                        throw error;
                     });
             })
             .catch((error: Error) => {

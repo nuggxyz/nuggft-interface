@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import type { Networkish } from '@ethersproject/networks';
 import type { TransactionReceipt, Web3Provider } from '@ethersproject/providers';
 import { useEffect, useMemo, useState } from 'react';
@@ -7,6 +8,7 @@ import create from 'zustand';
 import { Address } from '@src/classes/Address';
 import client from '@src/client';
 import { EthInt } from '@src/classes/Fraction';
+// eslint-disable-next-line import/no-cycle
 import { CONTRACTS } from '@src/web3/config';
 
 import { createWeb3ReactStoreAndActions } from './store';
@@ -325,9 +327,8 @@ export function getPriorityConnector(initializedConnectors: {
 
         if (check !== undefined) {
             return check.connector;
-        } else {
-            return Object.values(initializedConnectors)[index === -1 ? 0 : index].connector;
         }
+        return Object.values(initializedConnectors)[index === -1 ? 0 : index].connector;
     }
 
     function usePriorityChainId() {
@@ -496,6 +497,7 @@ function useTx(provider: Web3Provider | undefined, hash: string) {
                 setData(undefined);
             };
         }
+        return () => undefined;
     }, [provider, hash]);
     return data;
 }
@@ -523,6 +525,7 @@ function useBalance(provider: Web3Provider | undefined, account: string | undefi
                 setBalance(new EthInt(0));
             };
         }
+        return () => undefined;
     }, [provider, account]);
     return balance;
 }
@@ -547,7 +550,7 @@ function useENS(
                     .lookupAddress(account)
                     .then((result) => {
                         if (!stale) {
-                            setENSName(result ? result : Address.shortenAddressHash(account));
+                            setENSName(result || Address.shortenAddressHash(account));
                         }
                     })
                     .catch((error) => {
@@ -561,6 +564,7 @@ function useENS(
                 };
             }
         }
+        return undefined;
     }, [provider, account, chainId]);
 
     return ENSName;
@@ -592,6 +596,7 @@ function getAugmentedHooks<T extends Connector>(
             if (providers && enabled && isActive && chainId && accounts && connector.provider) {
                 return new providers.Web3Provider(connector.provider, network);
             }
+            return undefined;
         }, [providers, enabled, isActive, chainId, accounts, network]);
     }
 

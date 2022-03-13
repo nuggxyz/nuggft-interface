@@ -30,6 +30,7 @@ const FeedbackButton: FunctionComponent<Props> = ({
                 clearTimeout(id);
             };
         }
+        return () => undefined;
     }, [clicked, timeout, label, overrideFeedback]);
 
     return (
@@ -40,7 +41,7 @@ const FeedbackButton: FunctionComponent<Props> = ({
             buttonStyle={props.buttonStyle}
             onClick={() => {
                 setClicked(true);
-                props.onClick && props.onClick();
+                if (props.onClick) props.onClick();
             }}
         />
     );

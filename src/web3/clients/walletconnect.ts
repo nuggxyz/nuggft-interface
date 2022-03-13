@@ -7,18 +7,21 @@ import curriedLighten from 'polished/lib/color/lighten';
 import type { Actions, ProviderRpcError } from '@src/web3/core/types';
 import { Connector } from '@src/web3/core/types';
 import { getBestUrl } from '@src/web3/core/utils';
-import { PeerInfo__WalletConnect, Peer } from '@src/web3/core/interfaces';
+import {
+    PeerInfo__WalletConnect,
+    Peer,
+    Connector as ConnectorEnum,
+} from '@src/web3/core/interfaces';
 import AppState from '@src/state/app';
 import store from '@src/state/store';
-import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
-import Colors from '@src/lib/colors';
+import lib from '@src/lib';
 
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
 type MockWalletConnectProvider = WalletConnectProvider & EventEmitter;
 
 function parseChainId(chainId: string | number) {
-    return typeof chainId === 'string' ? Number.parseInt(chainId) : chainId;
+    return typeof chainId === 'string' ? Number.parseInt(chainId, 10) : chainId;
 }
 
 type WalletConnectOptions = Omit<IWCEthRpcConnectionOptions, 'rpc' | 'infuraId' | 'chainId'> & {
@@ -30,11 +33,15 @@ const HREF_PATH = 'wc?uri=';
 export class WalletConnect extends Connector {
     /** {@inheritdoc Connector.provider} */
     public provider: MockWalletConnectProvider | undefined = undefined;
+
     public readonly events = new EventEmitter3();
 
     private readonly options: Omit<WalletConnectOptions, 'rpc'>;
+
     private readonly rpc: { [chainId: number]: string[] };
+
     private eagerConnection?: Promise<void>;
+
     private treatModalCloseAsError: boolean;
 
     private peer_url_lookup: { [_: string]: Peer };
@@ -106,7 +113,7 @@ export class WalletConnect extends Connector {
                         name: 'QrCodeModal',
                         modalData: {
                             data: { info: peer, uri },
-                            containerStyle: { background: Colors.semiTransparentWhite },
+                            containerStyle: { background: lib.colors.semiTransparentWhite },
                             backgroundStyle: { background: curriedLighten(0.1)(peer.color) },
                         },
                     });
@@ -130,19 +137,20 @@ export class WalletConnect extends Connector {
         // because we can only use 1 url per chainId, we need to decide between multiple, where necessary
         const rpc = Promise.all(
             Object.keys(this.rpc).map(
-                async (chainId): Promise<[number, string]> => [
-                    Number(chainId),
-                    await getBestUrl(this.rpc[Number(chainId)]),
+                async (_chainId): Promise<[number, string]> => [
+                    Number(_chainId),
+                    await getBestUrl(this.rpc[Number(_chainId)]),
                 ],
             ),
         ).then((results) =>
-            results.reduce<{ [chainId: number]: string }>((accumulator, [chainId, url]) => {
-                accumulator[chainId] = url;
+            results.reduce<{ [chainId: number]: string }>((accumulator, [_chainId, url]) => {
+                accumulator[_chainId] = url;
                 return accumulator;
             }, {}),
         );
 
         await (this.eagerConnection = import('@walletconnect/ethereum-provider').then(async (m) => {
+            // eslint-disable-next-line new-cap
             this.provider = new m.default({
                 ...this.options,
                 chainId,
@@ -155,6 +163,7 @@ export class WalletConnect extends Connector {
             this.provider.on('accountsChanged', this.accountsChangedListener);
             this.provider.connector.on('display_uri', this.URIListener);
         }));
+        return undefined;
     }
 
     private findPeer(): PeerInfo__WalletConnect {
@@ -244,7 +253,7 @@ export class WalletConnect extends Connector {
 
         // this early return clause catches some common cases if we're already connected
         if (this.provider?.connected) {
-            if (!desiredChainId || desiredChainId === this.provider.chainId) return;
+            if (!desiredChainId || desiredChainId === this.provider.chainId) return undefined;
 
             const desiredChainIdHex = `0x${desiredChainId.toString(16)}`;
             return this.provider
@@ -252,7 +261,9 @@ export class WalletConnect extends Connector {
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: desiredChainIdHex }],
                 })
-                .catch(() => void 0);
+                .catch(() => undefined);
+            // .then(() => undefined)
+            // ;
         }
 
         this.actions.startActivation();
@@ -297,7 +308,7 @@ export class WalletConnect extends Connector {
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: desiredChainIdHex }],
                 })
-                .catch(() => void 0);
+                .catch(() => undefined);
         } catch (error) {
             // this condition is a bit of a hack :/
             // if a user triggers the walletconnect modal, closes it, and then tries to connect again,
@@ -308,6 +319,7 @@ export class WalletConnect extends Connector {
                 this.actions.reportError(error as Error);
             }
         }
+        return undefined;
     }
 
     /** {@inheritdoc Connector.deactivate} */

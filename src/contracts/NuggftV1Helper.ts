@@ -18,14 +18,14 @@ export default class NuggftV1Helper extends ContractHelper {
             NuggftV1__factory.abi,
             provider,
         ) as NuggftV1;
-        provider && this.contract.connect(provider);
+        if (provider) this.contract.connect(provider);
     }
 
     public async ownerOf(tokenId: string): Promise<Address> {
         const res = await this.contract.ownerOf(tokenId);
         try {
             if (res) return new Address(res);
-            else throw new Error('token does not exist');
+            throw new Error('token does not exist');
         } catch {
             return Address.ZERO;
         }

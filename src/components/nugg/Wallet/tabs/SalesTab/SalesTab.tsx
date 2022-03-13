@@ -1,8 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-type Props = { isActive?: boolean };
-
-const SalesTab: FunctionComponent<Props> = ({ isActive }) => {
+const SalesTab: FunctionComponent<unknown> = () => {
     // const address = web3.hook.usePriorityAccount();
     // const epoch = client.live.epoch();
     // const [myNuggs, setMyNuggs] = useState([]);

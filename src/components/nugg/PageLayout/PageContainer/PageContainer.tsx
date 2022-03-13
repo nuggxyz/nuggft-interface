@@ -4,7 +4,7 @@ import NavigationBar from '@src/components/nugg/PageLayout/NavigationBar/Navigat
 
 type Props = {
     children: ReactChild | ReactChild[];
-    showBackButton?: boolean;
+    // showBackButton?: boolean;
 };
 
 const PageContainer: FC<Props> = ({ children }) => {

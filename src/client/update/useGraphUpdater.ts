@@ -1,15 +1,36 @@
 import React from 'react';
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 import { BigNumber } from 'ethers';
 
 import web3 from '@src/web3';
 import { EthInt, Fraction } from '@src/classes/Fraction';
-import { createItemId } from '@src/lib';
+import { createItemId, padToAddress } from '@src/lib';
 import constants from '@src/lib/constants';
-import { padToAddress } from '@src/lib/index';
 import { ItemId, NuggId } from '@src/client/router';
 import client from '@src/client/index';
 import { SwapData } from '@src/client/core';
+
+const mergeUnique = (arr: SwapData[]) => {
+    let len = arr.length;
+
+    let tmp: number;
+    const array3: SwapData[] = [];
+    const array5: string[] = [];
+
+    while (len--) {
+        const itm = arr[len];
+        // eslint-disable-next-line no-cond-assign
+        if ((tmp = array5.indexOf(itm.tokenId)) === -1) {
+            array3.unshift(itm);
+            array5.unshift(itm.tokenId);
+        } else if (+array3[tmp].eth < +itm.eth) {
+            array3[tmp] = itm;
+            array5[tmp] = itm.tokenId;
+        }
+    }
+
+    return array3;
+};
 
 export default () => {
     const address = web3.hook.usePriorityAccount();
@@ -131,45 +152,45 @@ export default () => {
                                 endblock: +x.data.protocol.epoch.endBlock,
                                 status: x.data.protocol.epoch.status,
                             },
-                            activeSwaps: x.data.protocol.activeNuggs.map((x) => {
+                            activeSwaps: x.data.protocol.activeNuggs.map((z) => {
                                 return {
-                                    id: x.id,
-                                    tokenId: x.id,
-                                    dotnuggRawCache: x.dotnuggRawCache,
-                                    eth: new EthInt(x.activeSwap?.eth),
-                                    started: !!x.activeSwap?.endingEpoch,
+                                    id: z.id,
+                                    tokenId: z.id,
+                                    dotnuggRawCache: z.dotnuggRawCache,
+                                    eth: new EthInt(z.activeSwap?.eth),
+                                    started: !!z.activeSwap?.endingEpoch,
                                     endingEpoch:
-                                        x.activeSwap && x.activeSwap?.endingEpoch
-                                            ? +x.activeSwap?.endingEpoch
+                                        z.activeSwap && z.activeSwap?.endingEpoch
+                                            ? Number(z.activeSwap?.endingEpoch)
                                             : 0,
                                     type: 'nugg',
                                     isCurrent: true,
                                 };
                             }),
                             activeItems: mergeUnique([
-                                ...x.data.protocol.activeItems.map((x) => {
+                                ...x.data.protocol.activeItems.map((z) => {
                                     return {
-                                        id: createItemId(x.id),
-                                        tokenId: createItemId(x.id),
-                                        dotnuggRawCache: x.activeSwap.sellingItem.dotnuggRawCache,
-                                        eth: new EthInt(x.activeSwap?.eth),
-                                        started: !!x.activeSwap.endingEpoch,
+                                        id: createItemId(z.id),
+                                        tokenId: createItemId(z.id),
+                                        dotnuggRawCache: z.activeSwap.sellingItem.dotnuggRawCache,
+                                        eth: new EthInt(z.activeSwap?.eth),
+                                        started: !!z.activeSwap.endingEpoch,
                                         sellingNugg: '',
-                                        endingEpoch: +x.activeSwap.endingEpoch!,
+                                        endingEpoch: +z.activeSwap.endingEpoch!,
                                         type: 'item' as const,
                                         isCurrent: true,
                                     };
                                 }),
-                                ...x.data.protocol.activeNuggItems.map((x) => {
+                                ...x.data.protocol.activeNuggItems.map((z) => {
                                     return {
-                                        id: createItemId(x.activeSwap.sellingNuggItem.item.id),
-                                        tokenId: createItemId(x.activeSwap.sellingNuggItem.item.id),
+                                        id: createItemId(z.activeSwap.sellingNuggItem.item.id),
+                                        tokenId: createItemId(z.activeSwap.sellingNuggItem.item.id),
                                         dotnuggRawCache:
-                                            x.activeSwap.sellingNuggItem.item.dotnuggRawCache,
-                                        eth: new EthInt(x.activeSwap?.eth),
-                                        started: !!x.activeSwap.endingEpoch,
-                                        sellingNugg: x.id.split('-')[constants.ITEM_NUGG_POS],
-                                        endingEpoch: +x.activeSwap.endingEpoch!,
+                                            z.activeSwap.sellingNuggItem.item.dotnuggRawCache,
+                                        eth: new EthInt(z.activeSwap?.eth),
+                                        started: !!z.activeSwap.endingEpoch,
+                                        sellingNugg: z.id.split('-')[constants.ITEM_NUGG_POS],
+                                        endingEpoch: +z.activeSwap.endingEpoch!,
                                         type: 'item' as const,
                                         isCurrent: true,
                                     };
@@ -182,6 +203,7 @@ export default () => {
                 instance.unsubscribe();
             };
         }
+        return () => undefined;
     }, [apollo]);
 
     React.useEffect(() => {
@@ -300,15 +322,14 @@ export default () => {
                     variables: { address: address.toLowerCase() },
                 })
                 .subscribe((x) => {
-                    x.data &&
-                        x.data.user &&
+                    if (x.data && x.data.user)
                         client.actions.updateProtocol({
-                            myNuggs: x.data.user.nuggs.map((x) => {
+                            myNuggs: x.data.user.nuggs.map((z) => {
                                 return {
-                                    tokenId: x.id,
-                                    activeLoan: !!x.activeLoan,
-                                    activeSwap: !!x.activeSwap,
-                                    unclaimedOffers: x.offers.map((y) => {
+                                    tokenId: z.id,
+                                    activeLoan: !!z.activeLoan,
+                                    activeSwap: !!z.activeSwap,
+                                    unclaimedOffers: z.offers.map((y) => {
                                         return {
                                             itemId: y.swap.sellingItem.id,
                                             endingEpoch:
@@ -319,39 +340,39 @@ export default () => {
                                     }),
                                 };
                             }),
-                            myUnclaimedNuggOffers: x.data.user.offers.map((x) => {
+                            myUnclaimedNuggOffers: x.data.user.offers.map((z) => {
                                 return {
-                                    tokenId: x.swap.nugg.id,
+                                    tokenId: z.swap.nugg.id,
                                     endingEpoch:
-                                        x && x.swap && x.swap.endingEpoch
-                                            ? +x.swap.endingEpoch
+                                        z && z.swap && z.swap.endingEpoch
+                                            ? +z.swap.endingEpoch
                                             : null,
-                                    eth: new EthInt(x.eth),
+                                    eth: new EthInt(z.eth),
                                     type: 'nugg',
                                     leader:
-                                        x.swap.leader.id.toLowerCase() === address.toLowerCase(),
+                                        z.swap.leader.id.toLowerCase() === address.toLowerCase(),
                                     claimParams: {
                                         address,
-                                        tokenId: x.swap.nugg.id,
+                                        tokenId: z.swap.nugg.id,
                                     },
                                 };
                             }),
                             myUnclaimedItemOffers: x.data.user.nuggs
-                                .map((x) => {
-                                    return x.offers.map((y) => {
+                                .map((z) => {
+                                    return z.offers.map((y) => {
                                         // console.log(y.swap.sellingItem.id);
                                         return {
-                                            tokenId: ('item-' + y.swap.sellingItem.id) as ItemId,
+                                            tokenId: `item-${y.swap.sellingItem.id}` as ItemId,
                                             endingEpoch:
                                                 y && y.swap && y.swap.endingEpoch
                                                     ? +y.swap.endingEpoch
                                                     : null,
                                             eth: new EthInt(y.eth),
                                             type: 'item' as const,
-                                            leader: y.swap.leader.id === x.id,
-                                            nugg: x.id,
+                                            leader: y.swap.leader.id === z.id,
+                                            nugg: z.id,
                                             claimParams: {
-                                                address: padToAddress(x.id),
+                                                address: padToAddress(z.id),
                                                 tokenId: BigNumber.from(+y.swap.sellingItem.id)
                                                     .shl(24)
                                                     .or(+y.swap.sellingNuggItem.nugg.id)
@@ -361,12 +382,12 @@ export default () => {
                                     });
                                 })
                                 .flat(),
-                            myLoans: x.data.user.loans.map((x) => {
+                            myLoans: x.data.user.loans.map((z) => {
                                 return {
-                                    endingEpoch: +x.endingEpoch!,
-                                    eth: new EthInt(x.eth),
-                                    nugg: x.nugg.id,
-                                    startingEpoch: +x.epoch.id,
+                                    endingEpoch: +z.endingEpoch!,
+                                    eth: new EthInt(z.eth),
+                                    nugg: z.nugg.id,
+                                    startingEpoch: +z.epoch.id,
                                 };
                             }),
                         });
@@ -375,29 +396,7 @@ export default () => {
                 instance.unsubscribe();
             };
         }
+        return () => undefined;
     }, [apollo, address]);
     return null;
-};
-
-const mergeUnique = (arr: SwapData[]) => {
-    let len = arr.length;
-
-    let tmp: number;
-    const array3: SwapData[] = [];
-    const array5: string[] = [];
-
-    while (len--) {
-        const itm = arr[len];
-        if ((tmp = array5.indexOf(itm.tokenId)) === -1) {
-            array3.unshift(itm);
-            array5.unshift(itm.tokenId);
-        } else {
-            if (+array3[tmp].eth < +itm.eth) {
-                array3[tmp] = itm;
-                array5[tmp] = itm.tokenId;
-            }
-        }
-    }
-
-    return array3;
 };

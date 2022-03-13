@@ -10,7 +10,10 @@
         "import/extensions": [".ts", ".tsx"]
     },
     "extends": [
+        "airbnb",
+        "airbnb/hooks",
         "prettier",
+        "plugin:prettier/recommended",
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking"
@@ -24,11 +27,11 @@
             "binaryLiterals": true
         },
         "ecmaVersion": "latest",
+
         "sourceType": "module",
         "project": ["./tsconfig.json", "webpack.config.js"]
     },
     "plugins": [
-        "react",
         "@typescript-eslint",
         "prettier",
         "import",
@@ -37,6 +40,11 @@
         "module-resolver"
     ],
     "rules": {
+        "no-void": ["error", { "allowAsStatement": true }],
+        "no-bitwise": ["error", { "allow": ["&", "|", "<<", ">>"] }],
+        "no-underscore-dangle": "off",
+        "camelcase": "off",
+        "no-plusplus": 0,
         "module-resolver/use-alias": [
             "error",
             {
@@ -67,7 +75,13 @@
                 "argsIgnorePattern": "^_"
             }
         ],
-        // "import/resolver": 2,
+        "import/extensions": "off",
+        "react/jsx-props-no-spreading": ["warn", { "exceptions": ["TextInput", "Text", "Button"] }],
+        "react/function-component-definition": [
+            "error",
+            { "namedComponents": "arrow-function", "unnamedComponents": "arrow-function" }
+        ],
+        "react/require-default-props": ["error", { "ignoreFunctionalComponents": true }],
         "import/order": [
             "warn",
             {

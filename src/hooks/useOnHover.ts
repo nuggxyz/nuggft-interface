@@ -6,7 +6,7 @@ const useOnHover = (callback?: RefCallback<unknown>): [Ref<HTMLDivElement>, bool
 
     useEffect(() => {
         if (ref.current) {
-            const current = ref.current;
+            const { current } = ref;
             const enter = () => setIsHovering(true);
             const leave = () => setIsHovering(false);
             current.onmouseenter = () => setIsHovering(true);
@@ -23,13 +23,13 @@ const useOnHover = (callback?: RefCallback<unknown>): [Ref<HTMLDivElement>, bool
                 current.removeEventListener('mousemove', enter);
                 current.removeEventListener('mouseleave', leave);
             };
-        } else {
-            setIsHovering(false);
         }
+        setIsHovering(false);
+        return () => undefined;
     }, [ref]);
 
     useEffect(() => {
-        callback && callback(isHovering);
+        if (callback) callback(isHovering);
     }, [isHovering, callback]);
 
     return [ref, isHovering];

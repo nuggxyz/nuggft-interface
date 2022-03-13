@@ -749,7 +749,7 @@ module.exports = function (webpackEnv) {
             !disableESLintPlugin &&
                 new ESLintPlugin({
                     // Plugin options
-                    extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx'],
+                    extensions: ['ts', 'tsx'],
                     formatter: require.resolve('react-dev-utils/eslintFormatter'),
                     eslintPath: require.resolve('eslint'),
                     failOnError: !(isEnvDevelopment && emitErrorsAsWarnings),
@@ -760,7 +760,7 @@ module.exports = function (webpackEnv) {
                     cwd: paths.appPath,
                     resolvePluginsRelativeTo: __dirname,
                     baseConfig: {
-                        extends: [require.resolve('eslint-config-react-app/base')],
+                        extends: [path.resolve(paths.appPath, '.eslintrc')],
                         rules: {
                             ...(!hasJsxRuntime && {
                                 'react/react-in-jsx-scope': 'error',

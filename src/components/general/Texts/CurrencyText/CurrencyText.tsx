@@ -36,13 +36,13 @@ const CurrencyText: React.FC<BalanceProps> = ({
     const [isGwei, setIsGwei] = useState(forceGwei);
     const prevValue = usePrevious(value);
     useEffect(() => {
-        !forceGwei && setIsGwei(value < 0.00001);
+        if (!forceGwei) setIsGwei(value < 0.00001);
     }, [value, forceGwei]);
 
     const [spring] = useSpring(
         {
             val: value,
-            from: { val: prevValue ? prevValue : value * 0.5 },
+            from: { val: prevValue || value * 0.5 },
             config: config.molasses,
         },
         [prevValue, value],
@@ -58,6 +58,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
         >
             <animated.div className="number" style={{ paddingRight: '.5rem' }}>
                 {spring.val.to((val) =>
+                    // eslint-disable-next-line no-nested-ternary
                     isGwei
                         ? (val * 10 ** 9).toFixed(decimals)
                         : val > 1

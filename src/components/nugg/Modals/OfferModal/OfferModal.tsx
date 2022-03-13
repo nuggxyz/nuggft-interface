@@ -1,4 +1,4 @@
-import React, { FC, FunctionComponent, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { BigNumber } from 'ethers';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
@@ -25,11 +25,38 @@ import { InfiniteListRenderItemProps } from '@src/components/general/List/Infini
 
 import styles from './OfferModal.styles';
 
+const MyNuggRenderItem: FC<InfiniteListRenderItemProps<MyNuggsData, undefined, MyNuggsData>> = ({
+    item,
+
+    selected,
+    action,
+}) => {
+    return (
+        <Button
+            buttonStyle={{
+                background: selected ? Colors.transparentGrey2 : Colors.transparent,
+                borderRadius: Layout.borderRadius.medium,
+                transition: '.2s background ease',
+            }}
+            rightIcon={
+                <TokenViewer
+                    tokenId={item.tokenId}
+                    style={{ width: '80px', height: '80px' }}
+                    // data={item.dotnuggRawCache}
+                    showLabel
+                    disableOnClick
+                />
+            }
+            onClick={() => action(item)}
+        />
+    );
+};
+
 type Props = {
     tokenId: TokenId;
 };
 
-const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
+const OfferModal = ({ tokenId }: Props) => {
     // const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
@@ -48,8 +75,8 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
     const [stableId, setId] = useState(tokenId);
 
     useLayoutEffect(() => {
-        type && setType(type);
-        tokenId && setId(tokenId);
+        if (type) setType(type);
+        if (tokenId) setId(tokenId);
     }, [type, tokenId]);
 
     const _myNuggs = client.live.myNuggs();
@@ -91,7 +118,8 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
                         curr: x.current,
                     };
                 });
-            } else if (
+            }
+            if (
                 stableType === 'OfferItem' &&
                 activeItem &&
                 selectedNuggForItem &&
@@ -113,6 +141,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
             }
         }
         return new Promise((resolve) =>
+            // eslint-disable-next-line no-promise-executor-return
             resolve({ canOffer: undefined, next: undefined, curr: undefined }),
         );
     }, [stableId, address, chainId, provider, stableType, selectedNuggForItem, activeItem]);
@@ -212,6 +241,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
                         feedbackText="Check Wallet..."
                         buttonStyle={styles.button}
                         label={`${
+                            // eslint-disable-next-line no-nested-ternary
                             check && check.curr && check.curr.toString() !== '0'
                                 ? !check.canOffer
                                     ? 'You cannot place an offer'
@@ -224,7 +254,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
                             provider &&
                             address &&
                             WalletState.dispatch.placeOffer({
-                                tokenId: tokenId,
+                                tokenId,
                                 amount: fromEth(toEth(amount).sub(check.curr)),
                                 chainId,
                                 provider,
@@ -243,33 +273,6 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
                 </div>
             ) : null}
         </div>
-    );
-};
-
-const MyNuggRenderItem: FC<InfiniteListRenderItemProps<MyNuggsData, undefined, MyNuggsData>> = ({
-    item,
-
-    selected,
-    action,
-}) => {
-    return (
-        <Button
-            buttonStyle={{
-                background: selected ? Colors.transparentGrey2 : Colors.transparent,
-                borderRadius: Layout.borderRadius.medium,
-                transition: '.2s background ease',
-            }}
-            rightIcon={
-                <TokenViewer
-                    tokenId={item.tokenId}
-                    style={{ width: '80px', height: '80px' }}
-                    // data={item.dotnuggRawCache}
-                    showLabel
-                    disableOnClick
-                />
-            }
-            onClick={() => action(item)}
-        />
     );
 };
 

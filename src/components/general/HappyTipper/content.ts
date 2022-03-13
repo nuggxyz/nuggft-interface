@@ -20,7 +20,7 @@ const tips: {
 
 const gotoLink = (link: TipLink) => {
     const win = window.open(link, '_blank');
-    win && win.focus();
+    if (win) win.focus();
 };
 
 const slang = [

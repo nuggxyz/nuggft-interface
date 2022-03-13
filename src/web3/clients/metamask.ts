@@ -1,4 +1,6 @@
-import type detectEthereumProvider from '@metamask/detect-provider';
+/* eslint-disable max-classes-per-file */
+
+import type detectEthereumProvider from '@metamask/detect-provider/dist';
 
 import {
     Connector,
@@ -8,8 +10,7 @@ import {
     Provider,
     Actions,
 } from '@src/web3/core/types';
-import { PeerInfo__MetaMask } from '@src/web3/core/interfaces';
-import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
+import { PeerInfo__MetaMask, Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 
 export class NoMetaMaskError extends Error {
     public constructor() {
@@ -25,6 +26,7 @@ function parseChainId(chainId: string) {
 
 export class MetaMask extends Connector {
     private readonly options?: Parameters<typeof detectEthereumProvider>[0];
+
     private eagerConnection?: Promise<void>;
 
     /**
@@ -34,8 +36,8 @@ export class MetaMask extends Connector {
     constructor(
         peer: PeerInfo__MetaMask,
         actions: Actions,
-        connectEagerly = false,
         options?: Parameters<typeof detectEthereumProvider>[0],
+        connectEagerly = false,
     ) {
         super(ConnectorEnum.MetaMask, actions, [peer]);
 
@@ -53,7 +55,7 @@ export class MetaMask extends Connector {
     private async isomorphicInitialize(): Promise<void> {
         if (this.eagerConnection) return this.eagerConnection;
 
-        await (this.eagerConnection = import('@metamask/detect-provider')
+        await (this.eagerConnection = import('@metamask/detect-provider/dist')
             .then((m) => m.default(this.options))
             .then((provider) => {
                 if (provider) {
@@ -87,6 +89,7 @@ export class MetaMask extends Connector {
                     });
                 }
             }));
+        return undefined;
     }
 
     /** {@inheritdoc Connector.connectEagerly} */
@@ -176,9 +179,8 @@ export class MetaMask extends Connector {
                                     },
                                 ],
                             });
-                        } else {
-                            throw error;
                         }
+                        throw error;
                     })
                     .then(() => this.activate(desiredChainId));
             })

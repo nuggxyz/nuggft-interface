@@ -11,37 +11,6 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
 import { LoanData } from '@src/client/core';
 
-type Props = Record<string, never>;
-
-const LoansTab: FunctionComponent<Props> = () => {
-    const epoch__id = client.live.epoch.id();
-
-    const loanedNuggs = client.live.myLoans();
-
-    return (
-        <div style={styles.container}>
-            <List
-                data={loanedNuggs}
-                RenderItem={React.memo(
-                    RenderItem,
-                    (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
-                )}
-                label="Loaned Nuggs"
-                // titleLoading={loadingNuggs}
-                style={listStyles.list}
-                extraData={epoch__id}
-                listEmptyText="You haven't loaned any nuggs yet!"
-                labelStyle={styles.listLabel}
-                listEmptyStyle={listStyles.textWhite}
-                loaderColor="white"
-                action={() => undefined}
-            />
-        </div>
-    );
-};
-
-export default React.memo(LoansTab);
-
 const RenderItem: FunctionComponent<
     ListRenderItemProps<LoanData, number | undefined, undefined>
 > = ({ item, index, extraData: epochId }) => {
@@ -69,7 +38,7 @@ const RenderItem: FunctionComponent<
                         ...listStyles.renderButtonLoan,
                         marginBottom: '.3rem',
                     }}
-                    label={`Extend`}
+                    label="Extend"
                     onClick={() =>
                         AppState.dispatch.setModalOpen({
                             name: 'LoanInputModal',
@@ -86,7 +55,7 @@ const RenderItem: FunctionComponent<
                 <Button
                     textStyle={listStyles.textWhite}
                     buttonStyle={listStyles.renderButtonLoan}
-                    label={`Pay off`}
+                    label="Pay off"
                     onClick={() =>
                         AppState.dispatch.setModalOpen({
                             name: 'LoanInputModal',
@@ -102,7 +71,38 @@ const RenderItem: FunctionComponent<
                 />
             </div>
         </div>
-    ) : (
-        <></>
+    ) : null;
+};
+
+type Props = Record<string, never>;
+
+const LoansTab: FunctionComponent<Props> = () => {
+    const epoch__id = client.live.epoch.id();
+
+    const loanedNuggs = client.live.myLoans();
+
+    return (
+        <div style={styles.container}>
+            <List
+                data={loanedNuggs}
+                RenderItem={
+                    React.memo(
+                        RenderItem,
+                        (prev, props) => JSON.stringify(prev.item) === JSON.stringify(props.item),
+                    ) as typeof RenderItem
+                }
+                label="Loaned Nuggs"
+                // titleLoading={loadingNuggs}
+                style={listStyles.list}
+                extraData={epoch__id}
+                listEmptyText="You haven't loaned any nuggs yet!"
+                labelStyle={styles.listLabel}
+                listEmptyStyle={listStyles.textWhite}
+                loaderColor="white"
+                action={() => undefined}
+            />
+        </div>
     );
 };
+
+export default React.memo(LoansTab);

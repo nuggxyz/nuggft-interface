@@ -7,7 +7,7 @@ import coinbase_icon from '@src/assets/images/app_icons/coinbase.webp';
 import rainbow_icon from '@src/assets/images/app_icons/rainbow.webp';
 import trust_icon from '@src/assets/images/app_icons/trust.webp';
 import walletconnect_icon from '@src/assets/images/app_icons/walletconnect.webp';
-/////////////////////////////////////////////////////////////////////
+/// //////////////////////////////////////////////////////////////////
 import eth from '@src/assets/images/currency/eth.svg';
 import metamask from '@src/assets/images/app_logos/metamask.png';
 import walletconnect from '@src/assets/images/app_logos/walletconnect.png';
@@ -19,19 +19,20 @@ import ledger from '@src/assets/images/app_logos/ledger.svg';
 import cryptodotcom from '@src/assets/images/app_logos/cryptodotcom.png';
 import { Peer } from '@src/web3/core/interfaces';
 
+export type NLStaticImageKey = 'nugg' | 'eth' | Peer | `${Peer}_icon` | `${Peer}_icon_small`;
+
 type Props = {
     image: NLStaticImageKey;
     style?: CSSProperties;
 };
 
-export type NLStaticImageKey = 'nugg' | 'eth' | Peer | `${Peer}_icon` | `${Peer}_icon_small`;
-
-const StaticAppIcon: FunctionComponent<Props & { icon: string }> = ({ style, icon }) => {
+const StaticAppIcon: FunctionComponent<Props & { icon: string }> = ({ image, style, icon }) => {
     return (
         <img
             src={icon}
             height={50}
             width={50}
+            alt={image}
             style={{
                 borderRadius: '22.5%',
                 objectFit: 'cover',
@@ -41,12 +42,17 @@ const StaticAppIcon: FunctionComponent<Props & { icon: string }> = ({ style, ico
     );
 };
 
-const StaticAppIconSmall: FunctionComponent<Props & { icon: string }> = ({ style, icon }) => {
+const StaticAppIconSmall: FunctionComponent<Props & { icon: string }> = ({
+    image,
+    style,
+    icon,
+}) => {
     return (
         <img
             src={icon}
             height={19}
             width={19}
+            alt={image}
             style={{
                 borderRadius: '22.5%',
                 objectFit: 'cover',
@@ -91,6 +97,7 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                 return (
                     <img
                         src={metamask}
+                        alt={props.image}
                         height={48}
                         width={128}
                         style={{ objectFit: 'contain', height: 23.8, ...props.style }}
@@ -101,15 +108,20 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                 return (
                     <img
                         src={walletconnect}
+                        alt={props.image}
                         height={48}
                         width={128}
                         style={{ objectFit: 'contain', height: 23.8, ...props.style }}
                     />
                 );
             case 'eth':
-                return <img src={eth} height={20} width={20} style={props.style} />;
+                return (
+                    <img src={eth} height={20} width={20} style={props.style} alt={props.image} />
+                );
             case 'nugg':
-                return <img src={nugg} height={35} width={35} style={props.style} />;
+                return (
+                    <img src={nugg} height={35} width={35} style={props.style} alt={props.image} />
+                );
             case 'coinbase':
                 return (
                     <img
@@ -117,6 +129,7 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                         height={48}
                         width={128}
                         style={{ objectFit: 'contain', height: 23.8, ...props.style }}
+                        alt={props.image}
                     />
                 );
             case 'rainbow':
@@ -126,6 +139,7 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                         height={48}
                         width={128}
                         style={{ objectFit: 'contain', height: 23.8, ...props.style }}
+                        alt={props.image}
                     />
                 );
             case 'trust':
@@ -134,6 +148,7 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                         src={trust}
                         width={170}
                         style={{ objectFit: 'cover', height: 23.8, ...props.style }}
+                        alt={props.image}
                     />
                 );
             case 'ledgerlive':
@@ -143,6 +158,7 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                         height={120}
                         width={100}
                         style={{ objectFit: 'contain', height: 23.8, ...props.style }}
+                        alt={props.image}
                     />
                 );
             case 'cryptodotcom':
@@ -152,6 +168,7 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                         height={48}
                         width={128}
                         style={{ objectFit: 'contain', height: 23.8, ...props.style }}
+                        alt={props.image}
                     />
                 );
             default:

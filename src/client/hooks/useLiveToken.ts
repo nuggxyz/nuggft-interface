@@ -3,9 +3,12 @@ import React from 'react';
 import constants, { ITEM_ID } from '@src/lib/constants';
 import { Address } from '@src/classes/Address';
 
+// eslint-disable-next-line import/no-cycle
 import client from '..';
 
+// eslint-disable-next-line import/no-cycle
 import { LiveItem, useLiveItem } from './useLiveItem';
+// eslint-disable-next-line import/no-cycle
 import { LiveNugg, useLiveNugg } from './useLiveNugg';
 
 type NuggLifeCyle =
@@ -18,7 +21,7 @@ type NuggLifeCyle =
     | 'cut' //    [nugg     ] a token that no one bid on but still exists in the graph
     | 'egg'; //   [nugg     ] a token that will be minting in the next epoch --- SAME AS DECK, BUT NON OFFERABLE
 
-export const useLiveToken = (
+const useLiveToken = (
     tokenId: string | ITEM_ID | undefined,
 ): {
     token: LiveNugg | LiveItem | undefined;
@@ -28,8 +31,10 @@ export const useLiveToken = (
     const epoch = client.live.epoch.id();
 
     const token = tokenId?.startsWith(constants.ID_PREFIX_ITEM)
-        ? useLiveItem(tokenId)
-        : useLiveNugg(tokenId);
+        ? // eslint-disable-next-line react-hooks/rules-of-hooks
+          useLiveItem(tokenId)
+        : // eslint-disable-next-line react-hooks/rules-of-hooks
+          useLiveNugg(tokenId);
 
     const lifecycle = React.useMemo(() => {
         if (token && epoch !== undefined) {
@@ -51,5 +56,7 @@ export const useLiveToken = (
         return 'stands';
     }, [epoch, token]);
 
-    return { token, lifecycle, epoch: epoch };
+    return { token, lifecycle, epoch };
 };
+
+export default useLiveToken;

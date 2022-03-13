@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
 type Props = {
-    src: any;
+    src: string;
     style?: React.CSSProperties;
     alt?: string;
 };

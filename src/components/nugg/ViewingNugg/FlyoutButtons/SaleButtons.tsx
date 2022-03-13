@@ -30,7 +30,7 @@ const SaleButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
                 onClick={() =>
                     state.wallet.dispatch.claim({
-                        tokenId: tokenId,
+                        tokenId,
                         sender,
                         provider,
                         chainId,

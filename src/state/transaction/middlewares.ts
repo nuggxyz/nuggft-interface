@@ -10,6 +10,7 @@ import AppState from '@src/state/app';
 import { NLState } from '@src/state/NLState';
 import { CHAIN_INFO } from '@src/web3/config';
 
+// eslint-disable-next-line import/no-cycle
 import TransactionState from './index';
 
 export const pending: NL.Redux.Middleware<
@@ -28,14 +29,14 @@ export const pending: NL.Redux.Middleware<
 
             const check = client.static.infura();
 
-            check &&
-                void check.waitForTransaction(action.payload._pendingtx, 1, 600000).then((x) =>
+            if (check) {
+                void check.waitForTransaction(action.payload._pendingtx, 1, 600000).then((x) => {
                     TransactionState.dispatch.finalizeTransaction({
                         hash: x.transactionHash,
                         successful: x.status === 1,
-                    }),
-                );
-
+                    });
+                });
+            }
             AppState.dispatch.addToastToList({
                 duration: 0,
                 title: 'Pending Transaction',
@@ -51,7 +52,7 @@ export const pending: NL.Redux.Middleware<
                         }`,
                         '_blank',
                     );
-                    win && win.focus();
+                    if (win) win.focus();
                 },
             });
             if (action.payload.callbackFn !== undefined) {
@@ -61,14 +62,15 @@ export const pending: NL.Redux.Middleware<
         // console.log(state);
         if (NLState.hasSuffix(action, 'finalizeTransaction')) {
             AppState.dispatch.replaceToast({
-                //@ts-ignore
-                id: action.payload._pendingtx,
-                //@ts-ignore
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                id: action.payload.hash,
+                // @ts-ignore
                 duration: action.payload.successful ? 5000 : 0,
                 loading: false,
-                //@ts-ignore
+                // @ts-ignore
                 error: !action.payload.successful,
-                //@ts-ignore
+                // @ts-ignore
                 title: action.payload.successful ? 'Successful Transaction' : 'Transaction Failed',
             });
         }

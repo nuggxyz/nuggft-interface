@@ -32,33 +32,43 @@ const Mobile: FunctionComponent<Props> = () => {
         }
     }, [lastView__tokenId]);
 
-    const wallet = useSpring({
-        opacity: currentView === 'Wallet' ? 1 : 0,
-        pointerEvents: currentView === 'Wallet' ? 'auto' : 'none',
-        zIndex: currentView === 'Wallet' ? 1 : 0,
-        ...sty,
-        config: config.default,
-    });
-    const mint = useSpring({
-        opacity: currentView === 'Mint' ? 1 : 0,
-        pointerEvents: currentView === 'Mint' ? 'auto' : 'none',
-        zIndex: currentView === 'Mint' ? 1 : 0,
-        ...sty,
-        config: config.default,
-    });
-    const search = useSpring({
-        opacity: currentView === 'Search' ? 1 : 0,
-        pointerEvents: currentView === 'Search' ? 'auto' : 'none',
-        zIndex: currentView === 'Search' ? 1 : 0,
-        ...sty,
-        config: config.default,
-    });
+    const [wallet] = useSpring(
+        {
+            opacity: currentView === 'Wallet' ? 1 : 0,
+            pointerEvents: currentView === 'Wallet' ? 'auto' : 'none',
+            zIndex: currentView === 'Wallet' ? 1 : 0,
+            ...sty,
+            config: config.default,
+        },
+        [],
+    );
+    const [mint] = useSpring(
+        {
+            opacity: currentView === 'Mint' ? 1 : 0,
+            pointerEvents: currentView === 'Mint' ? 'auto' : 'none',
+            zIndex: currentView === 'Mint' ? 1 : 0,
+            ...sty,
+            config: config.default,
+        },
+        [],
+    );
+    const [search] = useSpring(
+        {
+            opacity: currentView === 'Search' ? 1 : 0,
+            pointerEvents: currentView === 'Search' ? 'auto' : 'none',
+            zIndex: currentView === 'Search' ? 1 : 0,
+            ...sty,
+            config: config.default,
+        },
+        [],
+    );
 
     return (
         <div
             style={{
                 ...styles.container,
                 background:
+                    // eslint-disable-next-line no-nested-ternary
                     currentView === 'Wallet'
                         ? Colors.gradient3
                         : currentView === 'Search'
@@ -67,22 +77,13 @@ const Mobile: FunctionComponent<Props> = () => {
             }}
         >
             <div style={styles.viewContainer}>
-                <animated.div
-                    //@ts-ignore¸
-                    style={wallet}
-                >
+                <animated.div style={wallet as CSSPropertiesAnimated}>
                     <WalletView />
                 </animated.div>
-                <animated.div
-                    //@ts-ignore¸
-                    style={mint}
-                >
+                <animated.div style={mint as CSSPropertiesAnimated}>
                     <MintView />
                 </animated.div>
-                <animated.div
-                    //@ts-ignore¸
-                    style={search}
-                >
+                <animated.div style={search as CSSPropertiesAnimated}>
                     <SearchView />
                 </animated.div>
             </div>

@@ -8,6 +8,7 @@ import lib from '@src/lib';
 import { PeerInfo } from '@src/web3/core/interfaces';
 
 import styles from './QrCodeModal.styles';
+
 type Props = Record<string, never>;
 
 type ModalsData = {
@@ -20,7 +21,7 @@ const QrCodeModal: FunctionComponent<Props> = () => {
     const [stableData, setStableData] = useState<typeof modalsData>(modalsData);
 
     useLayoutEffect(() => {
-        modalsData && modalsData.data && setStableData(modalsData);
+        if (modalsData && modalsData.data) setStableData(modalsData);
     }, [modalsData, stableData]);
 
     return (
@@ -38,7 +39,7 @@ const QrCodeModal: FunctionComponent<Props> = () => {
                 <QRCode
                     value={stableData?.data.uri || ''}
                     size={400}
-                    level={'L'}
+                    level="L"
                     fgColor={stableData?.backgroundStyle.background}
                     bgColor={lib.colors.transparent}
                 />

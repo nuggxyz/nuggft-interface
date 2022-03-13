@@ -5,7 +5,7 @@ const useAsyncState = <T>(query: () => Promise<T>, deps: React.DependencyList) =
 
     useEffect(() => {
         try {
-            const exec = async () => query && (await query());
+            const exec = async () => query && query();
             void exec().then((res) => setResult(res));
         } catch (err: unknown) {
             console.log('error in useAsyncState');

@@ -62,6 +62,8 @@ const InteractiveText: FunctionComponent<InteractiveTextProps> = ({
         <>
             {badge && <div style={badgeStyle}>{badge}</div>}
             <div
+                aria-hidden="true"
+                role="button"
                 style={customStyle}
                 onClick={action}
                 onMouseEnter={() => setHover(true)}
