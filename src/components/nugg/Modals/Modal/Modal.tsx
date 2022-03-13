@@ -38,7 +38,7 @@ const Modal: FunctionComponent<Props> = () => {
     const [stableData, setStableData] = useState(data);
 
     useLayoutEffect(() => {
-        data && (data.data || data.targetId) && setStableData(data);
+        if (data && (data.data || data.targetId)) setStableData(data);
     }, [data]);
 
     useEffect(() => {
