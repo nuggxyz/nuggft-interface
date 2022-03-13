@@ -81,7 +81,7 @@ const List = <T, B, A>({
     }, [border, horizontal, style]);
 
     const List = useCallback(
-        ({ selected }) =>
+        ({ selected }: { selected?: T }) =>
             data ? (
                 <>
                     {data.map((item, index) => (
