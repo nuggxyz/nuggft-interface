@@ -1,4 +1,4 @@
-import React, { FC, FunctionComponent, useEffect, useMemo, useState } from 'react';
+import React, { FC, FunctionComponent, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { BigNumber } from 'ethers';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
@@ -47,7 +47,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(tokenId);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         type && setType(type);
         tokenId && setId(tokenId);
     }, [type, tokenId]);
@@ -114,23 +114,18 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
             resolve({ canOffer: undefined, next: undefined, curr: undefined }),
         );
     }, [stableId, address, chainId, provider, stableType, selectedNuggForItem, activeItem]);
-    console.log({ tokenId, stableId, activeItem, chainId, provider, address });
-    return tokenId &&
-        (tokenId.startsWith('item-') ? activeItem : true) &&
-        chainId &&
-        provider &&
-        address ? (
+    return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
                 {`${
                     check && check.curr && check.curr.toString() !== '0'
                         ? 'Change offer for'
                         : 'Offer on'
-                } ${parseTokenId(tokenId, true)}`}
+                } ${parseTokenId(stableId, true)}`}
             </Text>
             <AnimatedCard>
                 <TokenViewer
-                    tokenId={tokenId}
+                    tokenId={stableId}
                     showcase
                     style={stableType === 'OfferItem' ? { height: '350px', width: '350px' } : {}}
                 />
@@ -224,6 +219,9 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
                         }`}
                         onClick={() =>
                             check.curr &&
+                            chainId &&
+                            provider &&
+                            address &&
                             WalletState.dispatch.placeOffer({
                                 tokenId: tokenId,
                                 amount: fromEth(toEth(amount).sub(check.curr)),
@@ -244,7 +242,7 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
                 </div>
             ) : null}
         </div>
-    ) : null;
+    );
 };
 
 const MyNuggRenderItem: FC<InfiniteListRenderItemProps<MyNuggsData, undefined, MyNuggsData>> = ({

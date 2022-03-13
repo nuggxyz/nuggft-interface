@@ -6,7 +6,7 @@ import Layout from '@src/lib/layout';
 
 const styles = NLStyleSheetCreator({
     container: {
-        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadows.nuggBlue}`,
+        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadowNuggBlue}`,
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',

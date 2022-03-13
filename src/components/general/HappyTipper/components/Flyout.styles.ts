@@ -7,7 +7,7 @@ import Layout from '@src/lib/layout';
 const styles = NLStyleSheetCreator({
     container: {
         backgroundColor: Colors.background,
-        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadows.lightGrey}`,
+        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadowLightGrey}`,
         borderRadius: Layout.borderRadius.mediumish,
         display: 'inline-block',
         position: 'absolute',

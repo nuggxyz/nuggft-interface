@@ -6,6 +6,13 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
+        padding: '2rem 0rem',
+    },
+    textContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        padding: '1rem',
     },
 });
 

@@ -11,6 +11,7 @@ import { PeerInfo__WalletConnect, Peer } from '@src/web3/core/interfaces';
 import AppState from '@src/state/app';
 import store from '@src/state/store';
 import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
+import Colors from '@src/lib/colors';
 
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
@@ -105,7 +106,7 @@ export class WalletConnect extends Connector {
                         name: 'QrCodeModal',
                         modalData: {
                             data: { info: peer, uri },
-                            containerStyle: { backgroundColor: 'white' },
+                            containerStyle: { background: Colors.semiTransparentWhite },
                             backgroundStyle: { background: curriedLighten(0.1)(peer.color) },
                         },
                     });
