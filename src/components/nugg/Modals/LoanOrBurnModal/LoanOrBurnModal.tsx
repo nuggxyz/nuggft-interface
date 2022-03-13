@@ -18,7 +18,6 @@ type Props = Record<string, never>;
 
 const LoanOrBurnModal: FunctionComponent<Props> = () => {
     const stake__eps = client.live.stake.eps();
-
     const { targetId, type } = AppState.select.modalData();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();

@@ -1,4 +1,11 @@
-import React, { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+    FunctionComponent,
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from 'react';
 import { animated, config, useSpring } from '@react-spring/web';
 
 import {
@@ -28,6 +35,11 @@ const Modal: FunctionComponent<Props> = () => {
     const previousOpen = usePrevious(isOpen);
     const node = useRef<HTMLDivElement>(null);
     const screenType = AppState.select.screenType();
+    const [stableData, setStableData] = useState(data);
+
+    useLayoutEffect(() => {
+        data && (data.data || data.targetId) && setStableData(data);
+    }, [data]);
 
     useEffect(() => {
         if (isUndefinedOrNull(isOpen) && !isUndefinedOrNullOrStringEmpty(previousOpen)) {
@@ -47,7 +59,6 @@ const Modal: FunctionComponent<Props> = () => {
                     ? 'translate(0px, 18px)'
                     : 'translate(8px, 8px)'
                 : 'translate(36px, 36px)',
-            ...data.containerStyle,
         },
         config: config.default,
     });
@@ -68,7 +79,6 @@ const Modal: FunctionComponent<Props> = () => {
     const style: CSSPropertiesAnimated = useAnimateOverlay(isOpen ? true : false);
 
     useOnClickOutside(node, closeModal);
-
     return (
         <animated.div style={style}>
             <div
@@ -83,19 +93,22 @@ const Modal: FunctionComponent<Props> = () => {
             >
                 {screenType !== 'phone' && (
                     <animated.div
-                        style={{ ...containerBackgroundStyle, ...data.backgroundStyle }}
+                        style={{ ...containerBackgroundStyle, ...stableData.backgroundStyle }}
                     />
                 )}
-                <animated.div style={containerStyle} ref={node}>
+                <animated.div
+                    style={{ ...containerStyle, ...stableData.containerStyle }}
+                    ref={node}
+                >
                     {currentModal === 'OfferModal' ? (
-                        <OfferModal tokenId={(data.data as { tokenId: TokenId })?.tokenId} />
+                        <OfferModal tokenId={(stableData.data as { tokenId: TokenId })?.tokenId} />
                     ) : null}
                     {currentModal === 'LoanOrBurnModal' ? <LoanOrBurnModal /> : null}
                     {currentModal === 'LoanInputModal' ? <LoanInputModal /> : null}
                     {currentModal === 'QrCodeModal' ? <QrCodeModal /> : null}
                     {currentModal === 'SellNuggOrItemModal' ? (
                         <SellNuggOrItemModal
-                            tokenId={(data.data as { tokenId: TokenId })?.tokenId}
+                            tokenId={(stableData.data as { tokenId: TokenId })?.tokenId}
                         />
                     ) : null}
                 </animated.div>

@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useLayoutEffect, useState } from 'react';
 import QRCode from 'qrcode.react';
 
 import Text from '@src/components/general/Texts/Text/Text';
@@ -12,46 +12,35 @@ type Props = Record<string, never>;
 
 type ModalsData = {
     data: { info: PeerInfo; uri: string };
+    backgroundStyle: { background: string };
 };
-// declare namespace NL.Redux.App {}
-
-// @dub call setModalOpen from appState to open, you can pass info to it via the modalData arg,
-// you can also add more fields to the modal data arg if you need to pass more info to the modal
 
 const QrCodeModal: FunctionComponent<Props> = () => {
-    const { data } = state.app.select.modalData() as ModalsData;
+    const modalsData = state.app.select.modalData() as ModalsData;
+    const [stableData, setStableData] = useState<typeof modalsData>(modalsData);
 
-    const [hack, setHack] = React.useState<typeof data>(data);
-
-    React.useEffect(() => {
-        if (!data && !hack) {
-            setHack(data);
-        }
-    }, [data, hack]);
+    useLayoutEffect(() => {
+        modalsData && modalsData.data && setStableData(modalsData);
+    }, [modalsData, stableData]);
 
     return (
-        <div style={{ padding: '20px', ...styles.container }}>
-            <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-around',
-                    padding: '15px',
-                    width: '400px',
-                }}
-            >
+        <div style={styles.container}>
+            <div style={styles.textContainer}>
                 <Text size="larger" textStyle={{ color: lib.colors.primaryColor }}>
-                    Sign in with {hack?.info.name}
+                    Sign in with {stableData?.data.info.name}
                 </Text>
-                <NLStaticImage image={`${hack?.info.peer}_icon`} />
+                <NLStaticImage
+                    image={`${stableData?.data.info.peer}_icon`}
+                    style={{ marginLeft: '1rem' }}
+                />
             </div>
             <div>
                 <QRCode
-                    value={hack?.uri || ''}
+                    value={stableData?.data.uri || ''}
                     size={400}
-                    level={'Q'}
-                    style={{ padding: '10px' }}
-                    fgColor={lib.colors.primaryColor}
+                    level={'L'}
+                    fgColor={stableData?.backgroundStyle.background}
+                    bgColor={lib.colors.transparent}
                 />
             </div>
         </div>

@@ -7,7 +7,7 @@ const styles = NLStyleSheetCreator({
         background: Colors.gradient3,
         borderRadius: Layout.borderRadius.medium,
         display: 'flex',
-        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadows.nuggPink}`,
+        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadowNuggPink}`,
         flexDirection: 'column',
         padding: '.5rem',
         width: '50%',

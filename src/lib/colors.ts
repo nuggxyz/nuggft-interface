@@ -1,6 +1,6 @@
 import curriedLighten from 'polished/lib/color/lighten';
 
-const Colors = {
+const Colors: Dictionary<string> = {
     primaryColor: '#25292e',
     secondaryColor: '#FFFFFF',
     white: '#FFF',
@@ -12,6 +12,7 @@ const Colors = {
     transparentGrey2: '#a7b7d455',
     transparentDarkGrey: 'rgba(0, 0, 0, 0.7)',
     transparentWhite: '#FFFFFF99',
+    semiTransparentWhite: '#FFFFFFCC',
     transparentLightGrey: '#c9d9f255',
     blue: '#0066ff',
     red: '#FF4040',
@@ -46,12 +47,10 @@ const Colors = {
         'radial-gradient(50% 50% at 50% 50%, #8A2BE211 0%, #8A2BE266 100%)',
 
     background: 'white',
-    shadows: {
-        nuggPink: '#b347a1',
-        nuggBlue: '#255aa8',
-        grey: '#788796',
-        lightGrey: 'rgba(0, 0, 0, 0.1)',
-    },
+    shadowNuggPink: '#b347a1',
+    shadowNuggBlue: '#255aa8',
+    shadowGrey: '#788796',
+    shadowLightGrey: 'rgba(0, 0, 0, 0.1)',
 };
 
 export const gradify = (col: string) => {

@@ -23,7 +23,7 @@ const styles = NLStyleSheetCreator({
         pointerEvents: 'auto',
     },
     body: {
-        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadows.nuggPink}`,
+        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadowNuggPink}`,
         borderRadius: Layout.borderRadius.medium,
         background: Colors.gradient3,
         padding: '.75rem',
