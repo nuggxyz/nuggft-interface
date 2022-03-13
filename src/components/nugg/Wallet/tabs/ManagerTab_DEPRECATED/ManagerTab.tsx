@@ -3,11 +3,11 @@ import React, { FunctionComponent } from 'react';
 import Colors from '@src/lib/colors';
 import Layout from '@src/lib/layout';
 
-import Connection from './ManagerTab/Connection';
+import Connection from './Connection';
 
 type Props = Record<string, never>;
 
-const ManageWalletTab: FunctionComponent<Props> = () => {
+const ManagerTab: FunctionComponent<Props> = () => {
     return (
         <div
             style={{
@@ -58,4 +58,4 @@ const ManageWalletTab: FunctionComponent<Props> = () => {
     );
 };
 
-export default ManageWalletTab;
+export default ManagerTab;

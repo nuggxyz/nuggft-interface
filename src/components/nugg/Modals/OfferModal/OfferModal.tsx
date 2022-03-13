@@ -224,7 +224,7 @@ const OfferModal = ({ tokenId }: Props) => {
                         color: 'white',
                     }}
                     extraData={undefined}
-                    RenderItem={React.memo(MyNuggRenderItem)}
+                    RenderItem={MyNuggRenderItem}
                     horizontal
                     action={setSelectedNugg}
                     selected={selectedNuggForItem}

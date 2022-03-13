@@ -20,7 +20,7 @@ import styles from './List.styles';
 export interface ListRenderItemProps<T, B, A> {
     item: T;
     extraData: B;
-    action: (arg: A) => void;
+    action?: (arg: A) => void;
     onScrollEnd?: () => () => void;
     index: number;
     rootRef?: LegacyRef<HTMLDivElement>;
@@ -32,7 +32,7 @@ export interface ListProps<T, B, A> {
     RenderItem: FunctionComponent<ListRenderItemProps<T, B, A>>;
     loading?: boolean;
     extraData: B;
-    action: (arg: A) => void;
+    action?: (arg: A) => void;
     onScrollEnd?: () => () => void;
     label?: string;
     border?: boolean;
@@ -102,7 +102,7 @@ const List = <T, B, A>({
 
     const ListCallback = useCallback(
         ({ selected: _selected }: { selected?: T }) =>
-            data ? (
+            data && data.length > 0 ? (
                 <>
                     {data.map((item, index) => (
                         <RenderItem

@@ -28,6 +28,10 @@ const globalStyles = NLStyleSheetCreator({
     firefoxBlur: {
         filter: 'blur(20px)',
     },
+    listNugg: {
+        height: '80px',
+        width: '80px',
+    },
 });
 
 export default globalStyles;
