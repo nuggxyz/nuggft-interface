@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { ethers } from 'ethers';
-import { namehash } from 'ethers/lib/utils';
 import invariant from 'tiny-invariant';
 
 export interface IAddress {
@@ -24,13 +23,13 @@ export class Address implements IAddress {
         return this._hash.toLowerCase();
     }
 
-    get namehash() {
-        return namehash(this.hash);
-    }
+    // get namehash() {
+    //     return namehash(this.hash);
+    // }
 
-    get reverse_namehash() {
-        return namehash(`${this.hash.substr(2)}.addr.reverse`);
-    }
+    // get reverse_namehash() {
+    //     return namehash(`${this.hash.substr(2)}.addr.reverse`);
+    // }
 
     get short() {
         return Address.shortenAddress(this);

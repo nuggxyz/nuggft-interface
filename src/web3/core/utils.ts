@@ -5,10 +5,10 @@ export const getBestUrl = async (urls: string[]): Promise<string> => {
 
     const [HttpConnection, JsonRpcProvider] = await Promise.all([
         import('@walletconnect/jsonrpc-http-connection').then(
-            // eslint-disable-next-line no-shadow
+            // eslint-disable-next-line @typescript-eslint/no-shadow
             ({ HttpConnection }) => HttpConnection,
         ),
-        // eslint-disable-next-line no-shadow
+        // eslint-disable-next-line @typescript-eslint/no-shadow
         import('@walletconnect/jsonrpc-provider').then(({ JsonRpcProvider }) => JsonRpcProvider),
     ]);
 

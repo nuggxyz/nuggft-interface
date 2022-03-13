@@ -225,12 +225,11 @@ const NextSwap: FunctionComponent<Props> = () => {
                             (swap, index) =>
                                 swap.started &&
                                 swap.tokenId !== lastSwap__tokenId && (
-                                    // eslint-disable-next-line no-use-before-define
+                                    // eslint-disable-next-line @typescript-eslint/no-use-before-define
                                     <SwapRenderItem
                                         swap={swap}
                                         index={index}
                                         setQueue={setQueue}
-                                        // eslint-disable-next-line react/no-array-index-key
                                         key={index}
                                     />
                                 ),
@@ -248,7 +247,6 @@ const SwapRenderItem = ({
     setQueue,
 }: {
     swap: SwapData;
-    // eslint-disable-next-line react/no-unused-prop-types
     index: number;
     setQueue: React.Dispatch<React.SetStateAction<SwapData | undefined>>;
 }) => {

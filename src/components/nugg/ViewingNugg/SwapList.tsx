@@ -44,6 +44,7 @@ const SwapItem: FunctionComponent<
     >
 > = ({ item, index, extraData }) => {
     const awaitingBid = item.endingEpoch === null;
+
     const ens = web3.hook.usePriorityAnyENSName(extraData?.provider, item.owner);
 
     return (
@@ -119,10 +120,10 @@ const SwapItem: FunctionComponent<
 const SwapList: FunctionComponent<Props> = () => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const lastView__tokenId = client.live.lastView.tokenId();
+    const tokenId = client.live.lastView.tokenId();
     const blocknum = client.live.blocknum();
 
-    const { token, epoch } = client.hook.useLiveToken(lastView__tokenId);
+    const { token, epoch } = client.hook.useLiveToken(tokenId);
 
     const listData = useMemo(() => {
         const res = [];
@@ -133,11 +134,10 @@ const SwapList: FunctionComponent<Props> = () => {
         }
         if (
             token &&
-            lastView__tokenId &&
+            tokenId &&
             (token?.swaps as LiveSwap[]).find((swap) => swap.endingEpoch === null) &&
-            lastView__tokenId.startsWith('item-')
+            tokenId.startsWith('item-')
         ) {
-            console.log({ res2: res });
             const tempTemp: LiveSwap[] = [];
             const waiting = tempSwaps.reduce((acc: LiveSwap[], swap) => {
                 if (swap.endingEpoch === null) {
@@ -159,14 +159,14 @@ const SwapList: FunctionComponent<Props> = () => {
         });
 
         return res;
-    }, [token, lastView__tokenId, chainId, provider, epoch]);
+    }, [token, tokenId, chainId, provider, epoch]);
 
-    return chainId && provider && epoch && token && blocknum && lastView__tokenId ? (
+    return chainId && provider && epoch && token && blocknum && tokenId ? (
         <StickyList
             data={listData}
             TitleRenderItem={SwapTitle}
             ChildRenderItem={React.memo(SwapItem)}
-            extraData={{ chainId, provider, token, epoch, tokenId: lastView__tokenId, blocknum }}
+            extraData={{ chainId, provider, token, epoch, tokenId, blocknum }}
             style={styles.stickyList}
             styleRight={styles.stickyListRight}
         />

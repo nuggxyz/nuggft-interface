@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
-import { parseEther, formatUnits } from 'ethers/lib/utils';
+import { parseEther, formatUnits } from '@ethersproject/units';
 
 export const toEth = (num: string): BigNumber => {
     return parseEther(num);

@@ -51,7 +51,7 @@ export default class TransactionState extends NLState<TransactionStateType> {
                 state.txn = '';
             },
             initiate: (_, __: PayloadAction<{ _pendingtx: unknown }>) => {
-                // eslint-disable-next-line no-unused-expressions
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                 __;
             },
 
@@ -66,7 +66,7 @@ export default class TransactionState extends NLState<TransactionStateType> {
                 }>,
             ) => {
                 state.toggleCompletedTxn = !state.toggleCompletedTxn;
-                // eslint-disable-next-line no-unused-expressions
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                 _;
             },
             reset: (state) => {
