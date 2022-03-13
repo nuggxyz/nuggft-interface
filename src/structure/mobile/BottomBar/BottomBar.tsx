@@ -36,21 +36,24 @@ const BottomBar: FunctionComponent<Props> = () => {
         0,
     );
 
-    const selectionIndicatorSpring: CSSPropertiesAnimated = useSpring({
-        from: {
-            opacity: 0,
-            position: 'absolute',
+    const [selectionIndicatorSpring] = useSpring(
+        {
+            from: {
+                opacity: 0,
+                position: 'absolute',
+            },
+            to: {
+                opacity: 1,
+                height: '45px',
+                background: Colors.nuggBlueTransparent,
+                width: INDEX[mobileView] === 0 ? '200px' : '45px',
+                borderRadius: Layout.borderRadius.large,
+                transform: `translate(${INDEX[mobileView] * ((width || 0) / 2 - 25)}px, 0px)`,
+            },
+            config: config.default,
         },
-        to: {
-            opacity: 1,
-            height: '45px',
-            background: Colors.nuggBlueTransparent,
-            width: INDEX[mobileView] === 0 ? '200px' : '45px',
-            borderRadius: Layout.borderRadius.large,
-            transform: `translate(${INDEX[mobileView] * ((width || 0) / 2 - 25)}px, 0px)`,
-        },
-        config: config.default,
-    });
+        [],
+    );
 
     return (
         <div style={styles.fixed}>
@@ -65,7 +68,7 @@ const BottomBar: FunctionComponent<Props> = () => {
                         alignItems: 'center',
                     }}
                 >
-                    <animated.div style={selectionIndicatorSpring} />
+                    <animated.div style={selectionIndicatorSpring as CSSPropertiesAnimated} />
                 </div>
                 <Button
                     onClick={() =>

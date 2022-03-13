@@ -21,21 +21,25 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
     const [openRef, openHover] = useOnHover(() => setOpen(true));
     const [closeRef, closeHover] = useOnHover(() => setOpen(openHover || closeHover));
 
-    const transition = useTransition(open, {
-        from: {
-            width: '50px',
-            height: '100px',
-            zIndex: 99,
-            pointerEvents: 'none',
-            position: 'relative',
-            top: 0,
-            opacity: 0,
-            y: -5,
+    const [transition] = useTransition(
+        open,
+        {
+            from: {
+                width: '50px',
+                height: '100px',
+                zIndex: 99,
+                pointerEvents: 'none',
+                position: 'relative',
+                top: 0,
+                opacity: 0,
+                y: -5,
+            },
+            enter: { opacity: 1, pointerEvents: 'auto', y: 0 },
+            leave: { opacity: 0, pointerEvents: 'none', y: -5 },
+            config: config.stiff,
         },
-        enter: { opacity: 1, pointerEvents: 'auto', y: 0 },
-        leave: { opacity: 0, pointerEvents: 'none', y: -5 },
-        config: config.stiff,
-    });
+        [],
+    );
 
     return (
         <div style={containerStyle} ref={openRef}>
@@ -43,9 +47,9 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
                 {button}
             </div>
             {transition(
-                (animatedStyle: CSSPropertiesAnimated, _open) =>
+                (animatedStyle, _open) =>
                     _open && (
-                        <animated.div style={animatedStyle}>
+                        <animated.div style={animatedStyle as CSSPropertiesAnimated}>
                             <div
                                 ref={closeRef}
                                 style={{

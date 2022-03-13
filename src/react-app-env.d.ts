@@ -8,8 +8,6 @@ declare namespace React {
     type UnsafeDependencyList = any[];
 }
 
-declare type CSSPropertiesAnimated = import('@react-spring/web').PickAnimated<CSSProperties>;
-
 declare module '@metamask/jazzicon' {
     export default function (diameter: number, seed: number): HTMLElement;
 }
@@ -139,3 +137,8 @@ type BigNumberish = import('ethers').BigNumberish;
 type TransactionResponse = import('@ethersproject/providers').TransactionResponse;
 
 type TransactionReceipt = import('@ethersproject/providers').TransactionReceipt;
+
+declare type CSSPropertiesAnimated =
+    import('@react-spring/web/dist/declarations/src/index').AnimatedProps<
+        import('react').CSSProperties
+    >;
