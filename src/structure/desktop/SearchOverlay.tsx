@@ -6,6 +6,7 @@ import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import AppState from '@src/state/app';
 import client from '@src/client';
+import useFirefoxBlur from '@src/hooks/useFirefoxBlur';
 
 import styles from './SearchOverlay.styles';
 
@@ -24,9 +25,11 @@ const SearchOverlay: FunctionComponent<Props> = () => {
         zIndex: 997,
         ...styles.container,
     });
-    console.log({ isViewOpen });
+
+    const modalStyle = useFirefoxBlur(['modal']);
+
     return (
-        <animated.div style={{ ...styles.container, ...style }} onClick={onClick}>
+        <animated.div style={{ ...styles.container, ...style, ...modalStyle }} onClick={onClick}>
             <div
                 style={{
                     ...styles.nuggDexContainer,

@@ -5,7 +5,6 @@ import { CornerRightDown, CornerRightUp, Search, X } from 'react-feather';
 import useDebounce from '@src/hooks/useDebounce';
 import usePrevious from '@src/hooks/usePrevious';
 import Colors from '@src/lib/colors';
-import AppState from '@src/state/app';
 import NuggDexState from '@src/state/nuggdex';
 import Button from '@src/components/general/Buttons/Button/Button';
 import TextInput from '@src/components/general/TextInputs/TextInput/TextInput';
@@ -17,7 +16,6 @@ type Props = Record<string, never>;
 
 const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const viewing = NuggDexState.select.viewing();
-    const view = AppState.select.view();
 
     const isViewOpen = client.live.isViewOpen();
     const filters = NuggDexState.select.searchFilters();
@@ -38,7 +36,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
         } else {
             setSearchValue('');
         }
-    }, [debouncedValue, view, isViewOpen]);
+    }, [debouncedValue, isViewOpen]);
 
     useEffect(() => {
         if (filters && filters.sort) {
