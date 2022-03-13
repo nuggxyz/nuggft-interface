@@ -122,29 +122,31 @@ export const useLiveItem = (tokenId: string | undefined) => {
                                     isTryout: y && y.endingEpoch === null,
                                 };
                             }),
-                            activeSwap: {
-                                count: 1,
-                                type: 'item',
-                                id: x.data.item.activeSwap?.id,
-                                epoch: {
-                                    id: +x.data.item.activeSwap?.epoch?.id,
-                                    startblock: +x.data.item.activeSwap?.epoch?.startblock,
-                                    endblock: +x.data.item.activeSwap?.epoch?.endblock,
-                                    status: x.data.item.activeSwap?.epoch?.status,
-                                },
-                                eth: new EthInt(x.data.item.activeSwap?.eth),
-                                leader: x.data.item.activeSwap?.leader?.id,
+                            activeSwap: x.data.item.activeSwap
+                                ? {
+                                      count: 1,
+                                      type: 'item',
+                                      id: x.data.item.activeSwap.id,
+                                      epoch: {
+                                          id: +x.data.item.activeSwap.epoch?.id,
+                                          startblock: +x.data.item.activeSwap.epoch?.startblock,
+                                          endblock: +x.data.item.activeSwap.epoch?.endblock,
+                                          status: x.data.item.activeSwap.epoch?.status,
+                                      },
+                                      eth: new EthInt(x.data.item.activeSwap.eth),
+                                      leader: x.data.item.activeSwap.leader?.id,
 
-                                owner: x.data.item.activeSwap?.owner?.id,
+                                      owner: x.data.item.activeSwap.owner?.id,
 
-                                endingEpoch:
-                                    x.data.item.activeSwap && x.data.item.activeSwap.endingEpoch
-                                        ? +x.data.item.activeSwap.endingEpoch
-                                        : null,
-                                num: +x.data.item.activeSwap?.num,
-                                isTryout: false,
-                            },
-                            // svg: x.data.item.dotnuggRawCache as any,
+                                      endingEpoch:
+                                          x.data.item.activeSwap &&
+                                          x.data.item.activeSwap.endingEpoch
+                                              ? +x.data.item.activeSwap.endingEpoch
+                                              : null,
+                                      num: +x.data.item.activeSwap.num,
+                                      isTryout: false,
+                                  }
+                                : undefined,
                         });
                     }
                 });

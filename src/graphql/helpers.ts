@@ -153,7 +153,7 @@ export const useFasterQuery = <T, R>(
         [src],
     );
 
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         const sub = fasterQuery<T, R>(query, variables, formatter).subscribe(cb, () => null);
 
         return () => {
@@ -180,7 +180,7 @@ export const useFastQuery = <T, R>(
         [src],
     );
 
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         const sub = fastQuery<T, R>(query, variables, formatter).subscribe(cb, () => null);
 
         return () => {

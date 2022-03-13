@@ -18,10 +18,10 @@ import state from '@src/state';
 import { TokenId } from '@src/client/router';
 import WalletState from '@src/state/wallet';
 import client from '@src/client';
-import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
 import Colors from '@src/lib/colors';
 import { MyNuggsData } from '@src/client/core';
 import List from '@src/components/general/List/List';
+import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
 
 import styles from './OfferModal.styles';
 
@@ -61,14 +61,16 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
         if (epoch__id) {
             const prevBidder = myNuggs.find((nugg) =>
                 nugg.unclaimedOffers.find(
-                    (offer) => (offer.endingEpoch ?? 0) <= epoch__id && offer.itemId === tokenId,
+                    (offer) =>
+                        (offer.endingEpoch ?? 0) <= epoch__id &&
+                        offer.itemId === extractItemId(stableId),
                 ),
             );
             if (prevBidder) {
                 setSelectedNugg(prevBidder);
             }
         }
-    }, [myNuggs, epoch__id, tokenId]);
+    }, [myNuggs, epoch__id, stableId]);
 
     const activeItem = stableId && client.live.activeNuggItem(stableId);
 
@@ -153,7 +155,6 @@ const OfferModal: FunctionComponent<Props> = ({ tokenId }) => {
             )}
             <div style={styles.inputContainer}>
                 <CurrencyInput
-                    // warning={swapError && 'Invalid input'}
                     shouldFocus
                     style={styles.input}
                     styleHeading={styles.heading}
