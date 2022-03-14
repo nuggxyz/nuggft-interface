@@ -63,10 +63,10 @@ const MintModal: FunctionComponent<Props> = () => {
                 if (count <= constants.PRE_MINT_ENDING_EPOCH) {
                     return String(count);
                 }
-                return undefined;
+                return null;
             });
         }
-        return undefined;
+        return null;
     }, [chainId]);
 
     useEffect(() => {
@@ -83,7 +83,7 @@ const MintModal: FunctionComponent<Props> = () => {
         if (chainId && provider) {
             return new NuggftV1Helper(chainId, provider).contract.msp();
         }
-        return undefined;
+        return null;
     }, [chainId, provider]);
 
     useEffect(() => {
