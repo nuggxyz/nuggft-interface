@@ -10,7 +10,6 @@ interface AppStateType {
     view: AppStateViews;
     mobileView: AppStateMobileViews;
     walletVisible: boolean;
-    walletManagerVisable: boolean;
 }
 
 interface AppStateToast {

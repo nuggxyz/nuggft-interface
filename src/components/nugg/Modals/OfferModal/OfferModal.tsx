@@ -19,15 +19,14 @@ import { NuggId, TokenId } from '@src/client/router';
 import WalletState from '@src/state/wallet';
 import client from '@src/client';
 import Colors from '@src/lib/colors';
-import List from '@src/components/general/List/List';
-import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
+import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import { LiveToken } from '@src/client/hooks/useLiveToken';
 import { TryoutData } from '@src/client/hooks/useLiveItem';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 
 import styles from './OfferModal.styles';
 
-const MyNuggRenderItem: FC<InfiniteListRenderItemProps<NuggId, undefined, NuggId>> = ({
+const MyNuggRenderItem: FC<ListRenderItemProps<NuggId, undefined, NuggId>> = ({
     item: tokenId,
     selected,
     action,
@@ -48,12 +47,12 @@ const MyNuggRenderItem: FC<InfiniteListRenderItemProps<NuggId, undefined, NuggId
                     disableOnClick
                 />
             }
-            onClick={() => action(tokenId)}
+            onClick={() => action && action(tokenId)}
         />
     );
 };
 
-const SellingNuggRenderItem: FC<InfiniteListRenderItemProps<TryoutData, undefined, TryoutData>> = ({
+const SellingNuggRenderItem: FC<ListRenderItemProps<TryoutData, undefined, TryoutData>> = ({
     item: tryoutData,
     selected,
     action,
@@ -76,7 +75,7 @@ const SellingNuggRenderItem: FC<InfiniteListRenderItemProps<TryoutData, undefine
                     <CurrencyText value={tryoutData.eth.decimal.toNumber()} />
                 </div>
             }
-            onClick={() => action(tryoutData)}
+            onClick={() => action && action(tryoutData)}
         />
     );
 };
@@ -224,7 +223,7 @@ const OfferModal = ({ tokenId }: Props) => {
                         color: 'white',
                     }}
                     extraData={undefined}
-                    RenderItem={React.memo(MyNuggRenderItem)}
+                    RenderItem={MyNuggRenderItem}
                     horizontal
                     action={setSelectedNugg}
                     selected={selectedNuggForItem}

@@ -3,7 +3,6 @@ import { BigNumber } from 'ethers';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
-import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import { fromEth } from '@src/lib/conversion';
 import AppState from '@src/state/app';
 import WalletState from '@src/state/wallet';
@@ -26,15 +25,15 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
     const address = web3.hook.usePriorityAccount();
     const { targetId, type } = AppState.select.modalData();
 
-    const [stableType, setType] = useState(type);
-    const [stableId, setId] = useState(targetId);
+    const [stableType, setType] = useState('');
+    const [stableId, setId] = useState('');
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
     useEffect(() => {
-        if (!isUndefinedOrNullOrStringEmpty(type)) {
+        if (type) {
             setType(type);
         }
-        if (!isUndefinedOrNullOrStringEmpty(targetId)) {
+        if (targetId) {
             setId(targetId);
         }
     }, [type, targetId]);
@@ -59,12 +58,7 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
         return new Promise((resolve) => resolve([]));
     }, [address, stableId, stableType, chainId, provider]);
 
-    return stableId &&
-        amountFromChain &&
-        amountFromChain.length > 0 &&
-        chainId &&
-        provider &&
-        address ? (
+    return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>{`${
                 stableType === 'PayoffLoan' ? 'Payoff' : 'Extend'
@@ -74,7 +68,6 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
             </AnimatedCard>
             <div style={styles.inputContainer}>
                 <CurrencyInput
-                    // warning={swapError && 'Invalid input'}
                     shouldFocus
                     style={styles.input}
                     styleHeading={styles.heading}
@@ -87,6 +80,8 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
                     rightToggles={[
                         <Button
                             onClick={() =>
+                                amountFromChain &&
+                                amountFromChain.length > 0 &&
                                 setAmount(
                                     `${fromEth(
                                         amountFromChain[0]
@@ -118,16 +113,9 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
             >
                 {userBalance ? (
                     <Text type="text" size="small" textStyle={styles.text} weight="bolder">
-                        You currently have {userBalance.num} ETH
+                        You currently have {userBalance.num.toString()} ETH
                     </Text>
                 ) : null}
-                {/* <Text textStyle={styles.text}>
-                        {`${
-                            stableType === 'PayOffLoan'
-                                ? 'Payoff amount'
-                                : 'Extension amount'
-                        } is ${amount} ETH`}
-                    </Text> */}
             </div>
             <div style={styles.subContainer}>
                 <FeedbackButton
@@ -135,7 +123,11 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
                     buttonStyle={styles.button}
                     label={`${stableType === 'PayoffLoan' ? 'Payoff' : 'Extend'}`}
                     onClick={() =>
-                        stableType === 'PayoffLoan'
+                        stableId &&
+                        chainId &&
+                        provider &&
+                        address &&
+                        (stableType === 'PayoffLoan'
                             ? WalletState.dispatch.payOffLoan({
                                   tokenId: stableId,
                                   amount,
@@ -149,12 +141,12 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
                                   chainId,
                                   provider,
                                   address,
-                              })
+                              }))
                     }
                 />
             </div>
         </div>
-    ) : null;
+    );
 };
 
 export default LoanInputModal;

@@ -1,13 +1,15 @@
 import React from 'react';
+import { IoOpenOutline, IoPowerOutline } from 'react-icons/io5';
 
 import Jazzicon from '@src/components/nugg/Jazzicon';
 import Text from '@src/components/general/Texts/Text/Text';
 import AppState from '@src/state/app';
-import Colors from '@src/lib/colors';
-import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
 import web3 from '@src/web3';
-import state from '@src/state';
 import NLStaticImage from '@src/components/general/NLStaticImage';
+import Flyout from '@src/components/general/Flyout/Flyout';
+import Button from '@src/components/general/Buttons/Button/Button';
+import lib from '@src/lib';
+import globalStyles from '@src/lib/globalStyles';
 
 import styles from './AccountViewer.styles';
 
@@ -22,62 +24,61 @@ const AccountViewer = () => {
     const connector = web3.hook.usePriorityConnector();
 
     return ens && address && chainId && peer ? (
-        <div style={styles.textContainer}>
-            <div
-                style={{
-                    marginRight: screenType === 'phone' ? '0rem' : '.5rem',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                }}
-            >
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'start',
-                        justifyContent: 'flex-end',
-                    }}
-                >
-                    <InteractiveText
-                        color={Colors.nuggBlueText}
-                        action={() => {
-                            if (chainId === 1) {
-                                void connector.deactivate();
-                            } else {
-                                state.app.dispatch.toggleWalletManager();
-                            }
-                        }}
-                        size={screenType === 'phone' ? 'small' : 'medium'}
-                        type="text"
-                        hideBorder={screenType === 'phone'}
-                        textStyle={{
-                            ...styles.button,
-                            textAlign: 'right',
-                            ...(screenType === 'phone'
-                                ? {
-                                      color: Colors.nuggRedText,
-                                      marginRight: '.4rem',
-                                  }
-                                : { color: Colors.nuggBlueText }),
+        <Flyout
+            style={styles.flyout}
+            button={
+                <div style={styles.textContainer}>
+                    <div
+                        style={{
+                            marginRight: screenType === 'phone' ? '0rem' : '.5rem',
+                            ...styles.header,
                         }}
                     >
-                        {ens.toLowerCase()}
-                    </InteractiveText>
-
-                    <NLStaticImage
-                        image={`${peer.peer}_icon_small`}
-                        style={{ marginLeft: '10px' }}
-                    />
-                    {screenType === 'phone' && <Jazzicon address={address} size={15} />}
+                        <div style={globalStyles.centeredSpaceBetween}>
+                            <Text type="text" size="medium" textStyle={styles.text}>
+                                {ens.toLowerCase()}
+                            </Text>
+                            <NLStaticImage image={`${peer.peer}_icon_small`} />
+                            {screenType === 'phone' && <Jazzicon address={address} size={15} />}
+                        </div>
+                        <Text size="smaller" type="code" textStyle={styles.balance}>
+                            ( {web3.config.CHAIN_INFO[chainId].label} )
+                            {balance ? balance.decimal.toNumber() : 0} ETH
+                        </Text>
+                    </div>
+                    {screenType !== 'phone' && <Jazzicon address={address} size={35} />}
                 </div>
-                <Text size="smaller" type="code" textStyle={styles.button}>
-                    ( {web3.config.CHAIN_INFO[chainId].label} )
-                    {balance ? balance.decimal.toNumber() : 0} ETH
-                </Text>
-            </div>
-            {screenType !== 'phone' && <Jazzicon address={address} size={35} />}
-        </div>
+            }
+        >
+            <>
+                <Button
+                    label="Open"
+                    type="text"
+                    buttonStyle={styles.flyoutButton}
+                    leftIcon={
+                        <IoOpenOutline
+                            color={lib.colors.nuggBlueText}
+                            size={25}
+                            style={{ marginRight: '.75rem' }}
+                        />
+                    }
+                    onClick={() => web3.config.gotoEtherscan(chainId, 'address', address)}
+                />
+                <Button
+                    type="text"
+                    label="Disconnect"
+                    buttonStyle={styles.flyoutButton}
+                    leftIcon={
+                        <IoPowerOutline
+                            color={lib.colors.nuggBlueText}
+                            size={25}
+                            style={{ marginRight: '.75rem' }}
+                        />
+                    }
+                    onClick={() => connector.deactivate()}
+                />
+            </>
+        </Flyout>
     ) : null;
 };
 

@@ -79,9 +79,14 @@ export default {
         myUnclaimedItemOffers: () => core.store((state) => state.myUnclaimedItemOffers),
         myUnclaimedOffers: () =>
             core.store((state) =>
-                [...state.myUnclaimedItemOffers, ...state.myUnclaimedNuggOffers].sort((a, b) =>
-                    a.endingEpoch ?? (b.endingEpoch ?? 0) > 0 ? -1 : 1,
-                ),
+                [...state.myUnclaimedItemOffers, ...state.myUnclaimedNuggOffers]
+                    .filter(
+                        (x) =>
+                            x.endingEpoch !== null &&
+                            state.epoch?.id &&
+                            x.endingEpoch < state.epoch?.id,
+                    )
+                    .sort((a, b) => ((a.endingEpoch ?? 0) > (b.endingEpoch ?? 0) ? -1 : 1)),
             ),
     },
     hook: {

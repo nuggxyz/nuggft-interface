@@ -9,6 +9,7 @@ type Props = {
     button: JSX.Element;
     style?: AnimatedProps<any>;
     containerStyle?: CSSProperties;
+    float?: 'left' | 'right';
 };
 
 const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
@@ -16,8 +17,9 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
     button,
     children,
     containerStyle,
+    float = 'right',
 }) => {
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(true);
     const [openRef, openHover] = useOnHover(() => setOpen(true));
     const [closeRef, closeHover] = useOnHover(() => setOpen(openHover || closeHover));
 
@@ -26,14 +28,15 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
             width: '50px',
             height: '100px',
             zIndex: 99,
-            pointerEvents: 'none',
-            position: 'absolute',
+            pointerEvents: 'none' as const,
+            position: 'absolute' as const,
             top: 0,
+            [float]: 0,
             opacity: 0,
             y: -5,
         },
-        enter: { opacity: 1, pointerEvents: 'auto', y: 0 },
-        leave: { opacity: 0, pointerEvents: 'none', y: -5 },
+        enter: { opacity: 1, pointerEvents: 'auto' as const, y: 0 },
+        leave: { opacity: 0, pointerEvents: 'none' as const, y: -5 },
         config: config.stiff,
     });
 
@@ -43,8 +46,8 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
                 {button}
             </div>
             {transition(
-                (animatedStyle: AnimatedProps<any>, _open) =>
-                    _open && (
+                (animatedStyle, isOpen) =>
+                    isOpen && (
                         <animated.div style={animatedStyle}>
                             <div
                                 ref={closeRef}

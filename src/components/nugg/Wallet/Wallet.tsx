@@ -1,57 +1,45 @@
 import React, { FunctionComponent, useMemo } from 'react';
-
 import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
 import state from '@src/state';
 import web3 from '@src/web3';
-
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
-import ConnectWalletTab from './tabs/ConnectWalletTab';
-import LoansTab from './tabs/LoansTab/LoansTab';
-import MintTab from './tabs/MintTab/MintTab';
+import ConnectTab from './tabs/ConnectTab/ConnectTab';
+import LoanTab from './tabs/LoanTab/LoanTab';
+import HomeTab from './tabs/HomeTab/HomeTab';
 import styles from './Wallet.styles';
-import ManageWalletTab from './tabs/ManageWalletTab';
 
 type Props = Record<string, never>;
 
 const Wallet: FunctionComponent<Props> = () => {
     const screenType = state.app.select.screenType();
     const account = web3.hook.usePriorityAccount();
-    const manager = state.app.select.walletManagerVisable();
 
     const happytabs: HappyTabberItem[] = useMemo(
-        () =>
-            manager
+        () => [
+            ...(account
                 ? [
                       {
                           label: 'Home',
-                          comp: React.memo(ManageWalletTab),
+                          comp: React.memo(HomeTab),
+                      },
+                      {
+                          label: 'Claims',
+                          comp: React.memo(ClaimTab),
+                      },
+
+                      {
+                          label: 'Loans',
+                          comp: React.memo(LoanTab),
                       },
                   ]
                 : [
-                      ...(account
-                          ? [
-                                {
-                                    label: 'Home',
-                                    comp: React.memo(MintTab),
-                                },
-                                {
-                                    label: 'Claims',
-                                    comp: ClaimTab,
-                                },
-
-                                {
-                                    label: 'Loans',
-                                    comp: LoansTab,
-                                },
-                            ]
-                          : [
-                                {
-                                    label: 'Home',
-                                    comp: React.memo(ConnectWalletTab),
-                                },
-                            ]),
-                  ],
-        [account, manager],
+                      {
+                          label: 'Home',
+                          comp: React.memo(ConnectTab),
+                      },
+                  ]),
+        ],
+        [account],
     );
 
     return (

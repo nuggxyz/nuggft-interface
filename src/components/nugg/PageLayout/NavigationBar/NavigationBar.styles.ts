@@ -41,7 +41,7 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         width: '50%',
         alignItems: 'center',
-        pointerEvents: 'none',
+        // pointerEvents: 'none',
     },
 });
 
