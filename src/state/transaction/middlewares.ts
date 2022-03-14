@@ -1,6 +1,7 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 
 import client from '@src/client';
+import emitter from '@src/emitter';
 import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
@@ -34,6 +35,10 @@ export const pending: NL.Redux.Middleware<
                     TransactionState.dispatch.finalizeTransaction({
                         hash: x.transactionHash,
                         successful: x.status === 1,
+                    });
+                    emitter.emit({
+                        type: emitter.events.TransactionComplete,
+                        txhash: x.transactionHash,
                     });
                 });
             }

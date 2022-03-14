@@ -9,6 +9,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import { parseTokenId } from '@src/lib';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import state from '@src/state';
+import emitter from '@src/emitter';
 
 import styles from './ClaimTab.styles';
 
@@ -22,6 +23,13 @@ const ClaimRenderItem: FunctionComponent<
                 : `From epoch ${item.endingEpoch !== null ? item.endingEpoch : ''}`,
         [item],
     );
+
+    emitter.hook.useOn({
+        type: emitter.events.OfferModalOpened,
+        callback: React.useCallback((arg) => {
+            console.log({ arg });
+        }, []),
+    });
 
     return (
         <div key={index} style={styles.renderItemContainer}>
