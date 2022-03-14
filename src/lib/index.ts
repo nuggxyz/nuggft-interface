@@ -28,25 +28,25 @@ type AllTypes<T> =
     | undefined
     | BigNumber;
 
-export const isNotAPainNotInTheAss = (arg: unknown): arg is boolean => {
-    if (
-        isUndefinedOrNullOrNotBigNumber(
-            isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(
-                isUndefinedOrNullOrStringEmpty(
-                    isUndefinedOrNullOrObjectEmpty(
-                        isUndefinedOrNullOrNotObject(
-                            isUndefinedOrNullOrArrayEmpty(
-                                isUndefinedOrNullOrNotArray(isUndefinedOrNull(isUndefined(arg))),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        )
-    )
-        return false;
-    return !!arg;
-};
+// export const isNotAPainNotInTheAss = (arg: unknown): arg is boolean => {
+//     if (
+//         isUndefinedOrNullOrNotBigNumber(
+//             isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(
+//                 isUndefinedOrNullOrStringEmpty(
+//                     isUndefinedOrNullOrObjectEmpty(
+//                         isUndefinedOrNullOrNotObject(
+//                             isUndefinedOrNullOrArrayEmpty(
+//                                 isUndefinedOrNullOrNotArray(isUndefinedOrNull(isUndefined(arg))),
+//                             ),
+//                         ),
+//                     ),
+//                 ),
+//             ),
+//         )
+//     )
+//         return false;
+//     return !!arg;
+// };
 
 export const isUndefined = <T>(value: T | undefined | unknown): value is undefined => {
     return typeof value === 'undefined';
