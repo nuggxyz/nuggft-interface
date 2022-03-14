@@ -44,7 +44,8 @@ type ModalNames =
     | 'LoanInputModal'
     | 'LoanOrBurnModal'
     | 'OfferModal'
-    | 'QrCodeModal';
+    | 'QrCodeModal'
+    | 'MintModal';
 
 type ModalTypes =
     | 'SellNugg'
@@ -64,7 +65,7 @@ type ModalsData = {
     data?: unknown;
 };
 
-type Modals = SellModal | OfferModal | LoanInputModal | LoanOrBurnModal | QrCodeModal;
+type Modals = SellModal | OfferModal | LoanInputModal | LoanOrBurnModal | QrCodeModal | MintModal;
 
 type SellModal = {
     name: 'SellNuggOrItemModal';
@@ -101,6 +102,11 @@ type LoanInputModal = {
 type QrCodeModal = {
     name: 'QrCodeModal';
     modalData: Omit<ModalsData, 'type' | 'targetId'>;
+};
+
+type MintModal = {
+    name: 'MintModal';
+    modalData?: ModalsData;
 };
 
 type Error = 'ERROR';

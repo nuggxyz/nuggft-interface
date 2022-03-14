@@ -3,12 +3,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import UAParser from 'ua-parser-js';
 
-import {
-    isUndefinedOrNullOrObjectEmpty,
-    smartInsertIndex,
-    smartRemove,
-    smartReplace,
-} from '@src/lib';
+import { smartInsertIndex, smartRemove, smartReplace } from '@src/lib';
 import { NLState } from '@src/state/NLState';
 
 import hooks from './hooks';
@@ -103,9 +98,7 @@ class AppState extends NLState<AppStateType> {
             },
             setModalOpen: (state, action: PayloadAction<Modals>) => {
                 state.modalIsOpen = action.payload.name;
-                state.modalData = !isUndefinedOrNullOrObjectEmpty(action.payload.modalData)
-                    ? action.payload.modalData
-                    : {};
+                state.modalData = action.payload.modalData ? action.payload.modalData : {};
             },
             setModalClosed: (state) => {
                 state.modalIsOpen = undefined;

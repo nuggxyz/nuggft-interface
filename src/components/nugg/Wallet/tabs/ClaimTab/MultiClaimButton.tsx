@@ -7,7 +7,7 @@ import state from '@src/state';
 
 import styles from './ClaimTab.styles';
 
-type Props = Record<string, unknown>;
+type Props = Record<string, never>;
 
 const MultiClaimButton: FunctionComponent<Props> = () => {
     const sender = web3.hook.usePriorityAccount();
