@@ -1,7 +1,9 @@
 import React, { FunctionComponent, useMemo } from 'react';
+
 import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
 import state from '@src/state';
 import web3 from '@src/web3';
+
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectTab from './tabs/ConnectTab/ConnectTab';
 import LoanTab from './tabs/LoanTab/LoanTab';

@@ -351,9 +351,38 @@ export const createApolloClient = (chainId: Chain) => {
     return ok;
 };
 
-export const ENS_REGISTRAR_ADDRESSES: NL.Web3.AddressMap = {
+export const ENS_REGISTRAR_ADDRESSES = {
     [Chain.MAINNET]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
     [Chain.ROPSTEN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
     [Chain.GOERLI]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
     [Chain.RINKEBY]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
 };
+
+// interface WalletInfo {
+//     name: string;
+//     label: string;
+//     description: string;
+//     href: string | null;
+//     color: string;
+//     primary?: true;
+//     mobile?: true;
+//     mobileOnly?: true;
+//     peerName?: string;
+//     peerurl?: string;
+// }
+
+interface L1ChainInfo {
+    readonly blockWaitMsBeforeWarning?: number;
+    readonly docs: string;
+    readonly explorer: string;
+    readonly infoLink: string;
+    readonly label: string;
+    readonly logoUrl?: string;
+    readonly rpcUrls?: string[];
+    readonly nativeCurrency: {
+        name: string; // 'Goerli ETH',
+        symbol: string; // 'gorETH',
+        decimals: number; // 18,
+    };
+    readonly name: string;
+}
