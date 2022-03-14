@@ -14,7 +14,7 @@ import { EthInt } from '@src/classes/Fraction';
 import emitter from '@src/emitter';
 import { NuggId } from '@src/client/router';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import lib, { isNotAPainNotInTheAss } from '@src/lib';
+import lib from '@src/lib';
 
 import styles from './MintModal.styles';
 
@@ -70,13 +70,7 @@ const MintModal: FunctionComponent<Props> = () => {
     }, [chainId]);
 
     useEffect(() => {
-        if (
-            isNotAPainNotInTheAss(newNugg) &&
-            isNotAPainNotInTheAss(chainId) &&
-            isNotAPainNotInTheAss(provider) &&
-            isNotAPainNotInTheAss(latestNugg) &&
-            newNugg === latestNugg
-        )
+        if (newNugg && chainId && provider && latestNugg && newNugg === latestNugg)
             void (async () =>
                 setNewNuggUri(
                     (await new NuggftV1Helper(chainId, provider).contract.imageURI(newNugg)) as
@@ -86,14 +80,14 @@ const MintModal: FunctionComponent<Props> = () => {
     }, [newNugg, chainId, provider, latestNugg]);
 
     const nuggPrice = useAsyncState(() => {
-        if (isNotAPainNotInTheAss(chainId) && isNotAPainNotInTheAss(provider)) {
+        if (chainId && provider) {
             return new NuggftV1Helper(chainId, provider).contract.msp();
         }
         return undefined;
     }, [chainId, provider]);
 
     useEffect(() => {
-        if (isNotAPainNotInTheAss(nuggPrice) && isNotAPainNotInTheAss(latestNugg)) {
+        if (nuggPrice && latestNugg) {
             setLoading(false);
         }
     }, [nuggPrice, latestNugg]);
@@ -119,16 +113,16 @@ const MintModal: FunctionComponent<Props> = () => {
                 )}
             </div>
             <FeedbackButton
-                disabled={!isNotAPainNotInTheAss(latestNugg)}
+                disabled={!latestNugg}
                 feedbackText="Check Wallet..."
                 buttonStyle={styles.button}
                 label="Mint this Nugg"
                 onClick={() =>
-                    isNotAPainNotInTheAss(address) &&
-                    isNotAPainNotInTheAss(provider) &&
-                    isNotAPainNotInTheAss(chainId) &&
-                    isNotAPainNotInTheAss(nuggPrice) &&
-                    isNotAPainNotInTheAss(latestNugg) &&
+                    address &&
+                    provider &&
+                    chainId &&
+                    nuggPrice &&
+                    latestNugg &&
                     state.wallet.dispatch.mintNugg({
                         chainId,
                         provider,
