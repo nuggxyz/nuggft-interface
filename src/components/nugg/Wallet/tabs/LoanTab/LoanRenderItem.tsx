@@ -35,7 +35,7 @@ const LoanRenderItem: FunctionComponent<
                         ...styles.renderItemButton,
                         marginBottom: '.3rem',
                     }}
-                    label={`Extend`}
+                    label="Extend"
                     onClick={() =>
                         state.app.dispatch.setModalOpen({
                             name: 'LoanInputModal',
@@ -51,7 +51,7 @@ const LoanRenderItem: FunctionComponent<
                     type="text"
                     size="small"
                     buttonStyle={styles.renderItemButton}
-                    label={`Pay off`}
+                    label="Pay off"
                     onClick={() =>
                         state.app.dispatch.setModalOpen({
                             name: 'LoanInputModal',
@@ -64,9 +64,7 @@ const LoanRenderItem: FunctionComponent<
                 />
             </div>
         </div>
-    ) : (
-        <></>
-    );
+    ) : null;
 };
 
 export default LoanRenderItem;

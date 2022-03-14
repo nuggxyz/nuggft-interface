@@ -30,8 +30,12 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
     useEffect(() => {
-        type && setType(type);
-        targetId && setId(targetId);
+        if (type) {
+            setType(type);
+        }
+        if (targetId) {
+            setId(targetId);
+        }
     }, [type, targetId]);
 
     const userBalance = web3.hook.usePriorityBalance(provider);

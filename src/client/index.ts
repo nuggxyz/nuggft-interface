@@ -86,7 +86,7 @@ export default {
                             state.epoch?.id &&
                             x.endingEpoch < state.epoch?.id,
                     )
-                    .sort((a, b) => (a.endingEpoch ?? 0 > (b.endingEpoch ?? 0) ? -1 : 1)),
+                    .sort((a, b) => ((a.endingEpoch ?? 0) > (b.endingEpoch ?? 0) ? -1 : 1)),
             ),
     },
     hook: {

@@ -12,6 +12,7 @@ import globalStyles from '@src/lib/globalStyles';
 import MintNuggButton from './MintNuggButton';
 import MyNuggRenderItem from './MyNuggRenderItem';
 import styles from './HomeTab.styles';
+
 type Props = Record<string, never>;
 
 const HomeTab: FunctionComponent<Props> = () => {

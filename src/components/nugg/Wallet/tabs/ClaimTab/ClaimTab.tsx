@@ -31,9 +31,7 @@ const ClaimTab: FunctionComponent<Props> = () => {
                 listEmptyText="No Nuggs or ETH to claim..."
             />
         </div>
-    ) : (
-        <></>
-    );
+    ) : null;
 };
 
 export default React.memo(ClaimTab);

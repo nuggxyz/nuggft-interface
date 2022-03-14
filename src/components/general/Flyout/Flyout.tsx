@@ -28,15 +28,15 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
             width: '50px',
             height: '100px',
             zIndex: 99,
-            pointerEvents: 'none',
-            position: 'absolute',
+            pointerEvents: 'none' as const,
+            position: 'absolute' as const,
             top: 0,
             [float]: 0,
             opacity: 0,
             y: -5,
         },
-        enter: { opacity: 1, pointerEvents: 'auto', y: 0 },
-        leave: { opacity: 0, pointerEvents: 'none', y: -5 },
+        enter: { opacity: 1, pointerEvents: 'auto' as const, y: 0 },
+        leave: { opacity: 0, pointerEvents: 'none' as const, y: -5 },
         config: config.stiff,
     });
 
@@ -46,12 +46,9 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
                 {button}
             </div>
             {transition(
-                (animatedStyle, open) =>
-                    open && (
-                        <animated.div
-                            //@ts-ignore
-                            style={{ ...animatedStyle }}
-                        >
+                (animatedStyle, isOpen) =>
+                    isOpen && (
+                        <animated.div style={animatedStyle}>
                             <div
                                 ref={closeRef}
                                 style={{

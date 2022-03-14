@@ -17,13 +17,13 @@ const MultiClaimButton: FunctionComponent<Props> = () => {
     const unclaimedOffers = client.live.myUnclaimedOffers();
 
     const { tokenIds, addresses } = useMemo(() => {
-        const addresses: string[] = [],
-            tokenIds: string[] = [];
+        const _addresses: string[] = [];
+        const _tokenIds: string[] = [];
         unclaimedOffers.forEach((x) => {
-            tokenIds.push(x.claimParams.tokenId);
-            addresses.push(x.claimParams.address);
+            _tokenIds.push(x.claimParams.tokenId);
+            _addresses.push(x.claimParams.address);
         });
-        return { tokenIds, addresses };
+        return { tokenIds: _tokenIds, addresses: _addresses };
     }, [unclaimedOffers]);
 
     return unclaimedOffers?.length > 0 ? (
@@ -32,18 +32,18 @@ const MultiClaimButton: FunctionComponent<Props> = () => {
             buttonStyle={styles.multiClaimButton}
             textStyle={styles.multiClaimButtonText}
             label="Claim all"
-            onClick={() => {
+            onClick={() =>
                 sender &&
-                    chainId &&
-                    provider &&
-                    state.wallet.dispatch.multiClaim({
-                        addresses,
-                        sender,
-                        chainId,
-                        provider,
-                        tokenIds,
-                    });
-            }}
+                chainId &&
+                provider &&
+                state.wallet.dispatch.multiClaim({
+                    addresses,
+                    sender,
+                    chainId,
+                    provider,
+                    tokenIds,
+                })
+            }
         />
     ) : null;
 };

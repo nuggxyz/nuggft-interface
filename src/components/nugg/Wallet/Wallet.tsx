@@ -1,14 +1,13 @@
 import React, { FunctionComponent, useMemo } from 'react';
-
 import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
 import state from '@src/state';
 import web3 from '@src/web3';
-
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectTab from './tabs/ConnectTab/ConnectTab';
 import LoanTab from './tabs/LoanTab/LoanTab';
 import HomeTab from './tabs/HomeTab/HomeTab';
 import styles from './Wallet.styles';
+
 type Props = Record<string, never>;
 
 const Wallet: FunctionComponent<Props> = () => {
@@ -21,22 +20,22 @@ const Wallet: FunctionComponent<Props> = () => {
                 ? [
                       {
                           label: 'Home',
-                          comp: () => <HomeTab />,
+                          comp: React.memo(HomeTab),
                       },
                       {
                           label: 'Claims',
-                          comp: () => <ClaimTab />,
+                          comp: React.memo(ClaimTab),
                       },
 
                       {
                           label: 'Loans',
-                          comp: () => <LoanTab />,
+                          comp: React.memo(LoanTab),
                       },
                   ]
                 : [
                       {
                           label: 'Home',
-                          comp: () => <ConnectTab />,
+                          comp: React.memo(ConnectTab),
                       },
                   ]),
         ],

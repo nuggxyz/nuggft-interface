@@ -50,7 +50,7 @@ const ClaimRenderItem: FunctionComponent<
                 type="text"
                 size="small"
                 buttonStyle={styles.renderItemButton}
-                label={`Claim`}
+                label="Claim"
                 onClick={() => {
                     state.wallet.dispatch.claim({
                         ...item.claimParams,
