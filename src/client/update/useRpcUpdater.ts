@@ -99,6 +99,10 @@ export default () => {
                                 activeSwap: false,
                                 unclaimedOffers: [],
                             });
+                            emitter.emit({
+                                type: emitter.events.Transfer,
+                                tokenId: event.args._tokenId.toString(),
+                            });
                         }
 
                         break;

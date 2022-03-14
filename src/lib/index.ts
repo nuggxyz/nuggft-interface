@@ -52,6 +52,9 @@ export const isUndefined = <T>(value: T | undefined | unknown): value is undefin
     return typeof value === 'undefined';
 };
 
+export const isNull = <T>(value: T | undefined | unknown): value is null => {
+    return value === null;
+};
 export const isUndefinedOrNull = <T>(value: T | Undesireable): value is null | undefined => {
     return isUndefined(value) || value === null;
 };

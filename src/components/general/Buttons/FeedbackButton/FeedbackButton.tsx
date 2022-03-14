@@ -25,6 +25,7 @@ const FeedbackButton: FunctionComponent<Props> = ({
         if (clicked) {
             const id = setTimeout(() => {
                 setFeedback(overrideFeedback ? label : 'Retry?');
+                setClicked(false);
             }, timeout);
             return () => {
                 clearTimeout(id);

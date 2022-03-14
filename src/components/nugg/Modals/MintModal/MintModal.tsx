@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import { Promise } from 'bluebird';
 
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import { executeQuery3 } from '@src/graphql/helpers';
@@ -14,7 +15,14 @@ import { EthInt } from '@src/classes/Fraction';
 import emitter from '@src/emitter';
 import { NuggId } from '@src/client/router';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import lib from '@src/lib';
+import lib, {
+    isNull,
+    isUndefined,
+    isUndefinedOrNull,
+    isUndefinedOrNullOrStringEmpty,
+    range,
+} from '@src/lib';
+import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 
 import styles from './MintModal.styles';
 
@@ -24,20 +32,19 @@ const MintModal: FunctionComponent<Props> = () => {
     const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
-    const [loading, setLoading] = useState(true);
+    const [myNuggTransfer, setMyNuggTransfer] = useState<string>();
+    const [loading, setLoading] = useState(false);
 
     const [newNugg, setNewNugg] = useState<NuggId>();
     const [newNuggUri, setNewNuggUri] = useState<Base64EncodedSvg>();
 
-    emitter.hook.useOnce({
-        type: emitter.events.Mint,
-        callback: (arg) => {
-            setNewNugg(arg.tokenId);
-        },
-    });
-
-    const latestNugg = useAsyncState(() => {
-        if (chainId) {
+    const nextNugg = useAsyncState(() => {
+        if (chainId && provider) {
+            if (newNugg && nextNugg === newNugg) {
+                return new Promise<string>((resolve) => {
+                    resolve(String(Number(newNugg) + 1));
+                });
+            }
             return executeQuery3<{ nuggs: { idnum: string }[] }>(
                 gql`
             {
@@ -55,10 +62,19 @@ const MintModal: FunctionComponent<Props> = () => {
             }
         `,
                 {},
-            ).then(({ nuggs }) => {
+            ).then(async ({ nuggs }) => {
                 let count = constants.PRE_MINT_STARTING_EPOCH + 1;
                 if (nuggs) {
-                    count = Number(nuggs[0].idnum) + 1;
+                    const vals = await Promise.map(
+                        range(Number(nuggs[0].idnum) + 1, Number(nuggs[0].idnum) + 11),
+                        async (id) => {
+                            return (
+                                await new NuggftV1Helper(chainId, provider).contract.agency(id)
+                            ).toString();
+                        },
+                    );
+
+                    count = Number(nuggs[0].idnum) + 1 + vals.indexOf('0');
                 }
                 if (count <= constants.PRE_MINT_ENDING_EPOCH) {
                     return String(count);
@@ -66,71 +82,143 @@ const MintModal: FunctionComponent<Props> = () => {
                 return null;
             });
         }
-        return null;
-    }, [chainId]);
-
-    useEffect(() => {
-        if (newNugg && chainId && provider && latestNugg && newNugg === latestNugg)
-            void (async () =>
-                setNewNuggUri(
-                    (await new NuggftV1Helper(chainId, provider).contract.imageURI(newNugg)) as
-                        | Base64EncodedSvg
-                        | undefined,
-                ))();
-    }, [newNugg, chainId, provider, latestNugg]);
+        return undefined;
+    }, [chainId, newNugg, provider]);
 
     const nuggPrice = useAsyncState(() => {
         if (chainId && provider) {
             return new NuggftV1Helper(chainId, provider).contract.msp();
         }
-        return null;
-    }, [chainId, provider]);
+        return undefined;
+    }, [chainId, provider, newNugg]);
+
+    emitter.hook.useOn({
+        type: emitter.events.Mint,
+        callback: (arg) => {
+            setNewNugg(arg.tokenId);
+        },
+    });
+
+    emitter.hook.useOnce({
+        type: emitter.events.Transfer,
+        callback: (arg) => {
+            setMyNuggTransfer(arg.tokenId);
+        },
+    });
+
+    emitter.hook.useOnce({
+        type: emitter.events.TransactionInitiated,
+        callback: () => {
+            setLoading(true);
+        },
+    });
 
     useEffect(() => {
-        if (nuggPrice && latestNugg) {
-            setLoading(false);
-        }
-    }, [nuggPrice, latestNugg]);
+        if (
+            newNugg &&
+            chainId &&
+            provider &&
+            nextNugg &&
+            newNugg === nextNugg &&
+            newNugg === myNuggTransfer
+        )
+            void (async () => {
+                setNewNuggUri(
+                    (await new NuggftV1Helper(chainId, provider).contract.imageURI(newNugg)) as
+                        | Base64EncodedSvg
+                        | undefined,
+                );
+                setLoading(false);
+            })();
+    }, [newNugg, chainId, provider, nextNugg, myNuggTransfer]);
 
+    const headerText = useMemo(() => {
+        if (isNull(nextNugg)) {
+            return 'No more nuggs';
+        }
+        if (loading) {
+            return 'Deep-frying your nugg...';
+        }
+        if (
+            !isUndefinedOrNullOrStringEmpty(newNuggUri) &&
+            !isUndefinedOrNullOrStringEmpty(nextNugg)
+        ) {
+            return `Nugg ${nextNugg}`;
+        }
+        return 'Mint yourself a nugg';
+    }, [nextNugg, loading, newNuggUri]);
+
+    const bodyText = useMemo(() => {
+        if (isNull(nextNugg)) {
+            return 'There are no more nuggs to mint. If you want a nugg, you must offer on a sale.';
+        }
+        if (isUndefined(nextNugg) || isUndefinedOrNull(nuggPrice)) {
+            return '';
+        }
+        if (loading) {
+            return 'Please wait while your nugg is being created';
+        }
+        if (!isUndefinedOrNullOrStringEmpty(newNuggUri)) {
+            return `You are now the proud owner Nugg ${nextNugg}!`;
+        }
+        return `You can be the proud owner of Nugg ${nextNugg} for ${new EthInt(nuggPrice).decimal
+            .toNumber()
+            .toPrecision(5)} ETH`;
+    }, [nextNugg, loading, nuggPrice, newNuggUri]);
+
+    const buttonText = useMemo(() => {
+        if (isNull(nextNugg) || !isUndefinedOrNullOrStringEmpty(newNuggUri)) {
+            return 'Close';
+        }
+        if (loading) {
+            return 'Deep-frying...';
+        }
+        return 'Mint this Nugg';
+    }, [nextNugg, newNuggUri, loading]);
     return (
         <div style={styles.container}>
-            {newNugg && newNuggUri && (
-                <TokenViewer tokenId={newNugg} showcase svgNotFromGraph={newNuggUri} />
-            )}
+            <Text textStyle={styles.text} type="title">
+                {headerText}
+            </Text>
+            <AnimatedCard>
+                <TokenViewer
+                    tokenId={newNugg || ''}
+                    showcase
+                    disableOnClick={!newNuggUri}
+                    showPending={!newNuggUri}
+                    svgNotFromGraph={newNuggUri}
+                />
+            </AnimatedCard>
+
             <div style={styles.top}>
-                {!loading ? (
-                    <Text textStyle={styles.text}>
-                        {latestNugg && nuggPrice
-                            ? `You can be the proud owner of Nugg ${latestNugg} for ${new EthInt(
-                                  nuggPrice,
-                              ).decimal
-                                  .toNumber()
-                                  .toPrecision(5)} ETH`
-                            : 'No more nuggs :('}
-                    </Text>
-                ) : (
-                    <Loader color={lib.colors.white} />
-                )}
+                <Text textStyle={styles.text} type="text">
+                    {bodyText}
+                </Text>
+                {loading ? (
+                    <Loader color={lib.colors.white} style={{ marginLeft: '.5rem' }} />
+                ) : null}
             </div>
             <FeedbackButton
-                disabled={!latestNugg}
+                disabled={!nextNugg}
                 feedbackText="Check Wallet..."
                 buttonStyle={styles.button}
-                label="Mint this Nugg"
-                onClick={() =>
-                    address &&
-                    provider &&
-                    chainId &&
-                    nuggPrice &&
-                    latestNugg &&
-                    state.wallet.dispatch.mintNugg({
-                        chainId,
-                        provider,
-                        address,
-                        nuggPrice,
-                        latestNugg,
-                    })
-                }
+                label={buttonText}
+                overrideFeedback
+                onClick={() => {
+                    if (isUndefined(newNuggUri)) {
+                        if (address && provider && chainId && nuggPrice && nextNugg) {
+                            state.wallet.dispatch.mintNugg({
+                                chainId,
+                                provider,
+                                address,
+                                nuggPrice,
+                                nextNugg,
+                            });
+                        }
+                    } else {
+                        state.app.dispatch.setModalClosed();
+                    }
+                }}
             />
         </div>
     );

@@ -11,8 +11,13 @@ type BuildCallback<T extends { type: any; callback: any }> = Pick<T, 'type' | 'c
 
 /*  INTERFACES: add new ones here  */
 
-interface EmitTransactionComplemted extends EmitEventBase {
+interface EmitTransactionCompleted extends EmitEventBase {
     type: EmitEventNames.TransactionComplete;
+    txhash: string;
+}
+
+interface EmitTransactionInitiated extends EmitEventBase {
+    type: EmitEventNames.TransactionInitiated;
     txhash: string;
 }
 
@@ -26,20 +31,31 @@ interface EmitMint extends EmitEventBase {
     tokenId: NuggId;
 }
 
+interface EmitTransfer extends EmitEventBase {
+    type: EmitEventNames.Transfer;
+    tokenId: NuggId;
+}
+
 /*  EXPORTS: must be manually updated  */
 
 export enum EmitEventNames {
     TransactionComplete = 'local.TransactionComplete',
+    TransactionInitiated = 'local.TransactionInitiated',
     OfferModalOpened = 'local.OfferModalOpened',
     Mint = 'local.rpc.event.Mint',
+    Transfer = 'local.rpc.event.Transfer',
 }
 
 export type EmitEventsListPayload =
-    | BuildPayload<EmitTransactionComplemted>
+    | BuildPayload<EmitTransactionCompleted>
+    | BuildPayload<EmitTransactionInitiated>
     | BuildPayload<EmitMint>
-    | BuildPayload<EmitModalOpen>;
+    | BuildPayload<EmitModalOpen>
+    | BuildPayload<EmitTransfer>;
 
 export type EmitEventsListCallback =
-    | BuildCallback<EmitTransactionComplemted>
+    | BuildCallback<EmitTransactionCompleted>
+    | BuildCallback<EmitTransactionInitiated>
     | BuildCallback<EmitMint>
-    | BuildCallback<EmitModalOpen>;
+    | BuildCallback<EmitModalOpen>
+    | BuildCallback<EmitTransfer>;

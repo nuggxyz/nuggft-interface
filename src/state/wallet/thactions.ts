@@ -15,6 +15,7 @@ import AppState from '@src/state/app';
 import { toEth } from '@src/lib/conversion';
 import { Chain } from '@src/web3/core/interfaces';
 import { NuggId } from '@src/client/router';
+import emitter from '@src/emitter';
 
 const placeOffer = createAsyncThunk<
     TxThunkSuccess<WalletSuccess>,
@@ -253,18 +254,20 @@ const mintNugg = createAsyncThunk<
         chainId: Chain;
         provider: Web3Provider;
         address: string;
-        latestNugg: NuggId;
+        nextNugg: NuggId;
         nuggPrice: BigNumber;
     },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: WalletError }
->(`wallet/mintNugg`, async ({ chainId, provider, address, nuggPrice, latestNugg }, thunkAPI) => {
+>(`wallet/mintNugg`, async ({ chainId, provider, address, nuggPrice, nextNugg }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(address))
-            .mint(latestNugg, {
+            .mint(nextNugg, {
                 value: nuggPrice,
             });
+
+        emitter.emit({ type: emitter.events.TransactionInitiated, txhash: _pendingtx.hash });
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,

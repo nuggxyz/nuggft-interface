@@ -52,7 +52,7 @@ const AccountViewer = () => {
         >
             <>
                 <Button
-                    label="Open"
+                    label="Explore"
                     type="text"
                     buttonStyle={styles.flyoutButton}
                     leftIcon={
