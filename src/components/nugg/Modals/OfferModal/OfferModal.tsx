@@ -282,7 +282,7 @@ const OfferModal = ({ tokenId }: Props) => {
                             textStyle={{ marginLeft: '.5rem' }}
                             weight="bolder"
                         >
-                            {userBalance.decimal.toNumber()} ETH
+                            {userBalance.decimal.toNumber().toPrecision(5)} ETH
                         </Text>
                     </Text>
                 )}

@@ -3,20 +3,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { Web3Provider } from '@ethersproject/providers';
 import { BigNumber, BigNumberish } from 'ethers';
-import { gql } from '@apollo/client/core';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import {
     extractItemId,
-    isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrNotObject,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
-import constants from '@src/lib/constants';
 import AppState from '@src/state/app';
 import { toEth } from '@src/lib/conversion';
-import { executeQuery } from '@src/graphql/helpers';
 import { Chain } from '@src/web3/core/interfaces';
 
 const placeOffer = createAsyncThunk<
@@ -252,57 +248,30 @@ const multiClaim = createAsyncThunk<
 
 const mintNugg = createAsyncThunk<
     TxThunkSuccess<WalletSuccess>,
-    { chainId: Chain; provider: Web3Provider; address: string },
+    {
+        chainId: Chain;
+        provider: Web3Provider;
+        address: string;
+        latestNugg: number;
+        nuggPrice: BigNumber;
+    },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: WalletError }
->(`wallet/mintNugg`, async ({ chainId, provider, address }, thunkAPI) => {
+>(`wallet/mintNugg`, async ({ chainId, provider, address, nuggPrice, latestNugg }, thunkAPI) => {
     try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const latestNugg = await executeQuery(
+        const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
+            .connect(provider.getSigner(address))
+            .mint(latestNugg, {
+                value: nuggPrice,
+            });
+        return {
+            success: 'SUCCESS',
+            _pendingtx: _pendingtx.hash,
             chainId,
-            gql`
-            {
-                nuggs(
-                    where: {
-                        idnum_gt: ${constants.PRE_MINT_STARTING_EPOCH}
-                        idnum_lt: ${constants.PRE_MINT_ENDING_EPOCH}
-                    }
-                    first: 1
-                    orderDirection: desc
-                    orderBy: idnum
-                ) {
-                    idnum
-                }
-            }
-        `,
-            'nuggs',
-        );
-
-        const nuggPrice = await new NuggftV1Helper(chainId, provider).contract.msp();
-
-        if (
-            isUndefinedOrNullOrArrayEmpty(latestNugg) ||
-            (!isUndefinedOrNullOrArrayEmpty(latestNugg) &&
-                !isUndefinedOrNullOrStringEmpty(latestNugg[0].idnum) &&
-                +latestNugg[0].idnum + 1 < constants.PRE_MINT_ENDING_EPOCH)
-        ) {
-            const nuggToMint = isUndefinedOrNullOrArrayEmpty(latestNugg)
-                ? constants.PRE_MINT_STARTING_EPOCH + 1
-                : +latestNugg[0].idnum + 1;
-            const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
-                .connect(provider.getSigner(address))
-                // .connect(Web3State.getSignerOrProvider())
-                .mint(nuggToMint, {
-                    value: nuggPrice,
-                });
-            return {
-                success: 'SUCCESS',
-                _pendingtx: _pendingtx.hash,
-                chainId,
-            };
-        }
-        return thunkAPI.rejectWithValue('NO_NUGGS_TO_MINT');
+            callbackFn: () => {
+                AppState.dispatch.setModalClosed();
+            },
+        };
     } catch (err: any) {
         console.log({ err: err as string });
         if (

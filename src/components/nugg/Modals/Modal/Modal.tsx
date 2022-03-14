@@ -25,6 +25,7 @@ import { TokenId } from '@src/client/router';
 import SellNuggOrItemModal from '@src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal';
 
 import styles from './Modal.styles';
+import MintModal from '@src/components/nugg/Modals/MintModal/MintModal';
 
 type Props = Record<string, never>;
 
@@ -107,6 +108,7 @@ const Modal: FunctionComponent<Props> = () => {
                     {currentModal === 'LoanOrBurnModal' ? <LoanOrBurnModal /> : null}
                     {currentModal === 'LoanInputModal' ? <LoanInputModal /> : null}
                     {currentModal === 'QrCodeModal' ? <QrCodeModal /> : null}
+                    {currentModal === 'MintModal' ? <MintModal /> : null}
                     {currentModal === 'SellNuggOrItemModal' ? (
                         <SellNuggOrItemModal
                             tokenId={(stableData.data as { tokenId: TokenId })?.tokenId}

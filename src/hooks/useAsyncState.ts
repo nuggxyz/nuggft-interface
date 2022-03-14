@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-const useAsyncState = <T>(query: () => Promise<T>, deps: React.DependencyList) => {
-    const [result, setResult] = useState<T>();
+const useAsyncState = <T>(
+    query: () => Promise<T> | undefined | null,
+    deps: React.DependencyList,
+) => {
+    const [result, setResult] = useState<T | null | undefined>();
 
     useEffect(() => {
         try {

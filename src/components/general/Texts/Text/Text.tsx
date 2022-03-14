@@ -19,6 +19,7 @@ const Text: FunctionComponent<TextProps> = ({
     textStyle,
 }) => {
     const style = {
+        userSelect: 'none' as const,
         ...styles[type],
         ...styles[weight],
         ...styles[size],

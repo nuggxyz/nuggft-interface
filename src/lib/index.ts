@@ -14,50 +14,88 @@ import parse from './parse';
 // 6287103
 // VERIFICATION
 
-export const isUndefined = (value: unknown) => {
+type Undesireable = null | undefined | unknown;
+
+type AllTypes<T> =
+    | boolean
+    | number
+    | string
+    | []
+    | T[]
+    | { [_: string]: object }
+    | Record<string, never>
+    | null
+    | undefined
+    | BigNumber;
+
+export const isUndefined = <T>(value: T | undefined | unknown): value is undefined => {
     return typeof value === 'undefined';
 };
 
-export const isUndefinedOrNull = (value: unknown) => {
+export const isUndefinedOrNull = <T>(value: T | Undesireable): value is null | undefined => {
     return isUndefined(value) || value === null;
 };
-export const isUndefinedOrNullOrNotArray = (value: unknown) => {
+export const isUndefinedOrNullOrNotArray = <T>(
+    value: T[] | Undesireable,
+): value is null | undefined => {
     return isUndefinedOrNull(value) || !Array.isArray(value);
 };
-export const isUndefinedOrNullOrArrayEmpty = (value: unknown) => {
+export const isUndefinedOrNullOrArrayEmpty = <T>(
+    value: T[] | Undesireable,
+): value is null | undefined | [] => {
     return isUndefinedOrNullOrNotArray(value) || (Array.isArray(value) && value.length === 0);
 };
-export const isUndefinedOrNullOrNotObject = (value: unknown) => {
+export const isUndefinedOrNullOrNotObject = <T extends Record<string, object>>(
+    value: T | Undesireable,
+): value is null | undefined => {
     return isUndefinedOrNull(value) || typeof value !== 'object';
 };
-export const isUndefinedOrNullOrObjectEmpty = (value: unknown) => {
+export const isUndefinedOrNullOrObjectEmpty = <T extends Record<string, object>>(
+    value: T | Undesireable,
+): value is null | undefined | Record<keyof T, never> => {
     return isUndefinedOrNullOrNotObject(value) || Object.getOwnPropertyNames(value).length === 0;
 };
-export const isUndefinedOrNullOrNotString = (value: unknown) => {
+export const isUndefinedOrNullOrNotString = <T>(
+    value: T | Undesireable,
+): value is Exclude<AllTypes<T>, string> => {
     return isUndefinedOrNull(value) || typeof value !== 'string';
 };
-export const isUndefinedOrNullOrStringEmpty = (value: unknown) => {
+export const isUndefinedOrNullOrStringEmpty = <T>(
+    value: T | Undesireable,
+): value is null | undefined | '' => {
     return isUndefinedOrNullOrNotString(value) || value === '';
 };
-export const isUndefinedOrNullOrStringEmptyOrZeroOrStringZero = (value: unknown) => {
+export const isUndefinedOrNullOrStringEmptyOrZeroOrStringZero = <T>(
+    value: T | Undesireable,
+): value is null | undefined | '0' | 0 => {
     return isUndefinedOrNullOrNotString(value) || value === '' || value === 0 || value === '0';
 };
-export const isUndefinedOrNullOrNotBoolean = (value: unknown) => {
+export const isUndefinedOrNullOrNotBoolean = <T>(
+    value: T | Undesireable,
+): value is Exclude<AllTypes<T>, boolean> => {
     return isUndefinedOrNull(value) || typeof value !== 'boolean';
 };
-export const isUndefinedOrNullOrBooleanFalse = (value: unknown) => {
+export const isUndefinedOrNullOrBooleanFalse = <T>(
+    value: T | Undesireable,
+): value is null | undefined | false => {
     return isUndefinedOrNullOrNotBoolean(value) || value === false;
 };
 export const isUndefinedOrNullOrNotFunction = (value: unknown) => {
     return isUndefinedOrNull(value) || typeof value !== 'function';
 };
-export const isUndefinedOrNullOrNotNumber = (value: unknown) => {
+export const isUndefinedOrNullOrNotNumber = <T>(
+    value: T | Undesireable,
+): value is Exclude<AllTypes<T>, number> => {
     return isUndefinedOrNull(value) || typeof value !== 'number' || Number.isNaN(value);
 };
-export const isUndefinedOrNullOrNumberZero = (value: unknown) => {
+export const isUndefinedOrNullOrNumberZero = <T>(
+    value: T | Undesireable,
+): value is undefined | null | 0 => {
     return isUndefinedOrNullOrNotNumber(value) || value === 0;
 };
-export const isUndefinedOrNullOrNotBigNumber = (value: unknown) => {
+export const isUndefinedOrNullOrNotBigNumber = <T>(
+    value: T | Undesireable,
+): value is Exclude<AllTypes<T>, BigNumber> => {
     return (
         isUndefinedOrNullOrObjectEmpty(value) ||
         isUndefinedOrNullOrBooleanFalse(BigNumber.isBigNumber(value))

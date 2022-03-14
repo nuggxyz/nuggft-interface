@@ -19,7 +19,7 @@ export interface InfiniteListRenderItemProps<T, B, A> {
     item: T;
     extraData: B;
     action: (arg: A) => void;
-    onScrollEnd?: (arg: any) => void;
+    onScrollEnd?: ({ addToList }: { addToList: boolean }) => void;
     index: number;
     rootRef?: unknown;
     selected?: boolean;
@@ -32,7 +32,7 @@ interface Props<T, B, A> {
     loading?: boolean;
     extraData: B;
     action: (arg: A) => void;
-    onScrollEnd?: (arg: any) => void;
+    onScrollEnd?: ({ addToList }: { addToList: boolean }) => void;
     label?: string;
     border?: boolean;
     horizontal?: boolean;
@@ -166,7 +166,7 @@ const InfiniteList = <T, B, A>({
                 prevEnd !== endIndex &&
                 !loading
             ) {
-                void onScrollEnd({});
+                void onScrollEnd({ addToList: true });
             }
         }
     }, [scrollTop, items, innerHeight, onScrollEnd, prevEnd, endIndex, loading, itemHeight]);
