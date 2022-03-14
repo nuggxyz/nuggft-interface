@@ -16,7 +16,7 @@ type Props = {
     showLabel?: boolean;
     labelColor?: string;
     textProps?: Omit<TextProps, 'children'>;
-    // data?: Base64EncodedSvg;
+    svgNotFromGraph?: Base64EncodedSvg;
     showcase?: boolean;
     labelLong?: boolean;
     disableOnClick?: boolean;
@@ -29,7 +29,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     showLabel,
     labelColor,
     textProps,
-    // data,
+    svgNotFromGraph,
     showcase = false,
     labelLong = false,
     disableOnClick = false,
@@ -41,9 +41,11 @@ const TokenViewer: FunctionComponent<Props> = ({
         return { width: window.innerWidth };
     }, []);
 
-    const src = checkForUpdates
-        ? client.hook.useDotnugg(tokenId)
-        : client.hook.useDotnuggCacheOnly(tokenId);
+    const src =
+        svgNotFromGraph ||
+        (checkForUpdates
+            ? client.hook.useDotnugg(tokenId)
+            : client.hook.useDotnuggCacheOnly(tokenId));
 
     const [hoverRef, isHovering] = useOnHover();
 

@@ -24,6 +24,7 @@ const DangerouslySetNugg = ({
                     ? { strokeWidth: size === 'showcase' ? 1.07 : 1.5 }
                     : {}),
             }}
+            // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: bug.toString('utf8') }}
         />
     );

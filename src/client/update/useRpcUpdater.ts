@@ -10,6 +10,9 @@ import { InterfacedEvent } from '@src/interfaces/events';
 import lib from '@src/lib';
 
 // eslint-disable-next-line import/no-cycle
+import emitter from '@src/emitter';
+
+// eslint-disable-next-line import/no-cycle
 import client from '..';
 
 export default () => {
@@ -40,6 +43,7 @@ export default () => {
                     case 'Offer':
                     case 'OfferMint':
                     case 'OfferItem':
+                    case 'Mint':
                     case 'Stake': {
                         client.actions.updateProtocol({
                             stake: EthInt.fromNuggftV1Stake(
@@ -52,6 +56,13 @@ export default () => {
 
                 // eslint-disable-next-line default-case
                 switch (event.name) {
+                    case 'Mint': {
+                        emitter.emit({
+                            type: emitter.events.Mint,
+                            tokenId: event.args.tokenId.toString(),
+                        });
+                        break;
+                    }
                     case 'Offer':
                     case 'OfferMint': {
                         const agency = BigNumber.from(event.args.agency);

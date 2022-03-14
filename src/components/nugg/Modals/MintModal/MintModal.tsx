@@ -1,3 +1,6 @@
+import gql from 'graphql-tag';
+import React, { FunctionComponent, useEffect, useState } from 'react';
+
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import { executeQuery3 } from '@src/graphql/helpers';
 import useAsyncState from '@src/hooks/useAsyncState';
@@ -5,20 +8,15 @@ import Text from '@src/components/general/Texts/Text/Text';
 import constants from '@src/lib/constants';
 import state from '@src/state';
 import web3 from '@src/web3';
-import gql from 'graphql-tag';
-import React, { FunctionComponent, useEffect, useState } from 'react';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
-import lib, {
-    isUndefined,
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrNotBigNumber,
-    isUndefinedOrNullOrNotNumber,
-    isUndefinedOrNullOrObjectEmpty,
-    isUndefinedOrNullOrStringEmpty,
-} from '@src/lib';
-import styles from './MintModal.styles';
 import Loader from '@src/components/general/Loader/Loader';
 import { EthInt } from '@src/classes/Fraction';
+import emitter from '@src/emitter';
+import { NuggId } from '@src/client/router';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import lib, { isNotAPainNotInTheAss } from '@src/lib';
+
+import styles from './MintModal.styles';
 
 type Props = Record<string, unknown>;
 
@@ -28,9 +26,19 @@ const MintModal: FunctionComponent<Props> = () => {
     const chainId = web3.hook.usePriorityChainId();
     const [loading, setLoading] = useState(true);
 
+    const [newNugg, setNewNugg] = useState<NuggId>();
+    const [newNuggUri, setNewNuggUri] = useState<Base64EncodedSvg>();
+
+    emitter.hook.useOnce({
+        type: emitter.events.Mint,
+        callback: (arg) => {
+            setNewNugg(arg.tokenId);
+        },
+    });
+
     const latestNugg = useAsyncState(() => {
         if (chainId) {
-            return executeQuery3<{ nuggs: { idnum: number }[] }>(
+            return executeQuery3<{ nuggs: { idnum: string }[] }>(
                 gql`
             {
                 nuggs(
@@ -49,38 +57,56 @@ const MintModal: FunctionComponent<Props> = () => {
                 {},
             ).then(({ nuggs }) => {
                 let count = constants.PRE_MINT_STARTING_EPOCH + 1;
-                if (!isUndefinedOrNullOrArrayEmpty(nuggs)) {
-                    count = +nuggs[0].idnum + 1;
+                if (nuggs) {
+                    count = Number(nuggs[0].idnum) + 1;
                 }
                 if (count <= constants.PRE_MINT_ENDING_EPOCH) {
-                    return count;
+                    return String(count);
                 }
-                return null;
+                return undefined;
             });
         }
-        return null;
+        return undefined;
     }, [chainId]);
 
+    useEffect(() => {
+        if (
+            isNotAPainNotInTheAss(newNugg) &&
+            isNotAPainNotInTheAss(chainId) &&
+            isNotAPainNotInTheAss(provider) &&
+            isNotAPainNotInTheAss(latestNugg) &&
+            newNugg === latestNugg
+        )
+            void (async () =>
+                setNewNuggUri(
+                    (await new NuggftV1Helper(chainId, provider).contract.imageURI(newNugg)) as
+                        | Base64EncodedSvg
+                        | undefined,
+                ))();
+    }, [newNugg, chainId, provider, latestNugg]);
+
     const nuggPrice = useAsyncState(() => {
-        if (chainId && provider) {
+        if (isNotAPainNotInTheAss(chainId) && isNotAPainNotInTheAss(provider)) {
             return new NuggftV1Helper(chainId, provider).contract.msp();
         }
-        return null;
+        return undefined;
     }, [chainId, provider]);
 
     useEffect(() => {
-        if (!isUndefined(nuggPrice) && !isUndefined(latestNugg)) {
+        if (isNotAPainNotInTheAss(nuggPrice) && isNotAPainNotInTheAss(latestNugg)) {
             setLoading(false);
         }
     }, [nuggPrice, latestNugg]);
 
     return (
         <div style={styles.container}>
+            {newNugg && newNuggUri && (
+                <TokenViewer tokenId={newNugg} showcase svgNotFromGraph={newNuggUri} />
+            )}
             <div style={styles.top}>
                 {!loading ? (
                     <Text textStyle={styles.text}>
-                        {!isUndefinedOrNullOrNotNumber(latestNugg) &&
-                        !isUndefinedOrNullOrNotBigNumber(nuggPrice)
+                        {latestNugg && nuggPrice
                             ? `You can be the proud owner of Nugg ${latestNugg} for ${new EthInt(
                                   nuggPrice,
                               ).decimal
@@ -93,16 +119,16 @@ const MintModal: FunctionComponent<Props> = () => {
                 )}
             </div>
             <FeedbackButton
-                disabled={isUndefinedOrNullOrNotNumber(latestNugg)}
+                disabled={!isNotAPainNotInTheAss(latestNugg)}
                 feedbackText="Check Wallet..."
                 buttonStyle={styles.button}
                 label="Mint this Nugg"
                 onClick={() =>
-                    !isUndefinedOrNullOrStringEmpty(address) &&
-                    !isUndefinedOrNullOrObjectEmpty(provider) &&
-                    !isUndefinedOrNullOrNotNumber(chainId) &&
-                    !isUndefinedOrNullOrNotBigNumber(nuggPrice) &&
-                    !isUndefinedOrNullOrNotNumber(latestNugg) &&
+                    isNotAPainNotInTheAss(address) &&
+                    isNotAPainNotInTheAss(provider) &&
+                    isNotAPainNotInTheAss(chainId) &&
+                    isNotAPainNotInTheAss(nuggPrice) &&
+                    isNotAPainNotInTheAss(latestNugg) &&
                     state.wallet.dispatch.mintNugg({
                         chainId,
                         provider,
