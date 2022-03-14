@@ -55,7 +55,6 @@ class AppState extends NLState<AppStateType> {
             view: 'Swap',
             mobileView: 'Mint',
             walletVisible: false,
-            walletManagerVisable: false,
         });
 
         const parser = new UAParser(window.navigator.userAgent);
@@ -86,9 +85,6 @@ class AppState extends NLState<AppStateType> {
             addToastToList: (state, action: PayloadAction<AppStateToast>) => {
                 const temp = state.toasts;
                 state.toasts = smartInsertIndex(temp, action.payload);
-            },
-            toggleWalletManager: (state) => {
-                state.walletManagerVisable = !state.walletManagerVisable;
             },
             removeToastFromList: (
                 state,

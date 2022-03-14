@@ -157,7 +157,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                         {token.type === 'nugg' && token.owner === sender && (
                             <Flyout
                                 containerStyle={styles.flyout}
-                                style={{ right: '1.5rem', top: '2rem' }}
+                                style={{ right: '0rem', top: '2rem' }}
                                 button={
                                     <div style={styles.flyoutButton}>
                                         <IoEllipsisHorizontal color={Colors.white} />
