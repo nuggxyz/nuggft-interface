@@ -14,6 +14,7 @@ import {
 import AppState from '@src/state/app';
 import { toEth } from '@src/lib/conversion';
 import { Chain } from '@src/web3/core/interfaces';
+import { NuggId } from '@src/client/router';
 
 const placeOffer = createAsyncThunk<
     TxThunkSuccess<WalletSuccess>,
@@ -252,7 +253,7 @@ const mintNugg = createAsyncThunk<
         chainId: Chain;
         provider: Web3Provider;
         address: string;
-        latestNugg: number;
+        latestNugg: NuggId;
         nuggPrice: BigNumber;
     },
     // adding the root state type to this thaction causes a circular reference
@@ -268,9 +269,9 @@ const mintNugg = createAsyncThunk<
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: () => {
-                AppState.dispatch.setModalClosed();
-            },
+            // callbackFn: () => {
+            //     AppState.dispatch.setModalClosed();
+            // },
         };
     } catch (err: any) {
         console.log({ err: err as string });

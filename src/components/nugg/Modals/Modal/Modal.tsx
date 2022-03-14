@@ -23,9 +23,9 @@ import LoanInputModal from '@src/components/nugg/Modals/LoanInputModal/LoanInput
 import QrCodeModal from '@src/components/nugg/Modals/QrCodeModal/QrCodeModal';
 import { TokenId } from '@src/client/router';
 import SellNuggOrItemModal from '@src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal';
+import MintModal from '@src/components/nugg/Modals/MintModal/MintModal';
 
 import styles from './Modal.styles';
-import MintModal from '@src/components/nugg/Modals/MintModal/MintModal';
 
 type Props = Record<string, never>;
 
