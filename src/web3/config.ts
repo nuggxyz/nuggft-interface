@@ -5,9 +5,9 @@ import {
     WebSocketProvider,
 } from '@ethersproject/providers';
 import { ethers } from 'ethers';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloClient } from '@apollo/client';
 
-import { buildApolloSplitLink } from '@src/graphql/client';
+import { buildApolloSplitLink, buildCache } from '@src/graphql/client';
 
 import { Connector } from './core/types';
 import {
@@ -345,7 +345,7 @@ export const createApolloClient = (chainId: Chain) => {
     const ok = new ApolloClient<any>({
         link: buildApolloSplitLink(GRAPH_ENPOINTS[chainId], GRAPH_WSS_ENDPOINTS[chainId]),
         connectToDevTools: true,
-        cache: new InMemoryCache(),
+        cache: buildCache(),
     });
     window.__APOLLO_CLIENT__ = ok;
     return ok;

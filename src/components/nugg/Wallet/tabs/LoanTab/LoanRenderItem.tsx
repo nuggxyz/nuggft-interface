@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-import { LoanData } from '@src/client/core';
+import { LoanData } from '@src/client/interfaces';
 import { ListRenderItemProps } from '@src/components/general/List/List';
 import Button from '@src/components/general/Buttons/Button/Button';
 import state from '@src/state';

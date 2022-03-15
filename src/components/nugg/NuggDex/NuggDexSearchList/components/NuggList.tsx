@@ -19,6 +19,7 @@ import AppState from '@src/state/app';
 import usePrevious from '@src/hooks/usePrevious';
 import InfiniteList from '@src/components/general/List/InfiniteList';
 import client from '@src/client';
+import { ListData } from '@src/client/interfaces';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -26,7 +27,7 @@ import styles from './NuggDexComponents.styles';
 type Props = {
     type?: NuggDexSearchViews;
     style: CSSProperties | UseSpringProps;
-    values: NL.GraphQL.Fragments.Nugg.ListItem[];
+    values: ListData[];
     animationToggle?: boolean;
     onScrollEnd?: ({
         setLoading,
@@ -60,7 +61,7 @@ const NuggList: FunctionComponent<Props> = ({
         batch(() => {
             client.actions.routeTo(item?.id, true);
             // @ts-ignore
-            NuggDexState.dispatch.addToRecents({ ...item, eth: undefined });
+            // NuggDexState.dispatch.addToRecents({ ...item, eth: undefined });
         });
     }, []);
 

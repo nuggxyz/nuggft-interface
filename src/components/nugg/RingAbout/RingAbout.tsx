@@ -16,7 +16,7 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import { Route } from '@src/client/router';
 import TxViewer from '@src/components/general/Texts/TxViewer/TxViewer';
-import { OfferData } from '@src/client/core';
+import { OfferData } from '@src/client/interfaces';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
 import { Chain } from '@src/web3/core/interfaces';
 import { LiveItem } from '@src/client/hooks/useLiveItem';

@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { IoSearch } from 'react-icons/io5';
 
-import { MyNuggsData } from '@src/client/core';
+import { MyNuggsData } from '@src/client/interfaces';
 import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import globalStyles from '@src/lib/globalStyles';

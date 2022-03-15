@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 import { executeQuery } from '@src/graphql/helpers';
 import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import { Chain } from '@src/web3/core/interfaces';
+import { ListData } from '@src/client/interfaces';
 
 const query = (
     orderDirection: 'asc' | 'desc',
@@ -37,7 +38,7 @@ const allNuggsQuery = async (
             chainId,
             query(orderDirection, searchValue, first, skip),
             'nuggs',
-        )) as NL.GraphQL.Fragments.Nugg.ListItem[];
+        )) as ListData[];
         return !isUndefinedOrNullOrArrayEmpty(result) ? result : [];
     } catch (e: any) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument

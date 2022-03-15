@@ -9,6 +9,7 @@ import { useLiveItem } from './hooks/useLiveItem';
 import { useDotnugg, useDotnuggCacheOnly } from './hooks/useDotnugg';
 import router, { TokenId } from './router';
 import useLiveToken from './hooks/useLiveToken';
+import { ListData } from './interfaces';
 
 export default {
     ...core,
@@ -69,6 +70,13 @@ export default {
                     [id],
                 ),
             ),
+        myRecents: () =>
+            core.store((state) =>
+                Array.from(state.myRecents)
+                    .map((x) => JSON.parse(x) as ListData)
+                    .reverse(),
+            ),
+
         myNuggs: () => core.store((state) => state.myNuggs),
         myLoans: () =>
             core.store((state) =>
@@ -106,14 +114,6 @@ export default {
         epoch: () => core.store.getState().epoch,
         stake: () => core.store.getState().stake,
         route: () => core.store.getState().route,
-        require: {
-            apollo: () => {
-                return core.store.getState().apollo!;
-            },
-            infura: () => {
-                return core.store.getState().infura!;
-            },
-        },
     },
     router,
     updater,

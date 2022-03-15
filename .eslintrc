@@ -42,6 +42,7 @@
         "module-resolver"
     ],
     "rules": {
+        "import/newline-after-import": "warn",
         "no-void": ["error", { "allowAsStatement": true }],
         "no-bitwise": ["error", { "allow": ["&", "|", "<<", ">>"] }],
         "no-underscore-dangle": "off",

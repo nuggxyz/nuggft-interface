@@ -28,7 +28,7 @@ export const useDotnuggRpcBackup = (outer: UseDotnuggResponse, tokenId: TokenId)
                 setSrc(res);
 
                 void apollo.cache.writeQuery({
-                    broadcast: true,
+                    // broadcast: true,
                     query: gql`
                         query ROOT_QUERY($tokenId: ID!) {
                             nugg(id: $tokenId) {
@@ -38,7 +38,7 @@ export const useDotnuggRpcBackup = (outer: UseDotnuggResponse, tokenId: TokenId)
                         }
                     `,
                     variables: { tokenId },
-                    overwrite: true,
+                    // overwrite: true,
                     data: {
                         nugg: {
                             __typename: 'Nugg',
@@ -106,34 +106,3 @@ export const useDotnuggCacheOnly = (tokenId: string) => {
     const fallback = useDotnuggRpcBackup(main, tokenId);
     return main || fallback;
 };
-
-// export const useDotnuggCacheOnlySubscribe = (tokenId: string) => {
-//     const main = useSlowQuery<
-//         {
-//             [key in 'nugg' | 'item']?: { dotnuggRawCache: Base64EncodedSvg };
-//         },
-//         Base64EncodedSvg
-//     >(
-//         gql`
-//             subscription OptimizedDotNugg($tokenId: ID!) {
-//                 ${tokenId?.startsWith('item-') ? 'item' : 'nugg'}(id: $tokenId) {
-//                     dotnuggRawCache
-//                 }
-//             }
-//         `,
-//         {
-//             tokenId: tokenId?.replace('item-', ''),
-//         },
-//         (x) => {
-//             console.log({ KFJDHDFKJHDKJSH: x });
-
-//             if (x.data && x.data.nugg !== undefined) return x.data.nugg.dotnuggRawCache;
-//             if (x.data && x.data.item !== undefined) return x.data.item.dotnuggRawCache;
-//             throw new Error('useDotnugg | no value returned');
-//         },
-//     );
-
-//     const fallback = useDotnuggRpcBackup(main, tokenId);
-
-//     return main || fallback;
-// };

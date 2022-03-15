@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
-import { DefaultExtraData, UnclaimedOffer } from '@src/client/core';
+import { DefaultExtraData, UnclaimedOffer } from '@src/client/interfaces';
 import { ListRenderItemProps } from '@src/components/general/List/List';
 import globalStyles from '@src/lib/globalStyles';
 import TokenViewer from '@src/components/nugg/TokenViewer';

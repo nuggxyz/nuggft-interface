@@ -9,19 +9,3 @@ const emitter = {
 };
 
 export default emitter;
-
-// emitter.hook.useOn({
-//     type: emitter.events.OfferModalOpened,
-//     callback: useCallback((args) => {
-//         args.onModalOpen();
-//     }, []),
-// });
-
-// useEffect(() => {
-//     emitter.emit({
-//         type: emitter.events.OfferModalOpened,
-//         onModalOpen: () => {
-//             console.log('hi boo');
-//         },
-//     });
-// }, []);
