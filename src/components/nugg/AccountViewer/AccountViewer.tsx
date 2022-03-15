@@ -42,8 +42,8 @@ const AccountViewer = () => {
                             {screenType === 'phone' && <Jazzicon address={address} size={15} />}
                         </div>
                         <Text size="smaller" type="code" textStyle={styles.balance}>
-                            ( {web3.config.CHAIN_INFO[chainId].label} )
-                            {balance ? balance.decimal.toNumber() : 0} ETH
+                            ({web3.config.CHAIN_INFO[chainId].label})
+                            {balance ? balance.decimal.toNumber().toPrecision(5) : 0} ETH
                         </Text>
                     </div>
                     {screenType !== 'phone' && <Jazzicon address={address} size={35} />}

@@ -14,11 +14,13 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
             const isItem = tokenId.startsWith('item-');
             const instance = apollo
                 .subscribe<{
-                    offers?: {
-                        user: { id: string };
-                        eth: string;
-                        txhash: string;
-                    }[];
+                    nugg: {
+                        offers?: {
+                            user: { id: string };
+                            eth: string;
+                            txhash: string;
+                        }[];
+                    };
 
                     itemOffers?: {
                         nugg: { id: string };
@@ -44,16 +46,14 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
                           `
                         : gql`
                               subscription useLiveOffers($tokenId: ID!) {
-                                  offers(
-                                      where: { swap_starts_with: $tokenId }
-                                      orderBy: eth
-                                      orderDirection: desc
-                                  ) {
-                                      user {
-                                          id
+                                  nugg(id: $tokenId) {
+                                      offers(orderBy: eth, orderDirection: desc) {
+                                          user {
+                                              id
+                                          }
+                                          eth
+                                          txhash
                                       }
-                                      eth
-                                      txhash
                                   }
                               }
                           `,
@@ -71,7 +71,7 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
                                           txhash: z.txhash,
                                       };
                                   })
-                                : x.data.offers!.map((z) => {
+                                : x.data.nugg.offers!.map((z) => {
                                       return {
                                           eth: new EthInt(z.eth),
                                           user: z.user.id,

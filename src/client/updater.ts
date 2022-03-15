@@ -13,9 +13,9 @@ export default () => {
 
     useRpcUpdater();
 
-    const lastSwap__tokneId = client.live.lastSwap.tokenId();
+    const lastSwap__tokenId = client.live.lastSwap.tokenId();
 
-    useLiveOffers(lastSwap__tokneId);
+    useLiveOffers(lastSwap__tokenId);
 
     useGraphUpdater();
 

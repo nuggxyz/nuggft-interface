@@ -99,6 +99,7 @@ const styles = NLStyleSheetCreator({
         background: Colors.transparentWhite,
         borderRadius: Layout.borderRadius.mediumish,
         padding: '.5rem .6rem',
+        width: '100%',
     },
     offerAmount: {
         display: 'flex',

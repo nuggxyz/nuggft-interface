@@ -3,7 +3,7 @@
 
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'react-feather';
-import { animated, config as springConfig, useSpring } from '@react-spring/web';
+import { animated, useSpring } from '@react-spring/web';
 import { Web3Provider } from '@ethersproject/providers';
 
 import Text from '@src/components/general/Texts/Text/Text';
@@ -15,7 +15,6 @@ import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
 import { Route } from '@src/client/router';
-import TxViewer from '@src/components/general/Texts/TxViewer/TxViewer';
 import { OfferData } from '@src/client/core';
 import InteractiveText from '@src/components/general/Texts/InteractiveText/InteractiveText';
 import { Chain } from '@src/web3/core/interfaces';
@@ -24,12 +23,12 @@ import { LiveNugg } from '@src/client/hooks/useLiveNugg';
 import { Lifecycle } from '@src/client/hooks/useLiveToken';
 
 import styles from './RingAbout.styles';
+import HighestOffer from './HighestOffer';
 
 type Props = Record<string, never>;
 
 const RingAbout: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
-
     const address = web3.hook.usePriorityAccount();
 
     const tokenId = client.live.lastSwap.tokenId();
@@ -43,6 +42,7 @@ const RingAbout: FunctionComponent<Props> = () => {
     const [open, setOpen] = useState(false);
 
     const offers = client.live.offers(tokenId);
+    console.log({ offers });
 
     const leader = useMemo(() => {
         if (offers.length > 0) return offers[0];
@@ -51,40 +51,40 @@ const RingAbout: FunctionComponent<Props> = () => {
 
     const hasBids = useMemo(() => !!leader, [leader]);
 
-    const [flashStyle, api] = useSpring(() => {
-        return {
-            to: [
-                {
-                    ...styles.leadingOfferAmount,
-                    background: 'white',
-                },
-                {
-                    ...styles.leadingOfferAmount,
-                    background: Colors.transparentWhite,
-                },
-            ],
-            from: {
-                ...styles.leadingOfferAmount,
-                background: Colors.transparentWhite,
-            },
-            config: springConfig.molasses,
-        };
-    });
+    // const [flashStyle, api] = useSpring(() => {
+    //     return {
+    //         to: [
+    //             {
+    //                 ...styles.leadingOfferAmount,
+    //                 background: 'white',
+    //             },
+    //             {
+    //                 ...styles.leadingOfferAmount,
+    //                 background: Colors.transparentWhite,
+    //             },
+    //         ],
+    //         from: {
+    //             ...styles.leadingOfferAmount,
+    //             background: Colors.transparentWhite,
+    //         },
+    //         config: springConfig.molasses,
+    //     };
+    // });
 
-    useEffect(() => {
-        api.start({
-            to: [
-                {
-                    ...styles.leadingOfferAmount,
-                    background: 'white',
-                },
-                {
-                    ...styles.leadingOfferAmount,
-                    background: Colors.transparentWhite,
-                },
-            ],
-        });
-    }, [leader]);
+    // useEffect(() => {
+    //     api.start({
+    //         to: [
+    //             {
+    //                 ...styles.leadingOfferAmount,
+    //                 background: 'white',
+    //             },
+    //             {
+    //                 ...styles.leadingOfferAmount,
+    //                 background: Colors.transparentWhite,
+    //             },
+    //         ],
+    //     });
+    // }, [leader]);
 
     useEffect(() => {
         if (offers && offers.length <= 1 && open) {
@@ -225,25 +225,7 @@ const RingAbout: FunctionComponent<Props> = () => {
                                         ]
                                     }
                                 >
-                                    {leader ? (
-                                        <animated.div
-                                            // @ts-ignore
-                                            style={flashStyle}
-                                        >
-                                            <CurrencyText
-                                                image="eth"
-                                                textStyle={styles.leadingOffer}
-                                                value={leader.eth.decimal.toNumber()}
-                                            />
-                                            <TxViewer
-                                                size="smaller"
-                                                textStyle={{ color: Colors.textColor }}
-                                                address={leader && leader.user}
-                                                hash={leader && leader.txhash}
-                                                isNugg={type === Route.SwapItem}
-                                            />
-                                        </animated.div>
-                                    ) : null}
+                                    {leader && type && <HighestOffer leader={leader} type={type} />}
                                     {offers.length > 1 && (
                                         <Button
                                             rightIcon={
