@@ -287,7 +287,7 @@ export default () => {
                                         id
                                     }
                                 }
-                                nuggs(where: { user: $address }) {
+                                nuggs(first: 500, where: { user: $address }) {
                                     id
                                     activeLoan {
                                         id
