@@ -35,7 +35,6 @@ export default () => {
 
             infura.on(globalEvent, (log: Log) => {
                 const event = nuggft.interface.parseLog(log) as unknown as InterfacedEvent;
-
                 console.log({ event });
 
                 // eslint-disable-next-line default-case
@@ -60,6 +59,7 @@ export default () => {
                         emitter.emit({
                             type: emitter.events.Mint,
                             tokenId: event.args.tokenId.toString(),
+                            minter: log.address,
                         });
                         break;
                     }

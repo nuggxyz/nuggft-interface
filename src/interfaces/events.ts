@@ -32,50 +32,62 @@ interface BaseEvent {
     name: EventNames;
 }
 
-interface Mint extends MintEvent, BaseEvent {
+interface Mint extends BaseEvent {
     name: EventNames.Mint;
+    args: MintEvent['args'];
 }
 
-interface Loan extends LoanEvent, BaseEvent {
+interface Loan extends BaseEvent {
     name: EventNames.Loan;
+    args: LoanEvent['args'];
 }
 
-interface Rebalance extends RebalanceEvent, BaseEvent {
+interface Rebalance extends BaseEvent {
     name: EventNames.Rebalance;
+    args: RebalanceEvent['args'];
 }
-interface Liquidate extends LiquidateEvent, BaseEvent {
+interface Liquidate extends BaseEvent {
     name: EventNames.Liquidate;
+    args: LiquidateEvent['args'];
 }
-interface Offer extends OfferEvent, BaseEvent {
+interface Offer extends BaseEvent {
     name: EventNames.Offer;
+    args: OfferEvent['args'];
 }
 
-interface OfferMint extends OfferMintEvent, BaseEvent {
+interface OfferMint extends BaseEvent {
     name: EventNames.OfferMint;
+    args: OfferMintEvent['args'];
 }
 
-interface OfferItem extends OfferItemEvent, BaseEvent {
+interface OfferItem extends BaseEvent {
     name: EventNames.OfferItem;
+    args: OfferItemEvent['args'];
 }
 
-interface Claim extends ClaimEvent, BaseEvent {
+interface Claim extends BaseEvent {
     name: EventNames.Claim;
+    args: ClaimEvent['args'];
 }
 
-interface ClaimItem extends ClaimItemEvent, BaseEvent {
+interface ClaimItem extends BaseEvent {
     name: EventNames.ClaimItem;
+    args: ClaimItemEvent['args'];
 }
 
-interface Stake extends StakeEvent, BaseEvent {
+interface Stake extends BaseEvent {
     name: EventNames.Stake;
+    args: StakeEvent['args'];
 }
 
-interface Transfer extends TransferEvent, BaseEvent {
+interface Transfer extends BaseEvent {
     name: EventNames.Transfer;
+    args: TransferEvent['args'];
 }
 
-interface TransferItem extends TransferItemEvent, BaseEvent {
+interface TransferItem extends BaseEvent {
     name: EventNames.TransferItem;
+    args: TransferItemEvent['args'];
 }
 
 export type InterfacedEvent =

@@ -29,6 +29,7 @@ interface EmitModalOpen extends EmitEventBase {
 interface EmitMint extends EmitEventBase {
     type: EmitEventNames.Mint;
     tokenId: NuggId;
+    minter: string;
 }
 
 interface EmitTransfer extends EmitEventBase {
