@@ -1,0 +1,18 @@
+overwrite: true
+schema: 'https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby'
+documents: 'src/**/*.graphql'
+generates:
+    ./src/gql/types.generated.ts:
+        plugins:
+            - typescript
+            - typescript-operations
+            - typescript-react-apollo
+        config:
+            namingConvention:
+                # https://github.com/dotansimha/graphql-code-generator/issues/6925#issuecomment-983748950
+                enumValues: change-case-all#upperCaseFirst
+            strictScalars: true
+            scalars:
+                BigInt: BigNumberish
+                Bytes: BytesLike
+                BigDecimal: string

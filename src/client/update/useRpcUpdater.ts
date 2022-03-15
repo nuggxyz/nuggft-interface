@@ -1,3 +1,4 @@
+/* eslint-disable no-duplicate-case */
 import React from 'react';
 import { Log } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
@@ -8,8 +9,6 @@ import { EthInt } from '@src/classes/Fraction';
 import { ItemId } from '@src/client/router';
 import { InterfacedEvent } from '@src/interfaces/events';
 import lib from '@src/lib';
-
-// eslint-disable-next-line import/no-cycle
 import emitter from '@src/emitter';
 
 // eslint-disable-next-line import/no-cycle
@@ -35,47 +34,68 @@ export default () => {
 
             infura.on(globalEvent, (log: Log) => {
                 const event = nuggft.interface.parseLog(log) as unknown as InterfacedEvent;
-                console.log({ event });
 
-                // eslint-disable-next-line default-case
                 switch (event.name) {
                     case 'Offer':
                     case 'OfferMint':
                     case 'OfferItem':
                     case 'Mint':
                     case 'Stake': {
+                        emitter.emit({
+                            type: emitter.events.Stake,
+                            event,
+                            log,
+                        });
+
                         client.actions.updateProtocol({
-                            stake: EthInt.fromNuggftV1Stake(
-                                event.name === 'Stake' ? event.args.cache : event.args.stake,
-                            ),
+                            stake: EthInt.fromNuggftV1Stake(event.args.stake),
                         });
                         break;
                     }
+                    default:
+                        break;
                 }
 
-                // eslint-disable-next-line default-case
                 switch (event.name) {
+                    case 'OfferMint':
                     case 'Mint': {
                         emitter.emit({
                             type: emitter.events.Mint,
-                            tokenId: event.args.tokenId.toString(),
-                            minter: log.address,
+                            event,
+                            log,
                         });
                         break;
                     }
+                    default:
+                        break;
+                }
+
+                switch (event.name) {
                     case 'Offer':
                     case 'OfferMint': {
                         const agency = BigNumber.from(event.args.agency);
 
-                        client.actions.updateOffers(event.args.tokenId.toString(), [
-                            {
-                                eth: EthInt.fromNuggftV1Agency(event.args.agency),
-                                user: agency.mask(160)._hex,
-                                txhash: log.transactionHash,
-                            },
-                        ]);
+                        const data = {
+                            eth: EthInt.fromNuggftV1Agency(event.args.agency),
+                            user: agency.mask(160)._hex,
+                            txhash: log.transactionHash,
+                        };
+
+                        emitter.emit({
+                            type: emitter.events.Offer,
+                            event,
+                            log,
+                            data,
+                        });
+
+                        client.actions.updateOffers(event.args.tokenId.toString(), [data]);
                         break;
                     }
+                    default:
+                        break;
+                }
+
+                switch (event.name) {
                     case 'OfferItem': {
                         const agency = BigNumber.from(event.args.agency);
 
@@ -101,7 +121,8 @@ export default () => {
                             });
                             emitter.emit({
                                 type: emitter.events.Transfer,
-                                tokenId: event.args._tokenId.toString(),
+                                event,
+                                log,
                             });
                         }
 
@@ -147,6 +168,8 @@ export default () => {
                         );
                         break;
                     }
+                    default:
+                        break;
                 }
             });
             return () => {

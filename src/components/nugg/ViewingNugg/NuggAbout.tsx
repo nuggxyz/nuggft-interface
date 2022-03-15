@@ -21,7 +21,7 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
     return epoch && blocknum ? (
         <Text textStyle={{ color: lib.colors.primaryColor }}>
             {/* eslint-disable-next-line no-nested-ternary */}
-            {!item.endingEpoch
+            {!item.epoch
                 ? 'Awaiting bid!'
                 : item.epoch.id < epoch
                 ? 'Swap is over'
@@ -62,7 +62,7 @@ export default ({
                     ...styles.swap,
                     background:
                         // eslint-disable-next-line no-nested-ternary
-                        !token.activeSwap.endingEpoch
+                        !token.activeSwap.epoch
                             ? lib.colors.gradient
                             : token.activeSwap.epoch.id < epoch
                             ? lib.colors.gradient3

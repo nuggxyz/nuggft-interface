@@ -97,7 +97,7 @@ const MintModal: FunctionComponent<Props> = () => {
         callback: (arg) => {
             // console.log({ arg, address });
             // if (address === arg.minter.toLowerCase()) {
-            setNewNugg(arg.tokenId);
+            setNewNugg(arg.event.args.tokenId.toString());
             // }
         },
     });
@@ -105,7 +105,7 @@ const MintModal: FunctionComponent<Props> = () => {
     emitter.hook.useOnce({
         type: emitter.events.Transfer,
         callback: (arg) => {
-            setMyNuggTransfer(arg.tokenId);
+            setMyNuggTransfer(arg.event.args._tokenId.toString());
             setLoading(false);
         },
     });

@@ -1,7 +1,10 @@
-import gql from 'graphql-tag';
 import React, { useEffect } from 'react';
 
 import { EthInt } from '@src/classes/Fraction';
+import { UseLiveNuggSubscription, UseLiveNuggDocument } from '@src/gql/types.generated';
+
+// eslint-disable-next-line import/no-cycle
+import { EpochData } from '@src/client/interfaces';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
@@ -12,12 +15,7 @@ import { LiveItemSwap } from './useLiveItem';
 export interface LiveSwapBase {
     type: 'nugg' | 'item';
     id: string;
-    epoch: {
-        id: number;
-        startblock: number;
-        endblock: number;
-        status: 'OVER' | 'ACTIVE' | 'PENDING';
-    };
+    epoch?: EpochData | null;
     eth: EthInt;
     leader: string;
     owner: string;
@@ -32,32 +30,9 @@ export interface LiveNuggSwap extends LiveSwapBase {
 
 export type LiveSwap = LiveNuggSwap | LiveItemSwap;
 
-export const swapgql = () => gql`
-    {
-        id
-        endingEpoch
-        epoch {
-            id
-            startblock
-            endblock
-            status
-            starttime
-        }
-        num
-        eth
-        ethUsd
-        owner {
-            id
-        }
-        leader {
-            id
-        }
-    }
-`;
-
 export interface LiveNuggItem {
     id: string;
-    activeSwap: string;
+    activeSwap: string | undefined;
     feature: number;
     position: number;
 }
@@ -81,91 +56,8 @@ export const useLiveNugg = (tokenId: string | undefined) => {
     useEffect(() => {
         if (tokenId && apollo) {
             const instance = apollo
-                .subscribe<{
-                    nugg: {
-                        id: string;
-                        user: { id: string };
-                        // dotnuggRawCache: string;
-                        items: {
-                            id: string;
-                            activeSwap: {
-                                id: string;
-                            };
-                            item: {
-                                id: string;
-                                // dotnuggRawCache
-                                feature: number;
-                                position: number;
-                            };
-                        }[];
-                        activeSwap?: {
-                            id: string;
-                            epoch: {
-                                id: string;
-                                startblock: string;
-                                endblock: string;
-                                status: 'OVER' | 'ACTIVE' | 'PENDING';
-                            };
-                            eth: string;
-                            leader: {
-                                id: string;
-                            };
-                            owner: {
-                                id: string;
-                            };
-                            endingEpoch: string | null;
-                            num: string;
-                        };
-                        swaps: {
-                            id: string;
-                            epoch: {
-                                id: string;
-                                startblock: string;
-                                endblock: string;
-                                status: 'OVER' | 'ACTIVE' | 'PENDING';
-                            };
-                            eth: string;
-                            leader: {
-                                id: string;
-                            };
-                            owner: {
-                                id: string;
-                            };
-                            endingEpoch: string | null;
-                            num: string;
-                        }[];
-                        activeLoan: { id: string };
-                    };
-                }>({
-                    query: gql`
-                        subscription useLiveNugg($tokenId: ID!) {
-                            nugg(id: $tokenId) {
-                                id
-                                # dotnuggRawCache
-                                # id
-                                user {
-                                    id
-                                }
-                                items {
-                                    id
-                                    activeSwap {
-                                        id
-                                    }
-                                    item {
-                                        id
-                                        dotnuggRawCache
-                                        feature
-                                        position
-                                    }
-                                }
-                                activeLoan {
-                                    id
-                                }
-                                swaps ${swapgql()}
-                                activeSwap ${swapgql()}
-                            }
-                        }
-                    `,
+                .subscribe<UseLiveNuggSubscription>({
+                    query: UseLiveNuggDocument,
                     variables: { tokenId },
                 })
                 .subscribe((x) => {
@@ -178,40 +70,46 @@ export const useLiveNugg = (tokenId: string | undefined) => {
                                 return {
                                     id: y?.id,
                                     activeSwap: y?.activeSwap?.id,
-                                    feature: y?.item.feature,
-                                    position: y?.item.position,
+                                    feature: Number(y?.item.feature),
+                                    position: Number(y?.item.position),
                                 };
                             }),
                             swaps: x.data.nugg.swaps.map((y) => {
                                 return {
                                     type: 'nugg',
                                     id: y?.id,
-                                    epoch: {
-                                        id: Number(y?.epoch?.id),
-                                        startblock: Number(y?.epoch?.startblock),
-                                        endblock: Number(y?.epoch?.endblock),
-                                        status: y?.epoch?.status,
-                                    },
+                                    epoch: y?.epoch
+                                        ? {
+                                              id: Number(y?.epoch.id),
+                                              startblock: Number(y?.epoch.startblock),
+                                              endblock: Number(y?.epoch.endblock),
+                                              status: y?.epoch.status,
+                                          }
+                                        : null,
                                     eth: new EthInt(y?.eth),
                                     leader: y?.leader?.id,
                                     owner: y?.owner?.id,
                                     endingEpoch: y && y.endingEpoch ? Number(y?.endingEpoch) : null,
                                     num: Number(y?.num),
-                                    isActive: x.data?.nugg.activeSwap?.id === y?.id,
+                                    isActive: x.data!.nugg!.activeSwap?.id === y?.id,
                                 };
                             }),
                             activeSwap: x.data.nugg.activeSwap
                                 ? {
                                       type: 'nugg',
                                       id: x.data.nugg.activeSwap?.id,
-                                      epoch: {
-                                          id: Number(x.data.nugg.activeSwap?.epoch?.id),
-                                          startblock: Number(
-                                              x.data.nugg.activeSwap?.epoch?.startblock,
-                                          ),
-                                          endblock: Number(x.data.nugg.activeSwap?.epoch?.endblock),
-                                          status: x.data.nugg.activeSwap?.epoch?.status,
-                                      },
+                                      epoch: x.data.nugg.activeSwap?.epoch
+                                          ? {
+                                                id: Number(x.data.nugg.activeSwap.epoch.id),
+                                                startblock: Number(
+                                                    x.data.nugg.activeSwap.epoch.startblock,
+                                                ),
+                                                endblock: Number(
+                                                    x.data.nugg.activeSwap.epoch.endblock,
+                                                ),
+                                                status: x.data.nugg.activeSwap.epoch.status,
+                                            }
+                                          : null,
                                       eth: new EthInt(x.data.nugg.activeSwap?.eth),
                                       leader: x.data.nugg.activeSwap?.leader?.id,
 

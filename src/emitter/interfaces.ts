@@ -1,4 +1,21 @@
-import { NuggId } from '@src/client/router';
+import { Log } from '@ethersproject/providers';
+
+import {
+    InterfacedEvent,
+    RpcOffer,
+    RpcTransfer,
+    RpcMint,
+    RpcOfferMint,
+    RpcStake,
+    RpcClaim,
+    RpcClaimItem,
+    RpcLiquidate,
+    RpcLoan,
+    RpcRebalance,
+    RpcOfferItem,
+} from '@src/interfaces/events';
+import { OfferData } from '@src/client/interfaces';
+
 /*  BASE: DO NOT CHANGE  */
 
 interface EmitEventBase {
@@ -8,6 +25,11 @@ interface EmitEventBase {
 
 type BuildPayload<T> = Omit<T, 'callback'>;
 type BuildCallback<T extends { type: any; callback: any }> = Pick<T, 'type' | 'callback'>;
+
+interface EmitOnChainEventBase {
+    event: InterfacedEvent;
+    log: Log;
+}
 
 /*  INTERFACES: add new ones here  */
 
@@ -26,15 +48,49 @@ interface EmitModalOpen extends EmitEventBase {
     onModalOpen: () => void;
 }
 
-interface EmitMint extends EmitEventBase {
+interface EmitLocalRpcMint extends EmitEventBase, EmitOnChainEventBase {
     type: EmitEventNames.Mint;
-    tokenId: NuggId;
-    minter: string;
+    event: RpcMint | RpcOfferMint;
 }
 
-interface EmitTransfer extends EmitEventBase {
+interface EmitLocalRpcOffer extends EmitEventBase, EmitOnChainEventBase {
+    type: EmitEventNames.Offer;
+    event: RpcOffer | RpcOfferMint;
+    data: OfferData;
+}
+
+interface EmitLocalRpcTransfer extends EmitEventBase, EmitOnChainEventBase {
     type: EmitEventNames.Transfer;
-    tokenId: NuggId;
+    event: RpcTransfer;
+}
+
+interface EmitLocalRpcStake extends EmitEventBase, EmitOnChainEventBase {
+    type: EmitEventNames.Stake;
+    event: RpcStake | RpcOffer | RpcOfferMint | RpcMint | RpcOfferItem;
+}
+
+interface EmitLocalRpcClaim extends EmitEventBase, EmitOnChainEventBase {
+    type: EmitEventNames.Claim;
+    event: RpcClaim;
+}
+
+interface EmitLocalRpcClaimItem extends EmitEventBase, EmitOnChainEventBase {
+    type: EmitEventNames.ClaimItem;
+    event: RpcClaimItem;
+}
+interface EmitLocalRpcLoan extends EmitEventBase, EmitOnChainEventBase {
+    type: EmitEventNames.Loan;
+    event: RpcLoan;
+}
+
+interface EmitLocalRpcLiquidate extends EmitEventBase, EmitOnChainEventBase {
+    type: EmitEventNames.Liquidate;
+    event: RpcLiquidate;
+}
+
+interface EmitLocalRpcRebalance extends EmitEventBase, EmitOnChainEventBase {
+    type: EmitEventNames.Rebalance;
+    event: RpcRebalance;
 }
 
 /*  EXPORTS: must be manually updated  */
@@ -43,20 +99,48 @@ export enum EmitEventNames {
     TransactionComplete = 'local.TransactionComplete',
     TransactionInitiated = 'local.TransactionInitiated',
     OfferModalOpened = 'local.OfferModalOpened',
+
+    // on chain events
     Mint = 'local.rpc.event.Mint',
     Transfer = 'local.rpc.event.Transfer',
+    Offer = 'local.rpc.event.Offer',
+    OfferMint = 'local.rpc.event.OfferMint',
+    Stake = 'local.rpc.event.Stake',
+    Loan = 'local.rpc.event.Loan',
+    Liquidate = 'local.rpc.event.Liquidate',
+    Rebalance = 'local.rpc.event.Rebalance',
+    Claim = 'local.rpc.event.Claim',
+    ClaimItem = 'local.rpc.event.ClaimItem',
+    // Sell = 'local.rpc.event.Sell',
 }
 
 export type EmitEventsListPayload =
     | BuildPayload<EmitTransactionCompleted>
     | BuildPayload<EmitTransactionInitiated>
-    | BuildPayload<EmitMint>
-    | BuildPayload<EmitModalOpen>
-    | BuildPayload<EmitTransfer>;
+    | BuildPayload<EmitLocalRpcMint>
+    | BuildPayload<EmitLocalRpcMint>
+    | BuildPayload<EmitLocalRpcOffer>
+    | BuildPayload<EmitLocalRpcStake>
+    | BuildPayload<EmitLocalRpcClaim>
+    | BuildPayload<EmitLocalRpcClaimItem>
+    | BuildPayload<EmitLocalRpcLoan>
+    | BuildPayload<EmitLocalRpcLiquidate>
+    | BuildPayload<EmitLocalRpcRebalance>
+    | BuildPayload<EmitLocalRpcTransfer>
+    // | BuildPayload<EmitRpcSell>
+    | BuildPayload<EmitModalOpen>;
 
 export type EmitEventsListCallback =
     | BuildCallback<EmitTransactionCompleted>
     | BuildCallback<EmitTransactionInitiated>
-    | BuildCallback<EmitMint>
-    | BuildCallback<EmitModalOpen>
-    | BuildCallback<EmitTransfer>;
+    | BuildCallback<EmitLocalRpcMint>
+    | BuildCallback<EmitLocalRpcMint>
+    | BuildCallback<EmitLocalRpcOffer>
+    | BuildCallback<EmitLocalRpcStake>
+    | BuildCallback<EmitLocalRpcClaim>
+    | BuildCallback<EmitLocalRpcClaimItem>
+    | BuildCallback<EmitLocalRpcLoan>
+    | BuildCallback<EmitLocalRpcLiquidate>
+    | BuildCallback<EmitLocalRpcRebalance>
+    | BuildCallback<EmitLocalRpcTransfer>
+    | BuildCallback<EmitModalOpen>;

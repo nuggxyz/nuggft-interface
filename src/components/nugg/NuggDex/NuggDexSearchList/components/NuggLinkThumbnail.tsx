@@ -2,16 +2,16 @@ import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 import { animated } from '@react-spring/web';
 
 import useOnHover from '@src/hooks/useOnHover';
-import NuggDexState from '@src/state/nuggdex';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import { parseTokenIdSmart } from '@src/lib';
 import client from '@src/client';
+import { ListData } from '@src/client/interfaces';
 
 import styles from './NuggDexComponents.styles';
 
 const NuggLinkThumbnail: FunctionComponent<{
-    item: NL.GraphQL.Fragments.Nugg.ListItem;
+    item: ListData;
     index: number;
     style?: CSSProperties;
 }> = ({ item, index, style: customStyle }) => {
@@ -34,8 +34,8 @@ const NuggLinkThumbnail: FunctionComponent<{
             style={{ ...style }}
             onClick={() => {
                 // NuggftV1Helper.storeNugg(item.id, item.dotnuggRawCache);
-                // @ts-ignore
-                NuggDexState.dispatch.addToRecents({ ...item, eth: undefined });
+
+                // NuggDexState.dispatch.addToRecents({ ...item, eth: undefined });
                 client.actions.routeTo(item?.id, true);
             }}
         >

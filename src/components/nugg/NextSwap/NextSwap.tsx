@@ -8,7 +8,7 @@ import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import { SwapData } from '@src/client/core';
+import { SwapData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import FontSize from '@src/lib/fontSize';
 import styles2 from '@src/components/nugg/RingAbout/RingAbout.styles';
@@ -226,11 +226,7 @@ const NextSwap: FunctionComponent<Props> = () => {
                                 swap.started &&
                                 swap.tokenId !== lastSwap__tokenId && (
                                     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-                                    <SwapRenderItem
-                                        swap={swap}
-                                        setQueue={setQueue}
-                                        key={swap.id}
-                                    />
+                                    <SwapRenderItem swap={swap} setQueue={setQueue} key={swap.id} />
                                 ),
                         )}
                 </animated.div>

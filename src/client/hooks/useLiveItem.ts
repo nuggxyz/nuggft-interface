@@ -1,4 +1,3 @@
-import gql from 'graphql-tag';
 import React, { useEffect } from 'react';
 
 import { EthInt } from '@src/classes/Fraction';
@@ -7,20 +6,21 @@ import { NuggId } from '@src/client/router';
 import { extractItemId } from '@src/lib';
 
 // eslint-disable-next-line import/no-cycle
+import { UseLiveItemSubscription, UseLiveItemDocument } from '@src/gql/types.generated';
+
+// eslint-disable-next-line import/no-cycle
+import { EpochData } from '@src/client/interfaces';
+
+// eslint-disable-next-line import/no-cycle
 import client from '..';
 
 // eslint-disable-next-line import/no-cycle
-import { swapgql, LiveSwapBase } from './useLiveNugg';
+import { LiveSwapBase } from './useLiveNugg';
 
 export interface LiveItemSwap extends LiveSwapBase {
     type: 'item';
     id: string;
-    epoch: {
-        id: number;
-        startblock: number;
-        endblock: number;
-        status: 'OVER' | 'ACTIVE' | 'PENDING';
-    };
+    epoch: EpochData | null;
     eth: EthInt;
     leader: string;
     owner: string;
@@ -54,81 +54,36 @@ export const useLiveItem = (tokenId: string | undefined) => {
     useEffect(() => {
         if (apollo && tokenId) {
             const instance = apollo
-                .subscribe<{
-                    item: {
-                        id: string;
-                        count: number;
-                        activeSwap: {
-                            id: string;
-                            epoch: {
-                                id: string;
-                                startblock: string;
-                                endblock: string;
-                                status: 'OVER' | 'ACTIVE' | 'PENDING';
-                            };
-                            eth: string;
-                            leader: {
-                                id: string;
-                            };
-                            owner: {
-                                id: string;
-                            };
-                            endingEpoch: string | null;
-                            num: string;
-                        };
-                        swaps: {
-                            id: string;
-                            epoch: {
-                                id: string;
-                                startblock: string;
-                                endblock: string;
-                                status: 'OVER' | 'ACTIVE' | 'PENDING';
-                            };
-                            eth: string;
-                            leader: {
-                                id: string;
-                            };
-                            owner: {
-                                id: string;
-                            };
-                            endingEpoch: string | null;
-                            num: string;
-                        }[];
-                    };
-                }>({
-                    query: gql`
-                        subscription useLiveItem($tokenId: ID!) {
-                            item(id: $tokenId) {
-                                id
-                                count
-                                activeSwap ${swapgql()}
-                                swaps ${swapgql()}
-                            }
-                        }
-                    `,
+                .subscribe<UseLiveItemSubscription>({
+                    query: UseLiveItemDocument,
                     variables: { tokenId: extractItemId(tokenId) },
                 })
                 .subscribe((x) => {
                     if (x.data && x.data.item) {
                         const tmp: Omit<LiveItem, 'tryout'> = {
                             type: 'item' as const,
-                            count: x.data.item.count,
+                            count: Number(x.data.item.count),
                             swaps: x.data.item.swaps.map((y) => {
                                 return {
                                     type: 'item',
                                     id: y?.id,
-                                    epoch: {
-                                        id: Number(y?.epoch?.id ?? 0),
-                                        startblock: Number(y?.epoch?.startblock),
-                                        endblock: Number(y?.epoch?.endblock),
-                                        status: y?.epoch?.status,
-                                    },
+                                    epoch: y.epoch
+                                        ? {
+                                              id: Number(y?.epoch?.id ?? 0),
+                                              startblock: Number(y?.epoch?.startblock),
+                                              endblock: Number(y?.epoch?.endblock),
+                                              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                                              // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+                                              status: y.epoch.status,
+                                          }
+                                        : null,
                                     eth: new EthInt(y?.eth),
-                                    leader: y?.leader?.id,
+                                    leader: y?.leader!.id,
                                     owner: y?.owner?.id,
-                                    endingEpoch: y && y.endingEpoch ? +y.endingEpoch : null,
+                                    endingEpoch: y && y.endingEpoch ? Number(y.endingEpoch) : null,
                                     num: Number(y?.num),
                                     isTryout: y && y.endingEpoch === null,
+                                    dotnuggRawCache: null,
                                 };
                             }),
                             activeSwap: x.data.item.activeSwap
@@ -136,26 +91,31 @@ export const useLiveItem = (tokenId: string | undefined) => {
                                       count: 1,
                                       type: 'item' as const,
                                       id: x.data.item.activeSwap?.id,
-                                      epoch: {
-                                          id: Number(x.data.item.activeSwap?.epoch?.id),
-                                          startblock: Number(
-                                              x.data.item.activeSwap?.epoch?.startblock,
-                                          ),
-                                          endblock: Number(x.data.item.activeSwap?.epoch?.endblock),
-                                          status: x.data.item.activeSwap?.epoch?.status,
-                                      },
+                                      epoch: x.data.item.activeSwap.epoch
+                                          ? {
+                                                id: Number(x.data.item.activeSwap.epoch.id),
+                                                startblock: Number(
+                                                    x.data.item.activeSwap.epoch.startblock,
+                                                ),
+                                                endblock: Number(
+                                                    x.data.item.activeSwap.epoch.endblock,
+                                                ),
+                                                status: x.data.item.activeSwap.epoch.status,
+                                            }
+                                          : null,
                                       eth: new EthInt(x.data.item.activeSwap?.eth),
-                                      leader: x.data.item.activeSwap?.leader?.id,
+                                      leader: x.data.item.activeSwap?.leader!.id,
 
                                       owner: x.data.item.activeSwap.owner?.id,
 
                                       endingEpoch:
                                           x.data.item.activeSwap &&
                                           x.data.item.activeSwap.endingEpoch
-                                              ? +x.data.item.activeSwap.endingEpoch
+                                              ? Number(x.data.item.activeSwap.endingEpoch)
                                               : null,
                                       num: Number(x.data.item.activeSwap?.num),
                                       isTryout: false,
+                                      //   dotnuggRawCache: null,
                                   }
                                 : undefined,
                         };
