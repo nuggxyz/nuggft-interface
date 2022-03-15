@@ -1,0 +1,17 @@
+query AllNuggs(
+    $first: Int
+    $skip: Int
+    $orderDirection: OrderDirection
+    $orderBy: Nugg_orderBy
+    $where: Nugg_filter
+) {
+    nuggs(
+        where: $where
+        orderBy: $orderBy
+        orderDirection: $orderDirection
+        first: $first
+        skip: $skip
+    ) {
+        id
+    }
+}

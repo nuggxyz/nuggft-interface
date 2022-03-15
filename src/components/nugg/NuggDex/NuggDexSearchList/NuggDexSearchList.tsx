@@ -117,20 +117,21 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         async (
             setResults: React.Dispatch<React.SetStateAction<ListData[]>>,
             startFrom: number,
-            // eslint-disable-next-line @typescript-eslint/default-param-last
-            addToResult,
+            // eslint-disable-next-line  @typescript-eslint/default-param-last
+            addToResult = false,
             _filters: NuggDexFilters,
             setLoading?: React.Dispatch<SetStateAction<boolean>>,
             desiredSize?: number,
         ) => {
             if (chainId) {
                 if (setLoading) setLoading(true);
+                console.log({ _filters });
                 const _allNuggs = await allNuggsQuery(
                     chainId,
                     // filters.sort && filters.sort.by ? filters.sort.by : 'eth',
                     _filters.sort && _filters.sort.asc ? 'asc' : 'desc',
                     _filters.searchValue ? _filters.searchValue : '',
-                    desiredSize || constants.NUGGDEX_SEARCH_LIST_CHUNK,
+                    desiredSize || 25,
                     startFrom,
                 );
                 setResults((res) => (addToResult ? [...res, ..._allNuggs] : _allNuggs));

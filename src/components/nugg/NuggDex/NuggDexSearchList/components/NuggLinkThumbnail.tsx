@@ -33,9 +33,6 @@ const NuggLinkThumbnail: FunctionComponent<{
             key={index}
             style={{ ...style }}
             onClick={() => {
-                // NuggftV1Helper.storeNugg(item.id, item.dotnuggRawCache);
-
-                // NuggDexState.dispatch.addToRecents({ ...item, eth: undefined });
                 client.actions.routeTo(item?.id, true);
             }}
         >

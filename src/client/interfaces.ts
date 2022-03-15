@@ -14,8 +14,8 @@ export interface OfferData {
 
 export interface ListData {
     id: TokenId;
-    type: 'nugg' | 'item';
-    dotnuggRawCache: Base64EncodedSvg | null;
+    // type: 'nugg' | 'item';
+    dotnuggRawCache?: Base64EncodedSvg;
 }
 
 export interface SwapData extends ListData {
@@ -27,7 +27,7 @@ export interface SwapData extends ListData {
     sellingNugg?: string;
     endingEpoch: number | null;
     isCurrent: boolean;
-    dotnuggRawCache: null;
+    dotnuggRawCache: undefined;
 }
 
 export interface LoanData {
