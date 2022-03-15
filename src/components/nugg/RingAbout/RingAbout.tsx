@@ -99,7 +99,7 @@ const RingAbout: FunctionComponent<Props> = () => {
         padding: open ? '0.75rem' : '0rem',
     });
 
-    console.log({ lifecycle });
+    // console.log({ lifecycle });
 
     return type !== undefined && tokenId && lifecycle !== 'stands' ? (
         <animated.div
@@ -306,23 +306,24 @@ const RingAbout: FunctionComponent<Props> = () => {
                             color: 'white',
                         }),
                     }}
-                    onClick={() =>
-                        screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                            ? AppState.dispatch.changeMobileView('Wallet')
-                            : tokenId &&
-                              AppState.dispatch.setModalOpen({
-                                  name: 'OfferModal',
-                                  modalData: {
-                                      targetId: tokenId,
-                                      type: type === Route.SwapItem ? 'OfferItem' : 'OfferNugg',
-                                      data: {
-                                          tokenId,
-                                          token,
-                                          mustPickNuggToBuyFrom: lifecycle === 'tryout',
-                                      },
-                                  },
-                              })
-                    }
+                    onClick={() => {
+                        if (screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address))
+                            AppState.dispatch.changeMobileView('Wallet');
+                        else if (tokenId) {
+                            void AppState.dispatch.setModalOpen({
+                                name: 'OfferModal',
+                                modalData: {
+                                    targetId: tokenId,
+                                    type: type === Route.SwapItem ? 'OfferItem' : 'OfferNugg',
+                                    data: {
+                                        tokenId,
+                                        token,
+                                        mustPickNuggToBuyFrom: lifecycle === 'tryout',
+                                    },
+                                },
+                            });
+                        }
+                    }}
                     label={
                         screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                             ? 'Connect wallet'

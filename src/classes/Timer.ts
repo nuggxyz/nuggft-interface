@@ -10,14 +10,14 @@ export class timer {
     private constructor() {}
 
     public static start(name: string) {
-        let me = new timer();
+        const me = new timer();
         me._start = new Date();
         me._name = name;
         timer._map[name] = me;
     }
 
     public static stop(name: string) {
-        let me = timer._map[name];
+        const me = timer._map[name];
         me._end = new Date();
         me.calc();
         delete timer._map[name];

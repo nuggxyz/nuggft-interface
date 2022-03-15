@@ -28,10 +28,8 @@ const TheRing: FunctionComponent<Props> = ({
     const screenType = AppState.select.screenType();
     const blocknum = client.live.blocknum();
 
-    const lastSwap__tokenId = client.live.lastSwap.tokenId();
-    const { token, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
-
-    // console.log({ token, lifecycle });
+    const tokenId = client.live.lastSwap.tokenId();
+    const { token, lifecycle } = client.hook.useLiveToken(tokenId);
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
@@ -78,14 +76,12 @@ const TheRing: FunctionComponent<Props> = ({
                     flexDirection: 'column',
                 }}
             >
-                {lastSwap__tokenId && (
+                {tokenId && (
                     <>
                         <AnimatedCard>
-                            <TokenViewer tokenId={lastSwap__tokenId} style={tokenStyle} showcase />
+                            <TokenViewer tokenId={tokenId} style={tokenStyle} showcase />
                         </AnimatedCard>
-                        {screenType !== 'phone' && (
-                            <Text>{parseTokenIdSmart(lastSwap__tokenId)}</Text>
-                        )}
+                        {screenType !== 'phone' && <Text>{parseTokenIdSmart(tokenId)}</Text>}
                     </>
                 )}
             </CircleTimer>

@@ -4,25 +4,6 @@ import React, { useState } from 'react';
 import { isUndefinedOrNullOrObjectEmpty } from '../lib';
 import GQLHelper from './GQLHelper';
 
-export const executeQuery = async (chainId: number, query: any, tableName: string) => {
-    try {
-        const result = await GQLHelper.instance(chainId).query({
-            query,
-            fetchPolicy: 'no-cache',
-        });
-
-        if (
-            !isUndefinedOrNullOrObjectEmpty(result) &&
-            !isUndefinedOrNullOrObjectEmpty(result.data) &&
-            tableName in result.data
-        ) {
-            return result.data[tableName];
-        }
-    } catch (error: any) {
-        throw new Error(error.message);
-    }
-};
-
 export const executeQuery2 = async (client: ApolloClient<any>, query: any, tableName: string) => {
     try {
         const result = await client.query({
@@ -51,7 +32,7 @@ export const executeQuery3 = async <T>(query: DocumentNode, variables: object) =
         const result = await check.query<T>({
             query,
             fetchPolicy: 'no-cache',
-            // canonizeResults: true,
+            canonizeResults: true,
             // notifyOnNetworkStatusChange: true,
             variables: variables,
         });

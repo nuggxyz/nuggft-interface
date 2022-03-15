@@ -7,7 +7,7 @@ import {
 import { ethers } from 'ethers';
 import { ApolloClient } from '@apollo/client';
 
-import { buildApolloSplitLink, buildCache } from '@src/graphql/client';
+import { buildApolloSplitLink, buildCache } from '@src/gql/config';
 
 import { Connector } from './core/types';
 import {

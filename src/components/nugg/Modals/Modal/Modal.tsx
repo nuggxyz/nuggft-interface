@@ -37,6 +37,7 @@ const Modal: FunctionComponent<Props> = () => {
     const node = useRef<HTMLDivElement>(null);
     const screenType = AppState.select.screenType();
     const [stableData, setStableData] = useState(data);
+    console.log('OfferModal');
 
     useLayoutEffect(() => {
         if (data && (data.data || data.targetId)) setStableData(data);
@@ -79,6 +80,7 @@ const Modal: FunctionComponent<Props> = () => {
     );
 
     const style: CSSPropertiesAnimated = useAnimateOverlay(!!isOpen);
+    console.log('Modal');
 
     useOnClickOutside(node, closeModal);
     return (

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { BigNumber } from 'ethers';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
@@ -94,7 +94,7 @@ const OfferModal = ({ tokenId }: Props) => {
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
-    const epoch__id = client.live.epoch.id();
+    // const epoch__id = client.live.epoch.id();
 
     const userBalance = web3.hook.usePriorityBalance(provider);
 
@@ -106,7 +106,9 @@ const OfferModal = ({ tokenId }: Props) => {
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(tokenId);
 
-    useLayoutEffect(() => {
+    console.log('OfferModal');
+
+    useEffect(() => {
         if (type) setType(type);
         if (tokenId) setId(tokenId);
     }, [type, tokenId]);
@@ -116,20 +118,21 @@ const OfferModal = ({ tokenId }: Props) => {
         () => _myNuggs.filter((nugg) => !(nugg.activeLoan || nugg.activeSwap)),
         [_myNuggs],
     );
-    useEffect(() => {
-        if (epoch__id) {
-            const prevBidder = myNuggs.find((nugg) =>
-                nugg.unclaimedOffers.find(
-                    (offer) =>
-                        (offer.endingEpoch ?? 0) <= epoch__id &&
-                        offer.itemId === extractItemId(stableId),
-                ),
-            );
-            if (prevBidder) {
-                setSelectedNugg(prevBidder.tokenId);
-            }
-        }
-    }, [myNuggs, epoch__id, stableId]);
+    // useEffect(() => {
+    //     if (epoch__id) {
+
+    //         const prevBidder = myNuggs.find((nugg) =>
+    //             nugg.unclaimedOffers.find(
+    //                 (offer) =>
+    //                     (offer.endingEpoch ?? 0) <= epoch__id &&
+    //                     offer.itemId === extractItemId(stableId),
+    //             ),
+    //         );
+    //         if (prevBidder) {
+    //             setSelectedNugg(prevBidder.tokenId);
+    //         }
+    //     }
+    // }, [myNuggs, epoch__id, stableId]);
 
     const activeItem = client.live.activeNuggItem(stableId);
 
@@ -176,6 +179,7 @@ const OfferModal = ({ tokenId }: Props) => {
             resolve({ canOffer: undefined, next: undefined, curr: undefined }),
         );
     }, [stableId, address, chainId, provider, stableType, selectedNuggForItem, activeItem]);
+
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>

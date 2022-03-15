@@ -17,6 +17,7 @@ const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
 const ESLintPlugin = require('eslint-webpack-plugin');
+
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 
 const paths = require('./webpack/paths');
@@ -755,7 +756,8 @@ module.exports = function (webpackEnv) {
                     failOnError: !(isEnvDevelopment && emitErrorsAsWarnings),
                     context: paths.appSrc,
                     cache: true,
-                    cacheLocation: path.resolve(paths.appNodeModules, '.cache/.eslintcache'),
+                    // cacheLocation: path.resolve(paths.appNodeModules, '.cache/.eslintcache'),
+                    // cacheStrategy: 'content',
                     // ESLint class options
                     cwd: paths.appPath,
                     resolvePluginsRelativeTo: __dirname,

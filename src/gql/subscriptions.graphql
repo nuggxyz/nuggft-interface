@@ -12,6 +12,7 @@ subscription liveProtocol {
         nuggftStakedShares
         activeNuggs(orderBy: idnum) {
             id
+            idnum
             activeSwap {
                 id
                 eth
@@ -147,7 +148,7 @@ fragment itemswapdata on ItemSwap {
     }
 }
 
-subscription useLiveItem($tokenId: ID!) {
+subscription liveItem($tokenId: ID!) {
     item(id: $tokenId) {
         id
         count
@@ -160,7 +161,7 @@ subscription useLiveItem($tokenId: ID!) {
     }
 }
 
-subscription useLiveNugg($tokenId: ID!) {
+subscription liveNugg($tokenId: ID!) {
     nugg(id: $tokenId) {
         id
         # dotnuggRawCache

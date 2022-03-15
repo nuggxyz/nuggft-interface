@@ -1,5 +1,3 @@
-import constants from './constants';
-
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { split, InMemoryCache, HttpLink } from '@apollo/client';
@@ -16,30 +14,19 @@ export const buildApolloSplitLink = (http: string, wss: string) => {
             uri: wss,
             options: {
                 reconnect: true,
-
                 timeout: 60000,
                 minTimeout: 30000,
                 reconnectionAttempts: 100,
             },
+            webSocketImpl: WebSocket,
         }),
         new HttpLink({
             uri: http,
-            fetch: fetch,
+            fetch,
         }),
     );
 };
 
 export const buildCache = () => {
-    return new InMemoryCache({
-        // typePolicies: {
-        //     Nugg: {
-        //         keyFields: ['id'],
-        //         // fields: {
-        //         //     dotnuggRawCache: {
-        //         //     }
-        //         // },
-        //     },
-        // },
-        // addTypename: true,
-    });
+    return new InMemoryCache({});
 };

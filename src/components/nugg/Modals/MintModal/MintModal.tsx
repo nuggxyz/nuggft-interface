@@ -26,9 +26,7 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 
 import styles from './MintModal.styles';
 
-type Props = Record<string, unknown>;
-
-const MintModal: FunctionComponent<Props> = () => {
+const MintModal: FunctionComponent<unknown> = () => {
     const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
@@ -36,7 +34,6 @@ const MintModal: FunctionComponent<Props> = () => {
     const [loading, setLoading] = useState(false);
 
     const [newNugg, setNewNugg] = useState<NuggId>();
-    // const [newNuggUri, setNewNuggUri] = useState<Base64EncodedSvg>();
 
     const nextNugg = useAsyncState(() => {
         if (chainId && provider) {
@@ -95,10 +92,7 @@ const MintModal: FunctionComponent<Props> = () => {
     emitter.hook.useOn({
         type: emitter.events.Mint,
         callback: (arg) => {
-            // console.log({ arg, address });
-            // if (address === arg.minter.toLowerCase()) {
             setNewNugg(arg.event.args.tokenId.toString());
-            // }
         },
     });
 
