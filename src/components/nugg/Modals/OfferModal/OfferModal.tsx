@@ -85,7 +85,6 @@ type Props = {
 };
 
 const OfferModal = ({ tokenId }: Props) => {
-    // const [swapError, clearError] = useHandleError('GAS_ERROR');
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
 
@@ -94,7 +93,7 @@ const OfferModal = ({ tokenId }: Props) => {
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
-    // const epoch__id = client.live.epoch.id();
+    const epoch = client.live.epoch.id();
 
     const userBalance = web3.hook.usePriorityBalance(provider);
 
@@ -106,8 +105,6 @@ const OfferModal = ({ tokenId }: Props) => {
     const [stableType, setType] = useState(type);
     const [stableId, setId] = useState(tokenId);
 
-    console.log('OfferModal');
-
     useEffect(() => {
         if (type) setType(type);
         if (tokenId) setId(tokenId);
@@ -118,21 +115,20 @@ const OfferModal = ({ tokenId }: Props) => {
         () => _myNuggs.filter((nugg) => !(nugg.activeLoan || nugg.activeSwap)),
         [_myNuggs],
     );
-    // useEffect(() => {
-    //     if (epoch__id) {
-
-    //         const prevBidder = myNuggs.find((nugg) =>
-    //             nugg.unclaimedOffers.find(
-    //                 (offer) =>
-    //                     (offer.endingEpoch ?? 0) <= epoch__id &&
-    //                     offer.itemId === extractItemId(stableId),
-    //             ),
-    //         );
-    //         if (prevBidder) {
-    //             setSelectedNugg(prevBidder.tokenId);
-    //         }
-    //     }
-    // }, [myNuggs, epoch__id, stableId]);
+    useEffect(() => {
+        if (epoch) {
+            const prevBidder = myNuggs.find((nugg) =>
+                nugg.unclaimedOffers.find(
+                    (offer) =>
+                        (offer.endingEpoch ?? 0) <= epoch &&
+                        offer.itemId === extractItemId(stableId),
+                ),
+            );
+            if (prevBidder) {
+                setSelectedNugg(prevBidder.tokenId);
+            }
+        }
+    }, [myNuggs, epoch, stableId]);
 
     const activeItem = client.live.activeNuggItem(stableId);
 
