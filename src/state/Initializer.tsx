@@ -17,6 +17,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
     const active = web3.hook.useNetworkIsActive();
     const chainId = web3.hook.usePriorityChainId();
     const epoch = client.live.epoch.id();
+    const graph = client.live.apollo();
 
     useEffect(() => {
         safeResetLocalStorage(['walletconnect', 'ens']);
@@ -71,7 +72,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
         return () => undefined;
     }, [chainId]);
 
-    return active ? (
+    return active && graph ? (
         <>
             {[...Object.values(states), client].map((state, index) => (
                 // eslint-disable-next-line react/no-array-index-key
