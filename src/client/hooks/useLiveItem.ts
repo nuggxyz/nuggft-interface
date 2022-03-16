@@ -46,10 +46,10 @@ export interface LiveItem {
 export const useLiveItem = (tokenId: string | undefined) => {
     const [liveItem, setLiveItem] = useState<LiveItem>();
 
-    const apollo = client.live.apollo();
+    const graph = client.live.graph();
 
     useLiveItemSubscription({
-        client: apollo,
+        client: graph,
         shouldResubscribe: true,
         fetchPolicy: 'cache-first',
         variables: { tokenId: tokenId || '' },

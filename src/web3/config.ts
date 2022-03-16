@@ -203,10 +203,10 @@ export const peer_walletconnect: PeerInfo__WalletConnect = {
     injected: false,
     fallback: false,
 };
-export const peer_infura: PeerInfo = {
-    type: ConnectorEnum.Infura,
-    name: 'Infura',
-    peer: Peer.Infura,
+export const peer_rpc: PeerInfo = {
+    type: ConnectorEnum.Rpc,
+    name: 'Rpc',
+    peer: Peer.Rpc,
     color: 'rgba(22,82,240,1.0)',
     injected: false,
     fallback: true,
@@ -222,7 +222,7 @@ export const peers: {
     cryptodotcom: peer_cryptodotcom,
     coinbase: peer_coinbase,
     walletconnect: peer_walletconnect,
-    infura: peer_infura,
+    rpc: peer_rpc,
 };
 
 export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connector> } = {
@@ -254,10 +254,10 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
               ),
           }
         : {}),
-    infura: initializeConnector<Network>(
+    rpc: initializeConnector<Network>(
         (actions) =>
             new Network(
-                peer_infura,
+                peer_rpc,
                 actions,
                 supportedChainIds().reduce((prev, curr) => {
                     return { ...prev, [curr]: [ALCHEMY_URLS[curr]] };

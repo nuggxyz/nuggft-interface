@@ -28,7 +28,7 @@ export const pending: NL.Redux.Middleware<
         ) {
             TransactionState.dispatch.addTransaction(action.payload._pendingtx);
 
-            const check = client.static.infura();
+            const check = client.static.rpc();
 
             if (check) {
                 void check.waitForTransaction(action.payload._pendingtx, 1, 600000).then((x) => {

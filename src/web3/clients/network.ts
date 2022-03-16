@@ -4,7 +4,7 @@ import { FallbackProviderConfig } from '@ethersproject/providers';
 import { constants, VoidSigner } from 'ethers';
 
 import { Connector, Actions } from '@src/web3/core/types';
-import { PeerInfo__Infura, Connector as ConnectorEnum } from '@src/web3/core/interfaces';
+import { PeerInfo__Rpc, Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 // eslint-disable-next-line import/no-cycle
 import { DEFAULT_CHAIN } from '@src/web3/config';
 
@@ -26,13 +26,13 @@ export class Network extends Connector {
      * @param defaultChainId - The chainId to connect to if connectEagerly is true.
      */
     constructor(
-        peer: PeerInfo__Infura,
+        peer: PeerInfo__Rpc,
         actions: Actions,
         urlMap: { [chainId: number]: url | url[] },
         connectEagerly = false,
         defaultChainId = DEFAULT_CHAIN,
     ) {
-        super(ConnectorEnum.Infura, actions, [peer]);
+        super(ConnectorEnum.Rpc, actions, [peer]);
 
         this.urlMap = Object.keys(urlMap).reduce<{ [chainId: number]: url[] }>(
             (accumulator, chainId) => {
@@ -96,7 +96,7 @@ export class Network extends Connector {
         return this.provider
             .request({ method: 'eth_chainId' })
             .then((chainId: number) => {
-                this.actions.update({ chainId, accounts: [], peer: this.peers.infura });
+                this.actions.update({ chainId, accounts: [], peer: this.peers.rpc });
             })
             .catch((error: Error) => {
                 this.actions.reportError(error);

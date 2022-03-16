@@ -15,19 +15,19 @@ type UseDotnuggResponse = Base64EncodedSvg | undefined | null;
 export const useDotnuggRpcBackup = (outer: UseDotnuggResponse, tokenId: TokenId) => {
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
-    const apollo = client.live.apollo();
+    const graph = client.live.graph();
 
     const [src, setSrc] = React.useState<Base64EncodedSvg>();
 
     useEffect(() => {
-        if (tokenId && apollo && chainId && provider && outer === null) {
+        if (tokenId && graph && chainId && provider && outer === null) {
             void (async () => {
                 const res = (await new NuggftV1Helper(chainId, provider).contract.imageURI(
                     tokenId,
                 )) as Base64EncodedSvg | undefined;
                 setSrc(res);
 
-                void apollo.cache.writeQuery({
+                void graph.cache.writeQuery({
                     // broadcast: true,
                     query: gql`
                         query ROOT_QUERY($tokenId: ID!) {
@@ -48,7 +48,7 @@ export const useDotnuggRpcBackup = (outer: UseDotnuggResponse, tokenId: TokenId)
                 });
             })();
         }
-    }, [apollo, chainId, provider, tokenId, outer]);
+    }, [graph, chainId, provider, tokenId, outer]);
 
     return src;
 };

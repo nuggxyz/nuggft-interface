@@ -7,12 +7,12 @@ import { extractItemId } from '@src/lib/index';
 import { TokenId } from '@src/client/router';
 
 const useLiveOffers = (tokenId: TokenId | undefined) => {
-    const apollo = client.live.apollo();
+    const graph = client.live.graph();
 
     React.useEffect(() => {
-        if (tokenId && apollo) {
+        if (tokenId && graph) {
             const isItem = tokenId.startsWith('item-');
-            const instance = apollo
+            const instance = graph
                 .subscribe<{
                     offers?: {
                         user: { id: string };
@@ -86,7 +86,7 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
             };
         }
         return () => undefined;
-    }, [tokenId, apollo]);
+    }, [tokenId, graph]);
 
     return null;
 };

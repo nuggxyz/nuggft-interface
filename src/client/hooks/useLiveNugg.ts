@@ -51,10 +51,10 @@ export interface LiveNugg {
 export const useLiveNugg = (tokenId: string | undefined) => {
     const [liveNugg, setLiveNugg] = React.useState<LiveNugg>();
 
-    const apollo = client.live.apollo();
+    const graph = client.live.graph();
 
     useLiveNuggSubscription({
-        client: apollo,
+        client: graph,
         shouldResubscribe: true,
         fetchPolicy: 'cache-first',
         variables: { tokenId: tokenId || '' },

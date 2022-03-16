@@ -4,6 +4,8 @@ import { ApolloClient } from '@apollo/client/core/ApolloClient';
 
 import { Chain, Connector } from '@src/web3/core/interfaces';
 
+import { NuggftV1 } from '../typechain/NuggftV1';
+
 import { TokenId, NuggId, ItemId, ViewRoutes, SwapRoutes } from './router';
 
 export interface OfferData {
@@ -94,8 +96,9 @@ export type EpochData = {
 };
 
 export interface ClientState extends State {
-    infura: WebSocketProvider | undefined;
-    apollo: ApolloClient<any> | undefined;
+    rpc: WebSocketProvider | undefined;
+    graph: ApolloClient<any> | undefined;
+    nuggft: NuggftV1 | undefined;
     manualPriority: Connector | undefined;
     route: string | undefined;
     lastView: ViewRoutes | undefined;
@@ -111,6 +114,7 @@ export interface ClientState extends State {
     myNuggs: MyNuggsData[];
     myUnclaimedNuggOffers: UnclaimedNuggOffer[];
     myUnclaimedItemOffers: UnclaimedItemOffer[];
+
     myLoans: LoanData[];
     myRecents: Set<string>;
     error: Error | undefined;
@@ -118,8 +122,9 @@ export interface ClientState extends State {
 }
 
 export const DEFAULT_STATE: ClientState = {
-    infura: undefined,
+    rpc: undefined,
     stake: undefined,
+    nuggft: undefined,
     epoch: undefined,
     epoch__id: 0,
     route: undefined,
@@ -134,7 +139,7 @@ export const DEFAULT_STATE: ClientState = {
     myUnclaimedItemOffers: [],
     myRecents: new Set(),
     myLoans: [],
-    apollo: undefined,
+    graph: undefined,
     activating: false,
     blocknum: undefined,
     error: undefined,
@@ -142,8 +147,8 @@ export const DEFAULT_STATE: ClientState = {
 };
 
 export type ClientStateUpdate = {
-    infura?: WebSocketProvider;
-    apollo?: ApolloClient<unknown>;
+    rpc?: WebSocketProvider;
+    graph?: ApolloClient<unknown>;
     manualPriority?: Connector;
     // route?: string;
     stake?: {
@@ -175,7 +180,7 @@ export interface Actions {
     reportError: (error: Error | undefined) => void;
     toggleView: () => void;
     updateClients: (
-        stateUpdate: Pick<ClientStateUpdate, 'infura' | 'apollo'>,
+        stateUpdate: Pick<ClientStateUpdate, 'rpc' | 'graph'>,
         chainId: Chain,
     ) => Promise<void>;
     updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;

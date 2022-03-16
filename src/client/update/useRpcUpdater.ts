@@ -15,13 +15,13 @@ import emitter from '@src/emitter';
 import client from '..';
 
 export default () => {
-    const infura = client.live.infura();
+    const rpc = client.live.rpc();
     const chainId = web3.hook.usePriorityChainId();
     const address = web3.hook.usePriorityAccount();
 
     React.useEffect(() => {
-        if (infura && chainId) {
-            infura.on('block', (log: number) => {
+        if (rpc && chainId) {
+            rpc.on('block', (log: number) => {
                 client.actions.updateBlocknum(log, chainId);
             });
 
@@ -32,7 +32,7 @@ export default () => {
                 topics: [],
             };
 
-            infura.on(globalEvent, (log: Log) => {
+            rpc.on(globalEvent, (log: Log) => {
                 const event = nuggft.interface.parseLog(log) as unknown as InterfacedEvent;
 
                 switch (event.name) {
@@ -173,10 +173,10 @@ export default () => {
                 }
             });
             return () => {
-                infura.off(globalEvent, () => undefined);
-                infura.off('block', () => undefined);
+                rpc.off(globalEvent, () => undefined);
+                rpc.off('block', () => undefined);
             };
         }
         return () => undefined;
-    }, [infura, chainId, address]);
+    }, [rpc, chainId, address]);
 };

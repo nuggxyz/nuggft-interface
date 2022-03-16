@@ -21,8 +21,8 @@ export default {
 
     live: {
         /// ///// simple ////////
-        apollo: () => core.store((state) => state.apollo),
-        infura: () => core.store((state) => state.infura),
+        graph: () => core.store((state) => state.graph),
+        rpc: () => core.store((state) => state.rpc),
 
         epoch: {
             id: () => core.store((state) => state.epoch?.id),
@@ -105,8 +105,8 @@ export default {
         useDotnuggCacheOnly,
     },
     static: {
-        apollo: () => core.store.getState().apollo,
-        infura: () => core.store.getState().infura,
+        graph: () => core.store.getState().graph,
+        rpc: () => core.store.getState().rpc,
         activeSwaps: () => core.store.getState().activeSwaps,
         activeItems: () => core.store.getState().activeItems,
         myNuggs: () => core.store.getState().myNuggs,

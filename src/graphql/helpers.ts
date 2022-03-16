@@ -25,9 +25,9 @@ export const executeQuery2 = async (client: ApolloClient<any>, query: any, table
 
 export const executeQuery3 = async <T>(query: DocumentNode, variables: object) => {
     try {
-        const check = client.static.apollo();
+        const check = client.static.graph();
 
-        if (check === undefined) throw new Error('executeQuery3 | apollo is undefined');
+        if (check === undefined) throw new Error('executeQuery3 | graph is undefined');
 
         const result = await check.query<T>({
             query,
@@ -48,9 +48,9 @@ export const executeQuery3 = async <T>(query: DocumentNode, variables: object) =
 
 export const executeQuery4 = async <T>(query: DocumentNode, variables: object) => {
     try {
-        const check = client.static.apollo();
+        const check = client.static.graph();
 
-        if (check === undefined) throw new Error('executeQuery4 | apollo is undefined');
+        if (check === undefined) throw new Error('executeQuery4 | graph is undefined');
 
         const result = await check.query<T>({
             query,
@@ -72,9 +72,9 @@ export const executeQuery4 = async <T>(query: DocumentNode, variables: object) =
 };
 
 export const executeQuery5 = <T>(query: DocumentNode, variables: object) => {
-    const check = client.static.apollo();
+    const check = client.static.graph();
 
-    if (check === undefined) throw new Error('executeQuery5 | apollo is undefined');
+    if (check === undefined) throw new Error('executeQuery5 | graph is undefined');
 
     return check.watchQuery<T>({
         query,
@@ -86,9 +86,9 @@ export const executeQuery5 = <T>(query: DocumentNode, variables: object) => {
 };
 
 export const executeQuery6 = <T>(query: DocumentNode, variables: object) => {
-    const check = client.static.apollo();
+    const check = client.static.graph();
 
-    if (check === undefined) throw new Error('executeQuery6 | apollo is undefined');
+    if (check === undefined) throw new Error('executeQuery6 | graph is undefined');
 
     return check.watchQuery<T>({
         query,

@@ -34,10 +34,10 @@ const mergeUnique = (arr: SwapData[]) => {
 export default () => {
     const address = web3.hook.usePriorityAccount();
 
-    const apollo = client.live.apollo();
+    const graph = client.live.graph();
 
     useLiveProtocolSubscription({
-        client: apollo,
+        client: graph,
         shouldResubscribe: true,
         fetchPolicy: 'cache-first',
         onSubscriptionData: (x) => {
@@ -113,7 +113,7 @@ export default () => {
     });
 
     useLiveUserSubscription({
-        client: apollo,
+        client: graph,
         variables: { address: address ? address.toLowerCase() : '' },
         shouldResubscribe: true,
         fetchPolicy: 'network-only',

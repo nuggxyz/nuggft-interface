@@ -189,8 +189,8 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             // determine the next chainId and accounts
             // const epoch = stateUpdate.epoch ?? existingState.epoch;
             const stake = stateUpdate.stake ?? existingState.stake;
-            const infura = stateUpdate.infura ?? existingState.infura;
-            const apollo = stateUpdate.apollo ?? existingState.apollo;
+            const rpc = stateUpdate.rpc ?? existingState.rpc;
+            const graph = stateUpdate.graph ?? existingState.graph;
             const activeSwaps = stateUpdate.activeSwaps ?? existingState.activeSwaps;
             const activeItems = stateUpdate.activeItems ?? existingState.activeItems;
             const manualPriority = stateUpdate.manualPriority ?? existingState.manualPriority;
@@ -207,8 +207,8 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             return {
                 ...existingState,
                 manualPriority,
-                infura,
-                apollo,
+                rpc,
+                graph,
                 myNuggs,
                 myUnclaimedNuggOffers,
                 myUnclaimedItemOffers,
@@ -440,29 +440,29 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
      * @param stateUpdate - The state update to report.
      */
     async function updateClients(
-        stateUpdate: Pick<ClientStateUpdate, 'infura' | 'apollo'>,
+        stateUpdate: Pick<ClientStateUpdate, 'rpc' | 'graph'>,
         chainId: Chain,
     ): Promise<void> {
         nullifier++;
 
         store.setState((existingState): ClientState => {
             // determine the next chainId and accounts
-            const infura = stateUpdate.infura ?? existingState.infura;
-            const apollo = stateUpdate.apollo ?? existingState.apollo;
+            const rpc = stateUpdate.rpc ?? existingState.rpc;
+            const graph = stateUpdate.graph ?? existingState.graph;
 
             // determine the next error
             const { error } = existingState;
 
             let { activating } = existingState;
-            if (activating && (error || (infura && apollo))) {
+            if (activating && (error || (rpc && graph))) {
                 activating = false;
             }
 
-            return { ...existingState, infura, apollo, activating, error };
+            return { ...existingState, rpc, graph, activating, error };
         });
 
-        if (!store.getState().route && stateUpdate.infura) {
-            const blocknum = stateUpdate.infura.getBlockNumber();
+        if (!store.getState().route && stateUpdate.rpc) {
+            const blocknum = stateUpdate.rpc.getBlockNumber();
 
             let awaited: number;
             await Promise.all([(awaited = await blocknum), await checkVaildRouteOnStartup()]);
