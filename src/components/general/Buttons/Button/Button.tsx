@@ -34,6 +34,7 @@ const Button: FunctionComponent<ButtonProps> = ({
         return {
             ...styles.button,
             ...(hover && !disabled ? { filter: 'brightness(.8)' } : {}),
+            ...(disabled ? { opacity: '0.3' } : {}),
             cursor: disabled ? 'not-allowed' : 'pointer',
             ...buttonStyle,
             ...(hover && hoverStyle),

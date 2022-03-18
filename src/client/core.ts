@@ -186,8 +186,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         nullifier++;
 
         store.setState((existingState): ClientState => {
-            // determine the next chainId and accounts
-            // const epoch = stateUpdate.epoch ?? existingState.epoch;
             const stake = stateUpdate.stake ?? existingState.stake;
             const rpc = stateUpdate.rpc ?? existingState.rpc;
             const graph = stateUpdate.graph ?? existingState.graph;
@@ -325,8 +323,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                 },
             };
 
-            console.log({ existingState, updates });
-
             return updates;
         });
     }
@@ -335,15 +331,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         store.setState((existingState): ClientState => {
             let route = '#/';
 
-            let {
-                lastView,
-                lastSwap,
-                isViewOpen,
-                // lastView__tokenId,
-                // lastSwap__tokenId,
-                // lastView__type,
-                // lastSwap__type,
-            } = existingState;
+            let { lastView, lastSwap, isViewOpen } = existingState;
 
             const isItem = tokenId?.includes('item-');
 

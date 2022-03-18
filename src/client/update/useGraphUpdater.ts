@@ -64,7 +64,6 @@ export default () => {
                         return {
                             id: z.id,
                             tokenId: z.id,
-                            // dotnuggRawCache: z.dotnuggRawCache,
                             eth: new EthInt(z.activeSwap!.eth),
                             started: !!z.activeSwap?.endingEpoch,
                             endingEpoch:
@@ -81,7 +80,6 @@ export default () => {
                             return {
                                 id: createItemId(z.id),
                                 tokenId: createItemId(z.id),
-                                // dotnuggRawCache: z.activeSwap.sellingItem.dotnuggRawCache,
                                 eth: new EthInt(z.activeSwap!.eth),
                                 started: !!z.activeSwap!.endingEpoch,
                                 sellingNugg: '',
@@ -95,8 +93,6 @@ export default () => {
                             return {
                                 id: createItemId(z.activeSwap!.sellingNuggItem.item.id),
                                 tokenId: createItemId(z.activeSwap!.sellingNuggItem.item.id),
-                                // dotnuggRawCache:
-                                //     z.activeSwap!.sellingNuggItem.item.dotnuggRawCache,
                                 eth: new EthInt(z.activeSwap!.eth),
                                 started: !!z.activeSwap!.endingEpoch,
                                 sellingNugg: z.id.split('-')[constants.ITEM_NUGG_POS],
@@ -128,6 +124,7 @@ export default () => {
                 client.actions.updateProtocol({
                     myNuggs: user.nuggs.map((z) => {
                         return {
+                            recent: false,
                             tokenId: z.id,
                             activeLoan: !!z.activeLoan,
                             activeSwap: !!z.activeSwap,

@@ -77,7 +77,12 @@ export default {
                     .reverse(),
             ),
 
-        myNuggs: () => core.store((state) => state.myNuggs),
+        myNuggs: () =>
+            core.store((state) =>
+                state.myNuggs.sort((a, b) =>
+                    !a.recent || Number(a.tokenId) > Number(b.tokenId) ? 1 : -1,
+                ),
+            ),
         myLoans: () =>
             core.store((state) =>
                 state.myLoans.sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1)),

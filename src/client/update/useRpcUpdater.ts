@@ -114,6 +114,7 @@ export default () => {
                     case 'Transfer': {
                         if (address && event.args._to.toLowerCase() === address.toLowerCase()) {
                             client.actions.addNugg({
+                                recent: true,
                                 tokenId: event.args._tokenId.toString(),
                                 activeLoan: false,
                                 activeSwap: false,

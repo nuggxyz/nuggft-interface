@@ -47,8 +47,8 @@ export interface DefaultExtraData {
 export interface MyNuggsData {
     activeLoan: boolean;
     activeSwap: boolean;
-    // svg: Base64EncodedSvg;
     tokenId: NuggId;
+    recent: boolean;
     unclaimedOffers: { itemId: ItemId; endingEpoch: number | null }[];
 }
 export interface BaseUnclaimedOffer {
