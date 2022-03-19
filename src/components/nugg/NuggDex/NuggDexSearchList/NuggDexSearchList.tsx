@@ -125,7 +125,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         ) => {
             if (chainId) {
                 if (setLoading) setLoading(true);
-                console.log({ _filters });
                 const _allNuggs = await allNuggsQuery(
                     chainId,
                     // filters.sort && filters.sort.by ? filters.sort.by : 'eth',
