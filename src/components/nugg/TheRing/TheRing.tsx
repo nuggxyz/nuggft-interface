@@ -9,6 +9,8 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
+import { Lifecycle } from '@src/client/hooks/useLiveToken';
+import Label from '@src/components/general/Label/Label';
 
 import styles from './TheRing.styles';
 
@@ -60,13 +62,13 @@ const TheRing: FunctionComponent<Props> = ({
                 blocktime={constants.BLOCKTIME}
                 width={circleWidth}
                 staticColor={
-                    lifecycle === 'stands'
+                    lifecycle === Lifecycle.Stands
                         ? lib.colors.darkerGray
-                        : lifecycle === 'bench'
+                        : lifecycle === Lifecycle.Bench
                         ? lib.colors.nuggGold
-                        : lifecycle === 'deck'
+                        : lifecycle === Lifecycle.Deck
                         ? lib.colors.green
-                        : lifecycle === 'bat'
+                        : lifecycle === Lifecycle.Bat
                         ? ''
                         : 'purple'
                 }
@@ -78,9 +80,13 @@ const TheRing: FunctionComponent<Props> = ({
             >
                 {tokenId && (
                     <>
+                        {lifecycle === Lifecycle.Deck && (
+                            <Label text={`countdown begins in ${blocksRemaining % 32} blocks`} />
+                        )}
                         <AnimatedCard>
                             <TokenViewer tokenId={tokenId} style={tokenStyle} showcase />
                         </AnimatedCard>
+
                         {screenType !== 'phone' && <Text>{parseTokenIdSmart(tokenId)}</Text>}
                     </>
                 )}
