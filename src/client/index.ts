@@ -48,6 +48,8 @@ export default {
 
         route: () => core.store((state) => state.route),
         isViewOpen: () => core.store((state) => state.isViewOpen),
+        editingNugg: () => core.store((state) => state.editingNugg),
+
         blocknum: () => core.store((state) => state.blocknum),
         manualPriority: () => core.store((state) => state.manualPriority),
 

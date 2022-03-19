@@ -188,6 +188,8 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         store.setState((existingState): ClientState => {
             const stake = stateUpdate.stake ?? existingState.stake;
             const rpc = stateUpdate.rpc ?? existingState.rpc;
+            const editingNugg = stateUpdate.editingNugg ?? existingState.editingNugg;
+
             const graph = stateUpdate.graph ?? existingState.graph;
             const activeSwaps = stateUpdate.activeSwaps ?? existingState.activeSwaps;
             const activeItems = stateUpdate.activeItems ?? existingState.activeItems;
@@ -204,6 +206,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
 
             return {
                 ...existingState,
+                editingNugg,
                 manualPriority,
                 rpc,
                 graph,
@@ -477,6 +480,12 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         else routeTo('', !isViewOpen);
     };
 
+    const toggleEditingNugg = (tokenId: NuggId | undefined) => {
+        store.setState((existingState): ClientState => {
+            return { ...existingState, editingNugg: tokenId };
+        });
+    };
+
     return {
         store,
         actions: {
@@ -497,6 +506,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             addNugg,
             removeNugg,
             updateLoan,
+            toggleEditingNugg,
         },
     };
 }

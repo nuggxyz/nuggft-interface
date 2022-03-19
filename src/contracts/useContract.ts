@@ -3,8 +3,8 @@ import { useMemo, useState, useCallback } from 'react';
 
 import web3 from '@src/web3';
 import { NuggftV1__factory } from '@src/typechain/factories/NuggftV1__factory';
-import { Chain } from '@src/web3/core/interfaces';
 import { RevertError } from '@src/lib/errors';
+import { DotnuggV1, DotnuggV1__factory } from '@src/typechain';
 import lib, { shortenTxnHash } from '@src/lib';
 import TransactionState from '@src/state/transaction';
 import { gotoEtherscan } from '@src/web3/config';
@@ -21,14 +21,24 @@ function useContract<C extends BaseContract>(address: string, abi: ContractInter
     }, [address, provider, abi]);
 }
 
-export default function useNuggftV1() {
+export function useNuggftV1() {
     const chainId = web3.hook.usePriorityChainId();
 
     const address = useMemo(() => {
-        return web3.config.CONTRACTS[chainId ?? Chain.MAINNET].NuggftV1;
+        return web3.config.CONTRACTS[chainId ?? web3.config.DEFAULT_CHAIN].NuggftV1;
     }, [chainId]);
 
     return useContract<NuggftV1>(address, NuggftV1__factory.abi);
+}
+
+export function useDotnuggV1() {
+    const chainId = web3.hook.usePriorityChainId();
+
+    const address = useMemo(() => {
+        return web3.config.CONTRACTS[chainId ?? web3.config.DEFAULT_CHAIN].DotnuggV1;
+    }, [chainId]);
+
+    return useContract<DotnuggV1>(address, DotnuggV1__factory.abi);
 }
 
 export function useTransactionManager() {
@@ -39,6 +49,40 @@ export function useTransactionManager() {
     const network = web3.hook.useNetworkProvider();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
+
+    const estimate = useCallback(
+        async (ptx: Promise<PopulatedTransaction>): Promise<boolean> => {
+            try {
+                if (provider && network && chainId) {
+                    const tx = await ptx;
+                    const signer = provider.getSigner();
+                    return network
+                        .estimateGas({ ...tx, from: signer.getAddress() })
+                        .then((gasLimit) => {
+                            console.log(
+                                'estimate passed - should take ',
+                                gasLimit.toNumber(),
+                                ' gas',
+                            );
+                            return true;
+                        })
+                        .catch((err: Error) => {
+                            const error = lib.errors.parseJsonRpcError(err);
+                            setRevert(error);
+                            console.error(error);
+                            return false;
+                        });
+                }
+                throw new Error('provider undefined');
+            } catch (err) {
+                const error = lib.errors.parseJsonRpcError(err);
+                setRevert(error);
+                console.error(error);
+                return false;
+            }
+        },
+        [provider, network, chainId],
+    );
 
     const send = useCallback(
         async (ptx: Promise<PopulatedTransaction>): Promise<void> => {
@@ -118,8 +162,8 @@ export function useTransactionManager() {
                 return undefined;
             }
         },
-        [provider, network],
+        [provider, network, chainId],
     );
 
-    return { response, receipt, revert, send };
+    return { response, receipt, revert, send, estimate };
 }

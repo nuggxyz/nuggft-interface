@@ -114,7 +114,7 @@ export interface ClientState extends State {
     myNuggs: MyNuggsData[];
     myUnclaimedNuggOffers: UnclaimedNuggOffer[];
     myUnclaimedItemOffers: UnclaimedItemOffer[];
-
+    editingNugg: NuggId | undefined;
     myLoans: LoanData[];
     myRecents: Set<string>;
     error: Error | undefined;
@@ -131,6 +131,7 @@ export const DEFAULT_STATE: ClientState = {
     lastView: undefined,
     lastSwap: undefined,
     isViewOpen: false,
+    editingNugg: undefined,
     activeSwaps: [],
     activeItems: [],
     activeOffers: {},
@@ -167,6 +168,8 @@ export type ClientStateUpdate = {
     error?: Error;
     activating?: boolean;
     myNuggs?: MyNuggsData[];
+    editingNugg?: NuggId | null;
+
     myUnclaimedNuggOffers?: UnclaimedNuggOffer[];
     myUnclaimedItemOffers?: UnclaimedItemOffer[];
     myLoans?: LoanData[];
@@ -193,6 +196,7 @@ export interface Actions {
     updateLoan: (update: LoanData) => void;
     addNugg: (update: MyNuggsData) => void;
     removeNugg: (tokenId: NuggId) => void;
+    toggleEditingNugg: (tokenId: NuggId | undefined) => void;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
