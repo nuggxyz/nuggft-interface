@@ -406,8 +406,8 @@ export const parseTokenIdSmart = (itemId: string) => {
     return `Nugg ${itemId}`;
 };
 
-export const parseItmeIdToNum = (itemId: `item-${string}`) => {
-    const num = +itemId.replace('item-', '');
+export const parseItmeIdToNum = (itemId: `item-${string}` | BigNumberish) => {
+    const num = +itemId.toString().replace('item-', '');
     return {
         feature: num >> 8,
         position: num & 0xff,

@@ -73,7 +73,7 @@ export const useLiveNugg = (tokenId: string | undefined) => {
                     owner: nugg.user?.id,
                     items: nugg.items.map((y) => {
                         return {
-                            id: y?.id,
+                            id: `item-${y?.id.split('-')[0]}`,
                             activeSwap: y?.activeSwap?.id,
                             feature: Number(y?.item.feature),
                             position: Number(y?.item.position),

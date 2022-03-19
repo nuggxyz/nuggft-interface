@@ -47,15 +47,14 @@ const TokenViewer: FunctionComponent<Props> = ({
     }, []);
 
     const src =
-        svgNotFromGraph ||
         // eslint-disable-next-line no-nested-ternary
-        (subscribe
+        subscribe
             ? client.hook.useDotnuggSubscription(tokenId)
             : updateCache
             ? client.hook.useDotnugg(tokenId)
-            : client.hook.useDotnuggCacheOnly(tokenId));
+            : client.hook.useDotnuggCacheOnly(tokenId);
 
-    const pendingSrc = usePending(src, showPending);
+    const pendingSrc = usePending(svgNotFromGraph ?? src, showPending);
 
     const [hoverRef, isHovering] = useOnHover();
 

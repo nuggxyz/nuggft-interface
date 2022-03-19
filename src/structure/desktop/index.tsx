@@ -5,6 +5,7 @@ import PageContainer from '@src/components/nugg/PageLayout/PageContainer/PageCon
 
 const SearchOverlay = React.lazy(() => import('./SearchOverlay'));
 const SwapPage = React.lazy(() => import('./SwapPage'));
+const HotRoateO = React.lazy(() => import('./HotRotateO'));
 
 type Props = Record<string, never>;
 
@@ -13,6 +14,8 @@ const Desktop: FunctionComponent<Props> = () => {
         <PageContainer>
             <Helmet />
             <Suspense fallback={<div />}>
+                <HotRoateO />
+
                 <SearchOverlay />
                 <SwapPage />
             </Suspense>
