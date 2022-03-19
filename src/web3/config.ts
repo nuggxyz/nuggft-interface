@@ -229,7 +229,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
     walletlink: initializeConnector<WalletLink>(
         (actions) =>
             new WalletLink(peer_coinbase, actions, {
-                url: ALCHEMY_URLS[1][0],
+                url: INFURA_URLS[1][0],
                 appName: 'NuggftV1',
             }),
     ),
@@ -244,7 +244,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                     peer_trust,
                 ],
                 actions,
-                { rpc: ALCHEMY_URLS },
+                { rpc: INFURA_URLS },
             ),
     ),
     ...(peer_metamask.type === ConnectorEnum.MetaMask
@@ -260,7 +260,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                 peer_rpc,
                 actions,
                 supportedChainIds().reduce((prev, curr) => {
-                    return { ...prev, [curr]: [ALCHEMY_URLS[curr]] };
+                    return { ...prev, [curr]: [INFURA_URLS[curr]] };
                 }, {}),
             ),
         supportedChainIds(),

@@ -3,7 +3,7 @@ import { EmitEventNames } from './interfaces';
 import hook from './hook';
 
 const emitter = {
-    emit: _emitter.emit,
+    ..._emitter,
     events: EmitEventNames,
     hook,
 };

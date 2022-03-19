@@ -28,8 +28,11 @@ const store = configureStore({
                 ignoredActions: [
                     'app/addToastToList',
                     'app/removeToastFromList',
+                    'app/setModalOpen',
+                    'app/removeToastFromList',
                     'wallet/placeOffer/fulfilled',
                     'wallet/claim/fulfilled',
+                    'wallet/initLoan/fulfilled',
                 ],
                 ignoredPaths: ['app'],
             },

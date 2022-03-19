@@ -223,9 +223,10 @@ export function getNetworkConnector(initializedConnectors: {
     function useNetworkConnector() {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const values = Object.values(initializedConnectors).map((x) => x.hooks.usePeer()?.fallback);
-        const index = values.findIndex((x) => x);
 
-        return Object.values(initializedConnectors)[index === -1 ? 0 : index].connector;
+        const index = values.findIndex((x) => x);
+        const res = Object.values(initializedConnectors)[index === -1 ? 0 : index];
+        return res.connector;
     }
 
     function useNetworkChainId() {

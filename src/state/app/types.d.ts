@@ -33,6 +33,11 @@ interface AppStateToast {
     loading: boolean;
     action?: (setClosed?: React.Dispatch<React.SetStateAction<boolean>>) => void;
     callback?: () => void;
+    listener?: (
+        setClosed: () => void,
+        setClosedSoftly: () => void,
+        setError: () => void,
+    ) => () => void;
 }
 
 type AppStateViews = 'Swap' | 'Search';

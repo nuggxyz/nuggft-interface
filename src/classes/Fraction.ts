@@ -31,6 +31,10 @@ export class Fraction {
         return new Decimal(this.num.toString()).div(new Decimal(this.den.toString()));
     }
 
+    get number() {
+        return this.decimal.toNumber();
+    }
+
     get bignumber() {
         return this.num.mul(ETH_ONE).div(this.den);
     }

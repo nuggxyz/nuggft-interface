@@ -83,6 +83,7 @@ const Modal: FunctionComponent<Props> = () => {
     console.log('Modal');
 
     useOnClickOutside(node, closeModal);
+
     return (
         <animated.div style={style}>
             <div

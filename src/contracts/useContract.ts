@@ -1,9 +1,15 @@
-import { BaseContract, ContractInterface } from 'ethers';
-import { useMemo } from 'react';
+import { BaseContract, ContractInterface, PopulatedTransaction, BigNumber } from 'ethers';
+import { useMemo, useState, useCallback } from 'react';
 
 import web3 from '@src/web3';
 import { NuggftV1__factory } from '@src/typechain/factories/NuggftV1__factory';
 import { Chain } from '@src/web3/core/interfaces';
+import { RevertError } from '@src/lib/errors';
+import lib, { shortenTxnHash } from '@src/lib';
+import TransactionState from '@src/state/transaction';
+import { gotoEtherscan } from '@src/web3/config';
+import AppState from '@src/state/app';
+import emitter from '@src/emitter';
 
 import { NuggftV1 } from '../typechain/NuggftV1';
 
@@ -25,46 +31,95 @@ export default function useNuggftV1() {
     return useContract<NuggftV1>(address, NuggftV1__factory.abi);
 }
 
-// export function getContractTransactions<C extends BaseContract>(contract: C) {
-//     return (Object.keys(contract.functions) as GetContractFunctions<C>[]).reduce((prev, curr) => {
-//         // eslint-disable-next-line react-hooks/rules-of-hooks
-//         return { ...prev, [curr]: () => useContractTransaction<C>(contract, curr) };
-//     }, {}) as { [key in GetContractFunctions<C>]: () => ReturnType<typeof useContractTransaction> };
-// }
+export function useTransactionManager() {
+    const [receipt, setReceipt] = useState<TransactionReceipt>();
+    const [response, setActiveResponse] = useState<TransactionResponse>();
+    const [revert, setRevert] = useState<RevertError | Error>();
 
-// export type Min<S extends string, ARGS> = {
-//     functions: { [key in S]: (ContractFunction<infer ARGS> ? ARGS : never) };
-// };
-// export type TryGetFunc<F> = F extends Min<any, any> ? F['functions'] : never;
+    const network = web3.hook.useNetworkProvider();
+    const provider = web3.hook.usePriorityProvider();
+    const chainId = web3.hook.usePriorityChainId();
 
-// export type GetContractFunctions<F> = F extends Min<infer C, any> ? C : never;
+    const send = useCallback(
+        async (ptx: Promise<PopulatedTransaction>): Promise<void> => {
+            try {
+                if (provider && network && chainId) {
+                    const tx = await ptx;
+                    const signer = provider.getSigner();
+                    const res = network
+                        .estimateGas({ ...tx, from: signer.getAddress() })
+                        .then((gasLimit) => {
+                            return provider
+                                .getSigner()
+                                .sendTransaction({ ...tx, gasLimit: BigNumber.from(gasLimit) })
+                                .then((y) => {
+                                    TransactionState.dispatch.addTransaction(y.hash);
+                                    setActiveResponse(y);
 
-// function useContractTransaction<C extends BaseContract>(
-//     contract: C,
-//     frag: GetContractFunctions<C>,
-// ) {
-//     const [receipt, setReceipt] = useState<TransactionReceipt>();
-//     const [response, setActiveResponse] = useState<TransactionResponse>();
+                                    AppState.dispatch.addToastToList({
+                                        duration: 0,
+                                        title: 'Pending Transaction',
+                                        message: shortenTxnHash(y.hash),
+                                        error: false,
+                                        id: y.hash,
+                                        index: 0,
+                                        loading: true,
+                                        action: () => gotoEtherscan(chainId, 'tx', y.hash),
+                                        listener: (setClosed, setClosedSoftly, setError) => {
+                                            return emitter.on({
+                                                type: emitter.events.TransactionComplete,
+                                                callback: (arg) => {
+                                                    if (arg.txhash === y.hash) {
+                                                        if (arg.success) {
+                                                            setClosedSoftly();
+                                                        } else {
+                                                            setError();
+                                                        }
+                                                    }
+                                                },
+                                            }).off;
+                                        },
+                                    });
+                                    return y;
+                                })
+                                .catch((err: Error) => {
+                                    const error = lib.errors.parseJsonRpcError(err);
+                                    setRevert(error);
+                                    console.error(error);
+                                });
+                        })
+                        .catch((err: Error) => {
+                            const error = lib.errors.parseJsonRpcError(err);
+                            setRevert(error);
+                            console.error(error);
+                        });
 
-//     const send = useCallback(
-//         (...args: Parameters<TryGetFunc<C>[typeof frag]>) => {
-//             if (!receipt) {
-//                 void contract.functions[frag](args).then((x: TransactionResponse) => {
-//                     setActiveResponse(x);
-//                 });
-//             }
-//         },
-//         [receipt],
-//     );
+                    const res2 = await res;
+                    if (res2) {
+                        return res2.wait(1).then((x) => {
+                            setReceipt(x);
+                            TransactionState.dispatch.finalizeTransaction({
+                                hash: x.transactionHash,
+                                successful: x.status === 1,
+                            });
+                            emitter.emit({
+                                type: emitter.events.TransactionComplete,
+                                txhash: x.transactionHash,
+                                success: x.status === 1,
+                            });
+                        });
+                    }
+                }
+                throw new Error('provider undefined');
+            } catch (err) {
+                const error = lib.errors.parseJsonRpcError(err);
+                setRevert(error);
+                console.error(error);
+                return undefined;
+            }
+        },
+        [provider, network],
+    );
 
-//     useEffect(() => {
-//         if (response) {
-//             void contract.provider.waitForTransaction(response.hash).then((result) => {
-//                 setReceipt(result);
-//             });
-//         }
-//         return () => undefined;
-//     }, [response]);
-
-//     return { response, receipt, send };
-// }
+    return { response, receipt, revert, send };
+}

@@ -35,6 +35,12 @@ export default () => {
             rpc.on(globalEvent, (log: Log) => {
                 const event = nuggft.interface.parseLog(log) as unknown as InterfacedEvent;
 
+                emitter.emit({
+                    type: emitter.events.TransactionComplete,
+                    txhash: log.transactionHash,
+                    success: true,
+                });
+
                 switch (event.name) {
                     case 'Offer':
                     case 'OfferMint':

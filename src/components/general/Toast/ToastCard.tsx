@@ -22,12 +22,32 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
     const [close, setClose] = useState(false);
 
     useEffect(() => {
-        if (!isUndefinedOrNullOrNumberZero(toast.duration)) {
-            const id = setTimeout(() => setClose(true), toast.duration);
+        setDuration(toast.duration);
+        setError(toast.error);
+    }, [toast]);
+
+    const [duration, setDuration] = useState(toast.duration);
+    const [error, setError] = useState(toast.error);
+
+    useEffect(() => {
+        if (!isUndefinedOrNullOrNumberZero(duration)) {
+            const id = setTimeout(() => setClose(true), duration);
             return () => clearTimeout(id);
         }
         return () => undefined;
-    }, [toast.duration]);
+    }, [duration]);
+
+    useEffect(() => {
+        if (toast?.listener) {
+            const list = toast.listener(
+                () => setClose(true),
+                () => setDuration(2000),
+                () => setError(true),
+            );
+            return list;
+        }
+        return undefined;
+    }, []);
 
     useEffect(() => {
         if (close) {
@@ -50,13 +70,13 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
     const style = useMemo(() => {
         return {
             ...(!hidden ? styles.visible : styles.hidden),
-            ...(toast.error ? styles.error : styles.success),
+            ...(error ? styles.error : styles.success),
             ...styles.toast,
             cursor: 'pointer',
             marginTop: '1rem',
             zIndex: 1000,
         };
-    }, [toast, hidden]);
+    }, [toast, hidden, error, duration]);
 
     const [ref, hovering] = useOnHover();
     const animatedS = useSpring({
@@ -86,11 +106,11 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
                 {!isUndefinedOrNullOrBooleanFalse(toast.loading) && (
                     <Loader style={styles.toastLoader} color={Colors.green} />
                 )}
-                {!isUndefinedOrNullOrNumberZero(toast.duration) && (
+                {!isUndefinedOrNullOrNumberZero(duration) && (
                     <AnimatedBarTimer
-                        duration={toast.duration}
+                        duration={duration}
                         style={styles.toastTimer}
-                        color={toast.error ? Colors.gradient3 : Colors.gradient2}
+                        color={error ? Colors.gradient3 : Colors.gradient2}
                     />
                 )}
             </animated.div>

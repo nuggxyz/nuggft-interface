@@ -16,13 +16,13 @@ import FontSize from '@src/lib/fontSize';
 import web3 from '@src/web3';
 import state from '@src/state';
 import { NuggId, TokenId } from '@src/client/router';
-import WalletState from '@src/state/wallet';
 import client from '@src/client';
 import Colors from '@src/lib/colors';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import { LiveToken } from '@src/client/hooks/useLiveToken';
 import { TryoutData } from '@src/client/hooks/useLiveItem';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import WalletState from '@src/state/wallet';
 
 import styles from './OfferModal.styles';
 
@@ -175,7 +175,9 @@ const OfferModal = ({ tokenId }: Props) => {
             resolve({ canOffer: undefined, next: undefined, curr: undefined }),
         );
     }, [stableId, address, chainId, provider, stableType, selectedNuggForItem, activeItem]);
+    // const nuggft = useNuggftV1();
 
+    // const { send, revert } = useTransactionManager();
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
@@ -287,11 +289,17 @@ const OfferModal = ({ tokenId }: Props) => {
                     </Text>
                 )}
             </div>
+            {/* {revert &&
+                (revert instanceof lib.errors.RevertError ? (
+                    <Label text={revert.message} />
+                ) : (
+                    <Label text="something unexpected happened" />
+                ))} */}
             {check ? (
                 <div style={styles.subContainer}>
                     <FeedbackButton
                         overrideFeedback
-                        disabled={!check || !check.canOffer}
+                        disabled={!check || !check.canOffer || Number(amount) === 0}
                         feedbackText="Check Wallet..."
                         buttonStyle={styles.button}
                         label={`${
@@ -302,6 +310,13 @@ const OfferModal = ({ tokenId }: Props) => {
                                     : 'Update offer'
                                 : 'Place offer'
                         }`}
+                        // onClick={() => {
+                        // if (check.curr && chainId && provider && address) {
+                        //     void send(
+                        //         nuggft.populateTransaction['offer(uint160)'](tokenId, {
+                        //             value: toEth(amount).sub(check.curr),
+                        //         }),
+                        //     );
                         onClick={() =>
                             check.curr &&
                             chainId &&
@@ -323,6 +338,7 @@ const OfferModal = ({ tokenId }: Props) => {
                                         : undefined,
                             })
                         }
+                        // }}
                     />
                 </div>
             ) : null}
