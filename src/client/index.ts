@@ -6,7 +6,7 @@ import core from './core';
 import { useLiveNugg } from './hooks/useLiveNugg';
 import updater from './updater';
 import { useLiveItem } from './hooks/useLiveItem';
-import { useDotnugg, useDotnuggCacheOnly } from './hooks/useDotnugg';
+import { useDotnugg, useDotnuggCacheOnly, useDotnuggSubscription } from './hooks/useDotnugg';
 import router, { TokenId } from './router';
 import useLiveToken from './hooks/useLiveToken';
 import { ListData } from './interfaces';
@@ -108,6 +108,7 @@ export default {
         useLiveToken,
         useDotnugg,
         useDotnuggCacheOnly,
+        useDotnuggSubscription,
     },
     static: {
         graph: () => core.store.getState().graph,

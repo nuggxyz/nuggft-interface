@@ -148,6 +148,7 @@ const NextSwap: FunctionComponent<Props> = () => {
                             <TokenViewer
                                 tokenId={queue.tokenId}
                                 style={{ width: '40px', height: '40px' }}
+                                subscribe
                             />
                             <Text type="text" size="smaller">
                                 {queue.tokenId}
@@ -258,7 +259,11 @@ const SwapRenderItem = ({
             }}
         >
             {swap.tokenId !== '' ? (
-                <TokenViewer tokenId={swap.tokenId} style={{ width: '40px', height: '40px' }} />
+                <TokenViewer
+                    tokenId={swap.tokenId}
+                    style={{ width: '40px', height: '40px' }}
+                    subscribe
+                />
             ) : (
                 <ChevronUp color={lib.colors.nuggBlueText} size={14} />
             )}

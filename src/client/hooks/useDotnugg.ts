@@ -6,6 +6,7 @@ import { useFastQuery, useFasterQuery } from '@src/graphql/helpers';
 import web3 from '@src/web3';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { TokenId } from '@src/client/router';
+import { useLiveDotnuggSubscription } from '@src/gql/types.generated';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
@@ -77,6 +78,39 @@ export const useDotnugg = (tokenId: string) => {
 
     const fallback = useDotnuggRpcBackup(main, tokenId);
     return main || fallback;
+};
+
+export const useDotnuggSubscription = (tokenId: string) => {
+    const isItem = React.useMemo(() => {
+        return tokenId.startsWith('item-');
+    }, [tokenId]);
+
+    const normal = useDotnugg(tokenId);
+
+    const graph = client.live.graph();
+
+    const [src, setSrc] = React.useState<Base64EncodedSvg>();
+
+    useLiveDotnuggSubscription({
+        client: graph,
+        variables: {
+            tokenId,
+        },
+        onSubscriptionData: (data) => {
+            if (
+                !isItem &&
+                data &&
+                data.subscriptionData &&
+                data.subscriptionData.data &&
+                data.subscriptionData.data.nugg &&
+                data.subscriptionData.data.nugg.dotnuggRawCache
+            ) {
+                setSrc(data.subscriptionData.data.nugg.dotnuggRawCache as Base64EncodedSvg);
+            }
+        },
+    });
+
+    return isItem || !src ? normal : src;
 };
 
 export const useDotnuggCacheOnly = (tokenId: string) => {

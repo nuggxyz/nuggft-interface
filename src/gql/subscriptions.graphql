@@ -47,6 +47,13 @@ subscription liveProtocol {
     }
 }
 
+subscription liveDotnugg($tokenId: ID!) {
+    nugg(id: $tokenId) {
+        id
+        dotnuggRawCache
+    }
+}
+
 subscription liveUser($address: ID!) {
     user(id: $address) {
         offers(where: { claimed: false }) {
@@ -164,8 +171,6 @@ subscription liveItem($tokenId: ID!) {
 subscription liveNugg($tokenId: ID!) {
     nugg(id: $tokenId) {
         id
-        # dotnuggRawCache
-        # id
         user {
             id
         }
@@ -176,7 +181,6 @@ subscription liveNugg($tokenId: ID!) {
             }
             item {
                 id
-                # dotnuggRawCache
                 feature
                 position
             }
