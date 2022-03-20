@@ -67,6 +67,7 @@ const HomeTab: FunctionComponent<Props> = () => {
                 </div>
             </div>
             <InfiniteList
+                id="home-tab-myNuggs"
                 TitleButton={MintNuggButton}
                 labelStyle={styles.listLabel}
                 data={nuggs}

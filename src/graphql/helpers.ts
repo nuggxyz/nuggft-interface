@@ -31,7 +31,7 @@ export const executeQuery3 = async <T>(query: DocumentNode, variables: object) =
 
         const result = await check.query<T>({
             query,
-            fetchPolicy: 'no-cache',
+            fetchPolicy: 'cache-first',
             canonizeResults: true,
             // notifyOnNetworkStatusChange: true,
             variables: variables,

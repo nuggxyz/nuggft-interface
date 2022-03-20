@@ -27,6 +27,7 @@ export interface InfiniteListRenderItemProps<T, B, A> {
 }
 
 interface Props<T, B, A> {
+    id?: string;
     data: T[];
     RenderItem: FunctionComponent<InfiniteListRenderItemProps<T, B, A>>;
     loading?: boolean;
@@ -52,6 +53,7 @@ interface Props<T, B, A> {
 const LIST_PADDING = 4;
 
 const InfiniteList = <T, B, A>({
+    id,
     data,
     RenderItem,
     loading = false,
@@ -75,10 +77,9 @@ const InfiniteList = <T, B, A>({
 }: Props<T, B, A>) => {
     const windowRef = useRef<HTMLDivElement>(null);
     const [windowHeight, setWindowHeight] = useState(0);
-
     useEffect(() => {
         if (windowRef.current) {
-            setWindowHeight(windowRef.current.clientHeight);
+            setWindowHeight(windowRef.current.scrollHeight);
         }
     }, [windowRef, animationToggle]);
 
@@ -88,11 +89,23 @@ const InfiniteList = <T, B, A>({
         () => Math.max(Math.floor(scrollTop / itemHeight) - LIST_PADDING, 0),
         [scrollTop, itemHeight],
     );
+    const endBufferIndex = useMemo(
+        () =>
+            Math.min(
+                data.length - 1,
+                scrollTop + windowHeight === 0
+                    ? 0
+                    : Math.ceil((scrollTop + windowHeight) / itemHeight) + LIST_PADDING * 2,
+            ),
+        [scrollTop, data, windowHeight, itemHeight],
+    );
     const endIndex = useMemo(
         () =>
             Math.min(
                 data.length - 1,
-                Math.floor((scrollTop + windowHeight) / itemHeight) + LIST_PADDING,
+                scrollTop + windowHeight === 0
+                    ? 0
+                    : Math.ceil((scrollTop + windowHeight) / itemHeight) + LIST_PADDING,
             ),
         [scrollTop, data, windowHeight, itemHeight],
     );
@@ -108,42 +121,51 @@ const InfiniteList = <T, B, A>({
             prevStart !== startIndex ||
             JSON.stringify(prevData) !== JSON.stringify(data)
         ) {
+            const key = (i: number) => `infinte-item-${id || 'unknown'}-${i}`;
+
+            const buildItem = (i: number) => (
+                <div
+                    key={key(i)}
+                    style={{
+                        position: 'absolute',
+                        top: `${i * itemHeight}px`,
+                        width: '100%',
+                        height: `${itemHeight}px`,
+                    }}
+                >
+                    <RenderItem
+                        item={data[i]}
+                        index={i}
+                        extraData={extraData}
+                        action={action}
+                        selected={JSON.stringify(selected) === JSON.stringify(data[i])}
+                    />
+                </div>
+            );
             setItems((_items) => {
-                range(startIndex, endIndex).forEach((i) => {
-                    if (
-                        !_items[i - startIndex] ||
-                        _items[i - startIndex].key !== JSON.stringify(data[i])
-                    ) {
-                        // eslint-disable-next-line no-param-reassign
-                        _items[i - startIndex] = (
-                            <div
-                                key={`infinite-${i}`}
-                                style={{
-                                    position: 'absolute',
-                                    top: `${i * itemHeight}px`,
-                                    width: '100%',
-                                    height: `${itemHeight}px`,
-                                }}
-                            >
-                                <RenderItem
-                                    item={data[i]}
-                                    index={i}
-                                    extraData={extraData}
-                                    action={action}
-                                    selected={JSON.stringify(selected) === JSON.stringify(data[i])}
-                                />
-                            </div>
-                        );
+                if (!(startIndex === endIndex && endIndex === 0)) {
+                    range(startIndex, endIndex).forEach((i) => {
+                        if (!_items[i - startIndex] || _items[i - startIndex].key !== key(i)) {
+                            const check = _items.findIndex(
+                                (x) => x.key !== undefined && x.key === key(i),
+                            );
+                            if (check !== -1) {
+                                _items.splice(check, 1);
+                            }
+
+                            _items[i - startIndex] = buildItem(i);
+                        }
+                    });
+                } else if (_items.length === 0 && data.length > 0) {
+                    for (let i = 0; i < Math.min(data.length, 25); i++) {
+                        _items[i] = buildItem(i);
                     }
-                });
-                const diff = endIndex - startIndex + 1;
-                if (diff !== _items.length) {
-                    range(0, diff).forEach(() => _items.pop());
                 }
                 return _items;
             });
         }
     }, [
+        id,
         endIndex,
         startIndex,
         prevEnd,
@@ -162,8 +184,8 @@ const InfiniteList = <T, B, A>({
         if (onScrollEnd) {
             if (
                 items.length !== 0 &&
-                items.length * itemHeight + scrollTop >= innerHeight &&
-                prevEnd !== endIndex &&
+                (items.length + 1) * itemHeight + scrollTop >= innerHeight &&
+                prevEnd !== endBufferIndex &&
                 !loading
             ) {
                 void onScrollEnd({ addToList: true });
@@ -233,7 +255,9 @@ const InfiniteList = <T, B, A>({
                 >
                     <Loader color={loaderColor || 'black'} />
                 </div>
-            ) : null,
+            ) : (
+                <div />
+            ),
         [loading, loaderColor, itemHeight, endIndex],
     );
 
@@ -266,6 +290,7 @@ const InfiniteList = <T, B, A>({
                 </div>
             )}
             <div
+                id="pee on me"
                 ref={windowRef}
                 style={{
                     ...containerStyle,
