@@ -1,5 +1,5 @@
 import { animated } from '@react-spring/web';
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import { ethers, BigNumber, BigNumberish } from 'ethers';
 
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
@@ -27,30 +27,41 @@ type Item = {
 
 type ItemList = { active: Item[]; hidden: Item[] };
 
-const ItemRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({
-    item,
-    selected,
-    action,
-}) => {
+const StoageRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ item, action }) => {
     return (
-        <Button
-            buttonStyle={{
-                background: selected ? lib.colors.transparentGrey2 : lib.colors.transparent,
+        <div
+            style={{
                 borderRadius: lib.layout.borderRadius.medium,
                 transition: '.2s background ease',
             }}
-            rightIcon={
-                <div>
-                    <TokenViewer
-                        tokenId={item.id}
-                        style={{ width: '80px', height: '80px' }}
-                        showLabel
-                        disableOnClick
-                    />
-                </div>
-            }
-            onClick={() => action && action(item)}
-        />
+        >
+            <TokenViewer
+                tokenId={item.id}
+                style={{ width: '80px', height: '80px' }}
+                showLabel
+                disableOnClick
+            />
+            <Button onClick={() => action && action(item)} label="View" />
+        </div>
+    );
+};
+
+const DisplayedRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ item, action }) => {
+    return (
+        <div
+            style={{
+                borderRadius: lib.layout.borderRadius.medium,
+                transition: '.2s background ease',
+            }}
+        >
+            <TokenViewer
+                tokenId={item.id}
+                style={{ width: '80px', height: '80px' }}
+                showLabel
+                disableOnClick
+            />
+            <Button onClick={() => action && action(item)} label="deselect" />
+        </div>
     );
 };
 
@@ -62,8 +73,6 @@ export default () => {
     const style = useAnimateOverlay(!!tokenId, {
         zIndex: 998,
     });
-
-    const [selectedItem, setSelectedItem] = useState<Item>();
 
     const nuggft = useNuggftV1();
     const dotnugg = useDotnuggV1();
@@ -182,11 +191,18 @@ export default () => {
                         labelStyle={{
                             color: 'white',
                         }}
+                        action={(item) => {
+                            if (items)
+                                setItems({
+                                    active: [
+                                        ...items.active.filter((x) => x.feature !== item.feature),
+                                    ],
+                                    hidden: [item, ...items.hidden],
+                                });
+                        }}
                         extraData={undefined}
-                        RenderItem={ItemRenderItem}
+                        RenderItem={DisplayedRenderItem}
                         horizontal
-                        action={setSelectedItem}
-                        selected={selectedItem}
                         style={{
                             width: '100%',
                             background: lib.colors.transparentLightGrey,
@@ -202,7 +218,7 @@ export default () => {
                             color: 'white',
                         }}
                         extraData={undefined}
-                        RenderItem={ItemRenderItem}
+                        RenderItem={StoageRenderItem}
                         horizontal
                         action={(item) => {
                             if (items)
@@ -216,9 +232,7 @@ export default () => {
                                         ...items.active.filter((x) => x.feature === item.feature),
                                     ],
                                 });
-                            setSelectedItem(item);
                         }}
-                        selected={selectedItem}
                         style={{
                             width: '100%',
                             background: lib.colors.transparentLightGrey,
