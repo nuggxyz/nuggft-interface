@@ -119,63 +119,61 @@ const InfiniteList = <T, B, A>({
     const prevData = usePrevious(data);
 
     const [items, setItems] = useState<JSX.Element[]>([]);
-    // console.log({
-    //     id,
-    //     prevEnd,
-    //     prevStart,
-    //     data,
-    //     items,
-    //     startIndex,
-    //     endIndex,
-    //     scrollTop,
-    //     windowHeight,
-    //     itemHeight,
-    // });
+    console.log({
+        id,
+        items,
+        startIndex,
+        endIndex,
+    });
 
     useEffect(() => {
+        const key = (i: number) => `infinte-item-${id || 'unknown'}-${i}`;
+
+        const buildItem = (i: number) => (
+            <div
+                key={key(i)}
+                style={{
+                    position: 'absolute',
+                    top: `${i * itemHeight}px`,
+                    width: '100%',
+                    height: `${itemHeight}px`,
+                }}
+            >
+                <RenderItem
+                    item={data[i]}
+                    index={i}
+                    extraData={extraData}
+                    action={action}
+                    selected={JSON.stringify(selected) === JSON.stringify(data[i])}
+                />
+            </div>
+        );
         if (
             prevEnd !== endIndex ||
             prevStart !== startIndex ||
             JSON.stringify(prevData) !== JSON.stringify(data)
         ) {
             setItems((_items) => {
-                range(startIndex, endIndex).forEach((i) => {
-                    const key = `infinte-item-${id || 'unknown'}-${i}`;
+                if (!(startIndex === endIndex && endIndex === 0)) {
+                    range(startIndex, endIndex).forEach((i) => {
+                        if (!_items[i - startIndex] || _items[i - startIndex].key !== key(i)) {
+                            const check = _items.findIndex(
+                                (x) => x.key !== undefined && x.key === key(i),
+                            );
+                            if (check !== -1) {
+                                _items.splice(check, 1);
+                            }
 
-                    if (!_items[i - startIndex] || _items[i - startIndex].key !== key) {
-                        const check = _items.findIndex((x) => x.key === key);
-                        if (check !== -1) {
-                            _items.splice(check, 1);
+                            // eslint-disable-next-line no-param-reassign
+                            _items[i - startIndex] = buildItem(i);
                         }
-
+                    });
+                } else if (_items.length === 0 && data.length > 0) {
+                    for (let i = 0; i < Math.min(data.length, 25); i++) {
                         // eslint-disable-next-line no-param-reassign
-                        _items[i - startIndex] = (
-                            <div
-                                key={key}
-                                style={{
-                                    position: 'absolute',
-                                    top: `${i * itemHeight}px`,
-                                    width: '100%',
-                                    height: `${itemHeight}px`,
-                                }}
-                            >
-                                <RenderItem
-                                    item={data[i]}
-                                    index={i}
-                                    extraData={extraData}
-                                    action={action}
-                                    selected={JSON.stringify(selected) === JSON.stringify(data[i])}
-                                />
-                            </div>
-                        );
+                        _items[i] = buildItem(i);
                     }
-                });
-
-                // const diff = endIndex - startIndex + 1;
-                // if (diff >= _items.length) {
-                //     range(0, diff - _items.length).forEach(() => _items.pop());
-                // }
-
+                }
                 return _items;
             });
         }
