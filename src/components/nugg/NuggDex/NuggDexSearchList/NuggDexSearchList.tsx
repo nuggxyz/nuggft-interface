@@ -210,7 +210,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         onScrollEnd={({ setLoading, filters: _filters, addToList, desiredSize }) =>
                             handleGetAll(
                                 setAllNuggs,
-                                addToList ? allNuggs.length : 0,
+                                addToList ? allNuggs.length + 25 : 0,
                                 addToList,
                                 _filters,
                                 setLoading,

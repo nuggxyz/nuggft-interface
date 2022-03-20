@@ -136,6 +136,7 @@ const NuggList: FunctionComponent<Props> = ({
                     />
                 )}
                 <InfiniteList
+                    id="nugg-list"
                     style={{ zIndex: 0, overflow: 'hidden', position: 'relative' }}
                     data={values}
                     RenderItem={NuggListRenderItem}

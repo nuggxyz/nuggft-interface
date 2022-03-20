@@ -27,6 +27,7 @@ export interface InfiniteListRenderItemProps<T, B, A> {
 }
 
 interface Props<T, B, A> {
+    id?: string;
     data: T[];
     RenderItem: FunctionComponent<InfiniteListRenderItemProps<T, B, A>>;
     loading?: boolean;
@@ -52,6 +53,7 @@ interface Props<T, B, A> {
 const LIST_PADDING = 4;
 
 const InfiniteList = <T, B, A>({
+    id,
     data,
     RenderItem,
     loading = false,
@@ -75,10 +77,14 @@ const InfiniteList = <T, B, A>({
 }: Props<T, B, A>) => {
     const windowRef = useRef<HTMLDivElement>(null);
     const [windowHeight, setWindowHeight] = useState(0);
-
     useEffect(() => {
         if (windowRef.current) {
-            setWindowHeight(windowRef.current.clientHeight);
+            console.log(id, 'abc', {
+                scroll: windowRef.current.scrollHeight,
+                offset: windowRef.current.offsetHeight,
+                client: windowRef.current.clientHeight,
+            });
+            setWindowHeight(windowRef.current.scrollHeight);
         }
     }, [windowRef, animationToggle]);
 
@@ -88,11 +94,23 @@ const InfiniteList = <T, B, A>({
         () => Math.max(Math.floor(scrollTop / itemHeight) - LIST_PADDING, 0),
         [scrollTop, itemHeight],
     );
+    const endBufferIndex = useMemo(
+        () =>
+            Math.min(
+                data.length - 1,
+                scrollTop + windowHeight === 0
+                    ? 0
+                    : Math.ceil((scrollTop + windowHeight) / itemHeight) + LIST_PADDING * 2,
+            ),
+        [scrollTop, data, windowHeight, itemHeight],
+    );
     const endIndex = useMemo(
         () =>
             Math.min(
                 data.length - 1,
-                Math.floor((scrollTop + windowHeight) / itemHeight) + LIST_PADDING,
+                scrollTop + windowHeight === 0
+                    ? 0
+                    : Math.ceil((scrollTop + windowHeight) / itemHeight) + LIST_PADDING,
             ),
         [scrollTop, data, windowHeight, itemHeight],
     );
@@ -101,6 +119,18 @@ const InfiniteList = <T, B, A>({
     const prevData = usePrevious(data);
 
     const [items, setItems] = useState<JSX.Element[]>([]);
+    // console.log({
+    //     id,
+    //     prevEnd,
+    //     prevStart,
+    //     data,
+    //     items,
+    //     startIndex,
+    //     endIndex,
+    //     scrollTop,
+    //     windowHeight,
+    //     itemHeight,
+    // });
 
     useEffect(() => {
         if (
@@ -110,14 +140,18 @@ const InfiniteList = <T, B, A>({
         ) {
             setItems((_items) => {
                 range(startIndex, endIndex).forEach((i) => {
-                    if (
-                        !_items[i - startIndex] ||
-                        _items[i - startIndex].key !== JSON.stringify(data[i])
-                    ) {
+                    const key = `infinte-item-${id || 'unknown'}-${i}`;
+
+                    if (!_items[i - startIndex] || _items[i - startIndex].key !== key) {
+                        const check = _items.findIndex((x) => x.key === key);
+                        if (check !== -1) {
+                            _items.splice(check, 1);
+                        }
+
                         // eslint-disable-next-line no-param-reassign
                         _items[i - startIndex] = (
                             <div
-                                key={`infinite-${i}`}
+                                key={key}
                                 style={{
                                     position: 'absolute',
                                     top: `${i * itemHeight}px`,
@@ -136,14 +170,17 @@ const InfiniteList = <T, B, A>({
                         );
                     }
                 });
-                const diff = endIndex - startIndex + 1;
-                if (diff !== _items.length) {
-                    range(0, diff).forEach(() => _items.pop());
-                }
+
+                // const diff = endIndex - startIndex + 1;
+                // if (diff >= _items.length) {
+                //     range(0, diff - _items.length).forEach(() => _items.pop());
+                // }
+
                 return _items;
             });
         }
     }, [
+        id,
         endIndex,
         startIndex,
         prevEnd,
@@ -162,8 +199,8 @@ const InfiniteList = <T, B, A>({
         if (onScrollEnd) {
             if (
                 items.length !== 0 &&
-                items.length * itemHeight + scrollTop >= innerHeight &&
-                prevEnd !== endIndex &&
+                (items.length + 1) * itemHeight + scrollTop >= innerHeight &&
+                prevEnd !== endBufferIndex &&
                 !loading
             ) {
                 void onScrollEnd({ addToList: true });
@@ -233,7 +270,9 @@ const InfiniteList = <T, B, A>({
                 >
                     <Loader color={loaderColor || 'black'} />
                 </div>
-            ) : null,
+            ) : (
+                <div />
+            ),
         [loading, loaderColor, itemHeight, endIndex],
     );
 
@@ -266,6 +305,7 @@ const InfiniteList = <T, B, A>({
                 </div>
             )}
             <div
+                id="pee on me"
                 ref={windowRef}
                 style={{
                     ...containerStyle,

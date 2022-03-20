@@ -42,6 +42,7 @@
         "module-resolver"
     ],
     "rules": {
+        "no-nested-ternary": "off",
         "import/newline-after-import": "warn",
         "no-void": ["error", { "allowAsStatement": true }],
         "no-bitwise": ["error", { "allow": ["&", "|", "<<", ">>"] }],
