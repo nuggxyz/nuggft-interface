@@ -127,32 +127,32 @@ const InfiniteList = <T, B, A>({
     });
 
     useEffect(() => {
-        const key = (i: number) => `infinte-item-${id || 'unknown'}-${i}`;
-
-        const buildItem = (i: number) => (
-            <div
-                key={key(i)}
-                style={{
-                    position: 'absolute',
-                    top: `${i * itemHeight}px`,
-                    width: '100%',
-                    height: `${itemHeight}px`,
-                }}
-            >
-                <RenderItem
-                    item={data[i]}
-                    index={i}
-                    extraData={extraData}
-                    action={action}
-                    selected={JSON.stringify(selected) === JSON.stringify(data[i])}
-                />
-            </div>
-        );
         if (
             prevEnd !== endIndex ||
             prevStart !== startIndex ||
             JSON.stringify(prevData) !== JSON.stringify(data)
         ) {
+            const key = (i: number) => `infinte-item-${id || 'unknown'}-${i}`;
+
+            const buildItem = (i: number) => (
+                <div
+                    key={key(i)}
+                    style={{
+                        position: 'absolute',
+                        top: `${i * itemHeight}px`,
+                        width: '100%',
+                        height: `${itemHeight}px`,
+                    }}
+                >
+                    <RenderItem
+                        item={data[i]}
+                        index={i}
+                        extraData={extraData}
+                        action={action}
+                        selected={JSON.stringify(selected) === JSON.stringify(data[i])}
+                    />
+                </div>
+            );
             setItems((_items) => {
                 if (!(startIndex === endIndex && endIndex === 0)) {
                     range(startIndex, endIndex).forEach((i) => {
@@ -164,13 +164,11 @@ const InfiniteList = <T, B, A>({
                                 _items.splice(check, 1);
                             }
 
-                            // eslint-disable-next-line no-param-reassign
                             _items[i - startIndex] = buildItem(i);
                         }
                     });
                 } else if (_items.length === 0 && data.length > 0) {
                     for (let i = 0; i < Math.min(data.length, 25); i++) {
-                        // eslint-disable-next-line no-param-reassign
                         _items[i] = buildItem(i);
                     }
                 }
