@@ -196,3 +196,51 @@ subscription liveNugg($tokenId: ID!) {
         }
     }
 }
+
+subscription liveItemOffers($tokenId: String!) {
+    itemOffers(where: { swap_starts_with: $tokenId }, orderBy: eth, orderDirection: desc) {
+        nugg {
+            id
+        }
+        eth
+        txhash
+    }
+}
+
+subscription liveOffers($tokenId: String!) {
+    offers(where: { swap_starts_with: $tokenId }, orderBy: eth, orderDirection: desc) {
+        user {
+            id
+        }
+        eth
+        txhash
+    }
+}
+
+subscription betterLiveItemOffers($tokenId: ID!) {
+    item(id: $tokenId) {
+        activeSwap {
+            offers(orderBy: eth, orderDirection: desc) {
+                nugg {
+                    id
+                }
+                eth
+                txhash
+            }
+        }
+    }
+}
+
+subscription betterLiveOffers($tokenId: ID!) {
+    nugg(id: $tokenId) {
+        activeSwap {
+            offers(orderBy: eth, orderDirection: desc) {
+                user {
+                    id
+                }
+                eth
+                txhash
+            }
+        }
+    }
+}

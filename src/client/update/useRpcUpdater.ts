@@ -35,7 +35,7 @@ export default () => {
             rpc.on(globalEvent, (log: Log) => {
                 const event = nuggft.interface.parseLog(log) as unknown as InterfacedEvent;
 
-                emitter.emit({
+                void emitter.emit({
                     type: emitter.events.TransactionComplete,
                     txhash: log.transactionHash,
                     success: true,
@@ -47,13 +47,13 @@ export default () => {
                     case 'OfferItem':
                     case 'Mint':
                     case 'Stake': {
-                        emitter.emit({
+                        void emitter.emit({
                             type: emitter.events.Stake,
                             event,
                             log,
                         });
 
-                        client.actions.updateProtocol({
+                        void client.actions.updateProtocol({
                             stake: EthInt.fromNuggftV1Stake(event.args.stake),
                         });
                         break;
@@ -65,7 +65,7 @@ export default () => {
                 switch (event.name) {
                     case 'OfferMint':
                     case 'Mint': {
-                        emitter.emit({
+                        void emitter.emit({
                             type: emitter.events.Mint,
                             event,
                             log,
@@ -87,14 +87,14 @@ export default () => {
                             txhash: log.transactionHash,
                         };
 
-                        emitter.emit({
+                        void emitter.emit({
                             type: emitter.events.Offer,
                             event,
                             log,
                             data,
                         });
 
-                        client.actions.updateOffers(event.args.tokenId.toString(), [data]);
+                        void client.actions.updateOffers(event.args.tokenId.toString(), [data]);
                         break;
                     }
                     default:
@@ -104,7 +104,6 @@ export default () => {
                 switch (event.name) {
                     case 'OfferItem': {
                         const agency = BigNumber.from(event.args.agency);
-
                         client.actions.updateOffers(
                             `item-${Number(event.args.itemId).toString()}` as ItemId,
                             [

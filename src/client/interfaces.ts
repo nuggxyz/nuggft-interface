@@ -176,11 +176,9 @@ export type ClientStateUpdate = {
 };
 
 export interface Actions {
-    startActivation: () => () => void;
     updateBlocknum: (blocknum: number, chainId: Chain) => void;
     updateProtocol: (stateUpdate: ClientStateUpdate) => void;
     routeTo: (tokenId: TokenId, view: boolean) => void;
-    reportError: (error: Error | undefined) => void;
     toggleView: () => void;
     updateClients: (
         stateUpdate: Pick<ClientStateUpdate, 'rpc' | 'graph'>,

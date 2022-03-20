@@ -14,13 +14,13 @@ import {
     OfferData,
     ClientStore,
     ClientState,
-    DEFAULT_STATE,
     UnclaimedNuggOffer,
     UnclaimedItemOffer,
     LoanData,
     MyNuggsData,
     ClientStateUpdate,
     Actions,
+    DEFAULT_STATE,
 } from './interfaces';
 
 const calculateStartBlock = (epoch: BigNumberish, chainId: Chain) => {
@@ -61,40 +61,26 @@ const mergeUnique = (arr: OfferData[]) => {
     return array3.sort((a, b) => (a.eth.gt(b.eth) ? -1 : 1));
 };
 
-function createClientStoreAndActions(allowedChainIds?: number[]): {
+// const log =
+//     (_config: StateCreator<ClientState>): StateCreator<ClientState> =>
+//     (set, get, api) =>
+//         _config(
+//             (args) => {
+//                 console.log('  applying', args);
+//                 set(args);
+//                 console.log('  new state', get());
+//             },
+//             get,
+//             api,
+//         );
+
+function createClientStoreAndActions(): {
     store: ClientStore;
     actions: Actions;
 } {
-    if (allowedChainIds?.length === 0) {
-        throw new Error(`allowedChainIds is length 0`);
-    }
-
     const store = create<ClientState>(() => DEFAULT_STATE);
 
     // flag for tracking updates so we don't clobber data when cancelling activation
-    let nullifier = 0;
-
-    /**
-     * Sets activating to true, indicating that an update is in progress.
-     *
-     * @returns cancelActivation - A function that cancels the activation by setting activating to false,
-     * as long as there haven't been any intervening updates.
-     */
-    function startActivation(): () => void {
-        const nullifierCached = ++nullifier;
-
-        store.setState({
-            ...DEFAULT_STATE,
-            activating: true,
-        });
-
-        // return a function that cancels the activation iff nothing else has happened
-        return () => {
-            if (nullifier === nullifierCached) {
-                store.setState({ ...DEFAULT_STATE, activating: false });
-            }
-        };
-    }
 
     async function checkVaildRouteOnStartup(): Promise<void> {
         const route = parseRoute(window.location.hash);
@@ -183,8 +169,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
      * as long as there haven't been any intervening updates.
      */
     function updateProtocol(stateUpdate: ClientStateUpdate): void {
-        nullifier++;
-
         store.setState((existingState): ClientState => {
             const stake = stateUpdate.stake ?? existingState.stake;
             const rpc = stateUpdate.rpc ?? existingState.rpc;
@@ -434,8 +418,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         stateUpdate: Pick<ClientStateUpdate, 'rpc' | 'graph'>,
         chainId: Chain,
     ): Promise<void> {
-        nullifier++;
-
         store.setState((existingState): ClientState => {
             // determine the next chainId and accounts
             const rpc = stateUpdate.rpc ?? existingState.rpc;
@@ -462,17 +444,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         }
     }
 
-    // /**
-    //  * Used to report an `error`, which clears all existing state.
-    //  *
-    //  * @param error - The error to report. If undefined, the state will be reset to its default value.
-    //  */
-    function reportError(error: Error | undefined): void {
-        nullifier++;
-
-        store.setState(() => ({ ...DEFAULT_STATE, error }));
-    }
-
     const toggleView = () => {
         const { isViewOpen } = store.getState();
         const { lastSwap } = store.getState();
@@ -490,9 +461,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         store,
         actions: {
             updateClients,
-            startActivation,
             updateBlocknum,
-            reportError,
             updateProtocol,
             routeTo,
             toggleView,

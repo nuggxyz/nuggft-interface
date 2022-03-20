@@ -37,14 +37,12 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
 
         if (rpc !== undefined && rpc.connector && rpc.connector.activate)
             void rpc.connector.activate(Chain.RINKEBY);
-
-        void client.actions.startActivation();
     }, []);
 
     useEffect(() => {
         if (chainId && web3.config.isValidChainId(chainId)) {
             const graph = web3.config.createApolloClient(chainId);
-            const rpc = web3.config.createAlchemyWebSocket(chainId);
+            const rpc = web3.config.createInfuraWebSocket(chainId);
 
             void core.actions.updateClients(
                 {
