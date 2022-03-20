@@ -79,11 +79,6 @@ const InfiniteList = <T, B, A>({
     const [windowHeight, setWindowHeight] = useState(0);
     useEffect(() => {
         if (windowRef.current) {
-            console.log(id, 'abc', {
-                scroll: windowRef.current.scrollHeight,
-                offset: windowRef.current.offsetHeight,
-                client: windowRef.current.clientHeight,
-            });
             setWindowHeight(windowRef.current.scrollHeight);
         }
     }, [windowRef, animationToggle]);
@@ -119,12 +114,6 @@ const InfiniteList = <T, B, A>({
     const prevData = usePrevious(data);
 
     const [items, setItems] = useState<JSX.Element[]>([]);
-    console.log({
-        id,
-        items,
-        startIndex,
-        endIndex,
-    });
 
     useEffect(() => {
         if (
