@@ -62,9 +62,9 @@ export const CONTRACTS = {
         Interval: 32,
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0xd94979f338081e32b74a5d84e402c619d4b30255', // 0x3f1c9c4ae47809d284592845e4ced13a6e352421
-        DotnuggV1: '0x6a374c2825fde54cd4feeed60551d55524a5cdce',
-        Genesis: 10305984,
+        NuggftV1: '0x2ea7dc5a053bf8607425c289953fb0ac7dc4e2ea', // 0x3f1c9c4ae47809d284592845e4ced13a6e352421
+        DotnuggV1: '0xf412e03318c359e883d5c08ffc310bca990bdeb4',
+        Genesis: 10366170,
         Interval: 32,
     },
     [Chain.GOERLI]: {
