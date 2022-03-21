@@ -89,6 +89,8 @@ subscription liveUser($address: ID!) {
             activeSwap {
                 id
             }
+            pendingClaim
+            lastTransfer
             offers(where: { claimed: false }) {
                 id
                 eth
@@ -185,6 +187,8 @@ subscription liveNugg($tokenId: ID!) {
                 position
             }
         }
+        pendingClaim
+        lastTransfer
         activeLoan {
             id
         }

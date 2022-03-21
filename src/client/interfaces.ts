@@ -49,6 +49,8 @@ export interface MyNuggsData {
     activeSwap: boolean;
     tokenId: NuggId;
     recent: boolean;
+    pendingClaim: boolean;
+    lastTransfer: number;
     unclaimedOffers: { itemId: ItemId; endingEpoch: number | null }[];
 }
 export interface BaseUnclaimedOffer {

@@ -22,7 +22,7 @@ export default () => {
     const updateOffers = client.mutate.updateOffers();
     const updateBlocknum = client.mutate.updateBlocknum();
     const updateProtocol = client.mutate.updateProtocol();
-    const addNugg = client.mutate.addNugg();
+    // const addNugg = client.mutate.addNugg();
     const addLoan = client.mutate.addLoan();
     const updateLoan = client.mutate.updateLoan();
     const removeLoan = client.mutate.removeLoan();
@@ -50,6 +50,8 @@ export default () => {
                     txhash: log.transactionHash,
                     success: true,
                 });
+
+                console.log(event);
 
                 switch (event.name) {
                     case 'Offer':
@@ -125,13 +127,15 @@ export default () => {
                     }
                     case 'Transfer': {
                         if (address && event.args._to.toLowerCase() === address.toLowerCase()) {
-                            addNugg({
-                                recent: true,
-                                tokenId: event.args._tokenId.toString(),
-                                activeLoan: false,
-                                activeSwap: false,
-                                unclaimedOffers: [],
-                            });
+                            // addNugg({
+                            //     recent: true,
+                            //     tokenId: event.args._tokenId.toString(),
+                            //     activeLoan: false,
+                            //     activeSwap: false,
+                            //     pendingClaim: false,
+                            //     lastTransfer: log.blockNumber,
+                            //     unclaimedOffers: [],
+                            // });
                             emitter.emit({
                                 type: emitter.events.Transfer,
                                 event,

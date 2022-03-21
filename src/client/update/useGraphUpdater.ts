@@ -130,6 +130,8 @@ export default () => {
                             tokenId: z.id,
                             activeLoan: !!z.activeLoan,
                             activeSwap: !!z.activeSwap,
+                            pendingClaim: z.pendingClaim,
+                            lastTransfer: z.lastTransfer,
                             unclaimedOffers: z.offers.map((y) => {
                                 return {
                                     itemId: y.swap.sellingItem.id as ItemId,

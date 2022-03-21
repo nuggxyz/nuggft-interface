@@ -42,7 +42,8 @@ export interface LiveNugg {
     activeLoan: boolean;
     activeSwap?: LiveNuggSwap;
     items: LiveNuggItem[];
-
+    pendingClaim: boolean;
+    lastTransfer: number;
     // svg: ReactSVG;
     owner: string;
     swaps: LiveNuggSwap[];
@@ -79,6 +80,8 @@ export const useLiveNugg = (tokenId: string | undefined) => {
                             position: Number(y?.item.position),
                         };
                     }),
+                    pendingClaim: nugg.pendingClaim,
+                    lastTransfer: nugg.lastTransfer,
                     swaps: nugg.swaps.map((y) => {
                         return {
                             type: 'nugg',
