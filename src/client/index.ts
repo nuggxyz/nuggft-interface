@@ -2,6 +2,8 @@
 import { useCallback } from 'react';
 
 // eslint-disable-next-line import/no-named-as-default
+// import shallow from 'zustand/shallow';
+
 import core from './core';
 import { useLiveNugg } from './hooks/useLiveNugg';
 import updater from './updater';
@@ -9,6 +11,11 @@ import { useLiveItem } from './hooks/useLiveItem';
 import { useDotnugg, useDotnuggCacheOnly } from './hooks/useDotnugg';
 import router, { TokenId } from './router';
 import useLiveToken from './hooks/useLiveToken';
+import getToken from './getters/getToken';
+import getNugg from './getters/getNugg';
+import getItem from './getters/getItem';
+
+const eqFunc = (prev: any, state: any) => JSON.stringify(prev) === JSON.stringify(state);
 
 export default {
     ...core,
@@ -31,13 +38,13 @@ export default {
         },
 
         lastSwap: {
-            tokenId: () => core.store((state) => state.lastSwap?.tokenId),
-            type: () => core.store((state) => state.lastSwap?.type),
+            tokenId: () => core.store((state) => state.lastSwap?.tokenId, eqFunc),
+            type: () => core.store((state) => state.lastSwap?.type, eqFunc),
         },
 
         lastView: {
-            tokenId: () => core.store((state) => state.lastView?.tokenId),
-            type: () => core.store((state) => state.lastView?.type),
+            tokenId: () => core.store((state) => state.lastView?.tokenId, eqFunc),
+            type: () => core.store((state) => state.lastView?.type, eqFunc),
         },
         stake: {
             eps: () => core.store((state) => state.stake?.eps),
@@ -58,6 +65,7 @@ export default {
                     (state) => (tokenId ? state.activeOffers[tokenId] ?? [] : []),
                     [tokenId],
                 ),
+                eqFunc,
             ),
         activeSwaps: () => core.store((state) => state.activeSwaps),
         activeItems: () => core.store((state) => state.activeItems),
@@ -69,6 +77,8 @@ export default {
                     [id],
                 ),
             ),
+        activeLifecycle: () => core.store((state) => state.activeLifecycle),
+        activeToken: () => core.store((state) => state.activeToken),
         myNuggs: () => core.store((state) => state.myNuggs),
         myLoans: () =>
             core.store((state) =>
@@ -114,6 +124,11 @@ export default {
                 return core.store.getState().infura!;
             },
         },
+        activeToken: () => core.store.getState().activeToken,
+        activeLifecycle: () => core.store.getState().activeLifecycle,
+        token: (tokenId: string) => getToken(tokenId),
+        nugg: (tokenId: string) => getNugg(tokenId),
+        item: (tokenId: string) => getItem(tokenId),
     },
     router,
     updater,

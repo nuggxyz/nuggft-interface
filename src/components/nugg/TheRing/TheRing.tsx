@@ -29,9 +29,8 @@ const TheRing: FunctionComponent<Props> = ({
     const blocknum = client.live.blocknum();
 
     const lastSwap__tokenId = client.live.lastSwap.tokenId();
-    const { token, lifecycle } = client.hook.useLiveToken(lastSwap__tokenId);
-
-    // console.log({ token, lifecycle });
+    const token = client.live.activeToken();
+    const lifecycle = client.live.activeLifecycle();
 
     const blockDuration = useMemo(() => {
         let remaining = 0;

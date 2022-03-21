@@ -84,7 +84,7 @@ export default () => {
                             [
                                 {
                                     eth: EthInt.fromNuggftV1Agency(event.args.agency),
-                                    user: agency.mask(160)._hex,
+                                    user: agency.mask(160).toString(),
                                     txhash: log.transactionHash,
                                 },
                             ],

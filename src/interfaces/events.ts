@@ -1,4 +1,3 @@
-import {} from '../typechain/NuggftV1';
 import {
     ClaimEvent,
     ClaimItemEvent,

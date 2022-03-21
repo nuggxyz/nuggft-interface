@@ -15,7 +15,6 @@ import styles from './HomeTab.styles';
 const MyNuggRenderItem: FunctionComponent<
     InfiniteListRenderItemProps<MyNuggsData, undefined, unknown>
 > = ({ item, style }) => {
-    console.log({ item });
     return item ? (
         <div
             style={{

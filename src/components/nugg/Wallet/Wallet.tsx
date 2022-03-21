@@ -3,6 +3,8 @@ import React, { FunctionComponent, useMemo } from 'react';
 import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
 import state from '@src/state';
 import web3 from '@src/web3';
+import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
+import lib from '@src/lib';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectTab from './tabs/ConnectTab/ConnectTab';
@@ -18,22 +20,48 @@ const Wallet: FunctionComponent<Props> = () => {
 
     const happytabs: HappyTabberItem[] = useMemo(
         () => [
+            // eslint-disable-next-line no-nested-ternary
             ...(account
-                ? [
-                      {
-                          label: 'Home',
-                          comp: React.memo(HomeTab),
-                      },
-                      {
-                          label: 'Claims',
-                          comp: React.memo(ClaimTab),
-                      },
+                ? screenType === 'tablet'
+                    ? [
+                          {
+                              label: 'Swap',
+                              comp: React.memo(RingAbout),
+                              labelStyle: { color: lib.colors.nuggBlueText },
+                              bodyStyle: {
+                                  background: lib.colors.gradient2,
+                                  boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggBlue}`,
+                              },
+                          },
+                          {
+                              label: 'Home',
+                              comp: React.memo(HomeTab),
+                          },
+                          {
+                              label: 'Claims',
+                              comp: React.memo(ClaimTab),
+                          },
 
-                      {
-                          label: 'Loans',
-                          comp: React.memo(LoanTab),
-                      },
-                  ]
+                          {
+                              label: 'Loans',
+                              comp: React.memo(LoanTab),
+                          },
+                      ]
+                    : [
+                          {
+                              label: 'Home',
+                              comp: React.memo(HomeTab),
+                          },
+                          {
+                              label: 'Claims',
+                              comp: React.memo(ClaimTab),
+                          },
+
+                          {
+                              label: 'Loans',
+                              comp: React.memo(LoanTab),
+                          },
+                      ]
                 : [
                       {
                           label: 'Home',

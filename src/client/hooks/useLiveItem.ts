@@ -46,6 +46,59 @@ export interface LiveItem {
     };
 }
 
+export const liveItemGql = () => gql`
+{
+    item(id: $tokenId) {
+        id
+        count
+        activeSwap ${swapgql()}
+        swaps ${swapgql()}
+    }
+}`;
+
+export type LiveItemGql = {
+    item: {
+        id: string;
+        count: number;
+        activeSwap: {
+            id: string;
+            epoch: {
+                id: string;
+                startblock: string;
+                endblock: string;
+                status: 'OVER' | 'ACTIVE' | 'PENDING';
+            };
+            eth: string;
+            leader: {
+                id: string;
+            };
+            owner: {
+                id: string;
+            };
+            endingEpoch: string | null;
+            num: string;
+        };
+        swaps: {
+            id: string;
+            epoch: {
+                id: string;
+                startblock: string;
+                endblock: string;
+                status: 'OVER' | 'ACTIVE' | 'PENDING';
+            };
+            eth: string;
+            leader: {
+                id: string;
+            };
+            owner: {
+                id: string;
+            };
+            endingEpoch: string | null;
+            num: string;
+        }[];
+    };
+};
+
 export const useLiveItem = (tokenId: string | undefined) => {
     const [item, setItem] = React.useState<LiveItem>();
 
@@ -54,57 +107,9 @@ export const useLiveItem = (tokenId: string | undefined) => {
     useEffect(() => {
         if (apollo && tokenId) {
             const instance = apollo
-                .subscribe<{
-                    item: {
-                        id: string;
-                        count: number;
-                        activeSwap: {
-                            id: string;
-                            epoch: {
-                                id: string;
-                                startblock: string;
-                                endblock: string;
-                                status: 'OVER' | 'ACTIVE' | 'PENDING';
-                            };
-                            eth: string;
-                            leader: {
-                                id: string;
-                            };
-                            owner: {
-                                id: string;
-                            };
-                            endingEpoch: string | null;
-                            num: string;
-                        };
-                        swaps: {
-                            id: string;
-                            epoch: {
-                                id: string;
-                                startblock: string;
-                                endblock: string;
-                                status: 'OVER' | 'ACTIVE' | 'PENDING';
-                            };
-                            eth: string;
-                            leader: {
-                                id: string;
-                            };
-                            owner: {
-                                id: string;
-                            };
-                            endingEpoch: string | null;
-                            num: string;
-                        }[];
-                    };
-                }>({
+                .subscribe<LiveItemGql>({
                     query: gql`
-                        subscription useLiveItem($tokenId: ID!) {
-                            item(id: $tokenId) {
-                                id
-                                count
-                                activeSwap ${swapgql()}
-                                swaps ${swapgql()}
-                            }
-                        }
+                        subscription useLiveItem($tokenId: ID!) ${liveItemGql()}
                     `,
                     variables: { tokenId: extractItemId(tokenId) },
                 })

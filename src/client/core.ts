@@ -12,6 +12,8 @@ import config from '@src/config';
 import { executeQuery3 } from '@src/graphql/helpers';
 
 import { parseRoute, Route, SwapRoutes, ViewRoutes, TokenId, ItemId, NuggId } from './router';
+// eslint-disable-next-line import/no-cycle
+import { Lifecycle, LiveToken } from './hooks/useLiveToken';
 
 export interface OfferData {
     user: string;
@@ -153,6 +155,8 @@ export interface ClientState extends State {
     myLoans: LoanData[];
     error: Error | undefined;
     activating: boolean;
+    activeLifecycle: Lifecycle;
+    activeToken?: LiveToken;
 }
 
 export const DEFAULT_STATE: ClientState = {
@@ -176,6 +180,8 @@ export const DEFAULT_STATE: ClientState = {
     blocknum: undefined,
     error: undefined,
     manualPriority: undefined,
+    activeLifecycle: Lifecycle.Stands,
+    activeToken: undefined,
 };
 
 type ClientStateUpdate = {
@@ -217,6 +223,8 @@ export interface Actions {
     ) => Promise<void>;
 
     updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;
+    updateLifecycle: (lifecycle: Lifecycle) => void;
+    updateToken: (token?: LiveToken) => void;
 
     removeLoan: (tokenId: NuggId) => void;
     removeNuggClaim: (tokenId: NuggId) => void;
@@ -293,6 +301,24 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                 if (check.item === null) window.location.hash = '#/';
             }
         }
+    }
+
+    function updateLifecycle(lifecycle: Lifecycle) {
+        store.setState((existingState): ClientState => {
+            return {
+                ...existingState,
+                activeLifecycle: lifecycle,
+            };
+        });
+    }
+
+    function updateToken(token?: LiveToken) {
+        store.setState((existingState): ClientState => {
+            return {
+                ...existingState,
+                activeToken: token,
+            };
+        });
     }
 
     /**
@@ -498,8 +524,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                 },
             };
 
-            console.log({ existingState, updates });
-
             return updates;
         });
     }
@@ -655,6 +679,8 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             updateClients,
             startActivation,
             updateBlocknum,
+            updateLifecycle,
+            updateToken,
             reportError,
             updateProtocol,
             routeTo,

@@ -17,10 +17,10 @@ import useIsVisible from '@src/hooks/useIsVisible';
 
 import styles from './List.styles';
 
-export interface ListRenderItemProps<T, B, A> {
-    item: T;
-    extraData: B;
-    action?: (arg: A) => void;
+export interface ListRenderItemProps<ItemType, ExtraDataType, ActionArgType> {
+    item: ItemType;
+    extraData: ExtraDataType;
+    action?: (arg: ActionArgType) => void;
     onScrollEnd?: () => () => void;
     index: number;
     rootRef?: LegacyRef<HTMLDivElement>;

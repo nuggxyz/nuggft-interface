@@ -540,7 +540,10 @@ function useENS(
         if (provider && account && chainId) {
             if (account === Address.ZERO.hash) setENSName('black-hole');
             if (provider === 'nugg') setENSName(`Nugg ${account}`);
-            else if (account.toLowerCase() === CONTRACTS[chainId].NuggftV1.toLowerCase())
+            else if (
+                account.toLowerCase() === CONTRACTS[chainId].NuggftV1.toLowerCase() ||
+                account.toLowerCase() === Address.ZERO.hash
+            )
                 setENSName('nuggftv1.nugg.xyz');
             else {
                 let stale = false;

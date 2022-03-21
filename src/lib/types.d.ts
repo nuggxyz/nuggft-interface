@@ -25,3 +25,5 @@ type NLStyleSheet = ApplyToChildren<React.CSSProperties>;
 type Dictionary<T> = {
     [_: string]: T;
 };
+
+type RecursiveRequired<T> = { [K in keyof T]: Required<T[K]> };

@@ -12,13 +12,14 @@ import Text from '@src/components/general/Texts/Text/Text';
 import Loader from '@src/components/general/Loader/Loader';
 import { isUndefinedOrNullOrArrayEmpty, range } from '@src/lib';
 import usePrevious from '@src/hooks/usePrevious';
+import useForceUpdate from '@src/hooks/useForceUpdate';
 
 import styles from './List.styles';
 
 export interface InfiniteListRenderItemProps<T, B, A> {
     item: T;
     extraData: B;
-    action: (arg: A) => void;
+    action?: (arg: A) => void;
     onScrollEnd?: ({ addToList }: { addToList: boolean }) => void;
     index: number;
     rootRef?: unknown;
@@ -31,7 +32,7 @@ interface Props<T, B, A> {
     RenderItem: FunctionComponent<InfiniteListRenderItemProps<T, B, A>>;
     loading?: boolean;
     extraData: B;
-    action: (arg: A) => void;
+    action?: (arg: A) => void;
     onScrollEnd?: ({ addToList }: { addToList: boolean }) => void;
     label?: string;
     border?: boolean;
@@ -76,9 +77,11 @@ const InfiniteList = <T, B, A>({
     const windowRef = useRef<HTMLDivElement>(null);
     const [windowHeight, setWindowHeight] = useState(0);
 
+    const forceUpdate = useForceUpdate();
+
     useEffect(() => {
         if (windowRef.current) {
-            setWindowHeight(windowRef.current.clientHeight);
+            setWindowHeight(windowRef.current.scrollHeight);
         }
     }, [windowRef, animationToggle]);
 
@@ -92,7 +95,9 @@ const InfiniteList = <T, B, A>({
         () =>
             Math.min(
                 data.length - 1,
-                Math.floor((scrollTop + windowHeight) / itemHeight) + LIST_PADDING,
+                scrollTop + windowHeight === 0
+                    ? 0
+                    : Math.floor((scrollTop + windowHeight) / itemHeight) + LIST_PADDING,
             ),
         [scrollTop, data, windowHeight, itemHeight],
     );
@@ -102,13 +107,41 @@ const InfiniteList = <T, B, A>({
 
     const [items, setItems] = useState<JSX.Element[]>([]);
 
+    // console.log({ startIndex, endIndex });
+
     useEffect(() => {
         if (
             prevEnd !== endIndex ||
             prevStart !== startIndex ||
             JSON.stringify(prevData) !== JSON.stringify(data)
         ) {
+            // console.log('setItems');
+            // const temp = [];
+            // for (let i = startIndex; i <= endIndex; i++) {
+            //     temp.push(
+            //         <div
+            //             key={JSON.stringify(data[i])}
+            //             style={{
+            //                 position: 'absolute',
+            //                 top: `${i * itemHeight}px`,
+            //                 width: '100%',
+            //                 height: `${itemHeight}px`,
+            //             }}
+            //         >
+            //             <RenderItem
+            //                 item={data[i]}
+            //                 key={JSON.stringify(data[i])}
+            //                 index={i}
+            //                 extraData={extraData}
+            //                 action={action}
+            //                 selected={JSON.stringify(selected) === JSON.stringify(data[i])}
+            //             />
+            //         </div>,
+            //     );
+            // }
+            // setItems(temp);
             setItems((_items) => {
+                const len = _items.length;
                 range(startIndex, endIndex).forEach((i) => {
                     if (
                         !_items[i - startIndex] ||
@@ -136,9 +169,15 @@ const InfiniteList = <T, B, A>({
                         );
                     }
                 });
+                // console.log(_items);
                 const diff = endIndex - startIndex + 1;
                 if (diff !== _items.length) {
-                    range(0, diff).forEach(() => _items.pop());
+                    // console.log(_items.length - diff);
+                    range(0, _items.length - diff).forEach(() => _items.pop());
+                }
+                if (len !== _items.length) {
+                    // console.log('FORCE');
+                    forceUpdate();
                 }
                 return _items;
             });

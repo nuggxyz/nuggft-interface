@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
 import { DefaultExtraData, UnclaimedOffer } from '@src/client/core';
-import { ListRenderItemProps } from '@src/components/general/List/List';
 import globalStyles from '@src/lib/globalStyles';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import NLStaticImage from '@src/components/general/NLStaticImage';
@@ -10,16 +9,17 @@ import { parseTokenId } from '@src/lib';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import state from '@src/state';
 import emitter from '@src/emitter';
+import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
 
 import styles from './ClaimTab.styles';
 
 const ClaimRenderItem: FunctionComponent<
-    ListRenderItemProps<UnclaimedOffer, DefaultExtraData, undefined>
+    InfiniteListRenderItemProps<UnclaimedOffer, DefaultExtraData, undefined>
 > = ({ item, index, extraData }) => {
     const swapText = useMemo(
         () =>
             item.type === 'item'
-                ? `For Nugg #${item.nugg}`
+                ? `For Nugg ${item.nugg}`
                 : `From epoch ${item.endingEpoch !== null ? item.endingEpoch : ''}`,
         [item],
     );

@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
-import List from '@src/components/general/List/List';
 import client from '@src/client';
+import InfiniteList from '@src/components/general/List/InfiniteList';
 
 import LoanRenderItem from './LoanRenderItem';
 import styles from './LoanTab.styles';
@@ -14,7 +14,7 @@ const LoanTab: FunctionComponent<Props> = () => {
 
     return (
         <div style={styles.container}>
-            <List
+            <InfiniteList
                 data={loanedNuggs}
                 RenderItem={LoanRenderItem}
                 label="Loaned Nuggs"
@@ -25,6 +25,7 @@ const LoanTab: FunctionComponent<Props> = () => {
                 listEmptyStyle={styles.textWhite}
                 loaderColor="white"
                 action={() => undefined}
+                itemHeight={79.578}
             />
         </div>
     );
