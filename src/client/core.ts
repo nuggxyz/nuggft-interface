@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { gql } from '@apollo/client';
-import create, { GetState, SetState, State, StateCreator, StoreApi } from 'zustand';
+import create, { State, StateCreator } from 'zustand';
 import { BigNumber, BigNumberish } from 'ethers';
 import { devtools } from 'zustand/middleware';
 import produce, { Draft, enableMapSet } from 'immer';
@@ -13,8 +13,8 @@ import { executeQuery3 } from '@src/graphql/helpers';
 
 import { parseRoute, Route, TokenId, ItemId, NuggId } from './router';
 import {
-    OfferData,
     ClientState,
+    OfferData,
     UnclaimedNuggOffer,
     UnclaimedItemOffer,
     LoanData,
@@ -62,22 +62,11 @@ const mergeUnique = (arr: OfferData[]) => {
     return array3.sort((a, b) => (a.eth.gt(b.eth) ? -1 : 1));
 };
 
-const immer =
-    <
-        T extends State,
-        CustomSetState extends SetState<T>,
-        CustomGetState extends GetState<T>,
-        CustomStoreApi extends StoreApi<T>,
-    >(
-        _config: StateCreator<
-            T,
-            (partial: ((draft: Draft<T>) => void) | T, replace?: boolean) => void,
-            CustomGetState,
-            CustomStoreApi
-        >,
-    ): StateCreator<T, CustomSetState, CustomGetState, CustomStoreApi> =>
-    (set, get, api) =>
-        _config(
+const immer__middleware = <T extends State>(
+    fn: StateCreator<T, (partial: ((draft: Draft<T>) => void) | T, replace?: boolean) => void>,
+): StateCreator<T> =>
+    function immer(set, get, api) {
+        return fn(
             (partial, replace) => {
                 const nextState =
                     typeof partial === 'function'
@@ -88,19 +77,19 @@ const immer =
             get,
             api,
         );
+    };
 
-const log =
-    (_config: StateCreator<ClientState>): StateCreator<ClientState> =>
-    (set, get, api) =>
-        _config(
+const logger__middleware = <T extends State>(fn: StateCreator<T>): StateCreator<T> =>
+    function log(set, get, api) {
+        return fn(
             (args) => {
-                // console.log('  applying', args);
                 set(args);
                 console.log('  new state', get());
             },
             get,
             api,
         );
+    };
 
 function createClientStoreAndActions2() {
     async function checkVaildRouteOnStartup(): Promise<void> {
@@ -131,10 +120,10 @@ function createClientStoreAndActions2() {
         }
     }
 
-    return create<Readonly<ClientState>>(
+    return create<ClientState>(
         devtools(
-            log(
-                immer((set, get) => {
+            logger__middleware(
+                immer__middleware((set, get) => {
                     function updateBlocknum(blocknum: number, chainId: Chain) {
                         const epochId = calculateEpochId(blocknum, chainId);
 
@@ -187,8 +176,6 @@ function createClientStoreAndActions2() {
                             }
 
                             draft.blocknum = blocknum;
-
-                            return draft;
                         });
                     }
 
