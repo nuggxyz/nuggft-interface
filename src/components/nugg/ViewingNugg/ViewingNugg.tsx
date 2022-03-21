@@ -176,8 +176,11 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                             >
                                 {tokenId &&
                                     // eslint-disable-next-line no-nested-ternary
-                                    (token?.activeSwap?.id ? (
-                                        <SaleButtons tokenId={tokenId} />
+                                    (token?.activeSwap?.id || token?.pendingClaim ? (
+                                        <SaleButtons
+                                            tokenId={tokenId}
+                                            reclaim={!token?.pendingClaim}
+                                        />
                                     ) : token?.activeLoan ? (
                                         <LoanButtons tokenId={tokenId} />
                                     ) : (
