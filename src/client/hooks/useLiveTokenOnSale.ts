@@ -1,20 +1,20 @@
-import React, { useEffect } from 'react';
+// import React, { useEffect } from 'react';
 
-import constants, { ITEM_ID } from '@src/lib/constants';
-import { Address } from '@src/classes/Address';
+import { ITEM_ID } from '@src/lib/constants';
+// import { Address } from '@src/classes/Address';
 
-// eslint-disable-next-line import/no-cycle
-import core from '@src/client/core';
+// // eslint-disable-next-line import/no-cycle
+// import core from '@src/client/core';
 
-// eslint-disable-next-line import/no-cycle
-import client from '..';
+// // eslint-disable-next-line import/no-cycle
+// import client from '..';
 
-// eslint-disable-next-line import/no-cycle
-import { useLiveItem } from './useLiveItem';
-// eslint-disable-next-line import/no-cycle
-import { useLiveNugg } from './useLiveNugg';
-// eslint-disable-next-line import/no-cycle
-import { Lifecycle } from './useLiveToken';
+// // eslint-disable-next-line import/no-cycle
+// import { useLiveItem } from './useLiveItem';
+// // eslint-disable-next-line import/no-cycle
+// import { useLiveNugg } from './useLiveNugg';
+// // eslint-disable-next-line import/no-cycle
+// import { Lifecycle } from './useLiveToken';
 
 export default (tokenId: string | ITEM_ID | undefined) => {
     // const epoch = client.live.epoch.id();

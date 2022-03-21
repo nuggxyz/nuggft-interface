@@ -99,13 +99,13 @@ function createClientStoreAndActions(): {
                         }
                     }
                 `,
-                { tokenId },
+                { tokenId: extractItemId(tokenId) },
             );
 
             if (route.type === Route.SwapNugg || route.type === Route.ViewNugg) {
-                if (check.nugg === null) window.location.hash = '#/';
+                if (check.nugg === undefined) window.location.hash = '#/';
             } else if (route.type === Route.SwapItem || route.type === Route.ViewItem) {
-                if (check.item === null) window.location.hash = '#/';
+                if (check.item === undefined) window.location.hash = '#/';
             }
         }
     }

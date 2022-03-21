@@ -12,7 +12,6 @@ import Text from '@src/components/general/Texts/Text/Text';
 import Loader from '@src/components/general/Loader/Loader';
 import { isUndefinedOrNullOrArrayEmpty, range } from '@src/lib';
 import usePrevious from '@src/hooks/usePrevious';
-import useForceUpdate from '@src/hooks/useForceUpdate';
 
 import styles from './List.styles';
 
