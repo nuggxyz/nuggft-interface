@@ -18,8 +18,6 @@ export default () => {
 
     const lastSwap__tokenId = client.live.lastSwap.tokenId();
 
-    // useLiveTokenOnSale(lastSwap__tokenId);
-
     useLiveOffers(lastSwap__tokenId);
 
     useGraphUpdater();
