@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
+import { IoOpenOutline } from 'react-icons/io5';
 
 import { OfferData } from '@src/client/interfaces';
 import { ListRenderItemProps } from '@src/components/general/List/List';
@@ -28,28 +29,22 @@ const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefin
         item?.user || '',
     );
     return (
-        <Button
-            onClick={() => {
-                if (extraData.chainId) {
-                    web3.config.gotoEtherscan(extraData.chainId, 'tx', item.txhash);
+        <div style={styles.offerAmount}>
+            <CurrencyText image="eth" value={item.eth.decimal.toNumber()} stopAnimation />
+            {leader ? (
+                <Text type="text" size="smaller" textStyle={{ color: lib.colors.textColor }}>
+                    {leader}
+                </Text>
+            ) : null}
+            <Button
+                buttonStyle={styles.etherscanBtn}
+                onClick={() =>
+                    extraData.chainId &&
+                    web3.config.gotoEtherscan(extraData.chainId, 'tx', item.txhash)
                 }
-            }}
-            buttonStyle={styles.offerAmount}
-            rightIcon={
-                <>
-                    <CurrencyText image="eth" value={item.eth.decimal.toNumber()} stopAnimation />
-                    {leader ? (
-                        <Text
-                            type="text"
-                            size="smaller"
-                            textStyle={{ color: lib.colors.textColor }}
-                        >
-                            {leader}
-                        </Text>
-                    ) : null}
-                </>
-            }
-        />
+                rightIcon={<IoOpenOutline color={lib.colors.nuggBlueText} size={14} />}
+            />
+        </div>
     );
 };
 
