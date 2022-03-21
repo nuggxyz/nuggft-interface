@@ -16,10 +16,10 @@ import { ListData } from './interfaces';
 export default {
     ...core,
 
-    exists: {
-        lastSwap: () => core((state) => state.lastView?.tokenId !== undefined),
-        lastView: () => core((state) => state.lastView?.tokenId !== undefined),
-    },
+    // exists: {
+    //     lastSwap: () => core.subscribe((state) => state.lastView?.tokenId !== undefined),
+    //     lastView: () => core((state) => state.lastView?.tokenId !== undefined),
+    // },
 
     live: {
         /// ///// simple ////////
@@ -83,10 +83,9 @@ export default {
 
         myNuggs: () =>
             core((state) => {
-                const r = state.myNuggs.sort((a, b) =>
+                return [...state.myNuggs].sort((a, b) =>
                     Number(a.tokenId) > Number(b.tokenId) ? 1 : -1,
                 );
-                return r;
             }),
         myLoans: () =>
             core((state) => state.myLoans.sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1))),

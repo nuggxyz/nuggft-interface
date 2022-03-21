@@ -145,6 +145,7 @@
         "graphql": "^16.2.0",
         "graphql-tag": "^2.12.6",
         "identity-obj-proxy": "^3.0.0",
+        "immer": "^9.0.12",
         "numbro": "^2.3.5",
         "polished": "^4.1.4",
         "prompts": "^2.4.2",
