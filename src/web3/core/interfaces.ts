@@ -14,7 +14,7 @@ export type SupportedConnector =
     | 'coinbase'
     | 'walletconnect'
     | 'metamask'
-    | 'infura';
+    | 'rpc';
 
 export type SupportedWalletConnectInstances =
     | 'metamask'
@@ -36,7 +36,7 @@ export enum Connector {
     WalletConnect = 'walletconnect',
     MetaMask = 'metamask',
     WalletLink = 'walletlink',
-    Infura = 'infura',
+    Rpc = 'rpc',
 }
 
 // eslint-disable-next-line no-shadow
@@ -48,7 +48,7 @@ export enum Peer {
     WalletConnect = 'walletconnect',
     CryptoDotCom = 'cryptodotcom',
     Trust = 'trust',
-    Infura = 'infura',
+    Rpc = 'rpc',
 }
 
 export interface PeerBaseInfo {
@@ -83,9 +83,9 @@ export interface PeerInfo__WalletConnect extends PeerBaseInfo {
     fallback: false;
 }
 
-export interface PeerInfo__Infura extends PeerBaseInfo {
-    type: Connector.Infura;
-    peer: Peer.Infura;
+export interface PeerInfo__Rpc extends PeerBaseInfo {
+    type: Connector.Rpc;
+    peer: Peer.Rpc;
     injected: false;
     fallback: true;
 }
@@ -107,6 +107,6 @@ export interface PeerInfo__WalletLink extends PeerBaseInfo {
 
 export type PeerInfo =
     | PeerInfo__WalletConnect
-    | PeerInfo__Infura
+    | PeerInfo__Rpc
     | PeerInfo__MetaMask
     | PeerInfo__WalletLink;

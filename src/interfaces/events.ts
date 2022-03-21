@@ -13,7 +13,7 @@ import {
     RebalanceEvent,
 } from '../typechain/NuggftV1';
 
-enum EventNames {
+export enum EventNames {
     Mint = 'Mint',
     Offer = 'Offer',
     OfferMint = 'OfferMint',
@@ -32,62 +32,74 @@ interface BaseEvent {
     name: EventNames;
 }
 
-interface Mint extends MintEvent, BaseEvent {
+export interface RpcMint extends BaseEvent {
     name: EventNames.Mint;
+    args: MintEvent['args'];
 }
 
-interface Loan extends LoanEvent, BaseEvent {
+export interface RpcLoan extends BaseEvent {
     name: EventNames.Loan;
+    args: LoanEvent['args'];
 }
 
-interface Rebalance extends RebalanceEvent, BaseEvent {
+export interface RpcRebalance extends BaseEvent {
     name: EventNames.Rebalance;
+    args: RebalanceEvent['args'];
 }
-interface Liquidate extends LiquidateEvent, BaseEvent {
+export interface RpcLiquidate extends BaseEvent {
     name: EventNames.Liquidate;
+    args: LiquidateEvent['args'];
 }
-interface Offer extends OfferEvent, BaseEvent {
+export interface RpcOffer extends BaseEvent {
     name: EventNames.Offer;
+    args: OfferEvent['args'];
 }
 
-interface OfferMint extends OfferMintEvent, BaseEvent {
+export interface RpcOfferMint extends BaseEvent {
     name: EventNames.OfferMint;
+    args: OfferMintEvent['args'];
 }
 
-interface OfferItem extends OfferItemEvent, BaseEvent {
+export interface RpcOfferItem extends BaseEvent {
     name: EventNames.OfferItem;
+    args: OfferItemEvent['args'];
 }
 
-interface Claim extends ClaimEvent, BaseEvent {
+export interface RpcClaim extends BaseEvent {
     name: EventNames.Claim;
+    args: ClaimEvent['args'];
 }
 
-interface ClaimItem extends ClaimItemEvent, BaseEvent {
+export interface RpcClaimItem extends BaseEvent {
     name: EventNames.ClaimItem;
+    args: ClaimItemEvent['args'];
 }
 
-interface Stake extends StakeEvent, BaseEvent {
+export interface RpcStake extends BaseEvent {
     name: EventNames.Stake;
+    args: StakeEvent['args'];
 }
 
-interface Transfer extends TransferEvent, BaseEvent {
+export interface RpcTransfer extends BaseEvent {
     name: EventNames.Transfer;
+    args: TransferEvent['args'];
 }
 
-interface TransferItem extends TransferItemEvent, BaseEvent {
+export interface RpcTransferItem extends BaseEvent {
     name: EventNames.TransferItem;
+    args: TransferItemEvent['args'];
 }
 
 export type InterfacedEvent =
-    | Mint
-    | OfferMint
-    | OfferItem
-    | Claim
-    | ClaimItem
-    | Stake
-    | Offer
-    | Transfer
-    | TransferItem
-    | Liquidate
-    | Loan
-    | Rebalance;
+    | RpcMint
+    | RpcOfferMint
+    | RpcOfferItem
+    | RpcClaim
+    | RpcClaimItem
+    | RpcStake
+    | RpcOffer
+    | RpcTransfer
+    | RpcTransferItem
+    | RpcLiquidate
+    | RpcLoan
+    | RpcRebalance;

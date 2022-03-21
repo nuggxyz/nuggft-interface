@@ -14,7 +14,7 @@ import constants from '@src/lib/constants';
 import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
 import web3 from '@src/web3';
 import client from '@src/client';
-import { SwapData } from '@src/client/core';
+import { ListData } from '@src/client/interfaces';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -43,7 +43,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 
     const liveActiveNuggs = useMemo(
         () =>
-            _liveActiveNuggs.reduce((acc: SwapData[], nugg) => {
+            _liveActiveNuggs.reduce((acc: ListData[], nugg) => {
                 let tmp = acc;
                 if (epoch__id && +nugg.id <= +epoch__id) {
                     if (filters.searchValue === '' || filters.searchValue === nugg.id) {
@@ -62,7 +62,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const rawLiveActiveItems = client.live.activeItems();
     const liveActiveItems = useMemo(
         () =>
-            rawLiveActiveItems.reduce((acc: SwapData[], item) => {
+            rawLiveActiveItems.reduce((acc: ListData[], item) => {
                 let tmp = acc;
                 // @danny7even is this needed?
                 // if (filters.searchValue && filters.searchValue === item.id) {
@@ -97,11 +97,9 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             });
         }
     }, [filters]);
-    const [allNuggs, setAllNuggs] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>([]);
-    const [allNuggsPreview, setAllNuggsPreview] = useState<NL.GraphQL.Fragments.Nugg.ListItem[]>(
-        [],
-    );
-    const recents = NuggDexState.select.recents();
+    const [allNuggs, setAllNuggs] = useState<ListData[]>([]);
+    const [allNuggsPreview, setAllNuggsPreview] = useState<ListData[]>([]);
+    const recents = client.live.myRecents();
 
     useEffect(() => {
         if (allNuggs.length >= constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT) {
@@ -117,7 +115,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 
     const handleGetAll = useCallback(
         async (
-            setResults: React.Dispatch<React.SetStateAction<NL.GraphQL.Fragments.Nugg.ListItem[]>>,
+            setResults: React.Dispatch<React.SetStateAction<ListData[]>>,
             startFrom: number,
             // eslint-disable-next-line  @typescript-eslint/default-param-last
             addToResult = false,
@@ -132,7 +130,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     // filters.sort && filters.sort.by ? filters.sort.by : 'eth',
                     _filters.sort && _filters.sort.asc ? 'asc' : 'desc',
                     _filters.searchValue ? _filters.searchValue : '',
-                    desiredSize || constants.NUGGDEX_SEARCH_LIST_CHUNK,
+                    desiredSize || 25,
                     startFrom,
                 );
                 setResults((res) => (addToResult ? [...res, ..._allNuggs] : _allNuggs));
@@ -212,7 +210,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         onScrollEnd={({ setLoading, filters: _filters, addToList, desiredSize }) =>
                             handleGetAll(
                                 setAllNuggs,
-                                addToList ? allNuggs.length : 0,
+                                addToList ? allNuggs.length + 25 : 0,
                                 addToList,
                                 _filters,
                                 setLoading,

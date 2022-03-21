@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
 
-import { OfferData } from '@src/client/core';
+import { OfferData } from '@src/client/interfaces';
 import { ListRenderItemProps } from '@src/components/general/List/List';
 import web3 from '@src/web3';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';

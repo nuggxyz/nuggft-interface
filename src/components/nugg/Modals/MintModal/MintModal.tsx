@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import React, { FunctionComponent, useMemo, useState } from 'react';
 import { Promise } from 'bluebird';
 
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
@@ -26,9 +26,7 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 
 import styles from './MintModal.styles';
 
-type Props = Record<string, unknown>;
-
-const MintModal: FunctionComponent<Props> = () => {
+const MintModal: FunctionComponent<unknown> = () => {
     const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
@@ -36,7 +34,6 @@ const MintModal: FunctionComponent<Props> = () => {
     const [loading, setLoading] = useState(false);
 
     const [newNugg, setNewNugg] = useState<NuggId>();
-    const [newNuggUri, setNewNuggUri] = useState<Base64EncodedSvg>();
 
     const nextNugg = useAsyncState(() => {
         if (chainId && provider) {
@@ -95,14 +92,15 @@ const MintModal: FunctionComponent<Props> = () => {
     emitter.hook.useOn({
         type: emitter.events.Mint,
         callback: (arg) => {
-            setNewNugg(arg.tokenId);
+            setNewNugg(arg.event.args.tokenId.toString());
         },
     });
 
     emitter.hook.useOnce({
         type: emitter.events.Transfer,
         callback: (arg) => {
-            setMyNuggTransfer(arg.tokenId);
+            setMyNuggTransfer(arg.event.args._tokenId.toString());
+            setLoading(false);
         },
     });
 
@@ -113,25 +111,6 @@ const MintModal: FunctionComponent<Props> = () => {
         },
     });
 
-    useEffect(() => {
-        if (
-            newNugg &&
-            chainId &&
-            provider &&
-            nextNugg &&
-            newNugg === nextNugg &&
-            newNugg === myNuggTransfer
-        )
-            void (async () => {
-                setNewNuggUri(
-                    (await new NuggftV1Helper(chainId, provider).contract.imageURI(newNugg)) as
-                        | Base64EncodedSvg
-                        | undefined,
-                );
-                setLoading(false);
-            })();
-    }, [newNugg, chainId, provider, nextNugg, myNuggTransfer]);
-
     const headerText = useMemo(() => {
         if (isNull(nextNugg)) {
             return 'No more nuggs';
@@ -139,14 +118,11 @@ const MintModal: FunctionComponent<Props> = () => {
         if (loading) {
             return 'Deep-frying your nugg...';
         }
-        if (
-            !isUndefinedOrNullOrStringEmpty(newNuggUri) &&
-            !isUndefinedOrNullOrStringEmpty(nextNugg)
-        ) {
+        if (!isUndefinedOrNullOrStringEmpty(nextNugg)) {
             return `Nugg ${nextNugg}`;
         }
         return 'Mint yourself a nugg';
-    }, [nextNugg, loading, newNuggUri]);
+    }, [nextNugg, loading]);
 
     const bodyText = useMemo(() => {
         if (isNull(nextNugg)) {
@@ -158,23 +134,23 @@ const MintModal: FunctionComponent<Props> = () => {
         if (loading) {
             return 'Please wait while your nugg is being created';
         }
-        if (!isUndefinedOrNullOrStringEmpty(newNuggUri)) {
+        if (!isUndefinedOrNullOrStringEmpty(newNugg)) {
             return `You are now the proud owner Nugg ${nextNugg}!`;
         }
         return `You can be the proud owner of Nugg ${nextNugg} for ${new EthInt(nuggPrice).decimal
             .toNumber()
             .toPrecision(5)} ETH`;
-    }, [nextNugg, loading, nuggPrice, newNuggUri]);
+    }, [nextNugg, loading, nuggPrice, newNugg]);
 
     const buttonText = useMemo(() => {
-        if (isNull(nextNugg) || !isUndefinedOrNullOrStringEmpty(newNuggUri)) {
+        if (isNull(nextNugg)) {
             return 'Close';
         }
         if (loading) {
             return 'Deep-frying...';
         }
         return 'Mint this Nugg';
-    }, [nextNugg, newNuggUri, loading]);
+    }, [nextNugg, loading]);
     return (
         <div style={styles.container}>
             <Text textStyle={styles.text} type="title">
@@ -182,11 +158,10 @@ const MintModal: FunctionComponent<Props> = () => {
             </Text>
             <AnimatedCard>
                 <TokenViewer
-                    tokenId={newNugg || ''}
+                    tokenId={newNugg && myNuggTransfer === newNugg ? newNugg : ''}
                     showcase
-                    disableOnClick={!newNuggUri}
-                    showPending={!newNuggUri}
-                    svgNotFromGraph={newNuggUri}
+                    disableOnClick={!newNugg}
+                    showPending={!newNugg}
                 />
             </AnimatedCard>
 
@@ -205,7 +180,7 @@ const MintModal: FunctionComponent<Props> = () => {
                 label={buttonText}
                 overrideFeedback
                 onClick={() => {
-                    if (isUndefined(newNuggUri)) {
+                    if (isUndefined(newNugg)) {
                         if (address && provider && chainId && nuggPrice && nextNugg) {
                             state.wallet.dispatch.mintNugg({
                                 chainId,

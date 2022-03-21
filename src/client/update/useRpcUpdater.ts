@@ -1,3 +1,4 @@
+/* eslint-disable no-duplicate-case */
 import React from 'react';
 import { Log } from '@ethersproject/providers';
 import { BigNumber } from 'ethers';
@@ -8,21 +9,19 @@ import { EthInt } from '@src/classes/Fraction';
 import { ItemId } from '@src/client/router';
 import { InterfacedEvent } from '@src/interfaces/events';
 import lib from '@src/lib';
-
-// eslint-disable-next-line import/no-cycle
 import emitter from '@src/emitter';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
 
 export default () => {
-    const infura = client.live.infura();
+    const rpc = client.live.rpc();
     const chainId = web3.hook.usePriorityChainId();
     const address = web3.hook.usePriorityAccount();
 
     React.useEffect(() => {
-        if (infura && chainId) {
-            infura.on('block', (log: number) => {
+        if (rpc && chainId) {
+            rpc.on('block', (log: number) => {
                 client.actions.updateBlocknum(log, chainId);
             });
 
@@ -33,58 +32,84 @@ export default () => {
                 topics: [],
             };
 
-            infura.on(globalEvent, (log: Log) => {
+            rpc.on(globalEvent, (log: Log) => {
                 const event = nuggft.interface.parseLog(log) as unknown as InterfacedEvent;
 
-                console.log({ event });
+                void emitter.emit({
+                    type: emitter.events.TransactionComplete,
+                    txhash: log.transactionHash,
+                    success: true,
+                });
 
-                // eslint-disable-next-line default-case
                 switch (event.name) {
                     case 'Offer':
                     case 'OfferMint':
                     case 'OfferItem':
                     case 'Mint':
                     case 'Stake': {
-                        client.actions.updateProtocol({
-                            stake: EthInt.fromNuggftV1Stake(
-                                event.name === 'Stake' ? event.args.cache : event.args.stake,
-                            ),
+                        void emitter.emit({
+                            type: emitter.events.Stake,
+                            event,
+                            log,
+                        });
+
+                        void client.actions.updateProtocol({
+                            stake: EthInt.fromNuggftV1Stake(event.args.stake),
                         });
                         break;
                     }
+                    default:
+                        break;
                 }
 
-                // eslint-disable-next-line default-case
                 switch (event.name) {
+                    case 'OfferMint':
                     case 'Mint': {
-                        emitter.emit({
+                        void emitter.emit({
                             type: emitter.events.Mint,
-                            tokenId: event.args.tokenId.toString(),
+                            event,
+                            log,
                         });
                         break;
                     }
+                    default:
+                        break;
+                }
+
+                switch (event.name) {
                     case 'Offer':
                     case 'OfferMint': {
                         const agency = BigNumber.from(event.args.agency);
 
-                        client.actions.updateOffers(event.args.tokenId.toString(), [
-                            {
-                                eth: EthInt.fromNuggftV1Agency(event.args.agency),
-                                user: agency.mask(160)._hex,
-                                txhash: log.transactionHash,
-                            },
-                        ]);
+                        const data = {
+                            eth: EthInt.fromNuggftV1Agency(event.args.agency),
+                            user: agency.mask(160)._hex,
+                            txhash: log.transactionHash,
+                        };
+
+                        void emitter.emit({
+                            type: emitter.events.Offer,
+                            event,
+                            log,
+                            data,
+                        });
+
+                        void client.actions.updateOffers(event.args.tokenId.toString(), [data]);
                         break;
                     }
+                    default:
+                        break;
+                }
+
+                switch (event.name) {
                     case 'OfferItem': {
                         const agency = BigNumber.from(event.args.agency);
-
                         client.actions.updateOffers(
                             `item-${Number(event.args.itemId).toString()}` as ItemId,
                             [
                                 {
                                     eth: EthInt.fromNuggftV1Agency(event.args.agency),
-                                    user: agency.mask(160).toString(),
+                                    user: agency.mask(160).toNumber().toString(),
                                     txhash: log.transactionHash,
                                 },
                             ],
@@ -94,6 +119,7 @@ export default () => {
                     case 'Transfer': {
                         if (address && event.args._to.toLowerCase() === address.toLowerCase()) {
                             client.actions.addNugg({
+                                recent: true,
                                 tokenId: event.args._tokenId.toString(),
                                 activeLoan: false,
                                 activeSwap: false,
@@ -101,7 +127,8 @@ export default () => {
                             });
                             emitter.emit({
                                 type: emitter.events.Transfer,
-                                tokenId: event.args._tokenId.toString(),
+                                event,
+                                log,
                             });
                         }
 
@@ -147,13 +174,15 @@ export default () => {
                         );
                         break;
                     }
+                    default:
+                        break;
                 }
             });
             return () => {
-                infura.off(globalEvent, () => undefined);
-                infura.off('block', () => undefined);
+                rpc.off(globalEvent, () => undefined);
+                rpc.off('block', () => undefined);
             };
         }
         return () => undefined;
-    }, [infura, chainId, address]);
+    }, [rpc, chainId, address]);
 };

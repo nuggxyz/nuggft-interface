@@ -1,27 +1,8 @@
-import { ApolloClient, ApolloQueryResult, DocumentNode } from '@apollo/client';
+import { ApolloClient, ApolloQueryResult, DocumentNode, FetchResult } from '@apollo/client';
 import client from '@src/client';
 import React, { useState } from 'react';
 import { isUndefinedOrNullOrObjectEmpty } from '../lib';
 import GQLHelper from './GQLHelper';
-
-export const executeQuery = async (chainId: number, query: any, tableName: string) => {
-    try {
-        const result = await GQLHelper.instance(chainId).query({
-            query,
-            fetchPolicy: 'no-cache',
-        });
-
-        if (
-            !isUndefinedOrNullOrObjectEmpty(result) &&
-            !isUndefinedOrNullOrObjectEmpty(result.data) &&
-            tableName in result.data
-        ) {
-            return result.data[tableName];
-        }
-    } catch (error: any) {
-        throw new Error(error.message);
-    }
-};
 
 export const executeQuery2 = async (client: ApolloClient<any>, query: any, tableName: string) => {
     try {
@@ -44,15 +25,15 @@ export const executeQuery2 = async (client: ApolloClient<any>, query: any, table
 
 export const executeQuery3 = async <T>(query: DocumentNode, variables: object) => {
     try {
-        const check = client.static.apollo();
+        const check = client.static.graph();
 
-        if (check === undefined) throw new Error('executeQuery3 | apollo is undefined');
+        if (check === undefined) throw new Error('executeQuery3 | graph is undefined');
 
         const result = await check.query<T>({
             query,
-            fetchPolicy: 'no-cache',
+            fetchPolicy: 'cache-first',
             canonizeResults: true,
-            notifyOnNetworkStatusChange: true,
+            // notifyOnNetworkStatusChange: true,
             variables: variables,
         });
 
@@ -67,9 +48,9 @@ export const executeQuery3 = async <T>(query: DocumentNode, variables: object) =
 
 export const executeQuery4 = async <T>(query: DocumentNode, variables: object) => {
     try {
-        const check = client.static.apollo();
+        const check = client.static.graph();
 
-        if (check === undefined) throw new Error('executeQuery4 | apollo is undefined');
+        if (check === undefined) throw new Error('executeQuery4 | graph is undefined');
 
         const result = await check.query<T>({
             query,
@@ -91,13 +72,12 @@ export const executeQuery4 = async <T>(query: DocumentNode, variables: object) =
 };
 
 export const executeQuery5 = <T>(query: DocumentNode, variables: object) => {
-    const check = client.static.apollo();
+    const check = client.static.graph();
 
-    if (check === undefined) throw new Error('executeQuery5 | apollo is undefined');
+    if (check === undefined) throw new Error('executeQuery5 | graph is undefined');
 
     return check.watchQuery<T>({
         query,
-        // @ts-ignore
         fetchPolicy: 'cache-and-network',
         canonizeResults: true,
         notifyOnNetworkStatusChange: true,
@@ -106,9 +86,9 @@ export const executeQuery5 = <T>(query: DocumentNode, variables: object) => {
 };
 
 export const executeQuery6 = <T>(query: DocumentNode, variables: object) => {
-    const check = client.static.apollo();
+    const check = client.static.graph();
 
-    if (check === undefined) throw new Error('executeQuery6 | apollo is undefined');
+    if (check === undefined) throw new Error('executeQuery6 | graph is undefined');
 
     return check.watchQuery<T>({
         query,
@@ -145,7 +125,7 @@ export const useFasterQuery = <T, R>(
     const [src, setSrc] = useState<R | undefined>(undefined);
 
     const cb = React.useCallback(
-        (x) => {
+        (x: R) => {
             if (JSON.stringify(src) !== JSON.stringify(x)) {
                 setSrc(x);
             }
@@ -172,7 +152,7 @@ export const useFastQuery = <T, R>(
     const [src, setSrc] = useState<R | undefined>(undefined);
 
     const cb = React.useCallback(
-        (x) => {
+        (x: R) => {
             if (JSON.stringify(src) !== JSON.stringify(x)) {
                 setSrc(x);
             }

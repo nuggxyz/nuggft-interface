@@ -9,6 +9,8 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
+import { Lifecycle } from '@src/client/hooks/useLiveToken';
+import Label from '@src/components/general/Label/Label';
 
 import styles from './TheRing.styles';
 
@@ -28,9 +30,8 @@ const TheRing: FunctionComponent<Props> = ({
     const screenType = AppState.select.screenType();
     const blocknum = client.live.blocknum();
 
-    const lastSwap__tokenId = client.live.lastSwap.tokenId();
-    const token = client.live.activeToken();
-    const lifecycle = client.live.activeLifecycle();
+    const tokenId = client.live.lastSwap.tokenId();
+    const { token, lifecycle } = client.hook.useLiveToken(tokenId);
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
@@ -61,13 +62,13 @@ const TheRing: FunctionComponent<Props> = ({
                 blocktime={constants.BLOCKTIME}
                 width={circleWidth}
                 staticColor={
-                    lifecycle === 'stands'
+                    lifecycle === Lifecycle.Stands
                         ? lib.colors.darkerGray
-                        : lifecycle === 'bench'
+                        : lifecycle === Lifecycle.Bench
                         ? lib.colors.nuggGold
-                        : lifecycle === 'deck'
+                        : lifecycle === Lifecycle.Deck
                         ? lib.colors.green
-                        : lifecycle === 'bat'
+                        : lifecycle === Lifecycle.Bat
                         ? ''
                         : 'purple'
                 }
@@ -77,14 +78,16 @@ const TheRing: FunctionComponent<Props> = ({
                     flexDirection: 'column',
                 }}
             >
-                {lastSwap__tokenId && (
+                {tokenId && (
                     <>
-                        <AnimatedCard>
-                            <TokenViewer tokenId={lastSwap__tokenId} style={tokenStyle} showcase />
-                        </AnimatedCard>
-                        {screenType !== 'phone' && (
-                            <Text>{parseTokenIdSmart(lastSwap__tokenId)}</Text>
+                        {lifecycle === Lifecycle.Deck && (
+                            <Label text={`countdown begins in ${blocksRemaining % 32} blocks`} />
                         )}
+                        <AnimatedCard>
+                            <TokenViewer tokenId={tokenId} style={tokenStyle} showcase />
+                        </AnimatedCard>
+
+                        {screenType !== 'phone' && <Text>{parseTokenIdSmart(tokenId)}</Text>}
                     </>
                 )}
             </CircleTimer>

@@ -27,5 +27,8 @@
     "typescript.tsdk": "node_modules/typescript/lib",
     "[ignore]": {
         "editor.defaultFormatter": "foxundermoon.shell-format"
-    }
+    },
+    // "eslint.workingDirectories": ["./"],
+    "eslint.useESLintClass": true,
+    "eslint.alwaysShowStatus": true
 }

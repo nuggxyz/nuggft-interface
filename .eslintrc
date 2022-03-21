@@ -42,6 +42,9 @@
         "module-resolver"
     ],
     "rules": {
+        "no-param-reassign": "off",
+        "no-nested-ternary": "off",
+        "import/newline-after-import": "warn",
         "no-void": ["error", { "allowAsStatement": true }],
         "no-bitwise": ["error", { "allow": ["&", "|", "<<", ">>"] }],
         "no-underscore-dangle": "off",
@@ -60,7 +63,6 @@
         "react-hooks/exhaustive-deps": "warn",
         "react/prop-types": "off",
         "react/display-name": "off",
-        "no-nested-ternary": "off",
         // "@typescript-eslint/explicit-module-boundary-types": "on",
         "prettier/prettier": "warn",
         "react/jsx-filename-extension": [

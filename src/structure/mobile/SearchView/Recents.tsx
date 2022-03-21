@@ -1,12 +1,12 @@
 import React, { FunctionComponent } from 'react';
 
 import NuggList from '@src/components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
-import NuggDexState from '@src/state/nuggdex';
+import client from '@src/client';
 
 type Props = Record<string, never>;
 
 const Recents: FunctionComponent<Props> = () => {
-    const recents = NuggDexState.select.recents();
+    const recents = client.live.myRecents();
     return (
         <div>
             <NuggList

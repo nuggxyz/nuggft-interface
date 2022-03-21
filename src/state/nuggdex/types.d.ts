@@ -1,23 +1,4 @@
 type NuggDexStateType = {
-    recents: {
-        id: string;
-        dotnuggRawCache: `data:image/svg+xml;base64,${string}`;
-        activeLoan?:
-            | {
-                  id: string;
-              }
-            | undefined;
-        activeSwap?:
-            | {
-                  id: string;
-              }
-            | undefined;
-        offers?:
-            | {
-                  id: string;
-              }[]
-            | undefined;
-    }[];
     success: NuggDexSuccess | undefined;
     error: NuggDexError | undefined;
     loading: boolean;

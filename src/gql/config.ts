@@ -1,8 +1,6 @@
-import constants from './constants';
-
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { split, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
+import { split, InMemoryCache, HttpLink } from '@apollo/client';
 
 export const buildApolloSplitLink = (http: string, wss: string) => {
     return split(
@@ -16,14 +14,19 @@ export const buildApolloSplitLink = (http: string, wss: string) => {
             uri: wss,
             options: {
                 reconnect: true,
-                timeout: 30000,
+                timeout: 60000,
                 minTimeout: 30000,
                 reconnectionAttempts: 100,
             },
+            webSocketImpl: WebSocket,
         }),
         new HttpLink({
             uri: http,
-            fetch: fetch as any,
+            fetch,
         }),
     );
+};
+
+export const buildCache = () => {
+    return new InMemoryCache({});
 };

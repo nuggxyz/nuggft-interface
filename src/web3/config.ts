@@ -5,9 +5,9 @@ import {
     WebSocketProvider,
 } from '@ethersproject/providers';
 import { ethers } from 'ethers';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloClient } from '@apollo/client';
 
-import { buildApolloSplitLink } from '@src/graphql/client';
+import { buildApolloSplitLink, buildCache } from '@src/gql/config';
 
 import { Connector } from './core/types';
 import {
@@ -63,7 +63,7 @@ export const CONTRACTS = {
     },
     [Chain.RINKEBY]: {
         NuggftV1: '0xd94979f338081e32b74a5d84e402c619d4b30255', // 0x3f1c9c4ae47809d284592845e4ced13a6e352421
-        DotnuggV1: '0x8239075908f08b64ab7818ff79652d25ae5301c6',
+        DotnuggV1: '0x6a374c2825fde54cd4feeed60551d55524a5cdce',
         Genesis: 10305984,
         Interval: 32,
     },
@@ -203,10 +203,10 @@ export const peer_walletconnect: PeerInfo__WalletConnect = {
     injected: false,
     fallback: false,
 };
-export const peer_infura: PeerInfo = {
-    type: ConnectorEnum.Infura,
-    name: 'Infura',
-    peer: Peer.Infura,
+export const peer_rpc: PeerInfo = {
+    type: ConnectorEnum.Rpc,
+    name: 'Rpc',
+    peer: Peer.Rpc,
     color: 'rgba(22,82,240,1.0)',
     injected: false,
     fallback: true,
@@ -222,7 +222,7 @@ export const peers: {
     cryptodotcom: peer_cryptodotcom,
     coinbase: peer_coinbase,
     walletconnect: peer_walletconnect,
-    infura: peer_infura,
+    rpc: peer_rpc,
 };
 
 export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connector> } = {
@@ -254,13 +254,13 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
               ),
           }
         : {}),
-    infura: initializeConnector<Network>(
+    rpc: initializeConnector<Network>(
         (actions) =>
             new Network(
-                peer_infura,
+                peer_rpc,
                 actions,
                 supportedChainIds().reduce((prev, curr) => {
-                    return { ...prev, [curr]: [INFURA_URLS[curr], ALCHEMY_URLS[curr]] };
+                    return { ...prev, [curr]: [INFURA_URLS[curr]] };
                 }, {}),
             ),
         supportedChainIds(),
@@ -345,7 +345,7 @@ export const createApolloClient = (chainId: Chain) => {
     const ok = new ApolloClient<any>({
         link: buildApolloSplitLink(GRAPH_ENPOINTS[chainId], GRAPH_WSS_ENDPOINTS[chainId]),
         connectToDevTools: true,
-        cache: new InMemoryCache(),
+        cache: buildCache(),
     });
     window.__APOLLO_CLIENT__ = ok;
     return ok;

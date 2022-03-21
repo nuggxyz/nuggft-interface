@@ -5,14 +5,11 @@ import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
 import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
+import { ListData } from '@src/client/interfaces';
 
 import styles from './NuggDexComponents.styles';
 
-type Props = InfiniteListRenderItemProps<
-    NL.GraphQL.Fragments.Nugg.ListItem,
-    undefined,
-    NL.GraphQL.Fragments.Nugg.ListItem
->;
+type Props = InfiniteListRenderItemProps<ListData, undefined, ListData>;
 
 const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
     const lastView__tokenId = client.live.lastView.tokenId();

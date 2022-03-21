@@ -28,7 +28,7 @@ export const pending: NL.Redux.Middleware<
         ) {
             TransactionState.dispatch.addTransaction(action.payload._pendingtx);
 
-            const check = client.static.infura();
+            const check = client.static.rpc();
 
             if (check) {
                 void check.waitForTransaction(action.payload._pendingtx, 1, 600000).then((x) => {
@@ -39,6 +39,7 @@ export const pending: NL.Redux.Middleware<
                     emitter.emit({
                         type: emitter.events.TransactionComplete,
                         txhash: x.transactionHash,
+                        success: x.status === 1,
                     });
                 });
             }
@@ -60,6 +61,7 @@ export const pending: NL.Redux.Middleware<
                     if (win) win.focus();
                 },
             });
+            console.log(action.payload);
             if (action.payload.callbackFn !== undefined) {
                 action.payload.callbackFn();
             }

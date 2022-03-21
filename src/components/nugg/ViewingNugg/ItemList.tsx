@@ -18,7 +18,7 @@ import Colors from '@src/lib/colors';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import WalletState from '@src/state/wallet';
 import { LiveNuggItem } from '@src/client/hooks/useLiveNugg';
-import { DefaultExtraData } from '@src/client/core';
+import { DefaultExtraData } from '@src/client/interfaces';
 
 import styles from './ViewingNugg.styles';
 
@@ -75,11 +75,12 @@ const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData, undefined>> = ({ ite
                         textStyle={styles.itemListButtonText}
                         type="text"
                         onClick={() => {
-                            WalletState.dispatch.claim({
-                                ...extraData,
-                                address: padToAddress(extraData.sender),
-                                tokenId: formatItemSwapIdForSend(item.activeSwap).toString(),
-                            });
+                            if (item.activeSwap)
+                                WalletState.dispatch.claim({
+                                    ...extraData,
+                                    address: padToAddress(extraData.sender),
+                                    tokenId: formatItemSwapIdForSend(item.activeSwap).toString(),
+                                });
                         }}
                     />
                 ))}

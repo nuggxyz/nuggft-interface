@@ -81,6 +81,7 @@ const Modal: FunctionComponent<Props> = () => {
     const style: CSSPropertiesAnimated = useAnimateOverlay(!!isOpen);
 
     useOnClickOutside(node, closeModal);
+
     return (
         <animated.div style={style}>
             <div

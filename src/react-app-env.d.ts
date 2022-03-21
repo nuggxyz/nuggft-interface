@@ -6,6 +6,13 @@ declare type Base64EncodedSvg = `data:image/svg+xml;base64,${string}`;
 
 declare namespace React {
     type UnsafeDependencyList = any[];
+
+    // function useCallback<T extends (...args: any[]) => unknown>(
+    //     callback: T,
+    //     deps: DependencyList,
+    // ): T;
+
+    type DependencyList = unknown[];
 }
 
 declare module '@metamask/jazzicon' {
@@ -133,6 +140,7 @@ type Fraction2x128 = import('./classes/Fraction').Fraction2x128;
 type Fractionish = import('./classes/Fraction').Fractionish;
 type BigNumber = import('ethers').BigNumber;
 type BigNumberish = import('ethers').BigNumberish;
+type BytesLike = import('ethers').BytesLike;
 
 type TransactionResponse = import('@ethersproject/providers').TransactionResponse;
 

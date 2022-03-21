@@ -3,3 +3,7 @@ out
 
 webpack.config.js
 node_modules
+
+# *.generated.*
+
+webpack

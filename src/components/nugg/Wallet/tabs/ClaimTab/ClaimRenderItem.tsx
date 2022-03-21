@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
-import { DefaultExtraData, UnclaimedOffer } from '@src/client/core';
+import { DefaultExtraData, UnclaimedOffer } from '@src/client/interfaces';
 import globalStyles from '@src/lib/globalStyles';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import NLStaticImage from '@src/components/general/NLStaticImage';
@@ -23,13 +23,6 @@ const ClaimRenderItem: FunctionComponent<
                 : `From epoch ${item.endingEpoch !== null ? item.endingEpoch : ''}`,
         [item],
     );
-
-    emitter.hook.useOn({
-        type: emitter.events.OfferModalOpened,
-        callback: React.useCallback((arg) => {
-            console.log({ arg });
-        }, []),
-    });
 
     return (
         <div key={index} style={styles.renderItemContainer}>

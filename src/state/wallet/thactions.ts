@@ -16,6 +16,7 @@ import { toEth } from '@src/lib/conversion';
 import { Chain } from '@src/web3/core/interfaces';
 import { NuggId } from '@src/client/router';
 import emitter from '@src/emitter';
+import { NuggftV1__factory } from '@src/typechain/factories/NuggftV1__factory';
 
 const placeOffer = createAsyncThunk<
     TxThunkSuccess<WalletSuccess>,
@@ -65,6 +66,13 @@ const placeOffer = createAsyncThunk<
                 },
             };
         } catch (err: any) {
+            console.log(err);
+            const abc = NuggftV1__factory.createInterface().decodeErrorResult(
+                'Revert',
+                (err as { data?: BytesLike })?.data || '0x0',
+            );
+
+            console.log('hi there', abc);
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (err !== undefined && err.method !== undefined && err.method === 'estimateGas') {
                 return thunkAPI.rejectWithValue('GAS_ERROR');

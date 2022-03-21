@@ -5,6 +5,7 @@ import { ucFirst } from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
 import NuggDexState from '@src/state/nuggdex';
 import constants from '@src/lib/constants';
+import { ListData } from '@src/client/interfaces';
 
 import styles from './NuggDexComponents.styles';
 import NuggLinkAnchor from './NuggLinkAnchor';
@@ -12,7 +13,7 @@ import NuggLinkThumbnail from './NuggLinkThumbnail';
 
 type Props = {
     type: NuggDexSearchViews;
-    previewNuggs: NL.GraphQL.Fragments.Nugg.ListItem[];
+    previewNuggs: ListData[];
     style?: CSSPropertiesAnimated;
     limit?: number;
 };

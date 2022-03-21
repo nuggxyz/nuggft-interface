@@ -26,7 +26,7 @@ const SearchOverlay: FunctionComponent<Props> = () => {
         ...styles.container,
     });
 
-    const modalStyle = useFirefoxBlur(['modal']);
+    const modalStyle = useFirefoxBlur(['modal', undefined, 'editView']);
 
     return (
         <animated.div style={{ ...styles.container, ...style, ...modalStyle }} onClick={onClick}>

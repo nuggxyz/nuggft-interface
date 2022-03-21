@@ -17,6 +17,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
     const active = web3.hook.useNetworkIsActive();
     const chainId = web3.hook.usePriorityChainId();
     const epoch = client.live.epoch.id();
+    const graphInstance = client.live.graph();
 
     useEffect(() => {
         safeResetLocalStorage(['walletconnect', 'ens']);
@@ -32,37 +33,35 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
                 void x.connector.connectEagerly(Chain.RINKEBY);
         });
 
-        const { infura } = web3.config.connector_instances;
+        const { rpc } = web3.config.connector_instances;
 
-        if (infura !== undefined && infura.connector && infura.connector.activate)
-            void infura.connector.activate(Chain.RINKEBY);
-
-        void client.actions.startActivation();
+        if (rpc !== undefined && rpc.connector && rpc.connector.activate)
+            void rpc.connector.activate(Chain.RINKEBY);
     }, []);
 
     useEffect(() => {
         if (chainId && web3.config.isValidChainId(chainId)) {
-            const apollo = web3.config.createApolloClient(chainId);
-            const infura = web3.config.createAlchemyWebSocket(chainId);
+            const graph = web3.config.createApolloClient(chainId);
+            const rpc = web3.config.createInfuraWebSocket(chainId);
 
             void core.actions.updateClients(
                 {
-                    apollo,
-                    infura,
+                    graph,
+                    rpc,
                 },
                 chainId,
             );
 
             return () => {
-                infura.removeAllListeners();
-                void infura.destroy();
+                rpc.removeAllListeners();
+                void rpc.destroy();
 
-                apollo.stop();
+                graph.stop();
 
                 void core.actions.updateClients(
                     {
-                        apollo: undefined,
-                        infura: undefined,
+                        graph: undefined,
+                        rpc: undefined,
                     },
                     chainId,
                 );
@@ -71,7 +70,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
         return () => undefined;
     }, [chainId]);
 
-    return active ? (
+    return active && graphInstance ? (
         <>
             {[...Object.values(states), client].map((state, index) => (
                 // eslint-disable-next-line react/no-array-index-key

@@ -8,14 +8,10 @@ import core from './core';
 import { useLiveNugg } from './hooks/useLiveNugg';
 import updater from './updater';
 import { useLiveItem } from './hooks/useLiveItem';
-import { useDotnugg, useDotnuggCacheOnly } from './hooks/useDotnugg';
+import { useDotnugg, useDotnuggCacheOnly, useDotnuggSubscription } from './hooks/useDotnugg';
 import router, { TokenId } from './router';
 import useLiveToken from './hooks/useLiveToken';
-import getToken from './getters/getToken';
-import getNugg from './getters/getNugg';
-import getItem from './getters/getItem';
-
-const eqFunc = (prev: any, state: any) => JSON.stringify(prev) === JSON.stringify(state);
+import { ListData } from './interfaces';
 
 export default {
     ...core,
@@ -27,8 +23,8 @@ export default {
 
     live: {
         /// ///// simple ////////
-        apollo: () => core.store((state) => state.apollo),
-        infura: () => core.store((state) => state.infura),
+        graph: () => core.store((state) => state.graph),
+        rpc: () => core.store((state) => state.rpc),
 
         epoch: {
             id: () => core.store((state) => state.epoch?.id),
@@ -38,13 +34,13 @@ export default {
         },
 
         lastSwap: {
-            tokenId: () => core.store((state) => state.lastSwap?.tokenId, eqFunc),
-            type: () => core.store((state) => state.lastSwap?.type, eqFunc),
+            tokenId: () => core.store((state) => state.lastSwap?.tokenId),
+            type: () => core.store((state) => state.lastSwap?.type),
         },
 
         lastView: {
-            tokenId: () => core.store((state) => state.lastView?.tokenId, eqFunc),
-            type: () => core.store((state) => state.lastView?.type, eqFunc),
+            tokenId: () => core.store((state) => state.lastView?.tokenId),
+            type: () => core.store((state) => state.lastView?.type),
         },
         stake: {
             eps: () => core.store((state) => state.stake?.eps),
@@ -54,6 +50,8 @@ export default {
 
         route: () => core.store((state) => state.route),
         isViewOpen: () => core.store((state) => state.isViewOpen),
+        editingNugg: () => core.store((state) => state.editingNugg),
+
         blocknum: () => core.store((state) => state.blocknum),
         manualPriority: () => core.store((state) => state.manualPriority),
 
@@ -65,7 +63,6 @@ export default {
                     (state) => (tokenId ? state.activeOffers[tokenId] ?? [] : []),
                     [tokenId],
                 ),
-                eqFunc,
             ),
         activeSwaps: () => core.store((state) => state.activeSwaps),
         activeItems: () => core.store((state) => state.activeItems),
@@ -77,9 +74,20 @@ export default {
                     [id],
                 ),
             ),
-        activeLifecycle: () => core.store((state) => state.activeLifecycle),
-        activeToken: () => core.store((state) => state.activeToken),
-        myNuggs: () => core.store((state) => state.myNuggs),
+        myRecents: () =>
+            core.store((state) =>
+                Array.from(state.myRecents)
+                    .map((x) => JSON.parse(x) as ListData)
+                    .reverse(),
+            ),
+
+        myNuggs: () =>
+            core.store((state) => {
+                const r = state.myNuggs.sort((a, b) =>
+                    Number(a.tokenId) > Number(b.tokenId) ? 1 : -1,
+                );
+                return r;
+            }),
         myLoans: () =>
             core.store((state) =>
                 state.myLoans.sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1)),
@@ -105,10 +113,11 @@ export default {
         useLiveToken,
         useDotnugg,
         useDotnuggCacheOnly,
+        useDotnuggSubscription,
     },
     static: {
-        apollo: () => core.store.getState().apollo,
-        infura: () => core.store.getState().infura,
+        graph: () => core.store.getState().graph,
+        rpc: () => core.store.getState().rpc,
         activeSwaps: () => core.store.getState().activeSwaps,
         activeItems: () => core.store.getState().activeItems,
         myNuggs: () => core.store.getState().myNuggs,
@@ -116,19 +125,6 @@ export default {
         epoch: () => core.store.getState().epoch,
         stake: () => core.store.getState().stake,
         route: () => core.store.getState().route,
-        require: {
-            apollo: () => {
-                return core.store.getState().apollo!;
-            },
-            infura: () => {
-                return core.store.getState().infura!;
-            },
-        },
-        activeToken: () => core.store.getState().activeToken,
-        activeLifecycle: () => core.store.getState().activeLifecycle,
-        token: (tokenId: string) => getToken(tokenId),
-        nugg: (tokenId: string) => getNugg(tokenId),
-        item: (tokenId: string) => getItem(tokenId),
     },
     router,
     updater,

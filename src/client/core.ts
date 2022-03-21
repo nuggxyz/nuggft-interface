@@ -1,25 +1,27 @@
 /* eslint-disable no-param-reassign */
-import { Web3Provider, WebSocketProvider } from '@ethersproject/providers';
-import { ApolloClient, gql } from '@apollo/client';
-import create, { State, StoreApi, UseBoundStore } from 'zustand';
+import { gql } from '@apollo/client';
+import create from 'zustand';
 import { BigNumber, BigNumberish } from 'ethers';
 
-import { EthInt } from '@src/classes/Fraction';
-import { Chain, Connector } from '@src/web3/core/interfaces';
+import { Chain } from '@src/web3/core/interfaces';
 import { extractItemId, parseItmeIdToNum } from '@src/lib';
 import web3 from '@src/web3';
 import config from '@src/config';
 import { executeQuery3 } from '@src/graphql/helpers';
 
-import { parseRoute, Route, SwapRoutes, ViewRoutes, TokenId, ItemId, NuggId } from './router';
-// eslint-disable-next-line import/no-cycle
-import { Lifecycle, LiveToken } from './hooks/useLiveToken';
-
-export interface OfferData {
-    user: string;
-    eth: EthInt;
-    txhash: string;
-}
+import { parseRoute, Route, TokenId, ItemId, NuggId } from './router';
+import {
+    OfferData,
+    ClientStore,
+    ClientState,
+    UnclaimedNuggOffer,
+    UnclaimedItemOffer,
+    LoanData,
+    MyNuggsData,
+    ClientStateUpdate,
+    Actions,
+    DEFAULT_STATE,
+} from './interfaces';
 
 const calculateStartBlock = (epoch: BigNumberish, chainId: Chain) => {
     return BigNumber.from(epoch)
@@ -59,221 +61,26 @@ const mergeUnique = (arr: OfferData[]) => {
     return array3.sort((a, b) => (a.eth.gt(b.eth) ? -1 : 1));
 };
 
-export interface SwapData {
-    id: TokenId;
-    tokenId: TokenId;
-    type: 'nugg' | 'item';
-    dotnuggRawCache: Base64EncodedSvg;
-    eth: EthInt;
-    started: boolean;
-    sellingNugg?: string;
-    endingEpoch: number | null;
-    isCurrent: boolean;
-}
+// const log =
+//     (_config: StateCreator<ClientState>): StateCreator<ClientState> =>
+//     (set, get, api) =>
+//         _config(
+//             (args) => {
+//                 console.log('  applying', args);
+//                 set(args);
+//                 console.log('  new state', get());
+//             },
+//             get,
+//             api,
+//         );
 
-export interface LoanData {
-    endingEpoch: number;
-    eth: EthInt;
-    nugg: NuggId;
-    startingEpoch: number;
-}
-export interface DefaultExtraData {
-    sender: string;
-    chainId: Chain;
-    provider: Web3Provider;
-}
-
-export interface MyNuggsData {
-    activeLoan: boolean;
-    activeSwap: boolean;
-    // svg: Base64EncodedSvg;
-    tokenId: NuggId;
-    unclaimedOffers: { itemId: ItemId; endingEpoch: number | null }[];
-}
-export interface BaseUnclaimedOffer {
-    type: 'nugg' | 'item';
-    tokenId: NuggId | ItemId;
-    endingEpoch: number | null;
-    eth: EthInt;
-    leader: boolean;
-    claimParams: {
-        address: string;
-        tokenId: string;
-    };
-}
-export interface UnclaimedNuggOffer extends BaseUnclaimedOffer {
-    type: 'nugg';
-    tokenId: NuggId;
-    claimParams: {
-        address: string;
-        tokenId: NuggId;
-    };
-}
-export interface UnclaimedItemOffer extends BaseUnclaimedOffer {
-    type: 'item';
-    tokenId: ItemId;
-    nugg: NuggId;
-    claimParams: {
-        address: NuggId;
-        tokenId: string;
-    };
-}
-
-export type UnclaimedOffer = UnclaimedNuggOffer | UnclaimedItemOffer;
-
-export type StakeData = {
-    staked: BigNumber;
-    shares: BigNumber;
-    eps: EthInt;
-};
-
-export type EpochData = {
-    startblock: number;
-    endblock: number;
-    id: number;
-    status: 'OVER' | 'ACTIVE' | 'PENDING';
-};
-
-export interface ClientState extends State {
-    infura: WebSocketProvider | undefined;
-    apollo: ApolloClient<any> | undefined;
-    manualPriority: Connector | undefined;
-    route: string | undefined;
-    lastView: ViewRoutes | undefined;
-    lastSwap: SwapRoutes | undefined;
-    isViewOpen: boolean;
-    stake: StakeData | undefined;
-    epoch__id: number | undefined;
-    epoch: EpochData | undefined;
-    blocknum: number | undefined;
-    activeOffers: Dictionary<OfferData[]>;
-    activeSwaps: SwapData[];
-    activeItems: SwapData[];
-    myNuggs: MyNuggsData[];
-    myUnclaimedNuggOffers: UnclaimedNuggOffer[];
-    myUnclaimedItemOffers: UnclaimedItemOffer[];
-    myLoans: LoanData[];
-    error: Error | undefined;
-    activating: boolean;
-    activeLifecycle: Lifecycle;
-    activeToken?: LiveToken;
-}
-
-export const DEFAULT_STATE: ClientState = {
-    infura: undefined,
-    stake: undefined,
-    epoch: undefined,
-    epoch__id: 0,
-    route: undefined,
-    lastView: undefined,
-    lastSwap: undefined,
-    isViewOpen: false,
-    activeSwaps: [],
-    activeItems: [],
-    activeOffers: {},
-    myNuggs: [],
-    myUnclaimedNuggOffers: [],
-    myUnclaimedItemOffers: [],
-    myLoans: [],
-    apollo: undefined,
-    activating: false,
-    blocknum: undefined,
-    error: undefined,
-    manualPriority: undefined,
-    activeLifecycle: Lifecycle.Stands,
-    activeToken: undefined,
-};
-
-type ClientStateUpdate = {
-    infura?: WebSocketProvider;
-    apollo?: ApolloClient<unknown>;
-    manualPriority?: Connector;
-    // route?: string;
-    stake?: {
-        staked: BigNumber;
-        shares: BigNumber;
-        eps: EthInt;
-    };
-    epoch?: {
-        startblock: number;
-        endblock: number;
-        id: number;
-        status: 'OVER' | 'ACTIVE' | 'PENDING';
-    };
-    activeSwaps?: SwapData[];
-    activeItems?: SwapData[];
-    error?: Error;
-    activating?: boolean;
-    myNuggs?: MyNuggsData[];
-    myUnclaimedNuggOffers?: UnclaimedNuggOffer[];
-    myUnclaimedItemOffers?: UnclaimedItemOffer[];
-    myLoans?: LoanData[];
-};
-
-export interface Actions {
-    startActivation: () => () => void;
-    updateBlocknum: (blocknum: number, chainId: Chain) => void;
-    updateProtocol: (stateUpdate: ClientStateUpdate) => void;
-    routeTo: (tokenId: TokenId, view: boolean) => void;
-    reportError: (error: Error | undefined) => void;
-    toggleView: () => void;
-    updateClients: (
-        stateUpdate: Pick<ClientStateUpdate, 'infura' | 'apollo'>,
-        chainId: Chain,
-    ) => Promise<void>;
-
-    updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;
-    updateLifecycle: (lifecycle: Lifecycle) => void;
-    updateToken: (token?: LiveToken) => void;
-
-    removeLoan: (tokenId: NuggId) => void;
-    removeNuggClaim: (tokenId: NuggId) => void;
-    removeItemClaimIfMine: (buyingNuggId: NuggId, itemId: ItemId) => void;
-    addNuggClaim: (update: UnclaimedNuggOffer) => void;
-    addItemClaim: (update: UnclaimedItemOffer) => void;
-    addLoan: (update: LoanData) => void;
-    updateLoan: (update: LoanData) => void;
-
-    addNugg: (update: MyNuggsData) => void;
-    removeNugg: (tokenId: NuggId) => void;
-}
-
-export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
-
-function createClientStoreAndActions(allowedChainIds?: number[]): {
+function createClientStoreAndActions(): {
     store: ClientStore;
     actions: Actions;
 } {
-    if (allowedChainIds?.length === 0) {
-        throw new Error(`allowedChainIds is length 0`);
-    }
-
     const store = create<ClientState>(() => DEFAULT_STATE);
 
     // flag for tracking updates so we don't clobber data when cancelling activation
-    let nullifier = 0;
-
-    /**
-     * Sets activating to true, indicating that an update is in progress.
-     *
-     * @returns cancelActivation - A function that cancels the activation by setting activating to false,
-     * as long as there haven't been any intervening updates.
-     */
-    function startActivation(): () => void {
-        const nullifierCached = ++nullifier;
-
-        store.setState({
-            ...DEFAULT_STATE,
-            activating: true,
-        });
-
-        // return a function that cancels the activation iff nothing else has happened
-        return () => {
-            if (nullifier === nullifierCached) {
-                store.setState({ ...DEFAULT_STATE, activating: false });
-            }
-        };
-    }
 
     async function checkVaildRouteOnStartup(): Promise<void> {
         const route = parseRoute(window.location.hash);
@@ -303,23 +110,23 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         }
     }
 
-    function updateLifecycle(lifecycle: Lifecycle) {
-        store.setState((existingState): ClientState => {
-            return {
-                ...existingState,
-                activeLifecycle: lifecycle,
-            };
-        });
-    }
+    // function updateLifecycle(lifecycle: Lifecycle) {
+    //     store.setState((existingState): ClientState => {
+    //         return {
+    //             ...existingState,
+    //             activeLifecycle: lifecycle,
+    //         };
+    //     });
+    // }
 
-    function updateToken(token?: LiveToken) {
-        store.setState((existingState): ClientState => {
-            return {
-                ...existingState,
-                activeToken: token,
-            };
-        });
-    }
+    // function updateToken(token?: LiveToken) {
+    //     store.setState((existingState): ClientState => {
+    //         return {
+    //             ...existingState,
+    //             activeToken: token,
+    //         };
+    //     });
+    // }
 
     /**
      * Sets activating to true, indicating that an update is in progress.
@@ -340,7 +147,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                         idnum: epochId,
                     };
                 }
-                console.log({ parsed });
+
                 if (parsed.type === Route.SwapNugg || parsed.type === Route.SwapItem) {
                     existingState = { ...existingState, lastSwap: parsed, isViewOpen: false };
                 } else {
@@ -348,8 +155,6 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                 }
 
                 existingState.route = window.location.hash;
-
-                console.log(existingState);
 
                 if (!existingState.lastSwap) {
                     existingState.lastSwap = {
@@ -382,14 +187,12 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
      * as long as there haven't been any intervening updates.
      */
     function updateProtocol(stateUpdate: ClientStateUpdate): void {
-        nullifier++;
-
         store.setState((existingState): ClientState => {
-            // determine the next chainId and accounts
-            // const epoch = stateUpdate.epoch ?? existingState.epoch;
             const stake = stateUpdate.stake ?? existingState.stake;
-            const infura = stateUpdate.infura ?? existingState.infura;
-            const apollo = stateUpdate.apollo ?? existingState.apollo;
+            const rpc = stateUpdate.rpc ?? existingState.rpc;
+            const editingNugg = stateUpdate.editingNugg ?? existingState.editingNugg;
+
+            const graph = stateUpdate.graph ?? existingState.graph;
             const activeSwaps = stateUpdate.activeSwaps ?? existingState.activeSwaps;
             const activeItems = stateUpdate.activeItems ?? existingState.activeItems;
             const manualPriority = stateUpdate.manualPriority ?? existingState.manualPriority;
@@ -405,9 +208,10 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
 
             return {
                 ...existingState,
+                editingNugg,
                 manualPriority,
-                infura,
-                apollo,
+                rpc,
+                graph,
                 myNuggs,
                 myUnclaimedNuggOffers,
                 myUnclaimedItemOffers,
@@ -532,15 +336,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         store.setState((existingState): ClientState => {
             let route = '#/';
 
-            let {
-                lastView,
-                lastSwap,
-                isViewOpen,
-                // lastView__tokenId,
-                // lastSwap__tokenId,
-                // lastView__type,
-                // lastSwap__type,
-            } = existingState;
+            let { lastView, lastSwap, isViewOpen } = existingState;
 
             const isItem = tokenId?.includes('item-');
 
@@ -557,16 +353,12 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
                 route += `${num.feature}/`;
                 route += num.position;
                 if (view) {
-                    // lastView__tokenId = tokenId;
-                    // lastView__type = Route.ViewItem;
                     lastView = {
                         type: Route.ViewItem,
                         tokenId: tokenId as `item-${string}`,
                         ...num,
                     };
                 } else {
-                    // lastSwap__tokenId = tokenId;
-                    // lastSwap__type = Route.SwapItem;
                     lastSwap = {
                         type: Route.SwapItem,
                         tokenId: tokenId as `item-${string}`,
@@ -576,16 +368,12 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             } else {
                 route += `nugg/${tokenId}`;
                 if (view) {
-                    // lastView__tokenId = tokenId;
-                    // lastView__type = Route.ViewNugg;
                     lastView = {
                         type: Route.ViewNugg,
                         tokenId,
                         idnum: +tokenId,
                     };
                 } else {
-                    // lastSwap__tokenId = tokenId;
-                    // lastSwap__type = Route.SwapNugg;
                     lastSwap = {
                         type: Route.SwapNugg,
                         tokenId,
@@ -596,6 +384,27 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
 
             if (route !== existingState.route) {
                 window.location.replace(route);
+            }
+            if (view && lastView) {
+                const save = JSON.stringify({
+                    id: lastView.tokenId,
+                    type: lastView.type === Route.ViewNugg ? 'nugg' : 'item',
+                    dotnuggRawCache: null,
+                });
+                if (existingState.myRecents.has(save)) {
+                    existingState.myRecents.delete(save);
+                }
+                existingState.myRecents.add(save);
+            } else if (lastSwap) {
+                const save = JSON.stringify({
+                    id: lastSwap.tokenId,
+                    type: lastSwap.type === Route.SwapNugg ? 'nugg' : 'item',
+                    dotnuggRawCache: null,
+                });
+                if (existingState.myRecents.has(save)) {
+                    existingState.myRecents.delete(save);
+                }
+                existingState.myRecents.add(save);
             }
 
             return {
@@ -624,46 +433,33 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
      * @param stateUpdate - The state update to report.
      */
     async function updateClients(
-        stateUpdate: Pick<ClientStateUpdate, 'infura' | 'apollo'>,
+        stateUpdate: Pick<ClientStateUpdate, 'rpc' | 'graph'>,
         chainId: Chain,
     ): Promise<void> {
-        nullifier++;
-
         store.setState((existingState): ClientState => {
             // determine the next chainId and accounts
-            const infura = stateUpdate.infura ?? existingState.infura;
-            const apollo = stateUpdate.apollo ?? existingState.apollo;
+            const rpc = stateUpdate.rpc ?? existingState.rpc;
+            const graph = stateUpdate.graph ?? existingState.graph;
 
             // determine the next error
             const { error } = existingState;
 
             let { activating } = existingState;
-            if (activating && (error || (infura && apollo))) {
+            if (activating && (error || (rpc && graph))) {
                 activating = false;
             }
 
-            return { ...existingState, infura, apollo, activating, error };
+            return { ...existingState, rpc, graph, activating, error };
         });
 
-        if (!store.getState().route && stateUpdate.infura) {
-            const blocknum = stateUpdate.infura.getBlockNumber();
+        if (!store.getState().route && stateUpdate.rpc) {
+            const blocknum = stateUpdate.rpc.getBlockNumber();
 
             let awaited: number;
             await Promise.all([(awaited = await blocknum), await checkVaildRouteOnStartup()]);
 
             updateBlocknum(awaited, chainId);
         }
-    }
-
-    // /**
-    //  * Used to report an `error`, which clears all existing state.
-    //  *
-    //  * @param error - The error to report. If undefined, the state will be reset to its default value.
-    //  */
-    function reportError(error: Error | undefined): void {
-        nullifier++;
-
-        store.setState(() => ({ ...DEFAULT_STATE, error }));
     }
 
     const toggleView = () => {
@@ -673,15 +469,17 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
         else routeTo('', !isViewOpen);
     };
 
+    const toggleEditingNugg = (tokenId: NuggId | undefined) => {
+        store.setState((existingState): ClientState => {
+            return { ...existingState, editingNugg: tokenId };
+        });
+    };
+
     return {
         store,
         actions: {
             updateClients,
-            startActivation,
             updateBlocknum,
-            updateLifecycle,
-            updateToken,
-            reportError,
             updateProtocol,
             routeTo,
             toggleView,
@@ -695,6 +493,7 @@ function createClientStoreAndActions(allowedChainIds?: number[]): {
             addNugg,
             removeNugg,
             updateLoan,
+            toggleEditingNugg,
         },
     };
 }

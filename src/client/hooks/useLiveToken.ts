@@ -1,7 +1,7 @@
 import React from 'react';
 
-import constants, { ITEM_ID } from '@src/lib/constants';
 import { Address } from '@src/classes/Address';
+import { TokenId } from '@src/client/router';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
@@ -25,7 +25,7 @@ export enum Lifecycle {
 export type LiveToken = LiveNugg | LiveItem;
 
 export default (
-    tokenId: string | ITEM_ID | undefined,
+    tokenId: TokenId | undefined,
 ): {
     token: LiveToken | undefined;
     lifecycle: Lifecycle;
@@ -35,9 +35,9 @@ export default (
 
     // since a component calling this will need to compleetly rerender when the tokenId changes
     //      + we can safely ignore the rules-of-hooks here
-    const token = tokenId?.startsWith(constants.ID_PREFIX_ITEM)
+    const token = tokenId?.startsWith('item-')
         ? // eslint-disable-next-line react-hooks/rules-of-hooks
-          useLiveItem(tokenId)
+          useLiveItem(tokenId.replace('item-', ''))
         : // eslint-disable-next-line react-hooks/rules-of-hooks
           useLiveNugg(tokenId);
 

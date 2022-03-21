@@ -1,9 +1,10 @@
 /* eslint-disable no-use-before-define */
 import type { Networkish } from '@ethersproject/networks';
 import type { TransactionReceipt, Web3Provider } from '@ethersproject/providers';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { EqualityChecker, UseBoundStore } from 'zustand';
 import create from 'zustand';
+import { PopulatedTransaction } from 'ethers';
 
 import { Address } from '@src/classes/Address';
 import client from '@src/client';
@@ -170,6 +171,11 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         return useTx(provider, hash);
     }
 
+    function useSelectedTransactionManager(connector: Connector) {
+        const provider = useSelectedProvider(connector);
+        return useTransactionManager(provider);
+    }
+
     return {
         useSelectedChainId,
         useSelectedAccounts,
@@ -184,6 +190,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         useSelectedBalance,
         useSelectedPeer,
         useSelectedTx,
+        useSelectedTransactionManager,
     };
 }
 
@@ -216,9 +223,10 @@ export function getNetworkConnector(initializedConnectors: {
     function useNetworkConnector() {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const values = Object.values(initializedConnectors).map((x) => x.hooks.usePeer()?.fallback);
-        const index = values.findIndex((x) => x);
 
-        return Object.values(initializedConnectors)[index === -1 ? 0 : index].connector;
+        const index = values.findIndex((x) => x);
+        const res = Object.values(initializedConnectors)[index === -1 ? 0 : index];
+        return res.connector;
     }
 
     function useNetworkChainId() {
@@ -315,6 +323,7 @@ export function getPriorityConnector(initializedConnectors: {
         useSelectedBalance,
         useSelectedPeer,
         useSelectedTx,
+        useSelectedTransactionManager,
     } = getSelectedConnector(...Object.values(initializedConnectors));
 
     function usePriorityConnector() {
@@ -383,6 +392,10 @@ export function getPriorityConnector(initializedConnectors: {
         return useSelectedTx(usePriorityConnector(), hash);
     }
 
+    function usePriorityTransactionManager() {
+        return useSelectedTransactionManager(usePriorityConnector());
+    }
+
     return {
         usePriorityConnector,
         usePriorityChainId,
@@ -400,6 +413,7 @@ export function getPriorityConnector(initializedConnectors: {
         // useSelectedPeer,
         usePriorityPeer,
         usePriorityTx,
+        usePriorityTransactionManager,
     };
 }
 
@@ -498,6 +512,74 @@ function useTx(provider: Web3Provider | undefined, hash: string) {
         return () => undefined;
     }, [provider, hash]);
     return data;
+}
+
+function useTransactionManager(provider: Web3Provider | undefined) {
+    const [receipt, setReceipt] = useState<TransactionReceipt>();
+    const [response, setActiveResponse] = useState<TransactionResponse>();
+
+    // const cancel = useCallback(() => {
+    //     if (!receipt && provider && response) {
+    //         void provider
+    //             .getSigner()
+    //             .provider.send('eth_sendTransaction', [
+    //                 Address.ZERO.hash,
+    //                 {
+    //                     from: provider.getSigner()._address,
+    //                     to: Address.ZERO.hash,
+    //                     nonce: response.nonce,
+    //                     gasPrice: response?.gasPrice?.add(1),
+    //                 },
+    //             ])
+    //             .then((y) => {
+    //                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    //                 console.log({ y });
+    //             });
+    //     }
+    // }, [response, provider, receipt]);
+
+    // const replace = useCallback(
+    //     (gasPrice: BigNumber) => {
+    //         if (!receipt && provider && response && populated) {
+    //             void provider
+    //                 .getSigner()
+    //                 .sendTransaction({
+    //                     ...populated,
+    //                     nonce: response?.nonce,
+    //                     gasPrice,
+    //                 })
+    //                 .then((x) => setActiveResponse(x));
+    //         }
+    //     },
+    //     [provider, response, populated, receipt],
+    // );
+
+    const send = useCallback(
+        (tx: PopulatedTransaction) => {
+            if (!receipt && provider) {
+                console.log({ tx });
+                void provider
+                    .getSigner()
+                    .sendTransaction(tx)
+                    .then((x) => {
+                        console.log({ x });
+                        setActiveResponse(x);
+                    });
+            }
+        },
+        [provider, receipt],
+    );
+
+    useEffect(() => {
+        if (provider && response) {
+            void provider.waitForTransaction(response.hash).then((result) => {
+                setReceipt(result);
+            });
+        }
+        return () => undefined;
+    }, [provider, response]);
+
+    return { response, receipt, send };
 }
 
 function useBalance(provider: Web3Provider | undefined, account: string | undefined) {

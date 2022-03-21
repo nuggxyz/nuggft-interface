@@ -14,7 +14,7 @@ type Props = Record<string, never>;
 const SwapPage: FunctionComponent<Props> = () => {
     const screen = AppState.select.screenType();
 
-    const container = useFirefoxBlur(['modal', 'searchView'], styles.container);
+    const container = useFirefoxBlur(['modal', 'searchView', 'editView'], styles.container);
 
     return (
         <animated.div style={container}>

@@ -36,7 +36,7 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
     return epoch && blocknum ? (
         <Text textStyle={{ color: lib.colors.primaryColor }}>
             {/* eslint-disable-next-line no-nested-ternary */}
-            {!item.endingEpoch
+            {!item.epoch
                 ? 'Awaiting bid!'
                 : item.epoch.id < epoch
                 ? 'Swap is over'
@@ -79,7 +79,7 @@ const SwapItem: FunctionComponent<
                     ...styles.swap,
                     background:
                         // eslint-disable-next-line no-nested-ternary
-                        !item.endingEpoch
+                        !item.epoch
                             ? lib.colors.gradient
                             : item.epoch.id < extraData.epoch
                             ? lib.colors.gradient3
@@ -170,8 +170,7 @@ const SwapList: FunctionComponent<Props> = () => {
     const provider = web3.hook.usePriorityProvider();
     const tokenId = client.live.lastView.tokenId();
     const type = client.live.lastView.type();
-    const token = client.live.activeToken();
-    const lifecycle = client.live.activeLifecycle();
+    const { lifecycle, token } = client.hook.useLiveToken(tokenId);
     const epoch = client.live.epoch.id();
 
     const listData = useMemo(() => {

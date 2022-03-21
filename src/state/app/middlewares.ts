@@ -126,33 +126,33 @@ import AppState from './index';
 //         return next(tempAction);
 //     };
 
-const viewChange: Middleware<Record<string, never>, unknown, Dispatch<any>> =
-    () => (next) => (action: PayloadAction<AppStateViews>) => {
-        const go = next(action);
-        // if (AppState.isOwnFulfilledAction(action, 'changeView')) {
-        //     if (action.payload === 'Search') {
-        //         const currentToken = getState().token.tokenId;
-        //         AppState.silentlySetRoute(
-        //             `#/nugg${
-        //                 !isUndefinedOrNullOrStringEmpty(currentToken) ? `/${currentToken}` : ''
-        //             }`,
-        //         );
-        //     } else {
-        //         const currentSwap = getState().swap.id;
-        //         const currentEpoch = !isUndefinedOrNullOrObjectEmpty(getState().protocol.epoch)
-        //             ? getState().protocol.epoch.id
-        //             : '';
-        //         AppState.silentlySetRoute(
-        //             (currentEpoch && currentSwap && currentSwap.includes(currentEpoch)) ||
-        //                 !currentSwap
-        //                 ? '/'
-        //                 : `#/swap/${currentSwap}`,
-        //         );
-        //     }
-        // }
+// const viewChange: Middleware<Record<string, never>, unknown, Dispatch<any>> =
+//     () => (next) => (action: PayloadAction<AppStateViews>) => {
+//         const go = next(action);
+//         // if (AppState.isOwnFulfilledAction(action, 'changeView')) {
+//         //     if (action.payload === 'Search') {
+//         //         const currentToken = getState().token.tokenId;
+//         //         AppState.silentlySetRoute(
+//         //             `#/nugg${
+//         //                 !isUndefinedOrNullOrStringEmpty(currentToken) ? `/${currentToken}` : ''
+//         //             }`,
+//         //         );
+//         //     } else {
+//         //         const currentSwap = getState().swap.id;
+//         //         const currentEpoch = !isUndefinedOrNullOrObjectEmpty(getState().protocol.epoch)
+//         //             ? getState().protocol.epoch.id
+//         //             : '';
+//         //         AppState.silentlySetRoute(
+//         //             (currentEpoch && currentSwap && currentSwap.includes(currentEpoch)) ||
+//         //                 !currentSwap
+//         //                 ? '/'
+//         //                 : `#/swap/${currentSwap}`,
+//         //         );
+//         //     }
+//         // }
 
-        return go;
-    };
+//         return go;
+//     };
 
 const rejectedThactions: Middleware<Record<string, never>, NLRootState, Dispatch<any>> =
     ({ getState }) =>
@@ -176,7 +176,7 @@ const rejectedThactions: Middleware<Record<string, never>, NLRootState, Dispatch
 
 export default {
     // localStorager,
-    viewChange,
+    // viewChange,
     rejectedThactions,
     // logger
 };

@@ -4,7 +4,7 @@ import React, { FunctionComponent, useEffect, useMemo } from 'react';
 import lib from '@src/lib';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Text from '@src/components/general/Texts/Text/Text';
-import { OfferData } from '@src/client/core';
+import { OfferData } from '@src/client/interfaces';
 import { EthInt } from '@src/classes/Fraction';
 import web3 from '@src/web3';
 import Button from '@src/components/general/Buttons/Button/Button';
