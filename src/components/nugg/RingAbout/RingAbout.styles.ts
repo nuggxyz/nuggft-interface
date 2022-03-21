@@ -106,6 +106,7 @@ const styles = NLStyleSheetCreator({
         width: '100%',
         background: 'transparent',
         padding: '0rem',
+        position: 'relative',
     },
     leadingOfferAmount: {
         display: 'flex',
@@ -134,8 +135,13 @@ const styles = NLStyleSheetCreator({
         height: '100%',
     },
     offerAmount: {
+        position: 'relative',
+        padding: '.4rem',
+        borderRadius: lib.layout.borderRadius.smallish,
         display: 'flex',
         flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
         width: '100%',
         marginBottom: '.75rem',
         zIndex: 1,
@@ -178,6 +184,13 @@ const styles = NLStyleSheetCreator({
         margin: '.4rem 0rem',
         width: '100%',
         textAlign: 'center',
+    },
+    etherscanBtn: {
+        position: 'absolute',
+        right: '.5rem',
+        borderRadius: lib.layout.borderRadius.large,
+        background: lib.colors.white,
+        padding: '.3rem',
     },
 });
 

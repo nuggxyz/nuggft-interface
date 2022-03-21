@@ -1,17 +1,20 @@
 import { animated, config as springConfig, useSpring } from '@react-spring/web';
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
+import { IoOpenOutline } from 'react-icons/io5';
 
 import lib from '@src/lib';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Text from '@src/components/general/Texts/Text/Text';
 import { OfferData } from '@src/client/interfaces';
-import { EthInt } from '@src/classes/Fraction';
 import web3 from '@src/web3';
-import Button from '@src/components/general/Buttons/Button/Button';
 import client from '@src/client';
 import { Lifecycle } from '@src/client/hooks/useLiveToken';
+import Button from '@src/components/general/Buttons/Button/Button';
+import Loader from '@src/components/general/Loader/Loader';
+import globalStyles from '@src/lib/globalStyles';
 
 import styles from './RingAbout.styles';
+import {EthInt} from '@src/classes/Fraction';
 
 type Props = Record<string, unknown>;
 
@@ -90,41 +93,50 @@ const HighestOffer: FunctionComponent<Props> = () => {
         return false;
     }, [token, leader, chainId, lifecycle]);
     return shouldShow ? (
-        <Button
-            buttonStyle={styles.leadingOfferAmountContainer}
-            onClick={() => chainId && web3.config.gotoEtherscan(chainId, 'tx', leader.txhash)}
-            rightIcon={
-                <animated.div style={flashStyle}>
-                    <div style={styles.leadingOfferAmountBlock}>
-                        <CurrencyText
-                            stopAnimation
-                            size="small"
-                            image="eth"
-                            textStyle={styles.leadingOffer}
-                            value={leader?.eth?.decimal?.toNumber()}
-                        />
-                        {tx && (
-                            <div style={{ display: 'flex' }}>
-                                ⛽️
-                                <CurrencyText
-                                    stopAnimation
-                                    decimals={0}
-                                    size="smaller"
-                                    forceGwei
-                                    value={EthInt.fromGwei(tx.gasUsed).decimal.toNumber()}
-                                />
-                            </div>
+        <div style={styles.leadingOfferAmountContainer}>
+            <animated.div style={flashStyle}>
+                <div style={styles.leadingOfferAmountBlock}>
+                    <CurrencyText
+                        stopAnimation
+                        size="small"
+                        image="eth"
+                        textStyle={styles.leadingOffer}
+                        value={leader?.eth?.decimal?.toNumber()}
+                    />
+                    <div style={globalStyles.centered}>
+                        ⛽️
+                        {tx ? (
+                            <CurrencyText
+                                stopAnimation
+                                decimals={0}
+                                size="smaller"
+                                forceGwei
+                                textStyle={{ marginLeft: '.4rem' }}
+                                value={EthInt.fromGwei(tx.gasUsed).decimal.toNumber()}
+                            />
+                        ) : (
+                            <Loader
+                                color={lib.colors.nuggBlueText}
+                                style={{ height: '10px', width: '10px', marginLeft: '.4rem' }}
+                            />
                         )}
                     </div>
-                    <div style={styles.leadingOfferAmountUser}>
-                        <Text size="smaller" type="text">
-                            from
-                        </Text>
-                        <Text size="smaller">{ens}</Text>
-                    </div>
-                </animated.div>
-            }
-        />
+                </div>
+                <div style={styles.leadingOfferAmountUser}>
+                    <Text size="smaller" type="text">
+                        from
+                    </Text>
+                    <Text size="smaller">{ens}</Text>
+                </div>
+                <Button
+                    buttonStyle={styles.etherscanBtn}
+                    onClick={() =>
+                        chainId && web3.config.gotoEtherscan(chainId, 'tx', leader.txhash)
+                    }
+                    rightIcon={<IoOpenOutline color={lib.colors.nuggBlueText} size={14} />}
+                />
+            </animated.div>
+        </div>
     ) : null;
 };
 
