@@ -1,4 +1,4 @@
-import { NLStyleSheetCreator } from '@src/lib';
+import  lib, { NLStyleSheetCreator } from '@src/lib';
 import Colors from '@src/lib/colors';
 import Layout from '@src/lib/layout';
 
@@ -10,6 +10,7 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'center',
         width: '100%',
         margin: '10px',
+        boxShadow: `0px 1px 3px ${lib.colors.shadowNuggPink}`,
     },
     background: {
         background: Colors.transparentWhite,
@@ -21,7 +22,7 @@ const styles = NLStyleSheetCreator({
     },
     title: {
         fontFamily: Layout.font.sf.bold,
-        fontWeight: 'bold',
+        // fontWeight: 'bold',
         color: 'white',
     },
     titleRed: {

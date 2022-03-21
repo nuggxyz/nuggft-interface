@@ -57,7 +57,7 @@ const styles = NLStyleSheetCreator({
     },
     containerBackground: {
         position: 'absolute',
-        background: Colors.gradient2,
+        background: Colors.gradient2Transparent,
         transition: `.2s all ${Layout.animation}`,
         opacity: 1,
         width: '100%',

@@ -99,16 +99,34 @@ function createClientStoreAndActions(): {
                         }
                     }
                 `,
-                { tokenId },
+                { tokenId: extractItemId(tokenId) },
             );
 
             if (route.type === Route.SwapNugg || route.type === Route.ViewNugg) {
-                if (check.nugg === null) window.location.hash = '#/';
+                if (check.nugg === undefined) window.location.hash = '#/';
             } else if (route.type === Route.SwapItem || route.type === Route.ViewItem) {
-                if (check.item === null) window.location.hash = '#/';
+                if (check.item === undefined) window.location.hash = '#/';
             }
         }
     }
+
+    // function updateLifecycle(lifecycle: Lifecycle) {
+    //     store.setState((existingState): ClientState => {
+    //         return {
+    //             ...existingState,
+    //             activeLifecycle: lifecycle,
+    //         };
+    //     });
+    // }
+
+    // function updateToken(token?: LiveToken) {
+    //     store.setState((existingState): ClientState => {
+    //         return {
+    //             ...existingState,
+    //             activeToken: token,
+    //         };
+    //     });
+    // }
 
     /**
      * Sets activating to true, indicating that an update is in progress.

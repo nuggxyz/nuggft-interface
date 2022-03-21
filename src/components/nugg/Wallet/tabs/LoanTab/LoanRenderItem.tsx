@@ -1,17 +1,17 @@
 import React, { FunctionComponent } from 'react';
 
 import { LoanData } from '@src/client/interfaces';
-import { ListRenderItemProps } from '@src/components/general/List/List';
 import Button from '@src/components/general/Buttons/Button/Button';
 import state from '@src/state';
 import Text from '@src/components/general/Texts/Text/Text';
 import globalStyles from '@src/lib/globalStyles';
 import TokenViewer from '@src/components/nugg/TokenViewer';
+import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
 
 import styles from './LoanTab.styles';
 
 const LoanRenderItem: FunctionComponent<
-    ListRenderItemProps<LoanData, number | undefined, undefined>
+    InfiniteListRenderItemProps<LoanData, number | undefined, undefined>
 > = ({ item, index, extraData: epochId }) => {
     return item ? (
         <div key={index} style={styles.renderItemContainer}>

@@ -18,7 +18,7 @@ import styles from './List.styles';
 export interface InfiniteListRenderItemProps<T, B, A> {
     item: T;
     extraData: B;
-    action: (arg: A) => void;
+    action?: (arg: A) => void;
     onScrollEnd?: ({ addToList }: { addToList: boolean }) => void;
     index: number;
     rootRef?: unknown;
@@ -32,7 +32,7 @@ interface Props<T, B, A> {
     RenderItem: FunctionComponent<InfiniteListRenderItemProps<T, B, A>>;
     loading?: boolean;
     extraData: B;
-    action: (arg: A) => void;
+    action?: (arg: A) => void;
     onScrollEnd?: ({ addToList }: { addToList: boolean }) => void;
     label?: string;
     border?: boolean;
@@ -114,6 +114,8 @@ const InfiniteList = <T, B, A>({
     const prevData = usePrevious(data);
 
     const [items, setItems] = useState<JSX.Element[]>([]);
+
+    // console.log({ startIndex, endIndex });
 
     useEffect(() => {
         if (

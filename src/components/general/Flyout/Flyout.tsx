@@ -19,7 +19,7 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
     containerStyle,
     float = 'right',
 }) => {
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
     const [openRef, openHover] = useOnHover(() => setOpen(true));
     const [closeRef, closeHover] = useOnHover(() => setOpen(openHover || closeHover));
 

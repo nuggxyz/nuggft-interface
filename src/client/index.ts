@@ -2,6 +2,8 @@
 import { useCallback } from 'react';
 
 // eslint-disable-next-line import/no-named-as-default
+// import shallow from 'zustand/shallow';
+
 import core from './core';
 import { useLiveNugg } from './hooks/useLiveNugg';
 import updater from './updater';

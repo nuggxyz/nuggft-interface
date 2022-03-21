@@ -392,7 +392,7 @@ export const parseTokenId = (itemId: string, long?: boolean) => {
             long ? '#' : ''
         }${num & 0xff}`;
     }
-    return `${long ? 'Nugg #' : ''}${itemId}`;
+    return `${long ? 'Nugg ' : ''}${itemId}`;
 };
 
 export const parseTokenIdSmart = (itemId: string) => {

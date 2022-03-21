@@ -11,6 +11,8 @@ import styles from './HappyTabber.styles';
 export interface HappyTabberItem {
     label: string;
     comp: NamedExoticComponent<any>;
+    labelStyle?: CSSProperties;
+    bodyStyle?: CSSProperties;
 }
 
 interface Props {
@@ -114,6 +116,7 @@ const HappyTabber = ({
                                         : screenType === 'phone'
                                         ? styles.headerTextMobile
                                         : styles.headerText),
+                                    ...item.labelStyle,
                                 }}
                             >
                                 {item.label}
@@ -122,7 +125,7 @@ const HappyTabber = ({
                     ))}
                 </div>
             )}
-            <div style={{ ...bodyStyle, ...styles.body }}>
+            <div style={{ ...bodyStyle, ...styles.body, ...items[activeIndex].bodyStyle }}>
                 {tabFadeTransition((_styles, Item) => (
                     // @ts-ignore
                     <animated.div style={_styles}>{Item && <Item isActive />}</animated.div>

@@ -170,8 +170,8 @@ const SwapList: FunctionComponent<Props> = () => {
     const provider = web3.hook.usePriorityProvider();
     const tokenId = client.live.lastView.tokenId();
     const type = client.live.lastView.type();
-
-    const { token, epoch, lifecycle } = client.hook.useLiveToken(tokenId);
+    const { lifecycle, token } = client.hook.useLiveToken(tokenId);
+    const epoch = client.live.epoch.id();
 
     const listData = useMemo(() => {
         const res: { title: string; items: LiveSwap[] }[] = [];

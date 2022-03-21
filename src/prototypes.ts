@@ -20,11 +20,11 @@ Array.prototype.shuffle = function () {
 
 Array.prototype.first = function (count: number) {
     if (!this || this === []) {
-        return [];
+        return undefined;
     }
 
-    if (count === undefined && this.length > 0) {
-        return this[0];
+    if (count === undefined) {
+        return this.length > 0 ? this[0] : undefined;
     }
 
     return this.slice(0).reduce((result, element, i, arr) => {
@@ -39,7 +39,7 @@ Array.prototype.first = function (count: number) {
 
 Array.prototype.last = function (count?: number) {
     if (!this || this === []) {
-        return [];
+        return undefined;
     }
     // TODO: #35 @danny7even this is some crap cheese code
     if (count === undefined) {

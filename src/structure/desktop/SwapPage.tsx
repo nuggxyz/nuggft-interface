@@ -24,10 +24,9 @@ const SwapPage: FunctionComponent<Props> = () => {
                         <div style={styles.tabletRing}>
                             <TheRing circleWidth={1100} />
                         </div>
-                        <div style={styles.tabletRingAbout}>
-                            {' '}
+                        {/* <div style={styles.tabletRingAbout}>
                             <RingAbout />
-                        </div>
+                        </div> */}
                     </div>
                     <div style={styles.tabletSecondary}>
                         <Wallet />
