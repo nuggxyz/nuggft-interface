@@ -142,17 +142,11 @@ function createClientStoreAndActions2() {
                                     parsed.type === Route.SwapNugg ||
                                     parsed.type === Route.SwapItem
                                 ) {
-                                    draft = {
-                                        ...draft,
-                                        lastSwap: parsed,
-                                        isViewOpen: false,
-                                    };
+                                    draft.lastSwap = parsed;
+                                    draft.isViewOpen = false;
                                 } else {
-                                    draft = {
-                                        ...draft,
-                                        lastView: parsed,
-                                        isViewOpen: true,
-                                    };
+                                    draft.lastView = parsed;
+                                    draft.isViewOpen = true;
                                 }
 
                                 draft.route = window.location.hash;

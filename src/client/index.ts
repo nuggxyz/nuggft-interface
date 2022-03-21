@@ -88,7 +88,9 @@ export default {
                 );
             }),
         myLoans: () =>
-            core((state) => state.myLoans.sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1))),
+            core((state) =>
+                [...state.myLoans].sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1)),
+            ),
 
         myUnclaimedNuggOffers: () => core((state) => state.myUnclaimedNuggOffers),
         myUnclaimedItemOffers: () => core((state) => state.myUnclaimedItemOffers),
