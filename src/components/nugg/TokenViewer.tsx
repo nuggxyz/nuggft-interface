@@ -57,6 +57,7 @@ const TokenViewer: FunctionComponent<Props> = ({
     const pendingSrc = usePending(svgNotFromGraph ?? src, showPending);
 
     const [hoverRef, isHovering] = useOnHover();
+    const routeTo = client.mutate.routeTo();
 
     const animatedStyle = useSpring({
         to: {
@@ -80,7 +81,7 @@ const TokenViewer: FunctionComponent<Props> = ({
                     disableOnClick
                         ? undefined
                         : () => {
-                              client.actions.routeTo(tokenId, true);
+                              routeTo(tokenId, true);
                           }
                 }
                 ref={hoverRef}

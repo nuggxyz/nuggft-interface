@@ -54,6 +54,7 @@ const BottomBar: FunctionComponent<Props> = () => {
         },
         [],
     );
+    const toggleView = client.mutate.toggleView();
 
     return (
         <div style={styles.fixed}>
@@ -73,7 +74,7 @@ const BottomBar: FunctionComponent<Props> = () => {
                 <Button
                     onClick={() =>
                         lastView__tokenId && mobileView === 'Search'
-                            ? client.actions.toggleView()
+                            ? toggleView()
                             : onClick('Search')
                     }
                     hoverStyle={{

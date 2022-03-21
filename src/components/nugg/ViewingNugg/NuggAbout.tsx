@@ -45,11 +45,12 @@ export default ({
 
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, token.activeSwap.leader);
     const [ref, hover] = useOnHover(() => undefined);
+    const routeTo = client.mutate.routeTo();
 
     return (
         <div
             ref={ref}
-            onClick={() => client.actions.routeTo(tokenId, false)}
+            onClick={() => routeTo(tokenId, false)}
             aria-hidden="true"
             role="button"
             style={{

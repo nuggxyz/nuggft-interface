@@ -31,13 +31,14 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
 
 export default ({ tokenId, token, epoch }: { tokenId: NuggId; token: LiveItem; epoch: number }) => {
     const [ref, hover] = useOnHover(() => undefined);
+    const routeTo = client.mutate.routeTo();
 
     return (
         <>
             {token.tryout.count > 0 && token.tryout.max && token.tryout.min && (
                 <div
                     ref={ref}
-                    onClick={() => client.actions.routeTo(tokenId, false)}
+                    onClick={() => routeTo(tokenId, false)}
                     aria-hidden="true"
                     role="button"
                     style={{
@@ -96,7 +97,7 @@ export default ({ tokenId, token, epoch }: { tokenId: NuggId; token: LiveItem; e
             {token.activeSwap && (
                 <div
                     ref={ref}
-                    onClick={() => client.actions.routeTo(tokenId, false)}
+                    onClick={() => routeTo(tokenId, false)}
                     aria-hidden="true"
                     role="button"
                     style={{

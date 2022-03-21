@@ -95,7 +95,7 @@ export type EpochData = {
     status: 'OVER' | 'ACTIVE' | 'PENDING';
 };
 
-export interface ClientState extends State {
+export interface ClientState extends State, Actions {
     rpc: WebSocketProvider | undefined;
     graph: ApolloClient<any> | undefined;
     nuggft: NuggftV1 | undefined;
@@ -120,32 +120,6 @@ export interface ClientState extends State {
     error: Error | undefined;
     activating: boolean;
 }
-
-export const DEFAULT_STATE: ClientState = {
-    rpc: undefined,
-    stake: undefined,
-    nuggft: undefined,
-    epoch: undefined,
-    epoch__id: 0,
-    route: undefined,
-    lastView: undefined,
-    lastSwap: undefined,
-    isViewOpen: false,
-    editingNugg: undefined,
-    activeSwaps: [],
-    activeItems: [],
-    activeOffers: {},
-    myNuggs: [],
-    myUnclaimedNuggOffers: [],
-    myUnclaimedItemOffers: [],
-    myRecents: new Set(),
-    myLoans: [],
-    graph: undefined,
-    activating: false,
-    blocknum: undefined,
-    error: undefined,
-    manualPriority: undefined,
-};
 
 export type ClientStateUpdate = {
     rpc?: WebSocketProvider;

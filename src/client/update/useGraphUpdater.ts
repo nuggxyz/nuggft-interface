@@ -36,6 +36,8 @@ export default () => {
 
     const graph = client.live.graph();
 
+    const updateProtocol = client.mutate.updateProtocol();
+
     useLiveProtocolSubscription({
         client: graph,
         shouldResubscribe: true,
@@ -48,7 +50,7 @@ export default () => {
 
                 const staked = BigNumber.from(protocol.nuggftStakedEth);
 
-                client.actions.updateProtocol({
+                updateProtocol({
                     stake: {
                         staked,
                         shares,
@@ -121,7 +123,7 @@ export default () => {
                 x.subscriptionData.data.user
             ) {
                 const { user } = x.subscriptionData.data;
-                client.actions.updateProtocol({
+                updateProtocol({
                     myNuggs: user.nuggs.map((z) => {
                         return {
                             recent: false,

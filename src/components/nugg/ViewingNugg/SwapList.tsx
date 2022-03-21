@@ -70,6 +70,7 @@ const SwapItem: FunctionComponent<
     );
 
     const epoch = client.live.epoch.id();
+    const routeTo = client.mutate.routeTo();
 
     return epoch ? (
         <div style={{ padding: '.25rem 1rem' }}>
@@ -154,7 +155,7 @@ const SwapItem: FunctionComponent<
                     {(!item.endingEpoch || epoch <= item.endingEpoch) && (
                         <Button
                             label="goto swap 🤠"
-                            onClick={() => client.actions.routeTo(extraData.tokenId, false)}
+                            onClick={() => routeTo(extraData.tokenId, false)}
                         />
                     )}
                 </div>

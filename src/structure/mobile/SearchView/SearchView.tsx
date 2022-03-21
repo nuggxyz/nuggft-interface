@@ -42,6 +42,7 @@ const SearchView: FunctionComponent<Props> = () => {
         opacity: isViewOpen ? 1 : 0,
         config: config.default,
     });
+    const toggleView = client.mutate.toggleView();
 
     return (
         <>
@@ -81,7 +82,7 @@ const SearchView: FunctionComponent<Props> = () => {
                                 <IoChevronBackOutline color={Colors.nuggBlueText} size="25" />
                             }
                             // label="Back"
-                            onClick={() => client.actions.toggleView()}
+                            onClick={() => toggleView()}
                             buttonStyle={{
                                 background: Colors.transparentWhite,
                                 borderRadius: Layout.borderRadius.large,

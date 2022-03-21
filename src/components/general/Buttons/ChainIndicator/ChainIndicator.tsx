@@ -25,6 +25,8 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
     const blocknum = client.live.blocknum();
     const error = web3.hook.usePriorityError();
 
+    const routeTo = client.mutate.routeTo();
+
     const springStyle = useSpring({
         display: 'flex',
         alignItems: 'center',
@@ -54,7 +56,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
                     role="button"
                     onClick={() => {
                         if (onClick) onClick();
-                        client.actions.routeTo(epoch__id!.toString(), false);
+                        routeTo(epoch__id!.toString(), false);
                     }}
                     style={style2}
                 >

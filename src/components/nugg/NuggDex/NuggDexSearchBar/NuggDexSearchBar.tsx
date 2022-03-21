@@ -27,6 +27,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
 
     const debouncedValue = useDebounce(searchValue, 100);
     const [sortAsc, setSortAsc] = useState(filters && filters.sort && filters.sort.asc);
+    const toggleView = client.mutate.toggleView();
 
     useEffect(() => {
         if (isViewOpen) {
@@ -85,7 +86,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
             leftToggles={[
                 <Button
                     buttonStyle={styles.searchBarButton}
-                    onClick={() => client.actions.toggleView()}
+                    onClick={() => toggleView()}
                     rightIcon={<Search style={styles.searchBarIcon} />}
                 />,
             ]}

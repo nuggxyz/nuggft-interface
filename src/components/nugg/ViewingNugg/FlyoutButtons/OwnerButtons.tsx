@@ -10,6 +10,8 @@ import client from '@src/client';
 type Props = { tokenId: string };
 
 const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
+    const toggleEditingNugg = client.mutate.toggleEditingNugg();
+
     return (
         <div style={styles.ownerButtonContainer}>
             <Button
@@ -100,7 +102,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                         style={{ marginRight: '.75rem' }}
                     />
                 }
-                onClick={() => client.actions.toggleEditingNugg(tokenId)}
+                onClick={() => toggleEditingNugg(tokenId)}
             />
         </div>
     );

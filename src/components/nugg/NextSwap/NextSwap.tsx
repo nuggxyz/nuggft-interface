@@ -31,12 +31,13 @@ const NextSwap: FunctionComponent<Props> = () => {
     const [waiting, setWaiting] = React.useState(false);
     const [queue, setQueue] = React.useState<SwapData>();
     const [auto, setAuto] = React.useState<boolean>(true);
+    const routeTo = client.mutate.routeTo();
 
     const abc = React.useCallback(
         (tokenId: string) => {
             setWaiting(true);
             setTimeout(() => {
-                client.actions.routeTo(tokenId, false);
+                routeTo(tokenId, false);
                 setWaiting(false);
                 setQueue(undefined);
 

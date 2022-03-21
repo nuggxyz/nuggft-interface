@@ -56,10 +56,11 @@ const NuggList: FunctionComponent<Props> = ({
     const viewing = NuggDexState.select.viewing();
 
     const [loading, setLoading] = useState(false);
+    const routeTo = client.mutate.routeTo();
 
     const onClick = useCallback((item: typeof values[0]) => {
         batch(() => {
-            client.actions.routeTo(item?.id, true);
+            routeTo(item?.id, true);
         });
     }, []);
 

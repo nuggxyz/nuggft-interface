@@ -161,6 +161,7 @@ export default () => {
     }, [items]);
 
     const { estimate, revert } = useTransactionManager();
+    const toggleEditingNugg = client.mutate.toggleEditingNugg();
 
     return (
         <animated.div style={{ ...styles.container, ...style }}>
@@ -169,7 +170,7 @@ export default () => {
                     <Button
                         label="kill"
                         onClick={() => {
-                            client.actions.toggleEditingNugg(undefined);
+                            toggleEditingNugg(undefined);
                         }}
                     />
 

@@ -14,6 +14,8 @@ import useLiveOffers from './hooks/useLiveOffers';
 export default () => {
     const address = web3.hook.usePriorityAccount();
 
+    const updateProtocol = client.mutate.updateProtocol();
+
     useRpcUpdater();
 
     const lastSwap__tokenId = client.live.lastSwap.tokenId();
@@ -25,7 +27,7 @@ export default () => {
     // clean up on account change
     React.useEffect(() => {
         return () => {
-            client.actions.updateProtocol({
+            updateProtocol({
                 myNuggs: [],
                 myLoans: [],
                 myUnclaimedItemOffers: [],

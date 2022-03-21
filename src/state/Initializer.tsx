@@ -5,7 +5,6 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import { Chain } from '@src/web3/core/interfaces';
 // eslint-disable-next-line import/no-named-as-default
-import core from '@src/client/core';
 
 import { states } from './store';
 
@@ -39,12 +38,14 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
             void rpc.connector.activate(Chain.RINKEBY);
     }, []);
 
+    const updateClients = client.mutate.updateClients();
+
     useEffect(() => {
         if (chainId && web3.config.isValidChainId(chainId)) {
             const graph = web3.config.createApolloClient(chainId);
             const rpc = web3.config.createInfuraWebSocket(chainId);
 
-            void core.actions.updateClients(
+            void updateClients(
                 {
                     graph,
                     rpc,
@@ -58,7 +59,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
 
                 graph.stop();
 
-                void core.actions.updateClients(
+                void updateClients(
                     {
                         graph: undefined,
                         rpc: undefined,

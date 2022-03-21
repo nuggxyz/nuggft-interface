@@ -15,6 +15,8 @@ import styles from './HomeTab.styles';
 const MyNuggRenderItem: FunctionComponent<
     InfiniteListRenderItemProps<MyNuggsData, undefined, unknown>
 > = ({ item, style }) => {
+    const routeTo = client.mutate.routeTo();
+
     return item ? (
         <div
             style={{
@@ -42,7 +44,7 @@ const MyNuggRenderItem: FunctionComponent<
             <Button
                 key={JSON.stringify(item)}
                 onClick={() => {
-                    client.actions.routeTo(item.tokenId, true);
+                    routeTo(item.tokenId, true);
                 }}
                 buttonStyle={styles.searchButton}
                 rightIcon={<IoSearch color={lib.colors.white} />}

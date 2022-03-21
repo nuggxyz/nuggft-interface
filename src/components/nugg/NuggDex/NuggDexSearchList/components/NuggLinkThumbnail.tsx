@@ -17,6 +17,7 @@ const NuggLinkThumbnail: FunctionComponent<{
 }> = ({ item, index, style: customStyle }) => {
     const [ref, isHovering] = useOnHover();
     const lastView__tokenId = client.live.lastView.tokenId();
+    const routeTo = client.mutate.routeTo();
 
     const style = useMemo(() => {
         return {
@@ -33,7 +34,7 @@ const NuggLinkThumbnail: FunctionComponent<{
             key={index}
             style={{ ...style }}
             onClick={() => {
-                client.actions.routeTo(item?.id, true);
+                routeTo(item?.id, true);
             }}
         >
             <TokenViewer tokenId={item.id} style={styles.nugg} disableOnClick />

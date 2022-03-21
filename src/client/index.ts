@@ -17,57 +17,57 @@ export default {
     ...core,
 
     exists: {
-        lastSwap: () => core.store((state) => state.lastView?.tokenId !== undefined),
-        lastView: () => core.store((state) => state.lastView?.tokenId !== undefined),
+        lastSwap: () => core((state) => state.lastView?.tokenId !== undefined),
+        lastView: () => core((state) => state.lastView?.tokenId !== undefined),
     },
 
     live: {
         /// ///// simple ////////
-        graph: () => core.store((state) => state.graph),
-        rpc: () => core.store((state) => state.rpc),
+        graph: () => core((state) => state.graph),
+        rpc: () => core((state) => state.rpc),
 
         epoch: {
-            id: () => core.store((state) => state.epoch?.id),
-            startblock: () => core.store((state) => state.epoch?.startblock),
-            endblock: () => core.store((state) => state.epoch?.endblock),
-            status: () => core.store((state) => state.epoch?.status),
+            id: () => core((state) => state.epoch?.id),
+            startblock: () => core((state) => state.epoch?.startblock),
+            endblock: () => core((state) => state.epoch?.endblock),
+            status: () => core((state) => state.epoch?.status),
         },
 
         lastSwap: {
-            tokenId: () => core.store((state) => state.lastSwap?.tokenId),
-            type: () => core.store((state) => state.lastSwap?.type),
+            tokenId: () => core((state) => state.lastSwap?.tokenId),
+            type: () => core((state) => state.lastSwap?.type),
         },
 
         lastView: {
-            tokenId: () => core.store((state) => state.lastView?.tokenId),
-            type: () => core.store((state) => state.lastView?.type),
+            tokenId: () => core((state) => state.lastView?.tokenId),
+            type: () => core((state) => state.lastView?.type),
         },
         stake: {
-            eps: () => core.store((state) => state.stake?.eps),
-            shares: () => core.store((state) => state.stake?.shares),
-            staked: () => core.store((state) => state.stake?.staked),
+            eps: () => core((state) => state.stake?.eps),
+            shares: () => core((state) => state.stake?.shares),
+            staked: () => core((state) => state.stake?.staked),
         },
 
-        route: () => core.store((state) => state.route),
-        isViewOpen: () => core.store((state) => state.isViewOpen),
-        editingNugg: () => core.store((state) => state.editingNugg),
+        route: () => core((state) => state.route),
+        isViewOpen: () => core((state) => state.isViewOpen),
+        editingNugg: () => core((state) => state.editingNugg),
 
-        blocknum: () => core.store((state) => state.blocknum),
-        manualPriority: () => core.store((state) => state.manualPriority),
+        blocknum: () => core((state) => state.blocknum),
+        manualPriority: () => core((state) => state.manualPriority),
 
         /// ///// complex ////////
         offers: (tokenId: TokenId | undefined) =>
-            core.store(
+            core(
                 // eslint-disable-next-line react-hooks/rules-of-hooks
                 useCallback(
                     (state) => (tokenId ? state.activeOffers[tokenId] ?? [] : []),
                     [tokenId],
                 ),
             ),
-        activeSwaps: () => core.store((state) => state.activeSwaps),
-        activeItems: () => core.store((state) => state.activeItems),
+        activeSwaps: () => core((state) => state.activeSwaps),
+        activeItems: () => core((state) => state.activeItems),
         activeNuggItem: (id: string | undefined) =>
-            core.store(
+            core(
                 // eslint-disable-next-line react-hooks/rules-of-hooks
                 useCallback(
                     (state) => id && state.activeItems.find((item) => item.id.includes(id)),
@@ -75,28 +75,26 @@ export default {
                 ),
             ),
         myRecents: () =>
-            core.store((state) =>
+            core((state) =>
                 Array.from(state.myRecents)
                     .map((x) => JSON.parse(x) as ListData)
                     .reverse(),
             ),
 
         myNuggs: () =>
-            core.store((state) => {
+            core((state) => {
                 const r = state.myNuggs.sort((a, b) =>
                     Number(a.tokenId) > Number(b.tokenId) ? 1 : -1,
                 );
                 return r;
             }),
         myLoans: () =>
-            core.store((state) =>
-                state.myLoans.sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1)),
-            ),
+            core((state) => state.myLoans.sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1))),
 
-        myUnclaimedNuggOffers: () => core.store((state) => state.myUnclaimedNuggOffers),
-        myUnclaimedItemOffers: () => core.store((state) => state.myUnclaimedItemOffers),
+        myUnclaimedNuggOffers: () => core((state) => state.myUnclaimedNuggOffers),
+        myUnclaimedItemOffers: () => core((state) => state.myUnclaimedItemOffers),
         myUnclaimedOffers: () =>
-            core.store((state) =>
+            core((state) =>
                 [...state.myUnclaimedItemOffers, ...state.myUnclaimedNuggOffers]
                     .filter(
                         (x) =>
@@ -107,6 +105,24 @@ export default {
                     .sort((a, b) => ((a.endingEpoch ?? 0) > (b.endingEpoch ?? 0) ? -1 : 1)),
             ),
     },
+    mutate: {
+        updateBlocknum: () => core((state) => state.updateBlocknum),
+        updateProtocol: () => core((state) => state.updateProtocol),
+        routeTo: () => core((state) => state.routeTo),
+        toggleView: () => core((state) => state.toggleView),
+        updateClients: () => core((state) => state.updateClients),
+        updateOffers: () => core((state) => state.updateOffers),
+        removeLoan: () => core((state) => state.removeLoan),
+        removeNuggClaim: () => core((state) => state.removeNuggClaim),
+        removeItemClaimIfMine: () => core((state) => state.removeItemClaimIfMine),
+        addNuggClaim: () => core((state) => state.addNuggClaim),
+        addItemClaim: () => core((state) => state.addItemClaim),
+        addLoan: () => core((state) => state.addLoan),
+        updateLoan: () => core((state) => state.updateLoan),
+        addNugg: () => core((state) => state.addNugg),
+        removeNugg: () => core((state) => state.removeNugg),
+        toggleEditingNugg: () => core((state) => state.toggleEditingNugg),
+    },
     hook: {
         useLiveNugg,
         useLiveItem,
@@ -116,15 +132,15 @@ export default {
         useDotnuggSubscription,
     },
     static: {
-        graph: () => core.store.getState().graph,
-        rpc: () => core.store.getState().rpc,
-        activeSwaps: () => core.store.getState().activeSwaps,
-        activeItems: () => core.store.getState().activeItems,
-        myNuggs: () => core.store.getState().myNuggs,
-        myLoans: () => core.store.getState().myLoans,
-        epoch: () => core.store.getState().epoch,
-        stake: () => core.store.getState().stake,
-        route: () => core.store.getState().route,
+        graph: () => core.getState().graph,
+        rpc: () => core.getState().rpc,
+        activeSwaps: () => core.getState().activeSwaps,
+        activeItems: () => core.getState().activeItems,
+        myNuggs: () => core.getState().myNuggs,
+        myLoans: () => core.getState().myLoans,
+        epoch: () => core.getState().epoch,
+        stake: () => core.getState().stake,
+        route: () => core.getState().route,
     },
     router,
     updater,

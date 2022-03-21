@@ -9,6 +9,7 @@ import { createItemId, extractItemId } from '@src/lib/index';
 
 const useLiveOffers = (tokenId: TokenId | undefined) => {
     const graph = client.live.graph();
+    const updateOffers = client.mutate.updateOffers();
 
     useBetterLiveItemOffersSubscription({
         client: graph,
@@ -26,7 +27,7 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
                 x.subscriptionData.data.item.activeSwap.offers
             ) {
                 const { offers } = x.subscriptionData.data.item.activeSwap;
-                client.actions.updateOffers(
+                updateOffers(
                     createItemId(tokenId),
                     offers.map((z) => {
                         return {
@@ -56,7 +57,7 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
                 x.subscriptionData.data.nugg.activeSwap.offers
             ) {
                 const { offers } = x.subscriptionData.data.nugg.activeSwap;
-                client.actions.updateOffers(
+                updateOffers(
                     tokenId,
                     offers.map((z) => {
                         return {

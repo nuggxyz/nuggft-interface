@@ -19,10 +19,20 @@ export default () => {
     const chainId = web3.hook.usePriorityChainId();
     const address = web3.hook.usePriorityAccount();
 
+    const updateOffers = client.mutate.updateOffers();
+    const updateBlocknum = client.mutate.updateBlocknum();
+    const updateProtocol = client.mutate.updateProtocol();
+    const addNugg = client.mutate.addNugg();
+    const addLoan = client.mutate.addLoan();
+    const updateLoan = client.mutate.updateLoan();
+    const removeLoan = client.mutate.removeLoan();
+    const removeNuggClaim = client.mutate.removeNuggClaim();
+    const removeItemClaimIfMine = client.mutate.removeItemClaimIfMine();
+
     React.useEffect(() => {
         if (rpc && chainId) {
             rpc.on('block', (log: number) => {
-                client.actions.updateBlocknum(log, chainId);
+                updateBlocknum(log, chainId);
             });
 
             const nuggft = new NuggftV1Helper(chainId, undefined).contract;
@@ -53,7 +63,7 @@ export default () => {
                             log,
                         });
 
-                        void client.actions.updateProtocol({
+                        void updateProtocol({
                             stake: EthInt.fromNuggftV1Stake(event.args.stake),
                         });
                         break;
@@ -94,7 +104,7 @@ export default () => {
                             data,
                         });
 
-                        void client.actions.updateOffers(event.args.tokenId.toString(), [data]);
+                        void updateOffers(event.args.tokenId.toString(), [data]);
                         break;
                     }
                     default:
@@ -104,21 +114,18 @@ export default () => {
                 switch (event.name) {
                     case 'OfferItem': {
                         const agency = BigNumber.from(event.args.agency);
-                        client.actions.updateOffers(
-                            `item-${Number(event.args.itemId).toString()}` as ItemId,
-                            [
-                                {
-                                    eth: EthInt.fromNuggftV1Agency(event.args.agency),
-                                    user: agency.mask(160).toNumber().toString(),
-                                    txhash: log.transactionHash,
-                                },
-                            ],
-                        );
+                        updateOffers(`item-${Number(event.args.itemId).toString()}` as ItemId, [
+                            {
+                                eth: EthInt.fromNuggftV1Agency(event.args.agency),
+                                user: agency.mask(160).toNumber().toString(),
+                                txhash: log.transactionHash,
+                            },
+                        ]);
                         break;
                     }
                     case 'Transfer': {
                         if (address && event.args._to.toLowerCase() === address.toLowerCase()) {
-                            client.actions.addNugg({
+                            addNugg({
                                 recent: true,
                                 tokenId: event.args._tokenId.toString(),
                                 activeLoan: false,
@@ -137,7 +144,7 @@ export default () => {
                     case 'Loan': {
                         const agency = lib.parse.agency(event.args.agency);
                         if (agency.address === address) {
-                            client.actions.addLoan({
+                            addLoan({
                                 startingEpoch: agency.epoch.toNumber(),
                                 endingEpoch: agency.epoch.add(1024).toNumber(),
                                 eth: agency.eth,
@@ -149,7 +156,7 @@ export default () => {
                     case 'Rebalance': {
                         const agency = lib.parse.agency(event.args.agency);
                         if (agency.address === address) {
-                            client.actions.updateLoan({
+                            updateLoan({
                                 startingEpoch: agency.epoch.toNumber(),
                                 endingEpoch: agency.epoch.add(1024).toNumber(),
                                 eth: agency.eth,
@@ -159,16 +166,16 @@ export default () => {
                         break;
                     }
                     case 'Liquidate':
-                        client.actions.removeLoan(event.args.tokenId.toString());
+                        removeLoan(event.args.tokenId.toString());
                         break;
                     case 'Claim': {
                         if (event.args.account === address) {
-                            client.actions.removeNuggClaim(event.args.tokenId.toString());
+                            removeNuggClaim(event.args.tokenId.toString());
                         }
                         break;
                     }
                     case 'ClaimItem': {
-                        client.actions.removeItemClaimIfMine(
+                        removeItemClaimIfMine(
                             event.args.buyerTokenId.toString(),
                             `item-${BigNumber.from(event.args.itemId).toString()}` as ItemId,
                         );
