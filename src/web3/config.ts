@@ -64,7 +64,7 @@ export const CONTRACTS = {
     [Chain.RINKEBY]: {
         NuggftV1: '0x2ea7dc5a053bf8607425c289953fb0ac7dc4e2ea', // 0x3f1c9c4ae47809d284592845e4ced13a6e352421
         DotnuggV1: '0xf412e03318c359e883d5c08ffc310bca990bdeb4',
-        Genesis: 10366170,
+        Genesis: 10366173,
         Interval: 32,
     },
     [Chain.GOERLI]: {
