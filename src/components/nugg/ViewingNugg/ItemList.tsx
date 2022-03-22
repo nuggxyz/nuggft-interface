@@ -17,8 +17,7 @@ import globalStyles from '@src/lib/globalStyles';
 import Colors from '@src/lib/colors';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import WalletState from '@src/state/wallet';
-import { LiveNuggItem } from '@src/client/hooks/useLiveNugg';
-import { DefaultExtraData } from '@src/client/interfaces';
+import { DefaultExtraData, LiveNuggItem } from '@src/client/interfaces';
 
 import styles from './ViewingNugg.styles';
 

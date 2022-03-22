@@ -6,6 +6,7 @@ import { Chain, Connector } from '@src/web3/core/interfaces';
 
 import { NuggftV1 } from '../typechain/NuggftV1';
 
+// eslint-disable-next-line import/no-cycle
 import { TokenId, NuggId, ItemId, ViewRoutes, SwapRoutes } from './router';
 
 export interface OfferData {
@@ -108,7 +109,7 @@ export interface ClientState extends State, Actions {
     epoch__id: number | undefined;
     epoch: EpochData | undefined;
     blocknum: number | undefined;
-    activeOffers: Dictionary<OfferData[]>;
+    liveOffers: Dictionary<OfferData[]>;
     activeSwaps: SwapData[];
     activeItems: SwapData[];
     myNuggs: MyNuggsData[];
@@ -119,6 +120,7 @@ export interface ClientState extends State, Actions {
     myRecents: Set<string>;
     error: Error | undefined;
     activating: boolean;
+    liveTokens: Dictionary<LiveTokenWithLifecycle>;
 }
 
 export type ClientStateUpdate = {
@@ -166,6 +168,91 @@ export interface Actions {
     removeNugg: (tokenId: NuggId) => void;
     toggleEditingNugg: (tokenId: NuggId | undefined) => void;
     start: (chainId: Chain, rpc: WebSocketProvider, graph: ApolloClient<any>) => Promise<void>;
+    updateToken: (tokenId: TokenId, data: LiveTokenWithLifecycle) => void;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
+
+export interface LiveSwapBase {
+    type: 'nugg' | 'item';
+    id: string;
+    epoch?: EpochData | null;
+    eth: EthInt;
+    leader: string;
+    owner: string;
+    endingEpoch: number | null;
+    num: number;
+}
+
+export interface LiveNuggSwap extends LiveSwapBase {
+    type: 'nugg';
+    isActive: boolean;
+}
+
+export type LiveSwap = LiveNuggSwap | LiveItemSwap;
+
+export interface LiveNuggItem {
+    id: string;
+    activeSwap: string | undefined;
+    feature: number;
+    position: number;
+}
+
+export interface LiveNugg {
+    type: 'nugg';
+    activeLoan: boolean;
+    activeSwap?: LiveNuggSwap;
+    items: LiveNuggItem[];
+    pendingClaim: boolean;
+    lastTransfer: number;
+    owner: string;
+    swaps: LiveNuggSwap[];
+}
+
+export interface LiveItemSwap extends LiveSwapBase {
+    type: 'item';
+    id: string;
+    epoch: EpochData | null;
+    eth: EthInt;
+    leader: string;
+    owner: string;
+    endingEpoch: number | null;
+    num: number;
+    isTryout: boolean;
+}
+
+export interface LiveActiveItemSwap extends LiveItemSwap {
+    count: number;
+}
+export type TryoutData = { nugg: NuggId; eth: EthInt };
+
+export interface LiveItem {
+    type: 'item';
+    activeSwap?: LiveActiveItemSwap;
+    swaps: LiveItemSwap[];
+    count: number;
+    tryout: {
+        count: number;
+        swaps: TryoutData[];
+        max?: TryoutData;
+        min?: TryoutData;
+    };
+}
+
+export enum Lifecycle {
+    Stands = 'stands', // [nugg/item] a token that has no active swap
+    Bench = 'bench', //   [nugg/item] a token that is for sale, but no one has bid on it
+    Deck = 'deck', //     [nugg/item] a token that is for sale, someone has bid on it, but it is not yet the final epoch
+    Bat = 'bat', //       [nugg/item] a token that is for sale, and it is in the final epoch
+    Shower = 'shower', // [nugg/item] active swap exists, but none of the others hit. ** i honestly dont even think it can hit this bc the graph catches it
+    Tryout = 'tryout', // [     item] a token that has no active sale, but one to many non-active sales
+    Cut = 'cut', //       [nugg     ] a token that no one bid on but still exists in the graph
+    Egg = 'egg', //       [nugg     ] a token that will be minting in the next epoch --- SAME AS DECK, BUT NON OFFERABLE
+}
+
+export type LiveToken = LiveNugg | LiveItem;
+
+export type LiveItemWithLifecycle = LiveItem & { lifecycle: Lifecycle };
+export type LiveNuggWithLifecycle = LiveNugg & { lifecycle: Lifecycle };
+
+export type LiveTokenWithLifecycle = LiveNuggWithLifecycle | LiveItemWithLifecycle;

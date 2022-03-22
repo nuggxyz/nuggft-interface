@@ -9,7 +9,7 @@ import lib, { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import state from '@src/state';
 import Text from '@src/components/general/Texts/Text/Text';
-import { Lifecycle } from '@src/client/hooks/useLiveToken';
+import { Lifecycle } from '@src/client/interfaces';
 
 import OfferRenderItem from './OfferRenderItem';
 import styles from './RingAbout.styles';
@@ -19,8 +19,7 @@ type Props = Record<string, unknown>;
 const OffersList: FunctionComponent<Props> = () => {
     const tokenId = client.live.lastSwap.tokenId();
     const offers = client.live.offers(tokenId).slice(1);
-    const { lifecycle } = client.hook.useLiveToken(tokenId);
-    // const lifecycle = client.live.activeLifecycle();
+    const token = client.live.token(tokenId);
 
     const type = client.live.lastSwap.type();
     const chainId = web3.hook.usePriorityChainId();
@@ -44,13 +43,13 @@ const OffersList: FunctionComponent<Props> = () => {
 
     const shouldShow = useMemo(() => {
         return (
-            lifecycle &&
-            lifecycle !== Lifecycle.Bench &&
-            lifecycle !== Lifecycle.Tryout &&
-            lifecycle !== Lifecycle.Stands &&
+            token &&
+            token.lifecycle !== Lifecycle.Bench &&
+            token.lifecycle !== Lifecycle.Tryout &&
+            token.lifecycle !== Lifecycle.Stands &&
             !isUndefinedOrNullOrArrayEmpty(offers)
         );
-    }, [lifecycle, offers]);
+    }, [token, offers]);
 
     return shouldShow ? (
         <>

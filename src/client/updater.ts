@@ -10,6 +10,8 @@ import useGraphUpdater from './update/useGraphUpdater';
 // eslint-disable-next-line import/no-cycle
 import useLiveOffers from './hooks/useLiveOffers';
 // eslint-disable-next-line import/no-cycle
+import useLiveToken from './hooks/useLiveToken';
+// eslint-disable-next-line import/no-cycle
 
 export default () => {
     const address = web3.hook.usePriorityAccount();
@@ -20,7 +22,13 @@ export default () => {
 
     const lastSwap__tokenId = client.live.lastSwap.tokenId();
 
+    const lastView__tokenId = client.live.lastView.tokenId();
+
     useLiveOffers(lastSwap__tokenId);
+
+    useLiveToken(lastSwap__tokenId);
+
+    useLiveToken(lastView__tokenId);
 
     useGraphUpdater();
 

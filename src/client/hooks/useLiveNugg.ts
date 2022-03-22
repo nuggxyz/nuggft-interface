@@ -1,57 +1,14 @@
-import React from 'react';
-
 import { EthInt } from '@src/classes/Fraction';
 import { useLiveNuggSubscription } from '@src/gql/types.generated';
-
-// eslint-disable-next-line import/no-cycle
-import { EpochData } from '@src/client/interfaces';
+import { LiveNugg } from '@src/client/interfaces';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
 
-// eslint-disable-next-line import/no-cycle
-import { LiveItemSwap } from './useLiveItem';
-
-export interface LiveSwapBase {
-    type: 'nugg' | 'item';
-    id: string;
-    epoch?: EpochData | null;
-    eth: EthInt;
-    leader: string;
-    owner: string;
-    endingEpoch: number | null;
-    num: number;
-}
-
-export interface LiveNuggSwap extends LiveSwapBase {
-    type: 'nugg';
-    isActive: boolean;
-}
-
-export type LiveSwap = LiveNuggSwap | LiveItemSwap;
-
-export interface LiveNuggItem {
-    id: string;
-    activeSwap: string | undefined;
-    feature: number;
-    position: number;
-}
-
-export interface LiveNugg {
-    type: 'nugg';
-    activeLoan: boolean;
-    activeSwap?: LiveNuggSwap;
-    items: LiveNuggItem[];
-    pendingClaim: boolean;
-    lastTransfer: number;
-    // svg: ReactSVG;
-    owner: string;
-    swaps: LiveNuggSwap[];
-}
-
-export const useLiveNugg = (tokenId: string | undefined) => {
-    const [liveNugg, setLiveNugg] = React.useState<LiveNugg>();
-
+export default (
+    tokenId: string | undefined,
+    onProccessedData: (data: Omit<LiveNugg, 'lifecycle'>) => void,
+) => {
     const graph = client.live.graph();
 
     useLiveNuggSubscription({
@@ -68,8 +25,8 @@ export const useLiveNugg = (tokenId: string | undefined) => {
             ) {
                 const { nugg } = x.subscriptionData.data;
 
-                setLiveNugg({
-                    type: 'nugg',
+                const z = {
+                    type: 'nugg' as const,
                     activeLoan: !!nugg.activeLoan?.id,
                     owner: nugg.user?.id,
                     items: nugg.items.map((y) => {
@@ -84,7 +41,7 @@ export const useLiveNugg = (tokenId: string | undefined) => {
                     lastTransfer: nugg.lastTransfer,
                     swaps: nugg.swaps.map((y) => {
                         return {
-                            type: 'nugg',
+                            type: 'nugg' as const,
                             id: y?.id,
                             epoch: y?.epoch
                                 ? {
@@ -104,7 +61,7 @@ export const useLiveNugg = (tokenId: string | undefined) => {
                     }),
                     activeSwap: nugg.activeSwap
                         ? {
-                              type: 'nugg',
+                              type: 'nugg' as const,
                               id: nugg.activeSwap?.id,
                               epoch: nugg.activeSwap?.epoch
                                   ? {
@@ -127,11 +84,11 @@ export const useLiveNugg = (tokenId: string | undefined) => {
                               isActive: true,
                           }
                         : undefined,
-                    // svg: nugg.dotnuggRawCache as any,
-                });
+                };
+
+                onProccessedData(z);
             }
         },
     });
-
-    return liveNugg;
+    return null;
 };

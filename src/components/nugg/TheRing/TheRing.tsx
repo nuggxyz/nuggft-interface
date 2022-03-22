@@ -9,8 +9,8 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
-import { Lifecycle } from '@src/client/hooks/useLiveToken';
 import Label from '@src/components/general/Label/Label';
+import { Lifecycle } from '@src/client/interfaces';
 
 import styles from './TheRing.styles';
 
@@ -31,8 +31,7 @@ const TheRing: FunctionComponent<Props> = ({
     const blocknum = client.live.blocknum();
 
     const tokenId = client.live.lastSwap.tokenId();
-    const { token, lifecycle } = client.hook.useLiveToken(tokenId);
-
+    const token = client.live.token(tokenId);
     const blockDuration = useMemo(() => {
         let remaining = 0;
         if (token?.activeSwap?.epoch) {
@@ -51,6 +50,14 @@ const TheRing: FunctionComponent<Props> = ({
             remaining = +token.activeSwap.epoch.endblock - +blocknum;
         }
 
+        /// //////////////////////////////
+        // @danny7even is this okay to add?
+        //     the ring was starting to overshoot at the end of an epoch after I updated the token
+        if (remaining <= 0) {
+            remaining = 0;
+        }
+        /// //////////////////////////////
+
         return remaining;
     }, [blocknum, token?.activeSwap?.epoch]);
 
@@ -62,14 +69,16 @@ const TheRing: FunctionComponent<Props> = ({
                 blocktime={constants.BLOCKTIME}
                 width={circleWidth}
                 staticColor={
-                    lifecycle === Lifecycle.Stands
-                        ? lib.colors.darkerGray
-                        : lifecycle === Lifecycle.Bench
-                        ? lib.colors.nuggGold
-                        : lifecycle === Lifecycle.Deck
-                        ? lib.colors.green
-                        : lifecycle === Lifecycle.Bat
-                        ? ''
+                    token
+                        ? token.lifecycle === Lifecycle.Stands
+                            ? lib.colors.darkerGray
+                            : token.lifecycle === Lifecycle.Bench
+                            ? lib.colors.nuggGold
+                            : token.lifecycle === Lifecycle.Deck
+                            ? lib.colors.green
+                            : token.lifecycle === Lifecycle.Bat
+                            ? ''
+                            : 'purple'
                         : 'purple'
                 }
                 style={{
@@ -78,9 +87,9 @@ const TheRing: FunctionComponent<Props> = ({
                     flexDirection: 'column',
                 }}
             >
-                {tokenId && (
+                {token && tokenId && (
                     <>
-                        {lifecycle === Lifecycle.Deck && (
+                        {token.lifecycle === Lifecycle.Deck && (
                             <Label text={`countdown begins in ${blocksRemaining % 32} blocks`} />
                         )}
                         <AnimatedCard>

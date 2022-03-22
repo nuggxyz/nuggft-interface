@@ -3,7 +3,6 @@ import React from 'react';
 import { HiArrowRight } from 'react-icons/hi';
 
 import { Address } from '@src/classes/Address';
-import { LiveNugg, LiveSwap } from '@src/client/hooks/useLiveNugg';
 import { NuggId } from '@src/client/router';
 import Colors from '@src/lib/colors';
 import web3 from '@src/web3';
@@ -12,6 +11,7 @@ import client from '@src/client';
 import lib from '@src/lib';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useOnHover from '@src/hooks/useOnHover';
+import { LiveNugg, LiveSwap } from '@src/client/interfaces';
 
 import styles from './ViewingNugg.styles';
 

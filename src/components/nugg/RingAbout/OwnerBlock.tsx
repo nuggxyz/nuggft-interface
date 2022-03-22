@@ -1,12 +1,10 @@
-import React, { FunctionComponent, useCallback, useMemo } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
-import { Lifecycle, LiveToken } from '@src/client/hooks/useLiveToken';
-import { LiveItem } from '@src/client/hooks/useLiveItem';
-import { isUndefinedOrNullOrBooleanFalse, isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import { Lifecycle } from '@src/client/interfaces';
 
 import styles from './RingAbout.styles';
 
@@ -16,16 +14,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
     const floor = client.live.stake.eps();
     const provider = web3.hook.usePriorityProvider();
     const tokenId = client.live.lastSwap.tokenId();
-    const { lifecycle, token } = client.hook.useLiveToken(tokenId);
-    // @danny @dub probably delete this later
-
-    // const lifecycle = client.live.activeLifecycle();
-    // const token = useAsyncState(async () => {
-    //     if (tokenId) {
-    //         return (await client.static.token(tokenId)).token;
-    //     }
-    //     return undefined;
-    // }, [tokenId]);
+    const token = client.live.token(tokenId);
 
     const ens = web3.hook.usePriorityAnyENSName(
         token?.type === 'item' ? 'nugg' : provider,
@@ -38,41 +27,52 @@ const OwnerBlock: FunctionComponent<Props> = () => {
             : '',
     );
 
-    const isItemTryout = useCallback(
-        (_token?: LiveToken | null): _token is RecursiveRequired<LiveItem> =>
-            !isUndefinedOrNullOrBooleanFalse(
-                lifecycle === Lifecycle.Tryout &&
-                    _token &&
-                    _token.type === 'item' &&
-                    !isUndefinedOrNullOrObjectEmpty(_token.tryout.min) &&
-                    !isUndefinedOrNullOrObjectEmpty(_token.tryout.max),
-            ),
-        [lifecycle],
-    );
+    // @danny7even what is the purpose of this? bypassing it fixes a small rendering delay
+    //   which makes the ring about not appear as jumpy on first render
+    // const isItemTryout = useCallback(
+    //     (_token?: LiveToken | null): _token is RecursiveRequired<LiveItem> =>
+    //         !isUndefinedOrNullOrBooleanFalse(
+    //             lifecycle === Lifecycle.Tryout &&
+    //                 _token &&
+    //                 _token.type === 'item' &&
+    //                 !isUndefinedOrNullOrObjectEmpty(_token.tryout.min) &&
+    //                 !isUndefinedOrNullOrObjectEmpty(_token.tryout.max),
+    //         ),
+    //     [lifecycle],
+    // );
 
     const title = useMemo(() => {
-        if (lifecycle === Lifecycle.Stands && token) {
+        if (token && token.lifecycle === Lifecycle.Stands) {
             return token.type === 'item'
                 ? 'this item is owned by ___ nuggs and is not currently for sale'
                 : 'This nugg is happily owned by';
         }
         let text = 'On sale by';
-        if (isItemTryout(token)) {
+        if (
+            token &&
+            token.lifecycle === Lifecycle.Tryout &&
+            token.type === 'item' &&
+            token.tryout.min &&
+            token.tryout.max
+        ) {
             text += ` ${token.tryout.count} Nugg${token.tryout.count > 1 ? 's' : ''}`;
         }
         return text;
-    }, [token, lifecycle, isItemTryout]);
+    }, [token]);
 
     return (
         <div style={styles.ownerBlockContainer}>
             <Text size="small" textStyle={styles.textBlue}>
                 {title}
             </Text>
-            {isItemTryout(token) ? (
+            {token &&
+            token.lifecycle === Lifecycle.Tryout &&
+            token.type === 'item' &&
+            token.tryout.min &&
+            token.tryout.max ? (
                 <div>
                     <div style={{ display: 'flex' }}>
                         <CurrencyText
-                            stopAnimation
                             image="eth"
                             value={token.tryout.min.eth.decimal.toNumber()}
                             size="small"
@@ -86,7 +86,6 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                     {!token.tryout.min.eth.eq(token.tryout.max.eth) && (
                         <div style={{ display: 'flex' }}>
                             <CurrencyText
-                                stopAnimation
                                 size="small"
                                 image="eth"
                                 value={token.tryout.max.eth.decimal.toNumber()}
@@ -98,17 +97,18 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                     )}
                 </div>
             ) : (
-                <Text size="medium">{ens}</Text>
-            )}
-            {token && token.activeSwap?.eth.decimal && (
-                <CurrencyText
-                    stopAnimation
-                    size="small"
-                    value={Math.max(
-                        floor?.decimal.toNumber() || 0,
-                        token.activeSwap?.eth.decimal.toNumber(),
-                    )}
-                />
+                // @danny7even is this logic okay, shoud be same as before but less conditional rerendering, i think
+                <>
+                    <Text size="medium">{ens}</Text>
+                    <CurrencyText
+                        stopAnimation
+                        size="small"
+                        value={Math.max(
+                            floor?.decimal.toNumber() || 0,
+                            token && token.activeSwap ? token.activeSwap?.eth.number : 0,
+                        )}
+                    />
+                </>
             )}
         </div>
     );

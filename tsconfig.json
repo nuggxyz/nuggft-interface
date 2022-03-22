@@ -20,6 +20,6 @@
         },
         "strict": true
     },
-    "include": ["src"],
+    "include": ["src", "archive/useLiveNugg.ts"],
     "exclude": ["node_modules", "webpack.config.js"]
 }

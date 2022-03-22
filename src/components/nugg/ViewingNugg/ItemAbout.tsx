@@ -2,7 +2,6 @@ import React from 'react';
 import { HiArrowRight } from 'react-icons/hi';
 
 import { Address } from '@src/classes/Address';
-import { LiveItem } from '@src/client/hooks/useLiveItem';
 import { NuggId } from '@src/client/router';
 import Colors from '@src/lib/colors';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -10,7 +9,7 @@ import client from '@src/client';
 import lib from '@src/lib';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useOnHover from '@src/hooks/useOnHover';
-import { LiveSwap } from '@src/client/hooks/useLiveNugg';
+import { LiveItemWithLifecycle, LiveSwap } from '@src/client/interfaces';
 
 import styles from './ViewingNugg.styles';
 
@@ -29,7 +28,15 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
     ) : null;
 };
 
-export default ({ tokenId, token, epoch }: { tokenId: NuggId; token: LiveItem; epoch: number }) => {
+export default ({
+    tokenId,
+    token,
+    epoch,
+}: {
+    tokenId: NuggId;
+    token: LiveItemWithLifecycle;
+    epoch: number;
+}) => {
     const [ref, hover] = useOnHover(() => undefined);
     const routeTo = client.mutate.routeTo();
 
