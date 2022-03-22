@@ -89,16 +89,19 @@ const InfiniteList = <T, B, A>({
         () => Math.max(Math.floor(scrollTop / itemHeight) - LIST_PADDING, 0),
         [scrollTop, itemHeight],
     );
-    const endBufferIndex = useMemo(
-        () =>
-            Math.min(
-                data.length - 1,
-                scrollTop + windowHeight === 0
-                    ? 0
-                    : Math.ceil((scrollTop + windowHeight) / itemHeight) + LIST_PADDING * 2,
-            ),
-        [scrollTop, data, windowHeight, itemHeight],
-    );
+
+    /// CAUSES BROWSER TO CRASH ---- idk why
+    // const endBufferIndex = useMemo(
+    //     () =>
+    //         Math.min(
+    //             data.length - 1,
+    //             scrollTop + windowHeight === 0
+    //                 ? 0
+    //                 : Math.ceil((scrollTop + windowHeight) / itemHeight) + LIST_PADDING * 2,
+    //         ),
+    //     [scrollTop, data, windowHeight, itemHeight],
+    // );
+
     const endIndex = useMemo(
         () =>
             Math.min(
@@ -186,8 +189,8 @@ const InfiniteList = <T, B, A>({
         if (onScrollEnd) {
             if (
                 items.length !== 0 &&
-                (items.length + 1) * itemHeight + scrollTop >= innerHeight &&
-                prevEnd !== endBufferIndex &&
+                items.length * itemHeight + scrollTop >= innerHeight &&
+                prevEnd !== endIndex &&
                 !loading
             ) {
                 void onScrollEnd({ addToList: true });
@@ -292,7 +295,7 @@ const InfiniteList = <T, B, A>({
                 </div>
             )}
             <div
-                id="pee on me"
+                id="list---12345"
                 ref={windowRef}
                 style={{
                     ...containerStyle,

@@ -130,7 +130,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     // filters.sort && filters.sort.by ? filters.sort.by : 'eth',
                     _filters.sort && _filters.sort.asc ? 'asc' : 'desc',
                     _filters.searchValue ? _filters.searchValue : '',
-                    desiredSize || 25,
+                    desiredSize || 25, // @danny7even when this is "10" it doesnt work
                     startFrom,
                 );
                 setResults((res) => (addToResult ? [...res, ..._allNuggs] : _allNuggs));
@@ -210,7 +210,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         onScrollEnd={({ setLoading, filters: _filters, addToList, desiredSize }) =>
                             handleGetAll(
                                 setAllNuggs,
-                                addToList ? allNuggs.length + 25 : 0,
+                                addToList ? allNuggs.length : 0,
                                 addToList,
                                 _filters,
                                 setLoading,
