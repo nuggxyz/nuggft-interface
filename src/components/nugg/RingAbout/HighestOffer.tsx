@@ -29,7 +29,7 @@ const HighestOffer: FunctionComponent<Props> = () => {
         leader?.user || '',
     );
 
-    const [flashStyle, api] = useSpring(() => {
+    const [flashStyle] = useSpring(() => {
         return {
             to: [
                 {
@@ -50,18 +50,18 @@ const HighestOffer: FunctionComponent<Props> = () => {
     });
 
     useEffect(() => {
-        api.start({
-            to: [
-                {
-                    ...styles.leadingOfferAmount,
-                    background: lib.colors.transparentWhite,
-                },
-                {
-                    ...styles.leadingOfferAmount,
-                    background: lib.colors.transparentLightGrey,
-                },
-            ],
-        });
+        // api.start({
+        //     to: [
+        //         {
+        //             ...styles.leadingOfferAmount,
+        //             background: lib.colors.transparentWhite,
+        //         },
+        //         {
+        //             ...styles.leadingOfferAmount,
+        //             background: lib.colors.transparentLightGrey,
+        //         },
+        //     ],
+        // });
     }, [leader]);
 
     const shouldShow = useMemo(() => {

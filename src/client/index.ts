@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 
 // eslint-disable-next-line import/no-named-as-default
-// import shallow from 'zustand/shallow';
+import shallow from 'zustand/shallow';
 
 import core, { coreNonImmer } from './core';
 import updater from './updater';
@@ -96,16 +96,20 @@ export default {
 
         myUnclaimedNuggOffers: () => core((state) => state.myUnclaimedNuggOffers),
         myUnclaimedItemOffers: () => core((state) => state.myUnclaimedItemOffers),
+
         myUnclaimedOffers: () =>
-            core((state) =>
-                [...state.myUnclaimedItemOffers, ...state.myUnclaimedNuggOffers]
-                    .filter(
-                        (x) =>
-                            x.endingEpoch !== null &&
-                            state.epoch?.id &&
-                            x.endingEpoch < state.epoch?.id,
-                    )
-                    .sort((a, b) => ((a.endingEpoch ?? 0) > (b.endingEpoch ?? 0) ? -1 : 1)),
+            core(
+                (state) =>
+                    [state.myUnclaimedItemOffers, state.myUnclaimedNuggOffers]
+                        .flat()
+                        .filter(
+                            (x) =>
+                                x.endingEpoch !== null &&
+                                state.epoch?.id &&
+                                x.endingEpoch < state.epoch?.id,
+                        )
+                        .sort((a, b) => ((a.endingEpoch ?? 0) > (b.endingEpoch ?? 0) ? -1 : 1)),
+                shallow,
             ),
     },
     mutate: {

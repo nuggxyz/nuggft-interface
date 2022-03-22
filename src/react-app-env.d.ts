@@ -118,6 +118,13 @@ interface Window {
 
 interface Array<T> {
     shuffle();
+    filterInPlace(callbackfn: (value: T, index?: number, array?: this) => boolean, thisArg?: this);
+    mergeInPlace(
+        incomingData: Array<T>,
+        keyField: keyof T,
+        shouldOverride: (a: T, b: T) => boolean,
+        sort: (a: T, b: T) => number,
+    );
     first(count?: number): Array<T>;
     last(count?: number): Array<T>;
     insert<U extends { index: number }>(element: U): Array<U>;

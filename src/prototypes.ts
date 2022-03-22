@@ -5,20 +5,61 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import {
     isUndefinedOrNullOrArrayEmpty,
     isUndefinedOrNullOrNotNumber,
     isUndefinedOrNullOrStringEmpty,
 } from './lib';
-// @ts-ignore
-Array.prototype.shuffle = function () {
+
+Array.prototype.mergeInPlace = function fn<T>(
+    incomingData: Array<T>,
+    keyFeild: keyof T,
+    shouldOverride: (a: T, b: T) => boolean,
+    sort: (a: T, b: T) => number,
+) {
+    const map = new Map<T[keyof T], number>();
+
+    (this as Array<T>).forEach((x, i) => {
+        map.set(x[keyFeild], i);
+    });
+
+    const unseen: T[] = [];
+
+    incomingData.forEach((x) => {
+        const check = map.get(x[keyFeild]);
+        if (check === undefined) {
+            unseen.push(x);
+        } else if (shouldOverride((this as Array<T>)[check], x)) {
+            (this as Array<T>)[check] = x;
+        }
+    });
+
+    this.unshift(...unseen);
+    if (sort) this.sort(sort);
+};
+
+Array.prototype.shuffle = function fn() {
     for (let i = this.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [this[i], this[j]] = [this[j], this[i]];
     }
 };
 
-Array.prototype.first = function (count: number) {
+Array.prototype.filterInPlace = function fn(callbackfn, thisArg) {
+    let ptr = 0;
+
+    this.forEach((element, index) => {
+        if (callbackfn.call(thisArg, element, index, this)) {
+            if (index !== ptr) this[ptr] = element;
+            ptr++;
+        }
+    }, this);
+
+    this.length = ptr;
+};
+
+Array.prototype.first = function fn(count: number) {
     if (!this || this === []) {
         return undefined;
     }
@@ -37,11 +78,11 @@ Array.prototype.first = function (count: number) {
     }, []);
 };
 
-Array.prototype.last = function (count?: number) {
+Array.prototype.last = function fn(count?: number) {
     if (!this || this === []) {
         return undefined;
     }
-    // TODO: #35 @danny7even this is some crap cheese code
+
     if (count === undefined) {
         return this[this.length - 1];
     }
@@ -59,7 +100,7 @@ Array.prototype.last = function (count?: number) {
         .reverse();
 };
 
-Array.prototype.toggle = function <T>(element: T, field?: keyof T) {
+Array.prototype.toggle = function fn<T>(element: T, field?: keyof T) {
     const val = [...this];
     if (isUndefinedOrNullOrArrayEmpty(val)) {
         return [element];
@@ -77,7 +118,7 @@ Array.prototype.toggle = function <T>(element: T, field?: keyof T) {
     return val;
 };
 
-Array.prototype.insert = function <T extends { index: number }>(element: T) {
+Array.prototype.insert = function fn<T extends { index: number }>(element: T) {
     if (isUndefinedOrNullOrArrayEmpty(this)) {
         return [element];
     }
@@ -103,7 +144,7 @@ Array.prototype.insert = function <T extends { index: number }>(element: T) {
     }, []);
 };
 
-Array.prototype.remove = function <T extends { index: number }>(element: T) {
+Array.prototype.remove = function fn<T extends { index: number }>(element: T) {
     if (isUndefinedOrNullOrArrayEmpty(this)) {
         return [];
     }
@@ -127,7 +168,10 @@ Array.prototype.remove = function <T extends { index: number }>(element: T) {
     }, []);
 };
 
-Array.prototype.replace = function <T extends { id: string } | object>(element: T, field: keyof T) {
+Array.prototype.replace = function fn<T extends { id: string } | object>(
+    element: T,
+    field: keyof T,
+) {
     if (isUndefinedOrNullOrArrayEmpty(this)) {
         return [];
     }
@@ -148,7 +192,7 @@ Array.prototype.replace = function <T extends { id: string } | object>(element: 
     }, []);
 };
 
-Array.prototype.smartInsert = function <T>(element: T, field?: keyof T) {
+Array.prototype.smartInsert = function fn<T>(element: T, field?: keyof T) {
     if (
         !this.find((item) =>
             field !== undefined ? item[field] === element[field] : item === element,
@@ -159,7 +203,7 @@ Array.prototype.smartInsert = function <T>(element: T, field?: keyof T) {
     return this;
 };
 
-Array.prototype.smartRemove = function <T>(element: T, field?: keyof T) {
+Array.prototype.smartRemove = function fn<T>(element: T, field?: keyof T) {
     const index = this.findIndex((item) =>
         field !== undefined ? item[field] === element[field] : item === element,
     );

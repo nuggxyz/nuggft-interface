@@ -36,15 +36,17 @@ const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData, undefined>> = ({ ite
         <div style={styles.itemListItem}>
             <div style={{ ...globalStyles.centeredSpaceBetween }}>
                 <TokenViewer
-                    tokenId={createItemId((item.feature << 8) | item.position)}
+                    tokenId={createItemId((Number(item.feature) << 8) | item.position)}
                     style={styles.listItemSvg}
                     // data={item.dotnuggRawCache}
                     disableOnClick
                 />
 
-                <Label text={parseTokenId(createItemId((item.feature << 8) | item.position))} />
+                <Label
+                    text={parseTokenId(createItemId((Number(item.feature) << 8) | item.position))}
+                />
             </div>
-            {+item.feature !== constants.FEATURE_BASE &&
+            {Number(item.feature) !== constants.FEATURE_BASE &&
                 extraData.isOwner &&
                 (!item.activeSwap ? (
                     <Button
@@ -98,7 +100,7 @@ const ItemList: FunctionComponent<Props> = ({
     return (
         <List
             style={{ padding: '1rem' }}
-            data={sortByField(items, 'feature', false)}
+            data={sortByField([...items], 'feature', false)}
             RenderItem={Item}
             extraData={{ sender, provider, chainId, tokenId, isOwner }}
             action={() => undefined}

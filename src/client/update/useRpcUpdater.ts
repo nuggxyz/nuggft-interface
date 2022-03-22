@@ -127,15 +127,6 @@ export default () => {
                     }
                     case 'Transfer': {
                         if (address && event.args._to.toLowerCase() === address.toLowerCase()) {
-                            // addNugg({
-                            //     recent: true,
-                            //     tokenId: event.args._tokenId.toString(),
-                            //     activeLoan: false,
-                            //     activeSwap: false,
-                            //     pendingClaim: false,
-                            //     lastTransfer: log.blockNumber,
-                            //     unclaimedOffers: [],
-                            // });
                             emitter.emit({
                                 type: emitter.events.Transfer,
                                 event,
@@ -173,7 +164,7 @@ export default () => {
                         removeLoan(event.args.tokenId.toString());
                         break;
                     case 'Claim': {
-                        if (event.args.account === address) {
+                        if (event.args.account.toLowerCase() === address?.toLowerCase()) {
                             removeNuggClaim(event.args.tokenId.toString());
                         }
                         break;

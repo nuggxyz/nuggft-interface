@@ -8,12 +8,12 @@ import Text from '@src/components/general/Texts/Text/Text';
 import { parseTokenId } from '@src/lib';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import state from '@src/state';
-import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
+import { ListRenderItemProps } from '@src/components/general/List/List';
 
 import styles from './ClaimTab.styles';
 
 const ClaimRenderItem: FunctionComponent<
-    InfiniteListRenderItemProps<UnclaimedOffer, DefaultExtraData, undefined>
+    ListRenderItemProps<UnclaimedOffer, DefaultExtraData, undefined>
 > = ({ item, index, extraData }) => {
     const swapText = useMemo(
         () =>
