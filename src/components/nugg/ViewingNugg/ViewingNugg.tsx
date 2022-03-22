@@ -13,7 +13,7 @@ import Flyout from '@src/components/general/Flyout/Flyout';
 import client from '@src/client';
 import HappyTabber from '@src/components/general/HappyTabber/HappyTabber';
 import AddressViewer from '@src/components/general/Texts/AddressViewer/AddressViewer';
-import { LiveNugg } from '@src/client/hooks/useLiveNugg';
+import { LiveNuggWithLifecycle } from '@src/client/interfaces';
 
 import styles from './ViewingNugg.styles';
 import OwnerButtons from './FlyoutButtons/OwnerButtons';
@@ -36,7 +36,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 
-    const { token } = client.hook.useLiveToken(tokenId);
+    const token = client.live.token(tokenId);
 
     const happyTabs = useMemo(() => {
         return [
@@ -93,7 +93,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 {token.type === 'nugg' && token.activeSwap !== undefined && (
                     <NuggAbout
                         tokenId={tokenId}
-                        token={token as Required<LiveNugg>}
+                        token={token as Required<LiveNuggWithLifecycle>}
                         epoch={epoch}
                         provider={provider}
                     />

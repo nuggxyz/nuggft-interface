@@ -1,51 +1,14 @@
-import { useState } from 'react';
-
 import { EthInt } from '@src/classes/Fraction';
-// eslint-disable-next-line import/no-cycle
-import { NuggId } from '@src/client/router';
 import { useLiveItemSubscription } from '@src/gql/types.generated';
-
-// eslint-disable-next-line import/no-cycle
-import { EpochData } from '@src/client/interfaces';
+import { LiveItem, TryoutData } from '@src/client/interfaces';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
 
-// eslint-disable-next-line import/no-cycle
-import { LiveSwapBase } from './useLiveNugg';
-
-export interface LiveItemSwap extends LiveSwapBase {
-    type: 'item';
-    id: string;
-    epoch: EpochData | null;
-    eth: EthInt;
-    leader: string;
-    owner: string;
-    endingEpoch: number | null;
-    num: number;
-    isTryout: boolean;
-}
-
-export interface LiveActiveItemSwap extends LiveItemSwap {
-    count: number;
-}
-export type TryoutData = { nugg: NuggId; eth: EthInt };
-export interface LiveItem {
-    type: 'item';
-    activeSwap?: LiveActiveItemSwap;
-    swaps: LiveItemSwap[];
-    count: number;
-    tryout: {
-        count: number;
-        swaps: TryoutData[];
-        max?: TryoutData;
-        min?: TryoutData;
-    };
-}
-
-export const useLiveItem = (tokenId: string | undefined) => {
-    const [liveItem, setLiveItem] = useState<LiveItem>();
-
+export default (
+    tokenId: string | undefined,
+    onProccessedData: (data: Omit<LiveItem, 'lifecycle'>) => void,
+) => {
     const graph = client.live.graph();
 
     useLiveItemSubscription({
@@ -62,12 +25,12 @@ export const useLiveItem = (tokenId: string | undefined) => {
             ) {
                 const { item } = x.subscriptionData.data;
 
-                const tmp: Omit<LiveItem, 'tryout'> = {
+                const tmp = {
                     type: 'item' as const,
                     count: Number(item.count),
                     swaps: item.swaps.map((y) => {
                         return {
-                            type: 'item',
+                            type: 'item' as const,
                             id: y?.id,
                             epoch: y.epoch
                                 ? {
@@ -134,7 +97,7 @@ export const useLiveItem = (tokenId: string | undefined) => {
                         swaps: [swap, ...prev.swaps].sort((a, b) => (a.eth.gt(b.eth) ? 1 : -1)),
                     };
                 }, undefined) ?? { count: 0, min: undefined, max: undefined, swaps: [] };
-                setLiveItem({
+                onProccessedData({
                     ...tmp,
                     tryout,
                 });
@@ -142,5 +105,5 @@ export const useLiveItem = (tokenId: string | undefined) => {
         },
     });
 
-    return liveItem;
+    return null;
 };

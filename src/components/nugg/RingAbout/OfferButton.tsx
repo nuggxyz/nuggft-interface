@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from 'react';
 
-import { Route } from '@src/client/router';
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import state from '@src/state';
@@ -15,17 +14,9 @@ const OfferButton: FunctionComponent<Props> = () => {
     const screenType = state.app.select.screenType();
     const address = web3.hook.usePriorityAccount();
     const tokenId = client.live.lastSwap.tokenId();
-    const type = client.live.lastSwap.type();
-    const { lifecycle, token } = client.hook.useLiveToken(tokenId);
-    // const lifecycle = client.live.activeLifecycle();
-    // const token = useAsyncState(async () => {
-    //     if (tokenId) {
-    //         return (await client.static.token(tokenId)).token;
-    //     }
-    //     return undefined;
-    // }, [tokenId]);
+    const token = client.live.token(tokenId);
 
-    return lifecycle !== 'shower' && (screenType === 'phone' || address) ? (
+    return token && token.lifecycle !== 'shower' && (screenType === 'phone' || address) ? (
         <Button
             buttonStyle={{
                 ...styles.button,
@@ -47,11 +38,11 @@ const OfferButton: FunctionComponent<Props> = () => {
                           name: 'OfferModal',
                           modalData: {
                               targetId: tokenId,
-                              type: type === Route.SwapItem ? 'OfferItem' : 'OfferNugg',
+                              type: token.type === 'item' ? 'OfferItem' : 'OfferNugg',
                               data: {
                                   tokenId,
                                   token,
-                                  mustPickNuggToBuyFrom: lifecycle === 'tryout',
+                                  mustPickNuggToBuyFrom: token.lifecycle === 'tryout',
                               },
                           },
                       })

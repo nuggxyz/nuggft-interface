@@ -5,12 +5,9 @@ import { useCallback } from 'react';
 // import shallow from 'zustand/shallow';
 
 import core, { coreNonImmer } from './core';
-import { useLiveNugg } from './hooks/useLiveNugg';
 import updater from './updater';
-import { useLiveItem } from './hooks/useLiveItem';
 import { useDotnugg, useDotnuggCacheOnly, useDotnuggSubscription } from './hooks/useDotnugg';
 import router, { TokenId } from './router';
-import useLiveToken from './hooks/useLiveToken';
 import { ListData } from './interfaces';
 
 export default {
@@ -59,8 +56,13 @@ export default {
         offers: (tokenId: TokenId | undefined) =>
             core(
                 // eslint-disable-next-line react-hooks/rules-of-hooks
+                useCallback((state) => (tokenId ? state.liveOffers[tokenId] ?? [] : []), [tokenId]),
+            ),
+        token: (tokenId: TokenId | undefined) =>
+            core(
+                // eslint-disable-next-line react-hooks/rules-of-hooks
                 useCallback(
-                    (state) => (tokenId ? state.activeOffers[tokenId] ?? [] : []),
+                    (state) => (tokenId ? state.liveTokens[tokenId] : undefined),
                     [tokenId],
                 ),
             ),
@@ -123,12 +125,11 @@ export default {
         removeNugg: () => core((state) => state.removeNugg),
         toggleEditingNugg: () => core((state) => state.toggleEditingNugg),
         updateClients: () => coreNonImmer((state) => state.updateClients),
+        updateToken: () => core((state) => state.updateToken),
+
         start: () => core((state) => state.start),
     },
     hook: {
-        useLiveNugg,
-        useLiveItem,
-        useLiveToken,
         useDotnugg,
         useDotnuggCacheOnly,
         useDotnuggSubscription,

@@ -8,7 +8,6 @@ import {
     OfferMintEvent,
     StakeEvent,
     TransferEvent,
-    TransferItemEvent,
     LiquidateEvent,
     RebalanceEvent,
 } from '../typechain/NuggftV1';
@@ -85,11 +84,6 @@ export interface RpcTransfer extends BaseEvent {
     args: TransferEvent['args'];
 }
 
-export interface RpcTransferItem extends BaseEvent {
-    name: EventNames.TransferItem;
-    args: TransferItemEvent['args'];
-}
-
 export type InterfacedEvent =
     | RpcMint
     | RpcOfferMint
@@ -99,7 +93,6 @@ export type InterfacedEvent =
     | RpcStake
     | RpcOffer
     | RpcTransfer
-    | RpcTransferItem
     | RpcLiquidate
     | RpcLoan
     | RpcRebalance;

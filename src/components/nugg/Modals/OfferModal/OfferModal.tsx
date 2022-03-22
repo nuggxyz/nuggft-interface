@@ -19,11 +19,9 @@ import { TokenId } from '@src/client/router';
 import client from '@src/client';
 import Colors from '@src/lib/colors';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
-import { LiveToken } from '@src/client/hooks/useLiveToken';
-import { TryoutData } from '@src/client/hooks/useLiveItem';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import WalletState from '@src/state/wallet';
-import { MyNuggsData } from '@src/client/interfaces';
+import { MyNuggsData, TryoutData, LiveToken } from '@src/client/interfaces';
 import Label from '@src/components/general/Label/Label';
 
 import styles from './OfferModal.styles';

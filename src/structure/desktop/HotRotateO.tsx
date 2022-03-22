@@ -6,7 +6,6 @@ import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import client from '@src/client';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import Button from '@src/components/general/Buttons/Button/Button';
-import { useLiveNugg } from '@src/client/hooks/useLiveNugg';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import lib, { parseItmeIdToNum } from '@src/lib';
 import useAsyncState, { useAsyncSetState } from '@src/hooks/useAsyncState';
@@ -68,7 +67,7 @@ const DisplayedRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ i
 export default () => {
     const tokenId = client.live.editingNugg();
 
-    const nugg = useLiveNugg(tokenId);
+    const token = client.live.token(tokenId);
 
     const style = useAnimateOverlay(!!tokenId, {
         zIndex: 998,
@@ -165,7 +164,7 @@ export default () => {
 
     return (
         <animated.div style={{ ...styles.container, ...style }}>
-            {nugg && tokenId && items && (
+            {token && tokenId && items && (
                 <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
                     <Button
                         label="kill"

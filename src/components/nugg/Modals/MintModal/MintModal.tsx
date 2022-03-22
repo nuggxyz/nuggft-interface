@@ -54,6 +54,7 @@ const MintModal: FunctionComponent<unknown> = () => {
                     orderDirection: desc
                     orderBy: idnum
                 ) {
+                    id
                     idnum
                 }
             }
@@ -61,7 +62,7 @@ const MintModal: FunctionComponent<unknown> = () => {
                 {},
             ).then(async ({ nuggs }) => {
                 let count = constants.PRE_MINT_STARTING_EPOCH + 1;
-                if (nuggs) {
+                if (nuggs && nuggs.length > 0) {
                     const vals = await Promise.map(
                         range(Number(nuggs[0].idnum) + 1, Number(nuggs[0].idnum) + 11),
                         async (id) => {

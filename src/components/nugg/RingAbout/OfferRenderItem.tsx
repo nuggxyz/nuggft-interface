@@ -30,7 +30,7 @@ const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefin
     );
     return (
         <div style={styles.offerAmount}>
-            <CurrencyText image="eth" value={item.eth.decimal.toNumber()} stopAnimation />
+            <CurrencyText image="eth" value={item.eth.decimal.toNumber()} />
             {leader ? (
                 <Text type="text" size="smaller" textStyle={{ color: lib.colors.textColor }}>
                     {leader}

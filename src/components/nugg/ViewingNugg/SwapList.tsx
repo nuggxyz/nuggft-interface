@@ -2,8 +2,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import React, { FunctionComponent, useMemo } from 'react';
 import { HiArrowRight } from 'react-icons/hi';
 
-import { LiveItem, LiveItemSwap } from '@src/client/hooks/useLiveItem';
-import { LiveNugg, LiveSwap } from '@src/client/hooks/useLiveNugg';
 import Text from '@src/components/general/Texts/Text/Text';
 import Colors from '@src/lib/colors';
 import StickyList from '@src/components/general/List/StickyList';
@@ -12,11 +10,11 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import client from '@src/client';
 import { ListRenderItemProps } from '@src/components/general/List/List';
 import { Chain } from '@src/web3/core/interfaces';
-import { Route, TokenId } from '@src/client/router';
+import { TokenId } from '@src/client/router';
 import lib from '@src/lib';
-import { Lifecycle } from '@src/client/hooks/useLiveToken';
 import { Address } from '@src/classes/Address';
 import Button from '@src/components/general/Buttons/Button/Button';
+import { LiveItemSwap, LiveSwap, LiveTokenWithLifecycle } from '@src/client/interfaces';
 
 import styles from './ViewingNugg.styles';
 
@@ -51,10 +49,9 @@ const SwapItem: FunctionComponent<
         {
             chainId: Chain;
             provider: Web3Provider;
-            token: LiveNugg | LiveItem;
+            token: LiveTokenWithLifecycle;
             epoch: number;
             tokenId: TokenId;
-            lifecycle: Lifecycle;
         },
         undefined
     >
@@ -170,8 +167,7 @@ const SwapList: FunctionComponent<Props> = () => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const tokenId = client.live.lastView.tokenId();
-    const type = client.live.lastView.type();
-    const { lifecycle, token } = client.hook.useLiveToken(tokenId);
+    const token = client.live.token(tokenId);
     const epoch = client.live.epoch.id();
 
     const listData = useMemo(() => {
@@ -185,7 +181,7 @@ const SwapList: FunctionComponent<Props> = () => {
             token &&
             tokenId &&
             (token?.swaps as LiveSwap[]).find((swap) => swap.endingEpoch === null) &&
-            type === Route.ViewItem
+            token.type === 'item'
         ) {
             const tempTemp: LiveItemSwap[] = [] as LiveItemSwap[];
 
@@ -197,7 +193,7 @@ const SwapList: FunctionComponent<Props> = () => {
         });
 
         return res;
-    }, [token, tokenId, chainId, provider, epoch]);
+    }, [token, tokenId]);
 
     return chainId && provider && epoch && token && tokenId ? (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
@@ -205,7 +201,7 @@ const SwapList: FunctionComponent<Props> = () => {
                 data={listData}
                 TitleRenderItem={SwapTitle}
                 ChildRenderItem={React.memo(SwapItem)}
-                extraData={{ chainId, provider, token, epoch, tokenId, lifecycle }}
+                extraData={{ chainId, provider, token, epoch, tokenId }}
                 style={styles.stickyList}
                 styleRight={styles.stickyListRight}
             />
