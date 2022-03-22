@@ -98,8 +98,6 @@ export type EpochData = {
 };
 
 export interface ClientState extends State, Actions {
-    rpc: WebSocketProvider | undefined;
-    graph: ApolloClient<any> | undefined;
     nuggft: NuggftV1 | undefined;
     manualPriority: Connector | undefined;
     route: string | undefined;
@@ -156,10 +154,6 @@ export interface Actions {
     updateProtocol: (stateUpdate: ClientStateUpdate) => void;
     routeTo: (tokenId: TokenId, view: boolean) => void;
     toggleView: () => void;
-    updateClients: (
-        stateUpdate: Pick<ClientStateUpdate, 'rpc' | 'graph'>,
-        chainId: Chain,
-    ) => Promise<void>;
     updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;
     removeLoan: (tokenId: NuggId) => void;
     removeNuggClaim: (tokenId: NuggId) => void;
@@ -171,6 +165,7 @@ export interface Actions {
     addNugg: (update: MyNuggsData) => void;
     removeNugg: (tokenId: NuggId) => void;
     toggleEditingNugg: (tokenId: NuggId | undefined) => void;
+    start: (chainId: Chain, rpc: WebSocketProvider, graph: ApolloClient<any>) => Promise<void>;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;

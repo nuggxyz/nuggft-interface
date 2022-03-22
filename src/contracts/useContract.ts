@@ -154,7 +154,8 @@ export function useTransactionManager() {
                         });
                     }
                 }
-                throw new Error('provider undefined');
+                return undefined;
+                // throw new Error('provider undefined');
             } catch (err) {
                 const error = lib.errors.parseJsonRpcError(err);
                 setRevert(error);

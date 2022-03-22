@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 // eslint-disable-next-line import/no-named-as-default
 // import shallow from 'zustand/shallow';
 
-import core from './core';
+import core, { coreNonImmer } from './core';
 import { useLiveNugg } from './hooks/useLiveNugg';
 import updater from './updater';
 import { useLiveItem } from './hooks/useLiveItem';
@@ -23,8 +23,8 @@ export default {
 
     live: {
         /// ///// simple ////////
-        graph: () => core((state) => state.graph),
-        rpc: () => core((state) => state.rpc),
+        graph: () => coreNonImmer((state) => state.graph),
+        rpc: () => coreNonImmer((state) => state.rpc),
 
         epoch: {
             id: () => core((state) => state.epoch?.id),
@@ -111,7 +111,6 @@ export default {
         updateProtocol: () => core((state) => state.updateProtocol),
         routeTo: () => core((state) => state.routeTo),
         toggleView: () => core((state) => state.toggleView),
-        updateClients: () => core((state) => state.updateClients),
         updateOffers: () => core((state) => state.updateOffers),
         removeLoan: () => core((state) => state.removeLoan),
         removeNuggClaim: () => core((state) => state.removeNuggClaim),
@@ -123,6 +122,8 @@ export default {
         addNugg: () => core((state) => state.addNugg),
         removeNugg: () => core((state) => state.removeNugg),
         toggleEditingNugg: () => core((state) => state.toggleEditingNugg),
+        updateClients: () => coreNonImmer((state) => state.updateClients),
+        start: () => core((state) => state.start),
     },
     hook: {
         useLiveNugg,
@@ -133,8 +134,8 @@ export default {
         useDotnuggSubscription,
     },
     static: {
-        graph: () => core.getState().graph,
-        rpc: () => core.getState().rpc,
+        graph: () => coreNonImmer.getState().graph,
+        rpc: () => coreNonImmer.getState().rpc,
         activeSwaps: () => core.getState().activeSwaps,
         activeItems: () => core.getState().activeItems,
         myNuggs: () => core.getState().myNuggs,

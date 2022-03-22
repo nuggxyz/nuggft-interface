@@ -1,14 +1,16 @@
 /* eslint-disable no-param-reassign */
-import { gql } from '@apollo/client';
+import { ApolloClient, gql } from '@apollo/client';
 import create, { State, StateCreator } from 'zustand';
 import { BigNumber, BigNumberish } from 'ethers';
 import produce, { Draft, enableMapSet } from 'immer';
+import { combine } from 'zustand/middleware';
+import { WebSocketProvider } from '@ethersproject/providers';
 
 import { Chain } from '@src/web3/core/interfaces';
 import { extractItemId, parseItmeIdToNum } from '@src/lib';
 import web3 from '@src/web3';
 import config from '@src/config';
-import { executeQuery3 } from '@src/graphql/helpers';
+import { executeQuery3b } from '@src/graphql/helpers';
 
 import { parseRoute, Route, TokenId, ItemId, NuggId } from './router';
 import {
@@ -90,35 +92,34 @@ const logger__middleware = <T extends State>(fn: StateCreator<T>): StateCreator<
         );
     };
 
+function createClientStoreAndActions3() {
+    return create(
+        combine(
+            {
+                rpc: undefined,
+                graph: undefined,
+            } as {
+                rpc: WebSocketProvider | undefined;
+                graph: ApolloClient<any> | undefined;
+            },
+            (set) => {
+                return {
+                    updateClients: (stateUpdate: Pick<ClientStateUpdate, 'rpc' | 'graph'>) => {
+                        set((draft) => {
+                            // determine the next chainId and accounts
+                            if (stateUpdate.rpc) draft.rpc = stateUpdate.rpc;
+                            // @ts-ignore
+                            if (stateUpdate.graph) draft.graph = stateUpdate.graph;
+                            return draft;
+                        });
+                    },
+                };
+            },
+        ),
+    );
+}
+
 function createClientStoreAndActions2() {
-    async function checkVaildRouteOnStartup(): Promise<void> {
-        const route = parseRoute(window.location.hash);
-
-        if (route.type !== Route.Home) {
-            const tokenId = extractItemId(route.tokenId);
-            const isItem = tokenId.startsWith('item-');
-            const check = await executeQuery3<{
-                nugg: { id: string };
-                item: { id: string };
-            }>(
-                gql`
-                    query Check($tokenId: ID!) {
-                        ${isItem ? 'item' : 'nugg'}(id: $tokenId) {
-                            id
-                        }
-                    }
-                `,
-                { tokenId },
-            );
-
-            if (route.type === Route.SwapNugg || route.type === Route.ViewNugg) {
-                if (check.nugg === null) window.location.hash = '#/';
-            } else if (route.type === Route.SwapItem || route.type === Route.ViewItem) {
-                if (check.item === null) window.location.hash = '#/';
-            }
-        }
-    }
-
     return create<ClientState>(
         // devtools(
         logger__middleware(
@@ -172,7 +173,6 @@ function createClientStoreAndActions2() {
                 function updateProtocol(stateUpdate: ClientStateUpdate): void {
                     set((draft) => {
                         if (stateUpdate.stake) draft.stake = stateUpdate.stake;
-                        if (stateUpdate.rpc) draft.rpc = stateUpdate.rpc;
                         if (stateUpdate.editingNugg) draft.editingNugg = stateUpdate.editingNugg;
                         // @ts-ignore
                         if (stateUpdate.graph) draft.graph = stateUpdate.graph;
@@ -334,30 +334,6 @@ function createClientStoreAndActions2() {
                     });
                 }
 
-                async function updateClients(
-                    stateUpdate: Pick<ClientStateUpdate, 'rpc' | 'graph'>,
-                    chainId: Chain,
-                ): Promise<void> {
-                    set((draft) => {
-                        // determine the next chainId and accounts
-                        if (stateUpdate.rpc) draft.rpc = stateUpdate.rpc;
-                        // @ts-ignore
-                        if (stateUpdate.graph) draft.graph = stateUpdate.graph;
-                    });
-
-                    if (!get().route && stateUpdate.rpc) {
-                        const blocknum = stateUpdate.rpc.getBlockNumber();
-
-                        let awaited: number;
-                        await Promise.all([
-                            (awaited = await blocknum),
-                            await checkVaildRouteOnStartup(),
-                        ]);
-
-                        updateBlocknum(awaited, chainId);
-                    }
-                }
-
                 const toggleView = () => {
                     const { isViewOpen } = get();
                     const { lastSwap } = get();
@@ -371,8 +347,54 @@ function createClientStoreAndActions2() {
                     });
                 };
 
+                const start = async (
+                    chainId: Chain,
+                    rpc: WebSocketProvider,
+                    graph: ApolloClient<any>,
+                ): Promise<void> => {
+                    const startup = async () => {
+                        const route = parseRoute(window.location.hash);
+
+                        if (route.type !== Route.Home) {
+                            const tokenId = extractItemId(route.tokenId);
+                            const isItem = tokenId.startsWith('item-');
+                            const check = await executeQuery3b<{
+                                nugg: { id: string };
+                                item: { id: string };
+                            }>(
+                                graph,
+                                gql`
+                                    query Check($tokenId: ID!) {
+                                        ${isItem ? 'item' : 'nugg'}(id: $tokenId) {
+                                            id
+                                        }
+                                    }
+                                `,
+                                { tokenId },
+                            );
+
+                            if (route.type === Route.SwapNugg || route.type === Route.ViewNugg) {
+                                if (check.nugg === null) window.location.hash = '#/';
+                            } else if (
+                                route.type === Route.SwapItem ||
+                                route.type === Route.ViewItem
+                            ) {
+                                if (check.item === null) window.location.hash = '#/';
+                            }
+                        }
+                    };
+
+                    if (!get().route && rpc) {
+                        const blocknum = rpc.getBlockNumber();
+
+                        let awaited: number;
+                        await Promise.all([(awaited = await blocknum), await startup()]);
+
+                        updateBlocknum(awaited, chainId);
+                    }
+                };
+
                 return {
-                    rpc: undefined,
                     stake: undefined,
                     nuggft: undefined,
                     epoch: undefined,
@@ -390,7 +412,6 @@ function createClientStoreAndActions2() {
                     myUnclaimedItemOffers: [],
                     myRecents: new Set(),
                     myLoans: [],
-                    graph: undefined,
                     activating: false,
                     blocknum: undefined,
                     error: undefined,
@@ -410,13 +431,15 @@ function createClientStoreAndActions2() {
                     updateOffers,
                     routeTo,
                     toggleView,
-                    updateClients,
                     toggleEditingNugg,
+                    start,
                 };
             }),
         ),
     );
 }
 const core = createClientStoreAndActions2();
+
+export const coreNonImmer = createClientStoreAndActions3();
 
 export default core;

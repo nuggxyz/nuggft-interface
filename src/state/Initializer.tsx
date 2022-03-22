@@ -17,6 +17,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
     const chainId = web3.hook.usePriorityChainId();
     const epoch = client.live.epoch.id();
     const graphInstance = client.live.graph();
+    const start = client.mutate.start();
 
     useEffect(() => {
         safeResetLocalStorage(['walletconnect', 'ens']);
@@ -31,7 +32,6 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
             if (x !== undefined && x.connector && x.connector.connectEagerly)
                 void x.connector.connectEagerly(Chain.RINKEBY);
         });
-
         const { rpc } = web3.config.connector_instances;
 
         if (rpc !== undefined && rpc.connector && rpc.connector.activate)
@@ -45,13 +45,12 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
             const graph = web3.config.createApolloClient(chainId);
             const rpc = web3.config.createInfuraWebSocket(chainId);
 
-            void updateClients(
-                {
-                    graph,
-                    rpc,
-                },
-                chainId,
-            );
+            updateClients({
+                graph,
+                rpc,
+            });
+
+            void start(chainId, rpc, graph);
 
             return () => {
                 rpc.removeAllListeners();
@@ -59,13 +58,10 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
 
                 graph.stop();
 
-                void updateClients(
-                    {
-                        graph: undefined,
-                        rpc: undefined,
-                    },
-                    chainId,
-                );
+                void updateClients({
+                    graph: undefined,
+                    rpc: undefined,
+                });
             };
         }
         return () => undefined;

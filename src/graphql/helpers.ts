@@ -23,6 +23,32 @@ export const executeQuery2 = async (client: ApolloClient<any>, query: any, table
     }
 };
 
+export const executeQuery3b = async <T>(
+    check: ApolloClient<any>,
+    query: DocumentNode,
+    variables: object,
+): Promise<T> => {
+    try {
+        if (check === undefined) throw new Error('executeQuery3 | graph is undefined');
+
+        const result = await check.query<T>({
+            query,
+            fetchPolicy: 'cache-first',
+            canonizeResults: true,
+            // notifyOnNetworkStatusChange: true,
+            variables: variables,
+        });
+
+        if (result && result.data) {
+            return result.data;
+        }
+
+        throw new Error('executeQuery3 failed');
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+};
+
 export const executeQuery3 = async <T>(query: DocumentNode, variables: object): Promise<T> => {
     try {
         const check = client.static.graph();

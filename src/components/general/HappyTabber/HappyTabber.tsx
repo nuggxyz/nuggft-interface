@@ -125,7 +125,7 @@ const HappyTabber = ({
                     ))}
                 </div>
             )}
-            <div style={{ ...bodyStyle, ...styles.body, ...items[activeIndex].bodyStyle }}>
+            <div style={{ ...bodyStyle, ...styles.body, ...items[activeIndex]?.bodyStyle }}>
                 {tabFadeTransition((_styles, Item) => (
                     // @ts-ignore
                     <animated.div style={_styles}>{Item && <Item isActive />}</animated.div>

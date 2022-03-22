@@ -160,7 +160,7 @@ export default () => {
         return undefined;
     }, [items]);
 
-    const { estimate, revert } = useTransactionManager();
+    const { send, revert } = useTransactionManager();
     const toggleEditingNugg = client.mutate.toggleEditingNugg();
 
     return (
@@ -178,7 +178,7 @@ export default () => {
                         <Button
                             label="save"
                             onClick={() => {
-                                void estimate(nuggft.populateTransaction.rotate(...algo));
+                                void send(nuggft.populateTransaction.rotate(...algo));
                             }}
                         />
                     )}
