@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { ApolloClient, gql } from '@apollo/client';
+import { ApolloClient } from '@apollo/client';
 import create, { State, StateCreator } from 'zustand';
 import { BigNumber, BigNumberish } from 'ethers';
 import produce, { Draft, enableMapSet } from 'immer';
@@ -10,10 +10,19 @@ import { Chain } from '@src/web3/core/interfaces';
 import { extractItemId, parseItmeIdToNum } from '@src/lib';
 import web3 from '@src/web3';
 import config from '@src/config';
+import {
+    GetLiveItemDocument,
+    GetLiveItemQueryResult,
+    GetLiveNuggDocument,
+    GetLiveNuggQueryResult,
+} from '@src/gql/types.generated';
 import { executeQuery3b } from '@src/graphql/helpers';
+import { Address } from '@src/classes/Address';
 
 import { parseRoute, Route, TokenId, ItemId, NuggId } from './router';
 import {
+    Lifecycle,
+    LiveToken,
     LiveTokenWithLifecycle,
     ClientState,
     OfferData,
@@ -23,6 +32,7 @@ import {
     MyNuggsData,
     ClientStateUpdate,
 } from './interfaces';
+import formatLiveNugg from './formatters/formatLiveNugg';
 
 enableMapSet();
 
@@ -101,15 +111,19 @@ function createClientStoreAndActions3() {
                 graph: undefined,
             } as {
                 rpc: WebSocketProvider | undefined;
-                graph: ApolloClient<any> | undefined;
+                graph: ApolloClient<{ state: string }> | undefined;
             },
+
             (set) => {
                 return {
-                    updateClients: (stateUpdate: Pick<ClientStateUpdate, 'rpc' | 'graph'>) => {
+                    updateClients: (stateUpdate: {
+                        rpc: WebSocketProvider | undefined;
+                        graph: ApolloClient<{ state: string }> | undefined;
+                    }) => {
                         set((draft) => {
                             // determine the next chainId and accounts
                             if (stateUpdate.rpc) draft.rpc = stateUpdate.rpc;
-                            // @ts-ignore
+                            // // @ts-ignore
                             if (stateUpdate.graph) draft.graph = stateUpdate.graph;
                             return draft;
                         });
@@ -261,10 +275,39 @@ function createClientStoreAndActions2() {
                     });
                 }
 
-                function updateToken(tokenId: TokenId, data: LiveTokenWithLifecycle): void {
+                const wrapLifecycle = (token: LiveToken): LiveTokenWithLifecycle => {
+                    return Object.assign(token, { lifecycle: getLifecycle(token) });
+                };
+
+                const getLifecycle = (token: LiveToken): Lifecycle => {
+                    const { epoch } = get();
+                    if (token && epoch !== undefined) {
+                        if (!token.activeSwap?.id) {
+                            if (token.type === 'item' && token.swaps.length > 0)
+                                return Lifecycle.Tryout;
+                            return Lifecycle.Stands;
+                        }
+
+                        if (!token.activeSwap.endingEpoch) return Lifecycle.Bench;
+                        if (+token.activeSwap.endingEpoch === epoch.id + 1) {
+                            if (token.type === 'nugg' && token.owner === Address.ZERO.hash) {
+                                return Lifecycle.Egg;
+                            }
+                            return Lifecycle.Deck;
+                        }
+                        if (+token.activeSwap.endingEpoch === epoch.id) return Lifecycle.Bat;
+                        return Lifecycle.Shower;
+                    }
+                    return Lifecycle.Stands;
+                };
+
+                function updateToken(tokenId: TokenId, data: LiveToken): void {
                     set((draft) => {
-                        if (JSON.stringify(data) !== JSON.stringify(get().liveTokens[tokenId])) {
-                            draft.liveTokens[tokenId] = data;
+                        const lifeData = wrapLifecycle(data);
+                        if (
+                            JSON.stringify(lifeData) !== JSON.stringify(get().liveTokens[tokenId])
+                        ) {
+                            draft.liveTokens[tokenId] = lifeData;
                         }
                     });
                 }
@@ -363,35 +406,35 @@ function createClientStoreAndActions2() {
                     rpc: WebSocketProvider,
                     graph: ApolloClient<any>,
                 ): Promise<void> => {
-                    const startup = async () => {
+                    const startup = () => {
                         const route = parseRoute(window.location.hash);
 
                         if (route.type !== Route.Home) {
                             const tokenId = extractItemId(route.tokenId);
                             const isItem = tokenId.startsWith('item-');
-                            const check = await executeQuery3b<{
-                                nugg: { id: string };
-                                item: { id: string };
-                            }>(
-                                graph,
-                                gql`
-                                    query Check($tokenId: ID!) {
-                                        ${isItem ? 'item' : 'nugg'}(id: $tokenId) {
-                                            id
+                            if (!isItem)
+                                void executeQuery3b<GetLiveNuggQueryResult>(
+                                    graph,
+                                    GetLiveNuggDocument,
+                                    { tokenId },
+                                ).then((x) => {
+                                    if (!x.data?.nugg) window.location.hash = '#/';
+                                    else {
+                                        const formatted = formatLiveNugg(x.data.nugg);
+                                        if (formatted) {
+                                            updateToken(tokenId, formatted);
                                         }
                                     }
-                                `,
-                                { tokenId },
-                            );
-
-                            if (route.type === Route.SwapNugg || route.type === Route.ViewNugg) {
-                                if (check.nugg === null) window.location.hash = '#/';
-                            } else if (
-                                route.type === Route.SwapItem ||
-                                route.type === Route.ViewItem
-                            ) {
-                                if (check.item === null) window.location.hash = '#/';
-                            }
+                                });
+                            else
+                                void executeQuery3b<GetLiveItemQueryResult>(
+                                    graph,
+                                    GetLiveItemDocument,
+                                    { tokenId },
+                                ).then((x) => {
+                                    if (!x.data?.item) window.location.hash = '#/';
+                                    return x;
+                                });
                         }
                     };
 
@@ -399,7 +442,7 @@ function createClientStoreAndActions2() {
                         const blocknum = rpc.getBlockNumber();
 
                         let awaited: number;
-                        await Promise.all([(awaited = await blocknum), await startup()]);
+                        await Promise.all([(awaited = await blocknum), startup()]);
 
                         updateBlocknum(awaited, chainId);
                     }

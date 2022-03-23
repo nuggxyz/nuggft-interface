@@ -1,5 +1,5 @@
 import { EthInt } from '@src/classes/Fraction';
-import { useLiveItemSubscription } from '@src/gql/types.generated';
+import { useWatchLiveItemSubscription } from '@src/gql/types.generated';
 import { LiveItem, TryoutData } from '@src/client/interfaces';
 
 // eslint-disable-next-line import/no-cycle
@@ -11,7 +11,7 @@ export default (
 ) => {
     const graph = client.live.graph();
 
-    useLiveItemSubscription({
+    useWatchLiveItemSubscription({
         client: graph,
         shouldResubscribe: true,
         fetchPolicy: 'cache-first',
