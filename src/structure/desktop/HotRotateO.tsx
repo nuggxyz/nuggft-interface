@@ -8,10 +8,11 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import Button from '@src/components/general/Buttons/Button/Button';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import lib, { parseItmeIdToNum } from '@src/lib';
-import useAsyncState, { useAsyncSetState } from '@src/hooks/useAsyncState';
+import { useAsyncSetState } from '@src/hooks/useAsyncState';
 import { useNuggftV1, useDotnuggV1, useTransactionManager } from '@src/contracts/useContract';
 import { ItemId } from '@src/client/router';
 import Label from '@src/components/general/Label/Label';
+import TokenViewer2 from '@src/components/nugg/TokenViewer2';
 
 import styles from './SearchOverlay.styles';
 
@@ -141,7 +142,7 @@ export default () => {
         return undefined;
     }, [items, tokenId]);
 
-    const svg = useAsyncState(() => {
+    const [svg, setSvg] = useAsyncSetState(() => {
         const arr: BigNumberish[] = new Array<BigNumberish>(8);
 
         if (items && items.active) {
@@ -162,6 +163,8 @@ export default () => {
     const { send, revert } = useTransactionManager();
     const toggleEditingNugg = client.mutate.toggleEditingNugg();
 
+    const [waiting, setWaiting] = React.useState<boolean>();
+
     return (
         <animated.div style={{ ...styles.container, ...style }}>
             {token && tokenId && items && (
@@ -177,12 +180,19 @@ export default () => {
                         <Button
                             label="save"
                             onClick={() => {
+                                void setWaiting(true);
+                                void setSvg(undefined);
                                 void send(nuggft.populateTransaction.rotate(...algo));
                             }}
                         />
                     )}
 
-                    <TokenViewer tokenId={tokenId} svgNotFromGraph={svg ?? undefined} />
+                    {waiting ? (
+                        <TokenViewer2 tokenId={tokenId} showcase validated />
+                    ) : (
+                        <TokenViewer tokenId={tokenId} svgNotFromGraph={svg} showcase />
+                    )}
+
                     {revert && <Label text={revert.message} />}
 
                     <List

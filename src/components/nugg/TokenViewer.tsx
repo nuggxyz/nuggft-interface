@@ -10,13 +10,13 @@ import useOnHover from '@src/hooks/useOnHover';
 
 import DangerouslySetNugg from './DangerouslySetNugg';
 
-type Props = {
+export type TokenViewerProps = {
     tokenId: TokenId;
     style?: CSSProperties;
     showLabel?: boolean;
     labelColor?: string;
     textProps?: Omit<TextProps, 'children'>;
-    svgNotFromGraph?: Base64EncodedSvg;
+    svgNotFromGraph?: Base64EncodedSvg | null | undefined;
     showcase?: boolean;
     labelLong?: boolean;
     disableOnClick?: boolean;
@@ -26,7 +26,7 @@ type Props = {
     updateCache?: boolean;
 };
 
-const TokenViewer: FunctionComponent<Props> = ({
+const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     tokenId,
     style,
     showLabel,
