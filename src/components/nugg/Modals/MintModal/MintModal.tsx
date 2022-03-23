@@ -22,7 +22,7 @@ import lib, {
     range,
 } from '@src/lib';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
-import TokenViewer2 from '@src/components/nugg/TokenViewer2';
+import TokenViewer3 from '@src/components/nugg/TokenViewer3';
 
 import styles from './MintModal.styles';
 
@@ -158,7 +158,7 @@ const MintModal: FunctionComponent<unknown> = () => {
                 {headerText}
             </Text>
             <AnimatedCard>
-                <TokenViewer2
+                <TokenViewer3
                     validated={!!(newNugg && myNuggTransfer && newNugg === myNuggTransfer)}
                     tokenId={newNugg || ''}
                     showcase
