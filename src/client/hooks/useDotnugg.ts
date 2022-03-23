@@ -7,27 +7,20 @@ import web3 from '@src/web3';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { TokenId } from '@src/client/router';
 import { useLiveDotnuggSubscription } from '@src/gql/types.generated';
+import { useNuggftV1 } from '@src/contracts/useContract';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
 
 type UseDotnuggResponse = Base64EncodedSvg | undefined | null;
 
-export const useDotnuggRpcBackup = (outer: UseDotnuggResponse, tokenId: TokenId) => {
-    const provider = web3.hook.usePriorityProvider();
-    const chainId = web3.hook.usePriorityChainId();
+export const useDotnuggInjectToCache = () => {
     const graph = client.live.graph();
+    const nuggft = useNuggftV1();
 
-    const [src, setSrc] = React.useState<Base64EncodedSvg>();
-
-    useEffect(() => {
-        if (tokenId && graph && chainId && provider && outer === null) {
-            void (async () => {
-                const res = (await new NuggftV1Helper(chainId, provider).contract.imageURI(
-                    tokenId,
-                )) as Base64EncodedSvg | undefined;
-                setSrc(res);
-
+    return React.useCallback(
+        (tokenId: TokenId, data: Base64EncodedSvg) => {
+            if (graph && nuggft) {
                 void graph.cache.writeQuery({
                     // broadcast: true,
                     query: gql`
@@ -43,10 +36,33 @@ export const useDotnuggRpcBackup = (outer: UseDotnuggResponse, tokenId: TokenId)
                     data: {
                         nugg: {
                             __typename: 'Nugg',
-                            dotnuggRawCache: res,
+                            dotnuggRawCache: data,
                         },
                     },
                 });
+            }
+        },
+        [graph, nuggft],
+    );
+};
+
+export const useDotnuggRpcBackup = (outer: UseDotnuggResponse, tokenId: TokenId) => {
+    const provider = web3.hook.usePriorityProvider();
+    const chainId = web3.hook.usePriorityChainId();
+    const graph = client.live.graph();
+
+    const [src, setSrc] = React.useState<Base64EncodedSvg>();
+
+    const inject = useDotnuggInjectToCache();
+
+    useEffect(() => {
+        if (tokenId && graph && chainId && provider && outer === null) {
+            void (async () => {
+                const res = (await new NuggftV1Helper(chainId, provider).contract.imageURI(
+                    tokenId,
+                )) as Base64EncodedSvg | undefined;
+                setSrc(res);
+                if (res) void inject(tokenId, res);
             })();
         }
     }, [graph, chainId, provider, tokenId, outer]);

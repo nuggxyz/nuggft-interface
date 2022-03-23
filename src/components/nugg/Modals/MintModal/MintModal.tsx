@@ -14,7 +14,6 @@ import Loader from '@src/components/general/Loader/Loader';
 import { EthInt } from '@src/classes/Fraction';
 import emitter from '@src/emitter';
 import { NuggId } from '@src/client/router';
-import TokenViewer from '@src/components/nugg/TokenViewer';
 import lib, {
     isNull,
     isUndefined,
@@ -23,6 +22,7 @@ import lib, {
     range,
 } from '@src/lib';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
+import TokenViewer2 from '@src/components/nugg/TokenViewer2';
 
 import styles from './MintModal.styles';
 
@@ -158,8 +158,9 @@ const MintModal: FunctionComponent<unknown> = () => {
                 {headerText}
             </Text>
             <AnimatedCard>
-                <TokenViewer
-                    tokenId={newNugg && myNuggTransfer === newNugg ? newNugg : ''}
+                <TokenViewer2
+                    validated={!!(newNugg && myNuggTransfer && newNugg === myNuggTransfer)}
+                    tokenId={newNugg || ''}
                     showcase
                     disableOnClick={!newNugg}
                     showPending={!newNugg}
