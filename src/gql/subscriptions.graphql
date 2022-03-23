@@ -157,47 +157,55 @@ fragment itemswapdata on ItemSwap {
     }
 }
 
-subscription liveItem($tokenId: ID!) {
-    item(id: $tokenId) {
+fragment liveNugg on Nugg {
+    id
+    user {
         id
-        count
+    }
+    items {
+        id
         activeSwap {
-            ...itemswapdata
+            id
         }
-        swaps {
-            ...itemswapdata
+        item {
+            id
+            feature
+            position
         }
+    }
+    pendingClaim
+    lastTransfer
+    activeLoan {
+        id
+    }
+    activeSwap {
+        ...swapdata
+    }
+    swaps {
+        ...swapdata
     }
 }
 
-subscription liveNugg($tokenId: ID!) {
+fragment liveItem on Item {
+    id
+    count
+    activeSwap {
+        ...itemswapdata
+    }
+    swaps {
+        ...itemswapdata
+    }
+}
+
+subscription watchLiveItem($tokenId: ID!) {
+    item(id: $tokenId) {
+        ...liveItem
+    }
+}
+
+subscription watchLiveNugg($tokenId: ID!) {
     nugg(id: $tokenId) {
-        id
-        user {
-            id
-        }
-        items {
-            id
-            activeSwap {
-                id
-            }
-            item {
-                id
-                feature
-                position
-            }
-        }
-        pendingClaim
-        lastTransfer
-        activeLoan {
-            id
-        }
-        activeSwap {
-            ...swapdata
-        }
-        swaps {
-            ...swapdata
-        }
+        ...liveNugg
     }
 }
 

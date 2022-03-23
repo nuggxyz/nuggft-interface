@@ -124,7 +124,7 @@ const CircleTimer: FunctionComponent<Props> = ({
                     cx="50%"
                     cy="50%"
                     r={timerCircleRadius}
-                    stroke="white"
+                    stroke={shadowColor === 'transparent' ? 'transparent' : 'white'}
                     strokeDashoffset={x}
                     strokeWidth={20}
                     fill="none"

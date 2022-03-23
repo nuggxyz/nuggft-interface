@@ -79,7 +79,7 @@ const TheRing: FunctionComponent<Props> = ({
                             : token.lifecycle === Lifecycle.Bat
                             ? ''
                             : 'purple'
-                        : 'purple'
+                        : 'white'
                 }
                 style={{
                     ...styles.circle,
@@ -87,9 +87,9 @@ const TheRing: FunctionComponent<Props> = ({
                     flexDirection: 'column',
                 }}
             >
-                {token && tokenId && (
+                {tokenId && (
                     <>
-                        {token.lifecycle === Lifecycle.Deck && (
+                        {token && token.lifecycle === Lifecycle.Deck && (
                             <Label text={`countdown begins in ${blocksRemaining % 32} blocks`} />
                         )}
                         <AnimatedCard>

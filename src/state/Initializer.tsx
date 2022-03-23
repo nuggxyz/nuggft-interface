@@ -1,6 +1,5 @@
 import React, { FunctionComponent, ReactChild, useEffect } from 'react';
 
-import { safeResetLocalStorage } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
 import { Chain } from '@src/web3/core/interfaces';
@@ -20,7 +19,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
     const start = client.mutate.start();
 
     useEffect(() => {
-        safeResetLocalStorage(['walletconnect', 'ens']);
+        // safeResetLocalStorage(['walletconnect', 'ens']);
     }, []);
 
     useEffect(() => {
@@ -49,8 +48,9 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
                 graph,
                 rpc,
             });
-
+            console.log('a');
             void start(chainId, rpc, graph);
+            console.log('b');
 
             return () => {
                 rpc.removeAllListeners();
