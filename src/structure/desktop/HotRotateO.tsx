@@ -12,7 +12,7 @@ import { useAsyncSetState } from '@src/hooks/useAsyncState';
 import { useNuggftV1, useDotnuggV1, useTransactionManager } from '@src/contracts/useContract';
 import { ItemId } from '@src/client/router';
 import Label from '@src/components/general/Label/Label';
-import TokenViewer2 from '@src/components/nugg/TokenViewer2';
+import TokenViewer3 from '@src/components/nugg/TokenViewer3';
 
 import styles from './SearchOverlay.styles';
 
@@ -163,7 +163,7 @@ export default () => {
     const { send, revert } = useTransactionManager();
     const toggleEditingNugg = client.mutate.toggleEditingNugg();
 
-    const [waiting, setWaiting] = React.useState<boolean>();
+    // const [waiting, setWaiting] = React.useState<boolean>();
 
     return (
         <animated.div style={{ ...styles.container, ...style }}>
@@ -180,15 +180,14 @@ export default () => {
                         <Button
                             label="save"
                             onClick={() => {
-                                void setWaiting(true);
                                 void setSvg(undefined);
                                 void send(nuggft.populateTransaction.rotate(...algo));
                             }}
                         />
                     )}
 
-                    {waiting ? (
-                        <TokenViewer2 tokenId={tokenId} showcase validated />
+                    {!svg ? (
+                        <TokenViewer3 tokenId={tokenId} showcase validated />
                     ) : (
                         <TokenViewer tokenId={tokenId} svgNotFromGraph={svg} showcase />
                     )}

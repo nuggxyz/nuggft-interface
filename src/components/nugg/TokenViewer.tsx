@@ -24,6 +24,7 @@ export type TokenViewerProps = {
     showPending?: boolean;
     subscribe?: boolean;
     updateCache?: boolean;
+    morphing?: boolean;
 };
 
 const TokenViewer: FunctionComponent<TokenViewerProps> = ({
@@ -46,13 +47,11 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
         return { width: window.innerWidth };
     }, []);
 
-    const src =
-        // eslint-disable-next-line no-nested-ternary
-        subscribe
-            ? client.hook.useDotnuggSubscription(tokenId)
-            : updateCache
-            ? client.hook.useDotnugg(tokenId)
-            : client.hook.useDotnuggCacheOnly(tokenId);
+    const src = subscribe
+        ? client.hook.useDotnuggSubscription(tokenId)
+        : updateCache
+        ? client.hook.useDotnugg(tokenId)
+        : client.hook.useDotnuggCacheOnly(tokenId);
 
     const pendingSrc = usePending(svgNotFromGraph ?? src, showPending);
 
