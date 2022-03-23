@@ -71,7 +71,7 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                     onClick={() =>
                         stableType === 'LoanNugg'
                             ? WalletState.dispatch.initLoan({
-                                  tokenId: stableId,
+                                  tokenIds: [stableId],
                                   chainId,
                                   provider,
                                   address,

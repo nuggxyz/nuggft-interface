@@ -136,8 +136,7 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
                                   address,
                               })
                             : WalletState.dispatch.extend({
-                                  tokenId: stableId,
-                                  amount,
+                                  tokenIds: [stableId],
                                   chainId,
                                   provider,
                                   address,
