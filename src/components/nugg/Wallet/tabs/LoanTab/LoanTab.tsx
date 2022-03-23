@@ -5,8 +5,17 @@ import InfiniteList from '@src/components/general/List/InfiniteList';
 
 import LoanRenderItem from './LoanRenderItem';
 import styles from './LoanTab.styles';
+import MultiLoanButton from './MultiLoanButton';
+import MultiRebalanceButton from './MultiRebalanceButton';
 
 type Props = Record<string, never>;
+
+const Buttons = () => (
+    <>
+        <MultiRebalanceButton />
+        <MultiLoanButton />
+    </>
+);
 
 const LoanTab: FunctionComponent<Props> = () => {
     const epochId = client.live.epoch.id();
@@ -17,6 +26,7 @@ const LoanTab: FunctionComponent<Props> = () => {
             <InfiniteList
                 data={loanedNuggs}
                 RenderItem={LoanRenderItem}
+                TitleButton={Buttons}
                 label="Loaned Nuggs"
                 style={styles.list}
                 extraData={epochId}

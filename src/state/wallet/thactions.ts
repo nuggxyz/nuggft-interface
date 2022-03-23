@@ -303,14 +303,14 @@ const mintNugg = createAsyncThunk<
 
 const initLoan = createAsyncThunk<
     TxThunkSuccess<WalletSuccess>,
-    { tokenId: string; provider: Web3Provider; chainId: Chain; address: string },
+    { tokenIds: string[]; provider: Web3Provider; chainId: Chain; address: string },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: WalletError }
->(`wallet/initLoan`, async ({ tokenId, provider, chainId, address }, thunkAPI) => {
+>(`wallet/initLoan`, async ({ tokenIds, provider, chainId, address }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(address))
-            .loan([tokenId]);
+            .loan(tokenIds);
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -384,20 +384,24 @@ const payOffLoan = createAsyncThunk<
 const extend = createAsyncThunk<
     TxThunkSuccess<WalletSuccess>,
     {
-        tokenId: string;
-        amount: string;
+        tokenIds: string[];
         provider: Web3Provider;
         chainId: Chain;
         address: string;
     },
     // adding the root state type to this thaction causes a circular reference
     { rejectValue: WalletError }
->(`wallet/extend`, async ({ tokenId, amount, provider, chainId, address }, thunkAPI) => {
+>(`wallet/extend`, async ({ tokenIds, provider, chainId, address }, thunkAPI) => {
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(address))
-            // .connect(Web3State.getSignerOrProvider())
-            .rebalance([tokenId], { value: toEth(amount) });
+            .rebalance(tokenIds, {
+                value: (
+                    await new NuggftV1Helper(chainId, provider).contract
+                        .connect(provider.getSigner(address))
+                        .vfr(tokenIds)
+                ).reduce((a, b) => a.add(b), BigNumber.from(0)),
+            });
 
         return {
             success: 'SUCCESS',

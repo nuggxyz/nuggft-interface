@@ -14,6 +14,17 @@ const styles = NLStyleSheetCreator({
         color: lib.colors.white,
         paddingTop: '0rem',
     },
+    multiLoanButton: {
+        background: lib.colors.white,
+        borderRadius: lib.layout.borderRadius.large,
+        margin: '0rem',
+        padding: '.2rem .6rem',
+    },
+    multiLoanButtonText: {
+        color: lib.colors.nuggRedText,
+        fontSize: lib.fontSize.h6,
+        fontFamily: lib.layout.font.sf.regular,
+    },
     renderItemButton: {
         background: lib.colors.gradient2,
         borderRadius: lib.layout.borderRadius.large,
