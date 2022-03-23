@@ -15,3 +15,15 @@ query AllNuggs(
         id
     }
 }
+
+query getLiveNugg($tokenId: ID!) {
+    nugg(id: $tokenId) {
+        ...liveNugg
+    }
+}
+
+query getLiveItem($tokenId: ID!) {
+    item(id: $tokenId) {
+        ...liveItem
+    }
+}
