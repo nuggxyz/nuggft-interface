@@ -7,7 +7,7 @@
     "license": "AGPL-3.0-or-later",
     "private": true,
     "scripts": {
-        "start": "rm .eslintcache && node webpack/scripts/start.js",
+        "start": "rm -f .eslintcache && node webpack/scripts/start.js",
         "dev": "yarn start",
         "webpack:develop": "node webpack/scripts/develop.js",
         "build": "node webpack/scripts/build.js",
