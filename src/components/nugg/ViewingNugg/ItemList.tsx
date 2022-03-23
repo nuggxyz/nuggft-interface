@@ -39,7 +39,6 @@ const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData, undefined>> = ({ ite
                     tokenId={createItemId((Number(item.feature) << 8) | item.position)}
                     style={styles.listItemSvg}
                     // data={item.dotnuggRawCache}
-                    disableOnClick
                 />
 
                 <Label
