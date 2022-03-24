@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
+import { t } from '@lingui/macro';
 
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import web3 from '@src/web3';
@@ -31,7 +32,7 @@ const MultiClaimButton: FunctionComponent<Props> = () => {
             feedbackText="Check Wallet..."
             buttonStyle={styles.multiClaimButton}
             textStyle={styles.multiClaimButtonText}
-            label="Claim all"
+            label={t`Claim All`}
             onClick={() =>
                 sender &&
                 chainId &&

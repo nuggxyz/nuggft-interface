@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import { t } from '@lingui/macro';
 
 import client from '@src/client';
 import InfiniteList from '@src/components/general/List/InfiniteList';
@@ -27,10 +28,10 @@ const LoanTab: FunctionComponent<Props> = () => {
                 data={loanedNuggs}
                 RenderItem={LoanRenderItem}
                 TitleButton={Buttons}
-                label="Loaned Nuggs"
+                label={t`Loaned Nuggs`}
                 style={styles.list}
                 extraData={epochId}
-                listEmptyText="You haven't loaned any nuggs yet!"
+                listEmptyText={t`You haven't loaned any nuggs yet!`}
                 labelStyle={styles.listLabel}
                 listEmptyStyle={styles.textWhite}
                 loaderColor="white"

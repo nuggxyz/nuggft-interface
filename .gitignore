@@ -97,3 +97,6 @@ typechain/
 archive/
 
 *.generated.*
+src/locales/*
+!src/locales/*.po
+src/locales/en-US.po

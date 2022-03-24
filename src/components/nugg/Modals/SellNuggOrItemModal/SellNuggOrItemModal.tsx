@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
+import { t } from '@lingui/macro';
 
 import {
     extractItemId,
@@ -46,7 +47,7 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
     return stableId && chainId && provider && address ? (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
-                {`${stableType === 'SellNugg' ? 'Sell' : 'Sell Item:'} ${parseTokenId(
+                {`${stableType === 'SellNugg' ? t`Sell` : t`Sell Item:`} ${parseTokenId(
                     stableId,
                     true,
                 )}`}
@@ -62,7 +63,7 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
                         style={styles.input}
                         styleHeading={styles.heading}
                         styleInputContainer={styles.inputCurrency}
-                        label="Enter floor"
+                        label={t`Enter floor`}
                         setValue={setAmount}
                         value={amount}
                         code
@@ -71,7 +72,7 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
                             stableType === 'SellNugg' ? (
                                 <Button
                                     onClick={() => setAmount(stake.eps.decimal.toPrecision(5))}
-                                    label="Min"
+                                    label={t`Min`}
                                     size="small"
                                     buttonStyle={styles.minButton}
                                 />
@@ -87,9 +88,9 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
                 <FeedbackButton
                     overrideFeedback
                     disabled={isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount)}
-                    feedbackText="Check Wallet..."
+                    feedbackText={t`Check Wallet...`}
                     buttonStyle={styles.button}
-                    label={`${stableType === 'SellNugg' ? 'Sell Nugg' : 'Sell Item'}`}
+                    label={`${stableType === 'SellNugg' ? t`Sell Nugg` : t`Sell Item`}`}
                     onClick={() =>
                         WalletState.dispatch.initSale({
                             tokenId: stableType === 'SellNugg' ? stableId : tokenId,

@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import { t } from '@lingui/macro';
 
 import { LoanData } from '@src/client/interfaces';
 import Button from '@src/components/general/Buttons/Button/Button';
@@ -35,7 +36,7 @@ const LoanRenderItem: FunctionComponent<
                         ...styles.renderItemButton,
                         marginBottom: '.3rem',
                     }}
-                    label="Extend"
+                    label={t`Extend`}
                     onClick={() =>
                         state.app.dispatch.setModalOpen({
                             name: 'LoanInputModal',
@@ -51,7 +52,7 @@ const LoanRenderItem: FunctionComponent<
                     type="text"
                     size="small"
                     buttonStyle={styles.renderItemButton}
-                    label="Pay off"
+                    label={t`Pay off`}
                     onClick={() =>
                         state.app.dispatch.setModalOpen({
                             name: 'LoanInputModal',

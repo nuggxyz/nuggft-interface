@@ -53,8 +53,9 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
 
             return () => {
                 rpc.removeAllListeners();
-                void rpc.destroy();
 
+                void rpc.destroy();
+                void graph.clearStore();
                 graph.stop();
 
                 void updateClients({

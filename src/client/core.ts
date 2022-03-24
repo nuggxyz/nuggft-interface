@@ -18,6 +18,7 @@ import {
 } from '@src/gql/types.generated';
 import { executeQuery3b } from '@src/graphql/helpers';
 import { Address } from '@src/classes/Address';
+import { SupportedLocale } from '@src/lib/locales';
 
 import { parseRoute, Route, TokenId, ItemId, NuggId } from './router';
 import {
@@ -96,7 +97,7 @@ const logger__middleware = <T extends State>(fn: StateCreator<T>): StateCreator<
         return fn(
             (args) => {
                 set(args);
-                // console.log('  new state', get());
+                // console.log('new state', get());
             },
             get,
             api,
@@ -400,7 +401,11 @@ function createClientStoreAndActions2() {
                         draft.editingNugg = tokenId;
                     });
                 };
-
+                const updateLocale = (locale: SupportedLocale | undefined) => {
+                    set((draft) => {
+                        draft.locale = locale ?? undefined;
+                    });
+                };
                 const start = async (
                     chainId: Chain,
                     rpc: WebSocketProvider,
@@ -471,6 +476,11 @@ function createClientStoreAndActions2() {
                     error: undefined,
                     manualPriority: undefined,
                     liveTokens: {},
+                    darkmode: {
+                        user: undefined,
+                        media: undefined,
+                    },
+                    locale: undefined,
 
                     updateBlocknum,
                     updateProtocol,
@@ -489,6 +499,7 @@ function createClientStoreAndActions2() {
                     toggleEditingNugg,
                     start,
                     updateToken,
+                    updateLocale,
                 };
             }),
         ),

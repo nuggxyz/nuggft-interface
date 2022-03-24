@@ -23,7 +23,8 @@
                 "exts": ["js", "es6", "es", "tsx", "typescript"]
             }
         ],
-        ["import-directory"]
+        ["import-directory"],
+        ["macros"]
     ],
     "presets": [
         [

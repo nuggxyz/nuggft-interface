@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
+import { t } from '@lingui/macro';
 
 import AppState from '@src/state/app';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
@@ -37,7 +38,7 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
     return stableId && chainId && provider && address ? (
         <div style={styles.container}>
             <Text textStyle={styles.textWhite}>
-                {stableType === 'LoanNugg' ? 'Loan' : 'Burn'} Nugg #{stableId}
+                {stableType === 'LoanNugg' ? t`Loan` : t`Burn`} {t`Nugg ${stableId}`}
             </Text>
             <AnimatedCard>
                 <TokenViewer tokenId={stableId} />
@@ -55,19 +56,19 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                             fontSize: FontSize.h5,
                         }}
                     >
-                        This cannot be undone
+                        {t`This cannot be undone`}
                     </Text>
                 )}
 
                 <Text type="text" textStyle={styles.text}>
-                    {stake__eps ? `You will receive ${+stake__eps.decimal.toFixed(4)} ETH` : null}
+                    {stake__eps ? t`You will receive ${+stake__eps.decimal.toFixed(4)} ETH` : null}
                 </Text>
 
                 <FeedbackButton
                     overrideFeedback
-                    feedbackText="Check Wallet..."
+                    feedbackText={t`Check wallet...`}
                     buttonStyle={styles.button}
-                    label={`${stableType === 'LoanNugg' ? 'Loan' : 'Burn'}`}
+                    label={`${stableType === 'LoanNugg' ? t`Loan` : t`Burn`}`}
                     onClick={() =>
                         stableType === 'LoanNugg'
                             ? WalletState.dispatch.initLoan({

@@ -1,5 +1,6 @@
 import React from 'react';
 import { IoOpenOutline, IoPowerOutline } from 'react-icons/io5';
+import { t } from '@lingui/macro';
 
 import Jazzicon from '@src/components/nugg/Jazzicon';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -52,7 +53,7 @@ const AccountViewer = () => {
         >
             <>
                 <Button
-                    label="Explore"
+                    label={t`Explore`}
                     type="text"
                     buttonStyle={styles.flyoutButton}
                     leftIcon={
@@ -66,7 +67,7 @@ const AccountViewer = () => {
                 />
                 <Button
                     type="text"
-                    label="Disconnect"
+                    label={t`Disconnect`}
                     buttonStyle={styles.flyoutButton}
                     leftIcon={
                         <IoPowerOutline

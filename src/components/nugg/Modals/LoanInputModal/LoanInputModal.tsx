@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BigNumber } from 'ethers';
+import { t } from '@lingui/macro';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
@@ -61,7 +62,7 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>{`${
-                stableType === 'PayoffLoan' ? 'Payoff' : 'Extend'
+                stableType === 'PayoffLoan' ? t`Payoff` : t`Extend`
             } Nugg #${stableId}`}</Text>
             <AnimatedCard>
                 <TokenViewer tokenId={stableId} labelColor="white" showcase />
@@ -72,7 +73,7 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
                     style={styles.input}
                     styleHeading={styles.heading}
                     styleInputContainer={styles.inputCurrency}
-                    label="Enter amount"
+                    label={t`Enter amount`}
                     setValue={setAmount}
                     value={amount}
                     code
@@ -91,7 +92,7 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
                                     )}`,
                                 )
                             }
-                            label="Min"
+                            label={t`Min`}
                             textStyle={{
                                 fontFamily: Layout.font.sf.bold,
                                 fontSize: FontSize.h6,
@@ -113,15 +114,15 @@ const LoanInputModal: React.FunctionComponent<Props> = () => {
             >
                 {userBalance ? (
                     <Text type="text" size="small" textStyle={styles.text} weight="bolder">
-                        You currently have {userBalance.num.toString()} ETH
+                        {t`You currently have ${userBalance.num.toString()} ETH`}
                     </Text>
                 ) : null}
             </div>
             <div style={styles.subContainer}>
                 <FeedbackButton
-                    feedbackText="Check Wallet..."
+                    feedbackText={t`Check Wallet`}
                     buttonStyle={styles.button}
-                    label={`${stableType === 'PayoffLoan' ? 'Payoff' : 'Extend'}`}
+                    label={`${stableType === 'PayoffLoan' ? t`Payoff` : t`Extend`}`}
                     onClick={() =>
                         stableId &&
                         chainId &&

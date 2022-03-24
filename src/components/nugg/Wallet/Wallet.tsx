@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
+import { t } from '@lingui/macro';
 
 import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
 import state from '@src/state';
@@ -25,7 +26,7 @@ const Wallet: FunctionComponent<Props> = () => {
                 ? screenType === 'tablet'
                     ? [
                           {
-                              label: 'Swap',
+                              label: t`Swap`,
                               comp: React.memo(RingAbout),
                               labelStyle: { color: lib.colors.nuggBlueText },
                               bodyStyle: {
@@ -34,37 +35,37 @@ const Wallet: FunctionComponent<Props> = () => {
                               },
                           },
                           {
-                              label: 'Home',
+                              label: t`Home`,
                               comp: React.memo(HomeTab),
                           },
                           {
-                              label: 'Claims',
+                              label: t`Claims`,
                               comp: React.memo(ClaimTab),
                           },
 
                           {
-                              label: 'Loans',
+                              label: t`Loans`,
                               comp: React.memo(LoanTab),
                           },
                       ]
                     : [
                           {
-                              label: 'Home',
+                              label: t`Home`,
                               comp: React.memo(HomeTab),
                           },
                           {
-                              label: 'Claims',
+                              label: t`Claims`,
                               comp: React.memo(ClaimTab),
                           },
 
                           {
-                              label: 'Loans',
+                              label: t`Loans`,
                               comp: React.memo(LoanTab),
                           },
                       ]
                 : [
                       {
-                          label: 'Home',
+                          label: t`Home`,
                           comp: React.memo(ConnectTab),
                       },
                   ]),

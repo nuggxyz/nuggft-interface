@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { IoSearch } from 'react-icons/io5';
+import { t } from '@lingui/macro';
 
 import { MyNuggsData } from '@src/client/interfaces';
 import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
@@ -29,16 +30,14 @@ const MyNuggRenderItem: FunctionComponent<
 
                 <Text textStyle={styles.textRed}>Nugg {item.tokenId || ''}</Text>
             </div>
-            {!isUndefinedOrNullOrObjectEmpty(item.activeLoan) ||
-            !isUndefinedOrNullOrObjectEmpty(item.activeSwap) ||
-            item.recent ? (
+            {item.activeLoan || item.activeSwap ? (
                 <Text textStyle={styles.badge} size="smaller" type="text">
                     {/* eslint-disable-next-line no-nested-ternary */}
                     {item.recent
-                        ? 'New'
+                        ? t`New`
                         : !isUndefinedOrNullOrObjectEmpty(item.activeLoan)
-                        ? 'Loaned'
-                        : 'On sale'}
+                        ? t`Loaned`
+                        : t`On sale`}
                 </Text>
             ) : null}
             <Button

@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import React, { FunctionComponent, useMemo, useState } from 'react';
 import { Promise } from 'bluebird';
+import { t } from '@lingui/macro';
 
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import { executeQuery3 } from '@src/graphql/helpers';
@@ -114,43 +115,43 @@ const MintModal: FunctionComponent<unknown> = () => {
 
     const headerText = useMemo(() => {
         if (isNull(nextNugg)) {
-            return 'No more nuggs';
+            return t`No more nuggs`;
         }
         if (loading) {
-            return 'Deep-frying your nugg...';
+            return t`Deep-frying your nugg...`;
         }
         if (!isUndefinedOrNullOrStringEmpty(nextNugg)) {
-            return `Nugg ${nextNugg}`;
+            return t`Nugg ${nextNugg}`;
         }
-        return 'Mint yourself a nugg';
+        return t`Mint yourself a nugg`;
     }, [nextNugg, loading]);
 
     const bodyText = useMemo(() => {
         if (isNull(nextNugg)) {
-            return 'There are no more nuggs to mint. If you want a nugg, you must offer on a sale.';
+            return t`There are no more nuggs to mint. If you want a nugg, you must offer on a sale.`;
         }
         if (isUndefined(nextNugg) || isUndefinedOrNull(nuggPrice)) {
-            return '';
+            return ``;
         }
         if (loading) {
-            return 'Please wait while your nugg is being created';
+            return t`Please wait while your nugg is being created`;
         }
         if (!isUndefinedOrNullOrStringEmpty(newNugg)) {
-            return `You are now the proud owner Nugg ${nextNugg}!`;
+            return t`You are now the proud owner Nugg ${nextNugg}!`;
         }
-        return `You can be the proud owner of Nugg ${nextNugg} for ${new EthInt(nuggPrice).decimal
+        return t`You can be the proud owner of Nugg ${nextNugg} for ${new EthInt(nuggPrice).decimal
             .toNumber()
             .toPrecision(5)} ETH`;
     }, [nextNugg, loading, nuggPrice, newNugg]);
 
     const buttonText = useMemo(() => {
         if (isNull(nextNugg)) {
-            return 'Close';
+            return t`Close`;
         }
         if (loading) {
-            return 'Deep-frying...';
+            return t`Deep-frying...`;
         }
-        return 'Mint this Nugg';
+        return t`Mint this Nugg`;
     }, [nextNugg, loading]);
     return (
         <div style={styles.container}>
@@ -177,7 +178,7 @@ const MintModal: FunctionComponent<unknown> = () => {
             </div>
             <FeedbackButton
                 disabled={!nextNugg}
-                feedbackText="Check Wallet..."
+                feedbackText={t`Check wallet...`}
                 buttonStyle={styles.button}
                 label={buttonText}
                 overrideFeedback

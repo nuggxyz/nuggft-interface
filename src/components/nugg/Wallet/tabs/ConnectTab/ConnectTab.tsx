@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import curriedLighten from 'polished/lib/color/lighten';
+import { t } from '@lingui/macro';
 
 import Colors from '@src/lib/colors';
 import Button from '@src/components/general/Buttons/Button/Button';
@@ -23,13 +24,13 @@ const ConnectTab: FunctionComponent<Props> = () => {
                         marginRight: '1rem',
                     }}
                 >
-                    Connect to nuggft!
+                    {t`Connect to nuggft!`}
                 </Text>
                 <NLStaticImage image="nugg" />
             </div>
             <div style={styles.disclaimerContainer}>
                 <Text type="text" size="smaller" textStyle={{ color: Colors.textColor }}>
-                    {`By connecting a wallet, you agree to nugg.xyz's Terms of Service and acknowledge
+                    {t`By connecting a wallet, you agree to nugg.xyz's Terms of Service and acknowledge
                     that you have read and understood the nugg.xyz Protocol Disclaimer.`}
                 </Text>
             </div>

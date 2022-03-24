@@ -3,10 +3,12 @@ import { State, StoreApi, UseBoundStore } from 'zustand';
 import { ApolloClient } from '@apollo/client/core/ApolloClient';
 
 import { Chain, Connector } from '@src/web3/core/interfaces';
+import { SupportedLocale } from '@src/lib/locales';
 
 import { NuggftV1 } from '../typechain/NuggftV1';
 
 // eslint-disable-next-line import/no-cycle
+
 import { TokenId, NuggId, ItemId, ViewRoutes, SwapRoutes } from './router';
 
 export interface OfferData {
@@ -98,6 +100,16 @@ export type EpochData = {
     status: 'OVER' | 'ACTIVE' | 'PENDING';
 };
 
+export enum Theme {
+    DARK,
+    LIGHT,
+}
+
+export type DarkModePreferences = {
+    user: Theme | undefined;
+    media: Theme | undefined;
+};
+
 export interface ClientState extends State, Actions {
     nuggft: NuggftV1 | undefined;
     manualPriority: Connector | undefined;
@@ -121,6 +133,8 @@ export interface ClientState extends State, Actions {
     error: Error | undefined;
     activating: boolean;
     liveTokens: Dictionary<LiveTokenWithLifecycle>;
+    darkmode: DarkModePreferences;
+    locale: SupportedLocale | undefined;
 }
 
 export type ClientStateUpdate = {
@@ -169,6 +183,7 @@ export interface Actions {
     toggleEditingNugg: (tokenId: NuggId | undefined) => void;
     start: (chainId: Chain, rpc: WebSocketProvider, graph: ApolloClient<any>) => Promise<void>;
     updateToken: (tokenId: TokenId, data: LiveTokenWithLifecycle) => void;
+    updateLocale: (locale: SupportedLocale | undefined) => void;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
