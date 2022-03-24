@@ -1,4 +1,4 @@
-name: Crowdin Download
+name: Crowdin Sync
 
 # hourly we sync translations from Crowdin
 on:
@@ -51,6 +51,6 @@ jobs:
                   translation: 'src/locales/%locale%.po'
                   create_pull_request: false
                   localization_branch_name: main
-                  commit_message: 'chore(i18n): synchronize translations from crowdin [skip ci]'
+                  commit_message: 'i18n: sync from crowdin [skip ci]'
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
