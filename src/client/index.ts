@@ -8,7 +8,7 @@ import core, { coreNonImmer } from './core';
 import updater from './updater';
 import { useDotnugg, useDotnuggCacheOnly, useDotnuggSubscription } from './hooks/useDotnugg';
 import router, { TokenId } from './router';
-import { ListData } from './interfaces';
+import { ListData, SearchView } from './interfaces';
 
 export default {
     ...core,
@@ -52,6 +52,12 @@ export default {
 
         blocknum: () => core((state) => state.blocknum),
         manualPriority: () => core((state) => state.manualPriority),
+        searchFilter: {
+            viewing: () => core((state) => state.searchFilter?.viewing ?? SearchView.Home),
+            target: () => core((state) => state.searchFilter?.target),
+            sort: () => core((state) => state.searchFilter?.sort),
+            searchValue: () => core((state) => state.searchFilter?.searchValue),
+        },
 
         /// ///// complex ////////
         offers: (tokenId: TokenId | undefined) =>
@@ -132,8 +138,11 @@ export default {
         updateClients: () => coreNonImmer((state) => state.updateClients),
         updateToken: () => core((state) => state.updateToken),
         updateLocale: () => core((state) => state.updateLocale),
-
         start: () => core((state) => state.start),
+        updateSearchFilterTarget: () => core((state) => state.updateSearchFilterTarget),
+        updateSearchFilterViewing: () => core((state) => state.updateSearchFilterViewing),
+        updateSearchFilterSort: () => core((state) => state.updateSearchFilterSort),
+        updateSearchFilterSearchValue: () => core((state) => state.updateSearchFilterSearchValue),
     },
     hook: {
         useDotnugg,

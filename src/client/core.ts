@@ -32,6 +32,7 @@ import {
     LoanData,
     MyNuggsData,
     ClientStateUpdate,
+    SearchFilter,
 } from './interfaces';
 import formatLiveNugg from './formatters/formatLiveNugg';
 
@@ -406,6 +407,31 @@ function createClientStoreAndActions2() {
                         draft.locale = locale ?? undefined;
                     });
                 };
+
+                const updateSearchFilterTarget = (value: SearchFilter['target']) => {
+                    set((draft) => {
+                        draft.searchFilter.target = value;
+                    });
+                };
+
+                const updateSearchFilterViewing = (value: SearchFilter['viewing']) => {
+                    set((draft) => {
+                        draft.searchFilter.viewing = value;
+                    });
+                };
+
+                const updateSearchFilterSort = (value: SearchFilter['sort']) => {
+                    set((draft) => {
+                        draft.searchFilter.sort = value;
+                    });
+                };
+
+                const updateSearchFilterSearchValue = (value: SearchFilter['searchValue']) => {
+                    set((draft) => {
+                        draft.searchFilter.searchValue = value;
+                    });
+                };
+
                 const start = async (
                     chainId: Chain,
                     rpc: WebSocketProvider,
@@ -481,6 +507,12 @@ function createClientStoreAndActions2() {
                         media: undefined,
                     },
                     locale: undefined,
+                    searchFilter: {
+                        target: undefined,
+                        viewing: undefined,
+                        sort: undefined,
+                        searchValue: undefined,
+                    },
 
                     updateBlocknum,
                     updateProtocol,
@@ -500,6 +532,10 @@ function createClientStoreAndActions2() {
                     start,
                     updateToken,
                     updateLocale,
+                    updateSearchFilterTarget,
+                    updateSearchFilterViewing,
+                    updateSearchFilterSort,
+                    updateSearchFilterSearchValue,
                 };
             }),
         ),

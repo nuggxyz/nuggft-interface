@@ -1,18 +1,18 @@
 import React, { FunctionComponent, PropsWithChildren, useCallback, useMemo, useRef } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 
-import { ucFirst } from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
-import NuggDexState from '@src/state/nuggdex';
 import constants from '@src/lib/constants';
-import { ListData } from '@src/client/interfaces';
+import { ListData, SearchView } from '@src/client/interfaces';
+import client from '@src/client';
+import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 
 import styles from './NuggDexComponents.styles';
 import NuggLinkAnchor from './NuggLinkAnchor';
 import NuggLinkThumbnail from './NuggLinkThumbnail';
 
 type Props = {
-    type: NuggDexSearchViews;
+    type: SearchView;
     previewNuggs: ListData[];
     style?: CSSPropertiesAnimated;
     limit?: number;
@@ -26,16 +26,21 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
     children,
 }) => {
     const ref = useRef<HTMLDivElement>(null);
-    const viewing = NuggDexState.select.viewing();
+    const viewing = client.live.searchFilter.viewing();
+    const updateSearchFilterViewing = client.mutate.updateSearchFilterViewing();
+
     const toggled = useCallback(
         (toggVal: string | number, notToggVal: string | number) => {
-            // eslint-disable-next-line no-nested-ternary
-            return viewing !== 'home' ? (viewing !== type ? notToggVal : toggVal) : notToggVal;
+            return viewing !== SearchView.Home
+                ? viewing !== type
+                    ? notToggVal
+                    : toggVal
+                : notToggVal;
         },
         [viewing, type],
     );
     const { opacityText, zIndex, ...animation } = useSpring({
-        opacity: viewing === 'home' || viewing === type ? 1 : 0,
+        opacity: viewing === SearchView.Home || viewing === type ? 1 : 0,
         opacityText: viewing === type ? 0 : 1,
         height: toggled('100%', '45%'),
         width: toggled('100%', '45%'),
@@ -89,7 +94,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                     {previewNuggsStable}
                     <NuggLinkAnchor
                         onClick={() =>
-                            NuggDexState.dispatch.setViewing(viewing === type ? 'home' : type)
+                            updateSearchFilterViewing(viewing === type ? SearchView.Home : type)
                         }
                         style={limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}}
                     />
@@ -116,7 +121,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                     opacity: opacityText,
                 }}
             >
-                {ucFirst(type)}
+                {formatSearchFilter(type)}
             </Text>
         </animated.div>
     );

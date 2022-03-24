@@ -110,6 +110,25 @@ export type DarkModePreferences = {
     media: Theme | undefined;
 };
 
+export enum SearchView {
+    Home = 'Home',
+    AllNuggs = 'AllNuggs',
+    OnSale = 'OnSale',
+    MyNuggs = 'MyNuggs',
+    Recents = 'Recents',
+    AllItems = 'AllItems',
+}
+
+export type SearchFilter = {
+    viewing?: SearchView;
+    target?: SearchView;
+    sort?: {
+        direction?: 'asc' | 'desc';
+        by?: 'eth' | 'id';
+    };
+    searchValue?: string;
+};
+
 export interface ClientState extends State, Actions {
     nuggft: NuggftV1 | undefined;
     manualPriority: Connector | undefined;
@@ -135,6 +154,7 @@ export interface ClientState extends State, Actions {
     liveTokens: Dictionary<LiveTokenWithLifecycle>;
     darkmode: DarkModePreferences;
     locale: SupportedLocale | undefined;
+    searchFilter: SearchFilter;
 }
 
 export type ClientStateUpdate = {
@@ -184,6 +204,10 @@ export interface Actions {
     start: (chainId: Chain, rpc: WebSocketProvider, graph: ApolloClient<any>) => Promise<void>;
     updateToken: (tokenId: TokenId, data: LiveTokenWithLifecycle) => void;
     updateLocale: (locale: SupportedLocale | undefined) => void;
+    updateSearchFilterTarget: (locale: SearchFilter['target']) => void;
+    updateSearchFilterSort: (locale: SearchFilter['sort']) => void;
+    updateSearchFilterSearchValue: (locale: SearchFilter['searchValue']) => void;
+    updateSearchFilterViewing: (locale: SearchFilter['viewing']) => void;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;

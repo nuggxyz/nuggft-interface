@@ -13,31 +13,33 @@ import { ChevronLeft } from 'react-feather';
 import { batch } from 'react-redux';
 import { t } from '@lingui/macro';
 
-import { isUndefinedOrNullOrNotFunction, ucFirst } from '@src/lib';
+import { isUndefinedOrNullOrNotFunction } from '@src/lib';
 import TransitionText from '@src/components/general/Texts/TransitionText/TransitionText';
-import NuggDexState from '@src/state/nuggdex';
 import AppState from '@src/state/app';
 import usePrevious from '@src/hooks/usePrevious';
 import InfiniteList from '@src/components/general/List/InfiniteList';
 import client from '@src/client';
-import { ListData } from '@src/client/interfaces';
+import { ListData, SearchView } from '@src/client/interfaces';
+import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
 
 type Props = {
-    type?: NuggDexSearchViews;
+    type?: SearchView;
     style: CSSProperties | UseSpringProps;
     values: ListData[];
     animationToggle?: boolean;
     onScrollEnd?: ({
         setLoading,
-        filters,
+        sort,
+        searchValue,
         addToList,
         desiredSize,
     }: {
         setLoading?: React.Dispatch<SetStateAction<boolean>>;
-        filters: NuggDexFilters;
+        sort?: 'asc' | 'desc';
+        searchValue?: string;
         addToList?: boolean;
         desiredSize?: number;
     }) => Promise<void> | (() => void);
@@ -50,11 +52,16 @@ const NuggList: FunctionComponent<Props> = ({
     animationToggle,
     type,
 }) => {
-    const filters = NuggDexState.select.searchFilters();
+    const target = client.live.searchFilter.target();
+    const sort = client.live.searchFilter.sort();
+    const searchValue = client.live.searchFilter.searchValue();
 
-    const prevFilters = usePrevious(filters);
+    const prevTarget = usePrevious(target);
+    const prevSort = usePrevious(sort);
+    const prevSearchValue = usePrevious(searchValue);
+
     const screenType = AppState.select.screenType();
-    const viewing = NuggDexState.select.viewing();
+    const viewing = client.live.searchFilter.viewing();
 
     const [loading, setLoading] = useState(false);
     const routeTo = client.mutate.routeTo();
@@ -67,39 +74,63 @@ const NuggList: FunctionComponent<Props> = ({
 
     const _onScrollEnd = useCallback(
         ({ addToList, desiredSize }: { addToList: boolean; desiredSize?: number }) => {
-            if (onScrollEnd) void onScrollEnd({ setLoading, filters, addToList, desiredSize });
+            if (onScrollEnd)
+                void onScrollEnd({
+                    setLoading,
+                    searchValue,
+                    sort: sort?.direction,
+                    addToList,
+                    desiredSize,
+                });
         },
-        [filters, onScrollEnd],
+        [searchValue, sort, onScrollEnd],
     );
 
     useEffect(() => {
         if (
             !isUndefinedOrNullOrNotFunction(onScrollEnd) &&
-            (!type || filters.target === type) &&
-            ((prevFilters && prevFilters.searchValue !== filters.searchValue) ||
-                filters.searchValue !== '' ||
-                ((prevFilters && prevFilters.sort && prevFilters?.sort.asc) !==
-                    (filters && filters.sort && filters?.sort.asc) &&
-                    prevFilters?.target === filters.target))
+            (!type || target === type) &&
+            (prevSearchValue !== searchValue ||
+                searchValue !== '' ||
+                ((prevSort && prevSort.direction === 'asc') !==
+                    (sort && sort.direction === 'asc') &&
+                    prevTarget === target))
         ) {
             if (onScrollEnd)
                 void onScrollEnd({
                     setLoading,
-                    filters,
+                    sort: sort?.direction === 'asc' ? 'asc' : 'desc',
+                    searchValue,
                     addToList: false,
                     desiredSize: values.length,
                 });
         }
-    }, [filters, prevFilters, values]);
+    }, [
+        target,
+        prevTarget,
+        onScrollEnd,
+        type,
+        sort,
+        searchValue,
+        prevSort,
+        prevSearchValue,
+        values,
+    ]);
 
     useEffect(() => {
         if (onScrollEnd)
             void onScrollEnd({
                 setLoading,
-                filters,
+                sort: sort?.direction === 'asc' ? 'asc' : 'desc',
+                searchValue,
                 addToList: false,
             });
     }, []);
+
+    const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
+    const updateSearchFilterViewing = client.mutate.updateSearchFilterViewing();
+    const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
+    const updateSearchFilterSearchValue = client.mutate.updateSearchFilterSearchValue();
 
     return (
         <div
@@ -122,18 +153,13 @@ const NuggList: FunctionComponent<Props> = ({
                             </div>
                         }
                         style={styles.nuggListTitle}
-                        text={ucFirst(viewing)}
+                        text={formatSearchFilter(viewing)}
                         transitionText={t`Go back`}
                         onClick={() => {
-                            NuggDexState.dispatch.setSearchFilters({
-                                target: undefined,
-                                searchValue: '',
-                                sort: {
-                                    asc: true,
-                                    by: 'id',
-                                },
-                            });
-                            NuggDexState.dispatch.setViewing('home');
+                            updateSearchFilterTarget(undefined);
+                            updateSearchFilterViewing(SearchView.Home);
+                            updateSearchFilterSort(undefined);
+                            updateSearchFilterSearchValue(undefined);
                         }}
                     />
                 )}
