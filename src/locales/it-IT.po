@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-03-24 11:35+0000\n"
+"POT-Creation-Date: 2022-03-24 13:36+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,17 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Italian\n"
-"PO-Revision-Date: 2022-03-24 11:49\n"
+"PO-Revision-Date: 2022-03-24 14:02\n"
+
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
+msgid "(you)"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/ItemAbout.tsx
+#: src/components/nugg/ViewingNugg/NuggAbout.tsx
+#: src/components/nugg/ViewingNugg/SwapList.tsx
+msgid "Awaiting bid!"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "Balance"
@@ -22,7 +32,13 @@ msgstr ""
 
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
+#: src/components/nugg/ViewingNugg/FlyoutButtons/OwnerButtons.tsx
 msgid "Burn"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/NuggAbout.tsx
+#: src/components/nugg/ViewingNugg/SwapList.tsx
+msgid "Buyer"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab.tsx
@@ -71,6 +87,10 @@ msgstr ""
 msgid "Connect to nuggft!"
 msgstr ""
 
+#: src/components/nugg/RingAbout/OfferButton.tsx
+msgid "Connect wallet"
+msgstr ""
+
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Deep-frying your nugg..."
 msgstr ""
@@ -81,6 +101,11 @@ msgstr ""
 
 #: src/components/nugg/AccountViewer/AccountViewer.tsx
 msgid "Disconnect"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/FlyoutButtons/LoanButtons.tsx
+#: src/components/nugg/ViewingNugg/FlyoutButtons/OwnerButtons.tsx
+msgid "Edit"
 msgstr ""
 
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
@@ -98,8 +123,13 @@ msgstr ""
 
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
+#: src/components/nugg/ViewingNugg/FlyoutButtons/LoanButtons.tsx
 #: src/components/nugg/Wallet/tabs/LoanTab/LoanRenderItem.tsx
 msgid "Extend"
+msgstr ""
+
+#: src/components/nugg/FloorPrice.tsx
+msgid "FLOOR"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
@@ -110,14 +140,28 @@ msgstr ""
 msgid "From epoch {0}"
 msgstr ""
 
+#: src/components/nugg/NuggDex/NuggDexSearchList/components/NuggList.tsx
+msgid "Go back"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OfferText.tsx
+msgid "Highest offer"
+msgstr ""
+
 #: src/components/nugg/Wallet/Wallet.tsx
 #: src/components/nugg/Wallet/Wallet.tsx
 #: src/components/nugg/Wallet/Wallet.tsx
 msgid "Home"
 msgstr ""
 
+#: src/components/nugg/ViewingNugg/NuggAbout.tsx
+#: src/components/nugg/ViewingNugg/SwapList.tsx
+msgid "Leader"
+msgstr ""
+
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
+#: src/components/nugg/ViewingNugg/FlyoutButtons/OwnerButtons.tsx
 msgid "Loan"
 msgstr ""
 
@@ -139,9 +183,20 @@ msgstr ""
 msgid "Loans"
 msgstr ""
 
+#: src/components/nugg/NuggDex/NuggDexSearchList/components/NuggLinkAnchor.tsx
+msgid "MORE"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OwnerBlock.tsx
+#: src/components/nugg/ViewingNugg/ItemAbout.tsx
+msgid "Max"
+msgstr ""
+
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 #: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
+#: src/components/nugg/RingAbout/OwnerBlock.tsx
+#: src/components/nugg/ViewingNugg/ItemAbout.tsx
 msgid "Min"
 msgstr ""
 
@@ -173,6 +228,15 @@ msgstr ""
 msgid "No more nuggs"
 msgstr ""
 
+#: src/components/nugg/RingAbout/OfferText.tsx
+msgid "No offers yet..."
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/ItemAbout.tsx
+#: src/components/nugg/ViewingNugg/ItemAbout.tsx
+msgid "Nugg {0}"
+msgstr ""
+
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Nugg {nextNugg}"
 msgstr ""
@@ -193,6 +257,15 @@ msgstr ""
 msgid "On sale"
 msgstr ""
 
+#: src/components/nugg/ViewingNugg/ItemAbout.tsx
+msgid "On sale by {0} Nugg {1}"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
+msgid "Owner"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/FlyoutButtons/LoanButtons.tsx
 #: src/components/nugg/Wallet/tabs/LoanTab/LoanRenderItem.tsx
 msgid "Pay off"
 msgstr ""
@@ -211,7 +284,12 @@ msgid "Pick a nugg to offer on this item"
 msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
+#: src/components/nugg/RingAbout/OfferButton.tsx
 msgid "Place offer"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OfferText.tsx
+msgid "Place offer to begin auction"
 msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
@@ -222,7 +300,20 @@ msgstr ""
 msgid "Rebalance all ({0})"
 msgstr ""
 
+#: src/components/nugg/ViewingNugg/FlyoutButtons/SaleButtons.tsx
+msgid "Reclaim"
+msgstr ""
+
+#: src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.tsx
+msgid "Search {0}"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OfferText.tsx
+msgid "Select a nugg to buy this item from"
+msgstr ""
+
 #: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
+#: src/components/nugg/ViewingNugg/FlyoutButtons/OwnerButtons.tsx
 msgid "Sell"
 msgstr ""
 
@@ -242,8 +333,35 @@ msgstr ""
 msgid "Sign in with {0}"
 msgstr ""
 
+#: src/components/nugg/ViewingNugg/SwapList.tsx
+msgid "Sold by"
+msgstr ""
+
+#: src/state/transaction/middlewares.ts
+msgid "Successful Transaction"
+msgstr ""
+
 #: src/components/nugg/Wallet/Wallet.tsx
 msgid "Swap"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/ItemAbout.tsx
+#: src/components/nugg/ViewingNugg/NuggAbout.tsx
+#: src/components/nugg/ViewingNugg/SwapList.tsx
+msgid "Swap ending in {0} blocks"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/ItemAbout.tsx
+#: src/components/nugg/ViewingNugg/SwapList.tsx
+msgid "Swap is over"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/NuggAbout.tsx
+msgid "Swap is overt"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
+msgid "Swaps"
 msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
@@ -254,8 +372,24 @@ msgstr ""
 msgid "This cannot be undone"
 msgstr ""
 
+#: src/components/nugg/RingAbout/OwnerBlock.tsx
+msgid "This nugg is happily owned by"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OfferText.tsx
+msgid "This sale is over"
+msgstr ""
+
+#: src/state/transaction/middlewares.ts
+msgid "Transaction Failed"
+msgstr ""
+
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "Update offer"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OfferText.tsx
+msgid "Winner"
 msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
@@ -290,11 +424,55 @@ msgstr ""
 msgid "You will receive {0} ETH"
 msgstr ""
 
+#: src/components/nugg/NextSwap/NextSwap.tsx
+msgid "auto"
+msgstr ""
+
+#: src/components/nugg/TheRing/TheRing.tsx
+msgid "countdown begins in {0} blocks"
+msgstr ""
+
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "currenlty for sale"
 msgstr ""
 
+#: src/components/nugg/RingAbout/HighestOffer.tsx
+msgid "from"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/SwapList.tsx
+msgid "goto swap"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OffersList.tsx
+msgid "hide previous offers"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
+msgid "owned by {0} nuggs"
+msgstr ""
+
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "previous claim pending for this item"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OffersList.tsx
+msgid "previous offers"
+msgstr ""
+
+#: src/components/nugg/NextSwap/NextSwap.tsx
+msgid "queue"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OffersList.tsx
+msgid "show previous offers"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OwnerBlock.tsx
+msgid "this item is owned by {0} nuggs and is not currently for sale"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OwnerBlock.tsx
+msgid "{0, plural, one {nugg} other {nuggs}}"
 msgstr ""
 
