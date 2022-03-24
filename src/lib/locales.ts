@@ -33,8 +33,6 @@ import {
     zh,
 } from 'make-plural/plurals';
 
-import * as enUS from '@src/locales/en-US';
-
 export const SUPPORTED_LOCALES = [
     // order as they appear in the language dropdown
     'en-US',
@@ -72,6 +70,9 @@ export const SUPPORTED_LOCALES = [
 ] as const;
 
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number] | 'pseudo';
+
+// eslint-disable-next-line import/first
+import * as enUS from '@src/locales/en-US';
 
 export const DEFAULT_LOCALE: SupportedLocale = 'en-US';
 export const DEFAULT_CATALOG = enUS;

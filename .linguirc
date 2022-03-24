@@ -51,5 +51,6 @@
     "orderBy": "messageId",
     "rootDir": ".",
     "runtimeConfigModule": ["@lingui/core", "i18n"],
-    "sourceLocale": "en-US"
+    "sourceLocale": "en-US",
+    "pseudoLocale": "pseudo"
 }
