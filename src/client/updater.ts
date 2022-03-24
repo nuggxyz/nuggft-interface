@@ -12,6 +12,9 @@ import useLiveOffers from './hooks/useLiveOffers';
 // eslint-disable-next-line import/no-cycle
 import useLiveToken from './hooks/useLiveToken';
 // eslint-disable-next-line import/no-cycle
+// eslint-disable-next-line import/no-cycle
+import useMediaUpdater from './update/useMediaUpdater';
+// eslint-disable-next-line import/no-cycle
 
 export default () => {
     const address = web3.hook.usePriorityAccount();
@@ -31,6 +34,8 @@ export default () => {
     useLiveToken(lastView__tokenId);
 
     useGraphUpdater();
+
+    useMediaUpdater();
 
     // clean up on account change
     React.useEffect(() => {

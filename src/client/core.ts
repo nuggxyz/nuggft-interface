@@ -33,6 +33,7 @@ import {
     MyNuggsData,
     ClientStateUpdate,
     SearchFilter,
+    Theme,
 } from './interfaces';
 import formatLiveNugg from './formatters/formatLiveNugg';
 
@@ -53,28 +54,6 @@ const calculateEpochId = (blocknum: number, chainId: Chain) => {
         .add(config.EPOCH_OFFSET)
         .toNumber();
 };
-
-// const mergeUniqueOffers = (arr: OfferData[]) => {
-//     let len = arr.length;
-
-//     let tmp: number;
-//     const array3: OfferData[] = [];
-//     const array5: string[] = [];
-
-//     while (len--) {
-//         const itm = arr[len];
-//         // eslint-disable-next-line no-cond-assign
-//         if ((tmp = array5.indexOf(itm.user)) === -1) {
-//             array3.unshift(itm);
-//             array5.unshift(itm.user);
-//         } else if (array3[tmp].eth.lt(itm.eth)) {
-//             array3[tmp] = itm;
-//             array5[tmp] = itm.user;
-//         }
-//     }
-
-//     return array3.sort((a, b) => (a.eth.gt(b.eth) ? -1 : 1));
-// };
 
 const immer__middleware = <T extends State>(
     fn: StateCreator<T, (partial: ((draft: Draft<T>) => void) | T, replace?: boolean) => void>,
@@ -433,6 +412,17 @@ function createClientStoreAndActions2() {
                     });
                 };
 
+                const updateUserDarkMode = (value: Theme | undefined) => {
+                    set((draft) => {
+                        draft.darkmode.user = value;
+                    });
+                };
+                const updateMediaDarkMode = (value: Theme | undefined) => {
+                    set((draft) => {
+                        draft.darkmode.media = value;
+                    });
+                };
+
                 const start = async (
                     chainId: Chain,
                     rpc: WebSocketProvider,
@@ -537,6 +527,8 @@ function createClientStoreAndActions2() {
                     updateSearchFilterViewing,
                     updateSearchFilterSort,
                     updateSearchFilterSearchValue,
+                    updateUserDarkMode,
+                    updateMediaDarkMode,
                 };
             }),
         ),

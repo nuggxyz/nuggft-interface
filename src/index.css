@@ -4,7 +4,7 @@ body {
     height: 100%;
     width: 100%;
     transform: translate3D(0, 0, 0);
-    border-radius: 0.85rem;
+    /* border-radius: 0.85rem; */
     overflow: hidden;
     background: white;
 }
@@ -48,6 +48,18 @@ html {
     overflow: hidden;
 }
 
+#background-radial-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    width: 200vw;
+    height: 200vh;
+    transform: translate(-50vw, -100vh);
+    z-index: -1;
+}
+
 #root {
     background: radial-gradient(
         50% 50% at 50% 50%,
@@ -57,7 +69,7 @@ html {
 
     height: 100%;
     width: 100%;
-    border-radius: 0.85rem;
+    /* border-radius: 0.85rem; */
     overflow: hidden;
 }
 

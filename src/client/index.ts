@@ -9,6 +9,7 @@ import updater from './updater';
 import { useDotnugg, useDotnuggCacheOnly, useDotnuggSubscription } from './hooks/useDotnugg';
 import router, { TokenId } from './router';
 import { ListData, SearchView } from './interfaces';
+import { useDarkMode } from './hooks/useDarkMode';
 
 export default {
     ...core,
@@ -44,7 +45,6 @@ export default {
             shares: () => core((state) => state.stake?.shares),
             staked: () => core((state) => state.stake?.staked),
         },
-        darkmode: () => core((state) => state.darkmode),
         locale: () => core((state) => state.locale),
         route: () => core((state) => state.route),
         isViewOpen: () => core((state) => state.isViewOpen),
@@ -58,6 +58,7 @@ export default {
             sort: () => core((state) => state.searchFilter?.sort),
             searchValue: () => core((state) => state.searchFilter?.searchValue),
         },
+        darkmode: () => core((state) => state.darkmode, shallow),
 
         /// ///// complex ////////
         offers: (tokenId: TokenId | undefined) =>
@@ -143,11 +144,14 @@ export default {
         updateSearchFilterViewing: () => core((state) => state.updateSearchFilterViewing),
         updateSearchFilterSort: () => core((state) => state.updateSearchFilterSort),
         updateSearchFilterSearchValue: () => core((state) => state.updateSearchFilterSearchValue),
+        updateUserDarkMode: () => core((state) => state.updateUserDarkMode),
+        updateMediaDarkMode: () => core((state) => state.updateMediaDarkMode),
     },
     hook: {
         useDotnugg,
         useDotnuggCacheOnly,
         useDotnuggSubscription,
+        useDarkMode,
     },
     static: {
         graph: () => coreNonImmer.getState().graph,

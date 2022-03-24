@@ -202,10 +202,12 @@ export interface Actions {
     start: (chainId: Chain, rpc: WebSocketProvider, graph: ApolloClient<any>) => Promise<void>;
     updateToken: (tokenId: TokenId, data: LiveTokenWithLifecycle) => void;
     updateLocale: (locale: SupportedLocale | undefined) => void;
-    updateSearchFilterTarget: (locale: SearchFilter['target']) => void;
-    updateSearchFilterSort: (locale: SearchFilter['sort']) => void;
-    updateSearchFilterSearchValue: (locale: SearchFilter['searchValue']) => void;
-    updateSearchFilterViewing: (locale: SearchFilter['viewing']) => void;
+    updateSearchFilterTarget: (value: SearchFilter['target']) => void;
+    updateSearchFilterSort: (value: SearchFilter['sort']) => void;
+    updateSearchFilterSearchValue: (value: SearchFilter['searchValue']) => void;
+    updateSearchFilterViewing: (value: SearchFilter['viewing']) => void;
+    updateUserDarkMode: (value: Theme | undefined) => void;
+    updateMediaDarkMode: (value: Theme | undefined) => void;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;

@@ -26,6 +26,8 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
         ...style,
     });
 
+    const darkmode = client.hook.useDarkMode();
+
     return (
         <animated.div style={springStyle}>
             <Text
@@ -41,7 +43,12 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
             >
                 {t`FLOOR`}
             </Text>
-            <CurrencyText size="small" image="eth" value={stake__eps?.decimal.toNumber() || 0} />
+            <CurrencyText
+                textStyle={{ color: darkmode ? Colors.primaryColor : Colors.primaryColor }}
+                size="small"
+                image="eth"
+                value={stake__eps?.decimal.toNumber() || 0}
+            />
         </animated.div>
     );
 };
