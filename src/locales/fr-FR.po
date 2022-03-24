@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: French\n"
-"PO-Revision-Date: 2022-03-24 11:49\n"
+"PO-Revision-Date: 2022-03-24 13:07\n"
 
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "Balance"
@@ -168,15 +168,15 @@ msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimTab.tsx
 msgid "No Nuggs or ETH to claim..."
-msgstr ""
+msgstr "Aucun Nuggs ou ETH à réclamer..."
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "No more nuggs"
-msgstr ""
+msgstr "Pas plus de Nuggs"
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Nugg {nextNugg}"
-msgstr ""
+msgstr "Nugg {nextNugg}"
 
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 msgid "Nugg {stableId}"
@@ -184,7 +184,7 @@ msgstr ""
 
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "Nuggs"
-msgstr ""
+msgstr "Nuggs"
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "Offer on"
