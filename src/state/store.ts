@@ -4,18 +4,15 @@ import { useDispatch } from 'react-redux';
 import WalletState from './wallet';
 import AppState from './app';
 import TransactionState from './transaction';
-import NuggDexState from './nuggdex';
 
 export const states = {
     app: AppState,
     transaction: TransactionState,
     wallet: WalletState,
-    nuggdex: NuggDexState,
 };
 
 export const rootReducer = combineReducers({
     app: AppState.reducer,
-    nuggdex: NuggDexState.reducer,
     transaction: TransactionState.reducer,
     wallet: WalletState.reducer,
 });

@@ -9,12 +9,16 @@ import React, {
 } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 
-import NuggDexState from '@src/state/nuggdex';
 import constants from '@src/lib/constants';
-import allNuggsQuery from '@src/state/nuggdex/queries/allNuggsQuery';
 import web3 from '@src/web3';
 import client from '@src/client';
 import { ListData, SearchView } from '@src/client/interfaces';
+import {
+    GetAllNuggsQueryResult,
+    OrderDirection,
+    GetAllNuggsDocument,
+} from '@src/gql/types.generated';
+import { executeQuery3c } from '@src/graphql/helpers';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -24,7 +28,9 @@ type Props = Record<string, never>;
 
 const NuggDexSearchList: FunctionComponent<Props> = () => {
     const epoch__id = client.live.epoch.id();
-    const filters = NuggDexState.select.searchFilters();
+    const target = client.live.searchFilter.target();
+    const sort = client.live.searchFilter.sort();
+    const searchValue = client.live.searchFilter.searchValue();
     const [sortAsc, setSortAsc] = useState<{ [key in SearchView]: boolean }>({
         Recents: false,
         AllNuggs: false,
@@ -46,7 +52,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             _liveActiveNuggs.reduce((acc: ListData[], nugg) => {
                 let tmp = acc;
                 if (epoch__id && +nugg.id <= +epoch__id) {
-                    if (filters.searchValue === '' || filters.searchValue === nugg.id) {
+                    if (searchValue === '' || searchValue === nugg.id) {
                         if (sortAsc[SearchView.OnSale]) {
                             tmp = [...acc, nugg];
                         } else {
@@ -56,7 +62,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 }
                 return tmp;
             }, []),
-        [epoch__id, _liveActiveNuggs, filters, sortAsc],
+        [epoch__id, _liveActiveNuggs, searchValue, sortAsc],
     );
     const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
     const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
@@ -65,7 +71,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         () =>
             rawLiveActiveItems.reduce((acc: ListData[], item) => {
                 let tmp = acc;
-                if (filters.searchValue && filters.searchValue === item.id) {
+                if (searchValue && searchValue === item.id) {
                     if (sortAsc[SearchView.AllItems]) {
                         tmp = [...acc, item];
                     } else {
@@ -74,7 +80,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 }
                 return tmp;
             }, []),
-        [filters, sortAsc, rawLiveActiveItems],
+        [searchValue, sortAsc, rawLiveActiveItems],
     );
     useEffect(() => {
         if (viewing) {
@@ -86,17 +92,15 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     }, [viewing, setSortAsc]);
 
     useEffect(() => {
-        if (filters?.target) {
-            setSortAsc((sort) => {
+        if (target) {
+            setSortAsc((_sort) => {
                 return {
-                    ...sort,
-                    ...(filters.target && filters.sort
-                        ? { [filters.target]: filters.sort.asc }
-                        : {}),
+                    ..._sort,
+                    ...(target && sort ? { [target]: sort === 'asc' } : {}),
                 };
             });
         }
-    }, [filters]);
+    }, [sort, target]);
     const [allNuggs, setAllNuggs] = useState<ListData[]>([]);
     const [allNuggsPreview, setAllNuggsPreview] = useState<ListData[]>([]);
     const recents = client.live.myRecents();
@@ -112,33 +116,48 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         transform: viewing !== SearchView.Home ? 'scale(0.9)' : 'scale(1)',
         delay: constants.ANIMATION_DELAY,
     });
-
+    const graph = client.live.graph();
     const handleGetAll = useCallback(
         async (
             setResults: React.Dispatch<React.SetStateAction<ListData[]>>,
             startFrom: number,
             // eslint-disable-next-line  @typescript-eslint/default-param-last
             addToResult = false,
-            sort?: 'asc' | 'desc',
-            searchValue?: string,
+            _sort?: 'asc' | 'desc',
+            _searchValue?: string,
             setLoading?: React.Dispatch<SetStateAction<boolean>>,
             desiredSize?: number,
         ) => {
-            if (chainId) {
+            if (chainId && graph) {
                 if (setLoading) setLoading(true);
-                const _allNuggs = await allNuggsQuery(
-                    chainId,
-                    // filters.sort && filters.sort.by ? filters.sort.by : 'eth',
-                    sort ?? 'asc',
-                    searchValue ?? '',
-                    desiredSize || 25, // @danny7even when this is "10" it doesnt work
-                    startFrom,
+
+                const result = await executeQuery3c<GetAllNuggsQueryResult>(
+                    graph,
+                    GetAllNuggsDocument,
+                    {
+                        orderDirection:
+                            !_sort || _sort === 'asc' ? OrderDirection.Asc : OrderDirection.Desc,
+                        where: {
+                            ...(_searchValue && _searchValue !== '' ? { id: _searchValue } : {}),
+                        },
+                        first: desiredSize || 25,
+                        skip: startFrom,
+                        orderBy: 'idnum',
+                    },
                 );
-                setResults((res) => (addToResult ? [...res, ..._allNuggs] : _allNuggs));
-                if (setLoading) setLoading(false);
+
+                console.log(result);
+                if (result && setLoading) setLoading(false);
+                if (result) {
+                    setResults((res) => {
+                        if (addToResult) res = [...res, ...result.nuggs];
+                        else res = result.nuggs;
+                        return res;
+                    });
+                }
             }
         },
-        [chainId],
+        [chainId, graph],
     );
 
     return (
@@ -208,13 +227,19 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         style={styles.nuggListEnter}
                         values={allNuggs}
                         type={SearchView.AllNuggs}
-                        onScrollEnd={({ setLoading, searchValue, sort, addToList, desiredSize }) =>
+                        onScrollEnd={({
+                            setLoading,
+                            searchValue: _searchValue,
+                            sort: _sort,
+                            addToList,
+                            desiredSize,
+                        }) =>
                             handleGetAll(
                                 setAllNuggs,
                                 addToList ? allNuggs.length : 0,
                                 addToList,
-                                sort,
-                                searchValue,
+                                _sort,
+                                _searchValue,
                                 setLoading,
                                 desiredSize,
                             )

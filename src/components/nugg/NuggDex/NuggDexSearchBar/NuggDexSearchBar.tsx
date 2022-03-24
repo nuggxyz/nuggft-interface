@@ -6,65 +6,60 @@ import { t } from '@lingui/macro';
 import useDebounce from '@src/hooks/useDebounce';
 import usePrevious from '@src/hooks/usePrevious';
 import Colors from '@src/lib/colors';
-import NuggDexState from '@src/state/nuggdex';
 import Button from '@src/components/general/Buttons/Button/Button';
 import TextInput from '@src/components/general/TextInputs/TextInput/TextInput';
 import client from '@src/client';
+import { SearchView } from '@src/client/interfaces';
 
 import styles from './NuggDexSearchBar.styles';
 
 type Props = Record<string, never>;
 
 const NuggDexSearchBar: FunctionComponent<Props> = () => {
-    const viewing = NuggDexState.select.viewing();
+    const viewing = client.live.searchFilter.viewing();
 
     const isViewOpen = client.live.isViewOpen();
-    const filters = NuggDexState.select.searchFilters();
+    const sort = client.live.searchFilter.sort();
+    const searchValue = client.live.searchFilter.searchValue();
 
-    const prevFilters = usePrevious(filters);
-
-    const [searchValue, setSearchValue] = useState('');
+    const prevSearchValue = usePrevious(searchValue);
+    const [localSearchValue, setSearchValue] = useState('');
     const [isUserInput, setIsUserInput] = useState(false);
+    const updateSearchFilterSearchValue = client.mutate.updateSearchFilterSearchValue();
+    const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
+    const updateSearchFilterViewing = client.mutate.updateSearchFilterViewing();
 
-    const debouncedValue = useDebounce(searchValue, 100);
-    const [sortAsc, setSortAsc] = useState(filters && filters.sort && filters.sort.asc);
+    const debouncedValue = useDebounce(localSearchValue, 100);
+    const [sortAsc, setSortAsc] = useState(sort && sort.direction === 'asc');
     const toggleView = client.mutate.toggleView();
 
     useEffect(() => {
         if (isViewOpen) {
-            NuggDexState.dispatch.setSearchFilters({
-                searchValue: debouncedValue,
-            });
+            updateSearchFilterSearchValue(debouncedValue);
         } else {
             setSearchValue('');
         }
-    }, [debouncedValue, isViewOpen]);
+    }, [debouncedValue, isViewOpen, updateSearchFilterSearchValue]);
 
     useEffect(() => {
-        if (filters && filters.sort) {
-            if (sortAsc && filters.sort.asc !== sortAsc && isUserInput) {
+        if (sort) {
+            if (sortAsc && (sort.direction === 'asc') !== sortAsc && isUserInput) {
                 setIsUserInput(false);
-                NuggDexState.dispatch.setSearchFilters({
-                    sort: {
-                        by: 'id',
-                        asc: sortAsc,
-                    },
+                updateSearchFilterSort({
+                    by: 'id',
+                    direction: 'asc',
                 });
             } else {
-                setSortAsc(filters.sort.asc);
+                setSortAsc(sort.direction === 'asc');
             }
         }
-    }, [sortAsc, filters, isUserInput]);
+    }, [sortAsc, sort, isUserInput, updateSearchFilterSort]);
 
     useEffect(() => {
-        if (
-            filters.searchValue === '' &&
-            prevFilters &&
-            prevFilters.searchValue !== filters.searchValue
-        ) {
+        if (localSearchValue === '' && prevSearchValue && prevSearchValue !== localSearchValue) {
             setSearchValue('');
         }
-    }, [filters]);
+    }, [localSearchValue, prevSearchValue]);
 
     const styleInput = useSpring({
         width: isViewOpen ? '100%' : '0%',
@@ -77,9 +72,11 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
 
     return (
         <TextInput
-            onFocus={() => viewing === 'home' && NuggDexState.dispatch.setViewing('all nuggs')}
-            placeholder={t`Search ${viewing === 'home' ? 'all nuggs' : viewing}`}
-            value={searchValue}
+            onFocus={() =>
+                viewing === SearchView.Home && updateSearchFilterViewing(SearchView.AllNuggs)
+            }
+            placeholder={t`Search ${viewing === SearchView.Home ? SearchView.AllNuggs : viewing}`}
+            value={localSearchValue || ''}
             setValue={setSearchValue}
             className="placeholder-blue"
             style={style}
@@ -94,7 +91,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
             rightToggles={
                 isViewOpen
                     ? [
-                          ...(searchValue
+                          ...(localSearchValue
                               ? [
                                     <Button
                                         buttonStyle={styles.searchBarButton}
@@ -103,7 +100,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                                     />,
                                 ]
                               : []),
-                          ...(viewing !== 'home'
+                          ...(viewing !== SearchView.Home
                               ? [
                                     <Button
                                         buttonStyle={styles.filterButton}

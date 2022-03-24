@@ -158,8 +158,6 @@ export interface ClientState extends State, Actions {
 }
 
 export type ClientStateUpdate = {
-    rpc?: WebSocketProvider;
-    graph?: ApolloClient<unknown>;
     manualPriority?: Connector;
     // route?: string;
     stake?: {

@@ -113,14 +113,14 @@ function createClientStoreAndActions3() {
                 graph: undefined,
             } as {
                 rpc: WebSocketProvider | undefined;
-                graph: ApolloClient<{ state: string }> | undefined;
+                graph: ApolloClient<any> | undefined;
             },
 
             (set) => {
                 return {
                     updateClients: (stateUpdate: {
                         rpc: WebSocketProvider | undefined;
-                        graph: ApolloClient<{ state: string }> | undefined;
+                        graph: ApolloClient<any> | undefined;
                     }) => {
                         set((draft) => {
                             // determine the next chainId and accounts
@@ -192,6 +192,7 @@ function createClientStoreAndActions2() {
                         if (stateUpdate.stake) draft.stake = stateUpdate.stake;
                         if (stateUpdate.editingNugg) draft.editingNugg = stateUpdate.editingNugg;
                         // @ts-ignore
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         if (stateUpdate.graph) draft.graph = stateUpdate.graph;
                         if (stateUpdate.activeSwaps) draft.activeSwaps = stateUpdate.activeSwaps;
                         if (stateUpdate.activeItems) draft.activeItems = stateUpdate.activeItems;

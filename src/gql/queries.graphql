@@ -1,4 +1,4 @@
-query AllNuggs(
+query getAllNuggs(
     $first: Int
     $skip: Int
     $orderDirection: OrderDirection
@@ -6,6 +6,24 @@ query AllNuggs(
     $where: Nugg_filter
 ) {
     nuggs(
+        where: $where
+        orderBy: $orderBy
+        orderDirection: $orderDirection
+        first: $first
+        skip: $skip
+    ) {
+        id
+    }
+}
+
+query getAllItems(
+    $first: Int
+    $skip: Int
+    $orderDirection: OrderDirection
+    $orderBy: Item_orderBy
+    $where: Item_filter
+) {
+    items(
         where: $where
         orderBy: $orderBy
         orderDirection: $orderDirection

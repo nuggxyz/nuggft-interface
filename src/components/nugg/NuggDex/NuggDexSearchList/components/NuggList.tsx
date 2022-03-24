@@ -13,14 +13,14 @@ import { ChevronLeft } from 'react-feather';
 import { batch } from 'react-redux';
 import { t } from '@lingui/macro';
 
-import { isUndefinedOrNullOrNotFunction } from '@src/lib';
 import TransitionText from '@src/components/general/Texts/TransitionText/TransitionText';
 import AppState from '@src/state/app';
-import usePrevious from '@src/hooks/usePrevious';
 import InfiniteList from '@src/components/general/List/InfiniteList';
 import client from '@src/client';
 import { ListData, SearchView } from '@src/client/interfaces';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
+import { isUndefinedOrNullOrNotFunction } from '@src/lib';
+import usePrevious from '@src/hooks/usePrevious';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -83,7 +83,7 @@ const NuggList: FunctionComponent<Props> = ({
                     desiredSize,
                 });
         },
-        [searchValue, sort, onScrollEnd],
+        [searchValue, sort],
     );
 
     useEffect(() => {
@@ -96,26 +96,18 @@ const NuggList: FunctionComponent<Props> = ({
                     (sort && sort.direction === 'asc') &&
                     prevTarget === target))
         ) {
-            if (onScrollEnd)
-                void onScrollEnd({
-                    setLoading,
-                    sort: sort?.direction === 'asc' ? 'asc' : 'desc',
-                    searchValue,
-                    addToList: false,
-                    desiredSize: values.length,
-                });
+            // @danny7even i think i screwed up the logic above... have to have this commented out or the
+            // whole app crashes when you try to scroll on all nuggs
+            // if (onScrollEnd)
+            //     void onScrollEnd({
+            //         setLoading,
+            //         sort: sort?.direction === 'asc' ? 'asc' : 'desc',
+            //         searchValue,
+            //         addToList: false,
+            //         desiredSize: values.length,
+            //     });
         }
-    }, [
-        target,
-        prevTarget,
-        onScrollEnd,
-        type,
-        sort,
-        searchValue,
-        prevSort,
-        prevSearchValue,
-        values,
-    ]);
+    }, [target, prevTarget, type, sort, searchValue, prevSort, prevSearchValue, values]);
 
     useEffect(() => {
         if (onScrollEnd)
