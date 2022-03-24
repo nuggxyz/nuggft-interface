@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import { t } from '@lingui/macro';
 
 import NumberStatistic from '@src/components/nugg/Statistics/NumberStatistic';
 import TextStatistic from '@src/components/nugg/Statistics/TextStatistic';
@@ -37,7 +38,7 @@ const HomeTab: FunctionComponent<Props> = () => {
                                 ...styles.mainStatistic,
                                 width: screenType === 'phone' ? '48%' : '100%',
                             }}
-                            label="Balance"
+                            label={t`Balance`}
                             value={stake__eps.multiply(nuggs.length).decimal.toNumber()}
                             image="eth"
                         />
@@ -50,17 +51,17 @@ const HomeTab: FunctionComponent<Props> = () => {
                 </div>
                 <div style={globalStyles.centeredSpaceBetween}>
                     <TextStatistic
-                        label="Nuggs"
+                        label={t`Nuggs`}
                         value={`${nuggs.length || 0}`}
                         style={styles.statistic}
                     />
                     <TextStatistic
-                        label="Claims"
+                        label={t`Claims`}
                         value={`${unclaimedOffers.length}`}
                         style={styles.statistic}
                     />
                     <TextStatistic
-                        label="Loans"
+                        label={t`Loans`}
                         value={`${loans?.length || 0}`}
                         style={styles.statistic}
                     />
@@ -73,10 +74,10 @@ const HomeTab: FunctionComponent<Props> = () => {
                 data={nuggs}
                 extraData={undefined}
                 RenderItem={MyNuggRenderItem}
-                label="My Nuggs"
+                label={t`My Nuggs`}
                 style={styles.list}
                 listEmptyStyle={styles.textWhite}
-                listEmptyText="You don't have any Nuggs yet!"
+                listEmptyText={t`You don't have any Nuggs yet!`}
                 loaderColor="white"
                 itemHeight={108}
                 action={() => undefined}

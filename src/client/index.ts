@@ -44,7 +44,8 @@ export default {
             shares: () => core((state) => state.stake?.shares),
             staked: () => core((state) => state.stake?.staked),
         },
-
+        darkmode: () => core((state) => state.darkmode),
+        locale: () => core((state) => state.locale),
         route: () => core((state) => state.route),
         isViewOpen: () => core((state) => state.isViewOpen),
         editingNugg: () => core((state) => state.editingNugg),
@@ -130,6 +131,7 @@ export default {
         toggleEditingNugg: () => core((state) => state.toggleEditingNugg),
         updateClients: () => coreNonImmer((state) => state.updateClients),
         updateToken: () => core((state) => state.updateToken),
+        updateLocale: () => core((state) => state.updateLocale),
 
         start: () => core((state) => state.start),
     },

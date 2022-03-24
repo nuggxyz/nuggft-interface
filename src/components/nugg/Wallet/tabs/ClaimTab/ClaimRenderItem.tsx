@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
+import { t } from '@lingui/macro';
 
 import { DefaultExtraData, UnclaimedOffer } from '@src/client/interfaces';
 import globalStyles from '@src/lib/globalStyles';
@@ -18,8 +19,8 @@ const ClaimRenderItem: FunctionComponent<
     const swapText = useMemo(
         () =>
             item.type === 'item'
-                ? `For Nugg ${item.nugg}`
-                : `From epoch ${item.endingEpoch !== null ? item.endingEpoch : ''}`,
+                ? t`For Nugg ${item.nugg}`
+                : t`From epoch ${item.endingEpoch !== null ? item.endingEpoch : ''}`,
         [item],
     );
 
@@ -45,12 +46,12 @@ const ClaimRenderItem: FunctionComponent<
                 </div>
             </div>
             <FeedbackButton
-                feedbackText="Check Wallet..."
+                feedbackText={t`Check Wallet...`}
                 textStyle={styles.textWhite}
                 type="text"
                 size="small"
                 buttonStyle={styles.renderItemButton}
-                label="Claim"
+                label={t`Claim`}
                 onClick={() => {
                     state.wallet.dispatch.claim({
                         ...item.claimParams,

@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
+import { t } from '@lingui/macro';
 
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import web3 from '@src/web3';
@@ -29,7 +30,7 @@ const MultiLoanButton: FunctionComponent<Props> = () => {
             feedbackText="Check Wallet..."
             buttonStyle={styles.multiLoanButton}
             textStyle={styles.multiLoanButtonText}
-            label={`Loan all (${tokenIds.length})`}
+            label={t`Loan all (${tokenIds.length})`}
             onClick={() =>
                 address &&
                 chainId &&

@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import './prototypes';
 import store from './state/store';
 import './index.css';
+import I18N from './i18n';
 import Initializer from './state/Initializer';
 import Modal from './components/nugg/Modals/Modal/Modal';
 import IndexPage from './pages/Index';
@@ -17,9 +18,11 @@ ReactDOM.render(
         <React.StrictMode>
             <Provider store={store}>
                 <Initializer>
-                    <ToastContainer />
-                    <Modal />
-                    <IndexPage />
+                    <I18N>
+                        <ToastContainer />
+                        <Modal />
+                        <IndexPage />
+                    </I18N>
                 </Initializer>
             </Provider>
         </React.StrictMode>

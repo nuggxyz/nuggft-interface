@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { BigNumber } from 'ethers';
+import { t } from '@lingui/macro';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
@@ -32,8 +33,8 @@ const MyNuggRenderItem: FC<ListRenderItemProps<MyNuggsData, undefined, MyNuggsDa
     action,
 }) => {
     const disabled = React.useMemo(() => {
-        if (item.activeSwap) return 'currenlty for sale';
-        if (item.unclaimedOffers.length > 0) return 'previous claim pending for this item';
+        if (item.activeSwap) return t`currenlty for sale`;
+        if (item.unclaimedOffers.length > 0) return t`previous claim pending for this item`;
         return undefined;
     }, [item]);
     return (
@@ -209,8 +210,8 @@ const OfferModal = ({ tokenId }: Props) => {
             <Text textStyle={{ color: 'white' }}>
                 {`${
                     check && check.curr && check.curr.toString() !== '0'
-                        ? 'Change offer for'
-                        : 'Offer on'
+                        ? t`Change offer for`
+                        : t`Offer on`
                 } ${parseTokenId(stableId, true)}`}
             </Text>
             <AnimatedCard>
@@ -223,7 +224,7 @@ const OfferModal = ({ tokenId }: Props) => {
             {data?.token?.type === 'item' && data?.mustPickNuggToBuyFrom && (
                 <List
                     data={data?.token.tryout.swaps}
-                    label="Pick a nugg to buy this item from"
+                    label={t`Pick a nugg to buy this item from`}
                     labelStyle={{
                         color: 'white',
                     }}
@@ -246,7 +247,7 @@ const OfferModal = ({ tokenId }: Props) => {
             {stableType === 'OfferItem' && (
                 <List
                     data={myNuggs}
-                    label="Pick a nugg to offer on this item"
+                    label={t`Pick a nugg to offer on this item`}
                     labelStyle={{
                         color: 'white',
                     }}
@@ -270,7 +271,7 @@ const OfferModal = ({ tokenId }: Props) => {
                     style={styles.input}
                     styleHeading={styles.heading}
                     styleInputContainer={styles.inputCurrency}
-                    label="Enter amount"
+                    label={t`Enter amount`}
                     setValue={setAmount}
                     value={amount}
                     code
@@ -286,7 +287,7 @@ const OfferModal = ({ tokenId }: Props) => {
                                 }
                             }}
                             disabled={stableType === 'OfferItem' && !selectedNuggForItem}
-                            label="Min"
+                            label={t`Min`}
                             textStyle={{
                                 fontFamily: Layout.font.sf.bold,
                                 fontSize: FontSize.h6,
@@ -308,7 +309,7 @@ const OfferModal = ({ tokenId }: Props) => {
             >
                 {userBalance && (
                     <Text type="text" size="smaller" textStyle={styles.text} weight="bolder">
-                        You currently have
+                        {t`You currently have`}
                         <Text
                             type="code"
                             size="smaller"
@@ -331,15 +332,15 @@ const OfferModal = ({ tokenId }: Props) => {
                     <FeedbackButton
                         overrideFeedback
                         disabled={!check || !check.canOffer || Number(amount) === 0}
-                        feedbackText="Check Wallet..."
+                        feedbackText={t`Check Wallet...`}
                         buttonStyle={styles.button}
                         label={`${
                             // eslint-disable-next-line no-nested-ternary
                             check && check.curr && check.curr.toString() !== '0'
                                 ? !check.canOffer
-                                    ? 'You cannot place an offer'
-                                    : 'Update offer'
-                                : 'Place offer'
+                                    ? t`You cannot place an offer`
+                                    : t`Update offer`
+                                : t`Place offer`
                         }`}
                         // onClick={() => {
                         // if (check.curr && chainId && provider && address) {

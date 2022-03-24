@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import { t } from '@lingui/macro';
 
 import web3 from '@src/web3';
 import client from '@src/client';
@@ -28,7 +29,7 @@ const ClaimTab: FunctionComponent<Props> = () => {
                 loaderColor="white"
                 style={styles.list}
                 extraData={{ sender, chainId, provider }}
-                listEmptyText="No Nuggs or ETH to claim..."
+                listEmptyText={t`No Nuggs or ETH to claim...`}
                 // itemHeight={75.1875}
             />
         </div>

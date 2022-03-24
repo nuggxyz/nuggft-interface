@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useLayoutEffect, useState } from 'react';
 import QRCode from 'qrcode.react';
+import { t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import state from '@src/state';
@@ -28,7 +29,7 @@ const QrCodeModal: FunctionComponent<Props> = () => {
         <div style={styles.container}>
             <div style={styles.textContainer}>
                 <Text size="larger" textStyle={{ color: lib.colors.primaryColor }}>
-                    Sign in with {stableData?.data.info.name}
+                    {t`Sign in with ${stableData?.data.info.name}`}
                 </Text>
                 <NLStaticImage
                     image={`${stableData?.data.info.peer}_icon`}
