@@ -30,5 +30,7 @@
     },
     // "eslint.workingDirectories": ["./"],
     "eslint.useESLintClass": true,
-    "eslint.alwaysShowStatus": true
+    "eslint.alwaysShowStatus": true,
+    "explorer.sortOrder": "type",
+    "explorer.sortOrderLexicographicOptions": "upper"
 }

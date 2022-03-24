@@ -1,299 +1,291 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-03-23 17:34-0500\n"
+"POT-Creation-Date: 2022-03-24 06:02-0500\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: fr_FR\n"
-"Language-Team: French\n"
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Plural-Forms: \n"
+"Language: de-DE\n"
 
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "Balance"
-msgstr "Équilibre"
+msgstr ""
 
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 msgid "Burn"
-msgstr "Brûler"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab.tsx
 msgid ""
 "By connecting a wallet, you agree to nugg.xyz's Terms of Service and acknowledge\n"
 "that you have read and understood the nugg.xyz Protocol Disclaimer."
 msgstr ""
-"En connectant un portefeuille, vous acceptez les conditions d'utilisation de Nugg.xyz et reconnaissez\n"
-"que vous avez lu et compris la responsabilité du protocole Nugg.xyz."
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "Change offer for"
-msgstr "Offre de changement pour"
+msgstr ""
 
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
 msgid "Check Wallet"
-msgstr "Vérifiez le portefeuille"
+msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 #: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
 msgid "Check Wallet..."
-msgstr "Vérifiez le portefeuille..."
+msgstr ""
 
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Check wallet..."
-msgstr "Vérifiez le portefeuille..."
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
 msgid "Claim"
-msgstr "Prétendre"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ClaimTab/MultiClaimButton.tsx
 msgid "Claim All"
-msgstr "Réclamer tout"
+msgstr ""
 
 #: src/components/nugg/Wallet/Wallet.tsx
 #: src/components/nugg/Wallet/Wallet.tsx
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "Claims"
-msgstr "Réclamations"
+msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Close"
-msgstr "Fermer"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab.tsx
 msgid "Connect to nuggft!"
-msgstr "Connectez-vous à Nuggft!"
+msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Deep-frying your nugg..."
-msgstr "Frire de votre Nugg..."
+msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Deep-frying..."
-msgstr "Friture..."
+msgstr ""
 
 #: src/components/nugg/AccountViewer/AccountViewer.tsx
 msgid "Disconnect"
-msgstr "Déconnecter"
+msgstr ""
 
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "Enter amount"
-msgstr "Entrer le montant"
+msgstr ""
 
 #: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 msgid "Enter floor"
-msgstr "Entrer dans le sol"
+msgstr ""
 
 #: src/components/nugg/AccountViewer/AccountViewer.tsx
 msgid "Explore"
-msgstr "Explorer"
+msgstr ""
 
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
 #: src/components/nugg/Wallet/tabs/LoanTab/LoanRenderItem.tsx
 msgid "Extend"
-msgstr "Se déployer"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
 msgid "For Nugg {0}"
-msgstr "Pour nugg {0}"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
 msgid "From epoch {0}"
-msgstr "De l'époque {0}"
+msgstr ""
 
 #: src/components/nugg/Wallet/Wallet.tsx
 #: src/components/nugg/Wallet/Wallet.tsx
 #: src/components/nugg/Wallet/Wallet.tsx
 msgid "Home"
-msgstr "Maison"
+msgstr ""
 
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 msgid "Loan"
-msgstr "Prête"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/LoanTab/MultiLoanButton.tsx
 msgid "Loan all ({0})"
-msgstr "Prêt tout ({0})"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/HomeTab/MyNuggRenderItem.tsx
 msgid "Loaned"
-msgstr "Prêté"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/LoanTab/LoanTab.tsx
 msgid "Loaned Nuggs"
-msgstr "Prêté nuggs"
+msgstr ""
 
 #: src/components/nugg/Wallet/Wallet.tsx
 #: src/components/nugg/Wallet/Wallet.tsx
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "Loans"
-msgstr "Prêts"
+msgstr ""
 
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 #: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 msgid "Min"
-msgstr "Moi"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/HomeTab/MintNuggButton.tsx
 msgid "Mint a Nugg"
-msgstr "Comme Nugg"
+msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Mint this Nugg"
-msgstr "Menthe cette nugg"
+msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Mint yourself a nugg"
-msgstr "Mentez-vous un Nugg"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "My Nuggs"
-msgstr "Mes nuggs"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/HomeTab/MyNuggRenderItem.tsx
 msgid "New"
-msgstr "Nouvelle"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimTab.tsx
 msgid "No Nuggs or ETH to claim..."
-msgstr "Pas de nuggs ou d'ETH pour réclamer ..."
+msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "No more nuggs"
-msgstr "Pas plus pains"
+msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Nugg {nextNugg}"
-msgstr "Nugg {nextNugg}"
+msgstr ""
 
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 msgid "Nugg {stableId}"
-msgstr "Nugg {stableId}"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "Nuggs"
-msgstr "Nuggs"
+msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "Offer on"
-msgstr "Offrir sur"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/HomeTab/MyNuggRenderItem.tsx
 msgid "On sale"
-msgstr "En soldes"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/LoanTab/LoanRenderItem.tsx
 msgid "Pay off"
-msgstr "Payer"
+msgstr ""
 
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
 msgid "Payoff"
-msgstr "Payer"
+msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "Pick a nugg to buy this item from"
-msgstr "Choisissez une nugg pour acheter cet article de"
+msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "Pick a nugg to offer on this item"
-msgstr "Choisissez une nugg à offrir sur cet article"
+msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "Place offer"
-msgstr "Offre de place"
+msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Please wait while your nugg is being created"
-msgstr "Veuillez patienter pendant que votre nugg est créée"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/LoanTab/MultiRebalanceButton.tsx
 msgid "Rebalance all ({0})"
-msgstr "Rebalance tout ({0})"
+msgstr ""
 
 #: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 msgid "Sell"
-msgstr "Vendre"
+msgstr ""
 
 #: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 msgid "Sell Item"
-msgstr "Vendre l'article"
+msgstr ""
 
 #: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 msgid "Sell Item:"
-msgstr "Vendre l'article:"
+msgstr ""
 
 #: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 msgid "Sell Nugg"
-msgstr "Vendre nugg"
+msgstr ""
 
 #: src/components/nugg/Modals/QrCodeModal/QrCodeModal.tsx
 msgid "Sign in with {0}"
-msgstr "Connectez-vous avec {0}"
+msgstr ""
 
 #: src/components/nugg/Wallet/Wallet.tsx
 msgid "Swap"
-msgstr "Échanger"
+msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "There are no more nuggs to mint. If you want a nugg, you must offer on a sale."
-msgstr "Il n'y a plus de nuggs à la menthe. Si vous voulez une Nugg, vous devez offrir une vente."
+msgstr ""
 
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 msgid "This cannot be undone"
-msgstr "Ça ne peut pas être annulé"
+msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "Update offer"
-msgstr "Offre de mise à jour"
+msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "You are now the proud owner Nugg {nextNugg}!"
-msgstr "Vous êtes maintenant le fier propriétaire nugg {nextNugg}!"
+msgstr ""
 
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "You can be the proud owner of Nugg {nextNugg} for {0} ETH"
-msgstr "Vous pouvez être le fier propriétaire de nugg {nextNugg} pour {0} ETH"
+msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "You cannot place an offer"
-msgstr "Vous ne pouvez pas placer une offre"
+msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "You currently have"
-msgstr "Tu as présentement"
+msgstr ""
 
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
 msgid "You currently have {0} ETH"
-msgstr "Vous avez actuellement {0} ETH"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "You don't have any Nuggs yet!"
-msgstr "Vous n'avez pas encore de nuggs!"
+msgstr ""
 
 #: src/components/nugg/Wallet/tabs/LoanTab/LoanTab.tsx
 msgid "You haven't loaned any nuggs yet!"
-msgstr "Vous n'avez pas encore prêté nuggs!"
+msgstr ""
 
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 msgid "You will receive {0} ETH"
-msgstr "Vous recevrez {0} eth"
+msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "currenlty for sale"
-msgstr "actuellement à vendre"
+msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "previous claim pending for this item"
-msgstr "réclamation précédente en attente de cet article"
+msgstr ""

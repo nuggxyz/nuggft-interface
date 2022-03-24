@@ -40,7 +40,7 @@ msgstr ""
 #: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
 msgid "Check Wallet..."
-msgstr "Cheque billetera..."
+msgstr ""
 
 #: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 #: src/components/nugg/Modals/MintModal/MintModal.tsx

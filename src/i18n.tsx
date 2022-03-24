@@ -42,8 +42,6 @@ const Provider = ({
     onActivate,
     children,
 }: ProviderProps) => {
-    console.log('herhereher', locale);
-
     useEffect(() => {
         dynamicActivate(locale)
             .then(() => onActivate?.(locale))
