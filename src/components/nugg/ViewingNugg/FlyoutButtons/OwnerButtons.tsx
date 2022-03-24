@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { IoCashOutline, IoPencil, IoPricetagsOutline, IoTrashBinOutline } from 'react-icons/io5';
+import { t } from '@lingui/macro';
 
 import Colors from '@src/lib/colors';
 import state from '@src/state';
@@ -19,7 +20,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 size="medium"
                 type="text"
                 buttonStyle={styles.button}
-                label="Sell"
+                label={t`Sell`}
                 leftIcon={
                     <IoPricetagsOutline
                         color={Colors.nuggBlueText}
@@ -42,7 +43,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 size="medium"
                 type="text"
                 buttonStyle={styles.button}
-                label="Loan"
+                label={t`Loan`}
                 leftIcon={
                     <IoCashOutline
                         color={Colors.nuggBlueText}
@@ -68,7 +69,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 size="medium"
                 type="text"
                 buttonStyle={styles.button}
-                label="Burn"
+                label={t`Burn`}
                 leftIcon={
                     <IoTrashBinOutline
                         color={Colors.nuggRedText}
@@ -94,7 +95,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 size="medium"
                 type="text"
                 buttonStyle={styles.button}
-                label="Edit"
+                label={t`Edit`}
                 leftIcon={
                     <IoPencil
                         color={Colors.nuggBlueText}

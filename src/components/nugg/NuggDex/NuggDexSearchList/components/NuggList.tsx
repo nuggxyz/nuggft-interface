@@ -11,6 +11,7 @@ import { Promise } from 'bluebird';
 import { animated, UseSpringProps } from '@react-spring/web';
 import { ChevronLeft } from 'react-feather';
 import { batch } from 'react-redux';
+import { t } from '@lingui/macro';
 
 import { isUndefinedOrNullOrNotFunction, ucFirst } from '@src/lib';
 import TransitionText from '@src/components/general/Texts/TransitionText/TransitionText';
@@ -122,7 +123,7 @@ const NuggList: FunctionComponent<Props> = ({
                         }
                         style={styles.nuggListTitle}
                         text={ucFirst(viewing)}
-                        transitionText="Go back"
+                        transitionText={t`Go back`}
                         onClick={() => {
                             NuggDexState.dispatch.setSearchFilters({
                                 target: undefined,

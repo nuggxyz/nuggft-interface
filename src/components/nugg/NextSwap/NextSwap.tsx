@@ -2,6 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { HiOutlineRefresh } from 'react-icons/hi';
 import { animated, config, useSpring } from '@react-spring/web';
 import { ChevronUp } from 'react-feather';
+import { t } from '@lingui/macro';
 
 import client from '@src/client';
 import lib from '@src/lib';
@@ -217,7 +218,7 @@ const NextSwap: FunctionComponent<Props> = () => {
                                 fontSize: FontSize.h6,
                                 fontFamily: lib.layout.font.sf.regular,
                             }}
-                            label="auto"
+                            label={t`auto`}
                             onClick={() => setAuto(!auto)}
                         />
                     </div>
@@ -283,7 +284,7 @@ const SwapRenderItem = ({
                     fontSize: FontSize.h6,
                     fontFamily: lib.layout.font.sf.regular,
                 }}
-                label="queue"
+                label={t`queue`}
                 onClick={() => setQueue(swap)}
                 // onClick={() => WalletState.dispatch.mintNugg({ chainId, provider, address })}
             />

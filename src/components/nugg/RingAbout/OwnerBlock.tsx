@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
+import { plural, t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
@@ -44,8 +45,8 @@ const OwnerBlock: FunctionComponent<Props> = () => {
     const title = useMemo(() => {
         if (token && token.lifecycle === Lifecycle.Stands) {
             return token.type === 'item'
-                ? 'this item is owned by ___ nuggs and is not currently for sale'
-                : 'This nugg is happily owned by';
+                ? t`this item is owned by ${99999} nuggs and is not currently for sale`
+                : t`This nugg is happily owned by`;
         }
         let text = 'On sale by';
         if (
@@ -55,7 +56,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
             token.tryout.min &&
             token.tryout.max
         ) {
-            text += ` ${token.tryout.count} Nugg${token.tryout.count > 1 ? 's' : ''}`;
+            text += plural(token.tryout.count, { one: 'nugg', other: 'nuggs' });
         }
         return text;
     }, [token]);
@@ -79,7 +80,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                         />
                         {!token.tryout.min.eth.eq(token.tryout.max.eth) && (
                             <Text textStyle={{ marginLeft: '.5rem' }} size="small">
-                                Min
+                                {t`Min`}
                             </Text>
                         )}
                     </div>
@@ -91,7 +92,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                                 value={token.tryout.max.eth.decimal.toNumber()}
                             />
                             <Text textStyle={{ marginLeft: '.5rem' }} size="small">
-                                Max
+                                {t`Max`}
                             </Text>
                         </div>
                     )}

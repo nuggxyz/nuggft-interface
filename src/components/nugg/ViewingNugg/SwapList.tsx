@@ -1,6 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers';
 import React, { FunctionComponent, useMemo } from 'react';
 import { HiArrowRight } from 'react-icons/hi';
+import { t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import Colors from '@src/lib/colors';
@@ -35,10 +36,10 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
         <Text textStyle={{ color: lib.colors.primaryColor }}>
             {/* eslint-disable-next-line no-nested-ternary */}
             {!item.epoch
-                ? 'Awaiting bid!'
+                ? t`Awaiting bid!`
                 : item.epoch.id < epoch
-                ? 'Swap is over'
-                : `Swap ending in ${item.epoch.endblock - blocknum} blocks`}
+                ? t`Swap is over`
+                : t`Swap ending in ${item.epoch.endblock - blocknum} blocks`}
         </Text>
     ) : null;
 };
@@ -101,7 +102,7 @@ const SwapItem: FunctionComponent<
                                 color: Colors.textColor,
                             }}
                         >
-                            Sold by
+                            {t`Sold by`}
                         </Text>
                         <Text
                             textStyle={{
@@ -137,7 +138,7 @@ const SwapItem: FunctionComponent<
                                         color: Colors.textColor,
                                     }}
                                 >
-                                    {item.endingEpoch >= epoch ? 'Leader' : 'Buyer'}
+                                    {item.endingEpoch >= epoch ? t`Leader` : t`Buyer`}
                                 </Text>
                                 <Text
                                     textStyle={{
@@ -151,7 +152,7 @@ const SwapItem: FunctionComponent<
                     }
                     {(!item.endingEpoch || epoch <= item.endingEpoch) && (
                         <Button
-                            label="goto swap 🤠"
+                            label={t`goto swap`}
                             onClick={() => routeTo(extraData.tokenId, false)}
                         />
                     )}

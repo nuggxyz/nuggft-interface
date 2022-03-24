@@ -1,6 +1,7 @@
 import React, { CSSProperties, FunctionComponent } from 'react';
 import { animated } from '@react-spring/web';
 import { Maximize2 } from 'react-feather';
+import { t } from '@lingui/macro';
 
 import useOnHover from '@src/hooks/useOnHover';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -34,7 +35,7 @@ const NuggThumbnail: FunctionComponent<Props> = ({ onClick, style }) => {
                 }}
             />
             <Text size="smaller" textStyle={styles.label}>
-                MORE
+                {t`MORE`}
             </Text>
         </animated.div>
     );

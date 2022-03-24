@@ -1,6 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers';
 import React from 'react';
 import { HiArrowRight } from 'react-icons/hi';
+import { t } from '@lingui/macro';
 
 import { Address } from '@src/classes/Address';
 import { NuggId } from '@src/client/router';
@@ -22,10 +23,10 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
         <Text textStyle={{ color: lib.colors.primaryColor }}>
             {/* eslint-disable-next-line no-nested-ternary */}
             {!item.epoch
-                ? 'Awaiting bid!'
+                ? t`Awaiting bid!`
                 : item.epoch.id < epoch
-                ? 'Swap is over'
-                : `Swap ending in ${item.epoch.endblock - blocknum} blocks`}
+                ? t`Swap is overt`
+                : t`Swap ending in ${item.epoch.endblock - blocknum} blocks`}
         </Text>
     ) : null;
 };
@@ -124,7 +125,7 @@ export default ({
                                         color: Colors.textColor,
                                     }}
                                 >
-                                    {token.activeSwap.endingEpoch >= epoch ? 'Leader' : 'Buyer'}
+                                    {token.activeSwap.endingEpoch >= epoch ? t`Leader` : t`Buyer`}
                                 </Text>
                                 <Text
                                     textStyle={{

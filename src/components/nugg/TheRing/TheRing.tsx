@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
+import { t } from '@lingui/macro';
 
 import lib, { parseTokenIdSmart } from '@src/lib';
 import constants from '@src/lib/constants';
@@ -11,6 +12,7 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
 import Label from '@src/components/general/Label/Label';
 import { Lifecycle } from '@src/client/interfaces';
+import web3 from '@src/web3';
 
 import styles from './TheRing.styles';
 
@@ -29,6 +31,7 @@ const TheRing: FunctionComponent<Props> = ({
 }) => {
     const screenType = AppState.select.screenType();
     const blocknum = client.live.blocknum();
+    const chainId = web3.hook.usePriorityChainId();
 
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
@@ -89,8 +92,12 @@ const TheRing: FunctionComponent<Props> = ({
             >
                 {tokenId && (
                     <>
-                        {token && token.lifecycle === Lifecycle.Deck && (
-                            <Label text={`countdown begins in ${blocksRemaining % 32} blocks`} />
+                        {chainId && token && token.lifecycle === Lifecycle.Deck && (
+                            <Label
+                                text={t`countdown begins in ${
+                                    blocksRemaining % web3.config.CONTRACTS[chainId].Interval
+                                } blocks`}
+                            />
                         )}
                         <AnimatedCard>
                             <TokenViewer tokenId={tokenId} style={tokenStyle} showcase />

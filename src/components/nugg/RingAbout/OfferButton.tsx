@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import { t } from '@lingui/macro';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
@@ -49,8 +50,8 @@ const OfferButton: FunctionComponent<Props> = () => {
             }
             label={
                 screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                    ? 'Connect wallet'
-                    : 'Place offer'
+                    ? t`Connect wallet`
+                    : t`Place offer`
             }
         />
     ) : null;

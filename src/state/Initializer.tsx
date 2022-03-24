@@ -17,6 +17,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
     const epoch = client.live.epoch.id();
     const graphInstance = client.live.graph();
     const start = client.mutate.start();
+    const updateClients = client.mutate.updateClients();
 
     useEffect(() => {
         safeResetLocalStorage(['walletconnect', 'ens']);
@@ -31,13 +32,12 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
             if (x !== undefined && x.connector && x.connector.connectEagerly)
                 void x.connector.connectEagerly(Chain.RINKEBY);
         });
+
         const { rpc } = web3.config.connector_instances;
 
         if (rpc !== undefined && rpc.connector && rpc.connector.activate)
             void rpc.connector.activate(Chain.RINKEBY);
     }, []);
-
-    const updateClients = client.mutate.updateClients();
 
     useEffect(() => {
         if (chainId && web3.config.isValidChainId(chainId)) {
@@ -65,13 +65,13 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
             };
         }
         return () => undefined;
-    }, [chainId]);
+    }, [chainId, updateClients, start]);
 
     return active && graphInstance ? (
         <>
             {[...Object.values(states), client].map((state, index) => (
                 // eslint-disable-next-line react/no-array-index-key
-                <state.updater key={index} />
+                <state.updater key={`updater-${index}`} />
             ))}
             {epoch && children}
         </>

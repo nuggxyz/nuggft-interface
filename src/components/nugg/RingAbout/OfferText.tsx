@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
+import { t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import lib from '@src/lib';
@@ -21,16 +22,16 @@ const OfferText: FunctionComponent<Props> = () => {
     const text = useMemo(() => {
         if (!token) return '';
         if (token.lifecycle === Lifecycle.Tryout) {
-            return 'Select a nugg to buy this item from';
+            return t`Select a nugg to buy this item from`;
         }
         if (token.lifecycle === Lifecycle.Deck || token.lifecycle === Lifecycle.Bat) {
-            return hasBids ? 'Highest Offer' : 'No offers yet...';
+            return hasBids ? t`Highest offer` : t`No offers yet...`;
         }
         if (token.lifecycle === Lifecycle.Bench) {
-            return 'Place offer to begin auction';
+            return t`Place offer to begin auction`;
         }
         if (token.lifecycle === Lifecycle.Shower) {
-            return hasBids ? 'Winner' : 'This sale is over';
+            return hasBids ? t`Winner` : t`This sale is over`;
         }
         return '';
     }, [token, hasBids]);

@@ -1,6 +1,7 @@
 import React, { CSSProperties, FunctionComponent } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import { BigNumber } from 'ethers';
+import { t } from '@lingui/macro';
 
 import Colors from '@src/lib/colors';
 import Layout from '@src/lib/layout';
@@ -38,7 +39,7 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
                     marginTop: '.1rem',
                 }}
             >
-                FLOOR
+                {t`FLOOR`}
             </Text>
             <CurrencyText size="small" image="eth" value={stake__eps?.decimal.toNumber() || 0} />
         </animated.div>

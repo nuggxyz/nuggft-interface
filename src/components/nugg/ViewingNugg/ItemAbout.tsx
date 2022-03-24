@@ -1,5 +1,6 @@
 import React from 'react';
 import { HiArrowRight } from 'react-icons/hi';
+import { t } from '@lingui/macro';
 
 import { Address } from '@src/classes/Address';
 import { NuggId } from '@src/client/router';
@@ -20,10 +21,10 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
         <Text textStyle={{ color: lib.colors.primaryColor }}>
             {/* eslint-disable-next-line no-nested-ternary */}
             {!item.epoch
-                ? 'Awaiting bid!'
+                ? t`Awaiting bid!`
                 : item.epoch.id < epoch
-                ? 'Swap is over'
-                : `Swap ending in ${item.epoch.endblock - blocknum} blocks`}
+                ? t`Swap is over`
+                : t`Swap ending in ${item.epoch.endblock - blocknum} blocks`}
         </Text>
     ) : null;
 };
@@ -66,7 +67,7 @@ export default ({
                         >
                             <Text textStyle={{ color: lib.colors.primaryColor }}>
                                 {/* eslint-disable-next-line no-nested-ternary */}
-                                {`On sale by ${token.tryout.count} Nugg${
+                                {t`On sale by ${token.tryout.count} Nugg ${
                                     token.tryout.count > 1 ? 's' : ''
                                 }`}
                             </Text>
@@ -86,14 +87,14 @@ export default ({
                                             image="eth"
                                             value={token.tryout.min.eth.decimal.toNumber()}
                                         />
-                                        <Text textStyle={{ marginLeft: '5px' }}>Min</Text>
+                                        <Text textStyle={{ marginLeft: '5px' }}>{t`Min`}</Text>
                                     </div>
                                     <div style={{ display: 'flex' }}>
                                         <CurrencyText
                                             image="eth"
                                             value={token.tryout.max.eth.decimal.toNumber()}
                                         />
-                                        <Text textStyle={{ marginLeft: '5px' }}>Max</Text>
+                                        <Text textStyle={{ marginLeft: '5px' }}>{t`Max`}</Text>
                                     </div>
                                 </div>
                             )}
@@ -151,7 +152,7 @@ export default ({
                                         color: 'white',
                                     }}
                                 >
-                                    {`Nugg ${token.activeSwap.owner}`}
+                                    {t`Nugg ${token.activeSwap.owner}`}
                                 </Text>
                             </div>
                             <div
@@ -190,7 +191,7 @@ export default ({
                                                 color: 'white',
                                             }}
                                         >
-                                            {`Nugg ${token.activeSwap.leader}`}
+                                            {t`Nugg ${token.activeSwap.leader}`}
                                         </Text>
                                     </div>
                                 )

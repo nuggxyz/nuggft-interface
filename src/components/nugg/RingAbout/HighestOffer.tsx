@@ -1,6 +1,7 @@
 import { animated, config as springConfig, useSpring } from '@react-spring/web';
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
 import { IoOpenOutline } from 'react-icons/io5';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
@@ -104,7 +105,7 @@ const HighestOffer: FunctionComponent<Props> = () => {
                 </div>
                 <div style={styles.leadingOfferAmountUser}>
                     <Text size="smaller" type="text">
-                        from
+                        {t`from`}
                     </Text>
                     <Text size="smaller">{ens}</Text>
                 </div>

@@ -1,5 +1,6 @@
 import React, { FunctionComponent, MemoExoticComponent, useMemo } from 'react';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
+import { t } from '@lingui/macro';
 
 import { parseTokenIdSmart } from '@src/lib';
 import Colors from '@src/lib/colors';
@@ -41,7 +42,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const happyTabs = useMemo(() => {
         return [
             {
-                label: 'Swaps',
+                label: t`Swaps`,
                 comp: React.memo(SwapList),
             },
             ...(provider && chainId && token && token.type === 'nugg' && sender && tokenId
@@ -118,7 +119,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                 color: Colors.nuggBlueText,
                                             }}
                                         >
-                                            Owner
+                                            {t`Owner`}
                                         </Text>
                                         <AddressViewer
                                             address={token.owner}
@@ -135,7 +136,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                     size="smaller"
                                                     textStyle={{ paddingLeft: '.5rem' }}
                                                 >
-                                                    (you)
+                                                    {t`(you)`}
                                                 </Text>
                                             )}
                                         </Text>
@@ -149,7 +150,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                     size="smaller"
                                     textStyle={{ paddingLeft: '.5rem' }}
                                 >
-                                    owned by {token?.count} nuggs
+                                    {t`owned by ${token?.count} nuggs`}
                                 </Text>
                             )}
                         </div>

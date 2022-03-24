@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { IoSync } from 'react-icons/io5';
+import { t } from '@lingui/macro';
 
 import Colors from '@src/lib/colors';
 import state from '@src/state';
@@ -20,7 +21,7 @@ const SaleButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 size="medium"
                 type="text"
                 buttonStyle={styles.button}
-                label="Reclaim"
+                label={t`Reclaim`}
                 leftIcon={
                     <IoSync
                         color={Colors.nuggBlueText}

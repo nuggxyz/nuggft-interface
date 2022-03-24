@@ -1,4 +1,5 @@
 import { PayloadAction } from '@reduxjs/toolkit';
+import { t } from '@lingui/macro';
 
 import client from '@src/client';
 import emitter from '@src/emitter';
@@ -78,7 +79,9 @@ export const pending: NL.Redux.Middleware<
                 // @ts-ignore
                 error: !action.payload.successful,
                 // @ts-ignore
-                title: action.payload.successful ? 'Successful Transaction' : 'Transaction Failed',
+                title: action.payload.successful
+                    ? t`Successful Transaction`
+                    : t`Transaction Failed`,
             });
         }
         return next(action);

@@ -1,6 +1,7 @@
 import { useSpring } from '@react-spring/web';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { CornerRightDown, CornerRightUp, Search, X } from 'react-feather';
+import { t } from '@lingui/macro';
 
 import useDebounce from '@src/hooks/useDebounce';
 import usePrevious from '@src/hooks/usePrevious';
@@ -77,7 +78,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     return (
         <TextInput
             onFocus={() => viewing === 'home' && NuggDexState.dispatch.setViewing('all nuggs')}
-            placeholder={`Search ${viewing === 'home' ? 'all nuggs' : viewing}`}
+            placeholder={t`Search ${viewing === 'home' ? 'all nuggs' : viewing}`}
             value={searchValue}
             setValue={setSearchValue}
             className="placeholder-blue"

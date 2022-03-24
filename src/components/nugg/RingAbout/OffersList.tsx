@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import { IoAdd, IoRemove } from 'react-icons/io5';
+import { t } from '@lingui/macro';
 
 import List from '@src/components/general/List/List';
 import client from '@src/client';
@@ -59,14 +60,14 @@ const OffersList: FunctionComponent<Props> = () => {
                     type="text"
                     textStyle={{ color: 'white', ...styles.showMoreButton }}
                 >
-                    previous offers
+                    {t`previous offers`}
                 </Text>
             ) : (
                 <Button
                     size="small"
                     type="text"
                     textStyle={{ color: 'white' }}
-                    label={`${open ? 'hide' : 'show'} previous offers`}
+                    label={open ? t`hide previous offers` : t`show previous offers`}
                     rightIcon={
                         <div style={styles.allOffersButton}>
                             {open ? (

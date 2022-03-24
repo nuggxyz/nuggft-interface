@@ -61,14 +61,6 @@ class NuggDexState extends NLState<NuggDexStateType> {
             setViewing: (state, action: PayloadAction<NuggDexSearchViews>) => {
                 state.viewing = action.payload;
             },
-            // addToRecents: (state, action: PayloadAction<NL.GraphQL.Fragments.Nugg.ListItem>) => {
-            //     // if (!state.recents.find((recent) => recent.id === action.payload.id)) {
-            //     //     // @ts-ignore
-            //     //     // there is a type (unused by redux) from zustand that throws errors here
-            //     //     delete action.payload.eth;
-            //     //     state.recents.push(action.payload);
-            //     // }
-            // },
             setSearchFilters: (state, action: PayloadAction<Partial<NuggDexFilters>>) => {
                 state.searchFilters = { ...state.searchFilters, ...action.payload };
             },

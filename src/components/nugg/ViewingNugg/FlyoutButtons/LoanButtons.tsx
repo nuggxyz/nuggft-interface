@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { IoHourglassOutline, IoPencil, IoPricetagOutline } from 'react-icons/io5';
+import { t } from '@lingui/macro';
 
 import Colors from '@src/lib/colors';
 import state from '@src/state';
@@ -19,7 +20,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 size="medium"
                 type="text"
                 buttonStyle={styles.button}
-                label="Extend"
+                label={t`Extend`}
                 leftIcon={
                     <IoHourglassOutline
                         color={Colors.nuggBlueText}
@@ -45,7 +46,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 size="medium"
                 type="text"
                 buttonStyle={styles.button}
-                label="Pay off"
+                label={t`Pay off`}
                 leftIcon={
                     <IoPricetagOutline
                         color={Colors.nuggBlueText}
@@ -71,7 +72,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 size="medium"
                 type="text"
                 buttonStyle={styles.button}
-                label="Edit"
+                label={t`Edit`}
                 leftIcon={
                     <IoPencil
                         color={Colors.nuggBlueText}
