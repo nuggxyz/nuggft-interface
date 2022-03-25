@@ -134,8 +134,9 @@ interface Array<T> {
         incomingData: Array<T>,
         keyField: keyof T,
         shouldOverride: (a: T, b: T) => boolean,
-        sort: (a: T, b: T) => number,
+        sort?: (a: T, b: T) => number,
     );
+
     first(count?: number): Array<T>;
     last(count?: number): Array<T>;
     insert<U extends { index: number }>(element: U): Array<U>;

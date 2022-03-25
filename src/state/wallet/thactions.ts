@@ -134,14 +134,25 @@ const initSale = createAsyncThunk<
                 ['sell(uint160,uint96)'](tokenId, floor);
         }
 
+        TransactionState.dispatch.addTransaction(_pendingtx.hash);
+
+        void _pendingtx.wait().then((tx) => {
+            console.log({ tx });
+            AppState.dispatch.replaceToast({
+                id: tx.transactionHash,
+                duration: tx.status === 1 ? 5000 : 0,
+                loading: false,
+                error: tx.status !== 1,
+                title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
+            });
+        });
+
+        AppState.dispatch.setModalClosed();
+
         return {
             success: 'SUCCESS' as WalletSuccess,
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
-                void _pendingtx.wait().then(onFinish);
-                AppState.dispatch.setModalClosed();
-            },
         };
     } catch (err: any) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -174,14 +185,25 @@ const withdraw = createAsyncThunk<
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(address))
             .burn(tokenId);
+
+        TransactionState.dispatch.addTransaction(_pendingtx.hash);
+
+        void _pendingtx.wait().then((tx) => {
+            console.log({ tx });
+            AppState.dispatch.replaceToast({
+                id: tx.transactionHash,
+                duration: tx.status === 1 ? 5000 : 0,
+                loading: false,
+                error: tx.status !== 1,
+                title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
+            });
+        });
+
+        AppState.dispatch.setModalClosed();
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
-                void _pendingtx.wait().then(onFinish);
-                AppState.dispatch.setModalClosed();
-            },
         };
     } catch (err: any) {
         console.log({ err: err as string });
@@ -217,13 +239,25 @@ const claim = createAsyncThunk<
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(sender))
             ['claim(uint160[],address[])']([tokenId], [address || sender]);
+
+        TransactionState.dispatch.addTransaction(_pendingtx.hash);
+
+        void _pendingtx.wait().then((tx) => {
+            console.log({ tx });
+            AppState.dispatch.replaceToast({
+                id: tx.transactionHash,
+                duration: tx.status === 1 ? 5000 : 0,
+                loading: false,
+                error: tx.status !== 1,
+                title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
+            });
+        });
+
+        AppState.dispatch.setModalClosed();
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
-                void _pendingtx.wait().then(onFinish);
-            },
         };
     } catch (err: any) {
         console.log({ err: err as string });
@@ -260,13 +294,25 @@ const multiClaim = createAsyncThunk<
             ['claim(uint160[],address[])'](tokenIds, addresses, {
                 gasLimit: 500000,
             });
+
+        TransactionState.dispatch.addTransaction(_pendingtx.hash);
+
+        void _pendingtx.wait().then((tx) => {
+            console.log({ tx });
+            AppState.dispatch.replaceToast({
+                id: tx.transactionHash,
+                duration: tx.status === 1 ? 5000 : 0,
+                loading: false,
+                error: tx.status !== 1,
+                title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
+            });
+        });
+
+        AppState.dispatch.setModalClosed();
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
-                void _pendingtx.wait().then(onFinish);
-            },
         };
     } catch (err: any) {
         console.log({ err: err as string });
@@ -305,6 +351,21 @@ const mintNugg = createAsyncThunk<
             });
 
         emitter.emit({ type: emitter.events.TransactionInitiated, txhash: _pendingtx.hash });
+
+        TransactionState.dispatch.addTransaction(_pendingtx.hash);
+
+        void _pendingtx.wait().then((tx) => {
+            console.log({ tx });
+            AppState.dispatch.replaceToast({
+                id: tx.transactionHash,
+                duration: tx.status === 1 ? 5000 : 0,
+                loading: false,
+                error: tx.status !== 1,
+                title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
+            });
+        });
+
+        AppState.dispatch.setModalClosed();
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
@@ -340,14 +401,25 @@ const initLoan = createAsyncThunk<
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(address))
             .loan(tokenIds);
+
+        TransactionState.dispatch.addTransaction(_pendingtx.hash);
+
+        void _pendingtx.wait().then((tx) => {
+            console.log({ tx });
+            AppState.dispatch.replaceToast({
+                id: tx.transactionHash,
+                duration: tx.status === 1 ? 5000 : 0,
+                loading: false,
+                error: tx.status !== 1,
+                title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
+            });
+        });
+
+        AppState.dispatch.setModalClosed();
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
-                void _pendingtx.wait().then(onFinish);
-                AppState.dispatch.setModalClosed();
-            },
         };
     } catch (err: any) {
         console.log({ err: err as string });
@@ -383,14 +455,25 @@ const payOffLoan = createAsyncThunk<
             .connect(provider.getSigner(address))
             // .connect(Web3State.getSignerOrProvider())
             .liquidate(tokenId, { value: toEth(amount) });
+
+        TransactionState.dispatch.addTransaction(_pendingtx.hash);
+
+        void _pendingtx.wait().then((tx) => {
+            console.log({ tx });
+            AppState.dispatch.replaceToast({
+                id: tx.transactionHash,
+                duration: tx.status === 1 ? 5000 : 0,
+                loading: false,
+                error: tx.status !== 1,
+                title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
+            });
+        });
+
+        AppState.dispatch.setModalClosed();
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
-                void _pendingtx.wait().then(onFinish);
-                AppState.dispatch.setModalClosed();
-            },
         };
     } catch (err: any) {
         console.log({ err: err as string });
@@ -438,40 +521,24 @@ const extend = createAsyncThunk<
                 ).reduce((a, b) => a.add(b), BigNumber.from(0)),
             });
 
+        TransactionState.dispatch.addTransaction(_pendingtx.hash);
+
         void _pendingtx.wait().then((tx) => {
+            console.log({ tx });
             AppState.dispatch.replaceToast({
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                id: tx.hash,
-                // @ts-ignore
+                id: tx.transactionHash,
                 duration: tx.status === 1 ? 5000 : 0,
                 loading: false,
-                // @ts-ignore
                 error: tx.status !== 1,
                 title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
             });
         });
 
+        AppState.dispatch.setModalClosed();
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: () => {
-                // void _pendingtx.wait().then((tx) => {
-                //     AppState.dispatch.replaceToast({
-                //         // @ts-ignore
-                //         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                //         id: tx.hash,
-                //         // @ts-ignore
-                //         duration: tx.status === 1 ? 5000 : 0,
-                //         loading: false,
-                //         // @ts-ignore
-                //         error: tx.status !== 1,
-                //         title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
-                //     });
-                // });
-                AppState.dispatch.setModalClosed();
-            },
         };
     } catch (err: any) {
         console.log({ err: err as string });

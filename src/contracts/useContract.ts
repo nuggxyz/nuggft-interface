@@ -5,10 +5,7 @@ import web3 from '@src/web3';
 import { NuggftV1__factory } from '@src/typechain/factories/NuggftV1__factory';
 import { RevertError } from '@src/lib/errors';
 import { DotnuggV1, DotnuggV1__factory } from '@src/typechain';
-import lib, { shortenTxnHash } from '@src/lib';
-import TransactionState from '@src/state/transaction';
-import { gotoEtherscan } from '@src/web3/config';
-import AppState from '@src/state/app';
+import lib from '@src/lib';
 import emitter from '@src/emitter';
 
 import { NuggftV1 } from '../typechain/NuggftV1';
@@ -85,7 +82,11 @@ export function useTransactionManager() {
     );
 
     const send = useCallback(
-        async (ptx: Promise<PopulatedTransaction>): Promise<void> => {
+        async (
+            ptx: Promise<PopulatedTransaction>,
+            onResponse?: (response: TransactionResponse) => void,
+            onReceipt?: (response: TransactionReceipt) => void,
+        ): Promise<void> => {
             try {
                 if (provider && network && chainId) {
                     const tx = await ptx;
@@ -97,33 +98,16 @@ export function useTransactionManager() {
                                 .getSigner()
                                 .sendTransaction({ ...tx, gasLimit: BigNumber.from(gasLimit) })
                                 .then((y) => {
-                                    TransactionState.dispatch.addTransaction(y.hash);
+                                    // TransactionState.dispatch.addTransaction(y.hash);
                                     setActiveResponse(y);
 
-                                    AppState.dispatch.addToastToList({
-                                        duration: 0,
-                                        title: 'Pending Transaction',
-                                        message: shortenTxnHash(y.hash),
-                                        error: false,
-                                        id: y.hash,
-                                        index: 0,
-                                        loading: true,
-                                        action: () => gotoEtherscan(chainId, 'tx', y.hash),
-                                        listener: (setClosed, setClosedSoftly, setError) => {
-                                            return emitter.on({
-                                                type: emitter.events.TransactionComplete,
-                                                callback: (arg) => {
-                                                    if (arg.txhash === y.hash) {
-                                                        if (arg.success) {
-                                                            setClosedSoftly();
-                                                        } else {
-                                                            setError();
-                                                        }
-                                                    }
-                                                },
-                                            }).off;
-                                        },
+                                    if (onResponse) onResponse(y);
+
+                                    emitter.emit({
+                                        type: emitter.events.TransactionInitiated,
+                                        txhash: y.hash,
                                     });
+
                                     return y;
                                 })
                                 .catch((err: Error) => {
@@ -140,18 +124,29 @@ export function useTransactionManager() {
 
                     const res2 = await res;
                     if (res2) {
-                        return res2.wait(1).then((x) => {
-                            setReceipt(x);
-                            TransactionState.dispatch.finalizeTransaction({
-                                hash: x.transactionHash,
-                                successful: x.status === 1,
+                        return res2
+                            .wait(1)
+                            .then((x) => {
+                                setReceipt(x);
+
+                                if (onReceipt) onReceipt(x);
+
+                                emitter.emit({
+                                    type: emitter.events.TransactionComplete,
+                                    txhash: x.transactionHash,
+                                    success: x.status === 1,
+                                });
+                            })
+                            .catch((err) => {
+                                emitter.emit({
+                                    type: emitter.events.TransactionComplete,
+                                    txhash: res2.hash,
+                                    success: false,
+                                });
+                                const error = lib.errors.parseJsonRpcError(err);
+
+                                setRevert(error);
                             });
-                            emitter.emit({
-                                type: emitter.events.TransactionComplete,
-                                txhash: x.transactionHash,
-                                success: x.status === 1,
-                            });
-                        });
                     }
                 }
                 return undefined;
