@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
-import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { split, InMemoryCache, HttpLink } from '@apollo/client';
-
-const cache = new InMemoryCache({});
+import { split, HttpLink, InMemoryCache } from '@apollo/client';
+import { WebSocketLink } from '@apollo/client/link/ws';
 
 // // // await before instantiating ApolloClient, else queries might run before the cache is persisted
 // void persistCache({
@@ -24,10 +22,13 @@ const cache = new InMemoryCache({});
 //     // },
 // });
 
+const cache = new InMemoryCache({});
+
 export const buildApolloSplitLink = (http: string, wss: string) => {
     return split(
         ({ query }) => {
             const definition = getMainDefinition(query);
+
             return (
                 definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
             );

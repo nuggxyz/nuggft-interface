@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import { IoAdd, IoRemove } from 'react-icons/io5';
 import { t } from '@lingui/macro';
@@ -6,7 +6,7 @@ import { t } from '@lingui/macro';
 import List from '@src/components/general/List/List';
 import client from '@src/client';
 import web3 from '@src/web3';
-import lib, { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
+import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import state from '@src/state';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -19,7 +19,7 @@ type Props = Record<string, unknown>;
 
 const OffersList: FunctionComponent<Props> = () => {
     const tokenId = client.live.lastSwap.tokenId();
-    const offers = client.live.offers(tokenId).slice(1);
+    const offers = client.live.offers(tokenId);
     const token = client.live.token(tokenId);
 
     const type = client.live.lastSwap.type();
@@ -30,7 +30,7 @@ const OffersList: FunctionComponent<Props> = () => {
     const [open, setOpen] = useState(screenType === 'tablet');
 
     useEffect(() => {
-        if (offers && offers.length === 0 && open && screenType !== 'tablet') {
+        if (offers && offers.length === 1 && open && screenType !== 'tablet') {
             setOpen(false);
         }
     }, [open, offers, screenType]);
@@ -42,19 +42,12 @@ const OffersList: FunctionComponent<Props> = () => {
         padding: open ? '0.75rem' : '0rem',
     });
 
-    const shouldShow = useMemo(() => {
-        return (
-            token &&
-            token.lifecycle !== Lifecycle.Bench &&
-            token.lifecycle !== Lifecycle.Tryout &&
-            token.lifecycle !== Lifecycle.Stands &&
-            !isUndefinedOrNullOrArrayEmpty(offers)
-        );
-    }, [token, offers]);
-
-    return shouldShow ? (
+    return token &&
+        token.lifecycle !== Lifecycle.Bench &&
+        token.lifecycle !== Lifecycle.Tryout &&
+        token.lifecycle !== Lifecycle.Stands ? (
         <>
-            {offers.length >= 1 && screenType === 'tablet' ? (
+            {offers.length > 1 && screenType === 'tablet' ? (
                 <Text
                     size="small"
                     type="text"
@@ -83,7 +76,7 @@ const OffersList: FunctionComponent<Props> = () => {
             )}
             <animated.div style={springStyle}>
                 <List
-                    data={offers}
+                    data={offers.slice(1)}
                     RenderItem={OfferRenderItem}
                     extraData={{ type, provider, chainId }}
                 />

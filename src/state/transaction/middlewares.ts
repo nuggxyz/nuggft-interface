@@ -2,7 +2,6 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { t } from '@lingui/macro';
 
 import client from '@src/client';
-import emitter from '@src/emitter';
 import {
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmpty,
@@ -32,17 +31,29 @@ export const pending: NL.Redux.Middleware<
             const check = client.static.rpc();
 
             if (check) {
-                void check.waitForTransaction(action.payload._pendingtx, 1, 600000).then((x) => {
-                    TransactionState.dispatch.finalizeTransaction({
-                        hash: x.transactionHash,
-                        successful: x.status === 1,
-                    });
-                    emitter.emit({
-                        type: emitter.events.TransactionComplete,
-                        txhash: x.transactionHash,
-                        success: x.status === 1,
-                    });
-                });
+                // void check.waitForTransaction(action.payload._pendingtx, 1, 600000).then((x) => {
+                //     TransactionState.dispatch.finalizeTransaction({
+                //         hash: x.transactionHash,
+                //         successful: x.status === 1,
+                //     });
+                //     emitter.emit({
+                //         type: emitter.events.TransactionComplete,
+                //         txhash: x.transactionHash,
+                //         success: x.status === 1,
+                //     });
+                // });
+                // emitter.once({
+                //     type: emitter.events.TransactionComplete,
+                //     callback: (x) => {
+                //         console.log({ x });
+                //         if (x.txhash === action.payload._pendingtx) {
+                //             TransactionState.dispatch.finalizeTransaction({
+                //                 hash: x.txhash,
+                //                 successful: true,
+                //             });
+                //         }
+                //     },
+                // });
             }
             AppState.dispatch.addToastToList({
                 duration: 0,
@@ -64,7 +75,20 @@ export const pending: NL.Redux.Middleware<
             });
             console.log(action.payload);
             if (action.payload.callbackFn !== undefined) {
-                action.payload.callbackFn();
+                action.payload.callbackFn((tx) => {
+                    AppState.dispatch.replaceToast({
+                        // @ts-ignore
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                        id: tx.hash,
+                        // @ts-ignore
+                        duration: tx.status === 1 ? 5000 : 0,
+                        loading: false,
+                        // @ts-ignore
+                        error: !tx.status === 1,
+                        // @ts-ignore
+                        title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
+                    });
+                });
             }
         }
         // console.log(state);

@@ -1,4 +1,4 @@
-import { Web3Provider, WebSocketProvider } from '@ethersproject/providers';
+import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
 import { State, StoreApi, UseBoundStore } from 'zustand';
 import { ApolloClient } from '@apollo/client/core/ApolloClient';
 
@@ -199,7 +199,7 @@ export interface Actions {
     addNugg: (update: MyNuggsData) => void;
     removeNugg: (tokenId: NuggId) => void;
     toggleEditingNugg: (tokenId: NuggId | undefined) => void;
-    start: (chainId: Chain, rpc: WebSocketProvider, graph: ApolloClient<any>) => Promise<void>;
+    start: (chainId: Chain, rpc: JsonRpcProvider, graph: ApolloClient<any>) => Promise<void>;
     updateToken: (tokenId: TokenId, data: LiveTokenWithLifecycle) => void;
     updateLocale: (locale: SupportedLocale | undefined) => void;
     updateSearchFilterTarget: (value: SearchFilter['target']) => void;

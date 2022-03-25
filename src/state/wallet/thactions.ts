@@ -3,6 +3,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { Web3Provider } from '@ethersproject/providers';
 import { BigNumber, BigNumberish } from 'ethers';
+import { t } from '@lingui/macro';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import {
@@ -17,6 +18,7 @@ import { Chain } from '@src/web3/core/interfaces';
 import { NuggId } from '@src/client/router';
 import emitter from '@src/emitter';
 import { NuggftV1__factory } from '@src/typechain/factories/NuggftV1__factory';
+import TransactionState from '@src/state/transaction';
 
 const placeOffer = createAsyncThunk<
     TxThunkSuccess<WalletSuccess>,
@@ -37,7 +39,7 @@ const placeOffer = createAsyncThunk<
         thunkAPI,
     ) => {
         try {
-            let _pendingtx;
+            let _pendingtx: TransactionResponse;
             if (buyingTokenId && sellingTokenId) {
                 _pendingtx = await new NuggftV1Helper(chainId, provider).contract
                     .connect(provider.getSigner(address))
@@ -56,14 +58,29 @@ const placeOffer = createAsyncThunk<
                         value: toEth(amount),
                     });
             }
+            TransactionState.dispatch.addTransaction(_pendingtx.hash);
+
+            void _pendingtx.wait().then((tx) => {
+                console.log({ tx });
+                AppState.dispatch.replaceToast({
+                    id: tx.transactionHash,
+                    duration: tx.status === 1 ? 5000 : 0,
+                    loading: false,
+                    error: tx.status !== 1,
+                    title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
+                });
+            });
+
+            AppState.dispatch.setModalClosed();
 
             return {
                 success: 'SUCCESS',
                 _pendingtx: _pendingtx.hash,
                 chainId,
-                callbackFn: () => {
-                    AppState.dispatch.setModalClosed();
-                },
+                // callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
+                //     void _pendingtx.wait().then(onFinish);
+                //     AppState.dispatch.setModalClosed();
+                // },
             };
         } catch (err: any) {
             console.log(err);
@@ -104,7 +121,7 @@ const initSale = createAsyncThunk<
     { rejectValue: WalletError }
 >(`wallet/initSale`, async ({ tokenId, floor, chainId, provider, address, itemId }, thunkAPI) => {
     try {
-        let _pendingtx;
+        let _pendingtx: TransactionResponse;
 
         console.log({ tokenId, itemId, floor });
         if (itemId) {
@@ -121,7 +138,10 @@ const initSale = createAsyncThunk<
             success: 'SUCCESS' as WalletSuccess,
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: () => AppState.dispatch.setModalClosed(),
+            callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
+                void _pendingtx.wait().then(onFinish);
+                AppState.dispatch.setModalClosed();
+            },
         };
     } catch (err: any) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -158,7 +178,10 @@ const withdraw = createAsyncThunk<
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: () => AppState.dispatch.setModalClosed(),
+            callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
+                void _pendingtx.wait().then(onFinish);
+                AppState.dispatch.setModalClosed();
+            },
         };
     } catch (err: any) {
         console.log({ err: err as string });
@@ -198,6 +221,9 @@ const claim = createAsyncThunk<
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
+            callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
+                void _pendingtx.wait().then(onFinish);
+            },
         };
     } catch (err: any) {
         console.log({ err: err as string });
@@ -238,6 +264,9 @@ const multiClaim = createAsyncThunk<
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
+            callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
+                void _pendingtx.wait().then(onFinish);
+            },
         };
     } catch (err: any) {
         console.log({ err: err as string });
@@ -315,7 +344,10 @@ const initLoan = createAsyncThunk<
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: () => AppState.dispatch.setModalClosed(),
+            callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
+                void _pendingtx.wait().then(onFinish);
+                AppState.dispatch.setModalClosed();
+            },
         };
     } catch (err: any) {
         console.log({ err: err as string });
@@ -355,7 +387,10 @@ const payOffLoan = createAsyncThunk<
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: () => AppState.dispatch.setModalClosed(),
+            callbackFn: (onFinish: (a: TransactionReceipt) => void) => {
+                void _pendingtx.wait().then(onFinish);
+                AppState.dispatch.setModalClosed();
+            },
         };
     } catch (err: any) {
         console.log({ err: err as string });
@@ -403,11 +438,40 @@ const extend = createAsyncThunk<
                 ).reduce((a, b) => a.add(b), BigNumber.from(0)),
             });
 
+        void _pendingtx.wait().then((tx) => {
+            AppState.dispatch.replaceToast({
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                id: tx.hash,
+                // @ts-ignore
+                duration: tx.status === 1 ? 5000 : 0,
+                loading: false,
+                // @ts-ignore
+                error: tx.status !== 1,
+                title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
+            });
+        });
+
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,
             chainId,
-            callbackFn: () => AppState.dispatch.setModalClosed(),
+            callbackFn: () => {
+                // void _pendingtx.wait().then((tx) => {
+                //     AppState.dispatch.replaceToast({
+                //         // @ts-ignore
+                //         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                //         id: tx.hash,
+                //         // @ts-ignore
+                //         duration: tx.status === 1 ? 5000 : 0,
+                //         loading: false,
+                //         // @ts-ignore
+                //         error: tx.status !== 1,
+                //         title: tx.status === 1 ? t`Successful Transaction` : t`Transaction Failed`,
+                //     });
+                // });
+                AppState.dispatch.setModalClosed();
+            },
         };
     } catch (err: any) {
         console.log({ err: err as string });

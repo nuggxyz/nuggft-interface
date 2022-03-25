@@ -7,7 +7,7 @@ import { InfiniteListRenderItemProps } from '@src/components/general/List/Infini
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import globalStyles from '@src/lib/globalStyles';
 import Text from '@src/components/general/Texts/Text/Text';
-import lib, { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import client from '@src/client';
 
@@ -33,11 +33,7 @@ const MyNuggRenderItem: FunctionComponent<
             {item.activeLoan || item.activeSwap ? (
                 <Text textStyle={styles.badge} size="smaller" type="text">
                     {/* eslint-disable-next-line no-nested-ternary */}
-                    {item.recent
-                        ? t`New`
-                        : !isUndefinedOrNullOrObjectEmpty(item.activeLoan)
-                        ? t`Loaned`
-                        : t`On sale`}
+                    {item.recent ? t`New` : item.activeLoan ? t`Loaned` : t`On sale`}
                 </Text>
             ) : null}
             <Button

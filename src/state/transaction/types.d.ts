@@ -12,7 +12,7 @@ type TransactionStateType = {
 
 interface PendingMiddlewareTx {
     _pendingtx: string;
-    callbackFn?: () => void;
+    callbackFn?: (b: (a: TransactionReceipt) => void) => void;
     chainId: import('./../../web3/core/interfaces').Chain;
 }
 

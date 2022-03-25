@@ -24,7 +24,7 @@ interface BalanceProps extends PartialText {
 
 const CurrencyText: React.FC<BalanceProps> = ({
     value,
-    decimals = 1,
+    decimals = 0,
     // unit = '',
     // prefix = '',
     // duration = 2,
@@ -38,7 +38,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
     const [isGwei, setIsGwei] = useState(forceGwei);
     const prevValue = usePrevious(value);
     useEffect(() => {
-        if (!forceGwei) setIsGwei(value < 0.00001);
+        if (!forceGwei) setIsGwei(value < 0.001);
     }, [value, forceGwei]);
 
     const [spring] = useSpring(

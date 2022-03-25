@@ -1,9 +1,4 @@
 /* eslint-disable import/no-cycle */
-import {
-    AlchemyWebSocketProvider,
-    InfuraWebSocketProvider,
-    WebSocketProvider,
-} from '@ethersproject/providers';
 import { ethers } from 'ethers';
 import { ApolloClient } from '@apollo/client';
 
@@ -28,6 +23,11 @@ import { WalletLink } from './clients/walletlink';
 import { MetaMask } from './clients/metamask';
 import { WalletConnect } from './clients/walletconnect';
 import { Network } from './clients/network';
+import {
+    InfuraWebSocketProvider,
+    WebSocketProvider,
+    AlchemyWebSocketProvider,
+} from './classes/WebSocketProvider';
 
 export function supportedChainIds() {
     // @ts-ignore
@@ -333,29 +333,26 @@ export const gotoEtherscan = (chainId: Chain, route: 'tx' | 'address', value: st
     if (win) win.focus();
 };
 
-export const createInfuraWebSocket = (chainId: Chain): WebSocketProvider => {
-    return new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY);
+export const createInfuraWebSocket = (
+    chainId: Chain,
+    onClose: (e: CloseEvent) => void,
+): WebSocketProvider => {
+    return new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY, onClose);
 };
 
-export const createAlchemyWebSocket = (chainId: Chain): WebSocketProvider => {
-    return new AlchemyWebSocketProvider(CHAIN_INFO[chainId].label, ALCHEMY_KEY);
+export const createAlchemyWebSocket = (
+    chainId: Chain,
+    onClose: (e: CloseEvent) => void,
+): WebSocketProvider => {
+    return new AlchemyWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY, onClose);
 };
 
 export const createApolloClient = (chainId: Chain) => {
-    const ok = new ApolloClient<any>({
+    return new ApolloClient<any>({
         link: buildApolloSplitLink(GRAPH_ENPOINTS[chainId], GRAPH_WSS_ENDPOINTS[chainId]),
         connectToDevTools: true,
         cache: buildCache(),
     });
-    window.__APOLLO_CLIENT__ = ok;
-    return ok;
-};
-
-export const ENS_REGISTRAR_ADDRESSES = {
-    [Chain.MAINNET]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.ROPSTEN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.GOERLI]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.RINKEBY]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
 };
 
 // interface WalletInfo {
@@ -386,3 +383,52 @@ interface L1ChainInfo {
     };
     readonly name: string;
 }
+
+// let socket: WebSocket;
+// let timerId: NodeJS.Timer;
+// let rpc: WebSocketProvider;
+// let killed: boolean;
+
+// const listenChanges = (): WebSocketProvider => {
+//     if (killed) return rpc;
+
+//     rpc = new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY);
+//     // eslint-disable-next-line @typescript-eslint/unbound-method
+//     const func = rpc.destroy;
+
+//     rpc.destroy = async () => {
+//         killed = true;
+//         return func.call(rpc);
+//     };
+
+//     socket = rpc._websocket as WebSocket;
+//     socket.start;
+//     socket.onerror = (err): void => {
+//         console.error('Socket encountered error: ', err, 'Closing socket');
+//         socket.close();
+//     };
+
+//     const before = socket.onopen as (this: WebSocket, ev: Event) => any;
+
+//     socket.onopen = (ev) => {
+//         clearInterval(timerId);
+//         before.call(socket, ev);
+
+//         rpc.getBlockNumber().then((x) => {
+//             console.log(x);
+//         });
+//     };
+
+//     socket.onclose = (e): void => {
+//         console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+//         setTimeout(() => {
+//             listenChanges();
+//         }, 1000);
+
+//         timerId = setInterval(() => {
+//             listenChanges();
+//         }, 10000);
+//     };
+
+//     return rpc;
+// };

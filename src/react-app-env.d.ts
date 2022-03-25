@@ -4,6 +4,17 @@ import('react');
 
 declare type Base64EncodedSvg = `data:image/svg+xml;base64,${string}`;
 
+// declare interface WebSocketProvider extends import('@ethersproject/providers').WebSocketProvider {
+//     _websocket: Websocket;
+// }
+
+// declare module '@ethersproject/providers' {
+//     export interface WebSocketProvider
+//         extends import('@ethersproject/providers').WebSocketProvider {
+//         _websocket: WebSocket;
+//     }
+// }
+
 declare namespace React {
     type UnsafeDependencyList = any[];
 

@@ -4,7 +4,7 @@ import create, { State, StateCreator } from 'zustand';
 import { BigNumber, BigNumberish } from 'ethers';
 import produce, { Draft, enableMapSet } from 'immer';
 import { combine } from 'zustand/middleware';
-import { WebSocketProvider } from '@ethersproject/providers';
+import { WebSocketProvider, JsonRpcProvider } from '@ethersproject/providers';
 
 import { Chain } from '@src/web3/core/interfaces';
 import { extractItemId, parseItmeIdToNum } from '@src/lib';
@@ -98,12 +98,12 @@ function createClientStoreAndActions3() {
             (set) => {
                 return {
                     updateClients: (stateUpdate: {
-                        rpc: WebSocketProvider | undefined;
+                        // rpc: WebSocketProvider | undefined;
                         graph: ApolloClient<any> | undefined;
                     }) => {
                         set((draft) => {
                             // determine the next chainId and accounts
-                            if (stateUpdate.rpc) draft.rpc = stateUpdate.rpc;
+                            // if (stateUpdate.rpc) draft.rpc = stateUpdate.rpc;
                             // // @ts-ignore
                             if (stateUpdate.graph) draft.graph = stateUpdate.graph;
                             return draft;
@@ -425,7 +425,7 @@ function createClientStoreAndActions2() {
 
                 const start = async (
                     chainId: Chain,
-                    rpc: WebSocketProvider,
+                    rpc: JsonRpcProvider,
                     graph: ApolloClient<any>,
                 ): Promise<void> => {
                     const startup = () => {
@@ -460,14 +460,16 @@ function createClientStoreAndActions2() {
                         }
                     };
 
-                    if (!get().route && rpc) {
-                        const blocknum = rpc.getBlockNumber();
+                    startup();
 
-                        let awaited: number;
-                        await Promise.all([(awaited = await blocknum), startup()]);
+                    // if (!get().route && rpc) {
+                    const blocknum = rpc.getBlockNumber();
 
-                        updateBlocknum(awaited, chainId);
-                    }
+                    let awaited: number;
+                    await Promise.all([(awaited = await blocknum), startup()]);
+
+                    updateBlocknum(awaited, chainId);
+                    // }
                 };
 
                 return {
