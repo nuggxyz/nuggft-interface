@@ -8,7 +8,6 @@ import client from '@src/client';
 import useOnHover from '@src/hooks/useOnHover';
 import Text from '@src/components/general/Texts/Text/Text';
 import lib from '@src/lib';
-import NextSwap from '@src/components/nugg/NextSwap/NextSwap';
 
 import styles from './ChainIndicator.styles';
 
@@ -91,7 +90,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
                     ) : null}
                 </div>
             </animated.div>
-            <NextSwap />
+            {/* <NextSwap /> */}
         </div>
     );
 };

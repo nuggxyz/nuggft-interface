@@ -291,9 +291,7 @@ const multiClaim = createAsyncThunk<
     try {
         const _pendingtx = await new NuggftV1Helper(chainId, provider).contract
             .connect(provider.getSigner(sender))
-            ['claim(uint160[],address[])'](tokenIds, addresses, {
-                gasLimit: 500000,
-            });
+            ['claim(uint160[],address[])'](tokenIds, addresses);
 
         TransactionState.dispatch.addTransaction(_pendingtx.hash);
 

@@ -44,7 +44,7 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
                 {t`FLOOR`}
             </Text>
             <CurrencyText
-                textStyle={{ color: darkmode ? Colors.primaryColor : Colors.primaryColor }}
+                textStyle={{ color: darkmode ? Colors.white : Colors.primaryColor }}
                 size="small"
                 image="eth"
                 value={stake__eps?.decimal.toNumber() || 0}

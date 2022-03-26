@@ -1,10 +1,11 @@
 import React, { CSSProperties, NamedExoticComponent, useEffect, useState } from 'react';
 import { animated, useSpring, useTransition, config } from '@react-spring/web';
 
-import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
+import lib, { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import AppState from '@src/state/app';
 import Text from '@src/components/general/Texts/Text/Text';
 import useMeasure from '@src/hooks/useMeasure';
+import { useDarkMode } from '@src/client/hooks/useDarkMode';
 
 import styles from './HappyTabber.styles';
 
@@ -70,6 +71,8 @@ const HappyTabber = ({
         config: config.default,
     });
 
+    const darkmode = useDarkMode();
+
     return (
         <div
             style={{
@@ -94,6 +97,7 @@ const HappyTabber = ({
                         style={{
                             width: `${(WIDTH - 8) / items.length}px`,
                             ...selectionIndicatorSpring,
+                            ...(darkmode ? { background: lib.colors.nuggBlueTransparent } : {}),
                         }}
                     />
                     {items.map((item, index) => (

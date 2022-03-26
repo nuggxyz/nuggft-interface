@@ -11,6 +11,7 @@ import Flyout from '@src/components/general/Flyout/Flyout';
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib from '@src/lib';
 import globalStyles from '@src/lib/globalStyles';
+import { useDarkMode } from '@src/client/hooks/useDarkMode';
 
 import styles from './AccountViewer.styles';
 
@@ -23,6 +24,8 @@ const AccountViewer = () => {
     const balance = web3.hook.usePriorityBalance(provider);
     const peer = web3.hook.usePriorityPeer();
     const connector = web3.hook.usePriorityConnector();
+
+    const darkmode = useDarkMode();
 
     return ens && address && chainId && peer ? (
         <Flyout
@@ -42,7 +45,14 @@ const AccountViewer = () => {
                             <NLStaticImage image={`${peer.peer}_icon_small`} />
                             {screenType === 'phone' && <Jazzicon address={address} size={15} />}
                         </div>
-                        <Text size="smaller" type="code" textStyle={styles.balance}>
+                        <Text
+                            size="smaller"
+                            type="code"
+                            textStyle={{
+                                ...styles.balance,
+                                ...(darkmode ? { color: 'white' } : {}),
+                            }}
+                        >
                             ({web3.config.CHAIN_INFO[chainId].label})
                             {balance ? balance.decimal.toNumber().toPrecision(5) : 0} ETH
                         </Text>
