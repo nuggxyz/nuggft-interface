@@ -365,7 +365,6 @@ const mintNugg = createAsyncThunk<
             });
         });
 
-        AppState.dispatch.setModalClosed();
         return {
             success: 'SUCCESS',
             _pendingtx: _pendingtx.hash,

@@ -6,6 +6,7 @@ import web3 from '@src/web3';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
 import { Lifecycle } from '@src/client/interfaces';
+import lib from '@src/lib';
 
 import styles from './RingAbout.styles';
 
@@ -16,6 +17,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
     const provider = web3.hook.usePriorityProvider();
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
+    const offers = client.live.offers(tokenId);
 
     const ens = web3.hook.usePriorityAnyENSName(
         token?.type === 'item' ? 'nugg' : provider,
@@ -61,11 +63,17 @@ const OwnerBlock: FunctionComponent<Props> = () => {
         return text;
     }, [token]);
 
-    return (
+    return offers.length === 0 ? (
         <div style={styles.ownerBlockContainer}>
-            <Text size="small" textStyle={styles.textBlue}>
+            <Text
+                size="small"
+                textStyle={{
+                    color: lib.colors.nuggBlueText,
+                }}
+            >
                 {title}
             </Text>
+
             {token &&
             token.lifecycle === Lifecycle.Tryout &&
             token.type === 'item' &&
@@ -100,19 +108,37 @@ const OwnerBlock: FunctionComponent<Props> = () => {
             ) : (
                 // @danny7even is this logic okay, shoud be same as before but less conditional rerendering, i think
                 <>
-                    <Text size="medium">{ens}</Text>
-                    <CurrencyText
-                        stopAnimation
-                        size="small"
-                        value={Math.max(
-                            floor?.decimal.toNumber() || 0,
-                            token && token.activeSwap ? token.activeSwap?.eth.number : 0,
-                        )}
-                    />
+                    <Text
+                        size="medium"
+                        textStyle={{
+                            padding: '7px',
+                            fontFamily: lib.layout.font.sf.regular,
+                        }}
+                    >
+                        {ens}
+                    </Text>
+                    <div style={{ display: 'flex' }}>
+                        <Text
+                            size="small"
+                            textStyle={{
+                                fontFamily: lib.layout.font.sf.light,
+                                marginRight: '5px',
+                            }}
+                        >
+                            Current Price |{' '}
+                        </Text>
+                        <CurrencyText
+                            size="small"
+                            value={Math.max(
+                                floor?.decimal.toNumber() || 0,
+                                token && token.activeSwap ? token.activeSwap?.eth.number : 0,
+                            )}
+                        />
+                    </div>
                 </>
             )}
         </div>
-    );
+    ) : null;
 };
 
 export default React.memo(OwnerBlock);
