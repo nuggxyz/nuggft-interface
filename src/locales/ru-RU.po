@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-03-24 16:44+0000\n"
+"POT-Creation-Date: 2022-03-25 20:30+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Russian\n"
-"PO-Revision-Date: 2022-03-24 17:07\n"
+"PO-Revision-Date: 2022-03-26 06:02\n"
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "(you)"
@@ -342,6 +342,15 @@ msgid "Sold by"
 msgstr ""
 
 #: src/state/transaction/middlewares.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
 msgid "Successful Transaction"
 msgstr ""
 
@@ -385,6 +394,15 @@ msgid "This sale is over"
 msgstr ""
 
 #: src/state/transaction/middlewares.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
+#: src/state/wallet/thactions.ts
 msgid "Transaction Failed"
 msgstr ""
 
