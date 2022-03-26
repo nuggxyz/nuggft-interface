@@ -12,7 +12,7 @@ type Props = {
 };
 
 const Initializer: FunctionComponent<Props> = ({ children }) => {
-    const active = web3.hook.usePriorityIsActive();
+    const active = web3.hook.useNetworkIsActive();
     const provider = web3.hook.usePriorityProvider();
 
     const chainId = web3.hook.usePriorityChainId();
