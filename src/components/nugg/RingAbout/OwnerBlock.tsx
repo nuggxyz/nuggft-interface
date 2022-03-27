@@ -17,7 +17,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
     const provider = web3.hook.usePriorityProvider();
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
-    const offers = client.live.offers(tokenId);
+    // const offers = client.live.offers(tokenId);
 
     const ens = web3.hook.usePriorityAnyENSName(
         token?.type === 'item' ? 'nugg' : provider,
@@ -63,10 +63,10 @@ const OwnerBlock: FunctionComponent<Props> = () => {
         return text;
     }, [token]);
 
-    return offers.length === 0 ? (
+    return (
         <div style={styles.ownerBlockContainer}>
             <Text
-                size="small"
+                // size="small"
                 textStyle={{
                     color: lib.colors.nuggBlueText,
                 }}
@@ -112,7 +112,6 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                         size="medium"
                         textStyle={{
                             padding: '7px',
-                            fontFamily: lib.layout.font.sf.regular,
                         }}
                     >
                         {ens}
@@ -138,7 +137,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                 </>
             )}
         </div>
-    ) : null;
+    );
 };
 
 export default React.memo(OwnerBlock);

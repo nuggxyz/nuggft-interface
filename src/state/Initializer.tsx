@@ -12,9 +12,7 @@ type Props = {
 };
 
 const Initializer: FunctionComponent<Props> = ({ children }) => {
-    const active = web3.hook.useNetworkIsActive();
-    const provider = web3.hook.usePriorityProvider();
-
+    const active = web3.hook.usePriorityIsActive();
     const chainId = web3.hook.usePriorityChainId();
     const epoch = client.live.epoch.id();
     const graphInstance = client.live.graph();
@@ -42,17 +40,12 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        if (chainId && web3.config.isValidChainId(chainId) && provider) {
+        if (chainId && web3.config.isValidChainId(chainId)) {
             const graph = web3.config.createApolloClient(chainId);
 
             updateClients({
                 graph,
             });
-
-            console.log(graph);
-
-            // setInterval(() => {}, 5000);
-            // graph.stop();
 
             return () => {
                 void graph.clearStore();
@@ -64,7 +57,7 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
             };
         }
         return () => undefined;
-    }, [chainId, updateClients, start, provider]);
+    }, [chainId, updateClients, start]);
 
     return active && graphInstance ? (
         <>

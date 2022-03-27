@@ -97,16 +97,9 @@ function createClientStoreAndActions3() {
 
             (set) => {
                 return {
-                    updateClients: (stateUpdate: {
-                        // rpc: WebSocketProvider | undefined;
-                        graph: ApolloClient<any> | undefined;
-                    }) => {
-                        set((draft) => {
-                            // determine the next chainId and accounts
-                            // if (stateUpdate.rpc) draft.rpc = stateUpdate.rpc;
-                            // // @ts-ignore
-                            if (stateUpdate.graph) draft.graph = stateUpdate.graph;
-                            return draft;
+                    updateClients: (stateUpdate: { graph: ApolloClient<any> | undefined }) => {
+                        set(() => {
+                            return stateUpdate;
                         });
                     },
                 };
