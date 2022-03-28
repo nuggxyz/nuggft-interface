@@ -2,11 +2,10 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { plural, t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
-import web3 from '@src/web3';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
 import { Lifecycle } from '@src/client/interfaces';
-import lib from '@src/lib';
+import lib, { parseTokenIdSmart } from '@src/lib';
 
 import styles from './RingAbout.styles';
 
@@ -14,21 +13,21 @@ type Props = Record<string, unknown>;
 
 const OwnerBlock: FunctionComponent<Props> = () => {
     const floor = client.live.stake.eps();
-    const provider = web3.hook.usePriorityProvider();
+    // const provider = web3.hook.usePriorityProvider();
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
     // const offers = client.live.offers(tokenId);
 
-    const ens = web3.hook.usePriorityAnyENSName(
-        token?.type === 'item' ? 'nugg' : provider,
-        token
-            ? token.activeSwap
-                ? token.activeSwap.owner
-                : token.type === 'nugg'
-                ? token.owner
-                : ''
-            : '',
-    );
+    // const ens = web3.hook.usePriorityAnyENSName(
+    //     token?.type === 'item' ? 'nugg' : provider,
+    //     token
+    //         ? token.activeSwap
+    //             ? token.activeSwap.owner
+    //             : token.type === 'nugg'
+    //             ? token.owner
+    //             : ''
+    //         : '',
+    // );
 
     // @danny7even what is the purpose of this? bypassing it fixes a small rendering delay
     //   which makes the ring about not appear as jumpy on first render
@@ -58,21 +57,23 @@ const OwnerBlock: FunctionComponent<Props> = () => {
             token.tryout.min &&
             token.tryout.max
         ) {
-            text += plural(token.tryout.count, { one: 'nugg', other: 'nuggs' });
+            text += plural(token.tryout.count, { 1: 'nugg', other: 'nuggs' });
         }
         return text;
     }, [token]);
 
     return (
         <div style={styles.ownerBlockContainer}>
-            <Text
-                // size="small"
-                textStyle={{
-                    color: lib.colors.nuggBlueText,
-                }}
-            >
-                {title}
-            </Text>
+            {!token?.activeSwap && (
+                <Text
+                    // size="small"
+                    textStyle={{
+                        color: lib.colors.nuggBlueText,
+                    }}
+                >
+                    {title}
+                </Text>
+            )}
 
             {token &&
             token.lifecycle === Lifecycle.Tryout &&
@@ -114,7 +115,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                             padding: '7px',
                         }}
                     >
-                        {ens}
+                        {parseTokenIdSmart(tokenId || '')}
                     </Text>
                     <div style={{ display: 'flex' }}>
                         <Text

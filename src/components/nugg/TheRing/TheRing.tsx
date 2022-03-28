@@ -1,18 +1,19 @@
 /* eslint-disable no-nested-ternary */
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
-import { t } from '@lingui/macro';
+import { plural, t } from '@lingui/macro';
+import { add, formatDistanceToNowStrict } from 'date-fns';
 
-import lib, { parseTokenIdSmart } from '@src/lib';
+import lib from '@src/lib';
 import constants from '@src/lib/constants';
 import AppState from '@src/state/app';
 import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
-import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
 import Label from '@src/components/general/Label/Label';
 import { Lifecycle } from '@src/client/interfaces';
 import web3 from '@src/web3';
+import { useDarkMode } from '@src/client/hooks/useDarkMode';
 
 import styles from './TheRing.styles';
 
@@ -64,6 +65,29 @@ const TheRing: FunctionComponent<Props> = ({
         return remaining;
     }, [blocknum, token?.activeSwap?.epoch]);
 
+    const darkmode = useDarkMode();
+
+    const time = useMemo(() => {
+        return Number(
+            `${
+                formatDistanceToNowStrict(
+                    add(new Date(), {
+                        seconds: blocksRemaining * 12,
+                    }),
+                    {
+                        // addSuffix: true,
+                        unit: 'minute',
+                        // addSuffix: false,
+                        roundingMethod: 'floor',
+                        // roundingMethod: 'floor',
+                        // locale: dates[locale],
+                        // includeSeconds: true
+                    },
+                ).split(' ')[0]
+            }`,
+        );
+    }, [blocksRemaining]);
+
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
             <CircleTimer
@@ -103,7 +127,40 @@ const TheRing: FunctionComponent<Props> = ({
                             <TokenViewer tokenId={tokenId} style={tokenStyle} showcase />
                         </AnimatedCard>
 
-                        {screenType !== 'phone' && <Text>{parseTokenIdSmart(tokenId)}</Text>}
+                        {/* {screenType !== 'phone' && (
+                            <Label
+                                text={parseTokenIdSmart(tokenId)}
+                                containerStyles={
+                                    darkmode
+                                        ? {
+                                              background: lib.colors.nuggBlueTransparent,
+                                              color: lib.colors.nuggBlueText,
+                                          }
+                                        : {}
+                                }
+                            />
+                        )} */}
+
+                        {screenType !== 'phone' && (
+                            <Label
+                                text={`ending in about ${time} ${plural(time, {
+                                    1: 'minute',
+                                    other: 'minutes',
+                                })}`}
+                                // eslint-disable-next-line no-constant-condition
+                                size={time < 5 ? 'large' : 'medium'}
+                                textStyle={{ fontSize: '10px' }}
+                                containerStyles={{
+                                    ...(darkmode
+                                        ? {
+                                              background: lib.colors.nuggBlueTransparent,
+                                              color: lib.colors.nuggBlueText,
+                                          }
+                                        : {}),
+                                    marginTop: '5px',
+                                }}
+                            />
+                        )}
                     </>
                 )}
             </CircleTimer>

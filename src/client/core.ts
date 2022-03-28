@@ -17,7 +17,7 @@ import {
 } from '@src/gql/types.generated';
 import { executeQuery3b } from '@src/graphql/helpers';
 import { Address } from '@src/classes/Address';
-import { SupportedLocale } from '@src/lib/locales';
+import { SupportedLocale } from '@src/lib/i18n/locales';
 
 import { parseRoute, Route, TokenId, ItemId, NuggId } from './router';
 import {

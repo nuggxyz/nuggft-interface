@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, SupportedLocale } from '@src/lib/locales';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, SupportedLocale } from '@src/lib/i18n/locales';
 import client from '@src/client';
 
 import useParsedQueryString, { parsedQueryString } from './useQueryString';

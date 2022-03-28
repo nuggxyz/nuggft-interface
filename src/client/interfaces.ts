@@ -3,7 +3,7 @@ import { State, StoreApi, UseBoundStore } from 'zustand';
 import { ApolloClient } from '@apollo/client/core/ApolloClient';
 
 import { Chain, Connector } from '@src/web3/core/interfaces';
-import { SupportedLocale } from '@src/lib/locales';
+import { SupportedLocale } from '@src/lib/i18n/locales';
 
 import { NuggftV1 } from '../typechain/NuggftV1';
 

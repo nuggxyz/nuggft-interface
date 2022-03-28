@@ -2,7 +2,7 @@ import React, { useCallback, ReactNode, useEffect } from 'react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 
-import { dynamicActivate, SupportedLocale } from '@src/lib/locales';
+import { dynamicActivate, SupportedLocale } from '@src/lib/i18n/locales';
 import client from '@src/client/index';
 
 import { initialLocale, useLocale } from './hooks/useLocale';

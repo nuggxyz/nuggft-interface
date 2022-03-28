@@ -69,6 +69,8 @@ export const SUPPORTED_LOCALES = [
     'zh-TW',
 ] as const;
 
+export type SupportedLocaleWithoutPseudo = typeof SUPPORTED_LOCALES[number];
+
 export type SupportedLocale = typeof SUPPORTED_LOCALES[number] | 'pseudo';
 
 // eslint-disable-next-line import/first
@@ -160,7 +162,7 @@ export async function dynamicActivate(locale: SupportedLocale) {
     const catalog =
         locale === DEFAULT_LOCALE
             ? DEFAULT_CATALOG
-            : ((await import(`../locales/${locale}`)) as { messages: Record<string, string> });
+            : ((await import(`../../locales/${locale}`)) as { messages: Record<string, string> });
     i18n.load(locale, catalog.messages);
     i18n.activate(locale);
 }
