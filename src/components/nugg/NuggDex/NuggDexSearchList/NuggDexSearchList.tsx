@@ -17,10 +17,13 @@ import {
     GetAllNuggsQueryResult,
     OrderDirection,
     GetAllNuggsDocument,
+    GetAllItemsQueryResult,
+    GetAllItemsDocument,
 } from '@src/gql/types.generated';
 import { executeQuery3c } from '@src/graphql/helpers';
+import { createItemId } from '@src/lib/index';
 
-import NuggList from './components/NuggList';
+import NuggList, { NuggListOnScrollEndProps } from './components/NuggList';
 import NuggLink from './components/NuggLink';
 import styles from './NuggDexSearchList.styles';
 
@@ -31,6 +34,19 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const target = client.live.searchFilter.target();
     const sort = client.live.searchFilter.sort();
     const searchValue = client.live.searchFilter.searchValue();
+    const viewing = client.live.searchFilter.viewing();
+    const chainId = web3.hook.usePriorityChainId();
+    const _liveActiveNuggs = client.live.activeSwaps();
+    const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
+    const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
+    const rawLiveActiveItems = client.live.activeItems();
+    const [allNuggs, setAllNuggs] = useState<ListData[]>([]);
+    const [allNuggsPreview, setAllNuggsPreview] = useState<ListData[]>([]);
+    const [allItems, setAllItems] = useState<ListData[]>([]);
+    const [allItemsPreview, setAllItemsPreview] = useState<ListData[]>([]);
+    const recents = client.live.myRecents();
+    const graph = client.live.graph();
+
     const [sortAsc, setSortAsc] = useState<{ [key in SearchView]: boolean }>({
         Recents: false,
         AllNuggs: false,
@@ -40,48 +56,11 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         MyNuggs: false,
     });
     const _sortAsc = useRef(sortAsc);
+
     useEffect(() => {
         _sortAsc.current = sortAsc;
     });
-    const viewing = client.live.searchFilter.viewing();
-    const chainId = web3.hook.usePriorityChainId();
-    const _liveActiveNuggs = client.live.activeSwaps();
 
-    const liveActiveNuggs = useMemo(
-        () =>
-            _liveActiveNuggs.reduce((acc: ListData[], nugg) => {
-                let tmp = acc;
-                if (epoch__id && +nugg.id <= +epoch__id) {
-                    if (searchValue === '' || searchValue === nugg.id) {
-                        if (sortAsc[SearchView.OnSale]) {
-                            tmp = [...acc, nugg];
-                        } else {
-                            tmp = [nugg, ...acc];
-                        }
-                    }
-                }
-                return tmp;
-            }, []),
-        [epoch__id, _liveActiveNuggs, searchValue, sortAsc],
-    );
-    const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
-    const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
-    const rawLiveActiveItems = client.live.activeItems();
-    const liveActiveItems = useMemo(
-        () =>
-            rawLiveActiveItems.reduce((acc: ListData[], item) => {
-                let tmp = acc;
-                // if (searchValue && searchValue === item.id) {
-                if (sortAsc[SearchView.AllItems]) {
-                    tmp = [...acc, item];
-                } else {
-                    tmp = [item, ...acc];
-                }
-                // }
-                return tmp;
-            }, []),
-        [searchValue, sortAsc, rawLiveActiveItems],
-    );
     useEffect(() => {
         if (viewing) {
             updateSearchFilterTarget(viewing);
@@ -101,9 +80,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             });
         }
     }, [sort, target]);
-    const [allNuggs, setAllNuggs] = useState<ListData[]>([]);
-    const [allNuggsPreview, setAllNuggsPreview] = useState<ListData[]>([]);
-    const recents = client.live.myRecents();
 
     useEffect(() => {
         if (allNuggs.length >= constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT) {
@@ -111,19 +87,64 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         }
     }, [allNuggs]);
 
+    useEffect(() => {
+        if (allItems.length >= constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT) {
+            setAllItemsPreview(allItems.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT));
+        }
+    }, [allItems]);
+
+    const liveActiveNuggs = useMemo(
+        () =>
+            _liveActiveNuggs.reduce((acc: ListData[], nugg) => {
+                let tmp = acc;
+                if (epoch__id && +nugg.id <= +epoch__id) {
+                    if (searchValue === '' || searchValue === nugg.id) {
+                        if (sortAsc[SearchView.OnSale]) {
+                            tmp = [...acc, nugg];
+                        } else {
+                            tmp = [nugg, ...acc];
+                        }
+                    }
+                }
+                return tmp;
+            }, []),
+        [epoch__id, _liveActiveNuggs, searchValue, sortAsc],
+    );
+
+    const liveActiveItems = useMemo(
+        () =>
+            rawLiveActiveItems.reduce((acc: ListData[], item) => {
+                let tmp = acc;
+                // if (searchValue && searchValue === item.id) {
+                if (sortAsc[SearchView.OnSale]) {
+                    tmp = [...acc, item];
+                } else {
+                    tmp = [item, ...acc];
+                }
+                // }
+                return tmp;
+            }, []),
+        [searchValue, sortAsc, rawLiveActiveItems],
+    );
+
+    const liveActiveEverything = useMemo(() => {
+        return [...liveActiveNuggs, ...liveActiveItems];
+    }, [liveActiveNuggs, liveActiveItems]);
+
     const animatedStyle = useSpring({
         ...styles.nuggLinksContainer,
         transform: viewing !== SearchView.Home ? 'scale(0.9)' : 'scale(1)',
         delay: constants.ANIMATION_DELAY,
     });
-    const graph = client.live.graph();
+
     const handleGetAll = useCallback(
         async (
             setResults: React.Dispatch<React.SetStateAction<ListData[]>>,
             startFrom: number,
             // eslint-disable-next-line  @typescript-eslint/default-param-last
-            addToResult = false,
-            _sort?: 'asc' | 'desc',
+            // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+            addToResult: boolean = false,
+            _sort: 'asc' | 'desc' = 'asc',
             _searchValue?: string,
             setLoading?: React.Dispatch<SetStateAction<boolean>>,
             desiredSize?: number,
@@ -146,13 +167,58 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     },
                 );
 
-                console.log(result);
                 if (result && setLoading) setLoading(false);
                 if (result) {
                     setResults((res) => {
                         if (addToResult) res = [...res, ...result.nuggs];
                         else res = result.nuggs;
                         return res;
+                    });
+                }
+            }
+        },
+        [chainId, graph],
+    );
+
+    const handleGetAllItems = useCallback(
+        async (
+            setResults: React.Dispatch<React.SetStateAction<ListData[]>>,
+            startFrom: number,
+            // eslint-disable-next-line  @typescript-eslint/default-param-last
+            // eslint-disable-next-line @typescript-eslint/no-inferrable-types
+            addToResult: boolean = false,
+            _sort?: 'asc' | 'desc',
+            _searchValue?: string,
+            setLoading?: React.Dispatch<SetStateAction<boolean>>,
+            desiredSize?: number,
+        ) => {
+            if (chainId && graph) {
+                if (setLoading) setLoading(true);
+
+                const result = await executeQuery3c<GetAllItemsQueryResult>(
+                    graph,
+                    GetAllItemsDocument,
+                    {
+                        orderDirection:
+                            !_sort || _sort === 'asc' ? OrderDirection.Desc : OrderDirection.Asc,
+                        where: {
+                            ...(_searchValue && _searchValue !== '' ? { id: _searchValue } : {}),
+                        },
+                        first: desiredSize || 25,
+                        skip: startFrom,
+                        orderBy: 'idnum',
+                    },
+                );
+
+                console.log({ result });
+
+                if (result && setLoading) setLoading(false);
+                if (result) {
+                    const update = result.items.map((x) => ({ id: createItemId(x.id) }));
+                    console.log('helloooooo');
+                    setResults((res) => {
+                        if (addToResult) return [...res, ...update];
+                        return [...update];
                     });
                 }
             }
@@ -181,7 +247,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 </NuggLink>
                 <NuggLink
                     type={SearchView.OnSale}
-                    previewNuggs={liveActiveNuggs}
+                    previewNuggs={liveActiveEverything}
                     style={{
                         position: 'absolute',
                         top: 0,
@@ -191,24 +257,44 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     <NuggList
                         animationToggle={viewing === SearchView.OnSale}
                         style={styles.nuggListEnter}
-                        values={liveActiveNuggs}
+                        values={liveActiveEverything}
                         type={SearchView.OnSale}
                     />
                 </NuggLink>
+
                 <NuggLink
-                    type={SearchView.AllItems}
-                    previewNuggs={liveActiveItems}
                     style={{
+                        // width: '100%',
                         position: 'absolute',
-                        bottom: 0,
                         right: 0,
+                        bottom: 0,
                     }}
+                    type={SearchView.AllItems}
+                    previewNuggs={allItemsPreview}
+                    // limit={constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT}
                 >
                     <NuggList
                         animationToggle={viewing === SearchView.AllItems}
                         style={styles.nuggListEnter}
-                        values={liveActiveItems}
+                        values={allItems}
                         type={SearchView.AllItems}
+                        onScrollEnd={({
+                            setLoading,
+                            searchValue: _searchValue,
+                            sort: _sort,
+                            addToList,
+                            desiredSize,
+                        }: NuggListOnScrollEndProps) =>
+                            handleGetAllItems(
+                                setAllItems,
+                                addToList ? allItems.length : 0,
+                                addToList,
+                                _sort,
+                                _searchValue,
+                                setLoading,
+                                desiredSize,
+                            )
+                        }
                     />
                 </NuggLink>
                 <NuggLink

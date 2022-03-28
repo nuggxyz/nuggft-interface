@@ -1,6 +1,5 @@
 import React, {
     CSSProperties,
-    Dispatch,
     FunctionComponent,
     SetStateAction,
     useCallback,
@@ -25,7 +24,15 @@ import usePrevious from '@src/hooks/usePrevious';
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
 
-type Props = {
+export type NuggListOnScrollEndProps = {
+    setLoading?: React.Dispatch<SetStateAction<boolean>>;
+    sort?: 'asc' | 'desc';
+    searchValue?: string;
+    addToList?: boolean;
+    desiredSize?: number;
+};
+
+export type NuggListProps = {
     type?: SearchView;
     style: CSSProperties | UseSpringProps;
     values: ListData[];
@@ -36,16 +43,10 @@ type Props = {
         searchValue,
         addToList,
         desiredSize,
-    }: {
-        setLoading?: React.Dispatch<SetStateAction<boolean>>;
-        sort?: 'asc' | 'desc';
-        searchValue?: string;
-        addToList?: boolean;
-        desiredSize?: number;
-    }) => Promise<void> | (() => void);
+    }: NuggListOnScrollEndProps) => Promise<void> | (() => void);
 };
 
-const NuggList: FunctionComponent<Props> = ({
+const NuggList: FunctionComponent<NuggListProps> = ({
     style,
     values,
     onScrollEnd,
@@ -83,7 +84,7 @@ const NuggList: FunctionComponent<Props> = ({
                     desiredSize,
                 });
         },
-        [searchValue, sort],
+        [searchValue, sort, values],
     );
 
     useEffect(() => {

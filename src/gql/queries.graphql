@@ -2,8 +2,8 @@ query getAllNuggs(
     $first: Int
     $skip: Int
     $orderDirection: OrderDirection
-    $orderBy: Nugg_orderBy
-    $where: Nugg_filter
+    $orderBy: Nugg_OrderBy
+    $where: Nugg_Filter
 ) {
     nuggs(
         where: $where
@@ -20,8 +20,8 @@ query getAllItems(
     $first: Int
     $skip: Int
     $orderDirection: OrderDirection
-    $orderBy: Item_orderBy
-    $where: Item_filter
+    $orderBy: Item_OrderBy
+    $where: Item_Filter
 ) {
     items(
         where: $where
