@@ -54,26 +54,32 @@ export const CONTRACTS = {
         DotnuggV1: ethers.constants.AddressZero,
         Genesis: 0,
         Interval: 0,
+        Offset: 1,
     },
     [Chain.ROPSTEN]: {
         NuggftV1: '0x420690c1b1519a32fa36768dc2cefe128160a9b7',
         DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
         Genesis: 333,
         Interval: 32,
+        Offset: 1,
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0x040a27fab717ae2164837151b6b02299e3608ea3', // 0x3f1c9c4ae47809d284592845e4ced13a6e352421
-        DotnuggV1: '0x2206e6905872a4711e99aa0d0a2f25bd91925273',
-        Genesis: 10366720,
-        Interval: 32,
+        NuggftV1: '0xe094125aef5089dfd566b816b9e731c9c0d349b1', // 0x3f1c9c4ae47809d284592845e4ced13a6e352421
+        DotnuggV1: '0x4de28c0844af37f3c475afbad39ea818df62b2ae',
+        Genesis: 10405120,
+        Interval: 256,
+        Offset: 1,
     },
     [Chain.GOERLI]: {
         NuggftV1: '0x7ccd9a783e43845f3ae37e83b4a696b0cfab114c',
         DotnuggV1: '0x9a3b1be8ec7eaf472b22c9c833164297e2940f27',
         Genesis: 333,
         Interval: 32,
+        Offset: 1,
     },
 };
+
+// QmXAhEeSBXYA227ER3YK9NBE57HhpVGGWeYWQhic4nPZ6M
 
 export const GRAPH_ENPOINTS = {
     [Chain.MAINNET]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,

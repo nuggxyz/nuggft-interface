@@ -9,7 +9,6 @@ import { WebSocketProvider, JsonRpcProvider } from '@ethersproject/providers';
 import { Chain } from '@src/web3/core/interfaces';
 import { extractItemId, parseItmeIdToNum } from '@src/lib';
 import web3 from '@src/web3';
-import config from '@src/config';
 import {
     GetLiveItemDocument,
     GetLiveItemQueryResult,
@@ -41,7 +40,7 @@ enableMapSet();
 
 const calculateStartBlock = (epoch: BigNumberish, chainId: Chain) => {
     return BigNumber.from(epoch)
-        .sub(config.EPOCH_OFFSET)
+        .sub(web3.config.CONTRACTS[chainId].Offset)
         .mul(web3.config.CONTRACTS[chainId].Interval)
         .add(web3.config.CONTRACTS[chainId].Genesis)
         .toNumber();
@@ -51,7 +50,7 @@ const calculateEpochId = (blocknum: number, chainId: Chain) => {
     return BigNumber.from(blocknum)
         .sub(web3.config.CONTRACTS[chainId].Genesis)
         .div(web3.config.CONTRACTS[chainId].Interval)
-        .add(config.EPOCH_OFFSET)
+        .add(web3.config.CONTRACTS[chainId].Offset)
         .toNumber();
 };
 
