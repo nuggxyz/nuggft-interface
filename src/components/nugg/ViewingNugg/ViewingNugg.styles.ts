@@ -1,4 +1,4 @@
-import { NLStyleSheetCreator } from '@src/lib';
+import lib, { NLStyleSheetCreator } from '@src/lib';
 import Colors from '@src/lib/colors';
 import globalStyles from '@src/lib/globalStyles';
 import Layout from '@src/lib/layout';
@@ -9,20 +9,20 @@ const styles = NLStyleSheetCreator({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
-        height: '100%',
-        width: '100%',
+        height: '85%',
+        width: '80%',
         position: 'relative',
     },
     nuggId: {
-        color: 'white',
-        padding: '1rem',
-        background: Colors.nuggBlueSemiTransparent,
+        color: lib.colors.nuggBlueText,
+        padding: '.5rem 1rem',
+        background: Colors.transparentWhite,
         borderRadius: Layout.borderRadius.small,
     },
     nuggContainer: {
         position: 'relative',
         height: '400px',
-        width: '400px',
+        width: '100%', // '400px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -31,7 +31,7 @@ const styles = NLStyleSheetCreator({
     nuggContainerMobile: {
         position: 'relative',
         height: '400px',
-        width: '400px',
+        width: '100%',
         top: 0,
         display: 'flex',
         justifyContent: 'center',
@@ -39,12 +39,12 @@ const styles = NLStyleSheetCreator({
         zIndex: 100,
     },
     titleText: {
-        color: Colors.nuggBlueText,
+        color: Colors.white,
         display: 'flex',
         alignItems: 'center',
     },
     owner: {
-        background: Colors.transparentWhite,
+        background: Colors.nuggBlueTransparent,
         padding: '.5rem',
         borderRadius: Layout.borderRadius.mediumish,
         postion: 'relative',
@@ -54,9 +54,11 @@ const styles = NLStyleSheetCreator({
         borderBottomRightRadius: 0,
         borderBottomLeftRadius: 0,
         position: 'relative',
+        width: '100%',
     },
     swapsWrapper: {
-        height: '40%',
+        // height: '40%',
+        height: '100%',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -65,9 +67,11 @@ const styles = NLStyleSheetCreator({
     swaps: {
         borderRadius: Layout.borderRadius.mediumish,
         background: Colors.transparentGrey,
-        marginTop: '1rem',
-        width: '80%',
+        // marginTop: '1rem',
+        width: '100%',
         position: 'relative',
+        // justifyContent: 'center',
+        alignItems: 'center',
         height: '100%',
         overflow: 'hidden',
         display: 'flex',
@@ -106,13 +110,14 @@ const styles = NLStyleSheetCreator({
     textBlack: { color: Colors.primaryColor },
     flyout: {
         position: 'absolute',
-        top: '.4rem',
-        right: '.4rem',
+        zIndex: 10,
+        top: '.7rem',
+        left: '.7rem',
     },
     flyoutButton: {
-        background: Colors.gradient2Transparent,
+        background: Colors.white,
         borderRadius: Layout.borderRadius.large,
-        padding: '.25rem .25rem 0rem .25rem',
+        padding: '.4rem .4rem 0rem .4rem',
     },
     ownerButtonContainer: {
         display: 'flex',
@@ -128,9 +133,14 @@ const styles = NLStyleSheetCreator({
         overflow: 'scroll',
     },
     stickyList: {
-        height: '100%',
+        // height: '100%',
         width: '100%',
         overflow: 'hidden',
+        // margin: '.4rem',
+    },
+    tabberList: {
+        // background: lib.colors.nuggBlueTransparent,
+        // borderRadius: lib.layout.borderRadius.smallish,
     },
     swapButton: {
         width: '100%',
@@ -141,25 +151,31 @@ const styles = NLStyleSheetCreator({
     listTitle: {
         padding: '.5rem',
         background: Colors.transparentWhite,
-        borderTopRightRadius: Layout.borderRadius.large,
-        borderBottomRightRadius: Layout.borderRadius.large,
+        width: '100%',
         margin: '.25rem 0rem',
         ...globalStyles.backdropFilter,
     },
     listItemSvg: {
         height: '100px',
         width: '100px',
+        // background: 'red',
     },
     itemListItem: {
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        position: 'relative',
+        // justifyContent: 'center',
+        // justifyContent: 'space-between',
         width: '100%',
         marginBottom: '.5em',
+        background: lib.colors.transparentWhite,
+        borderRadius: lib.layout.borderRadius.mediumish,
     },
     itemListButton: {
-        borderRadius: Layout.borderRadius.medium,
+        borderRadius: Layout.borderRadius.large,
         background: Colors.gradient2Transparent,
+        position: 'absolute',
+        right: '1rem',
     },
     itemListButtonText: {
         color: Colors.white,

@@ -2,10 +2,9 @@ import React, { FunctionComponent, MemoExoticComponent, useMemo } from 'react';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 
-import { parseTokenIdSmart } from '@src/lib';
+import lib, { parseTokenIdSmart } from '@src/lib';
 import Colors from '@src/lib/colors';
 import AppState from '@src/state/app';
-import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import Loader from '@src/components/general/Loader/Loader';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -17,6 +16,9 @@ import AddressViewer from '@src/components/general/Texts/AddressViewer/AddressVi
 import { LiveNugg } from '@src/client/interfaces';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import useTokenQuery from '@src/client/hooks/useTokenQuery';
+// import { LiveNuggWithLifecycle } from '@src/client/interfaces';
+
+import globalStyles from '@src/lib/globalStyles';
 
 import styles from './ViewingNugg.styles';
 import OwnerButtons from './FlyoutButtons/OwnerButtons';
@@ -24,8 +26,8 @@ import SaleButtons from './FlyoutButtons/SaleButtons';
 import LoanButtons from './FlyoutButtons/LoanButtons';
 import SwapList from './SwapList';
 import ItemList from './ItemList';
-import NuggAbout from './NuggAbout';
-import ItemAbout from './ItemAbout';
+// import NuggAbout from './NuggAbout';
+// import ItemAbout from './ItemAbout';
 
 type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
 
@@ -73,6 +75,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 : []),
         ];
     }, [token, sender, chainId, provider, tokenId]);
+
     return provider && epoch && tokenId && token ? (
         <div style={styles.container}>
             {MobileBackButton && (
@@ -87,29 +90,6 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                     <MobileBackButton />
                 </div>
             )}
-            <div style={screenType === 'phone' ? styles.nuggContainerMobile : styles.nuggContainer}>
-                <div style={{ position: 'fixed' }}>
-                    <AnimatedCard>
-                        {tokenId && <TokenViewer tokenId={tokenId} showcase disableOnClick />}
-                    </AnimatedCard>
-                </div>
-            </div>
-
-            <div style={{ width: '80%' }}>
-                {token.type === 'item' && (
-                    <ItemAbout token={token} tokenId={tokenId} epoch={epoch} />
-                )}
-
-                {token.type === 'nugg' && token.activeSwap !== undefined && (
-                    <NuggAbout
-                        tokenId={tokenId}
-                        token={token as Required<LiveNugg>}
-                        epoch={epoch}
-                        provider={provider}
-                    />
-                )}
-            </div>
-
             <div style={styles.swapsWrapper}>
                 <div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
                     <div style={styles.owner}>
@@ -124,30 +104,32 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                             type="text"
                                             size="smaller"
                                             textStyle={{
-                                                color: Colors.nuggBlueText,
+                                                color: Colors.white,
                                             }}
                                         >
                                             {t`Owner`}
                                         </Text>
-                                        <AddressViewer
-                                            address={token.owner}
-                                            textStyle={styles.titleText}
-                                            param={token.owner}
-                                            route="address"
-                                            size="medium"
-                                            isNugg={false}
-                                        />
-                                        <Text textStyle={styles.titleText}>
-                                            {token?.owner === sender && (
-                                                <Text
-                                                    type="text"
-                                                    size="smaller"
-                                                    textStyle={{ paddingLeft: '.5rem' }}
-                                                >
-                                                    {t`(you)`}
-                                                </Text>
-                                            )}
-                                        </Text>
+                                        <div style={globalStyles.centered}>
+                                            <AddressViewer
+                                                address={token.owner}
+                                                textStyle={styles.titleText}
+                                                param={token.owner}
+                                                route="address"
+                                                size="medium"
+                                                isNugg={false}
+                                            />
+                                            <Text textStyle={styles.titleText}>
+                                                {token?.owner === sender && (
+                                                    <Text
+                                                        type="text"
+                                                        size="smaller"
+                                                        textStyle={{ paddingLeft: '.5rem' }}
+                                                    >
+                                                        {t`(you)`}
+                                                    </Text>
+                                                )}
+                                            </Text>
+                                        </div>
                                     </>
                                 ) : (
                                     <Loader color={Colors.nuggBlueText} />
@@ -162,14 +144,21 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                 </Text>
                             )}
                         </div>
-
+                    </div>
+                    <div
+                        style={
+                            screenType === 'phone'
+                                ? styles.nuggContainerMobile
+                                : styles.nuggContainer
+                        }
+                    >
                         {token.type === 'nugg' && token.owner === sender && (
                             <Flyout
                                 containerStyle={styles.flyout}
-                                style={{ right: '0rem', top: '2rem' }}
+                                style={{ left: '1rem', top: '2rem' }}
                                 button={
                                     <div style={styles.flyoutButton}>
-                                        <IoEllipsisHorizontal color={Colors.white} />
+                                        <IoEllipsisHorizontal color={Colors.nuggBlueText} />
                                     </div>
                                 }
                                 openOnHover
@@ -188,14 +177,21 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                     ))}
                             </Flyout>
                         )}
+                        {/* <div style={{ position: 'fixed' }}>
+                            <AnimatedCard> */}
+                        {tokenId && <TokenViewer tokenId={tokenId} showcase disableOnClick />}
+                        {/* </AnimatedCard>
+                        </div> */}
                     </div>
 
                     <HappyTabber
                         defaultActiveIndex={0}
                         items={happyTabs}
-                        bodyStyle={styles.stickyList}
+                        selectionIndicatorStyle={{ background: lib.colors.white }}
+                        bodyStyle={styles.tabberList}
+                        // wrapperStyle={{ padding: '.6rem' }}
                         headerContainerStyle={{
-                            background: Colors.transparentWhite,
+                            padding: '0rem 1rem',
                             borderRadius: 0,
                         }}
                     />

@@ -2,7 +2,6 @@ import React, { FC, FunctionComponent } from 'react';
 import { IoPricetagsOutline, IoSync } from 'react-icons/io5';
 
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import Label from '@src/components/general/Label/Label';
 import {
     createItemId,
     formatItemSwapIdForSend,
@@ -18,6 +17,7 @@ import Colors from '@src/lib/colors';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import WalletState from '@src/state/wallet';
 import { DefaultExtraData, LiveNuggItem } from '@src/client/interfaces';
+import Text from '@src/components/general/Texts/Text/Text';
 
 import styles from './ViewingNugg.styles';
 
@@ -34,16 +34,19 @@ interface Props extends ExtraData {
 const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData, undefined>> = ({ item, extraData }) => {
     return (
         <div style={styles.itemListItem}>
-            <div style={{ ...globalStyles.centeredSpaceBetween }}>
+            <div style={globalStyles.centeredSpaceBetween}>
                 <TokenViewer
                     tokenId={createItemId((Number(item.feature) << 8) | item.position)}
                     style={styles.listItemSvg}
                     // data={item.dotnuggRawCache}
                 />
+                <Text type="text">
+                    {parseTokenId(createItemId((Number(item.feature) << 8) | item.position))}
+                </Text>
 
-                <Label
+                {/* <Label
                     text={parseTokenId(createItemId((Number(item.feature) << 8) | item.position))}
-                />
+                /> */}
             </div>
             {Number(item.feature) !== constants.FEATURE_BASE &&
                 extraData.isOwner &&

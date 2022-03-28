@@ -21,6 +21,7 @@ interface Props {
     defaultActiveIndex?: number;
     // containerStyle?: CSSProperties;
     bodyStyle?: CSSProperties;
+    wrapperStyle?: CSSProperties;
     headerTextStyle?: CSSProperties;
     selectionIndicatorStyle?: CSSProperties;
     headerContainerStyle?: CSSProperties;
@@ -35,6 +36,7 @@ const HappyTabber = ({
     // containerStyle,
     disableTransition = false,
     bodyStyle,
+    wrapperStyle,
     headerTextStyle,
     selectionIndicatorStyle,
     headerContainerStyle,
@@ -85,6 +87,7 @@ const HappyTabber = ({
                 ...styles.wrapperContainer,
                 // ...(screenType === 'phone' && { overflow: 'scroll' }),
                 minWidth: screenType === 'phone' ? '100%' : `${WIDTH}px`,
+                ...wrapperStyle,
             }}
         >
             {!isUndefinedOrNullOrArrayEmpty(items) && items.length > 1 && (
