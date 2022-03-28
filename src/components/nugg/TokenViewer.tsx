@@ -87,7 +87,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
                 style={{
                     ...(screenType === 'phone'
                         ? { width: width / 1.2, height: width / 1.2 }
-                        : { width: '550px', height: '550px' }),
+                        : { width: '400px', height: '400px' }),
                     // width: '100%',
                     ...style,
                     transform: 'translate3d(0,0,0)',
