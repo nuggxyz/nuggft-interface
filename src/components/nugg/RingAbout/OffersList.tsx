@@ -47,33 +47,34 @@ const OffersList: FunctionComponent<Props> = () => {
         token.lifecycle !== Lifecycle.Tryout &&
         token.lifecycle !== Lifecycle.Stands ? (
         <>
-            {offers.length > 1 && screenType === 'tablet' ? (
-                <Text
-                    size="small"
-                    type="text"
-                    textStyle={{ color: 'white', ...styles.showMoreButton }}
-                >
-                    {t`previous offers`}
-                </Text>
-            ) : (
-                <Button
-                    size="small"
-                    type="text"
-                    textStyle={{ color: 'white' }}
-                    label={open ? t`hide previous offers` : t`show previous offers`}
-                    rightIcon={
-                        <div style={styles.allOffersButton}>
-                            {open ? (
-                                <IoRemove color={lib.colors.nuggBlueText} size={14} />
-                            ) : (
-                                <IoAdd color={lib.colors.nuggBlueText} size={14} />
-                            )}
-                        </div>
-                    }
-                    onClick={() => setOpen(!open)}
-                    buttonStyle={styles.showMoreButton}
-                />
-            )}
+            {offers.length > 1 &&
+                (screenType === 'tablet' ? (
+                    <Text
+                        size="small"
+                        type="text"
+                        textStyle={{ color: 'white', ...styles.showMoreButton }}
+                    >
+                        {t`previous offers`}
+                    </Text>
+                ) : (
+                    <Button
+                        size="small"
+                        type="text"
+                        textStyle={{ color: 'white' }}
+                        label={open ? t`hide previous offers` : t`show previous offers`}
+                        rightIcon={
+                            <div style={styles.allOffersButton}>
+                                {open ? (
+                                    <IoRemove color={lib.colors.nuggBlueText} size={14} />
+                                ) : (
+                                    <IoAdd color={lib.colors.nuggBlueText} size={14} />
+                                )}
+                            </div>
+                        }
+                        onClick={() => setOpen(!open)}
+                        buttonStyle={styles.showMoreButton}
+                    />
+                ))}
             <animated.div style={springStyle}>
                 <List
                     data={offers.slice(1)}

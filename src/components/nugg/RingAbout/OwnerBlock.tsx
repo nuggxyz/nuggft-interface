@@ -1,17 +1,32 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FC, FunctionComponent, useMemo } from 'react';
 import { plural, t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
-import { Lifecycle } from '@src/client/interfaces';
+import { Lifecycle, LiveNuggItem } from '@src/client/interfaces';
 import lib, { parseTokenIdSmart } from '@src/lib';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import useRemaining from '@src/hooks/useRemaining';
+import List, { ListRenderItemProps } from '@src/components/general/List/List';
+import TokenViewer from '@src/components/nugg/TokenViewer';
 
 import styles from './RingAbout.styles';
 
 type Props = Record<string, unknown>;
+
+const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>> = ({ item }) => {
+    return (
+        <div
+            style={{
+                borderRadius: lib.layout.borderRadius.medium,
+                transition: '.2s background ease',
+            }}
+        >
+            <TokenViewer tokenId={item.id} style={{ width: '60px', height: '60px' }} />
+        </div>
+    );
+};
 
 const OwnerBlock: FunctionComponent<Props> = () => {
     // const floor = client.live.stake.eps();
@@ -19,31 +34,6 @@ const OwnerBlock: FunctionComponent<Props> = () => {
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
     // const offers = client.live.offers(tokenId);
-
-    // const ens = web3.hook.usePriorityAnyENSName(
-    //     token?.type === 'item' ? 'nugg' : provider,
-    //     token
-    //         ? token.activeSwap
-    //             ? token.activeSwap.owner
-    //             : token.type === 'nugg'
-    //             ? token.owner
-    //             : ''
-    //         : '',
-    // );
-
-    // @danny7even what is the purpose of this? bypassing it fixes a small rendering delay
-    //   which makes the ring about not appear as jumpy on first render
-    // const isItemTryout = useCallback(
-    //     (_token?: LiveToken | null): _token is RecursiveRequired<LiveItem> =>
-    //         !isUndefinedOrNullOrBooleanFalse(
-    //             lifecycle === Lifecycle.Tryout &&
-    //                 _token &&
-    //                 _token.type === 'item' &&
-    //                 !isUndefinedOrNullOrObjectEmpty(_token.tryout.min) &&
-    //                 !isUndefinedOrNullOrObjectEmpty(_token.tryout.max),
-    //         ),
-    //     [lifecycle],
-    // );
 
     const title = useMemo(() => {
         if (token && token.lifecycle === Lifecycle.Stands) {
@@ -114,62 +104,77 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                 </div>
             ) : (
                 // @danny7even is this logic okay, shoud be same as before but less conditional rerendering, i think
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Text
-                        textStyle={{
-                            color: 'white',
-                            padding: '1rem',
-                            background: darkmode
-                                ? lib.colors.nuggBlueTransparent
-                                : lib.colors.transparentGrey,
-                            borderRadius: lib.layout.borderRadius.medium,
-                            fontSize: '23px',
-                        }}
-                    >
-                        {tokenId && parseTokenIdSmart(tokenId)}
-                    </Text>
-                    {/* <div style={{ display: 'flex', marginTop: '20px' }}>
-                        <Text
-                            size="small"
-                            textStyle={{
-                                fontFamily: lib.layout.font.sf.light,
-                                marginRight: '5px',
-                            }}
-                        >
-                            Current Price |{' '}
-                        </Text>
-                        <CurrencyText
-                            size="small"
-                            value={Math.max(
-                                floor?.decimal.toNumber() || 0,
-                                token && token.activeSwap ? token.activeSwap?.eth.number : 0,
-                            )}
-                        />
-                    </div> */}
+                <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
                     <div
                         style={{
-                            alignItems: 'end',
                             display: 'flex',
-                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            width: '100%',
+                            alignItems: 'center',
                         }}
                     >
-                        <Text textStyle={{ fontSize: '13px', color: 'white' }}>
-                            ending in about
-                        </Text>
                         <Text
-                            textStyle={{ color: 'white', fontSize: '28px' }}
-                        >{`${minutes} ${plural(minutes, {
-                            1: 'minute',
-                            other: 'minutes',
-                        })}`}</Text>
-                    </div>
+                            textStyle={{
+                                color: 'white',
+                                padding: '1rem',
+                                background: darkmode
+                                    ? lib.colors.nuggBlueTransparent
+                                    : lib.colors.transparentGrey,
+                                borderRadius: lib.layout.borderRadius.medium,
+                                fontSize: '23px',
+                            }}
+                        >
+                            {tokenId && parseTokenIdSmart(tokenId)}
+                        </Text>
+
+                        <div
+                            style={{
+                                alignItems: 'end',
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                        >
+                            <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                                ending in about
+                            </Text>
+                            <Text
+                                textStyle={{ color: 'white', fontSize: '28px' }}
+                            >{`${minutes} ${plural(minutes, {
+                                1: 'minute',
+                                other: 'minutes',
+                            })}`}</Text>
+                        </div>
+                    </div>{' '}
+                    {token && token.type === 'nugg' && (
+                        <List
+                            data={token.items}
+                            labelStyle={{
+                                color: 'white',
+                            }}
+                            action={() => {
+                                // if (items)
+                                //     setItems({
+                                //         active: [
+                                //             ...items.active.filter(
+                                //                 (x) => x.feature !== item.feature,
+                                //             ),
+                                //         ],
+                                //         hidden: [item, ...items.hidden],
+                                //     });
+                            }}
+                            extraData={undefined}
+                            RenderItem={RenderItem}
+                            horizontal
+                            style={{
+                                // width: '100%',
+                                marginTop: '20px',
+                                background: lib.colors.transparentLightGrey,
+                                height: '80px',
+                                padding: '0rem .3rem',
+                                borderRadius: lib.layout.borderRadius.medium,
+                            }}
+                        />
+                    )}{' '}
                 </div>
             )}
         </div>
@@ -177,3 +182,49 @@ const OwnerBlock: FunctionComponent<Props> = () => {
 };
 
 export default React.memo(OwnerBlock);
+
+// const ens = web3.hook.usePriorityAnyENSName(
+//     token?.type === 'item' ? 'nugg' : provider,
+//     token
+//         ? token.activeSwap
+//             ? token.activeSwap.owner
+//             : token.type === 'nugg'
+//             ? token.owner
+//             : ''
+//         : '',
+// );
+
+// @danny7even what is the purpose of this? bypassing it fixes a small rendering delay
+//   which makes the ring about not appear as jumpy on first render
+// const isItemTryout = useCallback(
+//     (_token?: LiveToken | null): _token is RecursiveRequired<LiveItem> =>
+//         !isUndefinedOrNullOrBooleanFalse(
+//             lifecycle === Lifecycle.Tryout &&
+//                 _token &&
+//                 _token.type === 'item' &&
+//                 !isUndefinedOrNullOrObjectEmpty(_token.tryout.min) &&
+//                 !isUndefinedOrNullOrObjectEmpty(_token.tryout.max),
+//         ),
+//     [lifecycle],
+// );
+
+// {
+// /* <div style={{ display: 'flex', marginTop: '20px' }}>
+//                     <Text
+//                         size="small"
+//                         textStyle={{
+//                             fontFamily: lib.layout.font.sf.light,
+//                             marginRight: '5px',
+//                         }}
+//                     >
+//                         Current Price |{' '}
+//                     </Text>
+//                     <CurrencyText
+//                         size="small"
+//                         value={Math.max(
+//                             floor?.decimal.toNumber() || 0,
+//                             token && token.activeSwap ? token.activeSwap?.eth.number : 0,
+//                         )}
+//                     />
+//                 </div> */
+// }

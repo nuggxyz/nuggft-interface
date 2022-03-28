@@ -71,13 +71,13 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         () =>
             rawLiveActiveItems.reduce((acc: ListData[], item) => {
                 let tmp = acc;
-                if (searchValue && searchValue === item.id) {
-                    if (sortAsc[SearchView.AllItems]) {
-                        tmp = [...acc, item];
-                    } else {
-                        tmp = [item, ...acc];
-                    }
+                // if (searchValue && searchValue === item.id) {
+                if (sortAsc[SearchView.AllItems]) {
+                    tmp = [...acc, item];
+                } else {
+                    tmp = [item, ...acc];
                 }
+                // }
                 return tmp;
             }, []),
         [searchValue, sortAsc, rawLiveActiveItems],
