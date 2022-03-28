@@ -108,7 +108,6 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                             {tokenId && parseTokenIdSmart(tokenId)}
                         </Text>
                         <div style={{ marginLeft: '1rem' }}>
-                            {/* eslint-disable-next-line no-nested-ternary */}
                             {token.type === 'nugg' ? (
                                 token.owner ? (
                                     <>

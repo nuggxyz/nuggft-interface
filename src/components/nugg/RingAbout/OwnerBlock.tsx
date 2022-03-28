@@ -6,13 +6,15 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import client from '@src/client';
 import { Lifecycle } from '@src/client/interfaces';
 import lib, { parseTokenIdSmart } from '@src/lib';
+import { useDarkMode } from '@src/client/hooks/useDarkMode';
+import useRemaining from '@src/hooks/useRemaining';
 
 import styles from './RingAbout.styles';
 
 type Props = Record<string, unknown>;
 
 const OwnerBlock: FunctionComponent<Props> = () => {
-    const floor = client.live.stake.eps();
+    // const floor = client.live.stake.eps();
     // const provider = web3.hook.usePriorityProvider();
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
@@ -62,6 +64,10 @@ const OwnerBlock: FunctionComponent<Props> = () => {
         return text;
     }, [token]);
 
+    const darkmode = useDarkMode();
+
+    const { minutes } = useRemaining(token?.activeSwap?.epoch);
+
     return (
         <div style={styles.ownerBlockContainer}>
             {!token?.activeSwap && (
@@ -108,16 +114,28 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                 </div>
             ) : (
                 // @danny7even is this logic okay, shoud be same as before but less conditional rerendering, i think
-                <>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        alignItems: 'center',
+                    }}
+                >
                     <Text
-                        size="medium"
                         textStyle={{
-                            padding: '7px',
+                            color: 'white',
+                            padding: '1rem',
+                            background: darkmode
+                                ? lib.colors.nuggBlueTransparent
+                                : lib.colors.transparentGrey,
+                            borderRadius: lib.layout.borderRadius.medium,
+                            fontSize: '23px',
                         }}
                     >
-                        {parseTokenIdSmart(tokenId || '')}
+                        {tokenId && parseTokenIdSmart(tokenId)}
                     </Text>
-                    <div style={{ display: 'flex' }}>
+                    {/* <div style={{ display: 'flex', marginTop: '20px' }}>
                         <Text
                             size="small"
                             textStyle={{
@@ -134,8 +152,25 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                                 token && token.activeSwap ? token.activeSwap?.eth.number : 0,
                             )}
                         />
+                    </div> */}
+                    <div
+                        style={{
+                            alignItems: 'end',
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}
+                    >
+                        <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                            ending in about
+                        </Text>
+                        <Text
+                            textStyle={{ color: 'white', fontSize: '28px' }}
+                        >{`${minutes} ${plural(minutes, {
+                            1: 'minute',
+                            other: 'minutes',
+                        })}`}</Text>
                     </div>
-                </>
+                </div>
             )}
         </div>
     );

@@ -1,11 +1,9 @@
 /* eslint-disable no-nested-ternary */
-import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
-import { plural, t } from '@lingui/macro';
-import { add, formatDistanceToNowStrict } from 'date-fns';
+import React, { CSSProperties, FunctionComponent } from 'react';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import constants from '@src/lib/constants';
-import AppState from '@src/state/app';
 import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -13,7 +11,7 @@ import client from '@src/client';
 import Label from '@src/components/general/Label/Label';
 import { Lifecycle } from '@src/client/interfaces';
 import web3 from '@src/web3';
-import { useDarkMode } from '@src/client/hooks/useDarkMode';
+import useRemaining from '@src/hooks/useRemaining';
 
 import styles from './TheRing.styles';
 
@@ -30,63 +28,15 @@ const TheRing: FunctionComponent<Props> = ({
     circleWidth = 1600,
     tokenStyle,
 }) => {
-    const screenType = AppState.select.screenType();
-    const blocknum = client.live.blocknum();
+    // const screenType = AppState.select.screenType();
     const chainId = web3.hook.usePriorityChainId();
 
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
-    const blockDuration = useMemo(() => {
-        let remaining = 0;
-        if (token?.activeSwap?.epoch) {
-            remaining = +token.activeSwap.epoch.endblock - +token.activeSwap.epoch.startblock;
-        }
-        if (remaining <= 0) {
-            remaining = 0;
-        }
-        return remaining;
-    }, [token?.activeSwap?.epoch]);
 
-    const blocksRemaining = useMemo(() => {
-        let remaining = 0;
+    // const darkmode = useDarkMode();
 
-        if (token?.activeSwap?.epoch && blocknum) {
-            remaining = +token.activeSwap.epoch.endblock - +blocknum;
-        }
-
-        /// //////////////////////////////
-        // @danny7even is this okay to add?
-        //     the ring was starting to overshoot at the end of an epoch after I updated the token
-        if (remaining <= 0) {
-            remaining = 0;
-        }
-        /// //////////////////////////////
-
-        return remaining;
-    }, [blocknum, token?.activeSwap?.epoch]);
-
-    const darkmode = useDarkMode();
-
-    const time = useMemo(() => {
-        return Number(
-            `${
-                formatDistanceToNowStrict(
-                    add(new Date(), {
-                        seconds: blocksRemaining * 12,
-                    }),
-                    {
-                        // addSuffix: true,
-                        unit: 'minute',
-                        // addSuffix: false,
-                        roundingMethod: 'floor',
-                        // roundingMethod: 'floor',
-                        // locale: dates[locale],
-                        // includeSeconds: true
-                    },
-                ).split(' ')[0]
-            }`,
-        );
-    }, [blocksRemaining]);
+    const { blocksRemaining, blockDuration } = useRemaining(token?.activeSwap?.epoch);
 
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
@@ -141,14 +91,14 @@ const TheRing: FunctionComponent<Props> = ({
                             />
                         )} */}
 
-                        {screenType !== 'phone' && (
+                        {/* {screenType !== 'phone' && (
                             <Label
-                                text={`ending in about ${time} ${plural(time, {
+                                text={`ending in about ${minutes} ${plural(minutes, {
                                     1: 'minute',
                                     other: 'minutes',
                                 })}`}
                                 // eslint-disable-next-line no-constant-condition
-                                size={time < 5 ? 'large' : 'medium'}
+                                size={minutes < 5 ? 'large' : 'medium'}
                                 textStyle={{ fontSize: '10px' }}
                                 containerStyles={{
                                     ...(darkmode
@@ -160,7 +110,7 @@ const TheRing: FunctionComponent<Props> = ({
                                     marginTop: '5px',
                                 }}
                             />
-                        )}
+                        )} */}
                     </>
                 )}
             </CircleTimer>

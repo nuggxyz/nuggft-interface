@@ -31,12 +31,12 @@
 //     zhCN,
 //     zhTW,
 // } from 'date-fns/locale';
+export default {};
+// import { SupportedLocale } from '@src/lib/i18n/locales';
 
-import { SupportedLocale } from '@src/lib/i18n/locales';
-
-export type LocaleDate = {
-    [key in SupportedLocale]: Locale;
-};
+// export type LocaleDate = {
+//     [key in SupportedLocale]: Locale;
+// };
 
 // // eslint-disable-next-line import/prefer-default-export
 // export const dates: LocaleDate = {

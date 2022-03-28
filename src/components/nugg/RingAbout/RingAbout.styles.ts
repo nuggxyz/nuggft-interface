@@ -1,19 +1,34 @@
 import lib, { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
 import FontSize from '@src/lib/fontSize';
 import globalStyles from '@src/lib/globalStyles';
-import Layout from '@src/lib/layout';
 
 const styles = NLStyleSheetCreator({
     container: {
-        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadowNuggBlue}`,
+        boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggBlue}`,
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'space-between',
         overflow: 'hidden',
-        borderRadius: Layout.borderRadius.medium,
-        background: Colors.gradient2,
+        borderRadius: lib.layout.borderRadius.medium,
+        background: lib.colors.gradient2,
+        padding: '.75rem',
+        width: '100%',
+        position: 'relative',
+        height: 'auto',
+        pointerEvents: 'auto',
+    },
+    containerDark: {
+        boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggBlue}`,
+        borderRadius: lib.layout.borderRadius.medium,
+        background: lib.colors.transparentGrey,
+        display: 'flex',
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        overflow: 'hidden',
+        // borderRadius: lib.layout.borderRadius.medium,
+        // background: lib.colors.gradient2,
         padding: '.75rem',
         width: '100%',
         position: 'relative',
@@ -26,7 +41,7 @@ const styles = NLStyleSheetCreator({
         flexDirection: 'column',
         justifyContent: 'space-between',
         overflow: 'hidden',
-        borderRadius: Layout.borderRadius.medium,
+        borderRadius: lib.layout.borderRadius.medium,
         width: '100%',
         position: 'relative',
         height: 'auto',
@@ -35,7 +50,7 @@ const styles = NLStyleSheetCreator({
     mobile: {
         width: '90%',
         boxShadow: 'none',
-        background: Colors.transparentWhite,
+        background: lib.colors.transparentWhite,
         ...globalStyles.backdropFilter,
         zIndex: 10000,
     },
@@ -47,12 +62,12 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'center',
     },
     offersContainer: {
-        background: Colors.transparentGrey,
+        background: lib.colors.transparentGrey,
         width: '100%',
-        borderRadius: Layout.borderRadius.mediumish,
+        borderRadius: lib.layout.borderRadius.mediumish,
     },
     title: {
-        fontFamily: Layout.font.sf.bold,
+        fontFamily: lib.layout.font.sf.bold,
         fontWeight: 'bold',
         color: 'white',
         paddingLeft: '.5rem',
@@ -60,16 +75,16 @@ const styles = NLStyleSheetCreator({
         textAlign: 'center',
     },
     button: {
-        borderRadius: Layout.borderRadius.large,
+        borderRadius: lib.layout.borderRadius.large,
         background: 'white',
         width: '100%',
         marginTop: '.5rem',
     },
     buttonText: {
-        color: Colors.nuggBlueText,
+        color: lib.colors.nuggBlueText,
     },
     code: {
-        fontFamily: Layout.font.code.regular,
+        fontFamily: lib.layout.font.code.regular,
         fontSize: FontSize.p,
         textAlign: 'right',
         marginTop: '.2rem',
@@ -112,8 +127,8 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        background: Colors.transparentWhite,
-        borderRadius: Layout.borderRadius.mediumish,
+        background: lib.colors.transparentWhite,
+        borderRadius: lib.layout.borderRadius.mediumish,
         padding: '.4rem',
         width: '100%',
         marginBottom: '.4rem',
@@ -123,8 +138,8 @@ const styles = NLStyleSheetCreator({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'flex-start',
-        background: Colors.transparentWhite,
-        borderRadius: Layout.borderRadius.smallish,
+        background: lib.colors.transparentWhite,
+        borderRadius: lib.layout.borderRadius.smallish,
         padding: '.5rem .6rem',
         marginRight: '.5rem',
     },
@@ -150,10 +165,10 @@ const styles = NLStyleSheetCreator({
     },
     leadingOffer: {
         paddingRight: '0rem',
-        color: Colors.nuggBlueText,
+        color: lib.colors.nuggBlueText,
     },
     allOffersButton: {
-        borderRadius: Layout.borderRadius.large,
+        borderRadius: lib.layout.borderRadius.large,
         background: 'white',
         padding: '.24rem .25rem',
         margin: '0rem .5rem',
@@ -161,8 +176,8 @@ const styles = NLStyleSheetCreator({
     },
     ownerBlockContainer: {
         width: '100%',
-        background: lib.colors.transparentWhite,
-        borderRadius: lib.layout.borderRadius.medium,
+        // background: lib.colors.transparentWhite,
+        // borderRadius: lib.layout.borderRadius.medium,
         padding: '.5rem',
         display: 'flex',
         flexDirection: 'column',
@@ -170,7 +185,7 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'center',
         marginTop: '.1rem',
         marginBottom: '.5rem',
-        boxShadow: `0px 1px 3px ${lib.colors.shadowNuggBlue}`,
+        // boxShadow: `0px 1px 3px ${lib.colors.shadowNuggBlue}`,
         textAlign: 'center',
     },
     textBlue: {

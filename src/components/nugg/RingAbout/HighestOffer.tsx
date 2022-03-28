@@ -10,8 +10,6 @@ import { Lifecycle, OfferData } from '@src/client/interfaces';
 import web3 from '@src/web3';
 import client from '@src/client';
 import Button from '@src/components/general/Buttons/Button/Button';
-import globalStyles from '@src/lib/globalStyles';
-import { EthInt } from '@src/classes/Fraction';
 
 import styles from './RingAbout.styles';
 
@@ -24,7 +22,7 @@ const HighestOffer: FunctionComponent<Props> = () => {
 
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const tx = web3.hook.usePriorityTx(leader?.txhash || '');
+    // const tx = web3.hook.usePriorityTx(leader?.txhash || '');
     const ens = web3.hook.usePriorityAnyENSName(
         token && token.type === 'item' ? 'nugg' : provider,
         leader?.user || '',
@@ -92,7 +90,7 @@ const HighestOffer: FunctionComponent<Props> = () => {
                         textStyle={styles.leadingOffer}
                         value={leader?.eth?.decimal?.toNumber()}
                     />
-                    <div style={globalStyles.centered}>
+                    {/* <div style={globalStyles.centered}>
                         ⛽️
                         <CurrencyText
                             decimals={0}
@@ -101,7 +99,7 @@ const HighestOffer: FunctionComponent<Props> = () => {
                             textStyle={{ marginLeft: '.4rem' }}
                             value={EthInt.fromGwei((tx && tx.gasUsed) || 0).decimal.toNumber()}
                         />
-                    </div>
+                    </div> */}
                 </div>
                 <div style={styles.leadingOfferAmountUser}>
                     <Text size="smaller" type="text">
