@@ -36,6 +36,7 @@ import {
     Theme,
 } from './interfaces';
 import formatLiveNugg from './formatters/formatLiveNugg';
+import formatLiveItem from './formatters/formatLiveItem';
 
 enableMapSet();
 
@@ -465,19 +466,23 @@ function createClientStoreAndActions2() {
                         const route = parseRoute(window.location.hash);
 
                         if (route.type !== Route.Home) {
+                            const isItem = route.type === Route.ViewItem || Route.ViewNugg;
+
                             const tokenId = extractItemId(route.tokenId);
-                            const isItem = tokenId.startsWith('item-');
+
                             if (!isItem)
                                 void executeQuery3c<GetLiveNuggQueryResult>(
                                     graph,
                                     GetLiveNuggDocument,
                                     { tokenId },
                                 ).then((x) => {
-                                    if (x && !x.nugg) window.location.hash = '#/';
-                                    else if (x && x.nugg) {
-                                        const formatted = formatLiveNugg(x.nugg);
-                                        if (formatted) {
-                                            updateToken(tokenId, formatted);
+                                    if (x) {
+                                        if (!x.nugg) window.location.hash = '#/';
+                                        else {
+                                            const formatted = formatLiveNugg(x.nugg);
+                                            if (formatted) {
+                                                updateToken(tokenId, formatted);
+                                            }
                                         }
                                     }
                                 });
@@ -487,8 +492,15 @@ function createClientStoreAndActions2() {
                                     GetLiveItemDocument,
                                     { tokenId },
                                 ).then((x) => {
-                                    if (x && !x.item) window.location.hash = '#/';
-                                    return x;
+                                    if (x) {
+                                        if (!x.item) window.location.hash = '#/';
+                                        else {
+                                            const formatted = formatLiveItem(x.item);
+                                            if (formatted) {
+                                                updateToken(route.tokenId, formatted);
+                                            }
+                                        }
+                                    }
                                 });
                         }
                     };
