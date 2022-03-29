@@ -11,7 +11,7 @@ export default (value: SearchView): string => {
         case SearchView.AllItems:
             return t`All Items`;
         case SearchView.Recents:
-            return t`Recently Viewed`;
+            return t`Recently Ended`;
         case SearchView.OnSale:
             return t`On Sale`;
         default: {

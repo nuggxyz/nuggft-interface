@@ -1,4 +1,4 @@
-import React, { FC, FunctionComponent, useMemo } from 'react';
+import React, { FC, FunctionComponent } from 'react';
 import { plural, t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
@@ -37,24 +37,24 @@ const OwnerBlock: FunctionComponent<Props> = () => {
     // const offers = client.live.offers(tokenId);
     const leader = client.live.offers(tokenId).first() as unknown as OfferData;
 
-    const title = useMemo(() => {
-        if (token && token.lifecycle === Lifecycle.Stands) {
-            return token.type === 'item'
-                ? t`this item is owned by ${99999} nuggs and is not currently for sale`
-                : t`Nugg ${tokenId} is happily owned by`;
-        }
-        let text = 'On sale by';
-        if (
-            token &&
-            token.lifecycle === Lifecycle.Tryout &&
-            token.type === 'item' &&
-            token.tryout.min &&
-            token.tryout.max
-        ) {
-            text += plural(token.tryout.count, { 1: 'nugg', other: 'nuggs' });
-        }
-        return text;
-    }, [token]);
+    // const title = useMemo(() => {
+    //     if (token && token.lifecycle === Lifecycle.Stands) {
+    //         return token.type === 'item'
+    //             ? t`this item is owned by ${99999} nuggs and is not currently for sale`
+    //             : t`Nugg ${tokenId} is happily owned by`;
+    //     }
+    //     let text = 'On sale by';
+    //     if (
+    //         token &&
+    //         token.lifecycle === Lifecycle.Tryout &&
+    //         token.type === 'item' &&
+    //         token.tryout.min &&
+    //         token.tryout.max
+    //     ) {
+    //         text += plural(token.tryout.count, { 1: 'nugg', other: 'nuggs' });
+    //     }
+    //     return text;
+    // }, [token]);
 
     const darkmode = useDarkMode();
 
@@ -75,7 +75,9 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                             color: lib.colors.white,
                         }}
                     >
-                        {title}
+                        {token.type === 'item'
+                            ? t`this item is owned by ${99999} nuggs and is not currently for sale`
+                            : t`Nugg ${tokenId} is happily owned by`}
                     </Text>
 
                     <Text
@@ -90,7 +92,17 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                 </>
             )}
 
-            {token && token.lifecycle !== Lifecycle.Stands && (
+            {token && token.lifecycle === Lifecycle.Cut && (
+                <Text
+                    textStyle={{
+                        color: lib.colors.white,
+                    }}
+                >
+                    {t`Unfortuantly, Nugg ${tokenId} did not make it.`}
+                </Text>
+            )}
+
+            {token && token.lifecycle !== Lifecycle.Stands && token.lifecycle !== Lifecycle.Cut && (
                 // @danny7even is this logic okay, shoud be same as before but less conditional rerendering, i think
                 <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
                     <div

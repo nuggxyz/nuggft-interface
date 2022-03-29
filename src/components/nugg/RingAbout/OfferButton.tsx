@@ -56,6 +56,7 @@ const OfferButton: FunctionComponent<Props> = () => {
     return token &&
         token.lifecycle !== 'shower' &&
         token.lifecycle !== 'stands' &&
+        token.lifecycle !== 'cut' &&
         (screenType === 'phone' || address) ? (
         <>
             {token &&

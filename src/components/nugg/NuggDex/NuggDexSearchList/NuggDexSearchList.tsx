@@ -44,7 +44,9 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const [allNuggsPreview, setAllNuggsPreview] = useState<ListData[]>([]);
     const [allItems, setAllItems] = useState<ListData[]>([]);
     const [allItemsPreview, setAllItemsPreview] = useState<ListData[]>([]);
-    const recents = client.live.myRecents();
+    const recentNuggs = client.live.recentSwaps();
+    const recentItems = client.live.recentItems();
+
     const graph = client.live.graph();
 
     const [sortAsc, setSortAsc] = useState<{ [key in SearchView]: boolean }>({
@@ -130,6 +132,10 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const liveActiveEverything = useMemo(() => {
         return [...liveActiveNuggs, ...liveActiveItems];
     }, [liveActiveNuggs, liveActiveItems]);
+
+    const recentEverything = useMemo(() => {
+        return [...recentNuggs, ...recentItems];
+    }, [recentNuggs, recentItems]);
 
     const animatedStyle = useSpring({
         ...styles.nuggLinksContainer,
@@ -235,7 +241,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             <animated.div style={animatedStyle}>
                 <NuggLink
                     type={SearchView.Recents}
-                    previewNuggs={recents}
+                    previewNuggs={recentEverything}
                     style={{
                         position: 'absolute',
                         top: 0,
@@ -245,7 +251,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     <NuggList
                         animationToggle={viewing === SearchView.Recents}
                         style={styles.nuggListEnter}
-                        values={recents}
+                        values={recentEverything}
                         type={SearchView.Recents}
                     />
                 </NuggLink>

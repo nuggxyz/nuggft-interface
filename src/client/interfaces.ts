@@ -46,6 +46,8 @@ export interface SwapData extends ListDataBase {
     endingEpoch: number | null;
     isCurrent: boolean;
     dotnuggRawCache: undefined;
+    over: boolean;
+    leader?: string;
 }
 
 export type ListData = SwapData | BasicData;
@@ -308,6 +310,7 @@ export enum Lifecycle {
     Shower = 'shower', // [nugg/item] active swap exists, but none of the others hit. ** i honestly dont even think it can hit this bc the graph catches it
     Tryout = 'tryout', // [     item] a token that has no active sale, but one to many non-active sales
     Cut = 'cut', //       [nugg     ] a token that no one bid on but still exists in the graph
+
     Egg = 'egg', //       [nugg     ] a token that will be minting in the next epoch --- SAME AS DECK, BUT NON OFFERABLE
 }
 

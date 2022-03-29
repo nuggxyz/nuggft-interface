@@ -278,6 +278,8 @@ function createClientStoreAndActions2() {
 
                 const getLifecycle = (token: LiveToken): Lifecycle => {
                     const { epoch } = get();
+                    const { blocknum } = get();
+
                     if (token && epoch !== undefined) {
                         if (!token.activeSwap?.id) {
                             if (token.type === 'item' && token.swaps.length > 0)
@@ -286,12 +288,23 @@ function createClientStoreAndActions2() {
                         }
 
                         if (!token.activeSwap.endingEpoch) return Lifecycle.Bench;
+
                         if (+token.activeSwap.endingEpoch === epoch.id + 1) {
                             if (token.type === 'nugg' && token.owner === Address.ZERO.hash) {
                                 return Lifecycle.Egg;
                             }
                             return Lifecycle.Deck;
                         }
+
+                        if (
+                            token.activeSwap.leader === Address.ZERO.hash &&
+                            token.activeSwap.epoch &&
+                            blocknum &&
+                            +token.activeSwap.epoch.endblock - blocknum < 16
+                        ) {
+                            return Lifecycle.Cut;
+                        }
+
                         if (+token.activeSwap.endingEpoch === epoch.id) {
                             if (token.type === 'nugg' && token.owner === Address.ZERO.hash) {
                                 return Lifecycle.Bunt;

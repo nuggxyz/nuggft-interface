@@ -5,10 +5,14 @@ import { createItemId } from '@src/lib/index';
 
 export default (
     z:
-        | Pick<SwapdataFragment | ItemswapdataFragment, 'endingEpoch' | '__typename' | 'eth'>
+        | Pick<
+              SwapdataFragment | ItemswapdataFragment,
+              'endingEpoch' | '__typename' | 'eth' | 'leader'
+          >
         | undefined
         | null,
     tokenId: string,
+    over: boolean,
 ): SwapData => {
     const type = z!.__typename === 'Swap' ? 'nugg' : 'item';
 
@@ -26,5 +30,7 @@ export default (
         isCurrent: true,
         dotnuggRawCache: undefined,
         listDataType: ListDataTypes.Swap,
+        over,
+        leader: z?.leader?.id,
     };
 };

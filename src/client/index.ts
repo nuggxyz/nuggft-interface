@@ -59,6 +59,8 @@ export default {
             searchValue: () => core((state) => state.searchFilter?.searchValue),
         },
         darkmode: () => core((state) => state.darkmode, shallow),
+        recentSwaps: () => core((state) => state.recentSwaps),
+        recentItems: () => core((state) => state.recentItems),
 
         /// ///// complex ////////
         offers: (tokenId: TokenId | undefined) =>

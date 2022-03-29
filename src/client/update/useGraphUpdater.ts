@@ -63,22 +63,27 @@ export default () => {
                         status: protocol.epoch.status,
                     },
                     recentSwaps: protocol.lastEpoch.swaps.map((z) => {
-                        return formatSwapData(z, z.nugg.id);
+                        return formatSwapData(z, z.nugg.id, true);
                     }),
                     activeSwaps: protocol.activeNuggs.map((z) => {
-                        return formatSwapData(z.activeSwap, z.id);
+                        return formatSwapData(z.activeSwap, z.id, false);
                     }),
                     recentItems: protocol.lastEpoch.itemSwaps.map((z) => {
-                        return formatSwapData(z, z.sellingItem.id);
+                        return formatSwapData(z, z.sellingItem.id, true);
                     }),
                     activeItems: mergeUnique([
                         ...protocol.activeItems.map((z) => {
-                            return formatSwapData(z.activeSwap, z.activeSwap?.sellingItem.id || '');
+                            return formatSwapData(
+                                z.activeSwap,
+                                z.activeSwap?.sellingItem.id || '',
+                                false,
+                            );
                         }),
                         ...protocol.activeNuggItems.map((z) => {
                             return formatSwapData(
                                 z.activeSwap,
                                 z.activeSwap?.sellingNuggItem.item.id || '',
+                                false,
                             );
                         }),
                     ]),

@@ -56,6 +56,8 @@ const TheRing: FunctionComponent<Props> = ({
                             : token.lifecycle === Lifecycle.Bat ||
                               token.lifecycle === Lifecycle.Bunt
                             ? ''
+                            : token.lifecycle === Lifecycle.Cut
+                            ? lib.colors.red
                             : 'purple'
                         : 'white'
                 }

@@ -39,12 +39,15 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
                     containerStyles={{ marginBottom: '10px' }}
                 />
                 {item.listDataType === 'swap' && (
-                    <CurrencyText
-                        textStyle={{ color: lib.colors.primaryColor }}
-                        image="eth"
-                        value={item.eth.number}
-                        stopAnimation
-                    />
+                    <>
+                        <CurrencyText
+                            textStyle={{ color: lib.colors.primaryColor }}
+                            image="eth"
+                            value={item.eth.number}
+                            stopAnimation
+                        />
+                        {item.over && item.leader && <Label text={item.leader} />}
+                    </>
                 )}
             </div>
         </div>
