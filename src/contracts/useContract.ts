@@ -14,7 +14,7 @@ function useContract<C extends BaseContract>(address: string, abi: ContractInter
     const provider = web3.hook.usePriorityProvider();
 
     return useMemo(() => {
-        return new BaseContract(address, abi, provider?.getSigner()) as C;
+        return new BaseContract(address, abi, provider) as C;
     }, [address, provider, abi]);
 }
 

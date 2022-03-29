@@ -297,6 +297,7 @@ export enum Lifecycle {
     Bench = 'bench', //   [nugg/item] a token that is for sale, but no one has bid on it
     Deck = 'deck', //     [nugg/item] a token that is for sale, someone has bid on it, but it is not yet the final epoch
     Bat = 'bat', //       [nugg/item] a token that is for sale, and it is in the final epoch
+    Bunt = 'bunt', //     [nugg     ] a token in its final epoch, but has no leader - only for minting nuggs
     Shower = 'shower', // [nugg/item] active swap exists, but none of the others hit. ** i honestly dont even think it can hit this bc the graph catches it
     Tryout = 'tryout', // [     item] a token that has no active sale, but one to many non-active sales
     Cut = 'cut', //       [nugg     ] a token that no one bid on but still exists in the graph

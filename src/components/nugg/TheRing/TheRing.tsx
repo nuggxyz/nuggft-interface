@@ -53,7 +53,8 @@ const TheRing: FunctionComponent<Props> = ({
                             ? lib.colors.nuggGold
                             : token.lifecycle === Lifecycle.Deck
                             ? lib.colors.green
-                            : token.lifecycle === Lifecycle.Bat
+                            : token.lifecycle === Lifecycle.Bat ||
+                              token.lifecycle === Lifecycle.Bunt
                             ? ''
                             : 'purple'
                         : 'white'

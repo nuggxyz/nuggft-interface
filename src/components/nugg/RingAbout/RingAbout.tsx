@@ -16,6 +16,7 @@ type Props = Record<string, never>;
 const RingAbout: FunctionComponent<Props> = () => {
     const screenType = AppState.select.screenType();
     const darkmode = useDarkMode();
+
     return (
         <animated.div
             style={{

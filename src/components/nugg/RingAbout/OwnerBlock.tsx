@@ -41,7 +41,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
         if (token && token.lifecycle === Lifecycle.Stands) {
             return token.type === 'item'
                 ? t`this item is owned by ${99999} nuggs and is not currently for sale`
-                : t`This nugg is happily owned by`;
+                : t`Nugg ${tokenId} is happily owned by`;
         }
         let text = 'On sale by';
         if (
@@ -68,131 +68,143 @@ const OwnerBlock: FunctionComponent<Props> = () => {
 
     return (
         <div style={styles.ownerBlockContainer}>
-            {!token?.activeSwap && (
-                <Text
-                    // size="small"
-                    textStyle={{
-                        color: lib.colors.nuggBlueText,
-                    }}
-                >
-                    {title}
-                </Text>
+            {token && token.lifecycle === Lifecycle.Stands && (
+                <>
+                    <Text
+                        textStyle={{
+                            color: lib.colors.white,
+                        }}
+                    >
+                        {title}
+                    </Text>
+
+                    <Text
+                        textStyle={{
+                            marginTop: '15px',
+                            color: lib.colors.white,
+                            fontSize: '32px',
+                        }}
+                    >
+                        {leaderEns}
+                    </Text>
+                </>
             )}
 
             {token &&
-            token.lifecycle === Lifecycle.Tryout &&
-            token.type === 'item' &&
-            token.tryout.min &&
-            token.tryout.max ? (
-                <div>
-                    <div style={{ display: 'flex' }}>
-                        <CurrencyText
-                            image="eth"
-                            value={token.tryout.min.eth.decimal.toNumber()}
-                            size="small"
-                        />
-                        {!token.tryout.min.eth.eq(token.tryout.max.eth) && (
-                            <Text textStyle={{ marginLeft: '.5rem' }} size="small">
-                                {t`Min`}
-                            </Text>
-                        )}
-                    </div>
-                    {!token.tryout.min.eth.eq(token.tryout.max.eth) && (
+                token.lifecycle !== Lifecycle.Stands &&
+                (token.lifecycle === Lifecycle.Tryout &&
+                token.type === 'item' &&
+                token.tryout.min &&
+                token.tryout.max ? (
+                    <div>
                         <div style={{ display: 'flex' }}>
                             <CurrencyText
-                                size="small"
                                 image="eth"
-                                value={token.tryout.max.eth.decimal.toNumber()}
+                                value={token.tryout.min.eth.decimal.toNumber()}
+                                size="small"
                             />
-                            <Text textStyle={{ marginLeft: '.5rem' }} size="small">
-                                {t`Max`}
-                            </Text>
+                            {!token.tryout.min.eth.eq(token.tryout.max.eth) && (
+                                <Text textStyle={{ marginLeft: '.5rem' }} size="small">
+                                    {t`Min`}
+                                </Text>
+                            )}
                         </div>
-                    )}
-                </div>
-            ) : (
-                // @danny7even is this logic okay, shoud be same as before but less conditional rerendering, i think
-                <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            width: '100%',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Text
-                            textStyle={{
-                                color: 'white',
-                                padding: '1rem',
-                                background: darkmode
-                                    ? lib.colors.nuggBlueTransparent
-                                    : lib.colors.transparentGrey,
-                                borderRadius: lib.layout.borderRadius.medium,
-                                fontSize: '23px',
-                            }}
-                        >
-                            {tokenId && parseTokenIdSmart(tokenId)}
-                        </Text>
-
-                        {leader && token?.lifecycle === Lifecycle.Bench ? (
-                            <div
-                                style={{
-                                    alignItems: 'flex-end',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                }}
-                            >
+                        {!token.tryout.min.eth.eq(token.tryout.max.eth) && (
+                            <div style={{ display: 'flex' }}>
                                 <CurrencyText
-                                    textStyle={{ color: 'white', fontSize: '28px' }}
+                                    size="small"
                                     image="eth"
-                                    value={leader?.eth?.decimal?.toNumber()}
+                                    value={token.tryout.max.eth.decimal.toNumber()}
                                 />
-                                <Text textStyle={{ fontSize: '13px', color: 'white' }}>
-                                    {`${leaderEns || leader?.user} is selling`}
+                                <Text textStyle={{ marginLeft: '.5rem' }} size="small">
+                                    {t`Max`}
                                 </Text>
-                            </div>
-                        ) : (
-                            <div
-                                style={{
-                                    alignItems: 'flex-end',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                }}
-                            >
-                                <Text textStyle={{ fontSize: '13px', color: 'white' }}>
-                                    ending in about
-                                </Text>
-                                <Text
-                                    textStyle={{ color: 'white', fontSize: '28px' }}
-                                >{`${minutes} ${plural(minutes, {
-                                    1: 'minute',
-                                    other: 'minutes',
-                                })}`}</Text>
                             </div>
                         )}
                     </div>
-                    {token && token.type === 'nugg' && (
-                        <List
-                            data={token.items}
-                            labelStyle={{
-                                color: 'white',
-                            }}
-                            extraData={undefined}
-                            RenderItem={RenderItem}
-                            horizontal
+                ) : (
+                    // @danny7even is this logic okay, shoud be same as before but less conditional rerendering, i think
+                    <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
+                        <div
                             style={{
-                                // width: '100%',
-                                marginTop: '20px',
-                                background: lib.colors.transparentLightGrey,
-                                height: '80px',
-                                padding: '0rem .3rem',
-                                borderRadius: lib.layout.borderRadius.medium,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                alignItems: 'center',
                             }}
-                        />
-                    )}{' '}
-                </div>
-            )}
+                        >
+                            <Text
+                                textStyle={{
+                                    color: 'white',
+                                    padding: '1rem',
+                                    background: darkmode
+                                        ? lib.colors.nuggBlueTransparent
+                                        : lib.colors.transparentGrey,
+                                    borderRadius: lib.layout.borderRadius.medium,
+                                    fontSize: '23px',
+                                }}
+                            >
+                                {tokenId && parseTokenIdSmart(tokenId)}
+                            </Text>
+
+                            {leader && token?.lifecycle === Lifecycle.Bench ? (
+                                <div
+                                    style={{
+                                        alignItems: 'flex-end',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                    }}
+                                >
+                                    <CurrencyText
+                                        textStyle={{ color: 'white', fontSize: '28px' }}
+                                        image="eth"
+                                        value={leader?.eth?.decimal?.toNumber()}
+                                    />
+                                    <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                                        {`${leaderEns || leader?.user} is selling`}
+                                    </Text>
+                                </div>
+                            ) : (
+                                <div
+                                    style={{
+                                        alignItems: 'flex-end',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                    }}
+                                >
+                                    <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                                        ending in about
+                                    </Text>
+                                    <Text
+                                        textStyle={{ color: 'white', fontSize: '28px' }}
+                                    >{`${minutes} ${plural(minutes, {
+                                        1: 'minute',
+                                        other: 'minutes',
+                                    })}`}</Text>
+                                </div>
+                            )}
+                        </div>
+                        {token && token.type === 'nugg' && (
+                            <List
+                                data={token.items}
+                                labelStyle={{
+                                    color: 'white',
+                                }}
+                                extraData={undefined}
+                                RenderItem={RenderItem}
+                                horizontal
+                                style={{
+                                    // width: '100%',
+                                    marginTop: '20px',
+                                    background: lib.colors.transparentLightGrey,
+                                    height: '80px',
+                                    padding: '0rem .3rem',
+                                    borderRadius: lib.layout.borderRadius.medium,
+                                }}
+                            />
+                        )}{' '}
+                    </div>
+                ))}
         </div>
     );
 };

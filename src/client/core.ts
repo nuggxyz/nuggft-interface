@@ -246,6 +246,14 @@ function createClientStoreAndActions2() {
                             (a, b) => b.eth.gt(a.eth),
                             (a, b) => (a.eth.gt(b.eth) ? 1 : -1),
                         );
+
+                        // this makes sure that token rerenders too when a new offer comes in
+                        if (
+                            offers.length > 0 &&
+                            get().liveTokens[tokenId]?.lifecycle === Lifecycle.Bunt
+                        ) {
+                            draft.liveTokens[tokenId].lifecycle = Lifecycle.Bat;
+                        }
                     });
                 }
 
@@ -269,7 +277,12 @@ function createClientStoreAndActions2() {
                             }
                             return Lifecycle.Deck;
                         }
-                        if (+token.activeSwap.endingEpoch === epoch.id) return Lifecycle.Bat;
+                        if (+token.activeSwap.endingEpoch === epoch.id) {
+                            if (token.type === 'nugg' && token.owner === Address.ZERO.hash) {
+                                return Lifecycle.Bunt;
+                            }
+                            return Lifecycle.Bat;
+                        }
                         return Lifecycle.Shower;
                     }
                     return Lifecycle.Stands;

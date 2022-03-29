@@ -67,11 +67,12 @@ const HighestOffer: FunctionComponent<Props> = () => {
         if (
             chainId &&
             token &&
+            leader &&
             token.lifecycle !== Lifecycle.Bench &&
             token.lifecycle !== Lifecycle.Tryout &&
             token.lifecycle !== Lifecycle.Stands
         ) {
-            if (token.type === 'item' && leader) {
+            if (token.type === 'item') {
                 return token.activeSwap?.owner.toLowerCase() !== leader.user.toLowerCase();
             }
             return true;

@@ -17,7 +17,10 @@ const OfferButton: FunctionComponent<Props> = () => {
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
 
-    return token && token.lifecycle !== 'shower' && (screenType === 'phone' || address) ? (
+    return token &&
+        token.lifecycle !== 'shower' &&
+        token.lifecycle !== 'stands' &&
+        (screenType === 'phone' || address) ? (
         <Button
             buttonStyle={{
                 ...styles.button,

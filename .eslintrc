@@ -42,6 +42,7 @@
         "module-resolver"
     ],
     "rules": {
+        "no-unexpected-multiline": "off",
         "class-methods-use-this": "off",
         "no-param-reassign": "off",
         "no-nested-ternary": "off",
