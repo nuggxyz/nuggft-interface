@@ -4,6 +4,7 @@ import { ApolloClient } from '@apollo/client/core/ApolloClient';
 
 import { Chain, Connector } from '@src/web3/core/interfaces';
 import { SupportedLocale } from '@src/lib/i18n/locales';
+import { FeedMessage } from '@src/interfaces/feed';
 
 import { NuggftV1 } from '../typechain/NuggftV1';
 
@@ -158,6 +159,8 @@ export interface ClientState extends State, Actions {
     activeSwaps: SwapData[];
     activeItems: SwapData[];
     myNuggs: MyNuggsData[];
+    recentSwaps: SwapData[];
+    recentItems: SwapData[];
     myUnclaimedNuggOffers: UnclaimedNuggOffer[];
     myUnclaimedItemOffers: UnclaimedItemOffer[];
     editingNugg: NuggId | undefined;
@@ -169,6 +172,7 @@ export interface ClientState extends State, Actions {
     darkmode: DarkModePreferences;
     locale: SupportedLocale | undefined;
     searchFilter: SearchFilter;
+    feedMessages: FeedMessage[];
 }
 
 export type ClientStateUpdate = {
@@ -187,6 +191,8 @@ export type ClientStateUpdate = {
     };
     activeSwaps?: SwapData[];
     activeItems?: SwapData[];
+    recentSwaps?: SwapData[];
+    recentItems?: SwapData[];
     error?: Error;
     activating?: boolean;
     myNuggs?: MyNuggsData[];
@@ -222,6 +228,7 @@ export interface Actions {
     updateSearchFilterViewing: (value: SearchFilter['viewing']) => void;
     updateUserDarkMode: (value: Theme | undefined) => void;
     updateMediaDarkMode: (value: Theme | undefined) => void;
+    addFeedMessage: (update: FeedMessage) => void;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;

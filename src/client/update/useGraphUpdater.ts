@@ -2,12 +2,12 @@ import { BigNumber } from 'ethers';
 
 import web3 from '@src/web3';
 import { EthInt, Fraction } from '@src/classes/Fraction';
-import { createItemId, padToAddress } from '@src/lib';
-import constants from '@src/lib/constants';
+import { padToAddress } from '@src/lib';
 import { ItemId } from '@src/client/router';
 import client from '@src/client/index';
-import { ListDataTypes, SwapData } from '@src/client/interfaces';
+import { SwapData } from '@src/client/interfaces';
 import { useLiveProtocolSubscription, useLiveUserSubscription } from '@src/gql/types.generated';
+import formatSwapData from '@src/client/formatters/formatSwapData';
 
 const mergeUnique = (arr: SwapData[]) => {
     let len = arr.length;
@@ -62,50 +62,24 @@ export default () => {
                         endblock: Number(protocol.epoch.endblock),
                         status: protocol.epoch.status,
                     },
+                    recentSwaps: protocol.lastEpoch.swaps.map((z) => {
+                        return formatSwapData(z, z.nugg.id);
+                    }),
                     activeSwaps: protocol.activeNuggs.map((z) => {
-                        return {
-                            id: z.id,
-                            tokenId: z.id,
-                            eth: new EthInt(z.activeSwap!.eth),
-                            started: !!z.activeSwap?.endingEpoch,
-                            endingEpoch:
-                                z.activeSwap && z.activeSwap?.endingEpoch
-                                    ? Number(z.activeSwap?.endingEpoch)
-                                    : 0,
-                            type: 'nugg',
-                            isCurrent: true,
-                            dotnuggRawCache: undefined,
-                            listDataType: ListDataTypes.Swap,
-                        };
+                        return formatSwapData(z.activeSwap, z.id);
+                    }),
+                    recentItems: protocol.lastEpoch.itemSwaps.map((z) => {
+                        return formatSwapData(z, z.sellingItem.id);
                     }),
                     activeItems: mergeUnique([
                         ...protocol.activeItems.map((z) => {
-                            return {
-                                id: createItemId(z.id),
-                                tokenId: createItemId(z.id),
-                                eth: new EthInt(z.activeSwap!.eth),
-                                started: !!z.activeSwap!.endingEpoch,
-                                sellingNugg: '',
-                                endingEpoch: Number(z.activeSwap!.endingEpoch),
-                                type: 'item' as const,
-                                isCurrent: true,
-                                dotnuggRawCache: undefined,
-                                listDataType: ListDataTypes.Swap as const,
-                            };
+                            return formatSwapData(z.activeSwap, z.activeSwap?.sellingItem.id || '');
                         }),
                         ...protocol.activeNuggItems.map((z) => {
-                            return {
-                                id: createItemId(z.activeSwap!.sellingNuggItem.item.id),
-                                tokenId: createItemId(z.activeSwap!.sellingNuggItem.item.id),
-                                eth: new EthInt(z.activeSwap!.eth),
-                                started: !!z.activeSwap!.endingEpoch,
-                                sellingNugg: z.id.split('-')[constants.ITEM_NUGG_POS],
-                                endingEpoch: Number(z.activeSwap!.endingEpoch),
-                                type: 'item' as const,
-                                isCurrent: true,
-                                dotnuggRawCache: undefined,
-                                listDataType: ListDataTypes.Swap as const,
-                            };
+                            return formatSwapData(
+                                z.activeSwap,
+                                z.activeSwap?.sellingNuggItem.item.id || '',
+                            );
                         }),
                     ]),
                 });

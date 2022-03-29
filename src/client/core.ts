@@ -18,6 +18,7 @@ import {
 import { executeQuery3b } from '@src/graphql/helpers';
 import { Address } from '@src/classes/Address';
 import { SupportedLocale } from '@src/lib/i18n/locales';
+import { FeedMessage } from '@src/interfaces/feed';
 
 import { parseRoute, Route, TokenId, ItemId, NuggId } from './router';
 import {
@@ -165,6 +166,8 @@ function createClientStoreAndActions2() {
                         // @ts-ignore
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         if (stateUpdate.graph) draft.graph = stateUpdate.graph;
+                        if (stateUpdate.recentSwaps) draft.recentSwaps = stateUpdate.recentSwaps;
+                        if (stateUpdate.recentItems) draft.recentItems = stateUpdate.recentItems;
                         if (stateUpdate.activeSwaps) draft.activeSwaps = stateUpdate.activeSwaps;
                         if (stateUpdate.activeItems) draft.activeItems = stateUpdate.activeItems;
                         if (stateUpdate.manualPriority)
@@ -234,6 +237,17 @@ function createClientStoreAndActions2() {
                 function addNugg(update: MyNuggsData): void {
                     set((draft) => {
                         draft.myNuggs.unshift(update);
+                    });
+                }
+
+                function addFeedMessage(update: FeedMessage): void {
+                    set((draft) => {
+                        draft.feedMessages.mergeInPlace(
+                            [update],
+                            'id',
+                            () => false,
+                            (a, b) => (a.block > b.block ? -1 : 1),
+                        );
                     });
                 }
 
@@ -492,6 +506,9 @@ function createClientStoreAndActions2() {
                     activeItems: [],
                     liveOffers: {},
                     myNuggs: [],
+                    feedMessages: [],
+                    recentSwaps: [],
+                    recentItems: [],
                     myUnclaimedNuggOffers: [],
                     myUnclaimedItemOffers: [],
                     myRecents: new Set(),
@@ -537,6 +554,7 @@ function createClientStoreAndActions2() {
                     updateSearchFilterSearchValue,
                     updateUserDarkMode,
                     updateMediaDarkMode,
+                    addFeedMessage,
                 };
             }),
         ),

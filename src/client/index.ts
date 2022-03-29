@@ -108,6 +108,8 @@ export default {
                 [...state.myLoans].sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1)),
             ),
 
+        feedMessages: () => core((state) => state.feedMessages),
+
         myUnclaimedNuggOffers: () => core((state) => state.myUnclaimedNuggOffers),
         myUnclaimedItemOffers: () => core((state) => state.myUnclaimedItemOffers),
 
@@ -152,6 +154,7 @@ export default {
         updateSearchFilterSearchValue: () => core((state) => state.updateSearchFilterSearchValue),
         updateUserDarkMode: () => core((state) => state.updateUserDarkMode),
         updateMediaDarkMode: () => core((state) => state.updateMediaDarkMode),
+        addFeedMessage: () => core((state) => state.addFeedMessage),
     },
     hook: {
         useDotnugg,

@@ -11,6 +11,7 @@ import lib from '@src/lib';
 import emitter from '@src/emitter';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import { WebSocketProvider } from '@src/web3/classes/WebSocketProvider';
+import { FeedMessageType } from '@src/interfaces/feed';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
@@ -29,6 +30,7 @@ export default () => {
     const removeLoan = client.mutate.removeLoan();
     const removeNuggClaim = client.mutate.removeNuggClaim();
     const removeItemClaimIfMine = client.mutate.removeItemClaimIfMine();
+    const addFeedMessage = client.mutate.addFeedMessage();
 
     const [rpc, setRpc] = React.useState<WebSocketProvider>();
 
@@ -38,13 +40,13 @@ export default () => {
         (log: Log) => {
             const event = nuggft.interface.parseLog(log) as unknown as InterfacedEvent;
 
+            console.log(event);
+
             void emitter.emit({
                 type: emitter.events.TransactionComplete,
                 txhash: log.transactionHash,
                 success: true,
             });
-
-            console.log(event);
 
             switch (event.name) {
                 case 'Offer':
@@ -97,6 +99,15 @@ export default () => {
                         event,
                         log,
                         data,
+                    });
+
+                    void addFeedMessage({
+                        id: log.transactionHash,
+                        block: log.blockNumber,
+                        eth: data.eth,
+                        tokenId: event.args.tokenId.toString(),
+                        type: FeedMessageType.Offer,
+                        user: data.user,
                     });
 
                     void updateOffers(event.args.tokenId.toString(), [data]);
@@ -183,6 +194,7 @@ export default () => {
             updateLoan,
             updateOffers,
             updateProtocol,
+            addFeedMessage,
         ],
     );
 

@@ -8,6 +8,12 @@ subscription liveProtocol {
             endblock
             starttime
         }
+        lastEpoch {
+            ...epochswapdata
+        }
+        nextEpoch {
+            ...epochswapdata
+        }
         nuggftStakedEth
         nuggftStakedShares
         activeNuggs(orderBy: idnum) {
@@ -111,6 +117,21 @@ subscription liveUser($address: ID!) {
                     endingEpoch
                 }
             }
+        }
+    }
+}
+
+fragment epochswapdata on Epoch {
+    swaps {
+        ...swapdata
+        nugg {
+            id
+        }
+    }
+    itemSwaps {
+        ...itemswapdata
+        sellingItem {
+            id
         }
     }
 }
