@@ -246,13 +246,14 @@ function createClientStoreAndActions2() {
                             (a, b) => b.eth.gt(a.eth),
                             (a, b) => (a.eth.gt(b.eth) ? 1 : -1),
                         );
+                        const cycle = get().liveTokens[tokenId]?.lifecycle;
 
                         // this makes sure that token rerenders too when a new offer comes in
-                        if (
-                            offers.length > 0 &&
-                            get().liveTokens[tokenId]?.lifecycle === Lifecycle.Bunt
-                        ) {
-                            draft.liveTokens[tokenId].lifecycle = Lifecycle.Bat;
+                        if (offers.length > 0) {
+                            if (cycle === Lifecycle.Bunt)
+                                draft.liveTokens[tokenId].lifecycle = Lifecycle.Bat;
+                            if (cycle === Lifecycle.Tryout)
+                                draft.liveTokens[tokenId].lifecycle = Lifecycle.Deck;
                         }
                     });
                 }
