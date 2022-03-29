@@ -15,7 +15,7 @@ import {
     GetLiveNuggDocument,
     GetLiveNuggQueryResult,
 } from '@src/gql/types.generated';
-import { executeQuery3b } from '@src/graphql/helpers';
+import { executeQuery3c } from '@src/graphql/helpers';
 import { Address } from '@src/classes/Address';
 import { SupportedLocale } from '@src/lib/i18n/locales';
 import { FeedMessage } from '@src/interfaces/feed';
@@ -468,26 +468,26 @@ function createClientStoreAndActions2() {
                             const tokenId = extractItemId(route.tokenId);
                             const isItem = tokenId.startsWith('item-');
                             if (!isItem)
-                                void executeQuery3b<GetLiveNuggQueryResult>(
+                                void executeQuery3c<GetLiveNuggQueryResult>(
                                     graph,
                                     GetLiveNuggDocument,
                                     { tokenId },
                                 ).then((x) => {
-                                    if (!x.data?.nugg) window.location.hash = '#/';
-                                    else {
-                                        const formatted = formatLiveNugg(x.data.nugg);
+                                    if (x && !x.nugg) window.location.hash = '#/';
+                                    else if (x && x.nugg) {
+                                        const formatted = formatLiveNugg(x.nugg);
                                         if (formatted) {
                                             updateToken(tokenId, formatted);
                                         }
                                     }
                                 });
                             else
-                                void executeQuery3b<GetLiveItemQueryResult>(
+                                void executeQuery3c<GetLiveItemQueryResult>(
                                     graph,
                                     GetLiveItemDocument,
                                     { tokenId },
                                 ).then((x) => {
-                                    if (!x.data?.item) window.location.hash = '#/';
+                                    if (x && !x.item) window.location.hash = '#/';
                                     return x;
                                 });
                         }
