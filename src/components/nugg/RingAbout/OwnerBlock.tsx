@@ -4,12 +4,13 @@ import { plural, t } from '@lingui/macro';
 import Text from '@src/components/general/Texts/Text/Text';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
-import { Lifecycle, LiveNuggItem } from '@src/client/interfaces';
+import { Lifecycle, LiveNuggItem, OfferData } from '@src/client/interfaces';
 import lib, { parseTokenIdSmart } from '@src/lib';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import useRemaining from '@src/hooks/useRemaining';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import TokenViewer from '@src/components/nugg/TokenViewer';
+import web3 from '@src/web3';
 
 import styles from './RingAbout.styles';
 
@@ -34,6 +35,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
     // const offers = client.live.offers(tokenId);
+    const leader = client.live.offers(tokenId).first() as unknown as OfferData;
 
     const title = useMemo(() => {
         if (token && token.lifecycle === Lifecycle.Stands) {
@@ -57,6 +59,12 @@ const OwnerBlock: FunctionComponent<Props> = () => {
     const darkmode = useDarkMode();
 
     const { minutes } = useRemaining(token?.activeSwap?.epoch);
+    const provider = web3.hook.usePriorityProvider();
+
+    const leaderEns = web3.hook.usePriorityAnyENSName(
+        token && token.type === 'item' ? 'nugg' : provider,
+        leader?.user || '',
+    );
 
     return (
         <div style={styles.ownerBlockContainer}>
@@ -127,40 +135,48 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                             {tokenId && parseTokenIdSmart(tokenId)}
                         </Text>
 
-                        <div
-                            style={{
-                                alignItems: 'end',
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}
-                        >
-                            <Text textStyle={{ fontSize: '13px', color: 'white' }}>
-                                ending in about
-                            </Text>
-                            <Text
-                                textStyle={{ color: 'white', fontSize: '28px' }}
-                            >{`${minutes} ${plural(minutes, {
-                                1: 'minute',
-                                other: 'minutes',
-                            })}`}</Text>
-                        </div>
-                    </div>{' '}
+                        {leader && token?.lifecycle === Lifecycle.Bench ? (
+                            <div
+                                style={{
+                                    alignItems: 'flex-end',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                }}
+                            >
+                                <CurrencyText
+                                    textStyle={{ color: 'white', fontSize: '28px' }}
+                                    image="eth"
+                                    value={leader?.eth?.decimal?.toNumber()}
+                                />
+                                <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                                    {`${leaderEns || leader?.user} is selling`}
+                                </Text>
+                            </div>
+                        ) : (
+                            <div
+                                style={{
+                                    alignItems: 'flex-end',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                }}
+                            >
+                                <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                                    ending in about
+                                </Text>
+                                <Text
+                                    textStyle={{ color: 'white', fontSize: '28px' }}
+                                >{`${minutes} ${plural(minutes, {
+                                    1: 'minute',
+                                    other: 'minutes',
+                                })}`}</Text>
+                            </div>
+                        )}
+                    </div>
                     {token && token.type === 'nugg' && (
                         <List
                             data={token.items}
                             labelStyle={{
                                 color: 'white',
-                            }}
-                            action={() => {
-                                // if (items)
-                                //     setItems({
-                                //         active: [
-                                //             ...items.active.filter(
-                                //                 (x) => x.feature !== item.feature,
-                                //             ),
-                                //         ],
-                                //         hidden: [item, ...items.hidden],
-                                //     });
                             }}
                             extraData={undefined}
                             RenderItem={RenderItem}

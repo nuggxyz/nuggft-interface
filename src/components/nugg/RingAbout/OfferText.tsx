@@ -25,7 +25,7 @@ const OfferText: FunctionComponent<Props> = () => {
             return t`Select a nugg to buy this item from`;
         }
         if (token.lifecycle === Lifecycle.Deck || token.lifecycle === Lifecycle.Bat) {
-            return hasBids ? t`Highest offer` : t`No offers yet...`;
+            return hasBids ? t`Highest offer` : t`For sale`;
         }
         if (token.lifecycle === Lifecycle.Bench) {
             return t`Place offer to begin auction`;

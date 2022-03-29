@@ -66,13 +66,12 @@ const HighestOffer: FunctionComponent<Props> = () => {
     const shouldShow = useMemo(() => {
         if (
             chainId &&
-            leader &&
             token &&
             token.lifecycle !== Lifecycle.Bench &&
             token.lifecycle !== Lifecycle.Tryout &&
             token.lifecycle !== Lifecycle.Stands
         ) {
-            if (token.type === 'item') {
+            if (token.type === 'item' && leader) {
                 return token.activeSwap?.owner.toLowerCase() !== leader.user.toLowerCase();
             }
             return true;
@@ -90,16 +89,6 @@ const HighestOffer: FunctionComponent<Props> = () => {
                         textStyle={styles.leadingOffer}
                         value={leader?.eth?.decimal?.toNumber()}
                     />
-                    {/* <div style={globalStyles.centered}>
-                        ⛽️
-                        <CurrencyText
-                            decimals={0}
-                            size="smaller"
-                            forceGwei
-                            textStyle={{ marginLeft: '.4rem' }}
-                            value={EthInt.fromGwei((tx && tx.gasUsed) || 0).decimal.toNumber()}
-                        />
-                    </div> */}
                 </div>
                 <div style={styles.leadingOfferAmountUser}>
                     <Text size="smaller" type="text">
