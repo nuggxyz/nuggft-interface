@@ -12,7 +12,7 @@ import { animated, useSpring } from '@react-spring/web';
 import constants from '@src/lib/constants';
 import web3 from '@src/web3';
 import client from '@src/client';
-import { ListData, SearchView } from '@src/client/interfaces';
+import { ListData, SearchView, ListDataTypes } from '@src/client/interfaces';
 import {
     GetAllNuggsQueryResult,
     OrderDirection,
@@ -169,9 +169,13 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 
                 if (result && setLoading) setLoading(false);
                 if (result) {
+                    const update = result.nuggs.map((x) => ({
+                        id: x.id,
+                        listDataType: ListDataTypes.Basic as const,
+                    }));
                     setResults((res) => {
-                        if (addToResult) res = [...res, ...result.nuggs];
-                        else res = result.nuggs;
+                        if (addToResult) res = [...res, ...update];
+                        else res = update;
                         return res;
                     });
                 }
@@ -210,12 +214,12 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     },
                 );
 
-                console.log({ result });
-
                 if (result && setLoading) setLoading(false);
                 if (result) {
-                    const update = result.items.map((x) => ({ id: createItemId(x.id) }));
-                    console.log('helloooooo');
+                    const update = result.items.map((x) => ({
+                        id: createItemId(x.id),
+                        listDataType: ListDataTypes.Basic as const,
+                    }));
                     setResults((res) => {
                         if (addToResult) return [...res, ...update];
                         return [...update];

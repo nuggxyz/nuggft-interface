@@ -1,11 +1,12 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
-import { isUndefinedOrNullOrObjectEmpty, parseTokenId } from '@src/lib';
+import lib, { isUndefinedOrNullOrObjectEmpty, parseTokenId } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
 import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
 import { ListData } from '@src/client/interfaces';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 
 import styles from './NuggDexComponents.styles';
 
@@ -31,7 +32,21 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
                 }}
                 disableOnClick
             />
-            <Label text={parseTokenId(item?.id, true)} size="larger" />
+            <div>
+                <Label
+                    text={parseTokenId(item?.id, true)}
+                    size="larger"
+                    containerStyles={{ marginBottom: '10px' }}
+                />
+                {item.listDataType === 'swap' && (
+                    <CurrencyText
+                        textStyle={{ color: lib.colors.primaryColor }}
+                        image="eth"
+                        value={item.eth.number}
+                        stopAnimation
+                    />
+                )}
+            </div>
         </div>
     );
 };

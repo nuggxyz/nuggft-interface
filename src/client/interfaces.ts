@@ -17,14 +17,26 @@ export interface OfferData {
     txhash: string;
 }
 
-export interface ListData {
+export enum ListDataTypes {
+    Basic = 'basic',
+    Swap = 'swap',
+}
+
+export interface ListDataBase {
     id: TokenId;
-    // type: 'nugg' | 'item';
+    listDataType: ListDataTypes;
     dotnuggRawCache?: Base64EncodedSvg;
 }
 
-export interface SwapData extends ListData {
+export interface BasicData {
     id: TokenId;
+    listDataType: ListDataTypes.Basic;
+    dotnuggRawCache?: Base64EncodedSvg;
+}
+
+export interface SwapData extends ListDataBase {
+    id: TokenId;
+    listDataType: ListDataTypes.Swap;
     type: 'nugg' | 'item';
     tokenId: this['id'];
     eth: EthInt;
@@ -34,6 +46,8 @@ export interface SwapData extends ListData {
     isCurrent: boolean;
     dotnuggRawCache: undefined;
 }
+
+export type ListData = SwapData | BasicData;
 
 export interface LoanData {
     endingEpoch: number;

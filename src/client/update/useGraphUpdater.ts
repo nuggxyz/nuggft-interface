@@ -6,7 +6,7 @@ import { createItemId, padToAddress } from '@src/lib';
 import constants from '@src/lib/constants';
 import { ItemId } from '@src/client/router';
 import client from '@src/client/index';
-import { SwapData } from '@src/client/interfaces';
+import { ListDataTypes, SwapData } from '@src/client/interfaces';
 import { useLiveProtocolSubscription, useLiveUserSubscription } from '@src/gql/types.generated';
 
 const mergeUnique = (arr: SwapData[]) => {
@@ -75,6 +75,7 @@ export default () => {
                             type: 'nugg',
                             isCurrent: true,
                             dotnuggRawCache: undefined,
+                            listDataType: ListDataTypes.Swap,
                         };
                     }),
                     activeItems: mergeUnique([
@@ -89,6 +90,7 @@ export default () => {
                                 type: 'item' as const,
                                 isCurrent: true,
                                 dotnuggRawCache: undefined,
+                                listDataType: ListDataTypes.Swap as const,
                             };
                         }),
                         ...protocol.activeNuggItems.map((z) => {
@@ -102,6 +104,7 @@ export default () => {
                                 type: 'item' as const,
                                 isCurrent: true,
                                 dotnuggRawCache: undefined,
+                                listDataType: ListDataTypes.Swap as const,
                             };
                         }),
                     ]),
