@@ -3,6 +3,7 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { HiArrowRight } from 'react-icons/hi';
 import { t } from '@lingui/macro';
 import { useNavigate } from 'react-router-dom';
+import { IoArrowRedo } from 'react-icons/io5';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import Colors from '@src/lib/colors';
@@ -69,26 +70,43 @@ const SwapItem: FunctionComponent<
     const epoch = client.live.epoch.id();
 
     const navigate = useNavigate();
+
     return epoch ? (
-        <div style={{ padding: '.25rem 1rem' }}>
+        <div style={styles.swapItemContainer}>
+            {(!item.endingEpoch || epoch <= item.endingEpoch) && (
+                <div style={styles.goToSwap}>
+                    <Button
+                        buttonStyle={{
+                            ...styles.goToSwapGradient,
+                            backgroundImage: !item.epoch
+                                ? lib.colors.gradient
+                                : lib.colors.gradient3,
+                        }}
+                        textStyle={{ WebkitTextFillColor: 'transparent' }}
+                        label={t`Go to swap`}
+                        rightIcon={
+                            <IoArrowRedo
+                                color={
+                                    !item.epoch ? lib.colors.gradientGold : lib.colors.gradientPink
+                                }
+                            />
+                        }
+                        onClick={() => navigate(`/swap/${item.id}`)}
+                    />
+                </div>
+            )}
             <div
                 key={index}
                 style={{
                     ...styles.swap,
-                    background:
-                        // eslint-disable-next-line no-nested-ternary
-                        !item.epoch
-                            ? lib.colors.gradient
-                            : item.epoch.id < extraData.epoch
-                            ? lib.colors.gradient3
-                            : lib.colors.gradient2,
+                    background: !item.epoch
+                        ? lib.colors.gradient
+                        : item.epoch.id < extraData.epoch
+                        ? lib.colors.gradient2Transparent
+                        : lib.colors.gradient3,
                 }}
             >
-                <div
-                    style={{
-                        ...styles.swapButton,
-                    }}
-                >
+                <div style={styles.swapButton}>
                     <SwapDesc item={item} epoch={epoch} />
                     <CurrencyText image="eth" value={item.eth.decimal.toNumber()} />
                 </div>
@@ -101,7 +119,9 @@ const SwapItem: FunctionComponent<
                                 color: Colors.textColor,
                             }}
                         >
-                            {t`Sold by`}
+                            {!item.endingEpoch || epoch <= item.endingEpoch
+                                ? t`On sale by`
+                                : t`Sold by`}
                         </Text>
                         <Text
                             textStyle={{
@@ -111,16 +131,6 @@ const SwapItem: FunctionComponent<
                             {ownerEns}
                         </Text>
                     </div>
-                    <div
-                        style={{
-                            justifyContent: 'center',
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginRight: '10px',
-                        }}
-                    >
-                        <HiArrowRight color={lib.colors.primaryColor} />
-                    </div>
 
                     {
                         // if this swap is awaiting a bid
@@ -129,33 +139,40 @@ const SwapItem: FunctionComponent<
                         (item.owner === Address.ZERO.hash && item.leader === Address.ZERO.hash) ? (
                             <> </>
                         ) : (
-                            <div>
-                                <Text
-                                    type="text"
-                                    size="smaller"
-                                    textStyle={{
-                                        color: Colors.textColor,
+                            <>
+                                <div
+                                    style={{
+                                        justifyContent: 'center',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        marginRight: '10px',
                                     }}
                                 >
-                                    {item.endingEpoch >= epoch ? t`Leader` : t`Buyer`}
-                                </Text>
-                                <Text
-                                    textStyle={{
-                                        color: 'white',
-                                    }}
-                                >
-                                    {leaderEns}
-                                </Text>
-                            </div>
+                                    <HiArrowRight color={lib.colors.primaryColor} />
+                                </div>
+                                <div>
+                                    <Text
+                                        type="text"
+                                        size="smaller"
+                                        textStyle={{
+                                            color: Colors.textColor,
+                                        }}
+                                    >
+                                        {item.endingEpoch >= epoch ? t`Leader` : t`Buyer`}
+                                    </Text>
+                                    <Text
+                                        textStyle={{
+                                            color: 'white',
+                                        }}
+                                    >
+                                        {leaderEns}
+                                    </Text>
+                                </div>
+                            </>
                         )
                     }
-                    {(!item.endingEpoch || epoch <= item.endingEpoch) && (
-                        <Button label={t`goto swap`} onClick={() => navigate(`/swap/${item.id}`)} />
-                    )}
                 </div>
             </div>
-
-            <div />
         </div>
     ) : null;
 };
@@ -170,7 +187,7 @@ const SwapList: FunctionComponent<{ tokenId: TokenId | undefined }> = ({ tokenId
         const res: { title: string; items: LiveSwap[] }[] = [];
         let tempSwaps = token?.swaps ? [...token.swaps] : [];
         if (token && token.activeSwap && token.activeSwap.id) {
-            // res.push({ title: 'Ongoing Sale', items: [token.activeSwap] });
+            res.push({ title: t`Ongoing Swap`, items: [token.activeSwap] });
             tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'id');
         }
         if (
@@ -184,7 +201,7 @@ const SwapList: FunctionComponent<{ tokenId: TokenId | undefined }> = ({ tokenId
             tempSwaps = tempTemp.filter((x) => !x.isTryout);
         }
         res.push({
-            title: 'Previous Sales',
+            title: t`Previous Swaps`,
             items: tempSwaps,
         });
 

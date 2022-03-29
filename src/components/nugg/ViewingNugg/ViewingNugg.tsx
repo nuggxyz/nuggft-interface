@@ -1,5 +1,5 @@
-import React, { FunctionComponent, MemoExoticComponent, useMemo } from 'react';
-import { IoEllipsisHorizontal } from 'react-icons/io5';
+import React, { FunctionComponent, MemoExoticComponent, useMemo, useState } from 'react';
+import { IoCheckmarkCircle, IoCloseCircleOutline } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 
 import lib, { parseTokenIdSmart } from '@src/lib';
@@ -9,7 +9,6 @@ import Loader from '@src/components/general/Loader/Loader';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
-import Flyout from '@src/components/general/Flyout/Flyout';
 import client from '@src/client';
 import HappyTabber from '@src/components/general/HappyTabber/HappyTabber';
 import AddressViewer from '@src/components/general/Texts/AddressViewer/AddressViewer';
@@ -19,15 +18,13 @@ import useTokenQuery from '@src/client/hooks/useTokenQuery';
 // import { LiveNuggWithLifecycle } from '@src/client/interfaces';
 
 import globalStyles from '@src/lib/globalStyles';
+import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
+import Button from '@src/components/general/Buttons/Button/Button';
 
 import styles from './ViewingNugg.styles';
-import OwnerButtons from './FlyoutButtons/OwnerButtons';
-import SaleButtons from './FlyoutButtons/SaleButtons';
-import LoanButtons from './FlyoutButtons/LoanButtons';
 import SwapList from './SwapList';
 import ItemList from './ItemList';
-// import NuggAbout from './NuggAbout';
-// import ItemAbout from './ItemAbout';
+import MyNuggActions from './MyNuggActions';
 
 type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
 
@@ -49,9 +46,18 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const provider = web3.hook.usePriorityProvider();
 
     const token = client.live.token(tokenId);
+    const [zoomEnabled, setZoomEnabled] = useState(true);
 
     const happyTabs = useMemo(() => {
         return [
+            ...(token && token.type === 'nugg' && token.owner === sender
+                ? [
+                      {
+                          label: t`My Nugg`,
+                          comp: React.memo(MyNuggActions),
+                      },
+                  ]
+                : []),
             {
                 label: t`Swaps`,
                 comp: React.memo(SwapList),
@@ -118,17 +124,6 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                 size="medium"
                                                 isNugg={false}
                                             />
-                                            <Text textStyle={styles.titleText}>
-                                                {token?.owner === sender && (
-                                                    <Text
-                                                        type="text"
-                                                        size="smaller"
-                                                        textStyle={{ paddingLeft: '.5rem' }}
-                                                    >
-                                                        {t`(you)`}
-                                                    </Text>
-                                                )}
-                                            </Text>
                                         </div>
                                     </>
                                 ) : (
@@ -144,6 +139,29 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                 </Text>
                             )}
                         </div>
+                        <Button
+                            size="small"
+                            type="text"
+                            buttonStyle={styles.zoom}
+                            label={t`Zoom`}
+                            textStyle={styles.textBlue}
+                            onClick={() => setZoomEnabled(!zoomEnabled)}
+                            rightIcon={
+                                zoomEnabled ? (
+                                    <IoCheckmarkCircle
+                                        color={lib.colors.nuggBlueText}
+                                        size={20}
+                                        style={{ paddingLeft: '.3rem' }}
+                                    />
+                                ) : (
+                                    <IoCloseCircleOutline
+                                        color={lib.colors.nuggBlueText}
+                                        size={20}
+                                        style={{ paddingLeft: '.3rem' }}
+                                    />
+                                )
+                            }
+                        />
                     </div>
                     <div
                         style={
@@ -152,36 +170,21 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                 : styles.nuggContainer
                         }
                     >
-                        {token.type === 'nugg' && token.owner === sender && (
-                            <Flyout
-                                containerStyle={styles.flyout}
-                                style={{ left: '1rem', top: '2rem' }}
-                                button={
-                                    <div style={styles.flyoutButton}>
-                                        <IoEllipsisHorizontal color={Colors.nuggBlueText} />
-                                    </div>
-                                }
-                                openOnHover
-                            >
-                                {tokenId &&
-                                    // eslint-disable-next-line no-nested-ternary
-                                    (token?.activeSwap?.id || token?.pendingClaim ? (
-                                        <SaleButtons
-                                            tokenId={tokenId}
-                                            reclaim={!token?.pendingClaim}
-                                        />
-                                    ) : token?.activeLoan ? (
-                                        <LoanButtons tokenId={tokenId} />
-                                    ) : (
-                                        <OwnerButtons tokenId={tokenId} />
-                                    ))}
-                            </Flyout>
-                        )}
-                        {/* <div style={{ position: 'fixed' }}>
-                            <AnimatedCard> */}
-                        {tokenId && <TokenViewer tokenId={tokenId} showcase disableOnClick />}
-                        {/* </AnimatedCard>
-                        </div> */}
+                        <div
+                            style={{
+                                height: '400px',
+                                width: '100%',
+                                position: 'relative',
+                            }}
+                        >
+                            <div style={{ position: 'fixed' }}>
+                                <AnimatedCard disable={!zoomEnabled}>
+                                    {tokenId && (
+                                        <TokenViewer tokenId={tokenId} showcase disableOnClick />
+                                    )}
+                                </AnimatedCard>
+                            </div>
+                        </div>
                     </div>
 
                     <HappyTabber
@@ -189,7 +192,6 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                         items={happyTabs}
                         selectionIndicatorStyle={{ background: lib.colors.white }}
                         bodyStyle={styles.tabberList}
-                        // wrapperStyle={{ padding: '.6rem' }}
                         headerContainerStyle={{
                             padding: '0rem 1rem',
                             borderRadius: 0,

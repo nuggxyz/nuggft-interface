@@ -87,6 +87,11 @@ const styles = NLStyleSheetCreator({
         background: Colors.transparentGrey,
         width: '95%',
     },
+    swapItemContainer: {
+        padding: '.25rem 1rem',
+        flexDirection: 'column',
+        ...globalStyles.centered,
+    },
     swap: {
         background: Colors.gradient2Transparent,
         padding: '.5rem 1rem',
@@ -94,20 +99,20 @@ const styles = NLStyleSheetCreator({
         postion: 'relative',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-start',
-        justifyContent: 'stretch',
         width: '100%',
     },
     button: {
-        padding: '.75rem 3rem .75rem 1rem',
-        borderRadius: 0,
+        padding: '.75rem 1rem',
+        margin: '.5rem',
+        borderRadius: lib.layout.borderRadius.large,
         background: 'white',
-        width: '100%',
+        width: '40%',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'start',
+        justifyContent: 'center',
     },
     textBlack: { color: Colors.primaryColor },
+    textBlue: { color: lib.colors.nuggBlueText },
     flyout: {
         position: 'absolute',
         zIndex: 10,
@@ -124,8 +129,12 @@ const styles = NLStyleSheetCreator({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
+        // height: '100%',
         width: '100%',
         overflow: 'hidden',
+        background: lib.colors.transparentGrey2,
+        margin: '.4rem',
+        borderRadius: lib.layout.borderRadius.smallish,
     },
     stickyListRight: {
         width: '100%',
@@ -180,6 +189,23 @@ const styles = NLStyleSheetCreator({
     itemListButtonText: {
         color: Colors.white,
         marginLeft: '.5rem',
+    },
+    zoom: {
+        borderRadius: lib.layout.borderRadius.large,
+        padding: '.3rem .5rem',
+        position: 'absolute',
+        right: '.5rem',
+    },
+    goToSwap: {
+        marginBottom: '.4rem',
+        borderRadius: lib.layout.borderRadius.large,
+        backgroundColor: lib.colors.white,
+        padding: '.2rem .7rem',
+    },
+    goToSwapGradient: {
+        backgroundSize: '100%',
+        backgroundClip: 'text',
+        padding: 0,
     },
 });
 
