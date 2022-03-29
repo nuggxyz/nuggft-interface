@@ -7,7 +7,6 @@ import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/Feedb
 import { executeQuery3 } from '@src/graphql/helpers';
 import useAsyncState from '@src/hooks/useAsyncState';
 import Text from '@src/components/general/Texts/Text/Text';
-import constants from '@src/lib/constants';
 import state from '@src/state';
 import web3 from '@src/web3';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
@@ -48,8 +47,7 @@ const MintModal: FunctionComponent<unknown> = () => {
             {
                 nuggs(
                     where: {
-                        idnum_gt: ${constants.PRE_MINT_STARTING_EPOCH}
-                        idnum_lt: ${constants.PRE_MINT_ENDING_EPOCH}
+                        idnum_gt: ${web3.config.CONTRACTS[chainId].MintOffset}
                     }
                     first: 1
                     orderDirection: desc
@@ -62,7 +60,7 @@ const MintModal: FunctionComponent<unknown> = () => {
         `,
                 {},
             ).then(async ({ nuggs }) => {
-                let count = constants.PRE_MINT_STARTING_EPOCH + 1;
+                let count = web3.config.CONTRACTS[chainId].MintOffset + 1;
                 if (nuggs && nuggs.length > 0) {
                     const vals = await Promise.map(
                         range(Number(nuggs[0].idnum) + 1, Number(nuggs[0].idnum) + 11),
@@ -75,7 +73,7 @@ const MintModal: FunctionComponent<unknown> = () => {
 
                     count = Number(nuggs[0].idnum) + 1 + vals.indexOf('0');
                 }
-                if (count <= constants.PRE_MINT_ENDING_EPOCH) {
+                if (count <= 0xffffff) {
                     return String(count);
                 }
                 return null;

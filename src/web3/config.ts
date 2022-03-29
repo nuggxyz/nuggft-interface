@@ -55,6 +55,7 @@ export const CONTRACTS = {
         Genesis: 0,
         Interval: 0,
         Offset: 1,
+        MintOffset: 1000000,
     },
     [Chain.ROPSTEN]: {
         NuggftV1: '0x420690c1b1519a32fa36768dc2cefe128160a9b7',
@@ -62,6 +63,7 @@ export const CONTRACTS = {
         Genesis: 333,
         Interval: 32,
         Offset: 1,
+        MintOffset: 1000000,
     },
     [Chain.RINKEBY]: {
         NuggftV1: '0xe094125aef5089dfd566b816b9e731c9c0d349b1', // 0x3f1c9c4ae47809d284592845e4ced13a6e352421
@@ -69,6 +71,7 @@ export const CONTRACTS = {
         Genesis: 10405120,
         Interval: 256,
         Offset: 1,
+        MintOffset: 1000000,
     },
     [Chain.GOERLI]: {
         NuggftV1: '0x7ccd9a783e43845f3ae37e83b4a696b0cfab114c',
@@ -76,6 +79,7 @@ export const CONTRACTS = {
         Genesis: 333,
         Interval: 32,
         Offset: 1,
+        MintOffset: 1000000,
     },
 };
 
