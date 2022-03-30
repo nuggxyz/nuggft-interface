@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { IoSearch } from 'react-icons/io5';
+import { IoEllipsisHorizontal, IoSearch } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 
 import { MyNuggsData } from '@src/client/interfaces';
@@ -10,6 +10,10 @@ import Text from '@src/components/general/Texts/Text/Text';
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import client from '@src/client';
+import Flyout from '@src/components/general/Flyout/Flyout';
+import LoanButtons from '@src/components/nugg/ViewingNugg/FlyoutButtons/LoanButtons';
+import OwnerButtons from '@src/components/nugg/ViewingNugg/FlyoutButtons/OwnerButtons';
+import SaleButtons from '@src/components/nugg/ViewingNugg/FlyoutButtons/SaleButtons';
 
 import styles from './HomeTab.styles';
 
@@ -36,6 +40,25 @@ const MyNuggRenderItem: FunctionComponent<
                     {item.recent ? t`New` : item.activeLoan ? t`Loaned` : t`On sale`}
                 </Text>
             ) : null}
+            <Flyout
+                containerStyle={styles.flyout}
+                style={{ right: '0rem', top: '2rem' }}
+                button={
+                    <div style={styles.flyoutButton}>
+                        <IoEllipsisHorizontal color={lib.colors.white} />
+                    </div>
+                }
+            >
+                {item.tokenId &&
+                    // eslint-disable-next-line no-nested-ternary
+                    (item?.activeSwap ? (
+                        <SaleButtons tokenId={item.tokenId} />
+                    ) : item?.activeLoan ? (
+                        <LoanButtons tokenId={item.tokenId} />
+                    ) : (
+                        <OwnerButtons tokenId={item.tokenId} />
+                    ))}
+            </Flyout>
             <Button
                 key={JSON.stringify(item)}
                 onClick={() => {

@@ -16,6 +16,16 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         flexDirection: 'column',
     },
+    flyout: {
+        // position: 'absolute',
+        top: '.4rem',
+        right: '.4rem',
+    },
+    flyoutButton: {
+        background: lib.colors.gradient2Transparent,
+        borderRadius: lib.layout.borderRadius.large,
+        padding: '.25rem .25rem 0rem .25rem',
+    },
     list: {
         background: lib.colors.transparentLightGrey,
         borderRadius: lib.layout.borderRadius.mediumish,

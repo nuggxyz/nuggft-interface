@@ -25,7 +25,7 @@ const styles = NLStyleSheetCreator({
     },
     flyout: {
         right: '1rem',
-        top: '2.6rem',
+        top: '1.5rem',
     },
     flyoutButton: {
         padding: '.75rem 1rem .75rem 1rem',

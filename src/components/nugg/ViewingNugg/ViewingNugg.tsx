@@ -163,6 +163,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                         <IoEllipsisHorizontal color={Colors.white} />
                                     </div>
                                 }
+                                openOnHover
                             >
                                 {tokenId &&
                                     // eslint-disable-next-line no-nested-ternary

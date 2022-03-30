@@ -10,6 +10,7 @@ type Props = {
     style?: AnimatedProps<any>;
     containerStyle?: CSSProperties;
     float?: 'left' | 'right';
+    openOnHover?: boolean;
 };
 
 const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
@@ -18,10 +19,17 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
     children,
     containerStyle,
     float = 'right',
+    openOnHover = false,
 }) => {
     const [open, setOpen] = React.useState(false);
-    const [openRef, openHover] = useOnHover(() => setOpen(true));
-    const [closeRef, closeHover] = useOnHover(() => setOpen(openHover || closeHover));
+    const [openRef, openHover] = useOnHover(() => {
+        if (openOnHover) setOpen(true);
+    });
+
+    const [closeRef, closeHover] = useOnHover(() => {
+        if (openOnHover) setOpen(openHover || closeHover);
+        else if (open && !closeHover) setOpen(false);
+    });
 
     const transition = useTransition(open, {
         from: {
@@ -41,8 +49,8 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
     });
 
     return (
-        <div style={containerStyle} ref={openRef}>
-            <div aria-hidden="true" role="button" onClick={() => setOpen(false)}>
+        <div style={{ cursor: 'pointer', ...containerStyle }} ref={closeRef}>
+            <div aria-hidden="true" role="button" onClick={() => setOpen(!open)}>
                 {button}
             </div>
             {transition(
@@ -50,7 +58,7 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
                     isOpen && (
                         <animated.div style={animatedStyle}>
                             <div
-                                ref={closeRef}
+                                ref={openRef}
                                 style={{
                                     ...styles.container,
                                     ...style,
