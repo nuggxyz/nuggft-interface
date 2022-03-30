@@ -160,6 +160,8 @@ export interface ClientState extends State, Actions {
     liveOffers: Dictionary<OfferData[]>;
     activeSwaps: SwapData[];
     activeItems: SwapData[];
+    potentialItems: SwapData[];
+    potentialSwaps: SwapData[];
     myNuggs: MyNuggsData[];
     recentSwaps: SwapData[];
     recentItems: SwapData[];
@@ -195,6 +197,8 @@ export type ClientStateUpdate = {
     activeItems?: SwapData[];
     recentSwaps?: SwapData[];
     recentItems?: SwapData[];
+    potentialItems?: SwapData[];
+    potentialSwaps?: SwapData[];
     error?: Error;
     activating?: boolean;
     myNuggs?: MyNuggsData[];
@@ -222,7 +226,7 @@ export interface Actions {
     removeNugg: (tokenId: NuggId) => void;
     toggleEditingNugg: (tokenId: NuggId | undefined) => void;
     start: (chainId: Chain, rpc: JsonRpcProvider, graph: ApolloClient<any>) => Promise<void>;
-    updateToken: (tokenId: TokenId, data: LiveTokenWithLifecycle) => void;
+    updateToken: (tokenId: TokenId, data: LiveToken) => void;
     updateLocale: (locale: SupportedLocale | undefined) => void;
     updateSearchFilterTarget: (value: SearchFilter['target']) => void;
     updateSearchFilterSort: (value: SearchFilter['sort']) => void;
@@ -310,7 +314,6 @@ export enum Lifecycle {
     Shower = 'shower', // [nugg/item] active swap exists, but none of the others hit. ** i honestly dont even think it can hit this bc the graph catches it
     Tryout = 'tryout', // [     item] a token that has no active sale, but one to many non-active sales
     Cut = 'cut', //       [nugg     ] a token that no one bid on but still exists in the graph
-
     Egg = 'egg', //       [nugg     ] a token that will be minting in the next epoch --- SAME AS DECK, BUT NON OFFERABLE
 }
 

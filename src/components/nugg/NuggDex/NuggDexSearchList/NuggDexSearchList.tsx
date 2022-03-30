@@ -36,10 +36,14 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const searchValue = client.live.searchFilter.searchValue();
     const viewing = client.live.searchFilter.viewing();
     const chainId = web3.hook.usePriorityChainId();
-    const _liveActiveNuggs = client.live.activeSwaps();
+    const activeNuggs = client.live.activeSwaps();
+    const potentialNuggs = client.live.potentialSwaps();
+
     const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
     const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
-    const rawLiveActiveItems = client.live.activeItems();
+    const activeItems = client.live.activeItems();
+    const potentialItems = client.live.potentialItems();
+
     const [allNuggs, setAllNuggs] = useState<ListData[]>([]);
     const [allNuggsPreview, setAllNuggsPreview] = useState<ListData[]>([]);
     const [allItems, setAllItems] = useState<ListData[]>([]);
@@ -97,7 +101,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 
     const liveActiveNuggs = useMemo(
         () =>
-            _liveActiveNuggs.reduce((acc: ListData[], nugg) => {
+            [...activeNuggs, ...potentialNuggs].reduce((acc: ListData[], nugg) => {
                 let tmp = acc;
                 if (epoch__id && +nugg.id <= +epoch__id) {
                     if (searchValue === '' || searchValue === nugg.id) {
@@ -110,12 +114,12 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 }
                 return tmp;
             }, []),
-        [epoch__id, _liveActiveNuggs, searchValue, sortAsc],
+        [epoch__id, activeNuggs, searchValue, potentialNuggs, sortAsc],
     );
 
     const liveActiveItems = useMemo(
         () =>
-            rawLiveActiveItems.reduce((acc: ListData[], item) => {
+            [...activeItems, ...potentialItems].reduce((acc: ListData[], item) => {
                 let tmp = acc;
                 // if (searchValue && searchValue === item.id) {
                 if (sortAsc[SearchView.OnSale]) {
@@ -126,7 +130,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 // }
                 return tmp;
             }, []),
-        [searchValue, sortAsc, rawLiveActiveItems],
+        [searchValue, sortAsc, potentialItems, activeItems],
     );
 
     const liveActiveEverything = useMemo(() => {

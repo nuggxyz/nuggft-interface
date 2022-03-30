@@ -164,13 +164,14 @@ function createClientStoreAndActions2() {
                     set((draft) => {
                         if (stateUpdate.stake) draft.stake = stateUpdate.stake;
                         if (stateUpdate.editingNugg) draft.editingNugg = stateUpdate.editingNugg;
-                        // @ts-ignore
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                        if (stateUpdate.graph) draft.graph = stateUpdate.graph;
                         if (stateUpdate.recentSwaps) draft.recentSwaps = stateUpdate.recentSwaps;
                         if (stateUpdate.recentItems) draft.recentItems = stateUpdate.recentItems;
                         if (stateUpdate.activeSwaps) draft.activeSwaps = stateUpdate.activeSwaps;
                         if (stateUpdate.activeItems) draft.activeItems = stateUpdate.activeItems;
+                        if (stateUpdate.potentialSwaps)
+                            draft.potentialSwaps = stateUpdate.potentialSwaps;
+                        if (stateUpdate.potentialItems)
+                            draft.potentialItems = stateUpdate.potentialItems;
                         if (stateUpdate.manualPriority)
                             draft.manualPriority = stateUpdate.manualPriority;
                         if (stateUpdate.myNuggs) draft.myNuggs = stateUpdate.myNuggs;
@@ -466,7 +467,8 @@ function createClientStoreAndActions2() {
                         const route = parseRoute(window.location.hash);
 
                         if (route.type !== Route.Home) {
-                            const isItem = route.type === Route.ViewItem || Route.ViewNugg;
+                            const isItem =
+                                route.type === Route.ViewItem || route.type === Route.SwapItem;
 
                             const tokenId = extractItemId(route.tokenId);
 
@@ -534,6 +536,10 @@ function createClientStoreAndActions2() {
                     feedMessages: [],
                     recentSwaps: [],
                     recentItems: [],
+                    potentialSwaps: [],
+                    potentialItems: [],
+                    incomingSwaps: [],
+                    incomingItems: [],
                     myUnclaimedNuggOffers: [],
                     myUnclaimedItemOffers: [],
                     myRecents: new Set(),

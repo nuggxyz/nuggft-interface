@@ -6,12 +6,14 @@ import state from '@src/state';
 import web3 from '@src/web3';
 import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
 import lib from '@src/lib';
+import { useDarkMode } from '@src/client/hooks/useDarkMode';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectTab from './tabs/ConnectTab/ConnectTab';
 import LoanTab from './tabs/LoanTab/LoanTab';
 import HomeTab from './tabs/HomeTab/HomeTab';
 import styles from './Wallet.styles';
+import ActiveTab from './tabs/ActiveTab/ActiveTab';
 
 type Props = Record<string, never>;
 
@@ -25,6 +27,13 @@ const Wallet: FunctionComponent<Props> = () => {
             ...(account
                 ? screenType === 'tablet'
                     ? [
+                          // @danny7even just here for testing, easier to not reload page...
+                          // ive found like 4 bugs in the graph and a couple here too from trying to implement this
+                          // still not done
+                          {
+                              label: t`Active`,
+                              comp: React.memo(ActiveTab),
+                          },
                           {
                               label: t`Swap`,
                               comp: React.memo(RingAbout),
@@ -50,6 +59,11 @@ const Wallet: FunctionComponent<Props> = () => {
                       ]
                     : [
                           {
+                              // look up mfer
+                              label: t`Active`,
+                              comp: React.memo(ActiveTab),
+                          },
+                          {
                               label: t`Home`,
                               comp: React.memo(HomeTab),
                           },
@@ -73,6 +87,8 @@ const Wallet: FunctionComponent<Props> = () => {
         [account],
     );
 
+    const darkmode = useDarkMode();
+
     return (
         <div
             style={{
@@ -83,7 +99,11 @@ const Wallet: FunctionComponent<Props> = () => {
         >
             <HappyTabber
                 items={happytabs}
-                bodyStyle={screenType === 'phone' ? styles.mobileBody : styles.body}
+                bodyStyle={
+                    screenType === 'phone'
+                        ? styles.mobileBody
+                        : styles[darkmode ? 'bodyDark' : 'body']
+                }
                 headerTextStyle={
                     screenType === 'phone' ? styles.mobileHeaderText : styles.headerText
                 }

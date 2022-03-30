@@ -1,8 +1,7 @@
 /* eslint-disable import/no-cycle */
 import React from 'react';
 
-import { Lifecycle, LiveToken } from '@src/client/interfaces';
-import { Address } from '@src/classes/Address';
+import { LiveToken } from '@src/client/interfaces';
 import { TokenId } from '@src/client/router';
 
 import client from '..';
@@ -18,27 +17,7 @@ export default (tokenId: TokenId | undefined) => {
     const onNewData = React.useCallback(
         (token: LiveToken) => {
             if (tokenId) {
-                const getLifecycle = (): Lifecycle => {
-                    if (token && epoch !== undefined) {
-                        if (!token.activeSwap?.id) {
-                            if (token.type === 'item' && token.swaps.length > 0)
-                                return Lifecycle.Tryout;
-                            return Lifecycle.Stands;
-                        }
-
-                        if (!token.activeSwap.endingEpoch) return Lifecycle.Bench;
-                        if (+token.activeSwap.endingEpoch === epoch + 1) {
-                            if (token.type === 'nugg' && token.owner === Address.ZERO.hash) {
-                                return Lifecycle.Egg;
-                            }
-                            return Lifecycle.Deck;
-                        }
-                        if (+token.activeSwap.endingEpoch === epoch) return Lifecycle.Bat;
-                        return Lifecycle.Shower;
-                    }
-                    return Lifecycle.Stands;
-                };
-                updateToken(tokenId, { ...token, lifecycle: getLifecycle() });
+                updateToken(tokenId, { ...token });
             }
         },
         [updateToken, tokenId, epoch],

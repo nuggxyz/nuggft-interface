@@ -25,6 +25,7 @@ export default {
         rpc: () => coreNonImmer((state) => state.rpc),
 
         epoch: {
+            default: () => core((state) => state.epoch),
             id: () => core((state) => state.epoch?.id),
             startblock: () => core((state) => state.epoch?.startblock),
             endblock: () => core((state) => state.epoch?.endblock),
@@ -61,7 +62,8 @@ export default {
         darkmode: () => core((state) => state.darkmode, shallow),
         recentSwaps: () => core((state) => state.recentSwaps),
         recentItems: () => core((state) => state.recentItems),
-
+        potentialSwaps: () => core((state) => state.potentialSwaps),
+        potentialItems: () => core((state) => state.potentialItems),
         /// ///// complex ////////
         offers: (tokenId: TokenId | undefined) =>
             core(
@@ -89,6 +91,14 @@ export default {
                 // eslint-disable-next-line react-hooks/rules-of-hooks
                 useCallback(
                     (state) => id && state.activeItems.find((item) => item.id.includes(id)),
+                    [id],
+                ),
+            ),
+        potentialNuggItem: (id: string | undefined) =>
+            core(
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                useCallback(
+                    (state) => id && state.potentialItems.find((item) => item.id.includes(id)),
                     [id],
                 ),
             ),

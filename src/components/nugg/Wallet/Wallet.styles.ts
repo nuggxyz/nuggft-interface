@@ -26,6 +26,12 @@ const styles = NLStyleSheetCreator({
         background: lib.colors.gradient3,
         padding: '.75rem',
     },
+    bodyDark: {
+        boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggBlue}`,
+        borderRadius: lib.layout.borderRadius.medium,
+        background: lib.colors.transparentGrey,
+        padding: '.75rem',
+    },
     headerText: {
         color: lib.colors.nuggRedText,
     },

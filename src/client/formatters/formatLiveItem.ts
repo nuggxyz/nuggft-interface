@@ -61,13 +61,20 @@ export default (item: LiveItemFragment): LiveItem => {
             nugg: curr.owner,
             eth: curr.eth,
         };
-        if (!prev)
+        /// ////////////////////////////////////////
+        // @danny7even --- nothing for you to do here, just to remind you that you, the code god, would never have added this field on an object and then forget to use it 40 lines later....
+        // ..... so i didnt either and didnt spend an afternoon screwing around with the graph trying to fitgure out WHY IT WASNT WORKING
+        if (!curr.isTryout) return prev;
+        /// ////////////////////////////////////////
+
+        if (!prev) {
             return {
                 min: swap,
                 max: swap,
                 count: 1,
                 swaps: [swap],
             };
+        }
         return {
             min: !prev.min || prev.min.eth.gt(curr.eth) ? swap : prev.min,
             max: !prev.max || prev.max.eth.lt(curr.eth) ? swap : prev.max,

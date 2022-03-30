@@ -59,10 +59,9 @@ const OfferButton: FunctionComponent<Props> = () => {
         token.lifecycle !== 'cut' &&
         (screenType === 'phone' || address) ? (
         <>
-            {token &&
-                token.type === 'item' &&
-                token.lifecycle === 'tryout' &&
-                token.tryout.count > 0 && (
+            {/* FIXME */}
+            {token && token.type === 'item' && token.tryout.count > 0 && (
+                <>
                     <List
                         data={token.tryout.swaps}
                         labelStyle={{
@@ -83,7 +82,45 @@ const OfferButton: FunctionComponent<Props> = () => {
                             borderRadius: lib.layout.borderRadius.medium,
                         }}
                     />
-                )}
+                    {/* <Button
+                        buttonStyle={{
+                            ...styles.button,
+                            ...(screenType === 'phone' && {
+                                background: lib.colors.nuggBlueText,
+                            }),
+                        }}
+                        textStyle={{
+                            ...styles.buttonText,
+                            ...(screenType === 'phone' && {
+                                color: 'white',
+                            }),
+                        }}
+                        disabled={!nuggToBuyFrom}
+                        onClick={() =>
+                            screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
+                                ? state.app.dispatch.changeMobileView('Wallet')
+                                : tokenId &&
+                                  state.app.dispatch.setModalOpen({
+                                      name: 'OfferModal',
+                                      modalData: {
+                                          targetId: tokenId,
+                                          type: token.type === 'item' ? 'OfferItem' : 'OfferNugg',
+                                          data: {
+                                              tokenId,
+                                              token,
+                                              nuggToBuyFrom: nuggToBuyFrom?.nugg,
+                                          },
+                                      },
+                                  })
+                        }
+                        label={
+                            screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
+                                ? t`Connect wallet`
+                                : t`Place offer`
+                        }
+                    /> */}
+                </>
+            )}
             <Button
                 buttonStyle={{
                     ...styles.button,

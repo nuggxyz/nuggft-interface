@@ -99,11 +99,10 @@ const OfferModal = ({ tokenId }: Props) => {
     const address = web3.hook.usePriorityAccount();
 
     const [selectedNuggForItem, setSelectedNugg] = useState<MyNuggsData>();
-    // const [selectedSellingNuggForItem, setSelectedSellingNugg] = useState<TryoutData>();
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
-    const epoch = client.live.epoch.id();
+    // const epoch = client.live.epoch.id();
 
     const userBalance = web3.hook.usePriorityBalance(provider);
 
@@ -131,31 +130,32 @@ const OfferModal = ({ tokenId }: Props) => {
             })),
         [_myNuggs, stableId],
     );
-    useEffect(() => {
-        if (epoch) {
-            const prevBidder = myNuggs.find((nugg) =>
-                nugg.unclaimedOffers.find(
-                    (offer) =>
-                        (offer.endingEpoch ?? 0) === epoch &&
-                        offer.itemId === extractItemId(stableId),
-                ),
-            );
+    // @danny7even - this started throwing errors when I tried setting up offering on items when other items were "active"
+    // useEffect(() => {
+    //     console.log('ME TOOOOOO');
+    //     if (epoch) {
+    //         const prevBidder = myNuggs.find((nugg) =>
+    //             nugg.unclaimedOffers.find(
+    //                 (offer) =>
+    //                     (offer.endingEpoch ?? 0) === epoch &&
+    //                     offer.itemId === extractItemId(stableId),
+    //             ),
+    //         );
 
-            if (prevBidder) {
-                setSelectedNugg(prevBidder);
-            }
-        }
-    }, [myNuggs, epoch, stableId]);
+    //         if (prevBidder) {
+    //             setSelectedNugg(prevBidder);
+    //         }
+    //     }
+    // }, [myNuggs, epoch, stableId]);
 
-    const activeItem = client.live.activeNuggItem(stableId);
-
+    const activeItem = client.live.potentialNuggItem(stableId);
     const sellingNugg = React.useMemo(() => {
         if (data && data.token && data.nuggToBuyFrom) {
             return data.nuggToBuyFrom;
         }
         if (activeItem) return activeItem.sellingNugg;
         return undefined;
-    }, [activeItem, data]);
+    }, [data, activeItem]);
 
     const check = useAsyncState<{
         canOffer: boolean | undefined;
@@ -187,10 +187,7 @@ const OfferModal = ({ tokenId }: Props) => {
                 });
             }
         }
-        return new Promise((resolve) =>
-            // eslint-disable-next-line no-promise-executor-return
-            resolve({ canOffer: undefined, next: undefined, curr: undefined }),
-        );
+        return undefined;
     }, [
         stableId,
         address,
@@ -204,6 +201,20 @@ const OfferModal = ({ tokenId }: Props) => {
     // const nuggft = useNuggftV1();
     // console.log({ sellingNugg, stableId, selectedNuggForItem });
     // const { send, revert } = useTransactionManager();
+    console.log({
+        stableType,
+        activeItem,
+        selectedNuggForItem,
+        sellingNugg,
+        type,
+        data,
+        check,
+        stableId,
+        address,
+        chainId,
+        provider,
+    });
+
     return (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
@@ -220,29 +231,7 @@ const OfferModal = ({ tokenId }: Props) => {
                     style={stableType === 'OfferItem' ? { height: '350px', width: '350px' } : {}}
                 />
             </AnimatedCard>
-            {/* {data?.token?.type === 'item' && data?.mustPickNuggToBuyFrom && (
-                <List
-                    data={data?.token.tryout.swaps}
-                    label={t`Pick a nugg to buy this item from`}
-                    labelStyle={{
-                        color: 'white',
-                    }}
-                    extraData={undefined}
-                    RenderItem={React.memo(SellingNuggRenderItem)}
-                    horizontal
-                    action={(item: TryoutData) => {
-                        setSelectedSellingNugg(item);
-                    }}
-                    selected={selectedSellingNuggForItem}
-                    style={{
-                        width: '100%',
-                        background: Colors.transparentLightGrey,
-                        height: '140px',
-                        padding: '0rem .4rem',
-                        borderRadius: Layout.borderRadius.medium,
-                    }}
-                />
-            )} */}
+
             {stableType === 'OfferItem' && (
                 <List
                     data={myNuggs}

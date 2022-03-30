@@ -41,7 +41,7 @@ export default () => {
     useLiveProtocolSubscription({
         client: graph,
         shouldResubscribe: true,
-        fetchPolicy: 'cache-first',
+        fetchPolicy: 'network-only',
         onSubscriptionData: (x) => {
             if (x.subscriptionData && x.subscriptionData.data && x.subscriptionData.data.protocol) {
                 const { protocol } = x.subscriptionData.data;
@@ -49,6 +49,33 @@ export default () => {
                 const shares = BigNumber.from(protocol.nuggftStakedShares);
 
                 const staked = BigNumber.from(protocol.nuggftStakedEth);
+
+                const sortedPotentialItems = protocol.activeNuggItems.reduce(
+                    (
+                        prev: {
+                            potentialItems: SwapData[];
+                            incomingItems: SwapData[];
+                        },
+                        curr,
+                    ) => {
+                        const data = formatSwapData(
+                            curr.activeSwap,
+                            curr.activeSwap?.sellingNuggItem.item.id || '',
+                            false,
+                        );
+                        if (
+                            curr.activeSwap &&
+                            protocol.nextEpoch._upcomingActiveItemSwaps.includes(curr.activeSwap.id)
+                        ) {
+                            prev.incomingItems.push(data);
+                        } else {
+                            prev.potentialItems.push(data);
+                        }
+
+                        return prev;
+                    },
+                    { potentialItems: [], incomingItems: [] },
+                );
 
                 updateProtocol({
                     stake: {
@@ -65,28 +92,51 @@ export default () => {
                     recentSwaps: protocol.lastEpoch.swaps.map((z) => {
                         return formatSwapData(z, z.nugg.id, true);
                     }),
-                    activeSwaps: protocol.activeNuggs.map((z) => {
-                        return formatSwapData(z.activeSwap, z.id, false);
-                    }),
                     recentItems: protocol.lastEpoch.itemSwaps.map((z) => {
                         return formatSwapData(z, z.sellingItem.id, true);
                     }),
-                    activeItems: mergeUnique([
-                        ...protocol.activeItems.map((z) => {
-                            return formatSwapData(
-                                z.activeSwap,
-                                z.activeSwap?.sellingItem.id || '',
+                    potentialItems: mergeUnique(sortedPotentialItems.potentialItems),
+                    ...protocol.activeNuggs.reduce(
+                        (
+                            prev: {
+                                activeSwaps: SwapData[];
+                                potentialSwaps: SwapData[];
+                            },
+                            curr,
+                        ) => {
+                            const val = formatSwapData(curr.activeSwap, curr.id || '', false);
+                            if (!val.endingEpoch) {
+                                prev.potentialSwaps.push(val);
+                            } else prev.activeSwaps.push(val);
+
+                            return prev;
+                        },
+                        {
+                            activeSwaps: [],
+                            potentialSwaps: [],
+                        },
+                    ),
+                    ...protocol.activeItems.reduce(
+                        (
+                            prev: {
+                                activeItems: SwapData[];
+                            },
+                            curr,
+                        ) => {
+                            const val = formatSwapData(
+                                curr.activeSwap,
+                                curr.activeSwap?.sellingItem.id || '',
                                 false,
                             );
-                        }),
-                        ...protocol.activeNuggItems.map((z) => {
-                            return formatSwapData(
-                                z.activeSwap,
-                                z.activeSwap?.sellingNuggItem.item.id || '',
-                                false,
-                            );
-                        }),
-                    ]),
+
+                            prev.activeItems.push(val);
+
+                            return prev;
+                        },
+                        {
+                            activeItems: sortedPotentialItems.incomingItems,
+                        },
+                    ),
                 });
             }
         },

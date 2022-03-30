@@ -27,8 +27,7 @@ const styles = NLStyleSheetCreator({
         flexDirection: 'column',
         justifyContent: 'space-between',
         overflow: 'hidden',
-        // borderRadius: lib.layout.borderRadius.medium,
-        // background: lib.colors.gradient2,
+
         padding: '.75rem',
         width: '100%',
         position: 'relative',
