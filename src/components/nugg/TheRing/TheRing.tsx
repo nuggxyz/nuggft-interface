@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { CSSProperties, FunctionComponent } from 'react';
 import { t } from '@lingui/macro';
+import { IoWarning } from 'react-icons/io5';
 
 import lib from '@src/lib';
 import constants from '@src/lib/constants';
@@ -12,6 +13,7 @@ import Label from '@src/components/general/Label/Label';
 import { Lifecycle } from '@src/client/interfaces';
 import web3 from '@src/web3';
 import useRemaining from '@src/hooks/useRemaining';
+import Text from '@src/components/general/Texts/Text/Text';
 
 import styles from './TheRing.styles';
 
@@ -28,13 +30,23 @@ const TheRing: FunctionComponent<Props> = ({
     circleWidth = 1600,
     tokenStyle,
 }) => {
-    // const screenType = AppState.select.screenType();
     const chainId = web3.hook.usePriorityChainId();
 
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
+    const blocknum = client.live.blocknum();
 
-    // const darkmode = useDarkMode();
+    const showWarning = React.useMemo(() => {
+        if (
+            token?.lifecycle === Lifecycle.Bunt &&
+            blocknum &&
+            token.activeSwap?.epoch &&
+            +token.activeSwap.epoch.endblock - blocknum < 50
+        )
+            return +token.activeSwap.epoch.endblock - blocknum + 17;
+
+        return 0;
+    }, []);
 
     const { blocksRemaining, blockDuration } = useRemaining(token?.activeSwap?.epoch);
 
@@ -79,6 +91,41 @@ const TheRing: FunctionComponent<Props> = ({
                         <AnimatedCard>
                             <TokenViewer tokenId={tokenId} style={tokenStyle} showcase />
                         </AnimatedCard>
+
+                        {showWarning !== 0 && (
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    padding: '10px',
+                                    justifyContent: 'center',
+                                    background: 'white',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    borderRadius: lib.layout.borderRadius.medium,
+                                    zIndex: 1000,
+                                    border: '5px solid red',
+                                    position: 'absolute',
+                                    top: 300,
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <IoWarning size="25px" color="red" />
+                                    <Text size="larger" textStyle={{ color: 'red' }}>
+                                        Warning
+                                    </Text>
+                                </div>
+                                <Text
+                                    textStyle={{ padding: '5px', textAlign: 'center' }}
+                                >{`If Nugg ${tokenId} is not bid on in ${showWarning} blocks, it will DIE`}</Text>
+                            </div>
+                        )}
 
                         {/* {screenType !== 'phone' && (
                             <Label
