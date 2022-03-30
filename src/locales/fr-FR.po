@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-03-28 15:57+0000\n"
+"POT-Creation-Date: 2022-03-29 21:58+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,10 +14,14 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: French\n"
-"PO-Revision-Date: 2022-03-29 06:02\n"
+"PO-Revision-Date: 2022-03-30 06:02\n"
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "(you)"
+msgstr ""
+
+#: src/client/formatters/formatSearchFilter.ts
+msgid "All Items"
 msgstr ""
 
 #: src/client/formatters/formatSearchFilter.ts
@@ -192,7 +196,6 @@ msgstr ""
 msgid "MORE"
 msgstr ""
 
-#: src/components/nugg/RingAbout/OwnerBlock.tsx
 #: src/components/nugg/ViewingNugg/ItemAbout.tsx
 msgid "Max"
 msgstr ""
@@ -200,7 +203,6 @@ msgstr ""
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 #: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
-#: src/components/nugg/RingAbout/OwnerBlock.tsx
 #: src/components/nugg/ViewingNugg/ItemAbout.tsx
 msgid "Min"
 msgstr ""
@@ -233,10 +235,6 @@ msgstr "Aucun Nuggs ou ETH à réclamer..."
 msgid "No more nuggs"
 msgstr "Pas plus de Nuggs"
 
-#: src/components/nugg/RingAbout/OfferText.tsx
-msgid "No offers yet..."
-msgstr ""
-
 #: src/components/nugg/ViewingNugg/ItemAbout.tsx
 #: src/components/nugg/ViewingNugg/ItemAbout.tsx
 msgid "Nugg {0}"
@@ -250,12 +248,20 @@ msgstr "Nugg {nextNugg}"
 msgid "Nugg {stableId}"
 msgstr ""
 
+#: src/components/nugg/RingAbout/OwnerBlock.tsx
+msgid "Nugg {tokenId} is happily owned by"
+msgstr ""
+
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "Nuggs"
 msgstr "Nuggs"
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "Offer on"
+msgstr ""
+
+#: src/client/formatters/formatSearchFilter.ts
+msgid "On Sale"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/HomeTab/MyNuggRenderItem.tsx
@@ -281,10 +287,6 @@ msgid "Payoff"
 msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
-msgid "Pick a nugg to buy this item from"
-msgstr ""
-
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "Pick a nugg to offer on this item"
 msgstr ""
 
@@ -297,12 +299,20 @@ msgstr ""
 msgid "Place offer to begin auction"
 msgstr ""
 
+#: src/components/nugg/RingAbout/OfferText.tsx
+msgid "Place the first offer!"
+msgstr ""
+
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Please wait while your nugg is being created"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/LoanTab/MultiRebalanceButton.tsx
 msgid "Rebalance all ({0})"
+msgstr ""
+
+#: src/client/formatters/formatSearchFilter.ts
+msgid "Recently Ended"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/FlyoutButtons/SaleButtons.tsx
@@ -386,10 +396,6 @@ msgstr ""
 msgid "This cannot be undone"
 msgstr ""
 
-#: src/components/nugg/RingAbout/OwnerBlock.tsx
-msgid "This nugg is happily owned by"
-msgstr ""
-
 #: src/components/nugg/RingAbout/OfferText.tsx
 msgid "This sale is over"
 msgstr ""
@@ -405,6 +411,10 @@ msgstr ""
 #: src/state/wallet/thactions.ts
 #: src/state/wallet/thactions.ts
 msgid "Transaction Failed"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OwnerBlock.tsx
+msgid "Unfortuantly, Nugg {tokenId} did not make it."
 msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
@@ -471,6 +481,10 @@ msgstr ""
 msgid "hide previous offers"
 msgstr ""
 
+#: src/components/nugg/RingAbout/OwnerBlock.tsx
+msgid "minimum price"
+msgstr ""
+
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "owned by {0} nuggs"
 msgstr ""
@@ -496,10 +510,6 @@ msgid "this item is owned by {0} nuggs and is not currently for sale"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
-msgid "{0, plural, =1 {nugg} other {nuggs}}"
-msgstr ""
-
-#: src/components/nugg/TheRing/TheRing.tsx
-msgid "{time, plural, =1 {minute} other {minutes}}"
+msgid "{minutes, plural, =1 {minute} other {minutes}}"
 msgstr ""
 
