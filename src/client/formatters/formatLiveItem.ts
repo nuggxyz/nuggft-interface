@@ -25,6 +25,7 @@ export default (item: LiveItemFragment): LiveItem => {
                 num: Number(y?.num),
                 isTryout: y && y.endingEpoch === null,
                 dotnuggRawCache: null,
+                sellingNuggId: y.sellingNuggItem.nugg.id,
             };
         }),
         activeSwap: item.activeSwap
@@ -51,10 +52,40 @@ export default (item: LiveItemFragment): LiveItem => {
                           : null,
                   num: Number(item.activeSwap?.num),
                   isTryout: false,
-                  //   dotnuggRawCache: null,
+                  sellingNuggId: item.activeSwap?.sellingNuggItem.nugg.id,
+              }
+            : undefined,
+        upcomingActiveSwap: item.upcomingActiveSwap
+            ? {
+                  count: 1,
+                  type: 'item' as const,
+                  id: item.upcomingActiveSwap?.id,
+                  epoch: item.upcomingActiveSwap.epoch
+                      ? {
+                            id: Number(item.upcomingActiveSwap.epoch.id),
+                            startblock: Number(item.upcomingActiveSwap.epoch.startblock),
+                            endblock: Number(item.upcomingActiveSwap.epoch.endblock),
+                            status: item.upcomingActiveSwap.epoch.status,
+                        }
+                      : null,
+                  eth: new EthInt(item.upcomingActiveSwap?.eth),
+                  leader: item.upcomingActiveSwap?.leader!.id,
+                  owner: item.upcomingActiveSwap.owner?.id,
+                  endingEpoch:
+                      item.upcomingActiveSwap && item.upcomingActiveSwap.endingEpoch
+                          ? Number(item.upcomingActiveSwap.endingEpoch)
+                          : null,
+                  num: Number(item.upcomingActiveSwap?.num),
+                  isTryout: false,
+                  sellingNuggId: item.upcomingActiveSwap?.sellingNuggItem.nugg.id,
               }
             : undefined,
     };
+
+    if (!tmp.activeSwap && tmp.upcomingActiveSwap) {
+        tmp.activeSwap = tmp.upcomingActiveSwap;
+        tmp.upcomingActiveSwap = undefined;
+    }
 
     const tryout = tmp.swaps.reduce((prev: LiveItem['tryout'] | undefined, curr) => {
         const swap: TryoutData = {

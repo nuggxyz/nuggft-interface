@@ -4,12 +4,12 @@ import { t } from '@lingui/macro';
 import TextStatistic from '@src/components/nugg/Statistics/TextStatistic';
 import AppState from '@src/state/app';
 import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
-import InfiniteList from '@src/components/general/List/InfiniteList';
 import web3 from '@src/web3';
 import client from '@src/client';
 import globalStyles from '@src/lib/globalStyles';
 import useRemaining from '@src/hooks/useRemaining';
 import { SwapData } from '@src/client/interfaces';
+import List from '@src/components/general/List/List';
 
 import SeeAllButton from './SeeAllButton';
 import ActiveTabRenderItem from './ActiveTabRenderItem';
@@ -85,8 +85,7 @@ export default () => {
                 </div>
             </div>
 
-            <InfiniteList
-                id="home-tab-activeNuggs"
+            <List
                 TitleButton={SeeAllButton}
                 labelStyle={styles.listLabel}
                 data={sortedAll.current}
@@ -95,12 +94,10 @@ export default () => {
                 label={t`Ending in about ${minutes} minutes`}
                 style={styles.list}
                 loaderColor="white"
-                itemHeight={108}
                 action={() => undefined}
             />
 
-            <InfiniteList
-                id="home-tab-incomingNuggs"
+            <List
                 // TitleButton={SeeAllButton}
                 labelStyle={{ ...styles.listLabel, marginTop: '20px' }}
                 data={sortedAll.next}
@@ -111,7 +108,6 @@ export default () => {
                 listEmptyStyle={styles.textWhite}
                 listEmptyText={t`no action here...`}
                 loaderColor="white"
-                itemHeight={108}
                 action={() => undefined}
             />
         </div>

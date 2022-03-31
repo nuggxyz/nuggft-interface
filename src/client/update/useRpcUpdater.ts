@@ -89,6 +89,7 @@ export default () => {
                     const agency = BigNumber.from(event.args.agency);
 
                     const data = {
+                        type: 'nugg' as const,
                         eth: EthInt.fromNuggftV1Agency(event.args.agency),
                         user: agency.mask(160)._hex,
                         txhash: log.transactionHash,
@@ -122,9 +123,11 @@ export default () => {
                     const agency = BigNumber.from(event.args.agency);
                     updateOffers(`item-${Number(event.args.itemId).toString()}` as ItemId, [
                         {
+                            type: 'item',
                             eth: EthInt.fromNuggftV1Agency(event.args.agency),
                             user: agency.mask(160).toNumber().toString(),
                             txhash: log.transactionHash,
+                            sellingNuggId: event.args.sellingTokenId.toString(),
                         },
                     ]);
                     break;

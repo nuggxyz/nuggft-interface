@@ -67,7 +67,7 @@ export default () => {
                             curr.activeSwap &&
                             protocol.nextEpoch._upcomingActiveItemSwaps.includes(curr.activeSwap.id)
                         ) {
-                            prev.incomingItems.push(data);
+                            // prev.incomingItems.push(data);
                         } else {
                             prev.potentialItems.push(data);
                         }
@@ -123,13 +123,25 @@ export default () => {
                             },
                             curr,
                         ) => {
-                            const val = formatSwapData(
-                                curr.activeSwap,
-                                curr.activeSwap?.sellingItem.id || '',
-                                false,
-                            );
+                            if (curr.activeSwap) {
+                                const val = formatSwapData(
+                                    curr.activeSwap,
+                                    curr.activeSwap?.sellingItem.id || '',
+                                    false,
+                                );
 
-                            prev.activeItems.push(val);
+                                prev.activeItems.push(val);
+                            }
+
+                            if (curr.upcomingActiveSwap) {
+                                const val = formatSwapData(
+                                    curr.upcomingActiveSwap,
+                                    curr.upcomingActiveSwap?.sellingItem.id || '',
+                                    false,
+                                );
+
+                                prev.activeItems.push(val);
+                            }
 
                             return prev;
                         },
@@ -167,6 +179,8 @@ export default () => {
                             unclaimedOffers: z.offers.map((y) => {
                                 return {
                                     itemId: y.swap.sellingItem.id as ItemId,
+                                    eth: y.eth,
+                                    sellingNuggId: y.swap.sellingNuggItem.nugg.id,
                                     endingEpoch:
                                         y && y.swap && y.swap.endingEpoch
                                             ? Number(y.swap.endingEpoch)

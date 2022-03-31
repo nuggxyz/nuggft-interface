@@ -23,17 +23,19 @@ import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import WalletState from '@src/state/wallet';
 import { MyNuggsData, LiveToken } from '@src/client/interfaces';
 import Label from '@src/components/general/Label/Label';
+import { EthInt } from '@src/classes/Fraction';
 
 import styles from './OfferModal.styles';
 
-const MyNuggRenderItem: FC<ListRenderItemProps<MyNuggsData, undefined, MyNuggsData>> = ({
-    item,
-    selected,
-    action,
-}) => {
+type FormatedMyNuggsData = MyNuggsData & { lastBid: EthInt | 'unable-to-bid' };
+
+const MyNuggRenderItem: FC<
+    ListRenderItemProps<FormatedMyNuggsData, undefined, FormatedMyNuggsData>
+> = ({ item, selected, action }) => {
+    console.log({ item });
     const disabled = React.useMemo(() => {
         if (item.activeSwap) return t`currenlty for sale`;
-        if (item.unclaimedOffers.length > 0) return t`previous claim pending for this item`;
+        if (item.lastBid === 'unable-to-bid') return t`previous claim pending for this item`;
         return undefined;
     }, [item]);
     return (
@@ -98,11 +100,10 @@ const OfferModal = ({ tokenId }: Props) => {
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
 
-    const [selectedNuggForItem, setSelectedNugg] = useState<MyNuggsData>();
+    const [selectedNuggForItem, setSelectedNugg] = useState<FormatedMyNuggsData>();
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
-    // const epoch = client.live.epoch.id();
 
     const userBalance = web3.hook.usePriorityBalance(provider);
 
@@ -120,16 +121,25 @@ const OfferModal = ({ tokenId }: Props) => {
     }, [type, tokenId]);
 
     const _myNuggs = client.live.myNuggs();
-    const myNuggs = useMemo(
-        () =>
-            _myNuggs.map((x) => ({
+    const myNuggs = useMemo(() => {
+        const nuggId = data?.nuggToBuyFrom;
+
+        return _myNuggs.map((x) => {
+            const filt = x.unclaimedOffers.filter((y) => {
+                return `item-${y.itemId}` === stableId;
+            });
+
+            return {
                 ...x,
-                unclaimedOffers: x.unclaimedOffers.filter((y) => {
-                    return `item-${y.itemId}` === stableId;
-                }),
-            })),
-        [_myNuggs, stableId],
-    );
+                lastBid:
+                    filt.length === 0
+                        ? new EthInt(0)
+                        : filt[0].sellingNuggId === nuggId
+                        ? new EthInt(filt[0]?.eth || 0)
+                        : ('unable-to-bid' as const),
+            };
+        }) as FormatedMyNuggsData[];
+    }, [_myNuggs, stableId, data]);
     // @danny7even - this started throwing errors when I tried setting up offering on items when other items were "active"
     // useEffect(() => {
     //     console.log('ME TOOOOOO');

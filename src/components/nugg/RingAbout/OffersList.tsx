@@ -1,6 +1,6 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { animated, useSpring } from '@react-spring/web';
-import { IoAdd, IoRemove } from 'react-icons/io5';
+import React, { useEffect, useState } from 'react';
+import { animated, config as springConfig, useSpring } from '@react-spring/web';
+import { IoAdd, IoOpenOutline, IoRemove } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 
 import List from '@src/components/general/List/List';
@@ -11,23 +11,37 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import state from '@src/state';
 import Text from '@src/components/general/Texts/Text/Text';
 import { Lifecycle } from '@src/client/interfaces';
+import { NuggId, TokenId } from '@src/client/router';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 
 import OfferRenderItem from './OfferRenderItem';
 import styles from './RingAbout.styles';
 
-type Props = Record<string, unknown>;
-
-const OffersList: FunctionComponent<Props> = () => {
-    const tokenId = client.live.lastSwap.tokenId();
+export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?: NuggId }) => {
     const offers = client.live.offers(tokenId);
     const token = client.live.token(tokenId);
-
     const type = client.live.lastSwap.type();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const screenType = state.app.select.screenType();
 
     const [open, setOpen] = useState(screenType === 'tablet');
+
+    const { leader, others } = React.useMemo(() => {
+        const tmp =
+            token?.type === 'item'
+                ? offers.filter((x) => {
+                      return (
+                          x.type === 'item' &&
+                          x.sellingNuggId === (sellingNuggId || token.activeSwap?.sellingNuggId)
+                      );
+                  })
+                : [...offers];
+        return {
+            leader: tmp.shift(),
+            others: tmp,
+        };
+    }, [offers, token, sellingNuggId]);
 
     useEffect(() => {
         if (offers && offers.length === 1 && open && screenType !== 'tablet') {
@@ -42,12 +56,64 @@ const OffersList: FunctionComponent<Props> = () => {
         padding: open ? '0.75rem' : '0rem',
     });
 
+    const [flashStyle] = useSpring(() => {
+        return {
+            to: [
+                {
+                    ...styles.leadingOfferAmount,
+                    background: lib.colors.transparentWhite,
+                },
+                {
+                    ...styles.leadingOfferAmount,
+                    background: lib.colors.transparentLightGrey,
+                },
+            ],
+            from: {
+                ...styles.leadingOfferAmount,
+                background: lib.colors.transparentLightGrey,
+            },
+            config: springConfig.molasses,
+        };
+    });
+
+    const ens = web3.hook.usePriorityAnyENSName(
+        token && token.type === 'item' ? 'nugg' : provider,
+        leader?.user || '',
+    );
+
     return token &&
         token.lifecycle !== Lifecycle.Bench &&
         token.lifecycle !== Lifecycle.Tryout &&
         token.lifecycle !== Lifecycle.Stands ? (
         <>
-            {offers.length > 1 &&
+            {leader && chainId && token ? (
+                <div style={styles.leadingOfferAmountContainer}>
+                    <animated.div style={flashStyle}>
+                        <div style={styles.leadingOfferAmountBlock}>
+                            <CurrencyText
+                                size="small"
+                                image="eth"
+                                textStyle={styles.leadingOffer}
+                                value={leader?.eth?.decimal?.toNumber()}
+                            />
+                        </div>
+                        <div style={styles.leadingOfferAmountUser}>
+                            <Text size="smaller" type="text">
+                                {t`from`}
+                            </Text>
+                            <Text size="smaller">{ens}</Text>
+                        </div>
+                        <Button
+                            buttonStyle={styles.etherscanBtn}
+                            onClick={() =>
+                                chainId && web3.config.gotoEtherscan(chainId, 'tx', leader.txhash)
+                            }
+                            rightIcon={<IoOpenOutline color={lib.colors.nuggBlueText} size={14} />}
+                        />
+                    </animated.div>
+                </div>
+            ) : null}
+            {others.length > 0 &&
                 (screenType === 'tablet' ? (
                     <Text
                         size="small"
@@ -77,7 +143,7 @@ const OffersList: FunctionComponent<Props> = () => {
                 ))}
             <animated.div style={springStyle}>
                 <List
-                    data={offers.slice(1)}
+                    data={others}
                     RenderItem={OfferRenderItem}
                     extraData={{ type, provider, chainId }}
                 />
@@ -85,5 +151,3 @@ const OffersList: FunctionComponent<Props> = () => {
         </>
     ) : null;
 };
-
-export default OffersList;

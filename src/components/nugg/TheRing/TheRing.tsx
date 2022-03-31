@@ -41,9 +41,9 @@ const TheRing: FunctionComponent<Props> = ({
             token?.lifecycle === Lifecycle.Bunt &&
             blocknum &&
             token.activeSwap?.epoch &&
-            +token.activeSwap.epoch.endblock - blocknum < 75
+            +token.activeSwap.epoch.startblock + 255 - blocknum < 75
         )
-            return +token.activeSwap.epoch.endblock - blocknum - 17;
+            return +token.activeSwap.epoch.startblock + 255 - blocknum - 17;
 
         return 0;
     }, [token, blocknum]);

@@ -26,17 +26,31 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
                 x.subscriptionData.data.item.activeSwap &&
                 x.subscriptionData.data.item.activeSwap.offers
             ) {
-                const { offers } = x.subscriptionData.data.item.activeSwap;
-                updateOffers(
-                    createItemId(tokenId),
-                    offers.map((z) => {
-                        return {
-                            eth: new EthInt(z.eth),
-                            user: z.nugg.id,
-                            txhash: z.txhash,
-                        };
-                    }),
-                );
+                const { upcomingActiveSwap, activeSwap } = x.subscriptionData.data.item;
+                updateOffers(createItemId(tokenId), [
+                    ...(activeSwap
+                        ? activeSwap.offers.map((z) => {
+                              return {
+                                  type: 'item' as const,
+                                  eth: new EthInt(z.eth),
+                                  user: z.nugg.id,
+                                  txhash: z.txhash,
+                                  sellingNuggId: activeSwap.sellingNuggItem.nugg.id,
+                              };
+                          })
+                        : []),
+                    ...(upcomingActiveSwap
+                        ? upcomingActiveSwap.offers.map((z) => {
+                              return {
+                                  type: 'item' as const,
+                                  eth: new EthInt(z.eth),
+                                  user: z.nugg.id,
+                                  txhash: z.txhash,
+                                  sellingNuggId: upcomingActiveSwap.sellingNuggItem.nugg.id,
+                              };
+                          })
+                        : []),
+                ]);
             }
         },
     });
@@ -56,17 +70,17 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
                 x.subscriptionData.data.nugg.activeSwap &&
                 x.subscriptionData.data.nugg.activeSwap.offers
             ) {
-                const { offers } = x.subscriptionData.data.nugg.activeSwap;
-                updateOffers(
-                    tokenId,
-                    offers.map((z) => {
+                const { activeSwap } = x.subscriptionData.data.nugg;
+                updateOffers(tokenId, [
+                    ...activeSwap.offers.map((z) => {
                         return {
+                            type: 'nugg' as const,
                             eth: new EthInt(z.eth),
                             user: z.user.id,
                             txhash: z.txhash,
                         };
                     }),
-                );
+                ]);
             }
         },
     });

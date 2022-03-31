@@ -12,8 +12,8 @@ subscription liveProtocol {
             ...epochswapdata
         }
         nextEpoch {
-            ...epochswapdata
             _upcomingActiveItemSwaps
+            ...epochswapdata
         }
         nuggftStakedEth
         nuggftStakedShares
@@ -43,6 +43,14 @@ subscription liveProtocol {
         activeItems {
             id
             activeSwap {
+                id
+                sellingItem {
+                    id
+                }
+                eth
+                endingEpoch
+            }
+            upcomingActiveSwap {
                 id
                 sellingItem {
                     id
@@ -177,6 +185,12 @@ fragment itemswapdata on ItemSwap {
     leader {
         id
     }
+    sellingNuggItem {
+        id
+        nugg {
+            id
+        }
+    }
 }
 
 fragment liveNugg on Nugg {
@@ -214,6 +228,9 @@ fragment liveItem on Item {
     activeSwap {
         ...itemswapdata
     }
+    upcomingActiveSwap {
+        ...itemswapdata
+    }
     swaps {
         ...itemswapdata
     }
@@ -233,6 +250,7 @@ subscription watchLiveNugg($tokenId: ID!) {
 
 subscription liveItemOffers($tokenId: String!) {
     itemOffers(where: { swap_starts_with: $tokenId }, orderBy: eth, orderDirection: desc) {
+        id
         nugg {
             id
         }
@@ -243,6 +261,7 @@ subscription liveItemOffers($tokenId: String!) {
 
 subscription liveOffers($tokenId: String!) {
     offers(where: { swap_starts_with: $tokenId }, orderBy: eth, orderDirection: desc) {
+        id
         user {
             id
         }
@@ -254,7 +273,32 @@ subscription liveOffers($tokenId: String!) {
 subscription betterLiveItemOffers($tokenId: ID!) {
     item(id: $tokenId) {
         activeSwap {
+            id
+            sellingNuggItem {
+                id
+                nugg {
+                    id
+                }
+            }
             offers(orderBy: eth, orderDirection: desc) {
+                id
+                nugg {
+                    id
+                }
+                eth
+                txhash
+            }
+        }
+        upcomingActiveSwap {
+            id
+            sellingNuggItem {
+                id
+                nugg {
+                    id
+                }
+            }
+            offers(orderBy: eth, orderDirection: desc) {
+                id
                 nugg {
                     id
                 }

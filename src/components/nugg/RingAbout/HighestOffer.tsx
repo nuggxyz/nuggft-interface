@@ -1,5 +1,5 @@
 import { animated, config as springConfig, useSpring } from '@react-spring/web';
-import React, { FunctionComponent, useEffect, useMemo } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 import { IoOpenOutline } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 
@@ -47,21 +47,6 @@ const HighestOffer: FunctionComponent<Props> = () => {
             config: springConfig.molasses,
         };
     });
-
-    useEffect(() => {
-        // api.start({
-        //     to: [
-        //         {
-        //             ...styles.leadingOfferAmount,
-        //             background: lib.colors.transparentWhite,
-        //         },
-        //         {
-        //             ...styles.leadingOfferAmount,
-        //             background: lib.colors.transparentLightGrey,
-        //         },
-        //     ],
-        // });
-    }, [leader]);
 
     const shouldShow = useMemo(() => {
         if (

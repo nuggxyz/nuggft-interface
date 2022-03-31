@@ -30,31 +30,9 @@ const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>>
 };
 
 const OwnerBlock: FunctionComponent<Props> = () => {
-    // const floor = client.live.stake.eps();
-    // const provider = web3.hook.usePriorityProvider();
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
-    // const offers = client.live.offers(tokenId);
     const leader = client.live.offers(tokenId).first() as unknown as OfferData;
-
-    // const title = useMemo(() => {
-    //     if (token && token.lifecycle === Lifecycle.Stands) {
-    //         return token.type === 'item'
-    //             ? t`this item is owned by ${99999} nuggs and is not currently for sale`
-    //             : t`Nugg ${tokenId} is happily owned by`;
-    //     }
-    //     let text = 'On sale by';
-    //     if (
-    //         token &&
-    //         token.lifecycle === Lifecycle.Tryout &&
-    //         token.type === 'item' &&
-    //         token.tryout.min &&
-    //         token.tryout.max
-    //     ) {
-    //         text += plural(token.tryout.count, { 1: 'nugg', other: 'nuggs' });
-    //     }
-    //     return text;
-    // }, [token]);
 
     const darkmode = useDarkMode();
 
@@ -80,15 +58,17 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                             : t`Nugg ${tokenId} is happily owned by`}
                     </Text>
 
-                    <Text
-                        textStyle={{
-                            marginTop: '15px',
-                            color: lib.colors.white,
-                            fontSize: '32px',
-                        }}
-                    >
-                        {leaderEns}
-                    </Text>
+                    {token.type === 'nugg' && (
+                        <Text
+                            textStyle={{
+                                marginTop: '15px',
+                                color: lib.colors.white,
+                                fontSize: '32px',
+                            }}
+                        >
+                            {leaderEns}
+                        </Text>
+                    )}
                 </>
             )}
 

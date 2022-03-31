@@ -12,11 +12,29 @@ import { NuggftV1 } from '../typechain/NuggftV1';
 
 import { TokenId, NuggId, ItemId, ViewRoutes, SwapRoutes } from './router';
 
-export interface OfferData {
+export interface BaseOfferData {
+    user: string;
+    eth: EthInt;
+    txhash: string;
+    type: 'nugg' | 'item';
+}
+
+export interface ItemOfferData extends BaseOfferData {
+    type: 'item';
+    user: string;
+    eth: EthInt;
+    txhash: string;
+    sellingNuggId: string;
+}
+
+export interface NuggOfferData extends BaseOfferData {
+    type: 'nugg';
     user: string;
     eth: EthInt;
     txhash: string;
 }
+
+export type OfferData = ItemOfferData | NuggOfferData;
 
 export enum ListDataTypes {
     Basic = 'basic',
@@ -71,7 +89,12 @@ export interface MyNuggsData {
     recent: boolean;
     pendingClaim: boolean;
     lastTransfer: number;
-    unclaimedOffers: { itemId: ItemId; endingEpoch: number | null }[];
+    unclaimedOffers: {
+        itemId: ItemId;
+        endingEpoch: number | null;
+        eth: BigNumberish | undefined;
+        sellingNuggId: NuggId;
+    }[];
 }
 export interface BaseUnclaimedOffer {
     type: 'nugg' | 'item';
@@ -285,6 +308,7 @@ export interface LiveItemSwap extends LiveSwapBase {
     endingEpoch: number | null;
     num: number;
     isTryout: boolean;
+    sellingNuggId: NuggId;
 }
 
 export interface LiveActiveItemSwap extends LiveItemSwap {
@@ -295,6 +319,7 @@ export type TryoutData = { nugg: NuggId; eth: EthInt };
 export interface LiveItem {
     type: 'item';
     activeSwap?: LiveActiveItemSwap;
+    upcomingActiveSwap?: LiveActiveItemSwap;
     swaps: LiveItemSwap[];
     count: number;
     tryout: {

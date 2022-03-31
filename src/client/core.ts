@@ -282,6 +282,11 @@ function createClientStoreAndActions2() {
                     const { epoch } = get();
                     const { blocknum } = get();
 
+                    if (token.type === 'item' && !token.activeSwap && token.upcomingActiveSwap) {
+                        token.activeSwap = token.upcomingActiveSwap;
+                        delete token.upcomingActiveSwap;
+                    }
+
                     if (token && epoch !== undefined) {
                         if (!token.activeSwap?.id) {
                             if (token.type === 'item' && token.swaps.length > 0)
@@ -302,7 +307,8 @@ function createClientStoreAndActions2() {
                             token.activeSwap.leader === Address.ZERO.hash &&
                             token.activeSwap.epoch &&
                             blocknum &&
-                            +token.activeSwap.epoch.endblock - blocknum < 16
+                            (+token.activeSwap.epoch.startblock + 255 - blocknum < 16 ||
+                                +token.activeSwap.epoch.endblock < blocknum)
                         ) {
                             return Lifecycle.Cut;
                         }
@@ -313,6 +319,8 @@ function createClientStoreAndActions2() {
                             }
                             return Lifecycle.Bat;
                         }
+
+                        // if (+epoch.endblock < (blocknum || 0)) return Lifecycle.Cut;
                         return Lifecycle.Shower;
                     }
                     return Lifecycle.Stands;
@@ -550,7 +558,7 @@ function createClientStoreAndActions2() {
                     manualPriority: undefined,
                     liveTokens: {},
                     darkmode: {
-                        user: undefined,
+                        user: Theme.LIGHT,
                         media: undefined,
                     },
                     locale: undefined,
