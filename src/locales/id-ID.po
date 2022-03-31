@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-03-29 21:58+0000\n"
+"POT-Creation-Date: 2022-03-30 23:53+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,10 +14,19 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Indonesian\n"
-"PO-Revision-Date: 2022-03-30 06:02\n"
+"PO-Revision-Date: 2022-03-31 06:02\n"
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "(you)"
+msgstr ""
+
+#: src/components/nugg/Wallet/Wallet.tsx
+#: src/components/nugg/Wallet/Wallet.tsx
+msgid "Active"
+msgstr ""
+
+#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
+msgid "Active Items"
 msgstr ""
 
 #: src/client/formatters/formatSearchFilter.ts
@@ -91,6 +100,10 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
+#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
+msgid "Coming Up"
+msgstr ""
+
 #: src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab.tsx
 msgid "Connect to nuggft!"
 msgstr ""
@@ -114,6 +127,10 @@ msgstr ""
 #: src/components/nugg/ViewingNugg/FlyoutButtons/LoanButtons.tsx
 #: src/components/nugg/ViewingNugg/FlyoutButtons/OwnerButtons.tsx
 msgid "Edit"
+msgstr ""
+
+#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
+msgid "Ending in about {minutes} minutes"
 msgstr ""
 
 #: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
@@ -251,6 +268,7 @@ msgstr ""
 msgid "Nugg {tokenId} is happily owned by"
 msgstr ""
 
+#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "Nuggs"
 msgstr ""
@@ -320,6 +338,10 @@ msgstr ""
 
 #: src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.tsx
 msgid "Search {0}"
+msgstr ""
+
+#: src/components/nugg/Wallet/tabs/ActiveTab/SeeAllButton.tsx
+msgid "See All"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OfferText.tsx
@@ -482,6 +504,10 @@ msgstr ""
 
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
 msgid "minimum price"
+msgstr ""
+
+#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
+msgid "no action here..."
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
