@@ -9,8 +9,7 @@ import lib, { parseTokenIdSmart } from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import client from '@src/client';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-
-import { SwapData } from '../../../../../../archive/interfaces copy';
+import { SwapData } from '@src/client/interfaces';
 
 import styles from './ActiveTab.styles';
 
@@ -25,18 +24,16 @@ export default ({ item, style }: InfiniteListRenderItemProps<SwapData, undefined
             }}
         >
             <div style={globalStyles.centered}>
-                <TokenViewer tokenId={item.tokenId as string} style={globalStyles.listNugg} />
+                <TokenViewer tokenId={item.tokenId} style={globalStyles.listNugg} />
 
-                <Text textStyle={styles.textRed}>
-                    {parseTokenIdSmart((item.tokenId as string) || '')}
-                </Text>
+                <Text textStyle={styles.textRed}>{parseTokenIdSmart(item.tokenId || '')}</Text>
                 <CurrencyText textStyle={styles.textRed} value={item.eth.number} />
             </div>
 
             <Button
                 key={JSON.stringify(item)}
                 onClick={() => {
-                    routeTo(item.tokenId as string, true);
+                    routeTo(item.tokenId, true);
                 }}
                 buttonStyle={styles.searchButton}
                 rightIcon={<IoSearch color={lib.colors.white} />}

@@ -6,7 +6,7 @@
 /* eslint-disable no-restricted-syntax */
 import { useEffect } from 'react';
 
-const useDebugProps = <T>(props: T, name: string) => {
+const useDebugProps = <T extends object>(props: T, name: string) => {
     for (const key of Object.keys(props) as (keyof T)[]) {
         useEffect(() => {
             console.log(`prop => ${String(key)}`);
