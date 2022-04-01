@@ -179,6 +179,7 @@ export interface ClientState extends State, Actions {
     stake: StakeData | undefined;
     epoch__id: number | undefined;
     epoch: EpochData | undefined;
+    nextEpoch: EpochData | undefined;
     blocknum: number | undefined;
     liveOffers: Dictionary<OfferData[]>;
     activeSwaps: SwapData[];
@@ -211,6 +212,12 @@ export type ClientStateUpdate = {
         eps: EthInt;
     };
     epoch?: {
+        startblock: number;
+        endblock: number;
+        id: number;
+        status: 'OVER' | 'ACTIVE' | 'PENDING';
+    };
+    nextEpoch?: {
         startblock: number;
         endblock: number;
         id: number;

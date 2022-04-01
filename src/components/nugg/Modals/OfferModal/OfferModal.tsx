@@ -211,19 +211,21 @@ const OfferModal = ({ tokenId }: Props) => {
     // const nuggft = useNuggftV1();
     // console.log({ sellingNugg, stableId, selectedNuggForItem });
     // const { send, revert } = useTransactionManager();
-    console.log({
-        stableType,
-        activeItem,
-        selectedNuggForItem,
-        sellingNugg,
-        type,
-        data,
-        check,
-        stableId,
-        address,
-        chainId,
-        provider,
-    });
+    // console.log({
+    //     stableType,
+    //     activeItem,
+    //     selectedNuggForItem,
+    //     sellingNugg,
+    //     type,
+    //     data,
+    //     check,
+    //     stableId,
+    //     address,
+    //     chainId,
+    //     provider,
+    // });
+
+    console.log('OfferModal rerender');
 
     return (
         <div style={styles.container}>

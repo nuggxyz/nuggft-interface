@@ -83,12 +83,18 @@ export default () => {
                         shares,
                         eps: EthInt.fromFraction(new Fraction(staked, shares)),
                     },
-                    epoch: {
-                        id: +protocol.epoch.id,
-                        startblock: Number(protocol.epoch.startblock),
-                        endblock: Number(protocol.epoch.endblock),
-                        status: protocol.epoch.status,
-                    },
+                    // epoch: {
+                    //     id: +protocol.epoch.id,
+                    //     startblock: Number(protocol.epoch.startblock),
+                    //     endblock: Number(protocol.epoch.endblock),
+                    //     status: protocol.epoch.status,
+                    // },
+                    // nextEpoch: {
+                    //     id: +protocol.nextEpoch.id,
+                    //     startblock: Number(protocol.nextEpoch.startblock),
+                    //     endblock: Number(protocol.nextEpoch.endblock),
+                    //     status: protocol.nextEpoch.status,
+                    // },
                     recentSwaps: protocol.lastEpoch.swaps.map((z) => {
                         return formatSwapData(z, z.nugg.id, true);
                     }),

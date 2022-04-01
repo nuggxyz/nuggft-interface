@@ -154,6 +154,12 @@ function createClientStoreAndActions2() {
                                 endblock: calculateStartBlock(epochId + 1, chainId) - 1,
                                 status: 'ACTIVE',
                             };
+                            draft.nextEpoch = {
+                                id: epochId + 1,
+                                startblock: calculateStartBlock(epochId + 2, chainId),
+                                endblock: calculateStartBlock(epochId + 2, chainId) - 1,
+                                status: 'PENDING',
+                            };
                         }
 
                         draft.blocknum = blocknum;
@@ -268,8 +274,30 @@ function createClientStoreAndActions2() {
                         if (offers.length > 0) {
                             if (cycle === Lifecycle.Bunt)
                                 draft.liveTokens[tokenId].lifecycle = Lifecycle.Bat;
-                            if (cycle === Lifecycle.Tryout)
+                            if (cycle === Lifecycle.Tryout) {
                                 draft.liveTokens[tokenId].lifecycle = Lifecycle.Deck;
+
+                                const token = get().liveTokens[tokenId];
+                                const tmpOffer = offers[0];
+
+                                console.log({ token, tmpOffer });
+                                if (token.type === 'item' && tmpOffer.type === 'item') {
+                                    const preloadedSwap = token.swaps.find(
+                                        (x) => x.sellingNuggId === tmpOffer.sellingNuggId,
+                                    );
+
+                                    const { nextEpoch } = get();
+
+                                    if (preloadedSwap && nextEpoch) {
+                                        draft.liveTokens[tokenId].activeSwap = {
+                                            ...preloadedSwap,
+                                            endingEpoch: nextEpoch.id,
+                                            epoch: nextEpoch,
+                                            count: 1,
+                                        };
+                                    }
+                                }
+                            }
                         }
                     });
                 }
@@ -531,6 +559,8 @@ function createClientStoreAndActions2() {
                     stake: undefined,
                     nuggft: undefined,
                     epoch: undefined,
+                    nextEpoch: undefined,
+
                     epoch__id: 0,
                     route: undefined,
                     lastView: undefined,
