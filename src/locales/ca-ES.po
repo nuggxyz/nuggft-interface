@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-03-30 23:53+0000\n"
+"POT-Creation-Date: 2022-04-01 02:09+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Catalan\n"
-"PO-Revision-Date: 2022-03-31 06:02\n"
+"PO-Revision-Date: 2022-04-01 06:02\n"
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "(you)"
@@ -100,6 +100,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
+#: src/components/nugg/RingAbout/SideCar.tsx
 #: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
 msgid "Coming Up"
 msgstr ""
@@ -108,6 +109,7 @@ msgstr ""
 msgid "Connect to nuggft!"
 msgstr ""
 
+#: src/components/nugg/RingAbout/Caboose.tsx
 #: src/components/nugg/RingAbout/OfferButton.tsx
 msgid "Connect wallet"
 msgstr ""
@@ -308,6 +310,7 @@ msgid "Pick a nugg to offer on this item"
 msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
+#: src/components/nugg/RingAbout/Caboose.tsx
 #: src/components/nugg/RingAbout/OfferButton.tsx
 msgid "Place offer"
 msgstr ""
@@ -483,7 +486,7 @@ msgid "auto"
 msgstr ""
 
 #: src/components/nugg/TheRing/TheRing.tsx
-msgid "countdown begins in {0} blocks"
+msgid "countdown begins in {countdownMinutes} minutes"
 msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
@@ -491,6 +494,7 @@ msgid "currenlty for sale"
 msgstr ""
 
 #: src/components/nugg/RingAbout/HighestOffer.tsx
+#: src/components/nugg/RingAbout/OffersList.tsx
 msgid "from"
 msgstr ""
 
@@ -532,6 +536,10 @@ msgstr ""
 
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
 msgid "this item is owned by {0} nuggs and is not currently for sale"
+msgstr ""
+
+#: src/components/nugg/RingAbout/Caboose.tsx
+msgid "wait {minutes} minutes to buy from a new nugg"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
