@@ -48,7 +48,9 @@ const TheRing: FunctionComponent<Props> = ({
         return 0;
     }, [token, blocknum]);
 
-    const { blocksRemaining, blockDuration } = useRemaining(token?.activeSwap?.epoch);
+    const { blocksRemaining, blockDuration, countdownMinutes } = useRemaining(
+        token?.activeSwap?.epoch,
+    );
 
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
@@ -82,11 +84,7 @@ const TheRing: FunctionComponent<Props> = ({
                 {tokenId && (
                     <>
                         {chainId && token && token.lifecycle === Lifecycle.Deck && (
-                            <Label
-                                text={t`countdown begins in ${
-                                    blocksRemaining % web3.config.CONTRACTS[chainId].Interval
-                                } blocks`}
-                            />
+                            <Label text={t`countdown begins in ${countdownMinutes} minutes`} />
                         )}
                         <AnimatedCard>
                             <TokenViewer tokenId={tokenId} style={tokenStyle} showcase />

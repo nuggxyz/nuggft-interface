@@ -2,9 +2,12 @@ import { useMemo } from 'react';
 
 import { EpochData } from '@src/client/interfaces';
 import client from '@src/client';
+import web3 from '@src/web3';
 
 export default (epoch: EpochData | undefined | null) => {
     const blocknum = client.live.blocknum();
+
+    const chainId = web3.hook.usePriorityChainId();
 
     const blockDuration = useMemo(() => {
         let remaining = 0;
@@ -38,29 +41,25 @@ export default (epoch: EpochData | undefined | null) => {
     const time = useMemo(() => {
         const seconds = blocksRemaining * 12;
         const minutes = Math.floor(seconds / 60);
+
+        let countdownSeconds;
+        let countdownMinutes;
+
+        if (chainId) {
+            const interval = web3.config.CONTRACTS[chainId].Interval;
+            if (blocksRemaining >= interval) {
+                countdownSeconds = (blocksRemaining % interval) * 12;
+                countdownMinutes = Math.floor(countdownSeconds / 60);
+            }
+        }
+
         return {
             seconds,
             minutes,
+            countdownMinutes,
+            countdownSeconds,
         };
-        // return Number(
-        //     `${
-        //         formatDistanceToNowStrict(
-        //             add(new Date(), {
-        //                 seconds: blocksRemaining * 12,
-        //             }),
-        //             {
-        //                 // addSuffix: true,
-        //                 unit: 'minute',
-        //                 // addSuffix: false,
-        //                 roundingMethod: 'floor',
-        //                 // roundingMethod: 'floor',
-        //                 // locale: dates[locale],
-        //                 // includeSeconds: true
-        //             },
-        //         ).split(' ')[0]
-        // }`,
-        // );
-    }, [blocksRemaining]);
+    }, [blocksRemaining, chainId]);
 
     return {
         blockDuration,

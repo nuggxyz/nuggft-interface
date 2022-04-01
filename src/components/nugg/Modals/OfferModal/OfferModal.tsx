@@ -32,7 +32,6 @@ type FormatedMyNuggsData = MyNuggsData & { lastBid: EthInt | 'unable-to-bid' };
 const MyNuggRenderItem: FC<
     ListRenderItemProps<FormatedMyNuggsData, undefined, FormatedMyNuggsData>
 > = ({ item, selected, action }) => {
-    console.log({ item });
     const disabled = React.useMemo(() => {
         if (item.activeSwap) return t`currenlty for sale`;
         if (item.lastBid === 'unable-to-bid') return t`previous claim pending for this item`;
@@ -120,7 +119,7 @@ const OfferModal = ({ tokenId }: Props) => {
         if (tokenId) setId(tokenId);
     }, [type, tokenId]);
 
-    const _myNuggs = client.live.myNuggs();
+    const _myNuggs = client.live.myNuggs().first(8);
     const myNuggs = useMemo(() => {
         const nuggId = data?.nuggToBuyFrom;
 
@@ -140,6 +139,7 @@ const OfferModal = ({ tokenId }: Props) => {
             };
         }) as FormatedMyNuggsData[];
     }, [_myNuggs, stableId, data]);
+
     // @danny7even - this started throwing errors when I tried setting up offering on items when other items were "active"
     // useEffect(() => {
     //     console.log('ME TOOOOOO');

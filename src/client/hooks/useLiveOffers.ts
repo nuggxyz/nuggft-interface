@@ -22,11 +22,10 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
                 tokenId &&
                 x.subscriptionData &&
                 x.subscriptionData.data &&
-                x.subscriptionData.data.item &&
-                x.subscriptionData.data.item.activeSwap &&
-                x.subscriptionData.data.item.activeSwap.offers
+                x.subscriptionData.data.item
             ) {
                 const { upcomingActiveSwap, activeSwap } = x.subscriptionData.data.item;
+
                 updateOffers(createItemId(tokenId), [
                     ...(activeSwap
                         ? activeSwap.offers.map((z) => {
