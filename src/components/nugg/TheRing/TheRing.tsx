@@ -124,41 +124,6 @@ const TheRing: FunctionComponent<Props> = ({
                                 >{`If Nugg ${tokenId} is not bid on in ${showWarning} blocks, it will DIE`}</Text>
                             </div>
                         )}
-
-                        {/* {screenType !== 'phone' && (
-                            <Label
-                                text={parseTokenIdSmart(tokenId)}
-                                containerStyles={
-                                    darkmode
-                                        ? {
-                                              background: lib.colors.nuggBlueTransparent,
-                                              color: lib.colors.nuggBlueText,
-                                          }
-                                        : {}
-                                }
-                            />
-                        )} */}
-
-                        {/* {screenType !== 'phone' && (
-                            <Label
-                                text={`ending in about ${minutes} ${plural(minutes, {
-                                    1: 'minute',
-                                    other: 'minutes',
-                                })}`}
-                                // eslint-disable-next-line no-constant-condition
-                                size={minutes < 5 ? 'large' : 'medium'}
-                                textStyle={{ fontSize: '10px' }}
-                                containerStyles={{
-                                    ...(darkmode
-                                        ? {
-                                              background: lib.colors.nuggBlueTransparent,
-                                              color: lib.colors.nuggBlueText,
-                                          }
-                                        : {}),
-                                    marginTop: '5px',
-                                }}
-                            />
-                        )} */}
                     </>
                 )}
             </CircleTimer>

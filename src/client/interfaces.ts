@@ -271,6 +271,7 @@ export interface LiveSwapBase {
     owner: string;
     endingEpoch: number | null;
     num: number;
+    bottom: EthInt;
 }
 
 export interface LiveNuggSwap extends LiveSwapBase {

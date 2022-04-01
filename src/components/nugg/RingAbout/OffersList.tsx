@@ -1,21 +1,65 @@
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { animated, config as springConfig, useSpring } from '@react-spring/web';
-import { IoAdd, IoOpenOutline, IoRemove } from 'react-icons/io5';
+import { IoAdd, IoCheckmarkDoneOutline, IoRemove } from 'react-icons/io5';
 import { t } from '@lingui/macro';
+import { Web3Provider } from '@ethersproject/providers';
 
-import List from '@src/components/general/List/List';
+import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import client from '@src/client';
 import web3 from '@src/web3';
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import state from '@src/state';
 import Text from '@src/components/general/Texts/Text/Text';
-import { Lifecycle } from '@src/client/interfaces';
-import { NuggId, TokenId } from '@src/client/router';
+import { Lifecycle, OfferData } from '@src/client/interfaces';
+import { NuggId, Route, TokenId } from '@src/client/router';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import { Chain } from '@src/web3/core/interfaces';
+import useDistribution from '@src/hooks/useDistribution';
 
-import OfferRenderItem from './OfferRenderItem';
 import styles from './RingAbout.styles';
+
+type OfferExtraData = {
+    chainId?: Chain;
+    provider?: Web3Provider;
+    type?: Route.SwapItem | Route.SwapNugg;
+};
+
+const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefined>> = ({
+    item,
+    extraData,
+}) => {
+    const leader = web3.hook.usePriorityAnyENSName(
+        extraData.type === Route.SwapItem ? 'nugg' : extraData.provider,
+        item?.user || '',
+    );
+    return (
+        <div style={styles.offerAmount}>
+            <CurrencyText image="eth" value={item.eth.decimal.toNumber()} stopAnimation />
+            {leader ? (
+                <Text type="text" size="smaller" textStyle={{ color: lib.colors.textColor }}>
+                    {leader}
+                </Text>
+            ) : null}
+            {/* <Button
+                buttonStyle={{ ...styles.etherscanBtn, right: '2rem' }}
+                onClick={() =>
+                    extraData.chainId &&
+                    web3.config.gotoEtherscan(extraData.chainId, 'tx', item.txhash)
+                }
+                rightIcon={<IoCheckmarkDoneOutline color={lib.colors.green} size={14} />}
+            /> */}
+            <Button
+                buttonStyle={styles.etherscanBtn}
+                onClick={() =>
+                    extraData.chainId &&
+                    web3.config.gotoEtherscan(extraData.chainId, 'tx', item.txhash)
+                }
+                rightIcon={<IoCheckmarkDoneOutline color={lib.colors.green} size={14} />}
+            />
+        </div>
+    );
+};
 
 export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?: NuggId }) => {
     const offers = client.live.offers(tokenId);
@@ -27,7 +71,7 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
 
     const [open, setOpen] = useState(screenType === 'tablet');
 
-    const { leader, others } = React.useMemo(() => {
+    const { leader, others, swap } = React.useMemo(() => {
         const tmp =
             token?.type === 'item'
                 ? offers.filter((x) => {
@@ -37,11 +81,19 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
                       );
                   })
                 : [...offers];
+
+        const theSwap =
+            token?.type === 'item' && sellingNuggId
+                ? token?.swaps.find((x) => x.owner === sellingNuggId)
+                : token?.activeSwap;
         return {
             leader: tmp.shift(),
             others: tmp,
+            swap: theSwap,
         };
     }, [offers, token, sellingNuggId]);
+
+    const { distribution, ownerEns } = useDistribution(swap);
 
     useEffect(() => {
         if (offers && offers.length === 1 && open && screenType !== 'tablet') {
@@ -76,7 +128,7 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
         };
     });
 
-    const ens = web3.hook.usePriorityAnyENSName(
+    const leaderEns = web3.hook.usePriorityAnyENSName(
         token && token.type === 'item' ? 'nugg' : provider,
         leader?.user || '',
     );
@@ -101,14 +153,16 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
                             <Text size="smaller" type="text">
                                 {t`from`}
                             </Text>
-                            <Text size="smaller">{ens}</Text>
+                            <Text size="smaller">{leaderEns}</Text>
                         </div>
                         <Button
                             buttonStyle={styles.etherscanBtn}
                             onClick={() =>
                                 chainId && web3.config.gotoEtherscan(chainId, 'tx', leader.txhash)
                             }
-                            rightIcon={<IoOpenOutline color={lib.colors.nuggBlueText} size={14} />}
+                            rightIcon={
+                                <IoCheckmarkDoneOutline color={lib.colors.green} size={14} />
+                            }
                         />
                     </animated.div>
                 </div>
@@ -123,31 +177,43 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
                         {t`previous offers`}
                     </Text>
                 ) : (
-                    <Button
-                        size="small"
-                        type="text"
-                        textStyle={{ color: 'white' }}
-                        label={open ? t`hide previous offers` : t`show previous offers`}
-                        rightIcon={
-                            <div style={styles.allOffersButton}>
-                                {open ? (
-                                    <IoRemove color={lib.colors.nuggBlueText} size={14} />
-                                ) : (
-                                    <IoAdd color={lib.colors.nuggBlueText} size={14} />
-                                )}
-                            </div>
-                        }
-                        onClick={() => setOpen(!open)}
-                        buttonStyle={styles.showMoreButton}
-                    />
+                    <>
+                        <Button
+                            size="small"
+                            type="text"
+                            textStyle={{ color: 'white' }}
+                            label={open ? t`hide previous offers` : t`show previous offers`}
+                            rightIcon={
+                                <div style={styles.allOffersButton}>
+                                    {open ? (
+                                        <IoRemove color={lib.colors.nuggBlueText} size={14} />
+                                    ) : (
+                                        <IoAdd color={lib.colors.nuggBlueText} size={14} />
+                                    )}
+                                </div>
+                            }
+                            onClick={() => setOpen(!open)}
+                            buttonStyle={styles.showMoreButton}
+                        />
+                        <animated.div style={springStyle}>
+                            {distribution && (
+                                <div>
+                                    <Text>Distribution:</Text>
+                                    <Text>
+                                        {ownerEns}: {distribution.owner.number}
+                                    </Text>
+                                    <Text>Protocol: {distribution.proto.number}</Text>
+                                    <Text>Staked: {distribution.stake.number}</Text>
+                                </div>
+                            )}
+                            <List
+                                data={others}
+                                RenderItem={OfferRenderItem}
+                                extraData={{ type, provider, chainId }}
+                            />
+                        </animated.div>
+                    </>
                 ))}
-            <animated.div style={springStyle}>
-                <List
-                    data={others}
-                    RenderItem={OfferRenderItem}
-                    extraData={{ type, provider, chainId }}
-                />
-            </animated.div>
         </>
     ) : null;
 };

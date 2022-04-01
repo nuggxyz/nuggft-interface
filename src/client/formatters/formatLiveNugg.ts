@@ -35,6 +35,7 @@ export default (nugg: LiveNuggFragment): LiveNugg => {
                 endingEpoch: y && y.endingEpoch ? Number(y?.endingEpoch) : null,
                 num: Number(y?.num),
                 isActive: nugg.activeSwap?.id === y?.id,
+                bottom: new EthInt(y?.bottom),
             };
         }),
         activeSwap: nugg.activeSwap
@@ -60,6 +61,7 @@ export default (nugg: LiveNuggFragment): LiveNugg => {
                           : null,
                   num: Number(nugg.activeSwap?.num),
                   isActive: true,
+                  bottom: new EthInt(nugg.activeSwap?.bottom),
               }
             : undefined,
     };

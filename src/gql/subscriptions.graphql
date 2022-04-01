@@ -158,6 +158,7 @@ fragment swapdata on Swap {
     num
     eth
     ethUsd
+    bottom
     owner {
         id
     }
@@ -179,6 +180,7 @@ fragment itemswapdata on ItemSwap {
     num
     eth
     ethUsd
+    bottom
     owner {
         id
     }
@@ -209,6 +211,7 @@ fragment liveNugg on Nugg {
             position
         }
     }
+
     pendingClaim
     lastTransfer
     activeLoan {
@@ -270,41 +273,35 @@ subscription liveOffers($tokenId: String!) {
     }
 }
 
+fragment liveItemSwap on ItemSwap {
+    id
+    sellingNuggItem {
+        id
+        nugg {
+            id
+        }
+    }
+    # bottom
+    # owner {
+    #     id
+    # }
+    offers(orderBy: eth, orderDirection: desc) {
+        id
+        nugg {
+            id
+        }
+        eth
+        txhash
+    }
+}
+
 subscription betterLiveItemOffers($tokenId: ID!) {
     item(id: $tokenId) {
         activeSwap {
-            id
-            sellingNuggItem {
-                id
-                nugg {
-                    id
-                }
-            }
-            offers(orderBy: eth, orderDirection: desc) {
-                id
-                nugg {
-                    id
-                }
-                eth
-                txhash
-            }
+            ...liveItemSwap
         }
         upcomingActiveSwap {
-            id
-            sellingNuggItem {
-                id
-                nugg {
-                    id
-                }
-            }
-            offers(orderBy: eth, orderDirection: desc) {
-                id
-                nugg {
-                    id
-                }
-                eth
-                txhash
-            }
+            ...liveItemSwap
         }
     }
 }
@@ -312,6 +309,11 @@ subscription betterLiveItemOffers($tokenId: ID!) {
 subscription betterLiveOffers($tokenId: ID!) {
     nugg(id: $tokenId) {
         activeSwap {
+            id
+            # owner {
+            #     id
+            # }
+            # bottom
             offers(orderBy: eth, orderDirection: desc) {
                 user {
                     id
