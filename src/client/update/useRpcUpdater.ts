@@ -14,19 +14,19 @@ import { WebSocketProvider } from '@src/web3/classes/WebSocketProvider';
 import { FeedMessageType } from '@src/interfaces/feed';
 
 // eslint-disable-next-line import/no-cycle
+
+import { Chain } from '@src/web3/core/interfaces';
+
 import client from '..';
 
 export default () => {
     const chainId = web3.hook.usePriorityChainId();
     const address = web3.hook.usePriorityAccount();
-    const start = client.mutate.start();
-    const graph = client.live.graph();
 
     const updateOffers = client.mutate.updateOffers();
     const updateBlocknum = client.mutate.updateBlocknum();
     const updateProtocol = client.mutate.updateProtocol();
-    const addLoan = client.mutate.addLoan();
-    const updateLoan = client.mutate.updateLoan();
+
     const removeLoan = client.mutate.removeLoan();
     const removeNuggClaim = client.mutate.removeNuggClaim();
     const removeItemClaimIfMine = client.mutate.removeItemClaimIfMine();
@@ -190,13 +190,11 @@ export default () => {
             }
         },
         [
-            addLoan,
             address,
             nuggft.interface,
             removeItemClaimIfMine,
             removeLoan,
             removeNuggClaim,
-            updateLoan,
             updateOffers,
             updateProtocol,
             addFeedMessage,
@@ -228,13 +226,11 @@ export default () => {
         }
     }, [eventListener, rpc, nuggft.address]);
 
-    const buildRpc = React.useCallback(() => {
-        if (chainId && graph) {
-            const _rpc = web3.config.createInfuraWebSocket(chainId, buildRpc);
+    const buildRpc = React.useCallback(
+        (chainIdArg: Chain) => {
+            const _rpc = web3.config.createInfuraWebSocket(chainIdArg, () => buildRpc(chainIdArg));
 
-            void start(chainId, _rpc, graph).then(() => {
-                _rpc.on('block', blockListener);
-            });
+            _rpc.on('block', blockListener);
 
             _rpc.on(
                 {
@@ -245,8 +241,9 @@ export default () => {
             );
 
             setRpc(_rpc);
-        }
-    }, [blockListener, chainId, eventListener, graph, nuggft.address, start]);
+        },
+        [blockListener, eventListener, nuggft.address],
+    );
 
     const destoyRpc = React.useCallback(() => {
         void rpc?.destroy();
@@ -254,7 +251,7 @@ export default () => {
 
     React.useEffect(() => {
         if (chainId) {
-            buildRpc();
+            buildRpc(chainId);
             return destoyRpc;
         }
         return () => undefined;

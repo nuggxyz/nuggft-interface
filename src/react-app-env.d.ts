@@ -1,6 +1,6 @@
 /// <reference types="node" />
 /// <reference types="react-dom" />
-import('react');
+/// <reference types="react" />
 
 declare type Base64EncodedSvg = `data:image/svg+xml;base64,${string}`;
 
@@ -15,16 +15,16 @@ declare type Base64EncodedSvg = `data:image/svg+xml;base64,${string}`;
 //     }
 // }
 
-declare namespace React {
-    type UnsafeDependencyList = any[];
+// declare namespace React {
+//     type UnsafeDependencyList = any[];
 
-    // function useCallback<T extends (...args: any[]) => unknown>(
-    //     callback: T,
-    //     deps: DependencyList,
-    // ): T;
+//     // function useCallback<T extends (...args: any[]) => unknown>(
+//     //     callback: T,
+//     //     deps: DependencyList,
+//     // ): T;
 
-    type DependencyList = unknown[];
-}
+//     type DependencyList = unknown[];
+// }
 
 declare module '@metamask/jazzicon' {
     export default function (diameter: number, seed: number): HTMLElement;

@@ -381,6 +381,17 @@ export const createApolloClient = (chainId: Chain) => {
     });
 };
 
+export const createBrokenApolloClient = (chainId: Chain) => {
+    return new ApolloClient<any>({
+        link: buildApolloSplitLink(
+            `${GRAPH_ENPOINTS[chainId]}-TEST`,
+            `${GRAPH_WSS_ENDPOINTS[chainId]}-TEST`,
+        ),
+        connectToDevTools: true,
+        cache: buildCache(),
+    });
+};
+
 // interface WalletInfo {
 //     name: string;
 //     label: string;
