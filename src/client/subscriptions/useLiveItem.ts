@@ -5,7 +5,7 @@ import { extractItemId } from '@src/lib';
 import client from '@src/client';
 import { useHealth } from '@src/client/hooks/useHealth';
 
-export default (tokenId: string | undefined, sellingTokenId: string | undefined) => {
+export default (tokenId: string | undefined) => {
     const graph = client.live.graph();
 
     const updateToken = client.mutate.updateToken();
@@ -30,7 +30,7 @@ export default (tokenId: string | undefined, sellingTokenId: string | undefined)
         },
     });
 
-    useLiveItemBackup(useHealth().graphProblem, tokenId, sellingTokenId);
+    useLiveItemBackup(useHealth().graphProblem, tokenId);
 
     return null;
 };
