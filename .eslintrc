@@ -42,6 +42,7 @@
         "module-resolver"
     ],
     "rules": {
+        "no-cond-assign": "off",
         "react/no-array-index-key": "off",
         "no-unexpected-multiline": "off",
         "class-methods-use-this": "off",

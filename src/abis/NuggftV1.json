@@ -1134,9 +1134,9 @@
         "name": "lastItemSwap",
         "outputs": [
             {
-                "internalType": "uint24",
+                "internalType": "uint256",
                 "name": "",
-                "type": "uint24"
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",

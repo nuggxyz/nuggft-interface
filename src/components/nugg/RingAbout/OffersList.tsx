@@ -15,7 +15,7 @@ import { Lifecycle, OfferData } from '@src/client/interfaces';
 import { NuggId, Route, TokenId } from '@src/client/router';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { Chain } from '@src/web3/core/interfaces';
-import useDistribution from '@src/hooks/useDistribution';
+import useDistribution from '@src/client/hooks/useDistribution';
 
 import styles from './RingAbout.styles';
 
@@ -41,14 +41,7 @@ const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefin
                     {leader}
                 </Text>
             ) : null}
-            {/* <Button
-                buttonStyle={{ ...styles.etherscanBtn, right: '2rem' }}
-                onClick={() =>
-                    extraData.chainId &&
-                    web3.config.gotoEtherscan(extraData.chainId, 'tx', item.txhash)
-                }
-                rightIcon={<IoCheckmarkDoneOutline color={lib.colors.green} size={14} />}
-            /> */}
+
             {item.txhash && (
                 <Button
                     buttonStyle={styles.etherscanBtn}
@@ -132,8 +125,8 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
     });
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
-        token && token.type === 'item' ? 'nugg' : provider,
-        leader?.user || '',
+        token ? (token.type === 'item' ? 'nugg' : provider) : undefined,
+        (token && leader?.user) || '',
     );
 
     return token &&

@@ -7,7 +7,7 @@ import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
 import web3 from '@src/web3';
 import client from '@src/client';
 import globalStyles from '@src/lib/globalStyles';
-import useRemaining from '@src/hooks/useRemaining';
+import useRemaining from '@src/client/hooks/useRemaining';
 import { SwapData } from '@src/client/interfaces';
 import List from '@src/components/general/List/List';
 

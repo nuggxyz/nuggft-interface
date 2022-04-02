@@ -1,13 +1,13 @@
 import React, { FC, FunctionComponent } from 'react';
 import { plural, t } from '@lingui/macro';
 
+import useRemaining from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
 import { Lifecycle, LiveNuggItem, OfferData } from '@src/client/interfaces';
 import lib, { parseTokenIdSmart } from '@src/lib';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
-import useRemaining from '@src/hooks/useRemaining';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';

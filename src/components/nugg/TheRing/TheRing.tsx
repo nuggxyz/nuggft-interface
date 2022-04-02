@@ -12,7 +12,7 @@ import client from '@src/client';
 import Label from '@src/components/general/Label/Label';
 import { Lifecycle } from '@src/client/interfaces';
 import web3 from '@src/web3';
-import useRemaining from '@src/hooks/useRemaining';
+import useRemaining from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 
 import styles from './TheRing.styles';

@@ -78,6 +78,7 @@ const styles = NLStyleSheetCreator({
         background: 'white',
         width: '100%',
         marginTop: '.5rem',
+        zIndex: 500,
     },
     buttonText: {
         color: lib.colors.nuggBlueText,

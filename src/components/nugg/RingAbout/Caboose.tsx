@@ -11,7 +11,7 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import web3 from '@src/web3';
 import client from '@src/client';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
-import useRemaining from '@src/hooks/useRemaining';
+import useRemaining from '@src/client/hooks/useRemaining';
 
 import styles from './RingAbout.styles';
 
@@ -50,6 +50,8 @@ export default () => {
     const screenType = state.app.select.screenType();
     const address = web3.hook.usePriorityAccount();
     const tokenId = client.live.lastSwap.tokenId();
+    const epoch = client.live.epoch.id();
+
     const token = client.live.token(tokenId);
     const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<TryoutData>();
 
@@ -58,6 +60,15 @@ export default () => {
     const darkmode = useDarkMode();
 
     const [showBody, setShowBody] = React.useState(false);
+
+    const mustWaitToBid = React.useMemo(() => {
+        return (
+            token &&
+            epoch &&
+            token.activeSwap !== undefined &&
+            token.activeSwap.endingEpoch !== epoch
+        );
+    }, [token, epoch]);
 
     return token && token.type === 'item' && token.tryout.count > 0 ? (
         <div
@@ -108,11 +119,7 @@ export default () => {
                                 color: 'white',
                             }),
                         }}
-                        disabled={
-                            !nuggToBuyFrom ||
-                            (token.activeSwap !== undefined &&
-                                token.upcomingActiveSwap !== undefined)
-                        }
+                        disabled={mustWaitToBid || !nuggToBuyFrom}
                         onClick={() =>
                             screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                                 ? state.app.dispatch.changeMobileView('Wallet')
@@ -131,7 +138,7 @@ export default () => {
                                   })
                         }
                         label={
-                            token.activeSwap !== undefined && token.upcomingActiveSwap !== undefined
+                            mustWaitToBid
                                 ? t`wait ${minutes} minutes to buy from a new nugg`
                                 : screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                                 ? t`Connect wallet`

@@ -20,7 +20,7 @@ export default ({
     const screenType = state.app.select.screenType();
     const address = web3.hook.usePriorityAccount();
     const token = client.live.token(tokenId);
-    console.log({ token });
+
     return token &&
         token.lifecycle !== 'shower' &&
         token.lifecycle !== 'stands' &&
