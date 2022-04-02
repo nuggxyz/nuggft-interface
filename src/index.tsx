@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { FunctionComponent, ReactChild } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
 import './prototypes';
+
 import store from './state/store';
 import './index.css';
 import I18N from './i18n';
@@ -10,18 +11,42 @@ import Initializer from './state/Initializer';
 import Modal from './components/nugg/Modals/Modal/Modal';
 import IndexPage from './pages/Index';
 import ToastContainer from './components/general/Toast/ToastContainer';
+import web3 from './web3';
+import ClientUpdater from './client/ClientUpdater';
 
 global.Buffer = global.Buffer || (await import('buffer')).Buffer;
+
+const GlobalHooks = () => {
+    web3.config.useActivate();
+
+    return <ClientUpdater />;
+};
+
+const ContentBlock: FunctionComponent<{
+    children: ReactChild | ReactChild[];
+}> = ({ children }) => {
+    const active = web3.hook.usePriorityIsActive();
+
+    return active ? (
+        <>
+            {/** */}
+            {children}
+        </>
+    ) : null;
+};
 
 ReactDOM.render(
     <div style={{ width: '100%', height: '100%' }}>
         <React.StrictMode>
+            <GlobalHooks />
             <Provider store={store}>
                 <Initializer>
                     <I18N>
                         <ToastContainer />
                         <Modal />
-                        <IndexPage />
+                        <ContentBlock>
+                            <IndexPage />
+                        </ContentBlock>
                     </I18N>
                 </Initializer>
             </Provider>

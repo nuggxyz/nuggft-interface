@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
 import { BigNumber, ethers } from 'ethers';
 import { ApolloClient } from '@apollo/client';
+import { useEffect } from 'react';
 
 import { buildApolloSplitLink, buildCache } from '@src/gql/config';
 
@@ -420,6 +421,26 @@ interface L1ChainInfo {
     };
     readonly name: string;
 }
+
+export const useActivate = () => {
+    useEffect(() => {
+        [
+            connector_instances.metamask,
+            connector_instances.walletconnect,
+            connector_instances.walletlink,
+        ].forEach((x) => {
+            if (x !== undefined && x.connector && x.connector.connectEagerly)
+                void x.connector.connectEagerly(Chain.RINKEBY);
+        });
+
+        const { rpc } = connector_instances;
+
+        if (rpc !== undefined && rpc.connector && rpc.connector.activate)
+            void rpc.connector.activate(Chain.RINKEBY);
+    }, []);
+
+    return null;
+};
 
 // let socket: WebSocket;
 // let timerId: NodeJS.Timer;
