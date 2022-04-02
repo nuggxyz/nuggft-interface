@@ -1,20 +1,13 @@
 import { useWatchLiveNuggSubscription } from '@src/gql/types.generated';
 import formatLiveNugg from '@src/client/formatters/formatLiveNugg';
-
-// eslint-disable-next-line import/no-cycle
 import useLiveNuggBackup from '@src/client/backups/useLiveNuggBackup';
-
-// eslint-disable-next-line import/no-cycle
-import client from '..';
-
-import { useRpcBackup } from './useHealth';
+import client from '@src/client';
+import { useHealth } from '@src/client/hooks/useHealth';
 
 export default (tokenId: string | undefined) => {
     const graph = client.live.graph();
 
     const updateToken = client.mutate.updateToken();
-
-    const backup = useRpcBackup();
 
     useWatchLiveNuggSubscription({
         client: graph,
@@ -34,7 +27,7 @@ export default (tokenId: string | undefined) => {
         },
     });
 
-    useLiveNuggBackup(backup, tokenId);
+    useLiveNuggBackup(useHealth().graphProblem, tokenId);
 
     return null;
 };

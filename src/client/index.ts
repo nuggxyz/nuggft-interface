@@ -5,7 +5,6 @@ import { useCallback } from 'react';
 import shallow from 'zustand/shallow';
 
 import core, { coreNonImmer } from './core';
-import updater from './updater';
 import { useDotnugg, useDotnuggCacheOnly, useDotnuggSubscription } from './hooks/useDotnugg';
 import router, { TokenId } from './router';
 import { ListData, SearchView } from './interfaces';
@@ -17,7 +16,6 @@ export default {
     live: {
         /// ///// simple ////////
         graph: () => coreNonImmer((state) => state.graph),
-        rpc: () => coreNonImmer((state) => state.rpc),
 
         epoch: {
             default: () => core((state) => state.epoch),
@@ -80,6 +78,7 @@ export default {
                 ),
             ),
         health: () => core((state) => state.health),
+        lastGraphRefresh: () => coreNonImmer((state) => state.lastRefresh),
 
         activeSwaps: () => core((state) => state.activeSwaps),
         activeItems: () => core((state) => state.activeItems),
@@ -173,7 +172,6 @@ export default {
     },
     static: {
         graph: () => coreNonImmer.getState().graph,
-        rpc: () => coreNonImmer.getState().rpc,
         activeSwaps: () => core.getState().activeSwaps,
         activeItems: () => core.getState().activeItems,
         myNuggs: () => core.getState().myNuggs,
@@ -183,5 +181,4 @@ export default {
         route: () => core.getState().route,
     },
     router,
-    updater,
 };

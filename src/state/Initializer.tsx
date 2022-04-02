@@ -1,9 +1,9 @@
 import React, { FunctionComponent, ReactChild, useEffect } from 'react';
 
 import web3 from '@src/web3';
-import client from '@src/client';
 import { Chain } from '@src/web3/core/interfaces';
 import { safeResetLocalStorage } from '@src/lib';
+import ClientUpdater from '@src/client/ClientUpdater';
 
 import { states } from './store';
 
@@ -13,11 +13,8 @@ type Props = {
 
 const Initializer: FunctionComponent<Props> = ({ children }) => {
     const active = web3.hook.usePriorityIsActive();
-    const chainId = web3.hook.usePriorityChainId();
-    const epoch = client.live.epoch.id();
-    const graphInstance = client.live.graph();
-    const start = client.mutate.start();
-    const updateClients = client.mutate.updateClients();
+    // const epoch = client.live.epoch.id();
+    // const graphInstance = client.live.graph();
 
     useEffect(() => {
         safeResetLocalStorage(['walletconnect', 'ens']);
@@ -39,35 +36,18 @@ const Initializer: FunctionComponent<Props> = ({ children }) => {
             void rpc.connector.activate(Chain.RINKEBY);
     }, []);
 
-    useEffect(() => {
-        if (chainId && web3.config.isValidChainId(chainId)) {
-            const graph = web3.config.createApolloClient(chainId);
-
-            updateClients({
-                graph,
-            });
-
-            return () => {
-                void graph.clearStore();
-                graph.stop();
-
-                void updateClients({
-                    graph: undefined,
-                });
-            };
-        }
-        return () => undefined;
-    }, [chainId, updateClients, start]);
-
-    return active && graphInstance ? (
+    return (
         <>
-            {[...Object.values(states), client].map((state, index) => (
+            <ClientUpdater />
+
+            {[...Object.values(states)].map((state, index) => (
                 // eslint-disable-next-line react/no-array-index-key
                 <state.updater key={`updater-${index}`} />
             ))}
-            {epoch && children}
+
+            {active && children}
         </>
-    ) : null;
+    );
 };
 
 export default Initializer;

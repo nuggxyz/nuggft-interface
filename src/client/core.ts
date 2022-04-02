@@ -3,7 +3,7 @@ import { ApolloClient } from '@apollo/client';
 import create, { State, StateCreator } from 'zustand';
 import produce, { Draft, enableMapSet } from 'immer';
 import { combine } from 'zustand/middleware';
-import { WebSocketProvider, JsonRpcProvider } from '@ethersproject/providers';
+import { JsonRpcProvider } from '@ethersproject/providers';
 
 import { Chain } from '@src/web3/core/interfaces';
 import { extractItemId, parseItmeIdToNum } from '@src/lib';
@@ -72,18 +72,18 @@ function createClientStoreAndActions3() {
     return create(
         combine(
             {
-                rpc: undefined,
                 graph: undefined,
+                lastRefresh: undefined,
             } as {
-                rpc: WebSocketProvider | undefined;
                 graph: ApolloClient<any> | undefined;
+                lastRefresh: Date | undefined;
             },
 
             (set) => {
                 return {
-                    updateClients: (stateUpdate: { graph: ApolloClient<any> | undefined }) => {
+                    updateClients: (graph: ApolloClient<any> | undefined) => {
                         set(() => {
-                            return stateUpdate;
+                            return { graph, lastRefresh: new Date() };
                         });
                     },
                 };
@@ -97,11 +97,17 @@ function createClientStoreAndActions2() {
         // devtools(
         logger__middleware(
             immer__middleware((set, get) => {
-                function updateBlocknum(blocknum: number, chainId: Chain) {
+                function updateBlocknum(blocknum: number, chainId: Chain, startup = false) {
                     const epochId = web3.config.calculateEpochId(blocknum, chainId);
 
+                    const hasStarted = startup || get().started;
+
                     set((draft) => {
-                        if (!draft.route) {
+                        if (startup) {
+                            draft.started = true;
+                        }
+
+                        if (hasStarted && !draft.route) {
                             let parsed = parseRoute(window.location.hash);
                             if (parsed.type === Route.Home) {
                                 parsed = {
@@ -585,10 +591,10 @@ function createClientStoreAndActions2() {
                         searchValue: undefined,
                     },
                     health: {
-                        lastBlockGraph: 0,
                         lastBlockRpc: 0,
+                        lastBlockGraph: 0,
                     },
-
+                    started: false,
                     updateBlocknum,
                     updateProtocol,
                     removeLoan,

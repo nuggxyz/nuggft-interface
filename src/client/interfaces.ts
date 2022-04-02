@@ -201,11 +201,12 @@ export interface ClientState extends State, Actions {
     searchFilter: SearchFilter;
     feedMessages: FeedMessage[];
     health: Health;
+    started: boolean;
 }
 
 export interface Health {
-    lastBlockRpc: number | null;
-    lastBlockGraph: number | null;
+    lastBlockRpc?: number;
+    lastBlockGraph?: number;
 }
 
 export type ClientStateUpdate = {
@@ -245,7 +246,7 @@ export type ClientStateUpdate = {
 };
 
 export interface Actions {
-    updateBlocknum: (blocknum: number, chainId: Chain) => void;
+    updateBlocknum: (blocknum: number, chainId: Chain, startup?: boolean) => void;
     updateProtocol: (stateUpdate: ClientStateUpdate) => void;
     routeTo: (tokenId: TokenId, view: boolean) => void;
     toggleView: () => void;

@@ -100,13 +100,13 @@ export const executeQuery3 = async <T>(query: DocumentNode, variables: object): 
     }
 };
 
-export const executeQuery4 = async <T>(query: DocumentNode, variables: object) => {
+export const executeQuery4 = async <T>(
+    graph: ApolloClient<any>,
+    query: DocumentNode,
+    variables: object,
+) => {
     try {
-        const check = client.static.graph();
-
-        if (check === undefined) throw new Error('executeQuery4 | graph is undefined');
-
-        const result = await check.query<T>({
+        const result = await graph.query<T>({
             query,
             // @ts-ignore
             // fetchPolicy: 'cache-and-network',
@@ -125,12 +125,12 @@ export const executeQuery4 = async <T>(query: DocumentNode, variables: object) =
     }
 };
 
-export const executeQuery5 = <T>(query: DocumentNode, variables: object) => {
-    const check = client.static.graph();
-
-    if (check === undefined) throw new Error('executeQuery5 | graph is undefined');
-
-    return check.watchQuery<T>({
+export const executeQuery5 = <T>(
+    graph: ApolloClient<any>,
+    query: DocumentNode,
+    variables: object,
+) => {
+    return graph.watchQuery<T>({
         query,
         fetchPolicy: 'cache-and-network',
         canonizeResults: true,
@@ -139,12 +139,14 @@ export const executeQuery5 = <T>(query: DocumentNode, variables: object) => {
     });
 };
 
-export const executeQuery6 = <T>(query: DocumentNode, variables: object) => {
-    const check = client.static.graph();
+export const executeQuery6 = <T>(
+    graph: ApolloClient<any>,
+    query: DocumentNode,
+    variables: object,
+) => {
+    // if (check === undefined)return  undefined;
 
-    if (check === undefined) throw new Error('executeQuery6 | graph is undefined');
-
-    return check.watchQuery<T>({
+    return graph.watchQuery<T>({
         query,
         fetchPolicy: 'cache-first',
         canonizeResults: true,
@@ -154,20 +156,22 @@ export const executeQuery6 = <T>(query: DocumentNode, variables: object) => {
 };
 
 export const fasterQuery = <T, R>(
+    graph: ApolloClient<any>,
     query: DocumentNode,
     variables: object,
     formatter: (res: ApolloQueryResult<T>) => R,
 ) => {
-    const a = executeQuery6<T>(query, variables);
+    const a = executeQuery6<T>(graph, query, variables);
     return a.map(formatter);
 };
 
 export const fastQuery = <T, R>(
+    graph: ApolloClient<any>,
     query: DocumentNode,
     variables: object,
     formatter: (res: ApolloQueryResult<T>) => R,
 ) => {
-    const a = executeQuery5<T>(query, variables);
+    const a = executeQuery5<T>(graph, query, variables);
     return a.map(formatter);
 };
 
@@ -177,6 +181,8 @@ export const useFasterQuery = <T, R>(
     formatter: (res: ApolloQueryResult<T>) => R,
 ) => {
     const [src, setSrc] = useState<R | undefined>(undefined);
+
+    const graph = client.live.graph();
 
     const cb = React.useCallback(
         (x: R) => {
@@ -188,12 +194,16 @@ export const useFasterQuery = <T, R>(
     );
 
     React.useLayoutEffect(() => {
-        const sub = fasterQuery<T, R>(query, variables, formatter).subscribe(cb, () => null);
-
-        return () => {
-            sub.unsubscribe();
-        };
-    }, [variables, query]);
+        if (graph) {
+            const sub = fasterQuery<T, R>(graph, query, variables, formatter).subscribe(
+                cb,
+                () => null,
+            );
+            return () => {
+                sub.unsubscribe();
+            };
+        }
+    }, [variables, query, graph]);
 
     return src;
 };
@@ -204,6 +214,8 @@ export const useFastQuery = <T, R>(
     formatter: (res: ApolloQueryResult<T>) => R,
 ) => {
     const [src, setSrc] = useState<R | undefined>(undefined);
+
+    const graph = client.live.graph();
 
     const cb = React.useCallback(
         (x: R) => {
@@ -216,14 +228,19 @@ export const useFastQuery = <T, R>(
 
     React.useLayoutEffect(() => {
         try {
-            const sub = fastQuery<T, R>(query, variables, formatter).subscribe(cb, () => null);
-            return () => {
-                sub.unsubscribe();
-            };
+            if (graph) {
+                const sub = fastQuery<T, R>(graph, query, variables, formatter).subscribe(
+                    cb,
+                    () => null,
+                );
+                return () => {
+                    sub.unsubscribe();
+                };
+            }
         } catch {
             setSrc(undefined);
         }
-    }, [variables, query]);
+    }, [variables, query, graph]);
 
     return src;
 };

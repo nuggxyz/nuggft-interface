@@ -76,13 +76,23 @@ export const useDotnugg = (tokenId: string) => {
         { [key in 'nugg' | 'item']?: { dotnuggRawCache: Base64EncodedSvg } },
         UseDotnuggResponse
     >(
-        gql`
-        query OptimizedDotNugg($tokenId: ID!) {
-            ${tokenId?.isItemId() ? 'item' : 'nugg'}(id: $tokenId) {
-                dotnuggRawCache
-            }
-        }
-    `,
+        tokenId?.isItemId()
+            ? gql`
+                  query OptimizedDotNugg($tokenId: ID!) {
+                      item(id: $tokenId) {
+                          id
+                          dotnuggRawCache
+                      }
+                  }
+              `
+            : gql`
+                  query OptimizedDotNugg($tokenId: ID!) {
+                      nugg(id: $tokenId) {
+                          id
+                          dotnuggRawCache
+                      }
+                  }
+              `,
         {
             tokenId: tokenId?.replace('item-', ''),
         },
@@ -137,13 +147,23 @@ export const useDotnuggCacheOnly = (tokenId: string) => {
         },
         UseDotnuggResponse
     >(
-        gql`
-            query OptimizedDotNugg($tokenId: ID!) {
-                ${tokenId?.isItemId() ? 'item' : 'nugg'}(id: $tokenId) {
-                    dotnuggRawCache
-                }
-            }
-        `,
+        tokenId?.isItemId()
+            ? gql`
+                  query OptimizedDotNugg($tokenId: ID!) {
+                      item(id: $tokenId) {
+                          id
+                          dotnuggRawCache
+                      }
+                  }
+              `
+            : gql`
+                  query OptimizedDotNugg($tokenId: ID!) {
+                      nugg(id: $tokenId) {
+                          id
+                          dotnuggRawCache
+                      }
+                  }
+              `,
         {
             tokenId: tokenId?.replace('item-', ''),
         },
