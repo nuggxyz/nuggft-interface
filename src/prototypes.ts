@@ -12,6 +12,10 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from './lib';
 
+String.prototype.isItemId = function fn() {
+    return this.startsWith('item-');
+};
+
 Array.prototype.mergeInPlace = function fn<T>(
     incomingData: Array<T>,
     keyFeild: keyof T,

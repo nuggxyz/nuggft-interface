@@ -1,12 +1,18 @@
 import { BigNumber } from 'ethers';
+import { useEffect } from 'react';
 
 import web3 from '@src/web3';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import { padToAddress } from '@src/lib';
 import { ItemId } from '@src/client/router';
-import client from '@src/client/index';
+import client from '@src/client';
 import { SwapData } from '@src/client/interfaces';
-import { useLiveProtocolSubscription, useLiveUserSubscription } from '@src/gql/types.generated';
+import {
+    useLiveProtocolSubscription,
+    useLiveUserSubscription,
+    HealthDocument,
+    useHealthQuery,
+} from '@src/gql/types.generated';
 import formatSwapData from '@src/client/formatters/formatSwapData';
 
 const mergeUnique = (arr: SwapData[]) => {
@@ -38,11 +44,28 @@ export default () => {
 
     const updateProtocol = client.mutate.updateProtocol();
 
+    const { data: healthQueryData } = useHealthQuery({
+        client: graph,
+        query: HealthDocument,
+        fetchPolicy: 'network-only',
+        notifyOnNetworkStatusChange: true,
+        pollInterval: 12000,
+    });
+
+    useEffect(() => {
+        updateProtocol({
+            health: {
+                lastBlockGraph: healthQueryData?._meta?.block.number ?? null,
+            },
+        });
+    }, [healthQueryData, updateProtocol]);
+
     useLiveProtocolSubscription({
         client: graph,
         shouldResubscribe: true,
         fetchPolicy: 'network-only',
         onSubscriptionData: (x) => {
+            console.log({ x });
             if (x.subscriptionData && x.subscriptionData.data && x.subscriptionData.data.protocol) {
                 const { protocol } = x.subscriptionData.data;
 
@@ -83,18 +106,6 @@ export default () => {
                         shares,
                         eps: EthInt.fromFraction(new Fraction(staked, shares)),
                     },
-                    // epoch: {
-                    //     id: +protocol.epoch.id,
-                    //     startblock: Number(protocol.epoch.startblock),
-                    //     endblock: Number(protocol.epoch.endblock),
-                    //     status: protocol.epoch.status,
-                    // },
-                    // nextEpoch: {
-                    //     id: +protocol.nextEpoch.id,
-                    //     startblock: Number(protocol.nextEpoch.startblock),
-                    //     endblock: Number(protocol.nextEpoch.endblock),
-                    //     status: protocol.nextEpoch.status,
-                    // },
                     recentSwaps: protocol.lastEpoch.swaps.map((z) => {
                         return formatSwapData(z, z.nugg.id, true);
                     }),

@@ -7,13 +7,12 @@ import {
 } from '@src/gql/types.generated';
 import { createItemId, extractItemId } from '@src/lib/index';
 
-const useLiveOffers = (tokenId: TokenId | undefined) => {
+const useLiveItemOffers = (tokenId?: string) => {
     const graph = client.live.graph();
     const updateOffers = client.mutate.updateOffers();
 
     useBetterLiveItemOffersSubscription({
         client: graph,
-        skip: !tokenId?.startsWith('item-'),
         shouldResubscribe: true,
         fetchPolicy: 'network-only',
         variables: { tokenId: tokenId ? extractItemId(tokenId) : '' },
@@ -35,6 +34,7 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
                                   user: z.nugg.id,
                                   txhash: z.txhash,
                                   sellingNuggId: activeSwap.sellingNuggItem.nugg.id,
+                                  isBackup: false,
                               };
                           })
                         : []),
@@ -46,6 +46,7 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
                                   user: z.nugg.id,
                                   txhash: z.txhash,
                                   sellingNuggId: upcomingActiveSwap.sellingNuggItem.nugg.id,
+                                  isBackup: false,
                               };
                           })
                         : []),
@@ -53,10 +54,15 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
             }
         },
     });
+    return null;
+};
+
+const useLiveNuggOffers = (tokenId?: string) => {
+    const graph = client.live.graph();
+    const updateOffers = client.mutate.updateOffers();
 
     useBetterLiveOffersSubscription({
         client: graph,
-        skip: tokenId?.startsWith('item-'),
         shouldResubscribe: true,
         fetchPolicy: 'network-only',
         variables: { tokenId: tokenId || '' },
@@ -77,14 +83,18 @@ const useLiveOffers = (tokenId: TokenId | undefined) => {
                             eth: new EthInt(z.eth),
                             user: z.user.id,
                             txhash: z.txhash,
+                            isBackup: false,
                         };
                     }),
                 ]);
             }
         },
     });
-
     return null;
 };
 
-export default useLiveOffers;
+export default (tokenId: TokenId | undefined) => {
+    useLiveItemOffers(tokenId);
+    useLiveNuggOffers(tokenId);
+    return null;
+};

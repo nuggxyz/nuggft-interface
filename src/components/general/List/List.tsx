@@ -107,7 +107,8 @@ const List = <T, B, A>({
                     {data.map((item, index) => (
                         <RenderItem
                             item={item}
-                            key={JSON.stringify(item)}
+                            // eslint-disable-next-line react/no-array-index-key
+                            key={`${JSON.stringify(item)}-${index}`}
                             index={index}
                             extraData={extraData}
                             action={action}

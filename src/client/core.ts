@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { ApolloClient } from '@apollo/client';
 import create, { State, StateCreator } from 'zustand';
-import { BigNumber, BigNumberish } from 'ethers';
 import produce, { Draft, enableMapSet } from 'immer';
 import { combine } from 'zustand/middleware';
 import { WebSocketProvider, JsonRpcProvider } from '@ethersproject/providers';
@@ -39,22 +38,6 @@ import formatLiveNugg from './formatters/formatLiveNugg';
 import formatLiveItem from './formatters/formatLiveItem';
 
 enableMapSet();
-
-const calculateStartBlock = (epoch: BigNumberish, chainId: Chain) => {
-    return BigNumber.from(epoch)
-        .sub(web3.config.CONTRACTS[chainId].Offset)
-        .mul(web3.config.CONTRACTS[chainId].Interval)
-        .add(web3.config.CONTRACTS[chainId].Genesis)
-        .toNumber();
-};
-
-const calculateEpochId = (blocknum: number, chainId: Chain) => {
-    return BigNumber.from(blocknum)
-        .sub(web3.config.CONTRACTS[chainId].Genesis)
-        .div(web3.config.CONTRACTS[chainId].Interval)
-        .add(web3.config.CONTRACTS[chainId].Offset)
-        .toNumber();
-};
 
 const immer__middleware = <T extends State>(
     fn: StateCreator<T, (partial: ((draft: Draft<T>) => void) | T, replace?: boolean) => void>,
@@ -115,7 +98,7 @@ function createClientStoreAndActions2() {
         logger__middleware(
             immer__middleware((set, get) => {
                 function updateBlocknum(blocknum: number, chainId: Chain) {
-                    const epochId = calculateEpochId(blocknum, chainId);
+                    const epochId = web3.config.calculateEpochId(blocknum, chainId);
 
                     set((draft) => {
                         if (!draft.route) {
@@ -150,24 +133,28 @@ function createClientStoreAndActions2() {
                         if (!draft.epoch || epochId !== draft.epoch.id) {
                             draft.epoch = {
                                 id: epochId,
-                                startblock: calculateStartBlock(epochId, chainId),
-                                endblock: calculateStartBlock(epochId + 1, chainId) - 1,
+                                startblock: web3.config.calculateStartBlock(epochId, chainId),
+                                endblock: web3.config.calculateStartBlock(epochId + 1, chainId) - 1,
                                 status: 'ACTIVE',
                             };
                             draft.nextEpoch = {
                                 id: epochId + 1,
-                                startblock: calculateStartBlock(epochId + 2, chainId),
-                                endblock: calculateStartBlock(epochId + 2, chainId) - 1,
+                                startblock: web3.config.calculateStartBlock(epochId + 2, chainId),
+                                endblock: web3.config.calculateStartBlock(epochId + 2, chainId) - 1,
                                 status: 'PENDING',
                             };
                         }
 
                         draft.blocknum = blocknum;
+                        draft.health.lastBlockRpc = blocknum;
                     });
                 }
 
                 function updateProtocol(stateUpdate: ClientStateUpdate): void {
                     set((draft) => {
+                        if (stateUpdate.health?.lastBlockGraph)
+                            draft.health.lastBlockGraph = stateUpdate.health.lastBlockGraph;
+
                         if (stateUpdate.stake) draft.stake = stateUpdate.stake;
                         if (stateUpdate.editingNugg) draft.editingNugg = stateUpdate.editingNugg;
                         if (stateUpdate.recentSwaps) draft.recentSwaps = stateUpdate.recentSwaps;
@@ -501,7 +488,6 @@ function createClientStoreAndActions2() {
                 ): Promise<void> => {
                     const startup = () => {
                         const route = parseRoute(window.location.hash);
-
                         if (route.type !== Route.Home) {
                             const isItem =
                                 route.type === Route.ViewItem || route.type === Route.SwapItem;
@@ -543,7 +529,7 @@ function createClientStoreAndActions2() {
                         }
                     };
 
-                    startup();
+                    // startup();
 
                     // if (!get().route && rpc) {
                     const blocknum = rpc.getBlockNumber();
@@ -597,6 +583,10 @@ function createClientStoreAndActions2() {
                         viewing: undefined,
                         sort: undefined,
                         searchValue: undefined,
+                    },
+                    health: {
+                        lastBlockGraph: 0,
+                        lastBlockRpc: 0,
                     },
 
                     updateBlocknum,

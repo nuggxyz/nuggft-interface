@@ -1,23 +1,28 @@
 import { useWatchLiveItemSubscription } from '@src/gql/types.generated';
-import { LiveItem } from '@src/client/interfaces';
 
 // eslint-disable-next-line import/no-cycle
+import useLiveItemBackup from '@src/client/backups/useLiveItemBackup';
 import formatLiveItem from '@src/client/formatters/formatLiveItem';
+
+// eslint-disable-next-line import/no-cycle
+import { extractItemId } from '@src/lib';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
 
-export default (
-    tokenId: string | undefined,
-    onProccessedData: (data: Omit<LiveItem, 'lifecycle'>) => void,
-) => {
+import { useRpcBackup } from './useHealth';
+
+export default (tokenId: string | undefined, sellingTokenId: string | undefined) => {
     const graph = client.live.graph();
 
+    const backup = useRpcBackup();
+    const updateToken = client.mutate.updateToken();
     useWatchLiveItemSubscription({
         client: graph,
         shouldResubscribe: true,
         fetchPolicy: 'cache-first',
-        variables: { tokenId: tokenId || '' },
+        variables: { tokenId: extractItemId(tokenId || '') },
+
         onSubscriptionData: (x) => {
             if (
                 tokenId &&
@@ -27,10 +32,12 @@ export default (
             ) {
                 const { item } = x.subscriptionData.data;
 
-                onProccessedData(formatLiveItem(item));
+                updateToken(tokenId, formatLiveItem(item));
             }
         },
     });
+
+    useLiveItemBackup(backup, tokenId, sellingTokenId);
 
     return null;
 };

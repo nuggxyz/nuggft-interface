@@ -42,7 +42,7 @@ export default ({
     epoch: number;
     provider: Web3Provider;
 }) => {
-    const ownerEns = web3.hook.usePriorityAnyENSName(provider, token.activeSwap.owner);
+    const ownerEns = web3.hook.usePriorityAnyENSName(provider, token.activeSwap.owner || '');
 
     const leaderEns = web3.hook.usePriorityAnyENSName(provider, token.activeSwap.leader);
     const [ref, hover] = useOnHover(() => undefined);

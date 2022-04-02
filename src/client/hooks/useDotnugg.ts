@@ -8,6 +8,7 @@ import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { TokenId } from '@src/client/router';
 import { useLiveDotnuggSubscription } from '@src/gql/types.generated';
 import { useNuggftV1 } from '@src/contracts/useContract';
+import { extractItemId } from '@src/lib';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
@@ -56,11 +57,11 @@ export const useDotnuggRpcBackup = (outer: UseDotnuggResponse, tokenId: TokenId)
     const inject = useDotnuggInjectToCache();
 
     useEffect(() => {
-        if (tokenId && graph && chainId && provider && outer === null) {
+        if (tokenId && graph && chainId && provider && (outer === null || outer === undefined)) {
             void (async () => {
-                const res = (await new NuggftV1Helper(chainId, provider).contract.imageURI(
-                    tokenId,
-                )) as Base64EncodedSvg | undefined;
+                const res = (await new NuggftV1Helper(chainId, provider).contract[
+                    tokenId?.isItemId() ? 'itemURI' : 'imageURI'
+                ](extractItemId(tokenId))) as Base64EncodedSvg | undefined;
                 setSrc(res);
                 if (res) void inject(tokenId, res);
             })();
@@ -77,7 +78,7 @@ export const useDotnugg = (tokenId: string) => {
     >(
         gql`
         query OptimizedDotNugg($tokenId: ID!) {
-            ${tokenId?.startsWith('item-') ? 'item' : 'nugg'}(id: $tokenId) {
+            ${tokenId?.isItemId() ? 'item' : 'nugg'}(id: $tokenId) {
                 dotnuggRawCache
             }
         }
@@ -98,7 +99,7 @@ export const useDotnugg = (tokenId: string) => {
 
 export const useDotnuggSubscription = (tokenId: string) => {
     const isItem = React.useMemo(() => {
-        return tokenId.startsWith('item-');
+        return tokenId?.isItemId();
     }, [tokenId]);
 
     const normal = useDotnugg(tokenId);
@@ -138,7 +139,7 @@ export const useDotnuggCacheOnly = (tokenId: string) => {
     >(
         gql`
             query OptimizedDotNugg($tokenId: ID!) {
-                ${tokenId?.startsWith('item-') ? 'item' : 'nugg'}(id: $tokenId) {
+                ${tokenId?.isItemId() ? 'item' : 'nugg'}(id: $tokenId) {
                     dotnuggRawCache
                 }
             }

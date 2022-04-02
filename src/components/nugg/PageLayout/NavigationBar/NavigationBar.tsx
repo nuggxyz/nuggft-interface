@@ -7,6 +7,7 @@ import FloorPrice from '@src/components/nugg/FloorPrice';
 import NuggDexSearchBar from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar';
 import state from '@src/state';
 import useFirefoxBlur from '@src/hooks/useFirefoxBlur';
+import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
 
 import styles from './NavigationBar.styles';
 
@@ -24,7 +25,6 @@ const NavigationBar: FC<Props> = () => {
     );
 
     const container = useFirefoxBlur(['modal'], styles.navBarContainer);
-
     return (
         <animated.div style={container}>
             <div
@@ -36,6 +36,10 @@ const NavigationBar: FC<Props> = () => {
             <div style={styles.searchBarContainer}>
                 <NuggDexSearchBar />
             </div>
+            <div style={{ marginRight: '10px' }}>
+                <HealthIndicator />
+            </div>
+
             <div
                 style={{
                     whiteSpace: 'nowrap',

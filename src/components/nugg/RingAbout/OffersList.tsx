@@ -49,14 +49,17 @@ const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefin
                 }
                 rightIcon={<IoCheckmarkDoneOutline color={lib.colors.green} size={14} />}
             /> */}
-            <Button
-                buttonStyle={styles.etherscanBtn}
-                onClick={() =>
-                    extraData.chainId &&
-                    web3.config.gotoEtherscan(extraData.chainId, 'tx', item.txhash)
-                }
-                rightIcon={<IoCheckmarkDoneOutline color={lib.colors.green} size={14} />}
-            />
+            {item.txhash && (
+                <Button
+                    buttonStyle={styles.etherscanBtn}
+                    onClick={() =>
+                        extraData.chainId &&
+                        item.txhash &&
+                        web3.config.gotoEtherscan(extraData.chainId, 'tx', item.txhash)
+                    }
+                    rightIcon={<IoCheckmarkDoneOutline color={lib.colors.green} size={14} />}
+                />
+            )}
         </div>
     );
 };
@@ -155,15 +158,19 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
                             </Text>
                             <Text size="smaller">{leaderEns}</Text>
                         </div>
-                        <Button
-                            buttonStyle={styles.etherscanBtn}
-                            onClick={() =>
-                                chainId && web3.config.gotoEtherscan(chainId, 'tx', leader.txhash)
-                            }
-                            rightIcon={
-                                <IoCheckmarkDoneOutline color={lib.colors.green} size={14} />
-                            }
-                        />
+                        {leader.txhash && (
+                            <Button
+                                buttonStyle={styles.etherscanBtn}
+                                onClick={() =>
+                                    chainId &&
+                                    leader.txhash &&
+                                    web3.config.gotoEtherscan(chainId, 'tx', leader.txhash)
+                                }
+                                rightIcon={
+                                    <IoCheckmarkDoneOutline color={lib.colors.green} size={14} />
+                                }
+                            />
+                        )}
                     </animated.div>
                 </div>
             ) : null}

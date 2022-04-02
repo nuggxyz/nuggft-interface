@@ -15,15 +15,15 @@ import { TokenId, NuggId, ItemId, ViewRoutes, SwapRoutes } from './router';
 export interface BaseOfferData {
     user: string;
     eth: EthInt;
-    txhash: string;
+    txhash?: string;
     type: 'nugg' | 'item';
+    isBackup: boolean;
 }
 
 export interface ItemOfferData extends BaseOfferData {
     type: 'item';
     user: string;
     eth: EthInt;
-    txhash: string;
     sellingNuggId: string;
 }
 
@@ -31,7 +31,6 @@ export interface NuggOfferData extends BaseOfferData {
     type: 'nugg';
     user: string;
     eth: EthInt;
-    txhash: string;
 }
 
 export type OfferData = ItemOfferData | NuggOfferData;
@@ -201,6 +200,12 @@ export interface ClientState extends State, Actions {
     locale: SupportedLocale | undefined;
     searchFilter: SearchFilter;
     feedMessages: FeedMessage[];
+    health: Health;
+}
+
+export interface Health {
+    lastBlockRpc: number | null;
+    lastBlockGraph: number | null;
 }
 
 export type ClientStateUpdate = {
@@ -233,10 +238,10 @@ export type ClientStateUpdate = {
     activating?: boolean;
     myNuggs?: MyNuggsData[];
     editingNugg?: NuggId | null;
-
     myUnclaimedNuggOffers?: UnclaimedNuggOffer[];
     myUnclaimedItemOffers?: UnclaimedItemOffer[];
     myLoans?: LoanData[];
+    health?: MakeOptional<Health, keyof Health>;
 };
 
 export interface Actions {
@@ -275,10 +280,11 @@ export interface LiveSwapBase {
     epoch?: EpochData | null;
     eth: EthInt;
     leader: string;
-    owner: string;
+    owner: string | null;
     endingEpoch: number | null;
-    num: number;
+    num: number | null;
     bottom: EthInt;
+    isBackup: boolean;
 }
 
 export interface LiveNuggSwap extends LiveSwapBase {
@@ -297,13 +303,14 @@ export interface LiveNuggItem {
 
 export interface LiveNugg {
     type: 'nugg';
-    activeLoan: boolean;
+    activeLoan: boolean | null;
     activeSwap?: LiveNuggSwap;
     items: LiveNuggItem[];
-    pendingClaim: boolean;
-    lastTransfer: number;
+    pendingClaim: boolean | null;
+    lastTransfer: number | null;
     owner: string;
     swaps: LiveNuggSwap[];
+    isBackup: boolean;
 }
 
 export interface LiveItemSwap extends LiveSwapBase {
@@ -312,11 +319,12 @@ export interface LiveItemSwap extends LiveSwapBase {
     epoch: EpochData | null;
     eth: EthInt;
     leader: string;
-    owner: string;
+    owner: string | null;
     endingEpoch: number | null;
     num: number;
-    isTryout: boolean;
+    isTryout: boolean | null;
     sellingNuggId: NuggId;
+    isBackup: boolean;
 }
 
 export interface LiveActiveItemSwap extends LiveItemSwap {
@@ -336,6 +344,7 @@ export interface LiveItem {
         max?: TryoutData;
         min?: TryoutData;
     };
+    isBackup: boolean;
 }
 
 export enum Lifecycle {

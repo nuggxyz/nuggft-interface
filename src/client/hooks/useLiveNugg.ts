@@ -1,12 +1,20 @@
 import { useWatchLiveNuggSubscription } from '@src/gql/types.generated';
-import { LiveNugg } from '@src/client/interfaces';
 import formatLiveNugg from '@src/client/formatters/formatLiveNugg';
+
+// eslint-disable-next-line import/no-cycle
+import useLiveNuggBackup from '@src/client/backups/useLiveNuggBackup';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
 
-export default (tokenId: string | undefined, onProccessedData: (data: LiveNugg) => void) => {
+import { useRpcBackup } from './useHealth';
+
+export default (tokenId: string | undefined) => {
     const graph = client.live.graph();
+
+    const updateToken = client.mutate.updateToken();
+
+    const backup = useRpcBackup();
 
     useWatchLiveNuggSubscription({
         client: graph,
@@ -21,9 +29,12 @@ export default (tokenId: string | undefined, onProccessedData: (data: LiveNugg) 
                 x.subscriptionData.data.nugg
             ) {
                 const formatted = formatLiveNugg(x.subscriptionData.data.nugg);
-                if (formatted) onProccessedData(formatted);
+                if (formatted) updateToken(tokenId, formatted);
             }
         },
     });
+
+    useLiveNuggBackup(backup, tokenId);
+
     return null;
 };
