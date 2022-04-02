@@ -127,6 +127,10 @@ interface Window {
     __APOLLO_CLIENT__?: any;
 }
 
+interface String {
+    isItemId(): boolean;
+}
+
 interface Array<T> {
     shuffle();
     filterInPlace(callbackfn: (value: T, index?: number, array?: this) => boolean, thisArg?: this);

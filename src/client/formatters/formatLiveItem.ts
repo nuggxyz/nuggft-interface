@@ -27,8 +27,10 @@ export default (item: LiveItemFragment): LiveItem => {
                 dotnuggRawCache: null,
                 sellingNuggId: y.sellingNuggItem.nugg.id,
                 bottom: new EthInt(y?.bottom),
+                isBackup: false,
             };
         }),
+        isBackup: false,
         activeSwap: item.activeSwap
             ? {
                   count: 1,
@@ -55,6 +57,7 @@ export default (item: LiveItemFragment): LiveItem => {
                   isTryout: false,
                   sellingNuggId: item.activeSwap?.sellingNuggItem.nugg.id,
                   bottom: new EthInt(item.activeSwap?.bottom),
+                  isBackup: false,
               }
             : undefined,
         upcomingActiveSwap: item.upcomingActiveSwap
@@ -81,6 +84,7 @@ export default (item: LiveItemFragment): LiveItem => {
                   isTryout: false,
                   sellingNuggId: item.upcomingActiveSwap?.sellingNuggItem.nugg.id,
                   bottom: new EthInt(item.upcomingActiveSwap?.bottom),
+                  isBackup: false,
               }
             : undefined,
     };

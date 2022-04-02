@@ -1,22 +1,10 @@
 subscription liveProtocol {
     protocol(id: "0x42069") {
         id
-        # epoch {
-        #     id
-        #     status
-        #     startblock
-        #     endblock
-        #     starttime
-        # }
         lastEpoch {
             ...epochswapdata
         }
         nextEpoch {
-            # id
-            # status
-            # startblock
-            # endblock
-            # starttime
             _upcomingActiveItemSwaps
             ...epochswapdata
         }
@@ -286,10 +274,6 @@ fragment liveItemSwap on ItemSwap {
             id
         }
     }
-    # bottom
-    # owner {
-    #     id
-    # }
     offers(orderBy: eth, orderDirection: desc) {
         id
         nugg {
@@ -315,10 +299,6 @@ subscription betterLiveOffers($tokenId: ID!) {
     nugg(id: $tokenId) {
         activeSwap {
             id
-            # owner {
-            #     id
-            # }
-            # bottom
             offers(orderBy: eth, orderDirection: desc) {
                 user {
                     id

@@ -17,21 +17,20 @@ function useRecursiveTimeout<T>(callback: () => Promise<T> | void, delay: number
             const ret = savedCallback.current();
 
             if (ret instanceof Promise) {
-                ret.then(() => {
+                void ret.then(() => {
                     if (delay !== null) {
                         id = setTimeout(tick, delay);
                     }
                 });
-            } else {
-                if (delay !== null) {
-                    id = setTimeout(tick, delay);
-                }
+            } else if (delay !== null) {
+                id = setTimeout(tick, delay);
             }
         }
         if (delay !== null) {
-            tick(); //setTimeout(tick, delay);
+            tick(); // setTimeout(tick, delay);
             return () => id && clearTimeout(id);
         }
+        return undefined;
     }, [delay]);
 }
 

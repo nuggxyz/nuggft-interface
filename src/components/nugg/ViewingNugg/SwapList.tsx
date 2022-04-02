@@ -59,7 +59,7 @@ const SwapItem: FunctionComponent<
 > = ({ item, index, extraData }) => {
     const ownerEns = web3.hook.usePriorityAnyENSName(
         item.type === 'item' ? 'nugg' : extraData?.provider,
-        item.owner,
+        item.owner || '',
     );
 
     const leaderEns = web3.hook.usePriorityAnyENSName(

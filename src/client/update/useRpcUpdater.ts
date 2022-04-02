@@ -93,6 +93,7 @@ export default () => {
                         eth: EthInt.fromNuggftV1Agency(event.args.agency),
                         user: agency.mask(160)._hex,
                         txhash: log.transactionHash,
+                        isBackup: false,
                     };
 
                     void emitter.emit({
@@ -128,6 +129,7 @@ export default () => {
                             user: agency.mask(160).toNumber().toString(),
                             txhash: log.transactionHash,
                             sellingNuggId: event.args.sellingTokenId.toString(),
+                            isBackup: false,
                         },
                     ]);
                     break;
@@ -146,24 +148,24 @@ export default () => {
                 case 'Loan': {
                     const agency = lib.parse.agency(event.args.agency);
                     if (agency.address === address) {
-                        addLoan({
-                            startingEpoch: agency.epoch.toNumber(),
-                            endingEpoch: agency.epoch.add(1024).toNumber(),
-                            eth: agency.eth,
-                            nugg: event.args.tokenId.toString(),
-                        });
+                        // addLoan({
+                        //     startingEpoch: agency.epoch,
+                        //     endingEpoch: agency.epoch.add(1024).toNumber(),
+                        //     eth: agency.eth,
+                        //     nugg: event.args.tokenId.toString(),
+                        // });
                     }
                     break;
                 }
                 case 'Rebalance': {
                     const agency = lib.parse.agency(event.args.agency);
                     if (agency.address === address) {
-                        updateLoan({
-                            startingEpoch: agency.epoch.toNumber(),
-                            endingEpoch: agency.epoch.add(1024).toNumber(),
-                            eth: agency.eth,
-                            nugg: event.args.tokenId.toString(),
-                        });
+                        // updateLoan({
+                        //     startingEpoch: agency.epoch.toNumber(),
+                        //     endingEpoch: agency.epoch.add(1024).toNumber(),
+                        //     eth: agency.eth,
+                        //     nugg: event.args.tokenId.toString(),
+                        // });
                     }
                     break;
                 }

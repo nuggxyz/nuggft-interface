@@ -18,8 +18,9 @@ type Props = {
 };
 
 const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick }) => {
-    const epoch__id = client.live.epoch.id();
+    const epoch = client.live.epoch.id();
     const epoch__endblock = client.live.epoch.endblock();
+    // const health = client.live.health();
 
     const blocknum = client.live.blocknum();
     const error = web3.hook.usePriorityError();
@@ -29,7 +30,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
     const springStyle = useSpring({
         display: 'flex',
         alignItems: 'center',
-        opacity: epoch__id ? 1 : 0,
+        opacity: epoch ? 1 : 0,
     });
 
     const [ref, hover] = useOnHover(() => undefined);
@@ -55,7 +56,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
                     role="button"
                     onClick={() => {
                         if (onClick) onClick();
-                        routeTo(epoch__id!.toString(), false);
+                        routeTo(epoch!.toString(), false);
                     }}
                     style={style2}
                 >
@@ -63,9 +64,9 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
                         <AlertCircle size={24} style={{ paddingRight: `${0.5}rem` }} />
                     ) : (
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                            {epoch__id ? (
+                            {epoch ? (
                                 <TokenViewer
-                                    tokenId={epoch__id.toString()}
+                                    tokenId={epoch.toString()}
                                     style={{
                                         width: '37px',
                                         height: '37px',
@@ -78,14 +79,14 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
                         </div>
                     )}
 
-                    {epoch__id && epoch__endblock && blocknum ? (
+                    {epoch && epoch__endblock && blocknum ? (
                         <Text
                             textStyle={{
                                 fontFamily: lib.layout.font.code.regular,
                                 ...textStyle,
                             }}
                         >
-                            {`${epoch__id} | ${epoch__endblock - blocknum}`}
+                            {`${epoch} | ${epoch__endblock - blocknum}`}
                         </Text>
                     ) : null}
                 </div>

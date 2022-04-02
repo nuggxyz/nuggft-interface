@@ -14,11 +14,6 @@ import { useDarkMode } from './hooks/useDarkMode';
 export default {
     ...core,
 
-    // exists: {
-    //     lastSwap: () => core.subscribe((state) => state.lastView?.tokenId !== undefined),
-    //     lastView: () => core((state) => state.lastView?.tokenId !== undefined),
-    // },
-
     live: {
         /// ///// simple ////////
         graph: () => coreNonImmer((state) => state.graph),
@@ -84,6 +79,8 @@ export default {
                     [tokenId],
                 ),
             ),
+        health: () => core((state) => state.health),
+
         activeSwaps: () => core((state) => state.activeSwaps),
         activeItems: () => core((state) => state.activeItems),
         activeNuggItem: (id: string | undefined) =>

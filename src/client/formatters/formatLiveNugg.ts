@@ -15,6 +15,7 @@ export default (nugg: LiveNuggFragment): LiveNugg => {
                 position: Number(y?.item.position),
             };
         }),
+        isBackup: false,
         pendingClaim: nugg.pendingClaim,
         lastTransfer: nugg.lastTransfer,
         swaps: nugg.swaps.map((y) => {
@@ -36,6 +37,7 @@ export default (nugg: LiveNuggFragment): LiveNugg => {
                 num: Number(y?.num),
                 isActive: nugg.activeSwap?.id === y?.id,
                 bottom: new EthInt(y?.bottom),
+                isBackup: false,
             };
         }),
         activeSwap: nugg.activeSwap
@@ -62,6 +64,7 @@ export default (nugg: LiveNuggFragment): LiveNugg => {
                   num: Number(nugg.activeSwap?.num),
                   isActive: true,
                   bottom: new EthInt(nugg.activeSwap?.bottom),
+                  isBackup: false,
               }
             : undefined,
     };

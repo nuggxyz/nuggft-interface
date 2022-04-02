@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { ApolloClient } from '@apollo/client';
 
 import { buildApolloSplitLink, buildCache } from '@src/gql/config';
@@ -81,6 +81,22 @@ export const CONTRACTS = {
         Offset: 1,
         MintOffset: 1000000,
     },
+};
+
+export const calculateStartBlock = (epoch: BigNumberish, chainId: Chain) => {
+    return BigNumber.from(epoch)
+        .sub(CONTRACTS[chainId].Offset)
+        .mul(CONTRACTS[chainId].Interval)
+        .add(CONTRACTS[chainId].Genesis)
+        .toNumber();
+};
+
+export const calculateEpochId = (blocknum: number, chainId: Chain) => {
+    return BigNumber.from(blocknum)
+        .sub(CONTRACTS[chainId].Genesis)
+        .div(CONTRACTS[chainId].Interval)
+        .add(CONTRACTS[chainId].Offset)
+        .toNumber();
 };
 
 // QmXAhEeSBXYA227ER3YK9NBE57HhpVGGWeYWQhic4nPZ6M

@@ -12,7 +12,7 @@
         "webpack:develop": "node webpack/scripts/develop.js",
         "build": "node webpack/scripts/build.js",
         "serve": "serve -s build -l 3001",
-        "graphql:compile": "graphql-codegen --config codegen.yaml",
+        "graphql:compile": "graphql-codegen --config .graphqlrc",
         "test": "node webpack/scripts/test.js",
         "i18n:extract": "lingui extract --locale en-US",
         "i18n:compile": "yarn i18n:extract && lingui compile",

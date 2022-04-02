@@ -37,7 +37,7 @@ export const buildApolloSplitLink = (http: string, wss: string) => {
             uri: wss,
             options: {
                 reconnect: true,
-                timeout: 60000,
+                timeout: 120000,
                 minTimeout: 30000,
                 reconnectionAttempts: 100,
             },

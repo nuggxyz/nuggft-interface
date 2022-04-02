@@ -1,5 +1,6 @@
 import { BaseContract, ContractInterface, PopulatedTransaction, BigNumber } from 'ethers';
 import { useMemo, useState, useCallback } from 'react';
+import { Web3Provider } from '@ethersproject/providers';
 
 import web3 from '@src/web3';
 import { NuggftV1__factory } from '@src/typechain/factories/NuggftV1__factory';
@@ -10,22 +11,24 @@ import emitter from '@src/emitter';
 
 import { NuggftV1 } from '../typechain/NuggftV1';
 
-function useContract<C extends BaseContract>(address: string, abi: ContractInterface) {
-    const provider = web3.hook.usePriorityProvider();
-
+function useContract<C extends BaseContract>(
+    address: string,
+    abi: ContractInterface,
+    provider?: Web3Provider,
+) {
     return useMemo(() => {
         return new BaseContract(address, abi, provider) as C;
     }, [address, provider, abi]);
 }
 
-export function useNuggftV1() {
+export function useNuggftV1(provider?: Web3Provider) {
     const chainId = web3.hook.usePriorityChainId();
 
     const address = useMemo(() => {
         return web3.config.CONTRACTS[chainId ?? web3.config.DEFAULT_CHAIN].NuggftV1;
     }, [chainId]);
 
-    return useContract<NuggftV1>(address, NuggftV1__factory.abi);
+    return useContract<NuggftV1>(address, NuggftV1__factory.abi, provider);
 }
 
 export function useDotnuggV1() {

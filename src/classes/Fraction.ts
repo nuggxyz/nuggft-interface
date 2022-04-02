@@ -132,11 +132,11 @@ export class EthInt extends Fraction {
         super(BigNumber.from(value), ETH_ONE);
     }
 
-    public static fromNuggftV1Agency(value: string): EthInt {
+    public static fromNuggftV1Agency(value: BigNumberish): EthInt {
         return new EthInt(BigNumber.from(value).shr(160).mask(70).mul(100000000));
     }
 
-    public static fromNuggftV1Stake(cache: string) {
+    public static fromNuggftV1Stake(cache: BigNumberish) {
         const bn = BigNumber.from(cache);
         return {
             shares: bn.shr(192),

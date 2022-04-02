@@ -58,7 +58,7 @@ const HighestOffer: FunctionComponent<Props> = () => {
             token.lifecycle !== Lifecycle.Stands
         ) {
             if (token.type === 'item') {
-                return token.activeSwap?.owner.toLowerCase() !== leader.user.toLowerCase();
+                return token.activeSwap?.owner?.toLowerCase() !== leader.user.toLowerCase();
             }
             return true;
         }
@@ -82,13 +82,17 @@ const HighestOffer: FunctionComponent<Props> = () => {
                     </Text>
                     <Text size="smaller">{ens}</Text>
                 </div>
-                <Button
-                    buttonStyle={styles.etherscanBtn}
-                    onClick={() =>
-                        chainId && web3.config.gotoEtherscan(chainId, 'tx', leader.txhash)
-                    }
-                    rightIcon={<IoOpenOutline color={lib.colors.nuggBlueText} size={14} />}
-                />
+                {leader.txhash && (
+                    <Button
+                        buttonStyle={styles.etherscanBtn}
+                        onClick={() =>
+                            chainId &&
+                            leader.txhash &&
+                            web3.config.gotoEtherscan(chainId, 'tx', leader.txhash)
+                        }
+                        rightIcon={<IoOpenOutline color={lib.colors.nuggBlueText} size={14} />}
+                    />
+                )}
             </animated.div>
         </div>
     ) : null;

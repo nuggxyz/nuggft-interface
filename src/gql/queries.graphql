@@ -45,3 +45,11 @@ query getLiveItem($tokenId: ID!) {
         ...liveItem
     }
 }
+
+query health {
+    _meta {
+        block {
+            number
+        }
+    }
+}
