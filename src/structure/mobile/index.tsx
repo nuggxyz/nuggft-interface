@@ -68,7 +68,6 @@ const Mobile: FunctionComponent<Props> = () => {
             style={{
                 ...styles.container,
                 background:
-                    // eslint-disable-next-line no-nested-ternary
                     currentView === 'Wallet'
                         ? Colors.gradient3
                         : currentView === 'Search'

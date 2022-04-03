@@ -15,6 +15,7 @@ import web3 from '@src/web3';
 import useRemaining from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 import useLifecycle from '@src/client/hooks/useLifecycle';
+import AppState from '@src/state/app';
 
 import styles from './TheRing.styles';
 
@@ -31,6 +32,8 @@ const TheRing: FunctionComponent<Props> = ({
     circleWidth = 1600,
     tokenStyle,
 }) => {
+    const screenType = AppState.select.screenType();
+
     const chainId = web3.hook.usePriorityChainId();
 
     const tokenId = client.live.lastSwap.tokenId();
@@ -82,6 +85,7 @@ const TheRing: FunctionComponent<Props> = ({
                     ...circleStyle,
                     flexDirection: 'column',
                 }}
+                strokeWidth={screenType === 'phone' ? 10 : 20}
             >
                 {tokenId && (
                     <>

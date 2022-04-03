@@ -25,6 +25,7 @@ type Props = {
     staticColor: string;
     style?: CSSProperties;
     width: number;
+    strokeWidth?: number;
 };
 const TWOPI = Math.PI * 2;
 const HALFPI = Math.PI / 2;
@@ -38,6 +39,7 @@ const CircleTimer: FunctionComponent<Props> = ({
     staticColor,
     style,
     width,
+    strokeWidth = 20,
 }) => {
     // blocktime;
     // const dimensions = AppState.select.dimensions();
@@ -126,7 +128,7 @@ const CircleTimer: FunctionComponent<Props> = ({
                     r={timerCircleRadius}
                     stroke={shadowColor === 'transparent' ? 'transparent' : 'white'}
                     strokeDashoffset={x}
-                    strokeWidth={20}
+                    strokeWidth={strokeWidth}
                     fill="none"
                     strokeDasharray={`${circumference} ${circumference}`}
                     strokeLinecap="round"
