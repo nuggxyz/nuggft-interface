@@ -24,9 +24,8 @@ const ConnectTab: FunctionComponent<Props> = () => {
                         marginRight: '1rem',
                     }}
                 >
-                    {t`Connect to nuggft!`}
+                    {t`Connect`}
                 </Text>
-                <NLStaticImage image="nugg" />
             </div>
             <div style={styles.disclaimerContainer}>
                 <Text type="text" size="smaller" textStyle={{ color: Colors.textColor }}>
