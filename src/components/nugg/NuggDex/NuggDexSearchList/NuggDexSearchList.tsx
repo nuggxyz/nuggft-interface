@@ -22,6 +22,7 @@ import {
 } from '@src/gql/types.generated';
 import { executeQuery3c } from '@src/graphql/helpers';
 import { createItemId } from '@src/lib/index';
+import AppState from '@src/state/app';
 
 import NuggList, { NuggListOnScrollEndProps } from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -239,9 +240,15 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         },
         [chainId, graph],
     );
+    const screenType = AppState.select.screenType();
 
     return (
-        <div style={styles.searchListContainer}>
+        <div
+            style={{
+                ...styles.searchListContainer,
+                ...(screenType === 'phone' && { width: '100%' }),
+            }}
+        >
             <animated.div style={animatedStyle}>
                 <NuggLink
                     type={SearchView.Recents}

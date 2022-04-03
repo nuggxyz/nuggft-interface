@@ -7,6 +7,7 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import { parseTokenIdSmart } from '@src/lib';
 import client from '@src/client';
 import { ListData } from '@src/client/interfaces';
+import AppState from '@src/state/app';
 
 import styles from './NuggDexComponents.styles';
 
@@ -27,6 +28,7 @@ const NuggLinkThumbnail: FunctionComponent<{
             ...customStyle,
         };
     }, [item, isHovering, lastView__tokenId, customStyle]);
+    const screenType = AppState.select.screenType();
 
     return (
         <animated.div
@@ -38,9 +40,11 @@ const NuggLinkThumbnail: FunctionComponent<{
             }}
         >
             <TokenViewer tokenId={item.id} style={styles.nugg} disableOnClick />
-            <Text size="smaller" textStyle={styles.label}>
-                {parseTokenIdSmart(item.id)}
-            </Text>
+            {screenType !== 'phone' && (
+                <Text size="smaller" textStyle={styles.label}>
+                    {parseTokenIdSmart(item.id)}
+                </Text>
+            )}
         </animated.div>
     );
 };

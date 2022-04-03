@@ -13,6 +13,7 @@ import { useNuggftV1, useDotnuggV1, useTransactionManager } from '@src/contracts
 import { ItemId } from '@src/client/router';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer3 from '@src/components/nugg/TokenViewer3';
+import web3 from '@src/web3';
 
 import styles from './SearchOverlay.styles';
 
@@ -73,9 +74,10 @@ export default () => {
     const style = useAnimateOverlay(!!tokenId, {
         zIndex: 998,
     });
+    const provider = web3.hook.usePriorityProvider();
 
-    const nuggft = useNuggftV1();
-    const dotnugg = useDotnuggV1();
+    const nuggft = useNuggftV1(provider);
+    const dotnugg = useDotnuggV1(provider);
 
     const [items, setItems] = useAsyncSetState<ItemList>(() => {
         return tokenId

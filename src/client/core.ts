@@ -290,56 +290,63 @@ function createClientStoreAndActions2() {
                 function routeTo(tokenId: string | `item-${string}`, view: boolean): void {
                     set((draft) => {
                         let route = '#/';
+                        console.log(get());
 
-                        const { lastView, lastSwap } = draft;
+                        // const { lastView, lastSwap } = draft;
 
                         const isItem = tokenId?.includes('item-');
 
                         if (view) {
                             route += 'view/';
                             draft.isViewOpen = true;
+                            draft.isMobileWalletOpen = false;
+                            if (tokenId === '') draft.isMobileViewOpen = false;
+                            else draft.isMobileViewOpen = true;
                         } else {
                             draft.isViewOpen = false;
+                            draft.isMobileViewOpen = false;
                         }
-
-                        if (isItem) {
-                            route += 'item/';
-                            const num = parseItmeIdToNum(tokenId as `item-${string}`);
-                            route += `${num.feature}/`;
-                            route += num.position;
-                            if (view) {
-                                draft.lastView = {
-                                    type: Route.ViewItem,
-                                    tokenId: tokenId as `item-${string}`,
-                                    ...num,
-                                };
+                        if (tokenId !== '') {
+                            if (isItem) {
+                                route += 'item/';
+                                const num = parseItmeIdToNum(tokenId as `item-${string}`);
+                                route += `${num.feature}/`;
+                                route += num.position;
+                                if (view) {
+                                    draft.lastView = {
+                                        type: Route.ViewItem,
+                                        tokenId: tokenId as `item-${string}`,
+                                        ...num,
+                                    };
+                                } else {
+                                    draft.lastSwap = {
+                                        type: Route.SwapItem,
+                                        tokenId: tokenId as `item-${string}`,
+                                        ...num,
+                                    };
+                                }
                             } else {
-                                draft.lastSwap = {
-                                    type: Route.SwapItem,
-                                    tokenId: tokenId as `item-${string}`,
-                                    ...num,
-                                };
-                            }
-                        } else {
-                            route += `nugg/${tokenId}`;
-                            if (view) {
-                                draft.lastView = {
-                                    type: Route.ViewNugg,
-                                    tokenId,
-                                    idnum: +tokenId,
-                                };
-                            } else {
-                                draft.lastSwap = {
-                                    type: Route.SwapNugg,
-                                    tokenId,
-                                    idnum: +tokenId,
-                                };
+                                route += `nugg/${tokenId}`;
+                                if (view) {
+                                    draft.lastView = {
+                                        type: Route.ViewNugg,
+                                        tokenId,
+                                        idnum: +tokenId,
+                                    };
+                                } else {
+                                    draft.lastSwap = {
+                                        type: Route.SwapNugg,
+                                        tokenId,
+                                        idnum: +tokenId,
+                                    };
+                                }
                             }
                         }
 
                         if (route !== draft.route) {
                             window.location.replace(route);
                         }
+                        const { lastView, lastSwap } = get();
                         if (view && lastView) {
                             const save = JSON.stringify({
                                 id: lastView.tokenId,
@@ -366,14 +373,28 @@ function createClientStoreAndActions2() {
 
                 const toggleView = () => {
                     const { isViewOpen, lastSwap } = get();
-                    if (lastSwap) routeTo(lastSwap.tokenId, !isViewOpen);
+                    if (lastSwap) routeTo('', !isViewOpen);
                     else routeTo('', !isViewOpen);
+                };
+
+                const hideMobileViewingNugg = () => {
+                    set((draft) => {
+                        draft.isMobileViewOpen = false;
+                    });
                 };
 
                 const toggleEditingNugg = (tokenId: NuggId | undefined) => {
                     set((draft) => {
                         draft.editingNugg = tokenId;
                     });
+                };
+
+                const toggleMobileWallet = () => {
+                    routeTo('', false);
+                    set((draft) => {
+                        draft.isMobileWalletOpen = !get().isMobileWalletOpen;
+                    });
+                    console.log(get());
                 };
                 const updateLocale = (locale: SupportedLocale | undefined) => {
                     set((draft) => {
@@ -421,7 +442,8 @@ function createClientStoreAndActions2() {
                     nuggft: undefined,
                     epoch: undefined,
                     nextEpoch: undefined,
-
+                    isMobileViewOpen: false,
+                    isMobileWalletOpen: false,
                     epoch__id: 0,
                     route: undefined,
                     lastView: undefined,
@@ -488,6 +510,8 @@ function createClientStoreAndActions2() {
                     updateUserDarkMode,
                     updateMediaDarkMode,
                     addFeedMessage,
+                    hideMobileViewingNugg,
+                    toggleMobileWallet,
                 };
             }),
         ),

@@ -4,6 +4,7 @@ import { animated } from '@react-spring/web';
 import AppState from '@src/state/app';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import client from '@src/client';
+import { TokenId } from '@src/client/router';
 
 import styles from './RingAbout.styles';
 import OffersList from './OffersList';
@@ -15,13 +16,14 @@ import Caboose from './Caboose';
 
 type Props = {
     asHappyTab?: boolean;
+    manualTokenId?: TokenId;
 };
 
-const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false }) => {
+const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId }) => {
     const screenType = AppState.select.screenType();
     const darkmode = useDarkMode();
 
-    const tokenId = client.live.lastSwap.tokenId();
+    const tokenId = client.live.lastSwap.tokenIdWithOptionalOverride(manualTokenId);
     const token = client.live.token(tokenId);
 
     return token ? (
@@ -39,16 +41,16 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false }) => {
                 }}
             >
                 <div style={styles.bodyContainer}>
-                    <OwnerBlock />
-                    <OfferText />
-                    <OffersList tokenId={tokenId || ''} />
+                    <OwnerBlock tokenId={tokenId} />
+                    <OfferText tokenId={tokenId} />
+                    <OffersList tokenId={tokenId} />
                 </div>
                 <OfferButton tokenId={tokenId} />
             </animated.div>
 
-            <SideCar />
+            <SideCar tokenId={tokenId} />
 
-            <Caboose />
+            <Caboose tokenId={tokenId} />
         </>
     ) : null;
 };

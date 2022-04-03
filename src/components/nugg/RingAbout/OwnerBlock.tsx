@@ -1,4 +1,4 @@
-import React, { FC, FunctionComponent } from 'react';
+import React, { FC } from 'react';
 import { plural, t } from '@lingui/macro';
 
 import useLifecycle from '@src/client/hooks/useLifecycle';
@@ -12,10 +12,10 @@ import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
+import AppState from '@src/state/app';
+import TheRing from '@src/components/nugg/TheRing/TheRing';
 
 import styles from './RingAbout.styles';
-
-type Props = Record<string, unknown>;
 
 const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>> = ({ item }) => {
     return (
@@ -30,8 +30,7 @@ const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>>
     );
 };
 
-const OwnerBlock: FunctionComponent<Props> = () => {
-    const tokenId = client.live.lastSwap.tokenId();
+const OwnerBlock = ({ tokenId }: { tokenId?: string }) => {
     const token = client.live.token(tokenId);
     const lifecycle = useLifecycle(token);
     const leader = client.live.offers(tokenId).first() as unknown as OfferData;
@@ -45,6 +44,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
         token && token.type === 'item' ? 'nugg' : provider,
         leader?.user || '',
     );
+    const screenType = AppState.select.screenType();
 
     return (
         <div style={styles.ownerBlockContainer}>
@@ -120,7 +120,8 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                                 <CurrencyText
                                     textStyle={{ color: 'white', fontSize: '28px' }}
                                     image="eth"
-                                    value={leader?.eth?.decimal?.toNumber()}
+                                    value={leader?.eth?.number}
+                                    decimals={3}
                                 />
                                 <Text textStyle={{ fontSize: '13px', color: 'white' }}>
                                     {`${leaderEns || leader?.user} is selling`}
@@ -140,6 +141,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                                     textStyle={{ color: 'white', fontSize: '28px' }}
                                     image="eth"
                                     value={token.tryout.min.eth.number || 0}
+                                    decimals={3}
                                 />
                                 <Text textStyle={{ fontSize: '13px', color: 'white' }}>
                                     {t`minimum price`}
@@ -165,6 +167,20 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                             </div>
                         )}
                     </div>
+                    {screenType === 'phone' && (
+                        <div
+                            style={{
+                                width: '100%',
+                                height: '300px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'start',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <TheRing circleWidth={800} manualTokenId={tokenId} disableHover />
+                        </div>
+                    )}
                     {token && token.type === 'nugg' && (
                         <List
                             data={token.items}
@@ -176,7 +192,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                             horizontal
                             style={{
                                 // width: '100%',
-                                marginTop: '20px',
+                                marginTop: screenType === 'phone' ? '-20px' : '20px',
                                 background: lib.colors.transparentLightGrey,
                                 height: '80px',
                                 padding: '0rem .3rem',

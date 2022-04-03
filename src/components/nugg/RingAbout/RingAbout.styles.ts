@@ -48,8 +48,8 @@ const styles = NLStyleSheetCreator({
     },
     mobile: {
         width: '90%',
-        boxShadow: 'none',
-        background: lib.colors.transparentWhite,
+        // boxShadow: 'none',
+        // background: lib.colors.transparentWhite,
         ...globalStyles.backdropFilter,
         zIndex: 10000,
     },

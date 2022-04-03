@@ -77,10 +77,14 @@ const Wallet: FunctionComponent<Props> = () => {
                           },
                       ]
                 : [
-                      {
-                          label: t`Active`,
-                          comp: React.memo(ActiveTab),
-                      },
+                      ...(screenType !== 'phone'
+                          ? [
+                                {
+                                    label: t`Active`,
+                                    comp: React.memo(ActiveTab),
+                                },
+                            ]
+                          : []),
                       {
                           label: t`Connect`,
                           comp: React.memo(ConnectTab),

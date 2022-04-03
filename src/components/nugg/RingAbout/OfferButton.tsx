@@ -2,7 +2,7 @@ import React from 'react';
 import { t } from '@lingui/macro';
 
 import Button from '@src/components/general/Buttons/Button/Button';
-import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import state from '@src/state';
 import web3 from '@src/web3';
 import client from '@src/client';
@@ -21,6 +21,7 @@ export default ({
     const screenType = state.app.select.screenType();
     const address = web3.hook.usePriorityAccount();
     const token = client.live.token(tokenId);
+    const toggleMobileWallet = client.mutate.toggleMobileWallet();
 
     const lifecycle = useLifecycle(token);
 
@@ -34,19 +35,13 @@ export default ({
         <Button
             buttonStyle={{
                 ...styles.button,
-                ...(screenType === 'phone' && {
-                    background: lib.colors.nuggBlueText,
-                }),
             }}
             textStyle={{
                 ...styles.buttonText,
-                ...(screenType === 'phone' && {
-                    color: 'white',
-                }),
             }}
             onClick={() =>
                 screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                    ? state.app.dispatch.changeMobileView('Wallet')
+                    ? toggleMobileWallet()
                     : tokenId &&
                       state.app.dispatch.setModalOpen({
                           name: 'OfferModal',

@@ -16,6 +16,7 @@ import useRemaining from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import AppState from '@src/state/app';
+import { TokenId } from '@src/client/router';
 
 import styles from './TheRing.styles';
 
@@ -24,6 +25,8 @@ type Props = {
     circleStyle?: CSSProperties;
     circleWidth?: number;
     tokenStyle?: CSSProperties;
+    manualTokenId?: TokenId;
+    disableHover?: boolean;
 };
 
 const TheRing: FunctionComponent<Props> = ({
@@ -31,12 +34,14 @@ const TheRing: FunctionComponent<Props> = ({
     circleStyle,
     circleWidth = 1600,
     tokenStyle,
+    manualTokenId,
+    disableHover = false,
 }) => {
     const screenType = AppState.select.screenType();
 
     const chainId = web3.hook.usePriorityChainId();
 
-    const tokenId = client.live.lastSwap.tokenId();
+    const tokenId = client.live.lastSwap.tokenIdWithOptionalOverride(manualTokenId);
     const token = client.live.token(tokenId);
     const lifecycle = useLifecycle(token);
     const blocknum = client.live.blocknum();
@@ -90,9 +95,16 @@ const TheRing: FunctionComponent<Props> = ({
                 {tokenId && (
                     <>
                         {chainId && token && lifecycle === Lifecycle.Deck && (
-                            <Label text={t`countdown begins in ${countdownMinutes} minutes`} />
+                            <Label
+                                text={t`countdown begins in ${countdownMinutes} minutes`}
+                                containerStyles={{
+                                    ...(screenType === 'phone'
+                                        ? { position: 'absolute', top: 50, zIndex: 950 }
+                                        : {}),
+                                }}
+                            />
                         )}
-                        <AnimatedCard>
+                        <AnimatedCard disable={disableHover}>
                             <TokenViewer tokenId={tokenId} style={tokenStyle} showcase />
                         </AnimatedCard>
 

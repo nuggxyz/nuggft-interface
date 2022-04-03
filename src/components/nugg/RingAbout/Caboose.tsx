@@ -12,6 +12,7 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import useRemaining from '@src/client/hooks/useRemaining';
+import { TokenId } from '@src/client/router';
 
 import styles from './RingAbout.styles';
 
@@ -46,10 +47,9 @@ const TryoutRenderItem: FC<ListRenderItemProps<TryoutData, undefined, TryoutData
     );
 };
 
-export default () => {
+export default ({ tokenId }: { tokenId?: TokenId }) => {
     const screenType = state.app.select.screenType();
     const address = web3.hook.usePriorityAccount();
-    const tokenId = client.live.lastSwap.tokenId();
     const epoch = client.live.epoch.id();
 
     const token = client.live.token(tokenId);
@@ -69,6 +69,7 @@ export default () => {
             token.activeSwap.endingEpoch !== epoch
         );
     }, [token, epoch]);
+    const toggleMobileWallet = client.mutate.toggleMobileWallet();
 
     return token && token.type === 'item' && token.tryout.count > 0 ? (
         <div
@@ -105,20 +106,14 @@ export default () => {
                     <Button
                         buttonStyle={{
                             ...styles.button,
-                            ...(screenType === 'phone' && {
-                                background: lib.colors.nuggBlueText,
-                            }),
                         }}
                         textStyle={{
                             ...styles.buttonText,
-                            ...(screenType === 'phone' && {
-                                color: 'white',
-                            }),
                         }}
                         disabled={mustWaitToBid || !nuggToBuyFrom}
                         onClick={() =>
                             screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                                ? state.app.dispatch.changeMobileView('Wallet')
+                                ? toggleMobileWallet()
                                 : tokenId &&
                                   state.app.dispatch.setModalOpen({
                                       name: 'OfferModal',

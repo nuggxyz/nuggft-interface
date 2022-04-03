@@ -1,9 +1,7 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
-import lib from '@src/lib';
-import state from '@src/state';
 import client from '@src/client';
 import { Lifecycle } from '@src/client/interfaces';
 import { useNuggftV1 } from '@src/contracts/useContract';
@@ -17,14 +15,9 @@ import useLifecycle from '@src/client/hooks/useLifecycle';
 
 import styles from './RingAbout.styles';
 
-type Props = Record<string, unknown>;
-
-const OfferText: FunctionComponent<Props> = () => {
-    const tokenId = client.live.lastSwap.tokenId();
+const OfferText = ({ tokenId }: { tokenId?: string }) => {
     const token = client.live.token(tokenId);
     const lifecycle = useLifecycle(token);
-
-    const screenType = state.app.select.screenType();
 
     const hasBids = client.live.offers(tokenId).length !== 0;
 
@@ -51,9 +44,6 @@ const OfferText: FunctionComponent<Props> = () => {
         <Text
             textStyle={{
                 ...styles.title,
-                ...(screenType === 'phone' && {
-                    color: lib.colors.nuggBlueText,
-                }),
             }}
         >
             {text}

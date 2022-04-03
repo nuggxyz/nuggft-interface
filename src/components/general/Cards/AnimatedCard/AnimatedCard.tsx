@@ -10,11 +10,22 @@ const calc = (x: number, y: number, rect: DOMRect) => [
 const trans = (x: number, y: number, s: number) =>
     `perspective(600px) rotateX(${x}deg) rotateY(${y}deg) scale(${s})`;
 
-const AnimatedCard: FunctionComponent<React.PropsWithChildren<unknown>> = ({ children }) => {
+const AnimatedCard: FunctionComponent<React.PropsWithChildren<{ disable?: boolean }>> = ({
+    children,
+    disable = false,
+}) => {
     const ref = useRef<HTMLDivElement>(null);
     const [xys, set] = useState([0, 0, 1]);
     const props = useSpring({ xys, config: config.molasses });
-    return (
+    return disable ? (
+        <div
+            style={{
+                zIndex: 1,
+            }}
+        >
+            {children}
+        </div>
+    ) : (
         <div
             ref={ref}
             style={{
