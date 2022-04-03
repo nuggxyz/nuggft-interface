@@ -48,7 +48,7 @@ class AppState extends NLState<AppStateType> {
             modalIsOpen: undefined,
             modalData: {},
             view: 'Swap',
-            mobileView: 'Mint',
+            mobileView: 'Swap',
             walletVisible: false,
         });
 

@@ -91,7 +91,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
                     // width: '100%',
                     ...style,
                     transform: 'translate3d(0,0,0)',
-                    ...(isHovering ? { cursor: 'pointer' } : {}),
+                    ...(isHovering && !disableOnClick ? { cursor: 'pointer' } : {}),
                 }}
             >
                 {pendingSrc && (

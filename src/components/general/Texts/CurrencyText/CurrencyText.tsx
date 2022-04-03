@@ -102,7 +102,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
                             ? (val * 10 ** 9).toFixed(decimals)
                             : val > 1
                             ? val.toPrecision(percent ? 3 : 6)
-                            : val.toFixed(percent ? 2 : 5),
+                            : val.toFixed(percent ? 2 : decimals || 5),
                     )}
                 </animated.div>
                 {percent && '%'}

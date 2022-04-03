@@ -1,95 +1,35 @@
-import React, { FunctionComponent, useEffect } from 'react';
-import { animated, config, useSpring } from '@react-spring/web';
+import React, { FunctionComponent, Suspense } from 'react';
+import { Helmet } from 'react-helmet';
 
-import Colors from '@src/lib/colors';
-import state from '@src/state';
+import PageContainer from '@src/components/nugg/PageLayout/PageContainer/PageContainer';
 import client from '@src/client';
 
-import BottomBar from './BottomBar/BottomBar';
-import styles from './index.styles';
-import MintView from './MintView/MintView';
-import SearchView from './SearchView/SearchView';
-import WalletView from './WalletView';
+const SearchOverlay = React.lazy(() => import('@src/structure/desktop/SearchOverlay'));
+const SwapPage = React.lazy(() => import('@src/structure/desktop/SwapPage'));
+const HotRoateO = React.lazy(() => import('@src/structure/desktop/HotRotateO'));
+const WalletView = React.lazy(() => import('./WalletView'));
+const MobileViewOverlay = React.lazy(() => import('./MobileViewOverlay'));
 
 type Props = Record<string, never>;
 
-const sty = {
-    position: 'absolute',
-    height: '100%',
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    paddingBottom: '1rem',
-};
-
 const Mobile: FunctionComponent<Props> = () => {
-    const currentView = state.app.select.mobileView();
-    const lastView__tokenId = client.live.lastView.tokenId();
-    useEffect(() => {
-        if (lastView__tokenId && currentView !== 'Search') {
-            state.app.dispatch.changeMobileView('Search');
-        }
-    }, [lastView__tokenId]);
-
-    const [wallet] = useSpring(
-        {
-            opacity: currentView === 'Wallet' ? 1 : 0,
-            pointerEvents: currentView === 'Wallet' ? 'auto' : 'none',
-            zIndex: currentView === 'Wallet' ? 1 : 0,
-            ...sty,
-            config: config.default,
-        },
-        [],
-    );
-    const [mint] = useSpring(
-        {
-            opacity: currentView === 'Mint' ? 1 : 0,
-            pointerEvents: currentView === 'Mint' ? 'auto' : 'none',
-            zIndex: currentView === 'Mint' ? 1 : 0,
-            ...sty,
-            config: config.default,
-        },
-        [],
-    );
-    const [search] = useSpring(
-        {
-            opacity: currentView === 'Search' ? 1 : 0,
-            pointerEvents: currentView === 'Search' ? 'auto' : 'none',
-            zIndex: currentView === 'Search' ? 1 : 0,
-            ...sty,
-            config: config.default,
-        },
-        [],
-    );
+    const isMobileViewOpen = client.live.isMobileViewOpen();
+    const isMobileWalletOpen = client.live.isMobileWalletOpen();
 
     return (
-        <div
-            style={{
-                ...styles.container,
-                background:
-                    currentView === 'Wallet'
-                        ? Colors.gradient3
-                        : currentView === 'Search'
-                        ? Colors.gradient2
-                        : 'transparent',
-            }}
-        >
-            <div style={styles.viewContainer}>
-                <animated.div style={wallet as CSSPropertiesAnimated}>
-                    <WalletView />
-                </animated.div>
-                <animated.div style={mint as CSSPropertiesAnimated}>
-                    <MintView />
-                </animated.div>
-                <animated.div style={search as CSSPropertiesAnimated}>
-                    <SearchView />
-                </animated.div>
-            </div>
-            <div style={styles.bottomBar}>
-                <BottomBar />
-            </div>
-        </div>
+        <PageContainer>
+            <Helmet />
+            <Suspense fallback={<div />}>
+                {isMobileWalletOpen && <WalletView />}
+
+                <HotRoateO />
+                {isMobileViewOpen && <MobileViewOverlay />}
+
+                <SearchOverlay />
+
+                <SwapPage />
+            </Suspense>
+        </PageContainer>
     );
 };
 

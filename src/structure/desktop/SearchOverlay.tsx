@@ -24,9 +24,31 @@ const SearchOverlay: FunctionComponent<Props> = () => {
         ...styles.container,
     });
 
-    const modalStyle = useFirefoxBlur(['modal', undefined, 'editView']);
+    const modalStyle = useFirefoxBlur([
+        'modal',
+        undefined,
+        'editView',
+        'mobileSearchView',
+        'mobileWallet',
+    ]);
 
-    return (
+    return screenType === 'phone' ? (
+        <animated.div style={{ ...styles.container, ...style, ...modalStyle }} onClick={onClick}>
+            <div
+                aria-hidden="true"
+                role="button"
+                style={{
+                    ...styles.nuggDexContainer,
+                    alignItems: 'center',
+                    width: '100%',
+                    padding: '20px',
+                }}
+                onClick={(e) => e.stopPropagation()}
+            >
+                <NuggDexSearchList />
+            </div>
+        </animated.div>
+    ) : (
         <animated.div style={{ ...styles.container, ...style, ...modalStyle }} onClick={onClick}>
             <div
                 aria-hidden="true"

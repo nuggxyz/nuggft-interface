@@ -24,7 +24,7 @@ const Label: FunctionComponent<Props> = ({
                 ...containerStyles,
             }}
         >
-            <Text {...props} textStyle={styles.text}>
+            <Text textStyle={styles.text} {...props}>
                 {text}
             </Text>
         </div>

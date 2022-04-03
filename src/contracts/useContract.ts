@@ -31,14 +31,14 @@ export function useNuggftV1(provider?: Web3Provider) {
     return useContract<NuggftV1>(address, NuggftV1__factory.abi, provider);
 }
 
-export function useDotnuggV1() {
+export function useDotnuggV1(provider?: Web3Provider) {
     const chainId = web3.hook.usePriorityChainId();
 
     const address = useMemo(() => {
         return web3.config.CONTRACTS[chainId ?? web3.config.DEFAULT_CHAIN].DotnuggV1;
     }, [chainId]);
 
-    return useContract<DotnuggV1>(address, DotnuggV1__factory.abi);
+    return useContract<DotnuggV1>(address, DotnuggV1__factory.abi, provider);
 }
 
 export function useTransactionManager() {

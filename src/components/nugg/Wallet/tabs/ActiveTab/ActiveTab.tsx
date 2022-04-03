@@ -4,8 +4,6 @@ import { IoSearch } from 'react-icons/io5';
 import curriedLighten from 'polished/lib/color/lighten';
 
 import TextStatistic from '@src/components/nugg/Statistics/TextStatistic';
-import AppState from '@src/state/app';
-import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
 import web3 from '@src/web3';
 import client from '@src/client';
 import globalStyles from '@src/lib/globalStyles';
@@ -23,11 +21,19 @@ import SeeAllButton from './SeeAllButton';
 
 const fancy = curriedLighten(0.25)(lib.colors.blue);
 
-const RenderItem = ({ item }: { item: SwapData }) => {
+export const ActiveRenderItem = ({
+    item,
+    onClick,
+}: {
+    item: SwapData;
+    onClick?: (arg: typeof item) => void;
+}) => {
     const routeTo = client.mutate.routeTo();
 
     return item ? (
         <div
+            aria-hidden="true"
+            role="button"
             style={{
                 display: 'flex',
                 padding: '.5rem 1rem',
@@ -38,6 +44,13 @@ const RenderItem = ({ item }: { item: SwapData }) => {
                 borderRadius: lib.layout.borderRadius.medium,
                 margin: '0rem 0rem',
             }}
+            onClick={
+                onClick
+                    ? () => {
+                          onClick(item);
+                      }
+                    : undefined
+            }
         >
             <div
                 style={{
@@ -73,7 +86,7 @@ const RenderItem = ({ item }: { item: SwapData }) => {
 };
 
 export default () => {
-    const screenType = AppState.select.screenType();
+    // const screenType = AppState.select.screenType();
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
@@ -108,13 +121,13 @@ export default () => {
     return chainId && provider ? (
         <div style={styles.container}>
             <div>
-                <div style={screenType === 'phone' ? styles.phoneContainer : undefined}>
+                {/* <div style={screenType === 'phone' ? styles.phoneContainer : undefined}>
                     {screenType === 'phone' && (
                         <div style={styles.phoneAccountViewer}>
                             <AccountViewer />
                         </div>
                     )}
-                </div>
+                </div> */}
                 <div style={globalStyles.centeredSpaceBetween}>
                     <TextStatistic
                         label={t`Nuggs`}
@@ -134,7 +147,7 @@ export default () => {
                 labelStyle={styles.listLabel}
                 data={sortedAll.current}
                 extraData={undefined}
-                RenderItem={RenderItem}
+                RenderItem={ActiveRenderItem}
                 label={t`Ending in about ${minutes} minutes`}
                 style={styles.list}
                 loaderColor="white"
@@ -146,7 +159,7 @@ export default () => {
                 labelStyle={{ ...styles.listLabel, marginTop: '20px' }}
                 data={sortedAll.next}
                 extraData={undefined}
-                RenderItem={RenderItem}
+                RenderItem={ActiveRenderItem}
                 label={t`Coming Up`}
                 style={{ ...styles.list }}
                 listEmptyStyle={styles.textWhite}

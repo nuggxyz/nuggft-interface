@@ -1,5 +1,5 @@
 import React, { CSSProperties, NamedExoticComponent, useEffect, useState } from 'react';
-import { animated, useSpring, useTransition, config } from '@react-spring/web';
+import { animated, useSpring, config, useTransition } from '@react-spring/web';
 
 import lib, { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import AppState from '@src/state/app';
@@ -24,6 +24,7 @@ interface Props {
     headerTextStyle?: CSSProperties;
     selectionIndicatorStyle?: CSSProperties;
     headerContainerStyle?: CSSProperties;
+    disableTransition?: boolean;
 }
 
 // const WIDTH = 350;
@@ -32,6 +33,7 @@ const HappyTabber = ({
     items,
     defaultActiveIndex = 0,
     // containerStyle,
+    disableTransition = false,
     bodyStyle,
     headerTextStyle,
     selectionIndicatorStyle,
@@ -57,7 +59,11 @@ const HappyTabber = ({
         config: config.default,
     });
 
-    const tabFadeTransition = useTransition(items[activeIndex]?.comp, {
+    const Item = React.useMemo(() => {
+        return items[activeIndex]?.comp;
+    }, [items, activeIndex]);
+
+    const tabFadeTransition = useTransition(Item, {
         from: {
             padding: 'inherit',
             opacity: 0,
@@ -77,7 +83,7 @@ const HappyTabber = ({
         <div
             style={{
                 ...styles.wrapperContainer,
-                ...(screenType === 'phone' && styles.wrapperMobile),
+                // ...(screenType === 'phone' && { overflow: 'scroll' }),
                 minWidth: screenType === 'phone' ? '100%' : `${WIDTH}px`,
             }}
         >
@@ -129,11 +135,17 @@ const HappyTabber = ({
                     ))}
                 </div>
             )}
-            <div style={{ ...bodyStyle, ...styles.body, ...items[activeIndex]?.bodyStyle }}>
-                {tabFadeTransition((_styles, Item) => (
-                    // @ts-ignore
-                    <animated.div style={_styles}>{Item && <Item isActive />}</animated.div>
-                ))}
+            <div style={{ ...styles.body, ...items[activeIndex]?.bodyStyle, ...bodyStyle }}>
+                {disableTransition ? (
+                    <Item isActive />
+                ) : (
+                    tabFadeTransition((_styles, ItemComp) => (
+                        // @ts-ignore
+                        <animated.div style={_styles}>
+                            {ItemComp && <ItemComp isActive />}
+                        </animated.div>
+                    ))
+                )}
             </div>
         </div>
     );

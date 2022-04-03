@@ -6,16 +6,16 @@ import client from '@src/client';
 import state from '@src/state';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import lib from '@src/lib';
+import { TokenId } from '@src/client/router';
 
 import styles from './RingAbout.styles';
 import OffersList from './OffersList';
 import OfferButton from './OfferButton';
 
-export default () => {
+export default ({ tokenId }: { tokenId?: TokenId }) => {
     const screenType = state.app.select.screenType();
     const darkmode = useDarkMode();
 
-    const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
 
     return token && token.type === 'item' && token.upcomingActiveSwap ? (

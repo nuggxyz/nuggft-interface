@@ -6,6 +6,8 @@ import constants from '@src/lib/constants';
 import { ListData, SearchView } from '@src/client/interfaces';
 import client from '@src/client';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
+import Label from '@src/components/general/Label/Label';
+import AppState from '@src/state/app';
 
 import styles from './NuggDexComponents.styles';
 import NuggLinkAnchor from './NuggLinkAnchor';
@@ -65,6 +67,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                     ),
             );
     }, [previewNuggs, limit]);
+    const screenType = AppState.select.screenType();
 
     return (
         <animated.div
@@ -114,15 +117,29 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                     {children}
                 </animated.div>
             </animated.div>
-            <Text
-                size="small"
-                textStyle={{
-                    ...styles.nuggLinkCategoryTitle,
-                    opacity: opacityText,
-                }}
-            >
-                {formatSearchFilter(type)}
-            </Text>
+            {screenType === 'phone' ? (
+                <Label
+                    size="small"
+                    textStyle={{
+                        // ...styles.nuggLinkCategoryTitle,
+                        opacity: opacityText,
+                    }}
+                    containerStyles={{
+                        marginTop: '10px',
+                    }}
+                    text={formatSearchFilter(type)}
+                />
+            ) : (
+                <Text
+                    size="small"
+                    textStyle={{
+                        ...styles.nuggLinkCategoryTitle,
+                        opacity: opacityText,
+                    }}
+                >
+                    {formatSearchFilter(type)}
+                </Text>
+            )}
         </animated.div>
     );
 };

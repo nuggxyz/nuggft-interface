@@ -9,7 +9,7 @@ const styles = NLStyleSheetCreator({
         position: 'absolute',
         top: 0,
         width: '100%',
-        zIndex: 998,
+        zIndex: 1000,
         justifyContent: 'space-between',
         alignItems: 'center',
         transition: `all 0.3s ${Layout.animation}`,

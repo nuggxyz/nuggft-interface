@@ -1,6 +1,7 @@
 import React from 'react';
-import { IoOpenOutline, IoPowerOutline } from 'react-icons/io5';
+import { IoOpenOutline, IoPowerOutline, IoWallet } from 'react-icons/io5';
 import { t } from '@lingui/macro';
+import { FiAtSign } from 'react-icons/fi';
 
 import Jazzicon from '@src/components/nugg/Jazzicon';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -12,6 +13,7 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import lib from '@src/lib';
 import globalStyles from '@src/lib/globalStyles';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
+import client from '@src/client';
 
 import styles from './AccountViewer.styles';
 
@@ -24,44 +26,88 @@ const AccountViewer = () => {
     const balance = web3.hook.usePriorityBalance(provider);
     const peer = web3.hook.usePriorityPeer();
     const connector = web3.hook.usePriorityConnector();
+    const toggleMobileWallet = client.mutate.toggleMobileWallet();
 
     const darkmode = useDarkMode();
 
-    return ens && address && chainId && peer ? (
+    return !address ? (
+        // <Button
+        //     onClick={() => toggleMobileWallet()}
+        //     // buttonStyle={{ borderRadius: 100 }}
+        //     rightIcon={<div style={{ height: '35px', width: '35px', borderRadius: 100 }} />}
+        // />
+        <div
+            style={{
+                background: lib.colors.shadowLightGrey,
+                height: '35px',
+                width: '35px',
+                borderRadius: 100,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                boxShadow: lib.layout.boxShadow.basic,
+                // border: `3px solid ${lib.colors.transparentDarkGrey2}`,
+            }}
+        >
+            <Button
+                buttonStyle={{ background: lib.colors.transparent, padding: '.5rem .3rem' }}
+                onClick={() => toggleMobileWallet()}
+                rightIcon={<FiAtSign style={{ color: lib.colors.darkerGray }} />}
+            />
+        </div>
+    ) : // FiAtSign
+    // <div style={{ height: '35px', width: '35px', borderRadius: 100, background: 'white', border: '2px' }} />
+    ens && chainId && peer ? (
         <Flyout
             style={styles.flyout}
             button={
                 <div style={styles.textContainer}>
-                    <div
-                        style={{
-                            marginRight: screenType === 'phone' ? '0rem' : '.5rem',
-                            ...styles.header,
-                        }}
-                    >
-                        <div style={globalStyles.centeredSpaceBetween}>
-                            <Text type="text" size="medium" textStyle={styles.text}>
-                                {ens.toLowerCase()}
-                            </Text>
-                            <NLStaticImage image={`${peer.peer}_icon_small`} />
-                            {screenType === 'phone' && <Jazzicon address={address} size={15} />}
-                        </div>
-                        <Text
-                            size="smaller"
-                            type="code"
-                            textStyle={{
-                                ...styles.balance,
-                                ...(darkmode ? { color: 'white' } : {}),
+                    {screenType !== 'phone' && (
+                        <div
+                            style={{
+                                // marginRight: screenType ===|'phone' ? '0rem' : '.5rem',
+                                ...styles.header,
                             }}
                         >
-                            ({web3.config.CHAIN_INFO[chainId].label})
-                            {balance ? balance.decimal.toNumber().toPrecision(5) : 0} ETH
-                        </Text>
-                    </div>
-                    {screenType !== 'phone' && <Jazzicon address={address} size={35} />}
+                            <div style={globalStyles.centeredSpaceBetween}>
+                                <Text type="text" size="medium" textStyle={styles.text}>
+                                    {ens.toLowerCase()}
+                                </Text>
+                                <NLStaticImage image={`${peer.peer}_icon_small`} />
+                            </div>
+                            <Text
+                                size="smaller"
+                                type="code"
+                                textStyle={{
+                                    ...styles.balance,
+                                    ...(darkmode ? { color: 'white' } : {}),
+                                }}
+                            >
+                                ({web3.config.CHAIN_INFO[chainId].label})
+                                {balance ? balance.decimal.toNumber().toPrecision(5) : 0} ETH
+                            </Text>
+                        </div>
+                    )}
+                    <Jazzicon address={address} size={35} />
                 </div>
             }
         >
             <>
+                {screenType === 'phone' && (
+                    <Button
+                        label={t`Wallet`}
+                        type="text"
+                        buttonStyle={styles.flyoutButton}
+                        leftIcon={
+                            <IoWallet
+                                color={lib.colors.nuggBlueText}
+                                size={25}
+                                style={{ marginRight: '.75rem' }}
+                            />
+                        }
+                        onClick={() => toggleMobileWallet()}
+                    />
+                )}
                 <Button
                     label={t`Explore`}
                     type="text"

@@ -24,6 +24,7 @@ import WalletState from '@src/state/wallet';
 import { MyNuggsData, LiveToken } from '@src/client/interfaces';
 import Label from '@src/components/general/Label/Label';
 import { EthInt } from '@src/classes/Fraction';
+import AppState from '@src/state/app';
 
 import styles from './OfferModal.styles';
 
@@ -37,6 +38,8 @@ const MyNuggRenderItem: FC<
         if (item.lastBid === 'unable-to-bid') return t`previous claim pending for this item`;
         return undefined;
     }, [item]);
+    const screenType = AppState.select.screenType();
+
     return (
         <Button
             disabled={!!disabled}
@@ -49,7 +52,11 @@ const MyNuggRenderItem: FC<
                 <>
                     <TokenViewer
                         tokenId={item.tokenId}
-                        style={{ width: '80px', height: '80px' }}
+                        style={
+                            screenType !== 'phone'
+                                ? { width: '80px', height: '80px' }
+                                : { width: '60px', height: '60px' }
+                        }
                         showLabel
                         disableOnClick
                     />
@@ -208,24 +215,7 @@ const OfferModal = ({ tokenId }: Props) => {
         activeItem,
         sellingNugg,
     ]);
-    // const nuggft = useNuggftV1();
-    // console.log({ sellingNugg, stableId, selectedNuggForItem });
-    // const { send, revert } = useTransactionManager();
-    // console.log({
-    //     stableType,
-    //     activeItem,
-    //     selectedNuggForItem,
-    //     sellingNugg,
-    //     type,
-    //     data,
-    //     check,
-    //     stableId,
-    //     address,
-    //     chainId,
-    //     provider,
-    // });
-
-    console.log('OfferModal rerender');
+    const screenType = AppState.select.screenType();
 
     return (
         <div style={styles.container}>
@@ -236,13 +226,28 @@ const OfferModal = ({ tokenId }: Props) => {
                         : t`Offer on`
                 } ${parseTokenId(stableId, true)}`}
             </Text>
-            <AnimatedCard>
+            {screenType === 'phone' ? (
                 <TokenViewer
                     tokenId={stableId}
                     showcase
-                    style={stableType === 'OfferItem' ? { height: '350px', width: '350px' } : {}}
+                    disableOnClick
+                    style={{
+                        ...{ height: '150px', width: '150px' },
+                    }}
                 />
-            </AnimatedCard>
+            ) : (
+                <AnimatedCard>
+                    <TokenViewer
+                        tokenId={stableId}
+                        showcase
+                        style={{
+                            ...(stableType === 'OfferItem'
+                                ? { height: '350px', width: '350px' }
+                                : {}),
+                        }}
+                    />
+                </AnimatedCard>
+            )}
 
             {stableType === 'OfferItem' && (
                 <List
@@ -259,7 +264,7 @@ const OfferModal = ({ tokenId }: Props) => {
                     style={{
                         width: '100%',
                         background: Colors.transparentLightGrey,
-                        height: '140px',
+                        height: screenType === 'phone' ? '100px' : '140px',
                         padding: '0rem .4rem',
                         borderRadius: Layout.borderRadius.medium,
                     }}

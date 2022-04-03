@@ -14,9 +14,11 @@ import styles from './ConnectTab.styles';
 type Props = Record<string, never>;
 
 const ConnectTab: FunctionComponent<Props> = () => {
+    // const screenType = state.app.select.screenType();
+
     return (
         <div style={styles.container}>
-            <div style={styles.titleContainer}>
+            {/* <div style={styles.titleContainer}>
                 <Text
                     size="large"
                     textStyle={{
@@ -26,7 +28,7 @@ const ConnectTab: FunctionComponent<Props> = () => {
                 >
                     {t`Connect`}
                 </Text>
-            </div>
+            </div> */}
             <div style={styles.disclaimerContainer}>
                 <Text type="text" size="smaller" textStyle={{ color: Colors.textColor }}>
                     {t`By connecting a wallet, you agree to nugg.xyz's Terms of Service and acknowledge

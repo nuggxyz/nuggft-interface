@@ -12,6 +12,7 @@ import eth from '@src/assets/images/currency/eth.svg';
 import metamask from '@src/assets/images/app_logos/metamask.png';
 import walletconnect from '@src/assets/images/app_logos/walletconnect.png';
 import nugg from '@src/assets/images/nugg/nugg-white.png';
+import nuggbutton from '@src/assets/images/nugg/nuggbutton.png';
 import coinbase from '@src/assets/images/app_logos/coinbase.png';
 import rainbow from '@src/assets/images/app_logos/rainbow.png';
 import trust from '@src/assets/images/app_logos/trust.svg';
@@ -19,7 +20,13 @@ import ledger from '@src/assets/images/app_logos/ledger.svg';
 import cryptodotcom from '@src/assets/images/app_logos/cryptodotcom.png';
 import { Peer } from '@src/web3/core/interfaces';
 
-export type NLStaticImageKey = 'nugg' | 'eth' | Peer | `${Peer}_icon` | `${Peer}_icon_small`;
+export type NLStaticImageKey =
+    | 'nuggbutton'
+    | 'nugg'
+    | 'eth'
+    | Peer
+    | `${Peer}_icon`
+    | `${Peer}_icon_small`;
 
 type Props = {
     image: NLStaticImageKey;
@@ -121,6 +128,16 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
             case 'nugg':
                 return (
                     <img src={nugg} height={35} width={35} style={props.style} alt={props.image} />
+                );
+            case 'nuggbutton':
+                return (
+                    <img
+                        src={nuggbutton}
+                        height={35}
+                        width={100}
+                        style={{ objectFit: 'contain', ...props.style }}
+                        alt={props.image}
+                    />
                 );
             case 'coinbase':
                 return (

@@ -174,6 +174,8 @@ export interface ClientState extends State, Actions {
     lastView: ViewRoutes | undefined;
     lastSwap: SwapRoutes | undefined;
     isViewOpen: boolean;
+    isMobileViewOpen: boolean;
+    isMobileWalletOpen: boolean;
     stake: StakeData | undefined;
     epoch__id: number | undefined;
     epoch: EpochData | undefined;
@@ -249,6 +251,9 @@ export interface Actions {
     updateProtocol: (stateUpdate: ClientStateUpdate) => void;
     routeTo: (tokenId: TokenId, view: boolean) => void;
     toggleView: () => void;
+    toggleMobileWallet: () => void;
+
+    hideMobileViewingNugg: () => void;
     updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;
     removeLoan: (tokenId: NuggId) => void;
     removeNuggClaim: (tokenId: NuggId) => void;

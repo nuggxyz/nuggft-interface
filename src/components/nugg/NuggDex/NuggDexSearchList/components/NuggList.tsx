@@ -138,27 +138,32 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                     ...style,
                 }}
             >
-                {screenType !== 'phone' && (
-                    <TransitionText
-                        Icon={
-                            <div style={{ marginTop: '.25rem' }}>
-                                <ChevronLeft />
-                            </div>
-                        }
-                        style={styles.nuggListTitle}
-                        text={formatSearchFilter(viewing)}
-                        transitionText={t`Go back`}
-                        onClick={() => {
-                            updateSearchFilterTarget(undefined);
-                            updateSearchFilterViewing(SearchView.Home);
-                            updateSearchFilterSort(undefined);
-                            updateSearchFilterSearchValue(undefined);
-                        }}
-                    />
-                )}
+                {/* {screenType !== 'phone' && ( */}
+                <TransitionText
+                    Icon={
+                        <div style={{ marginTop: '.25rem' }}>
+                            <ChevronLeft />
+                        </div>
+                    }
+                    style={styles.nuggListTitle}
+                    text={formatSearchFilter(viewing)}
+                    transitionText={t`Go back`}
+                    onClick={() => {
+                        updateSearchFilterTarget(undefined);
+                        updateSearchFilterViewing(SearchView.Home);
+                        updateSearchFilterSort(undefined);
+                        updateSearchFilterSearchValue(undefined);
+                    }}
+                />
+                {/* )} */}
                 <InfiniteList
                     id="nugg-list"
-                    style={{ zIndex: 0, overflow: 'hidden', position: 'relative' }}
+                    style={{
+                        zIndex: 0,
+                        overflow: 'hidden',
+                        position: 'relative',
+                        ...(screenType === 'phone' && { width: '100%' }),
+                    }}
                     data={values}
                     RenderItem={NuggListRenderItem}
                     loading={loading}

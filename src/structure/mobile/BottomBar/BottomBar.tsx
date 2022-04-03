@@ -14,7 +14,7 @@ import styles from './BottomBar.styles';
 
 const INDEX = {
     Search: -1,
-    Mint: 0,
+    Swap: 0,
     Wallet: 1,
 };
 
@@ -91,9 +91,9 @@ const BottomBar: FunctionComponent<Props> = () => {
                 <ChainIndicator
                     style={{ background: 'transparent', margin: '.3rem 0rem' }}
                     textStyle={{
-                        color: mobileView === 'Mint' ? Colors.nuggBlueText : 'white',
+                        color: mobileView === 'Swap' ? Colors.nuggBlueText : 'white',
                     }}
-                    onClick={mobileView !== 'Mint' ? () => onClick('Mint') : () => undefined}
+                    onClick={mobileView !== 'Swap' ? () => onClick('Swap') : () => undefined}
                 />
                 <Button
                     onClick={() => onClick('Wallet')}

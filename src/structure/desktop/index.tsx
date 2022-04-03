@@ -17,6 +17,7 @@ const Desktop: FunctionComponent<Props> = () => {
                 <HotRoateO />
 
                 <SearchOverlay />
+
                 <SwapPage />
             </Suspense>
         </PageContainer>

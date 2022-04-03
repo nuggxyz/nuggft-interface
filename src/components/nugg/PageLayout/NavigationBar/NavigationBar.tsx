@@ -8,6 +8,9 @@ import NuggDexSearchBar from '@src/components/nugg/NuggDex/NuggDexSearchBar/Nugg
 import state from '@src/state';
 import useFirefoxBlur from '@src/hooks/useFirefoxBlur';
 import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
+import NLStaticImage from '@src/components/general/NLStaticImage';
+import client from '@src/client';
+import Button from '@src/components/general/Buttons/Button/Button';
 
 import styles from './NavigationBar.styles';
 
@@ -18,11 +21,11 @@ type Props = {
 const NavigationBar: FC<Props> = () => {
     // const [ref, isHovering] = useOnHover();
     const screenType = state.app.select.screenType();
-    const view = state.app.select.view();
-    const onClick = useCallback(
-        () => (view === 'Search' ? state.app.dispatch.changeView('Swap') : undefined),
-        [view],
-    );
+    const isViewOpen = client.live.isViewOpen();
+    const toggleView = client.mutate.toggleView();
+    const toggleMobileWallet = client.mutate.toggleMobileWallet();
+
+    const onClick = useCallback(() => (isViewOpen ? toggleView() : undefined), [isViewOpen]);
 
     const container = useFirefoxBlur(['modal'], styles.navBarContainer);
     return (
@@ -33,32 +36,51 @@ const NavigationBar: FC<Props> = () => {
                 style={styles.navBarBackground}
                 onClick={onClick}
             />
-            <div style={styles.searchBarContainer}>
-                <NuggDexSearchBar />
-            </div>
-            <div style={{ marginRight: '10px' }}>
-                <HealthIndicator />
-            </div>
-
             <div
                 style={{
-                    whiteSpace: 'nowrap',
-                    position: 'relative',
+                    ...styles.searchBarContainer,
+                    ...(isViewOpen && screenType === 'phone' ? { width: '100%' } : {}),
                 }}
             >
-                <ChainIndicator />
-                {screenType === 'tablet' && (
-                    <div
-                        style={{
-                            position: 'absolute',
-                            marginTop: '0rem',
-                            width: '100%',
-                        }}
-                    >
-                        <FloorPrice />
-                    </div>
-                )}
+                <NuggDexSearchBar />
             </div>
+            {!isViewOpen && (
+                <>
+                    <div style={{ marginRight: '10px' }}>
+                        <HealthIndicator />
+                    </div>
+                    {screenType === 'phone' && (
+                        <Button
+                            hoverStyle={{ cursor: 'pointer' }}
+                            buttonStyle={{ background: 'transparent', padding: '0', zIndex: 1000 }}
+                            onClick={() => (isViewOpen ? toggleView() : toggleMobileWallet())}
+                            rightIcon={<NLStaticImage image="nuggbutton" />}
+                        />
+                    )}
+                </>
+            )}
+
+            {screenType !== 'phone' && (
+                <div
+                    style={{
+                        whiteSpace: 'nowrap',
+                        position: 'relative',
+                    }}
+                >
+                    <ChainIndicator />
+                    {screenType === 'tablet' && (
+                        <div
+                            style={{
+                                position: 'absolute',
+                                marginTop: '0rem',
+                                width: '100%',
+                            }}
+                        >
+                            <FloorPrice />
+                        </div>
+                    )}
+                </div>
+            )}
             <div
                 style={{
                     ...styles.linkAccountContainer,

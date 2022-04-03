@@ -42,7 +42,7 @@ interface AppStateToast {
 
 type AppStateViews = 'Swap' | 'Search';
 
-type AppStateMobileViews = 'Mint' | 'Search' | 'Wallet';
+type AppStateMobileViews = 'Swap' | 'Search' | 'Wallet';
 
 type ModalNames =
     | 'SellNuggOrItemModal'

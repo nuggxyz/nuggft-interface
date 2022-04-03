@@ -28,6 +28,9 @@ export default {
         lastSwap: {
             tokenId: () => core((state) => state.lastSwap?.tokenId),
             type: () => core((state) => state.lastSwap?.type),
+            tokenIdWithOptionalOverride: (tokenId?: TokenId) =>
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                core(useCallback((state) => tokenId || state.lastSwap?.tokenId, [tokenId])),
         },
 
         lastView: {
@@ -42,6 +45,9 @@ export default {
         locale: () => core((state) => state.locale),
         route: () => core((state) => state.route),
         isViewOpen: () => core((state) => state.isViewOpen),
+        isMobileViewOpen: () => core((state) => state.isMobileViewOpen),
+        isMobileWalletOpen: () => core((state) => state.isMobileWalletOpen),
+
         editingNugg: () => core((state) => state.editingNugg),
 
         blocknum: () => core((state) => state.blocknum),
@@ -80,8 +86,18 @@ export default {
         health: () => core((state) => state.health),
         lastGraphRefresh: () => coreNonImmer((state) => state.lastRefresh),
 
-        activeSwaps: () => core((state) => state.activeSwaps),
-        activeItems: () => core((state) => state.activeItems),
+        activeSwaps: () =>
+            core((state) =>
+                state.activeSwaps.filter(
+                    (x) => x.endingEpoch && x.endingEpoch >= (state.epoch?.id || 0),
+                ),
+            ),
+        activeItems: () =>
+            core((state) =>
+                state.activeItems.filter(
+                    (x) => x.endingEpoch && x.endingEpoch >= (state.epoch?.id || 0),
+                ),
+            ),
         activeNuggItem: (id: string | undefined) =>
             core(
                 // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -152,6 +168,9 @@ export default {
         addNugg: () => core((state) => state.addNugg),
         removeNugg: () => core((state) => state.removeNugg),
         toggleEditingNugg: () => core((state) => state.toggleEditingNugg),
+        hideMobileViewingNugg: () => core((state) => state.hideMobileViewingNugg),
+        toggleMobileWallet: () => core((state) => state.toggleMobileWallet),
+
         updateClients: () => coreNonImmer((state) => state.updateClients),
         updateToken: () => core((state) => state.updateToken),
         updateLocale: () => core((state) => state.updateLocale),
