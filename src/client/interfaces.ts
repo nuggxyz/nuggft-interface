@@ -1,6 +1,5 @@
-import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
+import { Web3Provider } from '@ethersproject/providers';
 import { State, StoreApi, UseBoundStore } from 'zustand';
-import { ApolloClient } from '@apollo/client/core/ApolloClient';
 
 import { Chain, Connector } from '@src/web3/core/interfaces';
 import { SupportedLocale } from '@src/lib/i18n/locales';
@@ -195,7 +194,7 @@ export interface ClientState extends State, Actions {
     myRecents: Set<string>;
     error: Error | undefined;
     activating: boolean;
-    liveTokens: Dictionary<LiveTokenWithLifecycle>;
+    liveTokens: Dictionary<LiveToken>;
     darkmode: DarkModePreferences;
     locale: SupportedLocale | undefined;
     searchFilter: SearchFilter;
@@ -261,7 +260,6 @@ export interface Actions {
     addNugg: (update: MyNuggsData) => void;
     removeNugg: (tokenId: NuggId) => void;
     toggleEditingNugg: (tokenId: NuggId | undefined) => void;
-    start: (chainId: Chain, rpc: JsonRpcProvider, graph: ApolloClient<any>) => Promise<void>;
     updateToken: (tokenId: TokenId, data: LiveToken) => void;
     updateLocale: (locale: SupportedLocale | undefined) => void;
     updateSearchFilterTarget: (value: SearchFilter['target']) => void;
@@ -362,7 +360,7 @@ export enum Lifecycle {
 
 export type LiveToken = LiveNugg | LiveItem;
 
-export type LiveItemWithLifecycle = LiveItem & { lifecycle: Lifecycle };
-export type LiveNuggWithLifecycle = LiveNugg & { lifecycle: Lifecycle };
+// export type LiveItemWithLifecycle = LiveItem & { lifecycle: Lifecycle };
+// export type LiveNuggWithLifecycle = LiveNugg & { lifecycle: Lifecycle };
 
-export type LiveTokenWithLifecycle = LiveNuggWithLifecycle | LiveItemWithLifecycle;
+// export type LiveToken = LiveNuggWithLifecycle | LiveItemWithLifecycle;

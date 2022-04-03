@@ -14,6 +14,7 @@ import { Lifecycle } from '@src/client/interfaces';
 import web3 from '@src/web3';
 import useRemaining from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
+import useLifecycle from '@src/client/hooks/useLifecycle';
 
 import styles from './TheRing.styles';
 
@@ -34,11 +35,13 @@ const TheRing: FunctionComponent<Props> = ({
 
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
+    const lifecycle = useLifecycle(token);
     const blocknum = client.live.blocknum();
 
     const showWarning = React.useMemo(() => {
         if (
-            token?.lifecycle === Lifecycle.Bunt &&
+            lifecycle === Lifecycle.Bunt &&
+            token &&
             blocknum &&
             token.activeSwap?.epoch &&
             +token.activeSwap.epoch.startblock + 255 - blocknum < 75
@@ -46,7 +49,7 @@ const TheRing: FunctionComponent<Props> = ({
             return +token.activeSwap.epoch.startblock + 255 - blocknum - 17;
 
         return 0;
-    }, [token, blocknum]);
+    }, [token, blocknum, lifecycle]);
 
     const { blocksRemaining, blockDuration, countdownMinutes } = useRemaining(
         token?.activeSwap?.epoch,
@@ -60,17 +63,16 @@ const TheRing: FunctionComponent<Props> = ({
                 blocktime={constants.BLOCKTIME}
                 width={circleWidth}
                 staticColor={
-                    token
-                        ? token.lifecycle === Lifecycle.Stands
+                    token && lifecycle
+                        ? lifecycle === Lifecycle.Stands
                             ? lib.colors.darkerGray
-                            : token.lifecycle === Lifecycle.Bench
+                            : lifecycle === Lifecycle.Bench
                             ? lib.colors.nuggGold
-                            : token.lifecycle === Lifecycle.Deck
+                            : lifecycle === Lifecycle.Deck
                             ? lib.colors.green
-                            : token.lifecycle === Lifecycle.Bat ||
-                              token.lifecycle === Lifecycle.Bunt
+                            : lifecycle === Lifecycle.Bat || lifecycle === Lifecycle.Bunt
                             ? ''
-                            : token.lifecycle === Lifecycle.Cut
+                            : lifecycle === Lifecycle.Cut
                             ? lib.colors.red
                             : 'purple'
                         : 'white'
@@ -83,7 +85,7 @@ const TheRing: FunctionComponent<Props> = ({
             >
                 {tokenId && (
                     <>
-                        {chainId && token && token.lifecycle === Lifecycle.Deck && (
+                        {chainId && token && lifecycle === Lifecycle.Deck && (
                             <Label text={t`countdown begins in ${countdownMinutes} minutes`} />
                         )}
                         <AnimatedCard>

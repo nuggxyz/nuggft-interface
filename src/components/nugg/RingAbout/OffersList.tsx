@@ -4,6 +4,7 @@ import { IoAdd, IoCheckmarkDoneOutline, IoRemove } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 import { Web3Provider } from '@ethersproject/providers';
 
+import useLifecycle from '@src/client/hooks/useLifecycle';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import client from '@src/client';
 import web3 from '@src/web3';
@@ -60,6 +61,7 @@ const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefin
 export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?: NuggId }) => {
     const offers = client.live.offers(tokenId);
     const token = client.live.token(tokenId);
+    const lifecycle = useLifecycle(token);
     const type = client.live.lastSwap.type();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
@@ -130,9 +132,10 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
     );
 
     return token &&
-        token.lifecycle !== Lifecycle.Bench &&
-        token.lifecycle !== Lifecycle.Tryout &&
-        token.lifecycle !== Lifecycle.Stands ? (
+        lifecycle &&
+        lifecycle !== Lifecycle.Bench &&
+        lifecycle !== Lifecycle.Tryout &&
+        lifecycle !== Lifecycle.Stands ? (
         <>
             {leader && chainId && token ? (
                 <div style={styles.leadingOfferAmountContainer}>

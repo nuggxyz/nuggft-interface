@@ -17,19 +17,18 @@ import useIsVisible from '@src/hooks/useIsVisible';
 
 import styles from './List.styles';
 
-export interface ListRenderItemProps<ItemType, ExtraDataType, ActionArgType> {
+export interface SimpleListRenderItemProps<ItemType, ExtraDataType, ActionArgType> {
     item: ItemType;
     extraData: ExtraDataType;
     action?: (arg: ActionArgType) => void;
     onScrollEnd?: () => () => void;
     index: number;
     rootRef?: LegacyRef<HTMLDivElement>;
-    selected?: boolean;
     style?: CSSProperties;
 }
 
-export interface ListProps<T, B, A> {
-    RenderItem: FunctionComponent<ListRenderItemProps<T, B, A>>;
+export interface SimpleListProps<T, B, A> {
+    RenderItem: FunctionComponent<SimpleListRenderItemProps<T, B, A>>;
     loading?: boolean;
     extraData: B;
     action?: (arg: A) => void;
@@ -39,7 +38,6 @@ export interface ListProps<T, B, A> {
     horizontal?: boolean;
     style?: CSSProperties;
     onScroll?: RefCallback<any>;
-    selected?: T;
     listEmptyText?: string;
     labelStyle?: CSSProperties;
     listEmptyStyle?: CSSProperties;
@@ -70,7 +68,7 @@ const EndOfListAnchor = ({
     return <div ref={ref} key="NUGGNUGGNUGGNUGGNUGG" />;
 };
 
-const List = <T, B, A>({
+const SimpleList = <T, B, A>({
     data,
     RenderItem,
     loading = false,
@@ -82,14 +80,13 @@ const List = <T, B, A>({
     horizontal = false,
     style,
     onScroll,
-    selected,
     listEmptyText,
     labelStyle,
     loaderColor,
     listEmptyStyle,
     TitleButton,
     titleLoading,
-}: ListProps<T, B, A>) => {
+}: SimpleListProps<T, B, A>) => {
     const ref = useOnScroll(onScroll);
     const containerStyle = useMemo(() => {
         return {
@@ -99,38 +96,6 @@ const List = <T, B, A>({
             ...style,
         };
     }, [border, horizontal, style]);
-
-    const ListCallback = useCallback(
-        ({ selected: _selected }: { selected?: T }) =>
-            data && data.length > 0 ? (
-                <>
-                    {data.map((item, index) => (
-                        <RenderItem
-                            item={item}
-                            key={`bro-${index}`}
-                            index={index}
-                            extraData={extraData}
-                            action={action}
-                            selected={JSON.stringify(_selected) === JSON.stringify(item)}
-                        />
-                    ))}
-                </>
-            ) : (
-                <div
-                    style={{
-                        ...styles.container,
-                        justifyContent: 'center',
-                    }}
-                >
-                    {!loading && (
-                        <Text weight="light" size="small" type="text" textStyle={listEmptyStyle}>
-                            {listEmptyText || 'No items to display...'}
-                        </Text>
-                    )}
-                </div>
-            ),
-        [data, action, extraData, RenderItem, listEmptyText, loading],
-    );
 
     const Loading = useCallback(
         () =>
@@ -173,7 +138,37 @@ const List = <T, B, A>({
         <>
             <Label />
             <div style={containerStyle} ref={ref}>
-                <ListCallback selected={selected} />
+                {data && data.length > 0 ? (
+                    <>
+                        {data.map((item, index) => (
+                            <RenderItem
+                                item={item}
+                                key={`bro-${index}`}
+                                index={index}
+                                extraData={extraData}
+                                action={action}
+                            />
+                        ))}
+                    </>
+                ) : (
+                    <div
+                        style={{
+                            ...styles.container,
+                            justifyContent: 'center',
+                        }}
+                    >
+                        {!loading && (
+                            <Text
+                                weight="light"
+                                size="small"
+                                type="text"
+                                textStyle={listEmptyStyle}
+                            >
+                                {listEmptyText || 'No items to display...'}
+                            </Text>
+                        )}
+                    </div>
+                )}
                 <Loading />
                 {!isUndefinedOrNullOrNotFunction(onScrollEnd) && (
                     <EndOfListAnchor onScrollEnd={onScrollEnd} rootRef={ref} loading={loading} />
@@ -183,4 +178,4 @@ const List = <T, B, A>({
     );
 };
 
-export default React.memo(List) as typeof List;
+export default React.memo(SimpleList) as typeof SimpleList;

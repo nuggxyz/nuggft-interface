@@ -23,7 +23,6 @@ const Wallet: FunctionComponent<Props> = () => {
 
     const happytabs: HappyTabberItem[] = useMemo(
         () => [
-            // eslint-disable-next-line no-nested-ternary
             ...(account
                 ? screenType === 'tablet'
                     ? [
@@ -36,7 +35,7 @@ const Wallet: FunctionComponent<Props> = () => {
                           },
                           {
                               label: t`Swap`,
-                              comp: React.memo(RingAbout),
+                              comp: React.memo(() => <RingAbout asHappyTab />),
                               labelStyle: { color: lib.colors.nuggBlueText },
                               bodyStyle: {
                                   background: lib.colors.gradient2,
@@ -79,12 +78,16 @@ const Wallet: FunctionComponent<Props> = () => {
                       ]
                 : [
                       {
-                          label: t`Home`,
+                          label: t`Active`,
+                          comp: React.memo(ActiveTab),
+                      },
+                      {
+                          label: t`Connect`,
                           comp: React.memo(ConnectTab),
                       },
                   ]),
         ],
-        [account],
+        [account, screenType],
     );
 
     const darkmode = useDarkMode();

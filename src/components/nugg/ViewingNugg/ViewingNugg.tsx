@@ -14,7 +14,7 @@ import Flyout from '@src/components/general/Flyout/Flyout';
 import client from '@src/client';
 import HappyTabber from '@src/components/general/HappyTabber/HappyTabber';
 import AddressViewer from '@src/components/general/Texts/AddressViewer/AddressViewer';
-import { LiveNuggWithLifecycle } from '@src/client/interfaces';
+import { LiveNugg } from '@src/client/interfaces';
 
 import styles from './ViewingNugg.styles';
 import OwnerButtons from './FlyoutButtons/OwnerButtons';
@@ -94,7 +94,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 {token.type === 'nugg' && token.activeSwap !== undefined && (
                     <NuggAbout
                         tokenId={tokenId}
-                        token={token as Required<LiveNuggWithLifecycle>}
+                        token={token as Required<LiveNugg>}
                         epoch={epoch}
                         provider={provider}
                     />
