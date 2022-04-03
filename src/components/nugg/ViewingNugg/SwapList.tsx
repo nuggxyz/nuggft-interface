@@ -15,7 +15,7 @@ import { TokenId } from '@src/client/router';
 import lib from '@src/lib';
 import { Address } from '@src/classes/Address';
 import Button from '@src/components/general/Buttons/Button/Button';
-import { LiveItemSwap, LiveSwap, LiveTokenWithLifecycle } from '@src/client/interfaces';
+import { LiveItemSwap, LiveSwap, LiveToken } from '@src/client/interfaces';
 
 import styles from './ViewingNugg.styles';
 
@@ -50,7 +50,7 @@ const SwapItem: FunctionComponent<
         {
             chainId: Chain;
             provider: Web3Provider;
-            token: LiveTokenWithLifecycle;
+            token: LiveToken;
             epoch: number;
             tokenId: TokenId;
         },

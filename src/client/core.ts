@@ -3,27 +3,16 @@ import { ApolloClient } from '@apollo/client';
 import create, { State, StateCreator } from 'zustand';
 import produce, { Draft, enableMapSet } from 'immer';
 import { combine } from 'zustand/middleware';
-import { JsonRpcProvider } from '@ethersproject/providers';
 
 import { Chain } from '@src/web3/core/interfaces';
-import { extractItemId, parseItmeIdToNum } from '@src/lib';
+import { parseItmeIdToNum } from '@src/lib';
 import web3 from '@src/web3';
-import {
-    GetLiveItemDocument,
-    GetLiveItemQueryResult,
-    GetLiveNuggDocument,
-    GetLiveNuggQueryResult,
-} from '@src/gql/types.generated';
-import { executeQuery3c } from '@src/graphql/helpers';
-import { Address } from '@src/classes/Address';
 import { SupportedLocale } from '@src/lib/i18n/locales';
 import { FeedMessage } from '@src/interfaces/feed';
 
 import { parseRoute, Route, TokenId, ItemId, NuggId } from './router';
 import {
-    Lifecycle,
     LiveToken,
-    LiveTokenWithLifecycle,
     ClientState,
     OfferData,
     UnclaimedNuggOffer,
@@ -34,8 +23,6 @@ import {
     SearchFilter,
     Theme,
 } from './interfaces';
-import formatLiveNugg from './formatters/formatLiveNugg';
-import formatLiveItem from './formatters/formatLiveItem';
 
 enableMapSet();
 
@@ -261,99 +248,41 @@ function createClientStoreAndActions2() {
                             (a, b) => b.eth.gt(a.eth),
                             (a, b) => (a.eth.gt(b.eth) ? 1 : -1),
                         );
-                        const cycle = get().liveTokens[tokenId]?.lifecycle;
 
                         // this makes sure that token rerenders too when a new offer comes in
                         if (offers.length > 0) {
-                            if (cycle === Lifecycle.Bunt)
-                                draft.liveTokens[tokenId].lifecycle = Lifecycle.Bat;
-                            if (cycle === Lifecycle.Tryout) {
-                                draft.liveTokens[tokenId].lifecycle = Lifecycle.Deck;
+                            const token = get().liveTokens[tokenId];
+                            const tmpOffer = offers[0];
 
-                                const token = get().liveTokens[tokenId];
-                                const tmpOffer = offers[0];
+                            if (
+                                token.type === 'item' &&
+                                tmpOffer.type === 'item' &&
+                                !token.activeSwap
+                            ) {
+                                const preloadedSwap = token.swaps.find(
+                                    (x) => x.sellingNuggId === tmpOffer.sellingNuggId,
+                                );
 
-                                console.log({ token, tmpOffer });
-                                if (token.type === 'item' && tmpOffer.type === 'item') {
-                                    const preloadedSwap = token.swaps.find(
-                                        (x) => x.sellingNuggId === tmpOffer.sellingNuggId,
-                                    );
+                                const { nextEpoch } = get();
 
-                                    const { nextEpoch } = get();
-
-                                    if (preloadedSwap && nextEpoch) {
-                                        draft.liveTokens[tokenId].activeSwap = {
-                                            ...preloadedSwap,
-                                            endingEpoch: nextEpoch.id,
-                                            epoch: nextEpoch,
-                                            count: 1,
-                                        };
-                                    }
+                                if (preloadedSwap && nextEpoch) {
+                                    draft.liveTokens[tokenId].activeSwap = {
+                                        ...preloadedSwap,
+                                        endingEpoch: nextEpoch.id,
+                                        epoch: nextEpoch,
+                                        count: 1,
+                                    };
                                 }
                             }
                         }
                     });
                 }
 
-                const wrapLifecycle = (token: LiveToken): LiveTokenWithLifecycle => {
-                    return Object.assign(token, { lifecycle: getLifecycle(token) });
-                };
-
-                const getLifecycle = (token: LiveToken): Lifecycle => {
-                    const { epoch } = get();
-                    const { blocknum } = get();
-
-                    if (token.type === 'item' && !token.activeSwap && token.upcomingActiveSwap) {
-                        token.activeSwap = token.upcomingActiveSwap;
-                        delete token.upcomingActiveSwap;
-                    }
-
-                    if (token && epoch !== undefined) {
-                        if (!token.activeSwap?.id) {
-                            if (token.type === 'item' && token.swaps.length > 0)
-                                return Lifecycle.Tryout;
-                            return Lifecycle.Stands;
-                        }
-
-                        if (!token.activeSwap.endingEpoch) return Lifecycle.Bench;
-
-                        if (+token.activeSwap.endingEpoch === epoch.id + 1) {
-                            if (token.type === 'nugg' && token.owner === Address.ZERO.hash) {
-                                return Lifecycle.Egg;
-                            }
-                            return Lifecycle.Deck;
-                        }
-
-                        if (
-                            token.activeSwap.leader === Address.ZERO.hash &&
-                            token.activeSwap.epoch &&
-                            blocknum &&
-                            (+token.activeSwap.epoch.startblock + 255 - blocknum < 16 ||
-                                +token.activeSwap.epoch.endblock < blocknum)
-                        ) {
-                            return Lifecycle.Cut;
-                        }
-
-                        if (+token.activeSwap.endingEpoch === epoch.id) {
-                            if (token.type === 'nugg' && token.owner === Address.ZERO.hash) {
-                                return Lifecycle.Bunt;
-                            }
-                            return Lifecycle.Bat;
-                        }
-
-                        // if (+epoch.endblock < (blocknum || 0)) return Lifecycle.Cut;
-                        return Lifecycle.Shower;
-                    }
-                    return Lifecycle.Stands;
-                };
-
                 function updateToken(tokenId: TokenId, data: LiveToken): void {
                     set((draft) => {
-                        const lifeData = wrapLifecycle(data);
-                        if (
-                            JSON.stringify(lifeData) !== JSON.stringify(get().liveTokens[tokenId])
-                        ) {
-                            draft.liveTokens[tokenId] = lifeData;
+                        // const lifeData = wrapLifecycle(data);
+                        if (JSON.stringify(data) !== JSON.stringify(get().liveTokens[tokenId])) {
+                            draft.liveTokens[tokenId] = data;
                         }
                     });
                 }
@@ -487,66 +416,6 @@ function createClientStoreAndActions2() {
                     });
                 };
 
-                const start = async (
-                    chainId: Chain,
-                    rpc: JsonRpcProvider,
-                    graph: ApolloClient<any>,
-                ): Promise<void> => {
-                    const startup = () => {
-                        const route = parseRoute(window.location.hash);
-                        if (route.type !== Route.Home) {
-                            const isItem =
-                                route.type === Route.ViewItem || route.type === Route.SwapItem;
-
-                            const tokenId = extractItemId(route.tokenId);
-
-                            if (!isItem)
-                                void executeQuery3c<GetLiveNuggQueryResult>(
-                                    graph,
-                                    GetLiveNuggDocument,
-                                    { tokenId },
-                                ).then((x) => {
-                                    if (x) {
-                                        if (!x.nugg) window.location.hash = '#/';
-                                        else {
-                                            const formatted = formatLiveNugg(x.nugg);
-                                            if (formatted) {
-                                                updateToken(tokenId, formatted);
-                                            }
-                                        }
-                                    }
-                                });
-                            else
-                                void executeQuery3c<GetLiveItemQueryResult>(
-                                    graph,
-                                    GetLiveItemDocument,
-                                    { tokenId },
-                                ).then((x) => {
-                                    if (x) {
-                                        if (!x.item) window.location.hash = '#/';
-                                        else {
-                                            const formatted = formatLiveItem(x.item);
-                                            if (formatted) {
-                                                updateToken(route.tokenId, formatted);
-                                            }
-                                        }
-                                    }
-                                });
-                        }
-                    };
-
-                    // startup();
-
-                    // if (!get().route && rpc) {
-                    const blocknum = rpc.getBlockNumber();
-
-                    let awaited: number;
-                    await Promise.all([(awaited = await blocknum), startup()]);
-
-                    updateBlocknum(awaited, chainId);
-                    // }
-                };
-
                 return {
                     stake: undefined,
                     nuggft: undefined,
@@ -610,7 +479,6 @@ function createClientStoreAndActions2() {
                     routeTo,
                     toggleView,
                     toggleEditingNugg,
-                    start,
                     updateToken,
                     updateLocale,
                     updateSearchFilterTarget,

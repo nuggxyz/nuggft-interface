@@ -1,6 +1,7 @@
 import React, { FC, FunctionComponent } from 'react';
 import { plural, t } from '@lingui/macro';
 
+import useLifecycle from '@src/client/hooks/useLifecycle';
 import useRemaining from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
@@ -32,6 +33,7 @@ const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>>
 const OwnerBlock: FunctionComponent<Props> = () => {
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
+    const lifecycle = useLifecycle(token);
     const leader = client.live.offers(tokenId).first() as unknown as OfferData;
 
     const darkmode = useDarkMode();
@@ -46,7 +48,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
 
     return (
         <div style={styles.ownerBlockContainer}>
-            {token && token.lifecycle === Lifecycle.Stands && (
+            {token && lifecycle === Lifecycle.Stands && (
                 <>
                     <Text
                         textStyle={{
@@ -72,7 +74,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                 </>
             )}
 
-            {token && token.lifecycle === Lifecycle.Cut && (
+            {token && lifecycle === Lifecycle.Cut && (
                 <Text
                     textStyle={{
                         color: lib.colors.white,
@@ -82,7 +84,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                 </Text>
             )}
 
-            {token && token.lifecycle !== Lifecycle.Stands && token.lifecycle !== Lifecycle.Cut && (
+            {token && lifecycle !== Lifecycle.Stands && lifecycle !== Lifecycle.Cut && (
                 // @danny7even is this logic okay, shoud be same as before but less conditional rerendering, i think
                 <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
                     <div
@@ -107,7 +109,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                             {tokenId && parseTokenIdSmart(tokenId)}
                         </Text>
 
-                        {leader && token.lifecycle === Lifecycle.Bench ? (
+                        {leader && lifecycle === Lifecycle.Bench ? (
                             <div
                                 style={{
                                     alignItems: 'flex-end',
@@ -124,7 +126,7 @@ const OwnerBlock: FunctionComponent<Props> = () => {
                                     {`${leaderEns || leader?.user} is selling`}
                                 </Text>
                             </div>
-                        ) : token.lifecycle === Lifecycle.Tryout &&
+                        ) : lifecycle === Lifecycle.Tryout &&
                           token.type === 'item' &&
                           token.tryout.min ? (
                             <div

@@ -1,5 +1,7 @@
 import React from 'react';
 import { t } from '@lingui/macro';
+import { IoSearch } from 'react-icons/io5';
+import curriedLighten from 'polished/lib/color/lighten';
 
 import TextStatistic from '@src/components/nugg/Statistics/TextStatistic';
 import AppState from '@src/state/app';
@@ -7,22 +9,75 @@ import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
 import web3 from '@src/web3';
 import client from '@src/client';
 import globalStyles from '@src/lib/globalStyles';
-import useRemaining from '@src/client/hooks/useRemaining';
 import { SwapData } from '@src/client/interfaces';
-import List from '@src/components/general/List/List';
+import Button from '@src/components/general/Buttons/Button/Button';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import lib, { parseTokenIdSmart } from '@src/lib';
+import Label from '@src/components/general/Label/Label';
+import useRemaining from '@src/client/hooks/useRemaining';
+import SimpleList from '@src/components/general/List/SimpleList';
 
-import SeeAllButton from './SeeAllButton';
-import ActiveTabRenderItem from './ActiveTabRenderItem';
 import styles from './ActiveTab.styles';
+import SeeAllButton from './SeeAllButton';
+
+const fancy = curriedLighten(0.25)(lib.colors.blue);
+
+const RenderItem = ({ item }: { item: SwapData }) => {
+    const routeTo = client.mutate.routeTo();
+
+    return item ? (
+        <div
+            style={{
+                display: 'flex',
+                padding: '.5rem 1rem',
+                background: lib.colors.white,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                width: '100%',
+                borderRadius: lib.layout.borderRadius.medium,
+                margin: '0rem 0rem',
+            }}
+        >
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <TokenViewer tokenId={item.tokenId} style={globalStyles.listNugg} />
+                <div>
+                    <Label
+                        text={parseTokenIdSmart(item.tokenId || '')}
+                        containerStyles={{
+                            color: 'white',
+                            marginBottom: '5px',
+                            background: fancy,
+                        }}
+                    />
+                    <CurrencyText textStyle={{ color: fancy }} value={item.eth.number} />
+                </div>
+            </div>
+
+            <Button
+                key={JSON.stringify(item)}
+                onClick={() => {
+                    routeTo(item.tokenId, true);
+                }}
+                buttonStyle={styles.searchButton}
+                rightIcon={<IoSearch color={lib.colors.white} />}
+            />
+        </div>
+    ) : null;
+};
 
 export default () => {
     const screenType = AppState.select.screenType();
 
-    const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
 
-    // const stake__eps = client.live.stake.eps();
     const activeNuggs = client.live.activeSwaps();
     const activeItems = client.live.activeItems();
 
@@ -50,21 +105,10 @@ export default () => {
 
     const { minutes } = useRemaining(client.live.epoch.default());
 
-    return chainId && provider && address ? (
+    return chainId && provider ? (
         <div style={styles.container}>
             <div>
                 <div style={screenType === 'phone' ? styles.phoneContainer : undefined}>
-                    {/* {stake__eps && (
-                        <NumberStatistic
-                            style={{
-                                ...styles.mainStatistic,
-                                width: screenType === 'phone' ? '48%' : '100%',
-                            }}
-                            label={t`Balance`}
-                            value={stake__eps.multiply(nuggs.length).decimal.toNumber()}
-                            image="eth"
-                        />
-                    )} */}
                     {screenType === 'phone' && (
                         <div style={styles.phoneAccountViewer}>
                             <AccountViewer />
@@ -85,24 +129,24 @@ export default () => {
                 </div>
             </div>
 
-            <List
+            <SimpleList
                 TitleButton={SeeAllButton}
                 labelStyle={styles.listLabel}
                 data={sortedAll.current}
                 extraData={undefined}
-                RenderItem={ActiveTabRenderItem}
+                RenderItem={RenderItem}
                 label={t`Ending in about ${minutes} minutes`}
                 style={styles.list}
                 loaderColor="white"
                 action={() => undefined}
             />
 
-            <List
+            <SimpleList
                 // TitleButton={SeeAllButton}
                 labelStyle={{ ...styles.listLabel, marginTop: '20px' }}
                 data={sortedAll.next}
                 extraData={undefined}
-                RenderItem={ActiveTabRenderItem}
+                RenderItem={RenderItem}
                 label={t`Coming Up`}
                 style={{ ...styles.list }}
                 listEmptyStyle={styles.textWhite}

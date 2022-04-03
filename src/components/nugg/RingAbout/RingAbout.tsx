@@ -13,24 +13,22 @@ import OfferText from './OfferText';
 import SideCar from './SideCar';
 import Caboose from './Caboose';
 
-type Props = Record<string, never>;
+type Props = {
+    asHappyTab?: boolean;
+};
 
-const RingAbout: FunctionComponent<Props> = () => {
+const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false }) => {
     const screenType = AppState.select.screenType();
     const darkmode = useDarkMode();
 
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
 
-    const needSideCar = React.useMemo(() => {
-        return token?.type === 'item' && token?.activeSwap && token?.upcomingActiveSwap;
-    }, [token]);
-
-    return (
+    return token ? (
         <>
             <animated.div
                 style={{
-                    ...(screenType === 'tablet'
+                    ...(asHappyTab
                         ? styles.containerTablet
                         : darkmode
                         ? styles.containerDark
@@ -47,10 +45,12 @@ const RingAbout: FunctionComponent<Props> = () => {
                 </div>
                 <OfferButton tokenId={tokenId} />
             </animated.div>
-            {needSideCar && <SideCar />}
+
+            <SideCar />
+
             <Caboose />
         </>
-    );
+    ) : null;
 };
 
 export default React.memo(RingAbout);

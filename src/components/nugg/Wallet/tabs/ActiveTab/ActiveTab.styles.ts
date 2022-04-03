@@ -56,10 +56,10 @@ const styles = NLStyleSheetCreator({
     myNuggItemContainer: {
         display: 'flex',
         padding: '.5rem 1rem',
-        background: 'white',
+        background: lib.colors.transparentLightGrey,
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: '100%',
+        // width: '100%',
         borderRadius: lib.layout.borderRadius.medium,
         margin: '0rem 0rem',
     },

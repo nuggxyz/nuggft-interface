@@ -13,6 +13,7 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import Loader from '@src/components/general/Loader/Loader';
 import { Address } from '@src/classes/Address';
 import web3 from '@src/web3';
+import useLifecycle from '@src/client/hooks/useLifecycle';
 
 import styles from './RingAbout.styles';
 
@@ -21,29 +22,30 @@ type Props = Record<string, unknown>;
 const OfferText: FunctionComponent<Props> = () => {
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
+    const lifecycle = useLifecycle(token);
 
     const screenType = state.app.select.screenType();
 
     const hasBids = client.live.offers(tokenId).length !== 0;
 
     const text = useMemo(() => {
-        if (!token) return '';
-        if (token.lifecycle === Lifecycle.Tryout) {
+        if (!token || !lifecycle) return '';
+        if (lifecycle === Lifecycle.Tryout) {
             return t`Select a nugg to buy this item from`;
         }
-        if (token.lifecycle === Lifecycle.Deck || token.lifecycle === Lifecycle.Bat) {
+        if (lifecycle === Lifecycle.Deck || lifecycle === Lifecycle.Bat) {
             return hasBids ? t`Highest offer` : t`Place the first offer!`;
         }
-        if (token.lifecycle === Lifecycle.Bench) {
+        if (lifecycle === Lifecycle.Bench) {
             return t`Place offer to begin auction`;
         }
-        if (token.lifecycle === Lifecycle.Shower) {
+        if (lifecycle === Lifecycle.Shower) {
             return hasBids ? t`Winner` : t`This sale is over`;
         }
         return '';
-    }, [token, hasBids]);
+    }, [token, hasBids, lifecycle]);
 
-    return tokenId && token && token.lifecycle === 'bunt' ? (
+    return tokenId && token && lifecycle === 'bunt' ? (
         <BuntOfferText tokenId={tokenId} />
     ) : (
         <Text
@@ -62,10 +64,12 @@ const OfferText: FunctionComponent<Props> = () => {
 const BuntOfferText = ({ tokenId }: { tokenId: string }) => {
     const nuggft = useNuggftV1();
     const token = client.live.token(tokenId);
+    const lifecycle = useLifecycle(token);
+
     const provider = web3.hook.usePriorityProvider();
 
     const vfo = useAsyncState(() => {
-        if (token && provider && tokenId && token.lifecycle === Lifecycle.Bunt) {
+        if (token && provider && tokenId && lifecycle === Lifecycle.Bunt) {
             return nuggft
                 .connect(provider)
                 ['vfo(address,uint160)'](Address.NULL.hash, tokenId)

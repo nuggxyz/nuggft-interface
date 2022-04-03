@@ -10,7 +10,7 @@ import client from '@src/client';
 import lib from '@src/lib';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useOnHover from '@src/hooks/useOnHover';
-import { LiveItemWithLifecycle, LiveSwap } from '@src/client/interfaces';
+import { LiveSwap, LiveItem } from '@src/client/interfaces';
 
 import styles from './ViewingNugg.styles';
 
@@ -29,15 +29,7 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
     ) : null;
 };
 
-export default ({
-    tokenId,
-    token,
-    epoch,
-}: {
-    tokenId: NuggId;
-    token: LiveItemWithLifecycle;
-    epoch: number;
-}) => {
+export default ({ tokenId, token, epoch }: { tokenId: NuggId; token: LiveItem; epoch: number }) => {
     const [ref, hover] = useOnHover(() => undefined);
     const routeTo = client.mutate.routeTo();
 

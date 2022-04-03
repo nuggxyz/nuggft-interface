@@ -39,7 +39,7 @@ const styles = NLStyleSheetCreator({
     tabletMain: {
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         alignItems: 'center',
         height: '90%',
         width: '60%',
@@ -47,7 +47,7 @@ const styles = NLStyleSheetCreator({
         zIndex: 0,
     },
     tabletRing: {
-        height: '100%',
+        height: '50%',
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
@@ -57,11 +57,14 @@ const styles = NLStyleSheetCreator({
         zIndex: 0,
     },
     tabletRingAbout: {
-        height: '20%',
-        width: '80%',
+        flexDirection: 'column',
+
+        // height: '20%',
+        width: '550px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'flex-end',
+        // position: 'absolute',
         zIndex: 1010,
     },
     tabletSecondary: {

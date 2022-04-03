@@ -17,14 +17,11 @@ export default () => {
 
     const tokenId = client.live.lastSwap.tokenId();
     const token = client.live.token(tokenId);
+
     return token && token.type === 'item' && token.upcomingActiveSwap ? (
         <div
             style={{
-                ...(screenType === 'tablet'
-                    ? styles.containerTablet
-                    : darkmode
-                    ? styles.containerDark
-                    : styles.container),
+                ...(darkmode ? styles.containerDark : styles.container),
                 ...(screenType === 'phone' && {
                     ...styles.mobile,
                 }),

@@ -7,6 +7,7 @@ import state from '@src/state';
 import web3 from '@src/web3';
 import client from '@src/client';
 import { NuggId, TokenId } from '@src/client/router';
+import useLifecycle from '@src/client/hooks/useLifecycle';
 
 import styles from './RingAbout.styles';
 
@@ -21,11 +22,14 @@ export default ({
     const address = web3.hook.usePriorityAccount();
     const token = client.live.token(tokenId);
 
+    const lifecycle = useLifecycle(token);
+
     return token &&
-        token.lifecycle !== 'shower' &&
-        token.lifecycle !== 'stands' &&
-        token.lifecycle !== 'cut' &&
-        token.lifecycle !== 'tryout' &&
+        lifecycle &&
+        lifecycle !== 'shower' &&
+        lifecycle !== 'stands' &&
+        lifecycle !== 'cut' &&
+        lifecycle !== 'tryout' &&
         (screenType === 'phone' || address) ? (
         <Button
             buttonStyle={{

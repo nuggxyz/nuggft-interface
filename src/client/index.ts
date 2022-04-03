@@ -155,7 +155,6 @@ export default {
         updateClients: () => coreNonImmer((state) => state.updateClients),
         updateToken: () => core((state) => state.updateToken),
         updateLocale: () => core((state) => state.updateLocale),
-        start: () => core((state) => state.start),
         updateSearchFilterTarget: () => core((state) => state.updateSearchFilterTarget),
         updateSearchFilterViewing: () => core((state) => state.updateSearchFilterViewing),
         updateSearchFilterSort: () => core((state) => state.updateSearchFilterSort),
