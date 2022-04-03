@@ -1,6 +1,7 @@
 import React, { FunctionComponent, ReactChild } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import ReactGA from 'react-ga';
 
 import './prototypes';
 
@@ -15,6 +16,8 @@ import web3 from './web3';
 import ClientUpdater from './client/ClientUpdater';
 
 global.Buffer = global.Buffer || (await import('buffer')).Buffer;
+
+ReactGA.initialize('G-CVTT35FBMT', { gaOptions: { siteSpeedSampleRate: 100 } });
 
 const GlobalHooks = () => {
     web3.config.useActivate();
