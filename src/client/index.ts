@@ -4,7 +4,9 @@ import { useCallback } from 'react';
 // eslint-disable-next-line import/no-named-as-default
 import shallow from 'zustand/shallow';
 
-import core, { coreNonImmer } from './core';
+import web3 from '@src/web3';
+
+import core from './core';
 import { useDotnugg, useDotnuggCacheOnly, useDotnuggSubscription } from './hooks/useDotnugg';
 import router, { TokenId } from './router';
 import { ListData, SearchView } from './interfaces';
@@ -15,7 +17,7 @@ export default {
 
     live: {
         /// ///// simple ////////
-        graph: () => coreNonImmer((state) => state.graph),
+        graph: () => web3.config.apolloClient,
 
         epoch: {
             default: () => core((state) => state.epoch),
@@ -84,7 +86,7 @@ export default {
                 ),
             ),
         health: () => core((state) => state.health),
-        lastGraphRefresh: () => coreNonImmer((state) => state.lastRefresh),
+        // lastGraphRefresh: () => coreNonImmer((state) => state.lastRefresh),
 
         activeSwaps: () =>
             core((state) =>
@@ -171,7 +173,7 @@ export default {
         hideMobileViewingNugg: () => core((state) => state.hideMobileViewingNugg),
         toggleMobileWallet: () => core((state) => state.toggleMobileWallet),
 
-        updateClients: () => coreNonImmer((state) => state.updateClients),
+        // updateClients: () => coreNonImmer((state) => state.updateClients),
         updateToken: () => core((state) => state.updateToken),
         updateLocale: () => core((state) => state.updateLocale),
         updateSearchFilterTarget: () => core((state) => state.updateSearchFilterTarget),
@@ -189,7 +191,7 @@ export default {
         useDarkMode,
     },
     static: {
-        graph: () => coreNonImmer.getState().graph,
+        graph: () => web3.config.apolloClient,
         activeSwaps: () => core.getState().activeSwaps,
         activeItems: () => core.getState().activeItems,
         myNuggs: () => core.getState().myNuggs,

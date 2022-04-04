@@ -1,8 +1,6 @@
 /* eslint-disable no-param-reassign */
-import { ApolloClient } from '@apollo/client';
 import create, { State, StateCreator } from 'zustand';
 import produce, { Draft, enableMapSet } from 'immer';
-import { combine } from 'zustand/middleware';
 
 import { Chain } from '@src/web3/core/interfaces';
 import { parseItmeIdToNum } from '@src/lib';
@@ -55,29 +53,29 @@ const logger__middleware = <T extends State>(fn: StateCreator<T>): StateCreator<
         );
     };
 
-function createClientStoreAndActions3() {
-    return create(
-        combine(
-            {
-                graph: undefined,
-                lastRefresh: undefined,
-            } as {
-                graph: ApolloClient<any> | undefined;
-                lastRefresh: Date | undefined;
-            },
+// function createClientStoreAndActions3() {
+//     return create(
+//         combine(
+//             {
+//                 graph: undefined,
+//                 lastRefresh: undefined,
+//             } as {
+//                 graph: ApolloClient<any> | undefined;
+//                 lastRefresh: Date | undefined;
+//             },
 
-            (set) => {
-                return {
-                    updateClients: (graph: ApolloClient<any> | undefined) => {
-                        set(() => {
-                            return { graph, lastRefresh: new Date() };
-                        });
-                    },
-                };
-            },
-        ),
-    );
-}
+//             (set) => {
+//                 return {
+//                     updateClients: (graph: ApolloClient<any> | undefined) => {
+//                         set(() => {
+//                             return { graph, lastRefresh: new Date() };
+//                         });
+//                     },
+//                 };
+//             },
+//         ),
+//     );
+// }
 
 function createClientStoreAndActions2() {
     return create<ClientState>(
@@ -519,6 +517,6 @@ function createClientStoreAndActions2() {
 }
 const core = createClientStoreAndActions2();
 
-export const coreNonImmer = createClientStoreAndActions3();
+// export const coreNonImmer = createClientStoreAndActions3();
 
 export default core;
