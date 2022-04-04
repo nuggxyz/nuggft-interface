@@ -8,6 +8,7 @@ import { EthInt } from '@src/classes/Fraction';
 import { LiveActiveItemSwap } from '@src/client/interfaces';
 
 // eslint-disable-next-line import/no-cycle
+
 import client from '..';
 
 export default (activate: boolean, tokenId: string | undefined) => {

@@ -291,7 +291,7 @@ function createClientStoreAndActions2() {
 
                         // const { lastView, lastSwap } = draft;
 
-                        const isItem = tokenId?.includes('item-');
+                        const isItem = tokenId?.isItemId();
 
                         if (view) {
                             route += 'view/';
@@ -306,19 +306,19 @@ function createClientStoreAndActions2() {
                         if (tokenId !== '') {
                             if (isItem) {
                                 route += 'item/';
-                                const num = parseItmeIdToNum(tokenId as `item-${string}`);
+                                const num = parseItmeIdToNum(tokenId);
                                 route += `${num.feature}/`;
                                 route += num.position;
                                 if (view) {
                                     draft.lastView = {
                                         type: Route.ViewItem,
-                                        tokenId: tokenId as `item-${string}`,
+                                        tokenId,
                                         ...num,
                                     };
                                 } else {
                                     draft.lastSwap = {
                                         type: Route.SwapItem,
-                                        tokenId: tokenId as `item-${string}`,
+                                        tokenId,
                                         ...num,
                                     };
                                 }

@@ -128,7 +128,8 @@ interface Window {
 }
 
 interface String {
-    isItemId(): boolean;
+    isItemId(): this is `item-${string}`;
+    equals(other: string): boolean;
 }
 
 interface Array<T> {

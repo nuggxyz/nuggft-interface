@@ -13,7 +13,13 @@ import {
 } from './lib';
 
 String.prototype.isItemId = function fn() {
-    return this.startsWith('item-');
+    return ((input: string): input is `item-${string}` => {
+        return input.startsWith('item-');
+    })(this as string);
+};
+
+String.prototype.equals = function fn(other: string) {
+    return this === other;
 };
 
 Array.prototype.mergeInPlace = function fn<T>(
