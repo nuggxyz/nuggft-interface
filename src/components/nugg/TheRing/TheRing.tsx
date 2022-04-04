@@ -90,7 +90,7 @@ const TheRing: FunctionComponent<Props> = ({
                     ...circleStyle,
                     flexDirection: 'column',
                 }}
-                strokeWidth={screenType === 'phone' ? 10 : 20}
+                strokeWidth={screenType === 'phone' ? 10 : screenType === 'tablet' ? 13 : 20}
             >
                 {tokenId && (
                     <>

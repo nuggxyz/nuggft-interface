@@ -32,5 +32,8 @@
     "eslint.useESLintClass": true,
     "eslint.alwaysShowStatus": true,
     "explorer.sortOrder": "type",
-    "explorer.sortOrderLexicographicOptions": "upper"
+    "explorer.sortOrderLexicographicOptions": "upper",
+    "[dotenv]": {
+        "editor.defaultFormatter": "foxundermoon.shell-format"
+    }
 }
