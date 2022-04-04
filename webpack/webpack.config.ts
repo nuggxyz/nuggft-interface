@@ -1,36 +1,34 @@
-'strict';
+import * as fs from 'fs';
+import * as path from 'path';
 
-const fs = require('fs');
-const path = require('path');
+import webpack from 'webpack';
+import resolve from 'resolve';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin';
+import InlineChunkHtmlPlugin from 'react-dev-utils/InlineChunkHtmlPlugin';
+import TerserPlugin from 'terser-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import { WebpackManifestPlugin } from 'webpack-manifest-plugin';
+import InterpolateHtmlPlugin from 'react-dev-utils/InterpolateHtmlPlugin';
+import * as WorkboxWebpackPlugin from 'workbox-webpack-plugin';
+import ModuleScopePlugin from 'react-dev-utils/ModuleScopePlugin';
+import getCSSModuleLocalIdent from 'react-dev-utils/getCSSModuleLocalIdent';
+import ESLintPlugin from 'eslint-webpack-plugin';
 
-const webpack = require('webpack');
-const resolve = require('resolve');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
-const TerserPlugin = require('terser-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
-const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
-const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
-const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
-const ESLintPlugin = require('eslint-webpack-plugin');
+import ModuleNotFoundPlugin from 'react-dev-utils/ModuleNotFoundPlugin';
 
-const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
-
-const paths = require('./webpack/paths');
-const modules = require('./webpack/modules');
-const getClientEnvironment = require('./webpack/env');
+import paths from './paths';
+import modules from './modules';
+import getClientEnvironment from './env';
 
 const ForkTsCheckerWebpackPlugin =
     process.env.TSC_COMPILE_ON_ERROR === 'true'
         ? require('react-dev-utils/ForkTsCheckerWarningWebpackPlugin')
         : require('react-dev-utils/ForkTsCheckerWebpackPlugin');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
-const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash');
+import createEnvironmentHash from './persistentCache/createEnvironmentHash';
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
@@ -87,7 +85,7 @@ const hasJsxRuntime = (() => {
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
-module.exports = function (webpackEnv) {
+export default function (webpackEnv: 'production' | 'development'): webpack.Configuration {
     const isEnvDevelopment = webpackEnv === 'development';
     const isEnvProduction = webpackEnv === 'production';
 
@@ -186,7 +184,7 @@ module.exports = function (webpackEnv) {
     return {
         experiments: { topLevelAwait: true },
         target: ['browserslist'],
-        mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
+        mode: isEnvProduction ? 'production' : isEnvDevelopment ? 'development' : 'none',
         // Stop compilation early in production
         bail: isEnvProduction,
         devtool: isEnvProduction
@@ -270,7 +268,7 @@ module.exports = function (webpackEnv) {
                             // into invalid ecma 5 code. This is why the 'compress' and 'output'
                             // sections only apply transformations that are ecma 5 safe
                             // https://github.com/facebook/create-react-app/pull/4234
-                            ecma: 8,
+                            ecma: 2017,
                         },
                         compress: {
                             ecma: 5,
@@ -354,7 +352,7 @@ module.exports = function (webpackEnv) {
             rules: [
                 // Handle node_modules packages that contain sourcemaps
                 shouldUseSourceMap && {
-                    enforce: 'pre',
+                    enforce: 'pre' as string,
                     exclude: /@babel(?:\/|\\{1,2})runtime/,
                     test: /\.(js|mjs|jsx|ts|tsx|css)$/,
                     use: [
@@ -502,13 +500,18 @@ module.exports = function (webpackEnv) {
                         {
                             test: cssRegex,
                             exclude: cssModuleRegex,
-                            use: getStyleLoaders({
-                                importLoaders: 1,
-                                sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
-                                modules: {
-                                    mode: 'icss',
+                            use: getStyleLoaders(
+                                {
+                                    importLoaders: 1,
+                                    sourceMap: isEnvProduction
+                                        ? shouldUseSourceMap
+                                        : isEnvDevelopment,
+                                    modules: {
+                                        mode: 'icss',
+                                    },
                                 },
-                            }),
+                                undefined,
+                            ),
                             // Don't consider CSS imports dead code even if the
                             // containing package claims to have no side effects.
                             // Remove this when webpack adds a warning or an error for this.
@@ -519,14 +522,19 @@ module.exports = function (webpackEnv) {
                         // using the extension .module.css
                         {
                             test: cssModuleRegex,
-                            use: getStyleLoaders({
-                                importLoaders: 1,
-                                sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
-                                modules: {
-                                    mode: 'local',
-                                    getLocalIdent: getCSSModuleLocalIdent,
+                            use: getStyleLoaders(
+                                {
+                                    importLoaders: 1,
+                                    sourceMap: isEnvProduction
+                                        ? shouldUseSourceMap
+                                        : isEnvDevelopment,
+                                    modules: {
+                                        mode: 'local',
+                                        getLocalIdent: getCSSModuleLocalIdent,
+                                    },
                                 },
-                            }),
+                                undefined,
+                            ),
                         },
                         // Opt-in support for SASS (using .scss or .sass extensions).
                         // By default we support SASS Modules with the
@@ -587,7 +595,7 @@ module.exports = function (webpackEnv) {
                         // Make sure to add the new loader(s) before the "file" loader.
                     ],
                 },
-            ].filter(Boolean),
+            ].filter(Boolean) as webpack.RuleSetRule[],
         },
         plugins: [
             // Generates an `index.html` file with the <script> injected.
@@ -627,7 +635,13 @@ module.exports = function (webpackEnv) {
             // <link rel="icon" href="%PUBLIC_URL%/favicon.ico">
             // It will be an empty string unless you specify "homepage"
             // in `package.json`, in which case it will be the pathname of that URL.
-            new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
+            new InterpolateHtmlPlugin(
+                HtmlWebpackPlugin,
+                // this was just env.raw - modified it to convert all types to string
+                Object.entries(env.raw).reduce((prev, curr) => {
+                    return { ...prev, [curr[0]]: String(curr[1]) };
+                }, {}) as { [key: string]: string },
+            ),
             // This gives some necessary context to module not found errors, such as
             // the requesting resource.
             new ModuleNotFoundPlugin(paths.appPath),
@@ -664,6 +678,7 @@ module.exports = function (webpackEnv) {
             new WebpackManifestPlugin({
                 fileName: 'asset-manifest.json',
                 publicPath: paths.publicUrlOrPath,
+                useEntryKeys: true,
                 generate: (seed, files, entrypoints) => {
                     const manifestFiles = files.reduce((manifest, file) => {
                         manifest[file.name] = file.path;
@@ -676,7 +691,7 @@ module.exports = function (webpackEnv) {
                     return {
                         files: manifestFiles,
                         entrypoints: entrypointFiles,
-                    };
+                    } as { [key: string]: any };
                 },
             }),
             // Moment.js is an extremely popular library that bundles large locale files
@@ -775,4 +790,4 @@ module.exports = function (webpackEnv) {
         // our own hints via the FileSizeReporter
         performance: false,
     };
-};
+}

@@ -1,19 +1,21 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const chalk = require('react-dev-utils/chalk');
-const resolve = require('resolve');
+import chalk from 'chalk';
+import resolve from 'resolve';
 
-const paths = require('./paths');
+import paths from './paths';
+
+type BaseOptions = { baseUrl?: string };
 
 /**
  * Get additional module paths based on the baseUrl of a compilerOptions object.
  *
  * @param {Object} options
  */
-function getAdditionalModulePaths(options = {}) {
+function getAdditionalModulePaths(options: BaseOptions = {}) {
     const baseUrl = options.baseUrl;
 
     if (!baseUrl) {
@@ -56,7 +58,7 @@ function getAdditionalModulePaths(options = {}) {
  *
  * @param {*} options
  */
-function getWebpackAliases(options = {}) {
+function getWebpackAliases(options: BaseOptions = {}) {
     const baseUrl = options.baseUrl;
 
     if (!baseUrl) {
@@ -77,7 +79,7 @@ function getWebpackAliases(options = {}) {
  *
  * @param {*} options
  */
-function getJestAliases(options = {}) {
+function getJestAliases(options: BaseOptions = {}) {
     const baseUrl = options.baseUrl;
 
     if (!baseUrl) {
@@ -133,4 +135,4 @@ function getModules() {
     };
 }
 
-module.exports = getModules();
+export default getModules();

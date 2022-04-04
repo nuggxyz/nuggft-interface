@@ -1,9 +1,7 @@
-'use strict';
+import path from 'path';
+import fs from 'fs';
 
-const path = require('path');
-const fs = require('fs');
-
-const getPublicUrlOrPath = require('react-dev-utils/getPublicUrlOrPath');
+import getPublicUrlOrPath from 'react-dev-utils/getPublicUrlOrPath';
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
@@ -52,7 +50,7 @@ const resolveModule = (resolveFn, filePath) => {
 };
 
 // config after eject: we're in ./config/
-module.exports = {
+export default {
     dotenv: resolveApp('.env'),
     appPath: resolveApp('.'),
     appBuild: resolveApp(buildPath),
@@ -71,6 +69,5 @@ module.exports = {
     appTsBuildInfoFile: resolveApp('node_modules/.cache/tsconfig.tsbuildinfo'),
     swSrc: resolveModule(resolveApp, 'src/service-worker'),
     publicUrlOrPath,
+    moduleFileExtensions,
 };
-
-module.exports.moduleFileExtensions = moduleFileExtensions;

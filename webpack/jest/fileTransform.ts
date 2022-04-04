@@ -1,13 +1,11 @@
-'use strict';
+import path from 'path';
 
-const path = require('path');
-
-const camelcase = require('camelcase');
+import camelcase from 'camelcase';
 
 // This is a custom Jest transformer turning file imports into filenames.
 // http://facebook.github.io/jest/docs/en/webpack.html
 
-module.exports = {
+export default {
     process(src, filename) {
         const assetFilename = JSON.stringify(path.basename(filename));
 
