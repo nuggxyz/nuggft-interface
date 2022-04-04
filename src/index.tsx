@@ -15,6 +15,7 @@ import IndexPage from './pages/Index';
 import ToastContainer from './components/general/Toast/ToastContainer';
 import web3 from './web3';
 import ClientUpdater from './client/ClientUpdater';
+import ErrorBoundary from './components/general/ErrorBoundry';
 
 global.Buffer = global.Buffer || (await import('buffer')).Buffer;
 
@@ -45,11 +46,13 @@ ReactDOM.render(
                 <Provider store={store}>
                     <Initializer>
                         <I18N>
-                            <ToastContainer />
-                            <Modal />
-                            <ContentBlock>
-                                <IndexPage />
-                            </ContentBlock>
+                            <ErrorBoundary>
+                                <ToastContainer />
+                                <Modal />
+                                <ContentBlock>
+                                    <IndexPage />
+                                </ContentBlock>
+                            </ErrorBoundary>
                         </I18N>
                     </Initializer>
                 </Provider>

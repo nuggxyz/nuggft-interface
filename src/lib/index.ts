@@ -11,6 +11,7 @@ import fontSize from './fontSize';
 import layout from './layout';
 import parse from './parse';
 import errors from './errors';
+import { userAgent } from './userAgent';
 
 // 6287103
 // VERIFICATION
@@ -454,4 +455,6 @@ export const rangeEnd = (start: number, end: number) => {
         .map((_, idx) => start + 1 + idx);
 };
 
-export default { colors, constants, conversion, fontSize, layout, parse, lodash, errors };
+const lib = { colors, constants, conversion, fontSize, layout, parse, lodash, errors, userAgent };
+
+export default lib;
