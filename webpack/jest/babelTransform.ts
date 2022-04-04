@@ -1,5 +1,3 @@
-'use strict';
-
 const babelJest = require('babel-jest').default;
 
 const hasJsxRuntime = (() => {
@@ -15,7 +13,7 @@ const hasJsxRuntime = (() => {
     }
 })();
 
-module.exports = babelJest.createTransformer({
+export default babelJest.createTransformer({
     presets: [
         [
             require.resolve('babel-preset-react-app'),

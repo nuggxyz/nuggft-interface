@@ -1,5 +1,3 @@
-'use strict';
-
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
@@ -12,26 +10,25 @@ process.on('unhandledRejection', (err) => {
 });
 
 // Ensure environment variables are read.
-require('../env');
+import '../env';
 
-const path = require('path');
+import path from 'path';
 
-const chalk = require('react-dev-utils/chalk');
-const fs = require('fs-extra');
-const bfj = require('bfj');
-const webpack = require('webpack');
+import chalk from 'chalk';
+import fs from 'fs-extra';
+import bfj from 'bfj';
+import webpack from 'webpack';
 
-const configFactory = require('../../webpack.config');
-const paths = require('../paths');
+import configFactory from '../webpack.config';
+import paths from '../paths';
 
-const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
-const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
-const printHostingInstructions = require('react-dev-utils/printHostingInstructions');
-const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
-const printBuildError = require('react-dev-utils/printBuildError');
+import checkRequiredFiles from 'react-dev-utils/checkRequiredFiles';
+import formatWebpackMessages from 'react-dev-utils/formatWebpackMessages';
+import printHostingInstructions from 'react-dev-utils/printHostingInstructions';
+import FileSizeReporter from 'react-dev-utils/FileSizeReporter';
+import printBuildError from 'react-dev-utils/printBuildError';
 
-const measureFileSizesBeforeBuild =
-    FileSizeReporter.measureFileSizesBeforeBuild;
+const measureFileSizesBeforeBuild = FileSizeReporter.measureFileSizesBeforeBuild;
 const printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
 const useYarn = fs.existsSync(paths.yarnLockFile);
 
@@ -54,7 +51,7 @@ const config = configFactory('production');
 
 // We require that you explicitly set browsers and do not fall back to
 // browserslist defaults.
-const { checkBrowsers } = require('react-dev-utils/browsersHelper');
+import { checkBrowsers } from 'react-dev-utils/browsersHelper';
 checkBrowsers(paths.appPath, isInteractive)
     .then(() => {
         // First, read the current file sizes in build directory.
@@ -103,17 +100,10 @@ checkBrowsers(paths.appPath, isInteractive)
             const publicUrl = paths.publicUrlOrPath;
             const publicPath = config.output.publicPath;
             const buildFolder = path.relative(process.cwd(), paths.appBuild);
-            printHostingInstructions(
-                appPackage,
-                publicUrl,
-                publicPath,
-                buildFolder,
-                useYarn,
-            );
+            printHostingInstructions(appPackage, publicUrl, publicPath, buildFolder, useYarn);
         },
         (err) => {
-            const tscCompileOnError =
-                process.env.TSC_COMPILE_ON_ERROR === 'true';
+            const tscCompileOnError = process.env.TSC_COMPILE_ON_ERROR === 'true';
             if (tscCompileOnError) {
                 console.log(
                     chalk.yellow(
@@ -153,8 +143,7 @@ function build(previousFileSizes) {
                 // Add additional information for postcss errors
                 if (Object.prototype.hasOwnProperty.call(err, 'postcssNode')) {
                     errMessage +=
-                        '\nCompileError: Begins at CSS selector ' +
-                        err['postcssNode'].selector;
+                        '\nCompileError: Begins at CSS selector ' + err['postcssNode'].selector;
                 }
 
                 messages = formatWebpackMessages({
@@ -176,8 +165,7 @@ function build(previousFileSizes) {
             }
             if (
                 process.env.CI &&
-                (typeof process.env.CI !== 'string' ||
-                    process.env.CI.toLowerCase() !== 'false') &&
+                (typeof process.env.CI !== 'string' || process.env.CI.toLowerCase() !== 'false') &&
                 messages.warnings.length
             ) {
                 // Ignore sourcemap warnings in CI builds. See #8227 for more info.
@@ -203,10 +191,7 @@ function build(previousFileSizes) {
 
             if (writeStatsJson) {
                 return bfj
-                    .write(
-                        paths.appBuild + '/bundle-stats.json',
-                        stats.toJson(),
-                    )
+                    .write(paths.appBuild + '/bundle-stats.json', stats.toJson())
                     .then(() => resolve(resolveArgs))
                     .catch((error) => reject(new Error(error)));
             }

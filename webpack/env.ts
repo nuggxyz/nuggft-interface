@@ -1,9 +1,7 @@
-'use strict';
+import fs from 'fs';
+import path from 'path';
 
-const fs = require('fs');
-const path = require('path');
-
-const paths = require('./paths');
+import paths from './paths';
 
 // Make sure that including paths.js after env.js will read .env variables.
 delete require.cache[require.resolve('./paths')];
@@ -100,4 +98,4 @@ function getClientEnvironment(publicUrl) {
     return { raw, stringified };
 }
 
-module.exports = getClientEnvironment;
+export default getClientEnvironment;

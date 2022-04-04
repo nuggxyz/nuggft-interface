@@ -31,7 +31,7 @@
         "ecmaVersion": "latest",
 
         "sourceType": "module",
-        "project": ["./tsconfig.json", "webpack.config.js"]
+        "project": ["./tsconfig.json"]
     },
     "plugins": [
         "@typescript-eslint",
