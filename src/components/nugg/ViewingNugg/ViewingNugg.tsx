@@ -129,15 +129,17 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                 ) : (
                                     <Loader color={Colors.nuggBlueText} />
                                 )
-                            ) : (
+                            ) : token ? (
                                 <Text
                                     type="text"
                                     size="smaller"
-                                    textStyle={{ paddingLeft: '.5rem' }}
+                                    textStyle={{ color: lib.colors.white }}
                                 >
-                                    {t`owned by ${token?.count} nuggs`}
+                                    {t`Owned by ${token.count} Nugg${
+                                        token.count > 1 || !token.count ? 's' : ''
+                                    }`}
                                 </Text>
-                            )}
+                            ) : null}
                         </div>
                         <Button
                             size="small"
@@ -173,7 +175,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                         <div
                             style={{
                                 height: '400px',
-                                width: '100%',
+                                width: '400px',
                                 position: 'relative',
                             }}
                         >

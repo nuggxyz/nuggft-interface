@@ -203,7 +203,9 @@ const styles = NLStyleSheetCreator({
         padding: '.2rem .7rem',
     },
     goToSwapGradient: {
-        backgroundSize: '100%',
+        backgroundSize: 'cover',
+        WebkitBackgroundSize: 'cover',
+        WebkitBackgroundClip: 'text',
         backgroundClip: 'text',
         padding: 0,
     },

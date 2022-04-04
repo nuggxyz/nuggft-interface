@@ -12,5 +12,5 @@ export function useTheme(): Theme | undefined {
 export function useDarkMode(): boolean {
     const theme = useTheme();
 
-    return theme === Theme.DARK;
+    return false; // theme === Theme.DARK;
 }

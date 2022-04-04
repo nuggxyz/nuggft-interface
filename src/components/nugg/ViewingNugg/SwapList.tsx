@@ -82,7 +82,12 @@ const SwapItem: FunctionComponent<
                                 ? lib.colors.gradient
                                 : lib.colors.gradient3,
                         }}
-                        textStyle={{ WebkitTextFillColor: 'transparent' }}
+                        textStyle={{
+                            WebkitTextFillColor: 'transparent',
+                            // @ts-ignore
+                            textFillColor: 'transparent',
+                            background: !item.epoch ? lib.colors.gradient : lib.colors.gradient3,
+                        }}
                         label={t`Go to swap`}
                         rightIcon={
                             <IoArrowRedo
@@ -182,6 +187,8 @@ const SwapList: FunctionComponent<{ tokenId: TokenId | undefined }> = ({ tokenId
     const provider = web3.hook.usePriorityProvider();
     const token = client.live.token(tokenId);
     const epoch = client.live.epoch.id();
+    console.log({ token });
+    const routeTo = client.mutate.routeTo();
 
     const listData = useMemo(() => {
         const res: { title: string; items: LiveSwap[] }[] = [];
@@ -210,6 +217,68 @@ const SwapList: FunctionComponent<{ tokenId: TokenId | undefined }> = ({ tokenId
 
     return chainId && provider && epoch && token && tokenId ? (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
+            {token.type === 'item' &&
+                token.tryout.count > 0 &&
+                token.tryout.max &&
+                token.tryout.min && (
+                    <div
+                        // ref={ref}
+                        onClick={() => routeTo(tokenId, false)}
+                        aria-hidden="true"
+                        role="button"
+                        style={{
+                            padding: '.25rem 1rem',
+                            // ...(hover ? { filter: 'brightness(1.1)', cursor: 'pointer' } : {}),
+                        }}
+                    >
+                        <div
+                            style={{
+                                ...styles.swap,
+                                background: lib.colors.gradient2,
+                            }}
+                        >
+                            <div
+                                style={{
+                                    ...styles.swapButton,
+                                }}
+                            >
+                                <Text textStyle={{ color: lib.colors.primaryColor }}>
+                                    {/* eslint-disable-next-line no-nested-ternary */}
+                                    {t`On sale by ${token.tryout.count} Nugg${
+                                        token.tryout.count > 1 ? 's' : ''
+                                    }`}
+                                </Text>
+                                {token.tryout.min.eth.eq(token.tryout.max.eth) ? (
+                                    <div>
+                                        <div style={{ display: 'flex' }}>
+                                            <CurrencyText
+                                                image="eth"
+                                                value={token.tryout.min.eth.decimal.toNumber()}
+                                            />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <div style={{ display: 'flex' }}>
+                                            <CurrencyText
+                                                image="eth"
+                                                value={token.tryout.min.eth.decimal.toNumber()}
+                                            />
+                                            <Text textStyle={{ marginLeft: '5px' }}>{t`Min`}</Text>
+                                        </div>
+                                        <div style={{ display: 'flex' }}>
+                                            <CurrencyText
+                                                image="eth"
+                                                value={token.tryout.max.eth.decimal.toNumber()}
+                                            />
+                                            <Text textStyle={{ marginLeft: '5px' }}>{t`Max`}</Text>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
             <StickyList
                 data={listData}
                 TitleRenderItem={SwapTitle}
