@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-04-03 02:19+0000\n"
+"POT-Creation-Date: 2022-04-03 22:57+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Greek\n"
-"PO-Revision-Date: 2022-04-03 06:02\n"
+"PO-Revision-Date: 2022-04-04 06:02\n"
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "(you)"
@@ -106,12 +106,12 @@ msgstr ""
 msgid "Coming Up"
 msgstr ""
 
-#: src/components/nugg/Wallet/Wallet.tsx
-msgid "Connect"
+#: src/structure/mobile/SwapView/SwapView.tsx
+msgid "Coming up"
 msgstr ""
 
-#: src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab.tsx
-msgid "Connect to nuggft!"
+#: src/components/nugg/Wallet/Wallet.tsx
+msgid "Connect"
 msgstr ""
 
 #: src/components/nugg/RingAbout/Caboose.tsx
@@ -134,6 +134,10 @@ msgstr ""
 #: src/components/nugg/ViewingNugg/FlyoutButtons/LoanButtons.tsx
 #: src/components/nugg/ViewingNugg/FlyoutButtons/OwnerButtons.tsx
 msgid "Edit"
+msgstr ""
+
+#: src/structure/mobile/SwapView/SwapView.tsx
+msgid "Ending in about {minutes, plural, =1 {{minutes} minute} other {{minutes} minutes} =0 {less than 1 minute}}"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
@@ -447,6 +451,10 @@ msgstr ""
 
 #: src/components/nugg/Modals/OfferModal/OfferModal.tsx
 msgid "Update offer"
+msgstr ""
+
+#: src/components/nugg/AccountViewer/AccountViewer.tsx
+msgid "Wallet"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OfferText.tsx
