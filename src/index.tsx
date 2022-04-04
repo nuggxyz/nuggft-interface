@@ -1,9 +1,10 @@
 import React, { FunctionComponent, ReactChild } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import ReactGA from 'react-ga';
+import { HashRouter } from 'react-router-dom';
 
 import './prototypes';
+import './lib/analytics';
 
 import store from './state/store';
 import './index.css';
@@ -16,8 +17,6 @@ import web3 from './web3';
 import ClientUpdater from './client/ClientUpdater';
 
 global.Buffer = global.Buffer || (await import('buffer')).Buffer;
-
-ReactGA.initialize('G-CVTT35FBMT', { gaOptions: { siteSpeedSampleRate: 100 } });
 
 const GlobalHooks = () => {
     web3.config.useActivate();
@@ -41,18 +40,20 @@ const ContentBlock: FunctionComponent<{
 ReactDOM.render(
     <div style={{ width: '100%', height: '100%' }}>
         <React.StrictMode>
-            <GlobalHooks />
-            <Provider store={store}>
-                <Initializer>
-                    <I18N>
-                        <ToastContainer />
-                        <Modal />
-                        <ContentBlock>
-                            <IndexPage />
-                        </ContentBlock>
-                    </I18N>
-                </Initializer>
-            </Provider>
+            <HashRouter>
+                <GlobalHooks />
+                <Provider store={store}>
+                    <Initializer>
+                        <I18N>
+                            <ToastContainer />
+                            <Modal />
+                            <ContentBlock>
+                                <IndexPage />
+                            </ContentBlock>
+                        </I18N>
+                    </Initializer>
+                </Provider>
+            </HashRouter>
         </React.StrictMode>
     </div>,
     document.getElementById('root'),

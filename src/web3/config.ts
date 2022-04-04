@@ -40,8 +40,8 @@ export const DEFAULT_CHAIN = Chain.RINKEBY;
 export const NETWORK_HEALTH_CHECK_MS = 15 * 1000;
 export const DEFAULT_MS_BEFORE_WARNING = 90 * 1000;
 
-export const INFURA_KEY = 'a1625b39cf0047febd415f9b37d8c931';
-export const ALCHEMY_KEY = 'QuvT3tDt0pPE676Br4w2mhCws6vfnMlA';
+export const INFURA_KEY = process.env.NUGG_APP_INFURA_KEY as string;
+export const ALCHEMY_KEY = process.env.NUGG_APP_ALCHEMY_KEY as string;
 
 export const isValidChainId = (input: number) => {
     return supportedChainIds().indexOf(input) !== -1;

@@ -100,3 +100,5 @@ archive/
 src/locales/*
 !src/locales/*.po
 src/locales/en-US.po
+
+!.env

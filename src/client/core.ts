@@ -290,7 +290,6 @@ function createClientStoreAndActions2() {
                 function routeTo(tokenId: string | `item-${string}`, view: boolean): void {
                     set((draft) => {
                         let route = '#/';
-                        console.log(get());
 
                         // const { lastView, lastSwap } = draft;
 
