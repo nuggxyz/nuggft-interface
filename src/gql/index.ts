@@ -22,8 +22,6 @@ import { WebSocketLink } from '@apollo/client/link/ws';
 //     // },
 // });
 
-const cache = new InMemoryCache({});
-
 export const buildApolloSplitLink = (http: string, wss: string) => {
     return split(
         ({ query }) => {
@@ -52,5 +50,5 @@ export const buildApolloSplitLink = (http: string, wss: string) => {
 };
 
 export const buildCache = () => {
-    return cache;
+    return new InMemoryCache({});
 };

@@ -1,9 +1,9 @@
 /* eslint-disable import/no-cycle */
 import { BigNumber, ethers } from 'ethers';
-import { ApolloClient } from '@apollo/client';
 import { useEffect } from 'react';
+import { ApolloClient } from '@apollo/client';
 
-import { buildApolloSplitLink, buildCache } from '@src/gql/config';
+import { buildApolloSplitLink, buildCache } from '@src/gql';
 
 import { Connector } from './core/types';
 import {
@@ -374,24 +374,11 @@ export const createAlchemyWebSocket = (
     return new AlchemyWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY, onClose);
 };
 
-export const createApolloClient = (chainId: Chain) => {
-    return new ApolloClient<any>({
-        link: buildApolloSplitLink(GRAPH_ENPOINTS[chainId], GRAPH_WSS_ENDPOINTS[chainId]),
-        connectToDevTools: true,
-        cache: buildCache(),
-    });
-};
-
-export const createBrokenApolloClient = (chainId: Chain) => {
-    return new ApolloClient<any>({
-        link: buildApolloSplitLink(
-            `${GRAPH_ENPOINTS[chainId]}-TEST`,
-            `${GRAPH_WSS_ENDPOINTS[chainId]}-TEST`,
-        ),
-        connectToDevTools: true,
-        cache: buildCache(),
-    });
-};
+export const apolloClient = new ApolloClient<any>({
+    link: buildApolloSplitLink(GRAPH_ENPOINTS[DEFAULT_CHAIN], GRAPH_WSS_ENDPOINTS[DEFAULT_CHAIN]),
+    // connectToDevTools: true,
+    cache: buildCache(),
+});
 
 // interface WalletInfo {
 //     name: string;
