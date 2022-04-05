@@ -3,27 +3,19 @@ import React from 'react';
 import client from '@src/client';
 
 import useRpcUpdater from './update/useRpcUpdater';
-import useLiveOffers from './subscriptions/useLiveOffers';
-import useLiveToken from './subscriptions/useLiveToken';
 import useMediaUpdater from './update/useMediaUpdater';
 import useBackgroundUpdater from './update/useBackgroundUpdater';
 import useLiveProtocol from './subscriptions/useLiveProtocol';
 import useLiveUser from './subscriptions/useLiveUser';
-import useGraphUpdater from './update/useGraphUpdater';
-import useStartup from './subscriptions/useStartup';
+import useSwapUpdater from './update/useSwapUpdater';
+import useLiveGraphHealth from './subscriptions/useLiveGraphHealth';
 
 const GraphConditionalHooks = () => {
-    useStartup();
-
-    useLiveOffers(client.live.lastSwap.tokenId());
-
-    useLiveToken(client.live.lastSwap.tokenId());
-
-    useLiveToken(client.live.lastView.tokenId());
-
     useLiveProtocol();
 
     useLiveUser();
+
+    useLiveGraphHealth();
 
     return null;
 };
@@ -37,7 +29,9 @@ export default () => {
 
     useRpcUpdater();
 
-    useGraphUpdater();
+    // useGraphUpdater();
+
+    useSwapUpdater();
 
     return (
         <>

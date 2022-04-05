@@ -37,7 +37,7 @@ export const useHealth = () => {
     const graphProblem = React.useMemo(() => {
         if (!ok(health)) return false;
 
-        return blockdiff > 2 && health.lastBlockGraph < health.lastBlockRpc;
+        return blockdiff > 5 && health.lastBlockGraph < health.lastBlockRpc;
     }, [health, blockdiff]);
 
     return { blockdiff, graphProblem };

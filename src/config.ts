@@ -6,5 +6,3 @@ export default {
     SALT: 'DUBNDAN',
     // EPOCH_OFFSET: 3000,
 };
-
-export const NetworkContextName = 'NETWORK';

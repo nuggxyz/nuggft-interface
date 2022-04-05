@@ -1,55 +1,110 @@
 import { animated } from '@react-spring/web';
-import React, { FunctionComponent, useCallback } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
+import { useMatch, useNavigate } from 'react-router-dom';
 
+import MobileViewOverlay from '@src/structure/mobile/MobileViewOverlay';
 import NuggDexSearchList from '@src/components/nugg/NuggDex/NuggDexSearchList/NuggDexSearchList';
-import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
-import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import AppState from '@src/state/app';
+import useBlur from '@src/hooks/useBlur';
+import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
+import lib, { NLStyleSheetCreator } from '@src/lib';
+import { useOverlayRouteStyleWithOverride } from '@src/lib/router';
 import client from '@src/client';
-import useFirefoxBlur from '@src/hooks/useFirefoxBlur';
-
-import styles from './SearchOverlay.styles';
 
 type Props = Record<string, never>;
 
+const styles = NLStyleSheetCreator({
+    container: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'space-between',
+        zIndex: 997,
+        backdropFilter: 'blur(10)',
+    },
+    nuggDexContainer: {
+        display: 'flex',
+        width: '40%',
+        height: '100%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    tokenContainer: {
+        display: 'flex',
+        width: '40%',
+        height: '100%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        overflow: 'scroll',
+    },
+});
+
 const SearchOverlay: FunctionComponent<Props> = () => {
+    // const overlay = useOverlayRouteStyle();
+
     const screenType = AppState.select.screenType();
 
-    const isViewOpen = client.live.isViewOpen();
-    const toggleView = client.mutate.toggleView();
+    const navigate = useNavigate();
+    const lastSwap = client.live.lastSwap.tokenId();
 
-    const onClick = useCallback(() => (isViewOpen ? toggleView() : undefined), [isViewOpen]);
-    const style = useAnimateOverlay(isViewOpen, {
-        zIndex: 997,
-        ...styles.container,
-    });
+    const paramMatch = useMatch(`/view/${lib.constants.VIEWING_PREFIX}/*`);
+    const visible = useMatch('/view/*');
 
-    const modalStyle = useFirefoxBlur([
-        'modal',
-        undefined,
-        'editView',
-        'mobileSearchView',
-        'mobileWallet',
-    ]);
+    const blur = useBlur(['/view/*']);
+
+    const showMobileOverlay = useMemo(() => {
+        return screenType === 'phone' && !!paramMatch;
+    }, [paramMatch, screenType]);
+
+    const overlay = useOverlayRouteStyleWithOverride(showMobileOverlay);
 
     return screenType === 'phone' ? (
-        <animated.div style={{ ...styles.container, ...style, ...modalStyle }} onClick={onClick}>
-            <div
-                aria-hidden="true"
-                role="button"
+        <>
+            <animated.div
                 style={{
-                    ...styles.nuggDexContainer,
-                    alignItems: 'center',
-                    width: '100%',
-                    padding: '20px',
+                    ...blur,
+                    ...overlay,
+                    ...styles.container,
                 }}
-                onClick={(e) => e.stopPropagation()}
+                onClick={() => {
+                    if (visible) {
+                        if (lastSwap) navigate(`/swap/${lastSwap}`);
+                        else navigate('/');
+                    }
+                }}
             >
-                <NuggDexSearchList />
-            </div>
-        </animated.div>
+                <div
+                    aria-hidden="true"
+                    role="button"
+                    style={{
+                        ...styles.nuggDexContainer,
+                        alignItems: 'center',
+                        width: '100%',
+                        padding: '20px',
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <NuggDexSearchList />
+                </div>
+            </animated.div>
+            {showMobileOverlay && <MobileViewOverlay />}
+        </>
     ) : (
-        <animated.div style={{ ...styles.container, ...style, ...modalStyle }} onClick={onClick}>
+        <animated.div
+            style={{
+                ...blur,
+                ...overlay,
+                ...styles.container,
+            }}
+            onClick={() => {
+                if (visible) {
+                    if (lastSwap) navigate(`/swap/${lastSwap}`);
+                    else navigate('/');
+                }
+            }}
+        >
             <div
                 aria-hidden="true"
                 role="button"

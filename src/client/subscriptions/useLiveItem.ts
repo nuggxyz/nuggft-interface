@@ -19,6 +19,7 @@ export default (tokenId: string | undefined) => {
         onSubscriptionData: (x) => {
             if (
                 tokenId &&
+                tokenId.isItemId() &&
                 x.subscriptionData &&
                 x.subscriptionData.data &&
                 x.subscriptionData.data.item

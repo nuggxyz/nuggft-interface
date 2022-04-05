@@ -1,5 +1,6 @@
 import React from 'react';
 import { t } from '@lingui/macro';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
@@ -21,9 +22,9 @@ export default ({
     const screenType = state.app.select.screenType();
     const address = web3.hook.usePriorityAccount();
     const token = client.live.token(tokenId);
-    const toggleMobileWallet = client.mutate.toggleMobileWallet();
 
     const lifecycle = useLifecycle(token);
+    const navigate = useNavigate();
 
     return token &&
         lifecycle &&
@@ -41,7 +42,7 @@ export default ({
             }}
             onClick={() =>
                 screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                    ? toggleMobileWallet()
+                    ? navigate('/wallet')
                     : tokenId &&
                       state.app.dispatch.setModalOpen({
                           name: 'OfferModal',

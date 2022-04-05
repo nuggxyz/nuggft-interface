@@ -1,27 +1,20 @@
 import { animated } from '@react-spring/web';
-import React, { FunctionComponent, useCallback } from 'react';
+import React, { FunctionComponent } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
-import client from '@src/client';
 import Wallet from '@src/components/nugg/Wallet/Wallet';
-import useFirefoxBlur from '@src/hooks/useFirefoxBlur';
+import useBlur from '@src/hooks/useBlur';
 
 type Props = Record<string, never>;
 
 const WalletView: FunctionComponent<Props> = () => {
-    const isMobileWalletOpen = client.live.isMobileWalletOpen();
-
-    const toggleMobileWallet = client.mutate.toggleMobileWallet();
-
-    const onClick = useCallback(
-        () => (isMobileWalletOpen ? toggleMobileWallet() : undefined),
-        [isMobileWalletOpen],
-    );
-    const style = useAnimateOverlay(isMobileWalletOpen, {
+    const navigate = useNavigate();
+    const style = useAnimateOverlay(true, {
         zIndex: 999,
     });
 
-    const modalStyle = useFirefoxBlur(['modal', undefined, 'editView', undefined, undefined]);
+    const blur = useBlur(['/wallet']);
 
     return (
         <animated.div
@@ -34,9 +27,9 @@ const WalletView: FunctionComponent<Props> = () => {
                 padding: '0rem .5rem',
 
                 ...style,
-                ...modalStyle,
+                ...blur,
             }}
-            onClick={onClick}
+            onClick={() => navigate('/')}
         >
             <div
                 aria-hidden="true"
@@ -53,7 +46,7 @@ const WalletView: FunctionComponent<Props> = () => {
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
-                <div style={{ marginTop: '50px' }} />
+                <div style={{ marginTop: '75px' }} />
                 <Wallet />
             </div>
         </animated.div>

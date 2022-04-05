@@ -1,6 +1,7 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 import { AlertCircle } from 'react-feather';
 import { useSpring, animated } from '@react-spring/web';
+import { useNavigate } from 'react-router-dom';
 
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
@@ -19,14 +20,13 @@ type Props = {
 
 const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick }) => {
     const epoch = client.live.epoch.id();
+
     const epoch__endblock = client.live.epoch.endblock();
-    // const health = client.live.health();
 
     const blocknum = client.live.blocknum();
     const error = web3.hook.usePriorityError();
 
-    const routeTo = client.mutate.routeTo();
-
+    const navigate = useNavigate();
     const springStyle = useSpring({
         display: 'flex',
         alignItems: 'center',
@@ -56,7 +56,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
                     role="button"
                     onClick={() => {
                         if (onClick) onClick();
-                        routeTo(epoch!.toString(), false);
+                        navigate('/');
                     }}
                     style={style2}
                 >

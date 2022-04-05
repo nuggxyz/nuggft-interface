@@ -2,6 +2,7 @@ import React from 'react';
 import { IoOpenOutline, IoPowerOutline, IoWallet } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 import { FiAtSign } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 import Jazzicon from '@src/components/nugg/Jazzicon';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -13,7 +14,6 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import lib from '@src/lib';
 import globalStyles from '@src/lib/globalStyles';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
-import client from '@src/client';
 
 import styles from './AccountViewer.styles';
 
@@ -26,16 +26,12 @@ const AccountViewer = () => {
     const balance = web3.hook.usePriorityBalance(provider);
     const peer = web3.hook.usePriorityPeer();
     const connector = web3.hook.usePriorityConnector();
-    const toggleMobileWallet = client.mutate.toggleMobileWallet();
+
+    const navigate = useNavigate();
 
     const darkmode = useDarkMode();
 
     return !address ? (
-        // <Button
-        //     onClick={() => toggleMobileWallet()}
-        //     // buttonStyle={{ borderRadius: 100 }}
-        //     rightIcon={<div style={{ height: '35px', width: '35px', borderRadius: 100 }} />}
-        // />
         <div
             style={{
                 background: lib.colors.shadowLightGrey,
@@ -51,13 +47,11 @@ const AccountViewer = () => {
         >
             <Button
                 buttonStyle={{ background: lib.colors.transparent, padding: '.5rem .3rem' }}
-                onClick={() => toggleMobileWallet()}
+                onClick={() => navigate('/wallet')}
                 rightIcon={<FiAtSign style={{ color: lib.colors.darkerGray }} />}
             />
         </div>
-    ) : // FiAtSign
-    // <div style={{ height: '35px', width: '35px', borderRadius: 100, background: 'white', border: '2px' }} />
-    ens && chainId && peer ? (
+    ) : ens && chainId && peer ? (
         <Flyout
             style={styles.flyout}
             button={
@@ -105,7 +99,9 @@ const AccountViewer = () => {
                                 style={{ marginRight: '.75rem' }}
                             />
                         }
-                        onClick={() => toggleMobileWallet()}
+                        onClick={() => {
+                            navigate('/wallet');
+                        }}
                     />
                 )}
                 <Button

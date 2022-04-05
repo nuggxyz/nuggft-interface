@@ -1,14 +1,9 @@
 import { BigNumber } from 'ethers';
-import { useEffect } from 'react';
 
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import client from '@src/client';
 import { SwapData } from '@src/client/interfaces';
-import {
-    useLiveProtocolSubscription,
-    HealthDocument,
-    useHealthQuery,
-} from '@src/gql/types.generated';
+import { useLiveProtocolSubscription } from '@src/gql/types.generated';
 import formatSwapData from '@src/client/formatters/formatSwapData';
 
 const mergeUnique = (arr: SwapData[]) => {
@@ -37,22 +32,6 @@ export default () => {
     const graph = client.live.graph();
 
     const updateProtocol = client.mutate.updateProtocol();
-
-    const { data: healthQueryData } = useHealthQuery({
-        client: graph,
-        query: HealthDocument,
-        fetchPolicy: 'network-only',
-        notifyOnNetworkStatusChange: true,
-        pollInterval: 12000,
-    });
-
-    useEffect(() => {
-        updateProtocol({
-            health: {
-                lastBlockGraph: healthQueryData?._meta?.block.number ?? null,
-            },
-        });
-    }, [healthQueryData, updateProtocol]);
 
     useLiveProtocolSubscription({
         client: graph,
@@ -164,5 +143,6 @@ export default () => {
             }
         },
     });
+
     return null;
 };

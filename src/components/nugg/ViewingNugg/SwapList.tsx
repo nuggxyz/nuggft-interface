@@ -2,6 +2,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import React, { FunctionComponent, useMemo } from 'react';
 import { HiArrowRight } from 'react-icons/hi';
 import { t } from '@lingui/macro';
+import { useNavigate } from 'react-router-dom';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import Colors from '@src/lib/colors';
@@ -18,8 +19,6 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import { LiveItemSwap, LiveSwap, LiveToken } from '@src/client/interfaces';
 
 import styles from './ViewingNugg.styles';
-
-type Props = Record<string, never>;
 
 const SwapTitle = ({ title }: { title: string }) => {
     return (
@@ -68,8 +67,8 @@ const SwapItem: FunctionComponent<
     );
 
     const epoch = client.live.epoch.id();
-    const routeTo = client.mutate.routeTo();
 
+    const navigate = useNavigate();
     return epoch ? (
         <div style={{ padding: '.25rem 1rem' }}>
             <div
@@ -151,10 +150,7 @@ const SwapItem: FunctionComponent<
                         )
                     }
                     {(!item.endingEpoch || epoch <= item.endingEpoch) && (
-                        <Button
-                            label={t`goto swap`}
-                            onClick={() => routeTo(extraData.tokenId, false)}
-                        />
+                        <Button label={t`goto swap`} onClick={() => navigate(`/swap/${item.id}`)} />
                     )}
                 </div>
             </div>
@@ -164,10 +160,9 @@ const SwapItem: FunctionComponent<
     ) : null;
 };
 
-const SwapList: FunctionComponent<Props> = () => {
+const SwapList: FunctionComponent<{ tokenId: TokenId | undefined }> = ({ tokenId }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const tokenId = client.live.lastView.tokenId();
     const token = client.live.token(tokenId);
     const epoch = client.live.epoch.id();
 

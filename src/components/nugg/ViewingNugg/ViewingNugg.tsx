@@ -15,6 +15,8 @@ import client from '@src/client';
 import HappyTabber from '@src/components/general/HappyTabber/HappyTabber';
 import AddressViewer from '@src/components/general/Texts/AddressViewer/AddressViewer';
 import { LiveNugg } from '@src/client/interfaces';
+import useViewingNugg from '@src/client/hooks/useViewingNugg';
+import useTokenQuery from '@src/client/hooks/useTokenQuery';
 
 import styles from './ViewingNugg.styles';
 import OwnerButtons from './FlyoutButtons/OwnerButtons';
@@ -28,10 +30,17 @@ import ItemAbout from './ItemAbout';
 type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
 
 const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
-    const tokenId = client.live.lastView.tokenId();
     const epoch = client.live.epoch.id();
 
+    const { safeTokenId: tokenId } = useViewingNugg();
+
     const sender = web3.hook.usePriorityAccount();
+
+    const tokenQuery = useTokenQuery();
+
+    React.useEffect(() => {
+        if (tokenId) void tokenQuery(tokenId);
+    }, [tokenId, tokenQuery]);
 
     const screenType = AppState.select.screenType();
     const chainId = web3.hook.usePriorityChainId();

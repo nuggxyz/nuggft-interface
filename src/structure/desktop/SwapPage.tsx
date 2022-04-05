@@ -1,12 +1,12 @@
 import React, { FunctionComponent } from 'react';
 import { animated } from '@react-spring/web';
 
+import SwapView from '@src/structure/mobile/SwapView/SwapView';
 import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
 import Wallet from '@src/components/nugg/Wallet/Wallet';
 import AppState from '@src/state/app';
-import useFirefoxBlur from '@src/hooks/useFirefoxBlur';
-import SwapView from '@src/structure/mobile/SwapView/SwapView';
+import useBlur from '@src/hooks/useBlur';
 
 import styles from './SwapPage.styles';
 
@@ -15,47 +15,50 @@ type Props = Record<string, never>;
 const SwapPage: FunctionComponent<Props> = () => {
     const screen = AppState.select.screenType();
 
-    const container = useFirefoxBlur(
-        ['modal', 'searchView', 'editView', 'mobileSearchView', 'mobileWallet'],
-        styles.container,
-    );
+    const blur = useBlur(['/', '/swap/:id']);
 
     return (
-        <animated.div
-            style={{ ...container, ...(screen === 'phone' && { alignItems: 'flex-start' }) }}
-        >
-            {screen === 'phone' ? (
-                <SwapView />
-            ) : screen === 'tablet' ? (
-                <>
-                    <div style={styles.tabletMain}>
-                        <div style={styles.tabletRing}>
-                            <TheRing circleWidth={1100} />
+        <>
+            <animated.div
+                style={{
+                    ...styles.container,
+                    ...blur,
+                    ...(screen === 'phone' && { alignItems: 'flex-start' }),
+                }}
+            >
+                {screen === 'phone' ? (
+                    <SwapView />
+                ) : screen === 'tablet' ? (
+                    <>
+                        <div style={styles.tabletMain}>
+                            <div style={styles.tabletRing}>
+                                <TheRing circleWidth={1100} />
+                            </div>
+                            <div style={styles.tabletRingAbout}>
+                                <RingAbout />
+                            </div>
                         </div>
-                        <div style={styles.tabletRingAbout}>
-                            <RingAbout />
-                        </div>
-                    </div>
-                    <div style={styles.tabletSecondary}>
-                        <Wallet />
-                    </div>
-                </>
-            ) : (
-                <>
-                    <div style={styles.secondaryContainer}>
-                        <div style={styles.innerContainer}>
-                            <RingAbout />
-                        </div>
-                        <div style={styles.innerContainer}>
+                        <div style={styles.tabletSecondary}>
                             <Wallet />
                         </div>
-                    </div>
-                    <div style={styles.theRingContainer}>
-                        <TheRing />
-                    </div>
-                </>
-            )}
-        </animated.div>
+                    </>
+                ) : (
+                    <>
+                        <div style={styles.secondaryContainer}>
+                            <div style={styles.innerContainer}>
+                                <RingAbout />
+                            </div>
+                            <div style={styles.innerContainer}>
+                                <Wallet />
+                            </div>
+                        </div>
+                        <div style={styles.theRingContainer}>
+                            <TheRing />
+                        </div>
+                    </>
+                )}
+            </animated.div>{' '}
+        </>
     );
 };
 

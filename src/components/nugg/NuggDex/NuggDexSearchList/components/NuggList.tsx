@@ -20,6 +20,7 @@ import { ListData, SearchView } from '@src/client/interfaces';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 import { isUndefinedOrNullOrNotFunction } from '@src/lib';
 import usePrevious from '@src/hooks/usePrevious';
+import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -65,13 +66,17 @@ const NuggList: FunctionComponent<NuggListProps> = ({
     const viewing = client.live.searchFilter.viewing();
 
     const [loading, setLoading] = useState(false);
-    const routeTo = client.mutate.routeTo();
 
-    const onClick = useCallback((item: typeof values[0]) => {
-        batch(() => {
-            routeTo(item?.id, true);
-        });
-    }, []);
+    const { gotoViewingNugg } = useViewingNugg();
+
+    const onClick = useCallback(
+        (item: typeof values[0]) => {
+            batch(() => {
+                gotoViewingNugg(item.id);
+            });
+        },
+        [gotoViewingNugg],
+    );
 
     const _onScrollEnd = useCallback(
         ({ addToList, desiredSize }: { addToList: boolean; desiredSize?: number }) => {

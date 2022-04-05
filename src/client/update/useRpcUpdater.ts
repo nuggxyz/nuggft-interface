@@ -230,6 +230,8 @@ export default () => {
         (chainIdArg: Chain) => {
             const _rpc = web3.config.createInfuraWebSocket(chainIdArg, () => buildRpc(chainIdArg));
 
+            void _rpc.getBlockNumber().then(blockListener);
+
             _rpc.on('block', blockListener);
 
             _rpc.on(

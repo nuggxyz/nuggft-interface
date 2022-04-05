@@ -1,17 +1,17 @@
 import React, { FunctionComponent } from 'react';
 import { IoHourglassOutline, IoPencil, IoPricetagOutline } from 'react-icons/io5';
 import { t } from '@lingui/macro';
+import { useNavigate } from 'react-router-dom';
 
 import Colors from '@src/lib/colors';
 import state from '@src/state';
 import Button from '@src/components/general/Buttons/Button/Button';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
-import client from '@src/client';
 
 type Props = { tokenId: string };
 
 const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
-    const toggleEditingNugg = client.mutate.toggleEditingNugg();
+    const navigate = useNavigate();
 
     return (
         <div style={styles.ownerButtonContainer}>
@@ -80,7 +80,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                         style={{ marginRight: '.75rem' }}
                     />
                 }
-                onClick={() => toggleEditingNugg(tokenId)}
+                onClick={() => navigate(`/edit/${tokenId}`)}
             />
         </div>
     );

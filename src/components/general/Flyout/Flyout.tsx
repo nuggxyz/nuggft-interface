@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React, { CSSProperties, FunctionComponent, PropsWithChildren } from 'react';
 import { animated, AnimatedProps, config, useTransition } from '@react-spring/web';
 
 import useOnHover from '@src/hooks/useOnHover';
+import useOnClickOutside from '@src/hooks/useOnClickOutside';
+import AppState from '@src/state/app';
 
 import styles from './Flyout.styles';
 
@@ -29,13 +32,19 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
     const [closeRef, closeHover] = useOnHover(() => {
         if (openOnHover) setOpen(openHover || closeHover);
         else if (open && !closeHover) setOpen(false);
+        // else setOpen(false);
+    });
+    const screen = AppState.select.screenType();
+    const dimentions = AppState.select.dimensions();
+
+    useOnClickOutside<HTMLDivElement>(closeRef, () => {
+        setOpen(false);
     });
 
     const transition = useTransition(open, {
         from: {
             width: '50px',
             height: '100px',
-            zIndex: 99,
             pointerEvents: 'none' as const,
             position: 'absolute' as const,
             top: 0,
@@ -48,25 +57,51 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
         config: config.stiff,
     });
 
+    // const Child = children;
+
     return (
-        <div style={{ cursor: 'pointer', ...containerStyle }} ref={closeRef}>
+        <div
+            style={{ cursor: 'pointer', ...containerStyle }}
+            ref={closeRef}
+            aria-hidden="true"
+            onClick={() => {
+                setOpen(!open);
+            }}
+        >
             <div aria-hidden="true" role="button" onClick={() => setOpen(!open)}>
                 {button}
             </div>
             {transition(
                 (animatedStyle, isOpen) =>
                     isOpen && (
-                        <animated.div style={animatedStyle}>
-                            <div
-                                ref={openRef}
-                                style={{
-                                    ...styles.container,
-                                    ...style,
-                                }}
-                            >
-                                {children}
-                            </div>
-                        </animated.div>
+                        <>
+                            <animated.div style={animatedStyle}>
+                                <div
+                                    ref={openRef}
+                                    style={{
+                                        ...styles.container,
+                                        ...style,
+                                        zIndex: 1100,
+                                    }}
+                                >
+                                    {children}
+                                </div>
+                            </animated.div>
+                            {screen === 'phone' && (
+                                <div
+                                    aria-hidden="true"
+                                    style={{
+                                        cursor: 'default',
+                                        position: 'absolute',
+                                        zIndex: 1099,
+                                        ...dimentions,
+                                        top: 0,
+                                        right: 0,
+                                    }}
+                                    onClick={() => {}}
+                                />
+                            )}
+                        </>
                     ),
             )}
         </div>

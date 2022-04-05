@@ -1,6 +1,7 @@
 import { animated } from '@react-spring/web';
 import React, { FC } from 'react';
 import { ethers, BigNumber, BigNumberish } from 'ethers';
+import { useNavigate } from 'react-router-dom';
 
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import client from '@src/client';
@@ -163,8 +164,9 @@ export default () => {
     }, [items]);
 
     const { send, revert } = useTransactionManager();
-    const toggleEditingNugg = client.mutate.toggleEditingNugg();
 
+    const navigate = useNavigate();
+    const lastSwap = client.live.lastSwap.tokenId();
     // const [waiting, setWaiting] = React.useState<boolean>();
 
     return (
@@ -174,7 +176,8 @@ export default () => {
                     <Button
                         label="kill"
                         onClick={() => {
-                            toggleEditingNugg(undefined);
+                            if (lastSwap) navigate(`/swap/${lastSwap}`);
+                            else navigate('/');
                         }}
                     />
 
