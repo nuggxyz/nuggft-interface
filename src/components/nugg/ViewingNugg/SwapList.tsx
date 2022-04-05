@@ -16,8 +16,8 @@ import { Chain } from '@src/web3/core/interfaces';
 import { TokenId } from '@src/client/router';
 import lib from '@src/lib';
 import { Address } from '@src/classes/Address';
-import Button from '@src/components/general/Buttons/Button/Button';
 import { LiveItemSwap, LiveSwap, LiveToken } from '@src/client/interfaces';
+import Button from '@src/components/general/Buttons/Button/Button';
 
 import styles from './ViewingNugg.styles';
 
@@ -34,7 +34,6 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
 
     return epoch && blocknum ? (
         <Text textStyle={{ color: lib.colors.primaryColor }}>
-            {/* eslint-disable-next-line no-nested-ternary */}
             {!item.epoch
                 ? t`Awaiting bid!`
                 : item.epoch.id < epoch
@@ -74,31 +73,20 @@ const SwapItem: FunctionComponent<
     return epoch ? (
         <div style={styles.swapItemContainer}>
             {(!item.endingEpoch || epoch <= item.endingEpoch) && (
-                <div style={styles.goToSwap}>
-                    <Button
-                        buttonStyle={{
-                            ...styles.goToSwapGradient,
-                            backgroundImage: !item.epoch
-                                ? lib.colors.gradient
-                                : lib.colors.gradient3,
-                        }}
-                        textStyle={{
-                            WebkitTextFillColor: 'transparent',
-                            // @ts-ignore
-                            textFillColor: 'transparent',
-                            background: !item.epoch ? lib.colors.gradient : lib.colors.gradient3,
-                        }}
-                        label={t`Go to swap`}
-                        rightIcon={
-                            <IoArrowRedo
-                                color={
-                                    !item.epoch ? lib.colors.gradientGold : lib.colors.gradientPink
-                                }
-                            />
-                        }
-                        onClick={() => navigate(`/swap/${item.id}`)}
-                    />
-                </div>
+                <Button
+                    buttonStyle={styles.goToSwap}
+                    textStyle={{
+                        ...styles.goToSwapGradient,
+                        background: !item.epoch ? lib.colors.gradient : lib.colors.gradient3,
+                    }}
+                    label={t`Go to swap`}
+                    rightIcon={
+                        <IoArrowRedo
+                            color={!item.epoch ? lib.colors.gradientGold : lib.colors.gradientPink}
+                        />
+                    }
+                    onClick={() => navigate(`/swap/${item.id}`)}
+                />
             )}
             <div
                 key={index}
@@ -187,8 +175,6 @@ const SwapList: FunctionComponent<{ tokenId: TokenId | undefined }> = ({ tokenId
     const provider = web3.hook.usePriorityProvider();
     const token = client.live.token(tokenId);
     const epoch = client.live.epoch.id();
-    console.log({ token });
-    const routeTo = client.mutate.routeTo();
 
     const listData = useMemo(() => {
         const res: { title: string; items: LiveSwap[] }[] = [];
@@ -217,13 +203,13 @@ const SwapList: FunctionComponent<{ tokenId: TokenId | undefined }> = ({ tokenId
 
     return chainId && provider && epoch && token && tokenId ? (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
-            {token.type === 'item' &&
+            {/* {token.type === 'item' &&
                 token.tryout.count > 0 &&
                 token.tryout.max &&
                 token.tryout.min && (
                     <div
                         // ref={ref}
-                        onClick={() => routeTo(tokenId, false)}
+                        onClick={() => navigate(`/swap/${token.id}`)}
                         aria-hidden="true"
                         role="button"
                         style={{
@@ -243,7 +229,6 @@ const SwapList: FunctionComponent<{ tokenId: TokenId | undefined }> = ({ tokenId
                                 }}
                             >
                                 <Text textStyle={{ color: lib.colors.primaryColor }}>
-                                    {/* eslint-disable-next-line no-nested-ternary */}
                                     {t`On sale by ${token.tryout.count} Nugg${
                                         token.tryout.count > 1 ? 's' : ''
                                     }`}
@@ -278,7 +263,7 @@ const SwapList: FunctionComponent<{ tokenId: TokenId | undefined }> = ({ tokenId
                             </div>
                         </div>
                     </div>
-                )}
+                )} */}
             <StickyList
                 data={listData}
                 TitleRenderItem={SwapTitle}

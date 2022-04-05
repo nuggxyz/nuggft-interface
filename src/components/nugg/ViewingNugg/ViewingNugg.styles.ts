@@ -173,8 +173,6 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         alignItems: 'center',
         position: 'relative',
-        // justifyContent: 'center',
-        // justifyContent: 'space-between',
         width: '100%',
         marginBottom: '.5em',
         background: lib.colors.transparentWhite,
@@ -203,11 +201,10 @@ const styles = NLStyleSheetCreator({
         padding: '.2rem .7rem',
     },
     goToSwapGradient: {
-        backgroundSize: 'cover',
-        WebkitBackgroundSize: 'cover',
+        background: lib.colors.gradient3,
+        color: 'black',
         WebkitBackgroundClip: 'text',
-        backgroundClip: 'text',
-        padding: 0,
+        WebkitTextFillColor: 'transparent',
     },
 });
 
