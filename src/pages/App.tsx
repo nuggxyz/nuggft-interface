@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet';
 import { Navigate, Outlet } from 'react-router-dom';
 
 import ErrorBoundary from '@src/components/general/ErrorBoundry';
-import Loader from '@src/components/general/Loader/Loader';
 import NavigationBar from '@src/components/nugg/PageLayout/NavigationBar/NavigationBar';
 import ToastContainer from '@src/components/general/Toast/ToastContainer';
 import Modal from '@src/components/nugg/Modals/Modal/Modal';
@@ -49,7 +48,7 @@ const App = () => {
             <Modal />
             <Helmet />
             <NavigationBar />
-            <React.Suspense fallback={<Loader />}>{route} </React.Suspense>
+            <React.Suspense fallback={<div />}>{route} </React.Suspense>
 
             <SwapPage />
         </ErrorBoundary>
