@@ -132,7 +132,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                             ) : token ? (
                                 <Text
                                     type="text"
-                                    size="smaller"
+                                    size="medium"
                                     textStyle={{ color: lib.colors.white }}
                                 >
                                     {t`Owned by ${token.count} Nugg${

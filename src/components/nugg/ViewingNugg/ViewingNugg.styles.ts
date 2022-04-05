@@ -89,6 +89,7 @@ const styles = NLStyleSheetCreator({
     },
     swapItemContainer: {
         padding: '.25rem 1rem',
+        margin: '.25rem 0rem',
         flexDirection: 'column',
         ...globalStyles.centered,
     },
@@ -138,7 +139,6 @@ const styles = NLStyleSheetCreator({
     },
     stickyListRight: {
         width: '100%',
-        paddingBottom: '.75rem',
         overflow: 'scroll',
     },
     stickyList: {
@@ -161,7 +161,6 @@ const styles = NLStyleSheetCreator({
         padding: '.5rem',
         background: Colors.transparentWhite,
         width: '100%',
-        margin: '.25rem 0rem',
         ...globalStyles.backdropFilter,
     },
     listItemSvg: {

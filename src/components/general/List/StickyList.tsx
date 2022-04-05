@@ -1,8 +1,11 @@
 import React, { CSSProperties, FunctionComponent, useMemo, useRef, useState } from 'react';
 import { animated, config, SpringProps, useSpring } from '@react-spring/web';
+import { t } from '@lingui/macro';
 
 import useMeasure from '@src/hooks/useMeasure';
 import usePrevious from '@src/hooks/usePrevious';
+import Text from '@src/components/general/Texts/Text/Text';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 
 import { ListRenderItemProps } from './List';
 import styles from './List.styles';
@@ -108,6 +111,8 @@ type Props<T, B, A> = {
     styleLeft?: CSSProperties;
     styleRight?: CSSProperties;
     children?: FunctionComponent<any>;
+    emptyText?: string;
+    listEmptyStyle?: CSSProperties;
 };
 
 const StickyList = <T, B, A>({
@@ -120,6 +125,8 @@ const StickyList = <T, B, A>({
     styleLeft,
     styleRight,
     children,
+    emptyText,
+    listEmptyStyle,
 }: // ...props
 Props<T, B, A>) => {
     const refData = useMemo(
@@ -175,7 +182,18 @@ Props<T, B, A>) => {
                                     numberOfItems={refData[index].items.length}
                                 />
                             </React.Fragment>
-                        ) : null,
+                        ) : (
+                            <Text
+                                weight="light"
+                                size="small"
+                                type="text"
+                                textStyle={listEmptyStyle}
+                            >
+                                {!isUndefinedOrNullOrStringEmpty(emptyText)
+                                    ? emptyText
+                                    : t`No items to display...`}
+                            </Text>
+                        ),
                     )}
             </div>
             <div

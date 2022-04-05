@@ -213,7 +213,7 @@ fragment liveNugg on Nugg {
     activeSwap {
         ...swapdata
     }
-    swaps {
+    swaps(orderDirection: desc, orderBy: id) {
         ...swapdata
     }
 }

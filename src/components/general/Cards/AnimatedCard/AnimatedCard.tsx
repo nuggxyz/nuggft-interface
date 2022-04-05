@@ -16,15 +16,7 @@ const AnimatedCard: FunctionComponent<React.PropsWithChildren<{ disable?: boolea
     const ref = useRef<HTMLDivElement>(null);
     const [xys, set] = useState([0, 0, 1]);
     const props = useSpring({ xys, config: config.molasses });
-    return disable ? (
-        <div
-            style={{
-                zIndex: 1,
-            }}
-        >
-            {children}
-        </div>
-    ) : (
+    return (
         <div
             ref={ref}
             style={{

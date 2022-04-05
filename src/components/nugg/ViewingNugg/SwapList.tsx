@@ -14,7 +14,7 @@ import client from '@src/client';
 import { ListRenderItemProps } from '@src/components/general/List/List';
 import { Chain } from '@src/web3/core/interfaces';
 import { TokenId } from '@src/client/router';
-import lib from '@src/lib';
+import lib, { isUndefinedOrNull } from '@src/lib';
 import { Address } from '@src/classes/Address';
 import { LiveItemSwap, LiveSwap, LiveToken } from '@src/client/interfaces';
 import Button from '@src/components/general/Buttons/Button/Button';
@@ -34,8 +34,10 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
 
     return epoch && blocknum ? (
         <Text textStyle={{ color: lib.colors.primaryColor }}>
-            {!item.epoch
+            {!item.endingEpoch && !item.epoch
                 ? t`Awaiting bid!`
+                : !item.epoch
+                ? t`Swap is cancelled`
                 : item.epoch.id < epoch
                 ? t`Swap is over`
                 : t`Swap ending in ${item.epoch.endblock - blocknum} blocks`}
@@ -72,7 +74,8 @@ const SwapItem: FunctionComponent<
 
     return epoch ? (
         <div style={styles.swapItemContainer}>
-            {(!item.endingEpoch || epoch <= item.endingEpoch) && (
+            {(!item.endingEpoch ||
+                (!isUndefinedOrNull(item.epoch) && epoch <= item.endingEpoch)) && (
                 <Button
                     buttonStyle={styles.goToSwap}
                     textStyle={{
@@ -92,11 +95,12 @@ const SwapItem: FunctionComponent<
                 key={index}
                 style={{
                     ...styles.swap,
-                    background: !item.epoch
-                        ? lib.colors.gradient
-                        : item.epoch.id < extraData.epoch
-                        ? lib.colors.gradient2Transparent
-                        : lib.colors.gradient3,
+                    background:
+                        !item.epoch && !item.endingEpoch
+                            ? lib.colors.gradient
+                            : isUndefinedOrNull(item.epoch) || item.epoch?.id < extraData.epoch
+                            ? lib.colors.gradient2Transparent
+                            : lib.colors.gradient3,
                 }}
             >
                 <div style={styles.swapButton}>
@@ -114,6 +118,8 @@ const SwapItem: FunctionComponent<
                         >
                             {!item.endingEpoch || epoch <= item.endingEpoch
                                 ? t`On sale by`
+                                : isUndefinedOrNull(item.epoch)
+                                ? t`Cancelled by`
                                 : t`Sold by`}
                         </Text>
                         <Text
@@ -127,7 +133,8 @@ const SwapItem: FunctionComponent<
 
                     {
                         // if this swap is awaiting a bid
-                        item.endingEpoch === null ||
+                        isUndefinedOrNull(item.endingEpoch) ||
+                        isUndefinedOrNull(item.epoch) ||
                         // if this swap is a minting swap and no one has bid on it
                         (item.owner === Address.ZERO.hash && item.leader === Address.ZERO.hash) ? (
                             <> </>
