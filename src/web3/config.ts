@@ -2,6 +2,7 @@
 import { BigNumber, ethers } from 'ethers';
 import { useEffect } from 'react';
 import { ApolloClient } from '@apollo/client';
+import { InfuraProvider, JsonRpcProvider } from '@ethersproject/providers';
 
 import { buildApolloSplitLink, buildCache } from '@src/gql';
 
@@ -256,7 +257,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
     walletlink: initializeConnector<WalletLink>(
         (actions) =>
             new WalletLink(peer_coinbase, actions, {
-                url: INFURA_URLS[1][0],
+                url: ALCHEMY_URLS[1][0],
                 appName: 'NuggftV1',
             }),
     ),
@@ -271,7 +272,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                     peer_trust,
                 ],
                 actions,
-                { rpc: INFURA_URLS },
+                { rpc: ALCHEMY_URLS },
             ),
     ),
     ...(peer_metamask.type === ConnectorEnum.MetaMask
@@ -287,7 +288,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                 peer_rpc,
                 actions,
                 supportedChainIds().reduce((prev, curr) => {
-                    return { ...prev, [curr]: [INFURA_URLS[curr]] };
+                    return { ...prev, [curr]: [ALCHEMY_URLS[curr]] };
                 }, {}),
             ),
         supportedChainIds(),
@@ -365,6 +366,10 @@ export const createInfuraWebSocket = (
     onClose: (e: CloseEvent) => void,
 ): WebSocketProvider => {
     return new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY, onClose);
+};
+
+export const createInfuraProvider = (chainId: Chain): JsonRpcProvider => {
+    return new InfuraProvider(CHAIN_INFO[chainId].label, INFURA_KEY);
 };
 
 export const createAlchemyWebSocket = (

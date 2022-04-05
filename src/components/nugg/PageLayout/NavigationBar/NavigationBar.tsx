@@ -1,16 +1,16 @@
 import React, { FC, useCallback } from 'react';
 import { animated } from '@react-spring/web';
+import { useMatch, useNavigate } from 'react-router-dom';
 
 import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
 import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
 import FloorPrice from '@src/components/nugg/FloorPrice';
 import NuggDexSearchBar from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar';
 import state from '@src/state';
-import useFirefoxBlur from '@src/hooks/useFirefoxBlur';
 import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
 import NLStaticImage from '@src/components/general/NLStaticImage';
-import client from '@src/client';
 import Button from '@src/components/general/Buttons/Button/Button';
+import useBlur from '@src/hooks/useBlur';
 
 import styles from './NavigationBar.styles';
 
@@ -19,17 +19,20 @@ type Props = {
 };
 
 const NavigationBar: FC<Props> = () => {
-    // const [ref, isHovering] = useOnHover();
     const screenType = state.app.select.screenType();
-    const isViewOpen = client.live.isViewOpen();
-    const toggleView = client.mutate.toggleView();
-    const toggleMobileWallet = client.mutate.toggleMobileWallet();
 
-    const onClick = useCallback(() => (isViewOpen ? toggleView() : undefined), [isViewOpen]);
+    const navigate = useNavigate();
 
-    const container = useFirefoxBlur(['modal'], styles.navBarContainer);
+    const isViewOpen = useMatch('/view/*');
+    const isHome = useMatch('swap/:id');
+
+    const onClick = useCallback(() => {
+        if (!isHome?.params.id) navigate('/');
+    }, [isHome, navigate]);
+
+    const container = useBlur([]);
     return (
-        <animated.div style={container}>
+        <animated.div style={{ ...styles.navBarContainer, ...container }}>
             <div
                 role="button"
                 aria-hidden="true"
@@ -53,7 +56,7 @@ const NavigationBar: FC<Props> = () => {
                         <Button
                             hoverStyle={{ cursor: 'pointer' }}
                             buttonStyle={{ background: 'transparent', padding: '0', zIndex: 1000 }}
-                            onClick={() => (isViewOpen ? toggleView() : toggleMobileWallet())}
+                            onClick={onClick}
                             rightIcon={<NLStaticImage image="nuggbutton" />}
                         />
                     )}

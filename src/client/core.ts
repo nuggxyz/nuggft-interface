@@ -3,12 +3,12 @@ import create, { State, StateCreator } from 'zustand';
 import produce, { Draft, enableMapSet } from 'immer';
 
 import { Chain } from '@src/web3/core/interfaces';
-import { parseItmeIdToNum } from '@src/lib';
 import web3 from '@src/web3';
 import { SupportedLocale } from '@src/lib/i18n/locales';
 import { FeedMessage } from '@src/interfaces/feed';
+import { parseItmeIdToNum } from '@src/lib/index';
 
-import { parseRoute, Route, TokenId, ItemId, NuggId } from './router';
+import { TokenId, ItemId, NuggId } from './router';
 import {
     LiveToken,
     ClientState,
@@ -93,32 +93,7 @@ function createClientStoreAndActions2() {
                         }
 
                         if (hasStarted && !draft.route) {
-                            let parsed = parseRoute(window.location.hash);
-                            if (parsed.type === Route.Home) {
-                                parsed = {
-                                    type: Route.SwapNugg,
-                                    tokenId: epochId.toString(),
-                                    idnum: epochId,
-                                };
-                            }
-
-                            if (parsed.type === Route.SwapNugg || parsed.type === Route.SwapItem) {
-                                draft.lastSwap = parsed;
-                                draft.isViewOpen = false;
-                            } else {
-                                draft.lastView = parsed;
-                                draft.isViewOpen = true;
-                            }
-
                             draft.route = window.location.hash;
-
-                            if (!draft.lastSwap) {
-                                draft.lastSwap = {
-                                    type: Route.SwapNugg,
-                                    tokenId: epochId.toString(),
-                                    idnum: epochId,
-                                };
-                            }
                         }
 
                         if (!draft.epoch || epochId !== draft.epoch.id) {
@@ -164,6 +139,24 @@ function createClientStoreAndActions2() {
                             draft.myUnclaimedNuggOffers = stateUpdate.myUnclaimedNuggOffers;
                         if (stateUpdate.myUnclaimedItemOffers)
                             draft.myUnclaimedItemOffers = stateUpdate.myUnclaimedItemOffers;
+                    });
+                }
+
+                function setLastSwap(tokenId: TokenId | undefined): void {
+                    set((draft) => {
+                        draft.lastSwap = tokenId
+                            ? tokenId.isItemId()
+                                ? {
+                                      ...parseItmeIdToNum(tokenId),
+                                      tokenId: tokenId as ItemId,
+                                      type: 'item' as const,
+                                  }
+                                : {
+                                      tokenId,
+                                      type: 'nugg' as const,
+                                      idnum: Number(tokenId),
+                                  }
+                            : undefined;
                     });
                 }
 
@@ -240,6 +233,8 @@ function createClientStoreAndActions2() {
                 function updateOffers(tokenId: TokenId, offers: OfferData[]): void {
                     set((draft) => {
                         if (!get().liveOffers[tokenId]) draft.liveOffers[tokenId] = [];
+                        if (!get().liveOffers[tokenId]) draft.liveOffers[tokenId] = [];
+
                         draft.liveOffers[tokenId].mergeInPlace(
                             offers,
                             'user',
@@ -253,6 +248,7 @@ function createClientStoreAndActions2() {
                             const tmpOffer = offers[0];
 
                             if (
+                                token &&
                                 token.type === 'item' &&
                                 tmpOffer.type === 'item' &&
                                 !token.activeSwap
@@ -285,114 +281,114 @@ function createClientStoreAndActions2() {
                     });
                 }
 
-                function routeTo(tokenId: string | `item-${string}`, view: boolean): void {
-                    set((draft) => {
-                        let route = '#/';
+                // function routeTo(tokenId: string | `item-${string}`, view: boolean): void {
+                //     set((draft) => {
+                //         let route = '#/';
 
-                        // const { lastView, lastSwap } = draft;
+                //         // const { lastView, lastSwap } = draft;
 
-                        const isItem = tokenId?.isItemId();
+                //         const isItem = tokenId?.isItemId();
 
-                        if (view) {
-                            route += 'view/';
-                            draft.isViewOpen = true;
-                            draft.isMobileWalletOpen = false;
-                            if (tokenId === '') draft.isMobileViewOpen = false;
-                            else draft.isMobileViewOpen = true;
-                        } else {
-                            draft.isViewOpen = false;
-                            draft.isMobileViewOpen = false;
-                        }
-                        if (tokenId !== '') {
-                            if (isItem) {
-                                route += 'item/';
-                                const num = parseItmeIdToNum(tokenId);
-                                route += `${num.feature}/`;
-                                route += num.position;
-                                if (view) {
-                                    draft.lastView = {
-                                        type: Route.ViewItem,
-                                        tokenId,
-                                        ...num,
-                                    };
-                                } else {
-                                    draft.lastSwap = {
-                                        type: Route.SwapItem,
-                                        tokenId,
-                                        ...num,
-                                    };
-                                }
-                            } else {
-                                route += `nugg/${tokenId}`;
-                                if (view) {
-                                    draft.lastView = {
-                                        type: Route.ViewNugg,
-                                        tokenId,
-                                        idnum: +tokenId,
-                                    };
-                                } else {
-                                    draft.lastSwap = {
-                                        type: Route.SwapNugg,
-                                        tokenId,
-                                        idnum: +tokenId,
-                                    };
-                                }
-                            }
-                        }
+                //         if (view) {
+                //             route += 'view/';
+                //             draft.isViewOpen = true;
+                //             draft.isMobileWalletOpen = false;
+                //             if (tokenId === '') draft.isMobileViewOpen = false;
+                //             else draft.isMobileViewOpen = true;
+                //         } else {
+                //             draft.isViewOpen = false;
+                //             draft.isMobileViewOpen = false;
+                //         }
+                //         if (tokenId !== '') {
+                //             if (isItem) {
+                //                 route += 'item/';
+                //                 const num = parseItmeIdToNum(tokenId);
+                //                 route += `${num.feature}/`;
+                //                 route += num.position;
+                //                 if (view) {
+                //                     draft.lastView = {
+                //                         type: Route.ViewItem,
+                //                         tokenId,
+                //                         ...num,
+                //                     };
+                //                 } else {
+                //                     draft.lastSwap = {
+                //                         type: Route.SwapItem,
+                //                         tokenId,
+                //                         ...num,
+                //                     };
+                //                 }
+                //             } else {
+                //                 route += `nugg/${tokenId}`;
+                //                 if (view) {
+                //                     draft.lastView = {
+                //                         type: Route.ViewNugg,
+                //                         tokenId,
+                //                         idnum: +tokenId,
+                //                     };
+                //                 } else {
+                //                     draft.lastSwap = {
+                //                         type: Route.SwapNugg,
+                //                         tokenId,
+                //                         idnum: +tokenId,
+                //                     };
+                //                 }
+                //             }
+                //         }
 
-                        if (route !== draft.route) {
-                            window.location.replace(route);
-                        }
-                        const { lastView, lastSwap } = get();
-                        if (view && lastView) {
-                            const save = JSON.stringify({
-                                id: lastView.tokenId,
-                                type: lastView.type === Route.ViewNugg ? 'nugg' : 'item',
-                                dotnuggRawCache: null,
-                            });
-                            if (draft.myRecents.has(save)) {
-                                draft.myRecents.delete(save);
-                            }
-                            draft.myRecents.add(save);
-                        } else if (lastSwap) {
-                            const save = JSON.stringify({
-                                id: lastSwap.tokenId,
-                                type: lastSwap.type === Route.SwapNugg ? 'nugg' : 'item',
-                                dotnuggRawCache: null,
-                            });
-                            if (draft.myRecents.has(save)) {
-                                draft.myRecents.delete(save);
-                            }
-                            draft.myRecents.add(save);
-                        }
-                    });
-                }
+                //         if (route !== draft.route) {
+                //             window.location.replace(route);
+                //         }
+                //         const { lastView, lastSwap } = get();
+                //         if (view && lastView) {
+                //             const save = JSON.stringify({
+                //                 id: lastView.tokenId,
+                //                 type: lastView.type === Route.ViewNugg ? 'nugg' : 'item',
+                //                 dotnuggRawCache: null,
+                //             });
+                //             if (draft.myRecents.has(save)) {
+                //                 draft.myRecents.delete(save);
+                //             }
+                //             draft.myRecents.add(save);
+                //         } else if (lastSwap) {
+                //             const save = JSON.stringify({
+                //                 id: lastSwap.tokenId,
+                //                 type: lastSwap.type === Route.SwapNugg ? 'nugg' : 'item',
+                //                 dotnuggRawCache: null,
+                //             });
+                //             if (draft.myRecents.has(save)) {
+                //                 draft.myRecents.delete(save);
+                //             }
+                //             draft.myRecents.add(save);
+                //         }
+                //     });
+                // }
 
-                const toggleView = () => {
-                    const { isViewOpen, lastSwap } = get();
-                    if (lastSwap) routeTo('', !isViewOpen);
-                    else routeTo('', !isViewOpen);
-                };
+                // const toggleView = () => {
+                //     const { isViewOpen, lastSwap } = get();
+                //     if (lastSwap) routeTo('', !isViewOpen);
+                //     else routeTo('', !isViewOpen);
+                // };
 
-                const hideMobileViewingNugg = () => {
-                    set((draft) => {
-                        draft.isMobileViewOpen = false;
-                    });
-                };
+                // const hideMobileViewingNugg = () => {
+                //     set((draft) => {
+                //         draft.isMobileViewOpen = false;
+                //     });
+                // };
 
-                const toggleEditingNugg = (tokenId: NuggId | undefined) => {
-                    set((draft) => {
-                        draft.editingNugg = tokenId;
-                    });
-                };
+                // const toggleEditingNugg = (tokenId: NuggId | undefined) => {
+                //     set((draft) => {
+                //         draft.editingNugg = tokenId;
+                //     });
+                // };
 
-                const toggleMobileWallet = () => {
-                    routeTo('', false);
-                    set((draft) => {
-                        draft.isMobileWalletOpen = !get().isMobileWalletOpen;
-                    });
-                    console.log(get());
-                };
+                // const toggleMobileWallet = () => {
+                //     routeTo('', false);
+                //     set((draft) => {
+                //         draft.isMobileWalletOpen = !get().isMobileWalletOpen;
+                //     });
+                //     console.log(get());
+                // };
                 const updateLocale = (locale: SupportedLocale | undefined) => {
                     set((draft) => {
                         draft.locale = locale ?? undefined;
@@ -495,9 +491,9 @@ function createClientStoreAndActions2() {
                     updateLoan,
                     addNugg,
                     updateOffers,
-                    routeTo,
-                    toggleView,
-                    toggleEditingNugg,
+                    // routeTo,
+                    // toggleView,
+                    // toggleEditingNugg,
                     updateToken,
                     updateLocale,
                     updateSearchFilterTarget,
@@ -507,8 +503,9 @@ function createClientStoreAndActions2() {
                     updateUserDarkMode,
                     updateMediaDarkMode,
                     addFeedMessage,
-                    hideMobileViewingNugg,
-                    toggleMobileWallet,
+                    setLastSwap,
+                    // hideMobileViewingNugg,
+                    // toggleMobileWallet,
                 };
             }),
         ),

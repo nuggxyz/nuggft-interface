@@ -3,7 +3,7 @@
 /// <reference types="react" />
 
 declare type Base64EncodedSvg = `data:image/svg+xml;base64,${string}`;
-
+declare const __DEV__: boolean;
 // declare interface WebSocketProvider extends import('@ethersproject/providers').WebSocketProvider {
 //     _websocket: Websocket;
 // }

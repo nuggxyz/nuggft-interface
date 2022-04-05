@@ -3,7 +3,6 @@ import React, { FunctionComponent, useMemo } from 'react';
 import lib, { isUndefinedOrNullOrObjectEmpty, parseTokenId } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import client from '@src/client';
 import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
 import { ListData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
@@ -13,14 +12,14 @@ import styles from './NuggDexComponents.styles';
 type Props = InfiniteListRenderItemProps<ListData, undefined, ListData>;
 
 const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
-    const lastView__tokenId = client.live.lastView.tokenId();
+    // const lastView__tokenId = client.live.lastView.tokenId();
 
     const style = useMemo(() => {
         return {
             ...(!isUndefinedOrNullOrObjectEmpty(item) ? styles.nuggListRenderItemContainer : {}),
-            ...(lastView__tokenId === item?.id ? styles.selected : {}),
+            // ...(lastView__tokenId === item?.id ? styles.selected : {}),
         };
-    }, [item, lastView__tokenId]);
+    }, [item]);
 
     return (
         <div aria-hidden="true" role="button" style={style} onClick={() => action && action(item)}>

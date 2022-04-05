@@ -1,6 +1,8 @@
-import { Ref, RefCallback, useEffect, useRef, useState } from 'react';
+import { RefCallback, useEffect, useRef, useState } from 'react';
 
-const useOnHover = (callback?: RefCallback<unknown>): [Ref<HTMLDivElement>, boolean] => {
+const useOnHover = (
+    callback?: RefCallback<unknown>,
+): [React.RefObject<HTMLDivElement>, boolean] => {
     const ref = useRef<HTMLDivElement>(null);
     const [isHovering, setIsHovering] = useState(false);
 

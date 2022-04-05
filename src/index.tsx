@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactChild } from 'react';
+import React, { FC, PropsWithChildren } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
@@ -10,12 +10,9 @@ import store from './state/store';
 import './index.css';
 import I18N from './i18n';
 import Initializer from './state/Initializer';
-import Modal from './components/nugg/Modals/Modal/Modal';
-import IndexPage from './pages/Index';
-import ToastContainer from './components/general/Toast/ToastContainer';
 import web3 from './web3';
 import ClientUpdater from './client/ClientUpdater';
-import ErrorBoundary from './components/general/ErrorBoundry';
+import App from './pages/App';
 
 global.Buffer = global.Buffer || (await import('buffer')).Buffer;
 
@@ -25,17 +22,10 @@ const GlobalHooks = () => {
     return <ClientUpdater />;
 };
 
-const ContentBlock: FunctionComponent<{
-    children: ReactChild | ReactChild[];
-}> = ({ children }) => {
+const ContentBlock: FC<PropsWithChildren<unknown>> = ({ children }) => {
     const active = web3.hook.usePriorityIsActive();
 
-    return active ? (
-        <>
-            {/** */}
-            {children}
-        </>
-    ) : null;
+    return active ? <>{children}</> : null;
 };
 
 ReactDOM.render(
@@ -46,13 +36,9 @@ ReactDOM.render(
                 <Provider store={store}>
                     <Initializer>
                         <I18N>
-                            <ErrorBoundary>
-                                <ToastContainer />
-                                <Modal />
-                                <ContentBlock>
-                                    <IndexPage />
-                                </ContentBlock>
-                            </ErrorBoundary>
+                            <ContentBlock>
+                                <App />
+                            </ContentBlock>
                         </I18N>
                     </Initializer>
                 </Provider>

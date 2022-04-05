@@ -5,6 +5,8 @@ import AppState from '@src/state/app';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import client from '@src/client';
 import { TokenId } from '@src/client/router';
+import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
+import useLiveToken from '@src/client/subscriptions/useLiveToken';
 
 import styles from './RingAbout.styles';
 import OffersList from './OffersList';
@@ -25,6 +27,10 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
 
     const tokenId = client.live.lastSwap.tokenIdWithOptionalOverride(manualTokenId);
     const token = client.live.token(tokenId);
+
+    useLiveToken(tokenId);
+
+    useLiveOffers(tokenId);
 
     return token ? (
         <>

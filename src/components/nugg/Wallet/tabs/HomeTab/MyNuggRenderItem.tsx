@@ -9,18 +9,18 @@ import globalStyles from '@src/lib/globalStyles';
 import Text from '@src/components/general/Texts/Text/Text';
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
-import client from '@src/client';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import LoanButtons from '@src/components/nugg/ViewingNugg/FlyoutButtons/LoanButtons';
 import OwnerButtons from '@src/components/nugg/ViewingNugg/FlyoutButtons/OwnerButtons';
 import SaleButtons from '@src/components/nugg/ViewingNugg/FlyoutButtons/SaleButtons';
+import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
 import styles from './HomeTab.styles';
 
 const MyNuggRenderItem: FunctionComponent<
     InfiniteListRenderItemProps<MyNuggsData, undefined, unknown>
 > = ({ item, style }) => {
-    const routeTo = client.mutate.routeTo();
+    const { gotoViewingNugg } = useViewingNugg();
 
     return item ? (
         <div
@@ -62,7 +62,7 @@ const MyNuggRenderItem: FunctionComponent<
             <Button
                 key={JSON.stringify(item)}
                 onClick={() => {
-                    routeTo(item.tokenId, true);
+                    gotoViewingNugg(item.tokenId);
                 }}
                 buttonStyle={styles.searchButton}
                 rightIcon={<IoSearch color={lib.colors.white} />}

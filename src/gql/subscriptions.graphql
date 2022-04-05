@@ -284,6 +284,8 @@ fragment liveItemSwap on ItemSwap {
     }
 }
 
+fragment liveItemOffers on
+
 subscription betterLiveItemOffers($tokenId: ID!) {
     item(id: $tokenId) {
         activeSwap {

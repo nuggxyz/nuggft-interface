@@ -24,7 +24,8 @@
             }
         ],
         ["import-directory"],
-        ["macros"]
+        ["macros"],
+        ["babel-plugin-dev-expression"]
     ],
     "presets": [
         [

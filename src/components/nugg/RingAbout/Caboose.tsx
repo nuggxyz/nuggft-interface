@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { t } from '@lingui/macro';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
@@ -69,8 +70,8 @@ export default ({ tokenId }: { tokenId?: TokenId }) => {
             token.activeSwap.endingEpoch !== epoch
         );
     }, [token, epoch]);
-    const toggleMobileWallet = client.mutate.toggleMobileWallet();
 
+    const navigate = useNavigate();
     return token && token.type === 'item' && token.tryout.count > 0 ? (
         <div
             style={{
@@ -113,7 +114,7 @@ export default ({ tokenId }: { tokenId?: TokenId }) => {
                         disabled={mustWaitToBid || !nuggToBuyFrom}
                         onClick={() =>
                             screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                                ? toggleMobileWallet()
+                                ? navigate('/wallet')
                                 : tokenId &&
                                   state.app.dispatch.setModalOpen({
                                       name: 'OfferModal',

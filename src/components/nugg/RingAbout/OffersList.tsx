@@ -13,7 +13,7 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import state from '@src/state';
 import Text from '@src/components/general/Texts/Text/Text';
 import { Lifecycle, OfferData } from '@src/client/interfaces';
-import { NuggId, Route, TokenId } from '@src/client/router';
+import { NuggId, TokenId } from '@src/client/router';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { Chain } from '@src/web3/core/interfaces';
 import useDistribution from '@src/client/hooks/useDistribution';
@@ -23,7 +23,7 @@ import styles from './RingAbout.styles';
 type OfferExtraData = {
     chainId?: Chain;
     provider?: Web3Provider;
-    type?: Route.SwapItem | Route.SwapNugg;
+    type?: 'item' | 'nugg';
 };
 
 const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefined>> = ({
@@ -31,7 +31,7 @@ const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefin
     extraData,
 }) => {
     const leader = web3.hook.usePriorityAnyENSName(
-        extraData.type === Route.SwapItem ? 'nugg' : extraData.provider,
+        extraData.type === 'nugg' ? 'nugg' : extraData.provider,
         item?.user || '',
     );
     return (

@@ -2,6 +2,7 @@ import { useSpring } from '@react-spring/web';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { CornerRightDown, CornerRightUp, Search, X } from 'react-feather';
 import { t } from '@lingui/macro';
+import { useMatch, useNavigate } from 'react-router-dom';
 
 import useDebounce from '@src/hooks/useDebounce';
 import usePrevious from '@src/hooks/usePrevious';
@@ -18,7 +19,7 @@ type Props = Record<string, never>;
 const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const viewing = client.live.searchFilter.viewing();
 
-    const isViewOpen = client.live.isViewOpen();
+    const isViewOpen = useMatch('view/*');
     const sort = client.live.searchFilter.sort();
     const searchValue = client.live.searchFilter.searchValue();
 
@@ -31,7 +32,9 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
 
     const debouncedValue = useDebounce(localSearchValue, 100);
     const [sortAsc, setSortAsc] = useState(sort && sort.direction === 'asc');
-    const toggleView = client.mutate.toggleView();
+
+    const navigate = useNavigate();
+    // const location = useLocation();
 
     useEffect(() => {
         if (isViewOpen) {
@@ -84,7 +87,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
             leftToggles={[
                 <Button
                     buttonStyle={styles.searchBarButton}
-                    onClick={() => toggleView()}
+                    onClick={() => navigate('/view')}
                     rightIcon={<Search style={styles.searchBarIcon} />}
                 />,
             ]}

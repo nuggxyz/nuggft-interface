@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import ReactGA from 'react-ga4';
 import { getCLS, getFCP, getFID, getLCP, Metric } from 'web-vitals';
+import { useLocation } from 'react-router-dom';
 
 import web3 from '@src/web3';
 
@@ -15,8 +16,13 @@ function reportWebVitals({ name, delta, id }: Metric) {
     );
 }
 
-// tracks web vitals and pageviews
-export default ({ location: { pathname, search } }: typeof window) => {
+export default () => {
+    const location = useLocation();
+
+    useEffect(() => {
+        ReactGA.pageview(location.pathname + location.search);
+    }, [location]);
+
     useEffect(() => {
         getFCP(reportWebVitals);
         getFID(reportWebVitals);
@@ -31,10 +37,6 @@ export default ({ location: { pathname, search } }: typeof window) => {
     }, [chainId]);
 
     useEffect(() => {
-        ReactGA.pageview(`${pathname}${search}`);
-    }, [pathname, search]);
-
-    useEffect(() => {
         // typed as 'any' in react-ga4 -.-
         ReactGA.ga((tracker: { get: (arg: string) => string }) => {
             if (!tracker) return;
@@ -43,5 +45,4 @@ export default ({ location: { pathname, search } }: typeof window) => {
             window.localStorage.setItem(GOOGLE_ANALYTICS_CLIENT_ID_STORAGE_KEY, clientId);
         });
     }, []);
-    return null;
 };

@@ -15,6 +15,7 @@ import lib, { parseTokenIdSmart } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import useRemaining from '@src/client/hooks/useRemaining';
 import SimpleList from '@src/components/general/List/SimpleList';
+import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
 import styles from './ActiveTab.styles';
 import SeeAllButton from './SeeAllButton';
@@ -28,8 +29,7 @@ export const ActiveRenderItem = ({
     item: SwapData;
     onClick?: (arg: typeof item) => void;
 }) => {
-    const routeTo = client.mutate.routeTo();
-
+    const { gotoViewingNugg } = useViewingNugg();
     return item ? (
         <div
             aria-hidden="true"
@@ -76,7 +76,7 @@ export const ActiveRenderItem = ({
             <Button
                 key={JSON.stringify(item)}
                 onClick={() => {
-                    routeTo(item.tokenId, true);
+                    gotoViewingNugg(item.tokenId);
                 }}
                 buttonStyle={styles.searchButton}
                 rightIcon={<IoSearch color={lib.colors.white} />}

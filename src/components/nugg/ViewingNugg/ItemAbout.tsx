@@ -1,6 +1,7 @@
 import React from 'react';
 import { HiArrowRight } from 'react-icons/hi';
 import { t } from '@lingui/macro';
+import { useNavigate } from 'react-router-dom';
 
 import { Address } from '@src/classes/Address';
 import { NuggId } from '@src/client/router';
@@ -31,14 +32,15 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
 
 export default ({ tokenId, token, epoch }: { tokenId: NuggId; token: LiveItem; epoch: number }) => {
     const [ref, hover] = useOnHover(() => undefined);
-    const routeTo = client.mutate.routeTo();
+
+    const navigate = useNavigate();
 
     return (
         <>
             {token.tryout.count > 0 && token.tryout.max && token.tryout.min && (
                 <div
                     ref={ref}
-                    onClick={() => routeTo(tokenId, false)}
+                    onClick={() => navigate(`/swap/${tokenId}`)}
                     aria-hidden="true"
                     role="button"
                     style={{
@@ -97,7 +99,7 @@ export default ({ tokenId, token, epoch }: { tokenId: NuggId; token: LiveItem; e
             {token.activeSwap && (
                 <div
                     ref={ref}
-                    onClick={() => routeTo(tokenId, false)}
+                    onClick={() => navigate(`/swap/${tokenId}`)}
                     aria-hidden="true"
                     role="button"
                     style={{

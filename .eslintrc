@@ -10,6 +10,9 @@
         },
         "import/extensions": [".ts", ".tsx"]
     },
+    "globals": {
+        "__DEV__": true
+    },
     "extends": [
         "airbnb",
         "airbnb-typescript",
@@ -42,6 +45,7 @@
         "module-resolver"
     ],
     "rules": {
+        "react/jsx-no-useless-fragment": "off",
         "import/prefer-default-export": "off",
         "no-cond-assign": "off",
         "react/no-array-index-key": "off",

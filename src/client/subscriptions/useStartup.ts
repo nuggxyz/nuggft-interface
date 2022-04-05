@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
+import { useMatch } from 'react-router-dom';
 
 import { useGetLiveItemLazyQuery, useGetLiveNuggLazyQuery } from '@src/gql/types.generated';
-import { parseRoute, Route } from '@src/client/router';
 import { extractItemId } from '@src/lib';
 import formatLiveNugg from '@src/client/formatters/formatLiveNugg';
 import client from '@src/client';
@@ -14,42 +14,47 @@ export const useStartupCallback = () => {
     const chainId = web3.hook.usePriorityChainId();
 
     const updateToken = client.mutate.updateToken();
-    const updateBlocknum = client.mutate.updateBlocknum();
+    const setLastSwap = client.mutate.setLastSwap();
 
     const [itemLazyQuery] = useGetLiveItemLazyQuery({ client: graph });
     const [nuggLazyQuery] = useGetLiveNuggLazyQuery({ client: graph });
 
-    return useCallback(async () => {
-        if (provider && graph && chainId) {
-            const route = parseRoute(window.location.hash);
+    const match = useMatch('/:id');
 
-            if (route.type !== Route.Home) {
-                const isItem = route.type === Route.ViewItem || route.type === Route.SwapItem;
+    return useCallback(async () => {
+        if (provider && chainId) {
+            if (match && match.params.id && match.params.id !== '') {
+                const tokenId = match.params.id;
+
+                const isItem = tokenId.isItemId();
 
                 if (!isItem) {
                     await nuggLazyQuery({
-                        variables: { tokenId: route.tokenId },
+                        variables: { tokenId },
                     }).then((x) => {
                         if (x.data) {
                             if (!x.data.nugg) window.location.hash = '#/';
                             else {
                                 const formatted = formatLiveNugg(x.data.nugg);
                                 if (formatted) {
-                                    updateToken(route.tokenId, formatted);
+                                    setLastSwap(tokenId);
+                                    updateToken(tokenId, formatted);
                                 }
                             }
                         }
                     });
                 } else {
                     await itemLazyQuery({
-                        variables: { tokenId: extractItemId(route.tokenId) },
+                        variables: { tokenId: extractItemId(tokenId) },
                     }).then((x) => {
                         if (x.data) {
                             if (!x.data.item) window.location.hash = '#/';
                             else {
                                 const formatted = formatLiveItem(x.data.item);
                                 if (formatted) {
-                                    updateToken(route.tokenId, formatted);
+                                    setLastSwap(tokenId);
+
+                                    updateToken(tokenId, formatted);
                                 }
                             }
                         }
@@ -57,21 +62,24 @@ export const useStartupCallback = () => {
                 }
             }
 
-            await provider.getBlockNumber().then((num) => updateBlocknum(num, chainId, true));
+            // await createInfuraProvider(chainId)
+            //     .getBlockNumber()
+            //     .then((num) => {
+            //         updateBlocknum(num, chainId, true);
+            //     });
         }
-    }, [provider, graph, chainId, nuggLazyQuery, itemLazyQuery, updateBlocknum, updateToken]);
+    }, [provider, chainId, nuggLazyQuery, itemLazyQuery, updateToken, match, setLastSwap]);
 };
 
 export default () => {
-    const graph = client.live.graph();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
 
     const callback = useStartupCallback();
 
     useEffect(() => {
-        if (provider && graph && chainId) void callback();
-    }, [provider, graph, chainId, callback]);
+        if (provider && chainId) void callback();
+    }, [provider, chainId, callback]);
 
     return null;
 };

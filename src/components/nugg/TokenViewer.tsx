@@ -7,6 +7,7 @@ import client from '@src/client';
 import { TokenId } from '@src/client/router';
 import { parseTokenId } from '@src/lib';
 import useOnHover from '@src/hooks/useOnHover';
+import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
 import DangerouslySetNugg from './DangerouslySetNugg';
 
@@ -56,8 +57,8 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     const pendingSrc = usePending(svgNotFromGraph ?? src, showPending);
 
     const [hoverRef, isHovering] = useOnHover();
-    const routeTo = client.mutate.routeTo();
 
+    const { gotoViewingNugg } = useViewingNugg();
     const animatedStyle = useSpring({
         to: {
             // ...style,
@@ -80,7 +81,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
                     disableOnClick
                         ? undefined
                         : () => {
-                              routeTo(tokenId, true);
+                              gotoViewingNugg(tokenId);
                           }
                 }
                 ref={hoverRef}

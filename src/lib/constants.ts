@@ -19,6 +19,7 @@ export default {
     FEATURE_BASE: 0,
     ITEM_ID_POS: 0,
     ITEM_NUGG_POS: 1,
+    VIEWING_PREFIX: 'id' as const,
 };
 
 export type ITEM_ID = `item-${string}`;

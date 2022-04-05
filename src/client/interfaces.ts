@@ -9,7 +9,7 @@ import { NuggftV1 } from '../typechain/NuggftV1';
 
 // eslint-disable-next-line import/no-cycle
 
-import { TokenId, NuggId, ItemId, ViewRoutes, SwapRoutes } from './router';
+import { TokenId, NuggId, ItemId, SwapRoutes } from './router';
 
 export interface BaseOfferData {
     user: string;
@@ -171,11 +171,11 @@ export interface ClientState extends State, Actions {
     nuggft: NuggftV1 | undefined;
     manualPriority: Connector | undefined;
     route: string | undefined;
-    lastView: ViewRoutes | undefined;
+    // lastView: ViewRoutes | undefined;
     lastSwap: SwapRoutes | undefined;
-    isViewOpen: boolean;
-    isMobileViewOpen: boolean;
-    isMobileWalletOpen: boolean;
+    // isViewOpen: boolean;
+    // isMobileViewOpen: boolean;
+    // isMobileWalletOpen: boolean;
     stake: StakeData | undefined;
     epoch__id: number | undefined;
     epoch: EpochData | undefined;
@@ -249,11 +249,11 @@ export type ClientStateUpdate = {
 export interface Actions {
     updateBlocknum: (blocknum: number, chainId: Chain, startup?: boolean) => void;
     updateProtocol: (stateUpdate: ClientStateUpdate) => void;
-    routeTo: (tokenId: TokenId, view: boolean) => void;
-    toggleView: () => void;
-    toggleMobileWallet: () => void;
-
-    hideMobileViewingNugg: () => void;
+    // routeTo: (tokenId: TokenId, view: boolean) => void;
+    // toggleView: () => void;
+    // toggleMobileWallet: () => void;
+    setLastSwap: (tokenId: TokenId | undefined) => void;
+    // hideMobileViewingNugg: () => void;
     updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;
     removeLoan: (tokenId: NuggId) => void;
     removeNuggClaim: (tokenId: NuggId) => void;
@@ -264,7 +264,7 @@ export interface Actions {
     updateLoan: (update: LoanData) => void;
     addNugg: (update: MyNuggsData) => void;
     removeNugg: (tokenId: NuggId) => void;
-    toggleEditingNugg: (tokenId: NuggId | undefined) => void;
+    // toggleEditingNugg: (tokenId: NuggId | undefined) => void;
     updateToken: (tokenId: TokenId, data: LiveToken) => void;
     updateLocale: (locale: SupportedLocale | undefined) => void;
     updateSearchFilterTarget: (value: SearchFilter['target']) => void;
