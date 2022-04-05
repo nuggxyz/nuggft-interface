@@ -29,6 +29,7 @@ const NuggLinkThumbnail: FunctionComponent<{
     const screenType = AppState.select.screenType();
 
     const { gotoViewingNugg } = useViewingNugg();
+    // const pageLoaded = client.live.pageIsLoaded();
 
     return (
         <animated.div
@@ -39,7 +40,12 @@ const NuggLinkThumbnail: FunctionComponent<{
                 gotoViewingNugg(item.id);
             }}
         >
-            <TokenViewer tokenId={item.id} style={styles.nugg} disableOnClick />
+            <TokenViewer
+                tokenId={item.id}
+                style={styles.nugg}
+                disableOnClick
+                // shouldLoad={pageLoaded}
+            />
             {screenType !== 'phone' && (
                 <Text size="smaller" textStyle={styles.label}>
                     {parseTokenIdSmart(item.id)}

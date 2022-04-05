@@ -16,6 +16,20 @@ query getAllNuggs(
     }
 }
 
+query getDotnuggNugg($tokenId: ID!) {
+    nugg(id: $tokenId) {
+        id
+        dotnuggRawCache
+    }
+}
+
+query getDotnuggItem($tokenId: ID!) {
+    item(id: $tokenId) {
+        id
+        dotnuggRawCache
+    }
+}
+
 query getAllItems(
     $first: Int
     $skip: Int
