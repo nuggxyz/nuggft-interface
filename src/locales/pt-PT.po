@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-04-03 22:57+0000\n"
+"POT-Creation-Date: 2022-04-04 15:29+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Portuguese\n"
-"PO-Revision-Date: 2022-04-04 06:02\n"
+"PO-Revision-Date: 2022-04-05 06:02\n"
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "(you)"
@@ -119,6 +119,10 @@ msgstr ""
 msgid "Connect wallet"
 msgstr ""
 
+#: src/components/general/ErrorBoundry.tsx
+msgid "Create an issue on GitHub"
+msgstr ""
+
 #: src/components/nugg/Modals/MintModal/MintModal.tsx
 msgid "Deep-frying your nugg..."
 msgstr ""
@@ -174,6 +178,10 @@ msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
 msgid "From epoch {0}"
+msgstr ""
+
+#: src/components/general/ErrorBoundry.tsx
+msgid "Get support on Discord"
 msgstr ""
 
 #: src/components/nugg/NuggDex/NuggDexSearchList/components/NuggList.tsx
@@ -382,6 +390,10 @@ msgstr ""
 
 #: src/components/nugg/ViewingNugg/SwapList.tsx
 msgid "Sold by"
+msgstr ""
+
+#: src/components/general/ErrorBoundry.tsx
+msgid "Something went wrong"
 msgstr ""
 
 #: src/state/transaction/middlewares.ts
