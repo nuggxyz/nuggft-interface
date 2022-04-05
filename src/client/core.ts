@@ -213,6 +213,14 @@ function createClientStoreAndActions2() {
                     });
                 }
 
+                function setPageIsLoaded(): void {
+                    if (!get().pageIsLoaded) {
+                        set((draft) => {
+                            draft.pageIsLoaded = true;
+                        });
+                    }
+                }
+
                 function addNugg(update: MyNuggsData): void {
                     set((draft) => {
                         draft.myNuggs.unshift(update);
@@ -478,6 +486,7 @@ function createClientStoreAndActions2() {
                         lastBlockRpc: 0,
                         lastBlockGraph: 0,
                     },
+                    pageIsLoaded: false,
                     started: false,
                     updateBlocknum,
                     updateProtocol,
@@ -491,6 +500,7 @@ function createClientStoreAndActions2() {
                     updateLoan,
                     addNugg,
                     updateOffers,
+                    setPageIsLoaded,
                     // routeTo,
                     // toggleView,
                     // toggleEditingNugg,

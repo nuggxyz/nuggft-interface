@@ -138,7 +138,7 @@ export default {
 
         myUnclaimedNuggOffers: () => core((state) => state.myUnclaimedNuggOffers),
         myUnclaimedItemOffers: () => core((state) => state.myUnclaimedItemOffers),
-
+        pageIsLoaded: () => core((state) => state.pageIsLoaded),
         myUnclaimedOffers: () =>
             core(
                 (state) =>
@@ -173,7 +173,7 @@ export default {
         // hideMobileViewingNugg: () => core((state) => state.hideMobileViewingNugg),
         // toggleMobileWallet: () => core((state) => state.toggleMobileWallet),
         setLastSwap: () => core((state) => state.setLastSwap),
-
+        setPageIsLoaded: () => core((state) => state.setPageIsLoaded),
         // updateClients: () => coreNonImmer((state) => state.updateClients),
         updateToken: () => core((state) => state.updateToken),
         updateLocale: () => core((state) => state.updateLocale),

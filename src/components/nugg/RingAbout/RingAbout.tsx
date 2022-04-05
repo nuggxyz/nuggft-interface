@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { useEffect, FunctionComponent } from 'react';
 import { animated } from '@react-spring/web';
 
 import AppState from '@src/state/app';
@@ -27,10 +27,17 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
 
     const tokenId = client.live.lastSwap.tokenIdWithOptionalOverride(manualTokenId);
     const token = client.live.token(tokenId);
+    const setPageIsLoaded = client.mutate.setPageIsLoaded();
 
     useLiveToken(tokenId);
 
     useLiveOffers(tokenId);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setPageIsLoaded();
+        }, 5000);
+    }, [setPageIsLoaded]);
 
     return token ? (
         <>

@@ -173,6 +173,8 @@ export interface ClientState extends State, Actions {
     route: string | undefined;
     // lastView: ViewRoutes | undefined;
     lastSwap: SwapRoutes | undefined;
+    pageIsLoaded: boolean;
+
     // isViewOpen: boolean;
     // isMobileViewOpen: boolean;
     // isMobileWalletOpen: boolean;
@@ -264,6 +266,7 @@ export interface Actions {
     updateLoan: (update: LoanData) => void;
     addNugg: (update: MyNuggsData) => void;
     removeNugg: (tokenId: NuggId) => void;
+    setPageIsLoaded: () => void;
     // toggleEditingNugg: (tokenId: NuggId | undefined) => void;
     updateToken: (tokenId: TokenId, data: LiveToken) => void;
     updateLocale: (locale: SupportedLocale | undefined) => void;
