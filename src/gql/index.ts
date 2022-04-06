@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/require-await */
 import { getMainDefinition } from '@apollo/client/utilities';
 import { split, HttpLink, InMemoryCache } from '@apollo/client';
 import { WebSocketLink } from '@apollo/client/link/ws';
+
+import { StrictTypedTypePolicies } from './types.generated';
 
 // // // await before instantiating ApolloClient, else queries might run before the cache is persisted
 // void persistCache({
@@ -49,6 +52,56 @@ export const buildApolloSplitLink = (http: string, wss: string) => {
     );
 };
 
+const typePolicies: StrictTypedTypePolicies = {
+    Query: {
+        fields: {
+            // nugg: {
+            //     // keyArgs: ['id'],
+            //     // read: (x, b) => {
+            //     //     console.log({ x, b });
+            //     // },
+            //     // merge: (x, b) => {
+            //     //     console.log({ x, b });
+            //     // },
+            // },
+            // item: {
+            //     // keyArgs: ,
+            //     // read: (x, b) => {
+            //     //     console.log({ x, b });
+            //     // },
+            //     // merge: (x, b) => {
+            //     //     console.log({ x, b });
+            //     // },
+            // },
+            // nuggs: {
+            //     // Don't cache separate results based on
+            //     // any of this field's arguments.
+            //     keyArgs: false,
+            //     // Concatenate the incoming list items with
+            //     // the existing list items.
+            //     // eslint-disable-next-line @typescript-eslint/default-param-last
+            //     merge(existing = [], incoming) {
+            //         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            //         return [...existing, ...incoming];
+            //     },
+            // },
+            // items: {
+            //     // Don't cache separate results based on
+            //     // any of this field's arguments.
+            //     keyArgs: false,
+            //     // Concatenate the incoming list items with
+            //     // the existing list items.
+            //     // eslint-disable-next-line @typescript-eslint/default-param-last
+            //     merge(existing: Array<any> = [], incoming: Array<any>) {
+            //         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            //         return [...existing, ...incoming];
+            //     },
+            // },
+        },
+    },
+};
 export const buildCache = () => {
-    return new InMemoryCache({});
+    return new InMemoryCache({
+        typePolicies,
+    });
 };

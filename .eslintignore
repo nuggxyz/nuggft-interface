@@ -3,7 +3,7 @@ out
 
 node_modules
 
-# *.generated.*
+*.generated.*
 
 webpack
 src/locales

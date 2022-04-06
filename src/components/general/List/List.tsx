@@ -21,7 +21,7 @@ export interface ListRenderItemProps<ItemType, ExtraDataType, ActionArgType> {
     item: ItemType;
     extraData: ExtraDataType;
     action?: (arg: ActionArgType) => void;
-    onScrollEnd?: () => () => void;
+    onScrollEnd?: (...args: any[]) => void;
     index: number;
     rootRef?: LegacyRef<HTMLDivElement>;
     selected?: boolean;
@@ -29,6 +29,8 @@ export interface ListRenderItemProps<ItemType, ExtraDataType, ActionArgType> {
 }
 
 export interface ListProps<T, B, A> {
+    // eslint-disable-next-line react/no-unused-prop-types
+    id?: string;
     RenderItem: FunctionComponent<ListRenderItemProps<T, B, A>>;
     loading?: boolean;
     extraData: B;
@@ -46,7 +48,7 @@ export interface ListProps<T, B, A> {
     loaderColor?: string;
     TitleButton?: FunctionComponent;
     titleLoading?: boolean;
-    // itemHeight: number;
+    itemHeight?: number;
     data: T[];
 }
 
@@ -89,6 +91,8 @@ const List = <T, B, A>({
     listEmptyStyle,
     TitleButton,
     titleLoading,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    itemHeight = 10,
 }: ListProps<T, B, A>) => {
     const ref = useOnScroll(onScroll);
     const containerStyle = useMemo(() => {
@@ -99,7 +103,7 @@ const List = <T, B, A>({
             ...style,
         };
     }, [border, horizontal, style]);
-
+    // yeah I am simplifying the search a good bit - I am moving all the logic outside the search list and into the search bar. Its hard to explain but I am going to set up a bunch of simple filters that allow easy searching of things. Long story short, List is all the search will need
     const ListCallback = useCallback(
         ({ selected: _selected }: { selected?: T }) =>
             data && data.length > 0 ? (

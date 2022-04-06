@@ -28,6 +28,7 @@ export type TokenViewerProps = {
     updateCache?: boolean;
     morphing?: boolean;
     shouldLoad?: boolean;
+    forceCache?: boolean;
 };
 
 const TokenViewer: FunctionComponent<TokenViewerProps> = ({
@@ -44,6 +45,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     subscribe = false,
     showPending = false,
     shouldLoad = true,
+    forceCache = false,
 }) => {
     const screenType = AppState.select.screenType();
 
@@ -56,7 +58,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
         : updateCache
         ? client.hook.useDotnugg(tokenId)
         : // eslint-disable-next-line react-hooks/rules-of-hooks
-          useDotnuggCacheOnlyLazy(shouldLoad, tokenId);
+          useDotnuggCacheOnlyLazy(shouldLoad, tokenId, forceCache);
 
     const pendingSrc = usePending(svgNotFromGraph ?? src, showPending);
 

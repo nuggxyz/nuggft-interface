@@ -1,11 +1,4 @@
-import React, {
-    CSSProperties,
-    FunctionComponent,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
+import React, { CSSProperties, FunctionComponent, SetStateAction, useCallback } from 'react';
 import { Promise } from 'bluebird';
 import { animated, UseSpringProps } from '@react-spring/web';
 import { ChevronLeft } from 'react-feather';
@@ -18,8 +11,6 @@ import InfiniteList from '@src/components/general/List/InfiniteList';
 import client from '@src/client';
 import { ListData, SearchView } from '@src/client/interfaces';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
-import { isUndefinedOrNullOrNotFunction } from '@src/lib';
-import usePrevious from '@src/hooks/usePrevious';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
 import NuggListRenderItem from './NuggListRenderItem';
@@ -31,6 +22,7 @@ export type NuggListOnScrollEndProps = {
     searchValue?: string;
     addToList?: boolean;
     desiredSize?: number;
+    horribleMFingHack?: () => void;
 };
 
 export type NuggListProps = {
@@ -38,13 +30,17 @@ export type NuggListProps = {
     style: CSSProperties | UseSpringProps;
     values: ListData[];
     animationToggle?: boolean;
+    horribleMFingHack2?: boolean;
+    interval: number;
+
     onScrollEnd?: ({
         setLoading,
         sort,
         searchValue,
         addToList,
         desiredSize,
-    }: NuggListOnScrollEndProps) => Promise<void> | (() => void);
+        horribleMFingHack,
+    }: NuggListOnScrollEndProps) => Promise<void> | void;
 };
 
 const NuggList: FunctionComponent<NuggListProps> = ({
@@ -52,25 +48,19 @@ const NuggList: FunctionComponent<NuggListProps> = ({
     values,
     onScrollEnd,
     animationToggle,
+    interval = 25,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    horribleMFingHack2 = false,
 }) => {
-    const target = client.live.searchFilter.target();
-    const sort = client.live.searchFilter.sort();
-    const searchValue = client.live.searchFilter.searchValue();
-
-    const prevTarget = usePrevious(target);
-    const prevSort = usePrevious(sort);
-    const prevSearchValue = usePrevious(searchValue);
-
     const screenType = AppState.select.screenType();
     const viewing = client.live.searchFilter.viewing();
-
-    const [loading, setLoading] = useState(false);
 
     const { gotoViewingNugg } = useViewingNugg();
 
     const onClick = useCallback(
-        (item: typeof values[0]) => {
+        (item: typeof values[number]) => {
             batch(() => {
                 gotoViewingNugg(item.id);
             });
@@ -78,52 +68,9 @@ const NuggList: FunctionComponent<NuggListProps> = ({
         [gotoViewingNugg],
     );
 
-    const _onScrollEnd = useCallback(
-        ({ addToList, desiredSize }: { addToList: boolean; desiredSize?: number }) => {
-            if (onScrollEnd)
-                void onScrollEnd({
-                    setLoading,
-                    searchValue,
-                    sort: sort?.direction,
-                    addToList,
-                    desiredSize,
-                });
-        },
-        [searchValue, sort, values],
-    );
-
-    useEffect(() => {
-        if (
-            !isUndefinedOrNullOrNotFunction(onScrollEnd) &&
-            (!type || target === type) &&
-            (prevSearchValue !== searchValue ||
-                searchValue !== '' ||
-                ((prevSort && prevSort.direction === 'asc') !==
-                    (sort && sort.direction === 'asc') &&
-                    prevTarget === target))
-        ) {
-            // @danny7even i think i screwed up the logic above... have to have this commented out or the
-            // whole app crashes when you try to scroll on all nuggs
-            // if (onScrollEnd)
-            //     void onScrollEnd({
-            //         setLoading,
-            //         sort: sort?.direction === 'asc' ? 'asc' : 'desc',
-            //         searchValue,
-            //         addToList: false,
-            //         desiredSize: values.length,
-            //     });
-        }
-    }, [target, prevTarget, type, sort, searchValue, prevSort, prevSearchValue, values]);
-
-    useEffect(() => {
-        if (onScrollEnd)
-            void onScrollEnd({
-                setLoading,
-                sort: sort?.direction === 'asc' ? 'asc' : 'desc',
-                searchValue,
-                addToList: false,
-            });
-    }, []);
+    const _onScrollEnd = useCallback(() => {
+        if (onScrollEnd) void onScrollEnd({});
+    }, [onScrollEnd]);
 
     const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
     const updateSearchFilterViewing = client.mutate.updateSearchFilterViewing();
@@ -160,7 +107,7 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                         updateSearchFilterSearchValue(undefined);
                     }}
                 />
-                {/* )} */}
+
                 <InfiniteList
                     id="nugg-list"
                     style={{
@@ -171,7 +118,8 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                     }}
                     data={values}
                     RenderItem={NuggListRenderItem}
-                    loading={loading}
+                    loading={false}
+                    interval={interval}
                     onScrollEnd={_onScrollEnd}
                     action={onClick}
                     extraData={undefined}

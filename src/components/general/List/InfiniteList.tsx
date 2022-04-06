@@ -1,6 +1,7 @@
 import React, {
     CSSProperties,
     FunctionComponent,
+    LegacyRef,
     useCallback,
     useEffect,
     useMemo,
@@ -21,7 +22,7 @@ export interface InfiniteListRenderItemProps<T, B, A> {
     action?: (arg: A) => void;
     onScrollEnd?: ({ addToList }: { addToList: boolean }) => void;
     index: number;
-    rootRef?: unknown;
+    rootRef?: LegacyRef<HTMLDivElement>;
     selected?: boolean;
     style?: CSSProperties;
 }
@@ -48,6 +49,7 @@ interface Props<T, B, A> {
     animationToggle?: boolean;
     TitleButton?: FunctionComponent;
     titleLoading?: boolean;
+    interval?: number;
 }
 
 const LIST_PADDING = 4;
@@ -74,6 +76,7 @@ const InfiniteList = <T, B, A>({
     animationToggle,
     TitleButton,
     titleLoading,
+    interval = 25,
 }: Props<T, B, A>) => {
     const windowRef = useRef<HTMLDivElement>(null);
     const [windowHeight, setWindowHeight] = useState(0);
@@ -148,6 +151,18 @@ const InfiniteList = <T, B, A>({
                 </div>
             );
             setItems((_items) => {
+                if (
+                    data &&
+                    prevData &&
+                    (data.length < prevData.length ||
+                        (data.length > 0 &&
+                            prevData.length > 0 &&
+                            JSON.stringify(data[0]) !== JSON.stringify(prevData[0])))
+                ) {
+                    _items = data.map((_, i) => buildItem(i));
+                    return _items;
+                }
+
                 if (!(startIndex === endIndex && endIndex === 0)) {
                     range(startIndex, endIndex).forEach((i) => {
                         if (!_items[i - startIndex] || _items[i - startIndex].key !== key(i)) {
@@ -185,18 +200,41 @@ const InfiniteList = <T, B, A>({
         itemHeight,
     ]);
 
-    useEffect(() => {
-        if (onScrollEnd) {
-            if (
-                items.length !== 0 &&
-                items.length * itemHeight + scrollTop >= innerHeight &&
-                prevEnd !== endIndex &&
-                !loading
-            ) {
-                void onScrollEnd({ addToList: true });
+    const [lastGrabValue, setLastGrabValue] = React.useState<number>(0);
+
+    const lastGrab = React.useCallback(
+        (end: number) => {
+            if (onScrollEnd) {
+                const floor = Math.floor(end / (interval - LIST_PADDING - 1));
+                if (
+                    items.length !== 0 &&
+                    items.length * itemHeight + scrollTop >= innerHeight &&
+                    prevEnd !== end &&
+                    (lastGrabValue === 0 || floor !== lastGrabValue) &&
+                    !loading
+                ) {
+                    console.log({ end, floor, lastGrabValue });
+                    setLastGrabValue(floor);
+                    void onScrollEnd({ addToList: true });
+                }
             }
-        }
-    }, [scrollTop, items, innerHeight, onScrollEnd, prevEnd, endIndex, loading, itemHeight]);
+        },
+        [
+            scrollTop,
+            items,
+            innerHeight,
+            onScrollEnd,
+            prevEnd,
+            loading,
+            itemHeight,
+            interval,
+            lastGrabValue,
+        ],
+    );
+
+    useEffect(() => {
+        lastGrab(endIndex);
+    }, [endIndex]);
 
     const _onScroll = useCallback(
         (e: { currentTarget: { scrollTop: number } }) => {

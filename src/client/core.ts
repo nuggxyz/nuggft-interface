@@ -10,6 +10,7 @@ import { parseItmeIdToNum } from '@src/lib/index';
 
 import { TokenId, ItemId, NuggId } from './router';
 import {
+    SearchResults,
     LiveToken,
     ClientState,
     OfferData,
@@ -438,6 +439,13 @@ function createClientStoreAndActions2() {
                     });
                 };
 
+                const setActiveSearch = (value: SearchResults | undefined) => {
+                    if (value)
+                        set((draft) => {
+                            draft.activeSearch = value;
+                        });
+                };
+
                 return {
                     stake: undefined,
                     nuggft: undefined,
@@ -486,6 +494,7 @@ function createClientStoreAndActions2() {
                         lastBlockRpc: 0,
                         lastBlockGraph: 0,
                     },
+                    activeSearch: [],
                     pageIsLoaded: false,
                     started: false,
                     updateBlocknum,
@@ -514,6 +523,7 @@ function createClientStoreAndActions2() {
                     updateMediaDarkMode,
                     addFeedMessage,
                     setLastSwap,
+                    setActiveSearch,
                     // hideMobileViewingNugg,
                     // toggleMobileWallet,
                 };

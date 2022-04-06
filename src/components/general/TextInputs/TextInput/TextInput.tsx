@@ -29,6 +29,9 @@ export interface TextInputProps {
     styleLabel?: CSSProperties;
     shouldFocus?: boolean;
     onFocus?: () => void;
+    // https://stackoverflow.com/a/53803282
+    restrictToNumbers?: boolean;
+    // restrictToNumbersWithDecimal?: boolean;
 }
 
 const TextInput: FunctionComponent<TextInputProps> = ({
@@ -55,6 +58,8 @@ const TextInput: FunctionComponent<TextInputProps> = ({
     styleLabel,
     shouldFocus,
     onFocus,
+    restrictToNumbers,
+    // restrictToNumbersWithDecimal,
 }) => {
     const inputStyle = {
         ...styles.textInput,
@@ -137,10 +142,19 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                         onChange={(v: React.ChangeEvent<HTMLInputElement>) => {
                             setValue(v.target.value);
                         }}
-                        pattern={pattern}
+                        pattern={!pattern || pattern === '' ? undefined : pattern}
                         disabled={disabled}
                         inputMode={inputMode}
                         onFocus={onFocus}
+                        onKeyPress={
+                            restrictToNumbers
+                                ? (event) => {
+                                      if (!/[0-9]/.test(event.key)) {
+                                          event.preventDefault();
+                                      }
+                                  }
+                                : undefined
+                        }
                     />
                 )}
                 {rightToggles && rightToggles.map((Toggle) => <div key={Toggle.key}>{Toggle}</div>)}
