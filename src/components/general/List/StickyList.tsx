@@ -5,7 +5,7 @@ import { t } from '@lingui/macro';
 import useMeasure from '@src/hooks/useMeasure';
 import usePrevious from '@src/hooks/usePrevious';
 import Text from '@src/components/general/Texts/Text/Text';
-import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import { isUndefinedOrNullOrArrayEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
 
 import { ListRenderItemProps } from './List';
 import styles from './List.styles';
@@ -157,6 +157,8 @@ Props<T, B, A>) => {
     );
     const [current] = useState(refData?.map((item) => item.title));
 
+    console.log(refData, listRef);
+
     return listRef ? (
         <animated.div style={{ display: 'flex', ...style }}>
             <div style={styleLeft}>
@@ -182,18 +184,7 @@ Props<T, B, A>) => {
                                     numberOfItems={refData[index].items.length}
                                 />
                             </React.Fragment>
-                        ) : (
-                            <Text
-                                weight="light"
-                                size="small"
-                                type="text"
-                                textStyle={listEmptyStyle}
-                            >
-                                {!isUndefinedOrNullOrStringEmpty(emptyText)
-                                    ? emptyText
-                                    : t`No items to display...`}
-                            </Text>
-                        ),
+                        ) : null,
                     )}
             </div>
             <div
@@ -204,19 +195,32 @@ Props<T, B, A>) => {
                 }}
                 ref={listRef}
             >
-                {refData.map((item, index) =>
-                    refData[index].items && refData[index].items.length > 0 ? (
-                        <React.Fragment key={`list-${item.title}`}>
-                            <RenderItem
-                                item={item}
-                                TitleRenderItem={TitleRenderItem}
-                                ChildRenderItem={ChildRenderItem}
-                                extraData={extraData}
-                                animating={animating}
-                                refData={refData.map((_item) => _item.title)}
-                            />
-                        </React.Fragment>
-                    ) : null,
+                {!isUndefinedOrNullOrArrayEmpty(refData) ? (
+                    refData.map((item, index) =>
+                        refData[index].items && refData[index].items.length > 0 ? (
+                            <React.Fragment key={`list-${item.title}`}>
+                                <RenderItem
+                                    item={item}
+                                    TitleRenderItem={TitleRenderItem}
+                                    ChildRenderItem={ChildRenderItem}
+                                    extraData={extraData}
+                                    animating={animating}
+                                    refData={refData.map((_item) => _item.title)}
+                                />
+                            </React.Fragment>
+                        ) : null,
+                    )
+                ) : (
+                    <Text
+                        weight="light"
+                        size="small"
+                        type="text"
+                        textStyle={{ ...styles.noItems, ...listEmptyStyle }}
+                    >
+                        {!isUndefinedOrNullOrStringEmpty(emptyText)
+                            ? emptyText
+                            : t`No items to display...`}
+                    </Text>
                 )}
             </div>
             {children && children}

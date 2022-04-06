@@ -12,7 +12,6 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import HappyTabber from '@src/components/general/HappyTabber/HappyTabber';
 import AddressViewer from '@src/components/general/Texts/AddressViewer/AddressViewer';
-import { LiveNugg } from '@src/client/interfaces';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import useTokenQuery from '@src/client/hooks/useTokenQuery';
 // import { LiveNuggWithLifecycle } from '@src/client/interfaces';
@@ -60,7 +59,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 : []),
             {
                 label: t`Swaps`,
-                comp: React.memo(SwapList),
+                comp: React.memo(() => <SwapList token={token} />),
             },
             ...(provider && chainId && token && token.type === 'nugg' && sender && tokenId
                 ? [
@@ -195,6 +194,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                         selectionIndicatorStyle={{ background: lib.colors.white }}
                         bodyStyle={styles.tabberList}
                         headerContainerStyle={{
+                            marginTop: '1.5rem',
                             padding: '0rem 1rem',
                             borderRadius: 0,
                         }}

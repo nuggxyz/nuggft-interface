@@ -309,6 +309,7 @@ export interface LiveNuggItem {
 
 export interface LiveNugg {
     type: 'nugg';
+    id: string;
     activeLoan: boolean | null;
     activeSwap?: LiveNuggSwap;
     items: LiveNuggItem[];
@@ -340,6 +341,7 @@ export type TryoutData = { nugg: NuggId; eth: EthInt };
 
 export interface LiveItem {
     type: 'item';
+    id: string;
     activeSwap?: LiveActiveItemSwap;
     upcomingActiveSwap?: LiveActiveItemSwap;
     swaps: LiveItemSwap[];

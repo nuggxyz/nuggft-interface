@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
 import client from '@src/client';
+import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
 import LoanButtons from './FlyoutButtons/LoanButtons';
 import OwnerButtons from './FlyoutButtons/OwnerButtons';
@@ -9,7 +10,7 @@ import SaleButtons from './FlyoutButtons/SaleButtons';
 type Props = Record<string, never>;
 
 const MyNuggActions: FunctionComponent<Props> = () => {
-    const tokenId = client.live.lastView.tokenId();
+    const { safeTokenId: tokenId } = useViewingNugg();
     const token = client.live.token(tokenId);
 
     return tokenId && token && token.type === 'nugg' ? (

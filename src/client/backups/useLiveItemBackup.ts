@@ -79,6 +79,7 @@ export default (activate: boolean, tokenId: string | undefined) => {
 
             updateToken(tokenId, {
                 type: 'item' as const,
+                id: tokenId,
                 swaps: [],
                 activeSwap: check[0],
                 upcomingActiveSwap: check[1],

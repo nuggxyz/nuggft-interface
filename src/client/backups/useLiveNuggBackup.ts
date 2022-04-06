@@ -64,6 +64,7 @@ export default (activate: boolean, tokenId: string | undefined) => {
 
             updateToken(tokenId, {
                 type: 'nugg' as const,
+                id: tokenId,
                 activeLoan: null,
                 owner,
                 items,

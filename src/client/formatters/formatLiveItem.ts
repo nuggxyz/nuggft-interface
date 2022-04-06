@@ -5,6 +5,7 @@ import { LiveItemFragment } from '@src/gql/types.generated';
 export default (item: LiveItemFragment): LiveItem => {
     const tmp = {
         type: 'item' as const,
+        id: item.id,
         count: Number(item.count),
         swaps: item.swaps.map((y) => {
             return {
