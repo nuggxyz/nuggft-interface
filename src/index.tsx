@@ -6,6 +6,8 @@ import { HashRouter } from 'react-router-dom';
 import './prototypes';
 import './lib/analytics';
 
+import { ApolloProvider } from '@apollo/client/react/context/ApolloProvider';
+
 import store from './state/store';
 import './index.css';
 import I18N from './i18n';
@@ -31,18 +33,20 @@ const ContentBlock: FC<PropsWithChildren<unknown>> = ({ children }) => {
 ReactDOM.render(
     <div style={{ width: '100%', height: '100%' }}>
         <React.StrictMode>
-            <HashRouter>
-                <GlobalHooks />
-                <Provider store={store}>
-                    <Initializer>
-                        <I18N>
-                            <ContentBlock>
-                                <App />
-                            </ContentBlock>
-                        </I18N>
-                    </Initializer>
-                </Provider>
-            </HashRouter>
+            <ApolloProvider client={web3.config.apolloClient}>
+                <HashRouter>
+                    <GlobalHooks />
+                    <Provider store={store}>
+                        <Initializer>
+                            <I18N>
+                                <ContentBlock>
+                                    <App />
+                                </ContentBlock>
+                            </I18N>
+                        </Initializer>
+                    </Provider>
+                </HashRouter>
+            </ApolloProvider>
         </React.StrictMode>
     </div>,
     document.getElementById('root'),

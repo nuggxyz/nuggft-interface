@@ -30,6 +30,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
                     width: '200px',
                 }}
                 disableOnClick
+                // forceCache
                 // shouldLoad={pageLoaded}
             />
             <div>

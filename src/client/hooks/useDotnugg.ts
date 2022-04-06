@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import gql from 'graphql-tag';
 import React, { useMemo, useEffect } from 'react';
+import { useApolloClient } from '@apollo/client';
 
 import { useFastQuery } from '@src/graphql/helpers';
 import web3 from '@src/web3';
@@ -10,6 +11,9 @@ import {
     useLiveDotnuggSubscription,
     useGetDotnuggNuggLazyQuery,
     useGetDotnuggItemLazyQuery,
+    useGetDotnuggItemQuery,
+    useGetDotnuggNuggQuery,
+    GetDotnuggNuggQuery,
 } from '@src/gql/types.generated';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import { extractItemId } from '@src/lib';
@@ -33,6 +37,7 @@ export const useDotnuggInjectToCache = () => {
                         query ROOT_QUERY($tokenId: ID!) {
                             nugg(id: $tokenId) {
                                 __typename
+                                id
                                 dotnuggRawCache
                             }
                         }
@@ -42,6 +47,7 @@ export const useDotnuggInjectToCache = () => {
                     data: {
                         nugg: {
                             __typename: 'Nugg',
+                            id: tokenId,
                             dotnuggRawCache: data,
                         },
                     },
@@ -202,34 +208,56 @@ export const useDotnuggCacheOnly = (tokenId: string) => {
     return !error ? src : fallback;
 };
 
-export const useDotnuggCacheOnlyLazy = (shouldLoad: boolean, tokenId: string) => {
-    const [getNugg, nuggRes] = useGetDotnuggNuggLazyQuery({
-        client: apolloClient,
-        fetchPolicy: 'cache-first',
+export const useDotnuggCacheOnlyLazy = (
+    shouldLoad: boolean,
+    tokenId: string,
+    forceCache = false,
+) => {
+    const nuggRes = useGetDotnuggNuggQuery({
+        fetchPolicy: forceCache ? 'cache-only' : 'cache-first',
+        skip: forceCache || !shouldLoad || tokenId.isItemId(),
+        variables: { tokenId: tokenId.isItemId() ? extractItemId(tokenId) : tokenId },
     });
 
-    const [getItem, itemRes] = useGetDotnuggItemLazyQuery({
-        client: apolloClient,
-        fetchPolicy: 'cache-first',
+    const { data: itemRes, error: itemErr } = useGetDotnuggItemQuery({
+        fetchPolicy: forceCache ? 'cache-only' : 'cache-first',
+        skip: forceCache || !shouldLoad || !tokenId.isItemId(),
+        variables: { tokenId: tokenId.isItemId() ? extractItemId(tokenId) : tokenId },
     });
 
-    useEffect(() => {
-        if (shouldLoad) {
-            void (tokenId.isItemId() ? getItem : getNugg)({
-                variables: { tokenId: tokenId.isItemId() ? extractItemId(tokenId) : tokenId },
-            });
-        }
-    }, [tokenId, getItem, getNugg, shouldLoad]);
+    const clienter = useApolloClient();
 
     const src = useMemo(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const todo: GetDotnuggNuggQuery['nugg'] = clienter.readFragment({
+            id: `${tokenId.isItemId() ? 'Item' : 'Nugg'}:${
+                tokenId.isItemId() ? extractItemId(tokenId) : tokenId
+            }`, // The value of the to-do item's cache ID
+            fragment: tokenId.isItemId()
+                ? gql`
+                      fragment dnugg on Item {
+                          id
+                          dotnuggRawCache
+                      }
+                  `
+                : gql`
+                      fragment dnugg on Nugg {
+                          id
+                          dotnuggRawCache
+                      }
+                  `,
+        });
+        if (todo) {
+            return todo.dotnuggRawCache as Base64EncodedSvg;
+        }
         return tokenId.isItemId()
-            ? (itemRes.data?.item?.dotnuggRawCache as Base64EncodedSvg)
+            ? (itemRes?.item?.dotnuggRawCache as Base64EncodedSvg)
             : (nuggRes.data?.nugg?.dotnuggRawCache as Base64EncodedSvg);
     }, [itemRes, nuggRes, tokenId]);
 
     const error = useMemo(() => {
-        return tokenId.isItemId() ? !!itemRes.error : !!nuggRes.error;
-    }, [itemRes, nuggRes, tokenId]);
+        return tokenId.isItemId() ? !!itemErr : !!nuggRes.error;
+    }, [itemErr, nuggRes, tokenId]);
 
     const fallback = useDotnuggRpcBackup2(error, tokenId);
 

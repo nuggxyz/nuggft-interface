@@ -1,6 +1,6 @@
 import { EthInt } from '@src/classes/Fraction';
 import { SwapdataFragment, ItemswapdataFragment } from '@src/gql/types.generated';
-import { ListDataTypes, SwapData } from '@src/client/interfaces';
+import { SwapData } from '@src/client/interfaces';
 import { createItemId } from '@src/lib/index';
 
 export default (
@@ -29,7 +29,7 @@ export default (
         type: z?.__typename === 'Swap' ? 'nugg' : 'item',
         isCurrent: true,
         dotnuggRawCache: undefined,
-        listDataType: ListDataTypes.Swap,
+        listDataType: 'swap',
         over,
         leader: z?.leader?.id,
     };

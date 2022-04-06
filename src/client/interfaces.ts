@@ -34,26 +34,21 @@ export interface NuggOfferData extends BaseOfferData {
 
 export type OfferData = ItemOfferData | NuggOfferData;
 
-export enum ListDataTypes {
-    Basic = 'basic',
-    Swap = 'swap',
-}
-
 export interface ListDataBase {
     id: TokenId;
-    listDataType: ListDataTypes;
+    listDataType: 'swap' | 'basic';
     dotnuggRawCache?: Base64EncodedSvg;
 }
 
 export interface BasicData {
     id: TokenId;
-    listDataType: ListDataTypes.Basic;
+    listDataType: 'basic';
     dotnuggRawCache?: Base64EncodedSvg;
 }
 
 export interface SwapData extends ListDataBase {
     id: TokenId;
-    listDataType: ListDataTypes.Swap;
+    listDataType: 'swap';
     type: 'nugg' | 'item';
     tokenId: this['id'];
     eth: EthInt;
@@ -155,6 +150,7 @@ export enum SearchView {
     MyNuggs = 'MyNuggs',
     Recents = 'Recents',
     AllItems = 'AllItems',
+    Search = 'Search',
 }
 
 export type SearchFilter = {
@@ -205,6 +201,7 @@ export interface ClientState extends State, Actions {
     feedMessages: FeedMessage[];
     health: Health;
     started: boolean;
+    activeSearch: SearchResults;
 }
 
 export interface Health {
@@ -248,6 +245,8 @@ export type ClientStateUpdate = {
     health?: MakeOptional<Health, keyof Health>;
 };
 
+export type SearchResults = BasicData[];
+
 export interface Actions {
     updateBlocknum: (blocknum: number, chainId: Chain, startup?: boolean) => void;
     updateProtocol: (stateUpdate: ClientStateUpdate) => void;
@@ -255,7 +254,7 @@ export interface Actions {
     // toggleView: () => void;
     // toggleMobileWallet: () => void;
     setLastSwap: (tokenId: TokenId | undefined) => void;
-    // hideMobileViewingNugg: () => void;
+    setActiveSearch: (input: SearchResults | undefined) => void;
     updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;
     removeLoan: (tokenId: NuggId) => void;
     removeNuggClaim: (tokenId: NuggId) => void;

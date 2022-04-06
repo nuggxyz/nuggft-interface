@@ -286,6 +286,7 @@ fragment liveItemSwap on ItemSwap {
 
 subscription betterLiveItemOffers($tokenId: ID!) {
     item(id: $tokenId) {
+        id
         activeSwap {
             ...liveItemSwap
         }
@@ -297,6 +298,7 @@ subscription betterLiveItemOffers($tokenId: ID!) {
 
 subscription betterLiveOffers($tokenId: ID!) {
     nugg(id: $tokenId) {
+        id
         activeSwap {
             id
             offers(orderBy: eth, orderDirection: desc) {

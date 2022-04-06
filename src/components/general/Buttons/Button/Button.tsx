@@ -6,7 +6,7 @@ import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import styles from './Button.styles';
 
 export type ButtonProps = {
-    onClick: () => void;
+    onClick: React.MouseEventHandler<HTMLDivElement>;
     label?: string;
     buttonStyle?: React.CSSProperties;
     textStyle?: React.CSSProperties;

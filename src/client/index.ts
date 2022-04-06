@@ -18,6 +18,7 @@ export default {
     live: {
         /// ///// simple ////////
         graph: () => web3.config.apolloClient,
+        activeSearch: () => core((state) => state.activeSearch, shallow),
 
         epoch: {
             default: () => core((state) => state.epoch),
@@ -157,6 +158,8 @@ export default {
     mutate: {
         updateBlocknum: () => core((state) => state.updateBlocknum),
         updateProtocol: () => core((state) => state.updateProtocol),
+        setActiveSearch: () => core((state) => state.setActiveSearch),
+
         // routeTo: () => core((state) => state.routeTo),
         // toggleView: () => core((state) => state.toggleView),
         updateOffers: () => core((state) => state.updateOffers),

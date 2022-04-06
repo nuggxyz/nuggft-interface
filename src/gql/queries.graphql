@@ -13,6 +13,26 @@ query getAllNuggs(
         skip: $skip
     ) {
         id
+        dotnuggRawCache
+        idnum
+    }
+}
+
+query getAllNuggsSearch(
+    $first: Int
+    $skip: Int
+    $orderDirection: OrderDirection
+    $orderBy: Nugg_orderBy
+    $where: Nugg_filter
+) {
+    nuggs(
+        where: $where
+        orderBy: $orderBy
+        orderDirection: $orderDirection
+        first: $first
+        skip: $skip
+    ) {
+        id
     }
 }
 
@@ -31,6 +51,26 @@ query getDotnuggItem($tokenId: ID!) {
 }
 
 query getAllItems(
+    $first: Int
+    $skip: Int
+    $orderDirection: OrderDirection
+    $orderBy: Item_orderBy
+    $where: Item_filter
+) {
+    items(
+        where: $where
+        orderBy: $orderBy
+        orderDirection: $orderDirection
+        first: $first
+        skip: $skip
+    ) {
+        id
+        dotnuggRawCache
+        idnum
+    }
+}
+
+query getAllItemsSearch(
     $first: Int
     $skip: Int
     $orderDirection: OrderDirection

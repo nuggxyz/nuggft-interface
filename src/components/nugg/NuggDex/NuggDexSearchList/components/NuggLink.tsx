@@ -15,9 +15,10 @@ import NuggLinkThumbnail from './NuggLinkThumbnail';
 
 type Props = {
     type: SearchView;
-    previewNuggs: ListData[];
+    previewNuggs?: ListData[];
     style?: CSSPropertiesAnimated;
     limit?: number;
+    disablePreview?: boolean;
 };
 
 const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
@@ -26,6 +27,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
     style,
     limit = constants.NUGGDEX_DEFAULT_PREVIEW_COUNT,
     children,
+    disablePreview = false,
 }) => {
     const ref = useRef<HTMLDivElement>(null);
     const viewing = client.live.searchFilter.viewing();
@@ -80,28 +82,35 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                 zIndex,
             }}
         >
-            <animated.div style={styles.nuggLinkPreviewContainer}>
-                <animated.div
-                    style={{
-                        position: 'absolute',
-                        width: '100%',
-                        height: '100%',
-                        opacity: opacityText,
-                        zIndex: zIndex.to({
-                            range: [0, 1],
-                            output: [1, 0],
-                        }),
-                        ...styles.nuggLinkItemsContainer,
-                    }}
-                >
-                    {previewNuggsStable}
-                    <NuggLinkAnchor
-                        onClick={() =>
-                            updateSearchFilterViewing(viewing === type ? SearchView.Home : type)
-                        }
-                        style={limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}}
-                    />
-                </animated.div>
+            <animated.div
+                style={{
+                    ...styles.nuggLinkPreviewContainer,
+                    ...(disablePreview && viewing === SearchView.Home ? { display: 'none' } : {}),
+                }}
+            >
+                {!disablePreview && (
+                    <animated.div
+                        style={{
+                            position: 'absolute',
+                            width: '100%',
+                            height: '100%',
+                            opacity: opacityText,
+                            zIndex: zIndex.to({
+                                range: [0, 1],
+                                output: [1, 0],
+                            }),
+                            ...styles.nuggLinkItemsContainer,
+                        }}
+                    >
+                        {previewNuggsStable}
+                        <NuggLinkAnchor
+                            onClick={() =>
+                                updateSearchFilterViewing(viewing === type ? SearchView.Home : type)
+                            }
+                            style={limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}}
+                        />
+                    </animated.div>
+                )}
                 <animated.div
                     style={{
                         position: 'absolute',
@@ -117,28 +126,32 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                     {children}
                 </animated.div>
             </animated.div>
-            {screenType === 'phone' ? (
-                <Label
-                    size="small"
-                    textStyle={{
-                        // ...styles.nuggLinkCategoryTitle,
-                        opacity: opacityText,
-                    }}
-                    containerStyles={{
-                        marginTop: '10px',
-                    }}
-                    text={formatSearchFilter(type)}
-                />
-            ) : (
-                <Text
-                    size="small"
-                    textStyle={{
-                        ...styles.nuggLinkCategoryTitle,
-                        opacity: opacityText,
-                    }}
-                >
-                    {formatSearchFilter(type)}
-                </Text>
+            {!disablePreview && (
+                <>
+                    {screenType === 'phone' ? (
+                        <Label
+                            size="small"
+                            textStyle={{
+                                // ...styles.nuggLinkCategoryTitle,
+                                opacity: opacityText,
+                            }}
+                            containerStyles={{
+                                marginTop: '10px',
+                            }}
+                            text={formatSearchFilter(type)}
+                        />
+                    ) : (
+                        <Text
+                            size="small"
+                            textStyle={{
+                                ...styles.nuggLinkCategoryTitle,
+                                opacity: opacityText,
+                            }}
+                        >
+                            {formatSearchFilter(type)}
+                        </Text>
+                    )}
+                </>
             )}
         </animated.div>
     );
