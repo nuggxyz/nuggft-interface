@@ -11,6 +11,7 @@ import { useDotnugg, useDotnuggCacheOnly, useDotnuggSubscription } from './hooks
 import { TokenId } from './router';
 import { ListData, SearchView } from './interfaces';
 import { useDarkMode } from './hooks/useDarkMode';
+import modal from './modal';
 
 export default {
     ...core,
@@ -36,10 +37,6 @@ export default {
                 core(useCallback((state) => tokenId || state.lastSwap?.tokenId, [tokenId])),
         },
 
-        // lastView: {
-        //     tokenId: () => core((state) => state.lastView?.tokenId),
-        //     type: () => core((state) => state.lastView?.type),
-        // },
         stake: {
             eps: () => core((state) => state.stake?.eps),
             shares: () => core((state) => state.stake?.shares),
@@ -47,10 +44,8 @@ export default {
         },
         locale: () => core((state) => state.locale),
         route: () => core((state) => state.route),
-        // isViewOpen: () => core((state) => state.isViewOpen),
-        // isMobileViewOpen: () => core((state) => state.isMobileViewOpen),
-        // isMobileWalletOpen: () => core((state) => state.isMobileWalletOpen),
 
+        dimentions: () => core((state) => state.dimentions),
         editingNugg: () => core((state) => state.editingNugg),
 
         blocknum: () => core((state) => state.blocknum),
@@ -159,9 +154,6 @@ export default {
         updateBlocknum: () => core((state) => state.updateBlocknum),
         updateProtocol: () => core((state) => state.updateProtocol),
         setActiveSearch: () => core((state) => state.setActiveSearch),
-
-        // routeTo: () => core((state) => state.routeTo),
-        // toggleView: () => core((state) => state.toggleView),
         updateOffers: () => core((state) => state.updateOffers),
         removeLoan: () => core((state) => state.removeLoan),
         removeNuggClaim: () => core((state) => state.removeNuggClaim),
@@ -172,12 +164,8 @@ export default {
         updateLoan: () => core((state) => state.updateLoan),
         addNugg: () => core((state) => state.addNugg),
         removeNugg: () => core((state) => state.removeNugg),
-        // toggleEditingNugg: () => core((state) => state.toggleEditingNugg),
-        // hideMobileViewingNugg: () => core((state) => state.hideMobileViewingNugg),
-        // toggleMobileWallet: () => core((state) => state.toggleMobileWallet),
         setLastSwap: () => core((state) => state.setLastSwap),
         setPageIsLoaded: () => core((state) => state.setPageIsLoaded),
-        // updateClients: () => coreNonImmer((state) => state.updateClients),
         updateToken: () => core((state) => state.updateToken),
         updateLocale: () => core((state) => state.updateLocale),
         updateSearchFilterTarget: () => core((state) => state.updateSearchFilterTarget),
@@ -187,6 +175,7 @@ export default {
         updateUserDarkMode: () => core((state) => state.updateUserDarkMode),
         updateMediaDarkMode: () => core((state) => state.updateMediaDarkMode),
         addFeedMessage: () => core((state) => state.addFeedMessage),
+        updateDimentions: () => core((state) => state.updateDimentions),
     },
     hook: {
         useDotnugg,
@@ -204,4 +193,5 @@ export default {
         stake: () => core.getState().stake,
         route: () => core.getState().route,
     },
+    modal,
 };

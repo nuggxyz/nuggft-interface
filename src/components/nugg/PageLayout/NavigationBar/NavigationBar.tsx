@@ -6,11 +6,11 @@ import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/Chain
 import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
 import FloorPrice from '@src/components/nugg/FloorPrice';
 import NuggDexSearchBar from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar';
-import state from '@src/state';
 import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import Button from '@src/components/general/Buttons/Button/Button';
 import useBlur from '@src/hooks/useBlur';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './NavigationBar.styles';
 
@@ -19,7 +19,7 @@ type Props = {
 };
 
 const NavigationBar: FC<Props> = () => {
-    const screenType = state.app.select.screenType();
+    const { screen: screenType } = useDimentions();
 
     const navigate = useNavigate();
 

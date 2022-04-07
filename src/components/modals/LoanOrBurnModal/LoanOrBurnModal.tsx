@@ -1,51 +1,40 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React from 'react';
 import { t } from '@lingui/macro';
 
-import AppState from '@src/state/app';
-import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import Text from '@src/components/general/Texts/Text/Text';
-import WalletState from '@src/state/wallet';
 import FontSize from '@src/lib/fontSize';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import Colors from '@src/lib/colors';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import web3 from '@src/web3';
 import client from '@src/client';
+import { LoanModalData } from '@src/interfaces/modals';
+import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
 
 import styles from './LoanOrBurnModal.styles';
 
-type Props = Record<string, never>;
-
-const LoanOrBurnModal: FunctionComponent<Props> = () => {
+const LoanOrBurnModal = ({ data: { tokenId, actionType } }: { data: LoanModalData }) => {
     const stake__eps = client.live.stake.eps();
-    const { targetId, type } = AppState.select.modalData();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const address = web3.hook.usePriorityAccount();
+    const nuggft = useNuggftV1(provider);
+    const closeModal = client.modal.useCloseModal();
 
-    const [stableType, setType] = useState(type);
-    const [stableId, setId] = useState(targetId);
-    useEffect(() => {
-        if (!isUndefinedOrNullOrStringEmpty(type)) {
-            setType(type);
-        }
-        if (!isUndefinedOrNullOrStringEmpty(targetId)) {
-            setId(targetId);
-        }
-    }, [type, targetId]);
+    const { send } = useTransactionManager();
 
-    return stableId && chainId && provider && address ? (
+    return tokenId && chainId && provider && address ? (
         <div style={styles.container}>
             <Text textStyle={styles.textWhite}>
-                {stableType === 'LoanNugg' ? t`Loan` : t`Burn`} {t`Nugg ${stableId}`}
+                {actionType === 'loan' ? t`Loan` : t`Burn`} {t`Nugg ${tokenId}`}
             </Text>
             <AnimatedCard>
-                <TokenViewer tokenId={stableId} />
+                <TokenViewer tokenId={tokenId} />
             </AnimatedCard>
 
             <div style={{ width: '100%' }}>
-                {stableType === 'BurnNugg' && (
+                {actionType === 'burn' && (
                     <Text
                         type="text"
                         size="medium"
@@ -68,21 +57,11 @@ const LoanOrBurnModal: FunctionComponent<Props> = () => {
                     overrideFeedback
                     feedbackText={t`Check wallet...`}
                     buttonStyle={styles.button}
-                    label={`${stableType === 'LoanNugg' ? t`Loan` : t`Burn`}`}
+                    label={`${actionType === 'loan' ? t`Loan` : t`Burn`}`}
                     onClick={() =>
-                        stableType === 'LoanNugg'
-                            ? WalletState.dispatch.initLoan({
-                                  tokenIds: [stableId],
-                                  chainId,
-                                  provider,
-                                  address,
-                              })
-                            : WalletState.dispatch.withdraw({
-                                  tokenId: stableId,
-                                  chainId,
-                                  provider,
-                                  address,
-                              })
+                        actionType === 'loan'
+                            ? send(nuggft.populateTransaction.loan([tokenId]), closeModal)
+                            : send(nuggft.populateTransaction.burn(tokenId), closeModal)
                     }
                 />
             </div>

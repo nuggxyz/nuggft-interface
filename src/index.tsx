@@ -1,27 +1,32 @@
 import React, { FC, PropsWithChildren } from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import { ApolloProvider } from '@apollo/client/react/context/ApolloProvider';
+import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 
 import './prototypes';
 import './lib/analytics';
-
-import { ApolloProvider } from '@apollo/client/react/context/ApolloProvider';
-
-import store from './state/store';
 import './index.css';
-import I18N from './i18n';
-import Initializer from './state/Initializer';
 import web3 from './web3';
-import ClientUpdater from './client/ClientUpdater';
+import I18N from './i18n';
 import App from './pages/App';
+import ErrorBoundary from './components/general/ErrorBoundry';
+import useMountLogger from './hooks/useMountLogger';
+import useClientUpdater, { useDelayedClientUpdater } from './client/useClientUpdater';
+import useAnalyticsReporter from './lib/analytics/useAnalyticsReporter';
 
 global.Buffer = global.Buffer || (await import('buffer')).Buffer;
 
 const GlobalHooks = () => {
+    useMountLogger('GlobalHooks');
+
     web3.config.useActivate();
 
-    return <ClientUpdater />;
+    useClientUpdater();
+
+    useDelayedClientUpdater();
+    useAnalyticsReporter();
+
+    return null;
 };
 
 const ContentBlock: FC<PropsWithChildren<unknown>> = ({ children }) => {
@@ -30,27 +35,34 @@ const ContentBlock: FC<PropsWithChildren<unknown>> = ({ children }) => {
     return active ? <>{children}</> : null;
 };
 
-ReactDOM.render(
-    <div style={{ width: '100%', height: '100%' }}>
-        <React.StrictMode>
+const container = document.getElementById('root') as HTMLElement;
+
+const root = createRoot(container);
+
+if (root)
+    root.render(
+        <HashRouter>
             <ApolloProvider client={web3.config.apolloClient}>
-                <HashRouter>
-                    <GlobalHooks />
-                    <Provider store={store}>
-                        <Initializer>
+                <GlobalHooks />
+
+                <React.StrictMode>
+                    <div style={{ width: '100%', height: '100%' }}>
+                        <ErrorBoundary>
+                            {/* <Provider store={store}> */}
+                            {/* <Initializer> */}
                             <I18N>
                                 <ContentBlock>
                                     <App />
                                 </ContentBlock>
                             </I18N>
-                        </Initializer>
-                    </Provider>
-                </HashRouter>
-            </ApolloProvider>
-        </React.StrictMode>
-    </div>,
-    document.getElementById('root'),
-);
+                            {/* </Initializer> */}
+                            {/* </Provider> */}
+                        </ErrorBoundary>
+                    </div>
+                </React.StrictMode>
+            </ApolloProvider>{' '}
+        </HashRouter>,
+    );
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

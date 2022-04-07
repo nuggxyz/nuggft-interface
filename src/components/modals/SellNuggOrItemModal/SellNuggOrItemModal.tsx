@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { t } from '@lingui/macro';
 
 import {
@@ -13,47 +13,35 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import web3 from '@src/web3';
-import state from '@src/state';
-import { TokenId } from '@src/client/router';
-import WalletState from '@src/state/wallet';
 import Button from '@src/components/general/Buttons/Button/Button';
 import client from '@src/client';
+import { SellModalData } from '@src/interfaces/modals';
+import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
 
 import styles from './SellNuggOrItemModal.styles';
 
-type Props = {
-    tokenId: TokenId;
-};
-
-const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
-    // const [swapError, clearError] = useHandleError('GAS_ERROR');
+const SellNuggOrItemModal = ({ data: { tokenId, ...other } }: { data: SellModalData }) => {
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
     const stake = client.static.stake();
+    const nuggft = useNuggftV1();
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
+    const closeModal = client.modal.useCloseModal();
 
-    const { targetId, type } = state.app.select.modalData();
+    const { send } = useTransactionManager();
 
-    const [stableType, setType] = useState(type);
-    const [stableId, setId] = useState<TokenId | undefined>(targetId);
-
-    useEffect(() => {
-        if (type) setType(type);
-        if (targetId) setId(targetId);
-    }, [type, targetId]);
-
-    return stableId && chainId && provider && address ? (
+    return tokenId && chainId && provider && address ? (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
-                {`${stableType === 'SellNugg' ? t`Sell` : t`Sell Item:`} ${parseTokenId(
-                    stableId,
+                {`${other.tokenType === 'nugg' ? t`Sell` : t`Sell Item:`} ${parseTokenId(
+                    tokenId,
                     true,
                 )}`}
             </Text>
             <AnimatedCard>
-                <TokenViewer tokenId={stableId} showcase />
+                <TokenViewer tokenId={tokenId} showcase />
             </AnimatedCard>
             <div style={styles.inputContainer}>
                 {stake ? (
@@ -69,7 +57,7 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
                         code
                         className="placeholder-white"
                         rightToggles={[
-                            stableType === 'SellNugg' ? (
+                            other.tokenType === 'nugg' ? (
                                 <Button
                                     onClick={() => setAmount(stake.eps.decimal.toPrecision(5))}
                                     label={t`Min`}
@@ -90,17 +78,25 @@ const SellNuggOrItemModal: FunctionComponent<Props> = ({ tokenId }) => {
                     disabled={isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount)}
                     feedbackText={t`Check Wallet...`}
                     buttonStyle={styles.button}
-                    label={`${stableType === 'SellNugg' ? t`Sell Nugg` : t`Sell Item`}`}
-                    onClick={() =>
-                        WalletState.dispatch.initSale({
-                            tokenId: stableType === 'SellNugg' ? stableId : tokenId,
-                            floor: toEth(amount),
-                            chainId,
-                            provider,
-                            address,
-                            itemId: stableType === 'SellNugg' ? undefined : extractItemId(stableId),
-                        })
-                    }
+                    label={`${other.tokenType === 'nugg' ? t`Sell Nugg` : t`Sell Item`}`}
+                    onClick={() => {
+                        void (other.tokenType === ('item' as const)
+                            ? send(
+                                  nuggft.populateTransaction['sell(uint160,uint16,uint96)'](
+                                      other.sellingNuggId,
+                                      extractItemId(tokenId),
+                                      toEth(amount),
+                                  ),
+                                  closeModal,
+                              )
+                            : send(
+                                  nuggft.populateTransaction['sell(uint160,uint96)'](
+                                      tokenId,
+                                      toEth(amount),
+                                  ),
+                                  closeModal,
+                              ));
+                    }}
                 />
             </div>
         </div>

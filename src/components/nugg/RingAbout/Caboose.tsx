@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
-import state from '@src/state';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import { TryoutData } from '@src/client/interfaces';
@@ -14,6 +13,8 @@ import client from '@src/client';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import useRemaining from '@src/client/hooks/useRemaining';
 import { TokenId } from '@src/client/router';
+import useDimentions from '@src/client/hooks/useDimentions';
+import { ModalEnum } from '@src/interfaces/modals';
 
 import styles from './RingAbout.styles';
 
@@ -49,12 +50,13 @@ const TryoutRenderItem: FC<ListRenderItemProps<TryoutData, undefined, TryoutData
 };
 
 export default ({ tokenId }: { tokenId?: TokenId }) => {
-    const screenType = state.app.select.screenType();
+    const { screen: screenType } = useDimentions();
     const address = web3.hook.usePriorityAccount();
     const epoch = client.live.epoch.id();
 
     const token = client.live.token(tokenId);
     const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<TryoutData>();
+    const openModal = client.modal.useOpenModal();
 
     const { minutes } = useRemaining(client.live.epoch.default());
 
@@ -116,17 +118,12 @@ export default ({ tokenId }: { tokenId?: TokenId }) => {
                             screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                                 ? navigate('/wallet')
                                 : tokenId &&
-                                  state.app.dispatch.setModalOpen({
-                                      name: 'OfferModal',
-                                      modalData: {
-                                          targetId: tokenId,
-                                          type: token.type === 'item' ? 'OfferItem' : 'OfferNugg',
-                                          data: {
-                                              tokenId,
-                                              token,
-                                              nuggToBuyFrom: nuggToBuyFrom?.nugg,
-                                          },
-                                      },
+                                  openModal({
+                                      type: ModalEnum.Offer,
+                                      tokenId,
+                                      tokenType: token.type,
+                                      token,
+                                      nuggToBuyFrom: nuggToBuyFrom?.nugg,
                                   })
                         }
                         label={

@@ -1,12 +1,12 @@
 import React, { useEffect, FunctionComponent } from 'react';
 import { animated } from '@react-spring/web';
 
-import AppState from '@src/state/app';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import client from '@src/client';
 import { TokenId } from '@src/client/router';
 import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
 import useLiveToken from '@src/client/subscriptions/useLiveToken';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './RingAbout.styles';
 import OffersList from './OffersList';
@@ -22,7 +22,7 @@ type Props = {
 };
 
 const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId }) => {
-    const screenType = AppState.select.screenType();
+    const { screen: screenType } = useDimentions();
     const darkmode = useDarkMode();
 
     const tokenId = client.live.lastSwap.tokenIdWithOptionalOverride(manualTokenId);

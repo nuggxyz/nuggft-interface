@@ -15,8 +15,8 @@ import web3 from '@src/web3';
 import useRemaining from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import AppState from '@src/state/app';
 import { TokenId } from '@src/client/router';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './TheRing.styles';
 
@@ -37,7 +37,7 @@ const TheRing: FunctionComponent<Props> = ({
     manualTokenId,
     disableHover = false,
 }) => {
-    const screenType = AppState.select.screenType();
+    const { screen: screenType } = useDimentions();
 
     const chainId = web3.hook.usePriorityChainId();
 

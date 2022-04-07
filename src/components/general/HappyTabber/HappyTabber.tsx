@@ -2,10 +2,10 @@ import React, { CSSProperties, NamedExoticComponent, useEffect, useState } from 
 import { animated, useSpring, config, useTransition } from '@react-spring/web';
 
 import lib, { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
-import AppState from '@src/state/app';
 import Text from '@src/components/general/Texts/Text/Text';
 import useMeasure from '@src/hooks/useMeasure';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './HappyTabber.styles';
 
@@ -48,7 +48,8 @@ const HappyTabber = ({
         }
         return () => undefined;
     }, [items, activeIndex]);
-    const screenType = AppState.select.screenType();
+
+    const { screen: screenType } = useDimentions();
 
     const [headerRef, { width: WIDTH }] = useMeasure();
 

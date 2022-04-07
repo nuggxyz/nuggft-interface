@@ -3,17 +3,20 @@ import { t } from '@lingui/macro';
 
 import { LoanData } from '@src/client/interfaces';
 import Button from '@src/components/general/Buttons/Button/Button';
-import state from '@src/state';
 import Text from '@src/components/general/Texts/Text/Text';
 import globalStyles from '@src/lib/globalStyles';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
+import client from '@src/client';
+import { ModalEnum } from '@src/interfaces/modals';
 
 import styles from './LoanTab.styles';
 
 const LoanRenderItem: FunctionComponent<
     InfiniteListRenderItemProps<LoanData, number | undefined, undefined>
 > = ({ item, index, extraData: epochId }) => {
+    const openModal = client.modal.useOpenModal();
+
     return item ? (
         <div key={index} style={styles.renderItemContainer}>
             <div style={globalStyles.centered}>
@@ -38,12 +41,10 @@ const LoanRenderItem: FunctionComponent<
                     }}
                     label={t`Extend`}
                     onClick={() =>
-                        state.app.dispatch.setModalOpen({
-                            name: 'LoanInputModal',
-                            modalData: {
-                                targetId: item.nugg,
-                                type: 'ExtendLoan',
-                            },
+                        openModal({
+                            type: ModalEnum.LoanInput,
+                            tokenId: item.nugg,
+                            actionType: 'rebalance',
                         })
                     }
                 />
@@ -54,12 +55,10 @@ const LoanRenderItem: FunctionComponent<
                     buttonStyle={styles.renderItemButton}
                     label={t`Pay off`}
                     onClick={() =>
-                        state.app.dispatch.setModalOpen({
-                            name: 'LoanInputModal',
-                            modalData: {
-                                targetId: item.nugg,
-                                type: 'PayoffLoan',
-                            },
+                        openModal({
+                            type: ModalEnum.LoanInput,
+                            tokenId: item.nugg,
+                            actionType: 'liquidate',
                         })
                     }
                 />

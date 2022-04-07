@@ -1,8 +1,7 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { BigNumber } from 'ethers';
 import { t } from '@lingui/macro';
 
-import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { extractItemId, parseTokenId } from '@src/lib';
 import { fromEth, toEth } from '@src/lib/conversion';
@@ -15,124 +14,46 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 import Layout from '@src/lib/layout';
 import FontSize from '@src/lib/fontSize';
 import web3 from '@src/web3';
-import state from '@src/state';
-import { TokenId, NuggId } from '@src/client/router';
 import client from '@src/client';
 import Colors from '@src/lib/colors';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
-import WalletState from '@src/state/wallet';
-import { MyNuggsData, LiveToken } from '@src/client/interfaces';
+import { MyNuggsData } from '@src/client/interfaces';
 import Label from '@src/components/general/Label/Label';
 import { EthInt } from '@src/classes/Fraction';
-import AppState from '@src/state/app';
+import { OfferModalData } from '@src/interfaces/modals';
+import useDimentions from '@src/client/hooks/useDimentions';
+import { useTransactionManager, useNuggftV1 } from '@src/contracts/useContract';
 
 import styles from './OfferModal.styles';
 
 type FormatedMyNuggsData = MyNuggsData & { lastBid: EthInt | 'unable-to-bid' };
 
-const MyNuggRenderItem: FC<
-    ListRenderItemProps<FormatedMyNuggsData, undefined, FormatedMyNuggsData>
-> = ({ item, selected, action }) => {
-    const disabled = React.useMemo(() => {
-        if (item.activeSwap) return t`currenlty for sale`;
-        if (item.lastBid === 'unable-to-bid') return t`previous claim pending for this item`;
-        return undefined;
-    }, [item]);
-    const screenType = AppState.select.screenType();
-
-    return (
-        <Button
-            disabled={!!disabled}
-            buttonStyle={{
-                background: selected ? Colors.transparentGrey2 : Colors.transparent,
-                borderRadius: Layout.borderRadius.medium,
-                transition: '.2s background ease',
-            }}
-            rightIcon={
-                <>
-                    <TokenViewer
-                        tokenId={item.tokenId}
-                        style={
-                            screenType !== 'phone'
-                                ? { width: '80px', height: '80px' }
-                                : { width: '60px', height: '60px' }
-                        }
-                        showLabel
-                        disableOnClick
-                    />
-                    {disabled && (
-                        <Label text={disabled} containerStyles={{ background: 'transparent' }} />
-                    )}
-                </>
-            }
-            onClick={() => action && action(item)}
-        />
-    );
-};
-
-// const SellingNuggRenderItem: FC<ListRenderItemProps<TryoutData, undefined, TryoutData>> = ({
-//     item: tryoutData,
-//     selected,
-//     action,
-// }) => {
-//     return (
-//         <Button
-//             buttonStyle={{
-//                 background: selected ? Colors.transparentGrey2 : Colors.transparent,
-//                 borderRadius: Layout.borderRadius.medium,
-//                 transition: '.2s background ease',
-//             }}
-//             rightIcon={
-//                 <div>
-//                     <TokenViewer
-//                         tokenId={tryoutData.nugg}
-//                         style={{ width: '80px', height: '80px' }}
-//                         showLabel
-//                         disableOnClick
-//                     />
-//                     <CurrencyText value={tryoutData.eth.decimal.toNumber()} />
-//                 </div>
-//             }
-//             onClick={() => action && action(tryoutData)}
-//         />
-//     );
-// };
-
-type Props = {
-    tokenId: TokenId;
-};
-
-const OfferModal = ({ tokenId }: Props) => {
-    const [amount, setAmount] = useState('');
+const OfferModal = ({
+    data: { tokenId, token, tokenType, nuggToBuyFrom },
+}: {
+    data: OfferModalData;
+}) => {
     const address = web3.hook.usePriorityAccount();
-
-    const [selectedNuggForItem, setSelectedNugg] = useState<FormatedMyNuggsData>();
-
+    const { screen: screenType } = useDimentions();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
-
-    const userBalance = web3.hook.usePriorityBalance(provider);
-
-    const { type, data } = state.app.select.modalData() as {
-        type: ModalTypes;
-        data?: { token?: LiveToken; nuggToBuyFrom: undefined | NuggId };
-    };
-
-    const [stableType, setType] = useState(type);
-    const [stableId, setId] = useState(tokenId);
-
-    useEffect(() => {
-        if (type) setType(type);
-        if (tokenId) setId(tokenId);
-    }, [type, tokenId]);
-
     const _myNuggs = client.live.myNuggs().first(8);
+    const userBalance = web3.hook.usePriorityBalance(provider);
+    const activeItem = client.live.potentialNuggItem(tokenId);
+    const nuggft = useNuggftV1(provider);
+    const closeModal = client.modal.useCloseModal();
+
+    const { send } = useTransactionManager();
+
+    const [selectedNuggForItem, setSelectedNugg] = useState<FormatedMyNuggsData>();
+    const [amount, setAmount] = useState('');
+
     const myNuggs = useMemo(() => {
-        const nuggId = data?.nuggToBuyFrom;
+        const nuggId = nuggToBuyFrom;
 
         return _myNuggs.map((x) => {
             const filt = x.unclaimedOffers.filter((y) => {
-                return `item-${y.itemId}` === stableId;
+                return `item-${y.itemId}` === tokenId;
             });
 
             return {
@@ -145,7 +66,7 @@ const OfferModal = ({ tokenId }: Props) => {
                         : ('unable-to-bid' as const),
             };
         }) as FormatedMyNuggsData[];
-    }, [_myNuggs, stableId, data]);
+    }, [_myNuggs, tokenId, nuggToBuyFrom]);
 
     // @danny7even - this started throwing errors when I tried setting up offering on items when other items were "active"
     // useEffect(() => {
@@ -165,25 +86,34 @@ const OfferModal = ({ tokenId }: Props) => {
     //     }
     // }, [myNuggs, epoch, stableId]);
 
-    const activeItem = client.live.potentialNuggItem(stableId);
     const sellingNugg = React.useMemo(() => {
-        if (data && data.token && data.nuggToBuyFrom) {
-            return data.nuggToBuyFrom;
+        if (token && nuggToBuyFrom) {
+            return nuggToBuyFrom;
         }
         if (activeItem) return activeItem.sellingNugg;
         return undefined;
-    }, [data, activeItem]);
+    }, [token, nuggToBuyFrom, activeItem]);
 
     const check = useAsyncState<{
         canOffer: boolean | undefined;
         next: BigNumber | undefined;
         curr: BigNumber | undefined;
     }>(() => {
-        if (stableId && address && chainId && provider) {
-            if (stableType === 'OfferNugg') {
-                return new NuggftV1Helper(chainId, provider).contract['check(address,uint160)'](
-                    address,
-                    stableId,
+        if (tokenId && address && chainId && provider) {
+            if (tokenType === 'nugg') {
+                return nuggft['check(address,uint160)'](address, tokenId).then((x) => {
+                    return {
+                        canOffer: x.canOffer,
+                        next: x.next,
+                        curr: x.current,
+                    };
+                });
+            }
+            if (tokenType === 'item' && activeItem && selectedNuggForItem && sellingNugg) {
+                return nuggft['check(uint160,uint160,uint16)'](
+                    selectedNuggForItem.tokenId,
+                    sellingNugg,
+                    extractItemId(tokenId),
                 ).then((x) => {
                     return {
                         canOffer: x.canOffer,
@@ -192,30 +122,9 @@ const OfferModal = ({ tokenId }: Props) => {
                     };
                 });
             }
-            if (stableType === 'OfferItem' && activeItem && selectedNuggForItem && sellingNugg) {
-                return new NuggftV1Helper(chainId, provider).contract[
-                    'check(uint160,uint160,uint16)'
-                ](selectedNuggForItem.tokenId, sellingNugg, extractItemId(stableId)).then((x) => {
-                    return {
-                        canOffer: x.canOffer,
-                        next: x.next,
-                        curr: x.current,
-                    };
-                });
-            }
         }
         return undefined;
-    }, [
-        stableId,
-        address,
-        chainId,
-        provider,
-        stableType,
-        selectedNuggForItem,
-        activeItem,
-        sellingNugg,
-    ]);
-    const screenType = AppState.select.screenType();
+    }, [tokenId, address, chainId, provider, selectedNuggForItem, activeItem, sellingNugg]);
 
     return (
         <div style={styles.container}>
@@ -224,11 +133,11 @@ const OfferModal = ({ tokenId }: Props) => {
                     check && check.curr && check.curr.toString() !== '0'
                         ? t`Change offer for`
                         : t`Offer on`
-                } ${parseTokenId(stableId, true)}`}
+                } ${parseTokenId(tokenId, true)}`}
             </Text>
             {screenType === 'phone' ? (
                 <TokenViewer
-                    tokenId={stableId}
+                    tokenId={tokenId}
                     showcase
                     disableOnClick
                     style={{
@@ -238,18 +147,16 @@ const OfferModal = ({ tokenId }: Props) => {
             ) : (
                 <AnimatedCard>
                     <TokenViewer
-                        tokenId={stableId}
+                        tokenId={tokenId}
                         showcase
                         style={{
-                            ...(stableType === 'OfferItem'
-                                ? { height: '350px', width: '350px' }
-                                : {}),
+                            ...(tokenType === 'item' ? { height: '350px', width: '350px' } : {}),
                         }}
                     />
                 </AnimatedCard>
             )}
 
-            {stableType === 'OfferItem' && (
+            {tokenType === 'item' && (
                 <List
                     data={myNuggs}
                     label={t`Pick a nugg to offer on this item`}
@@ -291,7 +198,7 @@ const OfferModal = ({ tokenId }: Props) => {
                                     console.error(err);
                                 }
                             }}
-                            disabled={stableType === 'OfferItem' && !selectedNuggForItem}
+                            disabled={tokenType === 'item' && !selectedNuggForItem}
                             label={t`Min`}
                             textStyle={{
                                 fontFamily: Layout.font.sf.bold,
@@ -347,39 +254,70 @@ const OfferModal = ({ tokenId }: Props) => {
                                     : t`Update offer`
                                 : t`Place offer`
                         }`}
-                        // onClick={() => {
-                        // if (check.curr && chainId && provider && address) {
-                        //     void send(
-                        //         nuggft.populateTransaction['offer(uint160)'](tokenId, {
-                        //             value: toEth(amount).sub(check.curr),
-                        //         }),
-                        //     );
-                        onClick={() =>
-                            check.curr &&
-                            chainId &&
-                            provider &&
-                            address &&
-                            WalletState.dispatch.placeOffer({
-                                tokenId,
-                                amount: fromEth(toEth(amount).sub(check.curr)),
-                                chainId,
-                                provider,
-                                address,
-                                buyingTokenId:
-                                    stableType === 'OfferItem' && selectedNuggForItem
-                                        ? selectedNuggForItem.tokenId
-                                        : undefined,
-                                sellingTokenId:
-                                    stableType === 'OfferItem' && activeItem
-                                        ? sellingNugg
-                                        : undefined,
-                            })
-                        }
-                        // }}
+                        onClick={() => {
+                            if (check.curr && chainId && provider && address) {
+                                void (selectedNuggForItem && nuggToBuyFrom && tokenType === 'item'
+                                    ? send(
+                                          nuggft.populateTransaction[
+                                              'offer(uint160,uint160,uint16)'
+                                          ](selectedNuggForItem?.tokenId, nuggToBuyFrom, tokenId, {
+                                              value: toEth(amount).sub(check.curr),
+                                          }),
+                                          closeModal,
+                                      )
+                                    : send(
+                                          nuggft.populateTransaction['offer(uint160)'](tokenId, {
+                                              value: toEth(amount).sub(check.curr),
+                                          }),
+                                          closeModal,
+                                      ));
+                            }
+                        }}
                     />
                 </div>
             ) : null}
         </div>
+    );
+};
+
+const MyNuggRenderItem: FC<
+    ListRenderItemProps<FormatedMyNuggsData, undefined, FormatedMyNuggsData>
+> = ({ item, selected, action }) => {
+    const disabled = React.useMemo(() => {
+        if (item.activeSwap) return t`currenlty for sale`;
+        if (item.lastBid === 'unable-to-bid') return t`previous claim pending for this item`;
+        return undefined;
+    }, [item]);
+
+    const { screen: screenType } = useDimentions();
+
+    return (
+        <Button
+            disabled={!!disabled}
+            buttonStyle={{
+                background: selected ? Colors.transparentGrey2 : Colors.transparent,
+                borderRadius: Layout.borderRadius.medium,
+                transition: '.2s background ease',
+            }}
+            rightIcon={
+                <>
+                    <TokenViewer
+                        tokenId={item.tokenId}
+                        style={
+                            screenType !== 'phone'
+                                ? { width: '80px', height: '80px' }
+                                : { width: '60px', height: '60px' }
+                        }
+                        showLabel
+                        disableOnClick
+                    />
+                    {disabled && (
+                        <Label text={disabled} containerStyles={{ background: 'transparent' }} />
+                    )}
+                </>
+            }
+            onClick={() => action && action(item)}
+        />
     );
 };
 

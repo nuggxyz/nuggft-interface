@@ -2,7 +2,7 @@ import React from 'react';
 import { useSpring } from '@react-spring/web';
 import { matchPath, useLocation } from 'react-router-dom';
 
-import AppState from '@src/state/app';
+import client from '@src/client';
 
 const useNoMatchArray = (pattern: string[]) => {
     const location = useLocation();
@@ -15,12 +15,12 @@ const useNoMatchArray = (pattern: string[]) => {
 };
 
 export default (path: string[]): CSSPropertiesAnimated => {
-    const modal = AppState.select.modalIsOpen();
+    const openModal = client.modal.useOpen();
 
     const match = useNoMatchArray(Array.isArray(path) ? path : [path]);
 
     const style = useSpring({
-        filter: modal || match ? 'blur(10px)' : 'blur(0px)',
+        filter: openModal || match ? 'blur(10px)' : 'blur(0px)',
     });
 
     return style;

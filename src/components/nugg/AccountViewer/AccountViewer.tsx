@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 
 import Jazzicon from '@src/components/nugg/Jazzicon';
 import Text from '@src/components/general/Texts/Text/Text';
-import AppState from '@src/state/app';
 import web3 from '@src/web3';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import Flyout from '@src/components/general/Flyout/Flyout';
@@ -14,11 +13,12 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import lib from '@src/lib';
 import globalStyles from '@src/lib/globalStyles';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './AccountViewer.styles';
 
 const AccountViewer = () => {
-    const screenType = AppState.select.screenType();
+    const { screen: screenType } = useDimentions();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const ens = web3.hook.usePriorityENSName(provider);

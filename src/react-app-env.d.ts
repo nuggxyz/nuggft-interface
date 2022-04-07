@@ -1,6 +1,6 @@
 /// <reference types="node" />
 /// <reference types="react-dom" />
-/// <reference types="react" />
+/// <reference types="react/next" />
 
 declare type Base64EncodedSvg = `data:image/svg+xml;base64,${string}`;
 declare const __DEV__: boolean;

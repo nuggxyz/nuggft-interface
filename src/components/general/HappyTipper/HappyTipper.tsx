@@ -23,7 +23,7 @@ type Props = {
 // const WIDTH = 350;
 
 const HappyTipper: FunctionComponent<Props> = ({ tip }) => {
-    // const screenType = AppState.select.screenType();
+    // const { screen: screenType } = useDimentions();
 
     return (
         <Flyout

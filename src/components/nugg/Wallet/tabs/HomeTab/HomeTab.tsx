@@ -3,12 +3,12 @@ import { t } from '@lingui/macro';
 
 import NumberStatistic from '@src/components/nugg/Statistics/NumberStatistic';
 import TextStatistic from '@src/components/nugg/Statistics/TextStatistic';
-import AppState from '@src/state/app';
 import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
 import InfiniteList from '@src/components/general/List/InfiniteList';
 import web3 from '@src/web3';
 import client from '@src/client';
 import globalStyles from '@src/lib/globalStyles';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import MintNuggButton from './MintNuggButton';
 import MyNuggRenderItem from './MyNuggRenderItem';
@@ -17,7 +17,7 @@ import styles from './HomeTab.styles';
 type Props = Record<string, never>;
 
 const HomeTab: FunctionComponent<Props> = () => {
-    const screenType = AppState.select.screenType();
+    const { screen: screenType } = useDimentions();
 
     const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();

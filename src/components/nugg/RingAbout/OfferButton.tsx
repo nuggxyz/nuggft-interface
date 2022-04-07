@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
-import state from '@src/state';
 import web3 from '@src/web3';
 import client from '@src/client';
 import { NuggId, TokenId } from '@src/client/router';
 import useLifecycle from '@src/client/hooks/useLifecycle';
+import { ModalEnum } from '@src/interfaces/modals';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './RingAbout.styles';
 
@@ -19,12 +20,14 @@ export default ({
     tokenId: TokenId | undefined;
     sellingNuggId?: NuggId;
 }) => {
-    const screenType = state.app.select.screenType();
+    const { screen: screenType } = useDimentions();
     const address = web3.hook.usePriorityAccount();
     const token = client.live.token(tokenId);
 
     const lifecycle = useLifecycle(token);
     const navigate = useNavigate();
+
+    const openModal = client.modal.useOpenModal();
 
     return token &&
         lifecycle &&
@@ -44,19 +47,15 @@ export default ({
                 screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                     ? navigate('/wallet')
                     : tokenId &&
-                      state.app.dispatch.setModalOpen({
-                          name: 'OfferModal',
-                          modalData: {
-                              targetId: tokenId,
-                              type: token.type === 'item' ? 'OfferItem' : 'OfferNugg',
-                              data: {
-                                  tokenId,
-                                  token,
-                                  nuggToBuyFrom:
-                                      token.type === 'item' &&
-                                      (sellingNuggId || token.activeSwap?.sellingNuggId),
-                              },
-                          },
+                      openModal({
+                          type: ModalEnum.Offer,
+                          tokenId,
+                          tokenType: token.type,
+                          token,
+                          nuggToBuyFrom:
+                              token.type === 'item'
+                                  ? sellingNuggId || token.activeSwap?.sellingNuggId
+                                  : undefined,
                       })
             }
             label={

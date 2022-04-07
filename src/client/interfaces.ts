@@ -202,6 +202,7 @@ export interface ClientState extends State, Actions {
     health: Health;
     started: boolean;
     activeSearch: SearchResults;
+    dimentions: Dimentions;
 }
 
 export interface Health {
@@ -247,6 +248,8 @@ export type ClientStateUpdate = {
 
 export type SearchResults = BasicData[];
 
+export type Dimentions = { height: number; width: number };
+
 export interface Actions {
     updateBlocknum: (blocknum: number, chainId: Chain, startup?: boolean) => void;
     updateProtocol: (stateUpdate: ClientStateUpdate) => void;
@@ -276,6 +279,7 @@ export interface Actions {
     updateUserDarkMode: (value: Theme | undefined) => void;
     updateMediaDarkMode: (value: Theme | undefined) => void;
     addFeedMessage: (update: FeedMessage) => void;
+    updateDimentions: (window: Dimentions) => void;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;

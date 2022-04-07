@@ -5,7 +5,6 @@ import { IoArrowRedo } from 'react-icons/io5';
 
 import lib, { parseTokenIdSmart } from '@src/lib';
 import Colors from '@src/lib/colors';
-import AppState from '@src/state/app';
 import Loader from '@src/components/general/Loader/Loader';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -20,6 +19,7 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 import Button from '@src/components/general/Buttons/Button/Button';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './ViewingNugg.styles';
 import SwapList from './SwapList';
@@ -41,7 +41,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
         if (tokenId) void tokenQuery(tokenId);
     }, [tokenId, tokenQuery]);
 
-    const screenType = AppState.select.screenType();
+    const { screen: screenType } = useDimentions();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 

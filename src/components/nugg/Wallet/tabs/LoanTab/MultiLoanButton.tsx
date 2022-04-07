@@ -4,7 +4,7 @@ import { t } from '@lingui/macro';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import web3 from '@src/web3';
 import client from '@src/client';
-import state from '@src/state';
+import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
 
 import styles from './LoanTab.styles';
 
@@ -17,6 +17,9 @@ const MultiLoanButton: FunctionComponent<Props> = () => {
     const chainId = web3.hook.usePriorityChainId();
     const unclaimedOffers = client.live.myNuggs();
 
+    const nuggft = useNuggftV1();
+
+    const { send } = useTransactionManager();
     const { tokenIds } = useMemo(() => {
         const _tokenIds: string[] = [];
         unclaimedOffers.forEach((x) => {
@@ -31,17 +34,10 @@ const MultiLoanButton: FunctionComponent<Props> = () => {
             buttonStyle={styles.multiLoanButton}
             textStyle={styles.multiLoanButtonText}
             label={t`Loan all (${tokenIds.length})`}
-            onClick={() =>
-                address &&
-                chainId &&
-                provider &&
-                state.wallet.dispatch.initLoan({
-                    address,
-                    chainId,
-                    provider,
-                    tokenIds,
-                })
-            }
+            onClick={() => {
+                if (address && chainId && provider)
+                    void send(nuggft.populateTransaction.loan(tokenIds));
+            }}
         />
     ) : null;
 };

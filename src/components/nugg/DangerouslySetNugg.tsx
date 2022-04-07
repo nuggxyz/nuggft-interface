@@ -1,6 +1,6 @@
 import React, { CSSProperties, useMemo } from 'react';
 
-import AppState from '@src/state/app';
+import { userAgent } from '@src/lib/userAgent';
 
 const DangerouslySetNugg = ({
     imageUri,
@@ -47,9 +47,9 @@ const DangerouslySetNugg = ({
                 style={{
                     ...styles,
                     // hack to kill the horizontal see-through lines on modern safari
-                    ...(AppState.userAgent.browser.name === 'Firefox' ||
-                    AppState.userAgent.browser.name === 'Safari' ||
-                    AppState.userAgent.browser.name === 'Mobile Safari'
+                    ...(userAgent.browser.name === 'Firefox' ||
+                    userAgent.browser.name === 'Safari' ||
+                    userAgent.browser.name === 'Mobile Safari'
                         ? { strokeWidth: size === 'showcase' ? 1.07 : 1.5 }
                         : {}),
                 }}

@@ -4,7 +4,7 @@ import { t } from '@lingui/macro';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import web3 from '@src/web3';
 import client from '@src/client';
-import state from '@src/state';
+import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
 
 import styles from './ClaimTab.styles';
 
@@ -16,6 +16,10 @@ const MultiClaimButton: FunctionComponent<Props> = () => {
 
     const chainId = web3.hook.usePriorityChainId();
     const unclaimedOffers = client.live.myUnclaimedOffers();
+
+    const nuggft = useNuggftV1(provider);
+
+    const { send } = useTransactionManager();
 
     const { tokenIds, addresses } = useMemo(() => {
         const _addresses: string[] = [];
@@ -33,18 +37,16 @@ const MultiClaimButton: FunctionComponent<Props> = () => {
             buttonStyle={styles.multiClaimButton}
             textStyle={styles.multiClaimButtonText}
             label={t`Claim All`}
-            onClick={() =>
-                sender &&
-                chainId &&
-                provider &&
-                state.wallet.dispatch.multiClaim({
-                    addresses,
-                    sender,
-                    chainId,
-                    provider,
-                    tokenIds,
-                })
-            }
+            onClick={() => {
+                if (sender && chainId && provider) {
+                    void send(
+                        nuggft.populateTransaction['claim(uint160[],address[])'](
+                            tokenIds,
+                            addresses,
+                        ),
+                    );
+                }
+            }}
         />
     ) : null;
 };

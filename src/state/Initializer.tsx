@@ -1,19 +1,13 @@
-import React, { FunctionComponent, ReactChild } from 'react';
+import React, { FunctionComponent } from 'react';
 
-import { states } from './store';
-
-type Props = {
-    children: ReactChild | ReactChild[];
-};
-
-const Initializer: FunctionComponent<Props> = ({ children }) => {
+const Initializer: FunctionComponent<any> = () => {
     return (
         <>
-            {[...Object.values(states)].map((state, index) => (
+            {/* {[...Object.values(states)].map((state, index) => (
                 <state.updater key={`updater-${index}`} />
             ))}
 
-            {children}
+            {children} */}
         </>
     );
 };

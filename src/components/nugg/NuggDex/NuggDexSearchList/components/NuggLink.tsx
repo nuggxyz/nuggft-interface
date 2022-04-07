@@ -7,7 +7,7 @@ import { ListData, SearchView } from '@src/client/interfaces';
 import client from '@src/client';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 import Label from '@src/components/general/Label/Label';
-import AppState from '@src/state/app';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './NuggDexComponents.styles';
 import NuggLinkAnchor from './NuggLinkAnchor';
@@ -69,7 +69,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                     ),
             );
     }, [previewNuggs, limit]);
-    const screenType = AppState.select.screenType();
+    const { screen: screenType } = useDimentions();
 
     return (
         <animated.div
