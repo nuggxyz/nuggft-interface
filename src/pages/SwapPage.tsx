@@ -1,13 +1,13 @@
 import React, { FunctionComponent } from 'react';
 import { animated } from '@react-spring/web';
 
-import SwapView from '@src/structure/mobile/SwapView/SwapView';
 import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
 import Wallet from '@src/components/nugg/Wallet/Wallet';
 import AppState from '@src/state/app';
 import useBlur from '@src/hooks/useBlur';
 
+import MobileSwapPage from './mobile/MobileSwapPage';
 import styles from './SwapPage.styles';
 
 type Props = Record<string, never>;
@@ -27,7 +27,7 @@ const SwapPage: FunctionComponent<Props> = () => {
                 }}
             >
                 {screen === 'phone' ? (
-                    <SwapView />
+                    <MobileSwapPage />
                 ) : screen === 'tablet' ? (
                     <>
                         <div style={styles.tabletMain}>

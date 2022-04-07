@@ -17,17 +17,7 @@ interface Props extends TokenViewerProps {
     validated: boolean;
 }
 
-export default ({ tokenId, style, validated, onTokenQuery, ...props }: Props) => {
-    // const screenType = AppState.select.screenType();
-
-    // const [initial, setInitial] = React.useState<null | Base64EncodedSvg>();
-
-    // const [doneWaiting, setDoneWaiting] = React.useState<boolean>(false);
-
-    // const { width } = useMemo(() => {
-    //     return { width: window.innerWidth };
-    // }, []);
-
+export default ({ tokenId, validated, onTokenQuery, ...props }: Props) => {
     const blocknum = client.live.blocknum();
 
     const nuggft = useNuggftV1();
@@ -56,39 +46,10 @@ export default ({ tokenId, style, validated, onTokenQuery, ...props }: Props) =>
         return undefined;
     }, [tokenId, blocknum, network, onTokenQuery]);
 
-    // React.useEffect(() => {
-    //     if (initial !== undefined && svg && svg !== initial) {
-    //         inject(tokenId, svg);
-    //     }
-    // }, [initial, svg, inject, tokenId]);
-
-    // React.useEffect(() => {
-    //     if (initial === undefined && (svg !== undefined || tokenId === '')) {
-    //         if (!svg) setInitial(null);
-    //         else setInitial(svg || null);
-    //     }
-    // }, [svg, tokenId]);
-
-    // const { background, rotateZ } = useSpring({
-    //     from: {
-    //         background: '#46e891',
-    //         rotateZ: 0,
-    //     },
-    //     to: {
-    //         background: '#277ef4',
-    //         rotateZ: 225,
-    //     },
-    //     config: {
-    //         duration: 2000,
-    //         easing: easings.easeInOutQuart,
-    //     },
-    //     loop: { reverse: true },
-    // });
-
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
             <TokenViewer tokenId={tokenId} svgNotFromGraph={svg} showPending {...props} />
-            <Label text={`as of ${String(blocknum || 0)}`} />
+            <Label text={`Live as of ${String(blocknum || 0)}`} />
         </div>
     );
 };

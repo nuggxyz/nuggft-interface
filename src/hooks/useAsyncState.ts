@@ -10,7 +10,7 @@ const useAsyncState = <T>(
 };
 
 export const useAsyncSetState = <T>(
-    query: () => Promise<T> | undefined | null,
+    query: () => Promise<T | undefined> | undefined | null,
     deps: React.DependencyList,
 ): [
     T | null | undefined,

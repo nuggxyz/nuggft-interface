@@ -2,7 +2,7 @@ import { animated } from '@react-spring/web';
 import React, { FunctionComponent, useMemo } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
-import MobileViewOverlay from '@src/structure/mobile/MobileViewOverlay';
+import MobileViewOverlay from '@src/pages/mobile/MobileViewOverlay';
 import NuggDexSearchList from '@src/components/nugg/NuggDex/NuggDexSearchList/NuggDexSearchList';
 import AppState from '@src/state/app';
 import useBlur from '@src/hooks/useBlur';
