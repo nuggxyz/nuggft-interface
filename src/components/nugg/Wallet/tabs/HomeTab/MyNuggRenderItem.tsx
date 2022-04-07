@@ -10,9 +10,9 @@ import Text from '@src/components/general/Texts/Text/Text';
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Flyout from '@src/components/general/Flyout/Flyout';
-import LoanButtons from '@src/components/nugg/ViewingNugg/FlyoutButtons/LoanButtons';
-import OwnerButtons from '@src/components/nugg/ViewingNugg/FlyoutButtons/OwnerButtons';
-import SaleButtons from '@src/components/nugg/ViewingNugg/FlyoutButtons/SaleButtons';
+import LoanButtons from '@src/components/nugg/ViewingNugg/ActionButtons/LoanButtons';
+import OwnerButtons from '@src/components/nugg/ViewingNugg/ActionButtons/OwnerButtons';
+import SaleButtons from '@src/components/nugg/ViewingNugg/ActionButtons/SaleButtons';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
 import styles from './HomeTab.styles';

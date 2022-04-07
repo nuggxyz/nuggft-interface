@@ -2,7 +2,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import React, { FunctionComponent, useMemo } from 'react';
 import { HiArrowRight } from 'react-icons/hi';
 import { t } from '@lingui/macro';
-import { useNavigate } from 'react-router-dom';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { IoArrowRedo } from 'react-icons/io5';
 
 import Text from '@src/components/general/Texts/Text/Text';
@@ -15,17 +15,43 @@ import { ListRenderItemProps } from '@src/components/general/List/List';
 import { Chain } from '@src/web3/core/interfaces';
 import lib, { isUndefinedOrNull, isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import { Address } from '@src/classes/Address';
-import { LiveSwap, LiveToken } from '@src/client/interfaces';
+import { LiveItemSwap, LiveSwap, LiveToken } from '@src/client/interfaces';
 import Button from '@src/components/general/Buttons/Button/Button';
 
 import styles from './ViewingNugg.styles';
 
-const SwapTitle = ({ title }: { title: string }) => {
-    return (
-        <div style={{ display: 'flex' }}>
-            <Text textStyle={styles.listTitle}>{title}</Text>
-        </div>
-    );
+const SwapTitle = ({ title }: { title: string }) => (
+    <Text textStyle={styles.listTitle}>{title}</Text>
+);
+
+const SwapButton = ({
+    item,
+    epoch,
+    navigate,
+    tokenId,
+}: {
+    item: LiveSwap;
+    epoch: number;
+    navigate: NavigateFunction;
+    tokenId: string;
+}) => {
+    return !item.endingEpoch || (!isUndefinedOrNull(item.epoch) && epoch <= item.endingEpoch) ? (
+        <Button
+            buttonStyle={styles.goToSwap}
+            textStyle={{
+                ...styles.goToSwapGradient,
+                background: !item.epoch ? lib.colors.gradient : lib.colors.gradient3,
+                paddingRight: '.5rem',
+            }}
+            label={t`Go to swap`}
+            rightIcon={
+                <IoArrowRedo
+                    color={!item.epoch ? lib.colors.gradientGold : lib.colors.gradientPink}
+                />
+            }
+            onClick={() => navigate(`/swap/${item.type === 'item' ? 'item-' : ''}${tokenId}`)}
+        />
+    ) : null;
 };
 
 const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
@@ -69,31 +95,15 @@ const SwapItem: FunctionComponent<
     const epoch = client.live.epoch.id();
 
     const navigate = useNavigate();
-    console.log(item);
 
     return epoch ? (
         <div style={styles.swapItemContainer}>
-            {(!item.endingEpoch ||
-                (!isUndefinedOrNull(item.epoch) && epoch <= item.endingEpoch)) && (
-                <Button
-                    buttonStyle={styles.goToSwap}
-                    textStyle={{
-                        ...styles.goToSwapGradient,
-                        background: !item.epoch ? lib.colors.gradient : lib.colors.gradient3,
-                    }}
-                    label={t`Go to swap`}
-                    rightIcon={
-                        <IoArrowRedo
-                            color={!item.epoch ? lib.colors.gradientGold : lib.colors.gradientPink}
-                        />
-                    }
-                    onClick={() =>
-                        navigate(
-                            `/swap/${item.type === 'item' ? 'item-' : ''}${extraData.token.id}`,
-                        )
-                    }
-                />
-            )}
+            <SwapButton
+                item={item}
+                epoch={epoch}
+                navigate={navigate}
+                tokenId={extraData.token.id}
+            />
             <div
                 key={index}
                 style={{
@@ -110,8 +120,10 @@ const SwapItem: FunctionComponent<
                     <SwapDesc item={item} epoch={epoch} />
                     <CurrencyText image="eth" value={item.eth.decimal.toNumber()} />
                 </div>
-                <div style={{ display: 'flex' }}>
-                    <div style={{ marginRight: '10px' }}>
+                <div
+                    style={{ justifyContent: 'flex-start', display: 'flex', alignItems: 'center' }}
+                >
+                    <div>
                         <Text
                             type="text"
                             size="smaller"
@@ -140,20 +152,13 @@ const SwapItem: FunctionComponent<
                         isUndefinedOrNull(item.endingEpoch) ||
                         isUndefinedOrNull(item.epoch) ||
                         // if this swap is a minting swap and no one has bid on it
-                        (item.owner === Address.ZERO.hash && item.leader === Address.ZERO.hash) ? (
-                            <> </>
-                        ) : (
+                        (item.owner === Address.ZERO.hash &&
+                            item.leader === Address.ZERO.hash) ? null : (
                             <>
-                                <div
-                                    style={{
-                                        justifyContent: 'center',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        marginRight: '10px',
-                                    }}
-                                >
-                                    <HiArrowRight color={lib.colors.primaryColor} />
-                                </div>
+                                <HiArrowRight
+                                    color={lib.colors.primaryColor}
+                                    style={{ margin: '0rem 1rem' }}
+                                />
                                 <div>
                                     <Text
                                         type="text"
@@ -186,8 +191,6 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
     const provider = web3.hook.usePriorityProvider();
     const epoch = client.live.epoch.id();
 
-    console.log(token);
-
     const listData = useMemo(() => {
         const res: { title: string; items: LiveSwap[] }[] = [];
         let tempSwaps = token?.swaps ? [...token.swaps] : [];
@@ -195,15 +198,21 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
             res.push({ title: t`Ongoing Swap`, items: [token.activeSwap] });
             tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'id');
         }
-        // if (
-        //     token &&
-        //     (token?.swaps as LiveSwap[]).find((swap) => swap.endingEpoch === null) &&
-        //     token.type === 'item'
-        // ) {
-        //     const tempTemp: LiveItemSwap[] = [] as LiveItemSwap[];
+        if (token && token.type === 'item') {
+            if ((token?.swaps as LiveSwap[]).find((swap) => swap.endingEpoch === null)) {
+                const tempTemp: LiveItemSwap[] = tempSwaps as LiveItemSwap[];
 
-        //     tempSwaps = tempTemp.filter((x) => !x.isTryout);
-        // }
+                tempSwaps = tempTemp.filter((x) => !x.isTryout);
+            }
+            const upcoming = tempSwaps.find(
+                (x) =>
+                    !isUndefinedOrNull(x.epoch) && epoch && x.endingEpoch && epoch <= x.endingEpoch,
+            );
+            if (upcoming) {
+                res.push({ title: t`Ending in epoch ${upcoming.endingEpoch}`, items: [upcoming] });
+                tempSwaps = tempSwaps.smartRemove(upcoming, 'id');
+            }
+        }
         if (!isUndefinedOrNullOrArrayEmpty(tempSwaps)) {
             res.push({
                 title: t`Previous Swaps`,
@@ -216,67 +225,6 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
 
     return chainId && provider && epoch && token ? (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
-            {/* {token.type === 'item' &&
-                token.tryout.count > 0 &&
-                token.tryout.max &&
-                token.tryout.min && (
-                    <div
-                        // ref={ref}
-                        onClick={() => navigate(`/swap/${token.id}`)}
-                        aria-hidden="true"
-                        role="button"
-                        style={{
-                            padding: '.25rem 1rem',
-                            // ...(hover ? { filter: 'brightness(1.1)', cursor: 'pointer' } : {}),
-                        }}
-                    >
-                        <div
-                            style={{
-                                ...styles.swap,
-                                background: lib.colors.gradient2,
-                            }}
-                        >
-                            <div
-                                style={{
-                                    ...styles.swapButton,
-                                }}
-                            >
-                                <Text textStyle={{ color: lib.colors.primaryColor }}>
-                                    {t`On sale by ${token.tryout.count} Nugg${
-                                        token.tryout.count > 1 ? 's' : ''
-                                    }`}
-                                </Text>
-                                {token.tryout.min.eth.eq(token.tryout.max.eth) ? (
-                                    <div>
-                                        <div style={{ display: 'flex' }}>
-                                            <CurrencyText
-                                                image="eth"
-                                                value={token.tryout.min.eth.decimal.toNumber()}
-                                            />
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div>
-                                        <div style={{ display: 'flex' }}>
-                                            <CurrencyText
-                                                image="eth"
-                                                value={token.tryout.min.eth.decimal.toNumber()}
-                                            />
-                                            <Text textStyle={{ marginLeft: '5px' }}>{t`Min`}</Text>
-                                        </div>
-                                        <div style={{ display: 'flex' }}>
-                                            <CurrencyText
-                                                image="eth"
-                                                value={token.tryout.max.eth.decimal.toNumber()}
-                                            />
-                                            <Text textStyle={{ marginLeft: '5px' }}>{t`Max`}</Text>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                )} */}
             <StickyList
                 data={listData}
                 TitleRenderItem={SwapTitle}
@@ -285,7 +233,7 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
                 style={styles.stickyList}
                 styleRight={styles.stickyListRight}
                 emptyText={t`This ${token.type} has never been sold`}
-                listEmptyStyle={{ background: lib.colors.transparentLightGrey2 }}
+                listEmptyStyle={{ color: lib.colors.white }}
             />
         </div>
     ) : null;

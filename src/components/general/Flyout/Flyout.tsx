@@ -13,6 +13,7 @@ type Props = {
     style?: AnimatedProps<any>;
     containerStyle?: CSSProperties;
     float?: 'left' | 'right';
+    top?: number;
     openOnHover?: boolean;
 };
 
@@ -22,6 +23,7 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
     children,
     containerStyle,
     float = 'right',
+    top = 0,
     openOnHover = false,
 }) => {
     const [open, setOpen] = React.useState(false);
@@ -47,7 +49,7 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
             height: '100px',
             pointerEvents: 'none' as const,
             position: 'absolute' as const,
-            top: 0,
+            top,
             [float]: 0,
             opacity: 0,
             y: -5,

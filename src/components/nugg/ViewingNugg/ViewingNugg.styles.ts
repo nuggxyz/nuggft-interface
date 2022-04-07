@@ -15,9 +15,10 @@ const styles = NLStyleSheetCreator({
     },
     nuggId: {
         color: lib.colors.nuggBlueText,
-        padding: '.5rem 1rem',
+        padding: '.5rem .8rem',
         background: Colors.transparentWhite,
         borderRadius: Layout.borderRadius.small,
+        whiteSpace: 'nowrap',
     },
     nuggContainer: {
         position: 'relative',

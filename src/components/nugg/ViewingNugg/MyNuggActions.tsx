@@ -3,9 +3,9 @@ import React, { FunctionComponent } from 'react';
 import client from '@src/client';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
-import LoanButtons from './FlyoutButtons/LoanButtons';
-import OwnerButtons from './FlyoutButtons/OwnerButtons';
-import SaleButtons from './FlyoutButtons/SaleButtons';
+import LoanButtons from './ActionButtons/LoanButtons';
+import OwnerButtons from './ActionButtons/OwnerButtons';
+import SaleButtons from './ActionButtons/SaleButtons';
 
 type Props = Record<string, never>;
 
