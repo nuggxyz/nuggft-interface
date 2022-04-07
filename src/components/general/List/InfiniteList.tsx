@@ -93,18 +93,6 @@ const InfiniteList = <T, B, A>({
         [scrollTop, itemHeight],
     );
 
-    /// CAUSES BROWSER TO CRASH ---- idk why
-    // const endBufferIndex = useMemo(
-    //     () =>
-    //         Math.min(
-    //             data.length - 1,
-    //             scrollTop + windowHeight === 0
-    //                 ? 0
-    //                 : Math.ceil((scrollTop + windowHeight) / itemHeight) + LIST_PADDING * 2,
-    //         ),
-    //     [scrollTop, data, windowHeight, itemHeight],
-    // );
-
     const endIndex = useMemo(
         () =>
             Math.min(
@@ -120,8 +108,6 @@ const InfiniteList = <T, B, A>({
     const prevData = usePrevious(data);
 
     const [items, setItems] = useState<JSX.Element[]>([]);
-
-    // console.log({ startIndex, endIndex });
 
     useEffect(() => {
         if (
@@ -213,7 +199,6 @@ const InfiniteList = <T, B, A>({
                     (lastGrabValue === 0 || floor !== lastGrabValue) &&
                     !loading
                 ) {
-                    console.log({ end, floor, lastGrabValue });
                     setLastGrabValue(floor);
                     void onScrollEnd({ addToList: true });
                 }
