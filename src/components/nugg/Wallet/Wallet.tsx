@@ -2,11 +2,11 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { t } from '@lingui/macro';
 
 import HappyTabber, { HappyTabberItem } from '@src/components/general/HappyTabber/HappyTabber';
-import state from '@src/state';
 import web3 from '@src/web3';
 import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
 import lib from '@src/lib';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectTab from './tabs/ConnectTab/ConnectTab';
@@ -18,7 +18,7 @@ import ActiveTab from './tabs/ActiveTab/ActiveTab';
 type Props = Record<string, never>;
 
 const Wallet: FunctionComponent<Props> = () => {
-    const screenType = state.app.select.screenType();
+    const { screen: screenType } = useDimentions();
     const account = web3.hook.usePriorityAccount();
 
     const happytabs: HappyTabberItem[] = useMemo(

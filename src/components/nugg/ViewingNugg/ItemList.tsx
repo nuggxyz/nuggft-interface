@@ -11,13 +11,15 @@ import {
 } from '@src/lib';
 import constants from '@src/lib/constants';
 import Button from '@src/components/general/Buttons/Button/Button';
-import AppState from '@src/state/app';
 import globalStyles from '@src/lib/globalStyles';
 import Colors from '@src/lib/colors';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
-import WalletState from '@src/state/wallet';
 import { DefaultExtraData, LiveNuggItem } from '@src/client/interfaces';
 import Text from '@src/components/general/Texts/Text/Text';
+import client from '@src/client';
+import { ModalEnum } from '@src/interfaces/modals';
+import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
+import web3 from '@src/web3';
 
 import styles from './ViewingNugg.styles';
 
@@ -32,6 +34,14 @@ interface Props extends ExtraData {
 }
 
 const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData, undefined>> = ({ item, extraData }) => {
+    const openModal = client.modal.useOpenModal();
+
+    const provider = web3.hook.usePriorityProvider();
+
+    const nuggft = useNuggftV1(provider);
+
+    const { send } = useTransactionManager();
+
     return (
         <div style={styles.itemListItem}>
             <div style={globalStyles.centeredSpaceBetween}>
@@ -58,15 +68,11 @@ const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData, undefined>> = ({ ite
                         textStyle={styles.itemListButtonText}
                         type="text"
                         onClick={() => {
-                            AppState.dispatch.setModalOpen({
-                                name: 'SellNuggOrItemModal',
-                                modalData: {
-                                    targetId: createItemId((item.feature << 8) | item.position),
-                                    type: 'SellItem',
-                                    data: {
-                                        tokenId: extraData.tokenId,
-                                    },
-                                },
+                            openModal({
+                                type: ModalEnum.Sell,
+                                tokenId: createItemId((item.feature << 8) | item.position),
+                                tokenType: 'item',
+                                sellingNuggId: extraData.tokenId,
                             });
                         }}
                     />
@@ -79,11 +85,12 @@ const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData, undefined>> = ({ ite
                         type="text"
                         onClick={() => {
                             if (item.activeSwap)
-                                WalletState.dispatch.claim({
-                                    ...extraData,
-                                    address: padToAddress(extraData.sender),
-                                    tokenId: formatItemSwapIdForSend(item.activeSwap).toString(),
-                                });
+                                void send(
+                                    nuggft.populateTransaction['claim(uint160[],address[])'](
+                                        [formatItemSwapIdForSend(item.activeSwap)],
+                                        [padToAddress(extraData.sender)],
+                                    ),
+                                );
                         }}
                     />
                 ))}

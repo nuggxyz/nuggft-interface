@@ -86,7 +86,7 @@ export const ActiveRenderItem = ({
 };
 
 export default () => {
-    // const screenType = AppState.select.screenType();
+    // const { screen: screenType } = useDimentions();
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();

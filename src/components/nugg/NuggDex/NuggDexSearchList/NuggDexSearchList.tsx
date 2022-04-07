@@ -12,7 +12,7 @@ import {
     useGetAllItemsSearchQuery,
     useGetAllNuggsSearchQuery,
 } from '@src/gql/types.generated';
-import AppState from '@src/state/app';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -166,7 +166,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         delay: constants.ANIMATION_DELAY,
     });
 
-    const screenType = AppState.select.screenType();
+    const { screen: screenType } = useDimentions();
 
     const activeSearch = client.live.activeSearch();
 

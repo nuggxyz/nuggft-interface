@@ -6,7 +6,7 @@ import { batch } from 'react-redux';
 import { t } from '@lingui/macro';
 
 import TransitionText from '@src/components/general/Texts/TransitionText/TransitionText';
-import AppState from '@src/state/app';
+import useDimentions from '@src/client/hooks/useDimentions';
 import InfiniteList from '@src/components/general/List/InfiniteList';
 import client from '@src/client';
 import { ListData, SearchView } from '@src/client/interfaces';
@@ -54,7 +54,7 @@ const NuggList: FunctionComponent<NuggListProps> = ({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     horribleMFingHack2 = false,
 }) => {
-    const screenType = AppState.select.screenType();
+    const { screen: screenType } = useDimentions();
     const viewing = client.live.searchFilter.viewing();
 
     const { gotoViewingNugg } = useViewingNugg();

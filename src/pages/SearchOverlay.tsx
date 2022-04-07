@@ -4,12 +4,12 @@ import { useMatch, useNavigate } from 'react-router-dom';
 
 import MobileViewOverlay from '@src/pages/mobile/MobileViewOverlay';
 import NuggDexSearchList from '@src/components/nugg/NuggDex/NuggDexSearchList/NuggDexSearchList';
-import AppState from '@src/state/app';
 import useBlur from '@src/hooks/useBlur';
 import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
 import lib, { NLStyleSheetCreator } from '@src/lib';
 import { useOverlayRouteStyleWithOverride } from '@src/lib/router';
 import client from '@src/client';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 type Props = Record<string, never>;
 
@@ -44,7 +44,7 @@ const styles = NLStyleSheetCreator({
 const SearchOverlay: FunctionComponent<Props> = () => {
     // const overlay = useOverlayRouteStyle();
 
-    const screenType = AppState.select.screenType();
+    const { screen: screenType } = useDimentions();
 
     const navigate = useNavigate();
     const lastSwap = client.live.lastSwap.tokenId();

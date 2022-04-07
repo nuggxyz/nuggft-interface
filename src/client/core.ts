@@ -10,6 +10,7 @@ import { parseItmeIdToNum } from '@src/lib/index';
 
 import { TokenId, ItemId, NuggId } from './router';
 import {
+    Dimentions,
     SearchResults,
     LiveToken,
     ClientState,
@@ -290,114 +291,12 @@ function createClientStoreAndActions2() {
                     });
                 }
 
-                // function routeTo(tokenId: string | `item-${string}`, view: boolean): void {
-                //     set((draft) => {
-                //         let route = '#/';
+                function updateDimentions(dim: Dimentions): void {
+                    set((draft) => {
+                        draft.dimentions = dim;
+                    });
+                }
 
-                //         // const { lastView, lastSwap } = draft;
-
-                //         const isItem = tokenId?.isItemId();
-
-                //         if (view) {
-                //             route += 'view/';
-                //             draft.isViewOpen = true;
-                //             draft.isMobileWalletOpen = false;
-                //             if (tokenId === '') draft.isMobileViewOpen = false;
-                //             else draft.isMobileViewOpen = true;
-                //         } else {
-                //             draft.isViewOpen = false;
-                //             draft.isMobileViewOpen = false;
-                //         }
-                //         if (tokenId !== '') {
-                //             if (isItem) {
-                //                 route += 'item/';
-                //                 const num = parseItmeIdToNum(tokenId);
-                //                 route += `${num.feature}/`;
-                //                 route += num.position;
-                //                 if (view) {
-                //                     draft.lastView = {
-                //                         type: Route.ViewItem,
-                //                         tokenId,
-                //                         ...num,
-                //                     };
-                //                 } else {
-                //                     draft.lastSwap = {
-                //                         type: Route.SwapItem,
-                //                         tokenId,
-                //                         ...num,
-                //                     };
-                //                 }
-                //             } else {
-                //                 route += `nugg/${tokenId}`;
-                //                 if (view) {
-                //                     draft.lastView = {
-                //                         type: Route.ViewNugg,
-                //                         tokenId,
-                //                         idnum: +tokenId,
-                //                     };
-                //                 } else {
-                //                     draft.lastSwap = {
-                //                         type: Route.SwapNugg,
-                //                         tokenId,
-                //                         idnum: +tokenId,
-                //                     };
-                //                 }
-                //             }
-                //         }
-
-                //         if (route !== draft.route) {
-                //             window.location.replace(route);
-                //         }
-                //         const { lastView, lastSwap } = get();
-                //         if (view && lastView) {
-                //             const save = JSON.stringify({
-                //                 id: lastView.tokenId,
-                //                 type: lastView.type === Route.ViewNugg ? 'nugg' : 'item',
-                //                 dotnuggRawCache: null,
-                //             });
-                //             if (draft.myRecents.has(save)) {
-                //                 draft.myRecents.delete(save);
-                //             }
-                //             draft.myRecents.add(save);
-                //         } else if (lastSwap) {
-                //             const save = JSON.stringify({
-                //                 id: lastSwap.tokenId,
-                //                 type: lastSwap.type === Route.SwapNugg ? 'nugg' : 'item',
-                //                 dotnuggRawCache: null,
-                //             });
-                //             if (draft.myRecents.has(save)) {
-                //                 draft.myRecents.delete(save);
-                //             }
-                //             draft.myRecents.add(save);
-                //         }
-                //     });
-                // }
-
-                // const toggleView = () => {
-                //     const { isViewOpen, lastSwap } = get();
-                //     if (lastSwap) routeTo('', !isViewOpen);
-                //     else routeTo('', !isViewOpen);
-                // };
-
-                // const hideMobileViewingNugg = () => {
-                //     set((draft) => {
-                //         draft.isMobileViewOpen = false;
-                //     });
-                // };
-
-                // const toggleEditingNugg = (tokenId: NuggId | undefined) => {
-                //     set((draft) => {
-                //         draft.editingNugg = tokenId;
-                //     });
-                // };
-
-                // const toggleMobileWallet = () => {
-                //     routeTo('', false);
-                //     set((draft) => {
-                //         draft.isMobileWalletOpen = !get().isMobileWalletOpen;
-                //     });
-                //     console.log(get());
-                // };
                 const updateLocale = (locale: SupportedLocale | undefined) => {
                     set((draft) => {
                         draft.locale = locale ?? undefined;
@@ -494,6 +393,8 @@ function createClientStoreAndActions2() {
                         lastBlockRpc: 0,
                         lastBlockGraph: 0,
                     },
+                    dimentions: { width: window.innerWidth, height: window.innerHeight },
+
                     activeSearch: [],
                     pageIsLoaded: false,
                     started: false,
@@ -510,9 +411,6 @@ function createClientStoreAndActions2() {
                     addNugg,
                     updateOffers,
                     setPageIsLoaded,
-                    // routeTo,
-                    // toggleView,
-                    // toggleEditingNugg,
                     updateToken,
                     updateLocale,
                     updateSearchFilterTarget,
@@ -524,8 +422,7 @@ function createClientStoreAndActions2() {
                     addFeedMessage,
                     setLastSwap,
                     setActiveSearch,
-                    // hideMobileViewingNugg,
-                    // toggleMobileWallet,
+                    updateDimentions,
                 };
             }),
         ),

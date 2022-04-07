@@ -20,6 +20,6 @@
         },
         "strict": true
     },
-    "include": ["src"],
+    "include": ["src", "archive/wallet", "archive/transaction"],
     "exclude": ["node_modules"]
 }

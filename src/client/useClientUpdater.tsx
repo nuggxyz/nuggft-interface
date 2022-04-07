@@ -1,6 +1,4 @@
-import React from 'react';
-
-import client from '@src/client';
+import useMountLogger from '@src/hooks/useMountLogger';
 
 import useRpcUpdater from './update/useRpcUpdater';
 import useMediaUpdater from './update/useMediaUpdater';
@@ -9,19 +7,20 @@ import useLiveProtocol from './subscriptions/useLiveProtocol';
 import useLiveUser from './subscriptions/useLiveUser';
 import useSwapUpdater from './update/useSwapUpdater';
 import useLiveGraphHealth from './subscriptions/useLiveGraphHealth';
+import useDimentionsUpdater from './update/useDimentionsUpdater';
 
-const GraphConditionalHooks = () => {
-    useLiveProtocol();
+// const GraphConditionalHooks = () => {
+//     useLiveProtocol();
 
-    useLiveUser();
+//     useLiveUser();
 
-    useLiveGraphHealth();
+//     useLiveGraphHealth();
 
-    return null;
-};
+//     return null;
+// };
 
 export default () => {
-    const graph = client.live.graph();
+    useDimentionsUpdater();
 
     useMediaUpdater();
 
@@ -29,14 +28,21 @@ export default () => {
 
     useRpcUpdater();
 
-    // useGraphUpdater();
+    useLiveProtocol();
+
+    useLiveUser();
+
+    useLiveGraphHealth();
 
     useSwapUpdater();
 
-    return (
-        <>
-            {/* conditional hooks */}
-            {graph && <GraphConditionalHooks />}
-        </>
-    );
+    useMountLogger('ClientUpdater');
+
+    return null;
+};
+
+export const useDelayedClientUpdater = () => {
+    useMountLogger('DelayedClientUpdater');
+
+    return null;
 };

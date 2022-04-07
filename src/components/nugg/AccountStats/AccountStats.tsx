@@ -1,25 +1,21 @@
 import React, { FunctionComponent } from 'react';
-import { animated, config, useSpring } from '@react-spring/web';
-
-import AppState from '@src/state/app';
-
-import styles from './AccountStats.styles';
+import { animated } from '@react-spring/web';
 
 type Props = Record<string, never>;
 
 const AccountStats: FunctionComponent<Props> = () => {
-    const walletVisible = AppState.select.walletVisible();
+    // const walletVisible = AppState.select.walletVisible();
 
-    const containerStyle = useSpring({
-        to: {
-            opacity: walletVisible ? 0 : 1,
-            ...styles.container,
-        },
-        config: config.default,
-    });
+    // const containerStyle = useSpring({
+    //     to: {
+    //         opacity: walletVisible ? 0 : 1,
+    //         ...styles.container,
+    //     },
+    //     config: config.default,
+    // });
 
     return (
-        <animated.div style={containerStyle}>
+        <animated.div>
             {/* <TextStatistic label="Your shares" value={'' + userShares} transparent />
             <NumberStatistic
                 label="Your worth"

@@ -4,14 +4,16 @@ import { t } from '@lingui/macro';
 import { useNavigate } from 'react-router-dom';
 
 import Colors from '@src/lib/colors';
-import state from '@src/state';
 import Button from '@src/components/general/Buttons/Button/Button';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
+import client from '@src/client';
+import { ModalEnum } from '@src/interfaces/modals';
 
 type Props = { tokenId: string };
 
 const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
     const navigate = useNavigate();
+    const openModal = client.modal.useOpenModal();
 
     return (
         <div style={styles.ownerButtonContainer}>
@@ -28,15 +30,13 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                         style={{ marginRight: '.75rem' }}
                     />
                 }
-                onClick={() =>
-                    state.app.dispatch.setModalOpen({
-                        name: 'SellNuggOrItemModal',
-                        modalData: {
-                            targetId: tokenId,
-                            type: 'SellNugg',
-                        },
-                    })
-                }
+                onClick={() => {
+                    openModal({
+                        type: ModalEnum.Sell,
+                        tokenId,
+                        tokenType: 'nugg',
+                    });
+                }}
             />
             <Button
                 textStyle={styles.textBlack}
@@ -51,18 +51,16 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                         style={{ marginRight: '.75rem' }}
                     />
                 }
-                onClick={() =>
-                    state.app.dispatch.setModalOpen({
-                        name: 'LoanOrBurnModal',
-                        modalData: {
-                            targetId: tokenId,
-                            type: 'LoanNugg',
-                            backgroundStyle: {
-                                background: Colors.gradient2,
-                            },
+                onClick={() => {
+                    openModal({
+                        type: ModalEnum.Loan,
+                        tokenId,
+                        actionType: 'loan',
+                        backgroundStyle: {
+                            background: Colors.gradient2,
                         },
-                    })
-                }
+                    });
+                }}
             />
             {/* <Button
                 textStyle={styles.textBlack}

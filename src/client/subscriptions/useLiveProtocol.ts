@@ -29,15 +29,12 @@ const mergeUnique = (arr: SwapData[]) => {
 };
 
 export default () => {
-    const graph = client.live.graph();
-
     const updateProtocol = client.mutate.updateProtocol();
 
     useLiveProtocolSubscription({
-        client: graph,
         shouldResubscribe: true,
         fetchPolicy: 'network-only',
-
+        // client: web3.config.apolloClient,
         onSubscriptionData: (x) => {
             if (x.subscriptionData && x.subscriptionData.data && x.subscriptionData.data.protocol) {
                 const { protocol } = x.subscriptionData.data;
@@ -143,6 +140,10 @@ export default () => {
             }
         },
     });
+    // useMountLogger('updateProtocol');
+    // useUpdateLogger('abc', abc);
+
+    // console.log({ abc });
 
     return null;
 };

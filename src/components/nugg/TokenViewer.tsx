@@ -1,7 +1,6 @@
 import { config as springConfig, useSpring, animated } from '@react-spring/web';
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
-import AppState from '@src/state/app';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
 import { TokenId } from '@src/client/router';
@@ -9,6 +8,7 @@ import { parseTokenId } from '@src/lib';
 import useOnHover from '@src/hooks/useOnHover';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import { useDotnuggCacheOnlyLazy } from '@src/client/hooks/useDotnugg';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import DangerouslySetNugg from './DangerouslySetNugg';
 
@@ -47,7 +47,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     shouldLoad = true,
     forceCache = false,
 }) => {
-    const screenType = AppState.select.screenType();
+    const { screen: screenType } = useDimentions();
 
     const { width } = useMemo(() => {
         return { width: window.innerWidth };

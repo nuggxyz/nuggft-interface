@@ -10,13 +10,13 @@ import client from '@src/client';
 import web3 from '@src/web3';
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
-import state from '@src/state';
 import Text from '@src/components/general/Texts/Text/Text';
 import { Lifecycle, OfferData } from '@src/client/interfaces';
 import { NuggId, TokenId } from '@src/client/router';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { Chain } from '@src/web3/core/interfaces';
 import useDistribution from '@src/client/hooks/useDistribution';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './RingAbout.styles';
 
@@ -65,7 +65,7 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
     const type = client.live.lastSwap.type();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const screenType = state.app.select.screenType();
+    const { screen: screenType } = useDimentions();
 
     const [open, setOpen] = useState(screenType === 'tablet');
 

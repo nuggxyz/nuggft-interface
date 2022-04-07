@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import React, { FunctionComponent, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Promise } from 'bluebird';
 import { t } from '@lingui/macro';
 
@@ -7,7 +7,6 @@ import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/Feedb
 import { executeQuery3 } from '@src/graphql/helpers';
 import useAsyncState from '@src/hooks/useAsyncState';
 import Text from '@src/components/general/Texts/Text/Text';
-import state from '@src/state';
 import web3 from '@src/web3';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import Loader from '@src/components/general/Loader/Loader';
@@ -23,13 +22,22 @@ import lib, {
 } from '@src/lib';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import TokenViewer3 from '@src/components/nugg/TokenViewer3';
+import { MintModalData } from '@src/interfaces/modals';
+import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
+import client from '@src/client';
 
 import styles from './MintModal.styles';
 
-const MintModal: FunctionComponent<unknown> = () => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const MintModal = ({ data }: { data: MintModalData }) => {
     const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
+    const nuggft = useNuggftV1(provider);
+
+    const { send } = useTransactionManager();
+    const closeModal = client.modal.useCloseModal();
+
     const [myNuggTransfer, setMyNuggTransfer] = useState<string>();
     const [loading, setLoading] = useState(false);
 
@@ -183,16 +191,14 @@ const MintModal: FunctionComponent<unknown> = () => {
                 onClick={() => {
                     if (isUndefined(newNugg)) {
                         if (address && provider && chainId && nuggPrice && nextNugg) {
-                            state.wallet.dispatch.mintNugg({
-                                chainId,
-                                provider,
-                                address,
-                                nuggPrice,
-                                nextNugg,
-                            });
+                            void send(
+                                nuggft.populateTransaction.mint(nextNugg, {
+                                    value: nuggPrice,
+                                }),
+                            );
                         }
                     } else {
-                        state.app.dispatch.setModalClosed();
+                        closeModal();
                     }
                 }}
             />

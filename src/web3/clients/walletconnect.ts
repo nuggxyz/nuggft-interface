@@ -1,7 +1,8 @@
+import type { EventEmitter } from 'node:events';
+
 import type WalletConnectProvider from '@walletconnect/ethereum-provider';
 import type { IWCEthRpcConnectionOptions } from '@walletconnect/types';
 import EventEmitter3 from 'eventemitter3';
-import type { EventEmitter } from 'node:events';
 import curriedLighten from 'polished/lib/color/lighten';
 
 import type { Actions, ProviderRpcError } from '@src/web3/core/types';
@@ -12,9 +13,10 @@ import {
     Peer,
     Connector as ConnectorEnum,
 } from '@src/web3/core/interfaces';
-import AppState from '@src/state/app';
-import store from '@src/state/store';
 import lib from '@src/lib';
+import { isPhone } from '@src/lib/userAgent';
+import client from '@src/client';
+import { ModalEnum } from '@src/interfaces/modals';
 
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
@@ -103,19 +105,17 @@ export class WalletConnect extends Connector {
                 this.events.emit(URI_AVAILABLE, payload.params[0]);
 
             const uri = `${peer.deeplink_href}${HREF_PATH}${encodeURIComponent(payload.params[0])}`;
-            const device = store.getState().app.screenType;
 
-            if (device === 'desktop' || device === 'tablet') {
+            if (!isPhone) {
                 if (peer.desktopAction === 'deeplink') {
                     window.open(uri);
                 } else {
-                    AppState.dispatch.setModalOpen({
-                        name: 'QrCodeModal',
-                        modalData: {
-                            data: { info: peer, uri },
-                            containerStyle: { background: lib.colors.semiTransparentWhite },
-                            backgroundStyle: { background: curriedLighten(0.1)(peer.color) },
-                        },
+                    client.modal.getState().openModal({
+                        type: ModalEnum.QrCode,
+                        info: peer,
+                        uri,
+                        containerStyle: { background: lib.colors.semiTransparentWhite },
+                        backgroundStyle: { background: curriedLighten(0.1)(peer.color) },
                     });
                 }
             } else {

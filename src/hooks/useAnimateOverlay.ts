@@ -2,7 +2,7 @@ import { PickAnimated, useSpring } from '@react-spring/web';
 import { CSSProperties } from 'react';
 
 import { NLStyleSheetCreator } from '@src/lib';
-import AppState from '@src/state/app';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 const styles = NLStyleSheetCreator({
     wrapper: {
@@ -24,7 +24,7 @@ const styles = NLStyleSheetCreator({
 });
 
 const useAnimateOverlay = (isOpen: boolean, style?: CSSProperties) => {
-    const screenType = AppState.select.screenType();
+    const { screen: screenType } = useDimentions();
     const wrapperStyle: PickAnimated<CSSProperties> = useSpring({
         ...styles.wrapper,
         opacity: isOpen ? 1 : 0,

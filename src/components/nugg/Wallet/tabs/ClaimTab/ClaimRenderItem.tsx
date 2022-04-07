@@ -8,14 +8,21 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import Text from '@src/components/general/Texts/Text/Text';
 import { parseTokenId } from '@src/lib';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
-import state from '@src/state';
 import { ListRenderItemProps } from '@src/components/general/List/List';
+import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
+import web3 from '@src/web3';
 
 import styles from './ClaimTab.styles';
 
 const ClaimRenderItem: FunctionComponent<
     ListRenderItemProps<UnclaimedOffer, DefaultExtraData, undefined>
-> = ({ item, index, extraData }) => {
+> = ({ item, index }) => {
+    const provider = web3.hook.usePriorityProvider();
+
+    const nuggft = useNuggftV1(provider);
+
+    const { send } = useTransactionManager();
+
     const swapText = useMemo(
         () =>
             item.type === 'item'
@@ -53,10 +60,12 @@ const ClaimRenderItem: FunctionComponent<
                 buttonStyle={styles.renderItemButton}
                 label={t`Claim`}
                 onClick={() => {
-                    state.wallet.dispatch.claim({
-                        ...item.claimParams,
-                        ...extraData,
-                    });
+                    void send(
+                        nuggft.populateTransaction['claim(uint160[],address[])'](
+                            [item.claimParams.tokenId],
+                            [item.claimParams.address],
+                        ),
+                    );
                 }}
             />
         </div>

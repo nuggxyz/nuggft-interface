@@ -6,7 +6,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import { parseTokenIdSmart } from '@src/lib';
 import { ListData } from '@src/client/interfaces';
-import AppState from '@src/state/app';
+import useDimentions from '@src/client/hooks/useDimentions';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
 import styles from './NuggDexComponents.styles';
@@ -26,7 +26,7 @@ const NuggLinkThumbnail: FunctionComponent<{
             ...customStyle,
         };
     }, [item, isHovering, customStyle]);
-    const screenType = AppState.select.screenType();
+    const { screen: screenType } = useDimentions();
 
     const { gotoViewingNugg } = useViewingNugg();
     // const pageLoaded = client.live.pageIsLoaded();

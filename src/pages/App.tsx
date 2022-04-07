@@ -1,29 +1,26 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Navigate, Outlet } from 'react-router-dom';
 
 import SwapPage from '@src/pages/SwapPage';
-import ErrorBoundary from '@src/components/general/ErrorBoundry';
 import NavigationBar from '@src/components/nugg/PageLayout/NavigationBar/NavigationBar';
-import ToastContainer from '@src/components/general/Toast/ToastContainer';
-import Modal from '@src/components/nugg/Modals/Modal/Modal';
 import { useRoutes } from '@src/lib/router';
 import client from '@src/client';
-import useAnalyticsReporter from '@src/lib/analytics/useAnalyticsReporter';
+import GlobalModal from '@src/components/modals/GlobalModal';
 
 const MobileWalletView = React.lazy(() => import('@src/pages/mobile/MobileWalletView'));
 const HotRotateO = React.lazy(() => import('@src/pages/HotRotateO'));
 const SearchOverlay = React.lazy(() => import('@src/pages/SearchOverlay'));
 
-const App = () => {
-    useAnalyticsReporter();
-
+const Router = () => {
     const [loaded, setLoaded] = React.useState<boolean>(false);
 
-    useEffect(() => {
-        setTimeout(() => {
+    const [, start] = React.useTransition();
+
+    React.useEffect(() => {
+        start(() => {
             setLoaded(true);
-        }, 0);
+        });
     }, []);
 
     const epoch = client.live.epoch.id();
@@ -43,16 +40,19 @@ const App = () => {
         },
     ]);
 
+    return <React.Suspense fallback={<div />}>{route} </React.Suspense>;
+};
+
+const App = () => {
     return (
-        <ErrorBoundary>
-            <ToastContainer />
-            <Modal />
+        <>
+            {/* <ToastContainer /> */}
+            <GlobalModal />
             <Helmet />
             <NavigationBar />
-            <React.Suspense fallback={<div />}>{route} </React.Suspense>
-
-            <SwapPage />
-        </ErrorBoundary>
+            <Router />
+            <SwapPage />{' '}
+        </>
     );
 };
 
