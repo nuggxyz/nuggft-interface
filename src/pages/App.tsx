@@ -7,6 +7,7 @@ import NavigationBar from '@src/components/nugg/PageLayout/NavigationBar/Navigat
 import { useRoutes } from '@src/lib/router';
 import client from '@src/client';
 import GlobalModal from '@src/components/modals/GlobalModal';
+import ToastContainer from '@src/components/general/Toast/ToastContainer';
 
 const MobileWalletView = React.lazy(() => import('@src/pages/mobile/MobileWalletView'));
 const HotRotateO = React.lazy(() => import('@src/pages/HotRotateO'));
@@ -46,12 +47,12 @@ const Router = () => {
 const App = () => {
     return (
         <>
-            {/* <ToastContainer /> */}
+            <ToastContainer />
             <GlobalModal />
             <Helmet />
             <NavigationBar />
             <Router />
-            <SwapPage />{' '}
+            <SwapPage />
         </>
     );
 };

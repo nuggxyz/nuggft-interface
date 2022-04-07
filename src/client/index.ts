@@ -12,6 +12,7 @@ import { TokenId } from './router';
 import { ListData, SearchView } from './interfaces';
 import { useDarkMode } from './hooks/useDarkMode';
 import modal from './modal';
+import toast from './toast';
 
 export default {
     ...core,
@@ -194,4 +195,5 @@ export default {
         route: () => core.getState().route,
     },
     modal,
+    toast,
 };
