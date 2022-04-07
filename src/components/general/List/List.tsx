@@ -7,6 +7,7 @@ import React, {
     useEffect,
     useMemo,
 } from 'react';
+import { t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import Loader from '@src/components/general/Loader/Loader';
@@ -128,12 +129,12 @@ const List = <T, B, A>({
                 >
                     {!loading && (
                         <Text weight="light" size="small" type="text" textStyle={listEmptyStyle}>
-                            {listEmptyText || 'No items to display...'}
+                            {listEmptyText || t`No items to display...`}
                         </Text>
                     )}
                 </div>
             ),
-        [data, action, extraData, RenderItem, listEmptyText, loading],
+        [data, action, extraData, RenderItem, listEmptyText, loading, listEmptyStyle],
     );
 
     const Loading = useCallback(

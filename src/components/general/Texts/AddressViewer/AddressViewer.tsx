@@ -30,6 +30,7 @@ export default ({
             type="text"
             size={size}
             textStyle={{ ...textStyle }}
+            hideBorder
             action={() => {
                 web3.config.gotoEtherscan(chainId, route, param);
             }}

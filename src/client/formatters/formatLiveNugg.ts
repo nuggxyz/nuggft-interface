@@ -5,6 +5,7 @@ import { LiveNuggFragment } from '@src/gql/types.generated';
 export default (nugg: LiveNuggFragment): LiveNugg => {
     return {
         type: 'nugg' as const,
+        id: nugg.id,
         activeLoan: !!nugg.activeLoan?.id,
         owner: nugg.user?.id,
         items: nugg.items.map((y) => {

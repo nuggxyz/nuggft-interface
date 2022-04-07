@@ -1,4 +1,5 @@
 import Colors from '@src/lib/colors';
+import globalStyles from '@src/lib/globalStyles';
 import { NLStyleSheetCreator } from '@src/lib/index';
 
 const styles = NLStyleSheetCreator({
@@ -47,10 +48,10 @@ const styles = NLStyleSheetCreator({
         top: 0,
         zIndex: 1,
     },
-    // noItems: {
-    //     fontFamily: Layout.font.sf.bold,
-    //     fontSize: FontSize.h5,
-    // },
+    noItems: {
+        // ...globalStyles.fillWidth,
+        ...globalStyles.centered,
+    },
 });
 
 export default styles;

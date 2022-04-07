@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { IoCashOutline, IoPencil, IoPricetagsOutline, IoTrashBinOutline } from 'react-icons/io5';
+import { IoCashOutline, IoPencil, IoPricetagsOutline } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 import { useNavigate } from 'react-router-dom';
 
@@ -64,7 +64,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                     })
                 }
             />
-            <Button
+            {/* <Button
                 textStyle={styles.textBlack}
                 size="medium"
                 type="text"
@@ -89,7 +89,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                         },
                     })
                 }
-            />
+            /> */}
             <Button
                 textStyle={styles.textBlack}
                 size="medium"

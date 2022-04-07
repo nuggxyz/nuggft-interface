@@ -2,7 +2,8 @@ import { Web3Provider } from '@ethersproject/providers';
 import React, { FunctionComponent, useMemo } from 'react';
 import { HiArrowRight } from 'react-icons/hi';
 import { t } from '@lingui/macro';
-import { useNavigate } from 'react-router-dom';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
+import { IoArrowRedo } from 'react-icons/io5';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import Colors from '@src/lib/colors';
@@ -12,20 +13,45 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import client from '@src/client';
 import { ListRenderItemProps } from '@src/components/general/List/List';
 import { Chain } from '@src/web3/core/interfaces';
-import { TokenId } from '@src/client/router';
-import lib from '@src/lib';
+import lib, { isUndefinedOrNull, isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import { Address } from '@src/classes/Address';
-import Button from '@src/components/general/Buttons/Button/Button';
 import { LiveItemSwap, LiveSwap, LiveToken } from '@src/client/interfaces';
+import Button from '@src/components/general/Buttons/Button/Button';
 
 import styles from './ViewingNugg.styles';
 
-const SwapTitle = ({ title }: { title: string }) => {
-    return (
-        <div style={{ display: 'flex' }}>
-            <Text textStyle={styles.listTitle}>{title}</Text>
-        </div>
-    );
+const SwapTitle = ({ title }: { title: string }) => (
+    <Text textStyle={styles.listTitle}>{title}</Text>
+);
+
+const SwapButton = ({
+    item,
+    epoch,
+    navigate,
+    tokenId,
+}: {
+    item: LiveSwap;
+    epoch: number;
+    navigate: NavigateFunction;
+    tokenId: string;
+}) => {
+    return !item.endingEpoch || (!isUndefinedOrNull(item.epoch) && epoch <= item.endingEpoch) ? (
+        <Button
+            buttonStyle={styles.goToSwap}
+            textStyle={{
+                ...styles.goToSwapGradient,
+                background: !item.epoch ? lib.colors.gradient : lib.colors.gradient3,
+                paddingRight: '.5rem',
+            }}
+            label={t`Go to swap`}
+            rightIcon={
+                <IoArrowRedo
+                    color={!item.epoch ? lib.colors.gradientGold : lib.colors.gradientPink}
+                />
+            }
+            onClick={() => navigate(`/swap/${item.type === 'item' ? 'item-' : ''}${tokenId}`)}
+        />
+    ) : null;
 };
 
 const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
@@ -33,9 +59,10 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
 
     return epoch && blocknum ? (
         <Text textStyle={{ color: lib.colors.primaryColor }}>
-            {/* eslint-disable-next-line no-nested-ternary */}
-            {!item.epoch
+            {!item.endingEpoch && !item.epoch
                 ? t`Awaiting bid!`
+                : !item.epoch
+                ? t`Swap is cancelled`
                 : item.epoch.id < epoch
                 ? t`Swap is over`
                 : t`Swap ending in ${item.epoch.endblock - blocknum} blocks`}
@@ -51,7 +78,6 @@ const SwapItem: FunctionComponent<
             provider: Web3Provider;
             token: LiveToken;
             epoch: number;
-            tokenId: TokenId;
         },
         undefined
     >
@@ -69,31 +95,35 @@ const SwapItem: FunctionComponent<
     const epoch = client.live.epoch.id();
 
     const navigate = useNavigate();
+
     return epoch ? (
-        <div style={{ padding: '.25rem 1rem' }}>
+        <div style={styles.swapItemContainer}>
+            <SwapButton
+                item={item}
+                epoch={epoch}
+                navigate={navigate}
+                tokenId={extraData.token.id}
+            />
             <div
                 key={index}
                 style={{
                     ...styles.swap,
                     background:
-                        // eslint-disable-next-line no-nested-ternary
-                        !item.epoch
+                        !item.epoch && !item.endingEpoch
                             ? lib.colors.gradient
-                            : item.epoch.id < extraData.epoch
-                            ? lib.colors.gradient3
-                            : lib.colors.gradient2,
+                            : isUndefinedOrNull(item.epoch) || item.epoch?.id < extraData.epoch
+                            ? lib.colors.gradient2Transparent
+                            : lib.colors.gradient3,
                 }}
             >
-                <div
-                    style={{
-                        ...styles.swapButton,
-                    }}
-                >
+                <div style={styles.swapButton}>
                     <SwapDesc item={item} epoch={epoch} />
                     <CurrencyText image="eth" value={item.eth.decimal.toNumber()} />
                 </div>
-                <div style={{ display: 'flex' }}>
-                    <div style={{ marginRight: '10px' }}>
+                <div
+                    style={{ justifyContent: 'flex-start', display: 'flex', alignItems: 'center' }}
+                >
+                    <div>
                         <Text
                             type="text"
                             size="smaller"
@@ -101,7 +131,12 @@ const SwapItem: FunctionComponent<
                                 color: Colors.textColor,
                             }}
                         >
-                            {t`Sold by`}
+                            {!item.endingEpoch ||
+                            (epoch <= item.endingEpoch && !isUndefinedOrNull(item.epoch))
+                                ? t`On sale by`
+                                : isUndefinedOrNull(item.epoch)
+                                ? t`Cancelled by`
+                                : t`Sold by`}
                         </Text>
                         <Text
                             textStyle={{
@@ -111,95 +146,94 @@ const SwapItem: FunctionComponent<
                             {ownerEns}
                         </Text>
                     </div>
-                    <div
-                        style={{
-                            justifyContent: 'center',
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginRight: '10px',
-                        }}
-                    >
-                        <HiArrowRight color={lib.colors.primaryColor} />
-                    </div>
 
                     {
                         // if this swap is awaiting a bid
-                        item.endingEpoch === null ||
+                        isUndefinedOrNull(item.endingEpoch) ||
+                        isUndefinedOrNull(item.epoch) ||
                         // if this swap is a minting swap and no one has bid on it
-                        (item.owner === Address.ZERO.hash && item.leader === Address.ZERO.hash) ? (
-                            <> </>
-                        ) : (
-                            <div>
-                                <Text
-                                    type="text"
-                                    size="smaller"
-                                    textStyle={{
-                                        color: Colors.textColor,
-                                    }}
-                                >
-                                    {item.endingEpoch >= epoch ? t`Leader` : t`Buyer`}
-                                </Text>
-                                <Text
-                                    textStyle={{
-                                        color: 'white',
-                                    }}
-                                >
-                                    {leaderEns}
-                                </Text>
-                            </div>
+                        (item.owner === Address.ZERO.hash &&
+                            item.leader === Address.ZERO.hash) ? null : (
+                            <>
+                                <HiArrowRight
+                                    color={lib.colors.primaryColor}
+                                    style={{ margin: '0rem 1rem' }}
+                                />
+                                <div>
+                                    <Text
+                                        type="text"
+                                        size="smaller"
+                                        textStyle={{
+                                            color: Colors.textColor,
+                                        }}
+                                    >
+                                        {item.endingEpoch >= epoch ? t`Leader` : t`Buyer`}
+                                    </Text>
+                                    <Text
+                                        textStyle={{
+                                            color: 'white',
+                                        }}
+                                    >
+                                        {leaderEns}
+                                    </Text>
+                                </div>
+                            </>
                         )
                     }
-                    {(!item.endingEpoch || epoch <= item.endingEpoch) && (
-                        <Button label={t`goto swap`} onClick={() => navigate(`/swap/${item.id}`)} />
-                    )}
                 </div>
             </div>
-
-            <div />
         </div>
     ) : null;
 };
 
-const SwapList: FunctionComponent<{ tokenId: TokenId | undefined }> = ({ tokenId }) => {
+const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const token = client.live.token(tokenId);
     const epoch = client.live.epoch.id();
 
     const listData = useMemo(() => {
         const res: { title: string; items: LiveSwap[] }[] = [];
         let tempSwaps = token?.swaps ? [...token.swaps] : [];
         if (token && token.activeSwap && token.activeSwap.id) {
-            // res.push({ title: 'Ongoing Sale', items: [token.activeSwap] });
+            res.push({ title: t`Ongoing Swap`, items: [token.activeSwap] });
             tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'id');
         }
-        if (
-            token &&
-            tokenId &&
-            (token?.swaps as LiveSwap[]).find((swap) => swap.endingEpoch === null) &&
-            token.type === 'item'
-        ) {
-            const tempTemp: LiveItemSwap[] = [] as LiveItemSwap[];
+        if (token && token.type === 'item') {
+            if ((token?.swaps as LiveSwap[]).find((swap) => swap.endingEpoch === null)) {
+                const tempTemp: LiveItemSwap[] = tempSwaps as LiveItemSwap[];
 
-            tempSwaps = tempTemp.filter((x) => !x.isTryout);
+                tempSwaps = tempTemp.filter((x) => !x.isTryout);
+            }
+            const upcoming = tempSwaps.find(
+                (x) =>
+                    !isUndefinedOrNull(x.epoch) && epoch && x.endingEpoch && epoch <= x.endingEpoch,
+            );
+            if (upcoming) {
+                res.push({ title: t`Ending in epoch ${upcoming.endingEpoch}`, items: [upcoming] });
+                tempSwaps = tempSwaps.smartRemove(upcoming, 'id');
+            }
         }
-        res.push({
-            title: 'Previous Sales',
-            items: tempSwaps,
-        });
+        if (!isUndefinedOrNullOrArrayEmpty(tempSwaps)) {
+            res.push({
+                title: t`Previous Swaps`,
+                items: tempSwaps,
+            });
+        }
 
         return res;
-    }, [token, tokenId]);
+    }, [token]);
 
-    return chainId && provider && epoch && token && tokenId ? (
+    return chainId && provider && epoch && token ? (
         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
             <StickyList
                 data={listData}
                 TitleRenderItem={SwapTitle}
                 ChildRenderItem={React.memo(SwapItem)}
-                extraData={{ chainId, provider, token, epoch, tokenId }}
+                extraData={{ chainId, provider, token, epoch }}
                 style={styles.stickyList}
                 styleRight={styles.stickyListRight}
+                emptyText={t`This ${token.type} has never been sold`}
+                listEmptyStyle={{ color: lib.colors.white }}
             />
         </div>
     ) : null;

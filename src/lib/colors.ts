@@ -36,6 +36,7 @@ const Colors = {
     gradientRed: '#FF6871',
     gradientRedLight: '#ffe8ea',
     gradientGold: '#F3BE1E',
+    gradientPink: '#e856d0',
     chartbg: '#8a3434',
     chargbg0: 'rgba(0, 0, 0, 0.3)',
     gradient: `linear-gradient(128.17deg, #FF6871 -14.78%, #F3BE1E 110.05%)`,

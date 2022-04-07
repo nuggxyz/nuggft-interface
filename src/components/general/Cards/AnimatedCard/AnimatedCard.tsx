@@ -6,7 +6,6 @@ const calc = (x: number, y: number, rect: DOMRect) => [
     (x - rect.left - rect.width / 2) / 5,
     2,
 ];
-
 const trans = (x: number, y: number, s: number) =>
     `perspective(600px) rotateX(${x}deg) rotateY(${y}deg) scale(${s})`;
 
@@ -17,33 +16,28 @@ const AnimatedCard: FunctionComponent<React.PropsWithChildren<{ disable?: boolea
     const ref = useRef<HTMLDivElement>(null);
     const [xys, set] = useState([0, 0, 1]);
     const props = useSpring({ xys, config: config.molasses });
-    return disable ? (
-        <div
-            style={{
-                zIndex: 1,
-            }}
-        >
-            {children}
-        </div>
-    ) : (
+    return (
         <div
             ref={ref}
             style={{
                 zIndex: 1,
-                cursor: 'none',
+                // cursor: 'none',
             }}
         >
             <animated.div
                 style={{
                     transform: props.xys.to(trans),
                 }}
-                onMouseLeave={() => set([0, 0, 1])}
+                onMouseLeave={() => !disable && set([0, 0, 1])}
                 onMouseMove={(e) => {
-                    if (!ref.current)
+                    if (!ref.current) {
                         throw new Error(
-                            'components:Cards:AnimatedCard:AnimatedCard | ref.current is undefined',
+                            'co}mponents:Cards:AnimatedCard:AnimatedCard | ref.current is undefined',
                         );
-                    set(calc(e.clientX, e.clientY, ref.current.getBoundingClientRect()));
+                    }
+                    if (!disable) {
+                        set(calc(e.clientX, e.clientY, ref.current.getBoundingClientRect()));
+                    }
                 }}
             >
                 {children}
