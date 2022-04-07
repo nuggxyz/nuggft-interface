@@ -1,13 +1,15 @@
 import { BaseContract, ContractInterface, PopulatedTransaction, BigNumber } from 'ethers';
 import { useMemo, useState, useCallback } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
+import { t } from '@lingui/macro';
 
 import web3 from '@src/web3';
 import { NuggftV1__factory } from '@src/typechain/factories/NuggftV1__factory';
 import { RevertError } from '@src/lib/errors';
 import { DotnuggV1, DotnuggV1__factory } from '@src/typechain';
-import lib from '@src/lib';
+import lib, { shortenTxnHash } from '@src/lib';
 import emitter from '@src/emitter';
+import client from '@src/client';
 
 import { NuggftV1 } from '../typechain/NuggftV1';
 
@@ -49,6 +51,10 @@ export function useTransactionManager() {
     const network = web3.hook.useNetworkProvider();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
+
+    const toasts = client.toast.useList();
+    const addToast = client.toast.useAddToast();
+    const replaceToast = client.toast.useReplaceToast();
 
     const estimate = useCallback(
         async (ptx: Promise<PopulatedTransaction>): Promise<boolean> => {
@@ -101,7 +107,17 @@ export function useTransactionManager() {
                                 .getSigner()
                                 .sendTransaction({ ...tx, gasLimit: BigNumber.from(gasLimit) })
                                 .then((y) => {
-                                    // TransactionState.dispatch.addTransaction(y.hash);
+                                    addToast({
+                                        duration: 0,
+                                        title: t`Pending Transaction`,
+                                        message: shortenTxnHash(y.hash),
+                                        error: false,
+                                        id: y.hash,
+                                        index: toasts.length,
+                                        loading: true,
+                                        action: () =>
+                                            web3.config.gotoEtherscan(chainId, 'tx', y.hash),
+                                    });
                                     setActiveResponse(y);
 
                                     if (onResponse) onResponse(y);
@@ -130,6 +146,16 @@ export function useTransactionManager() {
                         return res2
                             .wait(1)
                             .then((x) => {
+                                const isSuccess = x.status === 1;
+                                replaceToast({
+                                    id: x.transactionHash,
+                                    duration: isSuccess ? 5000 : 0,
+                                    loading: false,
+                                    error: !isSuccess,
+                                    title: isSuccess
+                                        ? 'Successful Transaction'
+                                        : 'Transaction Failed',
+                                });
                                 setReceipt(x);
 
                                 if (onReceipt) onReceipt(x);
@@ -137,7 +163,7 @@ export function useTransactionManager() {
                                 emitter.emit({
                                     type: emitter.events.TransactionComplete,
                                     txhash: x.transactionHash,
-                                    success: x.status === 1,
+                                    success: isSuccess,
                                 });
                             })
                             .catch((err) => {

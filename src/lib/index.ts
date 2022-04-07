@@ -338,7 +338,7 @@ export const smartRemove = <T extends { index: number }>(array: T[], element: T)
     }, []);
 };
 
-export const smartReplace = <T extends { id: string }>(array: T[], element: T) => {
+export const smartReplace = <T extends { id: string }>(array: T[], element: Partial<T>) => {
     if (array === undefined) {
         return [];
     }

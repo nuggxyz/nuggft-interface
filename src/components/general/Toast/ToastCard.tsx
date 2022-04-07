@@ -5,21 +5,23 @@ import { IoClose, IoOpenOutline } from 'react-icons/io5';
 import useOnHover from '@src/hooks/useOnHover';
 import { isUndefinedOrNullOrBooleanFalse, isUndefinedOrNullOrNumberZero } from '@src/lib';
 import Colors from '@src/lib/colors';
-import AppState from '@src/state/app';
 import AnimatedBarTimer from '@src/components/general/AnimatedTimers/BarTimer/BarTimer';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Loader from '@src/components/general/Loader/Loader';
 import Text from '@src/components/general/Texts/Text/Text';
+import client from '@src/client';
+import { ToastType } from '@src/interfaces/toasts';
 
 import styles from './Toast.styles';
 
 type Props = {
-    toast: AppStateToast;
+    toast: ToastType;
 };
 
 const ToastCard: FunctionComponent<Props> = ({ toast }) => {
     const [hidden, setHidden] = useState(true);
     const [close, setClose] = useState(false);
+    const removeToast = client.toast.useRemoveToast();
 
     useEffect(() => {
         setDuration(toast.duration);
@@ -53,9 +55,7 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
         if (close) {
             setHidden(true);
             const id = setTimeout(() => {
-                AppState.dispatch.removeToastFromList({
-                    index: toast.index,
-                });
+                removeToast(toast);
             }, 500);
             return () => clearTimeout(id);
         }
@@ -76,7 +76,7 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
             marginTop: '1rem',
             zIndex: 1000,
         };
-    }, [toast, hidden, error, duration]);
+    }, [hidden, error]);
 
     const [ref, hovering] = useOnHover();
     const animatedS = useSpring({
