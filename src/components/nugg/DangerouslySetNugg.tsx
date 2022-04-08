@@ -3,14 +3,15 @@ import React, { CSSProperties } from 'react';
 import { userAgent } from '@src/lib/userAgent';
 
 const getParsed = (input: string) => {
-    // Buffer.from is the modern version of the below atob code
-
+    // Buffer.from is the modern version of atob
     return Buffer.from(input.replace('data:image/svg+xml;base64,', ''), 'base64').toString('utf8');
 };
 
 const getSvgObject = (input: string) => {
     const str = input
-        .replace('/svg">', '/svg" preserveAspectRatio="xMidYMid meet"  >')
+        .replace('.A.B.C.D.E.F.G.H', ``)
+        // unessesary - it is the default behavior
+        // .replace('/svg">', '/svg" preserveAspectRatio="xMidYMid meet"  >')
         .replace('</style>', `</style><g  class="R" >`)
         .replace('</svg>', '</g></svg>');
 
@@ -18,7 +19,23 @@ const getSvgObject = (input: string) => {
 };
 
 const getBoundingBox = (svg: Document) => {
-    return svg.rootElement?.getBBox();
+    if (!svg.rootElement) return undefined;
+
+    const tempDiv = document.createElement('div');
+
+    tempDiv.setAttribute('style', 'position:absolute; visibility:hidden; width:0; height:0');
+
+    const tempSvg = svg.rootElement.cloneNode(true) as SVGSVGElement;
+
+    tempDiv.appendChild(tempSvg);
+
+    document.body.appendChild(tempDiv);
+
+    const bbox = tempSvg.getBBox();
+
+    document.body.removeChild(tempDiv);
+
+    return bbox;
 };
 
 const getScalar = (rect: DOMRect): { value: number; type: 'x' | 'y' } => {
@@ -74,30 +91,38 @@ const DangerouslySetNugg = ({
 
         g.setAttribute('transform', `scale(${scale.value}) translate(${trans.x},${trans.y})`);
 
-        g.setAttribute('style', `transform-origin: center center;`);
+        g.setAttribute('style', ` transform-origin: center center;`);
+        g.setAttribute('stroke', `1`);
+        g.setAttribute('fill', `1`);
+
+        if (
+            userAgent.browser.name === 'Safari' ||
+            userAgent.browser.name === 'Mobile Safari' ||
+            userAgent.browser.name === 'Firefox'
+        ) {
+            /// // hack to kill the horizontal see-through lines on modern safari
+            svg.rootElement.setAttribute(
+                'style',
+                `stroke-width: ${size === 'thumbnail' ? 1.2 : 1.05}`,
+            );
+            // tried to solve with these, but none did the trick
+            // svg.rootElement.setAttribute('width', '100%');
+            // svg.rootElement.setAttribute('image-rendering', 'pixelated');
+            // svg.rootElement.setAttribute('stroke-width', '1');
+            // svg.rootElement.setAttribute('shape-rendering', 'geometricPrecision');
+            // svg.rootElement.setAttribute('vector-effect', 'non-scaling-stroke');
+            // svg.rootElement.setAttribute('y', '.5');
+            // svg.rootElement.setAttribute('x', '.5');
+            // svg.rootElement.setAttribute('transform', `translate(0,0)`);
+            // g.setAttribute('shape-rendering', 'crispEdges');
+        }
 
         div.innerHTML = '';
 
         div.appendChild(svg.rootElement);
-    }, [imageUri, id]);
+    }, [imageUri, id, size]);
 
-    return (
-        <>
-            <div className="B" style={{ stroke: 'red' }} />
-            <div
-                style={{
-                    ...styles,
-                    // hack to kill the horizontal see-through lines on modern safari
-                    ...(userAgent.browser.name === 'Firefox' ||
-                    userAgent.browser.name === 'Safari' ||
-                    userAgent.browser.name === 'Mobile Safari'
-                        ? { strokeWidth: size === 'showcase' ? 1.07 : 1.5 }
-                        : {}),
-                }}
-                id={id}
-            />
-        </>
-    );
+    return <div style={styles} id={id} />;
 };
 
 export default DangerouslySetNugg;
