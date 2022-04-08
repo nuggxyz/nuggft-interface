@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-04-07 04:09+0000\n"
+"POT-Creation-Date: 2022-04-07 22:08+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Hebrew\n"
-"PO-Revision-Date: 2022-04-07 06:02\n"
+"PO-Revision-Date: 2022-04-08 06:02\n"
 
 #: src/components/nugg/Wallet/Wallet.tsx
 #: src/components/nugg/Wallet/Wallet.tsx
@@ -42,8 +42,8 @@ msgstr ""
 msgid "Balance"
 msgstr ""
 
-#: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
-#: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
+#: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
+#: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 msgid "Burn"
 msgstr ""
 
@@ -60,22 +60,22 @@ msgstr ""
 msgid "Cancelled by"
 msgstr ""
 
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "Change offer for"
 msgstr ""
 
-#: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
+#: src/components/modals/LoanInputModal/LoanInputModal.tsx
 msgid "Check Wallet"
 msgstr ""
 
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
-#: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
+#: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
 msgid "Check Wallet..."
 msgstr ""
 
-#: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
-#: src/components/nugg/Modals/MintModal/MintModal.tsx
+#: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
+#: src/components/modals/MintModal/MintModal.tsx
 msgid "Check wallet..."
 msgstr ""
 
@@ -94,7 +94,7 @@ msgstr ""
 msgid "Claims"
 msgstr ""
 
-#: src/components/nugg/Modals/MintModal/MintModal.tsx
+#: src/components/modals/MintModal/MintModal.tsx
 msgid "Close"
 msgstr ""
 
@@ -103,7 +103,7 @@ msgstr ""
 msgid "Coming Up"
 msgstr ""
 
-#: src/structure/mobile/SwapView/SwapView.tsx
+#: src/pages/mobile/MobileSwapPage.tsx
 msgid "Coming up"
 msgstr ""
 
@@ -120,11 +120,11 @@ msgstr ""
 msgid "Create an issue on GitHub"
 msgstr ""
 
-#: src/components/nugg/Modals/MintModal/MintModal.tsx
+#: src/components/modals/MintModal/MintModal.tsx
 msgid "Deep-frying your nugg..."
 msgstr ""
 
-#: src/components/nugg/Modals/MintModal/MintModal.tsx
+#: src/components/modals/MintModal/MintModal.tsx
 msgid "Deep-frying..."
 msgstr ""
 
@@ -137,7 +137,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: src/structure/mobile/SwapView/SwapView.tsx
+#: src/pages/mobile/MobileSwapPage.tsx
 msgid "Ending in about {minutes, plural, =1 {{minutes} minute} other {{minutes} minutes} =0 {less than 1 minute}}"
 msgstr ""
 
@@ -149,12 +149,12 @@ msgstr ""
 msgid "Ending in epoch {0}"
 msgstr ""
 
-#: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
+#: src/components/modals/LoanInputModal/LoanInputModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "Enter amount"
 msgstr ""
 
-#: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
+#: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 msgid "Enter floor"
 msgstr ""
 
@@ -162,8 +162,8 @@ msgstr ""
 msgid "Explore"
 msgstr ""
 
-#: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
-#: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
+#: src/components/modals/LoanInputModal/LoanInputModal.tsx
+#: src/components/modals/LoanInputModal/LoanInputModal.tsx
 #: src/components/nugg/ViewingNugg/ActionButtons/LoanButtons.tsx
 #: src/components/nugg/Wallet/tabs/LoanTab/LoanRenderItem.tsx
 msgid "Extend"
@@ -207,8 +207,8 @@ msgstr ""
 msgid "Leader"
 msgstr ""
 
-#: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
-#: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
+#: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
+#: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 #: src/components/nugg/ViewingNugg/ActionButtons/OwnerButtons.tsx
 msgid "Loan"
 msgstr ""
@@ -239,9 +239,9 @@ msgstr ""
 msgid "Max"
 msgstr ""
 
-#: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
-#: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
+#: src/components/modals/LoanInputModal/LoanInputModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
+#: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "Min"
 msgstr ""
@@ -250,11 +250,11 @@ msgstr ""
 msgid "Mint a Nugg"
 msgstr ""
 
-#: src/components/nugg/Modals/MintModal/MintModal.tsx
+#: src/components/modals/MintModal/MintModal.tsx
 msgid "Mint this Nugg"
 msgstr ""
 
-#: src/components/nugg/Modals/MintModal/MintModal.tsx
+#: src/components/modals/MintModal/MintModal.tsx
 msgid "Mint yourself a nugg"
 msgstr ""
 
@@ -279,16 +279,16 @@ msgstr ""
 msgid "No items to display..."
 msgstr ""
 
-#: src/components/nugg/Modals/MintModal/MintModal.tsx
+#: src/components/modals/MintModal/MintModal.tsx
 msgid "No more nuggs"
 msgstr ""
 
-#: src/components/nugg/Modals/MintModal/MintModal.tsx
+#: src/components/modals/MintModal/MintModal.tsx
 msgid "Nugg {nextNugg}"
 msgstr ""
 
-#: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
-msgid "Nugg {stableId}"
+#: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
+msgid "Nugg {tokenId}"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
@@ -300,7 +300,7 @@ msgstr ""
 msgid "Nuggs"
 msgstr ""
 
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "Offer on"
 msgstr ""
 
@@ -334,16 +334,20 @@ msgstr ""
 msgid "Pay off"
 msgstr ""
 
-#: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
-#: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
+#: src/components/modals/LoanInputModal/LoanInputModal.tsx
+#: src/components/modals/LoanInputModal/LoanInputModal.tsx
 msgid "Payoff"
 msgstr ""
 
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
+#: src/contracts/useContract.ts
+msgid "Pending Transaction"
+msgstr ""
+
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "Pick a nugg to offer on this item"
 msgstr ""
 
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 #: src/components/nugg/RingAbout/Caboose.tsx
 #: src/components/nugg/RingAbout/OfferButton.tsx
 msgid "Place offer"
@@ -357,7 +361,7 @@ msgstr ""
 msgid "Place the first offer!"
 msgstr ""
 
-#: src/components/nugg/Modals/MintModal/MintModal.tsx
+#: src/components/modals/MintModal/MintModal.tsx
 msgid "Please wait while your nugg is being created"
 msgstr ""
 
@@ -385,24 +389,24 @@ msgstr ""
 msgid "Select a nugg to buy this item from"
 msgstr ""
 
-#: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
+#: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 #: src/components/nugg/ViewingNugg/ActionButtons/OwnerButtons.tsx
 msgid "Sell"
 msgstr ""
 
-#: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
+#: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 msgid "Sell Item"
 msgstr ""
 
-#: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
+#: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 msgid "Sell Item:"
 msgstr ""
 
-#: src/components/nugg/Modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
+#: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 msgid "Sell Nugg"
 msgstr ""
 
-#: src/components/nugg/Modals/QrCodeModal/QrCodeModal.tsx
+#: src/components/modals/QrCodeModal/QrCodeModal.tsx
 msgid "Sign in with {0}"
 msgstr ""
 
@@ -412,19 +416,6 @@ msgstr ""
 
 #: src/components/general/ErrorBoundry.tsx
 msgid "Something went wrong"
-msgstr ""
-
-#: src/state/transaction/middlewares.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-msgid "Successful Transaction"
 msgstr ""
 
 #: src/components/nugg/Wallet/Wallet.tsx
@@ -451,11 +442,11 @@ msgstr ""
 msgid "Swaps"
 msgstr ""
 
-#: src/components/nugg/Modals/MintModal/MintModal.tsx
+#: src/components/modals/MintModal/MintModal.tsx
 msgid "There are no more nuggs to mint. If you want a nugg, you must offer on a sale."
 msgstr ""
 
-#: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
+#: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 msgid "This cannot be undone"
 msgstr ""
 
@@ -467,19 +458,6 @@ msgstr ""
 msgid "This {0} has never been sold"
 msgstr ""
 
-#: src/state/transaction/middlewares.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-#: src/state/wallet/thactions.ts
-msgid "Transaction Failed"
-msgstr ""
-
 #: src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.tsx
 msgid "Type a number to search"
 msgstr ""
@@ -488,7 +466,7 @@ msgstr ""
 msgid "Unfortuantly, Nugg {tokenId} did not make it."
 msgstr ""
 
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "Update offer"
 msgstr ""
 
@@ -500,23 +478,23 @@ msgstr ""
 msgid "Winner"
 msgstr ""
 
-#: src/components/nugg/Modals/MintModal/MintModal.tsx
+#: src/components/modals/MintModal/MintModal.tsx
 msgid "You are now the proud owner Nugg {nextNugg}!"
 msgstr ""
 
-#: src/components/nugg/Modals/MintModal/MintModal.tsx
+#: src/components/modals/MintModal/MintModal.tsx
 msgid "You can be the proud owner of Nugg {nextNugg} for {0} ETH"
 msgstr ""
 
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "You cannot place an offer"
 msgstr ""
 
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "You currently have"
 msgstr ""
 
-#: src/components/nugg/Modals/LoanInputModal/LoanInputModal.tsx
+#: src/components/modals/LoanInputModal/LoanInputModal.tsx
 msgid "You currently have {0} ETH"
 msgstr ""
 
@@ -528,7 +506,7 @@ msgstr ""
 msgid "You haven't loaned any nuggs yet!"
 msgstr ""
 
-#: src/components/nugg/Modals/LoanOrBurnModal/LoanOrBurnModal.tsx
+#: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 msgid "You will receive {0} ETH"
 msgstr ""
 
@@ -536,7 +514,7 @@ msgstr ""
 msgid "countdown begins in {countdownMinutes} minutes"
 msgstr ""
 
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "currenlty for sale"
 msgstr ""
 
@@ -556,7 +534,7 @@ msgstr ""
 msgid "no action here..."
 msgstr ""
 
-#: src/components/nugg/Modals/OfferModal/OfferModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "previous claim pending for this item"
 msgstr ""
 
