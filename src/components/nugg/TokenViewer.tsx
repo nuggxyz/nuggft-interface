@@ -105,7 +105,6 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
                     <DangerouslySetNugg
                         imageUri={pendingSrc}
                         size={showcase ? 'showcase' : 'thumbnail'}
-                        cheat={tokenId}
                     />
                 )}
             </div>
