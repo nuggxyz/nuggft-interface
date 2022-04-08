@@ -132,6 +132,10 @@ interface String {
     equals(other: string): boolean;
 }
 
+interface SVGGraphicsElement {
+    getBBox: () => DOMRect;
+}
+
 interface Array<T> {
     shuffle();
     filterInPlace(callbackfn: (value: T, index?: number, array?: this) => boolean, thisArg?: this);

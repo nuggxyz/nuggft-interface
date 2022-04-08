@@ -35,6 +35,8 @@ const store = create(
     ),
 );
 
+export type ModalState = ReturnType<typeof store['getState']>;
+
 export default {
     useData: () => store((state) => state.data),
     useOpen: () => store((state) => state.open),

@@ -12,6 +12,29 @@ import {
     isUndefinedOrNullOrStringEmpty,
 } from './lib';
 
+// eslint-disable-next-line @typescript-eslint/unbound-method
+const _getBBox = SVGGraphicsElement.prototype.getBBox;
+
+SVGGraphicsElement.prototype.getBBox = function fn() {
+    let tempSvg: Node;
+    if (document.contains(this)) {
+        return _getBBox.apply(this);
+    }
+    const tempDiv = document.createElement('div');
+    tempDiv.setAttribute('style', 'position:absolute; visibility:hidden; width:0; height:0');
+    if (this.tagName === 'svg') {
+        tempSvg = this.cloneNode(true);
+    } else {
+        tempSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        tempSvg.appendChild(this.cloneNode(true));
+    }
+    tempDiv.appendChild(tempSvg);
+    document.body.appendChild(tempDiv);
+    const bbox = _getBBox.apply(tempSvg);
+    document.body.removeChild(tempDiv);
+    return bbox;
+};
+
 String.prototype.isItemId = function fn() {
     return ((input: string): input is `item-${string}` => {
         return input.startsWith('item-');
