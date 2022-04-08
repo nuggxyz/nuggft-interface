@@ -8,7 +8,7 @@ const getParsed = (input: string) => {
     return Buffer.from(input.replace('data:image/svg+xml;base64,', ''), 'base64').toString('utf8');
 };
 
-const getPreScalar = (input: string) => {
+const getSvgObject = (input: string) => {
     const str = input
         .replace('/svg">', '/svg" preserveAspectRatio="xMidYMid meet"  >')
         .replace('</style>', `</style><g  class="R" >`)
@@ -17,13 +17,13 @@ const getPreScalar = (input: string) => {
     return new DOMParser().parseFromString(str, 'image/svg+xml');
 };
 
-const getScalar = (svg: Document): { value: number; type: 'x' | 'y' } => {
-    if (!svg || !svg.rootElement) return { value: 0, type: 'x' };
+const getBoundingBox = (svg: Document) => {
+    return svg.rootElement?.getBBox();
+};
 
-    const box = svg.rootElement.getBBox();
-
-    const widthdiv = 62 / box.width;
-    const heightdiv = 62 / box.height;
+const getScalar = (rect: DOMRect): { value: number; type: 'x' | 'y' } => {
+    const widthdiv = 62 / rect.width;
+    const heightdiv = 62 / rect.height;
 
     if (widthdiv < heightdiv) {
         return { value: widthdiv, type: 'x' };
@@ -31,16 +31,12 @@ const getScalar = (svg: Document): { value: number; type: 'x' | 'y' } => {
     return { value: heightdiv, type: 'y' };
 };
 
-const getTransform = (svg: Document): { x: number; y: number } => {
-    if (!svg || !svg.rootElement) return { x: 0, y: 0 };
+const getTransform = (rect: DOMRect): { x: number; y: number } => {
+    rect.width++;
+    rect.height++;
 
-    const box = svg.rootElement.getBBox();
-
-    box.width++;
-    box.height++;
-
-    const centerX = box.x + box.width / 2;
-    const centerY = box.y + box.height / 2;
+    const centerX = rect.x + rect.width / 2;
+    const centerY = rect.y + rect.height / 2;
 
     const x = 32 - centerX;
     const y = 32 - centerY;
@@ -60,19 +56,21 @@ const DangerouslySetNugg = ({
     const id = React.useId();
 
     React.useEffect(() => {
-        const svg = getParsed(imageUri);
+        const svgString = getParsed(imageUri);
 
-        const prescaleSvg = getPreScalar(svg);
+        const svg = getSvgObject(svgString);
 
-        const scale = getScalar(prescaleSvg);
+        const box = getBoundingBox(svg);
 
-        const trans = getTransform(prescaleSvg);
-
-        const g = prescaleSvg.firstElementChild?.firstElementChild?.nextElementSibling;
+        const g = svg.firstElementChild?.firstElementChild?.nextElementSibling;
 
         const div = document.getElementById(id);
 
-        if (!div || !g || !prescaleSvg.rootElement) return;
+        if (!div || !g || !svg.rootElement || !box) return;
+
+        const scale = getScalar(box);
+
+        const trans = getTransform(box);
 
         g.setAttribute('transform', `scale(${scale.value}) translate(${trans.x},${trans.y})`);
 
@@ -80,7 +78,7 @@ const DangerouslySetNugg = ({
 
         div.innerHTML = '';
 
-        div.appendChild(prescaleSvg.rootElement);
+        div.appendChild(svg.rootElement);
     }, [imageUri, id]);
 
     return (
