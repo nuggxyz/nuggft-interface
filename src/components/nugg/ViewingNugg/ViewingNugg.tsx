@@ -154,6 +154,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                             openOnHover
                                             float="left"
                                             top={25}
+                                            triggerWidth="130px"
                                             containerStyle={{
                                                 position: 'relative',
                                             }}

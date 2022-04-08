@@ -15,6 +15,7 @@ type Props = {
     containerStyle?: CSSProperties;
     float?: 'left' | 'right';
     top?: number;
+    triggerWidth?: string;
     openOnHover?: boolean;
 };
 
@@ -25,17 +26,18 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
     containerStyle,
     float = 'right',
     top = 0,
+    triggerWidth = '50px',
     openOnHover = false,
 }) => {
     const [open, setOpen] = React.useState(false);
+    const [closing, setClosing] = React.useState(false);
     const [openRef, openHover] = useOnHover(() => {
         if (openOnHover) setOpen(true);
     });
 
     const [closeRef, closeHover] = useOnHover(() => {
-        if (openOnHover) setOpen(openHover || closeHover);
+        if (openOnHover && !closing) setOpen(openHover || closeHover);
         else if (open && !closeHover) setOpen(false);
-        // else setOpen(false);
     });
     const { screen } = useDimentions();
     const dimentions = client.live.dimentions();
@@ -46,11 +48,12 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
 
     const transition = useTransition(open, {
         from: {
-            width: '50px',
+            width: triggerWidth,
             height: '100px',
             pointerEvents: 'none' as const,
             position: 'absolute' as const,
-            top,
+            top: 0,
+            paddingTop: top,
             [float]: 0,
             opacity: 0,
             y: -5,
@@ -58,9 +61,13 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
         enter: { opacity: 1, pointerEvents: 'auto' as const, y: 0 },
         leave: { opacity: 0, pointerEvents: 'none' as const, y: -5 },
         config: config.stiff,
+        onStart: () => {
+            setClosing(false);
+        },
+        onDestroyed: () => {
+            setClosing(true);
+        },
     });
-
-    // const Child = children;
 
     return (
         <div
@@ -74,38 +81,37 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
             <div aria-hidden="true" role="button" onClick={() => setOpen(!open)}>
                 {button}
             </div>
-            {transition(
-                (animatedStyle, isOpen) =>
-                    isOpen && (
-                        <>
-                            <animated.div style={animatedStyle}>
-                                <div
-                                    ref={openRef}
-                                    style={{
-                                        ...styles.container,
-                                        ...style,
-                                        zIndex: 1100,
-                                    }}
-                                >
-                                    {children}
-                                </div>
-                            </animated.div>
-                            {screen === 'phone' && (
-                                <div
-                                    aria-hidden="true"
-                                    style={{
-                                        cursor: 'default',
-                                        position: 'absolute',
-                                        zIndex: 1099,
-                                        ...dimentions,
-                                        top: 0,
-                                        right: 0,
-                                    }}
-                                    onClick={() => {}}
-                                />
-                            )}
-                        </>
-                    ),
+            {transition((animatedStyle, isOpen) =>
+                isOpen ? (
+                    <>
+                        <animated.div style={animatedStyle}>
+                            <div
+                                ref={openRef}
+                                style={{
+                                    ...styles.container,
+                                    ...style,
+                                    zIndex: 1100,
+                                }}
+                            >
+                                {children}
+                            </div>
+                        </animated.div>
+                        {screen === 'phone' && (
+                            <div
+                                aria-hidden="true"
+                                style={{
+                                    cursor: 'default',
+                                    position: 'absolute',
+                                    zIndex: 1099,
+                                    ...dimentions,
+                                    top: 0,
+                                    right: 0,
+                                }}
+                                onClick={() => {}}
+                            />
+                        )}
+                    </>
+                ) : null,
             )}
         </div>
     );
