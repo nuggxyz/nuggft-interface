@@ -8,6 +8,7 @@ import Layout from '@src/lib/layout';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Text from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
+import { useDarkMode } from '@src/client/hooks/useDarkMode';
 
 type Props = { style?: CSSProperties };
 
@@ -26,7 +27,7 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
         ...style,
     });
 
-    const darkmode = client.hook.useDarkMode();
+    const darkmode = useDarkMode();
 
     return (
         <animated.div style={springStyle}>

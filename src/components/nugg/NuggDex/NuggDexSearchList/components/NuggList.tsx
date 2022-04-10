@@ -2,7 +2,6 @@ import React, { CSSProperties, FunctionComponent, SetStateAction, useCallback } 
 import { Promise } from 'bluebird';
 import { animated, UseSpringProps } from '@react-spring/web';
 import { ChevronLeft } from 'react-feather';
-import { batch } from 'react-redux';
 import { t } from '@lingui/macro';
 
 import TransitionText from '@src/components/general/Texts/TransitionText/TransitionText';
@@ -61,9 +60,7 @@ const NuggList: FunctionComponent<NuggListProps> = ({
 
     const onClick = useCallback(
         (item: typeof values[number]) => {
-            batch(() => {
-                gotoViewingNugg(item.id);
-            });
+            gotoViewingNugg(item.id);
         },
         [gotoViewingNugg],
     );

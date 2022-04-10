@@ -40,6 +40,8 @@ const store = create(
     ),
 );
 
+export type ToastState = ReturnType<typeof store['getState']>;
+
 export default {
     useList: () => store((state) => state.list),
     useAddToast: () => store((state) => state.addToast),

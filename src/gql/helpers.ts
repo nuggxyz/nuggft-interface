@@ -1,12 +1,16 @@
-import { ApolloClient, ApolloQueryResult, DocumentNode, FetchResult } from '@apollo/client';
-import client from '@src/client';
+import { ApolloClient, ApolloQueryResult, DocumentNode } from '@apollo/client';
 import React, { useState } from 'react';
-import { isUndefinedOrNullOrObjectEmpty } from '../lib';
-import GQLHelper from './GQLHelper';
 
-export const executeQuery2 = async (client: ApolloClient<any>, query: any, tableName: string) => {
+import client from '@src/client';
+import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
+
+export const executeQuery2 = async (
+    _client: ApolloClient<any>,
+    query: DocumentNode,
+    tableName: string,
+) => {
     try {
-        const result = await client.query({
+        const result = await _client.query<{ data: { [a: typeof tableName]: unknown } }>({
             query,
             fetchPolicy: 'no-cache',
         });
@@ -16,11 +20,14 @@ export const executeQuery2 = async (client: ApolloClient<any>, query: any, table
             !isUndefinedOrNullOrObjectEmpty(result.data) &&
             tableName in result.data
         ) {
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return result.data[tableName];
         }
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error: unknown) {
+        throw new Error(error as string);
     }
+    return undefined;
 };
 
 export const executeQuery3b = async <T>(
@@ -36,7 +43,7 @@ export const executeQuery3b = async <T>(
             fetchPolicy: 'cache-first',
             canonizeResults: true,
             // notifyOnNetworkStatusChange: true,
-            variables: variables,
+            variables,
         });
 
         if (result && result.data) {
@@ -44,8 +51,8 @@ export const executeQuery3b = async <T>(
         }
 
         throw new Error('executeQuery3 failed');
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error: unknown) {
+        throw new Error(error as string);
     }
 };
 export const executeQuery3c = async <T extends { data?: any }>(
@@ -62,7 +69,7 @@ export const executeQuery3c = async <T extends { data?: any }>(
                 fetchPolicy: 'cache-first',
                 canonizeResults: true,
                 // notifyOnNetworkStatusChange: true,
-                variables: variables,
+                variables,
             })
             .catch(() => {
                 return undefined;
@@ -71,9 +78,10 @@ export const executeQuery3c = async <T extends { data?: any }>(
         if (result && result.data) {
             return result.data;
         }
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error: unknown) {
+        throw new Error(error as string);
     }
+    return undefined;
 };
 
 export const executeQuery3 = async <T>(query: DocumentNode, variables: object): Promise<T> => {
@@ -87,7 +95,7 @@ export const executeQuery3 = async <T>(query: DocumentNode, variables: object): 
             fetchPolicy: 'cache-first',
             canonizeResults: true,
             // notifyOnNetworkStatusChange: true,
-            variables: variables,
+            variables,
         });
 
         if (result && result.data) {
@@ -95,8 +103,8 @@ export const executeQuery3 = async <T>(query: DocumentNode, variables: object): 
         }
 
         throw new Error('executeQuery3 failed');
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error: unknown) {
+        throw new Error(error as string);
     }
 };
 
@@ -113,15 +121,15 @@ export const executeQuery4 = async <T>(
             fetchPolicy: 'cache-first',
             canonizeResults: true,
             notifyOnNetworkStatusChange: true,
-            variables: variables,
+            variables,
         });
 
         if (result && result.data) {
             return result.data;
         }
         throw new Error('executeQuery3 failed');
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error: unknown) {
+        throw new Error(error as string);
     }
 };
 
@@ -135,7 +143,7 @@ export const executeQuery5 = <T>(
         fetchPolicy: 'cache-and-network',
         canonizeResults: true,
         notifyOnNetworkStatusChange: true,
-        variables: variables,
+        variables,
     });
 };
 
@@ -151,7 +159,7 @@ export const executeQuery6 = <T>(
         fetchPolicy: 'cache-first',
         canonizeResults: true,
         notifyOnNetworkStatusChange: true,
-        variables: variables,
+        variables,
     });
 };
 
@@ -203,6 +211,7 @@ export const useFasterQuery = <T, R>(
                 sub.unsubscribe();
             };
         }
+        return undefined;
     }, [variables, query, graph]);
 
     return src;
@@ -240,6 +249,7 @@ export const useFastQuery = <T, R>(
         } catch {
             setSrc(undefined);
         }
+        return undefined;
     }, [variables, query, graph]);
 
     return src;

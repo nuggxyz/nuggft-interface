@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import React, { useMemo, useEffect } from 'react';
 import { useApolloClient } from '@apollo/client';
 
-import { useFastQuery } from '@src/graphql/helpers';
+import { useFastQuery } from '@src/gql/helpers';
 import web3 from '@src/web3';
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import { TokenId } from '@src/client/router';

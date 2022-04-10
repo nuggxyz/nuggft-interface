@@ -7,10 +7,8 @@ import shallow from 'zustand/shallow';
 import web3 from '@src/web3';
 
 import core from './core';
-import { useDotnugg, useDotnuggCacheOnly, useDotnuggSubscription } from './hooks/useDotnugg';
 import { TokenId } from './router';
 import { ListData, SearchView } from './interfaces';
-import { useDarkMode } from './hooks/useDarkMode';
 import modal from './modal';
 import toast from './toast';
 
@@ -178,12 +176,7 @@ export default {
         addFeedMessage: () => core((state) => state.addFeedMessage),
         updateDimentions: () => core((state) => state.updateDimentions),
     },
-    hook: {
-        useDotnugg,
-        useDotnuggCacheOnly,
-        useDotnuggSubscription,
-        useDarkMode,
-    },
+
     static: {
         graph: () => web3.config.apolloClient,
         activeSwaps: () => core.getState().activeSwaps,

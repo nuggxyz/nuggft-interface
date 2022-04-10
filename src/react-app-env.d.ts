@@ -3,7 +3,22 @@
 /// <reference types="react/next" />
 
 declare type Base64EncodedSvg = `data:image/svg+xml;base64,${string}`;
+
 declare const __DEV__: boolean;
+
+declare type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
+
+declare type Maybe<T> = T | null;
+declare type InputMaybe<T> = Maybe<T>;
+declare type Exact<T extends { [key: string]: unknown }> = {
+    [K in keyof T]: T[K];
+};
+declare type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+    [SubKey in K]?: Maybe<T[SubKey]>;
+};
+declare type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+    [SubKey in K]: Maybe<T[SubKey]>;
+};
 // declare interface WebSocketProvider extends import('@ethersproject/providers').WebSocketProvider {
 //     _websocket: Websocket;
 // }

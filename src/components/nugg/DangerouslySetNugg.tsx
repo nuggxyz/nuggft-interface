@@ -49,11 +49,11 @@ const getScalar = (rect: DOMRect): { value: number; type: 'x' | 'y' } => {
 };
 
 const getTransform = (rect: DOMRect): { x: number; y: number } => {
-    rect.width++;
-    rect.height++;
+    // rect.width++;
+    // rect.height++;
 
-    const centerX = rect.x + rect.width / 2;
-    const centerY = rect.y + rect.height / 2;
+    const centerX = rect.x + (rect.width + 1) / 2;
+    const centerY = rect.y + (rect.height + 1) / 2;
 
     const x = 32 - centerX;
     const y = 32 - centerY;
@@ -88,6 +88,8 @@ const DangerouslySetNugg = ({
         const scale = getScalar(box);
 
         const trans = getTransform(box);
+
+        if (size === 'showcase') console.log({ box, scale, trans });
 
         g.setAttribute('transform', `scale(${scale.value}) translate(${trans.x},${trans.y})`);
 

@@ -4,7 +4,7 @@ import { Promise } from 'bluebird';
 import { t } from '@lingui/macro';
 
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
-import { executeQuery3 } from '@src/graphql/helpers';
+import { executeQuery3 } from '@src/gql/helpers';
 import useAsyncState from '@src/hooks/useAsyncState';
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
@@ -52,21 +52,19 @@ const MintModal = ({ data }: { data: MintModalData }) => {
             }
             return executeQuery3<{ nuggs: { idnum: string }[] }>(
                 gql`
-            {
-                nuggs(
-                    where: {
-                        idnum_gt: ${web3.config.CONTRACTS[chainId].MintOffset}
+                    query firstNugg($offset: BigInt!) {
+                        nuggs(
+                            where: { idnum_gt: $offset }
+                            first: 1
+                            orderDirection: desc
+                            orderBy: idnum
+                        ) {
+                            id
+                            idnum
+                        }
                     }
-                    first: 1
-                    orderDirection: desc
-                    orderBy: idnum
-                ) {
-                    id
-                    idnum
-                }
-            }
-        `,
-                {},
+                `,
+                { offset: web3.config.CONTRACTS[chainId].MintOffset },
             ).then(async ({ nuggs }) => {
                 let count = web3.config.CONTRACTS[chainId].MintOffset + 1;
                 if (nuggs && nuggs.length > 0) {

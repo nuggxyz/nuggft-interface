@@ -39,30 +39,25 @@ const container = document.getElementById('root') as HTMLElement;
 
 const root = createRoot(container);
 
-if (root)
-    root.render(
-        <HashRouter>
-            <ApolloProvider client={web3.config.apolloClient}>
-                <GlobalHooks />
+root.render(
+    <HashRouter>
+        <ApolloProvider client={web3.config.apolloClient}>
+            <GlobalHooks />
 
-                <React.StrictMode>
-                    <div style={{ width: '100%', height: '100%' }}>
-                        <ErrorBoundary>
-                            {/* <Provider store={store}> */}
-                            {/* <Initializer> */}
-                            <I18N>
-                                <ContentBlock>
-                                    <App />
-                                </ContentBlock>
-                            </I18N>
-                            {/* </Initializer> */}
-                            {/* </Provider> */}
-                        </ErrorBoundary>
-                    </div>
-                </React.StrictMode>
-            </ApolloProvider>{' '}
-        </HashRouter>,
-    );
+            <React.StrictMode>
+                <div style={{ width: '100%', height: '100%' }}>
+                    <ErrorBoundary>
+                        <I18N>
+                            <ContentBlock>
+                                <App />
+                            </ContentBlock>
+                        </I18N>
+                    </ErrorBoundary>
+                </div>
+            </React.StrictMode>
+        </ApolloProvider>
+    </HashRouter>,
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

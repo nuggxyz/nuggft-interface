@@ -2,7 +2,6 @@ import { config as springConfig, useSpring, animated } from '@react-spring/web';
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
-import client from '@src/client';
 import { TokenId } from '@src/client/router';
 import { parseTokenId } from '@src/lib';
 import useOnHover from '@src/hooks/useOnHover';
@@ -41,7 +40,9 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     showcase = false,
     labelLong = false,
     disableOnClick = false,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     updateCache = false,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     subscribe = false,
     showPending = false,
     shouldLoad = true,
@@ -53,12 +54,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
         return { width: window.innerWidth };
     }, []);
 
-    const src = subscribe
-        ? client.hook.useDotnuggSubscription(tokenId)
-        : updateCache
-        ? client.hook.useDotnugg(tokenId)
-        : // eslint-disable-next-line react-hooks/rules-of-hooks
-          useDotnuggCacheOnlyLazy(shouldLoad, tokenId, forceCache);
+    const src = useDotnuggCacheOnlyLazy(shouldLoad, tokenId, forceCache);
 
     const pendingSrc = usePending(svgNotFromGraph ?? src, showPending);
 
