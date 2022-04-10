@@ -225,7 +225,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     }, [searchedNuggsData, searchedItemsData]);
 
     return (
-        <div>
+        <>
             <TextInput
                 onFocus={() => {
                     // if (viewing === SearchView.Home) updateSearchFilterViewing(SearchView.Search);
@@ -375,7 +375,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                     ))}
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

@@ -61,14 +61,19 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 label: t`Swaps`,
                 comp: React.memo(() => <SwapList token={token} />),
             },
-            ...(token && token.type === 'nugg' && tokenId
+            ...(provider && chainId && token && token.type === 'nugg' && tokenId
                 ? [
                       {
                           label: 'Items',
                           comp: React.memo(() => (
                               <ItemList
                                   items={token?.items}
-                                  isOwner={sender === token.owner && !token?.activeSwap?.id}
+                                  chainId={chainId}
+                                  provider={provider}
+                                  sender={sender}
+                                  isOwner={
+                                      !!sender && sender === token.owner && !token?.activeSwap?.id
+                                  }
                                   tokenId={tokenId}
                               />
                           )),
@@ -170,7 +175,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                 </Text>
                                             }
                                         >
-                                            <div style={{ padding: '.5rem 1rem' }}>
+                                            <div style={{ padding: '.5rem 1rem', zIndex: 1000 }}>
                                                 <Text
                                                     size="medium"
                                                     textStyle={{ paddingBottom: '.25rem' }}

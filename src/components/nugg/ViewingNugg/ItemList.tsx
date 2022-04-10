@@ -13,7 +13,8 @@ import lib, {
 import constants from '@src/lib/constants';
 import Button from '@src/components/general/Buttons/Button/Button';
 import globalStyles from '@src/lib/globalStyles';
-import { LiveNuggItem } from '@src/client/interfaces';
+import Colors from '@src/lib/colors';
+import { DefaultExtraData, LiveNuggItem } from '@src/client/interfaces';
 import Text from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
@@ -26,9 +27,10 @@ import { NuggId, TokenId } from '@src/client/router';
 
 import styles from './ViewingNugg.styles';
 
-interface ExtraData {
+interface ExtraData extends Partial<DefaultExtraData> {
     tokenId: string;
     isOwner: boolean;
+    sender?: string;
 }
 
 interface Props extends ExtraData {
@@ -82,7 +84,7 @@ const Item: FC<{ item: LiveNuggItem; extraData: ExtraData }> = ({ item, extraDat
                         textStyle={styles.itemListButtonText}
                         type="text"
                         onClick={() => {
-                            if (item.activeSwap && sender)
+                            if (extraData.sender && item.activeSwap && sender)
                                 void send(
                                     nuggft.populateTransaction.claim(
                                         [formatItemSwapIdForSend(item.activeSwap).sellingNuggId],
