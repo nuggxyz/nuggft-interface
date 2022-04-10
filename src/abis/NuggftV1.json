@@ -826,7 +826,7 @@
         "name": "emitter",
         "outputs": [
             {
-                "internalType": "contract Erc1155Emmitter",
+                "internalType": "contract NuggftV1Items",
                 "name": "",
                 "type": "address"
             }
@@ -1339,6 +1339,30 @@
                 "internalType": "uint96",
                 "name": "res",
                 "type": "uint96"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint8",
+                "name": "feature",
+                "type": "uint8"
+            },
+            {
+                "internalType": "uint8",
+                "name": "position",
+                "type": "uint8"
+            }
+        ],
+        "name": "rarity",
+        "outputs": [
+            {
+                "internalType": "uint16",
+                "name": "res",
+                "type": "uint16"
             }
         ],
         "stateMutability": "view",
