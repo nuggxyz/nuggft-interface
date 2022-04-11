@@ -60,6 +60,10 @@ html {
     z-index: -1;
 }
 
+.DN {
+    stroke-width: var(--dotnugg-stroke-width);
+}
+
 #root {
     /* background: radial-gradient(
         50% 50% at 50% 50%,
