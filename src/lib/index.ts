@@ -389,9 +389,9 @@ export const extractItemId = (itemId: string) => {
 export const parseTokenId = (itemId: string, long?: boolean) => {
     if (itemId && itemId.startsWith(constants.ID_PREFIX_ITEM)) {
         const num = +itemId.replace(constants.ID_PREFIX_ITEM, '');
-        return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][num >> 8]} ${
-            long ? '#' : ''
-        }${num & 0xff}`;
+        return `${
+            ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][Math.floor(num / 1000)]
+        } ${long ? '#' : ''}${num % 1000}`;
     }
     return `${long ? 'Nugg ' : ''}${itemId}`;
 };
@@ -400,9 +400,9 @@ export const parseTokenIdSmart = (itemId: string) => {
     if (!itemId) return '';
     if (itemId.startsWith(constants.ID_PREFIX_ITEM)) {
         const num = +itemId.replace(constants.ID_PREFIX_ITEM, '');
-        return `${['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][num >> 8]} ${
-            num & 0xff
-        }`;
+        return `${
+            ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][Math.floor(num / 1000)]
+        } ${num % 1000}`;
     }
     return `Nugg ${itemId}`;
 };
@@ -410,8 +410,8 @@ export const parseTokenIdSmart = (itemId: string) => {
 export const parseItmeIdToNum = (itemId: `item-${string}` | BigNumberish) => {
     const num = +itemId.toString().replace('item-', '');
     return {
-        feature: num >> 8,
-        position: num & 0xff,
+        feature: Math.floor(num / 1000),
+        position: num % 1000,
     };
 };
 
@@ -419,14 +419,13 @@ export const padToAddress = (id: string) => {
     return ethers.utils.hexZeroPad(BigNumber.from(id)._hex, 20);
 };
 
-export const formatItemSwapIdForSend = (id: string | string[]) => {
-    let arr = id;
+export const formatItemSwapIdForSend = (id: string) => {
+    const arr = id.split('-');
 
-    console.log({ arr });
-    if (!isUndefinedOrNullOrStringEmpty(id)) {
-        arr = (id as string).split('-');
-    }
-    return BigNumber.from(arr[constants.ITEM_ID_POS]).shl(24).or(arr[constants.ITEM_NUGG_POS]);
+    return {
+        itemId: BigNumber.from(arr[0]),
+        sellingNuggId: BigNumber.from(arr[1]),
+    };
 };
 
 export const range = (start: number, end: number) => {

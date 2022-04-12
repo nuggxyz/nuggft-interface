@@ -2,13 +2,7 @@ import React, { FC, FunctionComponent } from 'react';
 import { IoPricetagsOutline, IoSync } from 'react-icons/io5';
 
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import {
-    createItemId,
-    formatItemSwapIdForSend,
-    padToAddress,
-    parseTokenId,
-    sortByField,
-} from '@src/lib';
+import { createItemId, formatItemSwapIdForSend, parseTokenId, sortByField } from '@src/lib';
 import constants from '@src/lib/constants';
 import Button from '@src/components/general/Buttons/Button/Button';
 import globalStyles from '@src/lib/globalStyles';
@@ -20,6 +14,7 @@ import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
 import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
 import web3 from '@src/web3';
+import { Address } from '@src/classes/Address';
 
 import styles from './ViewingNugg.styles';
 
@@ -86,9 +81,11 @@ const Item: FC<ListRenderItemProps<LiveNuggItem, ExtraData, undefined>> = ({ ite
                         onClick={() => {
                             if (item.activeSwap)
                                 void send(
-                                    nuggft.populateTransaction['claim(uint160[],address[])'](
-                                        [formatItemSwapIdForSend(item.activeSwap)],
-                                        [padToAddress(extraData.sender)],
+                                    nuggft.populateTransaction.claim(
+                                        [formatItemSwapIdForSend(item.activeSwap).sellingNuggId],
+                                        [Address.ZERO.hash],
+                                        [extraData.sender],
+                                        [formatItemSwapIdForSend(item.activeSwap).itemId],
                                     ),
                                 );
                         }}

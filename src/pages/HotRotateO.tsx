@@ -23,7 +23,7 @@ type Item = {
     id: ItemId;
     position: number;
     feature: number;
-    hexId: string;
+    hexId: number;
     desiredIndex?: number;
     duplicates: number;
 };
@@ -129,7 +129,7 @@ export default () => {
                     return x.reduce(
                         (prev: ItemList, curr, activeIndex) => {
                             const parsed = parseItmeIdToNum(curr);
-                            if (curr === '0x0000') return prev;
+                            if (curr === 0) return prev;
                             if (
                                 activeIndex < 8 &&
                                 !prev.active.find((z) => z.feature === parsed.feature)

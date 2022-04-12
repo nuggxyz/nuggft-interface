@@ -21,14 +21,26 @@ const MultiClaimButton: FunctionComponent<Props> = () => {
 
     const { send } = useTransactionManager();
 
-    const { tokenIds, addresses } = useMemo(() => {
-        const _addresses: string[] = [];
-        const _tokenIds: string[] = [];
-        unclaimedOffers.forEach((x) => {
-            _tokenIds.push(x.claimParams.tokenId);
-            _addresses.push(x.claimParams.address);
-        });
-        return { tokenIds: _tokenIds, addresses: _addresses };
+    const args = useMemo(() => {
+        return unclaimedOffers.reduce(
+            (
+                prev: {
+                    sellingTokenIds: string[];
+                    addresses: string[];
+                    buyingTokenIds: string[];
+                    itemIds: string[];
+                },
+                curr,
+            ) => {
+                return {
+                    sellingTokenIds: [...prev.sellingTokenIds, curr.claimParams.sellingTokenId],
+                    addresses: [...prev.addresses, curr.claimParams.address],
+                    buyingTokenIds: [...prev.buyingTokenIds, curr.claimParams.buyingTokenId],
+                    itemIds: [...prev.itemIds, curr.claimParams.itemId],
+                };
+            },
+            { sellingTokenIds: [], addresses: [], buyingTokenIds: [], itemIds: [] },
+        );
     }, [unclaimedOffers]);
 
     return unclaimedOffers?.length > 0 ? (
@@ -40,9 +52,11 @@ const MultiClaimButton: FunctionComponent<Props> = () => {
             onClick={() => {
                 if (sender && chainId && provider) {
                     void send(
-                        nuggft.populateTransaction['claim(uint160[],address[])'](
-                            tokenIds,
-                            addresses,
+                        nuggft.populateTransaction.claim(
+                            args.sellingTokenIds,
+                            args.addresses,
+                            args.buyingTokenIds,
+                            args.itemIds,
                         ),
                     );
                 }

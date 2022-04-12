@@ -82,7 +82,7 @@ const SellNuggOrItemModal = ({ data: { tokenId, ...other } }: { data: SellModalD
                     onClick={() => {
                         void (other.tokenType === ('item' as const)
                             ? send(
-                                  nuggft.populateTransaction['sell(uint160,uint16,uint96)'](
+                                  nuggft.populateTransaction['sell(uint24,uint16,uint96)'](
                                       other.sellingNuggId,
                                       extractItemId(tokenId),
                                       toEth(amount),
@@ -90,7 +90,7 @@ const SellNuggOrItemModal = ({ data: { tokenId, ...other } }: { data: SellModalD
                                   closeModal,
                               )
                             : send(
-                                  nuggft.populateTransaction['sell(uint160,uint96)'](
+                                  nuggft.populateTransaction['sell(uint24,uint96)'](
                                       tokenId,
                                       toEth(amount),
                                   ),

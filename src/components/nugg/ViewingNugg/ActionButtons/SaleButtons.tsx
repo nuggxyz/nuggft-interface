@@ -41,12 +41,7 @@ const SaleButtons: FunctionComponent<Props> = ({ tokenId, reclaim = false }) => 
                     )
                 }
                 onClick={() =>
-                    send(
-                        nuggft.populateTransaction['claim(uint160[],address[])'](
-                            [tokenId],
-                            [sender],
-                        ),
-                    )
+                    send(nuggft.populateTransaction.claim([tokenId], [sender], [0], [0]))
                 }
             />
         </div>

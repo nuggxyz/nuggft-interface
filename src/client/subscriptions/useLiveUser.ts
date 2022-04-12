@@ -1,12 +1,11 @@
-import { BigNumber } from 'ethers';
 import { useEffect } from 'react';
 
 import web3 from '@src/web3';
 import { EthInt } from '@src/classes/Fraction';
-import { padToAddress } from '@src/lib';
 import { ItemId } from '@src/client/router';
 import client from '@src/client';
 import { useLiveUserSubscription } from '@src/gql/types.generated';
+import { Address } from '@src/classes/Address';
 
 export default () => {
     const address = web3.hook.usePriorityAccount();
@@ -73,8 +72,10 @@ export default () => {
                             type: 'nugg',
                             leader: z.swap.leader.id.toLowerCase() === address.toLowerCase(),
                             claimParams: {
-                                address,
-                                tokenId: z.swap.nugg.id,
+                                address: address as AddressString,
+                                sellingTokenId: z.swap.nugg.id,
+                                itemId: '0',
+                                buyingTokenId: '0',
                             },
                         };
                     }),
@@ -82,7 +83,7 @@ export default () => {
                         .map((z) => {
                             return z.offers.map((y) => {
                                 return {
-                                    tokenId: `item-${y.swap.sellingItem.id}` as ItemId,
+                                    tokenId: `item-${y.swap.sellingItem.id}` as const,
                                     endingEpoch:
                                         y && y.swap && y.swap.endingEpoch
                                             ? Number(y.swap.endingEpoch)
@@ -92,11 +93,10 @@ export default () => {
                                     leader: y.swap.leader?.id === z.id,
                                     nugg: z.id,
                                     claimParams: {
-                                        address: padToAddress(z.id),
-                                        tokenId: BigNumber.from(+y.swap.sellingItem.id)
-                                            .shl(24)
-                                            .or(+y.swap.sellingNuggItem.nugg.id)
-                                            .toString(),
+                                        itemId: y.swap.sellingItem.id,
+                                        buyingTokenId: z.id,
+                                        sellingTokenId: y.swap.sellingNuggItem.nugg.id,
+                                        address: Address.ZERO.hash as AddressStringZero,
                                     },
                                 };
                             });

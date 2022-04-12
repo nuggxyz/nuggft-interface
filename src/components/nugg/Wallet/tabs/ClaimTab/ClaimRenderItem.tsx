@@ -61,9 +61,11 @@ const ClaimRenderItem: FunctionComponent<
                 label={t`Claim`}
                 onClick={() => {
                     void send(
-                        nuggft.populateTransaction['claim(uint160[],address[])'](
-                            [item.claimParams.tokenId],
+                        nuggft.populateTransaction.claim(
+                            [item.claimParams.sellingTokenId],
                             [item.claimParams.address],
+                            [item.claimParams.buyingTokenId],
+                            [item.claimParams.itemId],
                         ),
                     );
                 }}

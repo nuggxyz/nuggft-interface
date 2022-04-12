@@ -68,9 +68,9 @@ export const CONTRACTS = {
         MintOffset: 1000000,
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0xeb76d94260113738811bd8c395af98aefb2c93fb',
-        DotnuggV1: '0x4fd859c35f5bd594a4c9ac3bccb6cbf9badef02c',
-        Genesis: 10481856,
+        NuggftV1: '0x8e62b168b998c1380ec920b99dd495f646340e40',
+        DotnuggV1: '0x4ecf9bede07d781735b896da399d2154bc3345da',
+        Genesis: 10492992,
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,

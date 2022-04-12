@@ -9,7 +9,7 @@ import { NuggftV1 } from '../typechain/NuggftV1';
 
 // eslint-disable-next-line import/no-cycle
 
-import { TokenId, NuggId, ItemId, SwapRoutes } from './router';
+import { TokenId, NuggId, ItemId, SwapRoutes, RawItemId } from './router';
 
 export interface BaseOfferData {
     user: string;
@@ -95,17 +95,15 @@ export interface BaseUnclaimedOffer {
     endingEpoch: number | null;
     eth: EthInt;
     leader: boolean;
-    claimParams: {
-        address: string;
-        tokenId: string;
-    };
 }
 export interface UnclaimedNuggOffer extends BaseUnclaimedOffer {
     type: 'nugg';
     tokenId: NuggId;
     claimParams: {
-        address: string;
-        tokenId: NuggId;
+        sellingTokenId: NuggId;
+        address: AddressString;
+        buyingTokenId: '0';
+        itemId: '0';
     };
 }
 export interface UnclaimedItemOffer extends BaseUnclaimedOffer {
@@ -113,8 +111,10 @@ export interface UnclaimedItemOffer extends BaseUnclaimedOffer {
     tokenId: ItemId;
     nugg: NuggId;
     claimParams: {
-        address: NuggId;
-        tokenId: string;
+        sellingTokenId: NuggId;
+        address: AddressStringZero;
+        buyingTokenId: NuggId;
+        itemId: RawItemId;
     };
 }
 

@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import { t } from '@lingui/macro';
 
 import useAsyncState from '@src/hooks/useAsyncState';
-import { extractItemId, parseTokenId } from '@src/lib';
+import { extractItemId, parseTokenId, toGwei } from '@src/lib';
 import { fromEth, toEth } from '@src/lib/conversion';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
@@ -101,7 +101,7 @@ const OfferModal = ({
     }>(() => {
         if (tokenId && address && chainId && provider) {
             if (tokenType === 'nugg') {
-                return nuggft['check(address,uint160)'](address, tokenId).then((x) => {
+                return nuggft['check(address,uint24)'](address, tokenId).then((x) => {
                     return {
                         canOffer: x.canOffer,
                         next: x.next,
@@ -110,7 +110,7 @@ const OfferModal = ({
                 });
             }
             if (tokenType === 'item' && activeItem && selectedNuggForItem && sellingNugg) {
-                return nuggft['check(uint160,uint160,uint16)'](
+                return nuggft['check(uint24,uint24,uint16)'](
                     selectedNuggForItem.tokenId,
                     sellingNugg,
                     extractItemId(tokenId),
@@ -258,16 +258,20 @@ const OfferModal = ({
                             if (check.curr && chainId && provider && address) {
                                 void (selectedNuggForItem && nuggToBuyFrom && tokenType === 'item'
                                     ? send(
-                                          nuggft.populateTransaction[
-                                              'offer(uint160,uint160,uint16)'
-                                          ](selectedNuggForItem?.tokenId, nuggToBuyFrom, tokenId, {
-                                              value: toEth(amount).sub(check.curr),
-                                          }),
+                                          nuggft.populateTransaction['offer(uint24,uint24,uint16)'](
+                                              selectedNuggForItem?.tokenId,
+                                              nuggToBuyFrom,
+                                              tokenId,
+                                              {
+                                                  value: toEth(amount).sub(check.curr),
+                                              },
+                                          ),
                                           closeModal,
                                       )
                                     : send(
-                                          nuggft.populateTransaction['offer(uint160)'](tokenId, {
+                                          nuggft.populateTransaction['offer(uint24)'](tokenId, {
                                               value: toEth(amount).sub(check.curr),
+                                              gasLimit: toGwei('120000'),
                                           }),
                                           closeModal,
                                       ));

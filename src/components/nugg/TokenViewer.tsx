@@ -6,7 +6,7 @@ import { TokenId } from '@src/client/router';
 import { parseTokenId } from '@src/lib';
 import useOnHover from '@src/hooks/useOnHover';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
-import { useDotnuggCacheOnlyLazy } from '@src/client/hooks/useDotnugg';
+import { useDotnuggCacheOnlyLazy, useDotnuggSubscription } from '@src/client/hooks/useDotnugg';
 import useDimentions from '@src/client/hooks/useDimentions';
 
 import DangerouslySetNugg from './DangerouslySetNugg';
@@ -54,7 +54,13 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
         return { width: window.innerWidth };
     }, []);
 
-    const src = useDotnuggCacheOnlyLazy(shouldLoad, tokenId, forceCache);
+    const dotnugg = useDotnuggCacheOnlyLazy(shouldLoad, tokenId, forceCache);
+
+    const dotnuggSub = useDotnuggSubscription(subscribe, tokenId);
+
+    const src = useMemo(() => {
+        return subscribe ? dotnuggSub : dotnugg;
+    }, [dotnugg, dotnuggSub, subscribe]);
 
     const pendingSrc = usePending(svgNotFromGraph ?? src, showPending);
 

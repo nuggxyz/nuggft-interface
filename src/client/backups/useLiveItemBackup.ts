@@ -32,12 +32,10 @@ export default (activate: boolean, tokenId: string | undefined) => {
 
             const check = await Promise.all(
                 [active, upcoming].map(async (arg) => {
+                    if (!arg) return undefined;
+
                     const agency = lib.parse.agency(
-                        await nuggft.itemAgency(
-                            BigNumber.from(itemId)
-                                .shl(24)
-                                .or(arg?.tokenId || 0),
-                        ),
+                        await nuggft.itemAgency(arg.tokenId, BigNumber.from(itemId)),
                     );
 
                     const epoch =

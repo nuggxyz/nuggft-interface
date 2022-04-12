@@ -17,8 +17,7 @@ export default {
     NUGGDEX_DEFAULT_PREVIEW_COUNT: 3,
     ID_PREFIX_ITEM: 'item-',
     FEATURE_BASE: 0,
-    ITEM_ID_POS: 0,
-    ITEM_NUGG_POS: 1,
+
     VIEWING_PREFIX: 'id' as const,
 };
 

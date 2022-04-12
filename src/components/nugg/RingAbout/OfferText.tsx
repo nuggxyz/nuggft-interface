@@ -62,7 +62,7 @@ const BuntOfferText = ({ tokenId }: { tokenId: string }) => {
         if (token && provider && tokenId && lifecycle === Lifecycle.Bunt) {
             return nuggft
                 .connect(provider)
-                ['vfo(address,uint160)'](Address.NULL.hash, tokenId)
+                ['vfo(address,uint24)'](Address.NULL.hash, tokenId)
                 .then((x) => {
                     return new EthInt(x);
                 });
