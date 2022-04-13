@@ -3,17 +3,18 @@ import React, { useCallback } from 'react';
 import { IoChevronBackOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
-import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
-import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib, { NLStyleSheetCreator } from '@src/lib';
+import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import useBlur from '@src/hooks/useBlur';
+import ViewingNuggPhone from '@src/components/nugg/ViewingNugg/ViewingNuggPhone';
 
 const styles = NLStyleSheetCreator({
     container: {
         display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'space-between',
+        // justifyContent: 'space-between',
+        // alignItems: 'space-between',
+        height: '100%',
     },
     nuggDexContainer: {
         display: 'flex',
@@ -40,46 +41,34 @@ export default () => {
 
     const onClick = useCallback(() => navigate(-1), [navigate]);
 
-    const style = useAnimateOverlay(true, {
+    const style = useAnimateOverlayBackdrop(true, {
         zIndex: 998,
-        ...styles.container,
     });
 
     const modalStyle = useBlur([]);
 
     return (
-        <animated.div style={{ ...styles.container, ...style, ...modalStyle }} onClick={onClick}>
-            <div
-                aria-hidden="true"
-                role="button"
-                style={{
-                    ...styles.tokenContainer,
-                    width: '100%',
-                }}
-                onClick={(e) => e.stopPropagation()}
-            >
-                <ViewingNugg
-                    MobileBackButton={React.memo(() => (
-                        <Button
-                            leftIcon={
-                                <IoChevronBackOutline color={lib.colors.nuggBlueText} size="25" />
-                            }
-                            onClick={onClick}
-                            buttonStyle={{
-                                background: lib.colors.transparentWhite,
-                                borderRadius: lib.layout.borderRadius.large,
-                                padding: '0.4rem',
-                                marginTop: 50,
-                            }}
-                            textStyle={{
-                                fontFamily: lib.layout.font.sf.light,
-                                color: lib.colors.nuggBlueText,
-                                fontSize: lib.fontSize.h6,
-                            }}
-                        />
-                    ))}
-                />
-            </div>
+        <animated.div style={{ ...styles.container, ...style, ...modalStyle }}>
+            <ViewingNuggPhone
+                MobileBackButton={React.memo(() => (
+                    <Button
+                        leftIcon={
+                            <IoChevronBackOutline color={lib.colors.nuggBlueText} size="25" />
+                        }
+                        onClick={onClick}
+                        buttonStyle={{
+                            background: lib.colors.transparentWhite,
+                            borderRadius: lib.layout.borderRadius.large,
+                            padding: '0.4rem',
+                        }}
+                        textStyle={{
+                            fontFamily: lib.layout.font.sf.light,
+                            color: lib.colors.nuggBlueText,
+                            fontSize: lib.fontSize.h6,
+                        }}
+                    />
+                ))}
+            />
         </animated.div>
     );
 };

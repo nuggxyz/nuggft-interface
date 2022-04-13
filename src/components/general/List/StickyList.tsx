@@ -113,6 +113,7 @@ type Props<T, B, A> = {
     children?: FunctionComponent<any>;
     emptyText?: string;
     listEmptyStyle?: CSSProperties;
+    disableScroll?: boolean;
 };
 
 const StickyList = <T, B, A>({
@@ -127,6 +128,7 @@ const StickyList = <T, B, A>({
     children,
     emptyText,
     listEmptyStyle,
+    disableScroll,
 }: // ...props
 Props<T, B, A>) => {
     const refData = useMemo(
@@ -160,7 +162,9 @@ Props<T, B, A>) => {
     console.log(refData, listRef);
 
     return listRef ? (
-        <animated.div style={{ display: 'flex', ...style }}>
+        <animated.div
+            style={{ display: 'flex', ...style, overflow: disableScroll ? 'auto' : undefined }}
+        >
             <div style={styleLeft}>
                 {FeatureRenderItem &&
                     refData.map((item, index) =>

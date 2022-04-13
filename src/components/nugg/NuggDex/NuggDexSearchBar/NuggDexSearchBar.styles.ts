@@ -1,11 +1,11 @@
-import { NLStyleSheetCreator } from '@src/lib';
+import lib, { NLStyleSheetCreator } from '@src/lib';
 import Colors from '@src/lib/colors';
 import Layout from '@src/lib/layout';
 
 const styles = NLStyleSheetCreator({
     searchBar: {
         zIndex: 999,
-        background: Colors.nuggBlueTransparent,
+        background: lib.colors.nuggBlueTransparentNoAlpha,
         borderRadius: Layout.borderRadius.small,
         fontFamily: Layout.font.sf.regular,
         pointerEvents: 'auto',

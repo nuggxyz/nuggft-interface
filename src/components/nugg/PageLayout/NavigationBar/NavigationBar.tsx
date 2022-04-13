@@ -31,12 +31,24 @@ const NavigationBar: FC<Props> = () => {
     }, [isHome, navigate]);
 
     const container = useBlur([]);
+
     return (
-        <animated.div style={{ ...styles.navBarContainer, ...container }}>
+        <animated.div
+            style={{
+                ...styles.navBarContainer,
+                ...container,
+                ...(isHome
+                    ? {
+                          backdropFilter: 'blur(1px)',
+                          WebkitBackdropFilter: 'blur(1px)',
+                      }
+                    : {}),
+            }}
+        >
             <div
                 role="button"
                 aria-hidden="true"
-                style={styles.navBarBackground}
+                style={{ ...styles.navBarBackground }}
                 onClick={onClick}
             />
             <div

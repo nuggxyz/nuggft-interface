@@ -174,11 +174,17 @@ const OwnerBlock = ({ tokenId }: { tokenId?: string }) => {
                                 height: '300px',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                justifyContent: 'start',
+                                justifyContent: 'center',
                                 alignItems: 'center',
+                                marginBottom: '20px',
                             }}
                         >
-                            <TheRing circleWidth={800} manualTokenId={tokenId} disableHover />
+                            <TheRing
+                                circleWidth={800}
+                                manualTokenId={tokenId}
+                                disableHover
+                                tokenStyle={{ width: '200px', height: '200px' }}
+                            />
                         </div>
                     )}
                     {token && token.type === 'nugg' && (

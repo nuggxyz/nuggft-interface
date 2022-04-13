@@ -195,13 +195,21 @@ export const useDotnuggCacheOnlyLazy = (
     tokenId: string,
     forceCache = false,
 ) => {
-    const nuggRes = useGetDotnuggNuggQuery({
+    const {
+        data: nuggRes,
+        error: nuggErr,
+        called: nuggCalled,
+    } = useGetDotnuggNuggQuery({
         fetchPolicy: forceCache ? 'cache-only' : 'cache-first',
         skip: forceCache || !shouldLoad || tokenId.isItemId(),
         variables: { tokenId: tokenId.isItemId() ? extractItemId(tokenId) : tokenId },
     });
 
-    const { data: itemRes, error: itemErr } = useGetDotnuggItemQuery({
+    const {
+        data: itemRes,
+        error: itemErr,
+        called: itemCalled,
+    } = useGetDotnuggItemQuery({
         fetchPolicy: forceCache ? 'cache-only' : 'cache-first',
         skip: forceCache || !shouldLoad || !tokenId.isItemId(),
         variables: { tokenId: tokenId.isItemId() ? extractItemId(tokenId) : tokenId },
@@ -234,14 +242,18 @@ export const useDotnuggCacheOnlyLazy = (
         }
         return tokenId.isItemId()
             ? (itemRes?.item?.dotnuggRawCache as Base64EncodedSvg)
-            : (nuggRes.data?.nugg?.dotnuggRawCache as Base64EncodedSvg);
-    }, [itemRes, nuggRes, tokenId]);
+            : (nuggRes?.nugg?.dotnuggRawCache as Base64EncodedSvg);
+    }, [itemRes, nuggRes, tokenId, clienter]);
 
     const error = useMemo(() => {
-        return tokenId.isItemId() ? !!itemErr : !!nuggRes.error;
-    }, [itemErr, nuggRes, tokenId]);
+        return tokenId.isItemId() ? !!itemErr : !!nuggErr;
+    }, [itemErr, nuggErr, tokenId]);
 
     const fallback = useDotnuggRpcBackup2(error, tokenId);
 
-    return !error ? src : fallback;
+    const isEmpty = useMemo(() => {
+        return (tokenId.isItemId() ? itemCalled : nuggCalled) && !src && !fallback;
+    }, [itemCalled, nuggCalled, src, fallback, tokenId]);
+
+    return { src: !error ? src : fallback, isEmpty };
 };

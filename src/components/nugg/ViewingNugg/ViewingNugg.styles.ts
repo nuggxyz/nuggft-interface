@@ -84,7 +84,7 @@ const styles = NLStyleSheetCreator({
         flexDirection: 'column',
         height: '100%',
         borderRadius: Layout.borderRadius.mediumish,
-        overflow: 'hidden',
+        // overflow: 'hidden',
         background: Colors.transparentGrey,
         width: '95%',
     },

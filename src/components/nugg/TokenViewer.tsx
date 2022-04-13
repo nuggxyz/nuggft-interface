@@ -54,13 +54,17 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
         return { width: window.innerWidth };
     }, []);
 
-    const dotnugg = useDotnuggCacheOnlyLazy(shouldLoad, tokenId, forceCache);
+    const { src: dotnugg, isEmpty } = useDotnuggCacheOnlyLazy(shouldLoad, tokenId, forceCache);
 
-    const dotnuggSub = useDotnuggSubscription(subscribe, tokenId);
+    const triggerSubscriber = React.useMemo(() => {
+        return subscribe || isEmpty;
+    }, [subscribe, isEmpty]);
+
+    const dotnuggSub = useDotnuggSubscription(triggerSubscriber, tokenId);
 
     const src = useMemo(() => {
-        return subscribe ? dotnuggSub : dotnugg;
-    }, [dotnugg, dotnuggSub, subscribe]);
+        return triggerSubscriber ? dotnuggSub : dotnugg;
+    }, [dotnugg, dotnuggSub, triggerSubscriber]);
 
     const pendingSrc = usePending(svgNotFromGraph ?? src, showPending);
 

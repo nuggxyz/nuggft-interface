@@ -1,7 +1,7 @@
 import React, { CSSProperties, NamedExoticComponent, useEffect, useState } from 'react';
 import { animated, useSpring, config, useTransition } from '@react-spring/web';
 
-import lib, { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
+import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
 import useMeasure from '@src/hooks/useMeasure';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
@@ -91,7 +91,7 @@ const HappyTabber = ({
                 ...wrapperStyle,
             }}
         >
-            {!isUndefinedOrNullOrArrayEmpty(items) && items.length > 1 && (
+            {items && items.length > 1 && (
                 <div
                     ref={headerRef}
                     style={{
