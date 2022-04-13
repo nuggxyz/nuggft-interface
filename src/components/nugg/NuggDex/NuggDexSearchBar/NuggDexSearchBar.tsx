@@ -1,4 +1,4 @@
-import { useSpring } from '@react-spring/web';
+import { animated, useSpring } from '@react-spring/web';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { CornerRightDown, CornerRightUp, Search, X } from 'react-feather';
 import { t } from '@lingui/macro';
@@ -185,28 +185,12 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
             }
             case undefined:
             default: {
-                // void getAllItems({
-                //     variables: {
-                //         where: {
-                //             position: debouncedValue,
-                //         },
-                //     },
-                // });
-
-                // void getAllNuggs({
-                //     variables: {
-                //         where: {
-                //             id: debouncedValue,
-                //         },
-                //     },
-                // });
                 break;
             }
         }
     }, [activeFilter, getAllItems, getAllNuggs, blankItemQuery]);
 
     const setActiveSearch = client.mutate.setActiveSearch();
-    // const activeSearch = client.live.activeSearch();
 
     const ref = React.useRef(null);
     useOnClickOutside(ref, () => setShow(false));
@@ -224,8 +208,78 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
         ] as ListData[];
     }, [searchedNuggsData, searchedItemsData]);
 
+    const resultStyle = useSpring({
+        position: 'absolute' as const,
+        width: show ? '103%' : '100%',
+        height: show ? (agg.length === 0 ? '230%' : '1000%') : '0%',
+        top: show ? '-9px' : '0px',
+        // left: -10,
+        background: lib.colors.nuggBlueTransparent,
+        // padding: '100px',
+        borderRadius: lib.layout.borderRadius.medium,
+        paddingTop: '50px',
+        display: 'flex',
+        flexDirection: 'column' as const,
+        alignItems: 'center',
+        opacity: show ? 1 : 0,
+        pointerEvents: show ? ('auto' as const) : ('none' as const),
+        overflow: 'hidden' as const,
+    });
+
     return (
-        <>
+        <animated.div style={style}>
+            <animated.div ref={ref} style={resultStyle}>
+                {agg.length === 0 && <Text>Type a number</Text>}
+                {agg.map((x) => (
+                    <div
+                        key={`search-list${x.id}`}
+                        style={{
+                            display: 'flex',
+                            height: 50,
+                            justifyContent: 'flex-start',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <TokenViewer
+                            tokenId={x.id}
+                            style={{
+                                width: '37px',
+                                height: '37px',
+                                marginTop: '0.2rem',
+                                margin: '0rem .5rem 0rem 0rem',
+                            }}
+                        />
+                        {parseTokenIdSmart(x.id)}
+                        {x.id.isItemId() && (
+                            <Button
+                                size="small"
+                                onClick={(event) => {
+                                    updateSearchFilterViewing(SearchView.Search);
+
+                                    setActiveFilter({
+                                        type: FilterEnum.NuggsThatOwnThisItem,
+                                        itemId: x.id as ItemId,
+                                        only: 'nuggs',
+                                    });
+                                    setShow(false);
+                                    event.preventDefault();
+                                }}
+                                label="view nuggs with this"
+                            />
+                        )}
+
+                        <Button
+                            size="small"
+                            onClick={() => {
+                                navigate(`/view/${lib.constants.VIEWING_PREFIX}/${x.id}`);
+                                setShow(false);
+                                // event.preventDefault();
+                            }}
+                            label="VIEW"
+                        />
+                    </div>
+                ))}
+            </animated.div>
             <TextInput
                 onFocus={() => {
                     // if (viewing === SearchView.Home) updateSearchFilterViewing(SearchView.Search);
@@ -236,7 +290,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                 value={localSearchValue || ''}
                 setValue={setSearchValue}
                 className="placeholder-blue"
-                style={{ ...style, position: 'relative' }}
+                style={{ width: '100%', position: 'relative' }}
                 styleInputContainer={styleInput}
                 leftToggles={[
                     <Button
@@ -308,74 +362,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                     />
                 </div>
             )}
-            {show && (
-                <div
-                    ref={ref}
-                    style={{
-                        position: 'absolute',
-                        top: 60,
-                        left: 70,
-                        width: '100%',
-                        background: 'white',
-                        padding: '10px',
-                        borderRadius: '5px',
-                        zIndex: 1500,
-                        pointerEvents: 'auto',
-                    }}
-                >
-                    {agg.length === 0 && <Text>Type a number</Text>}
-                    {agg.map((x) => (
-                        <div
-                            key={`search-list${x.id}`}
-                            style={{
-                                display: 'flex',
-                                height: 50,
-                                justifyContent: 'flex-start',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <TokenViewer
-                                tokenId={x.id}
-                                style={{
-                                    width: '37px',
-                                    height: '37px',
-                                    marginTop: '0.2rem',
-                                    margin: '0rem .5rem 0rem 0rem',
-                                }}
-                            />
-                            {parseTokenIdSmart(x.id)}
-                            {x.id.isItemId() && (
-                                <Button
-                                    size="small"
-                                    onClick={(event) => {
-                                        updateSearchFilterViewing(SearchView.Search);
-
-                                        setActiveFilter({
-                                            type: FilterEnum.NuggsThatOwnThisItem,
-                                            itemId: x.id as ItemId,
-                                            only: 'nuggs',
-                                        });
-                                        setShow(false);
-                                        event.preventDefault();
-                                    }}
-                                    label="view nuggs with this"
-                                />
-                            )}
-
-                            <Button
-                                size="small"
-                                onClick={() => {
-                                    navigate(`/view/${lib.constants.VIEWING_PREFIX}/${x.id}`);
-                                    setShow(false);
-                                    // event.preventDefault();
-                                }}
-                                label="VIEW"
-                            />
-                        </div>
-                    ))}
-                </div>
-            )}
-        </>
+        </animated.div>
     );
 };
 

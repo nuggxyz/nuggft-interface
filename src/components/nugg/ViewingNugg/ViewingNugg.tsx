@@ -68,9 +68,6 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                           comp: React.memo(() => (
                               <ItemList
                                   items={token?.items}
-                                  chainId={chainId}
-                                  provider={provider}
-                                  sender={sender}
                                   isOwner={
                                       !!sender && sender === token.owner && !token?.activeSwap?.id
                                   }

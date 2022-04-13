@@ -9,6 +9,10 @@ const styles = NLStyleSheetCreator({
         borderRadius: Layout.borderRadius.small,
         fontFamily: Layout.font.sf.regular,
         pointerEvents: 'auto',
+        width: '100%',
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'center',
     },
     searchBarButton: {
         background: Colors.transparent,
