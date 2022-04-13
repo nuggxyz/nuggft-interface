@@ -16,8 +16,10 @@ import { ListData, SearchView } from '@src/client/interfaces';
 import {
     GetAllItemsQuery,
     GetAllNuggsQuery,
+    Nugg_OrderBy,
     useGetAllItemsQuery,
     useGetAllNuggsQuery,
+    Item_OrderBy,
 } from '@src/gql/types.generated';
 import { ItemId } from '@src/client/router';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -138,6 +140,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
         if (debouncedValue && debouncedValue !== '') {
             void getAllItems({
                 variables: {
+                    orderBy: Item_OrderBy.Idnum,
                     where: {
                         position: debouncedValue,
                     },
@@ -148,6 +151,8 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
 
             void getAllNuggs({
                 variables: {
+                    orderBy: Nugg_OrderBy.Idnum,
+
                     where: {
                         id: debouncedValue,
                     },
@@ -218,6 +223,8 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
             })),
         ] as ListData[];
     }, [searchedNuggsData, searchedItemsData]);
+
+    console.log({ agg });
 
     return (
         <div>
