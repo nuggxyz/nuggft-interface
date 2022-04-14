@@ -12,7 +12,7 @@ import {
     GetDotnuggNuggQuery,
 } from '@src/gql/types.generated';
 import { useNuggftV1 } from '@src/contracts/useContract';
-import { extractItemId, isUndefinedOrNullOrNotString } from '@src/lib';
+import { extractItemId, isUndefinedOrNullOrStringEmpty } from '@src/lib';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
@@ -131,6 +131,7 @@ export const useDotnuggSubscription = (
         client: graph,
         pollInterval: 15000,
         skip: !activate || isItem,
+        fetchPolicy: 'network-only',
         variables: {
             tokenId,
         },
@@ -254,8 +255,8 @@ export const useDotnuggCacheOnlyLazy = (
     const isEmpty = useMemo(() => {
         return (
             (tokenId.isItemId() ? itemCalled : nuggCalled) &&
-            isUndefinedOrNullOrNotString(src) &&
-            isUndefinedOrNullOrNotString(fallback)
+            isUndefinedOrNullOrStringEmpty(src) &&
+            isUndefinedOrNullOrStringEmpty(fallback)
         );
     }, [itemCalled, nuggCalled, src, fallback, tokenId]);
 
