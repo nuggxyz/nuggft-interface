@@ -3,7 +3,6 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { CornerRightDown, CornerRightUp, Search, X } from 'react-feather';
 import { t } from '@lingui/macro';
 import { useMatch, useNavigate } from 'react-router-dom';
-import { VscClose } from 'react-icons/vsc';
 
 import useDebounce from '@src/hooks/useDebounce';
 import usePrevious from '@src/hooks/usePrevious';
@@ -23,8 +22,13 @@ import {
 } from '@src/gql/types.generated';
 import { ItemId } from '@src/client/router';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import lib, { extractItemId, parseTokenIdSmart } from '@src/lib/index';
+import lib, {
+    extractItemId,
+    isUndefinedOrNullOrStringEmpty,
+    parseTokenIdSmart,
+} from '@src/lib/index';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
+import globalStyles from '@src/lib/globalStyles';
 
 import styles from './NuggDexSearchBar.styles';
 
@@ -114,6 +118,8 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const style = useSpring({
         ...styles.searchBar,
         margin: isViewOpen ? '0% 5% 0% 5%' : '0% 100% 0% 0%',
+    });
+    const animatedBR = useSpring({
         borderRadius: isViewOpen ? '7px' : '20px',
     });
 
@@ -135,6 +141,12 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const blankNuggQuery = React.useCallback(() => {
         setSearchedNuggsData(undefined);
     }, [setSearchedNuggsData]);
+
+    useEffect(() => {
+        if (!isUndefinedOrNullOrStringEmpty(searchValue)) {
+            setShow(true);
+        }
+    }, [setShow, searchValue]);
 
     useEffect(() => {
         if (debouncedValue && debouncedValue !== '') {
@@ -211,107 +223,158 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const resultStyle = useSpring({
         position: 'absolute' as const,
         width: show ? '103%' : '100%',
-        height: show ? (agg.length === 0 ? '230%' : '1000%') : '0%',
+        maxHeight: show ? (agg.length === 0 ? '230%' : '1000%') : '0%',
         top: show ? '-9px' : '0px',
         // left: -10,
-        background: lib.colors.nuggBlueTransparent,
+        background: lib.colors.semiTransparentWhite,
         // padding: '100px',
-        borderRadius: lib.layout.borderRadius.medium,
-        paddingTop: '50px',
-        display: 'flex',
-        flexDirection: 'column' as const,
-        alignItems: 'center',
+        borderRadius: lib.layout.borderRadius.mediumish,
+        paddingTop: '49px',
+        // display: 'flex',
+        // flexDirection: 'column' as const,
+        // alignItems: 'center',
         opacity: show ? 1 : 0,
         pointerEvents: show ? ('auto' as const) : ('none' as const),
         overflow: 'hidden' as const,
     });
 
     return (
-        <animated.div style={style}>
-            <animated.div ref={ref} style={resultStyle}>
-                {agg.length === 0 && <Text>Type a number</Text>}
-                {agg.map((x) => (
-                    <div
-                        key={`search-list${x.id}`}
-                        style={{
-                            display: 'flex',
-                            height: 50,
-                            justifyContent: 'flex-start',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <TokenViewer
-                            tokenId={x.id}
-                            style={{
-                                width: '37px',
-                                height: '37px',
-                                marginTop: '0.2rem',
-                                margin: '0rem .5rem 0rem 0rem',
-                            }}
-                        />
-                        {parseTokenIdSmart(x.id)}
-                        {x.id.isItemId() && (
-                            <Button
-                                size="small"
-                                onClick={(event) => {
-                                    updateSearchFilterViewing(SearchView.Search);
-
-                                    setActiveFilter({
-                                        type: FilterEnum.NuggsThatOwnThisItem,
-                                        itemId: x.id as ItemId,
-                                        only: 'nuggs',
-                                    });
-                                    setShow(false);
-                                    event.preventDefault();
+        <animated.div ref={ref} style={style}>
+            <animated.div style={resultStyle}>
+                <div
+                    style={{
+                        height: '100%',
+                        width: '100%',
+                        overflow: 'scroll',
+                        // ...globalStyles.centered,
+                        flexDirection: 'column',
+                    }}
+                >
+                    {agg.length === 0 ? (
+                        <Text
+                            textStyle={{ width: '100%', height: '100%', ...globalStyles.centered, padding: ".5rem" }}
+                        >
+                            Type a number
+                        </Text>
+                    ) : (
+                        agg.map((x) => (
+                            <div
+                                key={`search-list${x.id}`}
+                                style={{
+                                    display: 'flex',
+                                    height: 50,
+                                    justifyContent: 'flex-start',
+                                    alignItems: 'center',
+                                    width: '100%',
+                                    margin: '.2rem 0rem',
                                 }}
-                                label="view nuggs with this"
-                            />
-                        )}
+                            >
+                                <div style={globalStyles.centered}>
+                                    <TokenViewer
+                                        tokenId={x.id}
+                                        style={{
+                                            width: '50px',
+                                            height: '50px',
+                                        }}
+                                    />
+                                    {parseTokenIdSmart(x.id)}
+                                </div>
+                                {x.id.isItemId() && (
+                                    <Button
+                                        size="small"
+                                        onClick={(event) => {
+                                            updateSearchFilterViewing(SearchView.Search);
 
-                        <Button
-                            size="small"
-                            onClick={() => {
-                                navigate(`/view/${lib.constants.VIEWING_PREFIX}/${x.id}`);
-                                setShow(false);
-                                // event.preventDefault();
-                            }}
-                            label="VIEW"
-                        />
-                    </div>
-                ))}
+                                            setActiveFilter({
+                                                type: FilterEnum.NuggsThatOwnThisItem,
+                                                itemId: x.id as ItemId,
+                                                only: 'nuggs',
+                                            });
+                                            setSearchValue('');
+                                            setShow(false);
+                                            event.preventDefault();
+                                        }}
+                                        label="view nuggs with this"
+                                    />
+                                )}
+
+                                <Button
+                                    size="small"
+                                    onClick={() => {
+                                        navigate(`/view/${lib.constants.VIEWING_PREFIX}/${x.id}`);
+                                        setShow(false);
+                                    }}
+                                    label="VIEW"
+                                />
+                            </div>
+                        ))
+                    )}
+                </div>
             </animated.div>
             <TextInput
-                onFocus={() => {
-                    // if (viewing === SearchView.Home) updateSearchFilterViewing(SearchView.Search);
-                    setShow(true);
+                onClick={() => {
+                    setShow(!show);
                 }}
                 placeholder={t`Type a number to search`}
                 restrictToNumbers
                 value={localSearchValue || ''}
                 setValue={setSearchValue}
                 className="placeholder-blue"
-                style={{ width: '100%', position: 'relative' }}
+                style={{
+                    width: '100%',
+                    position: 'relative',
+                    background: lib.colors.nuggBlueTransparent,
+                    ...animatedBR,
+                }}
                 styleInputContainer={styleInput}
                 leftToggles={[
                     <Button
                         buttonStyle={styles.searchBarButton}
-                        onClick={() => navigate('/view')}
+                        onClick={() => navigate(isViewOpen ? '/swap' : '/view')}
                         rightIcon={<Search style={styles.searchBarIcon} />}
                     />,
                 ]}
                 rightToggles={
                     isViewOpen
                         ? [
-                              ...(localSearchValue
+                              ...(viewing === SearchView.Search && activeFilter
+                                  ? [
+                                        <Button
+                                            label={`Nuggs holding ${parseTokenIdSmart(
+                                                activeFilter.itemId,
+                                            )}`}
+                                            rightIcon={<X style={styles.searchBarIcon} size={15} />}
+                                            buttonStyle={{
+                                                padding: '.3rem .5rem',
+                                                marginRight: '.4rem',
+                                            }}
+                                            textStyle={{ whiteSpace: 'nowrap' }}
+                                            type="text"
+                                            size="small"
+                                            onClick={() => {
+                                                blankNuggQuery();
+                                                blankItemQuery();
+                                                setActiveFilter(undefined);
+                                                updateSearchFilterViewing(SearchView.Home);
+                                            }}
+                                        />,
+                                    ]
+                                  : localSearchValue || show
                                   ? [
                                         <Button
                                             buttonStyle={styles.searchBarButton}
-                                            onClick={() => setSearchValue('')}
+                                            onClick={() => {
+                                                if (isUndefinedOrNullOrStringEmpty(searchValue)) {
+                                                    setShow(false);
+                                                } else {
+                                                    setSearchValue('');
+                                                }
+                                            }}
                                             rightIcon={<X style={styles.searchBarIcon} />}
                                         />,
                                     ]
                                   : []),
-                              ...(viewing !== SearchView.Home
+                              ...(viewing !== SearchView.Home && !activeFilter
                                   ? [
                                         <Button
                                             buttonStyle={styles.filterButton}
@@ -339,29 +402,6 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                         : []
                 }
             />
-            {viewing === SearchView.Search && activeFilter && (
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: 60,
-                        left: 70,
-
-                        zIndex: 1500,
-                        pointerEvents: 'auto',
-                    }}
-                >
-                    <Button
-                        label={`Nuggs holding ${parseTokenIdSmart(activeFilter.itemId)}`}
-                        rightIcon={<VscClose />}
-                        onClick={() => {
-                            blankNuggQuery();
-                            blankItemQuery();
-                            setActiveFilter(undefined);
-                            updateSearchFilterViewing(SearchView.Home);
-                        }}
-                    />
-                </div>
-            )}
         </animated.div>
     );
 };

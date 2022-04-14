@@ -13,7 +13,6 @@ import lib, {
 import constants from '@src/lib/constants';
 import Button from '@src/components/general/Buttons/Button/Button';
 import globalStyles from '@src/lib/globalStyles';
-import Colors from '@src/lib/colors';
 import { LiveNuggItem } from '@src/client/interfaces';
 import Text from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
