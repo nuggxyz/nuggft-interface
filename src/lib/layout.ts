@@ -21,7 +21,7 @@ const Layout = {
     },
     boxShadow: {
         sample1: 'rgba(149, 157, 165, 0.2) 0px 8px 24px',
-        sample2: 'box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px',
+        sample2: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px',
         basic: '0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01)',
         dark: '0 6px 10px rgba(102, 102, 102,0.4)',
         prefix: '0 6px 10px',

@@ -1,6 +1,7 @@
 import React, { FC, useCallback } from 'react';
 import { animated } from '@react-spring/web';
 import { useMatch, useNavigate } from 'react-router-dom';
+import { Book } from 'react-feather';
 
 import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
 import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
@@ -11,6 +12,8 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import Button from '@src/components/general/Buttons/Button/Button';
 import useBlur from '@src/hooks/useBlur';
 import useDimentions from '@src/client/hooks/useDimentions';
+import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
+import client from '@src/client';
 
 import styles from './NavigationBar.styles';
 
@@ -31,6 +34,8 @@ const NavigationBar: FC<Props> = () => {
     }, [isHome, navigate]);
 
     const container = useBlur([]);
+
+    const openNuggBook = client.nuggbook.useOpenNuggBookStart();
 
     return (
         <animated.div
@@ -103,6 +108,9 @@ const NavigationBar: FC<Props> = () => {
                 }}
             >
                 {screenType === 'desktop' && <FloorPrice />}
+                {screenType === 'phone' && (
+                    <IconButton iconComponent={<Book />} onClick={openNuggBook} />
+                )}
                 <AccountViewer />
             </div>
         </animated.div>

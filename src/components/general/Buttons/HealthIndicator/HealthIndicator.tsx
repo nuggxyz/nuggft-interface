@@ -43,13 +43,6 @@ const DisplayOk = () => {
 };
 
 const DisplayProblem = () => {
-    // const rotate = useSpring({
-    //     loop: true,
-    //     config: springConfig.molasses,
-    //     from: { rotateZ: 0 },
-    //     to: { rotateZ: 180 },
-    // });
-
     return (
         <div
             style={{

@@ -8,6 +8,7 @@ import { useRoutes } from '@src/lib/router';
 import client from '@src/client';
 import GlobalModal from '@src/components/modals/GlobalModal';
 import ToastContainer from '@src/components/general/Toast/ToastContainer';
+import NuggBook from '@src/components/nuggbook/NuggBook';
 
 const MobileWalletView = React.lazy(() => import('@src/pages/mobile/MobileWalletView'));
 const HotRotateO = React.lazy(() => import('@src/pages/HotRotateO'));
@@ -51,6 +52,7 @@ const App = () => {
         <>
             <ToastContainer />
             <GlobalModal />
+            <NuggBook />
             <Helmet />
             <NavigationBar />
             <Router />

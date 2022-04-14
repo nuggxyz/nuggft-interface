@@ -11,6 +11,7 @@ import { TokenId } from './router';
 import { ListData, SearchView } from './interfaces';
 import modal from './modal';
 import toast from './toast';
+import nuggbook from './nuggbook';
 
 export default {
     ...core,
@@ -191,4 +192,5 @@ export default {
     },
     modal,
     toast,
+    nuggbook,
 };

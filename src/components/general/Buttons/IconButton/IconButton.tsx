@@ -8,12 +8,18 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import styles from './IconButton.styles';
 
 type Props = {
-    icon: string;
+    icon?: string;
     onClick: () => void;
     buttonStyle?: CSSProperties;
+    iconComponent?: JSX.Element;
 };
 
-const IconButton: FunctionComponent<Props> = ({ icon, onClick, buttonStyle }) => {
+const IconButton: FunctionComponent<Props> = ({
+    icon,
+    onClick,
+    buttonStyle,
+    iconComponent: Comp,
+}) => {
     const style = {
         ...styles.container,
         ...buttonStyle,
@@ -25,7 +31,7 @@ const IconButton: FunctionComponent<Props> = ({ icon, onClick, buttonStyle }) =>
 
     return (
         <Button
-            rightIcon={<Image src={icon} style={hoverStyle} />}
+            rightIcon={icon ? <Image src={icon} style={hoverStyle} /> : Comp || undefined}
             onClick={onClick}
             buttonStyle={style}
             isHovering={isHovering}
