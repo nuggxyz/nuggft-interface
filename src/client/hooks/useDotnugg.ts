@@ -12,7 +12,7 @@ import {
     GetDotnuggNuggQuery,
 } from '@src/gql/types.generated';
 import { useNuggftV1 } from '@src/contracts/useContract';
-import { extractItemId } from '@src/lib';
+import { extractItemId, isUndefinedOrNullOrNotString } from '@src/lib';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
@@ -241,8 +241,8 @@ export const useDotnuggCacheOnlyLazy = (
             return todo.dotnuggRawCache as Base64EncodedSvg;
         }
         return tokenId.isItemId()
-            ? (itemRes?.item?.dotnuggRawCache as Base64EncodedSvg)
-            : (nuggRes?.nugg?.dotnuggRawCache as Base64EncodedSvg);
+            ? (itemRes?.item?.dotnuggRawCache as Base64EncodedSvg | undefined)
+            : (nuggRes?.nugg?.dotnuggRawCache as Base64EncodedSvg | undefined);
     }, [itemRes, nuggRes, tokenId, clienter]);
 
     const error = useMemo(() => {
@@ -252,7 +252,11 @@ export const useDotnuggCacheOnlyLazy = (
     const fallback = useDotnuggRpcBackup2(error, tokenId);
 
     const isEmpty = useMemo(() => {
-        return (tokenId.isItemId() ? itemCalled : nuggCalled) && !src && !fallback;
+        return (
+            (tokenId.isItemId() ? itemCalled : nuggCalled) &&
+            isUndefinedOrNullOrNotString(src) &&
+            isUndefinedOrNullOrNotString(fallback)
+        );
     }, [itemCalled, nuggCalled, src, fallback, tokenId]);
 
     return { src: !error ? src : fallback, isEmpty };
