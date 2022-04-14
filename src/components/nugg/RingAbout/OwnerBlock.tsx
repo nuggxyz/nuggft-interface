@@ -73,7 +73,6 @@ const OwnerBlock = ({ tokenId }: { tokenId?: string }) => {
                     )}
                 </>
             )}
-
             {token && lifecycle === Lifecycle.Cut && (
                 <Text
                     textStyle={{
@@ -83,131 +82,132 @@ const OwnerBlock = ({ tokenId }: { tokenId?: string }) => {
                     {t`Unfortuantly, Nugg ${tokenId} did not make it.`}
                 </Text>
             )}
-
-            {token && lifecycle !== Lifecycle.Stands && lifecycle !== Lifecycle.Cut && (
-                // @danny7even is this logic okay, shoud be same as before but less conditional rerendering, i think
-                <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            width: '100%',
-                            alignItems: 'center',
+            {/* {token && lifecycle !== Lifecycle.Stands && lifecycle !== Lifecycle.Cut && (
+            // @danny7even is this logic okay, shoud be same as before but less conditional
+            rerendering, i think */}
+            <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Text
+                        textStyle={{
+                            color: 'white',
+                            padding: '1rem',
+                            background: darkmode
+                                ? lib.colors.nuggBlueTransparent
+                                : lib.colors.transparentGrey,
+                            borderRadius: lib.layout.borderRadius.medium,
+                            fontSize: '23px',
                         }}
                     >
-                        <Text
-                            textStyle={{
-                                color: 'white',
-                                padding: '1rem',
-                                background: darkmode
-                                    ? lib.colors.nuggBlueTransparent
-                                    : lib.colors.transparentGrey,
-                                borderRadius: lib.layout.borderRadius.medium,
-                                fontSize: '23px',
-                            }}
-                        >
-                            {tokenId && parseTokenIdSmart(tokenId)}
-                        </Text>
+                        {tokenId && parseTokenIdSmart(tokenId)}
+                    </Text>
 
-                        {leader && lifecycle === Lifecycle.Bench ? (
-                            <div
-                                style={{
-                                    alignItems: 'flex-end',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                }}
-                            >
-                                <CurrencyText
-                                    textStyle={{ color: 'white', fontSize: '28px' }}
-                                    image="eth"
-                                    value={leader?.eth?.number}
-                                    decimals={3}
-                                />
-                                <Text textStyle={{ fontSize: '13px', color: 'white' }}>
-                                    {`${leaderEns || leader?.user} is selling`}
-                                </Text>
-                            </div>
-                        ) : lifecycle === Lifecycle.Tryout &&
-                          token.type === 'item' &&
-                          token.tryout.min ? (
-                            <div
-                                style={{
-                                    alignItems: 'flex-end',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                }}
-                            >
-                                <CurrencyText
-                                    textStyle={{ color: 'white', fontSize: '28px' }}
-                                    image="eth"
-                                    value={token.tryout.min.eth.number || 0}
-                                    decimals={3}
-                                />
-                                <Text textStyle={{ fontSize: '13px', color: 'white' }}>
-                                    {t`minimum price`}
-                                </Text>
-                            </div>
-                        ) : (
-                            <div
-                                style={{
-                                    alignItems: 'flex-end',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                }}
-                            >
-                                <Text textStyle={{ fontSize: '13px', color: 'white' }}>
-                                    ending in about
-                                </Text>
-                                <Text
-                                    textStyle={{ color: 'white', fontSize: '28px' }}
-                                >{`${minutes} ${plural(minutes, {
-                                    1: 'minute',
-                                    other: 'minutes',
-                                })}`}</Text>
-                            </div>
-                        )}
-                    </div>
-                    {screenType === 'phone' && (
+                    {leader && lifecycle === Lifecycle.Bench ? (
                         <div
                             style={{
-                                width: '100%',
-                                height: '300px',
+                                alignItems: 'flex-end',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginBottom: '20px',
                             }}
                         >
-                            <TheRing
-                                circleWidth={800}
-                                manualTokenId={tokenId}
-                                disableHover
-                                tokenStyle={{ width: '200px', height: '200px' }}
+                            <CurrencyText
+                                textStyle={{ color: 'white', fontSize: '28px' }}
+                                image="eth"
+                                value={leader?.eth?.number}
+                                decimals={3}
                             />
+                            <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                                {`${leaderEns || leader?.user} is selling`}
+                            </Text>
+                        </div>
+                    ) : lifecycle === Lifecycle.Tryout &&
+                      token &&
+                      token.type === 'item' &&
+                      token.tryout.min ? (
+                        <div
+                            style={{
+                                alignItems: 'flex-end',
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                        >
+                            <CurrencyText
+                                textStyle={{ color: 'white', fontSize: '28px' }}
+                                image="eth"
+                                value={token.tryout.min.eth.number || 0}
+                                decimals={3}
+                            />
+                            <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                                {t`minimum price`}
+                            </Text>
+                        </div>
+                    ) : (
+                        <div
+                            style={{
+                                alignItems: 'flex-end',
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                        >
+                            <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                                ending in about
+                            </Text>
+                            <Text
+                                textStyle={{ color: 'white', fontSize: '28px' }}
+                            >{`${minutes} ${plural(minutes, {
+                                1: 'minute',
+                                other: 'minutes',
+                            })}`}</Text>
                         </div>
                     )}
-                    {token && token.type === 'nugg' && (
-                        <List
-                            data={token.items}
-                            labelStyle={{
-                                color: 'white',
-                            }}
-                            extraData={undefined}
-                            RenderItem={RenderItem}
-                            horizontal
-                            style={{
-                                // width: '100%',
-                                marginTop: screenType === 'phone' ? '-20px' : '20px',
-                                background: lib.colors.transparentLightGrey,
-                                height: '80px',
-                                padding: '0rem .3rem',
-                                borderRadius: lib.layout.borderRadius.medium,
-                            }}
-                        />
-                    )}
                 </div>
-            )}
+                {screenType === 'phone' && (
+                    <div
+                        style={{
+                            width: '100%',
+                            height: '300px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginBottom: '20px',
+                        }}
+                    >
+                        <TheRing
+                            circleWidth={800}
+                            manualTokenId={tokenId}
+                            disableHover
+                            tokenStyle={{ width: '200px', height: '200px' }}
+                        />
+                    </div>
+                )}
+                {token && token.type === 'nugg' && (
+                    <List
+                        data={token.items}
+                        labelStyle={{
+                            color: 'white',
+                        }}
+                        extraData={undefined}
+                        RenderItem={RenderItem}
+                        horizontal
+                        style={{
+                            // width: '100%',
+                            marginTop: screenType === 'phone' ? '-20px' : '20px',
+                            background: lib.colors.transparentLightGrey,
+                            height: '80px',
+                            padding: '0rem .3rem',
+                            borderRadius: lib.layout.borderRadius.medium,
+                        }}
+                    />
+                )}
+            </div>
+            {/* )} */}
         </div>
     );
 };

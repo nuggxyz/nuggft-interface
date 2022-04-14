@@ -29,13 +29,17 @@ export default ({
 
     const openModal = client.modal.useOpenModal();
 
-    return token &&
-        lifecycle &&
-        lifecycle !== 'shower' &&
-        lifecycle !== 'stands' &&
-        lifecycle !== 'cut' &&
-        lifecycle !== 'tryout' &&
-        (screenType === 'phone' || address) ? (
+    const isDisabled = React.useMemo(() => {
+        return !(
+            lifecycle &&
+            lifecycle !== 'shower' &&
+            lifecycle !== 'stands' &&
+            lifecycle !== 'cut' &&
+            lifecycle !== 'tryout'
+        );
+    }, [token, lifecycle]);
+
+    return (
         <Button
             buttonStyle={{
                 ...styles.button,
@@ -43,10 +47,12 @@ export default ({
             textStyle={{
                 ...styles.buttonText,
             }}
+            disabled={isDisabled}
             onClick={() =>
                 screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                     ? navigate('/wallet')
-                    : tokenId &&
+                    : token &&
+                      tokenId &&
                       openModal({
                           type: ModalEnum.Offer,
                           tokenId,
@@ -59,10 +65,14 @@ export default ({
                       })
             }
             label={
-                screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
+                !token
+                    ? 'Loading...'
+                    : isDisabled
+                    ? 'swap is over'
+                    : screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                     ? t`Connect wallet`
                     : t`Place offer`
             }
         />
-    ) : null;
+    );
 };

@@ -1,6 +1,7 @@
 subscription liveProtocol {
     protocol(id: "0x42069") {
         id
+        totalNuggs
         lastEpoch {
             ...epochswapdata
         }
@@ -195,6 +196,8 @@ fragment liveNugg on Nugg {
     }
     items {
         id
+        count
+        displayed
         activeSwap {
             id
         }
@@ -221,6 +224,7 @@ fragment liveNugg on Nugg {
 fragment liveItem on Item {
     id
     count
+    rarityX16
     activeSwap {
         ...itemswapdata
     }
@@ -241,6 +245,16 @@ subscription watchLiveItem($tokenId: ID!) {
 subscription watchLiveNugg($tokenId: ID!) {
     nugg(id: $tokenId) {
         ...liveNugg
+        activeSwap {
+            id
+            offers(orderBy: eth, orderDirection: desc) {
+                user {
+                    id
+                }
+                eth
+                txhash
+            }
+        }
     }
 }
 

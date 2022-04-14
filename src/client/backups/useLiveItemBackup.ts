@@ -4,7 +4,7 @@ import { BigNumber } from 'ethers';
 import web3 from '@src/web3';
 import lib, { extractItemId } from '@src/lib';
 import { useNuggftV1 } from '@src/contracts/useContract';
-import { EthInt } from '@src/classes/Fraction';
+import { EthInt, Fraction } from '@src/classes/Fraction';
 import { LiveActiveItemSwap } from '@src/client/interfaces';
 
 // eslint-disable-next-line import/no-cycle
@@ -69,6 +69,7 @@ export default (activate: boolean, tokenId: string | undefined) => {
                               isTryout: false,
                               owner: null,
                               count: 0,
+
                               isBackup: true,
                           } as LiveActiveItemSwap)
                         : undefined;
@@ -82,6 +83,7 @@ export default (activate: boolean, tokenId: string | undefined) => {
                 activeSwap: check[0],
                 upcomingActiveSwap: check[1],
                 count: 0,
+                rarity: new Fraction(0),
                 tryout: {
                     count: 0,
                     swaps: [],

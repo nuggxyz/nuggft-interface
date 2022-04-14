@@ -3,7 +3,7 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import Decimal from 'decimal.js-light';
 import numbro from 'numbro';
 
-import { fromEth, toEth, TWO_128, TWO_96, ETH_ONE } from '@src/lib/conversion';
+import { fromEth, toEth, TWO_128, TWO_96, ETH_ONE, TWO_16 } from '@src/lib/conversion';
 import { toGwei } from '@src/lib/index';
 
 // eslint-disable-next-line no-use-before-define
@@ -37,6 +37,12 @@ export class Fraction {
 
     get bignumber() {
         return this.num.mul(ETH_ONE).div(this.den);
+    }
+
+    public scale(denominator: BigNumberish) {
+        this.num = this.num.mul(denominator);
+        this.den = this.den.mul(denominator);
+        return this;
     }
 
     public add(other: Fractionish): Fraction {
@@ -114,6 +120,12 @@ export class Fraction {
 export class Fraction2x128 extends Fraction {
     constructor(num: BigNumberish) {
         super(BigNumber.from(num), TWO_128);
+    }
+}
+
+export class Fraction2x16 extends Fraction {
+    constructor(num: BigNumberish) {
+        super(BigNumber.from(num), TWO_16);
     }
 }
 

@@ -11,7 +11,7 @@ import I18N from './i18n';
 import App from './pages/App';
 import ErrorBoundary from './components/general/ErrorBoundry';
 import useMountLogger from './hooks/useMountLogger';
-import useClientUpdater, { useDelayedClientUpdater } from './client/useClientUpdater';
+import useClientUpdater from './client/useClientUpdater';
 import useAnalyticsReporter from './lib/analytics/useAnalyticsReporter';
 
 global.Buffer = global.Buffer || (await import('buffer')).Buffer;
@@ -23,7 +23,6 @@ const GlobalHooks = () => {
 
     useClientUpdater();
 
-    useDelayedClientUpdater();
     useAnalyticsReporter();
 
     return null;

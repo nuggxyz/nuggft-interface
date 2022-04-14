@@ -224,8 +224,6 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
         ] as ListData[];
     }, [searchedNuggsData, searchedItemsData]);
 
-    console.log({ agg });
-
     return (
         <div>
             <TextInput

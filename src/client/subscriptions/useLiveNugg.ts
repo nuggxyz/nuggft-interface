@@ -3,17 +3,19 @@ import formatLiveNugg from '@src/client/formatters/formatLiveNugg';
 import useLiveNuggBackup from '@src/client/backups/useLiveNuggBackup';
 import client from '@src/client';
 import { useHealth } from '@src/client/hooks/useHealth';
+import useDevStable from '@src/hooks/useDevStable';
 
-export default (tokenId: string | undefined) => {
-    const graph = client.live.graph();
-
+export default (_tokenId: string | undefined) => {
     const updateToken = client.mutate.updateToken();
 
+    const tokenId = useDevStable(_tokenId);
+
     useWatchLiveNuggSubscription({
-        client: graph,
-        shouldResubscribe: true,
+        shouldResubscribe: !!tokenId,
+
         fetchPolicy: 'cache-first',
         variables: { tokenId: tokenId || '' },
+        skip: !tokenId,
         onSubscriptionData: (x) => {
             if (
                 tokenId &&

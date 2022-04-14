@@ -45,6 +45,7 @@
         "module-resolver"
     ],
     "rules": {
+        "react/no-unused-prop-types": "off",
         "@typescript-eslint/no-unnecessary-type-assertion": "off",
         "no-undef-init": "off",
         "react/jsx-no-useless-fragment": "off",

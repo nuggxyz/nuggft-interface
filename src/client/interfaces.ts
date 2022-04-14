@@ -164,16 +164,12 @@ export type SearchFilter = {
 };
 
 export interface ClientState extends State, Actions {
+    subscriptionQueue: Array<TokenId>;
     nuggft: NuggftV1 | undefined;
     manualPriority: Connector | undefined;
     route: string | undefined;
-    // lastView: ViewRoutes | undefined;
     lastSwap: SwapRoutes | undefined;
     pageIsLoaded: boolean;
-
-    // isViewOpen: boolean;
-    // isMobileViewOpen: boolean;
-    // isMobileWalletOpen: boolean;
     stake: StakeData | undefined;
     epoch__id: number | undefined;
     epoch: EpochData | undefined;
@@ -203,6 +199,7 @@ export interface ClientState extends State, Actions {
     started: boolean;
     activeSearch: SearchResults;
     dimentions: Dimentions;
+    totalNuggs: number;
 }
 
 export interface Health {
@@ -212,7 +209,6 @@ export interface Health {
 
 export type ClientStateUpdate = {
     manualPriority?: Connector;
-    // route?: string;
     stake?: {
         staked: BigNumber;
         shares: BigNumber;
@@ -230,6 +226,7 @@ export type ClientStateUpdate = {
         id: number;
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
+    totalNuggs?: number;
     activeSwaps?: SwapData[];
     activeItems?: SwapData[];
     recentSwaps?: SwapData[];
@@ -253,9 +250,6 @@ export type Dimentions = { height: number; width: number };
 export interface Actions {
     updateBlocknum: (blocknum: number, chainId: Chain, startup?: boolean) => void;
     updateProtocol: (stateUpdate: ClientStateUpdate) => void;
-    // routeTo: (tokenId: TokenId, view: boolean) => void;
-    // toggleView: () => void;
-    // toggleMobileWallet: () => void;
     setLastSwap: (tokenId: TokenId | undefined) => void;
     setActiveSearch: (input: SearchResults | undefined) => void;
     updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;
@@ -269,7 +263,6 @@ export interface Actions {
     addNugg: (update: MyNuggsData) => void;
     removeNugg: (tokenId: NuggId) => void;
     setPageIsLoaded: () => void;
-    // toggleEditingNugg: (tokenId: NuggId | undefined) => void;
     updateToken: (tokenId: TokenId, data: LiveToken) => void;
     updateLocale: (locale: SupportedLocale | undefined) => void;
     updateSearchFilterTarget: (value: SearchFilter['target']) => void;
@@ -280,6 +273,7 @@ export interface Actions {
     updateMediaDarkMode: (value: Theme | undefined) => void;
     addFeedMessage: (update: FeedMessage) => void;
     updateDimentions: (window: Dimentions) => void;
+    addToSubscritpionQueue: (update: TokenId) => void;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
@@ -309,6 +303,8 @@ export interface LiveNuggItem {
     activeSwap: string | undefined;
     feature: number;
     position: number;
+    count: number;
+    displayed: boolean;
 }
 
 export interface LiveNugg {
@@ -356,6 +352,7 @@ export interface LiveItem {
         max?: TryoutData;
         min?: TryoutData;
     };
+    rarity: Fraction;
     isBackup: boolean;
 }
 

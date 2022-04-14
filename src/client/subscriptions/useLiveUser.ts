@@ -30,6 +30,7 @@ export default () => {
         client: graph,
         variables: { address: address ? address.toLowerCase() : '' },
         shouldResubscribe: true,
+        skip: !address,
         fetchPolicy: 'network-only',
         onSubscriptionData: (x) => {
             if (

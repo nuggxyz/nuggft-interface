@@ -25,6 +25,8 @@ export const ETH_BILLION = toEth('1000000000');
 export const ETH_TRILLION = toEth('1000000000000');
 export const TWO_128 = BigNumber.from(1).shl(128).sub(1);
 export const TWO_96 = 0xff;
+export const TWO_16 = 0xffff;
+
 export const LOSS = BigNumber.from(10).pow(8);
 
 export const DEADLINE = '10000000000000';

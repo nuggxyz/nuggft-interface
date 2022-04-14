@@ -72,7 +72,7 @@ const BuntOfferText = ({ tokenId }: { tokenId: string }) => {
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {vfo ? (
-                <CurrencyText textStyle={styles.title} value={vfo?.number || 0} />
+                <CurrencyText textStyle={styles.title} value={vfo?.number || 0} stopAnimation />
             ) : (
                 <>
                     <Loader color="white" />

@@ -34,7 +34,6 @@ export default () => {
     useLiveProtocolSubscription({
         shouldResubscribe: true,
         fetchPolicy: 'network-only',
-        // client: web3.config.apolloClient,
         onSubscriptionData: (x) => {
             if (x.subscriptionData && x.subscriptionData.data && x.subscriptionData.data.protocol) {
                 const { protocol } = x.subscriptionData.data;
@@ -76,6 +75,7 @@ export default () => {
                         shares,
                         eps: EthInt.fromFraction(new Fraction(staked, shares)),
                     },
+                    totalNuggs: Number(protocol.totalNuggs),
                     recentSwaps: protocol.lastEpoch.swaps.map((z) => {
                         return formatSwapData(z, z.nugg.id, true);
                     }),
@@ -140,10 +140,6 @@ export default () => {
             }
         },
     });
-    // useMountLogger('updateProtocol');
-    // useUpdateLogger('abc', abc);
-
-    // console.log({ abc });
 
     return null;
 };

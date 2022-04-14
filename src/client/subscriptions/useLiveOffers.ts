@@ -16,7 +16,7 @@ const useLiveItemOffers = (tokenId?: string) => {
         shouldResubscribe: true,
         fetchPolicy: 'network-only',
         variables: { tokenId: tokenId ? extractItemId(tokenId) : '' },
-
+        skip: !tokenId,
         onSubscriptionData: (x) => {
             if (
                 tokenId &&

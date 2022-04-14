@@ -7,6 +7,7 @@ import { TokenId } from '@src/client/router';
 import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
 import useLiveToken from '@src/client/subscriptions/useLiveToken';
 import useDimentions from '@src/client/hooks/useDimentions';
+import Loader from '@src/components/general/Loader/Loader';
 
 import styles from './RingAbout.styles';
 import OffersList from './OffersList';
@@ -28,18 +29,16 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
     const tokenId = client.live.lastSwap.tokenIdWithOptionalOverride(manualTokenId);
     const token = client.live.token(tokenId);
     const setPageIsLoaded = client.mutate.setPageIsLoaded();
-
+    const isPageLoaded = client.live.pageIsLoaded();
     useLiveToken(tokenId);
 
     useLiveOffers(tokenId);
 
     useEffect(() => {
-        setTimeout(() => {
-            setPageIsLoaded();
-        }, 5000);
-    }, [setPageIsLoaded]);
+        if (token && !isPageLoaded) setPageIsLoaded();
+    }, [token, setPageIsLoaded, isPageLoaded]);
 
-    return token ? (
+    return tokenId ? (
         <>
             <animated.div
                 style={{
@@ -65,7 +64,9 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
 
             <Caboose tokenId={tokenId} />
         </>
-    ) : null;
+    ) : (
+        <Loader />
+    );
 };
 
 export default React.memo(RingAbout);

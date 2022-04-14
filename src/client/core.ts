@@ -122,7 +122,7 @@ function createClientStoreAndActions2() {
                     set((draft) => {
                         if (stateUpdate.health?.lastBlockGraph)
                             draft.health.lastBlockGraph = stateUpdate.health.lastBlockGraph;
-
+                        if (stateUpdate.totalNuggs) draft.totalNuggs = stateUpdate.totalNuggs;
                         if (stateUpdate.stake) draft.stake = stateUpdate.stake;
                         if (stateUpdate.editingNugg) draft.editingNugg = stateUpdate.editingNugg;
                         if (stateUpdate.recentSwaps) draft.recentSwaps = stateUpdate.recentSwaps;
@@ -226,6 +226,14 @@ function createClientStoreAndActions2() {
                 function addNugg(update: MyNuggsData): void {
                     set((draft) => {
                         draft.myNuggs.unshift(update);
+                    });
+                }
+
+                function addToSubscritpionQueue(update: TokenId): void {
+                    set((draft) => {
+                        if (get().subscriptionQueue.indexOf(update) === -1) {
+                            draft.subscriptionQueue.push(update);
+                        }
                     });
                 }
 
@@ -372,6 +380,7 @@ function createClientStoreAndActions2() {
                     myUnclaimedNuggOffers: [],
                     myUnclaimedItemOffers: [],
                     myRecents: new Set(),
+                    subscriptionQueue: [],
                     myLoans: [],
                     activating: false,
                     blocknum: undefined,
@@ -394,7 +403,7 @@ function createClientStoreAndActions2() {
                         lastBlockGraph: 0,
                     },
                     dimentions: { width: window.innerWidth, height: window.innerHeight },
-
+                    totalNuggs: 0,
                     activeSearch: [],
                     pageIsLoaded: false,
                     started: false,
@@ -422,6 +431,7 @@ function createClientStoreAndActions2() {
                     addFeedMessage,
                     setLastSwap,
                     setActiveSearch,
+                    addToSubscritpionQueue,
                     updateDimentions,
                 };
             }),

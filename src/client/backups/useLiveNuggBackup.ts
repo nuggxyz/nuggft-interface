@@ -84,7 +84,7 @@ export default (activate: boolean, tokenId: string | undefined) => {
                     },
                 ]);
         }
-    }, [chainId, tokenId, activate, nuggft, liveEpoch]);
+    }, [chainId, tokenId, activate, nuggft, liveEpoch, updateOffers, updateToken]);
 
     useEffect(() => {
         void callback();

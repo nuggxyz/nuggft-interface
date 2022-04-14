@@ -6,7 +6,6 @@ export default () => {
     const updateDimentions = client.mutate.updateDimentions();
 
     const resizer = React.useCallback(() => {
-        console.log('hellooo');
         updateDimentions({
             height: window.innerHeight,
             width: window.innerWidth,
@@ -19,7 +18,7 @@ export default () => {
         return () => {
             window.removeEventListener('resize', resizer);
         };
-    }, []);
+    }, [resizer]);
 
     return null;
 };

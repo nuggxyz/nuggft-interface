@@ -37,20 +37,38 @@ const lastItemSwap = (_lis: BigNumber) => {
 const proof = (_proof: BigNumberish) => {
     let working = BigNumber.from(_proof);
 
-    const items: { id: ItemId; feature: number; position: number }[] = [];
+    const seen: Dictionary<{
+        id: ItemId;
+        feature: number;
+        position: number;
+        count: number;
+        displayed: boolean;
+    }> = {};
+
+    const seenFeatures: Dictionary<boolean> = {};
+
+    let index = 0;
     do {
         const curr = working.and('65535');
         if (!curr.eq(0)) {
-            items.push({
-                id: `item-${curr.toString()}`,
-                feature: curr.shr(8).toNumber(),
-                position: curr.and(0xff).toNumber(),
-            });
+            if (!seen[curr._hex]) {
+                seenFeatures[curr.div(1000).toNumber()] = true;
+                seen[curr._hex] = {
+                    id: `item-${curr.toString()}`,
+                    feature: curr.div(1000).toNumber(),
+                    position: curr.mod(1000).toNumber(),
+                    count: 1,
+                    displayed: !seenFeatures[curr.div(1000).toNumber()] && index < 8,
+                };
+            } else {
+                seen[curr._hex].count++;
+            }
+            seenFeatures[curr.div(1000).toNumber()] = true;
         }
-        // eslint-disable-next-line no-cond-assign
+        index++;
     } while (!(working = working.shr(16)).isZero());
 
-    return items;
+    return Object.values(seen);
 };
 
 export default { agency, proof, lastItemSwap };

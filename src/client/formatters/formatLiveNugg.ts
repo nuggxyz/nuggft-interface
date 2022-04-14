@@ -8,14 +8,18 @@ export default (nugg: LiveNuggFragment): LiveNugg => {
         id: nugg.id,
         activeLoan: !!nugg.activeLoan?.id,
         owner: nugg.user?.id,
-        items: nugg.items.map((y) => {
-            return {
-                id: `item-${y?.id.split('-')[0]}`,
-                activeSwap: y?.activeSwap?.id,
-                feature: Number(y?.item.feature),
-                position: Number(y?.item.position),
-            };
-        }),
+        items: nugg.items
+            .filter((x) => x.activeSwap || x.count > 0)
+            .map((y) => {
+                return {
+                    id: `item-${y?.id.split('-')[0]}`,
+                    activeSwap: y?.activeSwap?.id,
+                    feature: Number(y?.item.feature),
+                    position: Number(y?.item.position),
+                    count: Number(y?.count),
+                    displayed: y?.displayed,
+                };
+            }),
         isBackup: false,
         pendingClaim: nugg.pendingClaim,
         lastTransfer: nugg.lastTransfer,

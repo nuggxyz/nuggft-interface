@@ -13,12 +13,38 @@ import useTokenQuery from '@src/client/hooks/useTokenQuery';
 import globalStyles from '@src/lib/globalStyles';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import useDimentions from '@src/client/hooks/useDimentions';
+import { Fraction } from '@src/classes/Fraction';
 
 import MyNuggActions from './MyNuggActions';
 import { ItemListPhone } from './ItemList';
 import SwapListPhone from './SwapListPhone';
 
 type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
+
+const Info = ({ tokenId }: { tokenId?: string }) => {
+    const token = client.live.token(tokenId);
+    const totalNuggs = client.live.totalNuggs();
+
+    const observedRarity = useMemo(() => {
+        if (!token || token.type === 'nugg') return new Fraction(0);
+        return new Fraction(token.count, totalNuggs);
+    }, [token, totalNuggs]);
+
+    return token && token.type === 'item' ? (
+        <div
+            style={{
+                width: '100%',
+                padding: '1rem 0rem',
+                // margin: '.25rem 0rem',
+                flexDirection: 'column',
+                ...globalStyles.centered,
+            }}
+        >
+            <Text>rarity: {(token.rarity.number * 10000).toFixed(0)} / 10k</Text>
+            <Text>observed rarity: {(observedRarity.number * 10000).toFixed(0)} / 10k</Text>
+        </div>
+    ) : null;
+};
 
 const ViewingNuggPhone: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const epoch = client.live.epoch.id();
@@ -28,8 +54,6 @@ const ViewingNuggPhone: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const sender = web3.hook.usePriorityAccount();
 
     const tokenQuery = useTokenQuery();
-
-    // const navigate = useNavigate();
 
     React.useEffect(() => {
         if (tokenId) void tokenQuery(tokenId);
@@ -60,7 +84,7 @@ const ViewingNuggPhone: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 ? [
                       {
                           label: t`Stats`,
-                          comp: React.memo(MyNuggActions),
+                          comp: React.memo(() => <Info tokenId={tokenId} />),
                       },
                   ]
                 : []),
@@ -69,16 +93,7 @@ const ViewingNuggPhone: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 ? [
                       {
                           label: 'Items',
-                          comp: React.memo(() => (
-                              <ItemListPhone
-                                  items={token?.items}
-                                  //   chainId={chainId}
-                                  //   provider={provider}
-                                  //   sender={sender}
-                                  isOwner={sender === token.owner && !token?.activeSwap?.id}
-                                  tokenId={tokenId}
-                              />
-                          )),
+                          comp: React.memo(() => <ItemListPhone tokenId={tokenId} />),
                       },
                   ]
                 : []),
@@ -222,36 +237,18 @@ const ViewingNuggPhone: FunctionComponent<Props> = ({ MobileBackButton }) => {
                         </div>
                     )}
                 </div>
-                {/* {!token.activeSwap ? (
-                    <Button
-                        buttonStyle={{
-                            ...styles.goToSwap,
-                            marginBottom: '0rem',
-                        }}
-                        onClick={() => navigate(`/swap/item-${token.id}`)}
-                        size="small"
-                        textStyle={{
-                            ...styles.goToSwapGradient,
-                            background: lib.colors.gradient2,
-                            paddingRight: '.5rem',
-                        }}
-                        label={t`Go to swap`}
-                        rightIcon={<IoArrowRedo color={lib.colors.green} />}
-                    />
-                ) : null} */}
+
                 <HappyTabber
                     defaultActiveIndex={0}
                     items={happyTabs}
+                    disableTransition
                     selectionIndicatorStyle={{ background: lib.colors.white }}
-                    bodyStyle={styles.tabberList}
                     wrapperStyle={{ height: '100%', width: '100%' }}
                     headerContainerStyle={{
                         marginTop: '.5rem',
-                        // marginBottom: '1.5rem',
 
                         padding: '1rem 1rem',
                         borderRadius: 0,
-                        // height: '100%',
                     }}
                 />
             </div>

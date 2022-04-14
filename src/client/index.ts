@@ -57,6 +57,8 @@ export default {
         },
         darkmode: () => core((state) => state.darkmode, shallow),
         recentSwaps: () => core((state) => state.recentSwaps),
+        totalNuggs: () => core((state) => state.totalNuggs),
+
         recentItems: () => core((state) => state.recentItems),
         potentialSwaps: () => core((state) => state.potentialSwaps),
         potentialItems: () => core((state) => state.potentialItems),

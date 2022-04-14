@@ -4,16 +4,17 @@ import formatLiveItem from '@src/client/formatters/formatLiveItem';
 import { extractItemId } from '@src/lib';
 import client from '@src/client';
 import { useHealth } from '@src/client/hooks/useHealth';
+import useDevStable from '@src/hooks/useDevStable';
 
-export default (tokenId: string | undefined) => {
-    const graph = client.live.graph();
-
+export default (_tokenId: string | undefined) => {
     const updateToken = client.mutate.updateToken();
 
+    const tokenId = useDevStable(_tokenId);
+
     useWatchLiveItemSubscription({
-        client: graph,
-        shouldResubscribe: true,
+        shouldResubscribe: !!tokenId,
         fetchPolicy: 'cache-first',
+        skip: !tokenId || !tokenId.isItemId(),
         variables: { tokenId: extractItemId(tokenId || '') },
 
         onSubscriptionData: (x) => {

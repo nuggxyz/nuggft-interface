@@ -14,15 +14,17 @@ const HotRotateO = React.lazy(() => import('@src/pages/HotRotateO'));
 const SearchOverlay = React.lazy(() => import('@src/pages/SearchOverlay'));
 
 const Router = () => {
-    const [loaded, setLoaded] = React.useState<boolean>(false);
+    // const [loaded, setLoaded] = React.useState<boolean>(false);
 
-    const [, start] = React.useTransition();
+    // const [, start] = React.useTransition();
 
-    React.useEffect(() => {
-        start(() => {
-            setLoaded(true);
-        });
-    }, []);
+    // React.useEffect(() => {
+    //     start(() => {
+    //         setLoaded(true);
+    //     });
+    // }, []);
+
+    const isPageLoaded = client.live.pageIsLoaded();
 
     const epoch = client.live.epoch.id();
 
@@ -31,7 +33,7 @@ const Router = () => {
             path: '/',
             element: <Outlet />,
             children: [
-                { path: 'view/*', element: loaded ? <SearchOverlay /> : null, overlay: 997 },
+                { path: 'view/*', element: isPageLoaded ? <SearchOverlay /> : null, overlay: 997 },
                 { path: 'edit/:id', element: <HotRotateO /> },
                 // instead of hiding this for mobile here, we redirect inside the component to avoid lots of rerenders
                 { path: 'wallet', element: <MobileWalletView /> },

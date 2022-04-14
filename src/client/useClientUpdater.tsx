@@ -8,16 +8,7 @@ import useLiveUser from './subscriptions/useLiveUser';
 import useSwapUpdater from './update/useSwapUpdater';
 import useLiveGraphHealth from './subscriptions/useLiveGraphHealth';
 import useDimentionsUpdater from './update/useDimentionsUpdater';
-
-// const GraphConditionalHooks = () => {
-//     useLiveProtocol();
-
-//     useLiveUser();
-
-//     useLiveGraphHealth();
-
-//     return null;
-// };
+// import useGraphUpdater from './update/useGraphUpdater';
 
 export default () => {
     useDimentionsUpdater();
@@ -38,11 +29,7 @@ export default () => {
 
     useMountLogger('ClientUpdater');
 
-    return null;
-};
-
-export const useDelayedClientUpdater = () => {
-    useMountLogger('DelayedClientUpdater');
+    // useGraphUpdater();
 
     return null;
 };

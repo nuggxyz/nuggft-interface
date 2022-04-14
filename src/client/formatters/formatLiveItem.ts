@@ -1,36 +1,41 @@
 import { LiveItem, TryoutData } from '@src/client/interfaces';
-import { EthInt } from '@src/classes/Fraction';
+import { EthInt, Fraction2x16 } from '@src/classes/Fraction';
 import { LiveItemFragment } from '@src/gql/types.generated';
 
 export default (item: LiveItemFragment): LiveItem => {
-    const tmp = {
+    const tmp: Omit<LiveItem, 'tryout'> = {
         type: 'item' as const,
         id: item.id,
         count: Number(item.count),
-        swaps: item.swaps.map((y) => {
-            return {
-                type: 'item' as const,
-                id: y?.id,
-                epoch: y.epoch
+        swaps: item.swaps
+            .map((y) => {
+                return y
                     ? {
-                          id: Number(y?.epoch?.id ?? 0),
-                          startblock: Number(y?.epoch?.startblock),
-                          endblock: Number(y?.epoch?.endblock),
-                          status: y.epoch.status,
+                          type: 'item' as const,
+                          id: y.id,
+                          epoch: y.epoch
+                              ? {
+                                    id: Number(y.epoch?.id ?? 0),
+                                    startblock: Number(y.epoch?.startblock),
+                                    endblock: Number(y.epoch?.endblock),
+                                    status: y.epoch.status,
+                                }
+                              : null,
+                          eth: new EthInt(y.eth),
+                          leader: y.leader!.id,
+                          owner: y.owner.id,
+                          endingEpoch: y && y.endingEpoch ? Number(y.endingEpoch) : null,
+                          num: Number(y.num),
+                          isTryout: y && y.endingEpoch === null,
+                          dotnuggRawCache: null,
+                          sellingNuggId: y.sellingNuggItem.nugg.id,
+                          bottom: new EthInt(y.bottom),
+                          isBackup: false,
                       }
-                    : null,
-                eth: new EthInt(y?.eth),
-                leader: y?.leader!.id,
-                owner: y?.owner?.id,
-                endingEpoch: y && y.endingEpoch ? Number(y.endingEpoch) : null,
-                num: Number(y?.num),
-                isTryout: y && y.endingEpoch === null,
-                dotnuggRawCache: null,
-                sellingNuggId: y.sellingNuggItem.nugg.id,
-                bottom: new EthInt(y?.bottom),
-                isBackup: false,
-            };
-        }),
+                    : undefined;
+            })
+            .filter((x) => x) as LiveItem['swaps'],
+        rarity: new Fraction2x16(item.rarityX16),
         isBackup: false,
         activeSwap: item.activeSwap
             ? {
@@ -97,7 +102,7 @@ export default (item: LiveItemFragment): LiveItem => {
 
     const tryout = tmp.swaps.reduce((prev: LiveItem['tryout'] | undefined, curr) => {
         const swap: TryoutData = {
-            nugg: curr.owner,
+            nugg: curr.owner as string,
             eth: curr.eth,
         };
         /// ////////////////////////////////////////

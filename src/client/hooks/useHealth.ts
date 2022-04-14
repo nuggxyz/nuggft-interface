@@ -7,10 +7,9 @@ import useRecursiveTimeout from '@src/hooks/useRecursiveTimeout';
 import { Health } from '@src/client/interfaces';
 
 export const useRpcBackup = () => {
-    const { blockdiff } = useHealth();
+    const { graphProblem } = useHealth();
 
-    console.log({ blockdiff });
-    return blockdiff > 5;
+    return graphProblem;
 };
 
 const ok = (abc: Health): abc is Required<Health> => {
