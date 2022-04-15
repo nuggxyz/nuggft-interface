@@ -1,7 +1,7 @@
 import { PickAnimated, useSpring } from '@react-spring/web';
 import { CSSProperties } from 'react';
 
-import lib, { NLStyleSheetCreator } from '@src/lib';
+import { NLStyleSheetCreator } from '@src/lib';
 import useDimentions from '@src/client/hooks/useDimentions';
 
 const styles = NLStyleSheetCreator({
@@ -12,8 +12,8 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-
-        background: lib.colors.transparentDarkGrey2,
+        background: 'transparent',
+        // background: lib.colors.transparentDarkGrey2,
         backdropFilter: 'blur(10px) brightness(10)',
         // @danny7even this seemed to cause problems with issue #67 - but it didnt solve any
         WebkitBackdropFilter: 'blur(10px)',

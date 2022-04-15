@@ -2,21 +2,21 @@ import React from 'react';
 
 import client from '@src/client';
 import useDimentions from '@src/client/hooks/useDimentions';
+import { Page } from '@src/interfaces/nuggbook';
 
 import PageWrapper from './PageWrapper';
 import Start from './pages/Start';
 import Welcome from './pages/Welcome';
-import { Page } from '@src/interfaces/nuggbook';
 
 const useNuggBook = (page: Page) => {
     switch (page) {
         case Page.Start:
-            return { top: 450, height: 400, comp: React.memo(Start) };
+            return { top: 450, comp: Start };
         case Page.Welcome:
-            return { top: 200, height: 900, comp: React.memo(Welcome) };
+            return { top: 200, comp: Welcome };
         case Page.Close:
         default:
-            return { top: 1000, height: 500, comp: null };
+            return { top: 1000, comp: null };
     }
 };
 
@@ -32,12 +32,12 @@ export default () => {
         startTransiton(close);
     }, [close, startTransiton]);
 
-    const { comp: Comp, top, height } = useNuggBook(page);
+    const { comp: Comp, top } = useNuggBook(page);
 
     const { isPhone } = useDimentions();
 
     return isPhone ? (
-        <PageWrapper height={height} top={top}>
+        <PageWrapper top={top} close={closeit}>
             {Comp && <Comp setPage={setPage} close={closeit} />}
         </PageWrapper>
     ) : null;

@@ -15,7 +15,7 @@ const Start: NuggBookPage = ({ close }) => {
                 flexDirection: 'column',
             }}
         >
-            <Text size="larger" textStyle={{ padding: '15px' }}>
+            <Text size="larger" textStyle={{ padding: '10px' }}>
                 Welcome to Nuggft V1
             </Text>
             <Text
@@ -25,14 +25,14 @@ const Start: NuggBookPage = ({ close }) => {
                 a decentralized art project on ethereum
             </Text>
             <Button
-                label="nope"
+                label="my name is danny7even and i am a biiiiiiiiiiiitttch"
                 buttonStyle={{
                     background: lib.colors.gradient,
                     color: 'white',
                     borderRadius: lib.layout.borderRadius.large,
                     marginBottom: '.8rem',
                     backgroundColor: lib.colors.white,
-                    width: '5rem',
+                    // width: '5rem',
                 }}
                 onClick={close}
             />
