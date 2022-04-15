@@ -1,4 +1,5 @@
 import React from 'react';
+import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from 'react-icons/io';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -15,8 +16,8 @@ const WhatIsAnNFT: NuggBookPage = ({ setPage }) => {
                 flexDirection: 'column',
             }}
         >
-            <Text size="larger" textStyle={{ padding: '10px' }}>
-                Welcome to Nuggft V1
+            <Text size="large" textStyle={{ padding: '10px' }}>
+                what is an nft?
             </Text>
             <Text
                 size="medium"
@@ -24,31 +25,49 @@ const WhatIsAnNFT: NuggBookPage = ({ setPage }) => {
             >
                 a decentralized art project on ethereum
             </Text>
-            <Button
-                label="next"
-                buttonStyle={{
-                    background: lib.colors.gradient,
-                    color: 'white',
-                    borderRadius: lib.layout.borderRadius.large,
-                    marginBottom: '.8rem',
-                    backgroundColor: lib.colors.white,
-                    // width: '5rem',
-                }}
-                onClick={() => setPage(Page.TableOfContents)}
-            />
 
-            {/* <Button
-                buttonStyle={{
-                    background: lib.colors.gradient2,
-                    color: 'white',
-                    borderRadius: lib.layout.borderRadius.large,
-                    marginBottom: '.4rem',
-                    backgroundColor: lib.colors.white,
-                    width: '13rem',
-                }}
-                label="give me the rundown"
-                onClick={() => setPage(Page.Welcome)}
-            /> */}
+            <div>
+                <Button
+                    label="next"
+                    buttonStyle={{
+                        background: lib.colors.gradient,
+                        color: 'white',
+                        borderRadius: lib.layout.borderRadius.large,
+                        marginBottom: '.8rem',
+                        backgroundColor: lib.colors.white,
+                        alignItems: 'center',
+                    }}
+                    rightIcon={
+                        <IoIosArrowDroprightCircle
+                            color="white"
+                            style={{ marginLeft: '.3rem' }}
+                            size={20}
+                        />
+                    }
+                    onClick={() => setPage(Page.TableOfContents)}
+                />
+
+                <Button
+                    buttonStyle={{
+                        background: lib.colors.gradient2,
+                        color: 'white',
+                        borderRadius: lib.layout.borderRadius.large,
+                        marginBottom: '.4rem',
+                        backgroundColor: lib.colors.white,
+                        // width: '13rem',
+                        alignItems: 'center',
+                    }}
+                    label="back"
+                    leftIcon={
+                        <IoIosArrowDropleftCircle
+                            color="white"
+                            style={{ marginRight: '.3rem' }}
+                            size={20}
+                        />
+                    }
+                    onClick={() => setPage(Page.TableOfContents)}
+                />
+            </div>
         </div>
     );
 };

@@ -96,33 +96,28 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
 
     const style: CSSPropertiesAnimated = useAnimateOverlayBackdrop(book.page !== Page.Close);
 
-    const [tabFadeTransition] = useTransition(
-        book,
-        {
-            initial: {
-                opacity: 0,
-                height: 0,
-                zIndex: 0,
-                left: 0,
-            },
-
-            from: (page) => ({
-                opacity: 0,
-                height: 0,
-                zIndex: 0,
-                left: page.page === Page.TableOfContents ? -1000 : 1000,
-            }),
-            enter: { opacity: 1, left: 0, right: 0 },
-            leave: (page) => ({
-                opacity: 0,
-                height: 0,
-                zIndex: 0,
-                left: page.page === Page.TableOfContents ? -1000 : 1000,
-            }),
-            config: config.stiff,
+    const tabFadeTransition = useTransition(book, {
+        initial: {
+            opacity: 0,
+            height: 0,
+            zIndex: 0,
+            left: 0,
         },
-        [book],
-    );
+        from: (page) => ({
+            opacity: 0,
+            height: 0,
+            zIndex: 0,
+            left: page.page === Page.TableOfContents ? -1000 : 1000,
+        }),
+        enter: { opacity: 1, left: 0, right: 0 },
+        leave: (page) => ({
+            opacity: 0,
+            height: 0,
+            zIndex: 0,
+            left: page.page === Page.TableOfContents ? -1000 : 1000,
+        }),
+        config: config.stiff,
+    });
 
     const node = React.useRef<HTMLDivElement>(null);
 

@@ -103,23 +103,55 @@ type ListItemDescription = {
 };
 
 const TableOfContents: NuggBookPage = ({ setPage, visits, clear }) => {
-    const defi: ListItemDescription[] = [
+    const rundown: ListItemDescription[] = [
         {
-            header: 'what is defi',
+            header: 'who makes money off nuggft?',
             page: Page.WhatIsDefi,
         },
         {
-            header: 'what is a wallet',
+            header: 'where are the images stored?',
             page: Page.WhatIsAWallet,
         },
     ];
 
-    const nft: ListItemDescription[] = [
+    const weeds: ListItemDescription[] = [
         {
-            header: 'what is an nft',
-            page: Page.WhatIsAnNFT,
+            header: 'what are dynamic items?',
+            page: Page.WhatIsDefi,
+        },
+        {
+            header: 'where are the images stored?',
+            page: Page.WhatIsAWallet,
         },
     ];
+
+    const wut: ListItemDescription[] = [
+        {
+            header: 'what are dynamic items?',
+            page: Page.WhatIsDefi,
+        },
+        {
+            header: 'where are the images stored?',
+            page: Page.WhatIsAWallet,
+        },
+    ];
+    // const defi: ListItemDescription[] = [
+    //     {
+    //         header: 'what is defi',
+    //         page: Page.WhatIsDefi,
+    //     },
+    //     {
+    //         header: 'what is a wallet',
+    //         page: Page.WhatIsAWallet,
+    //     },
+    // ];
+
+    // const nft: ListItemDescription[] = [
+    //     {
+    //         header: 'what is an nft',
+    //         page: Page.WhatIsAnNFT,
+    //     },
+    // ];
 
     return (
         <div
@@ -131,14 +163,21 @@ const TableOfContents: NuggBookPage = ({ setPage, visits, clear }) => {
             }}
         >
             <Text size="larger" textStyle={{ padding: '10px' }}>
-                Welcome to Nuggft V1
+                welcome to nuggft
             </Text>
 
-            <ListItemGroup header="the rundown" items={defi} setPage={setPage} visits={visits} />
+            <ListItemGroup header="the rundown" items={rundown} setPage={setPage} visits={visits} />
 
-            <ListItemGroup header="intro to defi" items={defi} setPage={setPage} visits={visits} />
+            {/* <ListItemGroup header="intro to defi" items={defi} setPage={setPage} visits={visits} /> */}
 
-            <ListItemGroup header="intro to nfts" items={nft} setPage={setPage} visits={visits} />
+            <ListItemGroup
+                header="into the weeds"
+                items={weeds}
+                setPage={setPage}
+                visits={visits}
+            />
+
+            <ListItemGroup header="lol wut" items={wut} setPage={setPage} visits={visits} />
 
             {__DEV__ && (
                 <Button
