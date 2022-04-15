@@ -7,25 +7,9 @@ import { Page } from '@src/interfaces/nuggbook';
 const store = create(
     combine(
         {
-            page: Page.Start,
+            page: Page.Close,
         },
         (set) => {
-            const openNuggBookStart = () => {
-                set(() => {
-                    return {
-                        page: Page.Start,
-                    };
-                });
-            };
-
-            const openNuggBookMain = () => {
-                set(() => {
-                    return {
-                        page: Page.Welcome,
-                    };
-                });
-            };
-
             const closeNuggBook = () => {
                 set(() => {
                     return {
@@ -34,7 +18,7 @@ const store = create(
                 });
             };
 
-            const setNuggBookPage = (page: Page) => {
+            const openNuggBook = (page: Page) => {
                 set(() => {
                     return {
                         page,
@@ -42,7 +26,7 @@ const store = create(
                 });
             };
 
-            return { openNuggBookMain, closeNuggBook, openNuggBookStart, setNuggBookPage };
+            return { closeNuggBook, openNuggBook };
         },
     ),
 );
@@ -51,9 +35,7 @@ export type NuggBookState = ReturnType<typeof store['getState']>;
 
 export default {
     useNuggBookPage: () => store((state) => state.page),
-    useOpenNuggBookMain: () => store((state) => state.openNuggBookMain),
-    useOpenNuggBookStart: () => store((state) => state.openNuggBookStart),
-    useSetNuggBookPage: () => store((state) => state.setNuggBookPage),
+    useOpenNuggBook: () => store((state) => state.openNuggBook),
 
     useCloseNuggBook: () => store((state) => state.closeNuggBook),
     ...store,

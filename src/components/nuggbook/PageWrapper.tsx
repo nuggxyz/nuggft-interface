@@ -5,8 +5,13 @@ import client from '@src/client';
 import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import lib from '@src/lib';
 import { Page } from '@src/interfaces/nuggbook';
+import useOnClickOutside from '@src/hooks/useOnClickOutside';
 
-const Modal: FC<PropsWithChildren<{ top: number; close: () => void }>> = ({ top, children }) => {
+const Modal: FC<PropsWithChildren<{ top: number; close: () => void }>> = ({
+    top,
+    children,
+    close,
+}) => {
     const isOpen = client.nuggbook.useNuggBookPage();
 
     const [draggedTop, setDraggedTop] = React.useState<number>(top);
@@ -30,11 +35,17 @@ const Modal: FC<PropsWithChildren<{ top: number; close: () => void }>> = ({ top,
     const tabFadeTransition = useTransition(children, {
         from: {
             opacity: 0,
+            height: 0,
+            zIndex: 0,
         },
         enter: { opacity: 1 },
-        leave: { opacity: 0 },
+        leave: { opacity: 0, height: 0, zIndex: 0 },
         config: config.stiff,
     });
+
+    const node = React.useRef<HTMLDivElement>(null);
+
+    useOnClickOutside(node, close);
 
     return (
         <animated.div
@@ -49,6 +60,15 @@ const Modal: FC<PropsWithChildren<{ top: number; close: () => void }>> = ({ top,
             }}
         >
             <animated.div
+                ref={node}
+                draggable="true"
+                onDrag={(event) => {
+                    setDraggedTop(event.clientY);
+                    if (event.clientY > top + 200) close();
+                }}
+                onDragEnd={() => {
+                    setDraggedTop(top);
+                }}
                 style={{
                     ...containerStyle,
                     height: '2000px',
@@ -64,13 +84,6 @@ const Modal: FC<PropsWithChildren<{ top: number; close: () => void }>> = ({ top,
                 }}
             >
                 <div
-                    draggable="true"
-                    onDrag={(event) => {
-                        setDraggedTop(event.clientY);
-                    }}
-                    onDragEnd={() => {
-                        setDraggedTop(top);
-                    }}
                     style={{
                         margin: '.8rem',
                         background: lib.colors.grey,

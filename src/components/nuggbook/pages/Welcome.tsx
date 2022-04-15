@@ -3,9 +3,9 @@ import React from 'react';
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
 import Button from '@src/components/general/Buttons/Button/Button';
-import { NuggBookPage } from '@src/interfaces/nuggbook';
+import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
 
-const Start: NuggBookPage = ({ close }) => {
+const Start: NuggBookPage = ({ setPage }) => {
     return (
         <div
             style={{
@@ -25,7 +25,7 @@ const Start: NuggBookPage = ({ close }) => {
                 a decentralized art project on ethereum
             </Text>
             <Button
-                label="my name is danny7even and i am a biiiiiiiiiiiitttch"
+                label="next"
                 buttonStyle={{
                     background: lib.colors.gradient,
                     color: 'white',
@@ -34,7 +34,7 @@ const Start: NuggBookPage = ({ close }) => {
                     backgroundColor: lib.colors.white,
                     // width: '5rem',
                 }}
-                onClick={close}
+                onClick={() => setPage(Page.TableOfContents)}
             />
 
             {/* <Button

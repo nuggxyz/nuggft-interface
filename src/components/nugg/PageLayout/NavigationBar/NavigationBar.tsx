@@ -14,6 +14,7 @@ import useBlur from '@src/hooks/useBlur';
 import useDimentions from '@src/client/hooks/useDimentions';
 import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
 import client from '@src/client';
+import { Page } from '@src/interfaces/nuggbook';
 
 import styles from './NavigationBar.styles';
 
@@ -35,7 +36,7 @@ const NavigationBar: FC<Props> = () => {
 
     const container = useBlur([]);
 
-    const openNuggBook = client.nuggbook.useOpenNuggBookStart();
+    const openNuggBook = client.nuggbook.useOpenNuggBook();
 
     return (
         <animated.div
@@ -109,7 +110,10 @@ const NavigationBar: FC<Props> = () => {
             >
                 {screenType === 'desktop' && <FloorPrice />}
                 {screenType === 'phone' && (
-                    <IconButton iconComponent={<Book />} onClick={openNuggBook} />
+                    <IconButton
+                        iconComponent={<Book />}
+                        onClick={() => openNuggBook(Page.TableOfContents)}
+                    />
                 )}
                 <AccountViewer />
             </div>

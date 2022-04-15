@@ -5,7 +5,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import Button from '@src/components/general/Buttons/Button/Button';
 import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
 
-const Start: NuggBookPage = ({ setPage, close }) => {
+const WhatIsAnNFT: NuggBookPage = ({ setPage }) => {
     return (
         <div
             style={{
@@ -15,23 +15,29 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                 flexDirection: 'column',
             }}
         >
-            <Text size="larger" textStyle={{ padding: '15px' }}>
-                New here?
+            <Text size="larger" textStyle={{ padding: '10px' }}>
+                Welcome to Nuggft V1
+            </Text>
+            <Text
+                size="medium"
+                textStyle={{ padding: '15px', fontFamily: lib.layout.font.sf.regular }}
+            >
+                a decentralized art project on ethereum
             </Text>
             <Button
-                label="nah"
+                label="next"
                 buttonStyle={{
                     background: lib.colors.gradient,
                     color: 'white',
                     borderRadius: lib.layout.borderRadius.large,
                     marginBottom: '.8rem',
                     backgroundColor: lib.colors.white,
-                    width: '5rem',
+                    // width: '5rem',
                 }}
-                onClick={() => close()}
+                onClick={() => setPage(Page.TableOfContents)}
             />
 
-            <Button
+            {/* <Button
                 buttonStyle={{
                     background: lib.colors.gradient2,
                     color: 'white',
@@ -42,9 +48,9 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                 }}
                 label="give me the rundown"
                 onClick={() => setPage(Page.Welcome)}
-            />
+            /> */}
         </div>
     );
 };
 
-export default Start;
+export default WhatIsAnNFT;
