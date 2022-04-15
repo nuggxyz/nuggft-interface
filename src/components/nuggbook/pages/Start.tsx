@@ -19,7 +19,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                 New here?
             </Text>
             <Button
-                label="nope"
+                label="nah"
                 buttonStyle={{
                     background: lib.colors.gradient,
                     color: 'white',
