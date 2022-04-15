@@ -62,7 +62,11 @@ const Modal: FC<PropsWithChildren<{ top: number; close: () => void }>> = ({
             <animated.div
                 ref={node}
                 draggable="true"
+                onDragStart={(event) => {
+                    event.dataTransfer.setData('text/plain', 'draggable');
+                }}
                 onDrag={(event) => {
+                    event.preventDefault();
                     setDraggedTop(event.clientY);
                     if (event.clientY > top + 200) close();
                 }}
