@@ -25,7 +25,7 @@ const ListItem = ({
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 width: '100%',
-                padding: '1rem',
+                padding: '.7rem',
             }}
             onClick={onClick}
             rightIcon={
@@ -41,6 +41,8 @@ const ListItem = ({
                         <div
                             style={{
                                 marginRight: '.5rem',
+                                alignItems: 'center',
+                                display: 'flex',
                             }}
                         >
                             {visited ? (
@@ -50,7 +52,11 @@ const ListItem = ({
                             )}
                         </div>
 
-                        <Text>{text}</Text>
+                        <Text
+                            textStyle={{ fontFamily: lib.layout.font.sf.regular, fontSize: '20px' }}
+                        >
+                            {text}
+                        </Text>
                     </div>
                     <IoIosArrowForward color={lib.colors.darkerGray} />
                 </>
@@ -77,6 +83,7 @@ const ListItemGroup = ({
                 flexDirection: 'column',
                 alignItems: 'start',
                 width: '100%',
+                marginTop: '1rem',
             }}
         >
             <Text size="large">{header}</Text>
@@ -127,14 +134,17 @@ const TableOfContents: NuggBookPage = ({ setPage, visits, clear }) => {
                 Welcome to Nuggft V1
             </Text>
 
-            <ListItemGroup header="New to DeFi" items={defi} setPage={setPage} visits={visits} />
+            <ListItemGroup header="the rundown" items={defi} setPage={setPage} visits={visits} />
 
-            <ListItemGroup header="New to NFTs" items={nft} setPage={setPage} visits={visits} />
+            <ListItemGroup header="intro to defi" items={defi} setPage={setPage} visits={visits} />
+
+            <ListItemGroup header="intro to nfts" items={nft} setPage={setPage} visits={visits} />
 
             {__DEV__ && (
                 <Button
                     label="[DEV] clear local storage"
                     buttonStyle={{
+                        marginTop: '20px',
                         background: lib.colors.red,
                         color: lib.colors.white,
                     }}
@@ -143,19 +153,6 @@ const TableOfContents: NuggBookPage = ({ setPage, visits, clear }) => {
                     }}
                 />
             )}
-
-            {/* <Button
-                buttonStyle={{
-                    background: lib.colors.gradient2,
-                    color: 'white',
-                    borderRadius: lib.layout.borderRadius.large,
-                    marginBottom: '.4rem',
-                    backgroundColor: lib.colors.white,
-                    width: '13rem',
-                }}
-                label="give me the rundown"
-                onClick={() => setPage(Page.Welcome)}
-            /> */}
         </div>
     );
 };
