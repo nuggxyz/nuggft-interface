@@ -116,6 +116,7 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
             zIndex: 0,
             left: page.page === Page.TableOfContents ? -1000 : 1000,
         }),
+        keys: (item) => `tabFadeTransition${item.page}`,
         config: config.stiff,
     });
 
