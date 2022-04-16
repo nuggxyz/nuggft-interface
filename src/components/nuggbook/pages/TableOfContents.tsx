@@ -105,11 +105,19 @@ type ListItemDescription = {
 const TableOfContents: NuggBookPage = ({ setPage, visits, clear }) => {
     const rundown: ListItemDescription[] = [
         {
-            header: 'who makes money off nuggft?',
+            header: 'who makes the money?',
+            page: Page.WhatIsDefi,
+        },
+        {
+            header: 'who contributed?',
             page: Page.WhatIsDefi,
         },
         {
             header: 'where are the images stored?',
+            page: Page.WhatIsAWallet,
+        },
+        {
+            header: 'are nuggs tradeable?',
             page: Page.WhatIsAWallet,
         },
     ];
@@ -127,12 +135,16 @@ const TableOfContents: NuggBookPage = ({ setPage, visits, clear }) => {
 
     const wut: ListItemDescription[] = [
         {
-            header: 'what are dynamic items?',
+            header: 'what is a wallet?',
             page: Page.WhatIsDefi,
         },
         {
-            header: 'where are the images stored?',
-            page: Page.WhatIsAWallet,
+            header: 'what is an nft?',
+            page: Page.WhatIsAnNFT,
+        },
+        {
+            header: 'what is defi?',
+            page: Page.WhatIsDefi,
         },
     ];
     // const defi: ListItemDescription[] = [

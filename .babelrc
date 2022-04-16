@@ -25,7 +25,14 @@
         ],
         ["import-directory"],
         ["macros"],
-        ["babel-plugin-dev-expression"]
+        ["babel-plugin-dev-expression"],
+        [
+            "@babel/transform-runtime",
+            {
+                "regenerator": true
+            }
+        ],
+        ["syntax-dynamic-import"]
     ],
     "presets": [
         [
@@ -34,7 +41,12 @@
                 "allowDeclareFields": true
             }
         ],
-        ["@babel/preset-env"],
+        ["@babel/preset-env", { "useBuiltIns": false }],
         ["@babel/preset-react"]
-    ]
+    ],
+    "env": {
+        "test": {
+            "plugins": ["dynamic-import-node"]
+        }
+    }
 }

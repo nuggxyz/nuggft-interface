@@ -18,8 +18,9 @@
         "paths": {
             "@src/*": ["src/*"]
         },
+        "types": ["node", "jest"],
         "strict": true
     },
-    "include": ["src", "archive/wallet", "archive/transaction"],
+    "include": ["src"],
     "exclude": ["node_modules"]
 }
