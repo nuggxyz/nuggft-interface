@@ -25,7 +25,8 @@
         ],
         ["import-directory"],
         ["macros"],
-        ["babel-plugin-dev-expression"]
+        ["babel-plugin-dev-expression"],
+        ["transform-class-properties"]
     ],
     "presets": [
         [
