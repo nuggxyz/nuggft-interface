@@ -299,8 +299,8 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
                                 }}
                             >
                                 <TheRing
-                                    circleWidth={1050}
-                                    strokeWidth={14}
+                                    circleWidth={1000}
+                                    strokeWidth={10}
                                     disableClick
                                     manualTokenId={tokenId}
                                     disableHover
