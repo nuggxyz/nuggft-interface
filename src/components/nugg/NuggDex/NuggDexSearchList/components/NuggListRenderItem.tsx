@@ -55,7 +55,13 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
                             value={item.eth.number}
                             stopAnimation
                         />
-                        {item.over && item.leader && <Label text={shortenAddress(item.leader)} />}
+                        {item.over && item.leader && (
+                            <Label
+                                text={
+                                    item.type === 'nugg' ? shortenAddress(item.leader) : item.leader
+                                }
+                            />
+                        )}
                     </>
                 )}
             </div>
