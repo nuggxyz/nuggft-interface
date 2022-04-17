@@ -22,7 +22,7 @@ const SwapCard = ({
             from: { x: 0 },
             x: state ? 1 : 0,
             reset: true,
-            config: { duration: 500 },
+            config: { duration: 200 },
         },
         [state],
     );
@@ -47,18 +47,22 @@ const SwapCard = ({
                 alignItems: 'center',
                 position: 'relative',
             }}
-            onTouchStart={() => {
+            onClickCapture={() => {
                 toggle(true);
             }}
-            onTouchEnd={() => {
-                if (tokenId) {
-                    startTransition(() => {
-                        x.reset();
-                        gotoViewingNugg(tokenId || '');
-                    });
-                }
-            }}
-            onClick={() => {
+            // onTouchEnd={(event) => {
+            //     event.stopPropagation();
+            //     if (tokenId) {
+            //         startTransition(() => {
+            //             x.reset();
+            //             gotoViewingNugg(tokenId || '');
+            //         });
+            //     }
+            // }}
+            onClick={(event) => {
+                x.reset();
+
+                event.stopPropagation();
                 toggle(true);
                 if (tokenId) {
                     startTransition(() => {

@@ -14,7 +14,7 @@ const styles = NLStyleSheetCreator({
         alignItems: 'center',
         background: 'transparent',
         // background: lib.colors.transparentDarkGrey2,
-        backdropFilter: 'blur(10px) brightness(10)',
+        backdropFilter: 'blur(10px)',
         // @danny7even this seemed to cause problems with issue #67 - but it didnt solve any
         WebkitBackdropFilter: 'blur(10px)',
         overflow: 'hidden',
@@ -23,12 +23,13 @@ const styles = NLStyleSheetCreator({
     mobile: {},
 });
 
-export default (isOpen: boolean, style?: CSSProperties) => {
+export default (isOpen: boolean, style?: CSSProperties, delay?: number) => {
     const { screen: screenType } = useDimentions();
     const wrapperStyle: PickAnimated<CSSProperties> = useSpring({
         ...styles.wrapper,
         opacity: isOpen ? 1 : 0,
         pointerEvents: isOpen ? 'auto' : 'none',
+        delay,
         ...(screenType === 'phone'
             ? {
                   justifyContent: 'center',

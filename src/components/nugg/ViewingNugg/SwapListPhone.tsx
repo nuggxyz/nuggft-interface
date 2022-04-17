@@ -252,6 +252,7 @@ const SwapItem: FunctionComponent<
                     >
                         {item.tryout.swaps.map((x, i) => (
                             <div
+                                key={`${i}-swaplist`}
                                 style={{
                                     display: 'flex',
                                     flexDirection: 'row',

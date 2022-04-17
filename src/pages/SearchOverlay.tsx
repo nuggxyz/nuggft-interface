@@ -1,8 +1,7 @@
 import { animated } from '@react-spring/web';
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
-import MobileViewOverlay from '@src/pages/mobile/MobileViewOverlay';
 import NuggDexSearchList from '@src/components/nugg/NuggDex/NuggDexSearchList/NuggDexSearchList';
 import useBlur from '@src/hooks/useBlur';
 import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
@@ -42,21 +41,21 @@ const styles = NLStyleSheetCreator({
 });
 
 const SearchOverlay: FunctionComponent<Props> = () => {
-    // const overlay = useOverlayRouteStyle();
-
     const { screen: screenType } = useDimentions();
 
     const navigate = useNavigate();
     const lastSwap = client.live.lastSwap.tokenId();
 
-    const paramMatch = useMatch(`/view/${lib.constants.VIEWING_PREFIX}/*`);
     const visible = useMatch('/view/*');
 
     const blur = useBlur(['/view/*']);
 
-    const showMobileOverlay = useMemo(() => {
-        return screenType === 'phone' && !!paramMatch;
-    }, [paramMatch, screenType]);
+    const paramMatch = useMatch(`/view/${lib.constants.VIEWING_PREFIX}/*`);
+    const { isPhone } = useDimentions();
+
+    const showMobileOverlay = React.useMemo(() => {
+        return isPhone && !!paramMatch;
+    }, [paramMatch, isPhone]);
 
     const overlay = useOverlayRouteStyleWithOverride(showMobileOverlay);
 
@@ -89,7 +88,6 @@ const SearchOverlay: FunctionComponent<Props> = () => {
                     <NuggDexSearchList />
                 </div>
             </animated.div>
-            {showMobileOverlay && <MobileViewOverlay />}
         </>
     ) : (
         <animated.div

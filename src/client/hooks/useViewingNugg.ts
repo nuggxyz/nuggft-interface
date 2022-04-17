@@ -1,8 +1,9 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useMatch } from 'react-router-dom';
 
 import { TokenId } from '@src/client/router';
 import lib from '@src/lib';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 const PREFIX = lib.constants.VIEWING_PREFIX;
 
@@ -16,15 +17,13 @@ export default () => {
         [navigate],
     );
 
-    const path = useParams() as unknown as { '*': `${typeof PREFIX}/${string}` };
+    const tokenId = useMatch(`/view/id/:yo`);
 
-    const safeTokenId = React.useMemo(() => {
-        if (path['*']?.startsWith(`${PREFIX}/`)) {
-            return path['*'].replace(`${PREFIX}/`, '');
-        }
+    const { isPhone } = useDimentions();
 
-        return undefined;
-    }, [path]);
+    const showMobileViewOverlay = React.useMemo(() => {
+        return !!tokenId?.params.yo && isPhone;
+    }, [tokenId, isPhone]);
 
-    return { gotoViewingNugg, safeTokenId };
+    return { gotoViewingNugg, safeTokenId: tokenId?.params.yo, showMobileViewOverlay };
 };

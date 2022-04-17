@@ -383,8 +383,13 @@ export const ItemListPhone: FunctionComponent<{ tokenId: TokenId }> = ({ tokenId
         >
             {[...token.items]
                 .sort((a, b) => (a.feature < b.feature ? -1 : 1))
-                .map((x) => (
-                    <ItemPhone item={x} isOwner={token.owner === address} nuggId={tokenId} />
+                .map((x, i) => (
+                    <ItemPhone
+                        item={x}
+                        isOwner={token.owner === address}
+                        nuggId={tokenId}
+                        key={`${token.id}-${i}`}
+                    />
                 ))}
         </div>
     );

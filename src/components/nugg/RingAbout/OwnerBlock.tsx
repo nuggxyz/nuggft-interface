@@ -183,6 +183,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: string }) => {
                             circleWidth={800}
                             manualTokenId={tokenId}
                             disableHover
+                            disableClick
                             tokenStyle={{ width: '200px', height: '200px' }}
                         />
                     </div>

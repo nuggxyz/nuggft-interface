@@ -1,18 +1,38 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { FC, PropsWithChildren } from 'react';
 import { animated, config, useSpring } from '@react-spring/web';
 import { useNavigate } from 'react-router-dom';
 
 import client from '@src/client';
 import lib from '@src/lib';
-import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import ViewingNuggPhone from '@src/components/nugg/ViewingNugg/ViewingNuggPhone';
 import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
+import Button from '@src/components/general/Buttons/Button/Button';
+import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
 const TOP = 0;
 const HIDDEN = 1000;
 
-const MobileViewScreen: FC<PropsWithChildren<{ onClose?: () => void }>> = ({ onClose }) => {
-    const close = client.viewscreen.useCloseViewScreen();
+const MobileViewScreenController = () => {
+    const openViewScreen = client.viewscreen.useOpenViewScreen();
+    const closeViewScreen = client.viewscreen.useCloseViewScreen();
+
+    const { safeTokenId: tokenid } = useViewingNugg();
+
+    const navigate = useNavigate();
+
+    React.useEffect(() => {
+        if (tokenid) openViewScreen(tokenid);
+        return () => {
+            closeViewScreen();
+        };
+    }, [tokenid, openViewScreen, closeViewScreen, navigate]);
+
+    return <></>;
+};
+
+const MobileViewScreen: FC<PropsWithChildren<{ onClose?: () => void }>> = () => {
+    // const close = client.viewscreen.useCloseViewScreen();
     const isopen = client.viewscreen.useViewScreenOpen();
 
     const [, startTransiton] = React.useTransition();
@@ -23,15 +43,6 @@ const MobileViewScreen: FC<PropsWithChildren<{ onClose?: () => void }>> = ({ onC
 
     const navigate = useNavigate();
 
-    const handleClose = React.useCallback(() => {
-        if (isopen) {
-            console.log('h554');
-            if (onClose) onClose();
-            navigate(-1);
-            startTransiton(close);
-        }
-    }, [isopen, close, startTransiton, onClose, navigate]);
-
     const [draggedTop, setDraggedTop] = React.useState<number>(top);
 
     const containerStyle = useSpring({
@@ -41,79 +52,109 @@ const MobileViewScreen: FC<PropsWithChildren<{ onClose?: () => void }>> = ({ onC
         to: {
             top: draggedTop,
         },
-        config: config.gentle,
+        delay: 200,
+        config: config.default,
     });
 
     React.useEffect(() => {
         setDraggedTop(top);
     }, [top]);
 
-    const style = useAnimateOverlayBackdrop(isopen);
+    const style = useAnimateOverlayBackdrop(isopen, undefined, 400);
 
     const node = React.useRef<HTMLDivElement>(null);
 
-    useOnClickOutside(node, handleClose);
+    const { showMobileViewOverlay } = useViewingNugg();
 
     return (
-        <animated.div
-            style={{
-                ...style,
-                height: '100%',
-                width: '100%',
-                justifyContent: 'flex-end',
-                display: 'flex',
-                flexDirection: 'column',
-                zIndex: 100000,
-            }}
-        >
+        <>
             <animated.div
-                ref={node}
-                draggable="true"
-                onDragStart={(event) => {
-                    event.dataTransfer.setData('text/plain', 'draggable');
-                }}
-                onDrag={(event) => {
-                    event.preventDefault();
-                    setDraggedTop(event.clientY);
-                    if (event.clientY > top + 300) handleClose();
-                }}
-                onDragEnd={() => {
-                    setDraggedTop(top);
-                }}
                 style={{
-                    ...containerStyle,
+                    ...style,
                     height: '100%',
                     width: '100%',
-                    // boxShadow: '0 6px 10px rgba(102, 102, 102,1)',
-                    // background: lib.colors.white,
-                    borderTopLeftRadius: lib.layout.borderRadius.largish,
-                    borderTopRightRadius: lib.layout.borderRadius.largish,
-                    position: 'absolute',
-                    justifyContent: 'flex-start',
-                    alignItems: 'center',
+                    justifyContent: 'flex-end',
                     display: 'flex',
                     flexDirection: 'column',
-                    background: 'transparent',
-                    // background: lib.colors.transparentDarkGrey2,
-                    backdropFilter: 'blur(10px) darkness(1.2)',
-                    // @danny7even this seemed to cause problems with issue #67 - but it didnt solve any
-                    WebkitBackdropFilter: 'blur(10px)',
+                    zIndex: 100000,
                 }}
             >
-                <div
-                    style={{
-                        margin: '.8rem',
-                        background: lib.colors.grey,
-                        height: '8px',
-                        width: '40px',
-                        borderRadius: 100,
-                        alignSelf: 'center',
-                        justifySelf: 'center',
+                <animated.div
+                    ref={node}
+                    draggable="true"
+                    onDragStart={(event) => {
+                        event.dataTransfer.setData('text/plain', 'draggable');
                     }}
-                />
-                <ViewingNuggPhone />
+                    // onTouchStart={(event) => {
+                    //     console.log('abc', event.detail);
+                    // }}
+                    // onTouchMove={(event) => {
+                    //     event.preventDefault();
+                    //     const check = event.touches.item(0);
+                    //     console.log(check);
+                    //     setDraggedTop(check.clientY);
+                    //     if (check.clientY > top + 300) handleClose();
+                    // }}
+                    // onTouchEnd={() => {
+                    //     setDraggedTop(top);
+                    // }}
+                    // onDrag={(event) => {
+                    //     event.preventDefault();
+                    //     setDraggedTop(event.clientY);
+                    //     if (event.clientY > top + 300) handleClose();
+                    // }}
+                    onDragEnd={() => {
+                        setDraggedTop(top);
+                    }}
+                    style={{
+                        ...containerStyle,
+                        height: '100%',
+                        width: '100%',
+                        // background: 'white',
+
+                        // boxShadow: '0 6px 10px rgba(80, 80, 80,1)',
+                        // background: lib.colors.white,
+                        borderTopLeftRadius: lib.layout.borderRadius.largish,
+                        borderTopRightRadius: lib.layout.borderRadius.largish,
+                        position: 'absolute',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        background: 'transparent',
+                        // background: lib.colors.transparentDarkGrey2,
+                        backdropFilter: 'blur(10px)',
+                        // @danny7even this seemed to cause problems with issue #67 - but it didnt solve any
+                        WebkitBackdropFilter: 'blur(10px)',
+                    }}
+                >
+                    <Button
+                        buttonStyle={{
+                            position: 'absolute',
+                            boxShadow: '0 3px 5px rgba(80, 80, 80,1)',
+                            bottom: 30,
+                            right: 30,
+                            zIndex: 100002,
+                            background: lib.colors.gradient3,
+                            color: 'white',
+                            scale: '1.5',
+                            borderRadius: lib.layout.borderRadius.large,
+                        }}
+                        label="back"
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            startTransiton(() => {
+                                navigate(-1);
+                            });
+                        }}
+                    />
+                    <ViewingNuggPhone />
+                </animated.div>
             </animated.div>
-        </animated.div>
+
+            {showMobileViewOverlay && <MobileViewScreenController />}
+        </>
     );
 };
 

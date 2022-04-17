@@ -155,7 +155,7 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                         }}
                         pattern={!pattern || pattern === '' ? undefined : pattern}
                         disabled={disabled}
-                        inputMode={inputMode}
+                        inputMode={restrictToNumbers ? 'numeric' : inputMode}
                         onFocus={onFocus}
                         onClick={onClick}
                         onKeyPress={

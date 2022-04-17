@@ -133,7 +133,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                             size="small"
                             containerStyles={{
                                 marginTop: '10px',
-                                opacity: opacityText,
+                                opacity: opacityText.get(),
                             }}
                             text={formatSearchFilter(type)}
                         />
@@ -142,7 +142,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                             size="small"
                             textStyle={{
                                 ...styles.nuggLinkCategoryTitle,
-                                opacity: opacityText,
+                                opacity: opacityText.get(),
                             }}
                         >
                             {formatSearchFilter(type)}

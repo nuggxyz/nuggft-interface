@@ -28,6 +28,7 @@ type Props = {
     manualTokenId?: TokenId;
     disableHover?: boolean;
     circleChildrenContainerStyle?: CSSProperties;
+    disableClick?: boolean;
 };
 
 const TheRing: FunctionComponent<Props> = ({
@@ -38,6 +39,7 @@ const TheRing: FunctionComponent<Props> = ({
     tokenStyle,
     manualTokenId,
     disableHover = false,
+    disableClick = false,
 }) => {
     const { screen: screenType } = useDimentions();
 
@@ -108,7 +110,12 @@ const TheRing: FunctionComponent<Props> = ({
                             />
                         )}
                         <AnimatedCard disable={disableHover}>
-                            <TokenViewer tokenId={tokenId} style={tokenStyle} showcase />
+                            <TokenViewer
+                                tokenId={tokenId}
+                                style={tokenStyle}
+                                showcase
+                                disableOnClick={disableClick}
+                            />
                         </AnimatedCard>
 
                         {showWarning !== 0 && (

@@ -15,7 +15,7 @@ const store = create(
                 set(() => {
                     return {
                         open: false,
-                        tokenId: undefined,
+                        // tokenId: undefined,
                     };
                 });
             };
