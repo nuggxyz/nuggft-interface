@@ -85,7 +85,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
             <animated.div
                 style={{
                     ...styles.nuggLinkPreviewContainer,
-                    ...(disablePreview && viewing === SearchView.Home ? { display: 'none' } : {}),
+                    ...(disablePreview && viewing !== type ? { display: 'none' } : {}),
                 }}
             >
                 {!disablePreview && (
@@ -131,12 +131,9 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                     {screenType === 'phone' ? (
                         <Label
                             size="small"
-                            textStyle={{
-                                // ...styles.nuggLinkCategoryTitle,
-                                opacity: opacityText,
-                            }}
                             containerStyles={{
                                 marginTop: '10px',
+                                opacity: opacityText,
                             }}
                             text={formatSearchFilter(type)}
                         />

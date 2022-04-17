@@ -28,6 +28,7 @@ export interface TextInputProps {
     className?: string;
     styleLabel?: CSSProperties;
     shouldFocus?: boolean;
+    triggerFocus?: boolean;
     onFocus?: () => void;
     onClick?: () => void;
     // https://stackoverflow.com/a/53803282
@@ -61,6 +62,7 @@ const TextInput: FunctionComponent<TextInputProps> = ({
     onFocus,
     onClick,
     restrictToNumbers,
+    triggerFocus,
     // restrictToNumbersWithDecimal,
 }) => {
     const inputStyle = {
@@ -96,6 +98,12 @@ const TextInput: FunctionComponent<TextInputProps> = ({
             ref.current.focus();
         }
     }, [ref, shouldFocus]);
+
+    useEffect(() => {
+        if (ref.current && triggerFocus) {
+            ref.current.focus();
+        }
+    }, [ref, triggerFocus]);
 
     return (
         <animated.div style={containerStyle}>

@@ -43,6 +43,7 @@ const NavigationBar: FC<Props> = () => {
             style={{
                 ...styles.navBarContainer,
                 ...container,
+                ...(isViewOpen && screenType === 'phone' ? { justifyContent: 'flex-end' } : {}),
                 ...(isHome
                     ? {
                           backdropFilter: 'blur(1px)',
@@ -60,7 +61,9 @@ const NavigationBar: FC<Props> = () => {
             <div
                 style={{
                     ...styles.searchBarContainer,
-                    ...(isViewOpen && screenType === 'phone' ? { width: '100%' } : {}),
+                    ...(isViewOpen && screenType === 'phone'
+                        ? { width: '100%', position: 'absolute' }
+                        : {}),
                 }}
             >
                 <NuggDexSearchBar />

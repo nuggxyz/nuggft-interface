@@ -267,6 +267,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                 height: '400px',
                                 width: '400px',
                                 position: 'relative',
+                                padding: '.5rem',
                             }}
                         >
                             <div style={{ position: 'fixed' }}>

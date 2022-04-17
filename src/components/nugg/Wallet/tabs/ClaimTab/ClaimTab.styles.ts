@@ -45,7 +45,7 @@ const styles = NLStyleSheetCreator({
         height: '30px',
         margin: '.6rem 0rem',
     },
-    renderItemToken: { width: '60px', height: '50px' },
+    renderItemToken: { width: '50px', height: '50px', padding: '.3rem' },
     textBlue: {
         color: lib.colors.nuggBlueText,
     },

@@ -12,6 +12,7 @@ import {
     useGetAllItemsSearchQuery,
     useGetAllNuggsSearchQuery,
 } from '@src/gql/types.generated';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -28,6 +29,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const viewing = client.live.searchFilter.viewing();
     const activeNuggs = client.live.activeSwaps();
     const potentialNuggs = client.live.potentialSwaps();
+    const { screen: screenType } = useDimentions();
 
     const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
     const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
@@ -168,8 +170,25 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const activeSearch = client.live.activeSearch();
 
     return (
-        <div style={styles.searchListContainer}>
+        <div
+            style={{
+                ...styles.searchListContainer,
+                ...(screenType === 'phone' && { width: '100%', height: '90%', marginTop: '2rem' }),
+            }}
+        >
             <animated.div style={animatedStyle}>
+                <NuggLink type={SearchView.Search} disablePreview>
+                    <NuggList
+                        interval={INFINITE_INTERVAL}
+                        animationToggle={viewing === SearchView.Search}
+                        style={styles.nuggListEnter}
+                        values={activeSearch}
+                        type={SearchView.Search}
+                        onScrollEnd={({ horribleMFingHack }) => {
+                            if (horribleMFingHack) horribleMFingHack();
+                        }}
+                    />
+                </NuggLink>
                 <NuggLink
                     type={SearchView.Recents}
                     previewNuggs={recentEverything}
@@ -202,19 +221,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         style={styles.nuggListEnter}
                         values={liveActiveEverything}
                         type={SearchView.OnSale}
-                    />
-                </NuggLink>
-
-                <NuggLink type={SearchView.Search} disablePreview>
-                    <NuggList
-                        interval={INFINITE_INTERVAL}
-                        animationToggle={viewing === SearchView.Search}
-                        style={styles.nuggListEnter}
-                        values={activeSearch}
-                        type={SearchView.Search}
-                        onScrollEnd={({ horribleMFingHack }) => {
-                            if (horribleMFingHack) horribleMFingHack();
-                        }}
                     />
                 </NuggLink>
 
