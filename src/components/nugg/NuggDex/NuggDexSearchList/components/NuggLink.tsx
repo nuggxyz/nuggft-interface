@@ -49,7 +49,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
         height: toggled('100%', '45%'),
         width: toggled('100%', '45%'),
         zIndex: toggled(1, 0),
-        transform: toggled(`scale(1.17) translate(20px, 20px)`, `scale(1)  translate(0px, 0px)`),
+        transform: toggled(`scale(1.155) translate(0px, 15px)`, `scale(1)  translate(0px, 0px)`),
         delay: constants.ANIMATION_DELAY,
         // config: constants.ANIMATION_CONFIG,
     });
@@ -85,7 +85,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
             <animated.div
                 style={{
                     ...styles.nuggLinkPreviewContainer,
-                    ...(disablePreview && viewing === SearchView.Home ? { display: 'none' } : {}),
+                    ...(disablePreview && viewing !== type ? { display: 'none' } : {}),
                 }}
             >
                 {!disablePreview && (
@@ -131,12 +131,9 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                     {screenType === 'phone' ? (
                         <Label
                             size="small"
-                            textStyle={{
-                                // ...styles.nuggLinkCategoryTitle,
-                                opacity: opacityText,
-                            }}
                             containerStyles={{
                                 marginTop: '10px',
+                                opacity: opacityText,
                             }}
                             text={formatSearchFilter(type)}
                         />

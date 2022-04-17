@@ -30,7 +30,10 @@ const MyNuggRenderItem: FunctionComponent<
             }}
         >
             <div style={globalStyles.centered}>
-                <TokenViewer tokenId={item.tokenId || ''} style={globalStyles.listNugg} />
+                <TokenViewer
+                    tokenId={item.tokenId || ''}
+                    style={{ ...globalStyles.listNugg, padding: '.5rem' }}
+                />
 
                 <Text textStyle={styles.textRed}>Nugg {item.tokenId || ''}</Text>
             </div>

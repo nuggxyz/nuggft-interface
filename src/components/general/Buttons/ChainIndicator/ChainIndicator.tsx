@@ -70,8 +70,8 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
                                     style={{
                                         width: '37px',
                                         height: '37px',
-                                        marginTop: '0.2rem',
-                                        margin: '0rem .5rem 0rem 0rem',
+                                        marginRight: '.5rem',
+                                        padding: '.2rem',
                                     }}
                                     subscribe
                                 />

@@ -233,7 +233,12 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
                 style={styles.stickyList}
                 styleRight={styles.stickyListRight}
                 emptyText={t`This ${token.type} has never been sold`}
-                listEmptyStyle={{ color: lib.colors.white }}
+                listEmptyStyle={{
+                    color: lib.colors.white,
+                    display: 'flex',
+                    alignItems: 'center',
+                    height: '100%',
+                }}
             />
         </div>
     ) : null;

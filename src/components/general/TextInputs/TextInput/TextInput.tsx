@@ -28,7 +28,9 @@ export interface TextInputProps {
     className?: string;
     styleLabel?: CSSProperties;
     shouldFocus?: boolean;
+    triggerFocus?: boolean;
     onFocus?: () => void;
+    onClick?: () => void;
     // https://stackoverflow.com/a/53803282
     restrictToNumbers?: boolean;
     // restrictToNumbersWithDecimal?: boolean;
@@ -58,7 +60,9 @@ const TextInput: FunctionComponent<TextInputProps> = ({
     styleLabel,
     shouldFocus,
     onFocus,
+    onClick,
     restrictToNumbers,
+    triggerFocus,
     // restrictToNumbersWithDecimal,
 }) => {
     const inputStyle = {
@@ -95,6 +99,12 @@ const TextInput: FunctionComponent<TextInputProps> = ({
         }
     }, [ref, shouldFocus]);
 
+    useEffect(() => {
+        if (ref.current && triggerFocus) {
+            ref.current.focus();
+        }
+    }, [ref, triggerFocus]);
+
     return (
         <animated.div style={containerStyle}>
             <div style={headingStyle}>
@@ -129,6 +139,7 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                         }}
                         disabled={disabled}
                         onFocus={onFocus}
+                        onClick={onClick}
                     />
                 ) : (
                     <input
@@ -146,6 +157,7 @@ const TextInput: FunctionComponent<TextInputProps> = ({
                         disabled={disabled}
                         inputMode={inputMode}
                         onFocus={onFocus}
+                        onClick={onClick}
                         onKeyPress={
                             restrictToNumbers
                                 ? (event) => {

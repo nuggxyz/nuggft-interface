@@ -55,7 +55,7 @@ const styles = NLStyleSheetCreator({
     },
     myNuggItemContainer: {
         display: 'flex',
-        padding: '.5rem 1rem',
+        padding: '.5rem 1rem .5rem .5rem',
         background: 'white',
         justifyContent: 'space-between',
         alignItems: 'center',

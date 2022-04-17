@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import { animated, PickAnimated } from '@react-spring/web';
 
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import lib from '@src/lib';
@@ -6,7 +7,7 @@ import lib from '@src/lib';
 type Props = {
     basic?: boolean;
     text: string;
-    containerStyles?: React.CSSProperties;
+    containerStyles?: PickAnimated<React.CSSProperties>;
     leftDotColor?: string;
 } & Partial<TextProps>;
 
@@ -18,7 +19,7 @@ const Label: FunctionComponent<Props> = ({
     ...props
 }) => {
     return (
-        <div
+        <animated.div
             style={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -56,7 +57,7 @@ const Label: FunctionComponent<Props> = ({
             >
                 {text}
             </Text>
-        </div>
+        </animated.div>
     );
 };
 

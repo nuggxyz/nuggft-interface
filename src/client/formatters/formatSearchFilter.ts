@@ -15,7 +15,7 @@ export default (value: SearchView): string => {
         case SearchView.OnSale:
             return t`On Sale`;
         default: {
-            return 'Magic Panda Pants';
+            return 'Search Results';
         }
     }
 };

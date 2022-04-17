@@ -159,7 +159,6 @@ Props<T, B, A>) => {
     );
     const [current] = useState(refData?.map((item) => item.title));
 
-    console.log(refData, listRef);
 
     return listRef ? (
         <animated.div
@@ -193,7 +192,7 @@ Props<T, B, A>) => {
             </div>
             <div
                 style={{
-                    // height: '100%',
+                    height: '100%',
                     // overflow: 'scroll',
                     ...styleRight,
                 }}

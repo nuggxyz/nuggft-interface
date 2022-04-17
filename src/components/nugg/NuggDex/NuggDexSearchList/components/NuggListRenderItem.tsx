@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
-import lib, { isUndefinedOrNullOrObjectEmpty, parseTokenId } from '@src/lib';
+import lib, { isUndefinedOrNullOrObjectEmpty, parseTokenId, shortenAddress } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
@@ -28,12 +28,20 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
                 style={{
                     height: '200px',
                     width: '200px',
+                    padding: '1rem',
                 }}
                 disableOnClick
                 // forceCache
                 // shouldLoad={pageLoaded}
             />
-            <div>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+            >
                 <Label
                     text={parseTokenId(item?.id, true)}
                     size="larger"
@@ -47,7 +55,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
                             value={item.eth.number}
                             stopAnimation
                         />
-                        {item.over && item.leader && <Label text={item.leader} />}
+                        {item.over && item.leader && <Label text={shortenAddress(item.leader)} />}
                     </>
                 )}
             </div>

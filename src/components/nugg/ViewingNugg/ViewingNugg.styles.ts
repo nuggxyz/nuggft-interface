@@ -143,7 +143,7 @@ const styles = NLStyleSheetCreator({
         overflow: 'scroll',
     },
     stickyList: {
-        // height: '100%',
+        height: '100%',
         width: '100%',
         overflow: 'hidden',
         // margin: '.4rem',
@@ -167,6 +167,7 @@ const styles = NLStyleSheetCreator({
     listItemSvg: {
         height: '100px',
         width: '100px',
+        padding: '.5rem',
         // background: 'red',
     },
     itemListItem: {
