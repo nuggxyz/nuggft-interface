@@ -48,22 +48,21 @@ export default ({
                 ...styles.buttonText,
             }}
             disabled={isDisabled}
-            onClick={() =>
-                screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                    ? navigate('/wallet')
-                    : token &&
-                      tokenId &&
-                      openModal({
-                          type: ModalEnum.Offer,
-                          tokenId,
-                          tokenType: token.type,
-                          token,
-                          nuggToBuyFrom:
-                              token.type === 'item'
-                                  ? sellingNuggId || token.activeSwap?.sellingNuggId
-                                  : undefined,
-                      })
-            }
+            onClick={() => {
+                if (screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address))
+                    navigate('/wallet');
+                else if (token && tokenId)
+                    openModal({
+                        type: ModalEnum.Offer,
+                        tokenId,
+                        tokenType: token.type,
+                        token,
+                        nuggToBuyFrom:
+                            token.type === 'item'
+                                ? sellingNuggId || token.activeSwap?.sellingNuggId
+                                : undefined,
+                    });
+            }}
             label={
                 !token
                     ? 'Loading...'

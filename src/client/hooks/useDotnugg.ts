@@ -123,13 +123,10 @@ export const useDotnuggSubscription = (
         return tokenId?.isItemId();
     }, [tokenId]);
 
-    const graph = client.live.graph();
-
     const inject = useDotnuggInjectToCache();
 
     const { data: nuggSrc } = useGetDotnuggNuggQuery({
-        client: graph,
-        pollInterval: 15000,
+        pollInterval: 5000,
         skip: !activate || isItem,
         fetchPolicy: 'network-only',
         variables: {
@@ -142,9 +139,11 @@ export const useDotnuggSubscription = (
     });
 
     const { data: itemSrc } = useGetDotnuggItemQuery({
-        client: graph,
         pollInterval: 15000,
         skip: !activate || !isItem,
+
+        fetchPolicy: 'network-only',
+
         variables: {
             tokenId: extractItemId(tokenId),
         },

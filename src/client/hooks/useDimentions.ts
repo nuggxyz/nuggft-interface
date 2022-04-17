@@ -13,5 +13,5 @@ export default () => {
             : ('phone' as const);
     }, [dim]);
 
-    return { screen, isPhone: screen === 'phone' };
+    return { screen, isPhone: screen === 'phone', ...dim };
 };
