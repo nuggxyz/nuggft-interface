@@ -13,6 +13,10 @@ import useViewingNugg from '@src/client/hooks/useViewingNugg';
 const TOP = 0;
 const HIDDEN = 1000;
 
+// this makes the MobileViewScreen behave like a regular component
+// MobileViewScreen is always rendered, just hidden and this triggers it
+
+// there are probably 1400000 better ways to do this, but we can fix that later, this works lol
 const MobileViewScreenController = () => {
     const openViewScreen = client.viewscreen.useOpenViewScreen();
     const closeViewScreen = client.viewscreen.useCloseViewScreen();

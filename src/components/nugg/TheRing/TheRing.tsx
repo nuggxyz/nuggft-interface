@@ -29,6 +29,7 @@ type Props = {
     disableHover?: boolean;
     circleChildrenContainerStyle?: CSSProperties;
     disableClick?: boolean;
+    strokeWidth?: number;
 };
 
 const TheRing: FunctionComponent<Props> = ({
@@ -40,6 +41,7 @@ const TheRing: FunctionComponent<Props> = ({
     manualTokenId,
     disableHover = false,
     disableClick = false,
+    strokeWidth,
 }) => {
     const { screen: screenType } = useDimentions();
 
@@ -95,7 +97,9 @@ const TheRing: FunctionComponent<Props> = ({
                     ...circleStyle,
                     flexDirection: 'column',
                 }}
-                strokeWidth={screenType === 'phone' ? 10 : screenType === 'tablet' ? 13 : 20}
+                strokeWidth={
+                    strokeWidth || (screenType === 'phone' ? 10 : screenType === 'tablet' ? 13 : 20)
+                }
             >
                 {tokenId && (
                     <>

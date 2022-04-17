@@ -10,7 +10,6 @@ const SwapView = () => {
     const activeItems = client.live.activeItems();
     const recentItems = client.live.recentItems();
     const epoch = client.live.epoch.id();
-    const lastswap = client.live.lastSwap.tokenId();
 
     const all = React.useMemo(() => {
         return [...activeNuggs, ...activeItems, ...recentItems, ...recentNuggs].sort((a, b) =>
@@ -28,7 +27,7 @@ const SwapView = () => {
                 },
                 curr,
             ) => {
-                if (epoch && curr.endingEpoch && curr.tokenId !== lastswap) {
+                if (epoch && curr.endingEpoch) {
                     if (curr.endingEpoch === epoch) {
                         prev.current.push(curr);
                     } else if (curr.endingEpoch === epoch + 1) {
@@ -41,7 +40,7 @@ const SwapView = () => {
             },
             { current: [], next: [], recent: [] },
         );
-    }, [all, epoch, lastswap]);
+    }, [all, epoch]);
 
     return (
         <div
@@ -58,8 +57,6 @@ const SwapView = () => {
             }}
         >
             <div style={{ marginTop: '80px' }} />
-
-            {/* {lastswap && <SwapCard tokenId={lastswap} />} */}
 
             {sortedAll.current.map((x) => (
                 <SwapCard tokenId={x.tokenId} key={`SwapCard-Current-${x.tokenId}`} />

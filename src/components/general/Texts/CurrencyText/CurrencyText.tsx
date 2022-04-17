@@ -21,6 +21,7 @@ interface BalanceProps extends PartialText {
     showUnit?: boolean;
     stopAnimation?: boolean;
     showIncrementAnimation?: boolean;
+    loadOnZero?: boolean;
 }
 
 const CurrencyText: React.FC<BalanceProps> = ({
@@ -34,6 +35,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
     showUnit = true,
     stopAnimation = false,
     showIncrementAnimation = false,
+    loadOnZero = false,
     // image,
     ...props
 }) => {
@@ -54,7 +56,10 @@ const CurrencyText: React.FC<BalanceProps> = ({
         {
             val: value,
             from: {
-                val: stopAnimation ? value : prevValue || value * 0.5,
+                val:
+                    stopAnimation || (loadOnZero && prevValue === 0)
+                        ? value
+                        : prevValue || value * 0.5,
             },
             config: config.molasses,
         },

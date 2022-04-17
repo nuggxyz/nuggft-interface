@@ -79,7 +79,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: string }) => {
     return (
         <>
             <div style={{ width: '100%', padding: '0 40px', marginBottom: '20px' }}>
-                <OfferButton tokenId={tokenId} />
+                <OfferButton tokenId={tokenId} inOverlay />
             </div>
             <div
                 style={{
@@ -98,12 +98,22 @@ const ActiveSwap = ({ tokenId }: { tokenId: string }) => {
                         }}
                     >
                         <CurrencyText
-                            textStyle={{ color: 'white', fontSize: '28px' }}
+                            textStyle={{
+                                color: 'white',
+                                fontSize: '28px',
+                                textShadow: lib.layout.boxShadow.dark,
+                            }}
                             image="eth"
                             value={leader?.eth?.number}
                             decimals={3}
                         />
-                        <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                        <Text
+                            textStyle={{
+                                fontSize: '13px',
+                                color: 'white',
+                                textShadow: lib.layout.boxShadow.dark,
+                            }}
+                        >
                             {`${leaderEns || leader?.user} is selling`}
                         </Text>
                     </div>
@@ -119,12 +129,22 @@ const ActiveSwap = ({ tokenId }: { tokenId: string }) => {
                         }}
                     >
                         <CurrencyText
-                            textStyle={{ color: 'white', fontSize: '28px' }}
+                            textStyle={{
+                                color: 'white',
+                                fontSize: '28px',
+                                textShadow: lib.layout.boxShadow.dark,
+                            }}
                             image="eth"
                             value={token.tryout.min.eth.number || 0}
                             decimals={3}
                         />
-                        <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                        <Text
+                            textStyle={{
+                                fontSize: '13px',
+                                color: 'white',
+                                textShadow: lib.layout.boxShadow.dark,
+                            }}
+                        >
                             {t`minimum price`}
                         </Text>
                     </div>
@@ -137,12 +157,22 @@ const ActiveSwap = ({ tokenId }: { tokenId: string }) => {
                         }}
                     >
                         <CurrencyText
-                            textStyle={{ color: 'white', fontSize: '28px' }}
+                            textStyle={{
+                                color: 'white',
+                                fontSize: '28px',
+                                textShadow: lib.layout.boxShadow.dark,
+                            }}
                             image="eth"
                             value={leader?.eth?.number || vfo?.number || 0}
                             decimals={0}
                         />
-                        <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                        <Text
+                            textStyle={{
+                                fontSize: '13px',
+                                color: 'white',
+                                textShadow: lib.layout.boxShadow.dark,
+                            }}
+                        >
                             {`${leaderEns || leader?.user} is leading`}
                         </Text>
                     </div>
@@ -154,14 +184,25 @@ const ActiveSwap = ({ tokenId }: { tokenId: string }) => {
                         flexDirection: 'column',
                     }}
                 >
-                    <Text textStyle={{ fontSize: '13px', color: 'white' }}>ending in about</Text>
-                    <Text textStyle={{ color: 'white', fontSize: '28px' }}>{`${minutes} ${plural(
-                        minutes,
-                        {
-                            1: 'minute',
-                            other: 'minutes',
-                        },
-                    )}`}</Text>
+                    <Text
+                        textStyle={{
+                            fontSize: '13px',
+                            color: 'white',
+                            textShadow: lib.layout.boxShadow.dark,
+                        }}
+                    >
+                        ending in about
+                    </Text>
+                    <Text
+                        textStyle={{
+                            color: 'white',
+                            fontSize: '28px',
+                            textShadow: lib.layout.boxShadow.dark,
+                        }}
+                    >{`${minutes} ${plural(minutes, {
+                        1: 'minute',
+                        other: 'minutes',
+                    })}`}</Text>
                 </div>
             </div>
             <div style={{ width: '100%', padding: '20px 10px ' }}>
@@ -211,6 +252,7 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
             >
                 <Text
                     textStyle={{
+                        textShadow: lib.layout.boxShadow.dark,
                         color: 'white',
                         padding: '1rem',
                         // background: darkmode
@@ -252,15 +294,17 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
                                     flexDirection: 'column',
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    marginBottom: '-20px',
-                                    marginTop: '-40px',
+                                    // marginBottom: '-10px',
+                                    marginTop: '-30px',
                                 }}
                             >
                                 <TheRing
-                                    circleWidth={1000}
+                                    circleWidth={1050}
+                                    strokeWidth={14}
+                                    disableClick
                                     manualTokenId={tokenId}
                                     disableHover
-                                    tokenStyle={{ width: '300px', height: '300px' }}
+                                    tokenStyle={{ width: '275px', height: '275px' }}
                                 />
                             </div>
                         ) : (
@@ -281,7 +325,13 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
                                 padding: '10px',
                             }}
                         >
-                            <Text size="larger" textStyle={{ color: 'white' }}>
+                            <Text
+                                size="larger"
+                                textStyle={{
+                                    color: 'white',
+                                    textShadow: lib.layout.boxShadow.dark,
+                                }}
+                            >
                                 Active Swap
                             </Text>
                         </div>
@@ -301,7 +351,13 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
                                 padding: '10px',
                             }}
                         >
-                            <Text size="larger" textStyle={{ color: 'white' }}>
+                            <Text
+                                size="larger"
+                                textStyle={{
+                                    color: 'white',
+                                    textShadow: lib.layout.boxShadow.dark,
+                                }}
+                            >
                                 Info
                             </Text>
                         </div>
@@ -320,7 +376,13 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
                                 padding: '10px',
                             }}
                         >
-                            <Text size="larger" textStyle={{ color: 'white' }}>
+                            <Text
+                                size="larger"
+                                textStyle={{
+                                    color: 'white',
+                                    textShadow: lib.layout.boxShadow.dark,
+                                }}
+                            >
                                 My Nugg
                             </Text>
                         </div>
@@ -338,7 +400,10 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
                         padding: '10px',
                     }}
                 >
-                    <Text size="larger" textStyle={{ color: 'white' }}>
+                    <Text
+                        size="larger"
+                        textStyle={{ color: 'white', textShadow: lib.layout.boxShadow.dark }}
+                    >
                         Items
                     </Text>
                 </div>
@@ -353,7 +418,10 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
                         padding: '10px',
                     }}
                 >
-                    <Text size="larger" textStyle={{ color: 'white' }}>
+                    <Text
+                        size="larger"
+                        textStyle={{ color: 'white', textShadow: lib.layout.boxShadow.dark }}
+                    >
                         Previous Swaps
                     </Text>
                 </div>
