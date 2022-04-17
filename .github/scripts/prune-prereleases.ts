@@ -1,4 +1,4 @@
-module.exports = async ({ github, context }) => {
+export default async ({ github, context }) => {
     console.log('Pruning old prereleases');
 
     const { data: releases } = await github.rest.repos.listReleases({

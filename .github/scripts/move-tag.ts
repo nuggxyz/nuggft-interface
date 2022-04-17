@@ -1,4 +1,4 @@
-module.exports = async ({ github, context }, tagName) => {
+export default async ({ github, context }, tagName) => {
     try {
         await github.rest.git.updateRef({
             owner: context.repo.owner,
