@@ -3,7 +3,7 @@ import { t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
-import { Lifecycle } from '@src/client/interfaces';
+import { Lifecycle, OfferData } from '@src/client/interfaces';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { EthInt } from '@src/classes/Fraction';
@@ -12,6 +12,7 @@ import Loader from '@src/components/general/Loader/Loader';
 import { Address } from '@src/classes/Address';
 import web3 from '@src/web3';
 import useLifecycle from '@src/client/hooks/useLifecycle';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './RingAbout.styles';
 
@@ -69,7 +70,20 @@ const BuntOfferText = ({ tokenId }: { tokenId: string }) => {
         }
         return undefined;
     }, [token, nuggft, tokenId, provider]);
-    return (
+
+    const offers = client.live.offers(tokenId);
+
+    const leader = React.useMemo(() => {
+        return offers.first() as unknown as OfferData;
+    }, [offers]);
+
+    const leaderEns = web3.hook.usePriorityAnyENSName(
+        token && token.type === 'item' ? 'nugg' : provider,
+        leader?.user || '',
+    );
+    const { isPhone } = useDimentions();
+
+    return !isPhone ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {vfo ? (
                 <CurrencyText textStyle={styles.title} value={vfo?.number || 0} stopAnimation />
@@ -93,6 +107,29 @@ const BuntOfferText = ({ tokenId }: { tokenId: string }) => {
                 }}
             >
                 starting offer
+            </Text>
+        </div>
+    ) : (
+        <div
+            style={{
+                alignItems: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                marginTop: '-40px',
+            }}
+        >
+            <CurrencyText
+                textStyle={{ color: 'white', fontSize: '28px' }}
+                image="eth"
+                value={leader?.eth?.number || vfo?.number || 0}
+                decimals={0}
+            />
+            <Text textStyle={{ fontSize: '13px', color: 'white', marginTop: 5 }}>
+                {`${
+                    leader?.eth?.number
+                        ? `${leaderEns || leader?.user} is leading`
+                        : 'starting price'
+                } | ${offers.length} offers`}
             </Text>
         </div>
     );

@@ -23,7 +23,6 @@ export default () => {
             return path['*'].replace(`${PREFIX}/`, '');
         }
 
-        // navigate('/');
         return undefined;
     }, [path]);
 

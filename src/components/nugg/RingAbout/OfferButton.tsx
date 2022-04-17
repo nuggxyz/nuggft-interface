@@ -16,11 +16,13 @@ import styles from './RingAbout.styles';
 export default ({
     tokenId,
     sellingNuggId,
+    inOverlay = false,
 }: {
     tokenId: TokenId | undefined;
     sellingNuggId?: NuggId;
+    inOverlay?: boolean;
 }) => {
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType, isPhone } = useDimentions();
     const address = web3.hook.usePriorityAccount();
     const token = client.live.token(tokenId);
 
@@ -39,10 +41,13 @@ export default ({
         );
     }, [token, lifecycle]);
 
-    return (
+    return !isPhone ? (
         <Button
             buttonStyle={{
                 ...styles.button,
+                ...(inOverlay && {
+                    width: undefined,
+                }),
             }}
             textStyle={{
                 ...styles.buttonText,
@@ -73,5 +78,11 @@ export default ({
                     : t`Place offer`
             }
         />
-    );
+    ) : null;
+
+    // (
+    //     <Text size="small" textStyle={{ color: lib.colors.transparentWhite }}>
+    //         Tap to view
+    //     </Text>
+    // );
 };

@@ -2,8 +2,7 @@ import React from 'react';
 
 import client from '@src/client';
 import { SwapData } from '@src/client/interfaces';
-import { TokenId } from '@src/client/router';
-import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
+import SwapCard from '@src/components/mobile/SwapCard';
 
 const SwapView = () => {
     const activeNuggs = client.live.activeSwaps();
@@ -44,13 +43,6 @@ const SwapView = () => {
         );
     }, [all, epoch, lastswap]);
 
-    // const reff = React.useRef(null);
-    // const reff2 = React.useRef(null);
-
-    // const abc = useScrollPosition(reff);
-
-    // console.log({ abc, reff2, reff });
-
     return (
         <div
             style={{
@@ -67,63 +59,15 @@ const SwapView = () => {
         >
             <div style={{ marginTop: '80px' }} />
 
-            <SwapCard tokenId={lastswap} />
-
-            {/* <Label
-                textStyle={{ fontSize: '20px', padding: '5px', color: 'white' }}
-                containerStyles={{
-                    height: '50px',
-                    margin: '30px',
-                    background: lib.colors.gradient3Transparent,
-                }}
-                text={t`Ending in about ${plural(minutes, {
-                    1: `${minutes} minute`,
-                    other: `${minutes} minutes`,
-                    0: 'less than 1 minute',
-                })}`}
-            /> */}
+            {/* {lastswap && <SwapCard tokenId={lastswap} />} */}
 
             {sortedAll.current.map((x) => (
                 <SwapCard tokenId={x.tokenId} key={`SwapCard-Current-${x.tokenId}`} />
             ))}
-            {/* <Label
-                textStyle={{ fontSize: '20px', padding: '5px', color: 'white' }}
-                containerStyles={{
-                    height: '50px',
-                    margin: '30px',
-                    background: lib.colors.gradient3Transparent,
-                }}
-                text={t`Coming up`}
-            /> */}
+
             {sortedAll.next.map((x) => (
                 <SwapCard tokenId={x.tokenId} key={`SwapCard-Next-${x.tokenId}`} />
             ))}
-        </div>
-    );
-};
-
-const SwapCard = ({
-    ref,
-    tokenId,
-}: // deselect,
-{
-    tokenId?: TokenId;
-    ref?: React.RefObject<HTMLDivElement>;
-}) => {
-    return (
-        <div
-            ref={ref || null}
-            style={{
-                width: '100%',
-                paddingBottom: '20px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                position: 'relative',
-            }}
-        >
-            <RingAbout manualTokenId={tokenId} />
         </div>
     );
 };

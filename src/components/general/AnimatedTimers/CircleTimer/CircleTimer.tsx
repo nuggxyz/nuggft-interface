@@ -24,6 +24,7 @@ type Props = {
     blocktime: number;
     staticColor: string;
     style?: CSSProperties;
+    childrenContainerStyle?: CSSProperties;
     width: number;
     strokeWidth?: number;
 };
@@ -40,6 +41,7 @@ const CircleTimer: FunctionComponent<Props> = ({
     style,
     width,
     strokeWidth = 20,
+    childrenContainerStyle,
 }) => {
     // blocktime;
     // const dimensions = AppState.select.dimensions();
@@ -107,8 +109,8 @@ const CircleTimer: FunctionComponent<Props> = ({
     }, [remaining, duration, staticColor]);
 
     return (
-        <div style={{ ...style, ...styles.container }}>
-            <div style={styles.childrenContainer}>{children}</div>
+        <div style={{ ...styles.container, ...style }}>
+            <div style={{ ...styles.childrenContainer, ...childrenContainerStyle }}>{children}</div>
             <svg
                 height="100%"
                 width="100%"

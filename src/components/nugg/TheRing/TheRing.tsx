@@ -27,11 +27,13 @@ type Props = {
     tokenStyle?: CSSProperties;
     manualTokenId?: TokenId;
     disableHover?: boolean;
+    circleChildrenContainerStyle?: CSSProperties;
 };
 
 const TheRing: FunctionComponent<Props> = ({
     containerStyle,
     circleStyle,
+    circleChildrenContainerStyle,
     circleWidth = 1600,
     tokenStyle,
     manualTokenId,
@@ -70,6 +72,7 @@ const TheRing: FunctionComponent<Props> = ({
                 remaining={blocksRemaining}
                 blocktime={constants.BLOCKTIME}
                 width={circleWidth}
+                childrenContainerStyle={circleChildrenContainerStyle}
                 staticColor={
                     token && lifecycle
                         ? lifecycle === Lifecycle.Stands

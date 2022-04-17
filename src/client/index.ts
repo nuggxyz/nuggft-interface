@@ -12,6 +12,7 @@ import { ListData, SearchView } from './interfaces';
 import modal from './modal';
 import toast from './toast';
 import nuggbook from './nuggbook';
+import viewscreen from './viewscreen';
 
 export default {
     ...core,
@@ -193,4 +194,5 @@ export default {
     modal,
     toast,
     nuggbook,
+    viewscreen,
 };

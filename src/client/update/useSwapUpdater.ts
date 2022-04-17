@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useMatch } from 'react-router-dom';
 
 import client from '@src/client';
 import useTokenQuery from '@src/client/hooks/useTokenQuery';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 /// goal here is to trigger a update on swap change
 export default () => {
@@ -17,9 +18,9 @@ export default () => {
     const epoch = client.live.epoch.id();
 
     const startup = useTokenQuery();
-
+    const { isPhone } = useDimentions();
     useEffect(() => {
-        if (epoch) {
+        if (epoch && !isPhone) {
             let goto = String(epoch);
             if (location.pathname === '/') {
                 navigate(`/swap/${goto}`);
@@ -31,7 +32,7 @@ export default () => {
                 void startup(goto);
             }
         }
-    }, [location.pathname, navigate, match, lastSwap, setLastSwap, epoch, startup]);
+    }, [location.pathname, navigate, match, lastSwap, setLastSwap, epoch, startup, isPhone]);
 
     return null;
 };

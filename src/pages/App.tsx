@@ -9,24 +9,18 @@ import client from '@src/client';
 import GlobalModal from '@src/components/modals/GlobalModal';
 import ToastContainer from '@src/components/general/Toast/ToastContainer';
 import NuggBook from '@src/components/nuggbook/NuggBook';
+import useDimentions from '@src/client/hooks/useDimentions';
+
+import MobileViewScreen from './mobile/MobileViewScreen';
 
 const MobileWalletView = React.lazy(() => import('@src/pages/mobile/MobileWalletView'));
 const HotRotateO = React.lazy(() => import('@src/pages/HotRotateO'));
 const SearchOverlay = React.lazy(() => import('@src/pages/SearchOverlay'));
 
 const Router = () => {
-    // const [loaded, setLoaded] = React.useState<boolean>(false);
-
-    // const [, start] = React.useTransition();
-
-    // React.useEffect(() => {
-    //     start(() => {
-    //         setLoaded(true);
-    //     });
-    // }, []);
+    const { isPhone } = useDimentions();
 
     const isPageLoaded = client.live.pageIsLoaded();
-
     const epoch = client.live.epoch.id();
 
     const route = useRoutes([
@@ -38,7 +32,8 @@ const Router = () => {
                 { path: 'edit/:id', element: <HotRotateO /> },
                 // instead of hiding this for mobile here, we redirect inside the component to avoid lots of rerenders
                 { path: 'wallet', element: <MobileWalletView /> },
-                { path: 'swap/:id', element: null },
+                { path: 'swap/:id', element: isPhone ? <Navigate to="/live" /> : null },
+                { path: 'live', element: null },
                 { path: '*', element: <Navigate to={`swap/${epoch || ''}`} /> },
             ],
         },
@@ -55,6 +50,7 @@ const App = () => {
             <NuggBook />
             <Helmet />
             <NavigationBar />
+            <MobileViewScreen />
             <Router />
             <SwapPage />
         </>

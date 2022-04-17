@@ -44,7 +44,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: string }) => {
         token && token.type === 'item' ? 'nugg' : provider,
         leader?.user || '',
     );
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType, isPhone } = useDimentions();
 
     return (
         <div style={styles.ownerBlockContainer}>
@@ -187,7 +187,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: string }) => {
                         />
                     </div>
                 )}
-                {token && token.type === 'nugg' && (
+                {token && token.type === 'nugg' && !isPhone && (
                     <List
                         data={token.items}
                         labelStyle={{

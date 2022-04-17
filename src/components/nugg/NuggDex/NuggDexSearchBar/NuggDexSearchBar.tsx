@@ -67,7 +67,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const isViewOpen = useMatch('view/*');
     const sort = client.live.searchFilter.sort();
     const searchValue = client.live.searchFilter.searchValue();
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType, isPhone } = useDimentions();
 
     const [mobileExpanded, setMobileExpanded] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -230,14 +230,14 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const style = useSpring({
         ...styles.searchBar,
         margin:
-            isViewOpen && screenType !== 'phone'
+            isViewOpen && !isPhone
                 ? '0% 5% 0% 5%'
                 : isViewOpen && mobileExpanded
                 ? '0% 0% 0% 0%'
                 : '0% 100% 0% 0%',
     });
     const animatedBR = useSpring({
-        borderRadius: isViewOpen && (screenType !== 'phone' || mobileExpanded) ? '7px' : '20px',
+        borderRadius: isViewOpen && (!isPhone || mobileExpanded) ? '7px' : '20px',
     });
 
     const resultStyle = useSpring({
@@ -363,7 +363,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
             <TextInput
                 triggerFocus={mobileExpanded}
                 onClick={() => {
-                    setShow(screenType !== 'phone' ? !show : true);
+                    setShow(!isPhone ? !show : true);
                 }}
                 placeholder={t`Type a number to search`}
                 restrictToNumbers
@@ -381,8 +381,8 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                     <Button
                         buttonStyle={styles.searchBarButton}
                         onClick={() => {
-                            if (screenType !== 'phone') {
-                                navigate(isViewOpen ? '/swap' : '/view');
+                            if (!isPhone) {
+                                navigate(isViewOpen ? '/live' : '/view');
                                 setShow(false);
                             } else if (isViewOpen) {
                                 setMobileExpanded(!mobileExpanded);
@@ -395,7 +395,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                     />,
                 ]}
                 rightToggles={
-                    (isViewOpen && screenType !== 'phone') || mobileExpanded
+                    (isViewOpen && !isPhone) || mobileExpanded
                         ? [
                               ...(viewing === SearchView.Search && activeFilter
                                   ? [
