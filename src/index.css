@@ -39,7 +39,11 @@ body {
         );
     } */
 }
-
+html,
+body {
+    -webkit-overflow-scrolling: touch !important;
+    overflow: auto !important;
+}
 html {
     padding: 0;
     margin: 0;

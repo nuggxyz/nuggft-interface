@@ -115,6 +115,8 @@ const styles = NLStyleSheetCreator({
         // margin: '0rem .5rem',
         transform: 'translate(0rem, 0rem)',
         justifyContent: 'flex-start',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
         minWidth: '0px',
     },
     containerOpen: {
