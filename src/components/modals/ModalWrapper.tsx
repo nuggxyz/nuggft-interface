@@ -51,6 +51,7 @@ const Modal: FC<PropsWithChildren<any>> = ({ children }) => {
                         width: '100%',
                         display: 'flex',
                         justifyContent: 'center',
+                        marginTop: '150px',
                     }),
                 }}
             >
