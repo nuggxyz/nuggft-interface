@@ -13,8 +13,6 @@ const SwapView = () => {
     const potentialSwaps = client.live.potentialSwaps();
     const potentialItems = client.live.potentialItems();
 
-    console.log(potentialItems, potentialSwaps);
-
     const epoch = client.live.epoch.id();
 
     const all = React.useMemo(() => {
