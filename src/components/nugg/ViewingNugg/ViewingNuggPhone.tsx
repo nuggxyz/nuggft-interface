@@ -250,20 +250,6 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
                     //   marginBottom: '400px',
                 }}
             >
-                <Text
-                    textStyle={{
-                        textShadow: lib.layout.boxShadow.dark,
-                        color: 'white',
-                        padding: '1rem',
-                        // background: darkmode
-                        //     ? lib.colors.nuggBlueTransparent
-                        //     : lib.colors.transparentGrey,
-                        borderRadius: lib.layout.borderRadius.medium,
-                    }}
-                    size="largest"
-                >
-                    {tokenId && parseTokenIdSmart(tokenId)}
-                </Text>
                 <div
                     style={{
                         position: 'relative',
@@ -312,6 +298,21 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
                         )}
                     </div>
                 </div>
+
+                <Text
+                    textStyle={{
+                        textShadow: lib.layout.boxShadow.dark,
+                        color: 'white',
+                        padding: '1rem',
+                        // background: darkmode
+                        //     ? lib.colors.nuggBlueTransparent
+                        //     : lib.colors.transparentGrey,
+                        borderRadius: lib.layout.borderRadius.medium,
+                    }}
+                    size="larger"
+                >
+                    {tokenId && parseTokenIdSmart(tokenId)}
+                </Text>
 
                 {token.activeSwap && (
                     <>

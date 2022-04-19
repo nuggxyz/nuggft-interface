@@ -38,7 +38,7 @@ const Modal: FC<PropsWithChildren<any>> = ({ children }) => {
         config: config.default,
     });
 
-    const style: CSSPropertiesAnimated = useAnimateOverlay(isOpen);
+    const style: CSSPropertiesAnimated = useAnimateOverlay(isOpen, { zIndex: 999000 });
 
     useOnClickOutside(node, closeModal);
 
@@ -80,12 +80,12 @@ const styles = NLStyleSheetCreator({
         transition: `opacity .5s ${lib.layout.animation}`,
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
-        zIndex: 999,
+        zIndex: 99900000,
     },
     open: {
         opacity: 1,
         background: lib.colors.transparentGrey,
-        zIndex: 999,
+        zIndex: 99900000,
         overflow: 'hidden',
     },
     closed: {
