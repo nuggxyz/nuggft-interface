@@ -248,6 +248,8 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
         pointerEvents: show ? ('auto' as const) : ('none' as const),
     });
 
+    const lastSwap = client.live.lastSwap.tokenId();
+
     return (
         <animated.div ref={ref} style={style}>
             <animated.div style={resultStyle}>

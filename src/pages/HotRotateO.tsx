@@ -2,6 +2,8 @@ import { animated } from '@react-spring/web';
 import React, { FC } from 'react';
 import { ethers, BigNumber, BigNumberish } from 'ethers';
 import { useNavigate, useMatch } from 'react-router-dom';
+import { t } from '@lingui/macro';
+import { IoArrowDown, IoArrowUp } from 'react-icons/io5';
 
 import client from '@src/client';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -49,77 +51,58 @@ export const HotRotateOController = () => {
     return <></>;
 };
 
-const StoageRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ item, action }) => {
+const RenderItem: FC<
+    ListRenderItemProps<Item, { items: ItemList; type: 'storage' | 'displayed' }, Item>
+> = ({ item, action, extraData }) => {
     return (
         <div
             style={{
                 borderRadius: lib.layout.borderRadius.medium,
                 transition: '.2s background ease',
                 position: 'relative',
+                margin: '.6rem 1rem',
             }}
         >
-            {item.duplicates > 1 && (
-                <Label
-                    containerStyles={{ position: 'absolute', top: 5, right: 5 }}
-                    text={String(item.duplicates)}
-                />
-            )}
             <TokenViewer
                 tokenId={item.tokenId}
-                style={{ width: '80px', height: '80px' }}
+                style={{ width: '80px', height: '80px', padding: '.3rem' }}
                 showLabel
                 disableOnClick
             />
-            <Button onClick={() => action && action(item)} label="View" />
-        </div>
-    );
-};
-
-const DisplayedRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ item, action }) => {
-    return (
-        <div
-            style={{
-                borderRadius: lib.layout.borderRadius.medium,
-                transition: '.2s background ease',
-                position: 'relative',
-            }}
-        >
             {item.duplicates > 1 && (
                 <Label
-                    containerStyles={{ position: 'absolute', top: 5, right: 0 }}
+                    containerStyles={{ position: 'absolute', top: -5, right: -5 }}
                     text={String(item.duplicates)}
                 />
             )}
-
-            <TokenViewer
-                tokenId={item.tokenId}
-                style={{ width: '80px', height: '80px' }}
-                showLabel
-                disableOnClick
+            <Button
+                size="small"
+                onClick={() => action && action(item)}
+                buttonStyle={{
+                    borderRadius: lib.layout.borderRadius.large,
+                    padding: '.3rem .4rem .3rem .6rem',
+                }}
+                textStyle={{
+                    paddingRight: '.2rem',
+                }}
+                label={
+                    extraData.type === 'storage'
+                        ? extraData.items.active.find((list) => list.feature === item.feature)
+                            ? 'Replace'
+                            : 'Show'
+                        : t`Hide`
+                }
+                rightIcon={
+                    extraData.type === 'storage' ? (
+                        <IoArrowUp color={lib.colors.nuggBlueText} />
+                    ) : (
+                        <IoArrowDown color={lib.colors.nuggRedText} />
+                    )
+                }
             />
-
-            <Button onClick={() => action && action(item)} label="deselect" />
         </div>
     );
 };
-
-// const DuplicateRenderItem: FC<ListRenderItemProps<Item, undefined, undefined>> = ({ item }) => {
-//     return (
-//         <div
-//             style={{
-//                 borderRadius: lib.layout.borderRadius.medium,
-//                 transition: '.2s background ease',
-//             }}
-//         >
-//             <TokenViewer
-//                 tokenId={item.id}
-//                 style={{ width: '80px', height: '80px' }}
-//                 showLabel
-//                 disableOnClick
-//             />
-//         </div>
-//     );
-// };
 
 export default () => {
     const [death, setDeath] = React.useState(false);
@@ -137,7 +120,6 @@ export default () => {
     const address = web3.hook.usePriorityAccount();
 
     const nuggft = useNuggftV1(provider);
-    const dotnugg = useDotnuggV1(provider);
 
     const [needsToClaim, setNeedsToClaim] = React.useState<boolean>();
     const [cannotProveOwnership, setCannotProveOwnership] = React.useState<boolean>();
@@ -276,30 +258,9 @@ export default () => {
         return undefined;
     }, [items, tokenId]);
 
-    const [svg] = useAsyncSetState(() => {
-        const arr: BigNumberish[] = new Array<BigNumberish>(8);
-
-        if (provider) {
-            if (items && items.active) {
-                for (let i = 0; i < 8; i++) {
-                    arr[i] = BigNumber.from(
-                        items.active.find((x) => x.feature === i)?.hexId ?? 0,
-                    ).and(0xff);
-                }
-                return dotnugg['exec(uint8[8],bool)'](
-                    arr as Parameters<typeof dotnugg['exec(uint8[8],bool)']>[0],
-                    true,
-                ) as Promise<Base64EncodedSvg>;
-            }
-        }
-
-        return undefined;
-    }, [items, dotnugg, provider]);
-
-    const { send, error } = usePrioritySendTransaction();
+    const { send, revert } = useTransactionManager();
 
     const navigate = useNavigate();
-    const lastSwap = client.live.lastSwap.tokenId();
 
     if (needsToClaim) {
         return (
@@ -321,45 +282,7 @@ export default () => {
         <animated.div style={{ ...styles.container, ...style }}>
             {tokenId && items && (
                 <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
-                    <Button
-                        label="kill"
-                        onClick={() => {
-                            setDeath(true);
-                            start(() => {
-                                setTimeout(() => {
-                                    if (lastSwap) navigate(`/swap/${lastSwap}`);
-                                    else navigate('/');
-                                    setDeath(false);
-                                }, 3000);
-                            });
-                        }}
-                    />
-
-                    {algo && algo[1] && algo[1].length > 0 && (
-                        <Button
-                            label="save"
-                            onClick={() => {
-                                void send(nuggft.populateTransaction.rotate(...algo));
-                            }}
-                        />
-                    )}
-
-                    {tokenId && openEditScreen && (
-                        <div style={{ display: 'flex', flexDirection: 'row' }}>
-                            <TokenViewer3
-                                tokenId={tokenId}
-                                showcase
-                                validated
-                                style={{ height: 300, width: 300 }}
-                            />
-                            <TokenViewer
-                                tokenId={tokenId}
-                                svgNotFromGraph={svg}
-                                showcase
-                                style={{ height: 300, width: 300 }}
-                            />
-                        </div>
-                    )}
+                    <RotateOViewer items={items} tokenId={tokenId} />
 
                     {error && <Label text={error.message} />}
 
@@ -382,8 +305,8 @@ export default () => {
                                         duplicates: items.duplicates,
                                     });
                             }}
-                            extraData={undefined}
-                            RenderItem={DisplayedRenderItem}
+                            extraData={{ items, type: 'displayed' as const }}
+                            RenderItem={RenderItem}
                             horizontal
                             style={{
                                 width: '100%',
@@ -401,8 +324,8 @@ export default () => {
                             labelStyle={{
                                 color: 'white',
                             }}
-                            extraData={undefined}
-                            RenderItem={StoageRenderItem}
+                            extraData={{ items, type: 'storage' as const }}
+                            RenderItem={RenderItem}
                             horizontal
                             action={(item) => {
                                 if (items)
@@ -439,20 +362,124 @@ export default () => {
                         labelStyle={{
                             color: 'white',
                         }}
-                        extraData={undefined}
-                        RenderItem={DisplayedRenderItem}
+                        extraData={{ items, type: 'displayed' as const }}
+                        RenderItem={RenderItem}
                         horizontal
                         style={{
                             width: '100%',
-                            background: lib.colors.transparentLightGrey,
-                            height: '140px',
+                            background: lib.colors.transparentWhite,
                             padding: '0rem .4rem',
-                            opacity: 0.7,
+                            borderRadius: lib.layout.borderRadius.medium,
+                            justifyContent: 'space-around',
+                        }}
+                    />
+                    <List
+                        data={items.hidden}
+                        label={t`In storage`}
+                        extraData={{ items, type: 'storage' as const }}
+                        RenderItem={RenderItem}
+                        horizontal
+                        action={(item) => {
+                            if (items)
+                                setItems({
+                                    active: [
+                                        ...items.active.filter((x) => x.feature !== item.feature),
+                                        item,
+                                    ],
+                                    hidden: [
+                                        ...items.hidden.filter((x) => x.id !== item.id),
+                                        ...items.active.filter((x) => x.feature === item.feature),
+                                    ],
+                                    duplicates: items.duplicates,
+                                });
+                        }}
+                        style={{
+                            width: '100%',
+                            background: lib.colors.transparentWhite,
+                            padding: '0rem .4rem',
                             borderRadius: lib.layout.borderRadius.medium,
                         }}
-                    /> */}
+                    />
+                    <div
+                        style={{
+                            display: 'flex',
+                            width: '100%',
+                            justifyContent: 'space-between',
+                            marginTop: '.5rem',
+                        }}
+                    >
+                        <Button
+                            buttonStyle={{
+                                width: '40%',
+                                borderRadius: lib.layout.borderRadius.large,
+                            }}
+                            textStyle={{ color: lib.colors.nuggRedText }}
+                            label={t`Cancel`}
+                            onClick={() => {
+                                navigate(-1);
+                            }}
+                        />
+
+                        <Button
+                            buttonStyle={{
+                                width: '40%',
+                                borderRadius: lib.layout.borderRadius.large,
+                            }}
+                            textStyle={{ color: lib.colors.nuggBlueText }}
+                            disabled={!(algo && algo[1] && algo[1].length > 0)}
+                            label={t`Save`}
+                            onClick={() => {
+                                if (algo) {
+                                    void send(nuggft.populateTransaction.rotate(...algo));
+                                }
+                            }}
+                        />
+                    </div>
                 </div>
             )}
         </animated.div>
+    );
+};
+
+const RotateOViewer = ({ tokenId, items }: { tokenId: TokenId; items: ItemList }) => {
+    const provider = web3.hook.usePriorityProvider();
+
+    const dotnugg = useDotnuggV1(provider);
+
+    const [svg] = useAsyncSetState(() => {
+        const arr: BigNumberish[] = new Array<BigNumberish>(8);
+
+        if (provider) {
+            if (items && items.active) {
+                for (let i = 0; i < 8; i++) {
+                    arr[i] = BigNumber.from(
+                        items.active.find((x) => x.feature === i)?.hexId ?? 0,
+                    ).mod(1000);
+                }
+                return dotnugg['exec(uint8[8],bool)'](
+                    arr as Parameters<typeof dotnugg['exec(uint8[8],bool)']>[0],
+                    true,
+                ) as Promise<Base64EncodedSvg>;
+            }
+        }
+
+        return undefined;
+    }, [items, dotnugg, provider]);
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <TokenViewer3
+                tokenId={tokenId}
+                showcase
+                validated
+                style={{ height: 300, width: 300 }}
+            />
+            <TokenViewer
+                tokenId={tokenId}
+                svgNotFromGraph={svg}
+                showcase
+                style={{ height: 300, width: 300 }}
+            />
+        </div>
     );
 };

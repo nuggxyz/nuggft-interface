@@ -2,6 +2,8 @@
 import { ethers } from 'ethers';
 import invariant from 'tiny-invariant';
 
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+
 export interface IAddress {
     hash: string;
     short: string;
@@ -58,7 +60,7 @@ export class Address implements IAddress {
     }
 
     public static shortenAddressHash(addressHash: string, chars = 4): string {
-        if (addressHash) {
+        if (!isUndefinedOrNullOrStringEmpty(addressHash) && addressHash.length >= 42) {
             try {
                 return `${addressHash.substring(0, chars + 2)}...${addressHash.substring(
                     42 - chars,
