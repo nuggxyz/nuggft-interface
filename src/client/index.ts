@@ -13,6 +13,7 @@ import modal from './modal';
 import toast from './toast';
 import nuggbook from './nuggbook';
 import viewscreen from './viewscreen';
+import editscreen from './editscreen';
 
 export default {
     ...core,
@@ -195,4 +196,5 @@ export default {
     toast,
     nuggbook,
     viewscreen,
+    editscreen,
 };

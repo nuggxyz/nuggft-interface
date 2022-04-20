@@ -1,9 +1,8 @@
 import { animated } from '@react-spring/web';
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { ethers, BigNumber, BigNumberish } from 'ethers';
 import { useNavigate, useMatch } from 'react-router-dom';
 
-import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import client from '@src/client';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import Button from '@src/components/general/Buttons/Button/Button';
@@ -15,6 +14,7 @@ import { ItemId } from '@src/client/router';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer3 from '@src/components/nugg/TokenViewer3';
 import web3 from '@src/web3';
+import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 
 import styles from './SearchOverlay.styles';
 
@@ -30,7 +30,26 @@ type Item = {
 
 type ItemList = { active: Item[]; hidden: Item[]; duplicates: Item[] };
 
+export const HotRotateOController = () => {
+    const openEditScreen = client.editscreen.useOpenEditScreen();
+    const closeEditScreen = client.editscreen.useCloseEditScreen();
+
+    const tokenId = useMatch(`/edit/:id`);
+
+    const navigate = useNavigate();
+
+    React.useEffect(() => {
+        if (tokenId && tokenId.params.id) openEditScreen(tokenId.params.id);
+        return () => {
+            closeEditScreen();
+        };
+    }, [tokenId, openEditScreen, closeEditScreen, navigate]);
+
+    return <></>;
+};
+
 const StoageRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ item, action }) => {
+    console.log('ayo1');
     return (
         <div
             style={{
@@ -57,6 +76,8 @@ const StoageRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ item
 };
 
 const DisplayedRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ item, action }) => {
+    console.log('ayo2');
+
     return (
         <div
             style={{
@@ -103,13 +124,14 @@ const DisplayedRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ i
 // };
 
 export default () => {
-    const match = useMatch('/edit/:id');
+    const [death, setDeath] = React.useState(false);
 
-    const tokenId = useMemo(() => {
-        return match?.params.id || undefined;
-    }, [match]);
+    const [, start] = React.useTransition();
 
-    const style = useAnimateOverlay(true, {
+    const openEditScreen = client.editscreen.useEditScreenOpen();
+    const tokenId = client.editscreen.useEditScreenTokenId();
+
+    const style = useAnimateOverlay(openEditScreen && !death, {
         zIndex: 998,
     });
 
@@ -125,6 +147,8 @@ export default () => {
     const [items, setItems] = useAsyncSetState<ItemList>(() => {
         if (tokenId && provider && address) {
             const floopCheck = async () => {
+                console.log('floopCheck');
+
                 return nuggft.floop(fmtTokenId).then((x) => {
                     return x.reduce(
                         (prev: ItemList, curr, activeIndex) => {
@@ -209,8 +233,10 @@ export default () => {
         }
         return undefined;
     }, [tokenId, nuggft, provider, address]);
-
+    // console.log('hello');
     const algo: Parameters<typeof nuggft.rotate> | undefined = React.useMemo(() => {
+        console.log('algo');
+
         if (items && tokenId) {
             const active = items.active.map((x, i) => ({ ...x, desiredIndex: i }));
             const hidden = items.hidden.map((x, i) => ({ ...x, desiredIndex: i + 8 }));
@@ -245,6 +271,8 @@ export default () => {
     }, [items, tokenId]);
 
     const [svg] = useAsyncSetState(() => {
+        console.log('svg');
+
         const arr: BigNumberish[] = new Array<BigNumberish>(8);
 
         if (provider) {
@@ -292,8 +320,14 @@ export default () => {
                     <Button
                         label="kill"
                         onClick={() => {
-                            if (lastSwap) navigate(`/swap/${lastSwap}`);
-                            else navigate('/');
+                            setDeath(true);
+                            start(() => {
+                                setTimeout(() => {
+                                    if (lastSwap) navigate(`/swap/${lastSwap}`);
+                                    else navigate('/');
+                                    setDeath(false);
+                                }, 3000);
+                            });
                         }}
                     />
 
@@ -306,81 +340,93 @@ export default () => {
                         />
                     )}
 
-                    <div style={{ display: 'flex', flexDirection: 'row' }}>
-                        <TokenViewer3
-                            tokenId={tokenId}
-                            showcase
-                            validated
-                            style={{ height: 300, width: 300 }}
-                        />
-                        <TokenViewer
-                            tokenId={tokenId}
-                            svgNotFromGraph={svg}
-                            showcase
-                            style={{ height: 300, width: 300 }}
-                        />
-                    </div>
+                    {tokenId && openEditScreen && (
+                        <div style={{ display: 'flex', flexDirection: 'row' }}>
+                            <TokenViewer3
+                                tokenId={tokenId}
+                                showcase
+                                validated
+                                style={{ height: 300, width: 300 }}
+                            />
+                            <TokenViewer
+                                tokenId={tokenId}
+                                svgNotFromGraph={svg}
+                                showcase
+                                style={{ height: 300, width: 300 }}
+                            />
+                        </div>
+                    )}
 
                     {revert && <Label text={revert.message} />}
 
-                    <List
-                        data={items.active}
-                        label="displayed"
-                        labelStyle={{
-                            color: 'white',
-                        }}
-                        action={(item) => {
-                            if (items)
-                                setItems({
-                                    active: [
-                                        ...items.active.filter((x) => x.feature !== item.feature),
-                                    ],
-                                    hidden: [item, ...items.hidden],
-                                    duplicates: items.duplicates,
-                                });
-                        }}
-                        extraData={undefined}
-                        RenderItem={DisplayedRenderItem}
-                        horizontal
-                        style={{
-                            width: '100%',
-                            background: lib.colors.transparentLightGrey,
-                            height: '140px',
-                            padding: '0rem .4rem',
-                            borderRadius: lib.layout.borderRadius.medium,
-                        }}
-                    />
-                    <List
-                        data={items.hidden}
-                        label="in storage"
-                        labelStyle={{
-                            color: 'white',
-                        }}
-                        extraData={undefined}
-                        RenderItem={StoageRenderItem}
-                        horizontal
-                        action={(item) => {
-                            if (items)
-                                setItems({
-                                    active: [
-                                        ...items.active.filter((x) => x.feature !== item.feature),
-                                        item,
-                                    ],
-                                    hidden: [
-                                        ...items.hidden.filter((x) => x.id !== item.id),
-                                        ...items.active.filter((x) => x.feature === item.feature),
-                                    ],
-                                    duplicates: items.duplicates,
-                                });
-                        }}
-                        style={{
-                            width: '100%',
-                            background: lib.colors.transparentLightGrey,
-                            height: '140px',
-                            padding: '0rem .4rem',
-                            borderRadius: lib.layout.borderRadius.medium,
-                        }}
-                    />
+                    {tokenId && openEditScreen && (
+                        <List
+                            data={items.active}
+                            label="displayed"
+                            labelStyle={{
+                                color: 'white',
+                            }}
+                            action={(item) => {
+                                if (items)
+                                    setItems({
+                                        active: [
+                                            ...items.active.filter(
+                                                (x) => x.feature !== item.feature,
+                                            ),
+                                        ],
+                                        hidden: [item, ...items.hidden],
+                                        duplicates: items.duplicates,
+                                    });
+                            }}
+                            extraData={undefined}
+                            RenderItem={DisplayedRenderItem}
+                            horizontal
+                            style={{
+                                width: '100%',
+                                background: lib.colors.transparentLightGrey,
+                                height: '140px',
+                                padding: '0rem .4rem',
+                                borderRadius: lib.layout.borderRadius.medium,
+                            }}
+                        />
+                    )}
+                    {tokenId && openEditScreen && (
+                        <List
+                            data={items.hidden}
+                            label="in storage"
+                            labelStyle={{
+                                color: 'white',
+                            }}
+                            extraData={undefined}
+                            RenderItem={StoageRenderItem}
+                            horizontal
+                            action={(item) => {
+                                if (items)
+                                    setItems({
+                                        active: [
+                                            ...items.active.filter(
+                                                (x) => x.feature !== item.feature,
+                                            ),
+                                            item,
+                                        ],
+                                        hidden: [
+                                            ...items.hidden.filter((x) => x.id !== item.id),
+                                            ...items.active.filter(
+                                                (x) => x.feature === item.feature,
+                                            ),
+                                        ],
+                                        duplicates: items.duplicates,
+                                    });
+                            }}
+                            style={{
+                                width: '100%',
+                                background: lib.colors.transparentLightGrey,
+                                height: '140px',
+                                padding: '0rem .4rem',
+                                borderRadius: lib.layout.borderRadius.medium,
+                            }}
+                        />
+                    )}
                     {/* <List
                         data={items.duplicates}
                         label="duplicates"
