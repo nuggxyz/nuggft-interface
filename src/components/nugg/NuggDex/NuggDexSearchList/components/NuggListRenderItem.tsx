@@ -58,7 +58,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
                         {item.leader && (
                             <Label
                                 text={
-                                    item.leader.isNuggId()
+                                    item.isItem()
                                         ? item.leader.toPrettyId()
                                         : shortenAddress(item.leader)
                                 }

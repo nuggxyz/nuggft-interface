@@ -6,22 +6,34 @@ import shallow from 'zustand/shallow';
 
 import { EthInt } from '@src/classes/Fraction';
 
-export interface SwapData extends TokenIdFactory {
+interface SwapDataBase extends TokenIdFactory {
     listDataType: 'swap';
     eth: EthInt;
     endingEpoch: number | null;
     dotnuggRawCache: undefined;
-    leader: PickFromFactory<this['type'], AddressString, NuggId>;
+    leader: AddressString | NuggId;
 }
 
-// const abc: SwapData = {
-//     tokenId: `item-333`,
+export type SwapData = TokenIdFactoryCreator<
+    SwapDataBase,
+    { leader: AddressString },
+    { leader: NuggId }
+>;
+
+// const abc: SwapData = buildTokenIdFactory({
+//     tokenId: `nugg-333`,
 //     listDataType: 'swap',
 //     eth: new EthInt(0),
 //     endingEpoch: 0,
 //     dotnuggRawCache: undefined,
 //     leader: '0x444',
-// };
+// });
+
+// if (abc.isItem()) {
+//     console.log(abc.le)
+// }
+
+// console.log(abc.leader);
 
 const store = create(
     combine(

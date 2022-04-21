@@ -36,7 +36,7 @@ import {
 // };
 
 export const buildTokenIdFactory = <A extends { tokenId: TokenId }>(input: A) => {
-    return {
+    const yo = {
         type: (input.tokenId.isItemId() ? ('item' as const) : ('nugg' as const)) as PickFromTokenId<
             A['tokenId'],
             'nugg',
@@ -46,6 +46,8 @@ export const buildTokenIdFactory = <A extends { tokenId: TokenId }>(input: A) =>
         isNugg: () => input.tokenId.isNuggId(),
         ...input,
     };
+
+    return yo;
 };
 
 // @ts-ignore

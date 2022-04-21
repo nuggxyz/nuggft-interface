@@ -7,11 +7,7 @@ declare type NuggId = `${'nugg'}-${number}`;
 declare type ItemId = `${'item'}-${number}`;
 declare type TokenId = ItemId | NuggId;
 
-// // interface TokenIdAsType<T extends TokenType> {
-// //     type: T;
-// //     tokenId: PickFromTokenType<T, NuggId, ItemId>;
-// // }
-interface Splitter<N, I> {
+declare interface Splitter<N, I> {
     nugg: N;
     item: I;
 }
@@ -28,11 +24,7 @@ declare function EnsureIdFixture<K extends TokenType, T extends `${K}`>(
     what: T,
 ): T extends infer R ? (R extends K ? TokenType[R] : undefined) : undefined;
 
-declare type PickFromFactory<T extends IdPrefix, N, I> = T extends infer R
-    ? R extends IdPrefix
-        ? Splitter<N, I>[R]
-        : never
-    : never;
+// declare type PickFromFactory<T extends TokenIdFactory, N, I> = Splitter<N, I>[T['type']];
 
 declare type PickFromTokenId<T extends TokenId, N, I> = T extends `${infer R}-${number}`
     ? R extends keyof Splitter

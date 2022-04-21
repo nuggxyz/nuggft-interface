@@ -33,13 +33,19 @@ export interface BasicData extends ListDataBase {
     dotnuggRawCache?: Base64EncodedSvg;
 }
 
-export interface SwapData extends ListDataBase {
+interface SwapDataBase extends ListDataBase {
     listDataType: 'swap';
     eth: EthInt;
     endingEpoch: number | null;
     dotnuggRawCache: undefined;
-    leader?: AddressString | NuggId;
+    leader?: unknown;
 }
+
+export type SwapData = TokenIdFactoryCreator<
+    SwapDataBase,
+    { leader?: AddressString },
+    { leader?: NuggId }
+>;
 
 export type ListData = SwapData | BasicData;
 
@@ -69,27 +75,36 @@ export interface MyNuggsData {
         sellingNuggId: NuggId | null;
     }[];
 }
-export interface UnclaimedOffer extends TokenIdFactory {
+
+export interface UnclaimedOfferBase extends TokenIdFactory {
     endingEpoch: number | null;
     eth: EthInt;
     leader: boolean;
-    claimParams: PickFromFactory<
-        this['type'],
-        {
+    claimParams: unknown;
+    nugg: unknown;
+}
+
+export type UnclaimedOffer = TokenIdFactoryCreator<
+    UnclaimedOfferBase,
+    {
+        nugg: null;
+        claimParams: {
             sellingTokenId: NuggId;
             address: AddressString;
             buyingTokenId: 'nugg-0';
             itemId: 'item-0';
-        },
-        {
+        };
+    },
+    {
+        nugg: NuggId;
+        claimParams: {
             sellingTokenId: NuggId;
             address: AddressStringZero;
             buyingTokenId: NuggId;
             itemId: ItemId;
-        }
-    >;
-    nugg: PickFromFactory<this['type'], null, NuggId>;
-}
+        };
+    }
+>;
 
 export type StakeData = {
     staked: BigNumber;
