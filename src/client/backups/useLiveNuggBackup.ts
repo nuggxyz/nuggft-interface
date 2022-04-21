@@ -9,7 +9,7 @@ import { Address } from '@src/classes/Address';
 
 // eslint-disable-next-line import/no-cycle
 
-import { idf } from '@src/prototypes';
+import { buildTokenIdFactory } from '@src/prototypes';
 
 import client from '..';
 
@@ -28,7 +28,7 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
 
             const items = lib.parse
                 .proof(await nuggft.proofOf(tokenId))
-                .map((x) => idf({ ...x, activeSwap: undefined }));
+                .map((x) => buildTokenIdFactory({ ...x, activeSwap: undefined }));
 
             const owner =
                 agency.flag === 0x0 && agency.epoch === 0
@@ -52,7 +52,7 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
 
             const activeSwap =
                 agency.flag === 0x3
-                    ? idf({
+                    ? buildTokenIdFactory({
                           tokenId,
                           epoch,
                           eth: agency.eth,
@@ -68,7 +68,7 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
 
             updateToken(
                 tokenId,
-                idf({
+                buildTokenIdFactory({
                     tokenId,
                     activeLoan: null,
                     owner,
@@ -82,7 +82,7 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
             );
             if (activeSwap && !activeSwap.eth.eq(0))
                 updateOffers(tokenId, [
-                    idf({
+                    buildTokenIdFactory({
                         eth: activeSwap.eth,
                         user: activeSwap.leader as AddressString,
                         isBackup: true,

@@ -9,7 +9,7 @@ import { NuggftV1 } from '../typechain/NuggftV1';
 
 import { SwapRoutes } from './router';
 
-interface OfferDataBase extends TokenDiff {
+interface OfferDataBase extends TokenIdFactory {
     user: AddressString | NuggId;
     eth: EthInt;
     txhash?: string;
@@ -17,13 +17,13 @@ interface OfferDataBase extends TokenDiff {
     sellingTokenId: null | NuggId;
 }
 
-export type OfferData = IdDiff<
+export type OfferData = TokenIdFactoryCreator<
     OfferDataBase,
     { sellingTokenId: null; user: AddressString },
     { sellingTokenId: NuggId; user: NuggId }
 >;
 
-export interface ListDataBase extends TokenDiff {
+export interface ListDataBase extends TokenIdFactory {
     listDataType: 'swap' | 'basic';
     dotnuggRawCache?: Base64EncodedSvg;
 }
@@ -69,11 +69,11 @@ export interface MyNuggsData {
         sellingNuggId: NuggId | null;
     }[];
 }
-export interface UnclaimedOffer extends TokenDiff {
+export interface UnclaimedOffer extends TokenIdFactory {
     endingEpoch: number | null;
     eth: EthInt;
     leader: boolean;
-    claimParams: PickFromTokenTypeSimple<
+    claimParams: PickFromFactory<
         this['type'],
         {
             sellingTokenId: NuggId;
@@ -88,7 +88,7 @@ export interface UnclaimedOffer extends TokenDiff {
             itemId: ItemId;
         }
     >;
-    nugg: PickFromTokenTypeSimple<this['type'], null, NuggId>;
+    nugg: PickFromFactory<this['type'], null, NuggId>;
 }
 
 export type StakeData = {
@@ -252,7 +252,7 @@ export interface Actions {
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
 
-export interface LiveSwapBase extends TokenDiff {
+export interface LiveSwapBase extends TokenIdFactory {
     epoch?: EpochData | null;
     eth: EthInt;
     leader: string;
@@ -270,7 +270,7 @@ export interface LiveNuggSwap extends LiveSwapBase {
 
 export type LiveSwap = LiveNuggSwap | LiveItemSwap;
 
-export interface LiveNuggItem extends ItemDiff {
+export interface LiveNuggItem extends ItemIdFactory {
     activeSwap: string | undefined;
     feature: number;
     position: number;
@@ -278,7 +278,7 @@ export interface LiveNuggItem extends ItemDiff {
     displayed: boolean;
 }
 
-export interface LiveNugg extends NuggDiff {
+export interface LiveNugg extends NuggIdFactory {
     activeLoan: boolean | null;
     activeSwap?: LiveNuggSwap;
     items: LiveNuggItem[];
@@ -306,7 +306,7 @@ export interface LiveActiveItemSwap extends LiveItemSwap {
 }
 export type TryoutData = { nugg: NuggId; eth: EthInt };
 
-export interface LiveItem extends ItemDiff {
+export interface LiveItem extends ItemIdFactory {
     activeSwap?: LiveActiveItemSwap;
     upcomingActiveSwap?: LiveActiveItemSwap;
     swaps: LiveItemSwap[];

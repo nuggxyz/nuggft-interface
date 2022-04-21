@@ -1,17 +1,17 @@
 import { LiveItem, TryoutData } from '@src/client/interfaces';
 import { EthInt, Fraction2x16 } from '@src/classes/Fraction';
 import { LiveItemFragment } from '@src/gql/types.generated';
-import { idf } from '@src/prototypes';
+import { buildTokenIdFactory } from '@src/prototypes';
 
 export default (item: LiveItemFragment): LiveItem => {
     const tokenId = item.id.toItemId();
-    const tmp: Omit<LiveItem, 'tryout'> = idf({
+    const tmp: Omit<LiveItem, 'tryout'> = buildTokenIdFactory({
         tokenId,
         count: Number(item.count),
         swaps: item.swaps
             .map((y) => {
                 return y
-                    ? idf({
+                    ? buildTokenIdFactory({
                           tokenId,
                           epoch: y.epoch
                               ? {
@@ -38,7 +38,7 @@ export default (item: LiveItemFragment): LiveItem => {
         rarity: new Fraction2x16(item.rarityX16),
         isBackup: false,
         activeSwap: item.activeSwap
-            ? idf({
+            ? buildTokenIdFactory({
                   count: 1,
                   tokenId,
                   epoch: item.activeSwap.epoch
@@ -66,7 +66,7 @@ export default (item: LiveItemFragment): LiveItem => {
               })
             : undefined,
         upcomingActiveSwap: item.upcomingActiveSwap
-            ? idf({
+            ? buildTokenIdFactory({
                   count: 1,
                   tokenId,
                   epoch: item.upcomingActiveSwap.epoch

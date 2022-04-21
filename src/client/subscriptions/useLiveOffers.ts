@@ -4,7 +4,7 @@ import {
     useBetterLiveItemOffersSubscription,
     useBetterLiveOffersSubscription,
 } from '@src/gql/types.generated';
-import { idf } from '@src/prototypes';
+import { buildTokenIdFactory } from '@src/prototypes';
 
 const useLiveItemOffers = (tokenId?: ItemId) => {
     const graph = client.live.graph();
@@ -28,7 +28,7 @@ const useLiveItemOffers = (tokenId?: ItemId) => {
                 updateOffers(tokenId.toItemId(), [
                     ...(activeSwap
                         ? activeSwap.offers.map((z) => {
-                              return idf({
+                              return buildTokenIdFactory({
                                   tokenId,
                                   eth: new EthInt(z.eth),
                                   user: z.nugg.id.toNuggId(),
@@ -40,7 +40,7 @@ const useLiveItemOffers = (tokenId?: ItemId) => {
                         : []),
                     ...(upcomingActiveSwap
                         ? upcomingActiveSwap.offers.map((z) => {
-                              return idf({
+                              return buildTokenIdFactory({
                                   tokenId,
                                   eth: new EthInt(z.eth),
                                   user: z.nugg.id.toNuggId(),
@@ -80,7 +80,7 @@ const useLiveNuggOffers = (tokenId?: NuggId) => {
                 const { activeSwap } = x.subscriptionData.data.nugg;
                 updateOffers(tokenId, [
                     ...activeSwap.offers.map((z) => {
-                        return idf({
+                        return buildTokenIdFactory({
                             type: 'nugg' as const,
                             tokenId,
                             eth: new EthInt(z.eth),

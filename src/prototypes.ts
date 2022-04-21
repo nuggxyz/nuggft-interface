@@ -35,24 +35,7 @@ import {
 //     return bbox;
 // };
 
-export enum TokenTypeEnum {
-    Nugg = 'nugg',
-    Item = 'item',
-}
-
-// interface DiffFactory {
-//     tokenId: TokenId;
-
-// }
-
-// export function idFactory<A extends { tokenId: TokenId }>(input: A): A & TokenDiff {
-//     return {
-//         type: input.tokenId.isItemId() ? ('item' as const) : ('nugg' as const),
-//         ...input,
-//     };
-// }
-
-export const idf = <A extends { tokenId: TokenId }>(input: A) => {
+export const buildTokenIdFactory = <A extends { tokenId: TokenId }>(input: A) => {
     return {
         type: (input.tokenId.isItemId() ? ('item' as const) : ('nugg' as const)) as PickFromTokenId<
             A['tokenId'],
@@ -65,20 +48,6 @@ export const idf = <A extends { tokenId: TokenId }>(input: A) => {
     };
 };
 
-// export function isItem(input: TokenDiff): input is ItemDiff {
-//     if (input.tokenId.isItemId()) return true;
-//     return false;
-// }
-
-// export function isNugg(input: TokenDiff): input is NuggDiff {
-//     if (input.tokenId.isNuggId()) return true;
-//     return false;
-// }
-
-// export function isolateItem<T extends TokenDiff>(input: T) {
-//     if (input.type === 'item') return input asItemDiff;
-//     return input as NuggDiff;
-// }
 // @ts-ignore
 String.prototype.onlyTokenId = function fn(input: `nugg` | `item`) {
     if (this.isTokenId(input)) return this;

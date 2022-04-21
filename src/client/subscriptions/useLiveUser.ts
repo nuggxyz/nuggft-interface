@@ -5,7 +5,7 @@ import { EthInt } from '@src/classes/Fraction';
 import client from '@src/client';
 import { useLiveUserSubscription } from '@src/gql/types.generated';
 import { Address } from '@src/classes/Address';
-import { idf } from '@src/prototypes';
+import { buildTokenIdFactory } from '@src/prototypes';
 
 export default () => {
     const address = web3.hook.usePriorityAccount();
@@ -63,7 +63,7 @@ export default () => {
                         };
                     }),
                     myUnclaimedNuggOffers: user.offers.map((z) => {
-                        return idf({
+                        return buildTokenIdFactory({
                             tokenId: z.swap.nugg.id.toNuggId(),
                             endingEpoch:
                                 z && z.swap && z.swap.endingEpoch
@@ -83,7 +83,7 @@ export default () => {
                     myUnclaimedItemOffers: user.nuggs
                         .map((z) => {
                             return z.offers.map((y) => {
-                                return idf({
+                                return buildTokenIdFactory({
                                     type: 'item' as const,
                                     tokenId: y.swap.sellingItem.id.toItemId(),
                                     endingEpoch:

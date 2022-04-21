@@ -1,7 +1,7 @@
 import { EthInt } from '@src/classes/Fraction';
 import { SwapdataFragment, ItemswapdataFragment } from '@src/gql/types.generated';
 import { SwapData } from '@src/client/interfaces';
-import { idf } from '@src/prototypes';
+import { buildTokenIdFactory } from '@src/prototypes';
 
 export const formatSwapData = (
     z:
@@ -33,7 +33,7 @@ export const formatSwapData = (
         };
     }
 
-    return idf({
+    return buildTokenIdFactory({
         ...a,
         eth: new EthInt(z?.eth || 0),
         endingEpoch: z && z.endingEpoch ? Number(z.endingEpoch) : 0,

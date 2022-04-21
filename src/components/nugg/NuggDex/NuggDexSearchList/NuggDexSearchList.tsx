@@ -13,7 +13,7 @@ import {
     useGetAllNuggsSearchQuery,
 } from '@src/gql/types.generated';
 import useDimentions from '@src/client/hooks/useDimentions';
-import { idf } from '@src/prototypes';
+import { buildTokenIdFactory } from '@src/prototypes';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -234,7 +234,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     type={SearchView.AllItems}
                     previewNuggs={
                         allItemsData?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT).map((x) =>
-                            idf({
+                            buildTokenIdFactory({
                                 tokenId: x.id.toItemId(),
                                 listDataType: 'basic' as const,
                             }),
@@ -246,7 +246,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         style={styles.nuggListEnter}
                         values={
                             allItemsData?.map((x) =>
-                                idf({
+                                buildTokenIdFactory({
                                     tokenId: x.id.toItemId(),
                                     listDataType: 'basic' as const,
                                 }),
@@ -267,7 +267,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     type={SearchView.AllNuggs}
                     previewNuggs={
                         allNuggsData?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT).map((x) =>
-                            idf({
+                            buildTokenIdFactory({
                                 tokenId: x.id.toNuggId(),
                                 listDataType: 'basic' as const,
                             }),
@@ -279,7 +279,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         style={styles.nuggListEnter}
                         values={
                             allNuggsData?.map((x) =>
-                                idf({
+                                buildTokenIdFactory({
                                     tokenId: x.id.toNuggId(),
                                     listDataType: 'basic' as const,
                                 }),

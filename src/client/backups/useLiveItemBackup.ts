@@ -8,7 +8,7 @@ import { EthInt, Fraction } from '@src/classes/Fraction';
 
 // eslint-disable-next-line import/no-cycle
 
-import { idf } from '@src/prototypes';
+import { buildTokenIdFactory } from '@src/prototypes';
 
 import client from '..';
 
@@ -54,7 +54,7 @@ export default (activate: boolean, tokenId: ItemId | undefined) => {
                             : null;
 
                     return agency.flag === 0x3
-                        ? idf({
+                        ? buildTokenIdFactory({
                               tokenId,
                               epoch,
                               eth: agency.eth,
@@ -75,7 +75,7 @@ export default (activate: boolean, tokenId: ItemId | undefined) => {
 
             updateToken(
                 tokenId,
-                idf({
+                buildTokenIdFactory({
                     tokenId,
                     swaps: [],
                     activeSwap: check[0],
@@ -96,7 +96,7 @@ export default (activate: boolean, tokenId: ItemId | undefined) => {
                     .filter((x) => x !== undefined)
                     .filter((x) => x && !x.eth.eq(0))
                     .map((x) =>
-                        idf({
+                        buildTokenIdFactory({
                             eth: x!.eth,
                             tokenId,
                             user: x!.leader.toNuggId(),

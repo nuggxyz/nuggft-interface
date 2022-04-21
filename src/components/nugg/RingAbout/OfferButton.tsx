@@ -9,7 +9,7 @@ import client from '@src/client';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import { ModalEnum } from '@src/interfaces/modals';
 import useDimentions from '@src/client/hooks/useDimentions';
-import { idf } from '@src/prototypes';
+import { buildTokenIdFactory } from '@src/prototypes';
 
 import styles from './RingAbout.styles';
 
@@ -58,7 +58,7 @@ export default ({
                     navigate('/wallet');
                 else if (token && token.isNugg()) {
                     openModal(
-                        idf({
+                        buildTokenIdFactory({
                             modalType: ModalEnum.Offer as const,
                             tokenId: token.tokenId,
                             token,
@@ -67,7 +67,7 @@ export default ({
                     );
                 } else if (token && token.type === 'item' && token.activeSwap) {
                     openModal(
-                        idf({
+                        buildTokenIdFactory({
                             modalType: ModalEnum.Offer as const,
                             tokenId: token.tokenId,
                             token,

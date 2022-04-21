@@ -17,7 +17,7 @@ import web3 from '@src/web3';
 import { Address } from '@src/classes/Address';
 import List from '@src/components/general/List/List';
 import Label from '@src/components/general/Label/Label';
-import { idf } from '@src/prototypes';
+import { buildTokenIdFactory } from '@src/prototypes';
 
 import styles from './ViewingNugg.styles';
 
@@ -62,7 +62,7 @@ const Item: FC<{ item: LiveNuggItem; extraData: ExtraData }> = ({ item, extraDat
                         type="text"
                         onClick={() => {
                             openModal(
-                                idf({
+                                buildTokenIdFactory({
                                     modalType: ModalEnum.Sell as const,
                                     tokenId: item.tokenId,
                                     sellingNuggId: extraData.tokenId,
@@ -292,7 +292,7 @@ const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = 
                         // rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
                         onClick={() => {
                             openModal(
-                                idf({
+                                buildTokenIdFactory({
                                     modalType: ModalEnum.Sell as const,
                                     tokenId: item.tokenId,
                                     sellingNuggId: nuggId,

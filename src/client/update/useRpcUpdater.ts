@@ -14,7 +14,7 @@ import { WebSocketProvider } from '@src/web3/classes/WebSocketProvider';
 // eslint-disable-next-line import/no-cycle
 
 import { Chain } from '@src/web3/core/interfaces';
-import { idf } from '@src/prototypes';
+import { buildTokenIdFactory } from '@src/prototypes';
 
 import client from '..';
 
@@ -87,7 +87,7 @@ export default () => {
                 case 'OfferMint': {
                     const agency = BigNumber.from(event.args.agency);
 
-                    const data = idf({
+                    const data = buildTokenIdFactory({
                         tokenId: event.args.tokenId.toNuggId(),
                         eth: EthInt.fromNuggftV1Agency(event.args.agency),
                         user: agency.mask(160)._hex as AddressString,
@@ -114,7 +114,7 @@ export default () => {
                 case 'OfferItem': {
                     const agency = BigNumber.from(event.args.agency);
                     updateOffers(event.args.itemId.toItemId(), [
-                        idf({
+                        buildTokenIdFactory({
                             type: 'item' as const,
                             tokenId: event.args.itemId.toItemId(),
                             eth: EthInt.fromNuggftV1Agency(event.args.agency),

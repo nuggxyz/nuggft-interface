@@ -6,12 +6,12 @@ import shallow from 'zustand/shallow';
 
 import { EthInt } from '@src/classes/Fraction';
 
-export interface SwapData extends TokenDiff {
+export interface SwapData extends TokenIdFactory {
     listDataType: 'swap';
     eth: EthInt;
     endingEpoch: number | null;
     dotnuggRawCache: undefined;
-    leader: PickFromTokenTypeSimple<this['type'], AddressString, NuggId>;
+    leader: PickFromFactory<this['type'], AddressString, NuggId>;
 }
 
 // const abc: SwapData = {

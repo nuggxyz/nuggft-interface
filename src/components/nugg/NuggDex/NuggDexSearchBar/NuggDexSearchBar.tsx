@@ -23,7 +23,7 @@ import lib, { isUndefinedOrNullOrStringEmpty, parseTokenIdSmart } from '@src/lib
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import globalStyles from '@src/lib/globalStyles';
 import useDimentions from '@src/client/hooks/useDimentions';
-import { idf } from '@src/prototypes';
+import { buildTokenIdFactory } from '@src/prototypes';
 
 import styles from './NuggDexSearchBar.styles';
 
@@ -186,7 +186,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                 }).then((x) => {
                     setActiveSearch([
                         ...(x.data.nuggs.map((y) =>
-                            idf({
+                            buildTokenIdFactory({
                                 tokenId: y.id.toNuggId(),
                                 listDataType: 'basic' as const,
                             }),
