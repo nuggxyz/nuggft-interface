@@ -3,7 +3,6 @@ import { animated } from '@react-spring/web';
 
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import client from '@src/client';
-import { TokenId } from '@src/client/router';
 import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
 import useLiveToken from '@src/client/subscriptions/useLiveToken';
 import useDimentions from '@src/client/hooks/useDimentions';
@@ -62,7 +61,7 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
 
             <SideCar tokenId={tokenId} />
 
-            <Caboose tokenId={tokenId} />
+            <Caboose tokenId={tokenId.onlyItemId()} />
         </>
     ) : (
         <Loader />

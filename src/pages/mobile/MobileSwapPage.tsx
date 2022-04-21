@@ -3,30 +3,12 @@ import React from 'react';
 import client from '@src/client';
 import { SwapData } from '@src/client/interfaces';
 import SwapCard from '@src/components/mobile/SwapCard';
+import useNotableSwaps from '@src/client/hooks/useNotableSwaps';
 
 const SwapView = () => {
-    const activeNuggs = client.live.activeSwaps();
-    const recentNuggs = client.live.recentSwaps();
-    const activeItems = client.live.activeItems();
-    const recentItems = client.live.recentItems();
-
-    const potentialSwaps = client.live.potentialSwaps();
-    const potentialItems = client.live.potentialItems();
-
     const epoch = client.live.epoch.id();
 
-    const all = React.useMemo(() => {
-        return [
-            ...activeNuggs,
-            ...activeItems,
-            ...recentItems,
-            ...recentNuggs,
-            ...potentialSwaps,
-            ...potentialItems,
-        ].sort((a, b) =>
-            a.isCurrent === b.isCurrent ? (a.eth.lt(b.eth) ? -1 : 1) : a.isCurrent ? 1 : -1,
-        );
-    }, [activeNuggs, activeItems, recentItems, recentNuggs, potentialItems, potentialSwaps]);
+    const all = useNotableSwaps();
 
     const sortedAll = React.useMemo(() => {
         return all.reduce(
@@ -56,6 +38,9 @@ const SwapView = () => {
         );
     }, [all, epoch]);
 
+    React.useEffect(() => {
+        console.log(all);
+    }, [all]);
     return (
         <div
             style={{

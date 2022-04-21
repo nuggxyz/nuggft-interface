@@ -12,7 +12,6 @@ import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import { Lifecycle, OfferData } from '@src/client/interfaces';
-import { NuggId, TokenId } from '@src/client/router';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { Chain } from '@src/web3/core/interfaces';
 import useDistribution from '@src/client/hooks/useDistribution';
@@ -74,8 +73,8 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
             token?.type === 'item'
                 ? offers.filter((x) => {
                       return (
-                          x.type === 'item' &&
-                          x.sellingNuggId === (sellingNuggId || token.activeSwap?.sellingNuggId)
+                          x.tokenId.isItemId() &&
+                          x.sellingTokenId === (sellingNuggId || token.activeSwap?.sellingNuggId)
                       );
                   })
                 : [...offers];

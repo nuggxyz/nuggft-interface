@@ -10,7 +10,6 @@ import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import lib, { parseItmeIdToNum } from '@src/lib';
 import { useAsyncSetState } from '@src/hooks/useAsyncState';
 import { useNuggftV1, useDotnuggV1, useTransactionManager } from '@src/contracts/useContract';
-import { ItemId } from '@src/client/router';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer3 from '@src/components/nugg/TokenViewer3';
 import web3 from '@src/web3';
@@ -39,7 +38,7 @@ export const HotRotateOController = () => {
     const navigate = useNavigate();
 
     React.useEffect(() => {
-        if (tokenId && tokenId.params.id) openEditScreen(tokenId.params.id);
+        if (tokenId && tokenId.params.id) openEditScreen(tokenId.params.id.toNuggId());
         return () => {
             closeEditScreen();
         };
@@ -76,8 +75,6 @@ const StoageRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ item
 };
 
 const DisplayedRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ item, action }) => {
-    console.log('ayo2');
-
     return (
         <div
             style={{
@@ -147,8 +144,6 @@ export default () => {
     const [items, setItems] = useAsyncSetState<ItemList>(() => {
         if (tokenId && provider && address) {
             const floopCheck = async () => {
-                console.log('floopCheck');
-
                 return nuggft.floop(fmtTokenId).then((x) => {
                     return x.reduce(
                         (prev: ItemList, curr, activeIndex) => {
@@ -233,10 +228,8 @@ export default () => {
         }
         return undefined;
     }, [tokenId, nuggft, provider, address]);
-    // console.log('hello');
-    const algo: Parameters<typeof nuggft.rotate> | undefined = React.useMemo(() => {
-        console.log('algo');
 
+    const algo: Parameters<typeof nuggft.rotate> | undefined = React.useMemo(() => {
         if (items && tokenId) {
             const active = items.active.map((x, i) => ({ ...x, desiredIndex: i }));
             const hidden = items.hidden.map((x, i) => ({ ...x, desiredIndex: i + 8 }));
@@ -271,8 +264,6 @@ export default () => {
     }, [items, tokenId]);
 
     const [svg] = useAsyncSetState(() => {
-        console.log('svg');
-
         const arr: BigNumberish[] = new Array<BigNumberish>(8);
 
         if (provider) {

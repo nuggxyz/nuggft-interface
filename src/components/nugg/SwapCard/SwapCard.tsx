@@ -33,7 +33,7 @@ export default ({
                 position: 'relative',
             }}
         >
-            <RingAbout manualTokenId={item.id} />
+            <RingAbout manualTokenId={item.tokenId} />
         </div>
     );
 };

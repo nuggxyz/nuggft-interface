@@ -5,14 +5,14 @@ import { LiveNuggFragment } from '@src/gql/types.generated';
 export default (nugg: LiveNuggFragment): LiveNugg => {
     return {
         type: 'nugg' as const,
-        id: nugg.id,
+        id: nugg.id.toNuggId(),
         activeLoan: !!nugg.activeLoan?.id,
-        owner: nugg.user?.id,
+        owner: nugg.user?.id as AddressString,
         items: nugg.items
             .filter((x) => x.activeSwap || x.count > 0)
             .map((y) => {
                 return {
-                    id: `item-${y?.id.split('-')[0]}`,
+                    tokenId: y?.id.split('-')[0].toItemId(),
                     activeSwap: y?.activeSwap?.id,
                     feature: Number(y?.item.feature),
                     position: Number(y?.item.position),
@@ -26,7 +26,7 @@ export default (nugg: LiveNuggFragment): LiveNugg => {
         swaps: nugg.swaps.map((y) => {
             return {
                 type: 'nugg' as const,
-                id: y?.id,
+                id: y?.id.toNuggId(),
                 epoch: y?.epoch
                     ? {
                           id: Number(y?.epoch.id),
@@ -48,8 +48,8 @@ export default (nugg: LiveNuggFragment): LiveNugg => {
         activeSwap: nugg.activeSwap
             ? {
                   type: 'nugg' as const,
-                  id: nugg.activeSwap?.id,
-                  epoch: nugg.activeSwap?.epoch
+                  id: nugg.activeSwap.id.toNuggId(),
+                  epoch: nugg.activeSwap.epoch
                       ? {
                             id: Number(nugg.activeSwap.epoch.id),
                             startblock: Number(nugg.activeSwap.epoch.startblock),
@@ -57,18 +57,18 @@ export default (nugg: LiveNuggFragment): LiveNugg => {
                             status: nugg.activeSwap.epoch.status,
                         }
                       : null,
-                  eth: new EthInt(nugg.activeSwap?.eth),
-                  leader: nugg.activeSwap?.leader?.id,
+                  eth: new EthInt(nugg.activeSwap.eth),
+                  leader: nugg.activeSwap.leader?.id,
 
-                  owner: nugg.activeSwap?.owner?.id,
+                  owner: nugg.activeSwap.owner?.id,
 
                   endingEpoch:
-                      nugg.activeSwap && nugg.activeSwap?.endingEpoch
-                          ? Number(nugg.activeSwap?.endingEpoch)
+                      nugg.activeSwap && nugg.activeSwap.endingEpoch
+                          ? Number(nugg.activeSwap.endingEpoch)
                           : null,
-                  num: Number(nugg.activeSwap?.num),
+                  num: Number(nugg.activeSwap.num),
                   isActive: true,
-                  bottom: new EthInt(nugg.activeSwap?.bottom),
+                  bottom: new EthInt(nugg.activeSwap.bottom),
                   isBackup: false,
               }
             : undefined,

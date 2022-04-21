@@ -1,10 +1,8 @@
 import React from 'react';
 
 import core from '@src/client/core';
-import { TokenId } from '@src/client/router';
 import useLiveItem from '@src/client/subscriptions/useLiveItem';
 import useLiveNugg from '@src/client/subscriptions/useLiveNugg';
-import useMountLogger from '@src/hooks/useMountLogger';
 
 export const useTriggerGraphRefresh = () => {
     // const updateClients = client.mutate.updateClients();
@@ -25,16 +23,15 @@ export const useTriggerGraphRefresh = () => {
 export const DynamicTokenSubscriptions = () => {
     const Subs = React.memo(
         ({ tokenId }: { tokenId: TokenId | undefined }) => {
-            useMountLogger(`ayo - ${tokenId || ''}`);
-            useLiveItem(tokenId);
-            useLiveNugg(tokenId);
+            useLiveItem(tokenId?.onlyItemId());
+            useLiveNugg(tokenId?.onlyNuggId());
             return (<></>) as unknown as JSX.Element;
         },
         (a, b) => a.tokenId === b.tokenId,
     );
 
     const List = React.memo(
-        ({ list }: { list: string[] }) => {
+        ({ list }: { list: TokenId[] }) => {
             return (
                 <>
                     {list.map((x) => (
@@ -50,8 +47,6 @@ export const DynamicTokenSubscriptions = () => {
         (state) => state.subscriptionQueue,
         (a, b) => JSON.stringify(a) === JSON.stringify(b),
     );
-
-    console.log('UPDAAAATTEEEEEEEEE', queue);
 
     return <List list={queue} />;
 };

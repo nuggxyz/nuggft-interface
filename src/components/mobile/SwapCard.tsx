@@ -1,7 +1,6 @@
 import React from 'react';
 import { animated, useSpring } from '@react-spring/web';
 
-import { TokenId } from '@src/client/router';
 import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 

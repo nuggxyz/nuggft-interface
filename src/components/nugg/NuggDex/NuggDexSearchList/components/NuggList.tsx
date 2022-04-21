@@ -60,7 +60,7 @@ const NuggList: FunctionComponent<NuggListProps> = ({
 
     const onClick = useCallback(
         (item: typeof values[number]) => {
-            gotoViewingNugg(item.id);
+            gotoViewingNugg(item.tokenId);
         },
         [gotoViewingNugg],
     );

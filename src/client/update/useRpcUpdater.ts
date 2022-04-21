@@ -5,13 +5,11 @@ import { BigNumber } from 'ethers';
 
 import web3 from '@src/web3';
 import { EthInt } from '@src/classes/Fraction';
-import { ItemId } from '@src/client/router';
 import { InterfacedEvent } from '@src/interfaces/events';
 import lib from '@src/lib';
 import emitter from '@src/emitter';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import { WebSocketProvider } from '@src/web3/classes/WebSocketProvider';
-import { FeedMessageType } from '@src/interfaces/feed';
 
 // eslint-disable-next-line import/no-cycle
 
@@ -89,11 +87,12 @@ export default () => {
                     const agency = BigNumber.from(event.args.agency);
 
                     const data = {
-                        type: 'nugg' as const,
+                        tokenId: event.args.tokenId.toNuggId(),
                         eth: EthInt.fromNuggftV1Agency(event.args.agency),
-                        user: agency.mask(160)._hex,
+                        user: agency.mask(160)._hex as AddressString,
                         txhash: log.transactionHash,
                         isBackup: false,
+                        sellingTokenId: null,
                     };
 
                     void emitter.emit({
@@ -103,16 +102,7 @@ export default () => {
                         data,
                     });
 
-                    void addFeedMessage({
-                        id: log.transactionHash,
-                        block: log.blockNumber,
-                        eth: data.eth,
-                        tokenId: event.args.tokenId.toString(),
-                        type: FeedMessageType.Offer,
-                        user: data.user,
-                    });
-
-                    void updateOffers(event.args.tokenId.toString(), [data]);
+                    void updateOffers(event.args.tokenId.toNuggId(), [data]);
                     break;
                 }
                 default:
@@ -122,13 +112,13 @@ export default () => {
             switch (event.name) {
                 case 'OfferItem': {
                     const agency = BigNumber.from(event.args.agency);
-                    updateOffers(`item-${Number(event.args.itemId).toString()}` as ItemId, [
+                    updateOffers(event.args.itemId.toItemId(), [
                         {
-                            type: 'item',
+                            tokenId: event.args.itemId.toItemId(),
                             eth: EthInt.fromNuggftV1Agency(event.args.agency),
-                            user: agency.mask(160).toNumber().toString(),
+                            user: agency.mask(160).toNumber().toString().toNuggId(),
                             txhash: log.transactionHash,
-                            sellingNuggId: event.args.sellingTokenId.toString(),
+                            sellingTokenId: event.args.sellingTokenId.toNuggId(),
                             isBackup: false,
                         },
                     ]);
@@ -170,18 +160,18 @@ export default () => {
                     break;
                 }
                 case 'Liquidate':
-                    removeLoan(event.args.tokenId.toString());
+                    removeLoan(event.args.tokenId.toNuggId());
                     break;
                 case 'Claim': {
                     if (event.args.account.toLowerCase() === address?.toLowerCase()) {
-                        removeNuggClaim(event.args.tokenId.toString());
+                        removeNuggClaim(event.args.tokenId.toNuggId());
                     }
                     break;
                 }
                 case 'ClaimItem': {
                     removeItemClaimIfMine(
-                        event.args.buyerTokenId.toString(),
-                        `item-${BigNumber.from(event.args.itemId).toString()}` as ItemId,
+                        event.args.buyerTokenId.toNuggId(),
+                        event.args.itemId.toItemId(),
                     );
                     break;
                 }

@@ -6,7 +6,6 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
-import { NuggId, TokenId } from '@src/client/router';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import { ModalEnum } from '@src/interfaces/modals';
 import useDimentions from '@src/client/hooks/useDimentions';
@@ -56,17 +55,21 @@ export default ({
             onClick={() => {
                 if (screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address))
                     navigate('/wallet');
-                else if (token && tokenId)
+                else if (token && token.type === 'nugg') {
                     openModal({
                         type: ModalEnum.Offer,
-                        tokenId,
-                        tokenType: token.type,
+                        tokenId: token.id,
                         token,
-                        nuggToBuyFrom:
-                            token.type === 'item'
-                                ? sellingNuggId || token.activeSwap?.sellingNuggId
-                                : undefined,
+                        nuggToBuyFrom: null,
                     });
+                } else if (token && token.type === 'item' && token.activeSwap) {
+                    openModal({
+                        type: ModalEnum.Offer,
+                        tokenId: token.id,
+                        token,
+                        nuggToBuyFrom: sellingNuggId || token.activeSwap.sellingNuggId,
+                    });
+                }
             }}
             label={
                 !token

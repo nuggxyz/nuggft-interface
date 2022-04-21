@@ -21,11 +21,11 @@ export default () => {
     const { isPhone } = useDimentions();
     useEffect(() => {
         if (epoch && !isPhone) {
-            let goto = String(epoch);
+            let goto = epoch.toNuggId() as TokenId;
             if (location.pathname === '/') {
                 navigate(`/swap/${goto}`);
             } else {
-                goto = match?.params.id || goto;
+                goto = (match?.params.id as TokenId) || goto;
             }
             if ((lastSwap === undefined || match?.params.id) && lastSwap !== goto) {
                 setLastSwap(goto);

@@ -26,7 +26,7 @@ import { ItemListPhone } from './ItemList';
 
 type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
 
-const Info = ({ tokenId }: { tokenId?: string }) => {
+const Info = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
     const totalNuggs = client.live.totalNuggs();
 
@@ -51,7 +51,7 @@ const Info = ({ tokenId }: { tokenId?: string }) => {
     ) : null;
 };
 
-const ActiveSwap = ({ tokenId }: { tokenId: string }) => {
+const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const token = client.live.token(tokenId);
     const lifecycle = useLifecycle(token);
     const leader = client.live.offers(tokenId).first() as unknown as OfferData;
@@ -69,7 +69,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: string }) => {
         if (token && provider && tokenId && lifecycle === Lifecycle.Bunt) {
             return nuggft
                 .connect(provider)
-                ['vfo(address,uint24)'](Address.NULL.hash, tokenId)
+                ['vfo(address,uint24)'](Address.NULL.hash, tokenId.toRawId())
                 .then((x) => {
                     return new EthInt(x);
                 });
@@ -408,7 +408,7 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
                         Items
                     </Text>
                 </div>
-                <ItemListPhone tokenId={tokenId} />
+                {tokenId.isNuggId() && <ItemListPhone tokenId={tokenId} />}
                 <div
                     style={{
                         display: 'flex',

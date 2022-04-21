@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate, useMatch } from 'react-router-dom';
 
-import { TokenId } from '@src/client/router';
 import lib from '@src/lib';
 import useDimentions from '@src/client/hooks/useDimentions';
 
@@ -25,5 +24,9 @@ export default () => {
         return !!tokenId?.params.yo && isPhone;
     }, [tokenId, isPhone]);
 
-    return { gotoViewingNugg, safeTokenId: tokenId?.params.yo, showMobileViewOverlay };
+    return {
+        gotoViewingNugg,
+        safeTokenId: tokenId?.params.yo as TokenId | undefined,
+        showMobileViewOverlay,
+    };
 };

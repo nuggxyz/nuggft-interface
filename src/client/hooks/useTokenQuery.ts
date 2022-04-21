@@ -2,9 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import client from '@src/client';
-import { TokenId } from '@src/client/router';
 import { useGetLiveItemLazyQuery, useGetLiveNuggLazyQuery } from '@src/gql/types.generated';
-import { extractItemId } from '@src/lib';
 import formatLiveItem from '@src/client/formatters/formatLiveItem';
 import formatLiveNugg from '@src/client/formatters/formatLiveNugg';
 
@@ -22,10 +20,10 @@ export default () => {
         async (tokenId: TokenId) => {
             if (!tokenId.isItemId()) {
                 await nuggLazyQuery({
-                    variables: { tokenId },
+                    variables: { tokenId: tokenId.toRawId() },
                 }).then((x) => {
                     if (x.data) {
-                        if (!x.data.nugg) navigate(epoch ? `/swap/${epoch}` : '/');
+                        if (!x.data.nugg) navigate(epoch ? `/swap/${epoch.toNuggId()}` : '/');
                         else {
                             const formatted = formatLiveNugg(x.data.nugg);
                             if (formatted) {
@@ -36,10 +34,10 @@ export default () => {
                 });
             } else {
                 await itemLazyQuery({
-                    variables: { tokenId: extractItemId(tokenId) },
+                    variables: { tokenId: tokenId.toRawId() },
                 }).then((x) => {
                     if (x.data) {
-                        if (!x.data.item) navigate(epoch ? `/swap/${epoch}` : '/');
+                        if (!x.data.item) navigate(epoch ? `/swap/${epoch.toNuggId()}` : '/');
                         else {
                             const formatted = formatLiveItem(x.data.item);
                             if (formatted) {
@@ -50,6 +48,6 @@ export default () => {
                 });
             }
         },
-        [nuggLazyQuery, itemLazyQuery, updateToken],
+        [nuggLazyQuery, itemLazyQuery, updateToken, epoch, navigate],
     );
 };

@@ -5,7 +5,7 @@ import client from '@src/client';
 import { useHealth } from '@src/client/hooks/useHealth';
 import useDevStable from '@src/hooks/useDevStable';
 
-export default (_tokenId: string | undefined) => {
+export default (_tokenId: NuggId | undefined) => {
     const updateToken = client.mutate.updateToken();
 
     const tokenId = useDevStable(_tokenId);
@@ -14,7 +14,7 @@ export default (_tokenId: string | undefined) => {
         shouldResubscribe: !!tokenId,
 
         fetchPolicy: 'cache-first',
-        variables: { tokenId: tokenId || '' },
+        variables: { tokenId: tokenId?.toRawId() || '' },
         skip: !tokenId,
         onSubscriptionData: (x) => {
             if (

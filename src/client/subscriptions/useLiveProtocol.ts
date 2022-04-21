@@ -4,7 +4,7 @@ import { EthInt, Fraction } from '@src/classes/Fraction';
 import client from '@src/client';
 import { SwapData } from '@src/client/interfaces';
 import { useLiveProtocolSubscription } from '@src/gql/types.generated';
-import formatSwapData from '@src/client/formatters/formatSwapData';
+import { formatSwapData } from '@src/client/formatters/formatSwapData';
 
 const mergeUnique = (arr: SwapData[]) => {
     let len = arr.length;
@@ -53,7 +53,6 @@ export default () => {
                         const data = formatSwapData(
                             curr.activeSwap,
                             curr.activeSwap?.sellingNuggItem.item.id || '',
-                            false,
                         );
                         if (
                             curr.activeSwap &&
@@ -77,10 +76,10 @@ export default () => {
                     },
                     totalNuggs: Number(protocol.totalNuggs),
                     recentSwaps: protocol.lastEpoch.swaps.map((z) => {
-                        return formatSwapData(z, z.nugg.id, true);
+                        return formatSwapData(z, z.nugg.id);
                     }),
                     recentItems: protocol.lastEpoch.itemSwaps.map((z) => {
-                        return formatSwapData(z, z.sellingItem.id, true);
+                        return formatSwapData(z, z.sellingItem.id);
                     }),
                     potentialItems: mergeUnique(sortedPotentialItems.potentialItems),
                     ...protocol.activeNuggs.reduce(
@@ -91,10 +90,10 @@ export default () => {
                             },
                             curr,
                         ) => {
-                            const val = formatSwapData(curr.activeSwap, curr.id || '', false);
+                            const val = formatSwapData(curr.activeSwap, curr.id || '');
                             if (!val.endingEpoch) {
                                 prev.potentialSwaps.push(val);
-                            } else prev.activeSwaps.push(val);
+                            } else prev.activeSwaps.push(val as SwapData);
 
                             return prev;
                         },
@@ -114,20 +113,18 @@ export default () => {
                                 const val = formatSwapData(
                                     curr.activeSwap,
                                     curr.activeSwap?.sellingItem.id || '',
-                                    false,
                                 );
 
-                                prev.activeItems.push(val);
+                                if (val) prev.activeItems.push(val);
                             }
 
                             if (curr.upcomingActiveSwap) {
                                 const val = formatSwapData(
                                     curr.upcomingActiveSwap,
                                     curr.upcomingActiveSwap?.sellingItem.id || '',
-                                    false,
                                 );
 
-                                prev.activeItems.push(val);
+                                if (val) prev.activeItems.push(val);
                             }
 
                             return prev;

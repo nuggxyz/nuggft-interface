@@ -15,7 +15,7 @@ import web3 from '@src/web3';
 import useRemaining from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import { TokenId } from '@src/client/router';
+
 import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './TheRing.styles';

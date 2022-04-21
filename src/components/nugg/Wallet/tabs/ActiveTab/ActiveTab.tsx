@@ -11,7 +11,7 @@ import { SwapData } from '@src/client/interfaces';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import lib, { parseTokenIdSmart } from '@src/lib';
+import lib from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import useRemaining from '@src/client/hooks/useRemaining';
 import SimpleList from '@src/components/general/List/SimpleList';
@@ -62,7 +62,7 @@ export const ActiveRenderItem = ({
                 <TokenViewer tokenId={item.tokenId} style={globalStyles.listNugg} />
                 <div>
                     <Label
-                        text={parseTokenIdSmart(item.tokenId || '')}
+                        text={item.tokenId.toPrettyId()}
                         containerStyles={{
                             color: 'white',
                             marginBottom: '5px',

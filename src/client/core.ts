@@ -8,15 +8,14 @@ import { SupportedLocale } from '@src/lib/i18n/locales';
 import { FeedMessage } from '@src/interfaces/feed';
 import { parseItmeIdToNum } from '@src/lib/index';
 
-import { TokenId, ItemId, NuggId } from './router';
 import {
+    SwapData,
+    UnclaimedOffer,
     Dimentions,
     SearchResults,
     LiveToken,
     ClientState,
     OfferData,
-    UnclaimedNuggOffer,
-    UnclaimedItemOffer,
     LoanData,
     MyNuggsData,
     ClientStateUpdate,
@@ -125,6 +124,7 @@ function createClientStoreAndActions2() {
                         if (stateUpdate.totalNuggs) draft.totalNuggs = stateUpdate.totalNuggs;
                         if (stateUpdate.stake) draft.stake = stateUpdate.stake;
                         if (stateUpdate.editingNugg) draft.editingNugg = stateUpdate.editingNugg;
+                        if (stateUpdate.notableSwaps) draft.notableSwaps = stateUpdate.notableSwaps;
                         if (stateUpdate.recentSwaps) draft.recentSwaps = stateUpdate.recentSwaps;
                         if (stateUpdate.recentItems) draft.recentItems = stateUpdate.recentItems;
                         if (stateUpdate.activeSwaps) draft.activeSwaps = stateUpdate.activeSwaps;
@@ -141,6 +141,25 @@ function createClientStoreAndActions2() {
                             draft.myUnclaimedNuggOffers = stateUpdate.myUnclaimedNuggOffers;
                         if (stateUpdate.myUnclaimedItemOffers)
                             draft.myUnclaimedItemOffers = stateUpdate.myUnclaimedItemOffers;
+
+                        const epoch = get().epoch?.id;
+
+                        draft.notableSwaps = [
+                            draft.recentSwaps,
+                            draft.recentItems,
+                            draft.activeSwaps,
+                            draft.activeItems,
+                            draft.potentialSwaps,
+                            draft.potentialItems,
+                        ]
+                            .flat()
+                            .filter((x) => x !== undefined) as SwapData[];
+
+                        if (epoch) {
+                            draft.activeSwaps.filterInPlace(
+                                (x) => x.endingEpoch !== null && x.endingEpoch >= epoch,
+                            );
+                        }
                     });
                 }
 
@@ -183,18 +202,18 @@ function createClientStoreAndActions2() {
                 function removeItemClaimIfMine(nuggId: NuggId, itemId: ItemId): void {
                     set((draft) => {
                         draft.myUnclaimedItemOffers.filterInPlace(
-                            (x) => x.nugg !== nuggId || x.tokenId !== itemId,
+                            (x) => x.leader || x.tokenId !== itemId,
                         );
                     });
                 }
 
-                function addNuggClaim(update: UnclaimedNuggOffer): void {
+                function addNuggClaim(update: UnclaimedOffer): void {
                     set((draft) => {
                         draft.myUnclaimedNuggOffers.unshift(update);
                     });
                 }
 
-                function addItemClaim(update: UnclaimedItemOffer): void {
+                function addItemClaim(update: UnclaimedOffer): void {
                     set((draft) => {
                         draft.myUnclaimedItemOffers.unshift(update);
                     });
@@ -265,14 +284,9 @@ function createClientStoreAndActions2() {
                             const token = get().liveTokens[tokenId];
                             const tmpOffer = offers[0];
 
-                            if (
-                                token &&
-                                token.type === 'item' &&
-                                tmpOffer.type === 'item' &&
-                                !token.activeSwap
-                            ) {
+                            if (token && token.type === 'item' && !token.activeSwap) {
                                 const preloadedSwap = token.swaps.find(
-                                    (x) => x.sellingNuggId === tmpOffer.sellingNuggId,
+                                    (x) => x.sellingNuggId === tmpOffer.sellingTokenId,
                                 );
 
                                 const { nextEpoch } = get();
@@ -376,6 +390,7 @@ function createClientStoreAndActions2() {
                     potentialSwaps: [],
                     potentialItems: [],
                     incomingSwaps: [],
+                    notableSwaps: [],
                     incomingItems: [],
                     myUnclaimedNuggOffers: [],
                     myUnclaimedItemOffers: [],

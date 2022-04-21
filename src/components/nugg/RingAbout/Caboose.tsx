@@ -12,7 +12,6 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import useRemaining from '@src/client/hooks/useRemaining';
-import { TokenId } from '@src/client/router';
 import useDimentions from '@src/client/hooks/useDimentions';
 import { ModalEnum } from '@src/interfaces/modals';
 
@@ -49,7 +48,7 @@ const TryoutRenderItem: FC<ListRenderItemProps<TryoutData, undefined, TryoutData
     );
 };
 
-export default ({ tokenId }: { tokenId?: TokenId }) => {
+export default ({ tokenId }: { tokenId?: ItemId }) => {
     const { screen: screenType } = useDimentions();
     const address = web3.hook.usePriorityAccount();
     const epoch = client.live.epoch.id();
@@ -114,18 +113,22 @@ export default ({ tokenId }: { tokenId?: TokenId }) => {
                             ...styles.buttonText,
                         }}
                         disabled={mustWaitToBid || !nuggToBuyFrom}
-                        onClick={() =>
-                            screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-                                ? navigate('/wallet')
-                                : tokenId &&
-                                  openModal({
-                                      type: ModalEnum.Offer,
-                                      tokenId,
-                                      tokenType: token.type,
-                                      token,
-                                      nuggToBuyFrom: nuggToBuyFrom?.nugg,
-                                  })
-                        }
+                        onClick={() => {
+                            if (nuggToBuyFrom) {
+                                if (
+                                    screenType === 'phone' &&
+                                    isUndefinedOrNullOrStringEmpty(address)
+                                )
+                                    navigate('/wallet');
+                                else if (tokenId)
+                                    openModal({
+                                        type: ModalEnum.Offer,
+                                        tokenId,
+                                        token,
+                                        nuggToBuyFrom: nuggToBuyFrom.nugg,
+                                    });
+                            }
+                        }}
                         label={
                             mustWaitToBid
                                 ? t`wait ${minutes} minutes to buy from a new nugg`

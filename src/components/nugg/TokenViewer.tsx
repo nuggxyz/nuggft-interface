@@ -2,8 +2,6 @@ import { config as springConfig, useSpring, animated } from '@react-spring/web';
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
-import { TokenId } from '@src/client/router';
-import { parseTokenId } from '@src/lib';
 import useOnHover from '@src/hooks/useOnHover';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import { useDotnuggCacheOnlyLazy, useDotnuggSubscription } from '@src/client/hooks/useDotnugg';
@@ -12,7 +10,7 @@ import useDimentions from '@src/client/hooks/useDimentions';
 import DangerouslySetNugg from './DangerouslySetNugg';
 
 export type TokenViewerProps = {
-    tokenId: TokenId;
+    tokenId?: TokenId;
     style?: CSSProperties;
     showLabel?: boolean;
     labelColor?: string;
@@ -38,6 +36,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     textProps,
     svgNotFromGraph,
     showcase = false,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     labelLong = false,
     disableOnClick = false,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -57,7 +56,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     const { src: dotnugg, isEmpty } = useDotnuggCacheOnlyLazy(shouldLoad, tokenId, forceCache);
 
     const triggerSubscriber = React.useMemo(() => {
-        return subscribe || isEmpty;
+        return !!(subscribe || isEmpty);
     }, [subscribe, isEmpty]);
 
     const dotnuggSub = useDotnuggSubscription(triggerSubscriber, tokenId);
@@ -91,10 +90,12 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
                 role="presentation"
                 onClick={
                     disableOnClick
-                        ? undefined
-                        : () => {
-                              gotoViewingNugg(tokenId);
+                        ? () => {
+                              if (tokenId) {
+                                  gotoViewingNugg(tokenId);
+                              }
                           }
+                        : undefined
                 }
                 ref={hoverRef}
                 style={{
@@ -122,7 +123,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
                     }}
                     {...textProps}
                 >
-                    {parseTokenId(tokenId, labelLong)}
+                    {tokenId?.toPrettyId()}
                 </Text>
             )}
         </animated.div>

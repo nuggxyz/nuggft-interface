@@ -8,9 +8,10 @@ import { EthInt } from '@src/classes/Fraction';
 import { Address } from '@src/classes/Address';
 
 // eslint-disable-next-line import/no-cycle
+
 import client from '..';
 
-export default (activate: boolean, tokenId: string | undefined) => {
+export default (activate: boolean, tokenId: NuggId | undefined) => {
     const chainId = web3.hook.usePriorityChainId();
     const liveEpoch = client.live.epoch.default();
     const provider = web3.hook.usePriorityProvider();
@@ -28,7 +29,9 @@ export default (activate: boolean, tokenId: string | undefined) => {
                 .map((x) => ({ ...x, activeSwap: undefined }));
 
             const owner =
-                agency.flag === 0x0 && agency.epoch === 0 ? Address.ZERO.hash : nuggft.address;
+                agency.flag === 0x0 && agency.epoch === 0
+                    ? (Address.ZERO.hash as AddressString)
+                    : (nuggft.address as AddressString);
 
             if (agency.flag === 0 && Number(tokenId) === liveEpoch.id) {
                 agency.epoch = liveEpoch.id;
@@ -78,9 +81,10 @@ export default (activate: boolean, tokenId: string | undefined) => {
                 updateOffers(tokenId, [
                     {
                         eth: activeSwap.eth,
-                        user: activeSwap.leader,
-                        type: 'nugg',
+                        user: activeSwap.leader as AddressString,
                         isBackup: true,
+                        sellingTokenId: null,
+                        tokenId,
                     },
                 ]);
         }

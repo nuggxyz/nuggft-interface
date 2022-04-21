@@ -127,7 +127,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         () =>
             [...activeNuggs, ...potentialNuggs].reduce((acc: ListData[], nugg) => {
                 let tmp = acc;
-                if (epoch__id && +nugg.id <= +epoch__id) {
+                if (epoch__id && +nugg.tokenId.toRawId() <= +epoch__id) {
                     if (sortAsc[SearchView.OnSale]) {
                         tmp = [...acc, nugg];
                     } else {
@@ -233,7 +233,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     type={SearchView.AllItems}
                     previewNuggs={
                         allItemsData?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT).map((x) => ({
-                            id: `item-${x.id}`,
+                            tokenId: x.id.toItemId(),
                             listDataType: 'basic' as const,
                         })) || []
                     }
@@ -243,7 +243,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         style={styles.nuggListEnter}
                         values={
                             allItemsData?.map((x) => ({
-                                id: `item-${x.id}`,
+                                tokenId: x.id.toItemId(),
                                 listDataType: 'basic' as const,
                             })) || []
                         }
@@ -262,7 +262,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     type={SearchView.AllNuggs}
                     previewNuggs={
                         allNuggsData?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT).map((x) => ({
-                            id: x.id,
+                            tokenId: x.id.toNuggId(),
                             listDataType: 'basic' as const,
                         })) || []
                     }
@@ -272,7 +272,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         style={styles.nuggListEnter}
                         values={
                             allNuggsData?.map((x) => ({
-                                id: x.id,
+                                tokenId: x.id.toNuggId(),
                                 listDataType: 'basic' as const,
                             })) || []
                         }

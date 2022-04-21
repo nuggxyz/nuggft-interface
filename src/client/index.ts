@@ -7,7 +7,6 @@ import shallow from 'zustand/shallow';
 import web3 from '@src/web3';
 
 import core from './core';
-import { TokenId } from './router';
 import { ListData, SearchView } from './interfaces';
 import modal from './modal';
 import toast from './toast';
@@ -16,7 +15,7 @@ import viewscreen from './viewscreen';
 import editscreen from './editscreen';
 
 export default {
-    ...core,
+    core,
 
     live: {
         /// ///// simple ////////
@@ -100,19 +99,19 @@ export default {
                     (x) => x.endingEpoch && x.endingEpoch >= (state.epoch?.id || 0),
                 ),
             ),
-        activeNuggItem: (id: string | undefined) =>
+        activeNuggItem: (id: ItemId | undefined) =>
             core(
                 // eslint-disable-next-line react-hooks/rules-of-hooks
                 useCallback(
-                    (state) => id && state.activeItems.find((item) => item.id.includes(id)),
+                    (state) => id && state.activeItems.find((item) => item.tokenId.includes(id)),
                     [id],
                 ),
             ),
-        potentialNuggItem: (id: string | undefined) =>
+        potentialNuggItem: (id: ItemId | undefined) =>
             core(
                 // eslint-disable-next-line react-hooks/rules-of-hooks
                 useCallback(
-                    (state) => id && state.potentialItems.find((item) => item.id.includes(id)),
+                    (state) => id && state.potentialItems.find((item) => item.tokenId.includes(id)),
                     [id],
                 ),
             ),

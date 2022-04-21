@@ -5,13 +5,13 @@ import { LiveItemFragment } from '@src/gql/types.generated';
 export default (item: LiveItemFragment): LiveItem => {
     const tmp: Omit<LiveItem, 'tryout'> = {
         type: 'item' as const,
-        id: item.id,
+        id: item.id.toItemId(),
         count: Number(item.count),
         swaps: item.swaps
             .map((y) => {
                 return y
                     ? {
-                          type: 'item' as const,
+                          type: 'item',
                           id: y.id,
                           epoch: y.epoch
                               ? {
@@ -41,7 +41,7 @@ export default (item: LiveItemFragment): LiveItem => {
             ? {
                   count: 1,
                   type: 'item' as const,
-                  id: item.activeSwap?.id,
+                  id: item.activeSwap?.id.toItemId(),
                   epoch: item.activeSwap.epoch
                       ? {
                             id: Number(item.activeSwap.epoch.id),
@@ -51,9 +51,9 @@ export default (item: LiveItemFragment): LiveItem => {
                         }
                       : null,
                   eth: new EthInt(item.activeSwap?.eth),
-                  leader: item.activeSwap?.leader!.id,
+                  leader: item.activeSwap?.leader!.id.toNuggId(),
 
-                  owner: item.activeSwap.owner?.id,
+                  owner: item.activeSwap.owner?.id.toNuggId(),
 
                   endingEpoch:
                       item.activeSwap && item.activeSwap.endingEpoch
@@ -61,7 +61,7 @@ export default (item: LiveItemFragment): LiveItem => {
                           : null,
                   num: Number(item.activeSwap?.num),
                   isTryout: false,
-                  sellingNuggId: item.activeSwap?.sellingNuggItem.nugg.id,
+                  sellingNuggId: item.activeSwap?.sellingNuggItem.nugg.id.toNuggId(),
                   bottom: new EthInt(item.activeSwap?.bottom),
                   isBackup: false,
               }
@@ -70,7 +70,7 @@ export default (item: LiveItemFragment): LiveItem => {
             ? {
                   count: 1,
                   type: 'item' as const,
-                  id: item.upcomingActiveSwap?.id,
+                  id: item.upcomingActiveSwap?.id.toItemId(),
                   epoch: item.upcomingActiveSwap.epoch
                       ? {
                             id: Number(item.upcomingActiveSwap.epoch.id),
@@ -80,15 +80,15 @@ export default (item: LiveItemFragment): LiveItem => {
                         }
                       : null,
                   eth: new EthInt(item.upcomingActiveSwap?.eth),
-                  leader: item.upcomingActiveSwap?.leader!.id,
-                  owner: item.upcomingActiveSwap.owner?.id,
+                  leader: item.upcomingActiveSwap?.leader!.id.toNuggId(),
+                  owner: item.upcomingActiveSwap.owner?.id.toNuggId(),
                   endingEpoch:
                       item.upcomingActiveSwap && item.upcomingActiveSwap.endingEpoch
                           ? Number(item.upcomingActiveSwap.endingEpoch)
                           : null,
                   num: Number(item.upcomingActiveSwap?.num),
                   isTryout: false,
-                  sellingNuggId: item.upcomingActiveSwap?.sellingNuggItem.nugg.id,
+                  sellingNuggId: item.upcomingActiveSwap?.sellingNuggItem.nugg.id.toNuggId(),
                   bottom: new EthInt(item.upcomingActiveSwap?.bottom),
                   isBackup: false,
               }
@@ -102,7 +102,7 @@ export default (item: LiveItemFragment): LiveItem => {
 
     const tryout = tmp.swaps.reduce((prev: LiveItem['tryout'] | undefined, curr) => {
         const swap: TryoutData = {
-            nugg: curr.owner as string,
+            nugg: curr.sellingNuggId,
             eth: curr.eth,
         };
         /// ////////////////////////////////////////

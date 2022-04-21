@@ -3,21 +3,17 @@ import gql from 'graphql-tag';
 import React, { useMemo, useEffect } from 'react';
 import { useApolloClient } from '@apollo/client';
 
-import { useFastQuery } from '@src/gql/helpers';
 import web3 from '@src/web3';
-import { TokenId } from '@src/client/router';
 import {
     useGetDotnuggItemQuery,
     useGetDotnuggNuggQuery,
     GetDotnuggNuggQuery,
 } from '@src/gql/types.generated';
 import { useNuggftV1 } from '@src/contracts/useContract';
-import { extractItemId, isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 
 // eslint-disable-next-line import/no-cycle
 import client from '..';
-
-type UseDotnuggResponse = Base64EncodedSvg | undefined | null;
 
 export const useDotnuggInjectToCache = () => {
     const graph = client.live.graph();
@@ -53,7 +49,7 @@ export const useDotnuggInjectToCache = () => {
     );
 };
 
-export const useDotnuggRpcBackup2 = (use: boolean, tokenId: TokenId) => {
+export const useDotnuggRpcBackup2 = (use: boolean, tokenId?: TokenId) => {
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
     const graph = client.live.graph();
@@ -67,8 +63,8 @@ export const useDotnuggRpcBackup2 = (use: boolean, tokenId: TokenId) => {
     useEffect(() => {
         if (tokenId && graph && chainId && provider && use) {
             void (async () => {
-                const res = (await nuggft[tokenId?.isItemId() ? 'itemURI' : 'imageURI'](
-                    extractItemId(tokenId),
+                const res = (await nuggft[tokenId.isItemId() ? 'itemURI' : 'imageURI'](
+                    tokenId.toRawId(),
                 )) as Base64EncodedSvg | undefined;
                 setSrc(res);
                 if (res) void inject(tokenId, res);
@@ -79,45 +75,45 @@ export const useDotnuggRpcBackup2 = (use: boolean, tokenId: TokenId) => {
     return src;
 };
 
-export const useDotnugg = (tokenId: string) => {
-    const main = useFastQuery<
-        { [key in 'nugg' | 'item']?: { dotnuggRawCache: Base64EncodedSvg } },
-        UseDotnuggResponse
-    >(
-        tokenId?.isItemId()
-            ? gql`
-                  query OptimizedDotNugg($tokenId: ID!) {
-                      item(id: $tokenId) {
-                          id
-                          dotnuggRawCache
-                      }
-                  }
-              `
-            : gql`
-                  query OptimizedDotNugg($tokenId: ID!) {
-                      nugg(id: $tokenId) {
-                          id
-                          dotnuggRawCache
-                      }
-                  }
-              `,
-        {
-            tokenId: tokenId?.replace('item-', ''),
-        },
-        (x) => {
-            if (x.data.nugg !== undefined) return x.data.nugg.dotnuggRawCache;
-            if (x.data.item !== undefined) return x.data.item.dotnuggRawCache;
-            return null;
-        },
-    );
+// export const useDotnugg = (tokenId?: TokenId) => {
+//     const main = useFastQuery<
+//         { [key in 'nugg' | 'item']?: { dotnuggRawCache: Base64EncodedSvg } },
+//         UseDotnuggResponse
+//     >(
+//         tokenId.isItemId()
+//             ? gql`
+//                   query OptimizedDotNugg($tokenId: ID!) {
+//                       item(id: $tokenId) {
+//                           id
+//                           dotnuggRawCache
+//                       }
+//                   }
+//               `
+//             : gql`
+//                   query OptimizedDotNugg($tokenId: ID!) {
+//                       nugg(id: $tokenId) {
+//                           id
+//                           dotnuggRawCache
+//                       }
+//                   }
+//               `,
+//         {
+//             tokenId: tokenId?.replace('item-', ''),
+//         },
+//         (x) => {
+//             if (x.data.nugg !== undefined) return x.data.nugg.dotnuggRawCache;
+//             if (x.data.item !== undefined) return x.data.item.dotnuggRawCache;
+//             return null;
+//         },
+//     );
 
-    const fallback = useDotnuggRpcBackup2(main === undefined, tokenId);
-    return main || fallback;
-};
+//     const fallback = useDotnuggRpcBackup2(main === undefined, tokenId);
+//     return main || fallback;
+// };
 
 export const useDotnuggSubscription = (
     activate: boolean,
-    tokenId: string,
+    tokenId?: TokenId,
 ): Base64EncodedSvg | undefined => {
     const isItem = React.useMemo(() => {
         return tokenId?.isItemId();
@@ -127,28 +123,28 @@ export const useDotnuggSubscription = (
 
     const { data: nuggSrc } = useGetDotnuggNuggQuery({
         pollInterval: 5000,
-        skip: !activate || isItem,
+        skip: !tokenId || !activate || isItem,
         fetchPolicy: 'network-only',
         variables: {
-            tokenId,
+            tokenId: tokenId?.toRawId() || '',
         },
         onCompleted: (data) => {
-            if (data.nugg?.dotnuggRawCache)
+            if (data.nugg?.dotnuggRawCache && tokenId)
                 inject(tokenId, data.nugg?.dotnuggRawCache as Base64EncodedSvg);
         },
     });
 
     const { data: itemSrc } = useGetDotnuggItemQuery({
         pollInterval: 15000,
-        skip: !activate || !isItem,
+        skip: !tokenId || !activate || !isItem,
 
         fetchPolicy: 'network-only',
 
         variables: {
-            tokenId: extractItemId(tokenId),
+            tokenId: tokenId?.toRawId() || '',
         },
         onCompleted: (data) => {
-            if (data.item?.dotnuggRawCache)
+            if (data.item?.dotnuggRawCache && tokenId)
                 inject(tokenId, data.item?.dotnuggRawCache as Base64EncodedSvg);
         },
     });
@@ -192,7 +188,7 @@ export const useDotnuggSubscription = (
 
 export const useDotnuggCacheOnlyLazy = (
     shouldLoad: boolean,
-    tokenId: string,
+    tokenId?: TokenId,
     forceCache = false,
 ) => {
     const {
@@ -201,8 +197,8 @@ export const useDotnuggCacheOnlyLazy = (
         called: nuggCalled,
     } = useGetDotnuggNuggQuery({
         fetchPolicy: forceCache ? 'cache-only' : 'cache-first',
-        skip: forceCache || !shouldLoad || tokenId.isItemId(),
-        variables: { tokenId: tokenId.isItemId() ? extractItemId(tokenId) : tokenId },
+        skip: !tokenId || forceCache || !shouldLoad || tokenId.isItemId(),
+        variables: { tokenId: tokenId?.toRawId() || '' },
     });
 
     const {
@@ -211,48 +207,50 @@ export const useDotnuggCacheOnlyLazy = (
         called: itemCalled,
     } = useGetDotnuggItemQuery({
         fetchPolicy: forceCache ? 'cache-only' : 'cache-first',
-        skip: forceCache || !shouldLoad || !tokenId.isItemId(),
-        variables: { tokenId: tokenId.isItemId() ? extractItemId(tokenId) : tokenId },
+        skip: !tokenId || forceCache || !shouldLoad || !tokenId.isItemId(),
+        variables: { tokenId: tokenId?.toRawId() || '' },
     });
 
     const clienter = useApolloClient();
 
     const src = useMemo(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const todo: GetDotnuggNuggQuery['nugg'] = clienter.readFragment({
-            id: `${tokenId.isItemId() ? 'Item' : 'Nugg'}:${
-                tokenId.isItemId() ? extractItemId(tokenId) : tokenId
-            }`, // The value of the to-do item's cache ID
-            fragment: tokenId.isItemId()
-                ? gql`
-                      fragment dnugg on Item {
-                          id
-                          dotnuggRawCache
-                      }
-                  `
-                : gql`
-                      fragment dnugg on Nugg {
-                          id
-                          dotnuggRawCache
-                      }
-                  `,
-        });
-        if (todo) {
-            return todo.dotnuggRawCache as Base64EncodedSvg;
+        if (tokenId) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            const todo: GetDotnuggNuggQuery['nugg'] = clienter.readFragment({
+                id: `${tokenId.isItemId() ? 'Item' : 'Nugg'}:${tokenId.toRawId()}`, // The value of the to-do item's cache ID
+                fragment: tokenId.isItemId()
+                    ? gql`
+                          fragment dnugg on Item {
+                              id
+                              dotnuggRawCache
+                          }
+                      `
+                    : gql`
+                          fragment dnugg on Nugg {
+                              id
+                              dotnuggRawCache
+                          }
+                      `,
+            });
+            if (todo) {
+                return todo.dotnuggRawCache as Base64EncodedSvg;
+            }
+            return tokenId.isItemId()
+                ? (itemRes?.item?.dotnuggRawCache as Base64EncodedSvg | undefined)
+                : (nuggRes?.nugg?.dotnuggRawCache as Base64EncodedSvg | undefined);
         }
-        return tokenId.isItemId()
-            ? (itemRes?.item?.dotnuggRawCache as Base64EncodedSvg | undefined)
-            : (nuggRes?.nugg?.dotnuggRawCache as Base64EncodedSvg | undefined);
+        return undefined;
     }, [itemRes, nuggRes, tokenId, clienter]);
 
     const error = useMemo(() => {
-        return tokenId.isItemId() ? !!itemErr : !!nuggErr;
+        return tokenId ? (tokenId.isItemId() ? !!itemErr : !!nuggErr) : undefined;
     }, [itemErr, nuggErr, tokenId]);
 
-    const fallback = useDotnuggRpcBackup2(error, tokenId);
+    const fallback = useDotnuggRpcBackup2(!!error, tokenId);
 
     const isEmpty = useMemo(() => {
         return (
+            tokenId &&
             (tokenId.isItemId() ? itemCalled : nuggCalled) &&
             isUndefinedOrNullOrStringEmpty(src) &&
             isUndefinedOrNullOrStringEmpty(fallback)

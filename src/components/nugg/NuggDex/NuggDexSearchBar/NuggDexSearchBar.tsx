@@ -18,13 +18,8 @@ import {
     useGetAllNuggsQuery,
     Item_OrderBy,
 } from '@src/gql/types.generated';
-import { ItemId } from '@src/client/router';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import lib, {
-    extractItemId,
-    isUndefinedOrNullOrStringEmpty,
-    parseTokenIdSmart,
-} from '@src/lib/index';
+import lib, { isUndefinedOrNullOrStringEmpty, parseTokenIdSmart } from '@src/lib/index';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import globalStyles from '@src/lib/globalStyles';
 import useDimentions from '@src/client/hooks/useDimentions';
@@ -176,19 +171,21 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
         return () => {};
     }, [localSearchValue, getAllNuggs, getAllItems, setSearchedNuggsData, setSearchedItemsData]);
 
+    const setActiveSearch = client.mutate.setActiveSearch();
+
     useEffect(() => {
         switch (activeFilter?.type) {
             case FilterEnum.NuggsThatOwnThisItem: {
                 void getAllNuggs({
                     variables: {
                         where: {
-                            _items_contains_nocase: [+extractItemId(activeFilter.itemId)],
+                            _items_contains_nocase: [+activeFilter.itemId.toRawId()],
                         },
                     },
                 }).then((x) => {
                     setActiveSearch([
                         ...(x.data.nuggs.map((y) => ({
-                            id: y.id,
+                            tokenId: y.id.toNuggId(),
                             listDataType: 'basic' as const,
                         })) || []),
                     ]);
@@ -201,9 +198,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                 break;
             }
         }
-    }, [activeFilter, getAllItems, getAllNuggs, blankItemQuery]);
-
-    const setActiveSearch = client.mutate.setActiveSearch();
+    }, [activeFilter, getAllItems, getAllNuggs, blankItemQuery, setActiveSearch]);
 
     const ref = React.useRef(null);
     useOnClickOutside(ref, () => {
@@ -214,11 +209,11 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const agg = React.useMemo(() => {
         return [
             ...(searchedNuggsData ?? []).map((x) => ({
-                id: x.id,
+                tokenId: x.id,
                 listDataType: 'basic' as const,
             })),
             ...(searchedItemsData ?? []).map((x) => ({
-                id: `item-${x.id}`,
+                tokenId: `item-${x.id}`,
                 listDataType: 'basic' as const,
             })),
         ] as ListData[];
@@ -264,7 +259,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                     ) : (
                         agg.map((x) => (
                             <div
-                                key={`search-list${x.id}`}
+                                key={`search-list${x.tokenId}`}
                                 style={{
                                     ...styles.resultListItemContainer,
                                     flexDirection: screenType !== 'desktop' ? 'column' : 'row',
@@ -272,7 +267,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                             >
                                 <div style={globalStyles.centered}>
                                     <TokenViewer
-                                        tokenId={x.id}
+                                        tokenId={x.tokenId}
                                         style={styles.resultListItemToken}
                                     />
                                     <Text
@@ -280,7 +275,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                                         type="text"
                                         textStyle={styles.resultListItemId}
                                     >
-                                        {parseTokenIdSmart(x.id)}
+                                        {parseTokenIdSmart(x.tokenId)}
                                     </Text>
                                 </div>
                                 <div
@@ -290,14 +285,14 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                                             ? {
                                                   width: '100%',
                                                   paddingTop: '.5rem',
-                                                  justifyContent: x.id.isItemId()
+                                                  justifyContent: x.tokenId.isItemId()
                                                       ? 'space-between'
                                                       : 'flex-end',
                                               }
                                             : {}),
                                     }}
                                 >
-                                    {x.id.isItemId() && (
+                                    {x.tokenId.isItemId() && (
                                         <Button
                                             size="small"
                                             onClick={(event) => {
@@ -305,7 +300,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
 
                                                 setActiveFilter({
                                                     type: FilterEnum.NuggsThatOwnThisItem,
-                                                    itemId: x.id as ItemId,
+                                                    itemId: x.tokenId as ItemId,
                                                     only: 'nuggs',
                                                 });
                                                 setSearchValue('');
@@ -340,7 +335,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                                         // type="text"
                                         onClick={() => {
                                             navigate(
-                                                `/view/${lib.constants.VIEWING_PREFIX}/${x.id}`,
+                                                `/view/${lib.constants.VIEWING_PREFIX}/${x.tokenId}`,
                                             );
                                             setShow(false);
                                             setMobileExpanded(false);

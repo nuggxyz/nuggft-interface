@@ -7,7 +7,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
 import { Lifecycle, LiveNuggItem, OfferData } from '@src/client/interfaces';
-import lib, { parseTokenIdSmart } from '@src/lib';
+import lib from '@src/lib';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -25,12 +25,12 @@ const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>>
                 transition: '.2s background ease',
             }}
         >
-            <TokenViewer tokenId={item.id} style={{ width: '60px', height: '60px' }} />
+            <TokenViewer tokenId={item.tokenId} style={{ width: '60px', height: '60px' }} />
         </div>
     );
 };
 
-const OwnerBlock = ({ tokenId }: { tokenId?: string }) => {
+const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
     const lifecycle = useLifecycle(token);
     const leader = client.live.offers(tokenId).first() as unknown as OfferData;
@@ -105,7 +105,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: string }) => {
                             fontSize: '23px',
                         }}
                     >
-                        {tokenId && parseTokenIdSmart(tokenId)}
+                        {tokenId && tokenId.toPrettyId()}
                     </Text>
 
                     {leader && lifecycle === Lifecycle.Bench ? (

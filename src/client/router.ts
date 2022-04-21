@@ -32,11 +32,9 @@ export interface SwapNuggRoute extends BaseRoute, NuggData {
 
 export type ViewRoute = Route.ViewItem | Route.ViewNugg;
 export type SwapRoute = Route.SwapItem | Route.SwapNugg;
-export type NuggId = `${string}`;
-export type RawItemId = `${string}`;
-export type ItemId = `item-${string}`;
+export type RawNuggId = `${number}`;
 
-export type TokenId = ItemId | NuggId;
+export type RawItemId = `${number}`;
 
 interface ItemData {
     tokenId: ItemId;

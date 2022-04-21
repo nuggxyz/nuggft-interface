@@ -1,7 +1,6 @@
 import { CSSProperties } from 'react';
 
-import { NuggId, TokenId } from '@src/client/router';
-import { LiveToken } from '@src/client/interfaces';
+import { LiveNugg, LiveItem } from '@src/client/interfaces';
 import { PeerInfo } from '@src/web3/core/interfaces';
 
 export enum ModalEnum {
@@ -21,17 +20,16 @@ export interface ModalDataBase {
 
 export interface LoanModalData extends ModalDataBase {
     type: ModalEnum.Loan;
-    tokenId: TokenId;
+    tokenId: NuggId;
     actionType: 'burn' | 'loan';
 }
 
-export interface OfferModalData extends ModalDataBase {
+export interface OfferModalDataBase<T extends TokenType> extends ModalDataBase, TokenIdAsType<T> {
     type: ModalEnum.Offer;
-    tokenId: TokenId;
-    nuggToBuyFrom?: NuggId;
-    token: LiveToken;
-    tokenType: 'nugg' | 'item';
+    nuggToBuyFrom: PickFromTokenType<T, null, NuggId>;
+    token: PickFromTokenType<T, LiveNugg, LiveItem>;
 }
+export type OfferModalData = { [S in TokenType]: OfferModalDataBase<S> }[TokenType];
 
 export interface MintModalData extends ModalDataBase {
     type: ModalEnum.Mint;
@@ -40,7 +38,7 @@ export interface MintModalData extends ModalDataBase {
 export interface LoanInputModalData extends ModalDataBase {
     type: ModalEnum.LoanInput;
     actionType: 'liquidate' | 'rebalance';
-    tokenId: TokenId;
+    tokenId: NuggId;
 }
 
 export interface QRCodeModalData extends ModalDataBase {
@@ -50,22 +48,12 @@ export interface QRCodeModalData extends ModalDataBase {
     backgroundStyle: { background: string };
 }
 
-interface SellModalDataBase extends ModalDataBase {
+interface SellModalDataBase<T extends TokenType> extends ModalDataBase, TokenIdAsType<T> {
     type: ModalEnum.Sell;
-    tokenId: TokenId;
-    tokenType: 'item' | 'nugg';
+    sellingNuggId: PickFromTokenType<T, null, NuggId>;
 }
 
-interface SellModalNuggData extends SellModalDataBase {
-    tokenType: 'nugg';
-}
-
-interface SellModalItemData extends SellModalDataBase {
-    tokenType: 'item';
-    sellingNuggId: NuggId;
-}
-
-export type SellModalData = SellModalNuggData | SellModalItemData;
+export type SellModalData = { [S in TokenType]: SellModalDataBase<S> }[TokenType];
 
 export type ModalType =
     | LoanModalData

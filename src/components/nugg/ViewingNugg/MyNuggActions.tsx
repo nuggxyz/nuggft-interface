@@ -13,10 +13,10 @@ const MyNuggActions: FunctionComponent<Props> = () => {
     const { safeTokenId: tokenId } = useViewingNugg();
     const token = client.live.token(tokenId);
 
-    return tokenId && token && token.type === 'nugg' ? (
+    return tokenId && token && token.type === 'nugg' && tokenId.isNuggId() ? (
         token?.activeSwap?.id || token?.pendingClaim ? (
             <SaleButtons tokenId={tokenId} reclaim={!token?.pendingClaim} />
-        ) : token?.activeLoan ? (
+        ) : token?.activeLoan && token.type === 'nugg' ? (
             <LoanButtons tokenId={tokenId} />
         ) : (
             <OwnerButtons tokenId={tokenId} />

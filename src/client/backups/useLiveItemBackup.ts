@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { BigNumber } from 'ethers';
 
 import web3 from '@src/web3';
-import lib, { extractItemId } from '@src/lib';
+import lib from '@src/lib';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import { LiveActiveItemSwap } from '@src/client/interfaces';
@@ -11,7 +11,7 @@ import { LiveActiveItemSwap } from '@src/client/interfaces';
 
 import client from '..';
 
-export default (activate: boolean, tokenId: string | undefined) => {
+export default (activate: boolean, tokenId: ItemId | undefined) => {
     const chainId = web3.hook.usePriorityChainId();
     const liveEpoch = client.live.epoch.default();
 
@@ -24,8 +24,7 @@ export default (activate: boolean, tokenId: string | undefined) => {
 
     const callback = useCallback(async () => {
         if (activate && tokenId && tokenId.isItemId() && chainId && liveEpoch) {
-            const itemId = extractItemId(tokenId);
-            const items = lib.parse.lastItemSwap(await nuggft.lastItemSwap(itemId));
+            const items = lib.parse.lastItemSwap(await nuggft.lastItemSwap(tokenId.toRawId()));
 
             const active = items.find((x) => x.endingEpoch === liveEpoch.id);
             const upcoming = items.find((x) => x.endingEpoch === liveEpoch.id + 1);
@@ -35,7 +34,7 @@ export default (activate: boolean, tokenId: string | undefined) => {
                     if (!arg) return undefined;
 
                     const agency = lib.parse.agency(
-                        await nuggft.itemAgency(arg.tokenId, BigNumber.from(itemId)),
+                        await nuggft.itemAgency(arg.tokenId, BigNumber.from(tokenId.toRawId())),
                     );
 
                     const epoch =
@@ -55,7 +54,7 @@ export default (activate: boolean, tokenId: string | undefined) => {
 
                     return agency.flag === 0x3
                         ? ({
-                              type: 'item' as const,
+                              type: 'item',
                               id: tokenId,
                               epoch,
                               eth: agency.eth,
@@ -77,7 +76,7 @@ export default (activate: boolean, tokenId: string | undefined) => {
             );
 
             updateToken(tokenId, {
-                type: 'item' as const,
+                type: 'item',
                 id: tokenId,
                 swaps: [],
                 activeSwap: check[0],
@@ -98,9 +97,9 @@ export default (activate: boolean, tokenId: string | undefined) => {
                     .filter((x) => x && !x.eth.eq(0))
                     .map((x) => ({
                         eth: x!.eth,
-                        user: x!.leader,
-                        type: 'item' as const,
-                        sellingNuggId: x!.sellingNuggId,
+                        tokenId,
+                        user: x!.leader.toNuggId(),
+                        sellingTokenId: x!.sellingNuggId.toNuggId(),
                         isBackup: true,
                     })),
             );

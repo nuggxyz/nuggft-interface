@@ -66,7 +66,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             {epoch ? (
                                 <TokenViewer
-                                    tokenId={epoch.toString()}
+                                    tokenId={epoch.toNuggId()}
                                     style={{
                                         width: '37px',
                                         height: '37px',

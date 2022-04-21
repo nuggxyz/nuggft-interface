@@ -108,7 +108,7 @@ function getRelevantState(): ClientState | null {
         return null;
     }
 
-    return client.getState();
+    return client.core.getState();
 }
 
 function issueBody(error: Error): string {

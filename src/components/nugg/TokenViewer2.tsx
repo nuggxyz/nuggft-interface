@@ -2,7 +2,6 @@ import { useSpring, animated, easings } from '@react-spring/web';
 import React, { CSSProperties, useMemo } from 'react';
 
 import client from '@src/client';
-import { TokenId } from '@src/client/router';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import web3 from '@src/web3';
@@ -12,7 +11,7 @@ import useDimentions from '@src/client/hooks/useDimentions';
 import TokenViewer, { TokenViewerProps } from './TokenViewer';
 
 interface Props extends TokenViewerProps {
-    tokenId: TokenId;
+    tokenId?: TokenId;
     style?: CSSProperties;
     validated: boolean;
 }
@@ -56,12 +55,14 @@ export default ({ tokenId, style, validated, ...props }: Props) => {
     React.useEffect(() => {
         if (initial !== undefined && svg && svg !== initial) {
             setDoneWaiting(true);
-            inject(tokenId, svg);
+            if (tokenId) {
+                inject(tokenId, svg);
+            }
         }
     }, [initial, svg, inject, tokenId]);
 
     React.useEffect(() => {
-        if (initial === undefined && (svg !== undefined || tokenId === '')) {
+        if (initial === undefined && (svg !== undefined || !tokenId)) {
             if (!svg) setInitial(null);
             else setInitial(svg || null);
         }

@@ -2,7 +2,6 @@ import { useCallback, useEffect } from 'react';
 import { useMatch } from 'react-router-dom';
 
 import { useGetLiveItemLazyQuery, useGetLiveNuggLazyQuery } from '@src/gql/types.generated';
-import { extractItemId } from '@src/lib';
 import formatLiveNugg from '@src/client/formatters/formatLiveNugg';
 import client from '@src/client';
 import formatLiveItem from '@src/client/formatters/formatLiveItem';
@@ -37,15 +36,15 @@ export const useStartupCallback = () => {
                             else {
                                 const formatted = formatLiveNugg(x.data.nugg);
                                 if (formatted) {
-                                    setLastSwap(tokenId);
-                                    updateToken(tokenId, formatted);
+                                    setLastSwap(tokenId.toNuggId());
+                                    updateToken(tokenId.toNuggId(), formatted);
                                 }
                             }
                         }
                     });
                 } else {
                     await itemLazyQuery({
-                        variables: { tokenId: extractItemId(tokenId) },
+                        variables: { tokenId: tokenId.toRawId() },
                     }).then((x) => {
                         if (x.data) {
                             if (!x.data.item) window.location.hash = '#/';

@@ -7,59 +7,38 @@ import { FeedMessage } from '@src/interfaces/feed';
 
 import { NuggftV1 } from '../typechain/NuggftV1';
 
-// eslint-disable-next-line import/no-cycle
+import { SwapRoutes } from './router';
 
-import { TokenId, NuggId, ItemId, SwapRoutes, RawItemId } from './router';
-
-export interface BaseOfferData {
-    user: string;
+export interface OfferDataBase<T extends TokenType> extends TokenIdAsType<T> {
+    user: PickFromTokenType<T, AddressString, NuggId>;
     eth: EthInt;
     txhash?: string;
-    type: 'nugg' | 'item';
     isBackup: boolean;
+    sellingTokenId: PickFromTokenType<T, null, NuggId>;
 }
 
-export interface ItemOfferData extends BaseOfferData {
-    type: 'item';
-    user: string;
-    eth: EthInt;
-    sellingNuggId: string;
-}
+export type OfferData = { [S in TokenType]: OfferDataBase<S> }[TokenType];
 
-export interface NuggOfferData extends BaseOfferData {
-    type: 'nugg';
-    user: string;
-    eth: EthInt;
-}
-
-export type OfferData = ItemOfferData | NuggOfferData;
-
-export interface ListDataBase {
-    id: TokenId;
+export interface ListDataBase<T extends TokenType> extends TokenIdAsType<T> {
     listDataType: 'swap' | 'basic';
     dotnuggRawCache?: Base64EncodedSvg;
 }
 
-export interface BasicData {
-    id: TokenId;
+export interface BasicDataBase<T extends TokenType> extends ListDataBase<T> {
     listDataType: 'basic';
     dotnuggRawCache?: Base64EncodedSvg;
 }
 
-export interface SwapData extends ListDataBase {
-    id: TokenId;
+export interface SwapDataBase<T extends TokenType> extends ListDataBase<T> {
     listDataType: 'swap';
-    type: 'nugg' | 'item';
-    tokenId: this['id'];
     eth: EthInt;
-    started: boolean;
-    sellingNugg?: string;
     endingEpoch: number | null;
-    isCurrent: boolean;
     dotnuggRawCache: undefined;
-    over: boolean;
-    leader?: string;
+    leader?: PickFromTokenType<T, AddressString, NuggId>;
 }
+
+export type SwapData = { [S in TokenType]: SwapDataBase<S> }[TokenType];
+export type BasicData = { [S in TokenType]: BasicDataBase<S> }[TokenType];
 
 export type ListData = SwapData | BasicData;
 
@@ -83,42 +62,26 @@ export interface MyNuggsData {
     pendingClaim: boolean;
     lastTransfer: number;
     unclaimedOffers: {
-        itemId: ItemId;
+        itemId: ItemId | null;
         endingEpoch: number | null;
         eth: BigNumberish | undefined;
-        sellingNuggId: NuggId;
+        sellingNuggId: NuggId | null;
     }[];
 }
-export interface BaseUnclaimedOffer {
-    type: 'nugg' | 'item';
-    tokenId: NuggId | ItemId;
+export interface BaseUnclaimedOffer<T extends TokenType> extends TokenIdAsType<T> {
     endingEpoch: number | null;
     eth: EthInt;
     leader: boolean;
-}
-export interface UnclaimedNuggOffer extends BaseUnclaimedOffer {
-    type: 'nugg';
-    tokenId: NuggId;
     claimParams: {
         sellingTokenId: NuggId;
-        address: AddressString;
-        buyingTokenId: '0';
-        itemId: '0';
+        address: PickFromTokenType<T, AddressString, AddressStringZero>;
+        buyingTokenId: PickFromTokenType<T, 'nugg-0', NuggId>;
+        itemId: PickFromTokenType<T, 'item-0', ItemId>;
     };
-}
-export interface UnclaimedItemOffer extends BaseUnclaimedOffer {
-    type: 'item';
-    tokenId: ItemId;
-    nugg: NuggId;
-    claimParams: {
-        sellingTokenId: NuggId;
-        address: AddressStringZero;
-        buyingTokenId: NuggId;
-        itemId: RawItemId;
-    };
+    nugg: PickFromTokenType<T, null, NuggId>;
 }
 
-export type UnclaimedOffer = UnclaimedNuggOffer | UnclaimedItemOffer;
+export type UnclaimedOffer = { [S in TokenType]: BaseUnclaimedOffer<S> }[TokenType];
 
 export type StakeData = {
     staked: BigNumber;
@@ -176,6 +139,7 @@ export interface ClientState extends State, Actions {
     nextEpoch: EpochData | undefined;
     blocknum: number | undefined;
     liveOffers: Dictionary<OfferData[]>;
+    notableSwaps: SwapData[];
     activeSwaps: SwapData[];
     activeItems: SwapData[];
     potentialItems: SwapData[];
@@ -183,8 +147,8 @@ export interface ClientState extends State, Actions {
     myNuggs: MyNuggsData[];
     recentSwaps: SwapData[];
     recentItems: SwapData[];
-    myUnclaimedNuggOffers: UnclaimedNuggOffer[];
-    myUnclaimedItemOffers: UnclaimedItemOffer[];
+    myUnclaimedNuggOffers: UnclaimedOffer[];
+    myUnclaimedItemOffers: UnclaimedOffer[];
     editingNugg: NuggId | undefined;
     myLoans: LoanData[];
     myRecents: Set<string>;
@@ -227,18 +191,20 @@ export type ClientStateUpdate = {
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
     totalNuggs?: number;
-    activeSwaps?: SwapData[];
-    activeItems?: SwapData[];
-    recentSwaps?: SwapData[];
-    recentItems?: SwapData[];
-    potentialItems?: SwapData[];
-    potentialSwaps?: SwapData[];
+    activeSwaps?: ClientState['activeSwaps'];
+    activeItems?: ClientState['activeItems'];
+    recentSwaps?: ClientState['recentSwaps'];
+    recentItems?: ClientState['recentItems'];
+    potentialItems?: ClientState['potentialItems'];
+    potentialSwaps?: ClientState['potentialSwaps'];
+    notableSwaps?: ClientState['notableSwaps'];
+
     error?: Error;
     activating?: boolean;
     myNuggs?: MyNuggsData[];
     editingNugg?: NuggId | null;
-    myUnclaimedNuggOffers?: UnclaimedNuggOffer[];
-    myUnclaimedItemOffers?: UnclaimedItemOffer[];
+    myUnclaimedNuggOffers?: UnclaimedOffer[];
+    myUnclaimedItemOffers?: UnclaimedOffer[];
     myLoans?: LoanData[];
     health?: MakeOptional<Health, keyof Health>;
 };
@@ -256,8 +222,8 @@ export interface Actions {
     removeLoan: (tokenId: NuggId) => void;
     removeNuggClaim: (tokenId: NuggId) => void;
     removeItemClaimIfMine: (buyingNuggId: NuggId, itemId: ItemId) => void;
-    addNuggClaim: (update: UnclaimedNuggOffer) => void;
-    addItemClaim: (update: UnclaimedItemOffer) => void;
+    addNuggClaim: (update: UnclaimedOffer) => void;
+    addItemClaim: (update: UnclaimedOffer) => void;
     addLoan: (update: LoanData) => void;
     updateLoan: (update: LoanData) => void;
     addNugg: (update: MyNuggsData) => void;
@@ -299,34 +265,34 @@ export interface LiveNuggSwap extends LiveSwapBase {
 export type LiveSwap = LiveNuggSwap | LiveItemSwap;
 
 export interface LiveNuggItem {
-    id: string;
     activeSwap: string | undefined;
     feature: number;
     position: number;
     count: number;
     displayed: boolean;
+    tokenId: ItemId;
 }
 
 export interface LiveNugg {
     type: 'nugg';
-    id: string;
+    id: NuggId;
     activeLoan: boolean | null;
     activeSwap?: LiveNuggSwap;
     items: LiveNuggItem[];
     pendingClaim: boolean | null;
     lastTransfer: number | null;
-    owner: string;
+    owner: AddressString;
     swaps: LiveNuggSwap[];
     isBackup: boolean;
 }
 
 export interface LiveItemSwap extends LiveSwapBase {
     type: 'item';
-    id: string;
+    id: ItemId;
     epoch: EpochData | null;
     eth: EthInt;
-    leader: string;
-    owner: string | null;
+    leader: NuggId;
+    owner: NuggId | null;
     endingEpoch: number | null;
     num: number;
     isTryout: boolean | null;
@@ -341,7 +307,7 @@ export type TryoutData = { nugg: NuggId; eth: EthInt };
 
 export interface LiveItem {
     type: 'item';
-    id: string;
+    id: ItemId;
     activeSwap?: LiveActiveItemSwap;
     upcomingActiveSwap?: LiveActiveItemSwap;
     swaps: LiveItemSwap[];
@@ -367,6 +333,24 @@ export enum Lifecycle {
     Cut = 'cut', //       [nugg     ] a token that no one bid on but still exists in the graph
     Egg = 'egg', //       [nugg     ] a token that will be minting in the next epoch --- SAME AS DECK, BUT NON OFFERABLE
 }
+
+// interface LiveT<T extends TokenType> extends TokenIdAsType<T> {
+//     activeSwap: LiveActiveItemSwap;
+//     upcomingActiveSwap: LiveActiveItemSwap;
+//     tryout: PickFromTokenType<
+//         T,
+//         null,
+//         {
+//             count: number;
+//             swaps: TryoutData[];
+//             max?: TryoutData;
+//             min?: TryoutData;
+//         }
+//     >;
+//     rarity: PickFromTokenType<T, null, Fraction>;
+//     count: PickFromTokenType<T, null, number>;
+
+// }
 
 export type LiveToken = LiveNugg | LiveItem;
 

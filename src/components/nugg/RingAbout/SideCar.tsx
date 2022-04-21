@@ -5,7 +5,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import lib from '@src/lib';
-import { TokenId } from '@src/client/router';
+
 import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './RingAbout.styles';

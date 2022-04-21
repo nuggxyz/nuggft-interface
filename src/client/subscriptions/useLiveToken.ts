@@ -1,7 +1,5 @@
 /* eslint-disable import/no-cycle */
 
-import { TokenId } from '@src/client/router';
-
 // export default (tokenId: TokenId | undefined) => {
 //     const updateToken = client.mutate.updateToken();
 
@@ -69,7 +67,7 @@ export default (tokenId: TokenId | undefined) => {
     // useEffect(() => {
     //     if (tokenId) go(tokenId);
     // }, [tokenId, go]);
-    useLiveItem(tokenId);
-    useLiveNugg(tokenId);
+    useLiveItem(tokenId?.onlyItemId());
+    useLiveNugg(tokenId?.onlyNuggId());
     return null;
 };

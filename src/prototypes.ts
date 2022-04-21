@@ -35,10 +35,91 @@ import {
 //     return bbox;
 // };
 
+export enum TokenTypeEnum {
+    Nugg = 'nugg',
+    Item = 'item',
+}
+// @ts-ignore
+String.prototype.onlyTokenId = function fn(input: `nugg` | `item`) {
+    if (this.isTokenId(input)) return this;
+    return undefined;
+};
+
+Number.prototype.toTokenId = function fn(input: `nugg` | `item`) {
+    return ((_input: number, pre: `nugg` | `item`) => {
+        return `${pre}-${Number(_input)}`;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    })(this as number, input) as unknown as any;
+};
+
+String.prototype.toTokenId = function fn(input: `nugg` | `item`) {
+    return ((_input: string, pre: `nugg` | `item`) => {
+        return `${pre}-${Number(_input)}`;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    })(this as string, input) as unknown as any;
+};
+
+String.prototype.isTokenId = function fn(input: `nugg` | `item`) {
+    return ((_input: string, pre: `nugg` | `item`) => {
+        return _input.startsWith(`${pre}-`);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    })(this as string, input) as unknown as any;
+};
+
+String.prototype.toPrettyId = function fn() {
+    if (this.isItemId()) {
+        return `${
+            ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][
+                Math.floor(Number(this.toRawId()) / 1000)
+            ]
+        } ${Number(this.toRawId()) % 1000}`;
+    }
+    if (this.isNuggId()) {
+        return `Nugg ${this.toRawId()}`;
+    }
+    return this as string;
+};
+
 String.prototype.isItemId = function fn() {
-    return ((input: string): input is `item-${string}` => {
-        return input.startsWith('item-');
-    })(this as string);
+    return this.isTokenId('item');
+};
+
+String.prototype.isNuggId = function fn() {
+    return this.isTokenId('nugg');
+};
+
+String.prototype.toItemId = function fn() {
+    return this.toTokenId('item');
+};
+
+String.prototype.toNuggId = function fn() {
+    return this.toTokenId('nugg');
+};
+
+String.prototype.onlyItemId = function fn() {
+    return this.onlyTokenId('item');
+};
+String.prototype.onlyNuggId = function fn() {
+    return this.onlyTokenId('nugg');
+};
+// @ts-ignore
+String.prototype.toRawId = function fn() {
+    return ((_input: TokenId): typeof _input extends TokenId ? string : never => {
+        if (this.startsWith('item-')) return this.replace('item-', '');
+        if (this.startsWith('nugg-')) return this.replace('nugg-', '');
+        return '';
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    })(this as TokenId);
+};
+
+Number.prototype.toItemId = function fn() {
+    return this.toTokenId('item');
+};
+
+Number.prototype.toNuggId = function fn() {
+    return ((input: number) => {
+        return `nugg-${Number(input)}`;
+    })(this as number) as NuggId;
 };
 
 String.prototype.equals = function fn(other: string) {
@@ -70,6 +151,20 @@ Array.prototype.mergeInPlace = function fn<T>(
 
     this.unshift(...unseen);
     if (sort) this.sort(sort);
+};
+
+Array.prototype.mergeInPlaceNoUpdateNoChange = function fn(
+    ...args: Parameters<typeof Array.prototype.mergeInPlace>
+) {
+    const holdMe = this as typeof args[0];
+
+    const before = JSON.stringify(holdMe);
+
+    Array.prototype.mergeInPlace.call(holdMe, args[0], args[1], args[2], args[3]);
+
+    const after = JSON.stringify(holdMe);
+
+    if (before !== after) this.mergeInPlace(...args);
 };
 
 Array.prototype.shuffle = function fn() {

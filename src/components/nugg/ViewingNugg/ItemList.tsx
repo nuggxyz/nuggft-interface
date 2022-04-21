@@ -4,12 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { t } from '@lingui/macro';
 
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import lib, {
-    formatItemSwapIdForSend,
-    parseTokenId,
-    sortByField,
-    parseTokenIdSmart,
-} from '@src/lib';
+import lib, { formatItemSwapIdForSend, sortByField } from '@src/lib';
 import constants from '@src/lib/constants';
 import Button from '@src/components/general/Buttons/Button/Button';
 import globalStyles from '@src/lib/globalStyles';
@@ -22,18 +17,17 @@ import web3 from '@src/web3';
 import { Address } from '@src/classes/Address';
 import List from '@src/components/general/List/List';
 import Label from '@src/components/general/Label/Label';
-import { NuggId, TokenId } from '@src/client/router';
 
 import styles from './ViewingNugg.styles';
 
 interface ExtraData {
-    tokenId: string;
+    tokenId: NuggId;
     isOwner: boolean;
 }
 
 interface Props extends ExtraData {
     items: LiveNuggItem[];
-    tokenId: string;
+    tokenId: NuggId;
 }
 
 const Item: FC<{ item: LiveNuggItem; extraData: ExtraData }> = ({ item, extraData }) => {
@@ -50,11 +44,11 @@ const Item: FC<{ item: LiveNuggItem; extraData: ExtraData }> = ({ item, extraDat
         <div style={styles.itemListItem}>
             <div style={globalStyles.centeredSpaceBetween}>
                 <TokenViewer
-                    tokenId={item.id}
+                    tokenId={item.tokenId}
                     style={styles.listItemSvg}
                     // data={item.dotnuggRawCache}
                 />
-                <Text type="text">{parseTokenId(item.id)}</Text>
+                <Text type="text">{item.tokenId.toPrettyId()}</Text>
             </div>
             {Number(item.feature) !== constants.FEATURE_BASE &&
                 extraData.isOwner &&
@@ -68,8 +62,7 @@ const Item: FC<{ item: LiveNuggItem; extraData: ExtraData }> = ({ item, extraDat
                         onClick={() => {
                             openModal({
                                 type: ModalEnum.Sell,
-                                tokenId: item.id,
-                                tokenType: 'item',
+                                tokenId: item.tokenId,
                                 sellingNuggId: extraData.tokenId,
                             });
                         }}
@@ -194,7 +187,7 @@ const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = 
                         // paddingBottom: 5,
                         position: 'relative',
                     }}
-                    text={parseTokenIdSmart(item.id)}
+                    text={item.tokenId.toPrettyId()}
                 />
             </div>
 
@@ -233,7 +226,7 @@ const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = 
                 }}
             >
                 <TokenViewer
-                    tokenId={item.id}
+                    tokenId={item.tokenId}
                     style={{
                         height: '90px',
                         width: '90px',
@@ -266,7 +259,7 @@ const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = 
                         }}
                         label={t`For sale`}
                         rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
-                        onClick={() => navigate(`/swap/${item.id}`)}
+                        onClick={() => navigate(`/swap/${item.tokenId}`)}
                     />
                 </div>
             ) : (!item.displayed || item.count > 1) && isOwner ? (
@@ -297,8 +290,7 @@ const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = 
                         onClick={() => {
                             openModal({
                                 type: ModalEnum.Sell,
-                                tokenId: item.id,
-                                tokenType: 'item',
+                                tokenId: item.tokenId,
                                 sellingNuggId: nuggId,
                             });
                         }}
@@ -363,7 +355,7 @@ const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = 
     );
 };
 
-export const ItemListPhone: FunctionComponent<{ tokenId: TokenId }> = ({ tokenId }) => {
+export const ItemListPhone: FunctionComponent<{ tokenId: NuggId }> = ({ tokenId }) => {
     const token = client.live.token(tokenId);
     const address = web3.hook.usePriorityAccount();
 

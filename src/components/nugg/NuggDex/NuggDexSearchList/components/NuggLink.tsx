@@ -63,7 +63,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                         <NuggLinkThumbnail
                             item={nugg}
                             index={i}
-                            key={nugg.id}
+                            key={nugg.tokenId}
                             style={limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}}
                         />
                     ),

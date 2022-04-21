@@ -6,7 +6,6 @@ import globalStyles from '@src/lib/globalStyles';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import Text from '@src/components/general/Texts/Text/Text';
-import { parseTokenId } from '@src/lib';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import { ListRenderItemProps } from '@src/components/general/List/List';
 import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
@@ -25,7 +24,7 @@ const ClaimRenderItem: FunctionComponent<
 
     const swapText = useMemo(
         () =>
-            item.type === 'item'
+            item.tokenId.isItemId()
                 ? t`For Nugg ${item.nugg}`
                 : t`From epoch ${item.endingEpoch !== null ? item.endingEpoch : ''}`,
         [item],
@@ -42,13 +41,11 @@ const ClaimRenderItem: FunctionComponent<
                 <div>
                     <Text textStyle={styles.textBlue} size="small">
                         {item.leader
-                            ? `${parseTokenId(item.tokenId, true)}`
+                            ? `${item.tokenId.toPrettyId()}`
                             : `${item.eth.decimal.toNumber()} ETH`}
                     </Text>
                     <Text textStyle={styles.textDefault} size="smaller" type="text">
-                        {item.leader
-                            ? swapText
-                            : `${parseTokenId(item.tokenId, true)} | ${swapText}`}
+                        {item.leader ? swapText : `${item.tokenId.toPrettyId()} | ${swapText}`}
                     </Text>
                 </div>
             </div>
@@ -62,10 +59,10 @@ const ClaimRenderItem: FunctionComponent<
                 onClick={() => {
                     void send(
                         nuggft.populateTransaction.claim(
-                            [item.claimParams.sellingTokenId],
+                            [item.claimParams.sellingTokenId.toRawId()],
                             [item.claimParams.address],
-                            [item.claimParams.buyingTokenId],
-                            [item.claimParams.itemId],
+                            [item.claimParams.buyingTokenId?.toRawId()],
+                            [item.claimParams.itemId?.toRawId()],
                         ),
                     );
                 }}

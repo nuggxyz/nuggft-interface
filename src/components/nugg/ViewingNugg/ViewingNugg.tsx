@@ -3,7 +3,7 @@ import { t } from '@lingui/macro';
 import { useNavigate } from 'react-router-dom';
 import { IoArrowRedo } from 'react-icons/io5';
 
-import lib, { parseTokenIdSmart } from '@src/lib';
+import lib from '@src/lib';
 import Colors from '@src/lib/colors';
 import Loader from '@src/components/general/Loader/Loader';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -61,7 +61,12 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 label: t`Swaps`,
                 comp: React.memo(() => <SwapList token={token} />),
             },
-            ...(provider && chainId && token && token.type === 'nugg' && tokenId
+            ...(provider &&
+            chainId &&
+            token &&
+            token.type === 'nugg' &&
+            tokenId &&
+            tokenId.isNuggId()
                 ? [
                       {
                           label: 'Items',
@@ -99,9 +104,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
             <div style={styles.swapsWrapper}>
                 <div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
                     <div style={styles.owner}>
-                        <Text textStyle={styles.nuggId}>
-                            {tokenId && parseTokenIdSmart(tokenId)}
-                        </Text>
+                        <Text textStyle={styles.nuggId}>{tokenId && tokenId.toPrettyId()}</Text>
                         {token.type === 'nugg' ? (
                             token.owner ? (
                                 <div style={{ marginLeft: '1rem' }}>
@@ -229,7 +232,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                 ...styles.goToSwap,
                                                 marginBottom: '0rem',
                                             }}
-                                            onClick={() => navigate(`/swap/item-${token.id}`)}
+                                            onClick={() => navigate(`/swap/${token.id}`)}
                                             size="small"
                                             textStyle={{
                                                 ...styles.goToSwapGradient,

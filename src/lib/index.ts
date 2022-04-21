@@ -375,17 +375,6 @@ export const safeResetLocalStorage = (keys: string[]) => {
     });
 };
 
-export const createItemId = (itemId: string | number) => {
-    return `${constants.ID_PREFIX_ITEM}${itemId.toString().replace(constants.ID_PREFIX_ITEM, '')}`;
-};
-
-export const extractItemId = (itemId: string) => {
-    if (itemId && itemId.startsWith(constants.ID_PREFIX_ITEM)) {
-        return itemId.replace(constants.ID_PREFIX_ITEM, '');
-    }
-    return itemId;
-};
-
 export const parseTokenId = (itemId: string, long?: boolean) => {
     if (itemId && itemId.startsWith(constants.ID_PREFIX_ITEM)) {
         const num = +itemId.replace(constants.ID_PREFIX_ITEM, '');

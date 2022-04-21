@@ -1,7 +1,6 @@
 import { BigNumber, ethers } from 'ethers';
 
 import { EthInt } from '@src/classes/Fraction';
-import { ItemId, TokenId } from '@src/client/router';
 
 const agency = (_agency: BigNumberish) => {
     const bn = BigNumber.from(_agency);
@@ -24,7 +23,7 @@ const lastItemSwap = (_lis: BigNumber) => {
         const curr = working.mask(48);
         if (!curr.isZero()) {
             items.push({
-                tokenId: curr.shr(24).toString(),
+                tokenId: curr.shr(24).toString().toItemId(),
                 endingEpoch: curr.mask(24).toNumber(),
             });
         }
@@ -38,7 +37,7 @@ const proof = (_proof: BigNumberish) => {
     let working = BigNumber.from(_proof);
 
     const seen: Dictionary<{
-        id: ItemId;
+        tokenId: ItemId;
         feature: number;
         position: number;
         count: number;
@@ -54,7 +53,7 @@ const proof = (_proof: BigNumberish) => {
             if (!seen[curr._hex]) {
                 seenFeatures[curr.div(1000).toNumber()] = true;
                 seen[curr._hex] = {
-                    id: `item-${curr.toString()}`,
+                    tokenId: curr.toString().toItemId(),
                     feature: curr.div(1000).toNumber(),
                     position: curr.mod(1000).toNumber(),
                     count: 1,

@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
-import lib, { isUndefinedOrNullOrObjectEmpty, parseTokenId, shortenAddress } from '@src/lib';
+import lib, { isUndefinedOrNullOrObjectEmpty, shortenAddress } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
@@ -24,7 +24,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
     return (
         <div aria-hidden="true" role="button" style={style} onClick={() => action && action(item)}>
             <TokenViewer
-                tokenId={item?.id || ''}
+                tokenId={item.tokenId}
                 style={{
                     height: '200px',
                     width: '200px',
@@ -43,7 +43,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
                 }}
             >
                 <Label
-                    text={parseTokenId(item?.id, true)}
+                    text={item.tokenId.toPrettyId()}
                     size="larger"
                     containerStyles={{ marginBottom: '10px' }}
                 />
@@ -55,10 +55,12 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
                             value={item.eth.number}
                             stopAnimation
                         />
-                        {item.over && item.leader && (
+                        {item.leader && (
                             <Label
                                 text={
-                                    item.type === 'nugg' ? shortenAddress(item.leader) : item.leader
+                                    item.leader.isNuggId()
+                                        ? item.leader.toPrettyId()
+                                        : shortenAddress(item.leader)
                                 }
                             />
                         )}

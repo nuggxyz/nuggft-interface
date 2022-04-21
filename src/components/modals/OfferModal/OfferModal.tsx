@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import { t } from '@lingui/macro';
 
 import useAsyncState from '@src/hooks/useAsyncState';
-import { extractItemId, parseTokenId, toGwei } from '@src/lib';
+import { toGwei } from '@src/lib';
 import { fromEth, toEth } from '@src/lib/conversion';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
@@ -28,18 +28,14 @@ import styles from './OfferModal.styles';
 
 type FormatedMyNuggsData = MyNuggsData & { lastBid: EthInt | 'unable-to-bid' };
 
-const OfferModal = ({
-    data: { tokenId, token, tokenType, nuggToBuyFrom },
-}: {
-    data: OfferModalData;
-}) => {
+const OfferModal = ({ data }: { data: OfferModalData }) => {
     const address = web3.hook.usePriorityAccount();
     const { screen: screenType } = useDimentions();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
     const _myNuggs = client.live.myNuggs().first(8);
     const userBalance = web3.hook.usePriorityBalance(provider);
-    const activeItem = client.live.potentialNuggItem(tokenId);
+    const activeItem = client.live.potentialNuggItem(data.tokenId.onlyItemId());
     const nuggft = useNuggftV1(provider);
     const closeModal = client.modal.useCloseModal();
 
@@ -49,11 +45,11 @@ const OfferModal = ({
     const [amount, setAmount] = useState('');
 
     const myNuggs = useMemo(() => {
-        const nuggId = nuggToBuyFrom;
+        const nuggId = data.nuggToBuyFrom;
 
         return _myNuggs.map((x) => {
             const filt = x.unclaimedOffers.filter((y) => {
-                return `item-${y.itemId}` === tokenId;
+                return y.itemId === data.tokenId;
             });
 
             return {
@@ -66,7 +62,7 @@ const OfferModal = ({
                         : ('unable-to-bid' as const),
             };
         }) as FormatedMyNuggsData[];
-    }, [_myNuggs, tokenId, nuggToBuyFrom]);
+    }, [_myNuggs, data.tokenId, data.nuggToBuyFrom]);
 
     // @danny7even - this started throwing errors when I tried setting up offering on items when other items were "active"
     // useEffect(() => {
@@ -86,34 +82,36 @@ const OfferModal = ({
     //     }
     // }, [myNuggs, epoch, stableId]);
 
-    const sellingNugg = React.useMemo(() => {
-        if (token && nuggToBuyFrom) {
-            return nuggToBuyFrom;
+    const sellingNugg = useMemo(() => {
+        if (data.tokenId.isItemId()) {
+            return data.nuggToBuyFrom;
+            // if (activeItem) return activeItem.sellingNugg;
         }
-        if (activeItem) return activeItem.sellingNugg;
         return undefined;
-    }, [token, nuggToBuyFrom, activeItem]);
+    }, [data.tokenId, data.nuggToBuyFrom]);
 
     const check = useAsyncState<{
         canOffer: boolean | undefined;
         next: BigNumber | undefined;
         curr: BigNumber | undefined;
     }>(() => {
-        if (tokenId && address && chainId && provider) {
-            if (tokenType === 'nugg') {
-                return nuggft['check(address,uint24)'](address, tokenId).then((x) => {
-                    return {
-                        canOffer: x.canOffer,
-                        next: x.next,
-                        curr: x.current,
-                    };
-                });
+        if (data.tokenId && address && chainId && provider) {
+            if (data.tokenId.isNuggId()) {
+                return nuggft['check(address,uint24)'](address, data.tokenId.toRawId()).then(
+                    (x) => {
+                        return {
+                            canOffer: x.canOffer,
+                            next: x.next,
+                            curr: x.current,
+                        };
+                    },
+                );
             }
-            if (tokenType === 'item' && activeItem && selectedNuggForItem && sellingNugg) {
+            if (activeItem && selectedNuggForItem && sellingNugg) {
                 return nuggft['check(uint24,uint24,uint16)'](
                     selectedNuggForItem.tokenId,
                     sellingNugg,
-                    extractItemId(tokenId),
+                    data.tokenId.toRawId(),
                 ).then((x) => {
                     return {
                         canOffer: x.canOffer,
@@ -124,7 +122,7 @@ const OfferModal = ({
             }
         }
         return undefined;
-    }, [tokenId, address, chainId, provider, selectedNuggForItem, activeItem, sellingNugg]);
+    }, [data, address, chainId, provider, selectedNuggForItem, activeItem, sellingNugg]);
 
     return (
         <div style={styles.container}>
@@ -133,11 +131,11 @@ const OfferModal = ({
                     check && check.curr && check.curr.toString() !== '0'
                         ? t`Change offer for`
                         : t`Offer on`
-                } ${parseTokenId(tokenId, true)}`}
+                } ${data.tokenId.toPrettyId()}`}
             </Text>
             {screenType === 'phone' ? (
                 <TokenViewer
-                    tokenId={tokenId}
+                    tokenId={data.tokenId}
                     showcase
                     disableOnClick
                     style={{
@@ -147,16 +145,16 @@ const OfferModal = ({
             ) : (
                 <AnimatedCard>
                     <TokenViewer
-                        tokenId={tokenId}
+                        tokenId={data.tokenId}
                         showcase
                         style={{
-                            ...(tokenType === 'item' ? { height: '350px', width: '350px' } : {}),
+                            ...(data.tokenId.isItemId() ? { height: '350px', width: '350px' } : {}),
                         }}
                     />
                 </AnimatedCard>
             )}
 
-            {tokenType === 'item' && (
+            {data.tokenId.isItemId() && (
                 <List
                     data={myNuggs}
                     label={t`Pick a nugg to offer on this item`}
@@ -198,7 +196,7 @@ const OfferModal = ({
                                     console.error(err);
                                 }
                             }}
-                            disabled={tokenType === 'item' && !selectedNuggForItem}
+                            disabled={data.tokenId.isItemId() && !selectedNuggForItem}
                             label={t`Min`}
                             textStyle={{
                                 fontFamily: Layout.font.sf.bold,
@@ -256,25 +254,31 @@ const OfferModal = ({
                         }`}
                         onClick={() => {
                             if (check.curr && chainId && provider && address) {
-                                void (selectedNuggForItem && nuggToBuyFrom && tokenType === 'item'
-                                    ? send(
-                                          nuggft.populateTransaction['offer(uint24,uint24,uint16)'](
-                                              selectedNuggForItem?.tokenId,
-                                              nuggToBuyFrom,
-                                              tokenId,
-                                              {
-                                                  value: toEth(amount).sub(check.curr),
-                                              },
-                                          ),
-                                          closeModal,
-                                      )
-                                    : send(
-                                          nuggft.populateTransaction['offer(uint24)'](tokenId, {
-                                              value: toEth(amount).sub(check.curr),
-                                              gasLimit: toGwei('120000'),
-                                          }),
-                                          closeModal,
-                                      ));
+                                if (data.tokenId.isItemId()) {
+                                    if (selectedNuggForItem && data.nuggToBuyFrom) {
+                                        void send(
+                                            nuggft.populateTransaction[
+                                                'offer(uint24,uint24,uint16)'
+                                            ](
+                                                selectedNuggForItem?.tokenId,
+                                                data.nuggToBuyFrom?.toRawId(),
+                                                data.tokenId,
+                                                {
+                                                    value: toEth(amount).sub(check.curr),
+                                                },
+                                            ),
+                                            closeModal,
+                                        );
+                                    }
+                                } else {
+                                    void send(
+                                        nuggft.populateTransaction['offer(uint24)'](data.tokenId, {
+                                            value: toEth(amount).sub(check.curr),
+                                            gasLimit: toGwei('120000'),
+                                        }),
+                                        closeModal,
+                                    );
+                                }
                             }
                         }}
                     />

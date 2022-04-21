@@ -1,13 +1,11 @@
 import client from '@src/client/index';
 import { EthInt } from '@src/classes/Fraction';
-import { TokenId } from '@src/client/router';
 import {
     useBetterLiveItemOffersSubscription,
     useBetterLiveOffersSubscription,
 } from '@src/gql/types.generated';
-import { createItemId, extractItemId } from '@src/lib/index';
 
-const useLiveItemOffers = (tokenId?: string) => {
+const useLiveItemOffers = (tokenId?: ItemId) => {
     const graph = client.live.graph();
     const updateOffers = client.mutate.updateOffers();
 
@@ -15,7 +13,7 @@ const useLiveItemOffers = (tokenId?: string) => {
         client: graph,
         shouldResubscribe: true,
         fetchPolicy: 'network-only',
-        variables: { tokenId: tokenId ? extractItemId(tokenId) : '' },
+        variables: { tokenId: tokenId ? tokenId.toItemId() : '' },
         skip: !tokenId,
         onSubscriptionData: (x) => {
             if (
@@ -26,15 +24,16 @@ const useLiveItemOffers = (tokenId?: string) => {
             ) {
                 const { upcomingActiveSwap, activeSwap } = x.subscriptionData.data.item;
 
-                updateOffers(createItemId(tokenId), [
+                updateOffers(tokenId.toItemId(), [
                     ...(activeSwap
                         ? activeSwap.offers.map((z) => {
                               return {
-                                  type: 'item' as const,
+                                  tokenId,
+
                                   eth: new EthInt(z.eth),
-                                  user: z.nugg.id,
+                                  user: z.nugg.id.toNuggId(),
                                   txhash: z.txhash,
-                                  sellingNuggId: activeSwap.sellingNuggItem.nugg.id,
+                                  sellingTokenId: activeSwap.sellingNuggItem.nugg.id.toNuggId(),
                                   isBackup: false,
                               };
                           })
@@ -42,11 +41,12 @@ const useLiveItemOffers = (tokenId?: string) => {
                     ...(upcomingActiveSwap
                         ? upcomingActiveSwap.offers.map((z) => {
                               return {
-                                  type: 'item' as const,
+                                  tokenId,
                                   eth: new EthInt(z.eth),
-                                  user: z.nugg.id,
+                                  user: z.nugg.id.toNuggId(),
                                   txhash: z.txhash,
-                                  sellingNuggId: upcomingActiveSwap.sellingNuggItem.nugg.id,
+                                  sellingTokenId:
+                                      upcomingActiveSwap.sellingNuggItem.nugg.id.toNuggId(),
                                   isBackup: false,
                               };
                           })
@@ -58,7 +58,7 @@ const useLiveItemOffers = (tokenId?: string) => {
     return null;
 };
 
-const useLiveNuggOffers = (tokenId?: string) => {
+const useLiveNuggOffers = (tokenId?: NuggId) => {
     const graph = client.live.graph();
     const updateOffers = client.mutate.updateOffers();
 
@@ -80,11 +80,12 @@ const useLiveNuggOffers = (tokenId?: string) => {
                 updateOffers(tokenId, [
                     ...activeSwap.offers.map((z) => {
                         return {
-                            type: 'nugg' as const,
+                            tokenId,
                             eth: new EthInt(z.eth),
-                            user: z.user.id,
+                            user: z.user.id as AddressString,
                             txhash: z.txhash,
                             isBackup: false,
+                            sellingTokenId: null,
                         };
                     }),
                 ]);
@@ -95,7 +96,7 @@ const useLiveNuggOffers = (tokenId?: string) => {
 };
 
 export default (tokenId: TokenId | undefined) => {
-    useLiveItemOffers(tokenId);
-    useLiveNuggOffers(tokenId);
+    useLiveItemOffers(tokenId?.onlyItemId());
+    useLiveNuggOffers(tokenId?.onlyNuggId());
     return null;
 };

@@ -2,6 +2,8 @@
 /// <reference types="react-dom" />
 /// <reference types="react/next" />
 
+declare type PickId<T extends TokenId> = T extends `${infer R}-${number}` ? R : never;
+
 declare type Base64EncodedSvg = `data:image/svg+xml;base64,${string}`;
 
 declare const __DEV__: boolean;
@@ -165,11 +167,49 @@ interface Window {
     __APOLLO_CLIENT__?: any;
 }
 
+type Entities = Splitter<NuggId, ItemId>;
+
+declare type Wrap<A, B> = { [S in A]: B<S> }[A];
+
+declare type TokenTypeWrapper<A> = Wrap<A, B>;
+
+// type _SezViewSettingUnion<S extends TokenType> = S extends any ? SezViewSettings<S> : never;
+
+// type SezViewSettingUnion = _SezViewSettingUnion<TokenType>;
+
+declare function FIXX<K extends TokenType>(): TokenId extends infer R
+    ? R extends K
+        ? number
+        : never
+    : never;
+
+declare type CusotomID = `${string}`;
+
 interface String {
-    isItemId(): this is `item-${string}`;
+    isItemId(): this is ItemId;
+    isNuggId(): this is NuggId;
+    toItemId(): ItemId;
+    toNuggId(): NuggId;
+    onlyTokenId: typeof EnsureIdFixture;
+    onlyItemId(): ItemId | undefined;
+    onlyNuggId(): NuggId | undefined;
+    toRawId(): [typeof this] extends [TokenId] ? string : never;
+    toPrettyId(): string;
+
+    // toIdNumber(): this extends `${}` ? number : null;
+    // toIdNumber(): this extends TokenId ? number : never;
+    isTokenId: typeof IsIdFixture;
+    toTokenId: typeof IdFixture;
     equals(other: string): boolean;
 }
+interface Number {
+    toItemId(): ItemId;
+    toNuggId(): NuggId;
+    toTokenId: typeof IdFixture;
+    isTokenId: typeof IsIdFixture;
 
+    equals(other: string): boolean;
+}
 interface SVGGraphicsElement {
     getBBox: () => DOMRect;
 }
@@ -183,7 +223,12 @@ interface Array<T> {
         shouldOverride: (a: T, b: T) => boolean,
         sort?: (a: T, b: T) => number,
     );
-
+    mergeInPlaceNoUpdateNoChange(
+        incomingData: Array<T>,
+        keyField: keyof T,
+        shouldOverride: (a: T, b: T) => boolean,
+        sort?: (a: T, b: T) => number,
+    );
     first(count?: number): Array<T>;
     last(count?: number): Array<T>;
     insert<U extends { index: number }>(element: U): Array<U>;

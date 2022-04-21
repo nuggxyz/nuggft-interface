@@ -2,13 +2,11 @@
 import create from 'zustand';
 import { combine } from 'zustand/middleware';
 
-import { TokenId } from './router';
-
 const store = create(
     combine(
         {
             open: false,
-            tokenId: undefined as string | undefined,
+            tokenId: undefined as NuggId | undefined,
         },
         (set) => {
             const closeEditScreen = () => {
@@ -20,7 +18,7 @@ const store = create(
                 });
             };
 
-            const updateEditScreen = (tokenId: TokenId) => {
+            const updateEditScreen = (tokenId: NuggId) => {
                 set(() => {
                     return {
                         tokenId,
@@ -36,7 +34,7 @@ const store = create(
                 };
             };
 
-            const openEditScreen = (tokenId: TokenId) => {
+            const openEditScreen = (tokenId: NuggId) => {
                 set(() => {
                     return {
                         open: true,

@@ -35,7 +35,7 @@ export function navigatorLocale(): SupportedLocale | undefined {
 }
 
 function storeLocale(): SupportedLocale | undefined {
-    return client.getState().locale ?? undefined;
+    return client.core.getState().locale ?? undefined;
 }
 
 export const initialLocale =

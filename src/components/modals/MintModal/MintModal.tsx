@@ -12,7 +12,6 @@ import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import Loader from '@src/components/general/Loader/Loader';
 import { EthInt } from '@src/classes/Fraction';
 import emitter from '@src/emitter';
-import { NuggId } from '@src/client/router';
 import lib, {
     isNull,
     isUndefined,
@@ -38,7 +37,7 @@ const MintModal = ({ data }: { data: MintModalData }) => {
     const { send } = useTransactionManager();
     const closeModal = client.modal.useCloseModal();
 
-    const [myNuggTransfer, setMyNuggTransfer] = useState<string>();
+    const [myNuggTransfer, setMyNuggTransfer] = useState<NuggId>();
     const [loading, setLoading] = useState(false);
 
     const [newNugg, setNewNugg] = useState<NuggId>();
@@ -52,7 +51,7 @@ const MintModal = ({ data }: { data: MintModalData }) => {
             }
             return executeQuery3<{ nuggs: { idnum: string }[] }>(
                 gql`
-                    query firstNugg($offset: BigInt!) {
+                    query firstNugg($offset: Int!) {
                         nuggs(
                             where: { idnum_gt: $offset }
                             first: 1
@@ -98,14 +97,14 @@ const MintModal = ({ data }: { data: MintModalData }) => {
     emitter.hook.useOn({
         type: emitter.events.Mint,
         callback: (arg) => {
-            setNewNugg(arg.event.args.tokenId.toString());
+            setNewNugg(arg.event.args.tokenId.toNuggId());
         },
     });
 
     emitter.hook.useOnce({
         type: emitter.events.Transfer,
         callback: (arg) => {
-            setMyNuggTransfer(arg.event.args._tokenId.toString());
+            setMyNuggTransfer(arg.event.args._tokenId.toString().toNuggId());
             setLoading(false);
         },
     });
@@ -163,13 +162,15 @@ const MintModal = ({ data }: { data: MintModalData }) => {
                 {headerText}
             </Text>
             <AnimatedCard>
-                <TokenViewer3
-                    validated={!!(newNugg && myNuggTransfer && newNugg === myNuggTransfer)}
-                    tokenId={newNugg || ''}
-                    showcase
-                    disableOnClick={!newNugg}
-                    showPending={!newNugg}
-                />
+                {newNugg && (
+                    <TokenViewer3
+                        validated={!!(newNugg && myNuggTransfer && newNugg === myNuggTransfer)}
+                        tokenId={newNugg}
+                        showcase
+                        disableOnClick={!newNugg}
+                        showPending={!newNugg}
+                    />
+                )}
             </AnimatedCard>
 
             <div style={styles.top}>

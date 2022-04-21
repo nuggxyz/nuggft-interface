@@ -16,7 +16,7 @@ import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './RingAbout.styles';
 
-const OfferText = ({ tokenId }: { tokenId?: string }) => {
+const OfferText = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
     const lifecycle = useLifecycle(token);
 
@@ -52,7 +52,7 @@ const OfferText = ({ tokenId }: { tokenId?: string }) => {
     );
 };
 
-const BuntOfferText = ({ tokenId }: { tokenId: string }) => {
+const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
     const nuggft = useNuggftV1();
     const token = client.live.token(tokenId);
     const lifecycle = useLifecycle(token);
@@ -63,7 +63,7 @@ const BuntOfferText = ({ tokenId }: { tokenId: string }) => {
         if (token && provider && tokenId && lifecycle === Lifecycle.Bunt) {
             return nuggft
                 .connect(provider)
-                ['vfo(address,uint24)'](Address.NULL.hash, tokenId)
+                ['vfo(address,uint24)'](Address.NULL.hash, tokenId.toRawId())
                 .then((x) => {
                     return new EthInt(x);
                 });

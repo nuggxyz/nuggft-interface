@@ -1,7 +1,6 @@
 import React, { CSSProperties } from 'react';
 
 import client from '@src/client';
-import { TokenId } from '@src/client/router';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import web3 from '@src/web3';

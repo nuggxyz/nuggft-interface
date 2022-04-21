@@ -9,7 +9,7 @@ import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
 import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
 
-type Props = { tokenId: string };
+type Props = { tokenId: NuggId };
 
 const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
     const navigate = useNavigate();
@@ -34,7 +34,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                     openModal({
                         type: ModalEnum.Sell,
                         tokenId,
-                        tokenType: 'nugg',
+                        sellingNuggId: null,
                     });
                 }}
             />

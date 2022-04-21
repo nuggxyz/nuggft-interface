@@ -1,12 +1,11 @@
 import { useWatchLiveItemSubscription } from '@src/gql/types.generated';
 import useLiveItemBackup from '@src/client/backups/useLiveItemBackup';
 import formatLiveItem from '@src/client/formatters/formatLiveItem';
-import { extractItemId } from '@src/lib';
 import client from '@src/client';
 import { useHealth } from '@src/client/hooks/useHealth';
 import useDevStable from '@src/hooks/useDevStable';
 
-export default (_tokenId: string | undefined) => {
+export default (_tokenId: ItemId | undefined) => {
     const updateToken = client.mutate.updateToken();
 
     const tokenId = useDevStable(_tokenId);
@@ -14,8 +13,8 @@ export default (_tokenId: string | undefined) => {
     useWatchLiveItemSubscription({
         shouldResubscribe: !!tokenId,
         fetchPolicy: 'cache-first',
-        skip: !tokenId || !tokenId.isItemId(),
-        variables: { tokenId: extractItemId(tokenId || '') },
+        skip: !tokenId,
+        variables: { tokenId: tokenId ? tokenId.toRawId() : '' },
 
         onSubscriptionData: (x) => {
             if (
