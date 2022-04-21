@@ -9,6 +9,8 @@ import { Address } from '@src/classes/Address';
 
 // eslint-disable-next-line import/no-cycle
 
+import { idf } from '@src/prototypes';
+
 import client from '..';
 
 export default (activate: boolean, tokenId: NuggId | undefined) => {
@@ -26,7 +28,7 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
 
             const items = lib.parse
                 .proof(await nuggft.proofOf(tokenId))
-                .map((x) => ({ ...x, activeSwap: undefined }));
+                .map((x) => idf({ ...x, activeSwap: undefined }));
 
             const owner =
                 agency.flag === 0x0 && agency.epoch === 0
@@ -50,9 +52,8 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
 
             const activeSwap =
                 agency.flag === 0x3
-                    ? {
-                          type: 'nugg' as const,
-                          id: tokenId,
+                    ? idf({
+                          tokenId,
                           epoch,
                           eth: agency.eth,
                           leader: agency.address,
@@ -62,30 +63,32 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
                           isActive: false,
                           bottom: new EthInt(0),
                           isBackup: true,
-                      }
+                      })
                     : undefined;
 
-            updateToken(tokenId, {
-                type: 'nugg' as const,
-                id: tokenId,
-                activeLoan: null,
-                owner,
-                items,
-                pendingClaim: null,
-                lastTransfer: null,
-                swaps: [],
-                activeSwap,
-                isBackup: true,
-            });
+            updateToken(
+                tokenId,
+                idf({
+                    tokenId,
+                    activeLoan: null,
+                    owner,
+                    items,
+                    pendingClaim: null,
+                    lastTransfer: null,
+                    swaps: [],
+                    activeSwap,
+                    isBackup: true,
+                }),
+            );
             if (activeSwap && !activeSwap.eth.eq(0))
                 updateOffers(tokenId, [
-                    {
+                    idf({
                         eth: activeSwap.eth,
                         user: activeSwap.leader as AddressString,
                         isBackup: true,
                         sellingTokenId: null,
                         tokenId,
-                    },
+                    }),
                 ]);
         }
     }, [chainId, tokenId, activate, nuggft, liveEpoch, updateOffers, updateToken]);

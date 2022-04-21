@@ -14,7 +14,7 @@ import SellNuggOrItemModal from './SellNuggOrItemModal/SellNuggOrItemModal';
 const ModalSwitch = () => {
     const data = client.modal.useData();
 
-    switch (data?.type) {
+    switch (data?.modalType) {
         case ModalEnum.Offer:
             return <OfferModal data={data} />;
         case ModalEnum.Sell:

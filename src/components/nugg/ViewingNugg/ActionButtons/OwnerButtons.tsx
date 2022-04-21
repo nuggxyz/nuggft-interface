@@ -8,6 +8,7 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
 import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
+import { idf } from '@src/prototypes';
 
 type Props = { tokenId: NuggId };
 
@@ -31,11 +32,13 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                     />
                 }
                 onClick={() => {
-                    openModal({
-                        type: ModalEnum.Sell,
-                        tokenId,
-                        sellingNuggId: null,
-                    });
+                    openModal(
+                        idf({
+                            modalType: ModalEnum.Sell as const,
+                            tokenId,
+                            sellingNuggId: null,
+                        }),
+                    );
                 }}
             />
             <Button
@@ -53,7 +56,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
                 onClick={() => {
                     openModal({
-                        type: ModalEnum.Loan,
+                        modalType: ModalEnum.Loan,
                         tokenId,
                         actionType: 'loan',
                         backgroundStyle: {

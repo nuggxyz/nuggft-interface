@@ -9,6 +9,9 @@
     },
     "typescript.inlayHints.parameterNames.enabled": "all",
     "typescript.inlayHints.variableTypes.enabled": false,
+    "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+    "typescript.inlayHints.parameterNames.": true,
+
     // "typescript.implementationsCodeLens.enabled": true,
     "typescript.tsserver.experimental.enableProjectDiagnostics": true,
     "eslint.trace.server": "verbose",

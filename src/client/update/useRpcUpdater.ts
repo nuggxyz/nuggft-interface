@@ -14,6 +14,7 @@ import { WebSocketProvider } from '@src/web3/classes/WebSocketProvider';
 // eslint-disable-next-line import/no-cycle
 
 import { Chain } from '@src/web3/core/interfaces';
+import { idf } from '@src/prototypes';
 
 import client from '..';
 
@@ -86,14 +87,14 @@ export default () => {
                 case 'OfferMint': {
                     const agency = BigNumber.from(event.args.agency);
 
-                    const data = {
+                    const data = idf({
                         tokenId: event.args.tokenId.toNuggId(),
                         eth: EthInt.fromNuggftV1Agency(event.args.agency),
                         user: agency.mask(160)._hex as AddressString,
                         txhash: log.transactionHash,
                         isBackup: false,
                         sellingTokenId: null,
-                    };
+                    });
 
                     void emitter.emit({
                         type: emitter.events.Offer,
@@ -113,14 +114,15 @@ export default () => {
                 case 'OfferItem': {
                     const agency = BigNumber.from(event.args.agency);
                     updateOffers(event.args.itemId.toItemId(), [
-                        {
+                        idf({
+                            type: 'item' as const,
                             tokenId: event.args.itemId.toItemId(),
                             eth: EthInt.fromNuggftV1Agency(event.args.agency),
                             user: agency.mask(160).toNumber().toString().toNuggId(),
                             txhash: log.transactionHash,
                             sellingTokenId: event.args.sellingTokenId.toNuggId(),
                             isBackup: false,
-                        },
+                        }),
                     ]);
                     break;
                 }

@@ -83,7 +83,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     // }, [myNuggs, epoch, stableId]);
 
     const sellingNugg = useMemo(() => {
-        if (data.tokenId.isItemId()) {
+        if (data.isItem()) {
             return data.nuggToBuyFrom;
             // if (activeItem) return activeItem.sellingNugg;
         }

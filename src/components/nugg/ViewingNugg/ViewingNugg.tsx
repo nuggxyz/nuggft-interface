@@ -74,7 +74,9 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                               <ItemList
                                   items={token?.items}
                                   isOwner={
-                                      !!sender && sender === token.owner && !token?.activeSwap?.id
+                                      !!sender &&
+                                      sender === token.owner &&
+                                      !token?.activeSwap?.tokenId
                                   }
                                   tokenId={tokenId}
                               />
@@ -232,7 +234,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                 ...styles.goToSwap,
                                                 marginBottom: '0rem',
                                             }}
-                                            onClick={() => navigate(`/swap/${token.id}`)}
+                                            onClick={() => navigate(`/swap/${token.tokenId}`)}
                                             size="small"
                                             textStyle={{
                                                 ...styles.goToSwapGradient,

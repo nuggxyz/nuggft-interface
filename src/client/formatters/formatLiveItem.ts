@@ -1,18 +1,18 @@
 import { LiveItem, TryoutData } from '@src/client/interfaces';
 import { EthInt, Fraction2x16 } from '@src/classes/Fraction';
 import { LiveItemFragment } from '@src/gql/types.generated';
+import { idf } from '@src/prototypes';
 
 export default (item: LiveItemFragment): LiveItem => {
-    const tmp: Omit<LiveItem, 'tryout'> = {
-        type: 'item' as const,
-        id: item.id.toItemId(),
+    const tokenId = item.id.toItemId();
+    const tmp: Omit<LiveItem, 'tryout'> = idf({
+        tokenId,
         count: Number(item.count),
         swaps: item.swaps
             .map((y) => {
                 return y
-                    ? {
-                          type: 'item',
-                          id: y.id,
+                    ? idf({
+                          tokenId,
                           epoch: y.epoch
                               ? {
                                     id: Number(y.epoch?.id ?? 0),
@@ -31,17 +31,16 @@ export default (item: LiveItemFragment): LiveItem => {
                           sellingNuggId: y.sellingNuggItem.nugg.id,
                           bottom: new EthInt(y.bottom),
                           isBackup: false,
-                      }
+                      })
                     : undefined;
             })
             .filter((x) => x) as LiveItem['swaps'],
         rarity: new Fraction2x16(item.rarityX16),
         isBackup: false,
         activeSwap: item.activeSwap
-            ? {
+            ? idf({
                   count: 1,
-                  type: 'item' as const,
-                  id: item.activeSwap?.id.toItemId(),
+                  tokenId,
                   epoch: item.activeSwap.epoch
                       ? {
                             id: Number(item.activeSwap.epoch.id),
@@ -64,13 +63,12 @@ export default (item: LiveItemFragment): LiveItem => {
                   sellingNuggId: item.activeSwap?.sellingNuggItem.nugg.id.toNuggId(),
                   bottom: new EthInt(item.activeSwap?.bottom),
                   isBackup: false,
-              }
+              })
             : undefined,
         upcomingActiveSwap: item.upcomingActiveSwap
-            ? {
+            ? idf({
                   count: 1,
-                  type: 'item' as const,
-                  id: item.upcomingActiveSwap?.id.toItemId(),
+                  tokenId,
                   epoch: item.upcomingActiveSwap.epoch
                       ? {
                             id: Number(item.upcomingActiveSwap.epoch.id),
@@ -91,9 +89,9 @@ export default (item: LiveItemFragment): LiveItem => {
                   sellingNuggId: item.upcomingActiveSwap?.sellingNuggItem.nugg.id.toNuggId(),
                   bottom: new EthInt(item.upcomingActiveSwap?.bottom),
                   isBackup: false,
-              }
+              })
             : undefined,
-    };
+    });
 
     if (!tmp.activeSwap && tmp.upcomingActiveSwap) {
         tmp.activeSwap = tmp.upcomingActiveSwap;

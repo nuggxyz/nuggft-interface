@@ -13,6 +13,7 @@ import {
     useGetAllNuggsSearchQuery,
 } from '@src/gql/types.generated';
 import useDimentions from '@src/client/hooks/useDimentions';
+import { idf } from '@src/prototypes';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -232,20 +233,24 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     }}
                     type={SearchView.AllItems}
                     previewNuggs={
-                        allItemsData?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT).map((x) => ({
-                            tokenId: x.id.toItemId(),
-                            listDataType: 'basic' as const,
-                        })) || []
+                        allItemsData?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT).map((x) =>
+                            idf({
+                                tokenId: x.id.toItemId(),
+                                listDataType: 'basic' as const,
+                            }),
+                        ) || []
                     }
                 >
                     <NuggList
                         animationToggle={viewing === SearchView.AllItems}
                         style={styles.nuggListEnter}
                         values={
-                            allItemsData?.map((x) => ({
-                                tokenId: x.id.toItemId(),
-                                listDataType: 'basic' as const,
-                            })) || []
+                            allItemsData?.map((x) =>
+                                idf({
+                                    tokenId: x.id.toItemId(),
+                                    listDataType: 'basic' as const,
+                                }),
+                            ) || []
                         }
                         interval={INFINITE_INTERVAL}
                         type={SearchView.AllItems}
@@ -261,20 +266,24 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     }}
                     type={SearchView.AllNuggs}
                     previewNuggs={
-                        allNuggsData?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT).map((x) => ({
-                            tokenId: x.id.toNuggId(),
-                            listDataType: 'basic' as const,
-                        })) || []
+                        allNuggsData?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT).map((x) =>
+                            idf({
+                                tokenId: x.id.toNuggId(),
+                                listDataType: 'basic' as const,
+                            }),
+                        ) || []
                     }
                 >
                     <NuggList
                         animationToggle={viewing === SearchView.AllNuggs}
                         style={styles.nuggListEnter}
                         values={
-                            allNuggsData?.map((x) => ({
-                                tokenId: x.id.toNuggId(),
-                                listDataType: 'basic' as const,
-                            })) || []
+                            allNuggsData?.map((x) =>
+                                idf({
+                                    tokenId: x.id.toNuggId(),
+                                    listDataType: 'basic' as const,
+                                }),
+                            ) || []
                         }
                         interval={INFINITE_INTERVAL}
                         type={SearchView.AllNuggs}

@@ -1,32 +1,32 @@
 import { LiveNugg } from '@src/client/interfaces';
 import { EthInt } from '@src/classes/Fraction';
 import { LiveNuggFragment } from '@src/gql/types.generated';
+import { idf } from '@src/prototypes';
 
 export default (nugg: LiveNuggFragment): LiveNugg => {
-    return {
-        type: 'nugg' as const,
-        id: nugg.id.toNuggId(),
+    const tokenId = nugg.id.toNuggId();
+    return idf({
+        tokenId,
         activeLoan: !!nugg.activeLoan?.id,
         owner: nugg.user?.id as AddressString,
         items: nugg.items
             .filter((x) => x.activeSwap || x.count > 0)
             .map((y) => {
-                return {
+                return idf({
                     tokenId: y?.id.split('-')[0].toItemId(),
                     activeSwap: y?.activeSwap?.id,
                     feature: Number(y?.item.feature),
                     position: Number(y?.item.position),
                     count: Number(y?.count),
                     displayed: y?.displayed,
-                };
+                });
             }),
         isBackup: false,
         pendingClaim: nugg.pendingClaim,
         lastTransfer: nugg.lastTransfer,
         swaps: nugg.swaps.map((y) => {
-            return {
-                type: 'nugg' as const,
-                id: y?.id.toNuggId(),
+            return idf({
+                tokenId,
                 epoch: y?.epoch
                     ? {
                           id: Number(y?.epoch.id),
@@ -43,12 +43,11 @@ export default (nugg: LiveNuggFragment): LiveNugg => {
                 isActive: nugg.activeSwap?.id === y?.id,
                 bottom: new EthInt(y?.bottom),
                 isBackup: false,
-            };
+            });
         }),
         activeSwap: nugg.activeSwap
-            ? {
-                  type: 'nugg' as const,
-                  id: nugg.activeSwap.id.toNuggId(),
+            ? idf({
+                  tokenId,
                   epoch: nugg.activeSwap.epoch
                       ? {
                             id: Number(nugg.activeSwap.epoch.id),
@@ -70,7 +69,7 @@ export default (nugg: LiveNuggFragment): LiveNugg => {
                   isActive: true,
                   bottom: new EthInt(nugg.activeSwap.bottom),
                   isBackup: false,
-              }
+              })
             : undefined,
-    };
+    });
 };

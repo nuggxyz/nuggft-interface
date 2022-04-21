@@ -1,6 +1,7 @@
 import { EthInt } from '@src/classes/Fraction';
 import { SwapdataFragment, ItemswapdataFragment } from '@src/gql/types.generated';
 import { SwapData } from '@src/client/interfaces';
+import { idf } from '@src/prototypes';
 
 export const formatSwapData = (
     z:
@@ -32,13 +33,13 @@ export const formatSwapData = (
         };
     }
 
-    return {
+    return idf({
         ...a,
         eth: new EthInt(z?.eth || 0),
         endingEpoch: z && z.endingEpoch ? Number(z.endingEpoch) : 0,
         dotnuggRawCache: undefined,
         listDataType: 'swap',
-    };
+    });
 };
 
 // export const formatActiveSwapData = (

@@ -14,7 +14,7 @@ export default () => {
             label={t`See All`}
             buttonStyle={styles.mintNuggButton}
             textStyle={styles.mintNuggButtonText}
-            onClick={() => openModal({ type: ModalEnum.Mint })}
+            onClick={() => openModal({ modalType: ModalEnum.Mint })}
         />
     );
 };

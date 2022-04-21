@@ -4,6 +4,7 @@ import {
     useBetterLiveItemOffersSubscription,
     useBetterLiveOffersSubscription,
 } from '@src/gql/types.generated';
+import { idf } from '@src/prototypes';
 
 const useLiveItemOffers = (tokenId?: ItemId) => {
     const graph = client.live.graph();
@@ -27,28 +28,28 @@ const useLiveItemOffers = (tokenId?: ItemId) => {
                 updateOffers(tokenId.toItemId(), [
                     ...(activeSwap
                         ? activeSwap.offers.map((z) => {
-                              return {
+                              return idf({
                                   tokenId,
-
                                   eth: new EthInt(z.eth),
                                   user: z.nugg.id.toNuggId(),
                                   txhash: z.txhash,
                                   sellingTokenId: activeSwap.sellingNuggItem.nugg.id.toNuggId(),
                                   isBackup: false,
-                              };
+                              });
                           })
                         : []),
                     ...(upcomingActiveSwap
                         ? upcomingActiveSwap.offers.map((z) => {
-                              return {
+                              return idf({
                                   tokenId,
                                   eth: new EthInt(z.eth),
                                   user: z.nugg.id.toNuggId(),
                                   txhash: z.txhash,
+                                  type: 'item' as const,
                                   sellingTokenId:
                                       upcomingActiveSwap.sellingNuggItem.nugg.id.toNuggId(),
                                   isBackup: false,
-                              };
+                              });
                           })
                         : []),
                 ]);
@@ -79,14 +80,15 @@ const useLiveNuggOffers = (tokenId?: NuggId) => {
                 const { activeSwap } = x.subscriptionData.data.nugg;
                 updateOffers(tokenId, [
                     ...activeSwap.offers.map((z) => {
-                        return {
+                        return idf({
+                            type: 'nugg' as const,
                             tokenId,
                             eth: new EthInt(z.eth),
                             user: z.user.id as AddressString,
                             txhash: z.txhash,
                             isBackup: false,
                             sellingTokenId: null,
-                        };
+                        });
                     }),
                 ]);
             }

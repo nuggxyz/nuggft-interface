@@ -14,6 +14,7 @@ import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import useRemaining from '@src/client/hooks/useRemaining';
 import useDimentions from '@src/client/hooks/useDimentions';
 import { ModalEnum } from '@src/interfaces/modals';
+import { idf } from '@src/prototypes';
 
 import styles from './RingAbout.styles';
 
@@ -121,12 +122,14 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
                                 )
                                     navigate('/wallet');
                                 else if (tokenId)
-                                    openModal({
-                                        type: ModalEnum.Offer,
-                                        tokenId,
-                                        token,
-                                        nuggToBuyFrom: nuggToBuyFrom.nugg,
-                                    });
+                                    openModal(
+                                        idf({
+                                            modalType: ModalEnum.Offer as const,
+                                            tokenId,
+                                            token,
+                                            nuggToBuyFrom: nuggToBuyFrom.nugg,
+                                        }),
+                                    );
                             }
                         }}
                         label={

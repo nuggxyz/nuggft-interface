@@ -42,7 +42,7 @@ const LoanRenderItem: FunctionComponent<
                     label={t`Extend`}
                     onClick={() =>
                         openModal({
-                            type: ModalEnum.LoanInput,
+                            modalType: ModalEnum.LoanInput,
                             tokenId: item.nugg,
                             actionType: 'rebalance',
                         })
@@ -56,7 +56,7 @@ const LoanRenderItem: FunctionComponent<
                     label={t`Pay off`}
                     onClick={() =>
                         openModal({
-                            type: ModalEnum.LoanInput,
+                            modalType: ModalEnum.LoanInput,
                             tokenId: item.nugg,
                             actionType: 'liquidate',
                         })

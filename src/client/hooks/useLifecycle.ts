@@ -12,14 +12,14 @@ export default (token?: LiveToken): Lifecycle | undefined => {
     return React.useMemo(() => {
         if (!token) return undefined;
 
-        if (token.type === 'item' && !token.activeSwap && token.upcomingActiveSwap) {
+        if (token.isItem() && !token.activeSwap && token.upcomingActiveSwap) {
             token.activeSwap = token.upcomingActiveSwap;
             delete token.upcomingActiveSwap;
         }
 
         if (token && epoch !== undefined) {
-            if (!token.activeSwap?.id) {
-                if (token.type === 'item' && token.swaps.length > 0) return Lifecycle.Tryout;
+            if (!token.activeSwap?.tokenId) {
+                if (token.isItem() && token.swaps.length > 0) return Lifecycle.Tryout;
                 return Lifecycle.Stands;
             }
 

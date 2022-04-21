@@ -9,6 +9,7 @@ import client from '@src/client';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import { ModalEnum } from '@src/interfaces/modals';
 import useDimentions from '@src/client/hooks/useDimentions';
+import { idf } from '@src/prototypes';
 
 import styles from './RingAbout.styles';
 
@@ -55,20 +56,24 @@ export default ({
             onClick={() => {
                 if (screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address))
                     navigate('/wallet');
-                else if (token && token.type === 'nugg') {
-                    openModal({
-                        type: ModalEnum.Offer,
-                        tokenId: token.id,
-                        token,
-                        nuggToBuyFrom: null,
-                    });
+                else if (token && token.isNugg()) {
+                    openModal(
+                        idf({
+                            modalType: ModalEnum.Offer as const,
+                            tokenId: token.tokenId,
+                            token,
+                            nuggToBuyFrom: null,
+                        }),
+                    );
                 } else if (token && token.type === 'item' && token.activeSwap) {
-                    openModal({
-                        type: ModalEnum.Offer,
-                        tokenId: token.id,
-                        token,
-                        nuggToBuyFrom: sellingNuggId || token.activeSwap.sellingNuggId,
-                    });
+                    openModal(
+                        idf({
+                            modalType: ModalEnum.Offer as const,
+                            tokenId: token.tokenId,
+                            token,
+                            nuggToBuyFrom: sellingNuggId || token.activeSwap.sellingNuggId,
+                        }),
+                    );
                 }
             }}
             label={

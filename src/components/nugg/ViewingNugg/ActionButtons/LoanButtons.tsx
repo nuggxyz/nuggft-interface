@@ -32,7 +32,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
                 onClick={() =>
                     openModal({
-                        type: ModalEnum.LoanInput,
+                        modalType: ModalEnum.LoanInput,
                         tokenId,
                         actionType: 'rebalance',
                         backgroundStyle: {
@@ -56,7 +56,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
                 onClick={() =>
                     openModal({
-                        type: ModalEnum.LoanInput,
+                        modalType: ModalEnum.LoanInput,
                         tokenId,
                         actionType: 'liquidate',
                         backgroundStyle: {

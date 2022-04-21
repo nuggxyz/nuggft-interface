@@ -17,6 +17,7 @@ import web3 from '@src/web3';
 import { Address } from '@src/classes/Address';
 import List from '@src/components/general/List/List';
 import Label from '@src/components/general/Label/Label';
+import { idf } from '@src/prototypes';
 
 import styles from './ViewingNugg.styles';
 
@@ -60,11 +61,13 @@ const Item: FC<{ item: LiveNuggItem; extraData: ExtraData }> = ({ item, extraDat
                         textStyle={styles.itemListButtonText}
                         type="text"
                         onClick={() => {
-                            openModal({
-                                type: ModalEnum.Sell,
-                                tokenId: item.tokenId,
-                                sellingNuggId: extraData.tokenId,
-                            });
+                            openModal(
+                                idf({
+                                    modalType: ModalEnum.Sell as const,
+                                    tokenId: item.tokenId,
+                                    sellingNuggId: extraData.tokenId,
+                                }),
+                            );
                         }}
                     />
                 ) : (
@@ -288,11 +291,13 @@ const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = 
                         label={t`For sale`}
                         // rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
                         onClick={() => {
-                            openModal({
-                                type: ModalEnum.Sell,
-                                tokenId: item.tokenId,
-                                sellingNuggId: nuggId,
-                            });
+                            openModal(
+                                idf({
+                                    modalType: ModalEnum.Sell as const,
+                                    tokenId: item.tokenId,
+                                    sellingNuggId: nuggId,
+                                }),
+                            );
                         }}
                     />
                 </div>
@@ -316,7 +321,7 @@ const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = 
                         type="text"
                         onClick={() => {
                             openModal({
-                                type: ModalEnum.Sell,
+                                modalType: ModalEnum.Sell,
                                 tokenId: item.id,
                                 tokenType: 'item',
                                 sellingNuggId: extraData.tokenId,
@@ -359,7 +364,7 @@ export const ItemListPhone: FunctionComponent<{ tokenId: NuggId }> = ({ tokenId 
     const token = client.live.token(tokenId);
     const address = web3.hook.usePriorityAccount();
 
-    if (!token || token?.type === 'item') return null;
+    if (!token || !token?.isNugg()) return null;
 
     return (
         <div
@@ -380,7 +385,7 @@ export const ItemListPhone: FunctionComponent<{ tokenId: NuggId }> = ({ tokenId 
                         item={x}
                         isOwner={token.owner === address}
                         nuggId={tokenId}
-                        key={`${token.id}-${i}`}
+                        key={`${token.tokenId}-${i}`}
                     />
                 ))}
         </div>

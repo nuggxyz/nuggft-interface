@@ -5,6 +5,7 @@ import { EthInt } from '@src/classes/Fraction';
 import client from '@src/client';
 import { useLiveUserSubscription } from '@src/gql/types.generated';
 import { Address } from '@src/classes/Address';
+import { idf } from '@src/prototypes';
 
 export default () => {
     const address = web3.hook.usePriorityAccount();
@@ -62,7 +63,7 @@ export default () => {
                         };
                     }),
                     myUnclaimedNuggOffers: user.offers.map((z) => {
-                        return {
+                        return idf({
                             tokenId: z.swap.nugg.id.toNuggId(),
                             endingEpoch:
                                 z && z.swap && z.swap.endingEpoch
@@ -77,12 +78,13 @@ export default () => {
                                 buyingTokenId: 'nugg-0',
                             },
                             nugg: null,
-                        };
+                        });
                     }),
                     myUnclaimedItemOffers: user.nuggs
                         .map((z) => {
                             return z.offers.map((y) => {
-                                return {
+                                return idf({
+                                    type: 'item' as const,
                                     tokenId: y.swap.sellingItem.id.toItemId(),
                                     endingEpoch:
                                         y && y.swap && y.swap.endingEpoch
@@ -97,7 +99,7 @@ export default () => {
                                         sellingTokenId: y.swap.sellingNuggItem.nugg.id.toNuggId(),
                                         address: Address.ZERO.hash as AddressStringZero,
                                     },
-                                };
+                                });
                             });
                         })
                         .flat(),

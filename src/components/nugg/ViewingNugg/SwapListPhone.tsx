@@ -104,12 +104,12 @@ const SwapItem: FunctionComponent<
     >
 > = ({ item, index, extraData }) => {
     const ownerEns = web3.hook.usePriorityAnyENSName(
-        item.type === 'item' ? 'nugg' : extraData?.provider,
+        item.isItem() ? 'nugg' : extraData?.provider,
         item.owner || '',
     );
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
-        item.type === 'item' ? 'nugg' : extraData?.provider,
+        item.isItem() ? 'nugg' : extraData?.provider,
         item.leader,
     );
 
@@ -130,7 +130,7 @@ const SwapItem: FunctionComponent<
                 item={item}
                 epoch={epoch}
                 navigate={navigate}
-                tokenId={extraData.token.id}
+                tokenId={extraData.token.tokenId}
             />
 
             <div
@@ -303,9 +303,9 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
         const _listData: { title: string; items: LiveSwapWithTryout[] }[] = [];
         let _activeSwap = undefined;
         let tempSwaps = token?.swaps ? [...token.swaps] : [];
-        if (token && token.activeSwap && token.activeSwap.id) {
+        if (token && token.activeSwap && token.activeSwap.tokenId) {
             _listData.push({ title: t`Ongoing Swap`, items: [token.activeSwap] });
-            tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'id');
+            tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'tokenId');
             _activeSwap = token.activeSwap;
         }
         if (token && token.type === 'item') {
@@ -329,7 +329,7 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
                     title: t`Ending in epoch ${upcoming.endingEpoch}`,
                     items: [upcoming],
                 });
-                tempSwaps = tempSwaps.smartRemove(upcoming, 'id');
+                tempSwaps = tempSwaps.smartRemove(upcoming, 'tokenId');
             }
         }
         if (!isUndefinedOrNullOrArrayEmpty(tempSwaps)) {

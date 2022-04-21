@@ -3,23 +3,25 @@ enum TokenType {
     Item = 'item',
 }
 
-declare type NuggId = `${TokenType.Nugg}-${number}`;
-declare type ItemId = `${TokenType.Item}-${number}`;
+declare type NuggId = `${'nugg'}-${number}`;
+declare type ItemId = `${'item'}-${number}`;
 declare type TokenId = ItemId | NuggId;
 
-interface TokenIdAsType<T extends TokenType> {
-    tokenId: PickFromTokenType<T, NuggId, ItemId>;
-    ___undefined__?: PickFromTokenId<
-        this['tokenId'],
-        typeof TokenType['Nugg'],
-        typeof TokenType['Item']
-    >;
-}
+declare type PickFromTokenTypeSimple<T extends IdPrefix, N, I> = T extends infer R
+    ? R extends IdPrefix
+        ? Splitter<N, I>[R]
+        : never
+    : never;
+
+// interface TokenIdAsType<T extends TokenType> {
+//     type: T;
+//     tokenId: PickFromTokenType<T, NuggId, ItemId>;
+// }
 interface Splitter<N, I> {
     nugg: N;
     item: I;
 }
-declare type IdPrefix = TokenType;
+declare type IdPrefix = 'nugg' | 'item';
 
 declare function IdFixture<K extends TokenType, T extends `${K}`>(
     what: T,
@@ -38,6 +40,12 @@ declare type PickTokenId<T extends IdPrefix> = T extends infer R
         : never
     : never;
 
+declare type PickTokenIdSimple<T extends IdPrefix> = T extends infer R
+    ? R extends IdPrefix
+        ? Splitter<'nugg', 'item'>[R]
+        : never
+    : never;
+
 declare type PickFromTokenType<T extends TokenType, N, I> = T extends infer R
     ? R extends TokenType
         ? Splitter<N, I>[R]
@@ -45,7 +53,25 @@ declare type PickFromTokenType<T extends TokenType, N, I> = T extends infer R
     : never;
 
 declare type PickFromTokenId<T extends TokenId, N, I> = T extends `${infer R}-${number}`
-    ? R extends TokenType
+    ? R extends keyof Splitter
         ? Splitter<N, I>[R]
         : never
     : never;
+
+interface TokenDiff {
+    tokenId: TokenId;
+    type: 'nugg' | 'item';
+    isItem: () => this is ItemDiff;
+    isNugg: () => this is NuggDiff;
+}
+
+interface NuggDiff extends TokenDiff {
+    type: 'nugg';
+    tokenId: NuggId;
+}
+interface ItemDiff extends TokenDiff {
+    type: 'item';
+    tokenId: ItemId;
+}
+
+type IdDiff<A extends TokenDiff, B, C> = (B & NuggDiff & A) | (C & ItemDiff & A);

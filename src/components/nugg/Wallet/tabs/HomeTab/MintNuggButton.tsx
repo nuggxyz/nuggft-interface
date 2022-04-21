@@ -17,7 +17,7 @@ const MintNuggButton: FunctionComponent<Props> = () => {
             label={t`Mint a Nugg`}
             buttonStyle={styles.mintNuggButton}
             textStyle={styles.mintNuggButtonText}
-            onClick={() => openModal({ type: ModalEnum.Mint })}
+            onClick={() => openModal({ modalType: ModalEnum.Mint })}
         />
     );
 };

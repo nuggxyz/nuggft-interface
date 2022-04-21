@@ -102,7 +102,7 @@ const SwapItem: FunctionComponent<
                 item={item}
                 epoch={epoch}
                 navigate={navigate}
-                tokenId={extraData.token.id}
+                tokenId={extraData.token.tokenId}
             />
             <div
                 key={index}
@@ -194,9 +194,9 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
     const listData = useMemo(() => {
         const res: { title: string; items: LiveSwap[] }[] = [];
         let tempSwaps = token?.swaps ? [...token.swaps] : [];
-        if (token && token.activeSwap && token.activeSwap.id) {
+        if (token && token.activeSwap && token.activeSwap.tokenId) {
             res.push({ title: t`Ongoing Swap`, items: [token.activeSwap] });
-            tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'id');
+            tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'tokenId');
         }
         if (token && token.type === 'item') {
             if ((token?.swaps as LiveSwap[]).find((swap) => swap.endingEpoch === null)) {
@@ -210,7 +210,7 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
             );
             if (upcoming) {
                 res.push({ title: t`Ending in epoch ${upcoming.endingEpoch}`, items: [upcoming] });
-                tempSwaps = tempSwaps.smartRemove(upcoming, 'id');
+                tempSwaps = tempSwaps.smartRemove(upcoming, 'tokenId');
             }
         }
         if (!isUndefinedOrNullOrArrayEmpty(tempSwaps)) {

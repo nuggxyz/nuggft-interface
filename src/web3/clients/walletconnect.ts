@@ -111,7 +111,7 @@ export class WalletConnect extends Connector {
                     window.open(uri);
                 } else {
                     client.modal.getState().openModal({
-                        type: ModalEnum.QrCode,
+                        modalType: ModalEnum.QrCode,
                         info: peer,
                         uri,
                         containerStyle: { background: lib.colors.semiTransparentWhite },
