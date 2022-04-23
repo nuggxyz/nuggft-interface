@@ -38,7 +38,7 @@ export const useDotnuggInjectToCache = () => {
                     data: {
                         nugg: {
                             __typename: 'Nugg',
-                            id: tokenId,
+                            id: tokenId.toRawId(),
                             dotnuggRawCache: data,
                         },
                     },
@@ -222,5 +222,7 @@ export const useDotnuggCacheOnlyLazy = (
         );
     }, [itemCalled, nuggCalled, src, fallback, tokenId]);
 
-    return { src: !error ? src : fallback, isEmpty };
+    return { src0: !error ? src : fallback, src: undefined, isEmpty: true, isEmpty0: isEmpty };
+
+    // return { src: !error ? src : fallback, isEmpty };
 };

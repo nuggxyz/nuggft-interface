@@ -78,6 +78,7 @@ const RenderItem = <T, B, A>({
                                 item={childItem}
                                 index={index}
                                 extraData={extraData}
+                                // @ts-ignore
                                 {...animating}
                                 {...refData}
                                 action={() => undefined}
@@ -158,7 +159,6 @@ Props<T, B, A>) => {
         [listRef],
     );
     const [current] = useState(refData?.map((item) => item.title));
-
 
     return listRef ? (
         <animated.div
