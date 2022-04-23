@@ -194,6 +194,8 @@ interface String {
     onlyItemId(): ItemId | undefined;
     onlyNuggId(): NuggId | undefined;
     toRawId(): [typeof this] extends [TokenId] ? string : never;
+    toRawIdNum(): [typeof this] extends [TokenId] ? number : never;
+
     toPrettyId(): string;
 
     // toIdNumber(): this extends `${}` ? number : null;

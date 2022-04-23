@@ -3,6 +3,9 @@ import React, { CSSProperties } from 'react';
 import useDotnuggStrokeWidth from '@src/client/hooks/useDotnuggStrokeWidth';
 
 const getParsed = (input: string) => {
+    if (input.startsWith('ERROR') || input === '') {
+        return '<svg></svg>';
+    }
     if (input.startsWith('data:image/svg+xml;charset=UTF-8,')) {
         return input.replace('data:image/svg+xml;charset=UTF-8,', '');
     }

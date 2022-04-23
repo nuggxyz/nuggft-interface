@@ -123,6 +123,10 @@ String.prototype.toRawId = function fn() {
     })(this as TokenId);
 };
 
+String.prototype.toRawIdNum = function fn() {
+    return +this.toRawId();
+};
+
 Number.prototype.toItemId = function fn() {
     return this.toTokenId('item');
 };

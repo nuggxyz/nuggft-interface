@@ -207,8 +207,9 @@ export const useDotnuggCacheOnlyLazy = (
     }, [itemRes, nuggRes, tokenId, clienter]);
 
     const error = useMemo(() => {
+        if (src && src.startsWith('ERROR')) return true;
         return tokenId ? (tokenId.isItemId() ? !!itemErr : !!nuggErr) : undefined;
-    }, [itemErr, nuggErr, tokenId]);
+    }, [itemErr, nuggErr, tokenId, src]);
 
     const fallback = useDotnuggRpcBackup2(!!error, tokenId);
 
@@ -216,7 +217,7 @@ export const useDotnuggCacheOnlyLazy = (
         return (
             tokenId &&
             (tokenId.isItemId() ? itemCalled : nuggCalled) &&
-            isUndefinedOrNullOrStringEmpty(src) &&
+            (isUndefinedOrNullOrStringEmpty(src) || src.startsWith('ERROR')) &&
             isUndefinedOrNullOrStringEmpty(fallback)
         );
     }, [itemCalled, nuggCalled, src, fallback, tokenId]);

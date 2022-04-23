@@ -64,7 +64,7 @@ const MobileViewScreen: FC<PropsWithChildren<{ onClose?: () => void }>> = () => 
         setDraggedTop(top);
     }, [top]);
 
-    const style = useAnimateOverlayBackdrop(isopen, undefined, 400);
+    const style = useAnimateOverlayBackdrop(isopen, undefined, 200);
 
     const node = React.useRef<HTMLDivElement>(null);
 

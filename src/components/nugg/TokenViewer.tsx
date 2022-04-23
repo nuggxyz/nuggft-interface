@@ -70,6 +70,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     const [hoverRef, isHovering] = useOnHover();
 
     const { gotoViewingNugg } = useViewingNugg();
+
     const animatedStyle = useSpring({
         to: {
             // ...style,
@@ -89,7 +90,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
             <div
                 role="presentation"
                 onClick={
-                    disableOnClick
+                    !disableOnClick
                         ? () => {
                               if (tokenId) {
                                   gotoViewingNugg(tokenId);
