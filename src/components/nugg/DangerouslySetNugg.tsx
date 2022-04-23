@@ -3,6 +3,9 @@ import React, { CSSProperties } from 'react';
 import useDotnuggStrokeWidth from '@src/client/hooks/useDotnuggStrokeWidth';
 
 const getParsed = (input: string) => {
+    if (input.startsWith('data:image/svg+xml;charset=UTF-8,')) {
+        return input.replace('data:image/svg+xml;charset=UTF-8,', '');
+    }
     // Buffer.from is the modern version of atob
     return Buffer.from(input.replace('data:image/svg+xml;base64,', ''), 'base64').toString('utf8');
 };

@@ -75,42 +75,6 @@ export const useDotnuggRpcBackup2 = (use: boolean, tokenId?: TokenId) => {
     return src;
 };
 
-// export const useDotnugg = (tokenId?: TokenId) => {
-//     const main = useFastQuery<
-//         { [key in 'nugg' | 'item']?: { dotnuggRawCache: Base64EncodedSvg } },
-//         UseDotnuggResponse
-//     >(
-//         tokenId.isItemId()
-//             ? gql`
-//                   query OptimizedDotNugg($tokenId: ID!) {
-//                       item(id: $tokenId) {
-//                           id
-//                           dotnuggRawCache
-//                       }
-//                   }
-//               `
-//             : gql`
-//                   query OptimizedDotNugg($tokenId: ID!) {
-//                       nugg(id: $tokenId) {
-//                           id
-//                           dotnuggRawCache
-//                       }
-//                   }
-//               `,
-//         {
-//             tokenId: tokenId?.replace('item-', ''),
-//         },
-//         (x) => {
-//             if (x.data.nugg !== undefined) return x.data.nugg.dotnuggRawCache;
-//             if (x.data.item !== undefined) return x.data.item.dotnuggRawCache;
-//             return null;
-//         },
-//     );
-
-//     const fallback = useDotnuggRpcBackup2(main === undefined, tokenId);
-//     return main || fallback;
-// };
-
 export const useDotnuggSubscription = (
     activate: boolean,
     tokenId?: TokenId,

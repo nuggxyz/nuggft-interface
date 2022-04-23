@@ -53,35 +53,43 @@ export const FEATURE_NAMES = ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'H
 export const CONTRACTS = {
     [Chain.MAINNET]: {
         NuggftV1: ethers.constants.AddressZero,
+        xNuggftV1: ethers.constants.AddressZero,
         DotnuggV1: ethers.constants.AddressZero,
         Genesis: 0,
         Interval: 0,
         Offset: 1,
         MintOffset: 1000000,
+        GraphId: 'QmNYd7mzNPnpt4yEB6VvzuboaRKWr1pScXP3jAvAKzXrhv',
     },
     [Chain.ROPSTEN]: {
         NuggftV1: '0x420690c1b1519a32fa36768dc2cefe128160a9b7',
+        xNuggftV1: ethers.constants.AddressZero,
         DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
         Genesis: 333,
         Interval: 32,
         Offset: 1,
         MintOffset: 1000000,
+        GraphId: 'QmNYd7mzNPnpt4yEB6VvzuboaRKWr1pScXP3jAvAKzXrhv',
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0x6b5bf1ad3708ea7ea6b601710a14c286eed9e8f0',
+        NuggftV1: '0x9e229c8a1fc52fe19e61eb7a22788cb901b92362',
+        xNuggftV1: '0x038d14f4fabb7afebfc326b40b2c122454a33d95',
         DotnuggV1: '0x5710ba43b112762fa4fe8922c7fc5e2a578cf29b',
-        Genesis: 10551936,
+        Genesis: 10554624,
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
+        GraphId: 'QmQ79YLEb36HKLtTEkg2biJxHQu9kJYiyg5VPHBydeAUi7',
     },
     [Chain.GOERLI]: {
-        NuggftV1: '0xff3c74becc04580d4157ec0d855c6c7c48b3283d',
-        DotnuggV1: '0xcad4f9faafb07aad3e217c038a8e6a972cdbf822',
+        NuggftV1: '0xf5622e697d1821b8e83e4beed9e897b49de81011',
+        xNuggftV1: ethers.constants.AddressZero,
+        DotnuggV1: '0x69c877437dc133bbf32c8bc1acfaf93ba824f28c',
         Genesis: 333,
         Interval: 32,
         Offset: 1,
         MintOffset: 1000000,
+        GraphId: 'QmNYd7mzNPnpt4yEB6VvzuboaRKWr1pScXP3jAvAKzXrhv',
     },
 };
 
@@ -104,17 +112,17 @@ export const calculateEpochId = (blocknum: number, chainId: Chain) => {
 // QmXAhEeSBXYA227ER3YK9NBE57HhpVGGWeYWQhic4nPZ6M
 
 export const GRAPH_ENPOINTS = {
-    [Chain.MAINNET]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
-    [Chain.RINKEBY]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby`,
-    [Chain.ROPSTEN]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
-    [Chain.GOERLI]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli`,
+    [Chain.MAINNET]: `https://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.MAINNET].GraphId}`,
+    [Chain.RINKEBY]: `https://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.RINKEBY].GraphId}`,
+    [Chain.ROPSTEN]: `https://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.ROPSTEN].GraphId}`,
+    [Chain.GOERLI]: `https://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.GOERLI].GraphId}`,
 };
 
 export const GRAPH_WSS_ENDPOINTS = {
-    [Chain.MAINNET]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
-    [Chain.RINKEBY]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby`,
-    [Chain.ROPSTEN]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
-    [Chain.GOERLI]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli`,
+    [Chain.MAINNET]: `wss://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.MAINNET].GraphId}`,
+    [Chain.RINKEBY]: `wss://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.RINKEBY].GraphId}`,
+    [Chain.ROPSTEN]: `wss://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.ROPSTEN].GraphId}`,
+    [Chain.GOERLI]: `wss://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.GOERLI].GraphId}`,
 };
 
 export const INFURA_URLS = {
