@@ -399,7 +399,7 @@ const HotRotateO = () => {
                             padding: '0rem .4rem',
                             borderRadius: lib.layout.borderRadius.medium,
                         }}
-                    />
+                    /> */}
                     <div
                         style={{
                             display: 'flex',
