@@ -48,7 +48,7 @@ export const HotRotateOController = () => {
         };
     }, [tokenId, openEditScreen, closeEditScreen, navigate]);
 
-    return <></>;
+    return <HotRotateO />;
 };
 
 const RenderItem: FC<
@@ -104,15 +104,15 @@ const RenderItem: FC<
     );
 };
 
-export default () => {
-    const [death, setDeath] = React.useState(false);
+const HotRotateO = () => {
+    // const [death, setDeath] = React.useState(false);
 
-    const [, start] = React.useTransition();
+    // const [, start] = React.useTransition();
 
     const openEditScreen = client.editscreen.useEditScreenOpen();
     const tokenId = client.editscreen.useEditScreenTokenId();
 
-    const style = useAnimateOverlay(openEditScreen && !death, {
+    const style = useAnimateOverlay(openEditScreen, {
         zIndex: 998,
     });
 
@@ -483,3 +483,5 @@ const RotateOViewer = ({ tokenId, items }: { tokenId: TokenId; items: ItemList }
         </div>
     );
 };
+
+export default HotRotateO;

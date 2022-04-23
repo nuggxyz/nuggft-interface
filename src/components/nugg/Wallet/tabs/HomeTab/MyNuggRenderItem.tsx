@@ -35,7 +35,7 @@ const MyNuggRenderItem: FunctionComponent<
                     style={{ ...globalStyles.listNugg, padding: '.5rem' }}
                 />
 
-                <Text textStyle={styles.textRed}>Nugg {item.tokenId || ''}</Text>
+                <Text textStyle={styles.textRed}>Nugg {item.tokenId.toRawId() || ''}</Text>
             </div>
             {item.activeLoan || item.activeSwap ? (
                 <Text textStyle={styles.badge} size="smaller" type="text">
