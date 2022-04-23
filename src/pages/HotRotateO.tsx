@@ -48,7 +48,7 @@ export const HotRotateOController = () => {
         };
     }, [tokenId, openEditScreen, closeEditScreen, navigate]);
 
-    return <HotRotateO />;
+    return <></>;
 };
 
 const RenderItem: FC<
@@ -64,6 +64,7 @@ const RenderItem: FC<
             }}
         >
             <TokenViewer
+                forceCache
                 tokenId={item.tokenId}
                 style={{ width: '80px', height: '80px', padding: '.3rem' }}
                 showLabel
@@ -105,10 +106,6 @@ const RenderItem: FC<
 };
 
 const HotRotateO = () => {
-    // const [death, setDeath] = React.useState(false);
-
-    // const [, start] = React.useTransition();
-
     const openEditScreen = client.editscreen.useEditScreenOpen();
     const tokenId = client.editscreen.useEditScreenTokenId();
 
@@ -126,7 +123,6 @@ const HotRotateO = () => {
 
     const [items, setItems] = useAsyncSetState<ItemList>(() => {
         if (tokenId && provider && address) {
-            console.log({ tokenId });
             const fmtTokenId = ethers.BigNumber.from(tokenId.toRawId());
 
             const floopCheck = async () => {
@@ -289,9 +285,9 @@ const HotRotateO = () => {
                     {tokenId && openEditScreen && (
                         <List
                             data={items.active}
-                            label="displayed"
+                            label={t`Displayed`}
                             labelStyle={{
-                                color: 'white',
+                                color: 'black',
                             }}
                             action={(item) => {
                                 if (items)
@@ -320,9 +316,9 @@ const HotRotateO = () => {
                     {tokenId && openEditScreen && (
                         <List
                             data={items.hidden}
-                            label="in storage"
+                            label={t`In storage`}
                             labelStyle={{
-                                color: 'white',
+                                color: 'black',
                             }}
                             extraData={{ items, type: 'storage' as const }}
                             RenderItem={RenderItem}
@@ -356,23 +352,7 @@ const HotRotateO = () => {
                             }}
                         />
                     )}
-                    {/* <List
-                        data={items.duplicates}
-                        label="duplicates"
-                        labelStyle={{
-                            color: 'white',
-                        }}
-                        extraData={{ items, type: 'displayed' as const }}
-                        RenderItem={RenderItem}
-                        horizontal
-                        style={{
-                            width: '100%',
-                            background: lib.colors.transparentWhite,
-                            padding: '0rem .4rem',
-                            borderRadius: lib.layout.borderRadius.medium,
-                            justifyContent: 'space-around',
-                        }}
-                    />
+                    {/*
                     <List
                         data={items.hidden}
                         label={t`In storage`}
