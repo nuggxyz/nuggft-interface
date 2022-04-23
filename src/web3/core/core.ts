@@ -621,7 +621,7 @@ function useENS(
     useEffect(() => {
         if (provider && account && chainId) {
             if (account === Address.ZERO.hash) setENSName('black-hole');
-            if (provider === 'nugg') setENSName(account.toPrettyId());
+            else if (provider === 'nugg') setENSName(account.toPrettyId());
             else if (
                 account.toLowerCase() === CONTRACTS[chainId].NuggftV1.toLowerCase() ||
                 account.toLowerCase() === Address.ZERO.hash

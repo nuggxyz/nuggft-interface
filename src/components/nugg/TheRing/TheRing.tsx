@@ -15,7 +15,6 @@ import web3 from '@src/web3';
 import useRemaining from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 import useLifecycle from '@src/client/hooks/useLifecycle';
-
 import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './TheRing.styles';
@@ -43,7 +42,7 @@ const TheRing: FunctionComponent<Props> = ({
     disableClick = false,
     strokeWidth,
 }) => {
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType, isPhone } = useDimentions();
 
     const chainId = web3.hook.usePriorityChainId();
 
@@ -89,6 +88,8 @@ const TheRing: FunctionComponent<Props> = ({
                             ? ''
                             : lifecycle === Lifecycle.Cut
                             ? lib.colors.red
+                            : isPhone
+                            ? 'white'
                             : 'purple'
                         : 'white'
                 }

@@ -37,10 +37,7 @@ const SwapView = () => {
             { current: [], next: [], recent: [], potential: [] },
         );
     }, [all, epoch]);
-
-    React.useEffect(() => {
-        console.log(all);
-    }, [all]);
+    console.log(all, sortedAll);
     return (
         <div
             style={{
@@ -58,15 +55,15 @@ const SwapView = () => {
             <div style={{ marginTop: '80px' }} />
 
             {sortedAll.current.map((x) => (
-                <SwapCard tokenId={x.tokenId} key={`SwapCard-Current-${x.tokenId}`} />
+                <SwapCard swap={x} key={`SwapCard-Current-${x.tokenId}`} />
             ))}
 
             {sortedAll.next.map((x) => (
-                <SwapCard tokenId={x.tokenId} key={`SwapCard-Next-${x.tokenId}`} />
+                <SwapCard swap={x} key={`SwapCard-Next-${x.tokenId}`} />
             ))}
 
             {sortedAll.potential.map((x) => (
-                <SwapCard tokenId={x.tokenId} key={`SwapCard-Potential-${x.tokenId}`} />
+                <SwapCard swap={x} key={`SwapCard-Potential-${x.tokenId}`} />
             ))}
         </div>
     );

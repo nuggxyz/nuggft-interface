@@ -13,6 +13,7 @@ export default () => {
     const notable = client.core((x) => x.notableSwaps, shallow);
 
     const epoch = client.live.epoch.id();
+
     return useMemo(() => {
         const working = notable;
 

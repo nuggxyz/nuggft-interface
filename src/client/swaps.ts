@@ -20,21 +20,6 @@ export type SwapData = TokenIdFactoryCreator<
     { leader: NuggId }
 >;
 
-// const abc: SwapData = buildTokenIdFactory({
-//     tokenId: `nugg-333`,
-//     listDataType: 'swap',
-//     eth: new EthInt(0),
-//     endingEpoch: 0,
-//     dotnuggRawCache: undefined,
-//     leader: '0x444',
-// });
-
-// if (abc.isItem()) {
-//     console.log(abc.le)
-// }
-
-// console.log(abc.leader);
-
 const store = create(
     combine(
         {

@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 
 import web3 from '@src/web3';
-import { LiveSwap } from '@src/client/interfaces';
+import { SwapData } from '@src/client/interfaces';
 
-export default (swapData?: LiveSwap) => {
+export default (swapData?: SwapData) => {
     const provider = web3.hook.usePriorityProvider();
 
     const ownerEns = web3.hook.usePriorityAnyENSName(

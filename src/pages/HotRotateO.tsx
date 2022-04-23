@@ -50,7 +50,6 @@ export const HotRotateOController = () => {
 };
 
 const StoageRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ item, action }) => {
-    console.log('ayo1');
     return (
         <div
             style={{

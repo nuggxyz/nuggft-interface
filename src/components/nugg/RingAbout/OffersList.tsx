@@ -74,7 +74,7 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
                 ? offers.filter((x) => {
                       return (
                           x.tokenId.isItemId() &&
-                          x.sellingTokenId === (sellingNuggId || token.activeSwap?.sellingNuggId)
+                          x.sellingTokenId === (sellingNuggId || token.activeSwap?.owner)
                       );
                   })
                 : [...offers];

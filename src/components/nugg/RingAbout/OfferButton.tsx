@@ -71,7 +71,7 @@ export default ({
                             modalType: ModalEnum.Offer as const,
                             tokenId: token.tokenId,
                             token,
-                            nuggToBuyFrom: sellingNuggId || token.activeSwap.sellingNuggId,
+                            nuggToBuyFrom: sellingNuggId || token.activeSwap.owner,
                         }),
                     );
                 }

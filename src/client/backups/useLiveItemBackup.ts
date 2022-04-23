@@ -63,11 +63,11 @@ export default (activate: boolean, tokenId: ItemId | undefined) => {
                               endingEpoch: epoch && epoch.id,
                               num: Number(0),
                               bottom: new EthInt(0),
-                              sellingNuggId: arg?.tokenId.toNuggId(),
                               isTryout: false,
-                              owner: null,
+                              owner: 'nugg-0' as NuggId,
                               count: 0,
                               isBackup: true,
+                              listDataType: 'swap' as const,
                           })
                         : undefined;
                 }),
@@ -100,7 +100,7 @@ export default (activate: boolean, tokenId: ItemId | undefined) => {
                             eth: x!.eth,
                             tokenId,
                             user: x!.leader.toNuggId(),
-                            sellingTokenId: x!.sellingNuggId.toNuggId(),
+                            sellingTokenId: x!.owner.toNuggId(),
                             isBackup: true,
                         }),
                     ),

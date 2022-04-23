@@ -15,42 +15,48 @@ subscription liveProtocol {
             id
             idnum
             activeSwap {
-                id
-                eth
-                endingEpoch
+                ...swapdata
+                # id
+                # eth
+                # endingEpoch
             }
         }
         activeNuggItems {
             id
             activeSwap {
-                id
-                sellingNuggItem {
-                    id
-                    item {
-                        id
-                    }
-                }
-                eth
-                endingEpoch
+                ...itemswapdata
+
+                # id
+                # sellingNuggItem {
+                #     id
+                #     item {
+                #         id
+                #     }
+                # }
+                # eth
+                # endingEpoch
             }
         }
         activeItems {
             id
             activeSwap {
-                id
-                sellingItem {
-                    id
-                }
-                eth
-                endingEpoch
+                ...itemswapdata
+                # id
+                # sellingItem {
+                #     id
+                # }
+                # eth
+                # endingEpoch
             }
             upcomingActiveSwap {
-                id
-                sellingItem {
-                    id
-                }
-                eth
-                endingEpoch
+                ...itemswapdata
+
+                # id
+                # sellingItem {
+                #     id
+                # }
+                # eth
+                # endingEpoch
             }
         }
     }
@@ -181,11 +187,8 @@ fragment itemswapdata on ItemSwap {
     leader {
         id
     }
-    sellingNuggItem {
+    sellingItem {
         id
-        nugg {
-            id
-        }
     }
 }
 

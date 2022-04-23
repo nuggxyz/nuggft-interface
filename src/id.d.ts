@@ -43,6 +43,7 @@ interface NuggIdFactory extends TokenIdFactory {
     type: 'nugg';
     tokenId: NuggId;
 }
+
 interface ItemIdFactory extends TokenIdFactory {
     type: 'item';
     tokenId: ItemId;
@@ -51,3 +52,11 @@ interface ItemIdFactory extends TokenIdFactory {
 type TokenIdFactoryCreator<A extends TokenIdFactory, B, C> =
     | (B & NuggIdFactory & A)
     | (C & ItemIdFactory & A);
+
+type IsolateItemIdFactory<T extends TokenIdFactory> = ItemIdFactory & T;
+type IsolateNuggIdFactory<T extends TokenIdFactory> = T & NuggIdFactory;
+
+interface TokenIdDictionary<T extends TokenIdFactory> {
+    [x: ItemId]: T & ItemIdFactory;
+    [x: NuggId]: T & NuggIdFactory;
+}

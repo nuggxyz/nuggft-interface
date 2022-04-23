@@ -36,15 +36,21 @@ export interface BasicData extends ListDataBase {
 interface SwapDataBase extends ListDataBase {
     listDataType: 'swap';
     eth: EthInt;
+    epoch: EpochData | null;
     endingEpoch: number | null;
-    dotnuggRawCache: undefined;
     leader?: unknown;
+    owner: unknown;
+    num: number | null;
+    bottom: EthInt;
+    isBackup: boolean;
+    count?: unknown;
+    isTryout?: unknown;
 }
 
 export type SwapData = TokenIdFactoryCreator<
     SwapDataBase,
-    { leader?: AddressString },
-    { leader?: NuggId }
+    { leader?: AddressString; owner: AddressString },
+    { leader?: NuggId; owner: NuggId; count: number; isTryout: boolean }
 >;
 
 export type ListData = SwapData | BasicData;
@@ -149,46 +155,6 @@ export type SearchFilter = {
     searchValue?: string;
 };
 
-export interface ClientState extends State, Actions {
-    subscriptionQueue: Array<TokenId>;
-    nuggft: NuggftV1 | undefined;
-    manualPriority: Connector | undefined;
-    route: string | undefined;
-    lastSwap: SwapRoutes | undefined;
-    pageIsLoaded: boolean;
-    stake: StakeData | undefined;
-    epoch__id: number | undefined;
-    epoch: EpochData | undefined;
-    nextEpoch: EpochData | undefined;
-    blocknum: number | undefined;
-    liveOffers: Dictionary<OfferData[]>;
-    notableSwaps: SwapData[];
-    activeSwaps: SwapData[];
-    activeItems: SwapData[];
-    potentialItems: SwapData[];
-    potentialSwaps: SwapData[];
-    myNuggs: MyNuggsData[];
-    recentSwaps: SwapData[];
-    recentItems: SwapData[];
-    myUnclaimedNuggOffers: UnclaimedOffer[];
-    myUnclaimedItemOffers: UnclaimedOffer[];
-    editingNugg: NuggId | undefined;
-    myLoans: LoanData[];
-    myRecents: Set<string>;
-    error: Error | undefined;
-    activating: boolean;
-    liveTokens: Dictionary<LiveToken>;
-    darkmode: DarkModePreferences;
-    locale: SupportedLocale | undefined;
-    searchFilter: SearchFilter;
-    feedMessages: FeedMessage[];
-    health: Health;
-    started: boolean;
-    activeSearch: SearchResults;
-    dimentions: Dimentions;
-    totalNuggs: number;
-}
-
 export interface Health {
     lastBlockRpc?: number;
     lastBlockGraph?: number;
@@ -226,8 +192,8 @@ export type ClientStateUpdate = {
     activating?: boolean;
     myNuggs?: MyNuggsData[];
     editingNugg?: NuggId | null;
-    myUnclaimedNuggOffers?: UnclaimedOffer[];
-    myUnclaimedItemOffers?: UnclaimedOffer[];
+    myUnclaimedNuggOffers?: ClientState['myUnclaimedNuggOffers'];
+    myUnclaimedItemOffers?: ClientState['myUnclaimedItemOffers'];
     myLoans?: LoanData[];
     health?: MakeOptional<Health, keyof Health>;
 };
@@ -235,6 +201,58 @@ export type ClientStateUpdate = {
 export type SearchResults = BasicData[];
 
 export type Dimentions = { height: number; width: number };
+
+export interface LiveNuggItem extends ItemIdFactory {
+    activeSwap: string | undefined;
+    feature: number;
+    position: number;
+    count: number;
+    displayed: boolean;
+}
+
+export interface LiveNugg extends NuggIdFactory {
+    activeLoan: boolean | null;
+    activeSwap?: IsolateNuggIdFactory<SwapData>;
+    items: LiveNuggItem[];
+    pendingClaim: boolean | null;
+    lastTransfer: number | null;
+    owner: AddressString;
+    swaps: IsolateNuggIdFactory<SwapData>[];
+    isBackup: boolean;
+}
+
+export type TryoutData = { nugg: NuggId; eth: EthInt };
+
+export interface LiveItem extends ItemIdFactory {
+    activeSwap?: IsolateItemIdFactory<SwapData>;
+    upcomingActiveSwap?: IsolateItemIdFactory<SwapData>;
+    swaps: IsolateItemIdFactory<SwapData>[];
+    count: number;
+    tryout: {
+        count: number;
+        swaps: TryoutData[];
+        max?: TryoutData;
+        min?: TryoutData;
+    };
+    rarity: Fraction;
+    isBackup: boolean;
+}
+
+export enum Lifecycle {
+    Stands = 'stands', // [nugg/item] a token that has no active swap
+    Bench = 'bench', //   [nugg/item] a token that is for sale, but no one has bid on it
+    Deck = 'deck', //     [nugg/item] a token that is for sale, someone has bid on it, but it is not yet the final epoch
+    Bat = 'bat', //       [nugg/item] a token that is for sale, and it is in the final epoch
+    Bunt = 'bunt', //     [nugg     ] a token in its final epoch, but has no leader - only for minting nuggs
+    Shower = 'shower', // [nugg/item] active swap exists, but none of the others hit. ** i honestly dont even think it can hit this bc the graph catches it
+    Tryout = 'tryout', // [     item] a token that has no active sale, but one to many non-active sales
+    Cut = 'cut', //       [nugg     ] a token that no one bid on but still exists in the graph
+    Egg = 'egg', //       [nugg     ] a token that will be minting in the next epoch --- SAME AS DECK, BUT NON OFFERABLE
+}
+
+// }
+
+export type LiveToken = LiveNugg | LiveItem;
 
 export interface Actions {
     updateBlocknum: (blocknum: number, chainId: Chain, startup?: boolean) => void;
@@ -267,108 +285,42 @@ export interface Actions {
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
 
-export interface LiveSwapBase extends TokenIdFactory {
-    epoch?: EpochData | null;
-    eth: EthInt;
-    leader: string;
-    owner: string | null;
-    endingEpoch: number | null;
-    num: number | null;
-    bottom: EthInt;
-    isBackup: boolean;
+export interface ClientState extends State, Actions {
+    subscriptionQueue: Array<TokenId>;
+    nuggft: NuggftV1 | undefined;
+    manualPriority: Connector | undefined;
+    route: string | undefined;
+    lastSwap: SwapRoutes | undefined;
+    pageIsLoaded: boolean;
+    stake: StakeData | undefined;
+    epoch__id: number | undefined;
+    epoch: EpochData | undefined;
+    nextEpoch: EpochData | undefined;
+    blocknum: number | undefined;
+    liveOffers: Dictionary<OfferData[]>;
+    notableSwaps: SwapData[];
+    activeSwaps: IsolateNuggIdFactory<SwapData>[];
+    activeItems: IsolateItemIdFactory<SwapData>[];
+    potentialItems: IsolateItemIdFactory<SwapData>[];
+    potentialSwaps: IsolateNuggIdFactory<SwapData>[];
+    myNuggs: MyNuggsData[];
+    recentSwaps: IsolateNuggIdFactory<SwapData>[];
+    recentItems: IsolateItemIdFactory<SwapData>[];
+    myUnclaimedNuggOffers: IsolateNuggIdFactory<UnclaimedOffer>[];
+    myUnclaimedItemOffers: IsolateItemIdFactory<UnclaimedOffer>[];
+    editingNugg: NuggId | undefined;
+    myLoans: LoanData[];
+    myRecents: Set<string>;
+    error: Error | undefined;
+    activating: boolean;
+    liveTokens: TokenIdDictionary<LiveToken>;
+    darkmode: DarkModePreferences;
+    locale: SupportedLocale | undefined;
+    searchFilter: SearchFilter;
+    feedMessages: FeedMessage[];
+    health: Health;
+    started: boolean;
+    activeSearch: SearchResults;
+    dimentions: Dimentions;
+    totalNuggs: number;
 }
-
-export interface LiveNuggSwap extends LiveSwapBase {
-    type: 'nugg';
-    isActive: boolean;
-}
-
-export type LiveSwap = LiveNuggSwap | LiveItemSwap;
-
-export interface LiveNuggItem extends ItemIdFactory {
-    activeSwap: string | undefined;
-    feature: number;
-    position: number;
-    count: number;
-    displayed: boolean;
-}
-
-export interface LiveNugg extends NuggIdFactory {
-    activeLoan: boolean | null;
-    activeSwap?: LiveNuggSwap;
-    items: LiveNuggItem[];
-    pendingClaim: boolean | null;
-    lastTransfer: number | null;
-    owner: AddressString;
-    swaps: LiveNuggSwap[];
-    isBackup: boolean;
-}
-
-export interface LiveItemSwap extends LiveSwapBase {
-    epoch: EpochData | null;
-    eth: EthInt;
-    leader: NuggId;
-    owner: NuggId | null;
-    endingEpoch: number | null;
-    num: number;
-    isTryout: boolean | null;
-    sellingNuggId: NuggId;
-    isBackup: boolean;
-}
-
-export interface LiveActiveItemSwap extends LiveItemSwap {
-    count: number;
-}
-export type TryoutData = { nugg: NuggId; eth: EthInt };
-
-export interface LiveItem extends ItemIdFactory {
-    activeSwap?: LiveActiveItemSwap;
-    upcomingActiveSwap?: LiveActiveItemSwap;
-    swaps: LiveItemSwap[];
-    count: number;
-    tryout: {
-        count: number;
-        swaps: TryoutData[];
-        max?: TryoutData;
-        min?: TryoutData;
-    };
-    rarity: Fraction;
-    isBackup: boolean;
-}
-
-export enum Lifecycle {
-    Stands = 'stands', // [nugg/item] a token that has no active swap
-    Bench = 'bench', //   [nugg/item] a token that is for sale, but no one has bid on it
-    Deck = 'deck', //     [nugg/item] a token that is for sale, someone has bid on it, but it is not yet the final epoch
-    Bat = 'bat', //       [nugg/item] a token that is for sale, and it is in the final epoch
-    Bunt = 'bunt', //     [nugg     ] a token in its final epoch, but has no leader - only for minting nuggs
-    Shower = 'shower', // [nugg/item] active swap exists, but none of the others hit. ** i honestly dont even think it can hit this bc the graph catches it
-    Tryout = 'tryout', // [     item] a token that has no active sale, but one to many non-active sales
-    Cut = 'cut', //       [nugg     ] a token that no one bid on but still exists in the graph
-    Egg = 'egg', //       [nugg     ] a token that will be minting in the next epoch --- SAME AS DECK, BUT NON OFFERABLE
-}
-
-// interface LiveT<T extends TokenType> extends TokenIdAsType<T> {
-//     activeSwap: LiveActiveItemSwap;
-//     upcomingActiveSwap: LiveActiveItemSwap;
-//     tryout: PickFromTokenType<
-//         T,
-//         null,
-//         {
-//             count: number;
-//             swaps: TryoutData[];
-//             max?: TryoutData;
-//             min?: TryoutData;
-//         }
-//     >;
-//     rarity: PickFromTokenType<T, null, Fraction>;
-//     count: PickFromTokenType<T, null, number>;
-
-// }
-
-export type LiveToken = LiveNugg | LiveItem;
-
-// export type LiveItemWithLifecycle = LiveItem & { lifecycle: Lifecycle };
-// export type LiveNuggWithLifecycle = LiveNugg & { lifecycle: Lifecycle };
-
-// export type LiveToken = LiveNuggWithLifecycle | LiveItemWithLifecycle;

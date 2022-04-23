@@ -5,7 +5,6 @@ import Text from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import lib from '@src/lib';
-
 import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './RingAbout.styles';
@@ -36,8 +35,8 @@ export default ({ tokenId }: { tokenId?: TokenId }) => {
                     }}
                 >{t`Coming Up`}</Text>
             </div>
-            <OffersList tokenId={tokenId} sellingNuggId={token.upcomingActiveSwap.sellingNuggId} />
-            <OfferButton tokenId={tokenId} sellingNuggId={token.upcomingActiveSwap.sellingNuggId} />
+            <OffersList tokenId={tokenId} sellingNuggId={token.upcomingActiveSwap.owner} />
+            <OfferButton tokenId={tokenId} sellingNuggId={token.upcomingActiveSwap.owner} />
         </div>
     ) : null;
 };
