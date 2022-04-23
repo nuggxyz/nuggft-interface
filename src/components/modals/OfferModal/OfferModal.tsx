@@ -262,7 +262,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                             ](
                                                 selectedNuggForItem?.tokenId,
                                                 data.nuggToBuyFrom?.toRawId(),
-                                                data.tokenId,
+                                                data.tokenId.toRawId(),
                                                 {
                                                     value: toEth(amount).sub(check.curr),
                                                 },
@@ -272,10 +272,13 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                     }
                                 } else {
                                     void send(
-                                        nuggft.populateTransaction['offer(uint24)'](data.tokenId, {
-                                            value: toEth(amount).sub(check.curr),
-                                            gasLimit: toGwei('120000'),
-                                        }),
+                                        nuggft.populateTransaction['offer(uint24)'](
+                                            data.tokenId.toRawId(),
+                                            {
+                                                value: toEth(amount).sub(check.curr),
+                                                gasLimit: toGwei('120000'),
+                                            },
+                                        ),
                                         closeModal,
                                     );
                                 }
