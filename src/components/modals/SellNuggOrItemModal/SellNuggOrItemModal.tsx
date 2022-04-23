@@ -75,10 +75,10 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
                     buttonStyle={styles.button}
                     label={`${data.tokenId.isNuggId() ? t`Sell Nugg` : t`Sell Item`}`}
                     onClick={() => {
-                        void (data.tokenId.isItemId()
+                        void (data.isItem()
                             ? send(
                                   nuggft.populateTransaction['sell(uint24,uint16,uint96)'](
-                                      data.sellingNuggId as NuggId,
+                                      data.sellingNuggId.toRawId(),
                                       data.tokenId.toRawId(),
                                       toEth(amount),
                                   ),

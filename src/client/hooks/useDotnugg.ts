@@ -9,7 +9,7 @@ import {
     useGetDotnuggNuggQuery,
     GetDotnuggNuggQuery,
 } from '@src/gql/types.generated';
-import { useNuggftV1 } from '@src/contracts/useContract';
+import { useNuggftV1, useXNuggftV1 } from '@src/contracts/useContract';
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 
 // eslint-disable-next-line import/no-cycle
@@ -24,20 +24,30 @@ export const useDotnuggInjectToCache = () => {
             if (graph && nuggft) {
                 void graph.cache.writeQuery({
                     // broadcast: true,
-                    query: gql`
-                        query ROOT_QUERY($tokenId: ID!) {
-                            nugg(id: $tokenId) {
-                                __typename
-                                id
-                                dotnuggRawCache
-                            }
-                        }
-                    `,
-                    variables: { tokenId },
+                    query: tokenId.isItemId()
+                        ? gql`
+                              query ROOT_QUERY($tokenId: ID!) {
+                                  item(id: $tokenId) {
+                                      __typename
+                                      id
+                                      dotnuggRawCache
+                                  }
+                              }
+                          `
+                        : gql`
+                              query ROOT_QUERY($tokenId: ID!) {
+                                  nugg(id: $tokenId) {
+                                      __typename
+                                      id
+                                      dotnuggRawCache
+                                  }
+                              }
+                          `,
+                    variables: { tokenId: tokenId.toRawId() },
                     // overwrite: true,
                     data: {
-                        nugg: {
-                            __typename: 'Nugg',
+                        [tokenId.isItemId() ? 'item' : 'nugg']: {
+                            __typename: tokenId.isItemId() ? 'Item' : 'Nugg',
                             id: tokenId.toRawId(),
                             dotnuggRawCache: data,
                         },
@@ -60,17 +70,19 @@ export const useDotnuggRpcBackup2 = (use: boolean, tokenId?: TokenId) => {
 
     const nuggft = useNuggftV1(provider);
 
+    const xnuggft = useXNuggftV1(provider);
+
     useEffect(() => {
         if (tokenId && graph && chainId && provider && use) {
             void (async () => {
-                const res = (await nuggft[tokenId.isItemId() ? 'itemURI' : 'imageURI'](
+                const res = (await (tokenId.isItemId() ? xnuggft : nuggft).imageSVG(
                     tokenId.toRawId(),
                 )) as Base64EncodedSvg | undefined;
                 setSrc(res);
                 if (res) void inject(tokenId, res);
             })();
         }
-    }, [graph, chainId, provider, tokenId, use, inject, nuggft]);
+    }, [graph, chainId, provider, tokenId, use, inject, nuggft, xnuggft]);
 
     return src;
 };
@@ -99,7 +111,7 @@ export const useDotnuggSubscription = (
     });
 
     const { data: itemSrc } = useGetDotnuggItemQuery({
-        pollInterval: 15000,
+        pollInterval: 5000,
         skip: !tokenId || !activate || !isItem,
 
         fetchPolicy: 'network-only',
@@ -184,13 +196,13 @@ export const useDotnuggCacheOnlyLazy = (
                 id: `${tokenId.isItemId() ? 'Item' : 'Nugg'}:${tokenId.toRawId()}`, // The value of the to-do item's cache ID
                 fragment: tokenId.isItemId()
                     ? gql`
-                          fragment dnugg on Item {
+                          fragment dnuggI on Item {
                               id
                               dotnuggRawCache
                           }
                       `
                     : gql`
-                          fragment dnugg on Nugg {
+                          fragment dnuggN on Nugg {
                               id
                               dotnuggRawCache
                           }
@@ -222,7 +234,5 @@ export const useDotnuggCacheOnlyLazy = (
         );
     }, [itemCalled, nuggCalled, src, fallback, tokenId]);
 
-    return { src0: !error ? src : fallback, src: undefined, isEmpty: true, isEmpty0: isEmpty };
-
-    // return { src: !error ? src : fallback, isEmpty };
+    return { src: !error ? src : fallback, isEmpty };
 };

@@ -4,14 +4,18 @@ import { Web3Provider } from '@ethersproject/providers';
 import { t } from '@lingui/macro';
 
 import web3 from '@src/web3';
-import { NuggftV1__factory } from '@src/typechain/factories/NuggftV1__factory';
 import { RevertError } from '@src/lib/errors';
-import { DotnuggV1, DotnuggV1__factory } from '@src/typechain';
+import {
+    DotnuggV1,
+    DotnuggV1__factory,
+    XNuggftV1,
+    XNuggftV1__factory,
+    NuggftV1,
+    NuggftV1__factory,
+} from '@src/typechain';
 import lib, { shortenTxnHash } from '@src/lib';
 import emitter from '@src/emitter';
 import client from '@src/client';
-
-import { NuggftV1 } from '../typechain/NuggftV1';
 
 function useContract<C extends BaseContract>(
     address: string,
@@ -31,6 +35,16 @@ export function useNuggftV1(provider?: Web3Provider) {
     }, [chainId]);
 
     return useContract<NuggftV1>(address, NuggftV1__factory.abi, provider);
+}
+
+export function useXNuggftV1(provider?: Web3Provider) {
+    const chainId = web3.hook.usePriorityChainId();
+
+    const address = useMemo(() => {
+        return web3.config.CONTRACTS[chainId ?? web3.config.DEFAULT_CHAIN].xNuggftV1;
+    }, [chainId]);
+
+    return useContract<XNuggftV1>(address, XNuggftV1__factory.abi, provider);
 }
 
 export function useDotnuggV1(provider?: Web3Provider) {
