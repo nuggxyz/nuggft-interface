@@ -72,7 +72,7 @@ export const CONTRACTS = {
         GraphId: 'QmNYd7mzNPnpt4yEB6VvzuboaRKWr1pScXP3jAvAKzXrhv',
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0x9e229c8a1fc52fe19e61eb7a22788cb901b92362',
+        NuggftV1: '0xf5622e697d1821b8e83e4beed9e897b49de81011',
         xNuggftV1: '0x038d14f4fabb7afebfc326b40b2c122454a33d95',
         DotnuggV1: '0x5710ba43b112762fa4fe8922c7fc5e2a578cf29b',
         Genesis: 10554624,
