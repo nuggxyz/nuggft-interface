@@ -15,7 +15,7 @@ type Props = Record<string, never>;
 const SwapPage: FunctionComponent<Props> = () => {
     const { screen } = useDimentions();
 
-    const blur = useBlur(['/', '/swap/:id']);
+    const blur = useBlur(['/', '/swap/:id', '/live']);
 
     return (
         <>

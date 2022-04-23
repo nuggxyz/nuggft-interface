@@ -14,18 +14,19 @@ import Label from '@src/components/general/Label/Label';
 import TokenViewer3 from '@src/components/nugg/TokenViewer3';
 import web3 from '@src/web3';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
+import { buildTokenIdFactory } from '@src/prototypes';
 
 import styles from './SearchOverlay.styles';
 
-type Item = {
+interface Item extends ItemIdFactory {
     activeIndex: number;
-    id: ItemId;
+    tokenId: ItemId;
     position: number;
     feature: number;
     hexId: number;
     desiredIndex?: number;
     duplicates: number;
-};
+}
 
 type ItemList = { active: Item[]; hidden: Item[]; duplicates: Item[] };
 
@@ -38,7 +39,8 @@ export const HotRotateOController = () => {
     const navigate = useNavigate();
 
     React.useEffect(() => {
-        if (tokenId && tokenId.params.id) openEditScreen(tokenId.params.id.toNuggId());
+        if (tokenId && tokenId.params.id && tokenId.params.id.isNuggId())
+            openEditScreen(tokenId.params.id);
         return () => {
             closeEditScreen();
         };
@@ -64,7 +66,7 @@ const StoageRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ item
                 />
             )}
             <TokenViewer
-                tokenId={item.id}
+                tokenId={item.tokenId}
                 style={{ width: '80px', height: '80px' }}
                 showLabel
                 disableOnClick
@@ -91,7 +93,7 @@ const DisplayedRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ i
             )}
 
             <TokenViewer
-                tokenId={item.id}
+                tokenId={item.tokenId}
                 style={{ width: '80px', height: '80px' }}
                 showLabel
                 disableOnClick
@@ -143,6 +145,9 @@ export default () => {
 
     const [items, setItems] = useAsyncSetState<ItemList>(() => {
         if (tokenId && provider && address) {
+            console.log({ tokenId });
+            const fmtTokenId = ethers.BigNumber.from(tokenId.toRawId());
+
             const floopCheck = async () => {
                 return nuggft.floop(fmtTokenId).then((x) => {
                     return x.reduce(
@@ -153,13 +158,15 @@ export default () => {
                                 activeIndex < 8 &&
                                 !prev.active.find((z) => z.feature === parsed.feature)
                             ) {
-                                prev.active.push({
-                                    duplicates: 1,
-                                    activeIndex,
-                                    hexId: curr,
-                                    id: `item-${Number(curr)}`,
-                                    ...parsed,
-                                });
+                                prev.active.push(
+                                    buildTokenIdFactory({
+                                        duplicates: 1,
+                                        activeIndex,
+                                        hexId: curr,
+                                        tokenId: curr.toItemId(),
+                                        ...parsed,
+                                    }),
+                                );
                             } else if (
                                 !prev.active.find(
                                     (z) =>
@@ -172,14 +179,15 @@ export default () => {
                                         z.position === parsed.position,
                                 )
                             ) {
-                                prev.hidden.push({
-                                    activeIndex,
-                                    hexId: curr,
-                                    duplicates: 1,
-
-                                    id: `item-${Number(curr)}`,
-                                    ...parsed,
-                                });
+                                prev.hidden.push(
+                                    buildTokenIdFactory({
+                                        activeIndex,
+                                        hexId: curr,
+                                        duplicates: 1,
+                                        tokenId: curr.toItemId(),
+                                        ...parsed,
+                                    }),
+                                );
                             } else {
                                 prev.active.forEach((z) => {
                                     if (
@@ -195,13 +203,15 @@ export default () => {
                                     )
                                         z.duplicates++;
                                 });
-                                prev.duplicates.push({
-                                    duplicates: 0,
-                                    activeIndex,
-                                    hexId: curr,
-                                    id: `item-${Number(curr)}`,
-                                    ...parsed,
-                                });
+                                prev.duplicates.push(
+                                    buildTokenIdFactory({
+                                        duplicates: 0,
+                                        activeIndex,
+                                        hexId: curr,
+                                        tokenId: curr.toItemId(),
+                                        ...parsed,
+                                    }),
+                                );
                             }
                             return prev;
                         },
@@ -209,7 +219,6 @@ export default () => {
                     );
                 });
             };
-            const fmtTokenId = ethers.BigNumber.from(tokenId);
             return nuggft.ownerOf(fmtTokenId).then((y) => {
                 if (y.toLowerCase() === address.toLowerCase()) {
                     return floopCheck();
@@ -242,6 +251,7 @@ export default () => {
                 },
                 new Array(16).fill(undefined) as undefined[],
             );
+
             const moves: { from: number; to: number }[] = [];
 
             let check = 0;
@@ -258,7 +268,11 @@ export default () => {
                     }
                 }
             }
-            return [BigNumber.from(tokenId), moves.map((x) => x.from), moves.map((x) => x.to)];
+            return [
+                BigNumber.from(tokenId.toRawId()),
+                moves.map((x) => x.from),
+                moves.map((x) => x.to),
+            ];
         }
         return undefined;
     }, [items, tokenId]);
@@ -401,7 +415,9 @@ export default () => {
                                             item,
                                         ],
                                         hidden: [
-                                            ...items.hidden.filter((x) => x.id !== item.id),
+                                            ...items.hidden.filter(
+                                                (x) => x.tokenId !== item.tokenId,
+                                            ),
                                             ...items.active.filter(
                                                 (x) => x.feature === item.feature,
                                             ),
