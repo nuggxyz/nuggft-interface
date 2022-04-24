@@ -28,7 +28,9 @@ export class Fraction {
     }
 
     get decimal() {
-        return new Decimal(this.num.toString()).div(new Decimal(this.den.toString()));
+        return this.den.toString() === '0'
+            ? new Decimal(0)
+            : new Decimal(this.num.toString()).div(new Decimal(this.den.toString()));
     }
 
     get number() {

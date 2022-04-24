@@ -50,7 +50,7 @@ const TryoutRenderItem: FC<ListRenderItemProps<TryoutData, undefined, TryoutData
 };
 
 export default ({ tokenId }: { tokenId?: ItemId }) => {
-    const { screen: screenType } = useDimentions();
+    const { isPhone } = useDimentions();
     const address = web3.hook.usePriorityAccount();
     const epoch = client.live.epoch.id();
 
@@ -62,7 +62,7 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
 
     const darkmode = useDarkMode();
 
-    const [showBody, setShowBody] = React.useState(false);
+    const [showBody, setShowBody] = React.useState(true);
 
     const mustWaitToBid = React.useMemo(() => {
         return (
@@ -77,11 +77,11 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
     return token && token.type === 'item' && token.tryout.count > 0 ? (
         <div
             style={{
-                ...(darkmode ? styles.containerDark : styles.container),
-                ...(screenType === 'phone' && {
+                ...(!isPhone && (darkmode ? styles.containerDark : styles.container)),
+                ...(isPhone && {
                     ...styles.mobile,
                 }),
-                marginTop: '20px',
+                marginTop: isPhone ? 0 : '20px',
             }}
         >
             {showBody ? (
@@ -116,10 +116,7 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
                         disabled={mustWaitToBid || !nuggToBuyFrom}
                         onClick={() => {
                             if (nuggToBuyFrom) {
-                                if (
-                                    screenType === 'phone' &&
-                                    isUndefinedOrNullOrStringEmpty(address)
-                                )
+                                if (isPhone && isUndefinedOrNullOrStringEmpty(address))
                                     navigate('/wallet');
                                 else if (tokenId)
                                     openModal(
@@ -135,7 +132,7 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
                         label={
                             mustWaitToBid
                                 ? t`wait ${minutes} minutes to buy from a new nugg`
-                                : screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
+                                : isPhone && isUndefinedOrNullOrStringEmpty(address)
                                 ? t`Connect wallet`
                                 : t`Place offer`
                         }

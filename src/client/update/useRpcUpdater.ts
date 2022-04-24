@@ -33,7 +33,9 @@ export default () => {
 
     const [rpc, setRpc] = React.useState<WebSocketProvider>();
 
-    const nuggft = useNuggftV1();
+    const provider = web3.hook.useNetworkProvider();
+
+    const nuggft = useNuggftV1(provider);
 
     const eventListener = React.useCallback(
         (log: Log) => {
@@ -195,7 +197,7 @@ export default () => {
 
     const blockListener = React.useCallback(
         (log: number) => {
-            if (chainId) updateBlocknum(log, chainId);
+            if (chainId && log !== 0) updateBlocknum(log, chainId);
         },
         [chainId, updateBlocknum],
     );

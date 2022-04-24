@@ -102,6 +102,7 @@ export const calculateStartBlock = (epoch: BigNumberish, chainId: Chain) => {
 };
 
 export const calculateEpochId = (blocknum: number, chainId: Chain) => {
+    if (!CONTRACTS[chainId].Interval) return 0;
     return BigNumber.from(blocknum)
         .sub(CONTRACTS[chainId].Genesis)
         .div(CONTRACTS[chainId].Interval)

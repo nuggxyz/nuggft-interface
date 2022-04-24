@@ -66,7 +66,7 @@ export default {
         potentialSwaps: () => core((state) => state.potentialSwaps),
         potentialItems: () => core((state) => state.potentialItems),
         /// ///// complex ////////
-        offers: (tokenId: TokenId | undefined) =>
+        offers: <A extends TokenId>(tokenId: A | undefined) =>
             core(
                 // eslint-disable-next-line react-hooks/rules-of-hooks
                 useCallback(
@@ -77,7 +77,7 @@ export default {
                     [tokenId],
                 ),
             ),
-        token: (tokenId: TokenId | undefined) =>
+        token: <A extends TokenId>(tokenId: A | undefined) =>
             core(
                 // eslint-disable-next-line react-hooks/rules-of-hooks
                 useCallback(

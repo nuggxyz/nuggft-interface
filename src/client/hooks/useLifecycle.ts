@@ -13,11 +13,9 @@ export default (token?: LiveToken | SwapData): Lifecycle | undefined => {
     return React.useMemo(() => {
         if (!token) return undefined;
 
-        const isToken = 'activeSwap' in token;
+        const isToken = 'swaps' in token;
 
-        let abc = (isToken ? token.activeSwap : token) as SwapData;
-
-        // if (!abc) return undefined;
+        let abc = isToken ? token.activeSwap : token;
 
         if (
             isToken &&
@@ -30,11 +28,11 @@ export default (token?: LiveToken | SwapData): Lifecycle | undefined => {
             delete token.upcomingActiveSwap;
         }
 
-        if (abc && epoch !== undefined) {
-            if (abc.isItem() && abc.isTryout) {
-                return Lifecycle.Tryout;
-            }
+        if (isToken && !abc && token.isItem() && token.tryout.count > 0) {
+            return Lifecycle.Tryout;
+        }
 
+        if (abc && epoch !== undefined) {
             if (!abc.endingEpoch) return Lifecycle.Bench;
 
             if (+abc.endingEpoch === epoch.id + 1) {

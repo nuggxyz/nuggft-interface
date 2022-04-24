@@ -15,31 +15,27 @@ import {
 import useDimentions from '@src/client/hooks/useDimentions';
 import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
 
-import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
 import styles from './NuggDexSearchList.styles';
+import NuggList from './components/NuggList';
 
 type Props = Record<string, never>;
 
 const INFINITE_INTERVAL = 25;
+const START_INTERVAL = 3;
+
+// const NuggList = React.lazy(() => import('./components/NuggList'));
 
 const NuggDexSearchList: FunctionComponent<Props> = () => {
     const epoch__id = client.live.epoch.id();
     const target = client.live.searchFilter.target();
     const sort = client.live.searchFilter.sort();
     const viewing = client.live.searchFilter.viewing();
-    // const activeNuggs = client.live.activeSwaps();
-    // const potentialNuggs = client.live.potentialSwaps();
 
     const { screen: screenType } = useDimentions();
 
     const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
     const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
-    // const activeItems = client.live.activeItems();
-    // const potentialItems = client.live.potentialItems();
-
-    // const recentNuggs = client.live.recentSwaps();
-    // const recentItems = client.live.recentItems();
 
     const [sortAsc, setSortAsc] = useState<{ [key in SearchView]: boolean }>({
         Recents: false,
@@ -59,7 +55,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         fetchPolicy: 'cache-first',
         variables: {
             skip: 0,
-            first: INFINITE_INTERVAL,
+            first: START_INTERVAL,
             orderBy: Nugg_OrderBy.Idnum,
         },
         onCompleted: (x) => {
@@ -82,7 +78,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         fetchPolicy: 'cache-first',
         variables: {
             skip: 0,
-            first: INFINITE_INTERVAL,
+            first: START_INTERVAL,
             orderBy: Item_OrderBy.Idnum,
         },
         onCompleted: (x) => {

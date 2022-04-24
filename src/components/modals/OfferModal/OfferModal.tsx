@@ -30,12 +30,14 @@ type FormatedMyNuggsData = MyNuggsData & { lastBid: EthInt | 'unable-to-bid' };
 
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const address = web3.hook.usePriorityAccount();
+
+    console.log({ address });
     const { screen: screenType } = useDimentions();
-    const provider = web3.hook.usePriorityProvider();
+    const provider = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
-    const _myNuggs = client.live.myNuggs().first(8);
+    const _myNuggs = client.live.myNuggs();
     const userBalance = web3.hook.usePriorityBalance(provider);
-    const activeItem = client.live.potentialNuggItem(data.tokenId.onlyItemId());
+
     const nuggft = useNuggftV1(provider);
     const closeModal = client.modal.useCloseModal();
 
@@ -95,8 +97,10 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         next: BigNumber | undefined;
         curr: BigNumber | undefined;
     }>(() => {
+        console.log('ayo', data, selectedNuggForItem, sellingNugg);
+
         if (data.tokenId && address && chainId && provider) {
-            if (data.tokenId.isNuggId()) {
+            if (data.isNugg()) {
                 return nuggft['check(address,uint24)'](address, data.tokenId.toRawId()).then(
                     (x) => {
                         return {
@@ -107,12 +111,14 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     },
                 );
             }
-            if (activeItem && selectedNuggForItem && sellingNugg) {
+
+            if (selectedNuggForItem && sellingNugg) {
                 return nuggft['check(uint24,uint24,uint16)'](
-                    selectedNuggForItem.tokenId,
-                    sellingNugg,
+                    selectedNuggForItem.tokenId.toRawId(),
+                    sellingNugg.toRawId(),
                     data.tokenId.toRawId(),
                 ).then((x) => {
+                    console.log('ABC', x);
                     return {
                         canOffer: x.canOffer,
                         next: x.next,
@@ -122,16 +128,17 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             }
         }
         return undefined;
-    }, [data, address, chainId, provider, selectedNuggForItem, activeItem, sellingNugg]);
+    }, [data, address, chainId, provider, selectedNuggForItem, sellingNugg]);
 
     return (
         <div style={styles.container}>
-            <Text textStyle={{ color: 'white' }}>
+            <Text textStyle={{ color: 'white', fontSize: 12 }}>
                 {`${
                     check && check.curr && check.curr.toString() !== '0'
                         ? t`Change offer for`
                         : t`Offer on`
                 } ${data.tokenId.toPrettyId()}`}
+                {address}
             </Text>
             {screenType === 'phone' ? (
                 <TokenViewer

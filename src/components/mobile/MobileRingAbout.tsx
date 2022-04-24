@@ -44,10 +44,6 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId }) => {
                 </div>
                 <OfferButton tokenId={tokenId} />
             </animated.div>
-            {/* <>
-                    <SideCar tokenId={swap.tokenId} />
-                    <Caboose tokenId={tokenId.onlyItemId()} />
-                </> */}
         </>
     );
 };

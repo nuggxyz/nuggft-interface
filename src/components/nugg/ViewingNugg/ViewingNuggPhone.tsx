@@ -19,6 +19,8 @@ import useAsyncState from '@src/hooks/useAsyncState';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import { Address } from '@src/classes/Address';
 import OffersList from '@src/components/nugg/RingAbout/OffersList';
+import Caboose from '@src/components/nugg/RingAbout/Caboose';
+import SideCar from '@src/components/nugg/RingAbout/SideCar';
 
 import MyNuggActions from './MyNuggActions';
 import SwapListPhone from './SwapListPhone';
@@ -51,10 +53,68 @@ const Info = ({ tokenId }: { tokenId?: TokenId }) => {
     ) : null;
 };
 
+const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
+    const token = client.live.token(tokenId);
+
+    const text = useMemo(() => {
+        if (token && token.tryout && token.tryout.count && token.tryout.count > 0)
+            return t`Pick a nugg to buy from`;
+        return t`This item is not being sold by any nuggs`;
+    }, [token]);
+    return (
+        <div
+            style={{
+                height: 'auto',
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+            }}
+        >
+            {token && token.tryout.min && (
+                <div
+                    style={{
+                        alignItems: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        marginBottom: '20px',
+                        marginTop: '10px',
+                    }}
+                >
+                    <CurrencyText
+                        textStyle={{
+                            color: 'white',
+                            fontSize: '28px',
+                            textShadow: lib.layout.boxShadow.dark,
+                        }}
+                        image="eth"
+                        value={token.tryout.min.eth.number || 0}
+                        decimals={3}
+                    />
+                    <Text
+                        textStyle={{
+                            fontSize: '13px',
+                            color: 'white',
+                            textShadow: lib.layout.boxShadow.dark,
+                        }}
+                    >
+                        {t`minimum price`}
+                    </Text>
+                </div>
+            )}
+            <Text textStyle={{ color: 'white' }}>{text}</Text>
+            <SideCar tokenId={tokenId} />
+            <Caboose tokenId={tokenId} />
+        </div>
+    );
+};
+
 const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const token = client.live.token(tokenId);
     const swap = client.swaps.useSwap(tokenId);
     const lifecycle = useLifecycle(token);
+
     const leader = client.live.offers(tokenId).first() as unknown as OfferData;
 
     const { minutes } = useRemaining(token?.activeSwap?.epoch);
@@ -116,37 +176,6 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                             }}
                         >
                             {`${leaderEns || ''} is selling`}
-                        </Text>
-                    </div>
-                ) : lifecycle === Lifecycle.Tryout &&
-                  token &&
-                  token.type === 'item' &&
-                  token.tryout.min ? (
-                    <div
-                        style={{
-                            alignItems: 'flex-end',
-                            display: 'flex',
-                            flexDirection: 'column',
-                        }}
-                    >
-                        <CurrencyText
-                            textStyle={{
-                                color: 'white',
-                                fontSize: '28px',
-                                textShadow: lib.layout.boxShadow.dark,
-                            }}
-                            image="eth"
-                            value={token.tryout.min.eth.number || 0}
-                            decimals={3}
-                        />
-                        <Text
-                            textStyle={{
-                                fontSize: '13px',
-                                color: 'white',
-                                textShadow: lib.layout.boxShadow.dark,
-                            }}
-                        >
-                            {t`minimum price`}
                         </Text>
                     </div>
                 ) : (
@@ -362,12 +391,34 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
                                     textShadow: lib.layout.boxShadow.dark,
                                 }}
                             >
+                                Start an Auction
+                            </Text>
+                        </div>
+                        <NextSwap tokenId={token.tokenId} />
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'flex-start',
+                                alignItems: 'flex-start',
+                                textAlign: 'left',
+                                width: '100%',
+                                padding: '10px',
+                            }}
+                        >
+                            <Text
+                                size="larger"
+                                textStyle={{
+                                    color: 'white',
+                                    textShadow: lib.layout.boxShadow.dark,
+                                }}
+                            >
                                 Info
                             </Text>
                         </div>
                         <Info tokenId={tokenId} />{' '}
                     </>
                 )}
+
                 {token.type === 'nugg' && token.owner === sender && (
                     <>
                         <div
@@ -394,24 +445,32 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
                     </>
                 )}
 
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'flex-start',
-                        alignItems: 'flex-start',
-                        textAlign: 'left',
-                        width: '100%',
-                        padding: '10px',
-                    }}
-                >
-                    <Text
-                        size="larger"
-                        textStyle={{ color: 'white', textShadow: lib.layout.boxShadow.dark }}
-                    >
-                        Items
-                    </Text>
-                </div>
-                {tokenId.isNuggId() && <ItemListPhone tokenId={tokenId} />}
+                {tokenId.isNuggId() && (
+                    <>
+                        {' '}
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'flex-start',
+                                alignItems: 'flex-start',
+                                textAlign: 'left',
+                                width: '100%',
+                                padding: '10px',
+                            }}
+                        >
+                            <Text
+                                size="larger"
+                                textStyle={{
+                                    color: 'white',
+                                    textShadow: lib.layout.boxShadow.dark,
+                                }}
+                            >
+                                Items
+                            </Text>
+                        </div>
+                        <ItemListPhone tokenId={tokenId} />
+                    </>
+                )}
                 <div
                     style={{
                         display: 'flex',

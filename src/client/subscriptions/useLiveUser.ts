@@ -10,8 +10,6 @@ import { buildTokenIdFactory } from '@src/prototypes';
 export default () => {
     const address = web3.hook.usePriorityAccount();
 
-    const graph = client.live.graph();
-
     const updateProtocol = client.mutate.updateProtocol();
 
     // clean up on account change
@@ -27,7 +25,6 @@ export default () => {
     }, [address]);
 
     useLiveUserSubscription({
-        client: graph,
         variables: { address: address ? address.toLowerCase() : '' },
         shouldResubscribe: true,
         skip: !address,

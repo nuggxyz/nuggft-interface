@@ -41,7 +41,7 @@ export default ({
         );
     }, [token, lifecycle]);
 
-    return !isPhone || inOverlay ? (
+    return lifecycle !== 'tryout' && (!isPhone || inOverlay) ? (
         <Button
             buttonStyle={{
                 ...styles.button,

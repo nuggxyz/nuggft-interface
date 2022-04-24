@@ -52,7 +52,7 @@ const OfferText = ({ tokenId }: { tokenId?: TokenId }) => {
     );
 };
 
-const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
+export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
     const nuggft = useNuggftV1();
     const token = client.live.token(tokenId);
     const lifecycle = useLifecycle(token);

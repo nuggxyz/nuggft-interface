@@ -72,7 +72,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                           label: 'Items',
                           comp: React.memo(() => (
                               <ItemList
-                                  items={token?.items}
+                                  items={token?.items || []}
                                   isOwner={
                                       !!sender &&
                                       sender === token.owner &&

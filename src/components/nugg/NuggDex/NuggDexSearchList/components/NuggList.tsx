@@ -6,11 +6,11 @@ import { t } from '@lingui/macro';
 
 import TransitionText from '@src/components/general/Texts/TransitionText/TransitionText';
 import useDimentions from '@src/client/hooks/useDimentions';
-import InfiniteList from '@src/components/general/List/InfiniteList';
 import client from '@src/client';
 import { SearchView } from '@src/client/interfaces';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
+import InfiniteList from '@src/components/general/List/InfiniteList';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -56,6 +56,7 @@ const NuggList: FunctionComponent<NuggListProps> = ({
     horribleMFingHack2 = false,
 }) => {
     const { screen: screenType } = useDimentions();
+
     const viewing = client.live.searchFilter.viewing();
 
     const { gotoViewingNugg } = useViewingNugg();
