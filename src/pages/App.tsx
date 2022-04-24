@@ -21,7 +21,20 @@ const SearchOverlay = React.lazy(() => import('@src/pages/SearchOverlay'));
 const Router = () => {
     const { isPhone } = useDimentions();
 
-    const isPageLoaded = client.live.pageIsLoaded();
+    // const isPageLoaded = client.live.pageIsLoaded();
+
+    // const [loadSearchOverlay, setLoadSearchOverlay] = React.useState(false);
+
+    // const isView =
+
+    // React.useEffect(() => {
+    //     if (isPageLoaded) {
+    //         if (!loadSearchOverlay) {
+    //             if (isPhone) setTimeout(() => setLoadSearchOverlay(true), isPhone ? 2000 : 1000);
+    //         }
+    //     }
+    // }, [isPageLoaded, loadSearchOverlay, isPhone]);
+
     const epoch = client.live.epoch.id();
 
     const route = useRoutes([
@@ -29,7 +42,11 @@ const Router = () => {
             path: '/',
             element: <Outlet />,
             children: [
-                { path: 'view/*', element: isPageLoaded ? <SearchOverlay /> : null, overlay: 997 },
+                {
+                    path: 'view/*',
+                    element: <SearchOverlay />,
+                    overlay: 997,
+                },
                 {
                     path: 'edit/:id',
                     element: <HotRotateOController />,

@@ -8,7 +8,7 @@ import TransitionText from '@src/components/general/Texts/TransitionText/Transit
 import useDimentions from '@src/client/hooks/useDimentions';
 import InfiniteList from '@src/components/general/List/InfiniteList';
 import client from '@src/client';
-import { ListData, SearchView } from '@src/client/interfaces';
+import { SearchView } from '@src/client/interfaces';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
@@ -27,7 +27,8 @@ export type NuggListOnScrollEndProps = {
 export type NuggListProps = {
     type?: SearchView;
     style: CSSProperties | UseSpringProps;
-    values: ListData[];
+    tokenIds: TokenId[];
+    cardType: 'recent' | 'all' | 'swap';
     animationToggle?: boolean;
     horribleMFingHack2?: boolean;
     interval: number;
@@ -44,10 +45,11 @@ export type NuggListProps = {
 
 const NuggList: FunctionComponent<NuggListProps> = ({
     style,
-    values,
+    tokenIds,
     onScrollEnd,
     animationToggle,
     interval = 25,
+    cardType,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -59,8 +61,8 @@ const NuggList: FunctionComponent<NuggListProps> = ({
     const { gotoViewingNugg } = useViewingNugg();
 
     const onClick = useCallback(
-        (item: typeof values[number]) => {
-            gotoViewingNugg(item.tokenId);
+        (item: TokenId) => {
+            gotoViewingNugg(item);
         },
         [gotoViewingNugg],
     );
@@ -113,13 +115,13 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                         position: 'relative',
                         ...(screenType === 'phone' && { width: '100%' }),
                     }}
-                    data={values}
+                    data={tokenIds}
                     RenderItem={NuggListRenderItem}
                     loading={false}
                     interval={interval}
                     onScrollEnd={_onScrollEnd}
                     action={onClick}
-                    extraData={undefined}
+                    extraData={{ cardType }}
                     itemHeight={210}
                     animationToggle={animationToggle}
                 />

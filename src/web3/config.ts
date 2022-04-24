@@ -79,7 +79,7 @@ export const CONTRACTS = {
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
-        GraphId: 'QmQ79YLEb36HKLtTEkg2biJxHQu9kJYiyg5VPHBydeAUi7',
+        GraphId: 'QmVzfjtGvQVwfYCp76FAoKkivzaTP3mumvnb8Y5Vr5YxBB',
     },
     [Chain.GOERLI]: {
         NuggftV1: '0xf5622e697d1821b8e83e4beed9e897b49de81011',

@@ -53,6 +53,7 @@ const Info = ({ tokenId }: { tokenId?: TokenId }) => {
 
 const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const token = client.live.token(tokenId);
+    const swap = client.swaps.useSwap(tokenId);
     const lifecycle = useLifecycle(token);
     const leader = client.live.offers(tokenId).first() as unknown as OfferData;
 
@@ -66,7 +67,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const nuggft = useNuggftV1();
 
     const vfo = useAsyncState(() => {
-        if (token && provider && tokenId && lifecycle === Lifecycle.Bunt) {
+        if (swap && provider && tokenId && lifecycle === Lifecycle.Bunt) {
             return nuggft
                 .connect(provider)
                 ['vfo(address,uint24)'](Address.NULL.hash, tokenId.toRawId())
@@ -75,7 +76,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                 });
         }
         return undefined;
-    }, [token, nuggft, tokenId, provider]);
+    }, [swap, nuggft, tokenId, provider]);
     return (
         <>
             <div style={{ width: '100%', padding: '0 40px', marginBottom: '20px' }}>
@@ -163,7 +164,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                                 textShadow: lib.layout.boxShadow.dark,
                             }}
                             image="eth"
-                            value={leader?.eth?.number || vfo?.number || 0}
+                            value={swap?.eth?.number || vfo?.number || 0}
                             decimals={0}
                         />
                         <Text
@@ -177,33 +178,35 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                         </Text>
                     </div>
                 )}
-                <div
-                    style={{
-                        alignItems: 'flex-end',
-                        display: 'flex',
-                        flexDirection: 'column',
-                    }}
-                >
-                    <Text
-                        textStyle={{
-                            fontSize: '13px',
-                            color: 'white',
-                            textShadow: lib.layout.boxShadow.dark,
+                {swap?.endingEpoch && (
+                    <div
+                        style={{
+                            alignItems: 'flex-end',
+                            display: 'flex',
+                            flexDirection: 'column',
                         }}
                     >
-                        ending in about
-                    </Text>
-                    <Text
-                        textStyle={{
-                            color: 'white',
-                            fontSize: '28px',
-                            textShadow: lib.layout.boxShadow.dark,
-                        }}
-                    >{`${minutes} ${plural(minutes, {
-                        1: 'minute',
-                        other: 'minutes',
-                    })}`}</Text>
-                </div>
+                        <Text
+                            textStyle={{
+                                fontSize: '13px',
+                                color: 'white',
+                                textShadow: lib.layout.boxShadow.dark,
+                            }}
+                        >
+                            ending in about
+                        </Text>
+                        <Text
+                            textStyle={{
+                                color: 'white',
+                                fontSize: '28px',
+                                textShadow: lib.layout.boxShadow.dark,
+                            }}
+                        >{`${minutes} ${plural(minutes, {
+                            1: 'minute',
+                            other: 'minutes',
+                        })}`}</Text>
+                    </div>
+                )}
             </div>
             <div style={{ width: '100%', padding: '20px 10px ' }}>
                 <OffersList tokenId={tokenId} />

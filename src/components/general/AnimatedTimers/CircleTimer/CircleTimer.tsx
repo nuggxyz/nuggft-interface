@@ -6,7 +6,7 @@ import React, {
     useMemo,
     useState,
 } from 'react';
-import { animated, config, useSpring } from '@react-spring/web';
+import { animated, useSpring } from '@react-spring/web';
 
 import {
     isUndefinedOrNullOrNotNumber,
@@ -27,6 +27,7 @@ type Props = {
     childrenContainerStyle?: CSSProperties;
     width: number;
     strokeWidth?: number;
+    defaultColor: string;
 };
 const TWOPI = Math.PI * 2;
 const HALFPI = Math.PI / 2;
@@ -42,6 +43,7 @@ const CircleTimer: FunctionComponent<Props> = ({
     width,
     strokeWidth = 20,
     childrenContainerStyle,
+    defaultColor,
 }) => {
     // blocktime;
     // const dimensions = AppState.select.dimensions();
@@ -51,7 +53,7 @@ const CircleTimer: FunctionComponent<Props> = ({
     //     () => ((timerCircleRadius * TWOPI) / duration) * 1.5,
     //     [timerCircleRadius, duration],
     // );
-    const [stateRemaining, setStateRemaining] = useState(remaining);
+    const [stateRemaining, setStateRemaining] = useState(duration);
 
     useEffect(() => {
         setStateRemaining(!isUndefinedOrNullOrStringEmpty(staticColor) ? duration : remaining);
@@ -81,6 +83,7 @@ const CircleTimer: FunctionComponent<Props> = ({
         to: {
             x: to,
         },
+        delay: 200,
         // from: {
         //     x: previousTo,
         // },
@@ -91,12 +94,17 @@ const CircleTimer: FunctionComponent<Props> = ({
         //         setStateRemaining(val);
         //     }
         // },
-        config: config.molasses,
+        config: {
+            // ...springConfig.slow,
+            tension: 250,
+            friction: 180,
+            // easing: (r) => r * 50,
+        },
     });
 
     const shadowColor = useMemo(() => {
         const percent = remaining / duration;
-        if (!isUndefinedOrNullOrStringEmpty(staticColor)) {
+        if (percent > 1 && !isUndefinedOrNullOrStringEmpty(staticColor)) {
             return staticColor;
         }
         if (percent <= 0.1) {
@@ -105,8 +113,8 @@ const CircleTimer: FunctionComponent<Props> = ({
         if (percent <= 0.25) {
             return Colors.nuggGold;
         }
-        return Colors.nuggBlueText;
-    }, [remaining, duration, staticColor]);
+        return defaultColor;
+    }, [remaining, duration, staticColor, defaultColor]);
 
     return (
         <div style={{ ...styles.container, ...style }}>

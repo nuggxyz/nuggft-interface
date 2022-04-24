@@ -32,6 +32,7 @@ const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>>
 
 const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
+
     const swap = client.swaps.useSwap(tokenId);
 
     const lifecycle = useLifecycle(swap);
@@ -42,11 +43,11 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 
     const darkmode = useDarkMode();
 
-    const { minutes } = useRemaining(token?.activeSwap?.epoch);
+    const { minutes } = useRemaining(swap?.epoch);
     const provider = web3.hook.usePriorityProvider();
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
-        token && token.type === 'item' ? 'nugg' : provider,
+        swap && swap.type === 'item' ? 'nugg' : provider,
         leader?.user || '',
     );
     const { screen: screenType, isPhone } = useDimentions();
@@ -186,9 +187,10 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                     >
                         <TheRing
                             circleWidth={800}
-                            manualTokenId={tokenId}
+                            manualTokenId={swap?.tokenId}
                             disableHover
                             disableClick
+                            defaultColor={isPhone ? 'white' : lib.colors.nuggBlue}
                             tokenStyle={{ width: '200px', height: '200px' }}
                         />
                     </div>

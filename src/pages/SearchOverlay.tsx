@@ -43,10 +43,23 @@ const styles = NLStyleSheetCreator({
 const SearchOverlay: FunctionComponent<Props> = () => {
     const { screen: screenType } = useDimentions();
 
+    const isPageLoaded = client.live.pageIsLoaded();
+
+    const setPageIsLoaded = client.mutate.setPageIsLoaded();
+
     const navigate = useNavigate();
     const lastSwap = client.live.lastSwap.tokenId();
 
     const visible = useMatch('/view/*');
+
+    // this slows the rendering to a normal timeframe depending on how the user gets here
+    // if the SearchOverlay was viewable from the beggining, we go ahead and render everything (setPageIsLoaded to true with no timeout)
+    // if this is not the case, we delay the render by 500ms to reduce the lurching in
+    const [wasNotVisible] = React.useState(visible === null);
+
+    React.useEffect(() => {
+        if (!isPageLoaded && visible) setTimeout(() => setPageIsLoaded(), wasNotVisible ? 500 : 0);
+    }, [visible, isPageLoaded, setPageIsLoaded, wasNotVisible]);
 
     const blur = useBlur(['/view/*']);
 

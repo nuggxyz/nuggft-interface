@@ -1,30 +1,67 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
-import lib, { isUndefinedOrNullOrObjectEmpty, shortenAddress } from '@src/lib';
+import lib, { shortenAddress } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
-import { ListData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import client from '@src/client';
 
 import styles from './NuggDexComponents.styles';
 
-type Props = InfiniteListRenderItemProps<ListData, undefined, ListData>;
+const NuggListRenderItemSwap = ({ tokenId }: { tokenId: TokenId }) => {
+    const swap = client.swaps.useSwap(tokenId);
+    return swap ? (
+        <div
+            style={{
+                display: 'flex',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                alignItems: 'center',
+            }}
+        >
+            <Label
+                text={tokenId.toPrettyId()}
+                size="larger"
+                containerStyles={{ marginBottom: '10px' }}
+            />
+            <CurrencyText
+                textStyle={{ color: lib.colors.primaryColor }}
+                image="eth"
+                value={swap.eth.number}
+                stopAnimation
+            />
+            {swap.leader && (
+                <Label
+                    text={swap.isItem() ? swap.leader.toPrettyId() : shortenAddress(swap.leader)}
+                />
+            )}
+        </div>
+    ) : null;
+};
 
-const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
-    // const lastView__tokenId = client.live.lastView.tokenId();
+type Props = InfiniteListRenderItemProps<TokenId, { cardType: 'swap' | 'all' | 'recent' }, TokenId>;
 
+const NuggListRenderItem: FunctionComponent<Props> = ({
+    item: tokenId,
+    action,
+    extraData: { cardType },
+}) => {
     const style = useMemo(() => {
         return {
-            ...(!isUndefinedOrNullOrObjectEmpty(item) ? styles.nuggListRenderItemContainer : {}),
-            // ...(lastView__tokenId === item?.id ? styles.selected : {}),
+            ...(tokenId ? styles.nuggListRenderItemContainer : {}),
         };
-    }, [item]);
+    }, [tokenId]);
 
     return (
-        <div aria-hidden="true" role="button" style={style} onClick={() => action && action(item)}>
+        <div
+            aria-hidden="true"
+            role="button"
+            style={style}
+            onClick={() => action && action(tokenId)}
+        >
             <TokenViewer
-                tokenId={item.tokenId}
+                tokenId={tokenId}
                 style={{
                     height: '200px',
                     width: '200px',
@@ -32,7 +69,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
                 }}
                 disableOnClick
                 // forceCache
-                // shouldLoad={pageLoaded}
+                // shouldLoad={isPageLoaded}
             />
             <div
                 style={{
@@ -42,29 +79,23 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
                     alignItems: 'center',
                 }}
             >
-                <Label
-                    text={item.tokenId.toPrettyId()}
-                    size="larger"
-                    containerStyles={{ marginBottom: '10px' }}
-                />
-                {item.listDataType === 'swap' && (
-                    <>
-                        <CurrencyText
-                            textStyle={{ color: lib.colors.primaryColor }}
-                            image="eth"
-                            value={item.eth.number}
-                            stopAnimation
+                {cardType === 'swap' ? (
+                    <NuggListRenderItemSwap tokenId={tokenId} />
+                ) : (
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Label
+                            text={tokenId.toPrettyId()}
+                            size="larger"
+                            containerStyles={{ marginBottom: '10px' }}
                         />
-                        {item.leader && (
-                            <Label
-                                text={
-                                    item.isItem()
-                                        ? item.leader.toPrettyId()
-                                        : shortenAddress(item.leader)
-                                }
-                            />
-                        )}
-                    </>
+                    </div>
                 )}
             </div>
         </div>
@@ -74,7 +105,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item, action }) => {
 export default React.memo(
     NuggListRenderItem,
     (prevProps, props) =>
-        JSON.stringify(prevProps.item) === JSON.stringify(props.item) &&
+        prevProps.item === props.item &&
         prevProps.selected === props.selected &&
         JSON.stringify(prevProps.action) === JSON.stringify(props.action),
 ) as typeof NuggListRenderItem;

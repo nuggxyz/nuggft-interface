@@ -1,13 +1,13 @@
-import React, { useEffect, FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { animated } from '@react-spring/web';
 
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
-import client from '@src/client';
 import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
 import useLiveToken from '@src/client/subscriptions/useLiveToken';
 import useDimentions from '@src/client/hooks/useDimentions';
 import Loader from '@src/components/general/Loader/Loader';
 import lib from '@src/lib';
+import useDesktopSwappingNugg from '@src/client/hooks/useDesktopSwappingNugg';
 
 import styles from './RingAbout.styles';
 import OffersList from './OffersList';
@@ -26,17 +26,11 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
     const { screen: screenType, isPhone } = useDimentions();
     const darkmode = useDarkMode();
 
-    const tokenId = client.live.lastSwap.tokenIdWithOptionalOverride(manualTokenId);
-    const token = client.live.token(tokenId);
-    const setPageIsLoaded = client.mutate.setPageIsLoaded();
-    const isPageLoaded = client.live.pageIsLoaded();
+    const tokenId = useDesktopSwappingNugg(manualTokenId);
+
     useLiveToken(tokenId);
 
     useLiveOffers(tokenId);
-
-    useEffect(() => {
-        if (token && !isPageLoaded) setPageIsLoaded();
-    }, [token, setPageIsLoaded, isPageLoaded]);
 
     return tokenId ? (
         <>
@@ -50,9 +44,6 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
                     ...(screenType === 'phone' && {
                         ...styles.mobile,
                     }),
-                    // ...(!token && {
-                    //     background: lib.colors.gradient4,
-                    // }),
                     boxShadow: lib.layout.boxShadow.dark,
                 }}
             >

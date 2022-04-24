@@ -9,7 +9,6 @@ import { FeedMessage } from '@src/interfaces/feed';
 import { parseItmeIdToNum } from '@src/lib/index';
 
 import {
-    SwapData,
     UnclaimedOffer,
     Dimentions,
     SearchResults,
@@ -124,15 +123,15 @@ function createClientStoreAndActions2() {
                         if (stateUpdate.totalNuggs) draft.totalNuggs = stateUpdate.totalNuggs;
                         if (stateUpdate.stake) draft.stake = stateUpdate.stake;
                         if (stateUpdate.editingNugg) draft.editingNugg = stateUpdate.editingNugg;
-                        if (stateUpdate.notableSwaps) draft.notableSwaps = stateUpdate.notableSwaps;
-                        if (stateUpdate.recentSwaps) draft.recentSwaps = stateUpdate.recentSwaps;
-                        if (stateUpdate.recentItems) draft.recentItems = stateUpdate.recentItems;
-                        if (stateUpdate.activeSwaps) draft.activeSwaps = stateUpdate.activeSwaps;
-                        if (stateUpdate.activeItems) draft.activeItems = stateUpdate.activeItems;
-                        if (stateUpdate.potentialSwaps)
-                            draft.potentialSwaps = stateUpdate.potentialSwaps;
-                        if (stateUpdate.potentialItems)
-                            draft.potentialItems = stateUpdate.potentialItems;
+                        // if (stateUpdate.notableSwaps) draft.notableSwaps = stateUpdate.notableSwaps;
+                        // if (stateUpdate.recentSwaps) draft.recentSwaps = stateUpdate.recentSwaps;
+                        // if (stateUpdate.recentItems) draft.recentItems = stateUpdate.recentItems;
+                        // if (stateUpdate.activeSwaps) draft.activeSwaps = stateUpdate.activeSwaps;
+                        // if (stateUpdate.activeItems) draft.activeItems = stateUpdate.activeItems;
+                        // if (stateUpdate.potentialSwaps)
+                        //     draft.potentialSwaps = stateUpdate.potentialSwaps;
+                        // if (stateUpdate.potentialItems)
+                        // draft.potentialItems = stateUpdate.potentialItems;
                         if (stateUpdate.manualPriority)
                             draft.manualPriority = stateUpdate.manualPriority;
                         if (stateUpdate.myNuggs) draft.myNuggs = stateUpdate.myNuggs;
@@ -141,45 +140,6 @@ function createClientStoreAndActions2() {
                             draft.myUnclaimedNuggOffers = stateUpdate.myUnclaimedNuggOffers;
                         if (stateUpdate.myUnclaimedItemOffers)
                             draft.myUnclaimedItemOffers = stateUpdate.myUnclaimedItemOffers;
-
-                        // const epoch = get().epoch?.id;
-
-                        draft.notableSwaps = [
-                            draft.recentSwaps,
-                            draft.recentItems,
-                            draft.activeSwaps,
-                            draft.activeItems,
-                            draft.potentialSwaps,
-                            draft.potentialItems,
-                        ]
-                            .flat()
-                            .filter((x) => x !== undefined) as SwapData[];
-
-                        stateUpdate.activeItems?.forEach((x) => {
-                            const abc = get().liveTokens[x.tokenId];
-
-                            draft.liveTokens[x.tokenId] = {
-                                activeSwap: x,
-                                ...abc,
-
-                                ...x,
-                            };
-                        });
-
-                        stateUpdate.activeSwaps?.forEach((x) => {
-                            const abc = get().liveTokens[x.tokenId];
-                            draft.liveTokens[x.tokenId as NuggId] = {
-                                activeSwap: x,
-                                ...x,
-                                ...abc,
-                            };
-                        });
-
-                        // if (epoch) {
-                        //     draft.activeSwaps.filterInPlace(
-                        //         (x) => x.endingEpoch !== null && x.endingEpoch >= epoch,
-                        //     );
-                        // }
                     });
                 }
 

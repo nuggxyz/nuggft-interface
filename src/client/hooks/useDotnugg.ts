@@ -59,30 +59,45 @@ export const useDotnuggInjectToCache = () => {
     );
 };
 
-export const useDotnuggRpcBackup2 = (use: boolean, tokenId?: TokenId) => {
+export const useDotnuggRpcCallback = () => {
     const provider = web3.hook.usePriorityProvider();
-    const chainId = web3.hook.usePriorityChainId();
-    const graph = client.live.graph();
-
-    const [src, setSrc] = React.useState<Base64EncodedSvg>();
-
-    const inject = useDotnuggInjectToCache();
 
     const nuggft = useNuggftV1(provider);
 
     const xnuggft = useXNuggftV1(provider);
 
+    const inject = useDotnuggInjectToCache();
+
+    const callAsync = React.useCallback(
+        async (tokenId: TokenId) => {
+            if (!provider) return undefined;
+            return (tokenId.isItemId() ? xnuggft : nuggft).imageSVG(tokenId.toRawId()).then((x) => {
+                if (x !== '') {
+                    inject(tokenId, x as Base64EncodedSvg);
+                }
+                return x as Base64EncodedSvg;
+            });
+        },
+        [nuggft, xnuggft, inject, provider],
+    );
+
+    return callAsync;
+};
+
+export const useDotnuggRpcBackup2 = (use: boolean, tokenId?: TokenId) => {
+    const [src, setSrc] = React.useState<Base64EncodedSvg>();
+
+    const callback = useDotnuggRpcCallback();
+
     useEffect(() => {
-        if (tokenId && graph && chainId && provider && use) {
+        if (tokenId && use) {
             void (async () => {
-                const res = (await (tokenId.isItemId() ? xnuggft : nuggft).imageSVG(
-                    tokenId.toRawId(),
-                )) as Base64EncodedSvg | undefined;
+                const res = (await callback(tokenId)) as Base64EncodedSvg | undefined;
+
                 setSrc(res);
-                if (res) void inject(tokenId, res);
             })();
         }
-    }, [graph, chainId, provider, tokenId, use, inject, nuggft, xnuggft]);
+    }, [tokenId, use, callback]);
 
     return src;
 };
@@ -97,16 +112,27 @@ export const useDotnuggSubscription = (
 
     const inject = useDotnuggInjectToCache();
 
+    const callback = useDotnuggRpcCallback();
+
+    const [rpcBackup, setRpcBackup] = React.useState<Base64EncodedSvg>();
+
     const { data: nuggSrc } = useGetDotnuggNuggQuery({
         pollInterval: 5000,
         skip: !tokenId || !activate || isItem,
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'network-only',
         variables: {
             tokenId: tokenId?.toRawId() || '',
         },
         onCompleted: (data) => {
-            if (data.nugg?.dotnuggRawCache && tokenId)
-                inject(tokenId, data.nugg?.dotnuggRawCache as Base64EncodedSvg);
+            if (tokenId) {
+                if (data.nugg?.dotnuggRawCache) {
+                    inject(tokenId, data.nugg?.dotnuggRawCache as Base64EncodedSvg);
+                    setRpcBackup(undefined);
+                } else {
+                    void callback(tokenId).then((x) => x && setRpcBackup(x));
+                }
+            }
         },
     });
 
@@ -120,10 +146,18 @@ export const useDotnuggSubscription = (
             tokenId: tokenId?.toRawId() || '',
         },
         onCompleted: (data) => {
-            if (data.item?.dotnuggRawCache && tokenId)
-                inject(tokenId, data.item?.dotnuggRawCache as Base64EncodedSvg);
+            if (tokenId) {
+                if (data.item?.dotnuggRawCache) {
+                    inject(tokenId, data.item?.dotnuggRawCache as Base64EncodedSvg);
+                    setRpcBackup(undefined);
+                } else {
+                    void callback(tokenId).then(setRpcBackup);
+                }
+            }
         },
     });
+
+    if (rpcBackup) return rpcBackup;
 
     return isItem
         ? (itemSrc?.item?.dotnuggRawCache as Base64EncodedSvg)

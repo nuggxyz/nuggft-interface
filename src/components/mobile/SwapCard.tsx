@@ -2,7 +2,6 @@ import React from 'react';
 import { animated, useSpring } from '@react-spring/web';
 
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
-import client from '@src/client';
 
 import MobileRingAbout from './MobileRingAbout';
 
@@ -16,8 +15,6 @@ const SwapCard = ({
     asHappyTab?: boolean;
 }) => {
     const [state, toggle] = React.useState(true);
-
-    const swap = client.swaps.useSwap(tokenId);
 
     const [{ x }] = useSpring(
         {
@@ -33,7 +30,7 @@ const SwapCard = ({
 
     const [, startTransition] = React.useTransition();
 
-    return swap ? (
+    return (
         <animated.div
             ref={ref || null}
             style={{
@@ -66,17 +63,17 @@ const SwapCard = ({
 
                 event.stopPropagation();
                 toggle(true);
-                if (swap.tokenId) {
+                if (tokenId) {
                     startTransition(() => {
                         x.reset();
-                        gotoViewingNugg(swap.tokenId);
+                        gotoViewingNugg(tokenId);
                     });
                 }
             }}
         >
-            <MobileRingAbout swap={swap} />
+            <MobileRingAbout tokenId={tokenId} />
         </animated.div>
-    ) : null;
+    );
 };
 
 export default SwapCard;

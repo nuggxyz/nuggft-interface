@@ -156,11 +156,11 @@ export default () => {
                         eps: EthInt.fromFraction(new Fraction(staked, shares)),
                     },
                     totalNuggs: Number(protocol.totalNuggs),
-                    recentSwaps,
-                    recentItems,
-                    potentialItems,
-                    ...activeNuggs,
-                    ...activeItems,
+                    // recentSwaps,
+                    // recentItems,
+                    // potentialItems,
+                    // ...activeNuggs,
+                    // ...activeItems,
                 });
             }
         },

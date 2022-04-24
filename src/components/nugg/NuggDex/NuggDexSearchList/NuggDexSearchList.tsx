@@ -3,7 +3,7 @@ import { animated, useSpring } from '@react-spring/web';
 
 import constants from '@src/lib/constants';
 import client from '@src/client';
-import { ListData, SearchView } from '@src/client/interfaces';
+import { SearchView } from '@src/client/interfaces';
 import {
     GetAllItemsSearchQuery,
     GetAllNuggsSearchQuery,
@@ -13,7 +13,7 @@ import {
     useGetAllNuggsSearchQuery,
 } from '@src/gql/types.generated';
 import useDimentions from '@src/client/hooks/useDimentions';
-import { buildTokenIdFactory } from '@src/prototypes';
+import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -28,17 +28,18 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const target = client.live.searchFilter.target();
     const sort = client.live.searchFilter.sort();
     const viewing = client.live.searchFilter.viewing();
-    const activeNuggs = client.live.activeSwaps();
-    const potentialNuggs = client.live.potentialSwaps();
+    // const activeNuggs = client.live.activeSwaps();
+    // const potentialNuggs = client.live.potentialSwaps();
+
     const { screen: screenType } = useDimentions();
 
     const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
     const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
-    const activeItems = client.live.activeItems();
-    const potentialItems = client.live.potentialItems();
+    // const activeItems = client.live.activeItems();
+    // const potentialItems = client.live.potentialItems();
 
-    const recentNuggs = client.live.recentSwaps();
-    const recentItems = client.live.recentItems();
+    // const recentNuggs = client.live.recentSwaps();
+    // const recentItems = client.live.recentItems();
 
     const [sortAsc, setSortAsc] = useState<{ [key in SearchView]: boolean }>({
         Recents: false,
@@ -124,43 +125,27 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         }
     }, [sort, target]);
 
-    const liveActiveNuggs = useMemo(
+    const all = useSortedSwapList();
+
+    const liveActiveEverything = useMemo(
         () =>
-            [...activeNuggs, ...potentialNuggs].reduce((acc: ListData[], nugg) => {
-                let tmp = acc;
-                if (epoch__id && +nugg.tokenId.toRawId() <= +epoch__id) {
+            [...all.current, ...all.next, ...all.potential].reduce((acc: TokenId[], curr) => {
+                let tmp: TokenId[] = acc;
+                if (epoch__id && +curr.toRawId() <= +epoch__id) {
                     if (sortAsc[SearchView.OnSale]) {
-                        tmp = [...acc, nugg];
+                        tmp = [...acc, curr];
                     } else {
-                        tmp = [nugg, ...acc];
+                        tmp = [curr, ...acc];
                     }
                 }
                 return tmp;
             }, []),
-        [epoch__id, activeNuggs, potentialNuggs, sortAsc],
+        [epoch__id, all, sortAsc],
     );
-
-    const liveActiveItems = useMemo(
-        () =>
-            [...activeItems, ...potentialItems].reduce((acc: ListData[], item) => {
-                let tmp = acc;
-                if (sortAsc[SearchView.OnSale]) {
-                    tmp = [...acc, item];
-                } else {
-                    tmp = [item, ...acc];
-                }
-                return tmp;
-            }, []),
-        [sortAsc, potentialItems, activeItems],
-    );
-
-    const liveActiveEverything = useMemo(() => {
-        return [...liveActiveNuggs, ...liveActiveItems];
-    }, [liveActiveNuggs, liveActiveItems]);
 
     const recentEverything = useMemo(() => {
-        return [...recentNuggs, ...recentItems];
-    }, [recentNuggs, recentItems]);
+        return [...all.recent];
+    }, [all.recent]);
 
     const animatedStyle = useSpring({
         ...styles.nuggLinksContainer,
@@ -183,11 +168,12 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         interval={INFINITE_INTERVAL}
                         animationToggle={viewing === SearchView.Search}
                         style={styles.nuggListEnter}
-                        values={activeSearch}
+                        tokenIds={activeSearch.map((x) => x.tokenId)}
                         type={SearchView.Search}
                         onScrollEnd={({ horribleMFingHack }) => {
                             if (horribleMFingHack) horribleMFingHack();
                         }}
+                        cardType="all"
                     />
                 </NuggLink>
                 <NuggLink
@@ -203,8 +189,9 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         interval={INFINITE_INTERVAL}
                         animationToggle={viewing === SearchView.Recents}
                         style={styles.nuggListEnter}
-                        values={recentEverything}
+                        tokenIds={recentEverything}
                         type={SearchView.Recents}
+                        cardType="recent"
                     />
                 </NuggLink>
                 <NuggLink
@@ -220,8 +207,9 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         interval={INFINITE_INTERVAL}
                         animationToggle={viewing === SearchView.OnSale}
                         style={styles.nuggListEnter}
-                        values={liveActiveEverything}
+                        tokenIds={liveActiveEverything}
                         type={SearchView.OnSale}
+                        cardType="swap"
                     />
                 </NuggLink>
 
@@ -233,28 +221,19 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     }}
                     type={SearchView.AllItems}
                     previewNuggs={
-                        allItemsData?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT).map((x) =>
-                            buildTokenIdFactory({
-                                tokenId: x.id.toItemId(),
-                                listDataType: 'basic' as const,
-                            }),
-                        ) || []
+                        allItemsData
+                            ?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT)
+                            .map((x) => x.id.toItemId()) || []
                     }
                 >
                     <NuggList
                         animationToggle={viewing === SearchView.AllItems}
                         style={styles.nuggListEnter}
-                        values={
-                            allItemsData?.map((x) =>
-                                buildTokenIdFactory({
-                                    tokenId: x.id.toItemId(),
-                                    listDataType: 'basic' as const,
-                                }),
-                            ) || []
-                        }
+                        tokenIds={allItemsData?.map((x) => x.id.toItemId()) || []}
                         interval={INFINITE_INTERVAL}
                         type={SearchView.AllItems}
                         onScrollEnd={loadMoreItems}
+                        cardType="all"
                     />
                 </NuggLink>
                 <NuggLink
@@ -266,25 +245,16 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     }}
                     type={SearchView.AllNuggs}
                     previewNuggs={
-                        allNuggsData?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT).map((x) =>
-                            buildTokenIdFactory({
-                                tokenId: x.id.toNuggId(),
-                                listDataType: 'basic' as const,
-                            }),
-                        ) || []
+                        allNuggsData
+                            ?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT)
+                            .map((x) => x.id.toNuggId()) || []
                     }
                 >
                     <NuggList
                         animationToggle={viewing === SearchView.AllNuggs}
                         style={styles.nuggListEnter}
-                        values={
-                            allNuggsData?.map((x) =>
-                                buildTokenIdFactory({
-                                    tokenId: x.id.toNuggId(),
-                                    listDataType: 'basic' as const,
-                                }),
-                            ) || []
-                        }
+                        tokenIds={allNuggsData?.map((x) => x.id.toNuggId()) || []}
+                        cardType="all"
                         interval={INFINITE_INTERVAL}
                         type={SearchView.AllNuggs}
                         onScrollEnd={loadMoreNuggs}

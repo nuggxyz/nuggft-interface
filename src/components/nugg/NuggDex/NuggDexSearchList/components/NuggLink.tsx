@@ -3,11 +3,12 @@ import { animated, useSpring } from '@react-spring/web';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import constants from '@src/lib/constants';
-import { ListData, SearchView } from '@src/client/interfaces';
+import { SearchView } from '@src/client/interfaces';
 import client from '@src/client';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 import Label from '@src/components/general/Label/Label';
 import useDimentions from '@src/client/hooks/useDimentions';
+import Loader from '@src/components/general/Loader/Loader';
 
 import styles from './NuggDexComponents.styles';
 import NuggLinkAnchor from './NuggLinkAnchor';
@@ -15,11 +16,25 @@ import NuggLinkThumbnail from './NuggLinkThumbnail';
 
 type Props = {
     type: SearchView;
-    previewNuggs?: ListData[];
+    previewNuggs?: TokenId[];
     style?: CSSPropertiesAnimated;
     limit?: number;
     disablePreview?: boolean;
 };
+
+const FullPageLoader = () => (
+    <div
+        style={{
+            display: 'flex',
+            width: '100%',
+            height: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+        }}
+    >
+        <Loader />
+    </div>
+);
 
 const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
     type,
@@ -54,16 +69,18 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
         // config: constants.ANIMATION_CONFIG,
     });
 
+    const isPageLoaded = client.live.pageIsLoaded();
+
     const previewNuggsStable = useMemo(() => {
         return previewNuggs
             .first(limit)
             .map(
-                (nugg, i) =>
-                    nugg && (
+                (tokenId, i) =>
+                    tokenId && (
                         <NuggLinkThumbnail
-                            item={nugg}
+                            tokenId={tokenId}
                             index={i}
-                            key={nugg.tokenId}
+                            key={`NuggLinkThumbnail-${tokenId}-${i}`}
                             style={limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}}
                         />
                     ),
@@ -88,43 +105,52 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                     ...(disablePreview && viewing !== type ? { display: 'none' } : {}),
                 }}
             >
-                {!disablePreview && (
-                    <animated.div
-                        style={{
-                            position: 'absolute',
-                            width: '100%',
-                            height: '100%',
-                            opacity: opacityText,
-                            zIndex: zIndex.to({
-                                range: [0, 1],
-                                output: [1, 0],
-                            }),
-                            ...styles.nuggLinkItemsContainer,
-                        }}
-                    >
-                        {previewNuggsStable}
-                        <NuggLinkAnchor
-                            onClick={() =>
-                                updateSearchFilterViewing(viewing === type ? SearchView.Home : type)
-                            }
-                            style={limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}}
-                        />
-                    </animated.div>
+                {isPageLoaded ? (
+                    <>
+                        {!disablePreview && (
+                            <animated.div
+                                style={{
+                                    position: 'absolute',
+                                    width: '100%',
+                                    height: '100%',
+                                    opacity: opacityText,
+                                    zIndex: zIndex.to({
+                                        range: [0, 1],
+                                        output: [1, 0],
+                                    }),
+                                    ...styles.nuggLinkItemsContainer,
+                                }}
+                            >
+                                {previewNuggsStable}
+                                <NuggLinkAnchor
+                                    onClick={() =>
+                                        updateSearchFilterViewing(
+                                            viewing === type ? SearchView.Home : type,
+                                        )
+                                    }
+                                    style={limit > 3 ? styles.nuggLinkThumbnailContainerBig : {}}
+                                />
+                            </animated.div>
+                        )}
+
+                        <animated.div
+                            style={{
+                                position: 'absolute',
+                                width: '100%',
+                                height: '100%',
+                                zIndex,
+                                opacity: opacityText.to({
+                                    range: [0, 1],
+                                    output: [1, 0],
+                                }),
+                            }}
+                        >
+                            {children}
+                        </animated.div>
+                    </>
+                ) : (
+                    <FullPageLoader />
                 )}
-                <animated.div
-                    style={{
-                        position: 'absolute',
-                        width: '100%',
-                        height: '100%',
-                        zIndex,
-                        opacity: opacityText.to({
-                            range: [0, 1],
-                            output: [1, 0],
-                        }),
-                    }}
-                >
-                    {children}
-                </animated.div>
             </animated.div>
             {!disablePreview && (
                 <>

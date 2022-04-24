@@ -20,16 +20,20 @@ const HIDDEN = 1000;
 const MobileViewScreenController = () => {
     const openViewScreen = client.viewscreen.useOpenViewScreen();
     const closeViewScreen = client.viewscreen.useCloseViewScreen();
+    // const isOpen = client.viewscreen.useViewScreenOpen();
 
     const { safeTokenId: tokenid } = useViewingNugg();
 
     const navigate = useNavigate();
 
     React.useEffect(() => {
-        if (tokenid) openViewScreen(tokenid);
-        return () => {
-            closeViewScreen();
-        };
+        if (tokenid) {
+            openViewScreen(tokenid);
+            return () => {
+                closeViewScreen();
+            };
+        }
+        return undefined;
     }, [tokenid, openViewScreen, closeViewScreen, navigate]);
 
     return <></>;

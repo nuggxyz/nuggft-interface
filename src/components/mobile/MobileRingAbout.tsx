@@ -1,61 +1,54 @@
-import React, { useEffect, FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { animated } from '@react-spring/web';
 
 import client from '@src/client';
 import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
 import useLiveToken from '@src/client/subscriptions/useLiveToken';
-import Loader from '@src/components/general/Loader/Loader';
 import lib from '@src/lib';
 import styles from '@src/components/nugg/RingAbout/RingAbout.styles';
 import OffersList from '@src/components/nugg/RingAbout/OffersList';
 import OwnerBlock from '@src/components/nugg/RingAbout/OwnerBlock';
 import OfferButton from '@src/components/nugg/RingAbout/OfferButton';
 import OfferText from '@src/components/nugg/RingAbout/OfferText';
-import { SwapData } from '@src/client/interfaces';
+import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
 
 type Props = {
-    swap: SwapData;
+    tokenId?: TokenId;
 };
 
-const RingAbout: FunctionComponent<Props> = ({ swap }) => {
-    const token = client.live.token(swap.tokenId);
-    const setPageIsLoaded = client.mutate.setPageIsLoaded();
-    const isPageLoaded = client.live.pageIsLoaded();
+const RingAbout: FunctionComponent<Props> = ({ tokenId }) => {
+    const swap = client.swaps.useSwap(tokenId);
 
-    useLiveToken(swap.tokenId);
+    useLiveToken(tokenId);
 
-    useLiveOffers(swap.tokenId);
+    useLiveOffers(tokenId);
 
-    useEffect(() => {
-        if (token && !isPageLoaded) setPageIsLoaded();
-    }, [token, setPageIsLoaded, isPageLoaded]);
+    useTriggerPageLoad(swap, 5000);
 
-    return swap ? (
+    return (
         <>
             <animated.div
                 style={{
                     ...styles.container,
                     ...styles.mobile,
-                    ...(swap.endingEpoch === null && {
+                    ...(swap?.endingEpoch === null && {
                         background: lib.colors.gradient4,
                     }),
                     boxShadow: lib.layout.boxShadow.dark,
                 }}
             >
                 <div style={styles.bodyContainer}>
-                    <OwnerBlock tokenId={swap.tokenId} />
-                    <OfferText tokenId={swap.tokenId} />
-                    <OffersList tokenId={swap.tokenId} />
+                    <OwnerBlock tokenId={tokenId} />
+                    <OfferText tokenId={tokenId} />
+                    <OffersList tokenId={tokenId} />
                 </div>
-                <OfferButton tokenId={swap.tokenId} />
+                <OfferButton tokenId={tokenId} />
             </animated.div>
             {/* <>
                     <SideCar tokenId={swap.tokenId} />
                     <Caboose tokenId={tokenId.onlyItemId()} />
                 </> */}
         </>
-    ) : (
-        <Loader />
     );
 };
 

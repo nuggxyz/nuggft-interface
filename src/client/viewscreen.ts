@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import create from 'zustand';
 import { combine } from 'zustand/middleware';
+import shallow from 'zustand/shallow';
 
 const store = create(
     combine(
@@ -10,10 +11,10 @@ const store = create(
         },
         (set) => {
             const closeViewScreen = () => {
-                set(() => {
+                set((state) => {
                     return {
+                        ...state,
                         open: false,
-                        // tokenId: undefined,
                     };
                 });
             };
@@ -51,7 +52,7 @@ const store = create(
 export type ViewScreenState = ReturnType<typeof store['getState']>;
 
 export default {
-    useViewScreenTokenId: () => store((state) => state.tokenId),
+    useViewScreenTokenId: () => store((state) => state.tokenId, shallow),
 
     useViewScreenOpen: () => store((state) => state.open),
     useOpenViewScreen: () => store((state) => state.openViewScreen),
