@@ -24,7 +24,7 @@ export interface LoanModalData extends ModalDataBase {
     actionType: 'burn' | 'loan';
 }
 
-export interface OfferModalDataBase extends TokenIdFactory, ModalDataBase {
+export interface OfferModalDataBase extends TokenIdFactoryBase, ModalDataBase {
     modalType: ModalEnum.Offer;
     nuggToBuyFrom: null | NuggId;
     token: LiveNugg | LiveItem;
@@ -62,7 +62,7 @@ export interface QRCodeModalData extends ModalDataBase {
     backgroundStyle: { background: string };
 }
 
-export interface SellModalDataBase extends TokenIdFactory, ModalDataBase {
+export interface SellModalDataBase extends TokenIdFactoryBase, ModalDataBase {
     modalType: ModalEnum.Sell;
     sellingNuggId: null | NuggId;
 }

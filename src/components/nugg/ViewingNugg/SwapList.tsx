@@ -15,7 +15,7 @@ import { ListRenderItemProps } from '@src/components/general/List/List';
 import { Chain } from '@src/web3/core/interfaces';
 import lib, { isUndefinedOrNull, isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import { Address } from '@src/classes/Address';
-import { LiveItemSwap, LiveSwap, LiveToken } from '@src/client/interfaces';
+import { LiveToken, SwapData } from '@src/client/interfaces';
 import Button from '@src/components/general/Buttons/Button/Button';
 
 import styles from './ViewingNugg.styles';
@@ -30,12 +30,12 @@ const SwapButton = ({
     navigate,
     tokenId,
 }: {
-    item: LiveSwap;
+    item: SwapData;
     epoch: number;
     navigate: NavigateFunction;
     tokenId: string;
 }) => {
-    return !item.endingEpoch || (!isUndefinedOrNull(item.epoch) && epoch <= item.endingEpoch) ? (
+    return !item.epoch?.id || (!isUndefinedOrNull(item.epoch) && epoch <= item.epoch.id) ? (
         <Button
             buttonStyle={styles.goToSwap}
             textStyle={{
@@ -54,7 +54,7 @@ const SwapButton = ({
     ) : null;
 };
 
-const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
+const SwapDesc = ({ item, epoch }: { item: SwapData; epoch: number }) => {
     const blocknum = client.live.blocknum();
 
     return epoch && blocknum ? (
@@ -72,7 +72,7 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwap; epoch: number }) => {
 
 const SwapItem: FunctionComponent<
     ListRenderItemProps<
-        LiveSwap,
+        SwapData,
         {
             chainId: Chain;
             provider: Web3Provider;
@@ -89,7 +89,7 @@ const SwapItem: FunctionComponent<
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         item.type === 'item' ? 'nugg' : extraData?.provider,
-        item.leader,
+        item.leader || '',
     );
 
     const epoch = client.live.epoch.id();
@@ -192,15 +192,15 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
     const epoch = client.live.epoch.id();
 
     const listData = useMemo(() => {
-        const res: { title: string; items: LiveSwap[] }[] = [];
+        const res: { title: string; items: SwapData[] }[] = [];
         let tempSwaps = token?.swaps ? [...token.swaps] : [];
         if (token && token.activeSwap && token.activeSwap.tokenId) {
             res.push({ title: t`Ongoing Swap`, items: [token.activeSwap] });
             tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'tokenId');
         }
         if (token && token.type === 'item') {
-            if ((token?.swaps as LiveSwap[]).find((swap) => swap.endingEpoch === null)) {
-                const tempTemp: LiveItemSwap[] = tempSwaps as LiveItemSwap[];
+            if ((token?.swaps as SwapData[]).find((swap) => swap.endingEpoch === null)) {
+                const tempTemp: SwapData[] = tempSwaps as SwapData[];
 
                 tempSwaps = tempTemp.filter((x) => !x.isTryout);
             }

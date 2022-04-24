@@ -7,6 +7,7 @@ import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
 import useLiveToken from '@src/client/subscriptions/useLiveToken';
 import useDimentions from '@src/client/hooks/useDimentions';
 import Loader from '@src/components/general/Loader/Loader';
+import lib from '@src/lib';
 
 import styles from './RingAbout.styles';
 import OffersList from './OffersList';
@@ -22,7 +23,7 @@ type Props = {
 };
 
 const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId }) => {
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType, isPhone } = useDimentions();
     const darkmode = useDarkMode();
 
     const tokenId = client.live.lastSwap.tokenIdWithOptionalOverride(manualTokenId);
@@ -49,6 +50,10 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
                     ...(screenType === 'phone' && {
                         ...styles.mobile,
                     }),
+                    // ...(!token && {
+                    //     background: lib.colors.gradient4,
+                    // }),
+                    boxShadow: lib.layout.boxShadow.dark,
                 }}
             >
                 <div style={styles.bodyContainer}>
@@ -58,10 +63,12 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
                 </div>
                 <OfferButton tokenId={tokenId} />
             </animated.div>
-
-            <SideCar tokenId={tokenId} />
-
-            <Caboose tokenId={tokenId.onlyItemId()} />
+            {!isPhone && (
+                <>
+                    <SideCar tokenId={tokenId} />
+                    <Caboose tokenId={tokenId.onlyItemId()} />
+                </>
+            )}
         </>
     ) : (
         <Loader />

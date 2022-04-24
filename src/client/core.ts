@@ -142,7 +142,7 @@ function createClientStoreAndActions2() {
                         if (stateUpdate.myUnclaimedItemOffers)
                             draft.myUnclaimedItemOffers = stateUpdate.myUnclaimedItemOffers;
 
-                        const epoch = get().epoch?.id;
+                        // const epoch = get().epoch?.id;
 
                         draft.notableSwaps = [
                             draft.recentSwaps,
@@ -155,11 +155,31 @@ function createClientStoreAndActions2() {
                             .flat()
                             .filter((x) => x !== undefined) as SwapData[];
 
-                        if (epoch) {
-                            draft.activeSwaps.filterInPlace(
-                                (x) => x.endingEpoch !== null && x.endingEpoch >= epoch,
-                            );
-                        }
+                        stateUpdate.activeItems?.forEach((x) => {
+                            const abc = get().liveTokens[x.tokenId];
+
+                            draft.liveTokens[x.tokenId] = {
+                                activeSwap: x,
+                                ...abc,
+
+                                ...x,
+                            };
+                        });
+
+                        stateUpdate.activeSwaps?.forEach((x) => {
+                            const abc = get().liveTokens[x.tokenId];
+                            draft.liveTokens[x.tokenId as NuggId] = {
+                                activeSwap: x,
+                                ...x,
+                                ...abc,
+                            };
+                        });
+
+                        // if (epoch) {
+                        //     draft.activeSwaps.filterInPlace(
+                        //         (x) => x.endingEpoch !== null && x.endingEpoch >= epoch,
+                        //     );
+                        // }
                     });
                 }
 
@@ -209,13 +229,13 @@ function createClientStoreAndActions2() {
 
                 function addNuggClaim(update: UnclaimedOffer): void {
                     set((draft) => {
-                        draft.myUnclaimedNuggOffers.unshift(update);
+                        if (update.isNugg()) draft.myUnclaimedNuggOffers.unshift(update);
                     });
                 }
 
                 function addItemClaim(update: UnclaimedOffer): void {
                     set((draft) => {
-                        draft.myUnclaimedItemOffers.unshift(update);
+                        if (update.isItem()) draft.myUnclaimedItemOffers.unshift(update);
                     });
                 }
 
@@ -286,7 +306,7 @@ function createClientStoreAndActions2() {
 
                             if (token && token.type === 'item' && !token.activeSwap) {
                                 const preloadedSwap = token.swaps.find(
-                                    (x) => x.sellingNuggId === tmpOffer.sellingTokenId,
+                                    (x) => x.owner === tmpOffer.sellingTokenId,
                                 );
 
                                 const { nextEpoch } = get();
@@ -308,6 +328,7 @@ function createClientStoreAndActions2() {
                     set((draft) => {
                         // const lifeData = wrapLifecycle(data);
                         if (JSON.stringify(data) !== JSON.stringify(get().liveTokens[tokenId])) {
+                            // @ts-ignore
                             draft.liveTokens[tokenId] = data;
                         }
                     });

@@ -18,7 +18,7 @@ import { buildTokenIdFactory } from '@src/prototypes';
 
 import styles from './SearchOverlay.styles';
 
-interface Item extends ItemIdFactory {
+interface Item extends ItemIdFactory<TokenIdFactoryBase> {
     activeIndex: number;
     tokenId: ItemId;
     position: number;
@@ -50,7 +50,6 @@ export const HotRotateOController = () => {
 };
 
 const StoageRenderItem: FC<ListRenderItemProps<Item, undefined, Item>> = ({ item, action }) => {
-    console.log('ayo1');
     return (
         <div
             style={{

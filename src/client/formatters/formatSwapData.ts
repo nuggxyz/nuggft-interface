@@ -3,53 +3,41 @@ import { SwapdataFragment, ItemswapdataFragment } from '@src/gql/types.generated
 import { SwapData } from '@src/client/interfaces';
 import { buildTokenIdFactory } from '@src/prototypes';
 
-export const formatSwapData = (
-    z:
-        | Pick<
-              SwapdataFragment | ItemswapdataFragment,
-              'endingEpoch' | '__typename' | 'eth' | 'leader'
-          >
-        | undefined
-        | null,
-    tokenId: string,
-): SwapData => {
-    const type = z!.__typename === 'Swap' ? ('nugg' as const) : ('item' as const);
+export const formatSwapData = <T extends TokenId>(
+    z: SwapdataFragment | ItemswapdataFragment,
+    tokenId: T,
+): SwapData & PickFromTokenId<T, { type: 'nugg' }, { type: 'item' }> => {
+    const a = {
+        eth: new EthInt(z?.eth || 0),
+        endingEpoch: z.endingEpoch ? Number(z.endingEpoch) : null,
+        epoch: z.epoch
+            ? {
+                  id: Number(z.epoch.id),
+                  startblock: Number(z.epoch.startblock),
+                  endblock: Number(z.epoch.endblock),
+                  status: z.epoch.status,
+              }
+            : null,
+        listDataType: 'swap' as const,
+        isBackup: false,
+        bottom: new EthInt(z.bottom),
+        num: 1,
+    };
 
-    let a;
-
-    if (type === 'item') {
-        a = {
-            type: 'item' as const,
-            id: tokenId.toItemId(),
-            tokenId: tokenId.toItemId(),
-            leader: z?.leader?.id.toNuggId(),
-        };
-    } else {
-        a = {
-            type: 'nugg' as const,
-            id: tokenId.toNuggId(),
-            tokenId: tokenId.toNuggId(),
-            leader: z?.leader?.id as AddressString,
-        };
+    if (tokenId.isItemId()) {
+        return buildTokenIdFactory({
+            ...a,
+            tokenId: tokenId as ItemId,
+            leader: z.leader?.id.toNuggId(),
+            owner: z.owner.id.toNuggId(),
+            count: 0,
+            isTryout: z.endingEpoch === null,
+        });
     }
-
     return buildTokenIdFactory({
         ...a,
-        eth: new EthInt(z?.eth || 0),
-        endingEpoch: z && z.endingEpoch ? Number(z.endingEpoch) : 0,
-        dotnuggRawCache: undefined,
-        listDataType: 'swap',
+        tokenId: tokenId as NuggId,
+        leader: z?.leader?.id as AddressString,
+        owner: z.owner.id as AddressString,
     });
 };
-
-// export const formatActiveSwapData = (
-//     ...args: Parameters<typeof formatSwapData>
-// ): ActiveSwapData | undefined => {
-//     const res = formatSwapData(...args);
-
-//     if (res.endingEpoch === null || !res.leader) {
-//         return undefined;
-//     }
-
-//     return res as ActiveSwapData;
-// };

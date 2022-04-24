@@ -56,13 +56,14 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
                           tokenId,
                           epoch,
                           eth: agency.eth,
-                          leader: agency.address,
+                          leader: agency.address as AddressString,
                           owner,
                           endingEpoch: epoch && epoch.id,
                           num: Number(0),
                           isActive: false,
                           bottom: new EthInt(0),
                           isBackup: true,
+                          listDataType: 'swap' as const,
                       })
                     : undefined;
 

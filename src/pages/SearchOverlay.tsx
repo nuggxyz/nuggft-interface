@@ -5,8 +5,8 @@ import { useMatch, useNavigate } from 'react-router-dom';
 import NuggDexSearchList from '@src/components/nugg/NuggDex/NuggDexSearchList/NuggDexSearchList';
 import useBlur from '@src/hooks/useBlur';
 import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
-import lib, { NLStyleSheetCreator } from '@src/lib';
-import { useOverlayRouteStyleWithOverride } from '@src/lib/router';
+import { NLStyleSheetCreator } from '@src/lib';
+import { useOverlayRouteStyle } from '@src/lib/router';
 import client from '@src/client';
 import useDimentions from '@src/client/hooks/useDimentions';
 
@@ -50,14 +50,7 @@ const SearchOverlay: FunctionComponent<Props> = () => {
 
     const blur = useBlur(['/view/*']);
 
-    const paramMatch = useMatch(`/view/${lib.constants.VIEWING_PREFIX}/*`);
-    const { isPhone } = useDimentions();
-
-    const showMobileOverlay = React.useMemo(() => {
-        return isPhone && !!paramMatch;
-    }, [paramMatch, isPhone]);
-
-    const overlay = useOverlayRouteStyleWithOverride(showMobileOverlay);
+    const overlay = useOverlayRouteStyle();
 
     return screenType === 'phone' ? (
         <>

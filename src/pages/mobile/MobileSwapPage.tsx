@@ -1,46 +1,41 @@
 import React from 'react';
 
 import client from '@src/client';
-import { SwapData } from '@src/client/interfaces';
 import SwapCard from '@src/components/mobile/SwapCard';
-import useNotableSwaps from '@src/client/hooks/useNotableSwaps';
 
 const SwapView = () => {
     const epoch = client.live.epoch.id();
 
-    const all = useNotableSwaps();
+    const abc = client.swaps.useSwapList();
 
     const sortedAll = React.useMemo(() => {
-        return all.reduce(
+        return abc.reduce(
             (
                 prev: {
-                    current: SwapData[];
-                    next: SwapData[];
-                    recent: SwapData[];
-                    potential: SwapData[];
+                    current: TokenId[];
+                    next: TokenId[];
+                    recent: TokenId[];
+                    potential: TokenId[];
                 },
                 curr,
             ) => {
                 if (epoch) {
                     if (curr.endingEpoch === epoch) {
-                        prev.current.push(curr);
+                        prev.current.push(curr.tokenId);
                     } else if (curr.endingEpoch === epoch + 1) {
-                        prev.next.push(curr);
-                    } else if (curr.endingEpoch === 0) {
-                        prev.potential.push(curr);
+                        prev.next.push(curr.tokenId);
+                    } else if (!curr.endingEpoch) {
+                        prev.potential.push(curr.tokenId);
                     } else if (curr.endingEpoch && curr.endingEpoch < epoch) {
-                        prev.recent.push(curr);
+                        prev.recent.push(curr.tokenId);
                     }
                 }
                 return prev;
             },
             { current: [], next: [], recent: [], potential: [] },
         );
-    }, [all, epoch]);
+    }, [abc, epoch]);
 
-    React.useEffect(() => {
-        console.log(all);
-    }, [all]);
     return (
         <div
             style={{
@@ -58,15 +53,15 @@ const SwapView = () => {
             <div style={{ marginTop: '80px' }} />
 
             {sortedAll.current.map((x) => (
-                <SwapCard tokenId={x.tokenId} key={`SwapCard-Current-${x.tokenId}`} />
+                <SwapCard tokenId={x} key={`SwapCard-Current-${x}`} />
             ))}
 
             {sortedAll.next.map((x) => (
-                <SwapCard tokenId={x.tokenId} key={`SwapCard-Next-${x.tokenId}`} />
+                <SwapCard tokenId={x} key={`SwapCard-Next-${x}`} />
             ))}
 
             {sortedAll.potential.map((x) => (
-                <SwapCard tokenId={x.tokenId} key={`SwapCard-Potential-${x.tokenId}`} />
+                <SwapCard tokenId={x} key={`SwapCard-Potential-${x}`} />
             ))}
         </div>
     );

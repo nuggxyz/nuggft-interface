@@ -84,7 +84,6 @@ export default () => {
                         .map((z) => {
                             return z.offers.map((y) => {
                                 return buildTokenIdFactory({
-                                    type: 'item' as const,
                                     tokenId: y.swap.sellingItem.id.toItemId(),
                                     endingEpoch:
                                         y && y.swap && y.swap.endingEpoch

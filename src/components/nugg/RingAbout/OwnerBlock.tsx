@@ -6,7 +6,7 @@ import useRemaining from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
-import { Lifecycle, LiveNuggItem, OfferData } from '@src/client/interfaces';
+import { Lifecycle, LiveNuggItem } from '@src/client/interfaces';
 import lib from '@src/lib';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
@@ -32,8 +32,13 @@ const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>>
 
 const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
-    const lifecycle = useLifecycle(token);
-    const leader = client.live.offers(tokenId).first() as unknown as OfferData;
+    const swap = client.swaps.useSwap(tokenId);
+
+    const lifecycle = useLifecycle(swap);
+
+    const leader = React.useMemo(() => {
+        return { user: swap?.leader, eth: swap?.eth };
+    }, [swap]);
 
     const darkmode = useDarkMode();
 
@@ -48,19 +53,19 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 
     return (
         <div style={styles.ownerBlockContainer}>
-            {token && lifecycle === Lifecycle.Stands && (
+            {swap && lifecycle === Lifecycle.Stands && (
                 <>
                     <Text
                         textStyle={{
                             color: lib.colors.white,
                         }}
                     >
-                        {token.type === 'item'
+                        {swap.type === 'item'
                             ? t`this item is owned by ${99999} nuggs and is not currently for sale`
                             : t`Nugg ${tokenId} is happily owned by`}
                     </Text>
 
-                    {token.type === 'nugg' && (
+                    {swap.type === 'nugg' && (
                         <Text
                             textStyle={{
                                 marginTop: '15px',
@@ -73,7 +78,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                     )}
                 </>
             )}
-            {token && lifecycle === Lifecycle.Cut && (
+            {swap && lifecycle === Lifecycle.Cut && (
                 <Text
                     textStyle={{
                         color: lib.colors.white,
@@ -119,11 +124,11 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             <CurrencyText
                                 textStyle={{ color: 'white', fontSize: '28px' }}
                                 image="eth"
-                                value={leader?.eth?.number}
+                                value={leader?.eth?.number || 0}
                                 decimals={3}
                             />
                             <Text textStyle={{ fontSize: '13px', color: 'white' }}>
-                                {`${leaderEns || leader?.user} is selling`}
+                                {`${leaderEns || leader?.user || ''} is selling`}
                             </Text>
                         </div>
                     ) : lifecycle === Lifecycle.Tryout &&

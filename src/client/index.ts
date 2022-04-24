@@ -13,6 +13,7 @@ import toast from './toast';
 import nuggbook from './nuggbook';
 import viewscreen from './viewscreen';
 import editscreen from './editscreen';
+import swaps from './swaps';
 
 export default {
     core,
@@ -196,4 +197,5 @@ export default {
     nuggbook,
     viewscreen,
     editscreen,
+    swaps,
 };

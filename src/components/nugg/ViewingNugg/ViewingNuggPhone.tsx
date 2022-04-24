@@ -114,7 +114,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                                 textShadow: lib.layout.boxShadow.dark,
                             }}
                         >
-                            {`${leaderEns || leader?.user} is selling`}
+                            {`${leaderEns || ''} is selling`}
                         </Text>
                     </div>
                 ) : lifecycle === Lifecycle.Tryout &&
@@ -173,7 +173,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                                 textShadow: lib.layout.boxShadow.dark,
                             }}
                         >
-                            {`${leaderEns || leader?.user} is leading`}
+                            {leaderEns ? `${leaderEns} is leading` : 'starting price'}
                         </Text>
                     </div>
                 )}

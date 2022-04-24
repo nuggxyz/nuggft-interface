@@ -49,8 +49,8 @@ const Colors = {
     gradientRadialTransparent:
         'radial-gradient(50% 50% at 50% 50%, rgb(80, 144, 234, .1) 0%, rgba(80, 144, 234, .34) 100%)',
     gradientRadialPurpleTransparent:
-        'radial-gradient(50% 50% at 50% 50%, #8A2BE211 0%, #8A2BE266 100%)',
-
+        'radial-gradient(50% 50% at 50% 50%, rgb(80, 144, 234, .1) 0%, #788796 100%)',
+    gradient4: 'rgb(86, 90, 105)',
     background: 'white',
     shadowNuggPink: '#b347a1',
     shadowNuggBlue: '#255aa8',

@@ -16,7 +16,7 @@ import { ListRenderItemProps } from '@src/components/general/List/List';
 import { Chain } from '@src/web3/core/interfaces';
 import lib, { isUndefinedOrNull, isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import { Address } from '@src/classes/Address';
-import { LiveItem, LiveItemSwap, LiveSwap, LiveToken } from '@src/client/interfaces';
+import { LiveItem, LiveToken, SwapData } from '@src/client/interfaces';
 import useDimentions from '@src/client/hooks/useDimentions';
 import Label from '@src/components/general/Label/Label';
 import Button from '@src/components/general/Buttons/Button/Button';
@@ -24,7 +24,7 @@ import globalStyles from '@src/lib/globalStyles';
 
 import styles from './ViewingNugg.styles';
 
-type LiveSwapWithTryout = LiveSwap & {
+type SwapDataWithTryout = SwapData & {
     tryout?: LiveItem['tryout'];
 };
 
@@ -47,7 +47,7 @@ const SwapButton = ({
     navigate,
     tokenId,
 }: {
-    item: LiveSwapWithTryout | undefined;
+    item: SwapDataWithTryout | undefined;
     epoch: number;
     navigate: NavigateFunction;
     tokenId: string;
@@ -75,7 +75,7 @@ const SwapButton = ({
     ) : null;
 };
 
-const SwapDesc = ({ item, epoch }: { item: LiveSwapWithTryout; epoch: number }) => {
+const SwapDesc = ({ item, epoch }: { item: SwapDataWithTryout; epoch: number }) => {
     const blocknum = client.live.blocknum();
 
     return epoch && blocknum ? (
@@ -93,7 +93,7 @@ const SwapDesc = ({ item, epoch }: { item: LiveSwapWithTryout; epoch: number }) 
 
 const SwapItem: FunctionComponent<
     ListRenderItemProps<
-        LiveSwapWithTryout,
+        SwapDataWithTryout,
         {
             chainId: Chain;
             provider: Web3Provider;
@@ -110,7 +110,7 @@ const SwapItem: FunctionComponent<
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         item.isItem() ? 'nugg' : extraData?.provider,
-        item.leader,
+        item.leader || '',
     );
 
     const epoch = client.live.epoch.id();
@@ -300,7 +300,7 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
     const epoch = client.live.epoch.id();
 
     const { listData } = useMemo(() => {
-        const _listData: { title: string; items: LiveSwapWithTryout[] }[] = [];
+        const _listData: { title: string; items: SwapDataWithTryout[] }[] = [];
         let _activeSwap = undefined;
         let tempSwaps = token?.swaps ? [...token.swaps] : [];
         if (token && token.activeSwap && token.activeSwap.tokenId) {
@@ -309,8 +309,8 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
             _activeSwap = token.activeSwap;
         }
         if (token && token.type === 'item') {
-            if ((token?.swaps as LiveSwapWithTryout[]).find((swap) => swap.endingEpoch === null)) {
-                const tempTemp: LiveItemSwap[] = tempSwaps as LiveItemSwap[];
+            if ((token?.swaps as SwapDataWithTryout[]).find((swap) => swap.endingEpoch === null)) {
+                const tempTemp: SwapData[] = tempSwaps as SwapData[];
                 const count = tempTemp.find((x) => x.isTryout);
                 if (count) {
                     tempSwaps = tempTemp.filter((x) => !x.isTryout);
