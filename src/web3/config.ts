@@ -112,17 +112,17 @@ export const calculateEpochId = (blocknum: number, chainId: Chain) => {
 // QmXAhEeSBXYA227ER3YK9NBE57HhpVGGWeYWQhic4nPZ6M
 
 export const GRAPH_ENPOINTS = {
-    [Chain.MAINNET]: `https://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.MAINNET].GraphId}`,
-    [Chain.RINKEBY]: `https://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.RINKEBY].GraphId}`,
-    [Chain.ROPSTEN]: `https://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.ROPSTEN].GraphId}`,
-    [Chain.GOERLI]: `https://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.GOERLI].GraphId}`,
+    [Chain.MAINNET]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-mainnet`,
+    [Chain.RINKEBY]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby`,
+    [Chain.ROPSTEN]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
+    [Chain.GOERLI]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli`,
 };
 
 export const GRAPH_WSS_ENDPOINTS = {
-    [Chain.MAINNET]: `wss://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.MAINNET].GraphId}`,
-    [Chain.RINKEBY]: `wss://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.RINKEBY].GraphId}`,
-    [Chain.ROPSTEN]: `wss://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.ROPSTEN].GraphId}`,
-    [Chain.GOERLI]: `wss://api.thegraph.com/subgraphs/id/${CONTRACTS[Chain.GOERLI].GraphId}`,
+    [Chain.MAINNET]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-mainnet`,
+    [Chain.RINKEBY]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby`,
+    [Chain.ROPSTEN]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
+    [Chain.GOERLI]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli`,
 };
 
 export const INFURA_URLS = {
