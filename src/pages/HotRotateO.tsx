@@ -277,82 +277,80 @@ const HotRotateO = () => {
     return (
         <animated.div style={{ ...styles.container, ...style }}>
             {tokenId && items && (
-                <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
-                    <RotateOViewer items={items} tokenId={tokenId} />
-
-                    {error && <Label text={error.message} />}
-
-                    {tokenId && openEditScreen && (
-                        <List
-                            data={items.active}
-                            label={t`Displayed`}
-                            labelStyle={{
-                                color: 'black',
-                            }}
-                            action={(item) => {
-                                if (items)
-                                    setItems({
-                                        active: [
-                                            ...items.active.filter(
-                                                (x) => x.feature !== item.feature,
-                                            ),
-                                        ],
-                                        hidden: [item, ...items.hidden],
-                                        duplicates: items.duplicates,
-                                    });
-                            }}
-                            extraData={{ items, type: 'displayed' as const }}
-                            RenderItem={RenderItem}
-                            horizontal
-                            style={{
-                                width: '100%',
-                                background: lib.colors.transparentLightGrey,
-                                height: '140px',
-                                padding: '0rem .4rem',
-                                borderRadius: lib.layout.borderRadius.medium,
-                            }}
-                        />
-                    )}
-                    {tokenId && openEditScreen && (
-                        <List
-                            data={items.hidden}
-                            label={t`In storage`}
-                            labelStyle={{
-                                color: 'black',
-                            }}
-                            extraData={{ items, type: 'storage' as const }}
-                            RenderItem={RenderItem}
-                            horizontal
-                            action={(item) => {
-                                if (items)
-                                    setItems({
-                                        active: [
-                                            ...items.active.filter(
-                                                (x) => x.feature !== item.feature,
-                                            ),
-                                            item,
-                                        ],
-                                        hidden: [
-                                            ...items.hidden.filter(
-                                                (x) => x.tokenId !== item.tokenId,
-                                            ),
-                                            ...items.active.filter(
-                                                (x) => x.feature === item.feature,
-                                            ),
-                                        ],
-                                        duplicates: items.duplicates,
-                                    });
-                            }}
-                            style={{
-                                width: '100%',
-                                background: lib.colors.transparentLightGrey,
-                                height: '140px',
-                                padding: '0rem .4rem',
-                                borderRadius: lib.layout.borderRadius.medium,
-                            }}
-                        />
-                    )}
-                    {/*
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    {revert && <Label text={revert.message} />}
+                    <div>
+                        {tokenId && openEditScreen && (
+                            <List
+                                data={items.active}
+                                label={t`Displayed`}
+                                labelStyle={{
+                                    color: 'black',
+                                }}
+                                action={(item) => {
+                                    if (items)
+                                        setItems({
+                                            active: [
+                                                ...items.active.filter(
+                                                    (x) => x.feature !== item.feature,
+                                                ),
+                                            ],
+                                            hidden: [item, ...items.hidden],
+                                            duplicates: items.duplicates,
+                                        });
+                                }}
+                                extraData={{ items, type: 'displayed' as const }}
+                                RenderItem={RenderItem}
+                                horizontal
+                                style={{
+                                    width: '100%',
+                                    background: lib.colors.transparentLightGrey,
+                                    height: '140px',
+                                    padding: '0rem .4rem',
+                                    borderRadius: lib.layout.borderRadius.medium,
+                                }}
+                            />
+                        )}
+                        {tokenId && openEditScreen && (
+                            <List
+                                data={items.hidden}
+                                label={t`In storage`}
+                                labelStyle={{
+                                    color: 'black',
+                                }}
+                                extraData={{ items, type: 'storage' as const }}
+                                RenderItem={RenderItem}
+                                horizontal
+                                action={(item) => {
+                                    if (items)
+                                        setItems({
+                                            active: [
+                                                ...items.active.filter(
+                                                    (x) => x.feature !== item.feature,
+                                                ),
+                                                item,
+                                            ],
+                                            hidden: [
+                                                ...items.hidden.filter(
+                                                    (x) => x.tokenId !== item.tokenId,
+                                                ),
+                                                ...items.active.filter(
+                                                    (x) => x.feature === item.feature,
+                                                ),
+                                            ],
+                                            duplicates: items.duplicates,
+                                        });
+                                }}
+                                style={{
+                                    width: '100%',
+                                    background: lib.colors.transparentLightGrey,
+                                    height: '140px',
+                                    padding: '0rem .4rem',
+                                    borderRadius: lib.layout.borderRadius.medium,
+                                }}
+                            />
+                        )}
+                        {/*
                     <List
                         data={items.hidden}
                         label={t`In storage`}
@@ -380,41 +378,43 @@ const HotRotateO = () => {
                             borderRadius: lib.layout.borderRadius.medium,
                         }}
                     /> */}
-                    <div
-                        style={{
-                            display: 'flex',
-                            width: '100%',
-                            justifyContent: 'space-between',
-                            marginTop: '.5rem',
-                        }}
-                    >
-                        <Button
-                            buttonStyle={{
-                                width: '40%',
-                                borderRadius: lib.layout.borderRadius.large,
+                        <div
+                            style={{
+                                display: 'flex',
+                                width: '100%',
+                                justifyContent: 'space-between',
+                                marginTop: '.5rem',
                             }}
-                            textStyle={{ color: lib.colors.nuggRedText }}
-                            label={t`Cancel`}
-                            onClick={() => {
-                                navigate(-1);
-                            }}
-                        />
+                        >
+                            <Button
+                                buttonStyle={{
+                                    width: '40%',
+                                    borderRadius: lib.layout.borderRadius.large,
+                                }}
+                                textStyle={{ color: lib.colors.nuggRedText }}
+                                label={t`Cancel`}
+                                onClick={() => {
+                                    navigate(-1);
+                                }}
+                            />
 
-                        <Button
-                            buttonStyle={{
-                                width: '40%',
-                                borderRadius: lib.layout.borderRadius.large,
-                            }}
-                            textStyle={{ color: lib.colors.nuggBlueText }}
-                            disabled={!(algo && algo[1] && algo[1].length > 0)}
-                            label={t`Save`}
-                            onClick={() => {
-                                if (algo) {
-                                    void send(nuggft.populateTransaction.rotate(...algo));
-                                }
-                            }}
-                        />
+                            <Button
+                                buttonStyle={{
+                                    width: '40%',
+                                    borderRadius: lib.layout.borderRadius.large,
+                                }}
+                                textStyle={{ color: lib.colors.nuggBlueText }}
+                                disabled={!(algo && algo[1] && algo[1].length > 0)}
+                                label={t`Save`}
+                                onClick={() => {
+                                    if (algo) {
+                                        void send(nuggft.populateTransaction.rotate(...algo));
+                                    }
+                                }}
+                            />
+                        </div>
                     </div>
+                    <RotateOViewer items={items} tokenId={tokenId} />
                 </div>
             )}
         </animated.div>
