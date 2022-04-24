@@ -6,30 +6,50 @@ import shallow from 'zustand/shallow';
 
 import { EthInt } from '@src/classes/Fraction';
 
-interface SwapDataBase extends TokenIdFactory {
+import { EpochData } from './interfaces';
+
+interface SwapDataBase extends TokenIdFactoryBase {
     listDataType: 'swap';
     eth: EthInt;
+    epoch: EpochData | null;
     endingEpoch: number | null;
-    dotnuggRawCache: undefined;
-    leader: AddressString | NuggId;
+    leader?: unknown;
+    owner: unknown;
+    num: number | null;
+    bottom: EthInt;
+    isBackup: boolean;
+    count?: unknown;
+    isTryout?: unknown;
 }
 
-export type SwapData = TokenIdFactoryCreator<
-    SwapDataBase,
-    { leader: AddressString },
-    { leader: NuggId }
->;
+interface SwapDataBase__Nugg {
+    leader?: AddressString;
+    owner: AddressString;
+}
+
+interface SwapDataBase__Item {
+    leader?: NuggId;
+    owner: NuggId;
+    count: number;
+    isTryout: boolean;
+}
+
+export type SwapData = TokenIdFactoryCreator<SwapDataBase, SwapDataBase__Nugg, SwapDataBase__Item>;
 
 const store = create(
     combine(
         {
-            data: {} as { [_: TokenId]: SwapData },
+            data: {} as TokenIdDictionary<SwapData>,
         },
         (set, get) => {
             function updateSingle(data: SwapData): void {
                 set((draft) => {
                     if (JSON.stringify(data) !== JSON.stringify(get().data[data.tokenId])) {
-                        draft.data[data.tokenId] = data;
+                        if (data.isItem()) {
+                            draft.data[data.tokenId] = data;
+                        } else {
+                            draft.data[data.tokenId] = data;
+                        }
                     }
                 });
             }
@@ -49,10 +69,17 @@ const store = create(
 );
 
 export default {
-    update: () => store((x) => x.update),
-    useSwap: (tokenId: TokenId | undefined) =>
+    useUpdateSwaps: () => store((x) => x.update),
+    useSwapList: () =>
+        store((x) =>
+            Object.values(x.data).map((y) => ({ tokenId: y.tokenId, endingEpoch: y.endingEpoch })),
+        ),
+    useSwap: <A extends TokenId>(tokenId: A | undefined) =>
         store(
-            useCallback((state) => (tokenId ? state.data[tokenId] : undefined), [tokenId]),
+            useCallback(
+                (state) => (tokenId !== undefined ? state.data[tokenId] : undefined),
+                [tokenId],
+            ),
             shallow,
         ),
     ...store,

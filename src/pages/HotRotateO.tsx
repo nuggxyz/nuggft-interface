@@ -18,7 +18,7 @@ import { buildTokenIdFactory } from '@src/prototypes';
 
 import styles from './SearchOverlay.styles';
 
-interface Item extends ItemIdFactory {
+interface Item extends ItemIdFactory<TokenIdFactoryBase> {
     activeIndex: number;
     tokenId: ItemId;
     position: number;

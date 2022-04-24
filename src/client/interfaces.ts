@@ -9,7 +9,7 @@ import { NuggftV1 } from '../typechain/NuggftV1';
 
 import { SwapRoutes } from './router';
 
-interface OfferDataBase extends TokenIdFactory {
+interface OfferDataBase extends TokenIdFactoryBase {
     user: AddressString | NuggId;
     eth: EthInt;
     txhash?: string;
@@ -23,7 +23,7 @@ export type OfferData = TokenIdFactoryCreator<
     { sellingTokenId: NuggId; user: NuggId }
 >;
 
-export interface ListDataBase extends TokenIdFactory {
+export interface ListDataBase extends TokenIdFactoryBase {
     listDataType: 'swap' | 'basic';
     dotnuggRawCache?: Base64EncodedSvg;
 }
@@ -82,7 +82,7 @@ export interface MyNuggsData {
     }[];
 }
 
-export interface UnclaimedOfferBase extends TokenIdFactory {
+export interface UnclaimedOfferBase extends TokenIdFactoryBase {
     endingEpoch: number | null;
     eth: EthInt;
     leader: boolean;
@@ -202,7 +202,11 @@ export type SearchResults = BasicData[];
 
 export type Dimentions = { height: number; width: number };
 
-export interface LiveNuggItem extends ItemIdFactory {
+export interface Live extends TokenIdFactoryBase {
+    activeSwap?: SwapData;
+}
+
+export interface LiveNuggItem extends ItemIdFactory<TokenIdFactoryBase> {
     activeSwap: string | undefined;
     feature: number;
     position: number;
@@ -210,7 +214,7 @@ export interface LiveNuggItem extends ItemIdFactory {
     displayed: boolean;
 }
 
-export interface LiveNugg extends NuggIdFactory {
+export interface LiveNugg extends NuggIdFactory<Live> {
     activeLoan: boolean | null;
     activeSwap?: IsolateNuggIdFactory<SwapData>;
     items: LiveNuggItem[];
@@ -223,7 +227,7 @@ export interface LiveNugg extends NuggIdFactory {
 
 export type TryoutData = { nugg: NuggId; eth: EthInt };
 
-export interface LiveItem extends ItemIdFactory {
+export interface LiveItem extends ItemIdFactory<Live> {
     activeSwap?: IsolateItemIdFactory<SwapData>;
     upcomingActiveSwap?: IsolateItemIdFactory<SwapData>;
     swaps: IsolateItemIdFactory<SwapData>[];

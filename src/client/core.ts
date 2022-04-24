@@ -157,7 +157,8 @@ function createClientStoreAndActions2() {
 
                         stateUpdate.activeItems?.forEach((x) => {
                             const abc = get().liveTokens[x.tokenId];
-                            draft.liveTokens[x.tokenId as ItemId] = {
+
+                            draft.liveTokens[x.tokenId] = {
                                 activeSwap: x,
                                 ...abc,
 

@@ -31,6 +31,8 @@ const mergeUnique = <T extends SwapData>(arr: T[]) => {
 export default () => {
     const updateProtocol = client.mutate.updateProtocol();
 
+    const updateSwaps = client.swaps.useUpdateSwaps();
+
     useLiveProtocolSubscription({
         shouldResubscribe: true,
         fetchPolicy: 'network-only',
@@ -75,6 +77,78 @@ export default () => {
                     incomingItems: IsolateItemIdFactory<SwapData>[];
                 };
 
+                const recentItems = protocol.lastEpoch.itemSwaps.map((z) => {
+                    return formatSwapData(z, z.sellingItem.id.toItemId());
+                });
+
+                const recentSwaps = protocol.lastEpoch.swaps.map((z) => {
+                    return formatSwapData(z, z.nugg.id.toNuggId());
+                });
+
+                const potentialItems = mergeUnique(sortedPotentialItems.potentialItems);
+                const activeNuggs = protocol.activeNuggs.reduce(
+                    (
+                        prev: {
+                            activeSwaps: IsolateNuggIdFactory<SwapData>[];
+                            potentialSwaps: IsolateNuggIdFactory<SwapData>[];
+                        },
+                        curr,
+                    ) => {
+                        if (curr.activeSwap) {
+                            const val = formatSwapData(curr.activeSwap, curr.id.toNuggId());
+                            if (!val.endingEpoch) {
+                                prev.potentialSwaps.push(val);
+                            } else prev.activeSwaps.push(val);
+                        }
+
+                        return prev;
+                    },
+                    {
+                        activeSwaps: [],
+                        potentialSwaps: [],
+                    },
+                );
+
+                const activeItems = protocol.activeItems.reduce(
+                    (
+                        prev: {
+                            activeItems: IsolateItemIdFactory<SwapData>[];
+                        },
+                        curr,
+                    ) => {
+                        if (curr.activeSwap) {
+                            const val = formatSwapData(
+                                curr.activeSwap,
+                                curr.activeSwap?.sellingItem.id.toItemId() || '',
+                            );
+
+                            if (val) prev.activeItems.push(val);
+                        }
+
+                        if (curr.upcomingActiveSwap) {
+                            const val = formatSwapData(
+                                curr.upcomingActiveSwap,
+                                curr.upcomingActiveSwap?.sellingItem.id.toItemId() || '',
+                            );
+
+                            if (val) prev.activeItems.push(val);
+                        }
+
+                        return prev;
+                    },
+                    {
+                        activeItems: sortedPotentialItems.incomingItems,
+                    },
+                );
+
+                updateSwaps([
+                    ...recentSwaps,
+                    ...recentItems,
+                    ...potentialItems,
+                    ...Object.values(activeNuggs).flat(),
+                    ...Object.values(activeItems).flat(),
+                ]);
+
                 updateProtocol({
                     stake: {
                         staked,
@@ -82,66 +156,11 @@ export default () => {
                         eps: EthInt.fromFraction(new Fraction(staked, shares)),
                     },
                     totalNuggs: Number(protocol.totalNuggs),
-                    recentSwaps: protocol.lastEpoch.swaps.map((z) => {
-                        return formatSwapData(z, z.nugg.id.toNuggId());
-                    }),
-                    recentItems: protocol.lastEpoch.itemSwaps.map((z) => {
-                        return formatSwapData(z, z.sellingItem.id.toItemId());
-                    }),
-                    potentialItems: mergeUnique(sortedPotentialItems.potentialItems),
-                    ...protocol.activeNuggs.reduce(
-                        (
-                            prev: {
-                                activeSwaps: IsolateNuggIdFactory<SwapData>[];
-                                potentialSwaps: IsolateNuggIdFactory<SwapData>[];
-                            },
-                            curr,
-                        ) => {
-                            if (curr.activeSwap) {
-                                const val = formatSwapData(curr.activeSwap, curr.id.toNuggId());
-                                if (!val.endingEpoch) {
-                                    prev.potentialSwaps.push(val);
-                                } else prev.activeSwaps.push(val);
-                            }
-
-                            return prev;
-                        },
-                        {
-                            activeSwaps: [],
-                            potentialSwaps: [],
-                        },
-                    ),
-                    ...protocol.activeItems.reduce(
-                        (
-                            prev: {
-                                activeItems: IsolateItemIdFactory<SwapData>[];
-                            },
-                            curr,
-                        ) => {
-                            if (curr.activeSwap) {
-                                const val = formatSwapData(
-                                    curr.activeSwap,
-                                    curr.activeSwap?.sellingItem.id.toItemId() || '',
-                                );
-
-                                if (val) prev.activeItems.push(val);
-                            }
-
-                            if (curr.upcomingActiveSwap) {
-                                const val = formatSwapData(
-                                    curr.upcomingActiveSwap,
-                                    curr.upcomingActiveSwap?.sellingItem.id.toItemId() || '',
-                                );
-
-                                if (val) prev.activeItems.push(val);
-                            }
-
-                            return prev;
-                        },
-                        {
-                            activeItems: sortedPotentialItems.incomingItems,
-                        },
-                    ),
+                    recentSwaps,
+                    recentItems,
+                    potentialItems,
+                    ...activeNuggs,
+                    ...activeItems,
                 });
             }
         },
