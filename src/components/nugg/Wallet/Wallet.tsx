@@ -7,6 +7,7 @@ import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
 import lib from '@src/lib';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import useDimentions from '@src/client/hooks/useDimentions';
+import HomeTabMobile from '@src/components/mobile/MobileWallet';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
 import ConnectTab from './tabs/ConnectTab/ConnectTab';
@@ -57,14 +58,16 @@ const Wallet: FunctionComponent<Props> = () => {
                           },
                       ]
                     : [
-                          {
-                              // look up mfer
-                              label: t`Active`,
-                              comp: React.memo(ActiveTab),
-                          },
+                          ...((screenType !== 'phone' && [
+                              {
+                                  label: t`Active`,
+                                  comp: React.memo(ActiveTab),
+                              },
+                          ]) ||
+                              []),
                           {
                               label: t`Home`,
-                              comp: React.memo(HomeTab),
+                              comp: React.memo(screenType !== 'phone' ? HomeTab : HomeTabMobile),
                           },
                           {
                               label: t`Claims`,

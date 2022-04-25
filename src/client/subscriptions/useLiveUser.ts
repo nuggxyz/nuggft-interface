@@ -6,6 +6,7 @@ import client from '@src/client';
 import { useLiveUserSubscription } from '@src/gql/types.generated';
 import { Address } from '@src/classes/Address';
 import { buildTokenIdFactory } from '@src/prototypes';
+import formatNuggItems from '@src/client/formatters/formatNuggItems';
 
 export default () => {
     const address = web3.hook.usePriorityAccount();
@@ -46,6 +47,7 @@ export default () => {
                             activeSwap: !!z.activeSwap,
                             pendingClaim: z.pendingClaim,
                             lastTransfer: z.lastTransfer,
+                            items: formatNuggItems(z),
                             unclaimedOffers: z.offers.map((y) => {
                                 return {
                                     itemId: y.swap.sellingItem.id.toItemId(),

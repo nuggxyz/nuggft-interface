@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import client from '@src/client';
-import { SwapData } from '@src/client/interfaces';
+import { SwapData } from '@src/client/swaps';
 import { useLiveProtocolSubscription } from '@src/gql/types.generated';
 import { formatSwapData } from '@src/client/formatters/formatSwapData';
 
@@ -29,7 +29,7 @@ const mergeUnique = <T extends SwapData>(arr: T[]) => {
 };
 
 export default () => {
-    const updateProtocol = client.mutate.updateProtocol();
+    const updateProtocolSimple = client.mutate.updateProtocolSimple();
 
     const updateSwaps = client.swaps.useUpdateSwaps();
 
@@ -140,16 +140,25 @@ export default () => {
                         activeItems: sortedPotentialItems.incomingItems,
                     },
                 );
+                console.log([
+                    ...recentSwaps,
+                    ...recentItems,
+                    ...potentialItems,
+
+                    ...Object.values(activeNuggs).flat(),
+                    ...Object.values(activeItems).flat(),
+                ]);
 
                 updateSwaps([
                     ...recentSwaps,
                     ...recentItems,
                     ...potentialItems,
+
                     ...Object.values(activeNuggs).flat(),
                     ...Object.values(activeItems).flat(),
                 ]);
 
-                updateProtocol({
+                updateProtocolSimple({
                     stake: {
                         staked,
                         shares,

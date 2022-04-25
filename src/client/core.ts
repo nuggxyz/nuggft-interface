@@ -1,19 +1,18 @@
 /* eslint-disable no-param-reassign */
-import create, { State, StateCreator } from 'zustand';
-import produce, { Draft, enableMapSet } from 'immer';
+import create from 'zustand';
+import { combine, subscribeWithSelector } from 'zustand/middleware';
 
 import { Chain } from '@src/web3/core/interfaces';
 import web3 from '@src/web3';
 import { SupportedLocale } from '@src/lib/i18n/locales';
-import { FeedMessage } from '@src/interfaces/feed';
 import { parseItmeIdToNum } from '@src/lib/index';
 
 import {
+    ClientState,
     UnclaimedOffer,
     Dimentions,
     SearchResults,
     LiveToken,
-    ClientState,
     OfferData,
     LoanData,
     MyNuggsData,
@@ -22,36 +21,36 @@ import {
     Theme,
 } from './interfaces';
 
-enableMapSet();
+// enableMapSet();
 
-const immer__middleware = <T extends State>(
-    fn: StateCreator<T, (partial: ((draft: Draft<T>) => void) | T, replace?: boolean) => void>,
-): StateCreator<T> =>
-    function immer(set, get, api) {
-        return fn(
-            (partial, replace) => {
-                const nextState =
-                    typeof partial === 'function'
-                        ? produce(partial as (state: Draft<T>) => T)
-                        : partial;
-                return set(nextState, replace);
-            },
-            get,
-            api,
-        );
-    };
+// const immer__middleware = <T extends State>(
+//     fn: StateCreator<T, (partial: ((draft: Draft<T>) => void) | T, replace?: boolean) => void>,
+// ): StateCreator<T> =>
+//     function immer(set, get, api) {
+//         return fn(
+//             (partial, replace) => {
+//                 const nextState =
+//                     typeof partial === 'function'
+//                         ? produce(partial as (state: Draft<T>) => T)
+//                         : partial;
+//                 return set(nextState, replace);
+//             },
+//             get,
+//             api,
+//         );
+//     };
 
-const logger__middleware = <T extends State>(fn: StateCreator<T>): StateCreator<T> =>
-    function log(set, get, api) {
-        return fn(
-            (args) => {
-                set(args);
-                // console.log('new state', get());
-            },
-            get,
-            api,
-        );
-    };
+// const logger__middleware = <T extends State>(fn: StateCreator<T>): StateCreator<T> =>
+//     function log(set, get, api) {
+//         return fn(
+//             (args) => {
+//                 set(args);
+//                 // console.log('new state', get());
+//             },
+//             get,
+//             api,
+//         );
+//     };
 
 // function createClientStoreAndActions3() {
 //     return create(
@@ -77,11 +76,57 @@ const logger__middleware = <T extends State>(fn: StateCreator<T>): StateCreator<
 //     );
 // }
 
-function createClientStoreAndActions2() {
-    return create<ClientState>(
-        // devtools(
-        logger__middleware(
-            immer__middleware((set, get) => {
+const core = create(
+    subscribeWithSelector(
+        combine(
+            {
+                stake: undefined,
+                myUnclaimedOffers: [],
+                nuggft: undefined,
+                epoch: undefined,
+                nextEpoch: undefined,
+                isMobileViewOpen: false,
+                isMobileWalletOpen: false,
+                route: undefined,
+                lastSwap: undefined,
+                isViewOpen: false,
+                editingNugg: undefined,
+                liveOffers: {},
+                myNuggs: [],
+                myUnclaimedNuggOffers: [],
+                myUnclaimedItemOffers: [],
+                myRecents: new Set(),
+                subscriptionQueue: [],
+                myLoans: [],
+                activating: false,
+                blocknum: undefined,
+                error: undefined,
+                manualPriority: undefined,
+                liveTokens: {},
+                darkmode: {
+                    user: Theme.LIGHT,
+                    media: undefined,
+                },
+                locale: undefined,
+                searchFilter: {
+                    target: undefined,
+                    viewing: undefined,
+                    sort: undefined,
+                    searchValue: undefined,
+                },
+                health: {
+                    lastBlockRpc: 0,
+                    lastBlockGraph: 0,
+                },
+                dimentions: { width: window.innerWidth, height: window.innerHeight },
+                totalNuggs: 0,
+                activeSearch: [],
+                pageIsLoaded: false,
+                started: false,
+            } as ClientState,
+
+            // devtools(
+            (set, get) => {
                 function updateBlocknum(blocknum: number, chainId: Chain, startup = false) {
                     const epochId = web3.config.calculateEpochId(blocknum, chainId);
 
@@ -116,6 +161,19 @@ function createClientStoreAndActions2() {
                     });
                 }
 
+                function updateProtocolSimple(
+                    upd: Pick<ClientStateUpdate, 'epoch' | 'stake' | 'totalNuggs' | 'health'>,
+                ): void {
+                    set((draft) => {
+                        if (upd.epoch) draft.epoch = upd.epoch;
+                        if (upd.stake) draft.stake = upd.stake;
+                        if (upd.health?.lastBlockGraph)
+                            draft.health.lastBlockGraph = upd.health.lastBlockGraph;
+                        if (upd.totalNuggs || upd.totalNuggs === 0)
+                            draft.totalNuggs = upd.totalNuggs;
+                    });
+                }
+
                 function updateProtocol(stateUpdate: ClientStateUpdate): void {
                     set((draft) => {
                         if (stateUpdate.health?.lastBlockGraph)
@@ -140,6 +198,12 @@ function createClientStoreAndActions2() {
                             draft.myUnclaimedNuggOffers = stateUpdate.myUnclaimedNuggOffers;
                         if (stateUpdate.myUnclaimedItemOffers)
                             draft.myUnclaimedItemOffers = stateUpdate.myUnclaimedItemOffers;
+
+                        if (stateUpdate.myUnclaimedNuggOffers || stateUpdate.myUnclaimedItemOffers)
+                            draft.myUnclaimedOffers = [
+                                ...stateUpdate.myUnclaimedItemOffers,
+                                ...stateUpdate.myUnclaimedNuggOffers,
+                            ];
                     });
                 }
 
@@ -236,21 +300,10 @@ function createClientStoreAndActions2() {
                     });
                 }
 
-                function addFeedMessage(update: FeedMessage): void {
-                    set((draft) => {
-                        draft.feedMessages.mergeInPlace(
-                            [update],
-                            'id',
-                            () => false,
-                            (a, b) => (a.block > b.block ? -1 : 1),
-                        );
-                    });
-                }
-
                 function updateOffers(tokenId: TokenId, offers: OfferData[]): void {
                     set((draft) => {
-                        if (!get().liveOffers[tokenId]) draft.liveOffers[tokenId] = [];
-                        if (!get().liveOffers[tokenId]) draft.liveOffers[tokenId] = [];
+                        if (!draft.liveOffers[tokenId]) draft.liveOffers[tokenId] = [];
+                        if (!draft.liveOffers[tokenId]) draft.liveOffers[tokenId] = [];
 
                         draft.liveOffers[tokenId].mergeInPlace(
                             offers,
@@ -349,60 +402,6 @@ function createClientStoreAndActions2() {
                 };
 
                 return {
-                    stake: undefined,
-                    nuggft: undefined,
-                    epoch: undefined,
-                    nextEpoch: undefined,
-                    isMobileViewOpen: false,
-                    isMobileWalletOpen: false,
-                    epoch__id: 0,
-                    route: undefined,
-                    lastView: undefined,
-                    lastSwap: undefined,
-                    isViewOpen: false,
-                    editingNugg: undefined,
-                    activeSwaps: [],
-                    activeItems: [],
-                    liveOffers: {},
-                    myNuggs: [],
-                    feedMessages: [],
-                    recentSwaps: [],
-                    recentItems: [],
-                    potentialSwaps: [],
-                    potentialItems: [],
-                    incomingSwaps: [],
-                    notableSwaps: [],
-                    incomingItems: [],
-                    myUnclaimedNuggOffers: [],
-                    myUnclaimedItemOffers: [],
-                    myRecents: new Set(),
-                    subscriptionQueue: [],
-                    myLoans: [],
-                    activating: false,
-                    blocknum: undefined,
-                    error: undefined,
-                    manualPriority: undefined,
-                    liveTokens: {},
-                    darkmode: {
-                        user: Theme.LIGHT,
-                        media: undefined,
-                    },
-                    locale: undefined,
-                    searchFilter: {
-                        target: undefined,
-                        viewing: undefined,
-                        sort: undefined,
-                        searchValue: undefined,
-                    },
-                    health: {
-                        lastBlockRpc: 0,
-                        lastBlockGraph: 0,
-                    },
-                    dimentions: { width: window.innerWidth, height: window.innerHeight },
-                    totalNuggs: 0,
-                    activeSearch: [],
-                    pageIsLoaded: false,
-                    started: false,
                     updateBlocknum,
                     updateProtocol,
                     removeLoan,
@@ -424,18 +423,19 @@ function createClientStoreAndActions2() {
                     updateSearchFilterSearchValue,
                     updateUserDarkMode,
                     updateMediaDarkMode,
-                    addFeedMessage,
                     setLastSwap,
                     setActiveSearch,
                     addToSubscritpionQueue,
                     updateDimentions,
+                    updateProtocolSimple,
                 };
-            }),
+            },
+            // ),
         ),
-        // ),
-    );
-}
-const core = createClientStoreAndActions2();
+    ),
+);
+
+core.subscribe((state) => state.blocknum, console.log);
 
 // export const coreNonImmer = createClientStoreAndActions3();
 

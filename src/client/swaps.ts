@@ -8,6 +8,12 @@ import { EthInt } from '@src/classes/Fraction';
 
 import { EpochData } from './interfaces';
 
+interface Offer<T> {
+    account: T;
+    eth: EthInt;
+    txhash: string;
+}
+
 interface SwapDataBase extends TokenIdFactoryBase {
     listDataType: 'swap';
     eth: EthInt;
@@ -20,11 +26,13 @@ interface SwapDataBase extends TokenIdFactoryBase {
     isBackup: boolean;
     count?: unknown;
     isTryout?: unknown;
+    readonly offers: unknown;
 }
 
 interface SwapDataBase__Nugg {
     leader?: AddressString;
     owner: AddressString;
+    readonly offers: Offer<AddressString>[];
 }
 
 interface SwapDataBase__Item {
@@ -32,11 +40,12 @@ interface SwapDataBase__Item {
     owner: NuggId;
     count: number;
     isTryout: boolean;
+    readonly offers: Offer<NuggId>[];
 }
 
 export type SwapData = TokenIdFactoryCreator<SwapDataBase, SwapDataBase__Nugg, SwapDataBase__Item>;
 
-const store = create(
+const useStore = create(
     combine(
         {
             data: {} as TokenIdDictionary<SwapData>,
@@ -46,9 +55,9 @@ const store = create(
                 set((draft) => {
                     if (JSON.stringify(data) !== JSON.stringify(get().data[data.tokenId])) {
                         if (data.isItem()) {
-                            draft.data[data.tokenId] = data;
+                            draft.data[data.tokenId] = Object.freeze(data);
                         } else {
-                            draft.data[data.tokenId] = data;
+                            draft.data[data.tokenId] = Object.freeze(data);
                         }
                     }
                 });
@@ -69,18 +78,15 @@ const store = create(
 );
 
 export default {
-    useUpdateSwaps: () => store((x) => x.update),
-    useSwapList: () =>
-        store((x) =>
-            Object.values(x.data).map((y) => ({ tokenId: y.tokenId, endingEpoch: y.endingEpoch })),
-        ),
+    useUpdateSwaps: () => useStore((x) => x.update),
+    useSwapList: () => useStore((x) => Object.values(x.data)),
     useSwap: <A extends TokenId>(tokenId: A | undefined) =>
-        store(
+        useStore(
             useCallback(
                 (state) => (tokenId !== undefined ? state.data[tokenId] : undefined),
                 [tokenId],
             ),
             shallow,
         ),
-    ...store,
+    useStore,
 };

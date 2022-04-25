@@ -1,7 +1,7 @@
 import { EthInt } from '@src/classes/Fraction';
 import { SwapdataFragment, ItemswapdataFragment } from '@src/gql/types.generated';
-import { SwapData } from '@src/client/interfaces';
 import { buildTokenIdFactory } from '@src/prototypes';
+import { SwapData } from '@src/client/swaps';
 
 export const formatSwapData = <T extends TokenId>(
     z: SwapdataFragment | ItemswapdataFragment,
@@ -22,6 +22,11 @@ export const formatSwapData = <T extends TokenId>(
         isBackup: false,
         bottom: new EthInt(z.bottom),
         num: 1,
+        offers: z.offers.map((x) => ({
+            eth: new EthInt(x.eth),
+            account: 'nugg' in x ? x.nugg.id : x.user.id,
+            txhash: x.txhash,
+        })),
     };
 
     if (tokenId.isItemId()) {
@@ -32,6 +37,7 @@ export const formatSwapData = <T extends TokenId>(
             owner: z.owner.id.toNuggId(),
             count: 0,
             isTryout: z.endingEpoch === null,
+            offers: a.offers.map((x) => ({ ...x, account: x.account.toNuggId() })),
         });
     }
     return buildTokenIdFactory({
@@ -39,5 +45,6 @@ export const formatSwapData = <T extends TokenId>(
         tokenId: tokenId as NuggId,
         leader: z?.leader?.id as AddressString,
         owner: z.owner.id as AddressString,
+        offers: a.offers.map((x) => ({ ...x, account: x.account as AddressString })),
     });
 };

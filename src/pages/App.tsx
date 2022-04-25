@@ -13,8 +13,9 @@ import useDimentions from '@src/client/hooks/useDimentions';
 import HotRotateO, { HotRotateOController } from '@src/pages/HotRotateO';
 
 import MobileViewScreen2 from './mobile/MobileViewScreen2';
+import MobileWalletScreen2 from './mobile/MobileWalletScreen2';
 
-const MobileWalletView = React.lazy(() => import('@src/pages/mobile/MobileWalletView'));
+// const MobileWalletView = React.lazy(() => import('@src/pages/mobile/MobileWalletView'));
 // const HotRotateO = React.lazy(() => import('@src/pages/HotRotateO'));
 const SearchOverlay = React.lazy(() => import('@src/pages/SearchOverlay'));
 
@@ -38,7 +39,7 @@ const Router = () => {
                     element: <HotRotateOController />,
                 },
                 // instead of hiding this for mobile here, we redirect inside the component to avoid lots of rerenders
-                { path: 'wallet', element: <MobileWalletView /> },
+                { path: 'wallet', element: isPhone ? <MobileWalletScreen2 /> : null },
                 { path: 'swap/:id', element: isPhone ? <MobileViewScreen2 /> : null },
                 { path: 'live', element: null },
                 { path: '*', element: <Navigate to={isPhone ? `swap/${epoch || ''}` : 'live'} /> },

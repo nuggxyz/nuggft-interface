@@ -1,27 +1,17 @@
-import shallow from 'zustand/shallow';
-import { useMemo } from 'react';
-
-import { SwapData } from '@src/client/interfaces';
-
-import client from '..';
-
-type EnhancedNotableSwap = {
-    isCurrent: boolean;
-} & SwapData;
+// type EnhancedNotableSwap = {
+//     isCurrent: boolean;
+// } & SwapData;
 
 export default () => {
-    const notable = client.core((x) => x.notableSwaps, shallow);
-
-    const epoch = client.live.epoch.id();
-
-    return useMemo(() => {
-        const working = notable;
-
-        return working.map((x) => {
-            return {
-                ...x,
-                isCurrent: x.endingEpoch !== null && epoch && x.endingEpoch >= epoch,
-            };
-        });
-    }, [notable, epoch]) as EnhancedNotableSwap[];
+    // const notable = client.core((x) => x.notableSwaps, shallow);
+    // const epoch = client.live.epoch.id();
+    // return useMemo(() => {
+    //     const working = notable;
+    //     return working.map((x) => {
+    //         return {
+    //             ...x,
+    //             isCurrent: x.endingEpoch !== null && epoch && x.endingEpoch >= epoch,
+    //         };
+    //     });
+    // }, [notable, epoch]) as EnhancedNotableSwap[];
 };

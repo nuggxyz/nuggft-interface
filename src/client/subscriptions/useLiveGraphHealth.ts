@@ -6,7 +6,7 @@ import { HealthDocument, useHealthQuery } from '@src/gql/types.generated';
 export default () => {
     const graph = client.live.graph();
 
-    const updateProtocol = client.mutate.updateProtocol();
+    const updateProtocolSimple = client.mutate.updateProtocolSimple();
     const { data: healthQueryData } = useHealthQuery({
         client: graph,
         query: HealthDocument,
@@ -16,12 +16,12 @@ export default () => {
     });
 
     useEffect(() => {
-        updateProtocol({
+        updateProtocolSimple({
             health: {
                 lastBlockGraph: healthQueryData?._meta?.block.number ?? null,
             },
         });
-    }, [healthQueryData, updateProtocol]);
+    }, [healthQueryData, updateProtocolSimple]);
 
     return null;
 };

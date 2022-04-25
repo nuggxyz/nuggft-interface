@@ -167,6 +167,18 @@ Array.prototype.mergeInPlace = function fn<T>(
     this.unshift(...unseen);
     if (sort) this.sort(sort);
 };
+Array.prototype.mergeInPlaceReturnRef = function fn(...args) {
+    this.mergeInPlace(...args);
+
+    return this;
+};
+Array.prototype.merge = function fn(...args) {
+    const updatedref = [...this];
+
+    updatedref.mergeInPlace(...args);
+
+    return updatedref;
+};
 
 Array.prototype.mergeInPlaceNoUpdateNoChange = function fn(
     ...args: Parameters<typeof Array.prototype.mergeInPlace>

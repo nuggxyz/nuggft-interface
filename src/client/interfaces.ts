@@ -3,24 +3,24 @@ import { State, StoreApi, UseBoundStore } from 'zustand';
 
 import { Chain, Connector } from '@src/web3/core/interfaces';
 import { SupportedLocale } from '@src/lib/i18n/locales';
-import { FeedMessage } from '@src/interfaces/feed';
 
 import { NuggftV1 } from '../typechain/NuggftV1';
 
 import { SwapRoutes } from './router';
 
 interface OfferDataBase extends TokenIdFactoryBase {
-    user: AddressString | NuggId;
+    user?: AddressString | NuggId;
     eth: EthInt;
-    txhash?: string;
+    txhash: string;
     isBackup: boolean;
     sellingTokenId: null | NuggId;
+    account: AddressString | NuggId;
 }
 
 export type OfferData = TokenIdFactoryCreator<
     OfferDataBase,
-    { sellingTokenId: null; user: AddressString },
-    { sellingTokenId: NuggId; user: NuggId }
+    { sellingTokenId: null; account: AddressString },
+    { sellingTokenId: NuggId; account: NuggId }
 >;
 
 export interface ListDataBase extends TokenIdFactoryBase {
@@ -74,6 +74,7 @@ export interface MyNuggsData {
     recent: boolean;
     pendingClaim: boolean;
     lastTransfer: number;
+    items: LiveNuggItem[];
     unclaimedOffers: {
         itemId: ItemId | null;
         endingEpoch: number | null;
@@ -180,20 +181,14 @@ export type ClientStateUpdate = {
         status: 'OVER' | 'ACTIVE' | 'PENDING';
     };
     totalNuggs?: number;
-    activeSwaps?: ClientState['activeSwaps'];
-    activeItems?: ClientState['activeItems'];
-    recentSwaps?: ClientState['recentSwaps'];
-    recentItems?: ClientState['recentItems'];
-    potentialItems?: ClientState['potentialItems'];
-    potentialSwaps?: ClientState['potentialSwaps'];
-    notableSwaps?: ClientState['notableSwaps'];
-
     error?: Error;
     activating?: boolean;
     myNuggs?: MyNuggsData[];
     editingNugg?: NuggId | null;
-    myUnclaimedNuggOffers?: ClientState['myUnclaimedNuggOffers'];
-    myUnclaimedItemOffers?: ClientState['myUnclaimedItemOffers'];
+    myUnclaimedOffers?: ClientState['myUnclaimedOffers'];
+
+    myUnclaimedNuggOffers: ClientState['myUnclaimedNuggOffers'];
+    myUnclaimedItemOffers: ClientState['myUnclaimedItemOffers'];
     myLoans?: LoanData[];
     health?: MakeOptional<Health, keyof Health>;
 };
@@ -261,6 +256,10 @@ export type LiveToken = LiveNugg | LiveItem;
 export interface Actions {
     updateBlocknum: (blocknum: number, chainId: Chain, startup?: boolean) => void;
     updateProtocol: (stateUpdate: ClientStateUpdate) => void;
+    updateProtocolSimple: (
+        stateUpdate: Pick<ClientStateUpdate, 'epoch' | 'stake' | 'totalNuggs' | 'health'>,
+    ) => void;
+
     setLastSwap: (tokenId: TokenId | undefined) => void;
     setActiveSearch: (input: SearchResults | undefined) => void;
     updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;
@@ -282,14 +281,11 @@ export interface Actions {
     updateSearchFilterViewing: (value: SearchFilter['viewing']) => void;
     updateUserDarkMode: (value: Theme | undefined) => void;
     updateMediaDarkMode: (value: Theme | undefined) => void;
-    addFeedMessage: (update: FeedMessage) => void;
     updateDimentions: (window: Dimentions) => void;
     addToSubscritpionQueue: (update: TokenId) => void;
 }
 
-export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
-
-export interface ClientState extends State, Actions {
+export interface ClientState {
     subscriptionQueue: Array<TokenId>;
     nuggft: NuggftV1 | undefined;
     manualPriority: Connector | undefined;
@@ -297,21 +293,14 @@ export interface ClientState extends State, Actions {
     lastSwap: SwapRoutes | undefined;
     pageIsLoaded: boolean;
     stake: StakeData | undefined;
-    epoch__id: number | undefined;
     epoch: EpochData | undefined;
     nextEpoch: EpochData | undefined;
     blocknum: number | undefined;
     liveOffers: Dictionary<OfferData[]>;
-    notableSwaps: SwapData[];
-    activeSwaps: IsolateNuggIdFactory<SwapData>[];
-    activeItems: IsolateItemIdFactory<SwapData>[];
-    potentialItems: IsolateItemIdFactory<SwapData>[];
-    potentialSwaps: IsolateNuggIdFactory<SwapData>[];
     myNuggs: MyNuggsData[];
-    recentSwaps: IsolateNuggIdFactory<SwapData>[];
-    recentItems: IsolateItemIdFactory<SwapData>[];
     myUnclaimedNuggOffers: IsolateNuggIdFactory<UnclaimedOffer>[];
     myUnclaimedItemOffers: IsolateItemIdFactory<UnclaimedOffer>[];
+    myUnclaimedOffers: UnclaimedOffer[];
     editingNugg: NuggId | undefined;
     myLoans: LoanData[];
     myRecents: Set<string>;
@@ -321,10 +310,13 @@ export interface ClientState extends State, Actions {
     darkmode: DarkModePreferences;
     locale: SupportedLocale | undefined;
     searchFilter: SearchFilter;
-    feedMessages: FeedMessage[];
     health: Health;
     started: boolean;
     activeSearch: SearchResults;
     dimentions: Dimentions;
     totalNuggs: number;
 }
+
+export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
+
+export interface FullClientState extends ClientState, State, Actions {}

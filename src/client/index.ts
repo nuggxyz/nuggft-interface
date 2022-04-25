@@ -59,12 +59,7 @@ export default {
             searchValue: () => core((state) => state.searchFilter?.searchValue),
         },
         darkmode: () => core((state) => state.darkmode, shallow),
-        recentSwaps: () => core((state) => state.recentSwaps),
         totalNuggs: () => core((state) => state.totalNuggs),
-
-        recentItems: () => core((state) => state.recentItems),
-        potentialSwaps: () => core((state) => state.potentialSwaps),
-        potentialItems: () => core((state) => state.potentialItems),
         /// ///// complex ////////
         offers: <A extends TokenId>(tokenId: A | undefined) =>
             core(
@@ -88,34 +83,6 @@ export default {
         health: () => core((state) => state.health),
         // lastGraphRefresh: () => coreNonImmer((state) => state.lastRefresh),
 
-        activeSwaps: () =>
-            core((state) =>
-                state.activeSwaps.filter(
-                    (x) => x.endingEpoch && x.endingEpoch >= (state.epoch?.id || 0),
-                ),
-            ),
-        activeItems: () =>
-            core((state) =>
-                state.activeItems.filter(
-                    (x) => x.endingEpoch && x.endingEpoch >= (state.epoch?.id || 0),
-                ),
-            ),
-        activeNuggItem: (id: ItemId | undefined) =>
-            core(
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                useCallback(
-                    (state) => id && state.activeItems.find((item) => item.tokenId.includes(id)),
-                    [id],
-                ),
-            ),
-        potentialNuggItem: (id: ItemId | undefined) =>
-            core(
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                useCallback(
-                    (state) => id && state.potentialItems.find((item) => item.tokenId.includes(id)),
-                    [id],
-                ),
-            ),
         myRecents: () =>
             core((state) =>
                 Array.from(state.myRecents)
@@ -133,8 +100,6 @@ export default {
             core((state) =>
                 [...state.myLoans].sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1)),
             ),
-
-        feedMessages: () => core((state) => state.feedMessages),
 
         myUnclaimedNuggOffers: () => core((state) => state.myUnclaimedNuggOffers),
         myUnclaimedItemOffers: () => core((state) => state.myUnclaimedItemOffers),
@@ -157,6 +122,8 @@ export default {
     mutate: {
         updateBlocknum: () => core((state) => state.updateBlocknum),
         updateProtocol: () => core((state) => state.updateProtocol),
+        updateProtocolSimple: () => core((state) => state.updateProtocolSimple),
+
         setActiveSearch: () => core((state) => state.setActiveSearch),
         updateOffers: () => core((state) => state.updateOffers),
         removeLoan: () => core((state) => state.removeLoan),
@@ -178,14 +145,12 @@ export default {
         updateSearchFilterSearchValue: () => core((state) => state.updateSearchFilterSearchValue),
         updateUserDarkMode: () => core((state) => state.updateUserDarkMode),
         updateMediaDarkMode: () => core((state) => state.updateMediaDarkMode),
-        addFeedMessage: () => core((state) => state.addFeedMessage),
         updateDimentions: () => core((state) => state.updateDimentions),
     },
 
     static: {
         graph: () => web3.config.apolloClient,
-        activeSwaps: () => core.getState().activeSwaps,
-        activeItems: () => core.getState().activeItems,
+
         myNuggs: () => core.getState().myNuggs,
         myLoans: () => core.getState().myLoans,
         epoch: () => core.getState().epoch,

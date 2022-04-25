@@ -133,7 +133,7 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                 justifyContent: 'flex-end',
                 display: 'flex',
                 flexDirection: 'column',
-                zIndex: 100000,
+                zIndex: 200000,
             }}
         >
             <animated.div

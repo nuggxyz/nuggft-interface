@@ -89,6 +89,8 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
                         isBackup: true,
                         sellingTokenId: null,
                         tokenId,
+                        account: activeSwap.leader as AddressString,
+                        txhash: '',
                     }),
                 ]);
         }

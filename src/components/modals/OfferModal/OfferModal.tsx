@@ -263,7 +263,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                             nuggft.populateTransaction[
                                                 'offer(uint24,uint24,uint16)'
                                             ](
-                                                selectedNuggForItem?.tokenId,
+                                                selectedNuggForItem?.tokenId.toRawId(),
                                                 data.nuggToBuyFrom?.toRawId(),
                                                 data.tokenId.toRawId(),
                                                 {

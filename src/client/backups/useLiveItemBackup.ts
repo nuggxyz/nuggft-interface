@@ -105,6 +105,8 @@ export default (activate: boolean, tokenId: ItemId | undefined) => {
                             user: x!.leader.toNuggId(),
                             sellingTokenId: x!.owner.toNuggId(),
                             isBackup: true,
+                            account: x!.leader.toNuggId(),
+                            txhash: '',
                         }),
                     ),
             );

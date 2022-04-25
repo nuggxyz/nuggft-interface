@@ -14,6 +14,7 @@ export type ButtonProps = {
     leftIcon?: JSX.Element;
     hoverStyle?: React.CSSProperties;
     disabled?: boolean;
+    className?: string;
     isHovering?: (hover: boolean) => void;
 } & Partial<TextProps>;
 
@@ -26,6 +27,7 @@ const Button: FunctionComponent<ButtonProps> = ({
     disabled = false,
     isHovering,
     hoverStyle,
+    className,
     ...textProps
 }) => {
     const [ref, hover] = useOnHover(isHovering);
@@ -48,6 +50,7 @@ const Button: FunctionComponent<ButtonProps> = ({
     return (
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         <div
+            className={className}
             aria-hidden="true"
             role="button"
             ref={ref}

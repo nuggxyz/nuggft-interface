@@ -48,6 +48,10 @@ html {
     overflow: hidden;
 }
 
+.info-clicker {
+    filter: drop-shadow(2px 3px 5px rgba(0, 0, 0, 0.4));
+}
+
 #background-radial-gradient {
     position: fixed;
     top: 0;

@@ -7,7 +7,6 @@ import TextStatistic from '@src/components/nugg/Statistics/TextStatistic';
 import web3 from '@src/web3';
 import client from '@src/client';
 import globalStyles from '@src/lib/globalStyles';
-import { SwapData } from '@src/client/interfaces';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -16,6 +15,7 @@ import Label from '@src/components/general/Label/Label';
 import useRemaining from '@src/client/hooks/useRemaining';
 import SimpleList from '@src/components/general/List/SimpleList';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
+import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
 
 import styles from './ActiveTab.styles';
 import SeeAllButton from './SeeAllButton';
@@ -23,14 +23,15 @@ import SeeAllButton from './SeeAllButton';
 const fancy = curriedLighten(0.25)(lib.colors.blue);
 
 export const ActiveRenderItem = ({
-    item,
+    item: tokenId,
     onClick,
 }: {
-    item: SwapData;
-    onClick?: (arg: typeof item) => void;
+    item: TokenId;
+    onClick?: (arg: typeof tokenId) => void;
 }) => {
     const { gotoViewingNugg } = useViewingNugg();
-    return item ? (
+    const swap = client.swaps.useSwap(tokenId);
+    return tokenId ? (
         <div
             aria-hidden="true"
             role="button"
@@ -47,7 +48,7 @@ export const ActiveRenderItem = ({
             onClick={
                 onClick
                     ? () => {
-                          onClick(item);
+                          onClick(tokenId);
                       }
                     : undefined
             }
@@ -59,24 +60,24 @@ export const ActiveRenderItem = ({
                     alignItems: 'center',
                 }}
             >
-                <TokenViewer tokenId={item.tokenId} style={globalStyles.listNugg} />
+                <TokenViewer tokenId={tokenId} style={globalStyles.listNugg} />
                 <div>
                     <Label
-                        text={item.tokenId.toPrettyId()}
+                        text={tokenId.toPrettyId()}
                         containerStyles={{
                             color: 'white',
                             marginBottom: '5px',
                             background: fancy,
                         }}
                     />
-                    <CurrencyText textStyle={{ color: fancy }} value={item.eth.number} />
+                    <CurrencyText textStyle={{ color: fancy }} value={swap?.eth.number || 0} />
                 </div>
             </div>
 
             <Button
-                key={JSON.stringify(item)}
+                key={JSON.stringify(swap)}
                 onClick={() => {
-                    gotoViewingNugg(item.tokenId);
+                    gotoViewingNugg(tokenId);
                 }}
                 buttonStyle={styles.searchButton}
                 rightIcon={<IoSearch color={lib.colors.white} />}
@@ -86,57 +87,25 @@ export const ActiveRenderItem = ({
 };
 
 export default () => {
-    // const { screen: screenType } = useDimentions();
-
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
 
-    const activeNuggs = client.live.activeSwaps();
-    const activeItems = client.live.activeItems();
-
-    const epoch = client.live.epoch.id();
-
-    const all = React.useMemo(() => {
-        return [...activeNuggs, ...activeItems].sort((a, b) => (a.eth.lt(b.eth) ? -1 : 1));
-    }, [activeNuggs, activeItems]);
-
-    const sortedAll = React.useMemo(() => {
-        return all.reduce(
-            (prev: { current: SwapData[]; next: SwapData[] }, curr) => {
-                if (epoch) {
-                    if (curr.endingEpoch === epoch) {
-                        prev.current.push(curr);
-                    } else if (curr.endingEpoch === epoch + 1) {
-                        prev.next.push(curr);
-                    }
-                }
-                return prev;
-            },
-            { current: [], next: [] },
-        );
-    }, [all, epoch]);
+    const swaps = useSortedSwapList();
 
     const { minutes } = useRemaining(client.live.epoch.default());
 
     return chainId && provider ? (
         <div style={styles.container}>
             <div>
-                {/* <div style={screenType === 'phone' ? styles.phoneContainer : undefined}>
-                    {screenType === 'phone' && (
-                        <div style={styles.phoneAccountViewer}>
-                            <AccountViewer />
-                        </div>
-                    )}
-                </div> */}
                 <div style={globalStyles.centeredSpaceBetween}>
                     <TextStatistic
                         label={t`Nuggs`}
-                        value={`${activeNuggs.length}`}
+                        value={`${swaps.current.length}`}
                         style={styles.statistic}
                     />
                     <TextStatistic
                         label={t`Active Items`}
-                        value={`${activeItems.length}`}
+                        value={`${swaps.next.length}`}
                         style={styles.statistic}
                     />
                 </div>
@@ -145,7 +114,7 @@ export default () => {
             <SimpleList
                 TitleButton={SeeAllButton}
                 labelStyle={styles.listLabel}
-                data={sortedAll.current}
+                data={swaps.current}
                 extraData={undefined}
                 RenderItem={ActiveRenderItem}
                 label={t`Ending in about ${minutes} minutes`}
@@ -157,7 +126,7 @@ export default () => {
             <SimpleList
                 // TitleButton={SeeAllButton}
                 labelStyle={{ ...styles.listLabel, marginTop: '20px' }}
-                data={sortedAll.next}
+                data={swaps.next}
                 extraData={undefined}
                 RenderItem={ActiveRenderItem}
                 label={t`Coming Up`}

@@ -104,6 +104,7 @@ subscription liveUser($address: ID!) {
             activeSwap {
                 id
             }
+            ...nuggitems
             pendingClaim
             lastTransfer
             offers(where: { claimed: false }) {
@@ -165,6 +166,14 @@ fragment swapdata on Swap {
     leader {
         id
     }
+    offers(first: 5, orderBy: eth, orderDirection: desc) {
+        id
+        user {
+            id
+        }
+        eth
+        txhash
+    }
 }
 
 fragment itemswapdata on ItemSwap {
@@ -190,13 +199,17 @@ fragment itemswapdata on ItemSwap {
     sellingItem {
         id
     }
+    offers(first: 5, orderBy: eth, orderDirection: desc) {
+        id
+        nugg {
+            id
+        }
+        eth
+        txhash
+    }
 }
 
-fragment liveNugg on Nugg {
-    id
-    user {
-        id
-    }
+fragment nuggitems on Nugg {
     items {
         id
         count
@@ -210,6 +223,14 @@ fragment liveNugg on Nugg {
             position
         }
     }
+}
+
+fragment liveNugg on Nugg {
+    id
+    user {
+        id
+    }
+    ...nuggitems
 
     pendingClaim
     lastTransfer
@@ -248,16 +269,16 @@ subscription watchLiveItem($tokenId: ID!) {
 subscription watchLiveNugg($tokenId: ID!) {
     nugg(id: $tokenId) {
         ...liveNugg
-        activeSwap {
-            id
-            offers(orderBy: eth, orderDirection: desc) {
-                user {
-                    id
-                }
-                eth
-                txhash
-            }
-        }
+        # activeSwap {
+        #     id
+        #     offers(orderBy: eth, orderDirection: desc) {
+        #         user {
+        #             id
+        #         }
+        #         eth
+        #         txhash
+        #     }
+        # }
     }
 }
 
@@ -319,6 +340,7 @@ subscription betterLiveOffers($tokenId: ID!) {
         activeSwap {
             id
             offers(orderBy: eth, orderDirection: desc) {
+                id
                 user {
                     id
                 }

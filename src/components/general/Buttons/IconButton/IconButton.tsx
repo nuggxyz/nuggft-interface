@@ -12,6 +12,7 @@ type Props = {
     onClick: () => void;
     buttonStyle?: CSSProperties;
     iconComponent?: JSX.Element;
+    className?: string;
 };
 
 const IconButton: FunctionComponent<Props> = ({
@@ -19,6 +20,7 @@ const IconButton: FunctionComponent<Props> = ({
     onClick,
     buttonStyle,
     iconComponent: Comp,
+    className,
 }) => {
     const style = {
         ...styles.container,
@@ -31,6 +33,7 @@ const IconButton: FunctionComponent<Props> = ({
 
     return (
         <Button
+            className={className}
             rightIcon={icon ? <Image src={icon} style={hoverStyle} /> : Comp || undefined}
             onClick={onClick}
             buttonStyle={style}

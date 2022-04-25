@@ -24,12 +24,11 @@ export default () => {
 
     const updateOffers = client.mutate.updateOffers();
     const updateBlocknum = client.mutate.updateBlocknum();
-    const updateProtocol = client.mutate.updateProtocol();
+    const updateProtocolSimple = client.mutate.updateProtocolSimple();
 
     const removeLoan = client.mutate.removeLoan();
     const removeNuggClaim = client.mutate.removeNuggClaim();
     const removeItemClaimIfMine = client.mutate.removeItemClaimIfMine();
-    const addFeedMessage = client.mutate.addFeedMessage();
 
     const [rpc, setRpc] = React.useState<WebSocketProvider>();
 
@@ -61,7 +60,7 @@ export default () => {
                         log,
                     });
 
-                    void updateProtocol({
+                    void updateProtocolSimple({
                         stake: EthInt.fromNuggftV1Stake(event.args.stake),
                     });
                     break;
@@ -96,6 +95,7 @@ export default () => {
                         txhash: log.transactionHash,
                         isBackup: false,
                         sellingTokenId: null,
+                        account: agency.mask(160)._hex as AddressString,
                     });
 
                     void emitter.emit({
@@ -124,6 +124,7 @@ export default () => {
                             txhash: log.transactionHash,
                             sellingTokenId: event.args.sellingTokenId.toNuggId(),
                             isBackup: false,
+                            account: agency.mask(160).toNumber().toString().toNuggId(),
                         }),
                     ]);
                     break;
@@ -190,8 +191,7 @@ export default () => {
             removeLoan,
             removeNuggClaim,
             updateOffers,
-            updateProtocol,
-            addFeedMessage,
+            updateProtocolSimple,
         ],
     );
 

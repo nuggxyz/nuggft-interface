@@ -2,6 +2,7 @@ import { LiveNugg } from '@src/client/interfaces';
 import { LiveNuggFragment } from '@src/gql/types.generated';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { formatSwapData } from '@src/client/formatters/formatSwapData';
+import formatNuggItems from '@src/client/formatters/formatNuggItems';
 
 export default (nugg: LiveNuggFragment): LiveNugg => {
     const tokenId = nugg.id.toNuggId();
@@ -10,18 +11,7 @@ export default (nugg: LiveNuggFragment): LiveNugg => {
         tokenId,
         activeLoan: !!nugg.activeLoan?.id,
         owner: nugg.user?.id as AddressString,
-        items: nugg.items
-            .filter((x) => x.activeSwap || x.count > 0)
-            .map((y) => {
-                return buildTokenIdFactory({
-                    tokenId: y?.id.split('-')[0].toItemId(),
-                    activeSwap: y?.activeSwap?.id,
-                    feature: Number(y?.item.feature),
-                    position: Number(y?.item.position),
-                    count: Number(y?.count),
-                    displayed: y?.displayed,
-                });
-            }),
+        items: formatNuggItems(nugg),
         isBackup: false,
         pendingClaim: nugg.pendingClaim,
         lastTransfer: nugg.lastTransfer,

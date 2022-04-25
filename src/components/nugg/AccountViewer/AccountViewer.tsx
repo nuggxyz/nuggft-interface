@@ -1,5 +1,5 @@
 import React from 'react';
-import { IoOpenOutline, IoPowerOutline, IoWallet } from 'react-icons/io5';
+import { IoOpenOutline, IoPowerOutline } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 import { FiAtSign } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,7 @@ import lib from '@src/lib';
 import globalStyles from '@src/lib/globalStyles';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import useDimentions from '@src/client/hooks/useDimentions';
+import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
 
 import styles from './AccountViewer.styles';
 
@@ -52,11 +53,20 @@ const AccountViewer = () => {
             />
         </div>
     ) : ens && chainId && peer ? (
-        <Flyout
-            style={styles.flyout}
-            button={
-                <div style={styles.textContainer}>
-                    {screenType !== 'phone' && (
+        screenType === 'phone' ? (
+            <IconButton
+                aria-hidden="true"
+                buttonStyle={styles.textContainer}
+                onClick={() => {
+                    navigate('/wallet');
+                }}
+                iconComponent={<Jazzicon address={address} size={35} />}
+            />
+        ) : (
+            <Flyout
+                style={styles.flyout}
+                button={
+                    <div style={styles.textContainer}>
                         <div
                             style={{
                                 // marginRight: screenType ===|'phone' ? '0rem' : '.5rem',
@@ -81,13 +91,13 @@ const AccountViewer = () => {
                                 {balance ? balance.decimal.toNumber().toPrecision(5) : 0} ETH
                             </Text>
                         </div>
-                    )}
-                    <Jazzicon address={address} size={35} />
-                </div>
-            }
-        >
-            <>
-                {screenType === 'phone' && (
+
+                        <Jazzicon address={address} size={35} />
+                    </div>
+                }
+            >
+                <>
+                    {/* {screenType === 'phone' && (
                     <Button
                         label={t`Wallet`}
                         type="text"
@@ -103,35 +113,36 @@ const AccountViewer = () => {
                             navigate('/wallet');
                         }}
                     />
-                )}
-                <Button
-                    label={t`Explore`}
-                    type="text"
-                    buttonStyle={styles.flyoutButton}
-                    leftIcon={
-                        <IoOpenOutline
-                            color={lib.colors.nuggBlueText}
-                            size={25}
-                            style={{ marginRight: '.75rem' }}
-                        />
-                    }
-                    onClick={() => web3.config.gotoEtherscan(chainId, 'address', address)}
-                />
-                <Button
-                    type="text"
-                    label={t`Disconnect`}
-                    buttonStyle={styles.flyoutButton}
-                    leftIcon={
-                        <IoPowerOutline
-                            color={lib.colors.nuggBlueText}
-                            size={25}
-                            style={{ marginRight: '.75rem' }}
-                        />
-                    }
-                    onClick={() => connector.deactivate()}
-                />
-            </>
-        </Flyout>
+                )} */}
+                    <Button
+                        label={t`Explore`}
+                        type="text"
+                        buttonStyle={styles.flyoutButton}
+                        leftIcon={
+                            <IoOpenOutline
+                                color={lib.colors.nuggBlueText}
+                                size={25}
+                                style={{ marginRight: '.75rem' }}
+                            />
+                        }
+                        onClick={() => web3.config.gotoEtherscan(chainId, 'address', address)}
+                    />
+                    <Button
+                        type="text"
+                        label={t`Disconnect`}
+                        buttonStyle={styles.flyoutButton}
+                        leftIcon={
+                            <IoPowerOutline
+                                color={lib.colors.nuggBlueText}
+                                size={25}
+                                style={{ marginRight: '.75rem' }}
+                            />
+                        }
+                        onClick={() => connector.deactivate()}
+                    />
+                </>
+            </Flyout>
+        )
     ) : null;
 };
 

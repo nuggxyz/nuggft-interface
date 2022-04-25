@@ -1,6 +1,5 @@
 import React, { CSSProperties, FunctionComponent, ReactChild, useMemo } from 'react';
 
-import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import Colors from '@src/lib/colors';
 
 import styles from './CircleTimer.styles';
@@ -72,7 +71,6 @@ const Normal: FunctionComponent<Props> = ({
     remaining,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     blocktime,
-    staticColor,
     style,
     width,
     strokeWidth = 20,
@@ -81,19 +79,13 @@ const Normal: FunctionComponent<Props> = ({
 }) => {
     const to = useMemo(() => {
         return duration
-            ? Math.abs(
-                  (width / 6.5) *
-                      (TWOPI - ((staticColor ? duration : remaining) / duration) * TWOPI) +
-                      HALFPI,
-              )
+            ? Math.abs((width / 6.5) * (TWOPI - (remaining / duration) * TWOPI) + HALFPI)
             : 0;
-    }, [duration, width, staticColor, remaining]);
+    }, [duration, width, remaining]);
 
     const shadowColor = useMemo(() => {
         const percent = remaining / duration;
-        if (percent > 1 && !isUndefinedOrNullOrStringEmpty(staticColor)) {
-            return staticColor;
-        }
+
         if (percent <= 0.1) {
             return Colors.nuggRedText;
         }
@@ -101,7 +93,7 @@ const Normal: FunctionComponent<Props> = ({
             return Colors.nuggGold;
         }
         return defaultColor;
-    }, [remaining, duration, staticColor, defaultColor]);
+    }, [remaining, duration, defaultColor]);
 
     return (
         <div style={{ ...styles.container, ...style }}>

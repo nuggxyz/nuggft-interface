@@ -11,11 +11,13 @@ import web3 from '@src/web3';
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
-import { Lifecycle, OfferData } from '@src/client/interfaces';
+import { Lifecycle } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { Chain } from '@src/web3/core/interfaces';
 import useDistribution from '@src/client/hooks/useDistribution';
 import useDimentions from '@src/client/hooks/useDimentions';
+import { SwapData } from '@src/client/swaps';
+import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 
 import styles from './RingAbout.styles';
 
@@ -25,13 +27,12 @@ type OfferExtraData = {
     type?: 'item' | 'nugg';
 };
 
-const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefined>> = ({
-    item,
-    extraData,
-}) => {
+const OfferRenderItem: FC<
+    ListRenderItemProps<SwapData['offers'][number], OfferExtraData, undefined>
+> = ({ item, extraData }) => {
     const leader = web3.hook.usePriorityAnyENSName(
         extraData.type === 'nugg' ? 'nugg' : extraData.provider,
-        item?.user || '',
+        item?.account || '',
     );
     return (
         <div style={styles.offerAmount}>
@@ -57,8 +58,10 @@ const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefin
     );
 };
 
-export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?: NuggId }) => {
-    const offers = client.live.offers(tokenId);
+export default ({ tokenId }: { tokenId?: TokenId; sellingNuggId?: NuggId }) => {
+    const swap = client.swaps.useSwap(tokenId);
+
+    const offers = useAggregatedOffers(tokenId);
     const token = client.live.token(tokenId);
     const lifecycle = useLifecycle(token);
     const type = client.live.lastSwap.type();
@@ -68,27 +71,14 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
 
     const [open, setOpen] = useState(screenType === 'tablet');
 
-    const { leader, others, swap } = React.useMemo(() => {
-        const tmp =
-            token?.type === 'item'
-                ? offers.filter((x) => {
-                      return (
-                          x.tokenId.isItemId() &&
-                          x.sellingTokenId === (sellingNuggId || token.activeSwap?.owner)
-                      );
-                  })
-                : [...offers];
+    const { leader, others } = React.useMemo(() => {
+        const tmp = offers || [];
 
-        const theSwap =
-            token?.type === 'item' && sellingNuggId
-                ? token?.swaps.find((x) => x.owner === sellingNuggId)
-                : token?.activeSwap;
         return {
-            leader: tmp.shift(),
-            others: tmp,
-            swap: theSwap,
+            leader: tmp[0],
+            others: tmp.last(tmp.length - 1),
         };
-    }, [offers, token, sellingNuggId]);
+    }, [offers]);
 
     const { distribution, ownerEns } = useDistribution(swap);
 
@@ -126,8 +116,8 @@ export default ({ tokenId, sellingNuggId }: { tokenId?: TokenId; sellingNuggId?:
     });
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
-        token ? (token.type === 'item' ? 'nugg' : provider) : undefined,
-        (token && leader?.user) || '',
+        swap ? (swap.type === 'item' ? 'nugg' : provider) : undefined,
+        (swap && leader?.account) || '',
     );
 
     return token &&
