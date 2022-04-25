@@ -1,9 +1,9 @@
 import { animated } from '@react-spring/web';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { ethers, BigNumber, BigNumberish } from 'ethers';
-import { useNavigate, useMatch } from 'react-router-dom';
+import { useNavigate, useMatch, NavigateFunction } from 'react-router-dom';
 import { t } from '@lingui/macro';
-import { IoArrowDown, IoArrowUp } from 'react-icons/io5';
+import { IoArrowDown, IoArrowUp, IoReload } from 'react-icons/io5';
 
 import client from '@src/client';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -13,12 +13,18 @@ import lib, { parseItmeIdToNum } from '@src/lib';
 import { useAsyncSetState } from '@src/hooks/useAsyncState';
 import { useNuggftV1, useDotnuggV1, usePrioritySendTransaction } from '@src/contracts/useContract';
 import Label from '@src/components/general/Label/Label';
-import TokenViewer3 from '@src/components/nugg/TokenViewer3';
 import web3 from '@src/web3';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
+import Text from '@src/components/general/Texts/Text/Text';
 import { buildTokenIdFactory } from '@src/prototypes';
+import Loader from '@src/components/general/Loader/Loader';
+import emitter from '@src/emitter';
+import globalStyles from '@src/lib/globalStyles';
+import { NuggftV1 } from '@src/typechain';
+import { useDotnuggInjectToCache } from '@src/client/hooks/useDotnugg';
+import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 
-import styles from './SearchOverlay.styles';
+import styles from './HotRotateO.styles';
 
 interface Item extends ItemIdFactory<TokenIdFactoryBase> {
     activeIndex: number;
@@ -76,31 +82,34 @@ const RenderItem: FC<
                     text={String(item.duplicates)}
                 />
             )}
-            <Button
-                size="small"
-                onClick={() => action && action(item)}
-                buttonStyle={{
-                    borderRadius: lib.layout.borderRadius.large,
-                    padding: '.3rem .4rem .3rem .6rem',
-                }}
-                textStyle={{
-                    paddingRight: '.2rem',
-                }}
-                label={
-                    extraData.type === 'storage'
-                        ? extraData.items.active.find((list) => list.feature === item.feature)
-                            ? 'Replace'
-                            : 'Show'
-                        : t`Hide`
-                }
-                rightIcon={
-                    extraData.type === 'storage' ? (
-                        <IoArrowUp color={lib.colors.nuggBlueText} />
-                    ) : (
-                        <IoArrowDown color={lib.colors.nuggRedText} />
-                    )
-                }
-            />
+            {item.feature !== 0 && (
+                <Button
+                    size="small"
+                    onClick={() => action && action(item)}
+                    buttonStyle={{
+                        borderRadius: lib.layout.borderRadius.large,
+                        padding: '.3rem .4rem .3rem .6rem',
+                        marginTop: '.3rem',
+                    }}
+                    textStyle={{
+                        paddingRight: '.2rem',
+                    }}
+                    label={
+                        extraData.type === 'storage'
+                            ? extraData.items.active.find((list) => list.feature === item.feature)
+                                ? 'Replace'
+                                : 'Show'
+                            : t`Hide`
+                    }
+                    rightIcon={
+                        extraData.type === 'storage' ? (
+                            <IoArrowUp color={lib.colors.nuggBlueText} />
+                        ) : (
+                            <IoArrowDown color={lib.colors.nuggRedText} />
+                        )
+                    }
+                />
+            )}
         </div>
     );
 };
@@ -108,6 +117,9 @@ const RenderItem: FC<
 const HotRotateO = () => {
     const openEditScreen = client.editscreen.useEditScreenOpen();
     const tokenId = client.editscreen.useEditScreenTokenId();
+
+    const [saving, setSaving] = useState(false);
+    const [savedToChain, setSavedToChain] = useState(false);
 
     const style = useAnimateOverlay(openEditScreen, {
         zIndex: 998,
@@ -120,6 +132,16 @@ const HotRotateO = () => {
 
     const [needsToClaim, setNeedsToClaim] = React.useState<boolean>();
     const [cannotProveOwnership, setCannotProveOwnership] = React.useState<boolean>();
+
+    emitter.on({
+        type: emitter.events.Rotate,
+        callback: ({ event }) => {
+            if (saving && event.args.tokenId === Number(tokenId?.toRawId())) {
+                setSaving(false);
+                setSavedToChain(true);
+            }
+        },
+    });
 
     const [items, setItems] = useAsyncSetState<ItemList>(() => {
         if (tokenId && provider && address) {
@@ -215,6 +237,151 @@ const HotRotateO = () => {
         return undefined;
     }, [tokenId, nuggft, provider, address]);
 
+    const navigate = useNavigate();
+
+    if (needsToClaim) {
+        return (
+            <animated.div style={{ ...styles.container, ...style }}>
+                <Label text="Needs to claim" />
+            </animated.div>
+        );
+    }
+
+    if (cannotProveOwnership) {
+        return (
+            <animated.div style={{ ...styles.container, ...style }}>
+                <Label text="Canot prove ownership" />
+            </animated.div>
+        );
+    }
+
+    return (
+        <animated.div style={{ ...styles.container, ...style }}>
+            {tokenId && items && (
+                <>
+                    {savedToChain ? (
+                        <div style={styles.controlContainer}>
+                            <Text
+                                size="larger"
+                                textStyle={styles.title}
+                            >{t`Nugg ${tokenId.toRawId()} saved!`}</Text>
+                            <div style={styles.buttonsContainer}>
+                                <Button
+                                    buttonStyle={styles.button}
+                                    textStyle={{ color: lib.colors.nuggRedText }}
+                                    label={t`Exit`}
+                                    onClick={() => {
+                                        navigate(-1);
+                                        setSavedToChain(false);
+                                        setSaving(false);
+                                    }}
+                                />
+
+                                <Button
+                                    buttonStyle={styles.button}
+                                    textStyle={{ color: lib.colors.nuggBlueText }}
+                                    label={t`Edit again`}
+                                    onClick={() => {
+                                        setSavedToChain(false);
+                                        setSaving(false);
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    ) : (
+                        <RotateOSelector
+                            {...{
+                                tokenId,
+                                items,
+                                navigate,
+                                nuggft,
+                                setItems,
+                                setSaving,
+                            }}
+                        />
+                    )}
+                    <RotateOViewer {...{ items, tokenId, savedToChain }} />
+                </>
+            )}
+        </animated.div>
+    );
+};
+
+const RotateOViewer = ({
+    tokenId,
+    items,
+    savedToChain,
+}: {
+    tokenId: TokenId;
+    items: ItemList;
+    savedToChain: boolean;
+}) => {
+    const provider = web3.hook.usePriorityProvider();
+    const dotnugg = useDotnuggV1(provider);
+
+    const inject = useDotnuggInjectToCache();
+
+    const [svg, , , loading] = useAsyncSetState(() => {
+        const arr: BigNumberish[] = new Array<BigNumberish>(8);
+
+        if (provider) {
+            if (items && items.active) {
+                for (let i = 0; i < 8; i++) {
+                    arr[i] = BigNumber.from(
+                        items.active.find((x) => x.feature === i)?.hexId ?? 0,
+                    ).mod(1000);
+                }
+                return dotnugg['exec(uint8[8],bool)'](
+                    arr as Parameters<typeof dotnugg['exec(uint8[8],bool)']>[0],
+                    true,
+                ) as Promise<Base64EncodedSvg>;
+            }
+        }
+
+        return undefined;
+    }, [items, dotnugg, provider]);
+
+    useEffect(() => {
+        if (savedToChain && svg) {
+            inject(tokenId, svg);
+        }
+    }, [savedToChain, svg, inject, tokenId]);
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ ...styles.loadingIndicator, opacity: loading ? 1 : 0 }}>
+                <Text
+                    textStyle={{ color: lib.colors.textColor, paddingRight: '.3rem' }}
+                >{t`Loading`}</Text>
+                <Loader color={lib.colors.textColor} />
+            </div>
+            <TokenViewer
+                tokenId={tokenId}
+                svgNotFromGraph={svg}
+                showcase
+                style={{ height: 600, width: 600 }}
+            />
+        </div>
+    );
+};
+
+const RotateOSelector = ({
+    tokenId,
+    items,
+    navigate,
+    nuggft,
+    setItems,
+    setSaving,
+}: {
+    tokenId: TokenId;
+    items: ItemList;
+    navigate: NavigateFunction;
+    nuggft: NuggftV1;
+    setItems: React.Dispatch<React.SetStateAction<ItemList | null | undefined>>;
+    setSaving: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+    const { send, revert } = useTransactionManager();
+
     const algo: Parameters<typeof nuggft.rotate> | undefined = React.useMemo(() => {
         if (items && tokenId) {
             const active = items.active.map((x, i) => ({ ...x, desiredIndex: i }));
@@ -254,212 +421,93 @@ const HotRotateO = () => {
         return undefined;
     }, [items, tokenId]);
 
-    const { send, revert } = useTransactionManager();
-
-    const navigate = useNavigate();
-
-    if (needsToClaim) {
-        return (
-            <animated.div style={{ ...styles.container, ...style }}>
-                <Label text="Needs to claim" />
-            </animated.div>
-        );
-    }
-
-    if (cannotProveOwnership) {
-        return (
-            <animated.div style={{ ...styles.container, ...style }}>
-                <Label text="Canot prove ownership" />
-            </animated.div>
-        );
-    }
-
+    const [original, setOriginal] = useState(items);
+    useEffect(() => {
+        setOriginal(items);
+    }, [tokenId]);
     return (
-        <animated.div style={{ ...styles.container, ...style }}>
-            {tokenId && items && (
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    {revert && <Label text={revert.message} />}
-                    <div>
-                        {tokenId && openEditScreen && (
-                            <List
-                                data={items.active}
-                                label={t`Displayed`}
-                                labelStyle={{
-                                    color: 'black',
-                                }}
-                                action={(item) => {
-                                    if (items)
-                                        setItems({
-                                            active: [
-                                                ...items.active.filter(
-                                                    (x) => x.feature !== item.feature,
-                                                ),
-                                            ],
-                                            hidden: [item, ...items.hidden],
-                                            duplicates: items.duplicates,
-                                        });
-                                }}
-                                extraData={{ items, type: 'displayed' as const }}
-                                RenderItem={RenderItem}
-                                horizontal
-                                style={{
-                                    width: '100%',
-                                    background: lib.colors.transparentLightGrey,
-                                    height: '140px',
-                                    padding: '0rem .4rem',
-                                    borderRadius: lib.layout.borderRadius.medium,
-                                }}
-                            />
-                        )}
-                        {tokenId && openEditScreen && (
-                            <List
-                                data={items.hidden}
-                                label={t`In storage`}
-                                labelStyle={{
-                                    color: 'black',
-                                }}
-                                extraData={{ items, type: 'storage' as const }}
-                                RenderItem={RenderItem}
-                                horizontal
-                                action={(item) => {
-                                    if (items)
-                                        setItems({
-                                            active: [
-                                                ...items.active.filter(
-                                                    (x) => x.feature !== item.feature,
-                                                ),
-                                                item,
-                                            ],
-                                            hidden: [
-                                                ...items.hidden.filter(
-                                                    (x) => x.tokenId !== item.tokenId,
-                                                ),
-                                                ...items.active.filter(
-                                                    (x) => x.feature === item.feature,
-                                                ),
-                                            ],
-                                            duplicates: items.duplicates,
-                                        });
-                                }}
-                                style={{
-                                    width: '100%',
-                                    background: lib.colors.transparentLightGrey,
-                                    height: '140px',
-                                    padding: '0rem .4rem',
-                                    borderRadius: lib.layout.borderRadius.medium,
-                                }}
-                            />
-                        )}
-                        {/*
-                    <List
-                        data={items.hidden}
-                        label={t`In storage`}
-                        extraData={{ items, type: 'storage' as const }}
-                        RenderItem={RenderItem}
-                        horizontal
-                        action={(item) => {
-                            if (items)
-                                setItems({
-                                    active: [
-                                        ...items.active.filter((x) => x.feature !== item.feature),
-                                        item,
-                                    ],
-                                    hidden: [
-                                        ...items.hidden.filter((x) => x.id !== item.id),
-                                        ...items.active.filter((x) => x.feature === item.feature),
-                                    ],
-                                    duplicates: items.duplicates,
-                                });
-                        }}
-                        style={{
-                            width: '100%',
-                            background: lib.colors.transparentWhite,
-                            padding: '0rem .4rem',
-                            borderRadius: lib.layout.borderRadius.medium,
-                        }}
-                    /> */}
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                justifyContent: 'space-between',
-                                marginTop: '.5rem',
-                            }}
-                        >
-                            <Button
-                                buttonStyle={{
-                                    width: '40%',
-                                    borderRadius: lib.layout.borderRadius.large,
-                                }}
-                                textStyle={{ color: lib.colors.nuggRedText }}
-                                label={t`Cancel`}
-                                onClick={() => {
-                                    navigate(-1);
-                                }}
-                            />
-
-                            <Button
-                                buttonStyle={{
-                                    width: '40%',
-                                    borderRadius: lib.layout.borderRadius.large,
-                                }}
-                                textStyle={{ color: lib.colors.nuggBlueText }}
-                                disabled={!(algo && algo[1] && algo[1].length > 0)}
-                                label={t`Save`}
-                                onClick={() => {
-                                    if (algo) {
-                                        void send(nuggft.populateTransaction.rotate(...algo));
-                                    }
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <RotateOViewer items={items} tokenId={tokenId} />
-                </div>
-            )}
-        </animated.div>
-    );
-};
-
-const RotateOViewer = ({ tokenId, items }: { tokenId: TokenId; items: ItemList }) => {
-    const provider = web3.hook.usePriorityProvider();
-
-    const dotnugg = useDotnuggV1(provider);
-
-    const [svg] = useAsyncSetState(() => {
-        const arr: BigNumberish[] = new Array<BigNumberish>(8);
-
-        if (provider) {
-            if (items && items.active) {
-                for (let i = 0; i < 8; i++) {
-                    arr[i] = BigNumber.from(
-                        items.active.find((x) => x.feature === i)?.hexId ?? 0,
-                    ).mod(1000);
-                }
-                return dotnugg['exec(uint8[8],bool)'](
-                    arr as Parameters<typeof dotnugg['exec(uint8[8],bool)']>[0],
-                    true,
-                ) as Promise<Base64EncodedSvg>;
-            }
-        }
-
-        return undefined;
-    }, [items, dotnugg, provider]);
-
-    return (
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <TokenViewer3
-                tokenId={tokenId}
-                showcase
-                validated
-                style={{ height: 300, width: 300 }}
+        <div style={styles.controlContainer}>
+            <Text size="larger" textStyle={styles.title}>{t`Edit Nugg ${tokenId.toRawId()}`}</Text>
+            <Button
+                label={t`Reset`}
+                buttonStyle={{
+                    borderRadius: lib.layout.borderRadius.large,
+                    padding: '.3rem .7rem .3rem 1rem',
+                    position: 'absolute',
+                    top: '1rem',
+                    right: '1rem',
+                }}
+                textStyle={{ paddingRight: '.3rem' }}
+                onClick={() => setItems(original)}
+                disabled={JSON.stringify(original) === JSON.stringify(items)}
+                rightIcon={<IoReload />}
             />
-            <TokenViewer
-                tokenId={tokenId}
-                svgNotFromGraph={svg}
-                showcase
-                style={{ height: 300, width: 300 }}
+            {revert && <Label text={revert.message} />}
+            <List
+                data={items.active.sort((a, b) => a.feature - b.feature)}
+                label={t`Displayed`}
+                labelStyle={globalStyles.textBlack}
+                action={(item) => {
+                    if (items)
+                        setItems({
+                            active: [...items.active.filter((x) => x.feature !== item.feature)],
+                            hidden: [item, ...items.hidden],
+                            duplicates: items.duplicates,
+                        });
+                }}
+                extraData={{ items, type: 'displayed' as const }}
+                RenderItem={RenderItem}
+                horizontal
+                style={styles.list}
             />
+            <List
+                data={items.hidden}
+                label={t`In storage`}
+                labelStyle={globalStyles.textBlack}
+                extraData={{ items, type: 'storage' as const }}
+                RenderItem={RenderItem}
+                horizontal
+                action={(item) => {
+                    if (items)
+                        setItems({
+                            active: [
+                                ...items.active.filter((x) => x.feature !== item.feature),
+                                item,
+                            ],
+                            hidden: [
+                                ...items.hidden.filter((x) => x.tokenId !== item.tokenId),
+                                ...items.active.filter((x) => x.feature === item.feature),
+                            ],
+                            duplicates: items.duplicates,
+                        });
+                }}
+                style={styles.list}
+            />
+            <div style={styles.buttonsContainer}>
+                <Button
+                    buttonStyle={styles.button}
+                    textStyle={{ color: lib.colors.nuggRedText }}
+                    label={t`Cancel`}
+                    onClick={() => {
+                        navigate(-1);
+                        setSaving(false);
+                    }}
+                />
+
+                <FeedbackButton
+                    feedbackText={t`Check Wallet`}
+                    buttonStyle={styles.button}
+                    textStyle={{ color: lib.colors.nuggBlueText }}
+                    disabled={!(algo && algo[1] && algo[1].length > 0)}
+                    label={t`Save`}
+                    onClick={() => {
+                        if (algo) {
+                            setSaving(true);
+                            void send(nuggft.populateTransaction.rotate(...algo));
+                        }
+                    }}
+                />
+            </div>
         </div>
     );
 };

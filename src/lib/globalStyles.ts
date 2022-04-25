@@ -1,4 +1,4 @@
-import { NLStyleSheetCreator } from './index';
+import lib, { NLStyleSheetCreator } from './index';
 
 const globalStyles = NLStyleSheetCreator({
     absoluteFill: {
@@ -31,6 +31,18 @@ const globalStyles = NLStyleSheetCreator({
     listNugg: {
         height: '80px',
         width: '80px',
+    },
+    textWhite: {
+        color: 'white',
+    },
+    textBlack: {
+        color: 'black',
+    },
+    textBlue: {
+        color: lib.colors.nuggBlueText,
+    },
+    textRed: {
+        color: lib.colors.nuggRedText,
     },
 });
 

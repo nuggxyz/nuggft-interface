@@ -10,6 +10,7 @@ import {
     TransferEvent,
     LiquidateEvent,
     RebalanceEvent,
+    RotateEvent,
 } from '../typechain/NuggftV1';
 
 export enum EventNames {
@@ -25,6 +26,7 @@ export enum EventNames {
     Loan = 'Loan',
     Rebalance = 'Rebalance',
     Liquidate = 'Liquidate',
+    Rotate = 'Rotate',
 }
 
 interface BaseEvent {
@@ -84,6 +86,11 @@ export interface RpcTransfer extends BaseEvent {
     args: TransferEvent['args'];
 }
 
+export interface RpcRotate extends BaseEvent {
+    name: EventNames.Rotate;
+    args: RotateEvent['args'];
+}
+
 export type InterfacedEvent =
     | RpcMint
     | RpcOfferMint
@@ -95,4 +102,5 @@ export type InterfacedEvent =
     | RpcTransfer
     | RpcLiquidate
     | RpcLoan
-    | RpcRebalance;
+    | RpcRebalance
+    | RpcRotate;
