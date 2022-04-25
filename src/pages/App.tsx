@@ -12,7 +12,7 @@ import NuggBook from '@src/components/nuggbook/NuggBook';
 import useDimentions from '@src/client/hooks/useDimentions';
 import HotRotateO, { HotRotateOController } from '@src/pages/HotRotateO';
 
-import MobileViewScreen from './mobile/MobileViewScreen';
+import MobileViewScreen2 from './mobile/MobileViewScreen2';
 
 const MobileWalletView = React.lazy(() => import('@src/pages/mobile/MobileWalletView'));
 // const HotRotateO = React.lazy(() => import('@src/pages/HotRotateO'));
@@ -39,7 +39,7 @@ const Router = () => {
                 },
                 // instead of hiding this for mobile here, we redirect inside the component to avoid lots of rerenders
                 { path: 'wallet', element: <MobileWalletView /> },
-                { path: 'swap/:id', element: null },
+                { path: 'swap/:id', element: isPhone ? <MobileViewScreen2 /> : null },
                 { path: 'live', element: null },
                 { path: '*', element: <Navigate to={isPhone ? `swap/${epoch || ''}` : 'live'} /> },
             ],
@@ -57,7 +57,7 @@ const App = () => {
             <NuggBook />
             <Helmet />
             <NavigationBar />
-            <MobileViewScreen />
+
             <HotRotateO />
             <Router />
             <SwapPage />

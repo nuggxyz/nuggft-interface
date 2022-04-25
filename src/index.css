@@ -90,6 +90,23 @@ html {
     display: none;
 }
 
+.mobile-pressable-div {
+    transition: all 0.3s ease-in-out;
+}
+
+.mobile-pressable-div:active {
+    transform: scale(0.95);
+}
+
+@keyframes mobile-fade {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 .placeholder-blue::-webkit-input-placeholder {
     color: rgb(80, 144, 234);
 }

@@ -35,7 +35,10 @@ export default (activate: boolean, tokenId: ItemId | undefined) => {
                     if (!arg) return undefined;
 
                     const agency = lib.parse.agency(
-                        await nuggft.itemAgency(arg.tokenId, BigNumber.from(tokenId.toRawId())),
+                        await nuggft.itemAgency(
+                            arg.tokenId.toRawId(),
+                            BigNumber.from(tokenId.toRawId()),
+                        ),
                     );
 
                     const epoch =

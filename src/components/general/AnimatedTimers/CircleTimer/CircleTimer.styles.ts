@@ -12,7 +12,7 @@ const styles = NLStyleSheetCreator({
         flexDirection: 'column',
     },
     svgTransition: {
-        transition: 'filter .5s ease',
+        transition: 'all .5s ease',
         transformBox: 'fill-box',
         transformOrigin: 'center',
         transform: 'rotate(-90deg)',

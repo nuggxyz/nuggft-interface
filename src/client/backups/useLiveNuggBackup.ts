@@ -24,10 +24,10 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
 
     const callback = useCallback(async () => {
         if (activate && tokenId && chainId && liveEpoch) {
-            const agency = lib.parse.agency(await nuggft.agency(tokenId));
+            const agency = lib.parse.agency(await nuggft.agency(tokenId.toRawId()));
 
             const items = lib.parse
-                .proof(await nuggft.proofOf(tokenId))
+                .proof(await nuggft.proofOf(tokenId.toRawId()))
                 .map((x) => buildTokenIdFactory({ ...x, activeSwap: undefined }));
 
             const owner =
@@ -35,7 +35,7 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
                     ? (Address.ZERO.hash as AddressString)
                     : (nuggft.address as AddressString);
 
-            if (agency.flag === 0 && Number(tokenId) === liveEpoch.id) {
+            if (agency.flag === 0 && Number(tokenId.toRawId()) === liveEpoch.id) {
                 agency.epoch = liveEpoch.id;
                 agency.flag = 0x3;
             }
