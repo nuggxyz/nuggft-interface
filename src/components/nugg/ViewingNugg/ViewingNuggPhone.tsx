@@ -1,4 +1,4 @@
-import React, { FunctionComponent, MemoExoticComponent, useMemo } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 import { plural, t } from '@lingui/macro';
 
 import lib, { parseTokenIdSmart } from '@src/lib';
@@ -26,7 +26,7 @@ import MyNuggActions from './MyNuggActions';
 import SwapListPhone from './SwapListPhone';
 import { ItemListPhone } from './ItemList';
 
-type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
+// type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
 
 const Info = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
@@ -244,10 +244,12 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     );
 };
 
-const ViewingNuggPhone: FunctionComponent<Props> = () => {
+const ViewingNuggPhone: FunctionComponent<{
+    tokenId: TokenId | undefined;
+}> = ({ tokenId }) => {
     const epoch = client.live.epoch.id();
 
-    const tokenId = client.viewscreen.useViewScreenTokenId();
+    // const tokenId = client.viewscreen.useViewScreenTokenId();
 
     const sender = web3.hook.usePriorityAccount();
 
@@ -504,4 +506,4 @@ const ViewingNuggPhone: FunctionComponent<Props> = () => {
     ) : null;
 };
 
-export default React.memo(ViewingNuggPhone);
+export default ViewingNuggPhone;

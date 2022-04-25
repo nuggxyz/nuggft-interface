@@ -21,20 +21,6 @@ const SearchOverlay = React.lazy(() => import('@src/pages/SearchOverlay'));
 const Router = () => {
     const { isPhone } = useDimentions();
 
-    // const isPageLoaded = client.live.pageIsLoaded();
-
-    // const [loadSearchOverlay, setLoadSearchOverlay] = React.useState(false);
-
-    // const isView =
-
-    // React.useEffect(() => {
-    //     if (isPageLoaded) {
-    //         if (!loadSearchOverlay) {
-    //             if (isPhone) setTimeout(() => setLoadSearchOverlay(true), isPhone ? 2000 : 1000);
-    //         }
-    //     }
-    // }, [isPageLoaded, loadSearchOverlay, isPhone]);
-
     const epoch = client.live.epoch.id();
 
     const route = useRoutes([
@@ -45,7 +31,7 @@ const Router = () => {
                 {
                     path: 'view/*',
                     element: <SearchOverlay />,
-                    overlay: 997,
+                    // overlay: 997,
                 },
                 {
                     path: 'edit/:id',
@@ -53,9 +39,9 @@ const Router = () => {
                 },
                 // instead of hiding this for mobile here, we redirect inside the component to avoid lots of rerenders
                 { path: 'wallet', element: <MobileWalletView /> },
-                { path: 'swap/:id', element: isPhone ? <Navigate to="/live" /> : null },
+                { path: 'swap/:id', element: null },
                 { path: 'live', element: null },
-                { path: '*', element: <Navigate to={`swap/${epoch || ''}`} /> },
+                { path: '*', element: <Navigate to={isPhone ? `swap/${epoch || ''}` : 'live'} /> },
             ],
         },
     ]);

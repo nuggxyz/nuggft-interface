@@ -8,7 +8,7 @@ import lib from '@src/lib';
 import ViewingNuggPhone from '@src/components/nugg/ViewingNugg/ViewingNuggPhone';
 import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import Button from '@src/components/general/Buttons/Button/Button';
-import useViewingNugg from '@src/client/hooks/useViewingNugg';
+import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 
 const TOP = 0;
 const HIDDEN = 1000;
@@ -17,37 +17,35 @@ const HIDDEN = 1000;
 // MobileViewScreen is always rendered, just hidden and this triggers it
 
 // there are probably 1400000 better ways to do this, but we can fix that later, this works lol
-const MobileViewScreenController = () => {
+export const MobileViewScreenController = () => {
     const openViewScreen = client.viewscreen.useOpenViewScreen();
     const closeViewScreen = client.viewscreen.useCloseViewScreen();
-    // const isOpen = client.viewscreen.useViewScreenOpen();
 
-    const { safeTokenId: tokenid } = useViewingNugg();
+    const { tokenId } = useMobileViewingNugg();
 
     const navigate = useNavigate();
 
     React.useEffect(() => {
-        if (tokenid) {
-            openViewScreen(tokenid);
+        if (tokenId) {
+            openViewScreen(tokenId);
             return () => {
                 closeViewScreen();
             };
         }
         return undefined;
-    }, [tokenid, openViewScreen, closeViewScreen, navigate]);
+    }, [tokenId, openViewScreen, closeViewScreen, navigate]);
 
     return <></>;
 };
 
 const MobileViewScreen: FC<PropsWithChildren<{ onClose?: () => void }>> = () => {
-    // const close = client.viewscreen.useCloseViewScreen();
-    const isopen = client.viewscreen.useViewScreenOpen();
+    const { tokenId } = useMobileViewingNugg();
 
     const [, startTransiton] = React.useTransition();
 
     const top = React.useMemo(() => {
-        return isopen ? TOP : HIDDEN;
-    }, [isopen]);
+        return tokenId ? TOP : HIDDEN;
+    }, [tokenId]);
 
     const navigate = useNavigate();
 
@@ -60,7 +58,7 @@ const MobileViewScreen: FC<PropsWithChildren<{ onClose?: () => void }>> = () => 
         to: {
             top: draggedTop,
         },
-        delay: 200,
+        delay: 0,
         config: config.default,
     });
 
@@ -68,11 +66,9 @@ const MobileViewScreen: FC<PropsWithChildren<{ onClose?: () => void }>> = () => 
         setDraggedTop(top);
     }, [top]);
 
-    const style = useAnimateOverlayBackdrop(isopen, undefined, 200);
+    const style = useAnimateOverlayBackdrop(!!tokenId, undefined, 200);
 
     const node = React.useRef<HTMLDivElement>(null);
-
-    const { showMobileViewOverlay } = useViewingNugg();
 
     return (
         <>
@@ -93,24 +89,6 @@ const MobileViewScreen: FC<PropsWithChildren<{ onClose?: () => void }>> = () => 
                     onDragStart={(event) => {
                         event.dataTransfer.setData('text/plain', 'draggable');
                     }}
-                    // onTouchStart={(event) => {
-                    //     console.log('abc', event.detail);
-                    // }}
-                    // onTouchMove={(event) => {
-                    //     event.preventDefault();
-                    //     const check = event.touches.item(0);
-                    //     console.log(check);
-                    //     setDraggedTop(check.clientY);
-                    //     if (check.clientY > top + 300) handleClose();
-                    // }}
-                    // onTouchEnd={() => {
-                    //     setDraggedTop(top);
-                    // }}
-                    // onDrag={(event) => {
-                    //     event.preventDefault();
-                    //     setDraggedTop(event.clientY);
-                    //     if (event.clientY > top + 300) handleClose();
-                    // }}
                     onDragEnd={() => {
                         setDraggedTop(top);
                     }}
@@ -157,11 +135,11 @@ const MobileViewScreen: FC<PropsWithChildren<{ onClose?: () => void }>> = () => 
                             });
                         }}
                     />
-                    <ViewingNuggPhone />
+                    <ViewingNuggPhone tokenId={tokenId} />
                 </animated.div>
             </animated.div>
 
-            {showMobileViewOverlay && <MobileViewScreenController />}
+            {/* {show && <MobileViewScreenController />} */}
         </>
     );
 };

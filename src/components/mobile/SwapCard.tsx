@@ -1,7 +1,7 @@
 import React from 'react';
 import { animated, useSpring } from '@react-spring/web';
 
-import useViewingNugg from '@src/client/hooks/useViewingNugg';
+import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 
 import MobileRingAbout from './MobileRingAbout';
 
@@ -26,7 +26,7 @@ const SwapCard = ({
         [state],
     );
 
-    const { gotoViewingNugg } = useViewingNugg();
+    const { goto } = useMobileViewingNugg();
 
     const [, startTransition] = React.useTransition();
 
@@ -49,15 +49,6 @@ const SwapCard = ({
             onClickCapture={() => {
                 toggle(true);
             }}
-            // onTouchEnd={(event) => {
-            //     event.stopPropagation();
-            //     if (tokenId) {
-            //         startTransition(() => {
-            //             x.reset();
-            //             gotoViewingNugg(tokenId || '');
-            //         });
-            //     }
-            // }}
             onClick={(event) => {
                 x.reset();
 
@@ -66,7 +57,7 @@ const SwapCard = ({
                 if (tokenId) {
                     startTransition(() => {
                         x.reset();
-                        gotoViewingNugg(tokenId);
+                        goto(tokenId);
                     });
                 }
             }}

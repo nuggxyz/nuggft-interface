@@ -630,7 +630,6 @@ function useENS(
             else {
                 let stale = false;
                 setENSName(Address.shortenAddressHash(account));
-                console.log(account.toLowerCase(), provider);
 
                 provider
                     .lookupAddress(account.toLowerCase())

@@ -31,7 +31,6 @@ type FormatedMyNuggsData = MyNuggsData & { lastBid: EthInt | 'unable-to-bid' };
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const address = web3.hook.usePriorityAccount();
 
-    console.log({ address });
     const { screen: screenType } = useDimentions();
     const provider = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
@@ -90,15 +89,13 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             // if (activeItem) return activeItem.sellingNugg;
         }
         return undefined;
-    }, [data.tokenId, data.nuggToBuyFrom]);
+    }, [data.nuggToBuyFrom]);
 
     const check = useAsyncState<{
         canOffer: boolean | undefined;
         next: BigNumber | undefined;
         curr: BigNumber | undefined;
     }>(() => {
-        console.log('ayo', data, selectedNuggForItem, sellingNugg);
-
         if (data.tokenId && address && chainId && provider) {
             if (data.isNugg()) {
                 return nuggft['check(address,uint24)'](address, data.tokenId.toRawId()).then(
@@ -114,11 +111,10 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
             if (selectedNuggForItem && sellingNugg) {
                 return nuggft['check(uint24,uint24,uint16)'](
-                    selectedNuggForItem.tokenId.toRawId(),
+                    selectedNuggForItem.tokenId.toRawIdNum(),
                     sellingNugg.toRawId(),
                     data.tokenId.toRawId(),
                 ).then((x) => {
-                    console.log('ABC', x);
                     return {
                         canOffer: x.canOffer,
                         next: x.next,

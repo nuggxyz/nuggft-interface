@@ -43,7 +43,7 @@ const Modal: FC<PropsWithChildren<any>> = ({ children }) => {
     useOnClickOutside(node, closeModal);
 
     return (
-        <animated.div style={style}>
+        <animated.div style={{ ...style, justifyContent: 'flex-start' }}>
             <div
                 style={{
                     position: 'relative',
@@ -51,7 +51,7 @@ const Modal: FC<PropsWithChildren<any>> = ({ children }) => {
                         width: '100%',
                         display: 'flex',
                         justifyContent: 'center',
-                        marginTop: '150px',
+                        // marginTop: '150px',
                     }),
                 }}
             >

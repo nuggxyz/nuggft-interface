@@ -11,6 +11,7 @@ import { SearchView } from '@src/client/interfaces';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import InfiniteList from '@src/components/general/List/InfiniteList';
+import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -55,17 +56,19 @@ const NuggList: FunctionComponent<NuggListProps> = ({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     horribleMFingHack2 = false,
 }) => {
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType, isPhone } = useDimentions();
 
     const viewing = client.live.searchFilter.viewing();
 
     const { gotoViewingNugg } = useViewingNugg();
+    const { goto } = useMobileViewingNugg();
 
     const onClick = useCallback(
         (item: TokenId) => {
-            gotoViewingNugg(item);
+            if (isPhone) goto(item);
+            else gotoViewingNugg(item);
         },
-        [gotoViewingNugg],
+        [gotoViewingNugg, goto, isPhone],
     );
 
     const _onScrollEnd = useCallback(() => {

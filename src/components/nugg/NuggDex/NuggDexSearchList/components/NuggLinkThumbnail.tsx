@@ -6,6 +6,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import useDimentions from '@src/client/hooks/useDimentions';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
+import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 
 import styles from './NuggDexComponents.styles';
 
@@ -24,10 +25,18 @@ const NuggLinkThumbnail: FunctionComponent<{
             ...customStyle,
         };
     }, [tokenId, isHovering, customStyle]);
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType, isPhone } = useDimentions();
 
     const { gotoViewingNugg } = useViewingNugg();
-    // const pageLoaded = client.live.pageIsLoaded();
+    const { goto } = useMobileViewingNugg();
+
+    const onClick = React.useCallback(
+        (item: TokenId) => {
+            if (isPhone) goto(item);
+            else gotoViewingNugg(item);
+        },
+        [gotoViewingNugg, goto, isPhone],
+    );
 
     return (
         <animated.div
@@ -35,7 +44,7 @@ const NuggLinkThumbnail: FunctionComponent<{
             key={index}
             style={{ ...style }}
             onClick={() => {
-                gotoViewingNugg(tokenId);
+                onClick(tokenId);
             }}
         >
             <TokenViewer
