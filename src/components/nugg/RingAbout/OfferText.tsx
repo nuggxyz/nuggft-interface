@@ -127,7 +127,7 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
             <Text textStyle={{ fontSize: '13px', color: 'white', marginTop: 5 }}>
                 {`${
                     leader?.eth?.number
-                        ? `${leaderEns || leader?.user} is leading`
+                        ? `${leaderEns || leader?.user || ''} is leading`
                         : 'starting price'
                 } | ${offers.length} offers`}
             </Text>
