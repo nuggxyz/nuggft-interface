@@ -435,7 +435,7 @@ const core = create(
     ),
 );
 
-core.subscribe((state) => state.blocknum, console.log);
+// core.subscribe((state) => state.blocknum, console.log);
 
 // export const coreNonImmer = createClientStoreAndActions3();
 

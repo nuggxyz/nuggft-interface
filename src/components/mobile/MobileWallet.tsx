@@ -14,6 +14,7 @@ import { useMultiClaimArgs } from '@src/components/nugg/Wallet/tabs/ClaimTab/Mul
 import { Page } from '@src/interfaces/nuggbook';
 import InfoClicker from '@src/components/nuggbook/InfoClicker';
 import { LiveNuggItem } from '@src/client/interfaces';
+import NLStaticImage from '@src/components/general/NLStaticImage';
 
 import MyNuggItemListPhone from './MyNuggItemMobile';
 
@@ -45,6 +46,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
     const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
+    const peer = web3.hook.usePriorityPeer();
 
     // const stake__eps = client.live.stake.eps();
     const nuggs = client.live.myNuggs();
@@ -86,7 +88,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
         >
             <div
                 style={{
-                    marginTop: '10px',
+                    marginTop: '20px',
                     width: '95%',
                     display: 'flex',
                     justifyContent: 'flex-start',
@@ -122,10 +124,12 @@ const MobileWallet: FunctionComponent<Props> = () => {
                 >
                     {ens}
                 </Text>
+                {peer && <NLStaticImage image={`${peer.peer}_icon`} />}
             </div>
+            <Text size="small">change accounts</Text>
 
             <div style={{ width: '325px', paddingTop: '20px', paddingBottom: '20px' }}>
-                <div style={{}}>
+                <div style={{ paddingTop: '20px', paddingBottom: '20px' }}>
                     <div
                         style={{
                             width: '100%',
@@ -202,21 +206,23 @@ const MobileWallet: FunctionComponent<Props> = () => {
                     style={{
                         display: 'flex',
                         justifyContent: 'center',
-                        flexDirection: 'row-reverse',
+                        flexDirection: 'column',
                         width: '100%',
                     }}
                 >
-                    <InfoClicker to={Page.WhatIsAnNFT} style={{ marginTop: 7, marginLeft: 4 }} />
                     <div
                         className="mobile-pressable-div"
                         style={{
                             width: '100%',
                             background: lib.colors.gradient,
-                            borderRadius: lib.layout.borderRadius.large,
+                            borderRadius: lib.layout.borderRadius.medium,
                             // margin: '1rem',
                             marginRight: '.2rem',
                             boxShadow: lib.layout.boxShadow.dark,
                             // marginRight: 0,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
                         }}
                         onClick={() => setLoansOpen(!loansOpen)}
                         aria-hidden="true"
@@ -239,7 +245,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                 }}
                             >
                                 <Text
-                                    // size="small"
+                                    size="large"
                                     textStyle={{
                                         color: 'white',
                                         paddingLeft: '.5rem',
@@ -258,7 +264,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                 <Label
                                     containerStyles={{ marginRight: '10px' }}
                                     text={loans.length.toString()}
-                                    size="small"
+                                    // size="small"
                                 />
                                 <IoIosArrowDroprightCircle
                                     color="white"
@@ -270,92 +276,89 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                 />
                             </div>
                         </div>
+                        <InfoClicker to={Page.WhatIsAnNFT} text="learn about loans" />
                     </div>
                 </div>
                 <div
                     style={{
                         display: 'flex',
                         justifyContent: 'center',
-                        flexDirection: 'row-reverse',
+                        flexDirection: 'column-reverse',
                         width: '100%',
                         marginTop: '1rem',
                     }}
                 >
-                    <InfoClicker to={Page.WhatIsAnNFT} style={{ marginTop: 7, marginLeft: 4 }} />
                     <div
+                        className="mobile-pressable-div"
                         style={{
                             width: '100%',
-                            background: lib.colors.gradient,
-                            borderRadius: lib.layout.borderRadius.large,
-                            boxShadow: lib.layout.boxShadow.dark,
+                            background: lib.colors.gradient2,
+                            borderRadius: lib.layout.borderRadius.medium,
+                            // margin: '1rem',
                             marginRight: '.2rem',
+                            boxShadow: lib.layout.boxShadow.dark,
                             // marginRight: 0,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
                         }}
-                        className="mobile-pressable-div"
                         onClick={() => setPendingClaimsOpen(!pendingClaimsOpen)}
                         aria-hidden="true"
                     >
                         <div
+                            key={`${'claims'}-swaplist`}
                             style={{
-                                width: '100%',
+                                zIndex: 101,
                                 background: lib.colors.gradient2,
                                 borderRadius: lib.layout.borderRadius.large,
-                                zIndex: 101,
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                padding: '.3rem .5rem',
                             }}
                         >
                             <div
-                                key={`${'claims'}-swaplist`}
                                 style={{
                                     display: 'flex',
                                     flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    width: '100%',
-                                    padding: '.3rem .5rem',
+                                    alignItems: 'center',
                                 }}
                             >
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
+                                <Text
+                                    size="large"
+                                    textStyle={{
+                                        color: 'white',
+                                        paddingLeft: '.5rem',
                                     }}
                                 >
-                                    <Text
-                                        // size="small"
-                                        textStyle={{
-                                            color: 'white',
-                                            paddingLeft: '.5rem',
-                                        }}
-                                    >
-                                        Pending Claims
-                                    </Text>
-                                </div>
-                                <div
+                                    Pending Claims
+                                </Text>
+                            </div>
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Label
+                                    containerStyles={{ marginRight: '10px' }}
+                                    text={unclaimedOffers.length.toString()}
+                                    size="small"
+                                />
+                                <IoIosArrowDroprightCircle
+                                    color="white"
+                                    size={30}
+                                    transform={pendingClaimsOpen ? 'rotate(90deg)' : ''}
                                     style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
+                                        WebkitTransform: pendingClaimsOpen ? 'rotate(90deg)' : '',
                                     }}
-                                >
-                                    <Label
-                                        containerStyles={{ marginRight: '10px' }}
-                                        text={unclaimedOffers.length.toString()}
-                                        size="small"
-                                    />
-                                    <IoIosArrowDroprightCircle
-                                        color="white"
-                                        size={30}
-                                        transform={pendingClaimsOpen ? 'rotate(90deg)' : ''}
-                                        style={{
-                                            WebkitTransform: pendingClaimsOpen
-                                                ? 'rotate(90deg)'
-                                                : '',
-                                        }}
-                                    />
-                                </div>
-                                {/* <CurrencyText size="small" image="eth" value={x.eth.number} stopAnimation /> */}
+                                />
                             </div>
                         </div>
+                        <InfoClicker to={Page.WhatIsAnNFT} text="learn about claims" />
+
                         {pendingClaimsOpen && (
                             <div
                                 style={{
