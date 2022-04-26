@@ -13,13 +13,10 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import lib from '@src/lib';
 import globalStyles from '@src/lib/globalStyles';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
-import useDimentions from '@src/client/hooks/useDimentions';
-import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
 
 import styles from './AccountViewer.styles';
 
 const AccountViewer = () => {
-    const { screen: screenType } = useDimentions();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const ens = web3.hook.usePriorityENSName(provider);
@@ -53,51 +50,41 @@ const AccountViewer = () => {
             />
         </div>
     ) : ens && chainId && peer ? (
-        screenType === 'phone' ? (
-            <IconButton
-                aria-hidden="true"
-                buttonStyle={styles.textContainer}
-                onClick={() => {
-                    navigate('/wallet');
-                }}
-                iconComponent={<Jazzicon address={address} size={35} />}
-            />
-        ) : (
-            <Flyout
-                style={styles.flyout}
-                button={
-                    <div style={styles.textContainer}>
-                        <div
-                            style={{
-                                // marginRight: screenType ===|'phone' ? '0rem' : '.5rem',
-                                ...styles.header,
+        <Flyout
+            style={styles.flyout}
+            button={
+                <div style={styles.textContainer}>
+                    <div
+                        style={{
+                            // marginRight: screenType ===|'phone' ? '0rem' : '.5rem',
+                            ...styles.header,
+                        }}
+                    >
+                        <div style={globalStyles.centeredSpaceBetween}>
+                            <Text type="text" size="medium" textStyle={styles.text}>
+                                {ens.toLowerCase()}
+                            </Text>
+                            <NLStaticImage image={`${peer.peer}_icon_small`} />
+                        </div>
+                        <Text
+                            size="smaller"
+                            type="code"
+                            textStyle={{
+                                ...styles.balance,
+                                ...(darkmode ? { color: 'white' } : {}),
                             }}
                         >
-                            <div style={globalStyles.centeredSpaceBetween}>
-                                <Text type="text" size="medium" textStyle={styles.text}>
-                                    {ens.toLowerCase()}
-                                </Text>
-                                <NLStaticImage image={`${peer.peer}_icon_small`} />
-                            </div>
-                            <Text
-                                size="smaller"
-                                type="code"
-                                textStyle={{
-                                    ...styles.balance,
-                                    ...(darkmode ? { color: 'white' } : {}),
-                                }}
-                            >
-                                ({web3.config.CHAIN_INFO[chainId].label})
-                                {balance ? balance.decimal.toNumber().toPrecision(5) : 0} ETH
-                            </Text>
-                        </div>
-
-                        <Jazzicon address={address} size={35} />
+                            ({web3.config.CHAIN_INFO[chainId].label})
+                            {balance ? balance.decimal.toNumber().toPrecision(5) : 0} ETH
+                        </Text>
                     </div>
-                }
-            >
-                <>
-                    {/* {screenType === 'phone' && (
+
+                    <Jazzicon address={address} size={35} />
+                </div>
+            }
+        >
+            <>
+                {/* {screenType === 'phone' && (
                     <Button
                         label={t`Wallet`}
                         type="text"
@@ -114,35 +101,34 @@ const AccountViewer = () => {
                         }}
                     />
                 )} */}
-                    <Button
-                        label={t`Explore`}
-                        type="text"
-                        buttonStyle={styles.flyoutButton}
-                        leftIcon={
-                            <IoOpenOutline
-                                color={lib.colors.nuggBlueText}
-                                size={25}
-                                style={{ marginRight: '.75rem' }}
-                            />
-                        }
-                        onClick={() => web3.config.gotoEtherscan(chainId, 'address', address)}
-                    />
-                    <Button
-                        type="text"
-                        label={t`Disconnect`}
-                        buttonStyle={styles.flyoutButton}
-                        leftIcon={
-                            <IoPowerOutline
-                                color={lib.colors.nuggBlueText}
-                                size={25}
-                                style={{ marginRight: '.75rem' }}
-                            />
-                        }
-                        onClick={() => connector.deactivate()}
-                    />
-                </>
-            </Flyout>
-        )
+                <Button
+                    label={t`Explore`}
+                    type="text"
+                    buttonStyle={styles.flyoutButton}
+                    leftIcon={
+                        <IoOpenOutline
+                            color={lib.colors.nuggBlueText}
+                            size={25}
+                            style={{ marginRight: '.75rem' }}
+                        />
+                    }
+                    onClick={() => web3.config.gotoEtherscan(chainId, 'address', address)}
+                />
+                <Button
+                    type="text"
+                    label={t`Disconnect`}
+                    buttonStyle={styles.flyoutButton}
+                    leftIcon={
+                        <IoPowerOutline
+                            color={lib.colors.nuggBlueText}
+                            size={25}
+                            style={{ marginRight: '.75rem' }}
+                        />
+                    }
+                    onClick={() => connector.deactivate()}
+                />
+            </>
+        </Flyout>
     ) : null;
 };
 

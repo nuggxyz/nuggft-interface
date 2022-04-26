@@ -276,7 +276,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                 />
                             </div>
                         </div>
-                        <InfoClicker to={Page.WhatIsAnNFT} text="learn about loans" />
+                        <InfoClicker to={Page.WhatIsAnNFT} text="learn about loans" size={15} />
                     </div>
                 </div>
                 <div
@@ -357,7 +357,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                 />
                             </div>
                         </div>
-                        <InfoClicker to={Page.WhatIsAnNFT} text="learn about claims" />
+                        <InfoClicker to={Page.WhatIsAnNFT} text="learn about claims" size={15} />
 
                         {pendingClaimsOpen && (
                             <div

@@ -1,22 +1,17 @@
 import React, { FC, useCallback } from 'react';
 import { animated } from '@react-spring/web';
 import { useMatch, useNavigate } from 'react-router-dom';
-import { Book } from 'react-feather';
 
-import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
 import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
 import FloorPrice from '@src/components/nugg/FloorPrice';
 import NuggDexSearchBar from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar';
 import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
-import NLStaticImage from '@src/components/general/NLStaticImage';
-import Button from '@src/components/general/Buttons/Button/Button';
 import useBlur from '@src/hooks/useBlur';
 import useDimentions from '@src/client/hooks/useDimentions';
-import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
-import client from '@src/client';
-import { Page } from '@src/interfaces/nuggbook';
+import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
 
 import styles from './NavigationBar.styles';
+import NavigationBarMobile from './NavigationBarMobile';
 
 type Props = {
     showBackButton?: boolean;
@@ -36,14 +31,16 @@ const NavigationBar: FC<Props> = () => {
 
     const container = useBlur([]);
 
-    const openNuggBook = client.nuggbook.useOpenNuggBook();
+    // const openNuggBook = client.nuggbook.useOpenNuggBook();
 
-    return (
+    return screenType === 'phone' ? (
+        <NavigationBarMobile />
+    ) : (
         <animated.div
             style={{
                 ...styles.navBarContainer,
                 ...container,
-                ...(isViewOpen && screenType === 'phone' ? { justifyContent: 'flex-end' } : {}),
+                // ...(isViewOpen && screenType === 'phone' ? { justifyContent: 'flex-end' } : {}),
                 ...(isHome
                     ? {
                           backdropFilter: 'blur(1px)',
@@ -61,9 +58,9 @@ const NavigationBar: FC<Props> = () => {
             <div
                 style={{
                     ...styles.searchBarContainer,
-                    ...(isViewOpen && screenType === 'phone'
-                        ? { width: '100%', position: 'absolute' }
-                        : {}),
+                    // ...(isViewOpen && screenType === 'phone'
+                    //     ? { width: '100%', position: 'absolute' }
+                    //     : {}),
                 }}
             >
                 <NuggDexSearchBar />
@@ -73,38 +70,37 @@ const NavigationBar: FC<Props> = () => {
                     <div style={{ marginRight: '10px' }}>
                         <HealthIndicator />
                     </div>
-                    {screenType === 'phone' && (
+                    {/* {screenType === 'phone' && (
                         <Button
                             hoverStyle={{ cursor: 'pointer' }}
                             buttonStyle={{ background: 'transparent', padding: '0', zIndex: 1000 }}
                             onClick={onClick}
                             rightIcon={<NLStaticImage image="nuggbutton" />}
                         />
-                    )}
+                    )} */}
                 </>
             )}
 
-            {screenType !== 'phone' && (
-                <div
-                    style={{
-                        whiteSpace: 'nowrap',
-                        position: 'relative',
-                    }}
-                >
-                    <ChainIndicator />
-                    {screenType === 'tablet' && (
-                        <div
-                            style={{
-                                position: 'absolute',
-                                marginTop: '0rem',
-                                width: '100%',
-                            }}
-                        >
-                            <FloorPrice />
-                        </div>
-                    )}
-                </div>
-            )}
+            <div
+                style={{
+                    whiteSpace: 'nowrap',
+                    position: 'relative',
+                }}
+            >
+                <ChainIndicator />
+                {screenType === 'tablet' && (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            marginTop: '0rem',
+                            width: '100%',
+                        }}
+                    >
+                        <FloorPrice />
+                    </div>
+                )}
+            </div>
+
             <div
                 style={{
                     ...styles.linkAccountContainer,
@@ -112,12 +108,7 @@ const NavigationBar: FC<Props> = () => {
                 }}
             >
                 {screenType === 'desktop' && <FloorPrice />}
-                {screenType === 'phone' && (
-                    <IconButton
-                        iconComponent={<Book />}
-                        onClick={() => openNuggBook(Page.TableOfContents)}
-                    />
-                )}
+
                 <AccountViewer />
             </div>
         </animated.div>

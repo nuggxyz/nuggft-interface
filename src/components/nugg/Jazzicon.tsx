@@ -1,7 +1,14 @@
 import React, { FC, useEffect, useRef } from 'react';
 import jazziconer from '@metamask/jazzicon';
 
-const Jazzicon: FC<{ address: string; size: number }> = ({ address, size = 35 }) => {
+import lib from '@src/lib';
+
+const Jazzicon: FC<{
+    address: string;
+    size: number;
+    className?: string;
+    style?: React.CSSProperties;
+}> = ({ address, size = 35, className, style }) => {
     const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -22,7 +29,18 @@ const Jazzicon: FC<{ address: string; size: number }> = ({ address, size = 35 })
         return () => undefined;
     }, [ref, address, size]);
 
-    return <div ref={ref} style={{ height: `${size}px`, width: `${size}px` }} />;
+    return (
+        <div
+            className={className}
+            ref={ref}
+            style={{
+                height: `${size}px`,
+                width: `${size}px`,
+                borderRadius: lib.layout.borderRadius.large,
+                ...style,
+            }}
+        />
+    );
 };
 
 export default Jazzicon;

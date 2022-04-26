@@ -49,7 +49,7 @@ html {
 }
 
 .info-clicker {
-    filter: drop-shadow(2px 3px 5px rgba(0, 0, 0, 0.4));
+    filter: var(--info-clicker-filter);
 }
 
 #background-radial-gradient {

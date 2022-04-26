@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useCallback, useMemo } from 'react';
+import React, { FunctionComponent, useCallback, useMemo, CSSProperties } from 'react';
 
 import useOnHover from '@src/hooks/useOnHover';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
@@ -8,7 +8,7 @@ import styles from './Button.styles';
 export type ButtonProps = {
     onClick: React.MouseEventHandler<HTMLDivElement>;
     label?: string;
-    buttonStyle?: React.CSSProperties;
+    buttonStyle?: CSSProperties;
     textStyle?: React.CSSProperties;
     rightIcon?: JSX.Element;
     leftIcon?: JSX.Element;

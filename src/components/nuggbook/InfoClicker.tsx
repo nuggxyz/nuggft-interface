@@ -5,7 +5,21 @@ import { Page } from '@src/interfaces/nuggbook';
 import client from '@src/client';
 import Button from '@src/components/general/Buttons/Button/Button';
 
-export default ({ to, style, text }: { to: Page; style?: CSSProperties; text: string }) => {
+export default ({
+    to,
+    style,
+    text,
+    size = 35,
+    color = 'rgba(255,255,255, .8)',
+    iconDropShadow,
+}: {
+    to: Page;
+    color?: string;
+    style?: CSSProperties;
+    text?: string;
+    size?: number;
+    iconDropShadow?: string;
+}) => {
     const openNuggBook = client.nuggbook.useOpenNuggBook();
 
     return (
@@ -16,17 +30,23 @@ export default ({ to, style, text }: { to: Page; style?: CSSProperties; text: st
             }}
             leftIcon={
                 <IoInformationCircle
-                    size={15}
-                    color="rgba(255,255,255, .8)"
-                    // className="info-clicker "
+                    size={size}
+                    color={color}
+                    className="info-clicker"
                     style={{ marginRight: '3px', ...style }}
                 />
             }
             className="mobile-pressable-div"
             label={text}
             hoverStyle={{ filter: 'brightness(1)' }}
-            buttonStyle={{ background: 'transparent', paddingTop: 0 }}
-            textStyle={{ color: 'rgba(255,255,255, .8)' }}
+            buttonStyle={{
+                background: 'transparent',
+                padding: 0,
+                ...(iconDropShadow && {
+                    '--info-clicker-filter': `drop-shadow(${iconDropShadow})`,
+                }),
+            }}
+            textStyle={{ color }}
             size="small"
         />
         // <div

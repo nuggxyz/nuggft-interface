@@ -29,6 +29,7 @@ const Colors = {
     nuggBlueTransparent: 'rgba(80, 144, 234, 0.20)',
     nuggBlueTransparentNoAlpha: 'rgb(192, 215, 247)',
     nuggBlueSemiTransparent: 'rgba(80, 144, 234, 0.60)',
+    nuggGreenSemiTransparent: '#00C78188',
     nuggRedText: 'rgb(255, 104, 114)',
     nuggRedTransparent: 'rgba(255, 104, 114, 0.20)',
     transparent: 'rgba(0,0,0,0)',
