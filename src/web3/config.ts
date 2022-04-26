@@ -163,6 +163,8 @@ export const peer_rainbow: PeerInfo = {
     color: 'rgb(0,62,140)',
     name: 'Rainbow Wallet',
     deeplink_href: 'https://rnbwapp.com/',
+    ios_href: 'ios-app://1457119021/rainbow/open?',
+    android_href: 'android-app://me.rainbow/rainbow/open?',
     peerurl: 'https://rainbow.me',
 };
 
@@ -194,6 +196,7 @@ export const peer_ledgerlive: PeerInfo = {
     color: 'rgba(0,0,0,1.0)',
     name: 'Ledger Live',
     deeplink_href: 'ledgerlive://',
+
     peerurl: 'https://www.ledger.com/',
 };
 
@@ -309,6 +312,10 @@ export const priority = getPriorityConnector(connector_instances);
 export const network = getNetworkConnector(connector_instances);
 
 export const selected = getSelectedConnector();
+
+export const gotoDeepLink = (link: string) => {
+    window.open(link);
+};
 
 export const gotoLink = (link: string) => {
     const win = window.open(encodeURIComponent(link), '_blank');

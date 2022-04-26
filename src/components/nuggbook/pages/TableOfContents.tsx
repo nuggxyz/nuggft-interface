@@ -168,10 +168,12 @@ const TableOfContents: NuggBookPage = ({ setPage, visits, clear }) => {
     return (
         <div
             style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                display: 'flex',
-                flexDirection: 'column',
+                // justifyContent: 'center',
+                // alignItems: 'center',
+                // display: 'flex',
+                // flexDirection: 'column',
+                // height: dim?.height,
+                overflow: 'scroll',
             }}
         >
             <Text size="larger" textStyle={{ padding: '10px' }}>

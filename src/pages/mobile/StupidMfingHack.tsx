@@ -7,9 +7,9 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import emitter from '@src/emitter/index';
 import web3 from '@src/web3';
 import Text from '@src/components/general/Texts/Text/Text';
-import { gotoLink } from '@src/web3/config';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
+import { gotoDeepLink } from '@src/web3/config';
 
 const StupidMfingHack: FC<PropsWithChildren<{ onClose?: () => void }>> = () => {
     const peer = web3.hook.usePriorityPeer();
@@ -98,7 +98,7 @@ const StupidMfingHack: FC<PropsWithChildren<{ onClose?: () => void }>> = () => {
                         event.preventDefault();
                         event.stopPropagation();
                         startTransiton(() => {
-                            gotoLink(peer.deeplink_href || '');
+                            gotoDeepLink(peer.deeplink_href || '');
                         });
                     }}
                     rightIcon={

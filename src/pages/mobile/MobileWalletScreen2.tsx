@@ -1,24 +1,22 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { FC, PropsWithChildren } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import lib from '@src/lib';
-import Button from '@src/components/general/Buttons/Button/Button';
 import MobileWallet from '@src/components/mobile/MobileWallet';
+import BackButton from '@src/components/mobile/BackButton';
 
 // this makes the MobileViewScreen behave like a regular component
 // MobileViewScreen is always rendered, just hidden and this triggers it
 
 const MobileViewScreen2: FC<PropsWithChildren<{ onClose?: () => void }>> = () => {
-    const [, startTransiton] = React.useTransition();
+    // const [, startTransiton] = React.useTransition();
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const node = React.useRef<HTMLDivElement>(null);
 
-    const [death, setDeath] = React.useState(false);
-
-    return !death || death ? (
+    // const [death, setDeath] = React.useState(false);
+    return (
         <>
             <div
                 style={{
@@ -67,28 +65,8 @@ const MobileViewScreen2: FC<PropsWithChildren<{ onClose?: () => void }>> = () =>
                         padding: '10px',
                     }}
                 >
-                    <Button
-                        buttonStyle={{
-                            position: 'absolute',
-                            boxShadow: '0 3px 5px rgba(80, 80, 80,1)',
-                            bottom: 30,
-                            right: 30,
-                            zIndex: 100002,
-                            background: lib.colors.gradient3,
-                            color: 'white',
-                            scale: '1.5',
-                            borderRadius: lib.layout.borderRadius.large,
-                        }}
-                        label="back"
-                        onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            setDeath(true);
-                            startTransiton(() => {
-                                navigate(-1);
-                            });
-                        }}
-                    />
+                    <BackButton to="/live" />
+
                     <div
                         style={{
                             overflow: 'scroll',
@@ -102,7 +80,7 @@ const MobileViewScreen2: FC<PropsWithChildren<{ onClose?: () => void }>> = () =>
                 </div>
             </div>
         </>
-    ) : null;
+    );
 };
 
 export default MobileViewScreen2;

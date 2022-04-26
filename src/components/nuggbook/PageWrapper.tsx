@@ -7,6 +7,8 @@ import lib from '@src/lib';
 import { Page, initialNuggBookLocalStorage } from '@src/interfaces/nuggbook';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import useLocalStorage from '@src/hooks/useLocaleStorage';
+import useDimentions from '@src/client/hooks/useDimentions';
+import BackButton from '@src/components/mobile/BackButton';
 
 import Start from './pages/Start';
 import Welcome from './pages/Welcome';
@@ -73,6 +75,8 @@ const useNuggBookHandler = () => {
     return { handleClear, handleClose, handleVisit, visits };
 };
 
+const BOTTOM_OFFSET = 500;
+
 const Modal: FC<PropsWithChildren<unknown>> = () => {
     const book = useNuggBook();
 
@@ -83,6 +87,8 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
     useEffect(() => {
         setDraggedTop(book.top);
     }, [book.top]);
+
+    const dim = useDimentions();
 
     const containerStyle = useSpring({
         from: {
@@ -99,20 +105,17 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
     const tabFadeTransition = useTransition(book, {
         initial: {
             opacity: 0,
-            height: 0,
             zIndex: 0,
             left: 0,
         },
         from: (page) => ({
             opacity: 0,
-            height: 0,
             zIndex: 0,
             left: page.page === Page.TableOfContents ? -1000 : 1000,
         }),
-        enter: { opacity: 1, left: 0, right: 0 },
+        enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto' },
         leave: (page) => ({
             opacity: 0,
-            height: 0,
             zIndex: 0,
             left: page.page === Page.TableOfContents ? -1000 : 1000,
         }),
@@ -152,7 +155,6 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                 }}
                 style={{
                     ...containerStyle,
-                    height: '2000px',
                     width: '100%',
                     background: lib.colors.white,
                     borderTopLeftRadius: lib.layout.borderRadius.largish,
@@ -162,37 +164,64 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                     alignItems: 'center',
                     display: 'flex',
                     flexDirection: 'column',
+                    height: dim.height + BOTTOM_OFFSET,
+
+                    // paddingBottom: BOTTOM_OFFSET,
                 }}
             >
                 <div
                     style={{
-                        margin: '.8rem',
-                        background: lib.colors.grey,
-                        height: '8px',
-                        width: '40px',
-                        borderRadius: 100,
-                        alignSelf: 'center',
-                        justifySelf: 'center',
+                        height: dim.height - book.top,
+                        width: '100%',
+                        justifyContent: 'flex-start',
+                        display: 'flex',
+                        flexDirection: 'column',
+
+                        position: 'relative',
                     }}
-                />
-                {tabFadeTransition((_styles, kid) => (
-                    <animated.div
+                >
+                    <div
                         style={{
-                            ..._styles,
-                            position: 'absolute',
-                            width: '100%',
-                            padding: '25px',
+                            height: '100%',
+                            overflow: 'scroll',
                         }}
                     >
-                        {kid.comp &&
-                            kid.comp({
-                                clear: handleClear,
-                                close: handleClose,
-                                visits,
-                                setPage: handleVisit,
-                            })}
-                    </animated.div>
-                ))}
+                        {tabFadeTransition((_styles, kid) => (
+                            <>
+                                <animated.div
+                                    style={{
+                                        width: '100%',
+                                        padding: '25px',
+                                        position: 'absolute',
+                                        ..._styles,
+                                        overflow: 'scroll',
+
+                                        maxHeight: dim.height - book.top,
+                                    }}
+                                >
+                                    {!!kid.comp &&
+                                        kid.comp({
+                                            clear: handleClear,
+                                            close: handleClose,
+                                            visits,
+                                            setPage: handleVisit,
+                                        })}
+                                </animated.div>
+                            </>
+                        ))}
+                        <BackButton noNavigate onClick={() => handleClose()} />
+
+                        <div
+                            style={{
+                                position: 'absolute',
+                                left: 0,
+                                width: '20%',
+                                top: 0,
+                                height: '100%',
+                            }}
+                        />
+                    </div>
+                </div>
             </animated.div>
         </animated.div>
     );

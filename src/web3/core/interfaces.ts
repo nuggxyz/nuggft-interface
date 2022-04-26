@@ -81,6 +81,8 @@ export interface PeerInfo__WalletConnect extends PeerBaseInfo {
     peerurl: string | null;
     injected: false;
     fallback: false;
+    ios_href?: string;
+    android_href?: string;
 }
 
 export interface PeerInfo__Rpc extends PeerBaseInfo {
