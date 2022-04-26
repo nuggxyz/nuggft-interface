@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { animated } from '@react-spring/web';
 import { useMatch, useNavigate } from 'react-router-dom';
+import { IoQrCode } from 'react-icons/io5';
 
 import NuggDexSearchBar from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar';
 import useDimentions from '@src/client/hooks/useDimentions';
@@ -10,7 +11,6 @@ import lib from '@src/lib';
 import web3 from '@src/web3';
 import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
 import Jazzicon from '@src/components/nugg/Jazzicon';
-import Button from '@src/components/general/Buttons/Button/Button';
 import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 
@@ -90,44 +90,55 @@ const NavigationBarMobile: FC<Props> = () => {
                             to={Page.TableOfContents}
                             size={30}
                             color={lib.colors.nuggBlueSemiTransparent}
+                            buttonStyle={{ padding: 0 }}
                             // iconDropShadow={lib.layout.boxShadow.medium}
                         />
                     </div>
                 )}
 
-                {!isViewOpen ? (
-                    <div
-                        style={{
-                            ...styles.linkAccountContainer,
-                            padding: '0rem .5rem',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                        }}
-                    >
-                        <IconButton
-                            aria-hidden="true"
-                            buttonStyle={{
-                                padding: 0,
-                                background: 'transparent',
-                                borderRadius: lib.layout.borderRadius.large,
-                                boxShadow: lib.layout.boxShadow.medium,
+                {
+                    !isViewOpen ? (
+                        <div
+                            style={{
+                                ...styles.linkAccountContainer,
+                                padding: '0rem .5rem',
+                                alignItems: 'center',
+                                justifyContent: 'flex-end',
                             }}
-                            onClick={() => {
-                                navigate('/wallet');
-                            }}
-                            iconComponent={<Jazzicon address={address || ''} size={35} />}
-                        />
-                    </div>
-                ) : (
-                    <Button
-                        label="back"
-                        onClick={() => navigate(-1)}
-                        buttonStyle={{
-                            right: 30,
-                            position: 'absolute',
-                        }}
-                    />
-                )}
+                        >
+                            <IconButton
+                                aria-hidden="true"
+                                buttonStyle={{
+                                    padding: 0,
+                                    background: 'transparent',
+                                    borderRadius: lib.layout.borderRadius.large,
+                                    // boxShadow: lib.layout.boxShadow.medium,
+                                }}
+                                onClick={() => {
+                                    navigate('/wallet');
+                                }}
+                                iconComponent={
+                                    address ? (
+                                        <Jazzicon address={address || ''} size={35} />
+                                    ) : (
+                                        <IoQrCode
+                                            style={{ color: lib.colors.nuggBlueSemiTransparent }}
+                                            size={35}
+                                        />
+                                    )
+                                }
+                            />
+                        </div>
+                    ) : null
+                    // <Button
+                    //     label="back"
+                    //     onClick={() => navigate(-1)}
+                    //     buttonStyle={{
+                    //         right: 30,
+                    //         position: 'absolute',
+                    //     }}
+                    // />
+                }
             </div>
         </animated.div>
     );

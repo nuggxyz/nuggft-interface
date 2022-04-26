@@ -5,10 +5,11 @@ import { useMatch, useNavigate } from 'react-router-dom';
 import NuggDexSearchList from '@src/components/nugg/NuggDex/NuggDexSearchList/NuggDexSearchList';
 import useBlur from '@src/hooks/useBlur';
 import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
-import { NLStyleSheetCreator } from '@src/lib';
+import lib, { NLStyleSheetCreator } from '@src/lib';
 import client from '@src/client';
 import useDimentions from '@src/client/hooks/useDimentions';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
+import Button from '@src/components/general/Buttons/Button/Button';
 
 type Props = Record<string, never>;
 
@@ -84,6 +85,28 @@ const SearchOverlay: FunctionComponent<Props> = () => {
                     }
                 }}
             >
+                <Button
+                    buttonStyle={{
+                        position: 'absolute',
+                        boxShadow: '0 3px 5px rgba(80, 80, 80,1)',
+                        bottom: 30,
+                        right: 30,
+                        zIndex: 100002,
+                        background: lib.colors.gradient3,
+                        color: 'white',
+                        scale: '1.5',
+                        borderRadius: lib.layout.borderRadius.large,
+                    }}
+                    label="back"
+                    onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        // setDeath(true);
+                        // startTransiton(() => {
+                        navigate(-1);
+                        // });
+                    }}
+                />
                 <div
                     aria-hidden="true"
                     role="button"

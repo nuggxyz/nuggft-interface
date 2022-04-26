@@ -12,10 +12,12 @@ export default ({
     size = 35,
     color = 'rgba(255,255,255, .8)',
     iconDropShadow,
+    buttonStyle,
 }: {
     to: Page;
     color?: string;
     style?: CSSProperties;
+    buttonStyle?: CSSProperties;
     text?: string;
     size?: number;
     iconDropShadow?: string;
@@ -41,10 +43,10 @@ export default ({
             hoverStyle={{ filter: 'brightness(1)' }}
             buttonStyle={{
                 background: 'transparent',
-                padding: 0,
                 ...(iconDropShadow && {
                     '--info-clicker-filter': `drop-shadow(${iconDropShadow})`,
                 }),
+                ...buttonStyle,
             }}
             textStyle={{ color }}
             size="small"

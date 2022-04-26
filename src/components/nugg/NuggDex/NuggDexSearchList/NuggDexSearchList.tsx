@@ -32,7 +32,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const sort = client.live.searchFilter.sort();
     const viewing = client.live.searchFilter.viewing();
 
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType, isPhone } = useDimentions();
 
     const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
     const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
@@ -155,10 +155,26 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         <div
             style={{
                 ...styles.searchListContainer,
-                ...(screenType === 'phone' && { width: '100%', height: '90%', marginTop: '2rem' }),
+                ...(screenType === 'phone' && {
+                    width: '100%',
+                    height: '90%',
+                    marginTop: '2rem',
+                    alignItems: 'flex-start',
+                }),
             }}
         >
-            <animated.div style={animatedStyle}>
+            <animated.div
+                style={{
+                    ...animatedStyle,
+                    ...(screenType === 'phone' &&
+                        {
+                            // width: '100%',
+                            // height: '90%',
+                            // marginTop: '2rem',
+                            // alignItems: 'flex-start',
+                        }),
+                }}
+            >
                 <NuggLink type={SearchView.Search} disablePreview>
                     <NuggList
                         interval={INFINITE_INTERVAL}
@@ -213,7 +229,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     style={{
                         position: 'absolute',
                         right: 0,
-                        bottom: 0,
+                        bottom: isPhone ? 45 : 0,
                     }}
                     type={SearchView.AllItems}
                     previewNuggs={
@@ -237,7 +253,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         // width: '100%',
                         position: 'absolute',
                         left: 0,
-                        bottom: 0,
+                        bottom: isPhone ? 45 : 0,
                     }}
                     type={SearchView.AllNuggs}
                     previewNuggs={
