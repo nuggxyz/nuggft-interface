@@ -117,6 +117,10 @@ export function useTransactionManager() {
                     const res = network
                         .estimateGas({ ...tx, from: signer.getAddress() })
                         .then((gasLimit) => {
+                            emitter.emit({
+                                type: emitter.events.TransactionSent,
+                            });
+
                             return provider
                                 .getSigner()
                                 .sendTransaction({ ...tx, gasLimit: BigNumber.from(gasLimit) })

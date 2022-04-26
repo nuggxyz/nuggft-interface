@@ -44,6 +44,10 @@ interface EmitTransactionInitiated extends EmitEventBase {
     txhash: string;
 }
 
+interface EmitTransactionSent extends EmitEventBase {
+    type: EmitEventNames.TransactionSent;
+}
+
 interface EmitModalOpen extends EmitEventBase {
     type: EmitEventNames.OfferModalOpened;
     onModalOpen: () => void;
@@ -100,7 +104,7 @@ export enum EmitEventNames {
     TransactionComplete = 'local.TransactionComplete',
     TransactionInitiated = 'local.TransactionInitiated',
     OfferModalOpened = 'local.OfferModalOpened',
-
+    TransactionSent = 'local.TransactionSent',
     // on chain events
     Mint = 'local.rpc.event.Mint',
     Transfer = 'local.rpc.event.Transfer',
@@ -128,6 +132,7 @@ export type EmitEventsListPayload =
     | BuildPayload<EmitLocalRpcLiquidate>
     | BuildPayload<EmitLocalRpcRebalance>
     | BuildPayload<EmitLocalRpcTransfer>
+    | BuildPayload<EmitTransactionSent>
     // | BuildPayload<EmitRpcSell>
     | BuildPayload<EmitModalOpen>;
 
@@ -144,4 +149,5 @@ export type EmitEventsListCallback =
     | BuildCallback<EmitLocalRpcLiquidate>
     | BuildCallback<EmitLocalRpcRebalance>
     | BuildCallback<EmitLocalRpcTransfer>
+    | BuildCallback<EmitTransactionSent>
     | BuildCallback<EmitModalOpen>;
