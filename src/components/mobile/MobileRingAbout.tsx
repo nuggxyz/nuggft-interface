@@ -6,9 +6,7 @@ import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
 import useLiveToken from '@src/client/subscriptions/useLiveToken';
 import lib from '@src/lib';
 import styles from '@src/components/nugg/RingAbout/RingAbout.styles';
-import OffersList from '@src/components/nugg/RingAbout/OffersList';
 import OwnerBlock from '@src/components/nugg/RingAbout/OwnerBlock';
-import OfferButton from '@src/components/nugg/RingAbout/OfferButton';
 import OfferText from '@src/components/nugg/RingAbout/OfferText';
 import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
 
@@ -32,7 +30,7 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId }) => {
                     ...styles.container,
                     ...styles.mobile,
                     ...(swap?.endingEpoch === null && {
-                        background: lib.colors.gradient4,
+                        background: lib.colors.transparentGrey2,
                     }),
                     boxShadow: lib.layout.boxShadow.dark,
                 }}
@@ -40,9 +38,9 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId }) => {
                 <div style={styles.bodyContainer}>
                     <OwnerBlock tokenId={tokenId} />
                     <OfferText tokenId={tokenId} />
-                    <OffersList tokenId={tokenId} />
+                    {/* <OffersList tokenId={tokenId} /> */}
                 </div>
-                <OfferButton tokenId={tokenId} />
+                {/* <OfferButton tokenId={tokenId} /> */}
             </animated.div>
         </>
     );

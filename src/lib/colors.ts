@@ -16,7 +16,7 @@ const Colors = {
     transparentLightGrey: '#c9d9f255',
     transparentLightGrey2: '#c9d9f299',
     transparentDarkGrey2: 'rgba(0, 0, 0, 0.2)',
-
+    orange: '#ee7752',
     blue: '#0066ff',
     red: '#FF4040',
     purple: '#8A2BE2',

@@ -18,11 +18,15 @@ interface BalanceProps extends PartialText {
     percent?: boolean;
     image?: NLStaticImageKey;
     forceGwei?: boolean;
+    forceEth?: boolean;
+
     showUnit?: boolean;
     stopAnimation?: boolean;
     showIncrementAnimation?: boolean;
     loadOnZero?: boolean;
 }
+
+const MIN = 0.000000000001;
 
 const CurrencyText: React.FC<BalanceProps> = ({
     value,
@@ -32,6 +36,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
     // duration = 2,
     percent = false,
     forceGwei = false,
+    forceEth = false,
     showUnit = true,
     stopAnimation = false,
     showIncrementAnimation = false,
@@ -39,9 +44,10 @@ const CurrencyText: React.FC<BalanceProps> = ({
     // image,
     ...props
 }) => {
-    const [isGwei, setIsGwei] = useState(forceGwei);
+    // if (value === 0) value = MIN;
+    const [isGwei, setIsGwei] = useState(forceGwei && !forceEth);
     const prevValue = usePrevious(value);
-    const [jumpValue, setJumpValue] = React.useState(0);
+    const [jumpValue, setJumpValue] = React.useState(MIN);
     React.useEffect(() => {
         if (showIncrementAnimation && prevValue && prevValue !== 0 && prevValue < value) {
             setJumpValue(value - prevValue);
@@ -49,16 +55,16 @@ const CurrencyText: React.FC<BalanceProps> = ({
         return undefined;
     }, [value, prevValue, showIncrementAnimation]);
     useEffect(() => {
-        if (!forceGwei) setIsGwei(value < 0.001);
-    }, [value, forceGwei]);
+        if (!forceGwei && !forceEth) setIsGwei(value < 0.001);
+    }, [value, forceGwei, forceEth]);
 
     const [spring] = useSpring(
         {
-            val: value,
+            val: value || MIN,
             from: {
                 val:
                     stopAnimation || (loadOnZero && prevValue === 0)
-                        ? value
+                        ? MIN
                         : prevValue || value * 0.5,
             },
             config: config.molasses,
@@ -72,7 +78,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
         delay: 300,
         cancel: !showIncrementAnimation,
         config: config.molasses,
-        onRest: () => setJumpValue(0),
+        onRest: () => setJumpValue(MIN),
     });
 
     return (

@@ -15,8 +15,6 @@ import web3 from '@src/web3';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
 import useDimentions from '@src/client/hooks/useDimentions';
 
-import styles from './RingAbout.styles';
-
 const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>> = ({ item }) => {
     return (
         <div
@@ -52,13 +50,35 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
     );
     const { screen: screenType, isPhone } = useDimentions();
 
+    const dynamicTextColor = React.useMemo(() => {
+        if (isPhone && swap?.endingEpoch === null) {
+            return lib.colors.primaryColor;
+        }
+        return lib.colors.white;
+    }, [swap, isPhone]);
+
     return (
-        <div style={styles.ownerBlockContainer}>
+        <div
+            style={{
+                width: '100%',
+                // background: lib.colors.transparentWhite,
+                // borderRadius: lib.layout.borderRadius.medium,
+                padding: '.5rem',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '.1rem',
+                marginBottom: isPhone ? 0 : '.5rem',
+                // boxShadow: `0px 1px 3px ${lib.colors.shadowNuggBlue}`,
+                textAlign: 'center',
+            }}
+        >
             {swap && lifecycle === Lifecycle.Stands && (
                 <>
                     <Text
                         textStyle={{
-                            color: lib.colors.white,
+                            color: dynamicTextColor,
                         }}
                     >
                         {swap.type === 'item'
@@ -70,7 +90,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                         <Text
                             textStyle={{
                                 marginTop: '15px',
-                                color: lib.colors.white,
+                                color: dynamicTextColor,
                                 fontSize: '32px',
                             }}
                         >
@@ -82,7 +102,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
             {swap && lifecycle === Lifecycle.Cut && (
                 <Text
                     textStyle={{
-                        color: lib.colors.white,
+                        color: dynamicTextColor,
                     }}
                 >
                     {t`Unfortuantly, Nugg ${tokenId} did not make it.`}
@@ -102,7 +122,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                 >
                     <Text
                         textStyle={{
-                            color: 'white',
+                            color: dynamicTextColor,
                             padding: '1rem',
                             background: darkmode
                                 ? lib.colors.nuggBlueTransparent
@@ -123,12 +143,12 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             }}
                         >
                             <CurrencyText
-                                textStyle={{ color: 'white', fontSize: '28px' }}
+                                textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
                                 image="eth"
                                 value={leader?.eth?.number || 0}
                                 decimals={3}
                             />
-                            <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                            <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
                                 {`${leaderEns || leader?.user || ''} is selling`}
                             </Text>
                         </div>
@@ -144,12 +164,12 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             }}
                         >
                             <CurrencyText
-                                textStyle={{ color: 'white', fontSize: '28px' }}
+                                textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
                                 image="eth"
                                 value={token.tryout.min.eth.number || 0}
                                 decimals={3}
                             />
-                            <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                            <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
                                 {t`minimum price`}
                             </Text>
                         </div>
@@ -161,11 +181,11 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                                 flexDirection: 'column',
                             }}
                         >
-                            <Text textStyle={{ fontSize: '13px', color: 'white' }}>
+                            <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
                                 ending in about
                             </Text>
                             <Text
-                                textStyle={{ color: 'white', fontSize: '28px' }}
+                                textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
                             >{`${minutes} ${plural(minutes, {
                                 1: 'minute',
                                 other: 'minutes',
@@ -182,7 +202,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             flexDirection: 'column',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            marginBottom: '20px',
+                            // marginBottom: '20px',
                         }}
                     >
                         <TheRing
@@ -190,7 +210,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             manualTokenId={swap?.tokenId}
                             disableHover
                             disableClick
-                            defaultColor={isPhone ? 'white' : lib.colors.nuggBlue}
+                            defaultColor={isPhone ? dynamicTextColor : lib.colors.nuggBlue}
                             tokenStyle={{ width: '200px', height: '200px' }}
                         />
                     </div>
@@ -199,7 +219,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                     <List
                         data={token.items}
                         labelStyle={{
-                            color: 'white',
+                            color: dynamicTextColor,
                         }}
                         extraData={undefined}
                         RenderItem={RenderItem}

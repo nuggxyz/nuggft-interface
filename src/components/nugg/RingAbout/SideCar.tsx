@@ -12,7 +12,7 @@ import OffersList from './OffersList';
 import OfferButton from './OfferButton';
 
 export default ({ tokenId }: { tokenId?: TokenId }) => {
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType, isPhone } = useDimentions();
     const darkmode = useDarkMode();
 
     const token = client.live.token(tokenId);
@@ -30,7 +30,7 @@ export default ({ tokenId }: { tokenId?: TokenId }) => {
             <div style={styles.leadingOfferAmountUser}>
                 <Text
                     textStyle={{
-                        color: lib.colors.white,
+                        color: isPhone ? lib.colors.primaryColor : lib.colors.white,
                         paddingBottom: '10px',
                     }}
                 >{t`Coming Up`}</Text>

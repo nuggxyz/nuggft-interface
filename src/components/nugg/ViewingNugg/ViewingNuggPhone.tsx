@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { plural, t } from '@lingui/macro';
 
-import lib, { parseTokenIdSmart } from '@src/lib';
+import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
@@ -13,7 +13,7 @@ import TheRing from '@src/components/nugg/TheRing/TheRing';
 import OfferButton from '@src/components/nugg/RingAbout/OfferButton';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import useRemaining from '@src/client/hooks/useRemaining';
-import { Lifecycle, OfferData } from '@src/client/interfaces';
+import { Lifecycle } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { useNuggftV1 } from '@src/contracts/useContract';
@@ -21,6 +21,8 @@ import { Address } from '@src/classes/Address';
 import OffersList from '@src/components/nugg/RingAbout/OffersList';
 import Caboose from '@src/components/nugg/RingAbout/Caboose';
 import SideCar from '@src/components/nugg/RingAbout/SideCar';
+import Label from '@src/components/general/Label/Label';
+import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 
 import MyNuggActions from './MyNuggActions';
 import SwapListPhone from './SwapListPhone';
@@ -58,7 +60,7 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
 
     const text = useMemo(() => {
         if (token && token.tryout && token.tryout.count && token.tryout.count > 0)
-            return t`Pick a nugg to buy from`;
+            return t`accept a nugg's asking price`;
         return t`This item is not being sold by any nuggs`;
     }, [token]);
     return (
@@ -84,9 +86,8 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
                 >
                     <CurrencyText
                         textStyle={{
-                            color: 'white',
+                            color: lib.colors.primaryColor,
                             fontSize: '28px',
-                            textShadow: lib.layout.boxShadow.dark,
                         }}
                         image="eth"
                         value={token.tryout.min.eth.number || 0}
@@ -95,15 +96,14 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
                     <Text
                         textStyle={{
                             fontSize: '13px',
-                            color: 'white',
-                            textShadow: lib.layout.boxShadow.dark,
+                            color: lib.colors.primaryColor,
                         }}
                     >
                         {t`minimum price`}
                     </Text>
                 </div>
             )}
-            <Text textStyle={{ color: 'white' }}>{text}</Text>
+            <Text textStyle={{ color: lib.colors.primaryColor }}>{text}</Text>
             <SideCar tokenId={tokenId} />
             <Caboose tokenId={tokenId} />
         </div>
@@ -115,15 +115,14 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const swap = client.swaps.useSwap(tokenId);
     const lifecycle = useLifecycle(token);
 
-    const leader = client.live.offers(tokenId).first() as unknown as OfferData;
-
     const { minutes } = useRemaining(token?.activeSwap?.epoch);
     const provider = web3.hook.usePriorityProvider();
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         token && token.type === 'item' ? 'nugg' : provider,
-        leader?.user || '',
+        swap?.leader || '',
     );
+
     const nuggft = useNuggftV1();
 
     const vfo = useAsyncState(() => {
@@ -139,9 +138,6 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     }, [swap, nuggft, tokenId, provider]);
     return (
         <>
-            <div style={{ width: '100%', padding: '0 40px', marginBottom: '20px' }}>
-                <OfferButton tokenId={tokenId} inOverlay />
-            </div>
             <div
                 style={{
                     display: 'flex',
@@ -150,32 +146,40 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                     alignItems: 'center',
                 }}
             >
-                {leader && lifecycle === Lifecycle.Bench ? (
+                {lifecycle === Lifecycle.Bench ? (
                     <div
                         style={{
-                            alignItems: 'flex-end',
+                            alignItems: 'center',
                             display: 'flex',
                             flexDirection: 'column',
                         }}
                     >
                         <CurrencyText
                             textStyle={{
-                                color: 'white',
+                                color: lib.colors.primaryColor,
                                 fontSize: '28px',
-                                textShadow: lib.layout.boxShadow.dark,
                             }}
+                            forceEth
                             image="eth"
-                            value={leader?.eth?.number}
+                            value={swap?.eth?.number || 0}
                             decimals={3}
                         />
                         <Text
                             textStyle={{
                                 fontSize: '13px',
-                                color: 'white',
-                                textShadow: lib.layout.boxShadow.dark,
+                                color: lib.colors.primaryColor,
                             }}
                         >
-                            {`${leaderEns || ''} is selling`}
+                            asking price
+                        </Text>
+                        <Text
+                            size="large"
+                            textStyle={{
+                                paddingTop: '1rem',
+                                color: lib.colors.primaryColor,
+                            }}
+                        >
+                            {`for sale by ${leaderEns || Address.ZERO.hash}`}
                         </Text>
                     </div>
                 ) : (
@@ -188,22 +192,23 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                     >
                         <CurrencyText
                             textStyle={{
-                                color: 'white',
+                                color: lib.colors.primaryColor,
                                 fontSize: '28px',
-                                textShadow: lib.layout.boxShadow.dark,
                             }}
+                            forceEth
                             image="eth"
                             value={swap?.eth?.number || vfo?.number || 0}
-                            decimals={0}
+                            decimals={3}
                         />
                         <Text
                             textStyle={{
                                 fontSize: '13px',
-                                color: 'white',
-                                textShadow: lib.layout.boxShadow.dark,
+                                color: lib.colors.primaryColor,
                             }}
                         >
-                            {leaderEns ? `${leaderEns} is leading` : 'starting price'}
+                            {leaderEns && swap?.leader !== Address.ZERO.hash
+                                ? `${leaderEns} is leading`
+                                : 'starting price'}
                         </Text>
                     </div>
                 )}
@@ -218,17 +223,15 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                         <Text
                             textStyle={{
                                 fontSize: '13px',
-                                color: 'white',
-                                textShadow: lib.layout.boxShadow.dark,
+                                color: lib.colors.primaryColor,
                             }}
                         >
                             ending in about
                         </Text>
                         <Text
                             textStyle={{
-                                color: 'white',
+                                color: lib.colors.primaryColor,
                                 fontSize: '28px',
-                                textShadow: lib.layout.boxShadow.dark,
                             }}
                         >{`${minutes} ${plural(minutes, {
                             1: 'minute',
@@ -237,8 +240,13 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                     </div>
                 )}
             </div>
-            <div style={{ width: '100%', padding: '20px 10px ' }}>
-                <OffersList tokenId={tokenId} />
+            {(swap?.offers.length || 0) > 0 && lifecycle !== Lifecycle.Bench && (
+                <div style={{ width: '100%', padding: '20px 10px ' }}>
+                    <OffersList tokenId={tokenId} />
+                </div>
+            )}
+            <div style={{ width: '100%', padding: '0rem 20px', paddingTop: '.8rem' }}>
+                <OfferButton tokenId={tokenId} inOverlay />
             </div>
         </>
     );
@@ -263,6 +271,8 @@ const ViewingNuggPhone: FunctionComponent<{
     const provider = web3.hook.usePriorityProvider();
 
     const token = client.live.token(tokenId);
+    const swap = client.swaps.useSwap(tokenId);
+    const lifecycle = useLifecycleEnhanced(swap);
 
     return provider && epoch && tokenId && token ? (
         <>
@@ -324,7 +334,7 @@ const ViewingNuggPhone: FunctionComponent<{
                                     disableClick
                                     manualTokenId={tokenId}
                                     disableHover
-                                    tokenStyle={{ width: '275px', height: '275px' }}
+                                    tokenStyle={{ width: '225px', height: '225px' }}
                                 />
                             </div>
                         ) : (
@@ -332,71 +342,114 @@ const ViewingNuggPhone: FunctionComponent<{
                         )}
                     </div>
                 </div>
-
-                <Text
-                    textStyle={{
-                        textShadow: lib.layout.boxShadow.dark,
-                        color: 'white',
-                        padding: '1rem',
-                        // background: darkmode
-                        //     ? lib.colors.nuggBlueTransparent
-                        //     : lib.colors.transparentGrey,
+                <div
+                    style={{
+                        marginTop: token.activeSwap ? -10 : '1rem',
+                        // width: '95%',
+                        display: 'flex',
+                        // width: '90%',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        background: lib.colors.transparentWhite,
                         borderRadius: lib.layout.borderRadius.medium,
+                        padding: '.7rem .8rem',
                     }}
-                    size="larger"
                 >
-                    {tokenId && parseTokenIdSmart(tokenId)}
-                </Text>
-
-                {token.activeSwap && (
-                    <>
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'flex-start',
-                                alignItems: 'flex-start',
-                                textAlign: 'left',
-                                width: '100%',
-                                padding: '10px',
+                    <Text
+                        textStyle={{
+                            // textShadow: lib.layout.boxShadow.dark,
+                            color: lib.colors.primaryColor,
+                            // padding: '1rem',
+                            // background: darkmode
+                            //     ? lib.colors.nuggBlueTransparent
+                            //     : lib.colors.transparentGrey,
+                            borderRadius: lib.layout.borderRadius.medium,
+                        }}
+                        size="larger"
+                    >
+                        {tokenId && tokenId.toPrettyId()}
+                    </Text>
+                    {lifecycle && (
+                        <Label
+                            // type="text"
+                            containerStyles={{
+                                background: 'transparent',
                             }}
-                        >
-                            <Text
-                                size="larger"
-                                textStyle={{
-                                    color: 'white',
-                                    textShadow: lib.layout.boxShadow.dark,
+                            size="small"
+                            textStyle={{
+                                color: lib.colors.primaryColor,
+
+                                position: 'relative',
+                            }}
+                            text={lifecycle?.label}
+                            leftDotColor={lifecycle.color}
+                        />
+                    )}
+                </div>
+
+                {token.activeSwap &&
+                    (token.activeSwap.endingEpoch || 0) <= epoch &&
+                    lifecycle?.lifecycle !== Lifecycle.Cut && (
+                        <>
+                            <div
+                                style={{
+                                    // width: '95%',
+                                    display: 'flex',
+                                    width: '90%',
+                                    justifyContent: 'center',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    background: lib.colors.transparentWhite,
+                                    borderRadius: lib.layout.borderRadius.medium,
+                                    padding: '1rem .5rem',
+                                    marginTop: '1rem',
                                 }}
                             >
-                                Active Swap
-                            </Text>
-                        </div>
-                        <ActiveSwap tokenId={tokenId} />
-                    </>
-                )}
+                                <ActiveSwap tokenId={tokenId} />{' '}
+                            </div>
+                        </>
+                    )}
 
                 {token.type === 'item' && (
                     <>
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'flex-start',
-                                alignItems: 'flex-start',
-                                textAlign: 'left',
-                                width: '100%',
-                                padding: '10px',
-                            }}
-                        >
-                            <Text
-                                size="larger"
-                                textStyle={{
-                                    color: 'white',
-                                    textShadow: lib.layout.boxShadow.dark,
+                        {token.activeSwap && (
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-start',
+                                    alignItems: 'flex-start',
+                                    textAlign: 'left',
+                                    width: '100%',
+                                    padding: '2rem 1rem 1rem 1.5rem',
                                 }}
                             >
-                                Start an Auction
-                            </Text>
+                                <Text
+                                    size="larger"
+                                    textStyle={{
+                                        color: lib.colors.primaryColor,
+                                    }}
+                                >
+                                    Start the next auction
+                                </Text>
+                            </div>
+                        )}
+                        <div
+                            style={{
+                                // width: '95%',
+                                display: 'flex',
+                                width: '90%',
+                                justifyContent: 'center',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                background: lib.colors.transparentWhite,
+                                borderRadius: lib.layout.borderRadius.medium,
+                                padding: '1rem .5rem',
+                                marginTop: '1rem',
+                            }}
+                        >
+                            <NextSwap tokenId={token.tokenId} />
                         </div>
-                        <NextSwap tokenId={token.tokenId} />
                         <div
                             style={{
                                 display: 'flex',
@@ -404,14 +457,14 @@ const ViewingNuggPhone: FunctionComponent<{
                                 alignItems: 'flex-start',
                                 textAlign: 'left',
                                 width: '100%',
-                                padding: '10px',
+                                padding: '2rem 1rem 1rem 1.5rem',
                             }}
                         >
                             <Text
                                 size="larger"
                                 textStyle={{
-                                    color: 'white',
-                                    textShadow: lib.layout.boxShadow.dark,
+                                    color: lib.colors.primaryColor,
+                                    // textShadow: lib.layout.boxShadow.dark,
                                 }}
                             >
                                 Info
@@ -430,14 +483,14 @@ const ViewingNuggPhone: FunctionComponent<{
                                 alignItems: 'flex-start',
                                 textAlign: 'left',
                                 width: '100%',
-                                padding: '10px',
+                                padding: '2rem 1rem 1rem 1.5rem',
                             }}
                         >
                             <Text
                                 size="larger"
                                 textStyle={{
-                                    color: 'white',
-                                    textShadow: lib.layout.boxShadow.dark,
+                                    color: lib.colors.primaryColor,
+                                    // textShadow: lib.layout.boxShadow.dark,
                                 }}
                             >
                                 My Nugg
@@ -457,14 +510,14 @@ const ViewingNuggPhone: FunctionComponent<{
                                 alignItems: 'flex-start',
                                 textAlign: 'left',
                                 width: '100%',
-                                padding: '10px',
+                                padding: '2rem 1rem 1rem 1.5rem',
                             }}
                         >
                             <Text
                                 size="larger"
                                 textStyle={{
-                                    color: 'white',
-                                    textShadow: lib.layout.boxShadow.dark,
+                                    color: lib.colors.primaryColor,
+                                    // textShadow: lib.layout.boxShadow.dark,
                                 }}
                             >
                                 Items
@@ -480,14 +533,17 @@ const ViewingNuggPhone: FunctionComponent<{
                         alignItems: 'flex-start',
                         textAlign: 'left',
                         width: '100%',
-                        padding: '10px',
+                        padding: '2rem 1rem 1rem 1.5rem',
                     }}
                 >
                     <Text
                         size="larger"
-                        textStyle={{ color: 'white', textShadow: lib.layout.boxShadow.dark }}
+                        textStyle={{
+                            color: lib.colors.primaryColor,
+                            // textShadow: lib.layout.boxShadow.dark,
+                        }}
                     >
-                        Previous Swaps
+                        Previous Auctions
                     </Text>
                 </div>
 

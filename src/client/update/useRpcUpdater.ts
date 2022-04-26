@@ -19,7 +19,7 @@ import { buildTokenIdFactory } from '@src/prototypes';
 import client from '..';
 
 export default () => {
-    const chainId = web3.hook.usePriorityChainId();
+    const chainId = web3.hook.useNetworkChainId();
     const address = web3.hook.usePriorityAccount();
 
     const updateOffers = client.mutate.updateOffers();
@@ -197,6 +197,7 @@ export default () => {
 
     const blockListener = React.useCallback(
         (log: number) => {
+            console.log(chainId, log);
             if (chainId && log !== 0) updateBlocknum(log, chainId);
         },
         [chainId, updateBlocknum],

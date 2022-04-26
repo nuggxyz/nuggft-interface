@@ -8,6 +8,8 @@ const SwapView = () => {
 
     const abc = client.swaps.useSwapList();
 
+    console.log({ epoch });
+
     const sortedAll = React.useMemo(() => {
         return abc.reduce(
             (

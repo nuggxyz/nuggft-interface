@@ -161,7 +161,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                             {ens}
                         </Text>
                         {peer && <NLStaticImage image={`${peer.peer}_icon`} />}
-                    </div>{' '}
+                    </div>
                     <Button
                         size="small"
                         textStyle={{ color: lib.colors.primaryColor }}
@@ -209,12 +209,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                     collected
                                 </Text>
                             </div>
-                            {/* <List
-                            RenderItem={TryoutRenderItem}
-                            data={items}
-                            extraData={undefined}
-                            horizontal
-                        /> */}
+
                             <div
                                 style={{
                                     alignItems: 'center',

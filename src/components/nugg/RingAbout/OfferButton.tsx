@@ -3,13 +3,14 @@ import { t } from '@lingui/macro';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@src/components/general/Buttons/Button/Button';
-import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import { ModalEnum } from '@src/interfaces/modals';
 import useDimentions from '@src/client/hooks/useDimentions';
 import { buildTokenIdFactory } from '@src/prototypes';
+import { Lifecycle } from '@src/client/interfaces';
 
 import styles from './RingAbout.styles';
 
@@ -48,9 +49,16 @@ export default ({
                 ...(inOverlay && {
                     width: undefined,
                 }),
+                ...(isPhone && {
+                    border: `5px solid ${lib.colors.nuggBlueSemiTransparent}`,
+                    // borderRadius: lib.layout.borderRadius.medium,
+                }),
             }}
             textStyle={{
                 ...styles.buttonText,
+                // ...(isPhone && {
+                //     color: lib.colors.primaryColor,
+                // }),
             }}
             disabled={isDisabled}
             onClick={() => {
@@ -83,6 +91,8 @@ export default ({
                     ? 'swap is over'
                     : screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
                     ? t`Connect wallet`
+                    : lifecycle === Lifecycle.Bench
+                    ? 'Accept and Start Auction'
                     : t`Place offer`
             }
         />

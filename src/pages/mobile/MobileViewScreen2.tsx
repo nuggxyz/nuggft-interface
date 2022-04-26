@@ -28,9 +28,9 @@ const MobileViewScreen2: FC<PropsWithChildren<{ onClose?: () => void }>> = () =>
                     alignItems: 'center',
                     background: 'transparent',
                     // background: lib.colors.transparentDarkGrey2,
-                    backdropFilter: 'blur(10px)',
+                    backdropFilter: 'blur(30px)',
                     // @danny7even this seemed to cause problems with issue #67 - but it didnt solve any
-                    WebkitBackdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(30px)',
                     overflow: 'hidden',
 
                     flexDirection: 'column',
@@ -56,10 +56,6 @@ const MobileViewScreen2: FC<PropsWithChildren<{ onClose?: () => void }>> = () =>
                         display: 'flex',
                         flexDirection: 'column',
                         background: 'transparent',
-                        // background: lib.colors.transparentDarkGrey2,
-                        backdropFilter: 'blur(10px)',
-                        // @danny7even this seemed to cause problems with issue #67 - but it didnt solve any
-                        WebkitBackdropFilter: 'blur(10px)',
                     }}
                 >
                     <BackButton />

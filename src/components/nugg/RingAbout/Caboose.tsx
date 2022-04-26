@@ -53,6 +53,7 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
     const { isPhone } = useDimentions();
     const address = web3.hook.usePriorityAccount();
     const epoch = client.live.epoch.id();
+    const swap = client.swaps.useSwap(tokenId);
 
     const token = client.live.token(tokenId);
     const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<TryoutData>();
@@ -63,6 +64,13 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
     const darkmode = useDarkMode();
 
     const [showBody, setShowBody] = React.useState(true);
+
+    const dynamicTextColor = React.useMemo(() => {
+        if (isPhone) {
+            return lib.colors.primaryColor;
+        }
+        return lib.colors.white;
+    }, [swap, isPhone]);
 
     const mustWaitToBid = React.useMemo(() => {
         return (
@@ -89,7 +97,7 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
                     <List
                         data={token.tryout.swaps}
                         labelStyle={{
-                            color: 'white',
+                            color: dynamicTextColor,
                         }}
                         // label={t`Select a nugg to buy this item from`}
                         extraData={undefined}
@@ -109,6 +117,10 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
                     <Button
                         buttonStyle={{
                             ...styles.button,
+                            ...(isPhone && {
+                                border: `5px solid ${lib.colors.nuggBlueSemiTransparent}`,
+                                // borderRadius: lib.layout.borderRadius.medium,
+                            }),
                         }}
                         textStyle={{
                             ...styles.buttonText,
@@ -134,6 +146,8 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
                                 ? t`wait ${minutes} minutes to buy from a new nugg`
                                 : isPhone && isUndefinedOrNullOrStringEmpty(address)
                                 ? t`Connect wallet`
+                                : !swap?.endingEpoch
+                                ? 'Accept and Start Auction'
                                 : t`Place offer`
                         }
                     />
