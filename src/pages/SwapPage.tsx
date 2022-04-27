@@ -21,6 +21,7 @@ const SwapPage: FunctionComponent<Props> = () => {
 
     return (
         <>
+            {screen === 'phone' && <MobileSwapPage />}
             <animated.div
                 style={{
                     ...styles.container,
@@ -28,9 +29,7 @@ const SwapPage: FunctionComponent<Props> = () => {
                     ...(screen === 'phone' && { alignItems: 'flex-start' }),
                 }}
             >
-                {screen === 'phone' ? (
-                    <MobileSwapPage />
-                ) : screen === 'tablet' ? (
+                {screen === 'tablet' ? (
                     <>
                         <div style={styles.tabletMain}>
                             <div style={styles.tabletRing}>

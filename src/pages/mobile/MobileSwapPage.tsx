@@ -8,8 +8,6 @@ const SwapView = () => {
 
     const abc = client.swaps.useSwapList();
 
-    console.log({ epoch });
-
     const sortedAll = React.useMemo(() => {
         return abc.reduce(
             (
@@ -45,14 +43,16 @@ const SwapView = () => {
                 flexDirection: 'column',
                 height: '100%',
                 width: '100%',
+                // marginTop: '20px',
                 marginBottom: '500px',
                 alignItems: 'center',
                 justifyContent: 'flex-start',
                 overflow: 'scroll',
                 WebkitOverflowScrolling: 'touch',
+                zIndex: 0,
             }}
         >
-            <div style={{ marginTop: '80px' }} />
+            <div style={{ marginTop: '100px' }} />
 
             {sortedAll.current.map((x) => (
                 <SwapCard tokenId={x} key={`SwapCard-Current-${x}`} />

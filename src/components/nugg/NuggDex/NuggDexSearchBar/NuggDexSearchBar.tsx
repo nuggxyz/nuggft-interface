@@ -235,7 +235,8 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                 : '0% 100% 0% 0%',
     });
     const animatedBR = useSpring({
-        borderRadius: isViewOpen && (!isPhone || mobileExpanded) ? '7px' : '20px',
+        borderRadius:
+            isViewOpen && (!isPhone || mobileExpanded) ? '7px' : lib.layout.borderRadius.large,
     });
 
     const resultStyle = useSpring({
@@ -338,7 +339,9 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                                         // type="text"
                                         onClick={() => {
                                             navigate(
-                                                `/view/${lib.constants.VIEWING_PREFIX}/${x.tokenId}`,
+                                                isPhone
+                                                    ? `/swap/${x.tokenId}`
+                                                    : `/view/${lib.constants.VIEWING_PREFIX}/${x.tokenId}`,
                                             );
                                             setShow(false);
                                             setMobileExpanded(false);
@@ -377,7 +380,14 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                 styleInputContainer={styleInput}
                 leftToggles={[
                     <Button
-                        buttonStyle={styles.searchBarButton}
+                        buttonStyle={{
+                            ...styles.searchBarButton,
+                            ...(isPhone && {
+                                // padding: 10,
+                                width: 60,
+                                height: 60,
+                            }),
+                        }}
                         onClick={() => {
                             if (!isPhone) {
                                 navigate(isViewOpen ? '/live' : '/view');
@@ -389,7 +399,14 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                                 navigate('/view');
                             }
                         }}
-                        rightIcon={<Search style={styles.searchBarIcon} />}
+                        rightIcon={
+                            <Search
+                                style={{
+                                    ...styles.searchBarIcon,
+                                }}
+                                size={isPhone ? 40 : undefined}
+                            />
+                        }
                     />,
                 ]}
                 rightToggles={

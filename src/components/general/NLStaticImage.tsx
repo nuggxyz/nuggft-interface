@@ -133,8 +133,8 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                 return (
                     <img
                         src={nuggbutton}
-                        height={35}
-                        width={100}
+                        height={55}
+                        width={110}
                         style={{ objectFit: 'contain', ...props.style }}
                         alt={props.image}
                     />

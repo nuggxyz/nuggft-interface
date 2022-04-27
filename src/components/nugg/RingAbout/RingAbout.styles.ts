@@ -1,6 +1,5 @@
 import lib, { NLStyleSheetCreator } from '@src/lib';
 import FontSize from '@src/lib/fontSize';
-import globalStyles from '@src/lib/globalStyles';
 
 const styles = NLStyleSheetCreator({
     container: {
@@ -47,11 +46,11 @@ const styles = NLStyleSheetCreator({
         pointerEvents: 'auto',
     },
     mobile: {
-        width: '90%',
-        // boxShadow: 'none',
-        // background: lib.colors.transparentWhite,
-        ...globalStyles.backdropFilter,
-        zIndex: 10000,
+        // width: '90%',
+        // // boxShadow: 'none',
+        // // background: lib.colors.transparentWhite,
+        // ...globalStyles.backdropFilter,
+        // zIndex: 10000,
     },
     bodyContainer: {
         display: 'flex',

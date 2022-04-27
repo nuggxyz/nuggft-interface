@@ -72,11 +72,13 @@ const TextInput: FunctionComponent<TextInputProps> = ({
         ...styleInput,
     };
 
-    const headingStyle = {
-        ...styles.headingContainer,
-        ...(label && styles.marginTop),
-        ...styleHeading,
-    };
+    const headingStyle = label
+        ? {
+              ...styles.headingContainer,
+              ...(label && styles.marginTop),
+              ...styleHeading,
+          }
+        : {};
 
     const containerStyle = {
         ...styles.container,

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSpring, animated, config as springConfig } from '@react-spring/web';
-import { VscSyncIgnored } from 'react-icons/vsc';
 import { IoSyncCircle } from 'react-icons/io5';
 
 import lib from '@src/lib';
@@ -27,7 +26,7 @@ const DisplayOk = () => {
                 ...rotate,
             }}
         >
-            <IoSyncCircle color={lib.colors.nuggGreenSemiTransparent} size={30} />
+            <IoSyncCircle color={lib.colors.nuggGreenSemiTransparent} size={45} />
         </animated.div>
     );
 };
@@ -42,7 +41,7 @@ const DisplayProblem = () => {
                 // ...rotate,
             }}
         >
-            <VscSyncIgnored color={lib.colors.red} size={30} />
+            <IoSyncCircle color={lib.colors.red} size={45} />
         </animated.div>
     );
 };

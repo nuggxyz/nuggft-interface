@@ -50,7 +50,7 @@ const NavigationBarMobile: FC<Props> = () => {
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     WebkitBackdropFilter: 'blur(20px)',
-                    height: 50,
+                    height: '75px',
 
                     borderRadius: lib.layout.borderRadius.medium,
                     background: lib.colors.transparentWhite,
@@ -88,7 +88,7 @@ const NavigationBarMobile: FC<Props> = () => {
                         <NLStaticImage image="nuggbutton" />
                         <InfoClicker
                             to={Page.TableOfContents}
-                            size={30}
+                            size={45}
                             color={lib.colors.nuggBlueSemiTransparent}
                             buttonStyle={{ padding: 0 }}
                             // iconDropShadow={lib.layout.boxShadow.medium}
@@ -119,11 +119,11 @@ const NavigationBarMobile: FC<Props> = () => {
                                 }}
                                 iconComponent={
                                     address ? (
-                                        <Jazzicon address={address || ''} size={35} />
+                                        <Jazzicon address={address || ''} size={50} />
                                     ) : (
                                         <IoQrCode
                                             style={{ color: lib.colors.nuggBlueSemiTransparent }}
-                                            size={35}
+                                            size={50}
                                         />
                                     )
                                 }

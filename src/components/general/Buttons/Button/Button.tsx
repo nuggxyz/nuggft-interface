@@ -57,9 +57,9 @@ const Button: FunctionComponent<ButtonProps> = ({
             onClick={disabled ? undefined : onClick}
             style={style}
         >
-            <LeftIcon />
+            {LeftIcon && <LeftIcon />}
             {label ? <Text {...textProps}>{label}</Text> : null}
-            <RightIcon />
+            {RightIcon && <RightIcon />}
         </div>
     );
 };
