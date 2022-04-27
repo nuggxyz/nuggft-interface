@@ -33,6 +33,19 @@ query getAllNuggsSearch(
         skip: $skip
     ) {
         id
+        user {
+            id
+        }
+        dotnuggRawCache
+        items {
+            id
+        }
+        activeLoan {
+            id
+        }
+        activeSwap {
+            id
+        }
     }
 }
 
@@ -65,7 +78,7 @@ query getAllItems(
         skip: $skip
     ) {
         id
-        dotnuggRawCache
+        # dotnuggRawCache
         idnum
     }
 }
@@ -84,7 +97,7 @@ query getAllItemsSearch(
         first: $first
         skip: $skip
     ) {
-        id
+        ...liveItem
     }
 }
 
@@ -104,6 +117,27 @@ query health {
     _meta {
         block {
             number
+        }
+    }
+}
+
+query getNuggsThatHold(
+    $first: Int
+    $skip: Int
+    $orderDirection: OrderDirection
+    $orderBy: NuggItem_orderBy
+    $itemId: String!
+) {
+    nuggItems(
+        orderBy: $orderBy
+        orderDirection: $orderDirection
+        first: $first
+        skip: $skip
+        where: { item: $itemId, displayed: true }
+    ) {
+        id
+        nugg {
+            id
         }
     }
 }

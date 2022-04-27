@@ -1,5 +1,7 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { plural, t } from '@lingui/macro';
+import { IoGridOutline, IoLogoInstagram } from 'react-icons/io5';
+import { animated, config, useSpring } from '@react-spring/web';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -23,6 +25,12 @@ import Caboose from '@src/components/nugg/RingAbout/Caboose';
 import SideCar from '@src/components/nugg/RingAbout/SideCar';
 import Label from '@src/components/general/Label/Label';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
+import { useGetNuggsThatHoldQuery } from '@src/gql/types.generated';
+import NuggListRenderItemMobile, {
+    NuggListRenderItemMobileBig,
+} from '@src/components/mobile/NuggListRenderItemMobile';
+import InfiniteList from '@src/components/general/List/InfiniteList';
+import useMeasure from '@src/hooks/useMeasure';
 
 import MyNuggActions from './MyNuggActions';
 import SwapListPhone from './SwapListPhone';
@@ -61,7 +69,8 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
     const text = useMemo(() => {
         if (token && token.tryout && token.tryout.count && token.tryout.count > 0)
             return t`accept a nugg's asking price`;
-        return t`This item is not being sold by any nuggs`;
+        if (token && token.tokenId.toRawIdNum() < 1000) return `bases are non transferable`;
+        return t`accept a nugg's asking price`;
     }, [token]);
     return (
         <div
@@ -252,6 +261,19 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     );
 };
 
+const useSquishedListData = <G,>(data: G[]): [G | undefined, G | undefined][] => {
+    return React.useMemo(() => {
+        const abc: [G | undefined, G | undefined][] = [];
+        for (let i = 0; i < data.length; i += 2) {
+            const tmp: [G | undefined, G | undefined] = [undefined, undefined];
+            tmp[0] = data[i];
+            if (i + 1 < data.length) tmp[1] = data[i + 1];
+            abc.push(tmp);
+        }
+        return abc;
+    }, [data]);
+};
+
 const ViewingNuggPhone: FunctionComponent<{
     tokenId: TokenId | undefined;
 }> = ({ tokenId }) => {
@@ -273,6 +295,35 @@ const ViewingNuggPhone: FunctionComponent<{
     const token = client.live.token(tokenId);
     const swap = client.swaps.useSwap(tokenId);
     const lifecycle = useLifecycleEnhanced(swap);
+
+    const { data } = useGetNuggsThatHoldQuery({
+        fetchPolicy: 'network-only',
+        skip: !token || !token.isItem(),
+        variables: {
+            skip: 0,
+            first: 1000,
+            itemId: token?.tokenId.toRawId() || '',
+        },
+    });
+
+    const squishedData = useSquishedListData(
+        data ? data.nuggItems.map((x) => x.nugg.id.toNuggId()) : [],
+    );
+    const [activeIndex, setActiveIndex] = React.useState(1);
+
+    const [headerRef, { width: WIDTH }] = useMeasure();
+
+    const selectionIndicatorSpring = useSpring({
+        from: {
+            x: 0,
+            opacity: 1,
+        },
+        to: {
+            opacity: 1,
+            x: activeIndex * (WIDTH / 2) - 22.5,
+        },
+        config: config.default,
+    });
 
     return provider && epoch && tokenId && token ? (
         <>
@@ -364,7 +415,7 @@ const ViewingNuggPhone: FunctionComponent<{
                             // background: darkmode
                             //     ? lib.colors.nuggBlueTransparent
                             //     : lib.colors.transparentGrey,
-                            borderRadius: lib.layout.borderRadius.medium,
+                            borderRadius: lib.layout.borderRadius.large,
                         }}
                         size="larger"
                     >
@@ -387,6 +438,8 @@ const ViewingNuggPhone: FunctionComponent<{
                         />
                     )}
                 </div>
+
+                {/* <Button label="" /> */}
 
                 {token.activeSwap &&
                     (token.activeSwap.endingEpoch || 0) <= epoch &&
@@ -549,6 +602,113 @@ const ViewingNuggPhone: FunctionComponent<{
 
                 <SwapListPhone token={token} />
 
+                {token.isItem() ? (
+                    <>
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                textAlign: 'left',
+                                width: '100%',
+                                padding: '2rem 1rem 1rem 1.5rem',
+                            }}
+                        >
+                            <Text
+                                size="larger"
+                                textStyle={{
+                                    color: lib.colors.primaryColor,
+                                }}
+                            >
+                                Nuggs Holding
+                            </Text>
+
+                            <div
+                                ref={headerRef}
+                                style={{
+                                    display: 'flex',
+                                    zIndex: 5,
+                                    width: 90,
+                                    justifyContent: 'space-around',
+                                    position: 'relative',
+                                }}
+                            >
+                                <animated.div
+                                    style={{
+                                        top: -5,
+                                        width: `40px`,
+                                        height: `40px`,
+                                        ...selectionIndicatorSpring,
+                                        position: 'absolute',
+                                        zIndex: -1,
+                                        // backgroundColor: 'rgba(80, 144, 234, 0.4)',
+                                        background: lib.colors.transparentWhite,
+                                        borderRadius: lib.layout.borderRadius.mediumish,
+                                    }}
+                                />
+                                <IoLogoInstagram
+                                    color={lib.colors.primaryColor}
+                                    size={30}
+                                    onClick={() => setActiveIndex(0)}
+                                />
+                                <IoGridOutline
+                                    color={lib.colors.primaryColor}
+                                    size={30}
+                                    onClick={() => setActiveIndex(1)}
+                                />
+                            </div>
+                        </div>
+
+                        {squishedData.length > 0 &&
+                            (activeIndex === 0 ? (
+                                <InfiniteList
+                                    startGap={10}
+                                    id="nugg-list1"
+                                    style={{
+                                        position: 'relative',
+                                        width: '90%',
+                                        display: undefined,
+                                        overflow: undefined,
+                                    }}
+                                    skipSelectedCheck
+                                    data={data?.nuggItems.map((x) => x.nugg.id.toNuggId()) || []}
+                                    RenderItem={NuggListRenderItemMobileBig}
+                                    loading={false}
+                                    interval={3}
+                                    action={undefined}
+                                    extraData={{ cardType: 'all' as const }}
+                                    itemHeight={340}
+                                    animationToggle={false}
+                                    disableScroll
+                                    endGap={50}
+                                />
+                            ) : (
+                                <InfiniteList
+                                    startGap={10}
+                                    id="nugg-list2"
+                                    style={{
+                                        position: 'relative',
+                                        width: '90%',
+                                        display: undefined,
+                                        overflow: undefined,
+                                    }}
+                                    skipSelectedCheck
+                                    data={squishedData}
+                                    RenderItem={NuggListRenderItemMobile}
+                                    loading={false}
+                                    interval={10}
+                                    action={undefined}
+                                    extraData={{ cardType: 'all' as const }}
+                                    itemHeight={160}
+                                    animationToggle={false}
+                                    disableScroll
+                                    squishFactor={0.5}
+                                />
+                            ))}
+                    </>
+                ) : (
+                    <></>
+                )}
                 <div
                     style={{
                         width: '100%',

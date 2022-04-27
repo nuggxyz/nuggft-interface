@@ -140,14 +140,6 @@ export default () => {
                         activeItems: sortedPotentialItems.incomingItems,
                     },
                 );
-                console.log([
-                    ...recentSwaps,
-                    ...recentItems,
-                    ...potentialItems,
-
-                    ...Object.values(activeNuggs).flat(),
-                    ...Object.values(activeItems).flat(),
-                ]);
 
                 updateSwaps([
                     ...recentSwaps,

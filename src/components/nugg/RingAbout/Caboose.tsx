@@ -90,10 +90,11 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
                     ...styles.mobile,
                 }),
                 marginTop: isPhone ? 0 : '20px',
+                width: '90%',
             }}
         >
             {showBody ? (
-                <>
+                <div style={{ width: '100%' }}>
                     <List
                         data={token.tryout.swaps}
                         labelStyle={{
@@ -106,7 +107,8 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
                         action={setNuggToBuyFrom}
                         horizontal
                         style={{
-                            // width: '100%',
+                            width: '100%',
+
                             marginTop: '20px',
                             background: lib.colors.transparentLightGrey,
                             height: '100px',
@@ -151,7 +153,7 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
                                 : t`Place offer`
                         }
                     />
-                </>
+                </div>
             ) : (
                 <Button
                     onClick={() => setShowBody(true)}

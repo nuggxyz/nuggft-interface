@@ -64,10 +64,13 @@ html {
     z-index: -1;
 }
 
+svg:has(.DN) {
+    filter: drop-shadow(2px 3px 5px rgb(0 0 0 / 0.4));
+}
+
 .DN {
     stroke-width: var(--dotnugg-stroke-width);
-    /* filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));
-    overflow: unset;
+    /* overflow: unset;
     z-index: 6000; */
 }
 
@@ -125,6 +128,22 @@ html {
 
 .placeholder-blue::placeholder {
     color: rgb(80, 144, 234);
+}
+
+.placeholder-dark::-webkit-input-placeholder {
+    color: #25292e;
+}
+
+.placeholder-dark::-moz-placeholder {
+    color: #25292e;
+}
+
+.placeholder-dark::-ms-placeholder {
+    color: #25292e;
+}
+
+.placeholder-dark::placeholder {
+    color: #25292e;
 }
 .placeholder-white::-webkit-input-placeholder {
     color: white;

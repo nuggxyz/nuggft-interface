@@ -32,7 +32,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const sort = client.live.searchFilter.sort();
     const viewing = client.live.searchFilter.viewing();
 
-    const { screen: screenType, isPhone } = useDimentions();
+    const { screen: screenType } = useDimentions();
 
     const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
     const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
@@ -157,9 +157,13 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 ...styles.searchListContainer,
                 ...(screenType === 'phone' && {
                     width: '100%',
-                    height: '90%',
-                    marginTop: '2rem',
+                    height: '100%',
                     alignItems: 'flex-start',
+                    justifyContent: 'flex-start',
+                }),
+                ...(viewing === SearchView.Home && {
+                    height: '90%',
+                    marginTop: '4rem',
                 }),
             }}
         >
@@ -229,7 +233,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     style={{
                         position: 'absolute',
                         right: 0,
-                        bottom: isPhone ? 45 : 0,
+                        bottom: 0,
                     }}
                     type={SearchView.AllItems}
                     previewNuggs={
@@ -253,7 +257,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         // width: '100%',
                         position: 'absolute',
                         left: 0,
-                        bottom: isPhone ? 45 : 0,
+                        bottom: 0,
                     }}
                     type={SearchView.AllNuggs}
                     previewNuggs={
@@ -278,3 +282,15 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 };
 
 export default React.memo(NuggDexSearchList);
+
+//                     style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; height: 100%; opacity: 1; transform: scale(1.155) translate(0px, 15px); position: absolute; right: 0px; bottom: 45px; z-index: 1;"
+//                     style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; height: 100%; opacity: 1; transform: scale(1.155) translate(0px, 15px); position: absolute; top: 0px; right: 0px; bottom: 45px; z-index: 1;"
+
+// style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; flex-wrap: wrap; height: 100%; position: relative;"
+// style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; flex-wrap: wrap; height: 100%; position: relative;"
+
+// style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; flex-wrap: wrap; height: 100%; position: relative;"
+// style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; flex-wrap: wrap; height: 100%; position: relative;"
+
+// style="display: flex; align-items: center; justify-content: space-around; width: 100%; flex-wrap: wrap; height: 100%; position: relative; transform: scale(0.9);"
+// style="display: flex; align-items: center; justify-content: space-around; width: 100%; flex-wrap: wrap; height: 100%; position: relative; transform: scale(0.9);"

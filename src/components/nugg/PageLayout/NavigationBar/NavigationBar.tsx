@@ -9,9 +9,9 @@ import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/Hea
 import useBlur from '@src/hooks/useBlur';
 import useDimentions from '@src/client/hooks/useDimentions';
 import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
+import NavigationBarMobile from '@src/components/mobile/NavigationBarMobile';
 
 import styles from './NavigationBar.styles';
-import NavigationBarMobile from './NavigationBarMobile';
 
 type Props = {
     showBackButton?: boolean;

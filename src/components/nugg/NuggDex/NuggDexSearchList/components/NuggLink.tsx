@@ -86,7 +86,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                     ),
             );
     }, [previewNuggs, limit]);
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType, isPhone } = useDimentions();
 
     return (
         <animated.div
@@ -94,6 +94,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
             // @ts-ignore
             style={{
                 ...styles.nuggLinkContainer,
+                // justifyContent: 'flex-start',
                 ...animation,
                 ...style,
                 zIndex,
@@ -102,6 +103,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
             <animated.div
                 style={{
                     ...styles.nuggLinkPreviewContainer,
+                    ...(isPhone && viewing !== SearchView.Home && { background: 'transparent' }),
                     ...(disablePreview && viewing !== type ? { display: 'none' } : {}),
                 }}
             >

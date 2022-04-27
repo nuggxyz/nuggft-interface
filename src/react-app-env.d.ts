@@ -185,8 +185,8 @@ declare function FIXX<K extends TokenType>(): TokenId extends infer R
 
 declare type CusotomID = `${string}`;
 
-interface String {
-    isItemId(): this is ItemId;
+interface String extends tokenId {
+    isItemId: () => this is ItemId;
     isNuggId(): this is NuggId;
     toItemId(): ItemId;
     toNuggId(): NuggId;
@@ -195,9 +195,7 @@ interface String {
     onlyNuggId(): NuggId | undefined;
     toRawId(): [typeof this] extends [TokenId] ? string : never;
     toRawIdNum(): [typeof this] extends [TokenId] ? number : never;
-
-    toPrettyId(): string;
-
+    toPrettyId(): [typeof this] extends [TokenId] ? string : never;
     // toIdNumber(): this extends `${}` ? number : null;
     // toIdNumber(): this extends TokenId ? number : never;
     isTokenId: typeof IsIdFixture;

@@ -354,20 +354,33 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
                 height: '100%',
             }}
         >
-            <StickyList
-                data={listData}
-                TitleRenderItem={SwapTitle}
-                ChildRenderItem={React.memo(SwapItem)}
-                extraData={{ chainId, provider, token, epoch }}
-                style={styles.stickyList}
-                styleRight={{
-                    ...styles.stickyListRight,
-                    overflow: isPhone ? undefined : styles.stickyListRight.overflow,
-                }}
-                emptyText={t`This ${token.type} has never been sold`}
-                listEmptyStyle={{ color: lib.colors.white }}
-                disableScroll={isPhone}
-            />
+            {listData.length === 0 ? (
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        width: '100%',
+                    }}
+                >
+                    <Label size="large" text="none" />
+                </div>
+            ) : (
+                <StickyList
+                    data={listData}
+                    TitleRenderItem={SwapTitle}
+                    ChildRenderItem={React.memo(SwapItem)}
+                    extraData={{ chainId, provider, token, epoch }}
+                    style={styles.stickyList}
+                    styleRight={{
+                        ...styles.stickyListRight,
+                        overflow: isPhone ? undefined : styles.stickyListRight.overflow,
+                    }}
+                    // emptyText={t`This ${token.type} has never been sold`}
+                    // listEmptyStyle={{ color: lib.colors.white }}
+                    disableScroll={isPhone}
+                />
+            )}
         </div>
     ) : null;
 };

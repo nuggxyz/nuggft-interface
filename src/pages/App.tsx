@@ -31,11 +31,6 @@ const Router = () => {
             element: <Outlet />,
             children: [
                 {
-                    path: 'view/*',
-                    element: <SearchOverlay />,
-                    // overlay: 997,
-                },
-                {
                     path: 'edit/:id',
                     element: <HotRotateOController />,
                 },
@@ -43,6 +38,11 @@ const Router = () => {
                 { path: 'wallet', element: isPhone ? <MobileWalletScreen2 /> : null },
                 { path: 'swap/:id', element: isPhone ? <MobileViewScreen2 /> : null },
                 { path: 'live', element: null },
+                {
+                    path: 'view/*',
+                    element: isPhone ? null : <SearchOverlay />,
+                    // overlay: 997,
+                },
                 { path: '*', element: <Navigate to={isPhone ? `swap/${epoch || ''}` : 'live'} /> },
             ],
         },

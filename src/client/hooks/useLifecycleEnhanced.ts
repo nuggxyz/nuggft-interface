@@ -13,8 +13,6 @@ export default (swap: SwapData | undefined) => {
 
     if (!epoch || !blocknum || !swap) return undefined;
 
-    console.log(lifecycle);
-
     switch (lifecycle) {
         case Lifecycle.Bat:
         case Lifecycle.Bunt:

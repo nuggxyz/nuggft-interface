@@ -4,7 +4,24 @@ import { LiveItemFragment } from '@src/gql/types.generated';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { formatSwapData } from '@src/client/formatters/formatSwapData';
 
-export default (item: LiveItemFragment): LiveItem => {
+function main<T extends LiveItemFragment | LiveItemFragment[]>(
+    item: T,
+): T extends LiveItemFragment ? LiveItem : LiveItem[] {
+    if (Array.isArray(item)) {
+        const a: LiveItem[] = [];
+        for (let i = 0; i < item.length; i++) {
+            a.push(calc(item[i]));
+        }
+        // @ts-ignore
+        return a;
+    }
+    // @ts-ignore
+    return calc(<LiveItemFragment>item);
+}
+
+export default main;
+
+const calc = (item: LiveItemFragment) => {
     const tokenId = item.id.toItemId() as ItemId;
     const tmp: Omit<LiveItem, 'tryout'> = buildTokenIdFactory({
         tokenId,

@@ -141,7 +141,7 @@ const ItemList: FunctionComponent<Props> = ({ items, tokenId, isOwner }) => {
 //     ) : null;
 // };
 
-const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = ({
+export const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = ({
     item,
     isOwner,
     nuggId,

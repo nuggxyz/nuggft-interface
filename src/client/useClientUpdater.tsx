@@ -8,6 +8,7 @@ import useLiveUser from './subscriptions/useLiveUser';
 import useSwapUpdater from './update/useSwapUpdater';
 import useLiveGraphHealth from './subscriptions/useLiveGraphHealth';
 import useDimentionsUpdater from './update/useDimentionsUpdater';
+import useLiveStakeBackup from './backups/useLiveStakeBackup';
 // import useGraphUpdater from './update/useGraphUpdater';
 
 export default () => {
@@ -28,6 +29,8 @@ export default () => {
     useSwapUpdater();
 
     useMountLogger('ClientUpdater');
+
+    useLiveStakeBackup();
 
     // useGraphUpdater();
 

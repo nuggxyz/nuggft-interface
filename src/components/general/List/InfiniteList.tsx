@@ -50,6 +50,12 @@ interface Props<T, B, A> {
     TitleButton?: FunctionComponent;
     titleLoading?: boolean;
     interval?: number;
+    startGap?: number;
+    endGap?: number;
+
+    skipSelectedCheck?: boolean;
+    disableScroll?: boolean;
+    squishFactor?: number;
 }
 
 const LIST_PADDING = 4;
@@ -77,6 +83,11 @@ const InfiniteList = <T, B, A>({
     TitleButton,
     titleLoading,
     interval = 25,
+    startGap,
+    endGap,
+    skipSelectedCheck = false,
+    disableScroll = false,
+    squishFactor = 1,
 }: Props<T, B, A>) => {
     const windowRef = useRef<HTMLDivElement>(null);
     const [windowHeight, setWindowHeight] = useState(0);
@@ -87,7 +98,10 @@ const InfiniteList = <T, B, A>({
     }, [windowRef, animationToggle]);
 
     const [scrollTop, setScrollTop] = useState(0);
-    const innerHeight = useMemo(() => data.length * itemHeight, [data, itemHeight]);
+    const innerHeight = useMemo(
+        () => data.length * itemHeight * squishFactor,
+        [data, itemHeight, squishFactor],
+    );
     const startIndex = useMemo(
         () => Math.max(Math.floor(scrollTop / itemHeight) - LIST_PADDING, 0),
         [scrollTop, itemHeight],
@@ -132,7 +146,10 @@ const InfiniteList = <T, B, A>({
                         index={i}
                         extraData={extraData}
                         action={action}
-                        selected={JSON.stringify(selected) === JSON.stringify(data[i])}
+                        selected={
+                            !skipSelectedCheck &&
+                            JSON.stringify(selected) === JSON.stringify(data[i])
+                        }
                     />
                 </div>
             );
@@ -263,7 +280,7 @@ const InfiniteList = <T, B, A>({
                     )}
                 </div>
             ),
-        [items, listEmptyText, loading, innerHeight, listEmptyStyle],
+        [items, listEmptyText, loading, innerHeight, listEmptyStyle, startGap],
     );
 
     const Loading = useCallback(
@@ -322,12 +339,19 @@ const InfiniteList = <T, B, A>({
                 ref={windowRef}
                 style={{
                     ...containerStyle,
-                    overflow: 'scroll',
+                    ...(!disableScroll && { overflow: 'scroll' }),
+                    justifySelf: 'flex-start',
                 }}
                 onScroll={_onScroll}
             >
+                {startGap && startGap !== 0 && (
+                    <div style={{ width: '100%', marginTop: startGap }} />
+                )}
+
                 <List />
                 <Loading />
+
+                {endGap && endGap !== 0 && <div style={{ width: '100%', marginTop: endGap }} />}
             </div>
         </>
     );
