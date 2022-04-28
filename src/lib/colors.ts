@@ -11,6 +11,12 @@ const Colors = {
     transparentGrey: '#b7caed55',
     transparentGrey2: '#a7b7d455',
     transparentDarkGrey: 'rgba(0, 0, 0, 0.7)',
+    transparentPrimaryColorSuper: '#25292e44',
+    semiTransparentPrimaryColor: '#25292eCC',
+
+    transparentPrimaryColor: '#25292e99',
+    transparentWhiteSuper: '#FFFFFF44',
+
     transparentWhite: '#FFFFFF99',
     semiTransparentWhite: '#FFFFFFCC',
     transparentLightGrey: '#c9d9f255',
@@ -47,10 +53,13 @@ const Colors = {
     gradient2Transparent: `linear-gradient(128.17deg, rgb(80, 144, 234, .5) -14.78%, #00C78188 110.05%)`,
     gradient3: 'linear-gradient(-90deg, #e856d0 0%, #FF6871 100%)',
     gradient3Transparent: 'linear-gradient(-90deg, #e856d088 0%, #FF687188 100%)',
+    gradient4Transparent:
+        'linear-gradient(-90deg,  rgba(0, 0, 0, 0.1) 0%, rgb(80, 144, 234, .1) 100%)',
+
     gradientRadialTransparent:
         'radial-gradient(50% 50% at 50% 50%, rgb(80, 144, 234, .1) 0%, rgba(80, 144, 234, .34) 100%)',
     gradientRadialPurpleTransparent:
-        'radial-gradient(50% 50% at 50% 50%, rgb(80, 144, 234, .1) 0%, #788796 100%)',
+        'radial-gradient(50% 50% at 50% 50%, rgb(80, 144, 234, .1) 0%, rgba(225,225,225, 0.5) 100%)',
     gradient4: 'rgb(86, 90, 105)',
     background: 'white',
     shadowNuggPink: '#b347a1',

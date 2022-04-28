@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import client from '@src/client';
 import lib from '@src/lib';
-import ViewingNuggPhone from '@src/components/nugg/ViewingNugg/ViewingNuggPhone';
+import ViewingNuggPhone from '@src/components/mobile/ViewingNuggPhone';
 import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import Button from '@src/components/general/Buttons/Button/Button';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';

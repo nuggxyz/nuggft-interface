@@ -1,4 +1,4 @@
-import { animated, useSpring } from '@react-spring/web';
+import { animated, config, useSpring } from '@react-spring/web';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { ChevronRight, Search, X } from 'react-feather';
 import { t } from '@lingui/macro';
@@ -235,8 +235,8 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                 : '0% 100% 0% 0%',
     });
     const animatedBR = useSpring({
-        borderRadius:
-            isViewOpen && (!isPhone || mobileExpanded) ? '7px' : lib.layout.borderRadius.large,
+        borderRadius: lib.layout.borderRadius.medium,
+        config: config.gentle,
     });
 
     const resultStyle = useSpring({

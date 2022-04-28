@@ -9,6 +9,7 @@ import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 import Label from '@src/components/general/Label/Label';
 import useDimentions from '@src/client/hooks/useDimentions';
 import Loader from '@src/components/general/Loader/Loader';
+import lib from '@src/lib';
 
 import styles from './NuggDexComponents.styles';
 import NuggLinkAnchor from './NuggLinkAnchor';
@@ -103,7 +104,11 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
             <animated.div
                 style={{
                     ...styles.nuggLinkPreviewContainer,
-                    ...(isPhone && viewing !== SearchView.Home && { background: 'transparent' }),
+                    ...(isPhone &&
+                        (viewing === SearchView.Home
+                            ? { background: lib.colors.transparentWhiteSuper }
+                            : { background: 'transparent' })),
+
                     ...(disablePreview && viewing !== type ? { display: 'none' } : {}),
                 }}
             >

@@ -14,32 +14,27 @@ import {
 } from '@src/gql/types.generated';
 import useDimentions from '@src/client/hooks/useDimentions';
 import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
-
-import NuggList from './components/NuggList';
-import NuggLink from './components/NuggLink';
-import styles from './NuggDexSearchList.styles';
+import NuggLink from '@src/components/nugg/NuggDex/NuggDexSearchList/components/NuggLink';
+import styles from '@src/components/nugg/NuggDex/NuggDexSearchList/NuggDexSearchList.styles';
+import NuggList from '@src/components/nugg/NuggDex/NuggDexSearchList/components/NuggList';
 
 type Props = Record<string, never>;
 
 const INFINITE_INTERVAL = 25;
+const START_INTERVAL = 3;
 
-const NuggDexSearchList: FunctionComponent<Props> = () => {
+// const NuggList = React.lazy(() => import('./components/NuggList'));
+
+const NuggDexSearchListMobile: FunctionComponent<Props> = () => {
     const epoch__id = client.live.epoch.id();
     const target = client.live.searchFilter.target();
     const sort = client.live.searchFilter.sort();
     const viewing = client.live.searchFilter.viewing();
-    // const activeNuggs = client.live.activeSwaps();
-    // const potentialNuggs = client.live.potentialSwaps();
 
     const { screen: screenType } = useDimentions();
 
     const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
     const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
-    // const activeItems = client.live.activeItems();
-    // const potentialItems = client.live.potentialItems();
-
-    // const recentNuggs = client.live.recentSwaps();
-    // const recentItems = client.live.recentItems();
 
     const [sortAsc, setSortAsc] = useState<{ [key in SearchView]: boolean }>({
         Recents: false,
@@ -59,7 +54,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         fetchPolicy: 'cache-first',
         variables: {
             skip: 0,
-            first: INFINITE_INTERVAL,
+            first: START_INTERVAL,
             orderBy: Nugg_OrderBy.Idnum,
         },
         onCompleted: (x) => {
@@ -82,7 +77,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         fetchPolicy: 'cache-first',
         variables: {
             skip: 0,
-            first: INFINITE_INTERVAL,
+            first: START_INTERVAL,
             orderBy: Item_OrderBy.Idnum,
         },
         onCompleted: (x) => {
@@ -151,6 +146,13 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         ...styles.nuggLinksContainer,
         transform: viewing !== SearchView.Home ? 'scale(0.9)' : 'scale(1)',
         delay: constants.ANIMATION_DELAY,
+        height: viewing === SearchView.Home ? '90%' : '80%',
+
+        ...(screenType === 'phone' && {
+            marginTop: viewing === SearchView.Home ? '4rem' : '0rem',
+            width: viewing === SearchView.Home ? '93%' : '100%',
+            height: viewing === SearchView.Home ? '70%' : '100%',
+        }),
     });
 
     const activeSearch = client.live.activeSearch();
@@ -159,10 +161,31 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         <div
             style={{
                 ...styles.searchListContainer,
-                ...(screenType === 'phone' && { width: '100%', height: '90%', marginTop: '2rem' }),
+                ...(screenType === 'phone' && {
+                    width: '100%',
+                    height: '100%',
+                    alignItems: 'flex-start',
+                    justifyContent: 'center',
+                }),
+                ...(screenType !== 'phone' &&
+                    viewing === SearchView.Home && {
+                        height: '90%',
+                        marginTop: '4rem',
+                    }),
             }}
         >
-            <animated.div style={animatedStyle}>
+            <animated.div
+                style={{
+                    ...animatedStyle,
+                    ...(screenType === 'phone' &&
+                        {
+                            // width: '100%',
+                            // height: '90%',
+                            // marginTop: '2rem',
+                            // alignItems: 'flex-start',
+                        }),
+                }}
+            >
                 <NuggLink type={SearchView.Search} disablePreview>
                     <NuggList
                         interval={INFINITE_INTERVAL}
@@ -218,6 +241,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         position: 'absolute',
                         right: 0,
                         bottom: 0,
+                        // bottom: isPhone && viewing === SearchView.Home ? undefined : 0,
+                        // top: isPhone && viewing === SearchView.Home ? 220 : undefined,
                     }}
                     type={SearchView.AllItems}
                     previewNuggs={
@@ -242,6 +267,9 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         position: 'absolute',
                         left: 0,
                         bottom: 0,
+
+                        // bottom: isPhone && viewing === SearchView.Home ? undefined : 0,
+                        // top: isPhone && viewing === SearchView.Home ? 220 : undefined,
                     }}
                     type={SearchView.AllNuggs}
                     previewNuggs={
@@ -265,4 +293,16 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     );
 };
 
-export default React.memo(NuggDexSearchList);
+export default React.memo(NuggDexSearchListMobile);
+
+//                     style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; height: 100%; opacity: 1; transform: scale(1.155) translate(0px, 15px); position: absolute; right: 0px; bottom: 45px; z-index: 1;"
+//                     style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%; height: 100%; opacity: 1; transform: scale(1.155) translate(0px, 15px); position: absolute; top: 0px; right: 0px; bottom: 45px; z-index: 1;"
+
+// style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; flex-wrap: wrap; height: 100%; position: relative;"
+// style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; flex-wrap: wrap; height: 100%; position: relative;"
+
+// style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; flex-wrap: wrap; height: 100%; position: relative;"
+// style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; flex-wrap: wrap; height: 100%; position: relative;"
+
+// style="display: flex; align-items: center; justify-content: space-around; width: 100%; flex-wrap: wrap; height: 100%; position: relative; transform: scale(0.9);"
+// style="display: flex; align-items: center; justify-content: space-around; width: 100%; flex-wrap: wrap; height: 100%; position: relative; transform: scale(0.9);"
