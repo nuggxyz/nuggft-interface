@@ -52,7 +52,7 @@ interface Props<T, B, A> {
     interval?: number;
     startGap?: number;
     endGap?: number;
-
+    deep?: boolean;
     skipSelectedCheck?: boolean;
     disableScroll?: boolean;
     squishFactor?: number;
@@ -94,6 +94,7 @@ const InfiniteList = <T, B, A>({
     skipSelectedCheck = false,
     disableScroll = false,
     coreRef = null,
+    deep = false,
     // initialIndex = 0,
     // externalScrollTop,
     // scrollTopOffset,
@@ -155,7 +156,9 @@ const InfiniteList = <T, B, A>({
         if (
             prevEnd !== endIndex ||
             prevStart !== startIndex ||
-            JSON.stringify(prevData) !== JSON.stringify(data)
+            (deep
+                ? JSON.stringify(prevData) !== JSON.stringify(data)
+                : prevData?.length !== data.length)
         ) {
             const key = (i: number) => `infinte-item-${id || 'unknown'}-${i}`;
 
@@ -266,13 +269,6 @@ const InfiniteList = <T, B, A>({
         lastGrab(endIndex);
     }, [endIndex]);
 
-    useEffect(() => {
-        if (coreRef && coreRef.current) {
-            // @ts-ignore
-            coreRef.current.onscroll = _onScroll;
-        }
-    }, [coreRef]);
-
     const _onScroll = useCallback(
         (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
             setScrollTop(ev.currentTarget.scrollTop);
@@ -280,6 +276,14 @@ const InfiniteList = <T, B, A>({
         },
         [onScroll],
     );
+
+    useEffect(() => {
+        if (coreRef && coreRef.current) {
+            // @ts-ignore
+            coreRef.current.onscroll = _onScroll;
+            // coreRef.current.scrollTo({ top: 0 });
+        }
+    }, [coreRef, _onScroll]);
     const containerStyle = useMemo(() => {
         return {
             ...styles.container,
@@ -361,7 +365,7 @@ const InfiniteList = <T, B, A>({
         [label, labelStyle, titleLoading, loaderColor],
     );
 
-    console.log({ interval, startIndex, endIndex, id });
+    // console.log({ interval, startIndex, endIndex, id });
 
     return (
         <>
@@ -376,7 +380,7 @@ const InfiniteList = <T, B, A>({
                 ref={windowRef}
                 style={{
                     ...containerStyle,
-                    ...(!disableScroll && { overflow: 'scroll' }),
+                    ...(!disableScroll ? { overflow: 'scroll' } : { overflow: undefined }),
                     justifySelf: 'flex-start',
                 }}
                 onScroll={_onScroll}

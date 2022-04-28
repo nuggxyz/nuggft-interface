@@ -311,6 +311,8 @@ const ViewingNuggPhone: FunctionComponent<{
 
     const coreRef = React.useRef(null);
 
+    const ider = React.useId();
+
     return provider && epoch && tokenId && token ? (
         <>
             <div
@@ -591,9 +593,10 @@ const ViewingNuggPhone: FunctionComponent<{
                 {token.isItem() ? (
                     <>
                         <BradPitt
+                            id={ider}
                             listStyle={{
                                 display: 'flex',
-                                justifyContent: 'space-between',
+                                // justifyContent: 'space-between',
                                 alignItems: 'center',
                                 textAlign: 'left',
                                 width: '100%',

@@ -176,7 +176,9 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                             // marginTop: '110px',
                         }}
                         // coreRef={fullRef}
-                        Title={undefined}
+                        Title={React.memo(() => (
+                            <div />
+                        ))}
                         data={tokenIds}
                         RenderItemSmall={NuggListRenderItemMobile}
                         RenderItemBig={NuggListRenderItemMobileBig}
@@ -190,7 +192,7 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                         itemHeightBig={325}
                         itemHeightSmall={160}
                         startGap={50}
-                        headerStyle={{
+                        floaterWrapperStyle={{
                             position: 'absolute',
                             top: 57,
                             right: '1rem',

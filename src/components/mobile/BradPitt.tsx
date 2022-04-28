@@ -1,11 +1,12 @@
 import { animated, config, useSpring } from '@react-spring/web';
-import React, { useDeferredValue } from 'react';
+import React from 'react';
 import { IoGridOutline, IoLogoInstagram } from 'react-icons/io5';
 
 import useSquishedListData from '@src/client/hooks/useSquishedListData';
 import useMeasure from '@src/hooks/useMeasure';
 import InfiniteList from '@src/components/general/List/InfiniteList';
 import lib from '@src/lib';
+import Loader from '@src/components/general/Loader/Loader';
 
 export interface InfiniteListRenderItemProps<T, B, A> {
     item: T | [T | undefined, T | undefined];
@@ -54,6 +55,8 @@ interface Props<T, B, A> {
     startGap?: number;
     endGap?: number;
     headerStyle?: React.CSSProperties;
+    floaterWrapperStyle?: React.CSSProperties;
+
     floaterColor?: string;
     coreRef?: React.RefObject<HTMLDivElement>;
     useBradRef?: boolean;
@@ -75,12 +78,16 @@ const BradPitt = <T, B, A>({
     headerStyle,
     coreRef,
     useBradRef = false,
+    floaterWrapperStyle,
     floaterColor = lib.colors.transparentWhite,
     ...props
 }: Props<T, B, A>) => {
     const squishedData = useSquishedListData(data ?? []);
 
-    const [activeIndex, setActiveIndex] = React.useState(defaultActiveIndex);
+    const [activeIndex, setActiveIndex] = React.useState<0 | 1 | undefined>(defaultActiveIndex);
+    const [preActiveIndex, setPreActiveIndex] = React.useState<0 | 1>(defaultActiveIndex);
+
+    const [isPending, startTansition] = React.useTransition();
 
     const [headerRef, { width: WIDTH }] = useMeasure();
 
@@ -91,9 +98,9 @@ const BradPitt = <T, B, A>({
         },
         to: {
             opacity: 1,
-            x: activeIndex * (WIDTH / 2) - 22.5,
+            x: preActiveIndex * (WIDTH / 2) - 22.5,
         },
-        config: config.default,
+        config: config.stiff,
     });
 
     const [offset, setOffset] = React.useState<number>();
@@ -111,23 +118,18 @@ const BradPitt = <T, B, A>({
         }
     }, [brad]);
 
-    const deferedActiveIndex = useDeferredValue(activeIndex);
+    // const deferedActiveIndex = useDeferredValue(activeIndex);
 
     const toggleActiveIndex = React.useCallback(
         (to: 0 | 1) => {
-            setActiveIndex(to);
-            // if (coreRef && coreRef.current) {
-            //     if (offset) {
-            //         setScrollTopOffset(coreRef.current.scrollTop);
-            //         coreRef.current.scrollTo({ top: offset });
-            //     }
-
-            //     // const brad = document.getElementById('braaaaaaaad') as HTMLDivElement;
-
-            //     // if (brad) {
-            //     //     brad.scrollTop;
-            //     // }
-            // }
+            setPreActiveIndex(to);
+            setActiveIndex(undefined);
+            setTimeout(() => {
+                startTansition(() => {
+                    setActiveIndex(to);
+                    setPreActiveIndex(to);
+                });
+            }, 500);
         },
         [coreRef, offset],
     );
@@ -140,7 +142,7 @@ const BradPitt = <T, B, A>({
             id={`${id}B-R-A-D`}
             ref={brad}
         >
-            <div>
+            <div style={{ ...headerStyle, display: 'flex', justifyContent: 'space-between' }}>
                 {Title && <Title />}
 
                 <div
@@ -151,7 +153,8 @@ const BradPitt = <T, B, A>({
                         width: 90,
                         justifyContent: 'space-around',
                         position: 'relative',
-                        ...headerStyle,
+
+                        ...floaterWrapperStyle,
                     }}
                 >
                     <animated.div
@@ -166,6 +169,7 @@ const BradPitt = <T, B, A>({
                             background: floaterColor,
                             borderRadius: lib.layout.borderRadius.mediumish,
                             WebkitBackdropFilter: 'blur(30px)',
+                            display: 'flex',
                         }}
                     />
                     <IoLogoInstagram
@@ -180,8 +184,9 @@ const BradPitt = <T, B, A>({
                     />
                 </div>
             </div>
-            {squishedData.length > 0 &&
-                (deferedActiveIndex === 0 ? (
+            {squishedData.length > 0 && !isPending ? (
+                // activeIndex === 1 - 2 &&
+                activeIndex === 0 ? (
                     <InfiniteList
                         {...props}
                         startGap={10}
@@ -201,11 +206,11 @@ const BradPitt = <T, B, A>({
                         // scrollTopOffset={scrollTopOffset}
                         interval={3}
                     />
-                ) : (
+                ) : activeIndex === 1 ? (
                     <InfiniteList
                         {...props}
                         startGap={10}
-                        id={`nugg-list1${id}`}
+                        id={`nugg-list2${id}`}
                         style={listStyle}
                         skipSelectedCheck
                         data={squishedData}
@@ -221,7 +226,16 @@ const BradPitt = <T, B, A>({
                         coreRef={useBradRef ? brad : coreRef}
                         // scrollTopOffset={scrollTopOffset}
                     />
-                ))}
+                ) : (
+                    <div style={{ height: '100%', width: '100%' }}>
+                        <Loader />
+                    </div>
+                )
+            ) : (
+                <div style={{ height: '100%', width: '100%' }}>
+                    <Loader />
+                </div>
+            )}
         </div>
     );
 };
