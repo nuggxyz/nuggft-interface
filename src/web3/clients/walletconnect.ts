@@ -17,6 +17,9 @@ import lib from '@src/lib';
 import { isPhone } from '@src/lib/userAgent';
 import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
+//
+// eslint-disable-next-line import/no-cycle
+import { DEFAULT_CHAIN } from '@src/web3/config';
 
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
@@ -181,6 +184,8 @@ export class WalletConnect extends Connector {
             }
         )?.signer?.connection?.wc?._peerMeta;
 
+        console.log({ peerMeta, provider: this.provider });
+
         const res = peerMeta ? this.peer_url_lookup[peerMeta.url] : undefined;
 
         if (res === undefined) {
@@ -209,7 +214,7 @@ export class WalletConnect extends Connector {
     public async connectEagerly(): Promise<void> {
         const cancelActivation = this.actions.startActivation();
 
-        await this.isomorphicInitialize(5);
+        await this.isomorphicInitialize(DEFAULT_CHAIN);
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (this.provider!.connected) {
