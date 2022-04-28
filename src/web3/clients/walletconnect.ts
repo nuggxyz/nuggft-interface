@@ -346,6 +346,8 @@ export class WalletConnect extends Connector {
             this.URIListener,
         );
         await this.provider?.disconnect();
+
+        window.localStorage.removeItem('walletconnect');
         this.provider = undefined;
         this.eagerConnection = undefined;
         this.actions.reportError(error);
