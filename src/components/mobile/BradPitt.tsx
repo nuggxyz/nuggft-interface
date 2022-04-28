@@ -211,7 +211,7 @@ const BradPitt = <T, B, A>({
                         data={squishedData}
                         RenderItem={RenderItemSmall}
                         loading={false}
-                        interval={30}
+                        interval={50}
                         action={undefined}
                         itemHeight={itemHeightSmall}
                         animationToggle={false}
@@ -224,14 +224,14 @@ const BradPitt = <T, B, A>({
             ) : (
                 <div
                     style={{
-                        height: '200px',
+                        height: '300px',
                         width: '100%',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
                     }}
                 >
-                    <Loader />
+                    <Loader color={lib.colors.transparentWhite} />
                 </div>
             )}
         </div>

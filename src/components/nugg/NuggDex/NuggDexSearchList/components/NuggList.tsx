@@ -125,10 +125,11 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                     }
                     style={{
                         ...styles.nuggListTitle,
-                        ...(isPhone && { top: 57 }),
+                        ...(isPhone && { top: 63 }),
                         ...(isPhone && { WebkitBackdropFilter: 'blur(30px)' }),
+                        ...(isPhone && { background: lib.colors.transparentWhite }),
                     }}
-                    text={formatSearchFilter(viewing)}
+                    text={isPhone ? 'Go back' : formatSearchFilter(viewing)}
                     transitionText={t`Go back`}
                     onClick={() => {
                         updateSearchFilterTarget(undefined);
@@ -168,7 +169,7 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                         }}
                         style={{
                             width: '100%',
-                            padding: '0 1rem 1rem 1.5rem',
+                            // padding: '0 1rem 1rem 1.5rem',
                         }}
                         Title={React.memo(() => (
                             <div />
@@ -181,15 +182,15 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                         coreRef={fullRef}
                         onScrollEnd={_onScrollEnd}
                         extraData={{ cardType }}
-                        itemHeightBig={325}
+                        itemHeightBig={340}
                         itemHeightSmall={160}
-                        startGap={90}
+                        startGap={110}
                         floaterWrapperStyle={{
                             position: 'absolute',
-                            top: 57,
+                            top: 63,
                             right: '1rem',
                         }}
-                        floaterColor={lib.colors.transparentGrey2}
+                        floaterColor={lib.colors.transparentWhite}
                     />
                 )}
             </animated.div>

@@ -49,8 +49,6 @@ const NuggListRenderItemMobile: FunctionComponent<Props> = ({
     // action,
     // extraData: { cardType },
 }) => {
-    const [tokenId, tokenId2] = item;
-
     return (
         <div
             aria-hidden="true"
@@ -61,6 +59,7 @@ const NuggListRenderItemMobile: FunctionComponent<Props> = ({
                 display: 'flex',
                 justifyContent: 'space-around',
                 alignItems: 'center',
+                // padding: '0px 20px',
                 transition: `background .7s ${lib.layout.animation}`,
                 // cursor: 'pointer',
                 position: 'relative',
@@ -69,8 +68,8 @@ const NuggListRenderItemMobile: FunctionComponent<Props> = ({
             // onClick={() => action && action(item)}
         >
             {/* <div> */}
-            {tokenId && <MobileContainer tokenId={tokenId} />}
-            {tokenId2 && <MobileContainer tokenId={tokenId2} />}
+            {item[0] && <MobileContainer tokenId={item[0]} />}
+            {item[1] && <MobileContainer tokenId={item[1]} />}
         </div>
     );
 };

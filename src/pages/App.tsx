@@ -34,8 +34,10 @@ const Router = () => {
                     path: 'edit/:id',
                     element: <HotRotateOController />,
                 },
+                ...(isPhone
+                    ? [{ path: 'wallet', element: isPhone ? <MobileWalletScreen2 /> : null }]
+                    : []),
                 // instead of hiding this for mobile here, we redirect inside the component to avoid lots of rerenders
-                { path: 'wallet', element: isPhone ? <MobileWalletScreen2 /> : null },
                 { path: 'swap/:id', element: isPhone ? <MobileViewScreen2 /> : null },
                 { path: 'live', element: null },
                 {

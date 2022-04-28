@@ -124,7 +124,7 @@ const NavigationBarMobile: FC<Props> = () => {
                                         ) : (
                                             <IoQrCode
                                                 style={{
-                                                    color: lib.colors.nuggBlueSemiTransparent,
+                                                    color: lib.colors.semiTransparentPrimaryColor,
                                                 }}
                                                 size={50}
                                             />
