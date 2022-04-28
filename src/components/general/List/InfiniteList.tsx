@@ -56,6 +56,12 @@ interface Props<T, B, A> {
     skipSelectedCheck?: boolean;
     disableScroll?: boolean;
     squishFactor?: number;
+    initialIndex?: number;
+
+    externalScrollTop?: number;
+    scrollTopOffset?: number;
+
+    coreRef?: React.RefObject<HTMLDivElement> | null;
 }
 
 const LIST_PADDING = 4;
@@ -82,22 +88,44 @@ const InfiniteList = <T, B, A>({
     animationToggle,
     TitleButton,
     titleLoading,
-    interval = 25,
+    interval: _interval = 25,
     startGap,
     endGap,
     skipSelectedCheck = false,
     disableScroll = false,
+    coreRef = null,
+    // initialIndex = 0,
+    // externalScrollTop,
+    // scrollTopOffset,
     squishFactor = 1,
 }: Props<T, B, A>) => {
+    const [interval] = React.useState(_interval * squishFactor);
+
     const windowRef = useRef<HTMLDivElement>(null);
+
     const [windowHeight, setWindowHeight] = useState(0);
+
     useEffect(() => {
-        if (windowRef.current) {
+        if (coreRef?.current) {
+            console.log(coreRef.current.scrollHeight);
+            setWindowHeight(coreRef.current.scrollHeight);
+        } else if (windowRef.current) {
             setWindowHeight(windowRef.current.scrollHeight);
         }
-    }, [windowRef, animationToggle]);
+    }, [coreRef, windowRef, animationToggle]);
 
     const [scrollTop, setScrollTop] = useState(0);
+
+    // const scrollTop = React.useMemo(() => {
+    //     return _scrollTop + (scrollTopOffset || 0);
+    // }, [scrollTopOffset, _scrollTop]);
+
+    // useEffect(() => {
+    //     if (externalScrollTop) {
+    //         setScrollTop(externalScrollTop);
+    //     }
+    // }, [setScrollTop, externalScrollTop]);
+
     const innerHeight = useMemo(
         () => data.length * itemHeight * squishFactor,
         [data, itemHeight, squishFactor],
@@ -238,9 +266,16 @@ const InfiniteList = <T, B, A>({
         lastGrab(endIndex);
     }, [endIndex]);
 
+    useEffect(() => {
+        if (coreRef && coreRef.current) {
+            // @ts-ignore
+            coreRef.current.onscroll = _onScroll;
+        }
+    }, [coreRef]);
+
     const _onScroll = useCallback(
-        (e: { currentTarget: { scrollTop: number } }) => {
-            setScrollTop(e.currentTarget?.scrollTop);
+        (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
+            setScrollTop(ev.currentTarget.scrollTop);
             if (onScroll) onScroll();
         },
         [onScroll],
@@ -326,6 +361,8 @@ const InfiniteList = <T, B, A>({
         [label, labelStyle, titleLoading, loaderColor],
     );
 
+    console.log({ interval, startIndex, endIndex, id });
+
     return (
         <>
             {(label || TitleButton) && (
@@ -335,7 +372,7 @@ const InfiniteList = <T, B, A>({
                 </div>
             )}
             <div
-                id="list---12345"
+                id={`${id || 0}infinite`}
                 ref={windowRef}
                 style={{
                     ...containerStyle,

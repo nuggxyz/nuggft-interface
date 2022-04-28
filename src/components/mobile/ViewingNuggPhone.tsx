@@ -1,7 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { plural, t } from '@lingui/macro';
-import { IoGridOutline, IoLogoInstagram } from 'react-icons/io5';
-import { animated, config, useSpring } from '@react-spring/web';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -29,12 +27,11 @@ import { useGetNuggsThatHoldQuery } from '@src/gql/types.generated';
 import NuggListRenderItemMobile, {
     NuggListRenderItemMobileBig,
 } from '@src/components/mobile/NuggListRenderItemMobile';
-import InfiniteList from '@src/components/general/List/InfiniteList';
-import useMeasure from '@src/hooks/useMeasure';
+import MyNuggActions from '@src/components/nugg/ViewingNugg/MyNuggActions';
+import SwapListPhone from '@src/components/nugg/ViewingNugg/SwapListPhone';
+import { ItemListPhone } from '@src/components/nugg/ViewingNugg/ItemList';
 
-import MyNuggActions from './MyNuggActions';
-import SwapListPhone from './SwapListPhone';
-import { ItemListPhone } from './ItemList';
+import BradPitt from './BradPitt';
 
 // type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
 
@@ -261,19 +258,6 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     );
 };
 
-const useSquishedListData = <G,>(data: G[]): [G | undefined, G | undefined][] => {
-    return React.useMemo(() => {
-        const abc: [G | undefined, G | undefined][] = [];
-        for (let i = 0; i < data.length; i += 2) {
-            const tmp: [G | undefined, G | undefined] = [undefined, undefined];
-            tmp[0] = data[i];
-            if (i + 1 < data.length) tmp[1] = data[i + 1];
-            abc.push(tmp);
-        }
-        return abc;
-    }, [data]);
-};
-
 const ViewingNuggPhone: FunctionComponent<{
     tokenId: TokenId | undefined;
 }> = ({ tokenId }) => {
@@ -306,28 +290,31 @@ const ViewingNuggPhone: FunctionComponent<{
         },
     });
 
-    const squishedData = useSquishedListData(
-        data ? data.nuggItems.map((x) => x.nugg.id.toNuggId()) : [],
-    );
-    const [activeIndex, setActiveIndex] = React.useState(1);
+    // const squishedData = useSquishedListData(
+    //     data ? data.nuggItems.map((x) => x.nugg.id.toNuggId()) : [],
+    // );
+    // const [activeIndex, setActiveIndex] = React.useState(1);
 
-    const [headerRef, { width: WIDTH }] = useMeasure();
+    // const [headerRef, { width: WIDTH }] = useMeasure();
 
-    const selectionIndicatorSpring = useSpring({
-        from: {
-            x: 0,
-            opacity: 1,
-        },
-        to: {
-            opacity: 1,
-            x: activeIndex * (WIDTH / 2) - 22.5,
-        },
-        config: config.default,
-    });
+    // const selectionIndicatorSpring = useSpring({
+    //     from: {
+    //         x: 0,
+    //         opacity: 1,
+    //     },
+    //     to: {
+    //         opacity: 1,
+    //         x: activeIndex * (WIDTH / 2) - 22.5,
+    //     },
+    //     config: config.default,
+    // });
+
+    const coreRef = React.useRef(null);
 
     return provider && epoch && tokenId && token ? (
         <>
             <div
+                ref={coreRef}
                 style={{
                     position: 'relative',
                     display: 'flex',
@@ -555,7 +542,6 @@ const ViewingNuggPhone: FunctionComponent<{
 
                 {tokenId.isNuggId() && (
                     <>
-                        {' '}
                         <div
                             style={{
                                 display: 'flex',
@@ -604,7 +590,42 @@ const ViewingNuggPhone: FunctionComponent<{
 
                 {token.isItem() ? (
                     <>
-                        <div
+                        <BradPitt
+                            listStyle={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                textAlign: 'left',
+                                width: '100%',
+                                padding: '2rem 1rem 1rem 1.5rem',
+                            }}
+                            style={{
+                                position: 'relative',
+                                width: '90%',
+                                // display: 'flex',
+                                overflow: undefined,
+                                flexDirection: 'column',
+                            }}
+                            coreRef={coreRef}
+                            itemHeightBig={340}
+                            itemHeightSmall={160}
+                            data={data?.nuggItems.map((x) => x.nugg.id.toNuggId()) || []}
+                            RenderItemSmall={NuggListRenderItemMobile}
+                            RenderItemBig={NuggListRenderItemMobileBig}
+                            disableScroll
+                            extraData={undefined}
+                            Title={React.memo(() => (
+                                <Text
+                                    size="larger"
+                                    textStyle={{
+                                        color: lib.colors.primaryColor,
+                                    }}
+                                >
+                                    Nuggs Holding
+                                </Text>
+                            ))}
+                        />
+                        {/* <div
                             style={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
@@ -704,11 +725,12 @@ const ViewingNuggPhone: FunctionComponent<{
                                     disableScroll
                                     squishFactor={0.5}
                                 />
-                            ))}
+                            ))} */}
                     </>
                 ) : (
                     <></>
                 )}
+
                 <div
                     style={{
                         width: '100%',

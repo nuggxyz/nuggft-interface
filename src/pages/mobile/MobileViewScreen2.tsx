@@ -2,7 +2,7 @@
 import React, { FC, PropsWithChildren } from 'react';
 
 import lib from '@src/lib';
-import ViewingNuggPhone from '@src/components/nugg/ViewingNugg/ViewingNuggPhone';
+import ViewingNuggPhone from '@src/components/mobile/ViewingNuggPhone';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 import BackButton from '@src/components/mobile/BackButton';
 
