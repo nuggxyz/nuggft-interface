@@ -15,7 +15,7 @@ import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 import NuggListRenderItemMobile, {
     NuggListRenderItemMobileBig,
 } from '@src/components/mobile/NuggListRenderItemMobile';
-import BradPitt from '@src/components/mobile/BradPitt';
+import BradPittList from '@src/components/general/List/BradPittList';
 import lib from '@src/lib';
 
 import NuggListRenderItem from './NuggListRenderItem';
@@ -159,17 +159,17 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                         animationToggle={animationToggle}
                     />
                 ) : (
-                    <BradPitt
+                    <BradPittList
                         id={`${ider}brad`}
                         listStyle={{
                             overflow: undefined,
                             position: 'relative',
                             justifyContent: 'flex-start',
+                            padding: '0 20px',
                             ...(screenType === 'phone' && { width: '100%' }),
                         }}
                         style={{
                             width: '100%',
-                            // padding: '0 1rem 1rem 1.5rem',
                         }}
                         Title={React.memo(() => (
                             <div />

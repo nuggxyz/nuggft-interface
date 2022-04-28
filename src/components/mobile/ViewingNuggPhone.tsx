@@ -30,8 +30,7 @@ import NuggListRenderItemMobile, {
 import MyNuggActions from '@src/components/nugg/ViewingNugg/MyNuggActions';
 import SwapListPhone from '@src/components/nugg/ViewingNugg/SwapListPhone';
 import { ItemListPhone } from '@src/components/nugg/ViewingNugg/ItemList';
-
-import BradPitt from './BradPitt';
+import BradPittList from '@src/components/general/List/BradPittList';
 
 // type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
 
@@ -589,7 +588,7 @@ const ViewingNuggPhone: FunctionComponent<{
 
                 {token.isItem() ? (
                     <>
-                        <BradPitt
+                        <BradPittList
                             id={ider}
                             listStyle={{
                                 display: 'flex',

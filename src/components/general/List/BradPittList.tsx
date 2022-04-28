@@ -68,7 +68,7 @@ interface Props<T, B, A> {
 //         | React.FunctionComponent<InfiniteListRenderItemBig<T, B, A>>;
 // }
 
-const BradPitt = <T, B, A>({
+const BradPittList = <T, B, A>({
     id = 'NEEDS_AN_ID',
     data,
     RenderItemSmall,
@@ -238,4 +238,4 @@ const BradPitt = <T, B, A>({
     );
 };
 
-export default React.memo(BradPitt) as typeof BradPitt;
+export default React.memo(BradPittList) as typeof BradPittList;
