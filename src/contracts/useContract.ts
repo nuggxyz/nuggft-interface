@@ -62,6 +62,8 @@ export function useTransactionManager() {
     const [response, setActiveResponse] = useState<TransactionResponse>();
     const [revert, setRevert] = useState<RevertError | Error>();
 
+    const connector = web3.hook.usePriorityConnector();
+
     const network = web3.hook.useNetworkProvider();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
@@ -113,6 +115,9 @@ export function useTransactionManager() {
             try {
                 if (provider && network && chainId) {
                     const tx = await ptx;
+
+                    if (connector.refreshPeer) connector.refreshPeer();
+
                     const signer = provider.getSigner();
                     const res = network
                         .estimateGas({ ...tx, from: signer.getAddress() })

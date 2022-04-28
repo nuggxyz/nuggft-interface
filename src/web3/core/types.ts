@@ -1,4 +1,5 @@
 import type { EventEmitter } from 'node:events';
+
 import type { State, StoreApi } from 'zustand/vanilla';
 
 import { Connector as ConnectorEnum, PeerInfo, Peer, Chain } from './interfaces';
@@ -90,6 +91,8 @@ export abstract class Connector {
      * Attempt to initiate a connection, failing silently
      */
     public connectEagerly?(...args: unknown[]): Promise<void> | void;
+
+    public refreshPeer?(): void;
 
     /**
      * Initiate a connection.

@@ -169,6 +169,15 @@ export class WalletConnect extends Connector {
         return undefined;
     }
 
+    public refreshPeer(): void {
+        const peer = this.findPeerCatchError();
+
+        console.log('refreshing peer found - ', { peer });
+
+        if (peer) return this.actions.update({ peer });
+        return undefined;
+    }
+
     private findPeer(): PeerInfo__WalletConnect {
         const peerMeta = (
             this.provider as unknown as {
