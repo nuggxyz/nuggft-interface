@@ -62,12 +62,17 @@ interface Props<T, B, A> {
     useBradRef?: boolean;
 }
 
+// interface CustomInfiniteListProps<T, B, A> extends InfiniteListProps<T, B, A> {
+//     RenderItem:
+//         | React.FunctionComponent<InfiniteListRenderItemSmall<T, B, A>>
+//         | React.FunctionComponent<InfiniteListRenderItemBig<T, B, A>>;
+// }
+
 const BradPitt = <T, B, A>({
     id = 'NEEDS_AN_ID',
     data,
     RenderItemSmall,
     RenderItemBig,
-    extraData,
     itemHeightBig,
     itemHeightSmall,
     defaultActiveIndex = 0,
@@ -87,7 +92,7 @@ const BradPitt = <T, B, A>({
     const [activeIndex, setActiveIndex] = React.useState<0 | 1 | undefined>(defaultActiveIndex);
     const [preActiveIndex, setPreActiveIndex] = React.useState<0 | 1>(defaultActiveIndex);
 
-    const [isPending, startTansition] = React.useTransition();
+    const [, startTansition] = React.useTransition();
 
     const [headerRef, { width: WIDTH }] = useMeasure();
 
@@ -103,22 +108,7 @@ const BradPitt = <T, B, A>({
         config: config.stiff,
     });
 
-    const [offset, setOffset] = React.useState<number>();
-    // const [scrollTopOffset] = React.useState<number>(0);
-
     const brad = React.useRef<HTMLDivElement>(null);
-    // const ider = React.useId();
-
-    React.useEffect(() => {
-        if (brad && brad.current) {
-            const offsets = brad.current.getBoundingClientRect();
-            const { top } = offsets;
-
-            setOffset(top);
-        }
-    }, [brad]);
-
-    // const deferedActiveIndex = useDeferredValue(activeIndex);
 
     const toggleActiveIndex = React.useCallback(
         (to: 0 | 1) => {
@@ -131,10 +121,8 @@ const BradPitt = <T, B, A>({
                 });
             }, 500);
         },
-        [coreRef, offset],
+        [coreRef, startTansition, setActiveIndex, setPreActiveIndex],
     );
-
-    // console.log({ brad });
 
     return (
         <div
@@ -149,11 +137,10 @@ const BradPitt = <T, B, A>({
                     ref={headerRef}
                     style={{
                         display: 'flex',
-                        zIndex: 5,
+                        zIndex: 300010,
                         width: 90,
                         justifyContent: 'space-around',
                         position: 'relative',
-
                         ...floaterWrapperStyle,
                     }}
                 >
@@ -184,58 +171,62 @@ const BradPitt = <T, B, A>({
                     />
                 </div>
             </div>
-            {squishedData.length > 0 && !isPending ? (
-                // activeIndex === 1 - 2 &&
-                activeIndex === 0 ? (
-                    <InfiniteList
-                        {...props}
-                        startGap={10}
-                        id={`nugg-list1${id}`}
-                        style={listStyle}
-                        skipSelectedCheck
-                        data={data}
-                        RenderItem={RenderItemBig}
-                        loading={false}
-                        action={undefined}
-                        extraData={extraData}
-                        itemHeight={itemHeightBig}
-                        animationToggle={false}
-                        disableScroll={disableScroll}
-                        endGap={50}
-                        coreRef={useBradRef ? brad : coreRef}
-                        // scrollTopOffset={scrollTopOffset}
-                        interval={3}
-                    />
-                ) : activeIndex === 1 ? (
-                    <InfiniteList
-                        {...props}
-                        startGap={10}
-                        id={`nugg-list2${id}`}
-                        style={listStyle}
-                        skipSelectedCheck
-                        data={squishedData}
-                        RenderItem={RenderItemSmall}
-                        loading={false}
-                        interval={30}
-                        action={undefined}
-                        extraData={extraData}
-                        itemHeight={itemHeightSmall}
-                        animationToggle={false}
-                        disableScroll={disableScroll}
-                        squishFactor={0.5}
-                        coreRef={useBradRef ? brad : coreRef}
-                        // scrollTopOffset={scrollTopOffset}
-                    />
+            <div style={{ height: '100%', width: '100%', position: 'relative' }}>
+                {squishedData.length > 0 && activeIndex !== undefined ? (
+                    // activeIndex === 1 - 2 &&
+                    activeIndex === 0 ? (
+                        <InfiniteList
+                            {...props}
+                            startGap={80}
+                            id={`nugg-list1${id}`}
+                            style={listStyle}
+                            skipSelectedCheck
+                            data={data}
+                            RenderItem={RenderItemBig}
+                            loading={false}
+                            action={undefined}
+                            itemHeight={itemHeightBig}
+                            animationToggle={false}
+                            disableScroll={disableScroll}
+                            // endGap={50}
+                            coreRef={useBradRef ? brad : coreRef}
+                            // scrollTopOffset={scrollTopOffset}
+                            interval={3}
+                        />
+                    ) : (
+                        <InfiniteList
+                            {...props}
+                            startGap={80}
+                            id={`nugg-list2${id}`}
+                            style={listStyle}
+                            skipSelectedCheck
+                            data={squishedData}
+                            RenderItem={RenderItemSmall}
+                            loading={false}
+                            interval={30}
+                            action={undefined}
+                            itemHeight={itemHeightSmall}
+                            animationToggle={false}
+                            disableScroll={disableScroll}
+                            squishFactor={0.5}
+                            coreRef={useBradRef ? brad : coreRef}
+                            // scrollTopOffset={scrollTopOffset}
+                        />
+                    )
                 ) : (
-                    <div style={{ height: '100%', width: '100%' }}>
+                    <div
+                        style={{
+                            height: '200px',
+                            width: '100%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                    >
                         <Loader />
                     </div>
-                )
-            ) : (
-                <div style={{ height: '100%', width: '100%' }}>
-                    <Loader />
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };

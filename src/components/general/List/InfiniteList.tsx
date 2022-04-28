@@ -27,7 +27,7 @@ export interface InfiniteListRenderItemProps<T, B, A> {
     style?: CSSProperties;
 }
 
-interface Props<T, B, A> {
+export interface InfiniteListProps<T, B, A> {
     id?: string;
     data: T[];
     RenderItem: FunctionComponent<InfiniteListRenderItemProps<T, B, A>>;
@@ -99,7 +99,7 @@ const InfiniteList = <T, B, A>({
     // externalScrollTop,
     // scrollTopOffset,
     squishFactor = 1,
-}: Props<T, B, A>) => {
+}: InfiniteListProps<T, B, A>) => {
     const [interval] = React.useState(_interval * squishFactor);
 
     const windowRef = useRef<HTMLDivElement>(null);

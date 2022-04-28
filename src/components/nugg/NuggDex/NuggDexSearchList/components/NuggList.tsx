@@ -161,21 +161,15 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                     <BradPitt
                         id={`${ider}brad`}
                         listStyle={{
-                            zIndex: 0,
                             overflow: undefined,
                             position: 'relative',
+                            justifyContent: 'flex-start',
                             ...(screenType === 'phone' && { width: '100%' }),
                         }}
                         style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            textAlign: 'left',
                             width: '100%',
                             padding: '0 1rem 1rem 1.5rem',
-                            // marginTop: '110px',
                         }}
-                        // coreRef={fullRef}
                         Title={React.memo(() => (
                             <div />
                         ))}
@@ -184,8 +178,6 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                         RenderItemBig={NuggListRenderItemMobileBig}
                         interval={interval}
                         disableScroll
-                        // useBradRef
-
                         coreRef={fullRef}
                         onScrollEnd={_onScrollEnd}
                         extraData={{ cardType }}
