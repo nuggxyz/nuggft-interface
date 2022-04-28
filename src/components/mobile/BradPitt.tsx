@@ -1,5 +1,5 @@
 import { animated, config, useSpring } from '@react-spring/web';
-import React from 'react';
+import React, { useDeferredValue } from 'react';
 import { IoGridOutline, IoLogoInstagram } from 'react-icons/io5';
 
 import useSquishedListData from '@src/client/hooks/useSquishedListData';
@@ -111,6 +111,8 @@ const BradPitt = <T, B, A>({
         }
     }, [brad]);
 
+    const deferedActiveIndex = useDeferredValue(activeIndex);
+
     const toggleActiveIndex = React.useCallback(
         (to: 0 | 1) => {
             setActiveIndex(to);
@@ -179,8 +181,9 @@ const BradPitt = <T, B, A>({
                 </div>
             </div>
             {squishedData.length > 0 &&
-                (activeIndex === 0 ? (
+                (deferedActiveIndex === 0 ? (
                     <InfiniteList
+                        {...props}
                         startGap={10}
                         id={`nugg-list1${id}`}
                         style={listStyle}
@@ -188,7 +191,6 @@ const BradPitt = <T, B, A>({
                         data={data}
                         RenderItem={RenderItemBig}
                         loading={false}
-                        interval={3}
                         action={undefined}
                         extraData={extraData}
                         itemHeight={itemHeightBig}
@@ -197,10 +199,11 @@ const BradPitt = <T, B, A>({
                         endGap={50}
                         coreRef={useBradRef ? brad : coreRef}
                         // scrollTopOffset={scrollTopOffset}
-                        {...props}
+                        interval={3}
                     />
                 ) : (
                     <InfiniteList
+                        {...props}
                         startGap={10}
                         id={`nugg-list1${id}`}
                         style={listStyle}
@@ -217,7 +220,6 @@ const BradPitt = <T, B, A>({
                         squishFactor={0.5}
                         coreRef={useBradRef ? brad : coreRef}
                         // scrollTopOffset={scrollTopOffset}
-                        {...props}
                     />
                 ))}
         </div>
