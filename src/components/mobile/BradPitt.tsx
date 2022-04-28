@@ -60,7 +60,7 @@ interface Props<T, B, A> {
 }
 
 const BradPitt = <T, B, A>({
-    // id,
+    id = 'NEEDS_AN_ID',
     data,
     RenderItemSmall,
     RenderItemBig,
@@ -100,7 +100,7 @@ const BradPitt = <T, B, A>({
     // const [scrollTopOffset] = React.useState<number>(0);
 
     const brad = React.useRef<HTMLDivElement>(null);
-    const id = React.useId();
+    // const ider = React.useId();
 
     React.useEffect(() => {
         if (brad && brad.current) {
@@ -133,7 +133,11 @@ const BradPitt = <T, B, A>({
     // console.log({ brad });
 
     return (
-        <div style={{ ...style, ...(useBradRef && { overflow: 'scroll' }) }} id={id} ref={brad}>
+        <div
+            style={{ ...style, ...(useBradRef && { overflow: 'scroll' }) }}
+            id={`${id}B-R-A-D`}
+            ref={brad}
+        >
             <div>
                 {Title && <Title />}
 

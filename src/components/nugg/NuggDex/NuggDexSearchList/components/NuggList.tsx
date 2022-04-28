@@ -99,18 +99,21 @@ const NuggList: FunctionComponent<NuggListProps> = ({
 
     const fullRef = React.useRef(null);
 
+    const ider = React.useId();
+
     return (
         <div
-            ref={fullRef}
             style={{
                 ...styles.nuggListContainer,
-                ...(screenType === 'phone' && { position: 'relative' }),
+                ...(screenType === 'phone' && { position: 'relative', overflow: undefined }),
             }}
         >
             <animated.div
+                ref={fullRef}
                 style={{
                     ...styles.nuggListDefault,
                     ...style,
+                    ...(screenType === 'phone' && { overflow: 'auto' }),
                 }}
             >
                 {/* {screenType !== 'phone' && ( */}
@@ -137,7 +140,7 @@ const NuggList: FunctionComponent<NuggListProps> = ({
 
                 {!isPhone ? (
                     <InfiniteList
-                        id="nugg-list"
+                        id={`${ider}infinite`}
                         style={{
                             zIndex: 0,
                             overflow: 'hidden',
@@ -156,10 +159,10 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                     />
                 ) : (
                     <BradPitt
-                        id="nugg-list3"
+                        id={`${ider}brad`}
                         listStyle={{
                             zIndex: 0,
-                            overflow: 'hidden',
+                            overflow: undefined,
                             position: 'relative',
                             ...(screenType === 'phone' && { width: '100%' }),
                         }}
@@ -178,7 +181,10 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                         RenderItemSmall={NuggListRenderItemMobile}
                         RenderItemBig={NuggListRenderItemMobileBig}
                         interval={interval}
-                        disableScroll={false}
+                        disableScroll
+                        // useBradRef
+
+                        coreRef={fullRef}
                         onScrollEnd={_onScrollEnd}
                         extraData={{ cardType }}
                         itemHeightBig={325}
