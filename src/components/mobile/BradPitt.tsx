@@ -85,6 +85,8 @@ const BradPitt = <T, B, A>({
     useBradRef = false,
     floaterWrapperStyle,
     floaterColor = lib.colors.transparentWhite,
+    startGap,
+    endGap,
     ...props
 }: Props<T, B, A>) => {
     const squishedData = useSquishedListData(data ?? []);
@@ -130,7 +132,14 @@ const BradPitt = <T, B, A>({
             id={`${id}B-R-A-D`}
             ref={brad}
         >
-            <div style={{ ...headerStyle, display: 'flex', justifyContent: 'space-between' }}>
+            <div
+                style={{
+                    ...headerStyle,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    justifySelf: 'center',
+                }}
+            >
                 {Title && <Title />}
 
                 <div
@@ -171,62 +180,60 @@ const BradPitt = <T, B, A>({
                     />
                 </div>
             </div>
-            <div style={{ height: '100%', width: '100%', position: 'relative' }}>
-                {squishedData.length > 0 && activeIndex !== undefined ? (
-                    // activeIndex === 1 - 2 &&
-                    activeIndex === 0 ? (
-                        <InfiniteList
-                            {...props}
-                            startGap={80}
-                            id={`nugg-list1${id}`}
-                            style={listStyle}
-                            skipSelectedCheck
-                            data={data}
-                            RenderItem={RenderItemBig}
-                            loading={false}
-                            action={undefined}
-                            itemHeight={itemHeightBig}
-                            animationToggle={false}
-                            disableScroll={disableScroll}
-                            // endGap={50}
-                            coreRef={useBradRef ? brad : coreRef}
-                            // scrollTopOffset={scrollTopOffset}
-                            interval={3}
-                        />
-                    ) : (
-                        <InfiniteList
-                            {...props}
-                            startGap={80}
-                            id={`nugg-list2${id}`}
-                            style={listStyle}
-                            skipSelectedCheck
-                            data={squishedData}
-                            RenderItem={RenderItemSmall}
-                            loading={false}
-                            interval={30}
-                            action={undefined}
-                            itemHeight={itemHeightSmall}
-                            animationToggle={false}
-                            disableScroll={disableScroll}
-                            squishFactor={0.5}
-                            coreRef={useBradRef ? brad : coreRef}
-                            // scrollTopOffset={scrollTopOffset}
-                        />
-                    )
+            {/* <div style={{ height: '100%', width: '100%', position: 'relative' }}> */}
+            {squishedData.length > 0 && activeIndex !== undefined ? (
+                // activeIndex === 1 - 2 &&
+                activeIndex === 0 ? (
+                    <InfiniteList
+                        {...props}
+                        startGap={startGap}
+                        id={`nugg-list1${id}`}
+                        style={listStyle}
+                        skipSelectedCheck
+                        data={data}
+                        RenderItem={RenderItemBig}
+                        loading={false}
+                        action={undefined}
+                        itemHeight={itemHeightBig}
+                        animationToggle={false}
+                        disableScroll={disableScroll}
+                        coreRef={useBradRef ? brad : coreRef}
+                        interval={3}
+                        endGap={endGap}
+                    />
                 ) : (
-                    <div
-                        style={{
-                            height: '200px',
-                            width: '100%',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Loader />
-                    </div>
-                )}
-            </div>
+                    <InfiniteList
+                        {...props}
+                        startGap={startGap}
+                        id={`nugg-list2${id}`}
+                        style={listStyle}
+                        skipSelectedCheck
+                        data={squishedData}
+                        RenderItem={RenderItemSmall}
+                        loading={false}
+                        interval={30}
+                        action={undefined}
+                        itemHeight={itemHeightSmall}
+                        animationToggle={false}
+                        disableScroll={disableScroll}
+                        squishFactor={0.5}
+                        coreRef={useBradRef ? brad : coreRef}
+                        endGap={endGap}
+                    />
+                )
+            ) : (
+                <div
+                    style={{
+                        height: '200px',
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Loader />
+                </div>
+            )}
         </div>
     );
 };

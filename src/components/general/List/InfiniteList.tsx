@@ -365,8 +365,6 @@ const InfiniteList = <T, B, A>({
         [label, labelStyle, titleLoading, loaderColor],
     );
 
-    // console.log({ interval, startIndex, endIndex, id });
-
     return (
         <>
             {(label || TitleButton) && (

@@ -604,7 +604,7 @@ const ViewingNuggPhone: FunctionComponent<{
                             }}
                             style={{
                                 position: 'relative',
-                                width: '90%',
+                                width: '100%',
                                 // display: 'flex',
                                 overflow: undefined,
                                 flexDirection: 'column',
@@ -612,11 +612,13 @@ const ViewingNuggPhone: FunctionComponent<{
                             coreRef={coreRef}
                             itemHeightBig={340}
                             itemHeightSmall={160}
+                            startGap={0}
                             data={data?.nuggItems.map((x) => x.nugg.id.toNuggId()) || []}
                             RenderItemSmall={NuggListRenderItemMobile}
                             RenderItemBig={NuggListRenderItemMobileBig}
                             disableScroll
                             extraData={undefined}
+                            headerStyle={{ padding: '2rem 1rem 1rem 1.5rem' }}
                             Title={React.memo(() => (
                                 <Text
                                     size="larger"

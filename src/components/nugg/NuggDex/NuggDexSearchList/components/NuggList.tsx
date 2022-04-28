@@ -183,7 +183,7 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                         extraData={{ cardType }}
                         itemHeightBig={325}
                         itemHeightSmall={160}
-                        startGap={50}
+                        startGap={90}
                         floaterWrapperStyle={{
                             position: 'absolute',
                             top: 57,
