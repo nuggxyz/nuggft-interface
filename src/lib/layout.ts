@@ -9,7 +9,7 @@ const Layout = {
     sideModal: {
         width: '40rem',
     },
-    animation: 'cubic-bezier(0.165, 0.84, 0.44, 1)',
+    animation: 'cubic-bezier(.08,.44,.54,.98)', // 'cubic-bezier(0.165, 0.84, 0.44, 1)',
     smallDeviceWidth: 820,
     borderRadius: {
         small: '.3rem',

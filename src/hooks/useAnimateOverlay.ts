@@ -1,7 +1,6 @@
-import { PickAnimated, useSpring } from '@react-spring/web';
 import { CSSProperties } from 'react';
 
-import { NLStyleSheetCreator } from '@src/lib';
+import lib, { NLStyleSheetCreator } from '@src/lib';
 import useDimentions from '@src/client/hooks/useDimentions';
 
 const styles = NLStyleSheetCreator({
@@ -19,16 +18,17 @@ const styles = NLStyleSheetCreator({
         WebkitBackdropFilter: 'blur(10px)',
         overflow: 'hidden',
         zIndex: 999,
+        transition: `opacity .5s ${lib.layout.animation}`,
     },
     mobile: {},
 });
 
 const useAnimateOverlay = (isOpen: boolean, style?: CSSProperties) => {
     const { screen: screenType } = useDimentions();
-    const wrapperStyle: PickAnimated<CSSProperties> = useSpring({
+    const wrapperStyle: Partial<CSSProperties> = {
         ...styles.wrapper,
         opacity: isOpen ? 1 : 0,
-        pointerEvents: isOpen ? 'auto' : 'none',
+        pointerEvents: isOpen ? ('auto' as const) : ('none' as const),
         ...(screenType === 'phone'
             ? {
                   justifyContent: 'center',
@@ -39,7 +39,7 @@ const useAnimateOverlay = (isOpen: boolean, style?: CSSProperties) => {
                   alignItems: 'center',
               }),
         ...style,
-    });
+    };
     return wrapperStyle;
 };
 

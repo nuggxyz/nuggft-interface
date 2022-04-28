@@ -8,8 +8,12 @@ import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
 import { NLStyleSheetCreator } from '@src/lib';
 import client from '@src/client';
 import useDimentions from '@src/client/hooks/useDimentions';
+<<<<<<< HEAD
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import BackButton from '@src/components/mobile/BackButton';
+=======
+import { useOverlayRouteStyle } from '@src/lib/router';
+>>>>>>> 7a643ad (improvements)
 
 type Props = Record<string, never>;
 
@@ -64,11 +68,11 @@ const SearchOverlay: FunctionComponent<Props> = () => {
 
     const blur = useBlur(['/view/*']);
 
-    // const overlay = useOverlayRouteStyle();
+    const overlay = useOverlayRouteStyle();
 
-    const overlay = useAnimateOverlay(true, {
-        zIndex: 997,
-    });
+    // const overlay = useAnimateOverlay(true, {
+    //     zIndex: 997,
+    // });
 
     return screenType === 'phone' ? (
         <>

@@ -1,15 +1,33 @@
 import lib, { NLStyleSheetCreator } from '@src/lib';
 
 const styles = NLStyleSheetCreator({
+    containerDesktop: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'space-between',
+        transition: `opacity .5s ${lib.layout.animation}`,
+        background: 'red',
+    },
     container: {
         display: 'flex',
-        justifyContent: 'space-around',
-        alignItems: 'space-around',
+        // flexDirection: 'column-reverse',
+        justifyContent: 'space-between',
+        alignItems: 'space-between',
+        transition: `opacity .5s ${lib.layout.animation}`,
+        width: '100%',
+        background: 'red',
+    },
+    controlContainerDesktop: {
+        background: lib.colors.transparentLightGrey,
+        borderRadius: lib.layout.borderRadius.mediumish,
+        width: '45%',
+        position: 'relative',
+        padding: '1rem',
     },
     controlContainer: {
         background: lib.colors.transparentLightGrey,
         borderRadius: lib.layout.borderRadius.mediumish,
-        width: '45%',
+        width: '55%',
         position: 'relative',
         padding: '1rem',
     },
@@ -40,6 +58,7 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'center',
         opacity: 0,
         transition: `opacity .3s ${lib.layout.animation}`,
+        marginBottom: '.5rem',
     },
 });
 

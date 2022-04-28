@@ -23,6 +23,7 @@ import globalStyles from '@src/lib/globalStyles';
 import { NuggftV1 } from '@src/typechain';
 import { useDotnuggInjectToCache } from '@src/client/hooks/useDotnugg';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './HotRotateO.styles';
 
@@ -54,7 +55,7 @@ export const HotRotateOController = () => {
         };
     }, [tokenId, openEditScreen, closeEditScreen, navigate]);
 
-    return <></>;
+    return <HotRotateO />;
 };
 
 const RenderItem: FC<
@@ -144,12 +145,21 @@ const HotRotateO = () => {
     });
 
     const [items, setItems] = useAsyncSetState<ItemList>(() => {
-        if (tokenId && provider && address) {
+        if (tokenId && provider) {
+            if (!address) {
+                setCannotProveOwnership(true);
+                return undefined;
+            }
             const fmtTokenId = ethers.BigNumber.from(tokenId.toRawId());
 
             const floopCheck = async () => {
+                console.log('starting floop');
+                let val = Date.now();
                 return nuggft.floop(fmtTokenId).then((x) => {
-                    return x.reduce(
+                    console.log('floop length: ', Date.now() - val);
+                    val = Date.now();
+                    console.log('starting reduce');
+                    const res = x.reduce(
                         (prev: ItemList, curr, activeIndex) => {
                             const parsed = parseItmeIdToNum(curr);
                             if (curr === 0) return prev;
@@ -216,9 +226,13 @@ const HotRotateO = () => {
                         },
                         { active: [], hidden: [], duplicates: [] },
                     );
+                    console.log('done reduce ', Date.now() - val);
+                    return res;
                 });
             };
             return nuggft.ownerOf(fmtTokenId).then((y) => {
+                setNeedsToClaim(false);
+                setCannotProveOwnership(false);
                 if (y.toLowerCase() === address.toLowerCase()) {
                     return floopCheck();
                 }
@@ -239,9 +253,11 @@ const HotRotateO = () => {
 
     const navigate = useNavigate();
 
+    const { screen } = useDimentions();
+
     if (needsToClaim) {
         return (
-            <animated.div style={{ ...styles.container, ...style }}>
+            <animated.div style={{ ...styles.containerDesktop, ...style }}>
                 <Label text="Needs to claim" />
             </animated.div>
         );
@@ -249,58 +265,72 @@ const HotRotateO = () => {
 
     if (cannotProveOwnership) {
         return (
-            <animated.div style={{ ...styles.container, ...style }}>
+            <animated.div style={{ ...styles.containerDesktop, ...style }}>
                 <Label text="Canot prove ownership" />
             </animated.div>
         );
     }
 
     return (
-        <animated.div style={{ ...styles.container, ...style }}>
+        <animated.div
+            style={{
+                ...(screen === 'desktop' ? styles.containerDesktop : styles.container),
+                ...style,
+                opacity: items ? 1 : 0,
+            }}
+        >
             {tokenId && items && (
                 <>
-                    {savedToChain ? (
-                        <div style={styles.controlContainer}>
-                            <Text
-                                size="larger"
-                                textStyle={styles.title}
-                            >{t`Nugg ${tokenId.toRawId()} saved!`}</Text>
-                            <div style={styles.buttonsContainer}>
-                                <Button
-                                    buttonStyle={styles.button}
-                                    textStyle={{ color: lib.colors.nuggRedText }}
-                                    label={t`Exit`}
-                                    onClick={() => {
-                                        navigate(-1);
-                                        setSavedToChain(false);
-                                        setSaving(false);
-                                    }}
-                                />
+                    <div
+                        style={
+                            screen === 'desktop'
+                                ? styles.controlContainerDesktop
+                                : styles.controlContainer
+                        }
+                    >
+                        {savedToChain ? (
+                            <>
+                                <Text
+                                    size="larger"
+                                    textStyle={styles.title}
+                                >{t`Nugg ${tokenId.toRawId()} saved!`}</Text>
+                                <div style={styles.buttonsContainer}>
+                                    <Button
+                                        buttonStyle={styles.button}
+                                        textStyle={{ color: lib.colors.nuggRedText }}
+                                        label={t`Exit`}
+                                        onClick={() => {
+                                            navigate(-1);
+                                        }}
+                                    />
 
-                                <Button
-                                    buttonStyle={styles.button}
-                                    textStyle={{ color: lib.colors.nuggBlueText }}
-                                    label={t`Edit again`}
-                                    onClick={() => {
-                                        setSavedToChain(false);
-                                        setSaving(false);
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    ) : (
-                        <RotateOSelector
-                            {...{
-                                tokenId,
-                                items,
-                                navigate,
-                                nuggft,
-                                setItems,
-                                setSaving,
-                            }}
-                        />
-                    )}
-                    <RotateOViewer {...{ items, tokenId, savedToChain }} />
+                                    <Button
+                                        buttonStyle={styles.button}
+                                        textStyle={{ color: lib.colors.nuggBlueText }}
+                                        label={t`Edit again`}
+                                        onClick={() => {
+                                            setSavedToChain(false);
+                                            setSaving(false);
+                                        }}
+                                    />
+                                </div>
+                            </>
+                        ) : (
+                            <RotateOSelector
+                                {...{
+                                    tokenId,
+                                    items,
+                                    navigate,
+                                    nuggft,
+                                    setItems,
+                                    setSaving,
+                                }}
+                            />
+                        )}
+                    </div>
+                    <RotateOViewer
+                        {...{ items, tokenId, savedToChain, extraLarge: screen === 'desktop' }}
+                    />
                 </>
             )}
         </animated.div>
@@ -311,10 +341,12 @@ const RotateOViewer = ({
     tokenId,
     items,
     savedToChain,
+    extraLarge,
 }: {
     tokenId: TokenId;
     items: ItemList;
     savedToChain: boolean;
+    extraLarge: boolean;
 }) => {
     const provider = web3.hook.usePriorityProvider();
     const dotnugg = useDotnuggV1(provider);
@@ -359,7 +391,7 @@ const RotateOViewer = ({
                 tokenId={tokenId}
                 svgNotFromGraph={svg}
                 showcase
-                style={{ height: 600, width: 600 }}
+                style={extraLarge ? { height: 600, width: 600 } : { height: 400, width: 400 }}
             />
         </div>
     );
@@ -426,7 +458,7 @@ const RotateOSelector = ({
         setOriginal(items);
     }, [tokenId]);
     return (
-        <div style={styles.controlContainer}>
+        <>
             <Text size="larger" textStyle={styles.title}>{t`Edit Nugg ${tokenId.toRawId()}`}</Text>
             <Button
                 label={t`Reset`}
@@ -508,7 +540,7 @@ const RotateOSelector = ({
                     }}
                 />
             </div>
-        </div>
+        </>
     );
 };
 

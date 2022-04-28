@@ -12,6 +12,7 @@ const styles = NLStyleSheetCreator({
         height: '85%',
         width: '80%',
         position: 'relative',
+        transition: `opacity .5s ${lib.layout.animation}`,
     },
     nuggId: {
         color: lib.colors.nuggBlueText,

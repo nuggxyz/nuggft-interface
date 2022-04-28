@@ -74,19 +74,25 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     const animatedStyle = useSpring({
         to: {
             // ...style,
-            position: 'relative',
+            position: 'relative' as const,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flexDirection: 'column',
-            opacity: tokenId || svgNotFromGraph || showPending ? 1 : 0,
+            flexDirection: 'column' as const,
+            opacity: src || showPending ? 1 : 0,
         },
         config: springConfig.default,
     });
 
     return (
         // @ts-ignore
-        <animated.div style={animatedStyle}>
+        <animated.div
+            style={{
+                ...animatedStyle,
+                // opacity: src || showPending ? 1 : 0,
+                // transition: `opacity .5s ease`,
+            }}
+        >
             <div
                 role="presentation"
                 onClick={

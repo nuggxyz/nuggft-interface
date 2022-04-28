@@ -10,7 +10,7 @@ import GlobalModal from '@src/components/modals/GlobalModal';
 import ToastContainer from '@src/components/general/Toast/ToastContainer';
 import NuggBook from '@src/components/nuggbook/NuggBook';
 import useDimentions from '@src/client/hooks/useDimentions';
-import HotRotateO, { HotRotateOController } from '@src/pages/HotRotateO';
+import { HotRotateOController } from '@src/pages/HotRotateO';
 
 import MobileViewScreen2 from './mobile/MobileViewScreen2';
 import MobileWalletScreen2 from './mobile/MobileWalletScreen2';
@@ -29,6 +29,16 @@ const Router = () => {
             path: '/',
             element: <Outlet />,
             children: [
+                {
+                    path: 'view/*',
+                    element: <SearchOverlay />,
+                    overlay: 997,
+                },
+                {
+                    path: 'edit/:id',
+                    element: <HotRotateOController />,
+                    overlay: 997,
+                },
                 ...(isPhone
                     ? [{ path: 'wallet', element: <MobileWalletScreen2 /> }]
                     : [
@@ -49,6 +59,7 @@ const Router = () => {
         },
     ]);
 
+
     return <React.Suspense fallback={<div />}>{route} </React.Suspense>;
 };
 
@@ -63,6 +74,9 @@ const App = () => {
             <Helmet />
             <NavigationBar />
             {!isPhone && <HotRotateO />}
+            <StupidMfingHack />
+
+            {/* <HotRotateO /> */}
             <Router />
             <SwapPage />
         </>
