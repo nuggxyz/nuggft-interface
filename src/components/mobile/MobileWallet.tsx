@@ -483,7 +483,9 @@ const MobileWallet: FunctionComponent<Props> = () => {
                 <MyNuggItemListPhone />
             </div>
         ) : (
-            <MobileConnectTab />
+            <>
+                <MobileConnectTab />
+            </>
         )
     ) : null;
 };

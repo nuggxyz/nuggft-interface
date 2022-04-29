@@ -2,6 +2,8 @@ import React from 'react';
 
 import { ModalEnum } from '@src/interfaces/modals';
 import client from '@src/client';
+import useDimentions from '@src/client/hooks/useDimentions';
+import ModalWrapperMobile from '@src/components/mobile/ModalWrapperMobile';
 
 import LoanInputModal from './LoanInputModal/LoanInputModal';
 import LoanOrBurnModal from './LoanOrBurnModal/LoanOrBurnModal';
@@ -34,7 +36,13 @@ const ModalSwitch = () => {
 };
 
 export default () => {
-    return (
+    const { isPhone } = useDimentions();
+
+    return isPhone ? (
+        <ModalWrapperMobile>
+            <ModalSwitch />
+        </ModalWrapperMobile>
+    ) : (
         <ModalWrapper>
             <ModalSwitch />
         </ModalWrapper>

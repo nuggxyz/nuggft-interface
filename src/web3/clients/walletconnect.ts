@@ -45,6 +45,8 @@ export class WalletConnect extends Connector {
 
     private readonly rpc: { [chainId: number]: string[] };
 
+    private __DEV__forceDesktopAction = false;
+
     private eagerConnection?: Promise<void>;
 
     private treatModalCloseAsError: boolean;
@@ -109,7 +111,7 @@ export class WalletConnect extends Connector {
 
             const uri = `${peer.deeplink_href}${HREF_PATH}${encodeURIComponent(payload.params[0])}`;
 
-            if (!isPhone) {
+            if (!isPhone || this.__DEV__forceDesktopAction) {
                 if (peer.desktopAction === 'deeplink') {
                     window.open(uri);
                 } else {
@@ -258,8 +260,13 @@ export class WalletConnect extends Connector {
      * already connected to this chain, no additional steps will be taken. Otherwise, the user will be prompted to switch
      * to the chain, if their wallet supports it.
      */
-    public async activate(desiredChainId?: number, desiredPeer?: Peer): Promise<void> {
+    public async activate(
+        desiredChainId?: number,
+        desiredPeer?: Peer,
+        forceDesktopAction = false,
+    ): Promise<void> {
         this.peer_try = desiredPeer;
+        this.__DEV__forceDesktopAction = forceDesktopAction;
 
         if (desiredChainId && this.rpc[desiredChainId] === undefined) {
             throw new Error(`no url(s) provided for desiredChainId ${desiredChainId}`);

@@ -6,10 +6,12 @@ import Text from '@src/components/general/Texts/Text/Text';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import lib from '@src/lib';
 import { QRCodeModalData } from '@src/interfaces/modals';
+import useDimentions from '@src/client/hooks/useDimentions';
 
 import styles from './QrCodeModal.styles';
 
 const QrCodeModal = ({ data }: { data: QRCodeModalData }) => {
+    const { isPhone } = useDimentions();
     return (
         <div style={styles.container}>
             <div style={styles.textContainer}>
@@ -21,7 +23,7 @@ const QrCodeModal = ({ data }: { data: QRCodeModalData }) => {
             <div>
                 <QRCode
                     value={data.uri || ''}
-                    size={400}
+                    size={isPhone ? 200 : 400}
                     level="L"
                     fgColor={data.backgroundStyle.background}
                     bgColor={lib.colors.transparent}

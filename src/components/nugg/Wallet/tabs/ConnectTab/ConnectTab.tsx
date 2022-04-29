@@ -9,6 +9,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
 import HappyTipper from '@src/components/general/HappyTipper/HappyTipper';
 import useDimentions from '@src/client/hooks/useDimentions';
+import lib from '@src/lib';
 
 import styles from './ConnectTab.styles';
 
@@ -17,19 +18,10 @@ type Props = Record<string, never>;
 const ConnectTab: FunctionComponent<Props> = () => {
     const { isPhone } = useDimentions();
 
+    const [forceDesktopAction, setForceDesktopAction] = React.useState(false);
+
     return (
         <div style={styles.container}>
-            {/* <div style={styles.titleContainer}>
-                <Text
-                    size="large"
-                    textStyle={{
-                        color: 'white',
-                        marginRight: '1rem',
-                    }}
-                >
-                    {t`Connect`}
-                </Text>
-            </div> */}
             <div
                 style={{
                     ...styles.disclaimerContainer,
@@ -44,6 +36,23 @@ const ConnectTab: FunctionComponent<Props> = () => {
                 </Text>
             </div>
             <div style={{ ...styles.walletsContainer, overflow: isPhone ? 'hidden' : 'scroll' }}>
+                {isPhone && __DEV__ && (
+                    <Button
+                        label={
+                            forceDesktopAction
+                                ? `[DEV] QR forced - turn off`
+                                : `[DEV] QR not forced - turn on`
+                        }
+                        buttonStyle={{
+                            marginTop: '20px',
+                            background: lib.colors.red,
+                            color: lib.colors.white,
+                        }}
+                        onClick={() => {
+                            setForceDesktopAction(!forceDesktopAction);
+                        }}
+                    />
+                )}
                 {Object.values(web3.config.peers).map(
                     (peer) =>
                         !peer.fallback && (
@@ -60,7 +69,11 @@ const ConnectTab: FunctionComponent<Props> = () => {
                                     if (check) {
                                         if (check.store.getState().activating)
                                             await check.connector.deactivate();
-                                        void check.connector.activate(undefined, peer.peer);
+                                        void check.connector.activate(
+                                            undefined,
+                                            peer.peer,
+                                            __DEV__ && forceDesktopAction,
+                                        );
                                     }
                                 }}
                             />
