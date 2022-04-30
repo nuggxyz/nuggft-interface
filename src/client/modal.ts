@@ -8,10 +8,11 @@ const store = create(
     combine(
         {
             data: undefined as ModalType | undefined,
+            phase: 0 as number,
             open: false,
         },
         (set) => {
-            const openModal = (modalData: ModalType | undefined) => {
+            const openModal = (modalData: ModalType | undefined, phase = 0) => {
                 set(() => {
                     document.documentElement.classList.add('is-locked');
                     window.onscroll = () => window.scroll({ behavior: 'smooth', top: 0 });
@@ -19,7 +20,14 @@ const store = create(
                     return {
                         data: modalData,
                         open: true,
+                        phase,
                     };
+                });
+            };
+
+            const updatePhase = (input: number) => {
+                set((data) => {
+                    data.phase = input;
                 });
             };
 
@@ -35,7 +43,7 @@ const store = create(
                 });
             };
 
-            return { openModal, closeModal };
+            return { openModal, closeModal, updatePhase };
         },
     ),
 );
@@ -51,6 +59,9 @@ export const useCloseModalOnKeyboardClose = () => {
 };
 
 export default {
+    usePhase: (): [number, (input: number) => void] =>
+        store((state) => [state.phase, state.updatePhase]),
+
     useData: () => store((state) => state.data),
     useOpen: () => store((state) => state.open),
     useOpenModal: () => store((state) => state.openModal),

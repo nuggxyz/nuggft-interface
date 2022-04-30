@@ -34,8 +34,6 @@ import emitter from '@src/emitter';
 type FormatedMyNuggsData = MyNuggsData & { lastBid: EthInt | 'unable-to-bid' };
 
 const OfferModal = ({ data }: { data: OfferModalData }) => {
-    const [page, setPage] = React.useState(0);
-
     const isOpen = client.modal.useOpen();
 
     useMountLogger('OfferModal');
@@ -51,6 +49,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const nuggft = useNuggftV1(provider);
     const closeModal = client.modal.useCloseModal();
+
+    const [page, setPage] = client.modal.usePhase();
 
     const {
         estimate,
@@ -101,7 +101,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         curr: BigNumber | undefined;
         eth: EthInt | undefined;
     }>(() => {
-        console.log('check');
         if (data.tokenId && address && chainId && provider) {
             if (data.isNugg()) {
                 return Promise.all([
@@ -277,8 +276,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
             keys: (item) => `tabFadeTransition${item}5`,
             config: config.gentle,
-            // cancel: !isOpen,
-            // reset: !isOpen,
         },
         [page, isOpen],
     );

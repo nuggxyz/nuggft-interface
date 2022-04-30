@@ -90,7 +90,7 @@ const Modal: FC<PropsWithChildren<unknown>> = ({ children }) => {
     //     [page],
     // );
 
-    return (
+    return isOpen ? (
         <animated.div
             style={{
                 ...style,
@@ -136,7 +136,7 @@ const Modal: FC<PropsWithChildren<unknown>> = ({ children }) => {
                 </animated.div>
             ))} */}
         </animated.div>
-    );
+    ) : null;
 };
 
 export default React.memo(Modal);

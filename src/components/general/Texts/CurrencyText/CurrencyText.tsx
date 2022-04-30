@@ -71,6 +71,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
                     : prevValue || value * 0.5,
             },
             config: config.molasses,
+            cancel: stopAnimation,
         },
         [prevValue, value, stopAnimation],
     );
