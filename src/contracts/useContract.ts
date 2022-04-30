@@ -144,20 +144,7 @@ export function useTransactionManager() {
                                                   .replace('0x', '') || 0,
                                           data: tx.data,
                                       }) as Promise<string>)
-                                    : // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                                      //   .then(async (x: string) => {
-                                      //       console.log({ x });
-                                      //       const abc = await network
-                                      //           .getTransaction(x)
-                                      //           .catch((err) => {
-                                      //               console.error('ERRRRRR', err);
-                                      //               return null as unknown as TransactionResponse;
-                                      //           });
-                                      //       console.log({ abc });
-
-                                      //       return abc;
-                                      //   })
-                                      provider.getSigner().sendTransaction(tx),
+                                    : provider.getSigner().sendTransaction(tx),
                                 onSendSync ? onSendSync(gasLimit) : undefined,
                                 emitter.emit({
                                     type: emitter.events.TransactionSent,

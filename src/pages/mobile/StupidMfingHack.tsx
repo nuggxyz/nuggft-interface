@@ -13,7 +13,6 @@ import { gotoDeepLink } from '@src/web3/config';
 
 const StupidMfingHack: FC<PropsWithChildren<{ onClose?: () => void }>> = () => {
     const peer = web3.hook.usePriorityPeer();
-
     const [, startTransiton] = React.useTransition();
 
     const [open, setOpen] = React.useState(false);
@@ -22,8 +21,8 @@ const StupidMfingHack: FC<PropsWithChildren<{ onClose?: () => void }>> = () => {
         {
             opacity: open ? 1 : 0,
             pointerEvents: open ? 'auto' : 'none',
-            delay: 0,
-            config: config.default,
+            delay: 1000,
+            config: config.slow,
         },
         [open],
     );
@@ -32,9 +31,13 @@ const StupidMfingHack: FC<PropsWithChildren<{ onClose?: () => void }>> = () => {
         type: emitter.events.TransactionSent,
         callback: React.useCallback(() => {
             setOpen(true);
-            setTimeout(() => {
-                setOpen(false);
-            }, 10000);
+        }, [setOpen]),
+    });
+
+    emitter.hook.useOn({
+        type: emitter.events.TransactionResponse,
+        callback: React.useCallback(() => {
+            setOpen(false);
         }, [setOpen]),
     });
 
@@ -46,6 +49,7 @@ const StupidMfingHack: FC<PropsWithChildren<{ onClose?: () => void }>> = () => {
         <>
             <animated.div
                 // @ts-ignore
+
                 style={{
                     ...trans,
 
@@ -56,96 +60,81 @@ const StupidMfingHack: FC<PropsWithChildren<{ onClose?: () => void }>> = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     background: 'transparent',
+                    pointerEvents: 'none',
 
                     overflow: 'hidden',
-                    zIndex: 9900000,
+                    zIndex: 999000,
                 }}
             >
-                {/* <animated.div
+                <div
                     style={{
-                        height: '100%',
-                        width: '90%',
-                        // background: 'white',
-
-                        // boxShadow: '0 6px 10px rgba(80, 80, 80,1)',
-                        // background: lib.colors.white,
-                        borderTopLeftRadius: lib.layout.borderRadius.largish,
-                        borderTopRightRadius: lib.layout.borderRadius.largish,
                         position: 'absolute',
-                        justifyContent: 'flex-start',
+                        bottom: -80,
+                        // width: '100%',
                         alignItems: 'center',
+                        left: 0,
+                        right: 0,
                         display: 'flex',
-                        flexDirection: 'column',
+                        justifyContent: 'center',
                         background: 'transparent',
                     }}
-                > */}
-
-                <Button
-                    buttonStyle={{
-                        position: 'absolute',
-                        // boxShadow: '0 3px 5px rgba(80, 80, 80,1)',
-                        bottom: 30,
-                        // right: 30,
-                        padding: 10,
-
-                        zIndex: 100002,
-                        background: 'white',
-                        color: 'white',
-                        borderRadius: lib.layout.borderRadius.medium,
-                    }}
-                    hoverStyle={{ filter: 'brightness(1)' }}
-                    onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        startTransiton(() => {
-                            gotoDeepLink(peer.deeplink_href || '');
-                        });
-                    }}
-                    rightIcon={
-                        <div
-                            ref={node}
-                            style={{
-                                width: '100%',
-                                display: 'flex',
-                                height: '100%',
-                                alignItems: 'center',
-                            }}
-                        >
-                            {peer && <NLStaticImage image={`${peer.peer}_icon`} />}
+                >
+                    <Button
+                        className="mobile-pressable-div"
+                        buttonStyle={{
+                            position: 'absolute',
+                            // boxShadow: '0 3px 5px rgba(80, 80, 80,1)',
+                            bottom: 110,
+                            // right: 30,
+                            padding: 10,
+                            pointerEvents: 'auto',
+                            zIndex: 999000 + 1,
+                            // textAlign: 'center',
+                            background: 'white',
+                            color: 'white',
+                            borderRadius: lib.layout.borderRadius.medium,
+                            boxShadow: lib.layout.boxShadow.basic,
+                            width: 'auto',
+                        }}
+                        hoverStyle={{ filter: 'brightness(1)' }}
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            startTransiton(() => {
+                                gotoDeepLink(peer.deeplink_href || '');
+                            });
+                        }}
+                        // label="open"
+                        size="largerish"
+                        textStyle={{ color: lib.colors.primaryColor, marginLeft: 10 }}
+                        leftIcon={<NLStaticImage image={`${peer.peer}_icon`} />}
+                        rightIcon={
                             <div
+                                ref={node}
                                 style={{
                                     display: 'flex',
+                                    alignItems: 'left',
                                     flexDirection: 'column',
-                                    alignItems: 'flex-start',
+                                    // width: '100%',
                                     marginLeft: 10,
-                                    height: '100%',
-                                    justifyContent: 'center',
                                 }}
                             >
-                                <Text size="small" textStyle={{ color: lib.colors.primaryColor }}>
-                                    having trouble?
+                                <Text textStyle={{ color: lib.colors.primaryColor }}>
+                                    tap to open
                                 </Text>
                                 <Text
-                                    textStyle={{ color: lib.colors.primaryColor }}
-                                >{`tap to open ${peer.name}`}</Text>
+                                    textStyle={{
+                                        color: lib.colors.primaryColor,
+                                        fontSize: '24px',
+                                    }}
+                                >
+                                    {peer.name}
+                                </Text>
                             </div>
-                        </div>
-                    }
-                />
-                {/* <div
-                    style={{
-                        position: 'absolute',
-                        zIndex: 100003,
-                        top: -30,
-                        display: 'flex',
-                        alignItems: 'center',
-                        opacity: 0.8,
-                    }}
-                >
-                    <Text size="small">tap anywhere to close</Text>
-                </div> */}
+                        }
+                    />
+                </div>
             </animated.div>
-            {/* </animated.div> */}
         </>
     ) : null;
 };

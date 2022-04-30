@@ -63,8 +63,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const [selectedNuggForItem, setSelectedNugg] = useState<FormatedMyNuggsData>();
     const [amount, setAmount] = useState('0');
 
-    const [manualOk, setManualOk] = React.useState(false);
-
     const myNuggs = useMemo(() => {
         console.log('mynugggs');
 
@@ -282,105 +280,50 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const Page2 = React.useMemo(() => {
         return isOpen ? (
-            <div
-                style={{
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <AnimatedConfirmation confirmed={!!receipt} />
-
-                {!response && !manualOk && (
-                    <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
-                        <Text>Request sent to {peer?.name}</Text>
-                        <Text>Waiting on response...</Text>
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                            }}
-                        >
-                            {peer?.type === 'walletconnect' && (
-                                <Button
-                                    buttonStyle={{
-                                        background: 'white',
-                                        color: 'white',
-                                        borderRadius: lib.layout.borderRadius.large,
-                                    }}
-                                    hoverStyle={{ filter: 'brightness(1)' }}
-                                    onClick={(event) => {
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                        gotoDeepLink(peer?.deeplink_href || '');
-                                    }}
-                                    label="open"
-                                    size="largerish"
-                                    textStyle={{ color: lib.colors.primaryColor, marginLeft: 10 }}
-                                    leftIcon={<NLStaticImage image={`${peer.peer}_icon_small`} />}
-                                />
-                            )}
-                            <Button
-                                label="ok, it's done"
-                                size="largerish"
-                                onClick={() => setManualOk(true)}
-                                buttonStyle={{
-                                    borderRadius: lib.layout.borderRadius.large,
-                                    background: lib.colors.primaryColor,
-                                }}
-                                textStyle={{
-                                    color: lib.colors.white,
-                                }}
-                            />
-                        </div>
-                    </div>
-                )}
-
-                {!response && manualOk && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            width: '100%',
-                            flexDirection: 'column',
-                            background: 'white',
-                            borderRadius: lib.layout.borderRadius.medium,
-                            padding: 10,
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Text size="small">{`Didn't hear from ${peer?.name || ''}...`}</Text>
-                        <Text size="small">Watching for your transaction</Text>
-                    </div>
-                )}
-
-                <Button
-                    label="close"
-                    onClick={() => {
-                        closeModal();
-
-                        startTransition(() => {
-                            setTimeout(() => {
-                                setPage(0);
-                            }, 2000);
-                        });
-                    }}
-                    buttonStyle={{
-                        borderRadius: lib.layout.borderRadius.large,
-                        background: lib.colors.primaryColor,
-                        marginTop: '20px',
+            <>
+                <div
+                    style={{
                         width: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
                     }}
-                    textStyle={{
-                        color: lib.colors.white,
-                        fontSize: 30,
-                    }}
-                />
-            </div>
+                >
+                    <AnimatedConfirmation confirmed={!!receipt} />
+
+                    {!response && (
+                        <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
+                            <Text>Request sent to {peer?.name}</Text>
+                            <Text>Waiting on response...</Text>
+                        </div>
+                    )}
+
+                    <Button
+                        label="close"
+                        onClick={() => {
+                            closeModal();
+
+                            startTransition(() => {
+                                setTimeout(() => {
+                                    setPage(0);
+                                }, 2000);
+                            });
+                        }}
+                        buttonStyle={{
+                            borderRadius: lib.layout.borderRadius.large,
+                            background: lib.colors.primaryColor,
+                            marginTop: '20px',
+                            width: '100%',
+                        }}
+                        textStyle={{
+                            color: lib.colors.white,
+                            fontSize: 30,
+                        }}
+                    />
+                </div>
+            </>
         ) : null;
-    }, [response, receipt, manualOk, isOpen, closeModal, setPage, startTransition, peer]);
+    }, [response, receipt, isOpen, closeModal, setPage, startTransition, peer, startTransition]);
 
     const Page1 = React.useMemo(
         () =>
@@ -624,6 +567,16 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         config: config.default,
     });
 
+    const [trans] = useSpring(
+        {
+            opacity: page === 2 && !response ? 1 : 0,
+            pointerEvents: page === 2 && !response ? 'auto' : 'none',
+            delay: 1000,
+            config: config.slow,
+        },
+        [page, response],
+    );
+
     return (
         <>
             {tabFadeTransition((sty, pager) => (
@@ -635,7 +588,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         justifyContent: 'center',
                         width: '100%',
                         margin: 20,
-                        overflow: 'hidden',
                     }}
                     // ref={node}
                 >
@@ -656,7 +608,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             backdropFilter: 'blur(10px)',
                             WebkitBackdropFilter: 'blur(10px)',
                             ...containerStyle,
-                            overflow: 'hidden',
                             ...sty,
                         }}
                     >
@@ -664,6 +615,70 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     </animated.div>
                 </animated.div>
             ))}
+
+            {page === 2 && peer && peer.type === 'walletconnect' && !response && (
+                <animated.div
+                    // @ts-ignore
+                    style={{
+                        ...trans,
+                        position: 'absolute',
+                        bottom: 30,
+                        // width: '100%',
+                        alignItems: 'center',
+                        left: 0,
+                        right: 0,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        background: 'transparent',
+                    }}
+                >
+                    <Button
+                        className="mobile-pressable-div"
+                        // @ts-ignore
+                        buttonStyle={{
+                            // textAlign: 'center',
+                            background: 'white',
+                            color: 'white',
+                            borderRadius: lib.layout.borderRadius.medium,
+                            boxShadow: lib.layout.boxShadow.basic,
+                            width: 'auto',
+                        }}
+                        hoverStyle={{ filter: 'brightness(1)' }}
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            gotoDeepLink(peer?.deeplink_href || '');
+                        }}
+                        // label="open"
+                        size="largerish"
+                        textStyle={{ color: lib.colors.primaryColor, marginLeft: 10 }}
+                        leftIcon={<NLStaticImage image={`${peer.peer}_icon`} />}
+                        rightIcon={
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'left',
+                                    flexDirection: 'column',
+                                    // width: '100%',
+                                    marginLeft: 10,
+                                }}
+                            >
+                                <Text textStyle={{ color: lib.colors.primaryColor }}>
+                                    tap to open
+                                </Text>
+                                <Text
+                                    textStyle={{
+                                        color: lib.colors.primaryColor,
+                                        fontSize: '24px',
+                                    }}
+                                >
+                                    {peer.name}
+                                </Text>
+                            </div>
+                        }
+                    />
+                </animated.div>
+            )}
         </>
     );
 };

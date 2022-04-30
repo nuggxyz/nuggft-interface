@@ -12,9 +12,9 @@ const store = create(
             open: false,
         },
         (set) => {
-            const openModal = (modalData: ModalType | undefined, phase = 0) => {
+            const openModal = (modalData: ModalType | undefined, phase = 0, lock = false) => {
                 set(() => {
-                    document.documentElement.classList.add('is-locked');
+                    if (lock) document.documentElement.classList.add('is-locked');
                     window.onscroll = () => window.scroll({ behavior: 'smooth', top: 0 });
 
                     return {

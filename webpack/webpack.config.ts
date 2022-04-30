@@ -364,7 +364,8 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
                                         resourcePath.includes('@walletconnect') ||
                                         resourcePath.includes('@metamask') ||
                                         resourcePath.includes('json-rpc-engine') ||
-                                        resourcePath.includes('walletlink')
+                                        resourcePath.includes('walletlink') ||
+                                        resourcePath.includes('@coinbase')
                                     ) {
                                         return 'skip';
                                     }

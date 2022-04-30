@@ -14,7 +14,6 @@ import HotRotateO, { HotRotateOController } from '@src/pages/HotRotateO';
 
 import MobileViewScreen2 from './mobile/MobileViewScreen2';
 import MobileWalletScreen2 from './mobile/MobileWalletScreen2';
-import StupidMfingHack from './mobile/StupidMfingHack';
 
 // const MobileWalletView = React.lazy(() => import('@src/pages/mobile/MobileWalletView'));
 // const HotRotateO = React.lazy(() => import('@src/pages/HotRotateO'));
@@ -61,7 +60,7 @@ const App = () => {
             <NuggBook />
             <Helmet />
             <NavigationBar />
-            <StupidMfingHack />
+            {/* <StupidMfingHack /> */}
             <HotRotateO />
             <Router />
             <SwapPage />
