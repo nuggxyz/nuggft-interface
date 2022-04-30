@@ -1,12 +1,11 @@
 import type { EventEmitter } from 'node:events';
 
-import type WalletConnectProvider from '@walletconnect/ethereum-provider';
 import type { IWCEthRpcConnectionOptions } from '@walletconnect/types';
 import EventEmitter3 from 'eventemitter3';
 import curriedLighten from 'polished/lib/color/lighten';
 
 import type { Actions, ProviderRpcError } from '@src/web3/core/types';
-import { Connector } from '@src/web3/core/types';
+import { Connector, WalletConnectCoreProvider } from '@src/web3/core/types';
 import { getBestUrl } from '@src/web3/core/utils';
 import {
     PeerInfo__WalletConnect,
@@ -20,16 +19,15 @@ import { ModalEnum } from '@src/interfaces/modals';
 //
 // eslint-disable-next-line import/no-cycle
 import { DEFAULT_CHAIN } from '@src/web3/config';
+// eslint-disable-next-line import/no-cycle
 
 export const URI_AVAILABLE = 'URI_AVAILABLE';
-
-type MockWalletConnectProvider = WalletConnectProvider & EventEmitter;
 
 function parseChainId(chainId: string | number) {
     return typeof chainId === 'string' ? Number.parseInt(chainId, 10) : chainId;
 }
 
-type WalletConnectOptions = Omit<IWCEthRpcConnectionOptions, 'rpc' | 'infuraId' | 'chainId'> & {
+type WalletConnectOptions = Omit<IWCEthRpcConnectionOptions, 'rpc' | 'infuraId'> & {
     rpc: { [chainId: number]: string | string[] };
 };
 
@@ -37,7 +35,7 @@ const HREF_PATH = 'wc?uri=';
 
 export class WalletConnect extends Connector {
     /** {@inheritdoc Connector.provider} */
-    public provider: MockWalletConnectProvider | undefined = undefined;
+    public provider: WalletConnectCoreProvider['provider'] | undefined = undefined;
 
     public readonly events = new EventEmitter3();
 
@@ -69,7 +67,6 @@ export class WalletConnect extends Connector {
         treatModalCloseAsError = true,
     ) {
         super(ConnectorEnum.WalletConnect, actions, peers);
-
         this.peer_url_lookup = peers.reduce((prev, curr) => {
             return { ...prev, ...(curr.peerurl && { [curr.peerurl]: curr.peer }) };
         }, {});
@@ -160,8 +157,8 @@ export class WalletConnect extends Connector {
                 ...this.options,
                 chainId,
                 qrcode: peer ? peer.desktopAction === 'default' : false,
-                rpc: await rpc,
-            }) as unknown as MockWalletConnectProvider;
+                rpc: { ...(await rpc) },
+            }) as unknown as WalletConnectCoreProvider['provider'];
 
             this.provider.on('disconnect', this.disconnectListener);
             this.provider.on('chainChanged', this.chainChangedListener);

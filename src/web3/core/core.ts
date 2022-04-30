@@ -11,9 +11,11 @@ import client from '@src/client';
 import { EthInt } from '@src/classes/Fraction';
 // eslint-disable-next-line import/no-cycle
 import { CONTRACTS } from '@src/web3/config';
+// eslint-disable-next-line import/no-cycle
+// eslint-disable-next-line import/no-cycle
 
 import { createWeb3ReactStoreAndActions } from './store';
-import { Connector, Web3ReactStore, Web3ReactState, Actions } from './types';
+import { Connector, Web3ReactStore, Web3ReactState, Actions, CoreProvider } from './types';
 import { Connector as ConnectorEnum, Chain } from './interfaces';
 
 export type Web3ReactHooks = ReturnType<typeof getStateHooks> &
@@ -132,6 +134,15 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         return values[index];
     }
 
+    function useSelectedCoreProvider(connector: Connector, network?: Networkish) {
+        const index = getIndex(connector);
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const values = initializedConnectors.map((x, i) =>
+            x.hooks.useCoreProvider(network, i === index),
+        );
+        return values[index];
+    }
+
     function useSelectedENSName(connector: Connector, provider: Web3Provider | undefined) {
         const index = getIndex(connector);
         // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -191,6 +202,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         useSelectedPeer,
         useSelectedTx,
         useSelectedTransactionManager,
+        useSelectedCoreProvider,
     };
 }
 
@@ -323,6 +335,7 @@ export function getPriorityConnector(initializedConnectors: {
         useSelectedBalance,
         useSelectedPeer,
         useSelectedTx,
+        useSelectedCoreProvider,
         useSelectedTransactionManager,
     } = getSelectedConnector(...Object.values(initializedConnectors));
 
@@ -368,6 +381,10 @@ export function getPriorityConnector(initializedConnectors: {
         return useSelectedProvider(usePriorityConnector(), network);
     }
 
+    function usePriorityCoreProvider(network?: Networkish) {
+        return useSelectedCoreProvider(usePriorityConnector(), network);
+    }
+
     function usePriorityENSName(provider: Web3Provider | undefined) {
         return useSelectedENSName(usePriorityConnector(), provider);
     }
@@ -410,7 +427,7 @@ export function getPriorityConnector(initializedConnectors: {
         usePriorityAnyENSName,
         useSelectedBalance,
         usePriorityBalance,
-        // useSelectedPeer,
+        usePriorityCoreProvider,
         usePriorityPeer,
         usePriorityTx,
         usePriorityTransactionManager,
@@ -685,6 +702,24 @@ function getAugmentedHooks<T extends Connector>(
         }, [providers, enabled, isActive, chainId, accounts, network]);
     }
 
+    function useCoreProvider(network?: Networkish, enabled = true): CoreProvider | undefined {
+        const isActive = useIsActive();
+
+        const chainId = useChainId();
+        const accounts = useAccounts();
+
+        return useMemo(() => {
+            // we use chainId and accounts to re-render in case connector.provider changes in place
+            if (enabled && isActive && chainId && accounts && connector.provider) {
+                return {
+                    type: connector.connectorType,
+                    provider: connector.provider,
+                } as CoreProvider;
+            }
+            return undefined;
+        }, [enabled, isActive, chainId, accounts]);
+    }
+
     function useENSName(provider: Web3Provider | undefined): string | null | undefined {
         const account = useAccount();
         const chainId = useChainId();
@@ -722,5 +757,5 @@ function getAugmentedHooks<T extends Connector>(
         );
     }
 
-    return { useProvider, useENSName, useWeb3React, useAnyENSName };
+    return { useProvider, useENSName, useWeb3React, useAnyENSName, useCoreProvider };
 }

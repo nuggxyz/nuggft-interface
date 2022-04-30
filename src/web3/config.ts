@@ -283,8 +283,9 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                     peer_cryptodotcom,
                     peer_trust,
                 ],
+
                 actions,
-                { rpc: ALCHEMY_URLS },
+                { rpc: { ...INFURA_URLS }, chainId: DEFAULT_CHAIN },
             ),
     ),
     ...(peer_metamask.type === ConnectorEnum.MetaMask

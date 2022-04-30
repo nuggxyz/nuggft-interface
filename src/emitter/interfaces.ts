@@ -15,6 +15,7 @@ import {
     RpcOfferItem,
 } from '@src/interfaces/events';
 import { OfferData } from '@src/client/interfaces';
+import { RevertError } from '@src/lib/errors';
 
 /*  BASE: DO NOT CHANGE  */
 
@@ -33,16 +34,28 @@ interface EmitOnChainEventBase {
 
 /*  INTERFACES: add new ones here  */
 
-interface EmitTransactionCompleted extends EmitEventBase {
-    type: EmitEventNames.TransactionComplete;
-    from: AddressString;
-    txhash: string;
-    success: boolean;
+interface EmitTransactionReceipt extends EmitEventBase {
+    type: EmitEventNames.TransactionReceipt;
+    recipt: TransactionReceipt;
 }
 
-interface EmitTransactionInitiated extends EmitEventBase {
-    type: EmitEventNames.TransactionInitiated;
-    txhash: string;
+interface EmitPotentialTransactionReceipt extends EmitEventBase {
+    type: EmitEventNames.PotentialTransactionReceipt;
+    from: AddressString;
+    txhash: Hash;
+    success: boolean;
+    error?: RevertError;
+}
+
+interface EmitTransactionResponse extends EmitEventBase {
+    type: EmitEventNames.TransactionResponse;
+    response: TransactionResponse;
+}
+
+interface EmitPotentialTransactionResponse extends EmitEventBase {
+    type: EmitEventNames.PotentialTransactionResponse;
+    txhash: Hash;
+    from: AddressString;
 }
 
 interface EmitTransactionSent extends EmitEventBase {
@@ -106,8 +119,10 @@ interface EmitLocalRpcRebalance extends EmitEventBase, EmitOnChainEventBase {
 /*  EXPORTS: must be manually updated  */
 
 export enum EmitEventNames {
-    TransactionComplete = 'local.TransactionComplete',
-    TransactionInitiated = 'local.TransactionInitiated',
+    PotentialTransactionReceipt = 'local.PotentialTransactionReceipt',
+    PotentialTransactionResponse = 'local.PotentialTransactionResponse',
+    TransactionReceipt = 'local.TransactionReceipt',
+    TransactionResponse = 'local.TransactionResponse',
     OfferModalOpened = 'local.OfferModalOpened',
     TransactionSent = 'local.TransactionSent',
     // on chain events
@@ -126,8 +141,10 @@ export enum EmitEventNames {
 }
 
 export type EmitEventsListPayload =
-    | BuildPayload<EmitTransactionCompleted>
-    | BuildPayload<EmitTransactionInitiated>
+    | BuildPayload<EmitTransactionReceipt>
+    | BuildPayload<EmitTransactionResponse>
+    | BuildPayload<EmitPotentialTransactionResponse>
+    | BuildPayload<EmitPotentialTransactionReceipt>
     | BuildPayload<EmitLocalRpcMint>
     | BuildPayload<EmitLocalRpcMint>
     | BuildPayload<EmitLocalRpcOffer>
@@ -143,8 +160,10 @@ export type EmitEventsListPayload =
     | BuildPayload<EmitModalOpen>;
 
 export type EmitEventsListCallback =
-    | BuildCallback<EmitTransactionCompleted>
-    | BuildCallback<EmitTransactionInitiated>
+    | BuildCallback<EmitTransactionReceipt>
+    | BuildCallback<EmitPotentialTransactionReceipt>
+    | BuildCallback<EmitPotentialTransactionResponse>
+    | BuildCallback<EmitTransactionResponse>
     | BuildCallback<EmitLocalRpcMint>
     | BuildCallback<EmitLocalRpcMint>
     | BuildCallback<EmitLocalRpcOffer>

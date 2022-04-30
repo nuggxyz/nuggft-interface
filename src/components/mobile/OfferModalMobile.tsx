@@ -239,14 +239,14 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     }, [autoReceipt, manualReceipt]);
 
     emitter.on({
-        type: emitter.events.TransactionComplete,
+        type: emitter.events.TransactionReceipt,
         callback: React.useCallback(
-            async (input) => {
-                if (provider && input.from === address) {
-                    setManualReceipt(await provider.getTransactionReceipt(input.txhash));
+            (input) => {
+                if (input.recipt.from === address) {
+                    setManualReceipt(input.recipt);
                 }
             },
-            [address, provider, setManualReceipt],
+            [address, setManualReceipt],
         ),
     });
 

@@ -16,6 +16,7 @@ import {
 import lib, { shortenTxnHash } from '@src/lib';
 import emitter from '@src/emitter';
 import client from '@src/client';
+import { Connector } from '@src/web3/core/interfaces';
 
 function useContract<C extends BaseContract>(
     address: string,
@@ -67,7 +68,10 @@ export function useTransactionManager() {
 
     const network = web3.hook.useNetworkProvider();
     const provider = web3.hook.usePriorityProvider();
+    const coreProvider = web3.hook.usePriorityCoreProvider();
+
     const chainId = web3.hook.usePriorityChainId();
+    const address = web3.hook.usePriorityAccount();
 
     const toasts = client.toast.useList();
     const addToast = client.toast.useAddToast();
@@ -118,47 +122,77 @@ export function useTransactionManager() {
             setRevert(undefined);
 
             try {
-                if (provider && provider && chainId) {
+                if (provider && network && coreProvider && chainId && address) {
                     const tx = await ptx;
 
                     if (connector.refreshPeer) connector.refreshPeer();
 
-                    const signer = provider.getSigner();
-                    const res = provider
-                        .estimateGas({ ...tx, from: signer.getAddress() })
-                        .then((gasLimit) => {
-                            emitter.emit({
-                                type: emitter.events.TransactionSent,
-                            });
-                            console.log('HELLLLOOOOOOOOOOOOOOOOOOOOOO');
+                    // const signer = (connector.provider as WalletConnectProvider).connector.sendTransaction
+                    const res = await provider
+                        .estimateGas({ ...tx, from: address })
+                        .then(async (gasLimit) => {
                             return Promise.all([
-                                provider
-                                    .getSigner()
-                                    .sendTransaction({ ...tx, gasLimit: BigNumber.from(gasLimit) }),
+                                coreProvider.type === Connector.WalletConnect
+                                    ? (coreProvider.provider.connector.sendTransaction({
+                                          to: tx.to,
+                                          from: address,
+                                          type: '2',
+                                          value:
+                                              tx.value
+                                                  ?.toHexString()
+                                                  .replace('0x0', '')
+                                                  .replace('0x', '') || 0,
+                                          data: tx.data,
+                                      }) as Promise<string>)
+                                    : // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                                      //   .then(async (x: string) => {
+                                      //       console.log({ x });
+                                      //       const abc = await network
+                                      //           .getTransaction(x)
+                                      //           .catch((err) => {
+                                      //               console.error('ERRRRRR', err);
+                                      //               return null as unknown as TransactionResponse;
+                                      //           });
+                                      //       console.log({ abc });
+
+                                      //       return abc;
+                                      //   })
+                                      provider.getSigner().sendTransaction(tx),
                                 onSendSync ? onSendSync(gasLimit) : undefined,
+                                emitter.emit({
+                                    type: emitter.events.TransactionSent,
+                                }),
                             ])
-                                .then(([y]) => {
+                                .then(async ([y]) => {
+                                    let tmp: TransactionResponse;
+                                    if (typeof y === 'string') {
+                                        tmp = await provider.getTransaction(y);
+                                    } else {
+                                        tmp = y;
+                                    }
+                                    console.log({ y, tmp });
                                     addToast({
                                         duration: 0,
                                         title: t`Pending Transaction`,
-                                        message: shortenTxnHash(y.hash),
+                                        message: shortenTxnHash(tmp.hash),
                                         error: false,
-                                        id: y.hash,
+                                        id: tmp.hash,
                                         index: toasts.length,
                                         loading: true,
                                         action: () =>
-                                            web3.config.gotoEtherscan(chainId, 'tx', y.hash),
+                                            web3.config.gotoEtherscan(chainId, 'tx', tmp.hash),
                                     });
-                                    setActiveResponse(y);
+                                    setActiveResponse(tmp);
 
-                                    if (onResponse) onResponse(y);
+                                    // if (onResponse) onResponse(y);
 
                                     emitter.emit({
-                                        type: emitter.events.TransactionInitiated,
-                                        txhash: y.hash,
+                                        type: emitter.events.PotentialTransactionResponse,
+                                        txhash: tmp.hash as Hash,
+                                        from: address as AddressString,
                                     });
 
-                                    return y;
+                                    return tmp;
                                 })
                                 .catch((err: Error) => {
                                     const error = lib.errors.parseJsonRpcError(err);
@@ -172,7 +206,8 @@ export function useTransactionManager() {
                             console.error(error);
                         });
 
-                    const res2 = await res;
+                    const res2 = res;
+
                     if (res2) {
                         return res2
                             .wait(1)
@@ -192,21 +227,21 @@ export function useTransactionManager() {
                                 if (onReceipt) onReceipt(x);
 
                                 emitter.emit({
-                                    type: emitter.events.TransactionComplete,
-                                    txhash: x.transactionHash,
+                                    type: emitter.events.PotentialTransactionReceipt,
+                                    txhash: x.transactionHash as Hash,
                                     success: isSuccess,
                                     from: res2.from as AddressString,
                                 });
                             })
                             .catch((err) => {
+                                const error = lib.errors.parseJsonRpcError(err);
                                 emitter.emit({
-                                    type: emitter.events.TransactionComplete,
-                                    txhash: res2.hash,
+                                    type: emitter.events.PotentialTransactionReceipt,
+                                    txhash: res2.hash as Hash,
                                     success: false,
                                     from: res2.from as AddressString,
+                                    error,
                                 });
-                                const error = lib.errors.parseJsonRpcError(err);
-
                                 setRevert(error);
                             });
                     }
@@ -222,6 +257,137 @@ export function useTransactionManager() {
         },
         [provider, network, chainId],
     );
+
+    // const sendWalletConnect = useCallback(
+    //     async (
+    //         ptx: Promise<PopulatedTransaction>,
+    //         onResponse?: (response: TransactionResponse) => void,
+    //         onReceipt?: (response: TransactionReceipt) => void,
+    //         onSendSync?: (gasLimit: BigNumber) => void,
+    //     ): Promise<void> => {
+    //         setRevert(undefined);
+
+    //         try {
+    //             if (
+    //                 coreProvider &&
+    //                 coreProvider.type === Connector.WalletConnect &&
+    //                 provider &&
+    //                 chainId &&
+    //                 address
+    //             ) {
+    //                 const tx = await ptx;
+
+    //                 if (connector.refreshPeer) connector.refreshPeer();
+
+    //                 const res = await provider
+    //                     .estimateGas({ ...tx, from: address })
+    //                     .then(async (gasLimit) => {
+    //                         return Promise.all([
+    //                             coreProvider.provider.connector.sendTransaction({
+    //                                 // ...tx,
+
+    //                                 to: tx.to,
+    //                                 from: address,
+    //                                 type: '2',
+    //                                 value:
+    //                                     tx.value
+    //                                         ?.toHexString()
+    //                                         .replace('0x0', '')
+    //                                         .replace('0x', '') || 0,
+    //                                 data: tx.data,
+    //                             }),
+    //                             onSendSync ? onSendSync(gasLimit) : undefined,
+    //                             emitter.emit({
+    //                                 type: emitter.events.TransactionSent,
+    //                             }),
+    //                         ])
+    //                             .then(([y]: string[]) => {
+    //                                 console.log({ y });
+    //                                 addToast({
+    //                                     duration: 0,
+    //                                     title: t`Pending Transaction`,
+    //                                     message: shortenTxnHash(y),
+    //                                     error: false,
+    //                                     id: y,
+    //                                     index: toasts.length,
+    //                                     loading: true,
+    //                                     action: () => web3.config.gotoEtherscan(chainId, 'tx', y),
+    //                                 });
+    //                                 // setActiveResponse(y);
+
+    //                                 // if (onResponse) onResponse(y);
+
+    //                                 emitter.emit({
+    //                                     type: emitter.events.PotentialTransactionResponse,
+    //                                     txhash: y as Hash,
+    //                                     from: address as AddressString,
+    //                                 });
+
+    //                                 return y;
+    //                             })
+    //                             .catch((err: Error) => {
+    //                                 const error = lib.errors.parseJsonRpcError(err);
+    //                                 setRevert(error);
+    //                                 console.error(error);
+    //                             });
+    //                     })
+    //                     .catch((err: Error) => {
+    //                         const error = lib.errors.parseJsonRpcError(err);
+    //                         setRevert(error);
+    //                         console.error(error);
+    //                     });
+
+    //                 const res2 = await provider.getTransaction(res as string);
+
+    //                 if (res2) {
+    //                     return res2
+    //                         .wait(1)
+    //                         .then((x) => {
+    //                             const isSuccess = x.status === 1;
+    //                             replaceToast({
+    //                                 id: x.transactionHash,
+    //                                 duration: isSuccess ? 5000 : 0,
+    //                                 loading: false,
+    //                                 error: !isSuccess,
+    //                                 title: isSuccess
+    //                                     ? 'Successful Transaction'
+    //                                     : 'Transaction Failed',
+    //                             });
+    //                             setReceipt(x);
+
+    //                             if (onReceipt) onReceipt(x);
+
+    //                             emitter.emit({
+    //                                 type: emitter.events.PotentialTransactionReceipt,
+    //                                 txhash: x.transactionHash as Hash,
+    //                                 success: isSuccess,
+    //                                 from: res2.from as AddressString,
+    //                             });
+    //                         })
+    //                         .catch((err) => {
+    //                             const error = lib.errors.parseJsonRpcError(err);
+    //                             emitter.emit({
+    //                                 type: emitter.events.PotentialTransactionReceipt,
+    //                                 txhash: res2.hash as Hash,
+    //                                 success: false,
+    //                                 from: res2.from as AddressString,
+    //                                 error,
+    //                             });
+    //                             setRevert(error);
+    //                         });
+    //                 }
+    //             }
+    //             return undefined;
+    //             // throw new Error('provider undefined');
+    //         } catch (err) {
+    //             const error = lib.errors.parseJsonRpcError(err);
+    //             setRevert(error);
+    //             console.error(error);
+    //             return undefined;
+    //         }
+    //     },
+    //     [provider, network, chainId],
+    // );
 
     return { response, receipt, revert, send, estimate, estimateRevert };
 }

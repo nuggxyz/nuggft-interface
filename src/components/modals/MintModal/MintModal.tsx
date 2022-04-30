@@ -110,7 +110,7 @@ const MintModal = ({ data }: { data: MintModalData }) => {
     });
 
     emitter.hook.useOnce({
-        type: emitter.events.TransactionInitiated,
+        type: emitter.events.TransactionResponse,
         callback: () => {
             setLoading(true);
         },

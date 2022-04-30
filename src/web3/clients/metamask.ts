@@ -7,8 +7,8 @@ import {
     ProviderConnectInfo,
     ProviderRpcError,
     AddEthereumChainParameter,
-    Provider,
     Actions,
+    MetaMaskCoreProvider,
 } from '@src/web3/core/types';
 import { PeerInfo__MetaMask, Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 
@@ -28,6 +28,8 @@ export class MetaMask extends Connector {
     private readonly options?: Parameters<typeof detectEthereumProvider>[0];
 
     private eagerConnection?: Promise<void>;
+
+    public provider: MetaMaskCoreProvider['provider'] | undefined;
 
     /**
      * @param connectEagerly - A flag indicating whether connection should be initiated when the class is constructed.
@@ -59,7 +61,7 @@ export class MetaMask extends Connector {
             .then((m) => m.default(this.options))
             .then((provider) => {
                 if (provider) {
-                    this.provider = provider as Provider;
+                    this.provider = provider as MetaMaskCoreProvider['provider'];
 
                     this.provider.on('connect', ({ chainId }: ProviderConnectInfo): void => {
                         this.actions.update({

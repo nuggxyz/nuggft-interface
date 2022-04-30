@@ -11,6 +11,8 @@ declare const __DEV__: boolean;
 declare type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
 
 declare type Maybe<T> = T | null;
+declare type MaybeUndefinedOrNull<T> = T | null | undefined;
+
 declare type InputMaybe<T> = Maybe<T>;
 declare type Exact<T extends { [key: string]: unknown }> = {
     [K in keyof T]: T[K];
@@ -22,9 +24,13 @@ declare type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
     [SubKey in K]: Maybe<T[SubKey]>;
 };
 
+declare type MakeNullableInput<T, K extends keyof T> = Omit<T, K> & {
+    [SubKey in K]?: MaybeUndefinedOrNull<T[SubKey]>;
+};
+
 declare type AddressStringZero = '0x0000000000000000000000000000000000000000';
 
-declare type Hex =
+declare type Hex = `0x${
     | '0'
     | '1'
     | '2'
@@ -40,9 +46,12 @@ declare type Hex =
     | 'c'
     | 'd'
     | 'e'
-    | 'f';
+    | 'f'}`;
 
 declare type AddressString = `0x${string}`;
+declare type Hash = `0x${string}`;
+
+// const atMost32 = <T extends string>(str: TruncateTo32<T>) => str;
 
 // declare interface WebSocketProvider extends import('@ethersproject/providers').WebSocketProvider {
 //     _websocket: Websocket;

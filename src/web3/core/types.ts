@@ -1,6 +1,8 @@
 import type { EventEmitter } from 'node:events';
 
 import type { State, StoreApi } from 'zustand/vanilla';
+import type WalletConnectProvider from '@walletconnect/ethereum-provider';
+import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers';
 
 import { Connector as ConnectorEnum, PeerInfo, Peer, Chain } from './interfaces';
 
@@ -59,6 +61,36 @@ export interface AddEthereumChainParameter {
     iconUrls?: string[]; // Currently ignored.
 }
 
+export interface BaseCoreProvider {
+    type: ConnectorEnum;
+    provider?: ExternalProvider | JsonRpcFetchFunc;
+}
+type MockWalletConnectProvider = WalletConnectProvider & EventEmitter;
+
+export interface WalletConnectCoreProvider extends BaseCoreProvider {
+    type: ConnectorEnum.WalletConnect;
+    provider: MockWalletConnectProvider;
+}
+
+export interface RpcCoreProvider extends BaseCoreProvider {
+    type: ConnectorEnum.Rpc;
+    provider: Provider;
+}
+export interface MetaMaskCoreProvider extends BaseCoreProvider {
+    type: ConnectorEnum.MetaMask;
+    provider: Provider;
+}
+export interface WalletLinkCoreProvider extends BaseCoreProvider {
+    type: ConnectorEnum.WalletLink;
+    provider: Provider;
+}
+
+export type CoreProvider =
+    | WalletConnectCoreProvider
+    | RpcCoreProvider
+    | MetaMaskCoreProvider
+    | WalletLinkCoreProvider;
+
 export abstract class Connector {
     /**
      * An
@@ -67,11 +99,11 @@ export abstract class Connector {
      * May also comply with EIP-3085 ({@link https://github.com/ethereum/EIPs/blob/master/EIPS/eip-3085.md}).
      * This property must be defined while the connector is active.
      */
-    public provider: Provider | undefined;
+    public provider: CoreProvider['provider'] | undefined;
 
     protected readonly actions: Actions;
 
-    protected readonly connectorType: ConnectorEnum;
+    public readonly connectorType: ConnectorEnum;
 
     public peers: { [key in Peer]?: PeerInfo };
 

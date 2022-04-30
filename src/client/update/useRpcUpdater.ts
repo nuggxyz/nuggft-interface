@@ -44,8 +44,8 @@ export default () => {
 
             const emitCompletedTx = (addr: AddressString) => {
                 void emitter.emit({
-                    type: emitter.events.TransactionComplete,
-                    txhash: log.transactionHash,
+                    type: emitter.events.PotentialTransactionReceipt,
+                    txhash: log.transactionHash as Hash,
                     success: true,
                     from: addr,
                 });
