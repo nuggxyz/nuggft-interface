@@ -48,6 +48,10 @@ interface EmitTransactionSent extends EmitEventBase {
     type: EmitEventNames.TransactionSent;
 }
 
+interface EmitKeyboardClosed extends EmitEventBase {
+    type: EmitEventNames.KeyboardClosed;
+}
+
 interface EmitModalOpen extends EmitEventBase {
     type: EmitEventNames.OfferModalOpened;
     onModalOpen: () => void;
@@ -116,6 +120,7 @@ export enum EmitEventNames {
     Rebalance = 'local.rpc.event.Rebalance',
     Claim = 'local.rpc.event.Claim',
     ClaimItem = 'local.rpc.event.ClaimItem',
+    KeyboardClosed = 'local.viewport.KeyboardClosed',
     // Sell = 'local.rpc.event.Sell',
 }
 
@@ -133,7 +138,7 @@ export type EmitEventsListPayload =
     | BuildPayload<EmitLocalRpcRebalance>
     | BuildPayload<EmitLocalRpcTransfer>
     | BuildPayload<EmitTransactionSent>
-    // | BuildPayload<EmitRpcSell>
+    | BuildPayload<EmitKeyboardClosed>
     | BuildPayload<EmitModalOpen>;
 
 export type EmitEventsListCallback =
@@ -150,4 +155,5 @@ export type EmitEventsListCallback =
     | BuildCallback<EmitLocalRpcRebalance>
     | BuildCallback<EmitLocalRpcTransfer>
     | BuildCallback<EmitTransactionSent>
+    | BuildCallback<EmitKeyboardClosed>
     | BuildCallback<EmitModalOpen>;

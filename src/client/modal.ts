@@ -13,6 +13,9 @@ const store = create(
         (set) => {
             const openModal = (modalData: ModalType | undefined) => {
                 set(() => {
+                    document.documentElement.classList.add('is-locked');
+                    window.onscroll = () => window.scroll({ behavior: 'smooth', top: 0 });
+
                     return {
                         data: modalData,
                         open: true,
@@ -21,6 +24,8 @@ const store = create(
             };
 
             const closeModal = () => {
+                document.documentElement.classList.remove('is-locked');
+                window.onscroll = () => undefined;
                 set((state) => {
                     state.open = false;
                     return {
@@ -35,7 +40,15 @@ const store = create(
     ),
 );
 
-export type ModalState = ReturnType<typeof store['getState']>;
+export const useCloseModalOnKeyboardClose = () => {
+    // const close = store((state) => state.closeModal);
+    // emitter.on({
+    //     type: emitter.events.KeyboardClosed,
+    //     callback: React.useCallback(close, [close]),
+    // });
+
+    return null;
+};
 
 export default {
     useData: () => store((state) => state.data),

@@ -24,6 +24,7 @@ interface BalanceProps extends PartialText {
     stopAnimation?: boolean;
     showIncrementAnimation?: boolean;
     loadOnZero?: boolean;
+    str?: string;
 }
 
 const MIN = 0.000000000001;
@@ -41,6 +42,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
     stopAnimation = false,
     showIncrementAnimation = false,
     loadOnZero = false,
+    str,
     // image,
     ...props
 }) => {
@@ -62,10 +64,11 @@ const CurrencyText: React.FC<BalanceProps> = ({
         {
             val: value || MIN,
             from: {
-                val:
-                    stopAnimation || (loadOnZero && prevValue === 0)
-                        ? MIN
-                        : prevValue || value * 0.5,
+                val: stopAnimation
+                    ? value
+                    : loadOnZero && prevValue === 0
+                    ? MIN
+                    : prevValue || value * 0.5,
             },
             config: config.molasses,
         },
@@ -106,16 +109,20 @@ const CurrencyText: React.FC<BalanceProps> = ({
                     ...props.textStyle,
                 }}
             >
-                <animated.div className="number" style={{ paddingRight: '.5rem' }}>
-                    {spring.val.to((val) =>
-                        // eslint-disable-next-line no-nested-ternary
-                        isGwei
-                            ? (val * 10 ** 9).toFixed(decimals)
-                            : val > 1
-                            ? val.toPrecision(percent ? 3 : 6)
-                            : val.toFixed(percent ? 2 : decimals || 5),
-                    )}
-                </animated.div>
+                {str && value === 0 ? (
+                    str
+                ) : (
+                    <animated.div className="number" style={{ paddingRight: '.5rem' }}>
+                        {spring.val.to((val) =>
+                            // eslint-disable-next-line no-nested-ternary
+                            isGwei
+                                ? (val * 10 ** 9).toFixed(decimals)
+                                : val > 1
+                                ? val.toPrecision(percent ? 3 : 6)
+                                : val.toFixed(percent ? 2 : decimals || 5),
+                        )}
+                    </animated.div>
+                )}
                 {percent && '%'}
                 {showUnit && <div style={{ paddingRight: '0rem' }}>{isGwei ? 'gwei' : 'ETH'}</div>}
             </Text>

@@ -16,6 +16,7 @@ export type ButtonProps = {
     disabled?: boolean;
     className?: string;
     isHovering?: (hover: boolean) => void;
+    disableHoverAnimation?: boolean;
 } & Partial<TextProps>;
 
 const Button: FunctionComponent<ButtonProps> = ({
@@ -28,6 +29,7 @@ const Button: FunctionComponent<ButtonProps> = ({
     isHovering,
     hoverStyle,
     className,
+    disableHoverAnimation = false,
     ...textProps
 }) => {
     const [ref, hover] = useOnHover(isHovering);
@@ -35,11 +37,11 @@ const Button: FunctionComponent<ButtonProps> = ({
     const style = useMemo(() => {
         return {
             ...styles.button,
-            ...(hover && !disabled ? { filter: 'brightness(.8)' } : {}),
+            ...(hover && !disableHoverAnimation && !disabled ? { filter: 'brightness(.8)' } : {}),
             ...(disabled ? { opacity: '0.3' } : {}),
             cursor: disabled ? 'not-allowed' : 'pointer',
             ...buttonStyle,
-            ...(hover && hoverStyle),
+            ...(hover && !disableHoverAnimation && hoverStyle),
         };
     }, [hover, disabled, buttonStyle, hoverStyle]);
 

@@ -6,7 +6,16 @@ import styles from './Text.styles';
 export interface TextProps {
     children: string | string[] | ReactNode;
     weight?: 'light' | 'regular' | 'bold' | 'bolder';
-    size?: 'smaller' | 'small' | 'medium' | 'large' | 'larger' | 'largest';
+    size?:
+        | 'smaller'
+        | 'small'
+        | 'medium'
+        | 'large'
+        | 'largerish'
+        | 'larger'
+        | 'largermax'
+        | 'largestish'
+        | 'largest';
     type?: 'title' | 'text' | 'code';
     textStyle?: CSSProperties;
 }

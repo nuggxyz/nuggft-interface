@@ -12,7 +12,7 @@ const initialStyles = {
 };
 const backgroundResetStyles = {
     width: '100vw',
-    height: '100vh',
+    height: 'calc(var(--window-inner-height) - 1px)',
     transform: 'unset',
     backgroundBlendMode: '',
 };

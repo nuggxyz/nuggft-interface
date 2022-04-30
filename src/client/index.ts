@@ -14,6 +14,7 @@ import nuggbook from './nuggbook';
 import viewscreen from './viewscreen';
 import editscreen from './editscreen';
 import swaps from './swaps';
+import viewport from './viewport';
 
 export default {
     core,
@@ -163,4 +164,5 @@ export default {
     viewscreen,
     editscreen,
     swaps,
+    viewport,
 };

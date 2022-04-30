@@ -3,7 +3,7 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import Decimal from 'decimal.js-light';
 import numbro from 'numbro';
 
-import { fromEth, toEth, TWO_128, TWO_96, ETH_ONE, TWO_16 } from '@src/lib/conversion';
+import { toEth, TWO_128, TWO_96, ETH_ONE, TWO_16 } from '@src/lib/conversion';
 import { toGwei } from '@src/lib/index';
 
 // eslint-disable-next-line no-use-before-define
@@ -45,6 +45,10 @@ export class Fraction {
         this.num = this.num.mul(denominator);
         this.den = this.den.mul(denominator);
         return this;
+    }
+
+    public increase(percent: bigint) {
+        return this.multiply(new Fraction(percent + BigInt(100), 100));
     }
 
     public add(other: Fractionish): Fraction {
@@ -100,9 +104,10 @@ export class Fraction {
 
     protected static tryParseFraction(fractionish: Fractionish): Fraction {
         if (
-            fractionish instanceof BigNumber ||
+            BigNumber.isBigNumber(fractionish) ||
             typeof fractionish === 'number' ||
-            typeof fractionish === 'string'
+            typeof fractionish === 'string' ||
+            typeof fractionish === 'bigint'
         )
             return new Fraction(fractionish);
 
@@ -172,7 +177,9 @@ export class EthInt extends Fraction {
     }
 
     public static fromEthDecimalString(value: string): EthInt {
-        return new EthInt(fromEth(value));
+        console.log({ value });
+        if (value === '0.0') return new EthInt(0);
+        return new EthInt(toEth(value));
     }
 
     public static fromEthString(value: string): EthInt {

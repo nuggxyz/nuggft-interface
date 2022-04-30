@@ -11,7 +11,11 @@ export const fromEth = (num: BigNumberish | string): string => {
         parsedNum = BigNumber.from(num);
     }
     if (parsedNum === '0.0') return '0';
-    return formatUnits(parsedNum);
+    const res = formatUnits(parsedNum);
+
+    if (res === '0.0') return '0';
+
+    return res;
 };
 
 export const ETH_ONE = toEth('1');

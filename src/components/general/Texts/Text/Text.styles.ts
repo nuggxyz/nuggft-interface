@@ -39,8 +39,17 @@ const styles = NLStyleSheetCreator({
     large: {
         fontSize: FontSize.h3,
     },
+    largerish: {
+        fontSize: FontSize.h2_small,
+    },
     larger: {
         fontSize: FontSize.h2,
+    },
+    largermax: {
+        fontSize: FontSize.h2_large,
+    },
+    largestish: {
+        fontSize: FontSize.h1_small,
     },
     largest: {
         fontSize: FontSize.h1,

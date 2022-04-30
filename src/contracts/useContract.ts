@@ -73,7 +73,7 @@ export function useTransactionManager() {
     const replaceToast = client.toast.useReplaceToast();
 
     const estimate = useCallback(
-        async (ptx: Promise<PopulatedTransaction>): Promise<boolean> => {
+        async (ptx: Promise<PopulatedTransaction>) => {
             try {
                 if (provider && network && chainId) {
                     const tx = await ptx;
@@ -86,13 +86,13 @@ export function useTransactionManager() {
                                 gasLimit.toNumber(),
                                 ' gas',
                             );
-                            return true;
+                            return gasLimit;
                         })
                         .catch((err: Error) => {
                             const error = lib.errors.parseJsonRpcError(err);
                             setRevert(error);
                             console.error(error);
-                            return false;
+                            return null;
                         });
                 }
                 throw new Error('provider undefined');
@@ -100,7 +100,7 @@ export function useTransactionManager() {
                 const error = lib.errors.parseJsonRpcError(err);
                 setRevert(error);
                 console.error(error);
-                return false;
+                return null;
             }
         },
         [provider, network, chainId],

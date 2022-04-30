@@ -1,3 +1,30 @@
+html.is-locked,
+html.is-locked body {
+    /* want to fix the height to the window height */
+    height: calc(var(--window-inner-height) - 1px);
+
+    /* want to block all overflowing content */
+    overflow: hidden;
+
+    /* want to exclude padding from the height */
+    box-sizing: border-box;
+}
+
+/* very basic modal styles for brevity */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    display: none;
+}
+
+.model.is-open {
+    display: block;
+}
+
 body {
     padding: 0;
     margin: 0;
