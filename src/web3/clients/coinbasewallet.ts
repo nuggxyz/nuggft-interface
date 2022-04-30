@@ -1,51 +1,49 @@
-import type { WalletLink as WalletLinkInstance } from 'walletlink';
-import type { WalletLinkOptions } from 'walletlink/dist/WalletLink';
+import type { CoinbaseWalletSDK } from '@coinbase/wallet-sdk';
+import { CoinbaseWalletProvider } from '@coinbase/wallet-sdk';
 
 import {
     Actions,
-    Connector,
+    AddEthereumChainParameter,
     ProviderConnectInfo,
     ProviderRpcError,
-    AddEthereumChainParameter,
+    Connector,
 } from '@src/web3/core/types';
-import { Connector as ConnectorEnum, PeerInfo__WalletLink } from '@src/web3/core/interfaces';
+import { PeerInfo__CoinbaseWallet, Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 
-export function parseChainId(chainId: string | number) {
+function parseChainId(chainId: string | number) {
     return typeof chainId === 'number'
         ? chainId
         : Number.parseInt(chainId, chainId.startsWith('0x') ? 16 : 10);
 }
 
-export class WalletLink extends Connector {
-    /** {@inheritdoc Connector.provider} */
-    public provider: ReturnType<WalletLinkInstance['makeWeb3Provider']> | undefined = undefined;
+type CoinbaseWalletSDKOptions = ConstructorParameters<typeof CoinbaseWalletSDK>[0] & {
+    url: string;
+};
 
-    private readonly options: WalletLinkOptions & { url: string };
+export class CoinbaseWallet extends Connector {
+    /** {@inheritdoc Connector.provider} */
+    public provider: CoinbaseWalletProvider | undefined;
+
+    private readonly options: CoinbaseWalletSDKOptions;
 
     private eagerConnection?: Promise<void>;
 
     /**
-     * A `walletlink` instance.
+     * A `CoinbaseWalletSDK` instance.
      */
-    public walletLink: WalletLinkInstance | undefined;
+    public coinbaseWallet: CoinbaseWalletSDK | undefined;
 
     /**
-     * @param options - Options to pass to `walletlink`
+     * @param options - Options to pass to `@coinbase/wallet-sdk`
      * @param connectEagerly - A flag indicating whether connection should be initiated when the class is constructed.
      */
     constructor(
-        peer: PeerInfo__WalletLink,
+        peer: PeerInfo__CoinbaseWallet,
         actions: Actions,
-        options: WalletLinkOptions & { url: string },
+        options: CoinbaseWalletSDKOptions,
         connectEagerly = false,
     ) {
-        super(ConnectorEnum.WalletLink, actions, [peer]);
-
-        if (connectEagerly && typeof window === 'undefined') {
-            throw new Error(
-                'connectEagerly = true is invalid for SSR, instead use the connectEagerly method in a useEffect',
-            );
-        }
+        super(ConnectorEnum.CoinbaseWallet, actions, [peer]);
 
         this.options = options;
 
@@ -60,13 +58,13 @@ export class WalletLink extends Connector {
     private async isomorphicInitialize(): Promise<void> {
         if (this.eagerConnection) return this.eagerConnection;
 
-        await (this.eagerConnection = import('walletlink').then((m) => {
+        await (this.eagerConnection = import('@coinbase/wallet-sdk').then((m) => {
             const { url, ...options } = this.options;
-            this.walletLink = new m.WalletLink(options);
-            this.provider = this.walletLink.makeWeb3Provider(url);
+            this.coinbaseWallet = new m.default(options);
+            this.provider = this.coinbaseWallet.makeWeb3Provider(url);
 
             this.provider.on('connect', ({ chainId }: ProviderConnectInfo): void => {
-                this.actions.update({ chainId: parseChainId(chainId), peer: this.peers.coinbase });
+                this.actions.update({ chainId: parseChainId(chainId) });
             });
 
             this.provider.on('disconnect', (error: ProviderRpcError): void => {
@@ -74,13 +72,14 @@ export class WalletLink extends Connector {
             });
 
             this.provider.on('chainChanged', (chainId: string): void => {
-                this.actions.update({ chainId: parseChainId(chainId), peer: this.peers.coinbase });
+                this.actions.update({ chainId: parseChainId(chainId) });
             });
 
             this.provider.on('accountsChanged', (accounts: string[]): void => {
-                this.actions.update({ accounts, peer: this.peers.coinbase });
+                this.actions.update({ accounts });
             });
         }));
+
         return undefined;
     }
 
@@ -99,11 +98,7 @@ export class WalletLink extends Connector {
             ])
                 .then(([chainId, accounts]) => {
                     if (accounts.length) {
-                        this.actions.update({
-                            chainId: parseChainId(chainId),
-                            accounts,
-                            peer: this.peers.coinbase,
-                        });
+                        this.actions.update({ chainId: parseChainId(chainId), accounts });
                     } else {
                         throw new Error('No accounts returned');
                     }
@@ -113,8 +108,7 @@ export class WalletLink extends Connector {
                     cancelActivation();
                 });
         }
-        cancelActivation();
-        return undefined;
+        return cancelActivation();
     }
 
     /**
@@ -179,11 +173,7 @@ export class WalletLink extends Connector {
                 const receivedChainId = parseChainId(chainId);
 
                 if (!desiredChainId || desiredChainId === receivedChainId) {
-                    return this.actions.update({
-                        chainId: receivedChainId,
-                        accounts,
-                        peer: this.peers.coinbase,
-                    });
+                    return this.actions.update({ chainId: receivedChainId, accounts });
                 }
 
                 // if we're here, we can try to switch networks
@@ -220,6 +210,6 @@ export class WalletLink extends Connector {
 
     /** {@inheritdoc Connector.deactivate} */
     public deactivate(): void {
-        this.walletLink?.disconnect();
+        this.coinbaseWallet?.disconnect();
     }
 }

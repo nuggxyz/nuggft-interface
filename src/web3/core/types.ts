@@ -63,13 +63,12 @@ export interface AddEthereumChainParameter {
 
 export interface BaseCoreProvider {
     type: ConnectorEnum;
-    provider?: ExternalProvider | JsonRpcFetchFunc;
+    provider?: ExternalProvider | JsonRpcFetchFunc | Provider;
 }
-type MockWalletConnectProvider = WalletConnectProvider & EventEmitter;
 
 export interface WalletConnectCoreProvider extends BaseCoreProvider {
     type: ConnectorEnum.WalletConnect;
-    provider: MockWalletConnectProvider;
+    provider: WalletConnectProvider & EventEmitter;
 }
 
 export interface RpcCoreProvider extends BaseCoreProvider {
@@ -80,8 +79,8 @@ export interface MetaMaskCoreProvider extends BaseCoreProvider {
     type: ConnectorEnum.MetaMask;
     provider: Provider;
 }
-export interface WalletLinkCoreProvider extends BaseCoreProvider {
-    type: ConnectorEnum.WalletLink;
+export interface CoinbaseWalletCoreProvider extends BaseCoreProvider {
+    type: ConnectorEnum.CoinbaseWallet;
     provider: Provider;
 }
 
@@ -89,7 +88,7 @@ export type CoreProvider =
     | WalletConnectCoreProvider
     | RpcCoreProvider
     | MetaMaskCoreProvider
-    | WalletLinkCoreProvider;
+    | CoinbaseWalletCoreProvider;
 
 export abstract class Connector {
     /**

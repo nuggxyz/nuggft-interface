@@ -35,7 +35,7 @@ export enum Devices {
 export enum Connector {
     WalletConnect = 'walletconnect',
     MetaMask = 'metamask',
-    WalletLink = 'walletlink',
+    CoinbaseWallet = 'coinbasewallet',
     Rpc = 'rpc',
 }
 
@@ -99,8 +99,8 @@ export interface PeerInfo__MetaMask extends PeerBaseInfo {
     fallback: false;
 }
 
-export interface PeerInfo__WalletLink extends PeerBaseInfo {
-    type: Connector.WalletLink;
+export interface PeerInfo__CoinbaseWallet extends PeerBaseInfo {
+    type: Connector.CoinbaseWallet;
     peer: Peer.Coinbase;
 
     injected: false;
@@ -111,4 +111,4 @@ export type PeerInfo =
     | PeerInfo__WalletConnect
     | PeerInfo__Rpc
     | PeerInfo__MetaMask
-    | PeerInfo__WalletLink;
+    | PeerInfo__CoinbaseWallet;
