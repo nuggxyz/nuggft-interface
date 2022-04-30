@@ -40,13 +40,16 @@ export default () => {
         (log: Log) => {
             const event = nuggft.interface.parseLog(log) as unknown as InterfacedEvent;
 
-            console.log(event);
+            console.log({ event });
 
-            void emitter.emit({
-                type: emitter.events.TransactionComplete,
-                txhash: log.transactionHash,
-                success: true,
-            });
+            const emitCompletedTx = (addr: AddressString) => {
+                void emitter.emit({
+                    type: emitter.events.TransactionComplete,
+                    txhash: log.transactionHash,
+                    success: true,
+                    from: addr,
+                });
+            };
 
             switch (event.name) {
                 case 'Offer':
@@ -77,6 +80,10 @@ export default () => {
                         event,
                         log,
                     });
+                    const agency = BigNumber.from(event.args.agency);
+
+                    emitCompletedTx(agency.mask(160)._hex as AddressString);
+
                     break;
                 }
                 default:
@@ -97,6 +104,8 @@ export default () => {
                         sellingTokenId: null,
                         account: agency.mask(160)._hex as AddressString,
                     });
+
+                    emitCompletedTx(data.user);
 
                     void emitter.emit({
                         type: emitter.events.Offer,

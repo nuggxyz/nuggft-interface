@@ -1,11 +1,9 @@
 import React, { FC, PropsWithChildren } from 'react';
-import { animated, config, useSpring, useTransition } from '@react-spring/web';
+import { animated } from '@react-spring/web';
 
-import lib from '@src/lib';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import client from '@src/client';
 // eslint-disable-next-line import/no-cycle
-import { ModalSwitch } from '@src/components/modals/GlobalModal';
 
 // type SpecialDiv = JSX.IntrinsicElements['div'] & {
 //     style: (
@@ -45,7 +43,7 @@ import { ModalSwitch } from '@src/components/modals/GlobalModal';
 //     return <Comp style={mem} />;
 // };
 
-const Modal: FC<PropsWithChildren<unknown>> = () => {
+const Modal: FC<PropsWithChildren<unknown>> = ({ children }) => {
     const isOpen = client.modal.useOpen();
     // const data = client.modal.useData();
     // const closeModal = client.modal.useCloseModal();
@@ -53,13 +51,6 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
     // const node = useRef<HTMLDivElement>(null);
 
     // const { screen: screenType } = useDimentions();
-
-    const containerStyle = useSpring({
-        to: {
-            transform: isOpen ? 'scale(1.0)' : 'scale(0.9)',
-        },
-        config: config.default,
-    });
 
     const style = useAnimateOverlay(isOpen, { zIndex: 999000 });
 
@@ -69,34 +60,35 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
 
     // const visualViewport = client.viewport.useVisualViewport();
 
-    const [page, setPage] = React.useState(0);
+    // const [page, setPage] = React.useState(0);
 
-    const [tabFadeTransition] = useTransition(
-        page,
-        {
-            initial: {
-                opacity: 0,
-                zIndex: 0,
-                left: 0,
-            },
-            from: (p, i) => ({
-                opacity: 0,
-                zIndex: 0,
-                left: p === i ? 1000 : -1000,
-            }),
-            enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto', zIndex: 40000 },
-            leave: (p, i) => {
-                return {
-                    opacity: 0,
-                    zIndex: 0,
-                    left: p === i ? -1000 : 1000,
-                };
-            },
-            keys: (item) => `tabFadeTransition${item}5`,
-            config: config.gentle,
-        },
-        [page],
-    );
+    // const [tabFadeTransition] = useTransition(
+    //     page,
+    //     {
+    //         initial: {
+    //             opacity: 0,
+    //             zIndex: 0,
+    //             left: 0,
+    //         },
+    //         from: (p, i) => ({
+    //             opacity: 0,
+    //             zIndex: 0,
+    //             left: p === i ? 1000 : -1000,
+    //         }),
+    //         enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto', zIndex: 40000 },
+    //         leave: (p, i) => {
+    //             return {
+    //                 opacity: 0,
+    //                 zIndex: 0,
+    //                 left: p === i ? -1000 : 1000,
+    //             };
+    //         },
+    //         keys: (item) => `tabFadeTransition${item}5`,
+    //         config: config.gentle,
+    //         expires: true,
+    //     },
+    //     [page],
+    // );
 
     return (
         <animated.div
@@ -104,7 +96,9 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                 ...style,
             }}
         >
-            {tabFadeTransition((sty, pager) => (
+            {children}
+
+            {/* {tabFadeTransition((sty, pager) => (
                 <animated.div
                     style={{
                         // position: 'relative',
@@ -138,10 +132,9 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                             ...sty,
                         }}
                     >
-                        <ModalSwitch page={pager} setPage={setPage} />
                     </animated.div>
                 </animated.div>
-            ))}
+            ))} */}
         </animated.div>
     );
 };

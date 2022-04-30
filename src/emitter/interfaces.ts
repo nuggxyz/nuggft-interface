@@ -35,6 +35,7 @@ interface EmitOnChainEventBase {
 
 interface EmitTransactionCompleted extends EmitEventBase {
     type: EmitEventNames.TransactionComplete;
+    from: AddressString;
     txhash: string;
     success: boolean;
 }

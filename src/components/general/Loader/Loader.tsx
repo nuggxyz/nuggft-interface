@@ -1,26 +1,44 @@
 import React, { CSSProperties, FunctionComponent } from 'react';
 
-import { isUndefinedOrNullOrObjectEmpty, isUndefinedOrNullOrStringEmpty } from '@src/lib';
+import lib from '@src/lib';
 
-import styles from './Loader.styles';
 import './Loader.css';
 
-type Props = { style?: CSSProperties; color?: string };
+type Props = {
+    style?: CSSProperties;
+    color?: string;
+    diameter?: CSSNumber;
+    strokeWidth?: CSSNumber;
+};
 
-const Loader: FunctionComponent<Props> = ({ style, color }) => {
+const Loader: FunctionComponent<Props> = ({
+    style,
+    color = lib.colors.blue,
+    diameter = '1rem',
+    strokeWidth = '2px',
+}) => {
     return (
         <div
             className="loader"
             style={{
-                ...styles.loader,
-                ...(!isUndefinedOrNullOrObjectEmpty(style) ? style : {}),
-                ...(!isUndefinedOrNullOrStringEmpty(color)
-                    ? {
-                          borderRightColor: color,
-                          borderLeftColor: color,
-                          borderBottomColor: color,
-                      }
-                    : {}),
+                borderRadius: '100%',
+                borderBottom: `${strokeWidth} solid ${color}`,
+                borderRight: `${strokeWidth} solid ${color}`,
+                borderLeft: `${strokeWidth} solid ${color}`,
+                borderTop: `${strokeWidth} solid transparent`,
+                height: diameter,
+                width: diameter,
+                transform: 'rotate(0turn)',
+                transition: `transform .5s ${lib.layout.animation}`,
+
+                ...(style || {}),
+                // ...(color
+                //     ? {
+                //           borderRightColor: color,
+                //           borderLeftColor: color,
+                //           borderBottomColor: color,
+                //       }
+                //     : {}),
             }}
         />
     );

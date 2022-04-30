@@ -61,6 +61,7 @@ export function useTransactionManager() {
     const [receipt, setReceipt] = useState<TransactionReceipt>();
     const [response, setActiveResponse] = useState<TransactionResponse>();
     const [revert, setRevert] = useState<RevertError | Error>();
+    const [estimateRevert, setEstimateRevert] = useState<RevertError | Error>();
 
     const connector = web3.hook.usePriorityConnector();
 
@@ -81,6 +82,7 @@ export function useTransactionManager() {
                     return network
                         .estimateGas({ ...tx, from: signer.getAddress() })
                         .then((gasLimit) => {
+                            setEstimateRevert(undefined);
                             console.log(
                                 'estimate passed - should take ',
                                 gasLimit.toNumber(),
@@ -90,7 +92,7 @@ export function useTransactionManager() {
                         })
                         .catch((err: Error) => {
                             const error = lib.errors.parseJsonRpcError(err);
-                            setRevert(error);
+                            setEstimateRevert(error);
                             console.error(error);
                             return null;
                         });
@@ -98,7 +100,7 @@ export function useTransactionManager() {
                 throw new Error('provider undefined');
             } catch (err) {
                 const error = lib.errors.parseJsonRpcError(err);
-                setRevert(error);
+                setEstimateRevert(error);
                 console.error(error);
                 return null;
             }
@@ -111,25 +113,31 @@ export function useTransactionManager() {
             ptx: Promise<PopulatedTransaction>,
             onResponse?: (response: TransactionResponse) => void,
             onReceipt?: (response: TransactionReceipt) => void,
+            onSendSync?: (gasLimit: BigNumber) => void,
         ): Promise<void> => {
+            setRevert(undefined);
+
             try {
-                if (provider && network && chainId) {
+                if (provider && provider && chainId) {
                     const tx = await ptx;
 
                     if (connector.refreshPeer) connector.refreshPeer();
 
                     const signer = provider.getSigner();
-                    const res = network
+                    const res = provider
                         .estimateGas({ ...tx, from: signer.getAddress() })
                         .then((gasLimit) => {
                             emitter.emit({
                                 type: emitter.events.TransactionSent,
                             });
-
-                            return provider
-                                .getSigner()
-                                .sendTransaction({ ...tx, gasLimit: BigNumber.from(gasLimit) })
-                                .then((y) => {
+                            console.log('HELLLLOOOOOOOOOOOOOOOOOOOOOO');
+                            return Promise.all([
+                                provider
+                                    .getSigner()
+                                    .sendTransaction({ ...tx, gasLimit: BigNumber.from(gasLimit) }),
+                                onSendSync ? onSendSync(gasLimit) : undefined,
+                            ])
+                                .then(([y]) => {
                                     addToast({
                                         duration: 0,
                                         title: t`Pending Transaction`,
@@ -187,6 +195,7 @@ export function useTransactionManager() {
                                     type: emitter.events.TransactionComplete,
                                     txhash: x.transactionHash,
                                     success: isSuccess,
+                                    from: res2.from as AddressString,
                                 });
                             })
                             .catch((err) => {
@@ -194,6 +203,7 @@ export function useTransactionManager() {
                                     type: emitter.events.TransactionComplete,
                                     txhash: res2.hash,
                                     success: false,
+                                    from: res2.from as AddressString,
                                 });
                                 const error = lib.errors.parseJsonRpcError(err);
 
@@ -213,5 +223,5 @@ export function useTransactionManager() {
         [provider, network, chainId],
     );
 
-    return { response, receipt, revert, send, estimate };
+    return { response, receipt, revert, send, estimate, estimateRevert };
 }

@@ -36,4 +36,31 @@ export function parseJsonRpcError(input: unknown): Error | RevertError {
     return Error(input as string);
 }
 
-export default { parseJsonRpcError, RevertError };
+export default { parseJsonRpcError, RevertError, prettify };
+
+export function prettify(
+    caller: 'offer-modal' | 'general',
+    input: Error | RevertError | undefined,
+) {
+    if (input === undefined) return 'no error';
+
+    if (caller === 'general') {
+        switch (input.message) {
+            default:
+                return `general error [${input.message}]`;
+        }
+    }
+
+    switch (input.message) {
+        case 'Revert(0x99)': // Error__0x99__InvalidEpoch
+        case 'Revert(0xa0)': {
+            return 'auction is over';
+        }
+        case 'Revert(0x72)': // Error__0x72__IncrementTooLow
+        case 'Revert(0x71)': {
+            return 'value too low';
+        }
+        default:
+            return `offer-modal error [${input.message}]`;
+    }
+}

@@ -177,7 +177,6 @@ export class EthInt extends Fraction {
     }
 
     public static fromEthDecimalString(value: string): EthInt {
-        console.log({ value });
         if (value === '0.0') return new EthInt(0);
         return new EthInt(toEth(value));
     }

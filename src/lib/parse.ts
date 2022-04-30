@@ -6,7 +6,7 @@ const agency = (_agency: BigNumberish) => {
     const bn = BigNumber.from(_agency);
     const address = bn.mask(160);
     return {
-        address: ethers.utils.hexZeroPad(address._hex, 20),
+        address: ethers.utils.hexZeroPad(address._hex, 20) as AddressString,
         addressAsBigNumber: address,
         eth: EthInt.fromNuggftV1Agency(_agency),
         epoch: bn.shr(230).mask(24).toNumber(),

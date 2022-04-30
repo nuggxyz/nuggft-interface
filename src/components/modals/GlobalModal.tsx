@@ -3,7 +3,6 @@ import React from 'react';
 import { ModalEnum } from '@src/interfaces/modals';
 import client from '@src/client';
 import useDimentions from '@src/client/hooks/useDimentions';
-// eslint-disable-next-line import/no-cycle
 import ModalWrapperMobile from '@src/components/mobile/ModalWrapperMobile';
 import OfferModalMobile from '@src/components/mobile/OfferModalMobile';
 
@@ -15,23 +14,13 @@ import OfferModal from './OfferModal/OfferModal';
 import QrCodeModal from './QrCodeModal/QrCodeModal';
 import SellNuggOrItemModal from './SellNuggOrItemModal/SellNuggOrItemModal';
 
-export const ModalSwitch = ({
-    page,
-    setPage,
-}: {
-    page: number;
-    setPage: (num: number) => void;
-}) => {
+export const ModalSwitch = () => {
     const data = client.modal.useData();
     const { isPhone } = useDimentions();
 
     switch (data?.modalType) {
         case ModalEnum.Offer:
-            return isPhone ? (
-                <OfferModalMobile data={data} page={page} setPage={setPage} />
-            ) : (
-                <OfferModal data={data} />
-            );
+            return isPhone ? <OfferModalMobile data={data} /> : <OfferModal data={data} />;
         case ModalEnum.Sell:
             return <SellNuggOrItemModal data={data} />;
         case ModalEnum.Mint:
@@ -52,10 +41,12 @@ export default () => {
     const { isPhone } = useDimentions();
 
     return isPhone ? (
-        <ModalWrapperMobile />
+        <ModalWrapperMobile>
+            <ModalSwitch />
+        </ModalWrapperMobile>
     ) : (
         <ModalWrapper>
-            <ModalSwitch page={9} setPage={() => undefined} />
+            <ModalSwitch />
         </ModalWrapper>
     );
 };
