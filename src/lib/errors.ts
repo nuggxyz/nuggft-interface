@@ -1,8 +1,20 @@
 /* eslint-disable max-classes-per-file */
 
+// export type CustomError = RejectionError | RevertError;
+
 export type Revert = `Revert(${number | string})`;
 
-export class RevertError extends Error {
+export class CustomError extends Error {
+    _custom = true;
+}
+
+export class RejectionError extends CustomError {
+    constructor() {
+        super('Reject()');
+    }
+}
+
+export class RevertError extends CustomError {
     constructor(message: string, input: string) {
         if (input.startsWith('0x7e863b48')) {
             const code = `0x${input.slice(10)}`;
@@ -14,8 +26,11 @@ export class RevertError extends Error {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export function parseJsonRpcError(input: unknown): Error | RevertError {
+export function parseJsonRpcError(input: unknown): Error | CustomError {
     if (input instanceof Error) {
+        if (input.message === 'User rejected the transaction') {
+            return new RejectionError();
+        }
         try {
             const { error } = JSON.parse(
                 (input as unknown as { error: { body: string } }).error.body,

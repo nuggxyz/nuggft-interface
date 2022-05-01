@@ -51,6 +51,12 @@ export default () => {
                 });
             };
 
+            if ('agency' in event.args) {
+                const agency = BigNumber.from(event.args.agency);
+
+                emitCompletedTx(agency.mask(160)._hex as AddressString);
+            }
+
             switch (event.name) {
                 case 'Offer':
                 case 'OfferMint':

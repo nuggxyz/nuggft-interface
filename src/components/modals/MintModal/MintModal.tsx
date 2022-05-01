@@ -22,7 +22,11 @@ import lib, {
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import TokenViewer3 from '@src/components/nugg/TokenViewer3';
 import { MintModalData } from '@src/interfaces/modals';
-import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
+import {
+    useNuggftV1,
+    usePrioritySendTransaction,
+    useTransactionManager2,
+} from '@src/contracts/useContract';
 import client from '@src/client';
 
 import styles from './MintModal.styles';
@@ -34,8 +38,10 @@ const MintModal = ({ data }: { data: MintModalData }) => {
     const chainId = web3.hook.usePriorityChainId();
     const nuggft = useNuggftV1(provider);
 
-    const { send } = useTransactionManager();
     const closeModal = client.modal.useCloseModal();
+    const { send, hash } = usePrioritySendTransaction();
+
+    useTransactionManager2(provider, hash, closeModal);
 
     const [myNuggTransfer, setMyNuggTransfer] = useState<NuggId>();
     const [loading, setLoading] = useState(false);

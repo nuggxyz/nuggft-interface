@@ -22,7 +22,11 @@ import Label from '@src/components/general/Label/Label';
 import { EthInt } from '@src/classes/Fraction';
 import { OfferModalData } from '@src/interfaces/modals';
 import useDimentions from '@src/client/hooks/useDimentions';
-import { useTransactionManager, useNuggftV1 } from '@src/contracts/useContract';
+import {
+    useNuggftV1,
+    usePrioritySendTransaction,
+    useTransactionManager2,
+} from '@src/contracts/useContract';
 
 import styles from './OfferModal.styles';
 
@@ -40,7 +44,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const nuggft = useNuggftV1(provider);
     const closeModal = client.modal.useCloseModal();
 
-    const { send } = useTransactionManager();
+    const { send, hash } = usePrioritySendTransaction();
+
+    useTransactionManager2(provider, hash, closeModal);
 
     const [selectedNuggForItem, setSelectedNugg] = useState<FormatedMyNuggsData>();
     const [amount, setAmount] = useState('');
@@ -270,7 +276,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                                     value: toEth(amount).sub(check.curr),
                                                 },
                                             ),
-                                            closeModal,
                                         );
                                     }
                                 } else {
@@ -282,7 +287,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                                 gasLimit: toGwei('120000'),
                                             },
                                         ),
-                                        closeModal,
                                     );
                                 }
                             }

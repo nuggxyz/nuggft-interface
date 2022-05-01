@@ -2,13 +2,9 @@ import { Web3Provider } from '@ethersproject/providers';
 import React, { FunctionComponent, useMemo } from 'react';
 import { HiArrowRight } from 'react-icons/hi';
 import { plural, t } from '@lingui/macro';
-import { NavigateFunction } from 'react-router';
-import { IoArrowRedo } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import Colors from '@src/lib/colors';
-import StickyList from '@src/components/general/List/StickyList';
 import web3 from '@src/web3';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
@@ -17,9 +13,7 @@ import { Chain } from '@src/web3/core/interfaces';
 import lib, { isUndefinedOrNull, isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import { Address } from '@src/classes/Address';
 import { LiveItem, LiveToken, SwapData } from '@src/client/interfaces';
-import useDimentions from '@src/client/hooks/useDimentions';
 import Label from '@src/components/general/Label/Label';
-import Button from '@src/components/general/Buttons/Button/Button';
 import globalStyles from '@src/lib/globalStyles';
 
 import styles from './ViewingNugg.styles';
@@ -28,52 +22,52 @@ type SwapDataWithTryout = SwapData & {
     tryout?: LiveItem['tryout'];
 };
 
-const SwapTitle = ({ title }: { title: string }) => (
-    <Text
-        textStyle={{
-            padding: '.5rem',
-            background: Colors.transparentWhite,
-            width: '100%',
-            ...globalStyles.backdropFilter,
-        }}
-    >
-        {title}
-    </Text>
-);
+// const SwapTitle = ({ title }: { title: string }) => (
+//     <Text
+//         textStyle={{
+//             padding: '.5rem',
+//             background: Colors.transparentWhite,
+//             width: '100%',
+//             ...globalStyles.backdropFilter,
+//         }}
+//     >
+//         {title}
+//     </Text>
+// );
 
-const SwapButton = ({
-    item,
-    epoch,
-    navigate,
-    tokenId,
-}: {
-    item: SwapDataWithTryout | undefined;
-    epoch: number;
-    navigate: NavigateFunction;
-    tokenId: string;
-}) => {
-    if (!item) return null;
+// const SwapButton = ({
+//     item,
+//     epoch,
+//     navigate,
+//     tokenId,
+// }: {
+//     item: SwapDataWithTryout | undefined;
+//     epoch: number;
+//     navigate: NavigateFunction;
+//     tokenId: string;
+// }) => {
+//     if (!item) return null;
 
-    return (item.type === 'item' && item.isTryout) ||
-        !item.endingEpoch ||
-        (!isUndefinedOrNull(item.epoch) && epoch <= item.endingEpoch) ? (
-        <Button
-            buttonStyle={styles.goToSwap}
-            textStyle={{
-                ...styles.goToSwapGradient,
-                background: !item.epoch ? lib.colors.gradient : lib.colors.gradient3,
-                paddingRight: '.5rem',
-            }}
-            label={t`Go to swap`}
-            rightIcon={
-                <IoArrowRedo
-                    color={!item.epoch ? lib.colors.gradientGold : lib.colors.gradientPink}
-                />
-            }
-            onClick={() => navigate(`/swap/${item.type === 'item' ? 'item-' : ''}${tokenId}`)}
-        />
-    ) : null;
-};
+//     return (item.type === 'item' && item.isTryout) ||
+//         !item.endingEpoch ||
+//         (!isUndefinedOrNull(item.epoch) && epoch <= item.endingEpoch) ? (
+//         <Button
+//             buttonStyle={styles.goToSwap}
+//             textStyle={{
+//                 ...styles.goToSwapGradient,
+//                 background: !item.epoch ? lib.colors.gradient : lib.colors.gradient3,
+//                 paddingRight: '.5rem',
+//             }}
+//             label={t`Go to swap`}
+//             rightIcon={
+//                 <IoArrowRedo
+//                     color={!item.epoch ? lib.colors.gradientGold : lib.colors.gradientPink}
+//                 />
+//             }
+//             onClick={() => navigate(`/swap/${item.type === 'item' ? 'item-' : ''}${tokenId}`)}
+//         />
+//     ) : null;
+// };
 
 const SwapDesc = ({ item, epoch }: { item: SwapDataWithTryout; epoch: number }) => {
     const blocknum = client.live.blocknum();
@@ -115,7 +109,7 @@ const SwapItem: FunctionComponent<
 
     const epoch = client.live.epoch.id();
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     return epoch ? (
         <div
@@ -126,12 +120,12 @@ const SwapItem: FunctionComponent<
                 ...globalStyles.centered,
             }}
         >
-            <SwapButton
+            {/* <SwapButton
                 item={item}
                 epoch={epoch}
                 navigate={navigate}
                 tokenId={extraData.token.tokenId}
-            />
+            /> */}
 
             <div
                 style={{
@@ -342,7 +336,6 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
         return { listData: _listData, activeSwap: _activeSwap };
     }, [token, epoch]);
 
-    const { isPhone } = useDimentions();
     // const navigate = useNavigate();
 
     return chainId && provider && epoch && token ? (
@@ -366,20 +359,17 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
                     <Label size="large" text="none" />
                 </div>
             ) : (
-                <StickyList
-                    data={listData}
-                    TitleRenderItem={SwapTitle}
-                    ChildRenderItem={React.memo(SwapItem)}
-                    extraData={{ chainId, provider, token, epoch }}
-                    style={styles.stickyList}
-                    styleRight={{
-                        ...styles.stickyListRight,
-                        overflow: isPhone ? undefined : styles.stickyListRight.overflow,
-                    }}
-                    // emptyText={t`This ${token.type} has never been sold`}
-                    // listEmptyStyle={{ color: lib.colors.white }}
-                    disableScroll={isPhone}
-                />
+                <>
+                    {listData.map((item) =>
+                        item.items.map((abc, index) => (
+                            <SwapItem
+                                index={index}
+                                item={abc}
+                                extraData={{ chainId, provider, token, epoch }}
+                            />
+                        )),
+                    )}
+                </>
             )}
         </div>
     ) : null;

@@ -9,7 +9,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import Label from '@src/components/general/Label/Label';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Button from '@src/components/general/Buttons/Button/Button';
-import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
+import { useNuggftV1, usePrioritySendTransaction } from '@src/contracts/useContract';
 import { useMultiClaimArgs } from '@src/components/nugg/Wallet/tabs/ClaimTab/MultiClaimButton';
 import { Page } from '@src/interfaces/nuggbook';
 import InfoClicker from '@src/components/nuggbook/InfoClicker';
@@ -92,7 +92,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
 
     const args = useMultiClaimArgs();
 
-    const { send } = useTransactionManager();
+    const { send } = usePrioritySendTransaction();
 
     const items = React.useMemo(() => {
         return Object.values(

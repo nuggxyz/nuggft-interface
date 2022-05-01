@@ -19,7 +19,11 @@ import Label from '@src/components/general/Label/Label';
 import { EthInt } from '@src/classes/Fraction';
 import { OfferModalData } from '@src/interfaces/modals';
 import useDimentions from '@src/client/hooks/useDimentions';
-import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
+import {
+    useNuggftV1,
+    usePrioritySendTransaction,
+    useTransactionManager2,
+} from '@src/contracts/useContract';
 import styles from '@src/components/modals/OfferModal/OfferModal.styles';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { toEth } from '@src/lib/conversion';
@@ -27,7 +31,6 @@ import Loader from '@src/components/general/Loader/Loader';
 import useMountLogger from '@src/hooks/useMountLogger';
 import { gotoDeepLink } from '@src/web3/config';
 import NLStaticImage from '@src/components/general/NLStaticImage';
-import emitter from '@src/emitter';
 
 // eslint-disable-next-line import/no-cycle
 
@@ -41,24 +44,27 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     // const swap = client.swaps.useSwap(data.tokenId);
 
     const { screen: screenType } = useDimentions();
-    const provider = web3.hook.useNetworkProvider();
+    const network = web3.hook.useNetworkProvider();
 
     const chainId = web3.hook.usePriorityChainId();
     const _myNuggs = client.live.myNuggs();
-    const userBalance = web3.hook.usePriorityBalance(provider);
+    const userBalance = web3.hook.usePriorityBalance(network);
 
-    const nuggft = useNuggftV1(provider);
+    const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
 
     const [page, setPage] = client.modal.usePhase();
 
-    const {
-        estimate,
-        send,
-        response,
-        receipt: autoReceipt,
-        estimateRevert,
-    } = useTransactionManager();
+    const { send, estimation: estimator, hash, error, rejected } = usePrioritySendTransaction();
+
+    const transaction = useTransactionManager2(network, hash);
+
+    console.log({
+        transaction,
+        hash,
+        error,
+        rejected,
+    });
 
     const [selectedNuggForItem, setSelectedNugg] = useState<FormatedMyNuggsData>();
     const [amount, setAmount] = useState('0');
@@ -99,7 +105,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         curr: BigNumber | undefined;
         eth: EthInt | undefined;
     }>(() => {
-        if (data.tokenId && address && chainId && provider) {
+        if (data.tokenId && address && chainId && network) {
             if (data.isNugg()) {
                 return Promise.all([
                     nuggft['check(address,uint24)'](address, data.tokenId.toRawId()).then((x) => {
@@ -140,7 +146,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             }
         }
         return undefined;
-    }, [address, chainId, provider, selectedNuggForItem, sellingNugg]);
+    }, [address, chainId, network, selectedNuggForItem, sellingNugg]);
 
     React.useEffect(() => {
         if (check && check.eth && amount === '0') {
@@ -187,19 +193,20 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     }, [nuggft, amount, address, check?.curr, selectedNuggForItem]);
 
     const estimation = useAsyncState(() => {
-        if (populatedTransaction && provider) {
-            return Promise.all([estimate(populatedTransaction.tx), provider?.getGasPrice()]).then(
-                (_data) => ({
-                    gasLimit: _data[0] || BigNumber.from(0),
-                    gasPrice: new EthInt(_data[1] || 0),
-                    mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
-                    amount: populatedTransaction.amount,
-                }),
-            );
+        if (populatedTransaction && network) {
+            return Promise.all([
+                estimator.estimate(populatedTransaction.tx),
+                network?.getGasPrice(),
+            ]).then((_data) => ({
+                gasLimit: _data[0] || BigNumber.from(0),
+                gasPrice: new EthInt(_data[1] || 0),
+                mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
+                amount: populatedTransaction.amount,
+            }));
         }
 
         return undefined;
-    }, [populatedTransaction, provider]);
+    }, [populatedTransaction, network]);
 
     const IncrementButton = React.memo(({ increment }: { increment: bigint }) => {
         return (
@@ -228,24 +235,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 disableHoverAnimation
             />
         );
-    });
-
-    const [manualReceipt, setManualReceipt] = React.useState<TransactionReceipt>();
-
-    const receipt = React.useMemo(() => {
-        return autoReceipt ?? manualReceipt;
-    }, [autoReceipt, manualReceipt]);
-
-    emitter.on({
-        type: emitter.events.TransactionReceipt,
-        callback: React.useCallback(
-            (input) => {
-                if (input.recipt.from === address) {
-                    setManualReceipt(input.recipt);
-                }
-            },
-            [address, setManualReceipt],
-        ),
     });
 
     const peer = web3.hook.usePriorityPeer();
@@ -278,6 +267,32 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         [page, isOpen],
     );
 
+    // const [waiter] = React.useState(false);
+
+    // useRecursiveTimeout(() => {
+    //     // if (address) {
+    //     //     const prov = new ethers.networks.EtherscanProvider(
+    //     //         'rinkeby',
+    //     //         '19EGAM7C3N8WAZK8IZ8J1TG1G35T6WPWH2',
+    //     //     );
+    //     //     const abc2 = new ethers.networks.NodesmithProvider()
+
+    //     //     abc2.
+
+    //     //     // void prov.getHistory(address).then((abc) => {
+    //     //     // console.log({ abc });
+    //     //     // });
+    //     // }
+    // }, 5000);
+
+    // React.useEffect(() => {
+    //     if (page === 2 && !waiter) {
+    //         setTimeout(() => {
+    //             setWaiter(true);
+    //         });
+    //     }
+    // }, [page, waiter]);
+
     const Page2 = React.useMemo(() => {
         return isOpen ? (
             <>
@@ -289,14 +304,21 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         alignItems: 'center',
                     }}
                 >
-                    <AnimatedConfirmation confirmed={!!receipt} />
+                    <AnimatedConfirmation confirmed={!!transaction?.receipt} />
 
-                    {!response && (
+                    {!transaction?.response && (
                         <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
                             <Text>Request sent to {peer?.name}</Text>
                             <Text>Waiting on response...</Text>
                         </div>
                     )}
+
+                    {/* {!response && waiter &&  (
+                        <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
+                            <Text>No response recieved from {peer?.name}...</Text>
+                            <Button onClick={() => setManualResponse()}>it is done</Button>
+                        </div>
+                    )} */}
 
                     <Button
                         label="close"
@@ -323,7 +345,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 </div>
             </>
         ) : null;
-    }, [response, receipt, isOpen, closeModal, setPage, startTransition, peer, startTransition]);
+    }, [transaction, isOpen, closeModal, setPage, startTransition, peer, startTransition]);
 
     const Page1 = React.useMemo(
         () =>
@@ -387,12 +409,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         disabled={!check || !populatedTransaction}
                         onClick={() => {
                             if (populatedTransaction && peer) {
-                                void send(populatedTransaction.tx, undefined, undefined, () => {
-                                    setPage(2);
-                                    // if (peer.type === 'walletconnect')
-                                    //     gotoDeepLink(peer.deeplink_href || '');
-                                    // console.log({ res, peer });
-                                });
+                                void send(populatedTransaction.tx, () => setPage(2));
                             }
                         }}
                         buttonStyle={{
@@ -407,7 +424,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     />
                 </>
             ) : null,
-        [check, amount, estimation, setPage, isOpen],
+        [check, amount, estimation, setPage, isOpen, send, populatedTransaction, peer],
     );
 
     const calculating = React.useMemo(() => {
@@ -453,12 +470,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     >
                         {calculating ? (
                             <Loader style={{ color: lib.colors.primaryColor }} />
-                        ) : estimateRevert ? (
+                        ) : estimator.error ? (
                             <Label
                                 size="small"
                                 containerStyles={{ background: lib.colors.red }}
                                 textStyle={{ color: 'white' }}
-                                text={lib.errors.prettify('offer-modal', estimateRevert)}
+                                text={lib.errors.prettify('offer-modal', estimator.error)}
                             />
                         ) : null}
                     </div>
@@ -515,7 +532,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     label="Review"
                     // leftIcon={calculating ? <Loader /> : undefined}
                     onClick={() => setPage(1)}
-                    disabled={calculating || !!estimateRevert}
+                    disabled={calculating || !!estimator.error}
                     buttonStyle={{
                         borderRadius: lib.layout.borderRadius.large,
                         background: lib.colors.primaryColor,
@@ -557,7 +574,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 )}
             </>
         ),
-        [check, amount, estimation, setPage, estimateRevert, calculating],
+        [check, amount, estimation, setPage, estimation, calculating],
     );
 
     const containerStyle = useSpring({
@@ -569,12 +586,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const [trans] = useSpring(
         {
-            opacity: page === 2 && !response ? 1 : 0,
-            pointerEvents: page === 2 && !response ? 'auto' : 'none',
+            opacity: page === 2 && !transaction?.response ? 1 : 0,
+            pointerEvents: page === 2 && !transaction?.response ? 'auto' : 'none',
             delay: 1000,
             config: config.slow,
         },
-        [page, response],
+        [page, transaction],
     );
 
     return (
@@ -616,7 +633,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 </animated.div>
             ))}
 
-            {page === 2 && peer && peer.type === 'walletconnect' && !response && (
+            {page === 2 && peer && peer.type === 'walletconnect' && !transaction?.response && (
                 <animated.div
                     // @ts-ignore
                     style={{

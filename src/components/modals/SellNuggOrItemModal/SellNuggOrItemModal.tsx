@@ -12,7 +12,11 @@ import web3 from '@src/web3';
 import Button from '@src/components/general/Buttons/Button/Button';
 import client from '@src/client';
 import { SellModalData } from '@src/interfaces/modals';
-import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
+import {
+    useNuggftV1,
+    usePrioritySendTransaction,
+    useTransactionManager2,
+} from '@src/contracts/useContract';
 
 import styles from './SellNuggOrItemModal.styles';
 
@@ -26,8 +30,9 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
     const chainId = web3.hook.usePriorityChainId();
     const closeModal = client.modal.useCloseModal();
 
-    const { send } = useTransactionManager();
+    const { send, hash } = usePrioritySendTransaction();
 
+    useTransactionManager2(provider, hash, closeModal);
     return data.tokenId && chainId && provider && address ? (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
@@ -82,14 +87,12 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
                                       data.tokenId.toRawId(),
                                       toEth(amount),
                                   ),
-                                  closeModal,
                               )
                             : send(
                                   nuggft.populateTransaction['sell(uint24,uint96)'](
                                       data.tokenId.toRawId(),
                                       toEth(amount),
                                   ),
-                                  closeModal,
                               ));
                     }}
                 />

@@ -50,6 +50,10 @@ export const isValidChainId = (input: number) => {
 
 export const FEATURE_NAMES = ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Hold', 'Neck'];
 
+// export const NETWORKS: {[_: NetworkName]: Chain} = {
+//     'rinkeby': Chain.RINKEBY
+// }
+
 export const CONTRACTS = {
     [Chain.MAINNET]: {
         NuggftV1: ethers.constants.AddressZero,

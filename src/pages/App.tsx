@@ -53,9 +53,11 @@ const Router = () => {
 };
 
 const App = () => {
+    const { isPhone } = useDimentions();
+
     return (
         <>
-            <ToastContainer />
+            {!isPhone && <ToastContainer />}
             <GlobalModal />
             <NuggBook />
             <Helmet />

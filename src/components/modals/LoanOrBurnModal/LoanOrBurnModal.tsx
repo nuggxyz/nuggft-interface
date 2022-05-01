@@ -10,7 +10,11 @@ import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/Feedb
 import web3 from '@src/web3';
 import client from '@src/client';
 import { LoanModalData } from '@src/interfaces/modals';
-import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
+import {
+    useNuggftV1,
+    usePrioritySendTransaction,
+    useTransactionManager2,
+} from '@src/contracts/useContract';
 
 import styles from './LoanOrBurnModal.styles';
 
@@ -22,7 +26,9 @@ const LoanOrBurnModal = ({ data: { tokenId, actionType } }: { data: LoanModalDat
     const nuggft = useNuggftV1(provider);
     const closeModal = client.modal.useCloseModal();
 
-    const { send } = useTransactionManager();
+    const { send, hash } = usePrioritySendTransaction();
+
+    useTransactionManager2(provider, hash, closeModal);
 
     return tokenId && chainId && provider && address ? (
         <div style={styles.container}>
@@ -60,8 +66,8 @@ const LoanOrBurnModal = ({ data: { tokenId, actionType } }: { data: LoanModalDat
                     label={`${actionType === 'loan' ? t`Loan` : t`Burn`}`}
                     onClick={() =>
                         actionType === 'loan'
-                            ? send(nuggft.populateTransaction.loan([tokenId]), closeModal)
-                            : send(nuggft.populateTransaction.burn(tokenId), closeModal)
+                            ? send(nuggft.populateTransaction.loan([tokenId]))
+                            : send(nuggft.populateTransaction.burn(tokenId))
                     }
                 />
             </div>

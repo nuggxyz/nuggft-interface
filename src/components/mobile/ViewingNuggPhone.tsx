@@ -246,7 +246,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                 )}
             </div>
             {(swap?.offers.length || 0) > 0 && lifecycle !== Lifecycle.Bench && (
-                <div style={{ width: '100%', padding: '20px 10px ' }}>
+                <div style={{ width: '100%', padding: '20px 10px ', overflow: 'hidden' }}>
                     <OffersList tokenId={tokenId} />
                 </div>
             )}

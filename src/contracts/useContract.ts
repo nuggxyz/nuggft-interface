@@ -1,10 +1,10 @@
-import { BaseContract, ContractInterface, PopulatedTransaction, BigNumber } from 'ethers';
-import { useMemo, useState, useCallback } from 'react';
+import { BaseContract, ContractInterface, PopulatedTransaction } from 'ethers';
+import React, { useMemo, useCallback } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
 import { t } from '@lingui/macro';
 
 import web3 from '@src/web3';
-import { RevertError } from '@src/lib/errors';
+import { RevertError, RejectionError, CustomError } from '@src/lib/errors';
 import {
     DotnuggV1,
     DotnuggV1__factory,
@@ -16,7 +16,9 @@ import {
 import lib, { shortenTxnHash } from '@src/lib';
 import emitter from '@src/emitter';
 import client from '@src/client';
-import { Connector } from '@src/web3/core/interfaces';
+import { Connector, CoreProvider } from '@src/web3/core/types';
+import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
+import usePrevious from '@src/hooks/usePrevious';
 
 function useContract<C extends BaseContract>(
     address: string,
@@ -58,323 +60,264 @@ export function useDotnuggV1(provider?: Web3Provider) {
     return useContract<DotnuggV1>(address, DotnuggV1__factory.abi, provider);
 }
 
-export function useTransactionManager() {
-    const [receipt, setReceipt] = useState<TransactionReceipt>();
-    const [response, setActiveResponse] = useState<TransactionResponse>();
-    const [revert, setRevert] = useState<RevertError | Error>();
-    const [estimateRevert, setEstimateRevert] = useState<RevertError | Error>();
+export const useEstimateTransaction = (provider?: Web3Provider, from?: AddressString) => {
+    const [error, setError] = React.useState<RevertError | Error>();
 
-    const connector = web3.hook.usePriorityConnector();
-
-    const network = web3.hook.useNetworkProvider();
-    const provider = web3.hook.usePriorityProvider();
-    const coreProvider = web3.hook.usePriorityCoreProvider();
-
-    const chainId = web3.hook.usePriorityChainId();
-    const address = web3.hook.usePriorityAccount();
-
-    const toasts = client.toast.useList();
-    const addToast = client.toast.useAddToast();
-    const replaceToast = client.toast.useReplaceToast();
+    const [gasLimit, setGasLimit] = React.useState<number>();
 
     const estimate = useCallback(
         async (ptx: Promise<PopulatedTransaction>) => {
             try {
-                if (provider && network && chainId) {
+                if (provider && from) {
                     const tx = await ptx;
-                    const signer = provider.getSigner();
-                    return network
-                        .estimateGas({ ...tx, from: signer.getAddress() })
-                        .then((gasLimit) => {
-                            setEstimateRevert(undefined);
+                    return provider
+                        .estimateGas({ ...tx, from })
+                        .then((_gasLimit) => {
+                            setError(undefined);
                             console.log(
                                 'estimate passed - should take ',
-                                gasLimit.toNumber(),
+                                _gasLimit.toNumber(),
                                 ' gas',
                             );
-                            return gasLimit;
+                            setGasLimit(_gasLimit.toNumber());
+                            return _gasLimit;
                         })
                         .catch((err: Error) => {
-                            const error = lib.errors.parseJsonRpcError(err);
-                            setEstimateRevert(error);
-                            console.error(error);
+                            const fmt = lib.errors.parseJsonRpcError(err);
+                            setError(fmt);
+                            setGasLimit(undefined);
+                            console.error(fmt);
                             return null;
                         });
                 }
-                throw new Error('provider undefined');
+                throw new Error('provider or address undefined');
             } catch (err) {
-                const error = lib.errors.parseJsonRpcError(err);
-                setEstimateRevert(error);
-                console.error(error);
-                return null;
+                const fmt = lib.errors.parseJsonRpcError(err);
+                setError(fmt);
+                setGasLimit(undefined);
+                console.error(fmt);
+                return undefined;
             }
         },
-        [provider, network, chainId],
+        [provider, from],
     );
+
+    return { error, gasLimit, estimate };
+};
+
+function useSendTransaction(
+    network?: Web3Provider,
+    authenticatedProvider?: Web3Provider,
+    authenticatedCoreProvider?: CoreProvider,
+    authenticatedConnector?: Connector,
+    from?: AddressString,
+    onHash?: (hash: Hash) => void,
+) {
+    const [error, setError] = React.useState<CustomError | Error>();
+    const [rejected, setRejected] = React.useState<boolean>(false);
+
+    const [hash, setHash] = React.useState<Hash>();
+
+    const prevHash = usePrevious(hash);
+
+    const clear = React.useCallback(() => {
+        setError(undefined);
+        setRejected(false);
+        setHash(undefined);
+    }, [setError, setRejected, setHash]);
+
+    React.useEffect(() => {
+        if (hash && !prevHash && onHash) onHash(hash);
+    }, [hash, prevHash, onHash]);
+
+    const addToast = client.toast.useAddToast();
+    const toasts = client.toast.useList();
+
+    const estimation = useEstimateTransaction(network, from);
 
     const send = useCallback(
         async (
             ptx: Promise<PopulatedTransaction>,
-            onResponse?: (response: TransactionResponse) => void,
-            onReceipt?: (response: TransactionReceipt) => void,
-            onSendSync?: (gasLimit: BigNumber) => void,
-        ): Promise<void> => {
-            setRevert(undefined);
-
+            onSend?: (gasLimit: number) => void,
+        ): Promise<Hash | undefined> => {
             try {
-                if (provider && network && coreProvider && chainId && address) {
+                if (
+                    authenticatedConnector &&
+                    authenticatedCoreProvider &&
+                    authenticatedProvider &&
+                    from
+                ) {
                     const tx = await ptx;
 
-                    if (connector.refreshPeer) connector.refreshPeer();
+                    if (authenticatedConnector.refreshPeer) authenticatedConnector.refreshPeer();
 
-                    // const signer = (connector.provider as WalletConnectProvider).connector.sendTransaction
-                    const res = await provider
-                        .estimateGas({ ...tx, from: address })
+                    return estimation
+                        .estimate(ptx)
                         .then(async (gasLimit) => {
+                            if (!gasLimit) throw Error('estimaton error');
+
                             return Promise.all([
-                                coreProvider.type === Connector.WalletConnect
-                                    ? (coreProvider.provider.connector.sendTransaction({
-                                          to: tx.to,
-                                          from: address,
-                                          type: '2',
-                                          value:
-                                              tx.value
-                                                  ?.toHexString()
-                                                  .replace('0x0', '')
-                                                  .replace('0x', '') || 0,
-                                          data: tx.data,
-                                      }) as Promise<string>)
-                                    : provider.getSigner().sendTransaction(tx),
-                                onSendSync ? onSendSync(gasLimit) : undefined,
+                                authenticatedCoreProvider.type === ConnectorEnum.WalletConnect
+                                    ? (authenticatedCoreProvider.provider.connector.sendTransaction(
+                                          {
+                                              to: tx.to,
+                                              from,
+                                              type: '2',
+                                              value:
+                                                  tx.value
+                                                      ?.toHexString()
+                                                      .replace('0x0', '')
+                                                      .replace('0x', '') || 0,
+                                              data: tx.data,
+                                          },
+                                      ) as Promise<Hash>)
+                                    : authenticatedProvider.getSigner().sendTransaction(tx),
+                                onSend ? onSend(gasLimit?.toNumber() || 0) : undefined,
                                 emitter.emit({
                                     type: emitter.events.TransactionSent,
                                 }),
                             ])
-                                .then(async ([y]) => {
-                                    let tmp: TransactionResponse;
+                                .then(([y]) => {
+                                    console.log('YYYYYY', y);
+                                    let txhash: Hash;
                                     if (typeof y === 'string') {
-                                        tmp = await provider.getTransaction(y);
+                                        txhash = y;
+                                        setHash(y as Hash);
+                                        emitter.emit({
+                                            type: emitter.events.PotentialTransactionResponse,
+                                            txhash,
+                                            from,
+                                        });
                                     } else {
-                                        tmp = y;
+                                        txhash = y.hash as Hash;
+                                        setHash(txhash);
+                                        emitter.emit({
+                                            type: emitter.events.TransactionResponse,
+                                            response: y,
+                                        });
                                     }
-                                    console.log({ y, tmp });
                                     addToast({
                                         duration: 0,
                                         title: t`Pending Transaction`,
-                                        message: shortenTxnHash(tmp.hash),
+                                        message: shortenTxnHash(txhash),
                                         error: false,
-                                        id: tmp.hash,
+                                        id: txhash,
                                         index: toasts.length,
                                         loading: true,
                                         action: () =>
-                                            web3.config.gotoEtherscan(chainId, 'tx', tmp.hash),
+                                            web3.config.gotoEtherscan(
+                                                authenticatedProvider.network.chainId,
+                                                'tx',
+                                                txhash,
+                                            ),
                                     });
-                                    setActiveResponse(tmp);
-
-                                    // if (onResponse) onResponse(y);
-
-                                    emitter.emit({
-                                        type: emitter.events.PotentialTransactionResponse,
-                                        txhash: tmp.hash as Hash,
-                                        from: address as AddressString,
-                                    });
-
-                                    return tmp;
+                                    return txhash;
                                 })
                                 .catch((err: Error) => {
-                                    const error = lib.errors.parseJsonRpcError(err);
-                                    setRevert(error);
-                                    console.error(error);
+                                    const fmt = lib.errors.parseJsonRpcError(err);
+                                    if (fmt instanceof RejectionError) {
+                                        setRejected(true);
+                                        console.log('transaction rejected by user');
+                                        return undefined;
+                                    }
+                                    setError(fmt);
+                                    console.error(fmt);
+                                    throw fmt;
                                 });
                         })
                         .catch((err: Error) => {
-                            const error = lib.errors.parseJsonRpcError(err);
-                            setRevert(error);
-                            console.error(error);
+                            const fmt = lib.errors.parseJsonRpcError(err);
+                            setError(fmt);
+                            console.error(fmt);
+                            throw fmt;
                         });
-
-                    const res2 = res;
-
-                    if (res2) {
-                        return res2
-                            .wait(1)
-                            .then((x) => {
-                                const isSuccess = x.status === 1;
-                                replaceToast({
-                                    id: x.transactionHash,
-                                    duration: isSuccess ? 5000 : 0,
-                                    loading: false,
-                                    error: !isSuccess,
-                                    title: isSuccess
-                                        ? 'Successful Transaction'
-                                        : 'Transaction Failed',
-                                });
-                                setReceipt(x);
-
-                                if (onReceipt) onReceipt(x);
-
-                                emitter.emit({
-                                    type: emitter.events.PotentialTransactionReceipt,
-                                    txhash: x.transactionHash as Hash,
-                                    success: isSuccess,
-                                    from: res2.from as AddressString,
-                                });
-                            })
-                            .catch((err) => {
-                                const error = lib.errors.parseJsonRpcError(err);
-                                emitter.emit({
-                                    type: emitter.events.PotentialTransactionReceipt,
-                                    txhash: res2.hash as Hash,
-                                    success: false,
-                                    from: res2.from as AddressString,
-                                    error,
-                                });
-                                setRevert(error);
-                            });
-                    }
                 }
-                return undefined;
-                // throw new Error('provider undefined');
+                throw Error('authenticatedConnector, authenticatedProvider, or from is undefined');
             } catch (err) {
-                const error = lib.errors.parseJsonRpcError(err);
-                setRevert(error);
-                console.error(error);
+                const fmt = lib.errors.parseJsonRpcError(err);
+                setError(fmt);
+                console.error(fmt);
                 return undefined;
             }
         },
-        [provider, network, chainId],
+        [
+            authenticatedProvider,
+            authenticatedConnector,
+            authenticatedCoreProvider,
+            from,
+            estimation,
+            addToast,
+            toasts.length,
+        ],
     );
+    return { send, hash, error, estimation, rejected, clear };
+}
 
-    // const sendWalletConnect = useCallback(
-    //     async (
-    //         ptx: Promise<PopulatedTransaction>,
-    //         onResponse?: (response: TransactionResponse) => void,
-    //         onReceipt?: (response: TransactionReceipt) => void,
-    //         onSendSync?: (gasLimit: BigNumber) => void,
-    //     ): Promise<void> => {
-    //         setRevert(undefined);
+export function usePrioritySendTransaction() {
+    const connector = web3.hook.usePriorityConnector();
+    const network = web3.hook.useNetworkProvider();
+    const provider = web3.hook.usePriorityProvider();
+    const coreProvider = web3.hook.usePriorityCoreProvider();
+    const address = web3.hook.usePriorityAccount();
 
-    //         try {
-    //             if (
-    //                 coreProvider &&
-    //                 coreProvider.type === Connector.WalletConnect &&
-    //                 provider &&
-    //                 chainId &&
-    //                 address
-    //             ) {
-    //                 const tx = await ptx;
+    return useSendTransaction(
+        network,
+        provider,
+        coreProvider,
+        connector,
+        address as AddressString,
+        undefined,
+    );
+}
 
-    //                 if (connector.refreshPeer) connector.refreshPeer();
+export function useTransactionManager2(
+    network?: Web3Provider,
+    hash?: Hash,
+    onResponse?: (response: Hash) => void,
+    onReceipt?: (response: Hash) => void,
+) {
+    const txdata = client.transactions.useTransaction(hash);
 
-    //                 const res = await provider
-    //                     .estimateGas({ ...tx, from: address })
-    //                     .then(async (gasLimit) => {
-    //                         return Promise.all([
-    //                             coreProvider.provider.connector.sendTransaction({
-    //                                 // ...tx,
+    const prevTxdata = usePrevious(txdata);
 
-    //                                 to: tx.to,
-    //                                 from: address,
-    //                                 type: '2',
-    //                                 value:
-    //                                     tx.value
-    //                                         ?.toHexString()
-    //                                         .replace('0x0', '')
-    //                                         .replace('0x', '') || 0,
-    //                                 data: tx.data,
-    //                             }),
-    //                             onSendSync ? onSendSync(gasLimit) : undefined,
-    //                             emitter.emit({
-    //                                 type: emitter.events.TransactionSent,
-    //                             }),
-    //                         ])
-    //                             .then(([y]: string[]) => {
-    //                                 console.log({ y });
-    //                                 addToast({
-    //                                     duration: 0,
-    //                                     title: t`Pending Transaction`,
-    //                                     message: shortenTxnHash(y),
-    //                                     error: false,
-    //                                     id: y,
-    //                                     index: toasts.length,
-    //                                     loading: true,
-    //                                     action: () => web3.config.gotoEtherscan(chainId, 'tx', y),
-    //                                 });
-    //                                 // setActiveResponse(y);
+    const prevHash = usePrevious(hash);
 
-    //                                 // if (onResponse) onResponse(y);
+    const handleResponse = client.transactions.useStore((store) => store.handleResponse);
+    const replaceToast = client.toast.useReplaceToast();
 
-    //                                 emitter.emit({
-    //                                     type: emitter.events.PotentialTransactionResponse,
-    //                                     txhash: y as Hash,
-    //                                     from: address as AddressString,
-    //                                 });
+    React.useEffect(() => {
+        if (!prevHash && hash && network) {
+            void handleResponse(hash, network);
+        }
+    }, [hash, prevHash, network, handleResponse]);
 
-    //                                 return y;
-    //                             })
-    //                             .catch((err: Error) => {
-    //                                 const error = lib.errors.parseJsonRpcError(err);
-    //                                 setRevert(error);
-    //                                 console.error(error);
-    //                             });
-    //                     })
-    //                     .catch((err: Error) => {
-    //                         const error = lib.errors.parseJsonRpcError(err);
-    //                         setRevert(error);
-    //                         console.error(error);
-    //                     });
+    React.useEffect(() => {
+        if (txdata && hash) {
+            if (!prevTxdata) {
+                if (txdata.response && onResponse) onResponse(hash);
+                if (txdata.receipt && onReceipt) onReceipt(hash);
+            } else {
+                if (
+                    txdata.response !== null &&
+                    prevTxdata.response !== txdata.response &&
+                    onResponse
+                )
+                    onResponse(hash);
+                if (txdata.receipt !== null && prevTxdata.receipt !== txdata.receipt && onReceipt) {
+                    onReceipt(hash);
+                    /// lol, this always says success
+                    const isSuccess = txdata.receipt;
+                    replaceToast({
+                        id: hash,
+                        duration: isSuccess ? 5000 : 0,
+                        loading: false,
+                        error: !isSuccess,
+                        title: isSuccess ? 'Successful Transaction' : 'Transaction Failed',
+                    });
+                }
+            }
+        }
+    }, [txdata, prevTxdata, onReceipt, onResponse, hash]);
 
-    //                 const res2 = await provider.getTransaction(res as string);
-
-    //                 if (res2) {
-    //                     return res2
-    //                         .wait(1)
-    //                         .then((x) => {
-    //                             const isSuccess = x.status === 1;
-    //                             replaceToast({
-    //                                 id: x.transactionHash,
-    //                                 duration: isSuccess ? 5000 : 0,
-    //                                 loading: false,
-    //                                 error: !isSuccess,
-    //                                 title: isSuccess
-    //                                     ? 'Successful Transaction'
-    //                                     : 'Transaction Failed',
-    //                             });
-    //                             setReceipt(x);
-
-    //                             if (onReceipt) onReceipt(x);
-
-    //                             emitter.emit({
-    //                                 type: emitter.events.PotentialTransactionReceipt,
-    //                                 txhash: x.transactionHash as Hash,
-    //                                 success: isSuccess,
-    //                                 from: res2.from as AddressString,
-    //                             });
-    //                         })
-    //                         .catch((err) => {
-    //                             const error = lib.errors.parseJsonRpcError(err);
-    //                             emitter.emit({
-    //                                 type: emitter.events.PotentialTransactionReceipt,
-    //                                 txhash: res2.hash as Hash,
-    //                                 success: false,
-    //                                 from: res2.from as AddressString,
-    //                                 error,
-    //                             });
-    //                             setRevert(error);
-    //                         });
-    //                 }
-    //             }
-    //             return undefined;
-    //             // throw new Error('provider undefined');
-    //         } catch (err) {
-    //             const error = lib.errors.parseJsonRpcError(err);
-    //             setRevert(error);
-    //             console.error(error);
-    //             return undefined;
-    //         }
-    //     },
-    //     [provider, network, chainId],
-    // );
-
-    return { response, receipt, revert, send, estimate, estimateRevert };
+    return txdata;
 }

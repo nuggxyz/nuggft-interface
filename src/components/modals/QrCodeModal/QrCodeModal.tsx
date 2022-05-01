@@ -25,8 +25,8 @@ const QrCodeModal = ({ data }: { data: QRCodeModalData }) => {
                     value={data.uri || ''}
                     size={isPhone ? 200 : 400}
                     level="L"
-                    fgColor={data.backgroundStyle.background}
-                    bgColor={lib.colors.transparent}
+                    // fgColor={data.backgroundStyle.background}
+                    bgColor={lib.colors.background}
                 />
             </div>
         </div>

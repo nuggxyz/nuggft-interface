@@ -9,7 +9,7 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import lib, { parseItmeIdToNum } from '@src/lib';
 import { useAsyncSetState } from '@src/hooks/useAsyncState';
-import { useNuggftV1, useDotnuggV1, useTransactionManager } from '@src/contracts/useContract';
+import { useNuggftV1, useDotnuggV1, usePrioritySendTransaction } from '@src/contracts/useContract';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer3 from '@src/components/nugg/TokenViewer3';
 import web3 from '@src/web3';
@@ -296,7 +296,7 @@ export default () => {
         return undefined;
     }, [items, dotnugg, provider]);
 
-    const { send, revert } = useTransactionManager();
+    const { send, error } = usePrioritySendTransaction();
 
     const navigate = useNavigate();
     const lastSwap = client.live.lastSwap.tokenId();
@@ -361,7 +361,7 @@ export default () => {
                         </div>
                     )}
 
-                    {revert && <Label text={revert.message} />}
+                    {error && <Label text={error.message} />}
 
                     {tokenId && openEditScreen && (
                         <List

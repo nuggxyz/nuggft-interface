@@ -15,7 +15,11 @@ import FontSize from '@src/lib/fontSize';
 import Layout from '@src/lib/layout';
 import web3 from '@src/web3';
 import { LoanInputModalData } from '@src/interfaces/modals';
-import { useNuggftV1, useTransactionManager } from '@src/contracts/useContract';
+import {
+    useNuggftV1,
+    usePrioritySendTransaction,
+    useTransactionManager2,
+} from '@src/contracts/useContract';
 import client from '@src/client';
 
 import styles from './LoanInputModal.styles';
@@ -31,7 +35,10 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
     const nuggft = useNuggftV1(provider);
     const closeModal = client.modal.useCloseModal();
 
-    const { send } = useTransactionManager();
+    const { send, hash } = usePrioritySendTransaction();
+
+    useTransactionManager2(provider, hash, closeModal);
+
     const amountFromChain = useAsyncState<BigNumber[]>(() => {
         if (tokenId && chainId && provider) {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -124,13 +131,11 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
                                   nuggft.populateTransaction.liquidate(tokenId, {
                                       value: amount,
                                   }),
-                                  closeModal,
                               )
                             : send(
                                   nuggft.populateTransaction.rebalance([tokenId], {
                                       value: amount,
                                   }),
-                                  closeModal,
                               ))
                     }
                 />

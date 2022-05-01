@@ -1,57 +1,66 @@
 /* eslint-disable no-param-reassign */
 import create from 'zustand';
-import { combine, persist } from 'zustand/middleware';
+import { combine, subscribeWithSelector } from 'zustand/middleware';
 import React, { useCallback } from 'react';
-import shallow from 'zustand/shallow';
 import { Web3Provider } from '@ethersproject/providers';
 
 import web3 from '@src/web3';
 import emitter from '@src/emitter';
 
 interface Transaction {
-    response?: TransactionResponse;
-    receipt?: TransactionReceipt;
+    response: boolean;
+    receipt: boolean;
 }
 
 const useStore = create(
-    persist(
+    subscribeWithSelector(
         combine(
             {
                 potential: {} as { [_: `potential-${string}`]: Transaction },
                 data: {} as { [_: Hash]: Transaction },
             },
             (set, get) => {
-                function updateReceipt(data: TransactionReceipt): void {
-                    set((draft) => {
-                        if (!get().data[data.transactionHash as Hash])
-                            draft.data[data.transactionHash as Hash] = {};
-                        draft.data[data.transactionHash as Hash].receipt = data;
-                    });
+                function ensureEsists(txhash: Hash) {
+                    if (!get().data[txhash])
+                        set((draft) => {
+                            draft.data[txhash] = {
+                                response: false,
+                                receipt: false,
+                            };
+                        });
                 }
 
-                async function potentialReceipt(
-                    txhash: Hash,
-                    provider: Web3Provider,
-                ): Promise<void> {
-                    if (!get().data[txhash]?.receipt) {
-                        updateReceipt(await provider.getTransactionReceipt(txhash));
+                function handleReceipt(txhash: Hash): void {
+                    ensureEsists(txhash);
+
+                    const dat = get().data[txhash];
+
+                    if (!dat.receipt) {
+                        set((draft) => {
+                            draft.data[txhash].receipt = true;
+                        });
                     }
                 }
 
-                function updateResponse(data: TransactionResponse): void {
-                    set((draft) => {
-                        if (!get().data[data.hash as Hash]) draft.data[data.hash as Hash] = {};
-                        draft.data[data.hash as Hash].response = data;
-                    });
-                }
+                async function handleResponse(txhash: Hash, provider: Web3Provider): Promise<void> {
+                    ensureEsists(txhash);
 
-                async function potentialResponse(
-                    txhash: Hash,
-                    provider: Web3Provider,
-                ): Promise<void> {
-                    if (!get().data[txhash]?.receipt) {
-                        updateResponse(await provider.getTransaction(txhash));
+                    if (!get().data[txhash].response) {
+                        set((draft) => {
+                            draft.data[txhash].response = true;
+                        });
                     }
+
+                    let check = await provider.getTransactionReceipt(txhash);
+
+                    if (check === null) {
+                        check = await provider.waitForTransaction(txhash);
+                    }
+
+                    if (!get().data[txhash].receipt)
+                        set((draft) => {
+                            draft.data[txhash].receipt = true;
+                        });
                 }
 
                 function clear() {
@@ -61,15 +70,12 @@ const useStore = create(
                 }
 
                 return {
-                    updateResponse,
+                    handleResponse,
                     clear,
-                    updateReceipt,
-                    potentialReceipt,
-                    potentialResponse,
+                    handleReceipt,
                 };
             },
         ),
-        { name: 'nuggftv1-transaction' },
     ),
 );
 
@@ -77,18 +83,17 @@ export const useUpdateTransactionOnEmit = () => {
     const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
 
-    const updateResponse = useStore((store) => store.updateResponse);
-    const updateReceipt = useStore((store) => store.updateReceipt);
-    const potentialReceipt = useStore((store) => store.potentialReceipt);
-    const potentialResponse = useStore((store) => store.potentialResponse);
+    const handleResponse = useStore((store) => store.handleResponse);
+    const handleReceipt = useStore((store) => store.handleReceipt);
 
     emitter.on({
         type: emitter.events.TransactionResponse,
         callback: React.useCallback(
             (args) => {
-                if (args.response.from === address) updateResponse(args.response);
+                if (args.response.from === address && provider)
+                    void handleResponse(args.response.hash as Hash, provider);
             },
-            [updateResponse, address],
+            [handleResponse, address, provider],
         ),
     });
 
@@ -96,9 +101,10 @@ export const useUpdateTransactionOnEmit = () => {
         type: emitter.events.TransactionReceipt,
         callback: React.useCallback(
             (args) => {
-                if (address === args.recipt.from) void updateReceipt(args.recipt);
+                if (address === args.recipt.from)
+                    void handleReceipt(args.recipt.transactionHash as Hash);
             },
-            [address, updateReceipt],
+            [address, handleReceipt],
         ),
     });
 
@@ -106,9 +112,9 @@ export const useUpdateTransactionOnEmit = () => {
         type: emitter.events.PotentialTransactionReceipt,
         callback: React.useCallback(
             (args) => {
-                if (args.from === address && provider) void potentialReceipt(args.txhash, provider);
+                if (args.from === address && provider) void handleResponse(args.txhash, provider);
             },
-            [potentialReceipt, address, provider],
+            [handleResponse, address, provider],
         ),
     });
 
@@ -116,22 +122,31 @@ export const useUpdateTransactionOnEmit = () => {
         type: emitter.events.PotentialTransactionResponse,
         callback: React.useCallback(
             (args) => {
-                if (args.from === address && provider)
-                    void potentialResponse(args.txhash, provider);
+                if (args.from === address && provider) handleReceipt(args.txhash);
             },
-            [address, potentialResponse, provider],
+            [address, handleReceipt, provider],
         ),
     });
 };
 
-export default {
-    useTransaction: (txhash?: Hash) =>
-        useStore(
-            useCallback(
-                (state) => (txhash !== undefined ? state.data[txhash] : undefined),
-                [txhash],
-            ),
-            shallow,
+const useTransaction = (txhash?: Hash) => {
+    const response = useStore(
+        useCallback(
+            (state) => (txhash !== undefined ? state.data[txhash]?.response : undefined),
+            [txhash],
         ),
+    );
+
+    const receipt = useStore(
+        useCallback(
+            (state) => (txhash !== undefined ? state.data[txhash]?.receipt : undefined),
+            [txhash],
+        ),
+    );
+    return { response, receipt };
+};
+
+export default {
+    useTransaction,
     useStore,
 };
