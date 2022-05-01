@@ -72,6 +72,7 @@ const MobileConnectTab = () => {
 
 const MobileWallet: FunctionComponent<Props> = () => {
     const address = web3.hook.usePriorityAccount();
+
     const provider = web3.hook.usePriorityProvider();
     const connector = web3.hook.usePriorityConnector();
 

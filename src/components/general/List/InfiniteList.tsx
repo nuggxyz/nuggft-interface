@@ -232,6 +232,8 @@ const InfiniteList = <T, B, A>({
         selected,
         items,
         itemHeight,
+        deep,
+        skipSelectedCheck,
     ]);
 
     const [lastGrabValue, setLastGrabValue] = React.useState<number>(0);
@@ -282,6 +284,9 @@ const InfiniteList = <T, B, A>({
             // @ts-ignore
             coreRef.current.onscroll = _onScroll;
             // coreRef.current.scrollTo({ top: 0 });
+        } else if (windowRef && windowRef.current) {
+            // @ts-ignore
+            windowRef.current.onscroll = _onScroll;
         }
     }, [coreRef, _onScroll]);
     const containerStyle = useMemo(() => {

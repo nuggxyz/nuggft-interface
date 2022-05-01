@@ -7,11 +7,20 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import lib from '@src/lib';
 import { QRCodeModalData } from '@src/interfaces/modals';
 import useDimentions from '@src/client/hooks/useDimentions';
+import web3 from '@src/web3';
+import client from '@src/client';
 
 import styles from './QrCodeModal.styles';
 
 const QrCodeModal = ({ data }: { data: QRCodeModalData }) => {
     const { isPhone } = useDimentions();
+    const closeModal = client.modal.useCloseModal();
+    const check = web3.hook.usePriorityPeer();
+    React.useEffect(() => {
+        if (check === data.info) {
+            closeModal();
+        }
+    }, [check, data, closeModal]);
     return (
         <div style={styles.container}>
             <div style={styles.textContainer}>

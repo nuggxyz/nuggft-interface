@@ -29,21 +29,21 @@ const Router = () => {
             path: '/',
             element: <Outlet />,
             children: [
-                {
-                    path: 'edit/:id',
-                    element: <HotRotateOController />,
-                },
                 ...(isPhone
-                    ? [{ path: 'wallet', element: isPhone ? <MobileWalletScreen2 /> : null }]
-                    : []),
-                // instead of hiding this for mobile here, we redirect inside the component to avoid lots of rerenders
+                    ? [{ path: 'wallet', element: <MobileWalletScreen2 /> }]
+                    : [
+                          {
+                              path: 'edit/:id',
+                              element: <HotRotateOController />,
+                          },
+                          {
+                              path: 'view/*',
+                              element: <SearchOverlay />,
+                          },
+                      ]),
+
                 { path: 'swap/:id', element: isPhone ? <MobileViewScreen2 /> : null },
                 { path: 'live', element: null },
-                {
-                    path: 'view/*',
-                    element: isPhone ? null : <SearchOverlay />,
-                    // overlay: 997,
-                },
                 { path: '*', element: <Navigate to={isPhone ? `swap/${epoch || ''}` : 'live'} /> },
             ],
         },
@@ -62,8 +62,7 @@ const App = () => {
             <NuggBook />
             <Helmet />
             <NavigationBar />
-            {/* <StupidMfingHack /> */}
-            <HotRotateO />
+            {!isPhone && <HotRotateO />}
             <Router />
             <SwapPage />
         </>

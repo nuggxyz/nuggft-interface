@@ -270,7 +270,6 @@ export const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggI
                     style={{
                         position: 'absolute',
                         bottom: 5,
-                        right: 2,
                         display: 'flex',
                         flexDirection: 'row',
                         width: '100%',
@@ -288,7 +287,7 @@ export const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggI
                             padding: '.2rem',
                             fontSize: '10px',
                         }}
-                        label={t`For sale`}
+                        label={t`sell this item`}
                         // rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
                         onClick={() => {
                             openModal(

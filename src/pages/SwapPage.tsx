@@ -21,44 +21,47 @@ const SwapPage: FunctionComponent<Props> = () => {
 
     return (
         <>
-            {screen === 'phone' && <MobileSwapPage />}
-            <animated.div
-                style={{
-                    ...styles.container,
-                    ...blur,
-                    ...(screen === 'phone' && { alignItems: 'flex-start' }),
-                }}
-            >
-                {screen === 'tablet' ? (
-                    <>
-                        <div style={styles.tabletMain}>
-                            <div style={styles.tabletRing}>
-                                <TheRing circleWidth={1100} />
+            {screen === 'phone' ? (
+                <MobileSwapPage />
+            ) : (
+                <animated.div
+                    style={{
+                        ...styles.container,
+                        ...blur,
+                        alignItems: 'flex-start',
+                    }}
+                >
+                    {screen === 'tablet' ? (
+                        <>
+                            <div style={styles.tabletMain}>
+                                <div style={styles.tabletRing}>
+                                    <TheRing circleWidth={1100} />
+                                </div>
+                                <div style={styles.tabletRingAbout}>
+                                    <RingAbout />
+                                </div>
                             </div>
-                            <div style={styles.tabletRingAbout}>
-                                <RingAbout />
-                            </div>
-                        </div>
-                        <div style={styles.tabletSecondary}>
-                            <Wallet />
-                        </div>
-                    </>
-                ) : (
-                    <>
-                        <div style={styles.secondaryContainer}>
-                            <div style={styles.innerContainer}>
-                                <RingAbout />
-                            </div>
-                            <div style={styles.innerContainer}>
+                            <div style={styles.tabletSecondary}>
                                 <Wallet />
                             </div>
-                        </div>
-                        <div style={styles.theRingContainer}>
-                            <TheRing />
-                        </div>
-                    </>
-                )}
-            </animated.div>
+                        </>
+                    ) : (
+                        <>
+                            <div style={styles.secondaryContainer}>
+                                <div style={styles.innerContainer}>
+                                    <RingAbout />
+                                </div>
+                                <div style={styles.innerContainer}>
+                                    <Wallet />
+                                </div>
+                            </div>
+                            <div style={styles.theRingContainer}>
+                                <TheRing />
+                            </div>
+                        </>
+                    )}
+                </animated.div>
+            )}
         </>
     );
 };

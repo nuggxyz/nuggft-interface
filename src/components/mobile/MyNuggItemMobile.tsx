@@ -138,7 +138,7 @@ const MyNuggItem: FC<{ item: MyNuggsData; claims: UnclaimedOffer[] }> = ({ item,
                     style={{
                         position: 'absolute',
                         bottom: 5,
-                        right: 2,
+                        right: 0,
                         display: 'flex',
                         flexDirection: 'row',
                         width: '100%',

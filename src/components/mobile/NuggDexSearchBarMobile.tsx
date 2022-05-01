@@ -31,7 +31,7 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 
 import { MobileContainerBig } from './NuggListRenderItemMobile';
 import BackButton from './BackButton';
-import NuggDexSearchListMobile from './NuggDexSearchListMobile';
+import NuggDexSearchListMobile2 from './NuggDexSearchListMobile2';
 
 enum FilterEnum {
     NuggsThatOwnThisItem,
@@ -65,7 +65,7 @@ const SearchBarNuggDex = ({ onBack }: { onBack: () => void }) => {
     const { isPhone } = useDimentions();
     return (
         <div style={{ width: '100%', height: '100%', padding: '10px' }}>
-            <NuggDexSearchListMobile />
+            <NuggDexSearchListMobile2 />
             {isPhone && <BackButton noNavigate onClick={onBack} />}
         </div>
     );
@@ -127,32 +127,6 @@ export const SearchBarItem: FC<{ item: LiveItem }> = ({ item }) => {
                 />
             </div>
 
-            {/* <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: '.3rem',
-                    borderRadius: lib.layout.borderRadius.large,
-                    position: 'absolute',
-                    bottom: 4,
-                    // right: 2,
-                    paddingBottom: 5,
-                }}
-            >
-                <Label
-                    type="text"
-                    size="small"
-                    textStyle={{
-                        color: lib.colors.transparentDarkGrey,
-                        // marginLeft: '.5rem',
-                        fontSize: '10px',
-                        fontWeight: 'bold',
-                        // paddingBottom: 5,
-                        position: 'relative',
-                    }}
-                    text={`${item.count} in circulation`}
-                />
-            </div> */}
             <div
                 style={{
                     display: 'flex',
@@ -192,60 +166,6 @@ export const SearchBarItem: FC<{ item: LiveItem }> = ({ item }) => {
                     />
                 </div>
             ) : null}
-            {/* {Number(item.feature) !== constants.FEATURE_BASE &&
-                extraData.isOwner &&
-                (!item.activeSwap ? (
-                    <Button
-                        label="Sell"
-                        buttonStyle={{
-                            borderRadius: lib.layout.borderRadius.large,
-                            background: lib.colors.gradient2Transparent,
-                            position: 'absolute',
-                            right: '1rem',
-                        }}
-                        leftIcon={<IoPricetagsOutline color={lib.colors.white} />}
-                        textStyle={{
-                            color: lib.colors.white,
-                            marginLeft: '.5rem',
-                        }}
-                        type="text"
-                        onClick={() => {
-                            openModal({
-                                modalType: ModalEnum.Sell,
-                                tokenId: item.id,
-                                tokenType: 'item',
-                                sellingNuggId: extraData.tokenId,
-                            });
-                        }}
-                    />
-                ) : (
-                    <Button
-                        label="Reclaim"
-                        buttonStyle={{
-                            borderRadius: lib.layout.borderRadius.large,
-                            background: lib.colors.gradient2Transparent,
-                            position: 'absolute',
-                            right: '1rem',
-                        }}
-                        leftIcon={<IoSync color={lib.colors.white} />}
-                        textStyle={{
-                            color: lib.colors.white,
-                            marginLeft: '.5rem',
-                        }}
-                        type="text"
-                        onClick={() => {
-                            if (item.activeSwap && sender)
-                                void send(
-                                    nuggft.populateTransaction.claim(
-                                        [formatItemSwapIdForSend(item.activeSwap).sellingNuggId],
-                                        [Address.ZERO.hash],
-                                        [sender],
-                                        [formatItemSwapIdForSend(item.activeSwap).itemId],
-                                    ),
-                                );
-                        }}
-                    />
-                ))} */}
         </div>
     );
 };
@@ -575,6 +495,7 @@ const NuggDexSearchBarMobile: FunctionComponent<{
                     background: 'transparent',
                     WebkitBackdropFilter: 'blur(10px)',
                     marginTop: -13,
+                    overflow: 'auto',
                 }}
             >
                 <div
@@ -584,7 +505,7 @@ const NuggDexSearchBarMobile: FunctionComponent<{
                             {
                                 // marginTop: 90,
                             }),
-                        overflow: 'hidden',
+                        overflow: 'auto',
                         marginTop: 13,
                         // top: 0,
                     }}

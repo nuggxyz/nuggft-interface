@@ -21,6 +21,21 @@ import { ModalEnum } from '@src/interfaces/modals';
 import { DEFAULT_CHAIN } from '@src/web3/config';
 // eslint-disable-next-line import/no-cycle
 
+interface PeerMeta {
+    url: string;
+    description: string;
+    icons: string[];
+    name: string;
+    ssl: boolean;
+}
+
+interface ConnectPayload {
+    accounts: AddressString[];
+    chainId: 1 | 2 | 3 | 42 | 5;
+    peerId: string;
+    peerMeta: PeerMeta;
+}
+
 export const URI_AVAILABLE = 'URI_AVAILABLE';
 
 function parseChainId(chainId: string | number) {
@@ -98,6 +113,10 @@ export class WalletConnect extends Connector {
         this.actions.update({ accounts, peer: this.findPeer() });
     };
 
+    private connectListener = (_: Error | null, payload: [ConnectPayload]): void => {
+        this.actions.update({ ...payload[0], peer: this.findPeer(payload[0].peerMeta) });
+    };
+
     private URIListener = (_: Error | null, payload: { params: string[] }): void => {
         const peer = this.peer_try && this.peers[this.peer_try];
 
@@ -160,6 +179,7 @@ export class WalletConnect extends Connector {
                 rpc: { ...(await rpc) },
             }) as unknown as WalletConnectCoreProvider['provider'];
 
+            this.provider.connector.on('connect', this.connectListener);
             this.provider.on('disconnect', this.disconnectListener);
             this.provider.on('chainChanged', this.chainChangedListener);
             this.provider.on('accountsChanged', this.accountsChangedListener);
@@ -177,20 +197,19 @@ export class WalletConnect extends Connector {
         return undefined;
     }
 
-    private findPeer(): PeerInfo__WalletConnect {
-        const peerMeta = (
-            this.provider as unknown as {
-                signer?: {
-                    connection?: {
-                        wc?: {
-                            _peerMeta: {
-                                url: string;
+    private findPeer(peerMeta?: PeerMeta): PeerInfo__WalletConnect {
+        if (!peerMeta)
+            peerMeta = (
+                this.provider as unknown as {
+                    signer?: {
+                        connection?: {
+                            wc?: {
+                                _peerMeta: PeerMeta;
                             };
                         };
                     };
-                };
-            }
-        )?.signer?.connection?.wc?._peerMeta;
+                }
+            )?.signer?.connection?.wc?._peerMeta;
 
         console.log({ peerMeta, provider: this.provider });
 
@@ -348,6 +367,10 @@ export class WalletConnect extends Connector {
         (this.provider?.connector as unknown as EventEmitter | undefined)?.off(
             'display_uri',
             this.URIListener,
+        );
+        (this.provider?.connector as unknown as EventEmitter | undefined)?.off(
+            'connect',
+            this.connectListener,
         );
         await this.provider?.disconnect();
 

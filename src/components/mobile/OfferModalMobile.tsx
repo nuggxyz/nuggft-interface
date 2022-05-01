@@ -41,7 +41,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     useMountLogger('OfferModal');
     const address = web3.hook.usePriorityAccount();
-    // const swap = client.swaps.useSwap(data.tokenId);
 
     const { screen: screenType } = useDimentions();
     const network = web3.hook.useNetworkProvider();

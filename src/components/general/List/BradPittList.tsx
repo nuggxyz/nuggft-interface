@@ -89,7 +89,7 @@ const BradPittList = <T, B, A>({
     endGap,
     ...props
 }: Props<T, B, A>) => {
-    const squishedData = useSquishedListData(data ?? []);
+    const squishedData = useSquishedListData(data);
 
     const [activeIndex, setActiveIndex] = React.useState<0 | 1 | undefined>(defaultActiveIndex);
     const [preActiveIndex, setPreActiveIndex] = React.useState<0 | 1>(defaultActiveIndex);
@@ -126,6 +126,7 @@ const BradPittList = <T, B, A>({
         [coreRef, startTansition, setActiveIndex, setPreActiveIndex],
     );
 
+    console.log('herrhehee', { data });
     return (
         <div
             style={{ ...style, ...(useBradRef && { overflow: 'scroll' }) }}
