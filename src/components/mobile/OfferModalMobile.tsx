@@ -29,7 +29,6 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import { toEth } from '@src/lib/conversion';
 import Loader from '@src/components/general/Loader/Loader';
 import useMountLogger from '@src/hooks/useMountLogger';
-import { gotoDeepLink } from '@src/web3/config';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 
 // eslint-disable-next-line import/no-cycle
@@ -314,15 +313,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         </div>
                     )}
 
-                    {/* {!response && waiter &&  (
-                        <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
-                            <Text>No response recieved from {peer?.name}...</Text>
-                            <Button onClick={() => setManualResponse()}>it is done</Button>
-                        </div>
-                    )} */}
-
                     <Button
-                        label="close"
+                        label="dismiss"
                         onClick={() => {
                             closeModal();
 
@@ -350,7 +342,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const Page1 = React.useMemo(
         () =>
-            isOpen ? (
+            isOpen && peer ? (
                 <>
                     {/* <StupidMfingHack /> */}
                     <TokenViewer
@@ -405,24 +397,101 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                 .add(estimation?.mul || 0).number
                         }
                     />
-                    <Button
-                        label="Lets go"
-                        disabled={!check || !populatedTransaction}
-                        onClick={() => {
-                            if (populatedTransaction && peer) {
-                                void send(populatedTransaction.tx, () => setPage(2));
-                            }
-                        }}
-                        buttonStyle={{
-                            borderRadius: lib.layout.borderRadius.large,
-                            background: lib.colors.primaryColor,
-                            marginTop: '20px',
-                        }}
-                        textStyle={{
-                            color: lib.colors.white,
-                            fontSize: 30,
-                        }}
-                    />
+                    {peer.type === 'walletconnect' ? (
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                width: '100%',
+                                justifyContent: 'center',
+                                marginTop: '20px',
+                            }}
+                        >
+                            <Button
+                                className="mobile-pressable-div"
+                                // @ts-ignore
+                                buttonStyle={{
+                                    // textAlign: 'center',
+                                    background: lib.colors.primaryColor,
+                                    color: 'white',
+                                    borderRadius: lib.layout.borderRadius.medium,
+                                    boxShadow: lib.layout.boxShadow.basic,
+                                    width: 'auto',
+                                }}
+                                hoverStyle={{ filter: 'brightness(1)' }}
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+
+                                    const chicken = window.open.bind(
+                                        window,
+                                        peer.deeplink_href || '',
+                                    );
+
+                                    // void setTimeout(chicken, 1000);
+
+                                    // const stupidMfingHack = new Promise((resolve) => {
+                                    if (populatedTransaction && peer) {
+                                        void send(populatedTransaction.tx, () => {
+                                            // resolve('hey there buddy');
+                                            setPage(2);
+                                            void chicken();
+                                        });
+                                        // void chicken();
+                                    }
+                                    // });
+
+                                    // await stupidMfingHack;
+                                }}
+                                // label="open"
+                                size="largerish"
+                                textStyle={{ color: lib.colors.white, marginLeft: 10 }}
+                                leftIcon={<NLStaticImage image={`${peer.peer}_icon`} />}
+                                rightIcon={
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'left',
+                                            flexDirection: 'column',
+                                            // width: '100%',
+                                            marginLeft: 10,
+                                        }}
+                                    >
+                                        <Text textStyle={{ color: lib.colors.white }}>
+                                            tap to finalize on
+                                        </Text>
+                                        <Text
+                                            textStyle={{
+                                                color: lib.colors.white,
+                                                fontSize: '24px',
+                                            }}
+                                        >
+                                            {peer.name}
+                                        </Text>
+                                    </div>
+                                }
+                            />
+                        </div>
+                    ) : (
+                        <Button
+                            label=""
+                            disabled={!check || !populatedTransaction}
+                            onClick={() => {
+                                if (populatedTransaction && peer) {
+                                    void send(populatedTransaction.tx, () => setPage(2));
+                                }
+                            }}
+                            buttonStyle={{
+                                borderRadius: lib.layout.borderRadius.large,
+                                background: lib.colors.primaryColor,
+                                marginTop: '20px',
+                            }}
+                            textStyle={{
+                                color: lib.colors.white,
+                                fontSize: 35,
+                            }}
+                        />
+                    )}
                 </>
             ) : null,
         [check, amount, estimation, setPage, isOpen, send, populatedTransaction, peer],
@@ -585,15 +654,15 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         config: config.default,
     });
 
-    const [trans] = useSpring(
-        {
-            opacity: page === 2 && !transaction?.response ? 1 : 0,
-            pointerEvents: page === 2 && !transaction?.response ? 'auto' : 'none',
-            delay: 1000,
-            config: config.slow,
-        },
-        [page, transaction],
-    );
+    // const [trans] = useSpring(
+    //     {
+    //         opacity: page === 2 && !transaction?.response ? 1 : 0,
+    //         pointerEvents: page === 2 && !transaction?.response ? 'auto' : 'none',
+    //         delay: 1000,
+    //         config: config.slow,
+    //     },
+    //     [page, transaction],
+    // );
 
     return (
         <>
@@ -634,7 +703,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 </animated.div>
             ))}
 
-            {page === 2 && peer && peer.type === 'walletconnect' && !transaction?.response && (
+            {/* {page === 2 && peer && peer.type === 'walletconnect' && !transaction?.response && (
                 <animated.div
                     // @ts-ignore
                     style={{
@@ -696,7 +765,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         }
                     />
                 </animated.div>
-            )}
+            )} */}
         </>
     );
 };

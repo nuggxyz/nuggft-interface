@@ -17,8 +17,6 @@ const SwapPage: FunctionComponent<Props> = () => {
 
     const blur = useBlur(['/', '/swap/:id', '/live']);
 
-    console.log({ screen });
-
     return (
         <>
             {screen === 'phone' ? (

@@ -138,7 +138,7 @@ function useSendTransaction(
     const send = useCallback(
         async (
             ptx: Promise<PopulatedTransaction>,
-            onSend?: (gasLimit: number) => void,
+            onSend?: () => void,
         ): Promise<Hash | undefined> => {
             try {
                 if (
@@ -151,82 +151,68 @@ function useSendTransaction(
 
                     if (authenticatedConnector.refreshPeer) authenticatedConnector.refreshPeer();
 
-                    return estimation
-                        .estimate(ptx)
-                        .then(async (gasLimit) => {
-                            if (!gasLimit) throw Error('estimaton error');
-
-                            return Promise.all([
-                                authenticatedCoreProvider.type === ConnectorEnum.WalletConnect
-                                    ? (authenticatedCoreProvider.provider.connector.sendTransaction(
-                                          {
-                                              to: tx.to,
-                                              from,
-                                              type: '2',
-                                              value:
-                                                  tx.value
-                                                      ?.toHexString()
-                                                      .replace('0x0', '')
-                                                      .replace('0x', '') || 0,
-                                              data: tx.data,
-                                          },
-                                      ) as Promise<Hash>)
-                                    : authenticatedProvider.getSigner().sendTransaction(tx),
-                                onSend ? onSend(gasLimit?.toNumber() || 0) : undefined,
+                    return Promise.all([
+                        authenticatedCoreProvider.type === ConnectorEnum.WalletConnect
+                            ? (authenticatedCoreProvider.provider.connector.sendTransaction({
+                                  to: tx.to,
+                                  from,
+                                  type: '2',
+                                  value:
+                                      tx.value
+                                          ?.toHexString()
+                                          .replace('0x0', '')
+                                          .replace('0x', '') || 0,
+                                  data: tx.data,
+                              }) as Promise<Hash>)
+                            : authenticatedProvider.getSigner().sendTransaction(tx),
+                        onSend ? onSend() : undefined,
+                        emitter.emit({
+                            type: emitter.events.TransactionSent,
+                        }),
+                    ])
+                        .then(([y]) => {
+                            console.log('YYYYYY', y);
+                            let txhash: Hash;
+                            if (typeof y === 'string') {
+                                txhash = y;
+                                setHash(y as Hash);
                                 emitter.emit({
-                                    type: emitter.events.TransactionSent,
-                                }),
-                            ])
-                                .then(([y]) => {
-                                    console.log('YYYYYY', y);
-                                    let txhash: Hash;
-                                    if (typeof y === 'string') {
-                                        txhash = y;
-                                        setHash(y as Hash);
-                                        emitter.emit({
-                                            type: emitter.events.PotentialTransactionResponse,
-                                            txhash,
-                                            from,
-                                        });
-                                    } else {
-                                        txhash = y.hash as Hash;
-                                        setHash(txhash);
-                                        emitter.emit({
-                                            type: emitter.events.TransactionResponse,
-                                            response: y,
-                                        });
-                                    }
-                                    addToast({
-                                        duration: 0,
-                                        title: t`Pending Transaction`,
-                                        message: shortenTxnHash(txhash),
-                                        error: false,
-                                        id: txhash,
-                                        index: toasts.length,
-                                        loading: true,
-                                        action: () =>
-                                            web3.config.gotoEtherscan(
-                                                authenticatedProvider.network.chainId,
-                                                'tx',
-                                                txhash,
-                                            ),
-                                    });
-                                    return txhash;
-                                })
-                                .catch((err: Error) => {
-                                    const fmt = lib.errors.parseJsonRpcError(err);
-                                    if (fmt instanceof RejectionError) {
-                                        setRejected(true);
-                                        console.log('transaction rejected by user');
-                                        return undefined;
-                                    }
-                                    setError(fmt);
-                                    console.error(fmt);
-                                    throw fmt;
+                                    type: emitter.events.PotentialTransactionResponse,
+                                    txhash,
+                                    from,
                                 });
+                            } else {
+                                txhash = y.hash as Hash;
+                                setHash(txhash);
+                                emitter.emit({
+                                    type: emitter.events.TransactionResponse,
+                                    response: y,
+                                });
+                            }
+                            addToast({
+                                duration: 0,
+                                title: t`Pending Transaction`,
+                                message: shortenTxnHash(txhash),
+                                error: false,
+                                id: txhash,
+                                index: toasts.length,
+                                loading: true,
+                                action: () =>
+                                    web3.config.gotoEtherscan(
+                                        authenticatedProvider.network.chainId,
+                                        'tx',
+                                        txhash,
+                                    ),
+                            });
+                            return txhash;
                         })
                         .catch((err: Error) => {
                             const fmt = lib.errors.parseJsonRpcError(err);
+                            if (fmt instanceof RejectionError) {
+                                setRejected(true);
+                                console.log('transaction rejected by user');
+                                return undefined;
+                            }
                             setError(fmt);
                             console.error(fmt);
                             throw fmt;

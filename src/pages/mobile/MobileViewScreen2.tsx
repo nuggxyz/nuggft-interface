@@ -12,6 +12,8 @@ import BackButton from '@src/components/mobile/BackButton';
 const MobileViewScreen2: FC<PropsWithChildren<{ onClose?: () => void }>> = () => {
     const { tokenId } = useMobileViewingNugg();
 
+    console.log({ tokenId });
+
     const node = React.useRef<HTMLDivElement>(null);
 
     return (

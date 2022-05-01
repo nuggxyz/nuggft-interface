@@ -36,13 +36,11 @@ const SwapView = () => {
         );
     }, [abc, epoch]);
 
-    const [rest, setRest] = React.useState<boolean>(false);
-
-    React.useEffect(() => {
-        setTimeout(() => {
-            setRest(true);
-        }, 3000);
-    }, []);
+    // React.useEffect(() => {
+    //     setTimeout(() => {
+    //         setRest(true);
+    //     }, 3000);
+    // }, []);
 
     return (
         <div
@@ -61,22 +59,22 @@ const SwapView = () => {
             }}
         >
             <div style={{ marginTop: '100px' }} />
-            <SwapCard
+            {/* <SwapCard
                 tokenId={sortedAll.current[0]}
                 key={`SwapCard-Current-${sortedAll.current[0]}`}
-            />
+            /> */}
 
-            {rest &&
-                sortedAll.current.map((x) => (
-                    <SwapCard tokenId={x} key={`SwapCard-Current-${x}`} />
-                ))}
+            {sortedAll.current.map((x) => (
+                <SwapCard tokenId={x} key={`SwapCard-Current-${x}`} />
+            ))}
 
-            {rest && sortedAll.next.map((x) => <SwapCard tokenId={x} key={`SwapCard-Next-${x}`} />)}
+            {sortedAll.next.map((x) => (
+                <SwapCard tokenId={x} key={`SwapCard-Next-${x}`} />
+            ))}
 
-            {rest &&
-                sortedAll.potential.map((x) => (
-                    <SwapCard tokenId={x} key={`SwapCard-Potential-${x}`} />
-                ))}
+            {sortedAll.potential.map((x) => (
+                <SwapCard tokenId={x} key={`SwapCard-Potential-${x}`} />
+            ))}
         </div>
     );
 };

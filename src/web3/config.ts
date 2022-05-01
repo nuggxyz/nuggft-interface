@@ -273,7 +273,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
     coinbasewallet: initializeConnector<CoinbaseWallet>(
         (actions) =>
             new CoinbaseWallet(peer_coinbase, actions, {
-                url: ALCHEMY_URLS[1][0],
+                url: INFURA_URLS[1][0],
                 appName: 'NuggftV1',
             }),
     ),
@@ -305,7 +305,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                 peer_rpc,
                 actions,
                 supportedChainIds().reduce((prev, curr) => {
-                    return { ...prev, [curr]: [ALCHEMY_URLS[curr]] };
+                    return { ...prev, [curr]: [INFURA_URLS[curr]] };
                 }, {}),
             ),
         supportedChainIds(),
@@ -319,6 +319,7 @@ export const network = getNetworkConnector(connector_instances);
 export const selected = getSelectedConnector();
 
 export const gotoDeepLink = (link: string) => {
+    console.log('BOK BA GOK');
     window.open(link);
 };
 
