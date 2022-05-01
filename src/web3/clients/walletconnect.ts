@@ -114,7 +114,7 @@ export class WalletConnect extends Connector {
     };
 
     private connectListener = (_: Error | null, payload: [ConnectPayload]): void => {
-        this.actions.update({ ...payload[0], peer: this.findPeer(payload[0].peerMeta) });
+        this.actions.update({ ...payload[0], peer: this.findPeer(payload[0]?.peerMeta) });
     };
 
     private URIListener = (_: Error | null, payload: { params: string[] }): void => {
