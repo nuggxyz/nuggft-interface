@@ -10,6 +10,7 @@ import emitter from '@src/emitter';
 interface Transaction {
     response: boolean;
     receipt: boolean;
+    result: TransactionReceipt | null;
 }
 
 const useStore = create(
@@ -26,11 +27,25 @@ const useStore = create(
                             draft.data[txhash] = {
                                 response: false,
                                 receipt: false,
+                                result: null,
                             };
                         });
                 }
 
-                function handleReceipt(txhash: Hash): void {
+                function handleResult(res: TransactionReceipt): void {
+                    const hash = res.transactionHash as Hash;
+                    ensureEsists(hash);
+
+                    const dat = get().data[hash];
+
+                    set((draft) => {
+                        if (!dat.receipt) draft.data[hash].receipt = true;
+                        if (!dat.response) draft.data[hash].response = true;
+                        if (!dat.result) draft.data[hash].result = res;
+                    });
+                }
+
+                async function handleReceipt(txhash: Hash, provider: Web3Provider): Promise<void> {
                     ensureEsists(txhash);
 
                     const dat = get().data[txhash];
@@ -38,6 +53,17 @@ const useStore = create(
                     if (!dat.receipt) {
                         set((draft) => {
                             draft.data[txhash].receipt = true;
+                        });
+                    }
+
+                    if (!dat.result) {
+                        let check = await provider.getTransactionReceipt(txhash);
+
+                        if (check === null) {
+                            check = await provider.waitForTransaction(txhash);
+                        }
+                        set((draft) => {
+                            if (!get().data[txhash].result) draft.data[txhash].result = check;
                         });
                     }
                 }
@@ -57,10 +83,10 @@ const useStore = create(
                         check = await provider.waitForTransaction(txhash);
                     }
 
-                    if (!get().data[txhash].receipt)
-                        set((draft) => {
-                            draft.data[txhash].receipt = true;
-                        });
+                    set((draft) => {
+                        if (!get().data[txhash].receipt) draft.data[txhash].receipt = true;
+                        if (!get().data[txhash].result) draft.data[txhash].result = check;
+                    });
                 }
 
                 function clear() {
@@ -73,6 +99,7 @@ const useStore = create(
                     handleResponse,
                     clear,
                     handleReceipt,
+                    handleResult,
                 };
             },
         ),
@@ -85,6 +112,7 @@ export const useUpdateTransactionOnEmit = () => {
 
     const handleResponse = useStore((store) => store.handleResponse);
     const handleReceipt = useStore((store) => store.handleReceipt);
+    const handleResult = useStore((store) => store.handleResult);
 
     emitter.on({
         type: emitter.events.TransactionResponse,
@@ -101,10 +129,9 @@ export const useUpdateTransactionOnEmit = () => {
         type: emitter.events.TransactionReceipt,
         callback: React.useCallback(
             (args) => {
-                if (address === args.recipt.from)
-                    void handleReceipt(args.recipt.transactionHash as Hash);
+                if (address === args.recipt.from && provider) void handleResult(args.recipt);
             },
-            [address, handleReceipt],
+            [address, handleResult, provider],
         ),
     });
 
@@ -122,7 +149,7 @@ export const useUpdateTransactionOnEmit = () => {
         type: emitter.events.PotentialTransactionResponse,
         callback: React.useCallback(
             (args) => {
-                if (args.from === address && provider) handleReceipt(args.txhash);
+                if (args.from === address && provider) void handleReceipt(args.txhash, provider);
             },
             [address, handleReceipt, provider],
         ),
@@ -146,7 +173,20 @@ const useTransaction = (txhash?: Hash) => {
     return { response, receipt };
 };
 
+const useTransactionResult = (txhash?: Hash) => {
+    const response = useTransaction(txhash);
+
+    const result = useStore(
+        useCallback(
+            (state) => (txhash !== undefined ? state.data[txhash]?.result : undefined),
+            [txhash],
+        ),
+    );
+    return { ...response, result };
+};
+
 export default {
     useTransaction,
+    useTransactionResult,
     useStore,
 };

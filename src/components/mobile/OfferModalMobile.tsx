@@ -59,8 +59,10 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const transaction = useTransactionManager2(network, hash);
 
+    const tx = client.transactions.useTransactionResult(hash);
+
     console.log({
-        transaction,
+        tx,
         hash,
         error,
         rejected,
