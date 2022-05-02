@@ -24,6 +24,7 @@ const Colors = {
     transparentDarkGrey2: 'rgba(0, 0, 0, 0.2)',
     orange: '#ee7752',
     blue: '#0066ff',
+    etherscanBlue: '#21325b',
     red: '#FF4040',
     purple: '#8A2BE2',
     darkRed: '#8a3434',

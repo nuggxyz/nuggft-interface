@@ -28,7 +28,6 @@ const NavigationBarMobile: FC<Props> = () => {
     const abc = useSpring({
         opacity: searchOpen ? 0 : 1,
         height: searchOpen ? 0 : 1,
-        // reverse: true,
     });
 
     return (
@@ -97,51 +96,41 @@ const NavigationBarMobile: FC<Props> = () => {
                         </animated.div>
                     )}
 
-                    {
-                        !searchOpen ? (
-                            <animated.div
-                                style={{
-                                    ...styles.linkAccountContainer,
-                                    padding: '0rem .5rem',
-                                    alignItems: 'center',
-                                    justifyContent: 'flex-end',
+                    {!searchOpen ? (
+                        <animated.div
+                            style={{
+                                ...styles.linkAccountContainer,
+                                padding: '0rem .5rem',
+                                alignItems: 'center',
+                                justifyContent: 'flex-end',
+                            }}
+                        >
+                            <IconButton
+                                aria-hidden="true"
+                                buttonStyle={{
+                                    padding: 0,
+                                    background: 'transparent',
+                                    borderRadius: lib.layout.borderRadius.large,
+                                    // boxShadow: lib.layout.boxShadow.medium,
                                 }}
-                            >
-                                <IconButton
-                                    aria-hidden="true"
-                                    buttonStyle={{
-                                        padding: 0,
-                                        background: 'transparent',
-                                        borderRadius: lib.layout.borderRadius.large,
-                                        // boxShadow: lib.layout.boxShadow.medium,
-                                    }}
-                                    onClick={() => {
-                                        navigate('/wallet');
-                                    }}
-                                    iconComponent={
-                                        address ? (
-                                            <Jazzicon address={address || ''} size={50} />
-                                        ) : (
-                                            <IoQrCode
-                                                style={{
-                                                    color: lib.colors.semiTransparentPrimaryColor,
-                                                }}
-                                                size={50}
-                                            />
-                                        )
-                                    }
-                                />
-                            </animated.div>
-                        ) : null
-                        // <Button
-                        //     label="back"
-                        //     onClick={() => navigate(-1)}
-                        //     buttonStyle={{
-                        //         right: 30,
-                        //         position: 'absolute',
-                        //     }}
-                        // />
-                    }
+                                onClick={() => {
+                                    navigate('/wallet');
+                                }}
+                                iconComponent={
+                                    address ? (
+                                        <Jazzicon address={address || ''} size={50} />
+                                    ) : (
+                                        <IoQrCode
+                                            style={{
+                                                color: lib.colors.semiTransparentPrimaryColor,
+                                            }}
+                                            size={50}
+                                        />
+                                    )
+                                }
+                            />
+                        </animated.div>
+                    ) : null}
                 </animated.div>
             </div>
         </animated.div>

@@ -135,6 +135,18 @@ function useSendTransaction(
 
     const estimation = useEstimateTransaction(network, from);
 
+    emitter.on({
+        type: emitter.events.PotentialTransactionReceipt,
+        callback: React.useCallback(
+            (arg) => {
+                if (hash === undefined && from && arg.from === from) {
+                    setHash(arg.txhash);
+                }
+            },
+            [hash, setHash, from],
+        ),
+    });
+
     const send = useCallback(
         async (
             ptx: Promise<PopulatedTransaction>,
@@ -231,7 +243,6 @@ function useSendTransaction(
             authenticatedConnector,
             authenticatedCoreProvider,
             from,
-            estimation,
             addToast,
             toasts.length,
         ],

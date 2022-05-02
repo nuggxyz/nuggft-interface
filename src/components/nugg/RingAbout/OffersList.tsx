@@ -58,7 +58,14 @@ const OfferRenderItem: FC<
     );
 };
 
-export default ({ tokenId }: { tokenId?: TokenId; sellingNuggId?: NuggId }) => {
+export default ({
+    tokenId,
+    onlyLeader,
+}: {
+    tokenId?: TokenId;
+    sellingNuggId?: NuggId;
+    onlyLeader?: boolean;
+}) => {
     const swap = client.swaps.useSwap(tokenId);
 
     const offers = useAggregatedOffers(tokenId);
@@ -159,7 +166,8 @@ export default ({ tokenId }: { tokenId?: TokenId; sellingNuggId?: NuggId }) => {
                     </animated.div>
                 </div>
             ) : null}
-            {others.length > 0 &&
+            {!onlyLeader &&
+                others.length > 0 &&
                 (screenType === 'tablet' ? (
                     <Text
                         size="small"

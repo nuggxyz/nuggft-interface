@@ -4,7 +4,7 @@ import { t } from '@lingui/macro';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
 
 import useAsyncState from '@src/hooks/useAsyncState';
-import lib, { parseItmeIdToNum, toGwei } from '@src/lib';
+import lib, { parseItmeIdToNum, shortenTxnHash, toGwei } from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -30,6 +30,8 @@ import { toEth } from '@src/lib/conversion';
 import Loader from '@src/components/general/Loader/Loader';
 import useMountLogger from '@src/hooks/useMountLogger';
 import NLStaticImage from '@src/components/general/NLStaticImage';
+import { gotoEtherscan } from '@src/web3/config';
+import OffersList from '@src/components/nugg/RingAbout/OffersList';
 
 // eslint-disable-next-line import/no-cycle
 
@@ -70,8 +72,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const [amount, setAmount] = useState('0');
 
     const myNuggs = useMemo(() => {
-        console.log('mynugggs');
-
         if (data.token.isNugg()) return [];
         const nuggId = data.nuggToBuyFrom;
 
@@ -267,34 +267,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         [page, isOpen],
     );
 
-    // const [waiter] = React.useState(false);
-
-    // useRecursiveTimeout(() => {
-    //     // if (address) {
-    //     //     const prov = new ethers.networks.EtherscanProvider(
-    //     //         'rinkeby',
-    //     //         '19EGAM7C3N8WAZK8IZ8J1TG1G35T6WPWH2',
-    //     //     );
-    //     //     const abc2 = new ethers.networks.NodesmithProvider()
-
-    //     //     abc2.
-
-    //     //     // void prov.getHistory(address).then((abc) => {
-    //     //     // console.log({ abc });
-    //     //     // });
-    //     // }
-    // }, 5000);
-
-    // React.useEffect(() => {
-    //     if (page === 2 && !waiter) {
-    //         setTimeout(() => {
-    //             setWaiter(true);
-    //         });
-    //     }
-    // }, [page, waiter]);
-
     const Page2 = React.useMemo(() => {
-        return isOpen ? (
+        return isOpen && chainId ? (
             <>
                 <div
                     style={{
@@ -307,9 +281,72 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     <AnimatedConfirmation confirmed={!!transaction?.receipt} />
 
                     {!transaction?.response && (
-                        <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
-                            <Text>Request sent to {peer?.name}</Text>
-                            <Text>Waiting on response...</Text>
+                        <div
+                            style={{
+                                display: 'flex',
+                                width: '100%',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                padding: 20,
+                                marginTop: 20,
+                            }}
+                        >
+                            <Label
+                                text="looking for your transaction..."
+                                textStyle={{ color: 'white' }}
+                                containerStyles={{ background: lib.colors.nuggGold }}
+                            />
+                        </div>
+                    )}
+
+                    {transaction?.response && !transaction?.receipt && hash && (
+                        <div
+                            style={{
+                                display: 'flex',
+                                width: '100%',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                padding: 20,
+                                marginTop: 20,
+                                marginBottom: 20,
+                            }}
+                        >
+                            <Label
+                                text={shortenTxnHash(hash)}
+                                textStyle={{ color: 'white' }}
+                                containerStyles={{
+                                    background: lib.colors.etherscanBlue,
+                                    marginBottom: 20,
+                                }}
+                            />
+                            <Text textStyle={{ marginBottom: 20 }}>it should be included soon</Text>
+                            <Button
+                                onClick={() => gotoEtherscan(chainId, 'tx', hash)}
+                                label="view on etherscan"
+                                textStyle={{ color: lib.colors.etherscanBlue }}
+                                buttonStyle={{ borderRadius: lib.layout.borderRadius.large }}
+                            />
+                        </div>
+                    )}
+
+                    {transaction?.response && transaction?.receipt && (
+                        <div
+                            style={{
+                                display: 'flex',
+                                width: '100%',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                padding: 20,
+                                marginTop: 20,
+                                marginBottom: 20,
+                            }}
+                        >
+                            <Label
+                                text="boom, you're in the lead"
+                                textStyle={{ color: 'white' }}
+                                containerStyles={{ background: lib.colors.green, marginBottom: 20 }}
+                            />
+                            <OffersList tokenId={data.tokenId} onlyLeader />
                         </div>
                     )}
 

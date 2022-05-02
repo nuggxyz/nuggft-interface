@@ -32,8 +32,6 @@ import SwapListPhone from '@src/components/nugg/ViewingNugg/SwapListPhone';
 import { ItemListPhone } from '@src/components/nugg/ViewingNugg/ItemList';
 import BradPittList from '@src/components/general/List/BradPittList';
 
-// type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
-
 const Info = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
     const totalNuggs = client.live.totalNuggs();
@@ -262,8 +260,6 @@ const ViewingNuggPhone: FunctionComponent<{
 }> = ({ tokenId }) => {
     const epoch = client.live.epoch.id();
 
-    // const tokenId = client.viewscreen.useViewScreenTokenId();
-
     const sender = web3.hook.usePriorityAccount();
 
     const tokenQuery = useTokenQuery();
@@ -272,7 +268,6 @@ const ViewingNuggPhone: FunctionComponent<{
         if (tokenId) void tokenQuery(tokenId);
     }, [tokenId, tokenQuery]);
 
-    // const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 
     const token = client.live.token(tokenId);
@@ -289,25 +284,6 @@ const ViewingNuggPhone: FunctionComponent<{
         },
     });
 
-    // const squishedData = useSquishedListData(
-    //     data ? data.nuggItems.map((x) => x.nugg.id.toNuggId()) : [],
-    // );
-    // const [activeIndex, setActiveIndex] = React.useState(1);
-
-    // const [headerRef, { width: WIDTH }] = useMeasure();
-
-    // const selectionIndicatorSpring = useSpring({
-    //     from: {
-    //         x: 0,
-    //         opacity: 1,
-    //     },
-    //     to: {
-    //         opacity: 1,
-    //         x: activeIndex * (WIDTH / 2) - 22.5,
-    //     },
-    //     config: config.default,
-    // });
-
     const coreRef = React.useRef(null);
 
     const ider = React.useId();
@@ -320,8 +296,6 @@ const ViewingNuggPhone: FunctionComponent<{
                     position: 'relative',
                     display: 'flex',
                     flexDirection: 'column',
-                    //   borderRadius: lib.layout.borderRadius.mediumish,
-                    //   background: lib.colors.transparentGrey,
                     width: '100%',
                     alignItems: 'center',
                     justifyContent: 'start',
@@ -329,8 +303,6 @@ const ViewingNuggPhone: FunctionComponent<{
                     WebkitBackdropFilter: 'blur(5px)',
                     height: '100%',
                     overflow: 'scroll',
-                    //   paddingTop: '150px',
-                    //   marginBottom: '400px',
                 }}
             >
                 <div
@@ -397,12 +369,7 @@ const ViewingNuggPhone: FunctionComponent<{
                 >
                     <Text
                         textStyle={{
-                            // textShadow: lib.layout.boxShadow.dark,
                             color: lib.colors.primaryColor,
-                            // padding: '1rem',
-                            // background: darkmode
-                            //     ? lib.colors.nuggBlueTransparent
-                            //     : lib.colors.transparentGrey,
                             borderRadius: lib.layout.borderRadius.large,
                         }}
                         size="larger"
@@ -426,8 +393,6 @@ const ViewingNuggPhone: FunctionComponent<{
                         />
                     )}
                 </div>
-
-                {/* <Button label="" /> */}
 
                 {token.activeSwap &&
                     (token.activeSwap.endingEpoch || 0) <= epoch &&
