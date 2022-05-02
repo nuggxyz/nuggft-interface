@@ -43,6 +43,7 @@ export const DEFAULT_MS_BEFORE_WARNING = 90 * 1000;
 
 export const INFURA_KEY = process.env.NUGG_APP_INFURA_KEY as string;
 export const ALCHEMY_KEY = process.env.NUGG_APP_ALCHEMY_KEY as string;
+export const ETHERSCAN_KEY = process.env.NUGG_APP_ETHERSCAN_KEY as string;
 
 export const isValidChainId = (input: number) => {
     return supportedChainIds().indexOf(input) !== -1;

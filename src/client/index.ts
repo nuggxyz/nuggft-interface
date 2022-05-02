@@ -16,6 +16,7 @@ import editscreen from './editscreen';
 import swaps from './swaps';
 import viewport from './viewport';
 import transactions from './transactions';
+import usd from './usd';
 
 export default {
     core,
@@ -165,4 +166,5 @@ export default {
     swaps,
     viewport,
     transactions,
+    usd,
 };

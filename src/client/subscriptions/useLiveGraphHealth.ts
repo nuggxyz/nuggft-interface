@@ -4,11 +4,8 @@ import client from '@src/client';
 import { HealthDocument, useHealthQuery } from '@src/gql/types.generated';
 
 export default () => {
-    const graph = client.live.graph();
-
     const updateProtocolSimple = client.mutate.updateProtocolSimple();
     const { data: healthQueryData } = useHealthQuery({
-        client: graph,
         query: HealthDocument,
         fetchPolicy: 'network-only',
         notifyOnNetworkStatusChange: true,

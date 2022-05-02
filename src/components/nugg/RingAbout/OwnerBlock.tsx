@@ -14,6 +14,7 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
 import useDimentions from '@src/client/hooks/useDimentions';
+import { useUsdPair } from '@src/client/usd';
 
 const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>> = ({ item }) => {
     return (
@@ -56,6 +57,11 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
         }
         return lib.colors.white;
     }, [swap, isPhone]);
+
+    const leaderCurrency = useUsdPair(leader?.eth?.number);
+    const minTryoutCurrency = useUsdPair(
+        token?.isItem() ? token?.tryout.min?.eth.number : undefined,
+    );
 
     return (
         <div
@@ -145,7 +151,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             <CurrencyText
                                 textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
                                 image="eth"
-                                value={leader?.eth?.number || 0}
+                                value={leaderCurrency}
                                 decimals={3}
                             />
                             <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
@@ -166,7 +172,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             <CurrencyText
                                 textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
                                 image="eth"
-                                value={token.tryout.min.eth.number || 0}
+                                value={minTryoutCurrency}
                                 decimals={3}
                             />
                             <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>

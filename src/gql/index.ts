@@ -43,6 +43,7 @@ export const buildApolloSplitLink = (http: string, wss: string) => {
                 reconnectionAttempts: 100,
                 lazy: true,
             },
+
             webSocketImpl: WebSocket,
         }),
         new HttpLink({

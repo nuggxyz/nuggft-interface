@@ -1,12 +1,11 @@
-import { animated, config, useSpring } from '@react-spring/web';
 import React from 'react';
 import { IoGridOutline, IoLogoInstagram } from 'react-icons/io5';
 
 import useSquishedListData from '@src/client/hooks/useSquishedListData';
-import useMeasure from '@src/hooks/useMeasure';
 import InfiniteList from '@src/components/general/List/InfiniteList';
 import lib from '@src/lib';
 import Loader from '@src/components/general/Loader/Loader';
+import DualToggler from '@src/components/general/Buttons/DualToggler/DualToggler';
 
 export interface InfiniteListRenderItemProps<T, B, A> {
     item: T | [T | undefined, T | undefined];
@@ -96,20 +95,6 @@ const BradPittList = <T, B, A>({
 
     const [, startTansition] = React.useTransition();
 
-    const [headerRef, { width: WIDTH }] = useMeasure();
-
-    const selectionIndicatorSpring = useSpring({
-        from: {
-            x: 0,
-            opacity: 1,
-        },
-        to: {
-            opacity: 1,
-            x: preActiveIndex * (WIDTH / 2) - 22.5,
-        },
-        config: config.stiff,
-    });
-
     const brad = React.useRef<HTMLDivElement>(null);
 
     const toggleActiveIndex = React.useCallback(
@@ -122,11 +107,10 @@ const BradPittList = <T, B, A>({
                     setPreActiveIndex(to);
                 });
             }, 500);
+            return undefined;
         },
-        [coreRef, startTansition, setActiveIndex, setPreActiveIndex],
+        [startTansition, setActiveIndex, setPreActiveIndex],
     );
-
-    console.log('herrhehee', { data });
     return (
         <div
             style={{ ...style, ...(useBradRef && { overflow: 'scroll' }) }}
@@ -143,43 +127,14 @@ const BradPittList = <T, B, A>({
             >
                 {Title && <Title />}
 
-                <div
-                    ref={headerRef}
-                    style={{
-                        display: 'flex',
-                        zIndex: 300010,
-                        width: 90,
-                        justifyContent: 'space-around',
-                        position: 'relative',
-                        ...floaterWrapperStyle,
-                    }}
-                >
-                    <animated.div
-                        style={{
-                            top: -5,
-                            width: `40px`,
-                            height: `40px`,
-                            ...selectionIndicatorSpring,
-                            position: 'absolute',
-                            zIndex: -1,
-                            // backgroundColor: 'rgba(80, 144, 234, 0.4)',
-                            background: floaterColor,
-                            borderRadius: lib.layout.borderRadius.mediumish,
-                            WebkitBackdropFilter: 'blur(30px)',
-                            display: 'flex',
-                        }}
-                    />
-                    <IoLogoInstagram
-                        color={lib.colors.primaryColor}
-                        size={30}
-                        onClick={() => toggleActiveIndex(0)}
-                    />
-                    <IoGridOutline
-                        color={lib.colors.primaryColor}
-                        size={30}
-                        onClick={() => toggleActiveIndex(1)}
-                    />
-                </div>
+                <DualToggler
+                    LeftIcon={IoLogoInstagram}
+                    RightIcon={IoGridOutline}
+                    toggleActiveIndex={toggleActiveIndex}
+                    activeIndex={preActiveIndex}
+                    floaterStyle={{ background: floaterColor }}
+                    containerStyle={floaterWrapperStyle}
+                />
             </div>
             {/* <div style={{ height: '100%', width: '100%', position: 'relative' }}> */}
             {squishedData.length > 0 && activeIndex !== undefined ? (

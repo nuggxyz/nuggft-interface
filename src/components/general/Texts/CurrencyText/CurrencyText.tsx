@@ -4,13 +4,14 @@ import { useSpring, animated, config, useTransition } from '@react-spring/web';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import usePrevious from '@src/hooks/usePrevious';
 import { NLStaticImageKey } from '@src/components/general/NLStaticImage';
+import { PairInt, CurrencyInt } from '@src/classes/Fraction';
 
 import styles from './CurrencyText.styles';
 
 type PartialText = Partial<TextProps>;
 
 interface BalanceProps extends PartialText {
-    value: number;
+    value: number | PairInt;
     decimals?: number;
     // unit?: string;
     // prefix?: string;
@@ -30,7 +31,7 @@ interface BalanceProps extends PartialText {
 const MIN = 0.000000000001;
 
 const CurrencyText: React.FC<BalanceProps> = ({
-    value,
+    value: _value,
     decimals = 0,
     // unit = '',
     // prefix = '',
@@ -46,8 +47,13 @@ const CurrencyText: React.FC<BalanceProps> = ({
     // image,
     ...props
 }) => {
+    const { value, unit } = React.useMemo(() => {
+        if (typeof _value === 'number') return { value: _value, unit: 'ETH' };
+        return { value: _value.selected.number, unit: _value.preference };
+    }, [_value]);
+
     // if (value === 0) value = MIN;
-    const [isGwei, setIsGwei] = useState(forceGwei && !forceEth);
+    const [isGwei, setIsGwei] = useState(forceGwei);
     const prevValue = usePrevious(value);
     const [jumpValue, setJumpValue] = React.useState(MIN);
     React.useEffect(() => {
@@ -57,7 +63,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
         return undefined;
     }, [value, prevValue, showIncrementAnimation]);
     useEffect(() => {
-        if (!forceGwei && !forceEth) setIsGwei(value < 0.001);
+        if (!forceEth) setIsGwei(value < 0.001);
     }, [value, forceGwei, forceEth]);
 
     const [spring] = useSpring(
@@ -115,17 +121,16 @@ const CurrencyText: React.FC<BalanceProps> = ({
                 ) : (
                     <animated.div className="number" style={{ paddingRight: '.5rem' }}>
                         {spring.val.to((val) =>
-                            // eslint-disable-next-line no-nested-ternary
                             isGwei
                                 ? (val * 10 ** 9).toFixed(decimals)
                                 : val > 1
-                                ? val.toPrecision(percent ? 3 : 6)
+                                ? CurrencyInt.format(val)
                                 : val.toFixed(percent ? 2 : decimals || 5),
                         )}
                     </animated.div>
                 )}
                 {percent && '%'}
-                {showUnit && <div style={{ paddingRight: '0rem' }}>{isGwei ? 'gwei' : 'ETH'}</div>}
+                {showUnit && <div style={{ paddingRight: '0rem' }}>{isGwei ? 'gwei' : unit}</div>}
             </Text>
         </>
     );

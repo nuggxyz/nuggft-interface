@@ -32,6 +32,7 @@ import useMountLogger from '@src/hooks/useMountLogger';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import { gotoEtherscan } from '@src/web3/config';
 import OffersList from '@src/components/nugg/RingAbout/OffersList';
+import { useUsdPair, useUsdPairWithCalculation } from '@src/client/usd';
 
 // eslint-disable-next-line import/no-cycle
 
@@ -377,6 +378,16 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         ) : null;
     }, [transaction, isOpen, closeModal, setPage, startTransition, peer, startTransition]);
 
+    const currentBid = useUsdPair(check?.curr);
+
+    const amountUsd = useUsdPair(amount);
+
+    const desiredBid = useUsdPair(EthInt.fromEthDecimalString(amount));
+
+    const payment = useUsdPairWithCalculation([amount, check?.curr || 0], ([_amount, _check]) => {
+        return _amount.sub(_check);
+    });
+
     const Page1 = React.useMemo(
         () =>
             isOpen && peer ? (
@@ -399,21 +410,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     <Text size="large" textStyle={{ marginTop: 10 }}>
                         My Current Bid
                     </Text>
-                    <CurrencyText
-                        forceEth
-                        size="large"
-                        stopAnimation
-                        value={new EthInt(check?.curr || 0).number}
-                    />
+                    <CurrencyText forceEth size="large" stopAnimation value={currentBid} />
                     <Text size="large" textStyle={{ marginTop: 10 }}>
                         My Desired Bid
                     </Text>
-                    <CurrencyText
-                        size="large"
-                        stopAnimation
-                        value={EthInt.fromEthDecimalString(amount).number}
-                    />
-                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                    <CurrencyText forceEth size="large" stopAnimation value={amountUsd} />
+                    {/* <Text size="large" textStyle={{ marginTop: 10 }}>
                         Estimated Gas Fee
                     </Text>
                     <CurrencyText
@@ -421,19 +423,11 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         stopAnimation
                         value={estimation?.mul.number || 0}
                         forceEth
-                    />{' '}
+                    />{' '} */}
                     <Text size="large" textStyle={{ marginTop: 10 }}>
                         Payment
                     </Text>
-                    <CurrencyText
-                        size="largerish"
-                        stopAnimation
-                        value={
-                            EthInt.fromEthDecimalString(amount)
-                                .sub(new EthInt(check?.curr || 0))
-                                .add(estimation?.mul || 0).number
-                        }
-                    />
+                    <CurrencyText forceEth size="largerish" stopAnimation value={payment} />
                     {peer.type === 'walletconnect' ? (
                         <div
                             style={{
@@ -465,20 +459,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                         peer.deeplink_href || '',
                                     );
 
-                                    // void setTimeout(chicken, 1000);
-
-                                    // const stupidMfingHack = new Promise((resolve) => {
                                     if (populatedTransaction && peer) {
                                         void send(populatedTransaction.tx, () => {
-                                            // resolve('hey there buddy');
                                             setPage(2);
                                             void chicken();
                                         });
-                                        // void chicken();
                                     }
-                                    // });
-
-                                    // await stupidMfingHack;
                                 }}
                                 // label="open"
                                 size="largerish"
@@ -531,8 +517,22 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     )}
                 </>
             ) : null,
-        [check, amount, estimation, setPage, isOpen, send, populatedTransaction, peer],
+        [
+            check,
+            amount,
+            estimation,
+            setPage,
+            isOpen,
+            send,
+            populatedTransaction,
+            peer,
+            desiredBid,
+            currentBid,
+        ],
     );
+
+    const currentPrice = useUsdPair(check?.eth);
+    const myBalance = useUsdPair(userBalance?.number);
 
     const calculating = React.useMemo(() => {
         if (populatedTransaction && estimation) {
@@ -548,17 +548,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     Current Price
                 </Text>
 
-                <CurrencyText forceEth size="larger" value={check?.eth?.number || 0} />
+                <CurrencyText forceEth size="larger" value={currentPrice} />
 
                 <Text size="larger" textStyle={{ marginTop: 10 }}>
                     My Balance
                 </Text>
-                <CurrencyText
-                    forceEth
-                    size="larger"
-                    value={userBalance?.number || 0}
-                    stopAnimation
-                />
+                <CurrencyText forceEth size="larger" value={myBalance} stopAnimation />
                 <div
                     style={{
                         display: 'flex',

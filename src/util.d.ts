@@ -137,3 +137,13 @@ type ComponentPropsWithRef<T extends ElementType> = T extends React.ComponentCla
 
 // In @types/react, a "children" prop is required by the "FunctionComponent" type.
 type ComponentType<P = {}> = React.ComponentClass<P> | LeafFunctionComponent<P>;
+
+type ArrayLengthMutationKeys = 'splice' | 'push' | 'pop' | 'shift' | 'unshift';
+type FixedLengthArray<T, L extends number, TObj = [T, ...Array<T>]> = Pick<
+    TObj,
+    Exclude<keyof TObj, ArrayLengthMutationKeys>
+> & {
+    readonly length: L;
+    [I: number]: T;
+    [Symbol.iterator]: () => IterableIterator<T>;
+};

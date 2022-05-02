@@ -15,6 +15,7 @@ import { Address } from '@src/classes/Address';
 import { LiveItem, LiveToken, SwapData } from '@src/client/interfaces';
 import Label from '@src/components/general/Label/Label';
 import globalStyles from '@src/lib/globalStyles';
+import { useUsdPair } from '@src/client/usd';
 
 import styles from './ViewingNugg.styles';
 
@@ -107,6 +108,8 @@ const SwapItem: FunctionComponent<
         item.leader || '',
     );
 
+    const amount = useUsdPair(item.eth);
+
     const epoch = client.live.epoch.id();
 
     // const navigate = useNavigate();
@@ -155,7 +158,7 @@ const SwapItem: FunctionComponent<
                 >
                     <div style={styles.swapButton}>
                         <SwapDesc item={item} epoch={epoch} />
-                        <CurrencyText image="eth" value={item.eth.decimal.toNumber()} />
+                        <CurrencyText image="eth" value={amount} />
                     </div>
                     <div
                         style={{

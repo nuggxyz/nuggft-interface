@@ -14,6 +14,7 @@ import useDimentions from '@src/client/hooks/useDimentions';
 import lib from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
+import { useUsdPair } from '@src/client/usd';
 
 import styles from './RingAbout.styles';
 
@@ -116,6 +117,8 @@ export const BuntOfferTextMobile = ({ tokenId }: { tokenId: TokenId }) => {
         leader?.user || '',
     );
 
+    const leaderCurrency = useUsdPair(leader?.eth?.number || vfo?.number || 0);
+
     return !isPhone ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {vfo ? (
@@ -169,9 +172,9 @@ export const BuntOfferTextMobile = ({ tokenId }: { tokenId: TokenId }) => {
             )}
             <CurrencyText
                 textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
-                image="eth"
-                value={leader?.eth?.number || vfo?.number || 0}
-                decimals={0}
+                // image="eth"
+                value={leaderCurrency}
+                // decimals={0}
             />
             <Text textStyle={{ fontSize: '13px', color: dynamicTextColor, marginTop: 5 }}>
                 {`${

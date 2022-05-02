@@ -141,3 +141,84 @@ query getNuggsThatHold(
         }
     }
 }
+
+query getSwapData($tokenId: ID!) {
+    nugg(id: $tokenId) {
+        id
+        activeSwap {
+            ...swapdata
+        }
+    }
+}
+query getItemSwapData($tokenId: ID!) {
+    item(id: $tokenId) {
+        id
+        activeSwap {
+            ...itemswapdata
+        }
+    }
+}
+
+query getLiveProtocol {
+    protocol(id: "0x42069") {
+        id
+        totalNuggs
+        lastEpoch {
+            ...epochswapdata
+        }
+        nextEpoch {
+            _upcomingActiveItemSwaps
+            ...epochswapdata
+        }
+        nuggftStakedEth
+        nuggftStakedShares
+        activeNuggs(orderBy: idnum) {
+            id
+            idnum
+            activeSwap {
+                ...swapdata
+                # id
+                # eth
+                # endingEpoch
+            }
+        }
+        activeNuggItems {
+            id
+            activeSwap {
+                ...itemswapdata
+
+                # id
+                # sellingNuggItem {
+                #     id
+                #     item {
+                #         id
+                #     }
+                # }
+                # eth
+                # endingEpoch
+            }
+        }
+        activeItems {
+            id
+            activeSwap {
+                ...itemswapdata
+                # id
+                # sellingItem {
+                #     id
+                # }
+                # eth
+                # endingEpoch
+            }
+            upcomingActiveSwap {
+                ...itemswapdata
+
+                # id
+                # sellingItem {
+                #     id
+                # }
+                # eth
+                # endingEpoch
+            }
+        }
+    }
+}

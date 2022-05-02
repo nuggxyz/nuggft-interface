@@ -1,6 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import { IoIosArrowDroprightCircle } from 'react-icons/io';
 import { plural } from '@lingui/macro';
+import { IoLogoUsd } from 'react-icons/io5';
+import { SiEthereum } from 'react-icons/si';
 
 import web3 from '@src/web3';
 import client from '@src/client';
@@ -16,6 +18,7 @@ import InfoClicker from '@src/components/nuggbook/InfoClicker';
 import { LiveNuggItem } from '@src/client/interfaces';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
+import DualToggler from '@src/components/general/Buttons/DualToggler/DualToggler';
 
 import MyNuggItemListPhone from './MyNuggItemMobile';
 
@@ -95,6 +98,9 @@ const MobileWallet: FunctionComponent<Props> = () => {
 
     const { send } = usePrioritySendTransaction();
 
+    const setCurrencyPreference = client.usd.useSetCurrencyPreferrence();
+    const currencyPreferrence = client.usd.useCurrencyPreferrence();
+
     const items = React.useMemo(() => {
         return Object.values(
             nuggs.reduce(
@@ -140,6 +146,8 @@ const MobileWallet: FunctionComponent<Props> = () => {
                 <div
                     style={{
                         marginTop: '10px',
+                        marginBottom: '20px',
+
                         // width: '95%',
                         display: 'flex',
                         justifyContent: 'center',
@@ -172,6 +180,18 @@ const MobileWallet: FunctionComponent<Props> = () => {
                     />
                 </div>
 
+                <DualToggler
+                    LeftIcon={SiEthereum}
+                    RightIcon={IoLogoUsd}
+                    toggleActiveIndex={(input) => {
+                        setCurrencyPreference(input === 0 ? 'ETH' : 'USD');
+                        return undefined;
+                    }}
+                    activeIndex={currencyPreferrence === 'ETH' ? 0 : 1}
+                    // floaterStyle={{ background: floaterColor }}
+                    // containerStyle={floaterWrapperStyle}
+                />
+
                 <div style={{ width: '325px', paddingTop: '20px', paddingBottom: '20px' }}>
                     <div style={{ paddingTop: '20px', paddingBottom: '20px' }}>
                         <div
@@ -191,9 +211,8 @@ const MobileWallet: FunctionComponent<Props> = () => {
                             >
                                 <Text
                                     textStyle={{
-                                        color: 'white',
+                                        color: lib.colors.primaryColor,
                                         fontSize: '28px',
-                                        textShadow: lib.layout.boxShadow.dark,
                                     }}
                                 >{`${plural(items.length, {
                                     1: '# Item',
@@ -203,7 +222,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                 <Text
                                     textStyle={{
                                         fontSize: '13px',
-                                        color: 'white',
+                                        color: lib.colors.primaryColor,
                                         textShadow: lib.layout.boxShadow.dark,
                                     }}
                                 >
@@ -220,9 +239,8 @@ const MobileWallet: FunctionComponent<Props> = () => {
                             >
                                 <Text
                                     textStyle={{
-                                        color: 'white',
+                                        color: lib.colors.primaryColor,
                                         fontSize: '28px',
-                                        textShadow: lib.layout.boxShadow.dark,
                                     }}
                                 >{`${plural(nuggs.length, {
                                     1: '# Nugg',
@@ -232,8 +250,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                 <Text
                                     textStyle={{
                                         fontSize: '13px',
-                                        color: 'white',
-                                        textShadow: lib.layout.boxShadow.dark,
+                                        color: lib.colors.primaryColor,
                                     }}
                                 >
                                     staked

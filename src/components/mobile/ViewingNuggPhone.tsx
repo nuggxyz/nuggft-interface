@@ -31,6 +31,7 @@ import MyNuggActions from '@src/components/nugg/ViewingNugg/MyNuggActions';
 import SwapListPhone from '@src/components/nugg/ViewingNugg/SwapListPhone';
 import { ItemListPhone } from '@src/components/nugg/ViewingNugg/ItemList';
 import BradPittList from '@src/components/general/List/BradPittList';
+import { useUsdPair } from '@src/client/usd';
 
 const Info = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
@@ -139,6 +140,9 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
         }
         return undefined;
     }, [swap, nuggft, tokenId, provider]);
+
+    const swapCurrency = useUsdPair(swap?.eth?.number || vfo);
+
     return (
         <>
             <div
@@ -163,8 +167,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                                 fontSize: '28px',
                             }}
                             forceEth
-                            image="eth"
-                            value={swap?.eth?.number || 0}
+                            value={swapCurrency}
                             decimals={3}
                         />
                         <Text
@@ -199,8 +202,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                                 fontSize: '28px',
                             }}
                             forceEth
-                            image="eth"
-                            value={swap?.eth?.number || vfo?.number || 0}
+                            value={swapCurrency}
                             decimals={3}
                         />
                         <Text
