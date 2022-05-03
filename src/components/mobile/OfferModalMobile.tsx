@@ -119,7 +119,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         React.useMemo(
             () =>
                 ([_amount, _check]) => {
-                    return _amount.copy().sub(_check);
+                    const copy = _amount.copy();
+                    if (copy.gt(0)) return copy.sub(_check);
+                    return new EthInt(0);
                 },
             [],
         ),
@@ -127,6 +129,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const populatedTransaction = React.useMemo(() => {
         const value = paymentUsd.eth.bignumber;
+        console.log('value: ', value, estimator);
         if (!paymentUsd.eth.eq(0)) {
             if (data.isItem()) {
                 return {
@@ -156,7 +159,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     }, [nuggft, paymentUsd, address, data]);
 
     const estimation = useAsyncState(() => {
-        if (populatedTransaction && network && !estimator.error) {
+        if (populatedTransaction && network) {
             return Promise.all([
                 estimator.estimate(populatedTransaction.tx),
                 network?.getGasPrice(),
@@ -177,7 +180,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 className="mobile-pressable-div"
                 label={`+${increment.toString()}%`}
                 onClick={() => {
-                    setAmount(check?.eth?.increase(increment).number.toFixed(5) || '0');
+                    setAmount(check?.eth?.copy().increase(increment).number.toFixed(5) || '0');
                     setLastPressed(increment.toString());
                 }}
                 buttonStyle={{
