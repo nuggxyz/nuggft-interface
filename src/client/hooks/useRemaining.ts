@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { EpochData } from '@src/client/interfaces';
 import client from '@src/client';
 import web3 from '@src/web3';
+import useRecursiveTimeout from '@src/hooks/useRecursiveTimeout';
 
 export default (epoch: EpochData | undefined | null) => {
     const blocknum = client.live.blocknum();
@@ -61,9 +62,23 @@ export default (epoch: EpochData | undefined | null) => {
         };
     }, [blocksRemaining, chainId]);
 
+    const [trueSeconds, setTrueSeconds] = React.useState(time.seconds);
+
+    useRecursiveTimeout(
+        React.useCallback(() => {
+            setTrueSeconds(trueSeconds - 1);
+        }, [trueSeconds, setTrueSeconds]),
+        1000,
+    );
+
+    React.useEffect(() => {
+        setTrueSeconds(time.seconds);
+    }, [time.seconds, setTrueSeconds]);
+
     return {
         blockDuration,
         blocksRemaining,
         ...time,
+        trueSeconds,
     };
 };

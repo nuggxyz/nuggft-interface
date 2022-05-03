@@ -61,17 +61,16 @@ export const useUsdPair = (input?: Fractionish | undefined | null) => {
 
 export const useUsdPairWithCalculation = <T extends Fractionish, R extends number>(
     input: FixedLengthArray<T, R>,
-    callback: <G extends EthInt>(arg: FixedLengthArray<G, R>) => G,
+    callback: (arg: FixedLengthArray<Readonly<EthInt>, R>) => EthInt,
 ) => {
     const price = store((state) => state.price);
 
     const preference = store((state) => state.preference);
 
     return React.useMemo(() => {
-        const abc = input.map((x) => EthInt.tryParseFrac(x)) as unknown as FixedLengthArray<
-            EthInt,
-            R
-        >;
+        const abc = input.map((x) =>
+            Object.freeze(EthInt.tryParseFrac(x)),
+        ) as unknown as FixedLengthArray<EthInt, R>;
 
         const eths = callback(abc);
 

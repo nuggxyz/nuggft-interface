@@ -42,7 +42,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 
     const darkmode = useDarkMode();
 
-    const { minutes } = useRemaining(swap?.epoch);
+    const { minutes, trueSeconds } = useRemaining(swap?.epoch);
     const provider = web3.hook.usePriorityProvider();
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
@@ -190,12 +190,18 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
                                 ending in about
                             </Text>
-                            <Text
-                                textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
-                            >{`${minutes} ${plural(minutes, {
-                                1: 'minute',
-                                other: 'minutes',
-                            })}`}</Text>
+                            <Text textStyle={{ color: dynamicTextColor, fontSize: '28px' }}>
+                                {' '}
+                                {minutes === 0
+                                    ? `${plural(trueSeconds, {
+                                          1: '# second',
+                                          other: '# seconds',
+                                      })}`
+                                    : `${plural(minutes, {
+                                          1: '# mintue',
+                                          other: '# mintues',
+                                      })}`}
+                            </Text>
                         </div>
                     )}
                 </div>

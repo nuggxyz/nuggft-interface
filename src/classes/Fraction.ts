@@ -70,7 +70,10 @@ export class ImmutableFraction {
         return new Fraction(this.num, this.den);
     }
 
-    protected static tryParseFraction(fractionish: Fractionish): ImmutableFraction {
+    protected static tryParseFraction(
+        fractionish: Fractionish,
+        base = BigNumber.from(1),
+    ): ImmutableFraction {
         try {
             if (fractionish instanceof ImmutableFraction) {
                 return fractionish;
@@ -83,7 +86,7 @@ export class ImmutableFraction {
 
             if (
                 (typeof fractionish === 'string' && fractionish.includes('.')) ||
-                (typeof fractionish === 'number' && fractionish % 1 !== 0)
+                typeof fractionish === 'number'
             ) {
                 const abc = new Decimal(fractionish);
 
@@ -98,11 +101,10 @@ export class ImmutableFraction {
 
             if (
                 BigNumber.isBigNumber(fractionish) ||
-                typeof fractionish === 'number' ||
                 typeof fractionish === 'string' ||
                 typeof fractionish === 'bigint'
             )
-                return new ImmutableFraction(fractionish);
+                return new ImmutableFraction(fractionish, base);
 
             const unsafe = fractionish as unknown as { den: BigNumberish; num: BigNumberish };
             if ((unsafe as ImmutableFraction).num && (unsafe as ImmutableFraction).den)
@@ -310,7 +312,7 @@ export class EthInt extends CurrencyInt {
     }
 
     public static tryParseFrac(value: Fractionish): EthInt {
-        const abc = super.tryParseFraction(value);
+        const abc = super.tryParseFraction(value, ETH_ONE);
 
         const n = new EthInt(0);
         n.num = abc.num;

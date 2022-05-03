@@ -119,7 +119,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const swap = client.swaps.useSwap(tokenId);
     const lifecycle = useLifecycle(token);
 
-    const { minutes } = useRemaining(token?.activeSwap?.epoch);
+    const { minutes, trueSeconds } = useRemaining(token?.activeSwap?.epoch);
     const provider = web3.hook.usePriorityProvider();
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
@@ -238,10 +238,17 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                                 color: lib.colors.primaryColor,
                                 fontSize: '28px',
                             }}
-                        >{`${minutes} ${plural(minutes, {
-                            1: 'minute',
-                            other: 'minutes',
-                        })}`}</Text>
+                        >
+                            {minutes === 0
+                                ? `${plural(trueSeconds, {
+                                      1: '# second',
+                                      other: '# seconds',
+                                  })}`
+                                : `${plural(minutes, {
+                                      1: '# mintue',
+                                      other: '# mintues',
+                                  })}`}
+                        </Text>
                     </div>
                 )}
             </div>

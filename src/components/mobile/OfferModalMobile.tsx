@@ -56,18 +56,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const [page, setPage] = client.modal.usePhase();
 
-    const { send, estimation: estimator, hash, error, rejected } = usePrioritySendTransaction();
+    const { send, estimation: estimator, hash } = usePrioritySendTransaction();
 
     const transaction = useTransactionManager2(network, hash);
-
-    const tx = client.transactions.useTransactionResult(hash);
-
-    console.log({
-        tx,
-        hash,
-        error,
-        rejected,
-    });
 
     const [selectedNuggForItem, setSelectedNugg] = useState<FormatedMyNuggsData>();
     const [amount, setAmount] = useState('0');
@@ -385,7 +376,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const desiredBid = useUsdPair(EthInt.fromEthDecimalString(amount));
 
     const payment = useUsdPairWithCalculation([amount, check?.curr || 0], ([_amount, _check]) => {
-        return _amount.sub(_check);
+        console.log(_amount.number, _check.number);
+        return _amount.copy().sub(_check);
     });
 
     const Page1 = React.useMemo(

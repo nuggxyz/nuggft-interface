@@ -34,9 +34,11 @@ const OfferRenderItem: FC<
         extraData.type === 'nugg' ? 'nugg' : extraData.provider,
         item?.account || '',
     );
+
+    const amount = client.usd.useUsdPair(item.eth);
     return (
         <div style={styles.offerAmount}>
-            <CurrencyText image="eth" value={item.eth.decimal.toNumber()} stopAnimation />
+            <CurrencyText image="eth" value={amount} stopAnimation />
             {leader ? (
                 <Text type="text" size="smaller" textStyle={{ color: lib.colors.textColor }}>
                     {leader}
@@ -86,6 +88,8 @@ export default ({
             others: tmp.last(tmp.length - 1),
         };
     }, [offers]);
+
+    const leaderEth = client.usd.useUsdPair(leader?.eth);
 
     const { distribution, ownerEns } = useDistribution(swap);
 
@@ -141,7 +145,7 @@ export default ({
                                 size="small"
                                 image="eth"
                                 textStyle={styles.leadingOffer}
-                                value={leader?.eth?.decimal?.toNumber()}
+                                value={leaderEth}
                             />
                         </div>
                         <div style={styles.leadingOfferAmountUser}>
