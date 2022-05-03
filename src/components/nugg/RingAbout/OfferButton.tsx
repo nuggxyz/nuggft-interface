@@ -44,6 +44,7 @@ export default ({
 
     return lifecycle !== 'tryout' && (!isPhone || inOverlay) ? (
         <Button
+            className="mobile-pressable-div"
             buttonStyle={{
                 ...styles.button,
                 ...(inOverlay && {

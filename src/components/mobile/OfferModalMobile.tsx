@@ -337,6 +337,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 </div>
 
                 <Button
+                    className="mobile-pressable-div"
                     label="Review"
                     // leftIcon={calculating ? <Loader /> : undefined}
                     onClick={() => setPage(1)}
@@ -353,8 +354,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 />
 
                 <Button
+                    className="mobile-pressable-div"
                     size="small"
-                    buttonStyle={{ background: 'transparent' }}
+                    buttonStyle={{ background: 'transparent', marginTop: 10, marginBottom: -10 }}
                     label="cancel"
                     onClick={closeModal}
                 />
@@ -490,6 +492,18 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             }}
                         />
                     )}
+
+                    <Button
+                        className="mobile-pressable-div"
+                        size="small"
+                        buttonStyle={{
+                            background: 'transparent',
+                            marginTop: 10,
+                            marginBottom: -10,
+                        }}
+                        label="go back"
+                        onClick={() => setPage(0)}
+                    />
                 </>
             ) : null,
         [
