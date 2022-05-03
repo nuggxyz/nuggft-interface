@@ -27,13 +27,15 @@ export interface LoanModalData extends ModalDataBase {
 export interface OfferModalDataBase extends TokenIdFactoryBase, ModalDataBase {
     modalType: ModalEnum.Offer;
     nuggToBuyFrom: null | NuggId;
+    nuggToBuyFor: null | NuggId;
+
     token: LiveNugg | LiveItem;
 }
 
 export type OfferModalData = TokenIdFactoryCreator<
     OfferModalDataBase,
-    { nuggToBuyFrom: null; token: LiveNugg },
-    { nuggToBuyFrom: NuggId; token: LiveItem }
+    { nuggToBuyFrom: null; token: LiveNugg; nuggToBuyFor: null },
+    { nuggToBuyFrom: NuggId; token: LiveItem; nuggToBuyFor: NuggId }
 >;
 
 // export type OfferModalData = IdDiff<

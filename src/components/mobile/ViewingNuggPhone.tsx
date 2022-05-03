@@ -12,8 +12,8 @@ import { EthInt, Fraction } from '@src/classes/Fraction';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
 import OfferButton from '@src/components/nugg/RingAbout/OfferButton';
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import useRemaining from '@src/client/hooks/useRemaining';
-import { Lifecycle } from '@src/client/interfaces';
+import useRemaining, { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
+import { Lifecycle, TryoutData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { useNuggftV1 } from '@src/contracts/useContract';
@@ -61,13 +61,24 @@ const Info = ({ tokenId }: { tokenId?: TokenId }) => {
 const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
     const token = client.live.token(tokenId);
 
+    const [selected, setSelected] = React.useState<TryoutData>();
+    const [selectedMyNugg, setSelectedMyNugg] = React.useState<NuggId>();
+
+    const [continued, setContinued] = React.useState<boolean>(false);
+
     const text = useMemo(() => {
+        if (selected) return t`Continue to Start Auction`;
         if (token && token.tryout && token.tryout.count && token.tryout.count > 0)
             return t`accept a nugg's asking price`;
         if (token && token.tokenId.toRawIdNum() < 1000) return `bases are non transferable`;
-        return t`accept a nugg's asking price`;
-    }, [token]);
-    return (
+        return undefined;
+    }, [token, selected]);
+
+    const currency = client.usd.useUsdPair(
+        selected ? selected.eth : token?.tryout?.min?.eth.number,
+    );
+
+    return text ? (
         <div
             style={{
                 height: 'auto',
@@ -94,7 +105,7 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
                             fontSize: '28px',
                         }}
                         image="eth"
-                        value={token.tryout.min.eth.number || 0}
+                        value={currency}
                         decimals={3}
                     />
                     <Text
@@ -103,15 +114,32 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
                             color: lib.colors.primaryColor,
                         }}
                     >
-                        {t`minimum price`}
+                        {selected
+                            ? t`${selected.nugg.toPrettyId()}'s asking price`
+                            : t`minimum price`}
                     </Text>
                 </div>
             )}
-            <Text textStyle={{ color: lib.colors.primaryColor }}>{text}</Text>
-            <SideCar tokenId={tokenId} />
-            <Caboose tokenId={tokenId} />
+            <>
+                <Text textStyle={{ color: lib.colors.primaryColor }}>
+                    {continued
+                        ? !selectedMyNugg
+                            ? t`which nugg should bid on your behalf?`
+                            : t`you will bid as ${selectedMyNugg.toPrettyId()}`
+                        : text}
+                </Text>
+                <SideCar tokenId={tokenId} />
+                <Caboose
+                    tokenId={tokenId}
+                    onSelectNugg={setSelected}
+                    onSelectMyNugg={setSelectedMyNugg}
+                    onContinue={() => {
+                        setContinued(true);
+                    }}
+                />
+            </>
         </div>
-    );
+    ) : null;
 };
 
 const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
@@ -119,7 +147,9 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const swap = client.swaps.useSwap(tokenId);
     const lifecycle = useLifecycle(token);
 
-    const { minutes, trueSeconds } = useRemaining(token?.activeSwap?.epoch);
+    const { minutes, seconds } = useRemaining(token?.activeSwap?.epoch);
+
+    const trueSeconds = useRemainingTrueSeconds(seconds);
     const provider = web3.hook.usePriorityProvider();
 
     const leaderEns = web3.hook.usePriorityAnyENSName(

@@ -6,7 +6,7 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
-import { TryoutData } from '@src/client/interfaces';
+import { MyNuggsData, TryoutData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import web3 from '@src/web3';
 import client from '@src/client';
@@ -15,6 +15,8 @@ import useRemaining from '@src/client/hooks/useRemaining';
 import useDimentions from '@src/client/hooks/useDimentions';
 import { ModalEnum } from '@src/interfaces/modals';
 import { buildTokenIdFactory } from '@src/prototypes';
+import { EthInt } from '@src/classes/Fraction';
+import Label from '@src/components/general/Label/Label';
 
 import styles from './RingAbout.styles';
 
@@ -49,14 +51,70 @@ const TryoutRenderItem: FC<ListRenderItemProps<TryoutData, undefined, TryoutData
     );
 };
 
-export default ({ tokenId }: { tokenId?: ItemId }) => {
+const MyNuggRenderItem: FC<
+    ListRenderItemProps<FormatedMyNuggsData, undefined, FormatedMyNuggsData>
+> = ({ item, selected, action }) => {
+    const disabled = React.useMemo(() => {
+        if (item.activeSwap) return t`currenlty for sale`;
+        if (item.lastBid === 'unable-to-bid') return t`previous claim pending for this item`;
+        return undefined;
+    }, [item]);
+
+    const { screen: screenType } = useDimentions();
+
+    return (
+        <Button
+            disabled={!!disabled}
+            buttonStyle={{
+                background: selected ? lib.colors.transparentGrey2 : lib.colors.transparent,
+                borderRadius: lib.layout.borderRadius.medium,
+                transition: '.2s background ease',
+            }}
+            rightIcon={
+                <>
+                    <TokenViewer
+                        tokenId={item.tokenId}
+                        style={
+                            screenType !== 'phone'
+                                ? { width: '80px', height: '80px' }
+                                : { width: '60px', height: '60px' }
+                        }
+                        // showLabel
+                        disableOnClick
+                    />
+                    {disabled && (
+                        <Label text={disabled} containerStyles={{ background: 'transparent' }} />
+                    )}
+                </>
+            }
+            onClick={() => action && action(item)}
+        />
+    );
+};
+type FormatedMyNuggsData = MyNuggsData & { lastBid: EthInt | 'unable-to-bid' | 'user-must-claim' };
+
+export default ({
+    tokenId,
+    onSelectNugg,
+    onContinue,
+    onSelectMyNugg,
+}: {
+    tokenId?: ItemId;
+    onSelectNugg?: (dat: TryoutData) => void;
+    onContinue?: () => void;
+    onSelectMyNugg?: (tokenId: NuggId) => void;
+}) => {
     const { isPhone } = useDimentions();
     const address = web3.hook.usePriorityAccount();
     const epoch = client.live.epoch.id();
     const swap = client.swaps.useSwap(tokenId);
 
+    const myNuggs = client.live.myNuggs();
+
     const token = client.live.token(tokenId);
     const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<TryoutData>();
+    const [selectedMyNugg, setSelectedMyNugg] = React.useState<FormatedMyNuggsData>();
+    const [continued, setContinued] = React.useState<boolean>(false);
     const openModal = client.modal.useOpenModal();
 
     const { minutes } = useRemaining(client.live.epoch.default());
@@ -65,12 +123,12 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
 
     const [showBody, setShowBody] = React.useState(true);
 
-    const dynamicTextColor = React.useMemo(() => {
-        if (isPhone) {
-            return lib.colors.primaryColor;
-        }
-        return lib.colors.white;
-    }, [swap, isPhone]);
+    // const dynamicTextColor = React.useMemo(() => {
+    //     if (isPhone) {
+    //         return lib.colors.primaryColor;
+    //     }
+    //     return lib.colors.white;
+    // }, [swap, isPhone]);
 
     const mustWaitToBid = React.useMemo(() => {
         return (
@@ -82,6 +140,31 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
     }, [token, epoch]);
 
     const navigate = useNavigate();
+
+    const myNuggsFormatted = React.useMemo(() => {
+        const nuggId = nuggToBuyFrom;
+
+        return myNuggs
+            .map((x) => {
+                const filt = x.unclaimedOffers.filter((y) => {
+                    return y.itemId === tokenId;
+                });
+
+                return {
+                    ...x,
+                    lastBid: x.pendingClaim
+                        ? ('user-must-claim' as const)
+                        : filt.length === 0
+                        ? new EthInt(0)
+                        : filt[0].sellingNuggId === nuggId?.nugg
+                        ? new EthInt(filt[0]?.eth || 0)
+                        : ('unable-to-bid' as const),
+                };
+            })
+            .filter((x) => x.lastBid !== 'user-must-claim')
+            .first(5) as FormatedMyNuggsData[];
+    }, []);
+
     return token && token.type === 'item' && token.tryout.count > 0 ? (
         <div
             style={{
@@ -94,62 +177,95 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
             }}
         >
             {showBody ? (
-                <div style={{ width: '100%' }}>
-                    <List
-                        data={token.tryout.swaps}
-                        labelStyle={{
-                            color: dynamicTextColor,
-                        }}
-                        // label={t`Select a nugg to buy this item from`}
-                        extraData={undefined}
-                        RenderItem={TryoutRenderItem}
-                        selected={nuggToBuyFrom}
-                        action={setNuggToBuyFrom}
-                        horizontal
-                        style={{
-                            width: '100%',
+                <div style={{ width: '100%', marginTop: '20px' }}>
+                    {continued ? (
+                        <List
+                            data={myNuggsFormatted}
+                            extraData={undefined}
+                            RenderItem={MyNuggRenderItem}
+                            horizontal
+                            action={(dat) => {
+                                setSelectedMyNugg(dat);
+                                if (onSelectMyNugg) onSelectMyNugg(dat.tokenId);
+                            }}
+                            selected={selectedMyNugg}
+                            style={{
+                                width: '100%',
+                                background: lib.colors.transparentLightGrey,
+                                height: isPhone ? '100px' : '140px',
+                                padding: '0rem .4rem',
+                                borderRadius: lib.layout.borderRadius.medium,
+                            }}
+                        />
+                    ) : (
+                        <List
+                            data={token.tryout.swaps}
+                            // label={t`Select a nugg to buy this item from`}
+                            extraData={undefined}
+                            RenderItem={TryoutRenderItem}
+                            selected={nuggToBuyFrom}
+                            action={(dat: TryoutData) => {
+                                setNuggToBuyFrom(dat);
+                                if (onSelectNugg) onSelectNugg(dat);
+                            }}
+                            horizontal
+                            style={{
+                                width: '100%',
 
-                            marginTop: '20px',
-                            background: lib.colors.transparentLightGrey,
-                            height: '100px',
-                            padding: '0rem .3rem',
-                            borderRadius: lib.layout.borderRadius.medium,
-                        }}
-                    />
+                                background: lib.colors.transparentLightGrey,
+                                height: '100px',
+                                padding: '0rem .3rem',
+                                borderRadius: lib.layout.borderRadius.medium,
+                            }}
+                        />
+                    )}
                     <Button
                         buttonStyle={{
                             ...styles.button,
                             ...(isPhone && {
-                                border: `5px solid ${lib.colors.nuggBlueSemiTransparent}`,
-                                // borderRadius: lib.layout.borderRadius.medium,
+                                // border: `5px solid ${lib.colors.nuggBlueSemiTransparent}`,
+                                background: lib.colors.primaryColor,
                             }),
                         }}
                         textStyle={{
                             ...styles.buttonText,
+                            ...(isPhone && {
+                                color: lib.colors.white,
+                            }),
                         }}
-                        disabled={mustWaitToBid || !nuggToBuyFrom}
+                        disabled={mustWaitToBid || !nuggToBuyFrom || (continued && !selectedMyNugg)}
                         onClick={() => {
                             if (nuggToBuyFrom) {
                                 if (isPhone && isUndefinedOrNullOrStringEmpty(address))
                                     navigate('/wallet');
-                                else if (tokenId)
+                                else if (!continued) {
+                                    setContinued(true);
+                                    if (onContinue) onContinue();
+                                } else if (tokenId && selectedMyNugg)
                                     openModal(
                                         buildTokenIdFactory({
                                             modalType: ModalEnum.Offer as const,
                                             tokenId,
                                             token,
                                             nuggToBuyFrom: nuggToBuyFrom.nugg,
+                                            nuggToBuyFor: selectedMyNugg?.tokenId,
                                         }),
                                     );
                             }
                         }}
                         label={
-                            mustWaitToBid
+                            continued
+                                ? selectedMyNugg
+                                    ? t`Review`
+                                    : t`Select One of Your Nuggs`
+                                : mustWaitToBid
                                 ? t`wait ${minutes} minutes to buy from a new nugg`
                                 : isPhone && isUndefinedOrNullOrStringEmpty(address)
                                 ? t`Connect wallet`
+                                : !nuggToBuyFrom
+                                ? t`Select a Nugg`
                                 : !swap?.endingEpoch
-                                ? 'Accept and Start Auction'
+                                ? t`Continue`
                                 : t`Place offer`
                         }
                     />

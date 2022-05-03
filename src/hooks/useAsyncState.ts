@@ -23,12 +23,16 @@ export const useAsyncSetState = <T>(
     useEffect(() => {
         try {
             const exec = async () => query && query();
-            void exec().then((res) => {
-                setResult(res);
-                setOg(res);
-            });
+            void exec()
+                .then((res) => {
+                    setResult(res);
+                    setOg(res);
+                })
+                .catch((err) => {
+                    throw new Error(String(err));
+                });
         } catch (err: unknown) {
-            console.log('error in useAsyncState');
+            console.log('error in useAsyncState', err);
         }
     }, deps);
 

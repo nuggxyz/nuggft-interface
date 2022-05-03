@@ -62,7 +62,29 @@ export default (epoch: EpochData | undefined | null) => {
         };
     }, [blocksRemaining, chainId]);
 
-    const [trueSeconds, setTrueSeconds] = React.useState(time.seconds);
+    // const [trueSeconds, setTrueSeconds] = React.useState(time.seconds);
+
+    // useRecursiveTimeout(
+    //     React.useCallback(() => {
+    //         setTrueSeconds(trueSeconds - 1);
+    //     }, [trueSeconds, setTrueSeconds]),
+    //     1000,
+    // );
+
+    // React.useEffect(() => {
+    //     setTrueSeconds(time.seconds);
+    // }, [time.seconds, setTrueSeconds]);
+
+    return {
+        blockDuration,
+        blocksRemaining,
+        ...time,
+        // trueSeconds,
+    };
+};
+
+export const useRemainingTrueSeconds = (seconds: number) => {
+    const [trueSeconds, setTrueSeconds] = React.useState(seconds);
 
     useRecursiveTimeout(
         React.useCallback(() => {
@@ -72,13 +94,8 @@ export default (epoch: EpochData | undefined | null) => {
     );
 
     React.useEffect(() => {
-        setTrueSeconds(time.seconds);
-    }, [time.seconds, setTrueSeconds]);
+        setTrueSeconds(seconds);
+    }, [seconds, setTrueSeconds]);
 
-    return {
-        blockDuration,
-        blocksRemaining,
-        ...time,
-        trueSeconds,
-    };
+    return trueSeconds;
 };

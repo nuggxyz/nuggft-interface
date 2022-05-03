@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { plural, t } from '@lingui/macro';
 
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import useRemaining from '@src/client/hooks/useRemaining';
+import useRemaining, { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
@@ -42,7 +42,9 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 
     const darkmode = useDarkMode();
 
-    const { minutes, trueSeconds } = useRemaining(swap?.epoch);
+    const { minutes, seconds } = useRemaining(swap?.epoch);
+
+    const trueSeconds = useRemainingTrueSeconds(seconds);
     const provider = web3.hook.usePriorityProvider();
 
     const leaderEns = web3.hook.usePriorityAnyENSName(

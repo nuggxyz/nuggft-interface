@@ -50,15 +50,16 @@ export default ({
                     width: undefined,
                 }),
                 ...(isPhone && {
-                    border: `5px solid ${lib.colors.nuggBlueSemiTransparent}`,
+                    // border: `5px solid ${lib.colors.nuggBlueSemiTransparent}`,
                     // borderRadius: lib.layout.borderRadius.medium,
+                    background: lib.colors.primaryColor,
                 }),
             }}
             textStyle={{
                 ...styles.buttonText,
-                // ...(isPhone && {
-                //     color: lib.colors.primaryColor,
-                // }),
+                ...(isPhone && {
+                    color: lib.colors.white,
+                }),
             }}
             disabled={isDisabled}
             onClick={() => {
@@ -71,6 +72,7 @@ export default ({
                             tokenId: token.tokenId,
                             token,
                             nuggToBuyFrom: null,
+                            nuggToBuyFor: null,
                         }),
                     );
                 } else if (token && token.type === 'item' && token.activeSwap) {
@@ -80,6 +82,7 @@ export default ({
                             tokenId: token.tokenId,
                             token,
                             nuggToBuyFrom: sellingNuggId || token.activeSwap.owner,
+                            nuggToBuyFor: sellingNuggId || token.activeSwap.owner,
                         }),
                     );
                 }

@@ -75,6 +75,9 @@ export function prettify(
         case 'Revert(0x71)': {
             return 'value too low';
         }
+        case 'Revert(0xa3)': {
+            return 'must claim nugg';
+        }
         default:
             return `offer-modal error [${input.message}]`;
     }
