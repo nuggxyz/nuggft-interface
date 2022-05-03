@@ -57,6 +57,7 @@ const DualToggler = ({
                     background: lib.colors.transparentWhite,
                     borderRadius: lib.layout.borderRadius.mediumish,
                     WebkitBackdropFilter: 'blur(30px)',
+                    backdropFilter: 'blur(30px)',
                     display: 'flex',
                     ...floaterStyle,
                 }}

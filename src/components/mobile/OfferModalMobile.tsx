@@ -1,6 +1,7 @@
 import React, { startTransition, useState } from 'react';
 import { BigNumber } from 'ethers';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
+import { IoChevronBack } from 'react-icons/io5';
 
 import useAsyncState from '@src/hooks/useAsyncState';
 import lib, { shortenTxnHash, toGwei } from '@src/lib';
@@ -364,13 +365,13 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     }}
                 />
 
-                <Button
+                {/* <Button
                     className="mobile-pressable-div"
                     size="small"
                     buttonStyle={{ background: 'transparent', marginTop: 10, marginBottom: -10 }}
                     label="cancel"
                     onClick={closeModal}
-                />
+                /> */}
             </>
         ),
         [check, amount, estimation, setPage, estimation, calculating, localCurrencyPref],
@@ -522,7 +523,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         />
                     )}
 
-                    <Button
+                    {/* <Button
                         className="mobile-pressable-div"
                         size="small"
                         buttonStyle={{
@@ -532,7 +533,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         }}
                         label="go back"
                         onClick={() => setPage(0)}
-                    />
+                    /> */}
                 </>
             ) : null,
         [
@@ -684,7 +685,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             transition: `.2s all ${lib.layout.animation}`,
 
                             borderRadius: lib.layout.borderRadius.largish,
-
+                            boxShadow: lib.layout.boxShadow.basic,
                             margin: '0rem',
                             justifyContent: 'flex-start',
                             backdropFilter: 'blur(10px)',
@@ -695,12 +696,47 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     >
                         <>{pager === 0 ? Page0 : pager === 1 ? Page1 : Page2}</>{' '}
                         {(pager === 1 || pager === 0) && (
-                            <CurrencyToggler
-                                pref={localCurrencyPref}
-                                setPref={setLocalCurrencyPref}
-                                containerStyle={{ position: 'absolute', right: 3, bottom: -45 }}
-                                floaterStyle={{ background: lib.colors.transparentWhite }}
-                            />
+                            <>
+                                <Button
+                                    className="mobile-pressable-div"
+                                    size="small"
+                                    buttonStyle={{
+                                        position: 'absolute',
+                                        left: 3,
+                                        bottom: -50,
+                                        borderRadius: lib.layout.borderRadius.mediumish,
+                                        background: lib.colors.transparentWhite,
+                                        WebkitBackdropFilter: 'blur(30px)',
+                                        backdropFilter: 'blur(30px)',
+                                        boxShadow: lib.layout.boxShadow.basic,
+                                    }}
+                                    leftIcon={
+                                        <IoChevronBack
+                                            size={18}
+                                            color={lib.colors.primaryColor}
+                                            style={{
+                                                marginRight: 5,
+                                                marginLeft: -5,
+                                            }}
+                                        />
+                                    }
+                                    textStyle={{
+                                        color: lib.colors.primaryColor,
+                                        fontSize: 18,
+                                    }}
+                                    label="go back"
+                                    onClick={() => (pager === 0 ? closeModal() : setPage(0))}
+                                />{' '}
+                                <CurrencyToggler
+                                    pref={localCurrencyPref}
+                                    setPref={setLocalCurrencyPref}
+                                    containerStyle={{ position: 'absolute', right: 3, bottom: -45 }}
+                                    floaterStyle={{
+                                        background: lib.colors.transparentWhite,
+                                        boxShadow: lib.layout.boxShadow.basic,
+                                    }}
+                                />
+                            </>
                         )}
                     </animated.div>
                 </animated.div>
