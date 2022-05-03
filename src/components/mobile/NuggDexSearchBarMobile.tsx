@@ -28,6 +28,7 @@ import styles from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchB
 import formatLiveItem from '@src/client/formatters/formatLiveItem';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
+import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 
 import { MobileContainerBig } from './NuggListRenderItemMobile';
 import BackButton from './BackButton';
@@ -461,15 +462,20 @@ const NuggDexSearchBarMobile: FunctionComponent<{
             : lib.layout.borderRadius.large,
     });
 
-    const { height } = useDimentions();
+    const { height, width } = useDimentions();
 
-    const resultStyle = useSpring({
-        ...styles.resultContainer,
-        width: show ? '115%' : '100%',
-        height: show ? (agg.length === 0 ? `${height}px` : `${height}px`) : '100%',
-        top: show ? '-30%' : '0%',
-        opacity: show ? 1 : 0,
-        pointerEvents: show ? ('auto' as const) : ('none' as const),
+    // const resultStyle = useSpring({
+    //     width: show ? '115%' : '100%',
+    //     height: show ?  `${height}px` : '100%',
+    //     top: show ? '-30%' : '0%',
+    //     opacity: show ? 1 : 0,
+    //     pointerEvents: show ? ('auto' as const) : ('none' as const),
+    // });
+
+    const over = useAnimateOverlayBackdrop(show, {
+        height: `${height}px`,
+        zIndex: 998,
+        width: `${width}px`,
     });
 
     return (
@@ -488,12 +494,14 @@ const NuggDexSearchBarMobile: FunctionComponent<{
         >
             <animated.div
                 style={{
-                    ...resultStyle,
+                    ...styles.resultContainer,
+
+                    ...over,
                     position: 'absolute',
                     top: 0,
                     // background: lib.colors.,
                     background: 'transparent',
-                    WebkitBackdropFilter: 'blur(10px)',
+                    // WebkitBackdropFilter: 'blur(10px)',
                     marginTop: -13,
                     overflow: 'auto',
                 }}
@@ -545,6 +553,7 @@ const NuggDexSearchBarMobile: FunctionComponent<{
                     background: lib.colors.transparentWhite,
                     ...animatedBR,
                     WebkitBackdropFilter: 'blur(50px)',
+                    zIndex: 1000,
                 }}
                 styleInputContainer={styleInput}
                 leftToggles={[
