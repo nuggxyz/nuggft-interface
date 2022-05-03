@@ -4,7 +4,7 @@ import { animated, config, useSpring, useTransition } from '@react-spring/web';
 import { IoChevronBackCircle } from 'react-icons/io5';
 
 import useAsyncState from '@src/hooks/useAsyncState';
-import lib, { shortenTxnHash, toGwei } from '@src/lib';
+import lib, { shortenTxnHash } from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -146,7 +146,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 tx: nuggft.populateTransaction['offer(uint24)'](data.tokenId.toRawId(), {
                     from: address,
                     value,
-                    gasLimit: toGwei('120000'),
+                    // gasLimit: toGwei('120000'),
                 }),
                 amount: value,
             };
@@ -435,93 +435,80 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         stopAnimation
                         value={paymentUsd}
                     />
-                    {peer.type === 'walletconnect' ? (
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                width: '100%',
-                                justifyContent: 'center',
-                                marginTop: '20px',
+
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%',
+                            justifyContent: 'center',
+                            marginTop: '20px',
+                        }}
+                    >
+                        <Button
+                            className="mobile-pressable-div"
+                            // @ts-ignore
+                            buttonStyle={{
+                                background: lib.colors.primaryColor,
+                                color: 'white',
+                                borderRadius: lib.layout.borderRadius.medium,
+                                boxShadow: lib.layout.boxShadow.basic,
+                                width: 'auto',
                             }}
-                        >
-                            <Button
-                                className="mobile-pressable-div"
-                                // @ts-ignore
-                                buttonStyle={{
-                                    // textAlign: 'center',
-                                    background: lib.colors.primaryColor,
-                                    color: 'white',
-                                    borderRadius: lib.layout.borderRadius.medium,
-                                    boxShadow: lib.layout.boxShadow.basic,
-                                    width: 'auto',
-                                }}
-                                hoverStyle={{ filter: 'brightness(1)' }}
-                                onClick={(event) => {
+                            hoverStyle={{ filter: 'brightness(1)' }}
+                            disabled={!peer}
+                            onClick={(event) => {
+                                if (!peer || !populatedTransaction) return;
+
+                                if (peer.type === 'metamask' && peer.injected) {
+                                    void send(populatedTransaction.tx, () => {
+                                        setPage(2);
+                                    });
+                                } else if ('deeplink_href' in peer) {
                                     event.preventDefault();
                                     event.stopPropagation();
-
-                                    const chicken = window.open.bind(
-                                        window,
-                                        peer.deeplink_href || '',
-                                    );
 
                                     if (populatedTransaction && peer) {
                                         void send(populatedTransaction.tx, () => {
                                             setPage(2);
-                                            void chicken();
+                                            window.open(peer.deeplink_href || '');
                                         });
                                     }
-                                }}
-                                // label="open"
-                                size="largerish"
-                                textStyle={{ color: lib.colors.white, marginLeft: 10 }}
-                                leftIcon={<NLStaticImage image={`${peer.peer}_icon`} />}
-                                rightIcon={
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            alignItems: 'left',
-                                            flexDirection: 'column',
-                                            // width: '100%',
-                                            marginLeft: 10,
+                                } else {
+                                    void send(populatedTransaction.tx, () => {
+                                        setPage(2);
+                                    });
+                                }
+                            }}
+                            // label="open"
+                            size="largerish"
+                            textStyle={{ color: lib.colors.white, marginLeft: 10 }}
+                            leftIcon={<NLStaticImage image={`${peer.peer}_icon`} />}
+                            rightIcon={
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'left',
+                                        flexDirection: 'column',
+                                        // width: '100%',
+                                        marginLeft: 10,
+                                    }}
+                                >
+                                    <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>
+                                        tap to finalize on
+                                    </Text>
+                                    <Text
+                                        textStyle={{
+                                            color: lib.colors.white,
+                                            fontSize: 32,
                                         }}
                                     >
-                                        <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>
-                                            tap to finalize on
-                                        </Text>
-                                        <Text
-                                            textStyle={{
-                                                color: lib.colors.white,
-                                                fontSize: 32,
-                                            }}
-                                        >
-                                            {peer.name}
-                                        </Text>
-                                    </div>
-                                }
-                            />
-                        </div>
-                    ) : (
-                        <Button
-                            label=""
-                            disabled={!check || !populatedTransaction}
-                            onClick={() => {
-                                if (populatedTransaction && peer) {
-                                    void send(populatedTransaction.tx, () => setPage(2));
-                                }
-                            }}
-                            buttonStyle={{
-                                borderRadius: lib.layout.borderRadius.large,
-                                background: lib.colors.primaryColor,
-                                marginTop: '20px',
-                            }}
-                            textStyle={{
-                                color: lib.colors.white,
-                                fontSize: 35,
-                            }}
+                                        {peer.name}
+                                    </Text>
+                                </div>
+                            }
                         />
-                    )}
+                    </div>
 
                     {/* <Button
                         className="mobile-pressable-div"
