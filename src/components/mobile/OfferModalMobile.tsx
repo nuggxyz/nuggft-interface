@@ -111,10 +111,14 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const myBalance = useUsdPair(userBalance?.number);
     const currentBid = useUsdPair(check?.curr);
     const paymentUsd = useUsdPairWithCalculation(
-        [amount, check?.curr || 0],
-        ([_amount, _check]) => {
-            return _amount.copy().sub(_check);
-        },
+        React.useMemo(() => [amount, check?.curr || 0], [amount, check]),
+        React.useMemo(
+            () =>
+                ([_amount, _check]) => {
+                    return _amount.copy().sub(_check);
+                },
+            [],
+        ),
     );
 
     const populatedTransaction = React.useMemo(() => {
