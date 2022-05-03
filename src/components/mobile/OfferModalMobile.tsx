@@ -28,6 +28,9 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import { gotoEtherscan } from '@src/web3/config';
 import OffersList from '@src/components/nugg/RingAbout/OffersList';
 import { useUsdPair, useUsdPairWithCalculation } from '@src/client/usd';
+import CurrencyToggler, {
+    useCurrencyTogglerState,
+} from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 
 // eslint-disable-next-line import/no-cycle
 
@@ -154,15 +157,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const estimation = useAsyncState(() => {
         if (populatedTransaction && network && !estimator.error) {
             return Promise.all([
-                estimator
-                    .estimate(populatedTransaction.tx)
-                    .then((a) => {
-                        console.log({ a });
-                        return a;
-                    })
-                    .catch((b) => {
-                        console.log('b', b);
-                    }),
+                estimator.estimate(populatedTransaction.tx),
                 network?.getGasPrice(),
             ]).then((_data) => ({
                 gasLimit: _data[0] || BigNumber.from(0),
@@ -247,6 +242,10 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         return true;
     }, [populatedTransaction, estimation]);
 
+    const globalCurrencyPref = client.usd.useCurrencyPreferrence();
+
+    const [localCurrencyPref, setLocalCurrencyPref] = useCurrencyTogglerState(globalCurrencyPref);
+
     const Page0 = React.useMemo(
         () => (
             <>
@@ -254,12 +253,24 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     Current Price
                 </Text>
 
-                <CurrencyText forceEth size="larger" value={currentPrice} />
+                <CurrencyText
+                    unitOverride={localCurrencyPref}
+                    forceEth
+                    stopAnimation
+                    size="larger"
+                    value={currentPrice}
+                />
 
                 <Text size="larger" textStyle={{ marginTop: 10 }}>
                     My Balance
                 </Text>
-                <CurrencyText forceEth size="larger" value={myBalance} stopAnimation />
+                <CurrencyText
+                    unitOverride={localCurrencyPref}
+                    forceEth
+                    size="larger"
+                    value={myBalance}
+                    stopAnimation
+                />
                 <div
                     style={{
                         display: 'flex',
@@ -362,7 +373,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 />
             </>
         ),
-        [check, amount, estimation, setPage, estimation, calculating],
+        [check, amount, estimation, setPage, estimation, calculating, localCurrencyPref],
     );
 
     const Page1 = React.useMemo(
@@ -387,11 +398,23 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     <Text size="large" textStyle={{ marginTop: 10 }}>
                         My Current Bid
                     </Text>
-                    <CurrencyText forceEth size="large" stopAnimation value={currentBid} />
+                    <CurrencyText
+                        unitOverride={localCurrencyPref}
+                        forceEth
+                        size="large"
+                        stopAnimation
+                        value={currentBid}
+                    />
                     <Text size="large" textStyle={{ marginTop: 10 }}>
                         My Desired Bid
                     </Text>
-                    <CurrencyText forceEth size="large" stopAnimation value={amountUsd} />
+                    <CurrencyText
+                        unitOverride={localCurrencyPref}
+                        forceEth
+                        size="large"
+                        stopAnimation
+                        value={amountUsd}
+                    />
                     {/* <Text size="large" textStyle={{ marginTop: 10 }}>
                         Estimated Gas Fee
                     </Text>
@@ -404,7 +427,13 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     <Text size="large" textStyle={{ marginTop: 10 }}>
                         Payment
                     </Text>
-                    <CurrencyText forceEth size="largerish" stopAnimation value={paymentUsd} />
+                    <CurrencyText
+                        unitOverride={localCurrencyPref}
+                        forceEth
+                        size="largerish"
+                        stopAnimation
+                        value={paymentUsd}
+                    />
                     {peer.type === 'walletconnect' ? (
                         <div
                             style={{
@@ -665,6 +694,14 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         }}
                     >
                         <>{pager === 0 ? Page0 : pager === 1 ? Page1 : Page2}</>{' '}
+                        {(pager === 1 || pager === 0) && (
+                            <CurrencyToggler
+                                pref={localCurrencyPref}
+                                setPref={setLocalCurrencyPref}
+                                containerStyle={{ position: 'absolute', right: 3, bottom: -45 }}
+                                floaterStyle={{ background: lib.colors.transparentWhite }}
+                            />
+                        )}
                     </animated.div>
                 </animated.div>
             ))}

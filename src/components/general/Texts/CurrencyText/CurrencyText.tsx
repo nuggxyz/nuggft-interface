@@ -26,6 +26,8 @@ interface BalanceProps extends PartialText {
     showIncrementAnimation?: boolean;
     loadOnZero?: boolean;
     str?: string;
+
+    unitOverride?: 'ETH' | 'USD';
 }
 
 const MIN = 0.000000000001;
@@ -43,14 +45,20 @@ const CurrencyText: React.FC<BalanceProps> = ({
     stopAnimation = false,
     showIncrementAnimation = false,
     loadOnZero = false,
+    unitOverride,
     str,
     // image,
     ...props
 }) => {
     const { value, unit } = React.useMemo(() => {
-        if (typeof _value === 'number') return { value: _value, unit: 'ETH' };
+        if (typeof _value === 'number') return { value: _value, unit: unitOverride ?? 'ETH' };
+        if (unitOverride)
+            return {
+                value: _value[unitOverride.toLowerCase() as 'eth' | 'usd'].number,
+                unit: unitOverride,
+            };
         return { value: _value.selected.number, unit: _value.preference };
-    }, [_value]);
+    }, [_value, unitOverride]);
 
     // if (value === 0) value = MIN;
     const [isGwei, setIsGwei] = useState(forceGwei);
@@ -136,4 +144,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
     );
 };
 
-export default React.memo(CurrencyText, (prev, curr) => prev.value === curr.value);
+export default React.memo(
+    CurrencyText,
+    (prev, curr) => prev.value === curr.value && prev.unitOverride === curr.unitOverride,
+);
