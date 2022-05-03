@@ -441,18 +441,21 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                         display: 'flex',
                                         flexDirection: 'column',
                                         width: '100%',
-                                        zIndex: 100,
+                                        zIndex: 102,
                                         justifyContent: 'start',
                                         alignItems: 'center',
                                     }}
                                 >
                                     {unclaimedOffers.length > 0 && (
                                         <Button
-                                            onClick={() => {
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                event.preventDefault();
                                                 void send(
                                                     nuggft.populateTransaction.claim(...args),
                                                 );
                                             }}
+                                            buttonStyle={{ zIndex: 103 }}
                                             label="Claim All"
                                         />
                                     )}
