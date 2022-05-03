@@ -1,7 +1,7 @@
 import React, { startTransition, useState } from 'react';
 import { BigNumber } from 'ethers';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
-import { IoChevronBack } from 'react-icons/io5';
+import { IoChevronBackCircle } from 'react-icons/io5';
 
 import useAsyncState from '@src/hooks/useAsyncState';
 import lib, { shortenTxnHash, toGwei } from '@src/lib';
@@ -487,13 +487,13 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                             marginLeft: 10,
                                         }}
                                     >
-                                        <Text textStyle={{ color: lib.colors.white }}>
+                                        <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>
                                             tap to finalize on
                                         </Text>
                                         <Text
                                             textStyle={{
                                                 color: lib.colors.white,
-                                                fontSize: '24px',
+                                                fontSize: 32,
                                             }}
                                         >
                                             {peer.name}
@@ -662,85 +662,90 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     return (
         <>
-            {tabFadeTransition((sty, pager) => (
-                <animated.div
-                    style={{
-                        // position: 'relative',
-                        position: 'absolute',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        width: '100%',
-                        margin: 20,
-                    }}
-                    // ref={node}
-                >
+            {tabFadeTransition((sty, pager) => {
+                return (
                     <animated.div
                         style={{
-                            width: '93%',
-                            padding: '25px',
-                            position: 'relative',
-                            // pointerEvents: 'none',
-                            // ...sty,
-                            background: lib.colors.transparentWhite,
-                            transition: `.2s all ${lib.layout.animation}`,
-
-                            borderRadius: lib.layout.borderRadius.largish,
-                            boxShadow: lib.layout.boxShadow.basic,
-                            margin: '0rem',
-                            justifyContent: 'flex-start',
-                            backdropFilter: 'blur(10px)',
-                            WebkitBackdropFilter: 'blur(10px)',
-                            ...containerStyle,
-                            ...sty,
+                            // position: 'relative',
+                            position: 'absolute',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            width: '100%',
+                            margin: 20,
                         }}
                     >
-                        <>{pager === 0 ? Page0 : pager === 1 ? Page1 : Page2}</>{' '}
-                        {(pager === 1 || pager === 0) && (
-                            <>
-                                <Button
-                                    className="mobile-pressable-div"
-                                    size="small"
-                                    buttonStyle={{
-                                        position: 'absolute',
-                                        left: 3,
-                                        bottom: -50,
-                                        borderRadius: lib.layout.borderRadius.mediumish,
-                                        background: lib.colors.transparentWhite,
-                                        WebkitBackdropFilter: 'blur(30px)',
-                                        backdropFilter: 'blur(30px)',
-                                        boxShadow: lib.layout.boxShadow.basic,
-                                    }}
-                                    leftIcon={
-                                        <IoChevronBack
-                                            size={18}
-                                            color={lib.colors.primaryColor}
-                                            style={{
-                                                marginRight: 5,
-                                                marginLeft: -5,
-                                            }}
-                                        />
-                                    }
-                                    textStyle={{
-                                        color: lib.colors.primaryColor,
-                                        fontSize: 18,
-                                    }}
-                                    label="go back"
-                                    onClick={() => (pager === 0 ? closeModal() : setPage(0))}
-                                />{' '}
-                                <CurrencyToggler
-                                    pref={localCurrencyPref}
-                                    setPref={setLocalCurrencyPref}
-                                    containerStyle={{ position: 'absolute', right: 3, bottom: -45 }}
-                                    floaterStyle={{
-                                        background: lib.colors.transparentWhite,
-                                        boxShadow: lib.layout.boxShadow.basic,
-                                    }}
-                                />
-                            </>
-                        )}
+                        <animated.div
+                            style={{
+                                width: '93%',
+                                padding: '25px',
+                                position: 'relative',
+                                // pointerEvents: 'none',
+                                // ...sty,
+                                background: lib.colors.transparentWhite,
+                                transition: `.2s all ${lib.layout.animation}`,
+
+                                borderRadius: lib.layout.borderRadius.largish,
+                                boxShadow: lib.layout.boxShadow.basic,
+                                margin: '0rem',
+                                justifyContent: 'flex-start',
+                                backdropFilter: 'blur(10px)',
+                                WebkitBackdropFilter: 'blur(10px)',
+                                ...containerStyle,
+                                ...sty,
+                            }}
+                        >
+                            <>{pager === 0 ? Page0 : pager === 1 ? Page1 : Page2}</>{' '}
+                            {(pager === 1 || pager === 0) && (
+                                <>
+                                    <Button
+                                        className="mobile-pressable-div"
+                                        size="small"
+                                        buttonStyle={{
+                                            position: 'absolute',
+                                            left: 3,
+                                            bottom: -50,
+                                            borderRadius: lib.layout.borderRadius.mediumish,
+                                            background: lib.colors.transparentWhite,
+                                            WebkitBackdropFilter: 'blur(30px)',
+                                            backdropFilter: 'blur(30px)',
+                                            boxShadow: lib.layout.boxShadow.basic,
+                                        }}
+                                        leftIcon={
+                                            <IoChevronBackCircle
+                                                size={24}
+                                                color={lib.colors.primaryColor}
+                                                style={{
+                                                    marginRight: 5,
+                                                    marginLeft: -5,
+                                                }}
+                                            />
+                                        }
+                                        textStyle={{
+                                            color: lib.colors.primaryColor,
+                                            fontSize: 18,
+                                        }}
+                                        label="go back"
+                                        onClick={() => (pager === 0 ? closeModal() : setPage(0))}
+                                    />{' '}
+                                    <CurrencyToggler
+                                        pref={localCurrencyPref}
+                                        setPref={setLocalCurrencyPref}
+                                        containerStyle={{
+                                            position: 'absolute',
+                                            right: 3,
+                                            bottom: -45,
+                                        }}
+                                        floaterStyle={{
+                                            background: lib.colors.transparentWhite,
+                                            boxShadow: lib.layout.boxShadow.basic,
+                                        }}
+                                    />
+                                </>
+                            )}
+                        </animated.div>
                     </animated.div>
-                </animated.div>
-            ))}
+                );
+            })}
         </>
     );
 };
