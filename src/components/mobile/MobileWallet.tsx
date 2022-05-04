@@ -9,16 +9,14 @@ import client from '@src/client';
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
 import Label from '@src/components/general/Label/Label';
-import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Button from '@src/components/general/Buttons/Button/Button';
-import { useNuggftV1, usePrioritySendTransaction } from '@src/contracts/useContract';
-import { useMultiClaimArgs } from '@src/components/nugg/Wallet/tabs/ClaimTab/MultiClaimButton';
 import { Page } from '@src/interfaces/nuggbook';
 import InfoClicker from '@src/components/nuggbook/InfoClicker';
 import { LiveNuggItem } from '@src/client/interfaces';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
 import DualToggler from '@src/components/general/Buttons/DualToggler/DualToggler';
+import { ModalEnum } from '@src/interfaces/modals';
 
 import MyNuggItemListPhone from './MyNuggItemMobile';
 
@@ -75,6 +73,7 @@ const MobileConnectTab = () => {
 
 const MobileWallet: FunctionComponent<Props> = () => {
     const address = web3.hook.usePriorityAccount();
+    const openModal = client.modal.useOpenModal();
 
     const provider = web3.hook.usePriorityProvider();
     const connector = web3.hook.usePriorityConnector();
@@ -83,20 +82,20 @@ const MobileWallet: FunctionComponent<Props> = () => {
     const peer = web3.hook.usePriorityPeer();
 
     // const stake__eps = client.live.stake.eps();
-    const nuggs = client.live.myNuggs();
+    const nuggs = client.live.myNuggs().first(20);
     const loans = client.live.myLoans();
     const unclaimedOffers = client.live.myUnclaimedOffers();
 
-    const [pendingClaimsOpen, setPendingClaimsOpen] = React.useState(false);
+    // const [pendingClaimsOpen, setPendingClaimsOpen] = React.useState(false);
     const [loansOpen, setLoansOpen] = React.useState(false);
 
     const ens = web3.hook.usePriorityENSName(provider);
 
-    const nuggft = useNuggftV1(provider);
+    // const nuggft = useNuggftV1(provider);
 
-    const args = useMultiClaimArgs();
+    // const args = useMultiClaimArgs();
 
-    const { send } = usePrioritySendTransaction();
+    // const { send } = usePrioritySendTransaction();
 
     const setCurrencyPreference = client.usd.useSetCurrencyPreferrence();
     const currencyPreferrence = client.usd.useCurrencyPreferrence();
@@ -142,7 +141,6 @@ const MobileWallet: FunctionComponent<Props> = () => {
                         My Account
                     </Text>
                 </div>
-
                 <div
                     style={{
                         marginTop: '10px',
@@ -179,7 +177,6 @@ const MobileWallet: FunctionComponent<Props> = () => {
                         label="change accounts"
                     />
                 </div>
-
                 <DualToggler
                     LeftIcon={SiEthereum}
                     RightIcon={IoLogoUsd}
@@ -191,7 +188,6 @@ const MobileWallet: FunctionComponent<Props> = () => {
                     // floaterStyle={{ background: floaterColor }}
                     // containerStyle={floaterWrapperStyle}
                 />
-
                 <div style={{ width: '325px', paddingTop: '20px', paddingBottom: '20px' }}>
                     <div style={{ paddingTop: '20px', paddingBottom: '20px' }}>
                         <div
@@ -363,7 +359,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                 flexDirection: 'column',
                                 alignItems: 'flex-start',
                             }}
-                            onClick={() => setPendingClaimsOpen(!pendingClaimsOpen)}
+                            onClick={() => openModal({ modalType: ModalEnum.Claim })}
                             aria-hidden="true"
                         >
                             <div
@@ -408,7 +404,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                         text={unclaimedOffers.length.toString()}
                                         size="small"
                                     />
-                                    <IoIosArrowDroprightCircle
+                                    {/* <IoIosArrowDroprightCircle
                                         color="white"
                                         size={30}
                                         transform={pendingClaimsOpen ? 'rotate(90deg)' : ''}
@@ -416,8 +412,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                             WebkitTransform: pendingClaimsOpen
                                                 ? 'rotate(90deg)'
                                                 : '',
-                                        }}
-                                    />
+                                        }} /> */}
                                 </div>
                             </div>
                             <InfoClicker
@@ -427,7 +422,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                 buttonStyle={{ paddingTop: 0 }}
                             />
 
-                            {pendingClaimsOpen && (
+                            {/* {pendingClaimsOpen && (
                                 <div
                                     style={{
                                         marginTop: '-20px',
@@ -497,16 +492,14 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                         </div>
                                     ))}
                                 </div>
-                            )}
+                            )} */}
                         </div>
                     </div>
+                    <MyNuggItemListPhone />
                 </div>
-                <MyNuggItemListPhone />
             </div>
         ) : (
-            <>
-                <MobileConnectTab />
-            </>
+            <MobileConnectTab />
         )
     ) : null;
 };

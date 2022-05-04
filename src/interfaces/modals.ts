@@ -10,6 +10,7 @@ export enum ModalEnum {
     LoanInput,
     QrCode,
     Sell,
+    Claim,
 }
 
 export interface ModalDataBase {
@@ -22,6 +23,10 @@ export interface LoanModalData extends ModalDataBase {
     modalType: ModalEnum.Loan;
     tokenId: NuggId;
     actionType: 'burn' | 'loan';
+}
+
+export interface ClaimModalData extends ModalDataBase {
+    modalType: ModalEnum.Claim;
 }
 
 export interface OfferModalDataBase extends TokenIdFactoryBase, ModalDataBase {
@@ -81,4 +86,5 @@ export type ModalType =
     | QRCodeModalData
     | LoanInputModalData
     | MintModalData
+    | ClaimModalData
     | SellModalData;

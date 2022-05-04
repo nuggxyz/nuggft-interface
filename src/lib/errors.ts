@@ -54,7 +54,7 @@ export function parseJsonRpcError(input: unknown): Error | CustomError {
 export default { parseJsonRpcError, RevertError, prettify };
 
 export function prettify(
-    caller: 'offer-modal' | 'general',
+    caller: 'offer-modal' | 'general' | 'claim-modal' | 'sell-modal',
     input: Error | RevertError | undefined,
 ) {
     if (input === undefined) return 'no error';
@@ -78,7 +78,10 @@ export function prettify(
         case 'Revert(0xa3)': {
             return 'must claim nugg';
         }
+        case 'Revert(0xa5)': {
+            return 'invalid claim';
+        }
         default:
-            return `offer-modal error [${input.message}]`;
+            return `${caller} error [${input.message}]`;
     }
 }

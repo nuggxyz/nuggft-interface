@@ -5,11 +5,10 @@ import { IoChevronBackCircle } from 'react-icons/io5';
 
 import lib, { shortenTxnHash } from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
-import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
 import Button from '@src/components/general/Buttons/Button/Button';
 import client from '@src/client';
-import { SellModalData } from '@src/interfaces/modals';
+import { ClaimModalData } from '@src/interfaces/modals';
 import {
     useNuggftV1,
     usePrioritySendTransaction,
@@ -18,7 +17,6 @@ import {
 import { EthInt } from '@src/classes/Fraction';
 import { useUsdPair } from '@src/client/usd';
 import useAsyncState from '@src/hooks/useAsyncState';
-import Colors from '@src/lib/colors';
 import { gotoEtherscan } from '@src/web3/config';
 import CurrencyToggler, {
     useCurrencyTogglerState,
@@ -26,16 +24,16 @@ import CurrencyToggler, {
 import Label from '@src/components/general/Label/Label';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-import OffersList from '@src/components/nugg/RingAbout/OffersList';
 import Loader from '@src/components/general/Loader/Loader';
-import { DualCurrencyInputWithIcon } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
+import { useMultiClaimArgs } from '@src/components/nugg/Wallet/tabs/ClaimTab/MultiClaimButton';
 
 import { AnimatedConfirmation } from './OfferModalMobile';
 
-const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const isOpen = client.modal.useOpen();
+    const unclaimedOffers = client.live.myUnclaimedOffers();
 
-    const address = web3.hook.usePriorityAccount();
     const stake = client.static.stake();
 
     const provider = web3.hook.usePriorityProvider();
@@ -51,38 +49,16 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     const [amount, setAmount] = useState('0');
     const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');
 
+    const args = useMultiClaimArgs();
+
     useTransactionManager2(provider, hash, closeModal);
 
-    const amountUsd = useUsdPair(amount);
-
     const populatedTransaction = React.useMemo(() => {
-        const value = amountUsd.eth.bignumber;
-        if (!value.isZero()) {
-            if (data.isItem()) {
-                return {
-                    tx: nuggft.populateTransaction['sell(uint24,uint16,uint96)'](
-                        data.sellingNuggId.toRawId(),
-                        data.tokenId.toRawId(),
-                        value,
-                    ),
-
-                    amount: value,
-                };
-            }
-            return {
-                tx: nuggft.populateTransaction['sell(uint24,uint96)'](
-                    data.tokenId.toRawId(),
-                    value,
-                ),
-                amount: value,
-            };
-        }
-
-        return undefined;
-    }, [nuggft, amountUsd, address, data]);
+        return { amount: args[0].length, tx: nuggft.populateTransaction.claim(...args) };
+    }, [nuggft, args]);
 
     const estimation = useAsyncState(() => {
-        if (populatedTransaction && network) {
+        if (network) {
             return Promise.all([
                 estimator.estimate(populatedTransaction.tx),
                 network?.getGasPrice(),
@@ -90,7 +66,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                 gasLimit: _data[0] || BigNumber.from(0),
                 gasPrice: new EthInt(_data[1] || 0),
                 mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
-                amount: populatedTransaction.amount,
+                amount: args[0].length,
             }));
         }
 
@@ -188,30 +164,29 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
 
     const calculating = React.useMemo(() => {
         if (estimator.error) return false;
-        if (populatedTransaction && estimation) {
-            if (populatedTransaction.amount.eq(estimation.amount)) return false;
+        if (estimation) {
+            if (populatedTransaction.amount === estimation.amount) return false;
         }
         return true;
-    }, [populatedTransaction, estimation]);
+    }, [populatedTransaction, estimation, estimator.error]);
 
     const globalCurrencyPref = client.usd.useCurrencyPreferrence();
 
     const [localCurrencyPref, setLocalCurrencyPref] = useCurrencyTogglerState(globalCurrencyPref);
 
+    const ethclaims = React.useMemo(() => {
+        return unclaimedOffers.reduce((prev, curr) => prev.add(curr.eth), new EthInt(0));
+    }, [unclaimedOffers]);
+
+    const ethclaimsUsd = useUsdPair(ethclaims);
+    const estimatedGasUsd = useUsdPair(estimation?.mul);
+
     const Page0 = React.useMemo(
         () => (
             <>
                 <Text size="larger" textStyle={{ marginTop: 10 }}>
-                    Minimum
+                    Pending Claims
                 </Text>
-
-                <CurrencyText
-                    unitOverride={localCurrencyPref}
-                    forceEth
-                    stopAnimation
-                    size="larger"
-                    value={epsUsd}
-                />
 
                 <div
                     style={{
@@ -236,66 +211,10 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                                 size="small"
                                 containerStyles={{ background: lib.colors.red }}
                                 textStyle={{ color: 'white' }}
-                                text={lib.errors.prettify('sell-modal', estimator.error)}
+                                text={lib.errors.prettify('claim-modal', estimator.error)}
                             />
                         ) : null}
                     </div>
-                </div>
-
-                <div
-                    style={{
-                        display: 'flex',
-                        width: '100%',
-                        alignItems: 'flex-end',
-                        padding: '.5rem',
-                    }}
-                >
-                    <DualCurrencyInputWithIcon
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            width: '100%',
-                            color: lib.colors.primaryColor,
-                            position: 'relative',
-                        }}
-                        styleInput={{
-                            fontSize: 32,
-                            color: lib.colors.primaryColor,
-                            textAlign: 'center',
-                        }}
-                        // styleHeading={styles.heading}
-                        styleInputContainer={{
-                            textAlign: 'left',
-                            width: '100%',
-                            background: Colors.transparentPrimaryColorSuper,
-                            padding: '.3rem .6rem',
-                            borderRadius: lib.layout.borderRadius.mediumish,
-                        }}
-                        currencyPref={localCurrencyPref}
-                        // label={t`Enter amount`}
-                        setValue={wrappedSetAmount}
-                        value={amount}
-                        code
-                        className="placeholder-white"
-                    />
-                </div>
-                <div
-                    style={{
-                        display: 'flex',
-                        width: '100%',
-                        justifyContent: 'flex-start',
-                        padding: '10px 0',
-                        overflow: 'scroll',
-                    }}
-                >
-                    <IncrementButton increment={BigInt(5)} />
-                    <IncrementButton increment={BigInt(10)} />
-                    <IncrementButton increment={BigInt(15)} />
-                    <IncrementButton increment={BigInt(20)} />
-                    <IncrementButton increment={BigInt(25)} />
-                    <IncrementButton increment={BigInt(30)} />
                 </div>
 
                 <Button
@@ -332,65 +251,50 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
             isOpen && peer ? (
                 <>
                     {/* <StupidMfingHack /> */}
-                    <TokenViewer
-                        tokenId={data.tokenId}
-                        style={{ width: '150px', height: '150px' }}
-                    />
+
                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                        Token Being Sold
+                        New Nugg Claims
                     </Text>
                     <CurrencyText
                         size="large"
                         stopAnimation
                         showUnit={false}
                         value={0}
-                        str={`${data.tokenId.toPrettyId()} [ERC 721]`}
-                    />
-                    {/* <Text size="large" textStyle={{ marginTop: 10 }}>
-                        Minimum
-                    </Text>
-                    <CurrencyText
-                        unitOverride={localCurrencyPref}
-                        forceEth
-                        size="large"
-                        stopAnimation
-                        value={epsUsd}
-                    /> */}
-                    <Text size="large" textStyle={{ marginTop: 10 }}>
-                        My Asking Price
-                    </Text>
-                    <CurrencyText
-                        unitOverride={localCurrencyPref}
-                        forceEth
-                        size="large"
-                        stopAnimation
-                        value={amountUsd}
+                        str={`${unclaimedOffers.filter((x) => x.isNugg() && x.leader).length}`}
                     />
 
-                    {localCurrencyPref === 'USD' && (
-                        <>
-                            <Text size="large" textStyle={{ marginTop: 10 }}>
-                                My Asking Price (saved on-chain)
-                            </Text>
-                            {/* <div
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    width: '100%',
-                                    justifyContent: 'flex-start',
-                                }}
-                            > */}
-                            <CurrencyText
-                                unitOverride="ETH"
-                                forceEth
-                                size="large"
-                                stopAnimation
-                                value={amountUsd}
-                            />
-                            {/* <Label text={"stored on "}/>
-                            </div> */}
-                        </>
-                    )}
+                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                        New Item Claims
+                    </Text>
+                    <CurrencyText
+                        size="large"
+                        stopAnimation
+                        showUnit={false}
+                        value={0}
+                        str={`${unclaimedOffers.filter((x) => x.isItem() && x.leader).length}`}
+                    />
+
+                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                        Eth Claims
+                    </Text>
+                    <CurrencyText
+                        unitOverride={localCurrencyPref}
+                        forceEth
+                        size="large"
+                        stopAnimation
+                        value={ethclaimsUsd}
+                    />
+
+                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                        Estimated Gas Price
+                    </Text>
+                    <CurrencyText
+                        unitOverride={localCurrencyPref}
+                        forceEth
+                        size="large"
+                        stopAnimation
+                        value={estimatedGasUsd}
+                    />
 
                     <div
                         style={{
@@ -480,14 +384,14 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                 </>
             ) : null,
         [
-            amountUsd,
             setPage,
             isOpen,
             send,
             populatedTransaction,
             peer,
-            epsUsd,
-            data.tokenId,
+            estimatedGasUsd,
+            ethclaimsUsd,
+            unclaimedOffers,
             localCurrencyPref,
         ],
     );
@@ -571,7 +475,6 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                                 textStyle={{ color: 'white' }}
                                 containerStyles={{ background: lib.colors.green, marginBottom: 20 }}
                             />
-                            <OffersList tokenId={data.tokenId} onlyLeader />
                         </div>
                     )}
 
@@ -600,7 +503,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                 </div>
             </>
         ) : null;
-    }, [transaction, isOpen, closeModal, setPage, chainId, data.tokenId, hash]);
+    }, [transaction, isOpen, closeModal, setPage, chainId, hash]);
 
     return (
         <>
@@ -692,4 +595,4 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     );
 };
 
-export default SellNuggOrItemModalMobile;
+export default ClaimModalMobile;

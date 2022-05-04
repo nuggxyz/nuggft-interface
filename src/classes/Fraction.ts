@@ -7,7 +7,7 @@ import { toEth, TWO_128, TWO_96, ETH_ONE, TWO_16 } from '@src/lib/conversion';
 import { toGwei } from '@src/lib/index';
 
 // eslint-disable-next-line no-use-before-define
-export type Fractionish = BigNumberish | ImmutableFraction;
+export type Fractionish = BigNumberish | { num: BigNumber; den: BigNumber };
 
 export class ImmutableFraction {
     public readonly num: BigNumber;

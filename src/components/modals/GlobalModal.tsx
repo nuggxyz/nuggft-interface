@@ -6,6 +6,7 @@ import useDimentions from '@src/client/hooks/useDimentions';
 import ModalWrapperMobile from '@src/components/mobile/ModalWrapperMobile';
 import OfferModalMobile from '@src/components/mobile/OfferModalMobile';
 import SellNuggOrItemModalMobile from '@src/components/mobile/SellModalMobile';
+import ClaimModalMobile from '@src/components/mobile/ClaimModalMobile';
 
 import LoanInputModal from './LoanInputModal/LoanInputModal';
 import LoanOrBurnModal from './LoanOrBurnModal/LoanOrBurnModal';
@@ -28,8 +29,11 @@ export const ModalSwitch = () => {
             ) : (
                 <SellNuggOrItemModal data={data} />
             );
+        case ModalEnum.Claim:
+            return isPhone ? <ClaimModalMobile data={data} /> : null;
         case ModalEnum.Mint:
             return <MintModal data={data} />;
+
         case ModalEnum.QrCode:
             return <QrCodeModal data={data} />;
         case ModalEnum.LoanInput:
