@@ -33,38 +33,10 @@ import CurrencyToggler, {
     useCurrencyTogglerState,
 } from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 
-// const go = async (address: string, blocknum: number) => {
-//     // const res = await fetch(`https://rinkeby.etherscan.io/txsPending?a=${address}&m=hf`, {
-//     //     method: 'POST',
-//     // });
-
-//     // const text = await res.text();
-
-//     // console.log(blocknum, text);
-//     const hist = await etherscan.getHistory(address, blocknum);
-
-//     console.log('hist', hist);
-// };
-
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
 
     const address = web3.hook.usePriorityAccount();
-
-    // const blocknum = client.live.blocknum();
-
-    // React.useEffect(() => {
-    //     if (address && blocknum) {
-    //         const end = setInterval(() => {
-    //             void go(address, blocknum - 100);
-    //         }, 1000);
-
-    //         return () => {
-    //             clearInterval(end);
-    //         };
-    //     }
-    //     return undefined;
-    // }, [address, blocknum]);
 
     useMountLogger('OfferModal');
     const network = web3.hook.useNetworkProvider();
@@ -119,7 +91,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
                 nuggft.itemAgency(data.nuggToBuyFrom.toRawId(), data.tokenId.toRawId()),
             ]).then((_data) => {
-                console.log({ _data });
                 return { ..._data[0], ...lib.parse.agency(_data[1]) };
             });
         }
@@ -399,7 +370,16 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 /> */}
             </>
         ),
-        [check, amount, estimation, setPage, estimation, calculating, localCurrencyPref],
+        [
+            amount,
+            setPage,
+            calculating,
+            localCurrencyPref,
+            IncrementButton,
+            currentPrice,
+            estimator.error,
+            myBalance,
+        ],
     );
 
     const Page1 = React.useMemo(
@@ -551,7 +531,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         [
             amountUsd,
             paymentUsd,
-            check,
             setPage,
             isOpen,
             send,
@@ -559,6 +538,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             peer,
             currentBid,
             data.tokenId,
+            localCurrencyPref,
         ],
     );
 
