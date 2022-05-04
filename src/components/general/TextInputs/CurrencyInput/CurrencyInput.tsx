@@ -1,6 +1,8 @@
 import React, { FunctionComponent, useCallback } from 'react';
+import { SiEthereum } from 'react-icons/si';
+import { IoLogoUsd } from 'react-icons/io5';
 
-import { escapeRegExp } from '@src/lib';
+import lib, { escapeRegExp } from '@src/lib';
 import TextInput, { TextInputProps } from '@src/components/general/TextInputs/TextInput/TextInput';
 import { useUsdPair } from '@src/client/usd';
 import { EthInt } from '@src/classes/Fraction';
@@ -96,4 +98,42 @@ export const DualCurrencyInput: FunctionComponent<DualProps> = ({
     );
 
     return <CurrencyInput value={innerValue} setValue={setValWrapper} {...props} />;
+};
+
+interface DualIconProps extends Omit<DualProps, 'leftToggles'> {
+    iconColor?: string;
+    iconSize?: number;
+    iconStyle?: React.CSSProperties;
+}
+
+export const DualCurrencyInputWithIcon: FunctionComponent<DualIconProps> = ({
+    iconColor = lib.colors.primaryColor,
+    iconSize = 32,
+    iconStyle,
+    currencyPref,
+    style,
+    ...props
+}) => {
+    return (
+        <DualCurrencyInput
+            leftToggles={[
+                currencyPref === 'ETH' ? (
+                    <SiEthereum
+                        color={iconColor}
+                        size={iconSize}
+                        style={{ left: 10, position: 'absolute', height: '100%', ...iconStyle }}
+                    />
+                ) : (
+                    <IoLogoUsd
+                        color={iconColor}
+                        size={iconSize}
+                        style={{ left: 10, position: 'absolute', height: '100%', ...iconStyle }}
+                    />
+                ),
+            ]}
+            currencyPref={currencyPref}
+            style={{ position: 'relative', ...style } as React.CSSProperties}
+            {...props}
+        />
+    );
 };

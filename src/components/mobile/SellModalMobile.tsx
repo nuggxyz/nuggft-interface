@@ -1,11 +1,9 @@
 import React, { startTransition, useState } from 'react';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
 import { BigNumber } from 'ethers';
-import { IoChevronBackCircle, IoLogoUsd } from 'react-icons/io5';
-import { SiEthereum } from 'react-icons/si';
+import { IoChevronBackCircle } from 'react-icons/io5';
 
 import lib, { shortenTxnHash } from '@src/lib';
-import { DualCurrencyInput } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
@@ -30,6 +28,7 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import OffersList from '@src/components/nugg/RingAbout/OffersList';
 import Loader from '@src/components/general/Loader/Loader';
+import { DualCurrencyInputWithIcon } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 
 import { AnimatedConfirmation } from './OfferModalMobile';
 
@@ -251,7 +250,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                         padding: '.5rem',
                     }}
                 >
-                    <DualCurrencyInput
+                    <DualCurrencyInputWithIcon
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -261,21 +260,6 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                             color: lib.colors.primaryColor,
                             position: 'relative',
                         }}
-                        leftToggles={[
-                            localCurrencyPref === 'ETH' ? (
-                                <SiEthereum
-                                    color={lib.colors.primaryColor}
-                                    size={32}
-                                    style={{ left: 10, position: 'absolute', height: '100%' }}
-                                />
-                            ) : (
-                                <IoLogoUsd
-                                    color={lib.colors.primaryColor}
-                                    size={32}
-                                    style={{ left: 10, position: 'absolute', height: '100%' }}
-                                />
-                            ),
-                        ]}
                         styleInput={{
                             fontSize: 32,
                             color: lib.colors.primaryColor,

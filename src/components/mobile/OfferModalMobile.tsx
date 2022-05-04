@@ -6,7 +6,6 @@ import { IoChevronBackCircle } from 'react-icons/io5';
 import useAsyncState from '@src/hooks/useAsyncState';
 import lib, { shortenTxnHash } from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
-import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import Layout from '@src/lib/layout';
@@ -32,6 +31,7 @@ import { useUsdPair, useUsdPairWithCalculation } from '@src/client/usd';
 import CurrencyToggler, {
     useCurrencyTogglerState,
 } from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
+import { DualCurrencyInputWithIcon } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
@@ -298,7 +298,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 </div>
 
                 <div style={styles.inputContainer}>
-                    <CurrencyInput
+                    <DualCurrencyInputWithIcon
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -325,6 +325,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         value={amount}
                         code
                         className="placeholder-white"
+                        currencyPref={localCurrencyPref}
                     />
                 </div>
                 <div
