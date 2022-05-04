@@ -337,7 +337,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                         style={{ width: '150px', height: '150px' }}
                     />
                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                        Token
+                        Token Being Sold
                     </Text>
                     <CurrencyText
                         size="large"
@@ -346,7 +346,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                         value={0}
                         str={`${data.tokenId.toPrettyId()} [ERC 721]`}
                     />
-                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                    {/* <Text size="large" textStyle={{ marginTop: 10 }}>
                         Minimum
                     </Text>
                     <CurrencyText
@@ -355,7 +355,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                         size="large"
                         stopAnimation
                         value={epsUsd}
-                    />
+                    /> */}
                     <Text size="large" textStyle={{ marginTop: 10 }}>
                         My Asking Price
                     </Text>
@@ -367,16 +367,30 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                         value={amountUsd}
                     />
 
-                    <Text size="large" textStyle={{ marginTop: 10 }}>
-                        Payment
-                    </Text>
-                    <CurrencyText
-                        unitOverride={localCurrencyPref}
-                        forceEth
-                        size="largerish"
-                        stopAnimation
-                        value={amountUsd}
-                    />
+                    {localCurrencyPref === 'USD' && (
+                        <>
+                            <Text size="large" textStyle={{ marginTop: 10 }}>
+                                My Asking Price (saved on-chain)
+                            </Text>
+                            {/* <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    width: '100%',
+                                    justifyContent: 'flex-start',
+                                }}
+                            > */}
+                            <CurrencyText
+                                unitOverride="ETH"
+                                forceEth
+                                size="large"
+                                stopAnimation
+                                value={amountUsd}
+                            />
+                            {/* <Label text={"stored on "}/>
+                            </div> */}
+                        </>
+                    )}
 
                     <div
                         style={{

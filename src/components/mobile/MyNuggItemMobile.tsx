@@ -10,6 +10,9 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import Label from '@src/components/general/Label/Label';
 import { MyNuggsData, UnclaimedOffer } from '@src/client/interfaces';
 import client from '@src/client';
+import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
+import { buildTokenIdFactory } from '@src/prototypes';
+import { ModalEnum } from '@src/interfaces/modals';
 
 const MyNuggItemListMobile: FC<unknown> = () => {
     const nuggs = client.live.myNuggs();
@@ -42,6 +45,8 @@ const MyNuggItemListMobile: FC<unknown> = () => {
 };
 
 const MyNuggItem: FC<{ item: MyNuggsData; claims: UnclaimedOffer[] }> = ({ item, claims }) => {
+    const openModal = client.modal.useOpenModal();
+
     const navigate = useNavigate();
     return (
         <div
@@ -167,7 +172,7 @@ const MyNuggItem: FC<{ item: MyNuggsData; claims: UnclaimedOffer[] }> = ({ item,
                 </div>
             ) : null}
 
-            {claims.length > 0 && (
+            {claims.length > 0 ? (
                 <div
                     style={{
                         position: 'absolute',
@@ -227,6 +232,41 @@ const MyNuggItem: FC<{ item: MyNuggsData; claims: UnclaimedOffer[] }> = ({ item,
                         </div>
                     </div>
                     {/* ))} */}
+                </div>
+            ) : (
+                <div
+                    style={{
+                        position: 'absolute',
+                        bottom: 5,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        width: '100%',
+                        justifyContent: 'center',
+                        alignItems: 'end',
+                        textAlign: 'center',
+                    }}
+                >
+                    <Button
+                        buttonStyle={{
+                            ...styles.goToSwap,
+                        }}
+                        textStyle={{
+                            ...styles.goToSwapGradient,
+                            padding: '.2rem',
+                            fontSize: '10px',
+                        }}
+                        label={t`put up for sale`}
+                        // rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
+                        onClick={() => {
+                            openModal(
+                                buildTokenIdFactory({
+                                    modalType: ModalEnum.Sell as const,
+                                    tokenId: item.tokenId,
+                                    sellingNuggId: null,
+                                }),
+                            );
+                        }}
+                    />
                 </div>
             )}
             {/* {Number(item.feature) !== constants.FEATURE_BASE &&
