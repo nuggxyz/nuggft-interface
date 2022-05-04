@@ -32,6 +32,7 @@ import SwapListPhone from '@src/components/nugg/ViewingNugg/SwapListPhone';
 import { ItemListPhone } from '@src/components/nugg/ViewingNugg/ItemList';
 import BradPittList from '@src/components/general/List/BradPittList';
 import { useUsdPair } from '@src/client/usd';
+import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 
 const Info = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
@@ -148,13 +149,14 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const lifecycle = useLifecycle(token);
 
     const { minutes, seconds } = useRemaining(token?.activeSwap?.epoch);
+    const [leader] = useAggregatedOffers(tokenId);
 
     const trueSeconds = useRemainingTrueSeconds(seconds);
     const provider = web3.hook.usePriorityProvider();
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         token && token.type === 'item' ? 'nugg' : provider,
-        swap?.leader || '',
+        leader?.account || '',
     );
 
     const nuggft = useNuggftV1();
@@ -171,7 +173,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
         return undefined;
     }, [swap, nuggft, tokenId, provider]);
 
-    const swapCurrency = useUsdPair(swap?.eth?.number || vfo);
+    const swapCurrency = useUsdPair(leader?.eth || vfo);
 
     return (
         <>

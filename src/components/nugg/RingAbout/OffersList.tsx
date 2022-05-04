@@ -70,7 +70,7 @@ export default ({
 }) => {
     const swap = client.swaps.useSwap(tokenId);
 
-    const offers = useAggregatedOffers(tokenId);
+    const [leader, ...others] = useAggregatedOffers(tokenId);
     const token = client.live.token(tokenId);
     const lifecycle = useLifecycle(token);
     const type = client.live.lastSwap.type();
@@ -80,24 +80,15 @@ export default ({
 
     const [open, setOpen] = useState(screenType === 'tablet');
 
-    const { leader, others } = React.useMemo(() => {
-        const tmp = offers || [];
-
-        return {
-            leader: tmp[0],
-            others: tmp.last(tmp.length - 1),
-        };
-    }, [offers]);
-
     const leaderEth = client.usd.useUsdPair(leader?.eth);
 
     const { distribution, ownerEns } = useDistribution(swap);
 
     useEffect(() => {
-        if (offers && offers.length === 1 && open && screenType !== 'tablet') {
+        if (Array.isArray(others) && others.length === 0 && open && screenType !== 'tablet') {
             setOpen(false);
         }
-    }, [open, offers, screenType]);
+    }, [open, others, screenType]);
 
     const springStyle = useSpring({
         ...styles.offersContainer,

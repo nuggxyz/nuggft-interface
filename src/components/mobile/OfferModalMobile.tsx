@@ -33,8 +33,6 @@ import CurrencyToggler, {
     useCurrencyTogglerState,
 } from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 
-// eslint-disable-next-line import/no-cycle
-
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
 
@@ -44,16 +42,11 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const chainId = web3.hook.usePriorityChainId();
     const userBalance = web3.hook.usePriorityBalance(network);
     const peer = web3.hook.usePriorityPeer();
-
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
-
     const [page, setPage] = client.modal.usePhase();
-
     const { send, estimation: estimator, hash } = usePrioritySendTransaction();
-
     const transaction = useTransactionManager2(network, hash);
-
     const [amount, setAmount] = useState('0');
     const [lastPressed, setLastPressed] = React.useState('5');
 
@@ -119,6 +112,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         React.useMemo(
             () =>
                 ([_amount, _check]) => {
+                    // was running into issue where "value" inside populatedTransaction was negative
                     const copy = _amount.copy();
                     if (copy.gt(0)) return copy.sub(_check);
                     return new EthInt(0);
@@ -129,7 +123,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const populatedTransaction = React.useMemo(() => {
         const value = paymentUsd.eth.bignumber;
-        console.log('value: ', value, estimator);
         if (!paymentUsd.eth.eq(0)) {
             if (data.isItem()) {
                 return {
