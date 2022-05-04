@@ -132,7 +132,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
                             isGwei
                                 ? (val * 10 ** 9).toFixed(decimals)
                                 : val > 1
-                                ? CurrencyInt.format(val)
+                                ? CurrencyInt.format(val, unit === 'USD' ? 2 : 3)
                                 : val.toFixed(percent ? 2 : decimals || 5),
                         )}
                     </animated.div>

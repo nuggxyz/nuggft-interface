@@ -1,47 +1,48 @@
 import React, { startTransition, useState } from 'react';
-import { BigNumber } from 'ethers';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
-import { IoChevronBackCircle } from 'react-icons/io5';
+import { BigNumber } from 'ethers';
+import { IoChevronBackCircle, IoLogoUsd } from 'react-icons/io5';
+import { SiEthereum } from 'react-icons/si';
 
-import useAsyncState from '@src/hooks/useAsyncState';
 import lib, { shortenTxnHash } from '@src/lib';
-import Button from '@src/components/general/Buttons/Button/Button';
-import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
+import { DualCurrencyInput } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import Layout from '@src/lib/layout';
 import web3 from '@src/web3';
+import Button from '@src/components/general/Buttons/Button/Button';
 import client from '@src/client';
-import Colors from '@src/lib/colors';
-import Label from '@src/components/general/Label/Label';
-import { EthInt } from '@src/classes/Fraction';
-import { OfferModalData } from '@src/interfaces/modals';
+import { SellModalData } from '@src/interfaces/modals';
 import {
     useNuggftV1,
     usePrioritySendTransaction,
     useTransactionManager2,
 } from '@src/contracts/useContract';
-import styles from '@src/components/modals/OfferModal/OfferModal.styles';
-import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-import Loader from '@src/components/general/Loader/Loader';
-import useMountLogger from '@src/hooks/useMountLogger';
-import NLStaticImage from '@src/components/general/NLStaticImage';
+import { EthInt } from '@src/classes/Fraction';
+import { useUsdPair } from '@src/client/usd';
+import useAsyncState from '@src/hooks/useAsyncState';
+import Colors from '@src/lib/colors';
 import { gotoEtherscan } from '@src/web3/config';
-import OffersList from '@src/components/nugg/RingAbout/OffersList';
-import { useUsdPair, useUsdPairWithCalculation } from '@src/client/usd';
 import CurrencyToggler, {
     useCurrencyTogglerState,
 } from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
+import Label from '@src/components/general/Label/Label';
+import NLStaticImage from '@src/components/general/NLStaticImage';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import OffersList from '@src/components/nugg/RingAbout/OffersList';
+import Loader from '@src/components/general/Loader/Loader';
 
-const OfferModal = ({ data }: { data: OfferModalData }) => {
+import { AnimatedConfirmation } from './OfferModalMobile';
+
+const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     const isOpen = client.modal.useOpen();
 
     const address = web3.hook.usePriorityAccount();
+    const stake = client.static.stake();
 
-    useMountLogger('OfferModal');
+    const provider = web3.hook.usePriorityProvider();
+
     const network = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
-    const userBalance = web3.hook.usePriorityBalance(network);
     const peer = web3.hook.usePriorityPeer();
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
@@ -49,107 +50,37 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const { send, estimation: estimator, hash } = usePrioritySendTransaction();
     const transaction = useTransactionManager2(network, hash);
     const [amount, setAmount] = useState('0');
-    const [lastPressed, setLastPressed] = React.useState('5');
+    const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');
 
-    const check = useAsyncState<{
-        canOffer: boolean | undefined;
-        next: BigNumber | undefined;
-        curr: BigNumber | undefined;
-        eth: EthInt | undefined;
-    }>(() => {
-        if (data.tokenId && address && chainId && network) {
-            if (data.isNugg()) {
-                return Promise.all([
-                    nuggft['check(address,uint24)'](address, data.tokenId.toRawId()).then((x) => {
-                        return {
-                            canOffer: x.canOffer,
-                            next: x.next,
-                            curr: x.current,
-                        };
-                    }),
-                    nuggft.msp(),
-                    nuggft.agency(data.tokenId.toRawId()),
-                ]).then((_data) => {
-                    const agency = lib.parse.agency(_data[2]);
-                    if (agency.eth.eq(0)) agency.eth = new EthInt(_data[1]);
-                    return { ..._data[0], ...agency };
-                });
-            }
-
-            return Promise.all([
-                nuggft['check(uint24,uint24,uint16)'](
-                    data.nuggToBuyFor.toRawIdNum(),
-                    data.nuggToBuyFrom.toRawId(),
-                    data.tokenId.toRawId(),
-                ).then((x) => {
-                    return {
-                        canOffer: x.canOffer,
-                        next: x.next,
-                        curr: x.current,
-                    };
-                }),
-
-                nuggft.itemAgency(data.nuggToBuyFrom.toRawId(), data.tokenId.toRawId()),
-            ]).then((_data) => {
-                return { ..._data[0], ...lib.parse.agency(_data[1]) };
-            });
-        }
-        return undefined;
-    }, [address, chainId, network, data.nuggToBuyFor, data.nuggToBuyFrom]);
-
-    React.useEffect(() => {
-        if (check && check.eth && amount === '0') {
-            setAmount(check.eth.copy().increase(BigInt(5)).number.toFixed(5));
-        }
-    }, [amount, check]);
+    useTransactionManager2(provider, hash, closeModal);
 
     const amountUsd = useUsdPair(amount);
-    const currentPrice = useUsdPair(check?.eth);
-    const myBalance = useUsdPair(userBalance?.number);
-    const currentBid = useUsdPair(check?.curr);
-    const paymentUsd = useUsdPairWithCalculation(
-        React.useMemo(() => [amount, check?.curr || 0], [amount, check]),
-        React.useMemo(
-            () =>
-                ([_amount, _check]) => {
-                    // was running into issue where "value" inside populatedTransaction was negative
-                    const copy = _amount.copy();
-                    if (copy.gt(0)) return copy.sub(_check);
-                    return new EthInt(0);
-                },
-            [],
-        ),
-    );
 
     const populatedTransaction = React.useMemo(() => {
-        const value = paymentUsd.eth.bignumber;
-        if (!paymentUsd.eth.eq(0)) {
+        const value = amountUsd.eth.bignumber;
+        if (!value.isZero()) {
             if (data.isItem()) {
                 return {
-                    tx: nuggft.populateTransaction['offer(uint24,uint24,uint16)'](
-                        data.nuggToBuyFor.toRawId(),
-                        data.nuggToBuyFrom.toRawId(),
+                    tx: nuggft.populateTransaction['sell(uint24,uint16,uint96)'](
+                        data.sellingNuggId.toRawId(),
                         data.tokenId.toRawId(),
-                        {
-                            value,
-                            from: address,
-                        },
+                        value,
                     ),
+
                     amount: value,
                 };
             }
             return {
-                tx: nuggft.populateTransaction['offer(uint24)'](data.tokenId.toRawId(), {
-                    from: address,
+                tx: nuggft.populateTransaction['sell(uint24,uint96)'](
+                    data.tokenId.toRawId(),
                     value,
-                    // gasLimit: toGwei('120000'),
-                }),
+                ),
                 amount: value,
             };
         }
 
         return undefined;
-    }, [nuggft, paymentUsd, address, data]);
+    }, [nuggft, amountUsd, address, data]);
 
     const estimation = useAsyncState(() => {
         if (populatedTransaction && network) {
@@ -167,13 +98,38 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         return undefined;
     }, [populatedTransaction, network]);
 
+    const eps = useAsyncState(() => {
+        return nuggft.eps();
+    }, [nuggft, stake]);
+
+    const epsUsd = useUsdPair(eps);
+
+    const [valueIsSet, setValue] = React.useReducer(() => true, false);
+
+    const wrappedSetAmount = React.useCallback(
+        (amt: string) => {
+            setAmount(amt);
+            setLastPressed(undefined);
+        },
+        [setAmount, setLastPressed],
+    );
+
+    React.useEffect(() => {
+        if (eps && epsUsd && epsUsd.eth && !valueIsSet) {
+            wrappedSetAmount(epsUsd.eth.copy().increase(BigInt(5)).number.toFixed(5));
+            setValue();
+        }
+    }, [amount, eps, epsUsd, epsUsd.eth, valueIsSet, setValue, wrappedSetAmount]);
+
     const IncrementButton = React.memo(({ increment }: { increment: bigint }) => {
         return (
             <Button
                 className="mobile-pressable-div"
                 label={`+${increment.toString()}%`}
                 onClick={() => {
-                    setAmount(check?.eth?.copy().increase(increment).number.toFixed(5) || '0');
+                    wrappedSetAmount(
+                        epsUsd.eth.copy().increase(increment).number.toFixed(5) || '0',
+                    );
                     setLastPressed(increment.toString());
                 }}
                 buttonStyle={{
@@ -247,7 +203,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         () => (
             <>
                 <Text size="larger" textStyle={{ marginTop: 10 }}>
-                    Current Price
+                    Minimum
                 </Text>
 
                 <CurrencyText
@@ -255,19 +211,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     forceEth
                     stopAnimation
                     size="larger"
-                    value={currentPrice}
+                    value={epsUsd}
                 />
 
-                <Text size="larger" textStyle={{ marginTop: 10 }}>
-                    My Balance
-                </Text>
-                <CurrencyText
-                    unitOverride={localCurrencyPref}
-                    forceEth
-                    size="larger"
-                    value={myBalance}
-                    stopAnimation
-                />
                 <div
                     style={{
                         display: 'flex',
@@ -297,8 +243,15 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     </div>
                 </div>
 
-                <div style={styles.inputContainer}>
-                    <CurrencyInput
+                <div
+                    style={{
+                        display: 'flex',
+                        width: '100%',
+                        alignItems: 'flex-end',
+                        padding: '.5rem',
+                    }}
+                >
+                    <DualCurrencyInput
                         style={{
                             display: 'flex',
                             flexDirection: 'column',
@@ -306,7 +259,23 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             alignItems: 'center',
                             width: '100%',
                             color: lib.colors.primaryColor,
+                            position: 'relative',
                         }}
+                        leftToggles={[
+                            localCurrencyPref === 'ETH' ? (
+                                <SiEthereum
+                                    color={lib.colors.primaryColor}
+                                    size={32}
+                                    style={{ left: 10, position: 'absolute', height: '100%' }}
+                                />
+                            ) : (
+                                <IoLogoUsd
+                                    color={lib.colors.primaryColor}
+                                    size={32}
+                                    style={{ left: 10, position: 'absolute', height: '100%' }}
+                                />
+                            ),
+                        ]}
                         styleInput={{
                             fontSize: 32,
                             color: lib.colors.primaryColor,
@@ -318,10 +287,11 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             width: '100%',
                             background: Colors.transparentPrimaryColorSuper,
                             padding: '.3rem .6rem',
-                            borderRadius: Layout.borderRadius.mediumish,
+                            borderRadius: lib.layout.borderRadius.mediumish,
                         }}
+                        currencyPref={localCurrencyPref}
                         // label={t`Enter amount`}
-                        setValue={setAmount}
+                        setValue={wrappedSetAmount}
                         value={amount}
                         code
                         className="placeholder-white"
@@ -370,16 +340,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 /> */}
             </>
         ),
-        [
-            amount,
-            setPage,
-            calculating,
-            localCurrencyPref,
-            IncrementButton,
-            currentPrice,
-            estimator.error,
-            myBalance,
-        ],
+        [amount, setPage, calculating, localCurrencyPref, IncrementButton, estimator.error, epsUsd],
     );
 
     const Page1 = React.useMemo(
@@ -402,17 +363,17 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         str={`${data.tokenId.toPrettyId()} [ERC 721]`}
                     />
                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                        My Current Bid
+                        Minimum
                     </Text>
                     <CurrencyText
                         unitOverride={localCurrencyPref}
                         forceEth
                         size="large"
                         stopAnimation
-                        value={currentBid}
+                        value={epsUsd}
                     />
                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                        My Desired Bid
+                        My Asking Price
                     </Text>
                     <CurrencyText
                         unitOverride={localCurrencyPref}
@@ -421,15 +382,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         stopAnimation
                         value={amountUsd}
                     />
-                    {/* <Text size="large" textStyle={{ marginTop: 10 }}>
-                        Estimated Gas Fee
-                    </Text>
-                    <CurrencyText
-                        size="large"
-                        stopAnimation
-                        value={estimation?.mul.number || 0}
-                        forceEth
-                    />{' '} */}
+
                     <Text size="large" textStyle={{ marginTop: 10 }}>
                         Payment
                     </Text>
@@ -438,7 +391,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         forceEth
                         size="largerish"
                         stopAnimation
-                        value={paymentUsd}
+                        value={amountUsd}
                     />
 
                     <div
@@ -530,13 +483,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             ) : null,
         [
             amountUsd,
-            paymentUsd,
             setPage,
             isOpen,
             send,
             populatedTransaction,
             peer,
-            currentBid,
+            epsUsd,
             data.tokenId,
             localCurrencyPref,
         ],
@@ -742,49 +694,4 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     );
 };
 
-export default OfferModal;
-
-export const AnimatedConfirmation = ({ confirmed }: { confirmed: boolean }) => {
-    return (
-        <div style={{ height: '90px', width: '90px' }}>
-            {!confirmed ? (
-                <Loader diameter="90px" color={lib.colors.primaryColor} />
-            ) : (
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
-                    <circle
-                        className="path circle"
-                        fill="none"
-                        stroke={lib.colors.green}
-                        strokeWidth="6"
-                        strokeMiterlimit="10"
-                        cx="65.1"
-                        cy="65.1"
-                        r="62.1"
-                        style={{
-                            strokeDasharray: 1000,
-                            strokeDashoffset: 0,
-                            WebkitAnimation: `Dash 0.9s ease-in-out`,
-                            animation: `Dash 0.9s ease-in-out`,
-                        }}
-                    />
-                    <polyline
-                        className="path check"
-                        fill="none"
-                        stroke={lib.colors.green}
-                        strokeWidth="6"
-                        strokeLinecap="round"
-                        strokeMiterlimit="10"
-                        points="100.2,40.2 51.5,88.8 29.8,67.5 "
-                        style={{
-                            strokeDasharray: 1000,
-                            // strokeDashoffset: 0,
-                            strokeDashoffset: -100,
-                            WebkitAnimation: `DashChecked 0.9s 0.35s ease-in-out forwards`,
-                            animation: `DashChecked 0.9s 0.35s ease-in-out forwards`,
-                        }}
-                    />
-                </svg>
-            )}
-        </div>
-    );
-};
+export default SellNuggOrItemModalMobile;

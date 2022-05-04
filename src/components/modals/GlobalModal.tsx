@@ -5,6 +5,7 @@ import client from '@src/client';
 import useDimentions from '@src/client/hooks/useDimentions';
 import ModalWrapperMobile from '@src/components/mobile/ModalWrapperMobile';
 import OfferModalMobile from '@src/components/mobile/OfferModalMobile';
+import SellNuggOrItemModalMobile from '@src/components/mobile/SellModalMobile';
 
 import LoanInputModal from './LoanInputModal/LoanInputModal';
 import LoanOrBurnModal from './LoanOrBurnModal/LoanOrBurnModal';
@@ -22,7 +23,11 @@ export const ModalSwitch = () => {
         case ModalEnum.Offer:
             return isPhone ? <OfferModalMobile data={data} /> : <OfferModal data={data} />;
         case ModalEnum.Sell:
-            return <SellNuggOrItemModal data={data} />;
+            return isPhone ? (
+                <SellNuggOrItemModalMobile data={data} />
+            ) : (
+                <SellNuggOrItemModal data={data} />
+            );
         case ModalEnum.Mint:
             return <MintModal data={data} />;
         case ModalEnum.QrCode:

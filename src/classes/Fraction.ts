@@ -251,13 +251,11 @@ export class CurrencyInt extends Fraction {
         });
     }
 
-    public static format(num: number) {
-        const digits = 3;
-
+    public static format(num: number, digits = 3) {
         if (num === 0) return '0';
         if (!num) return '-';
         if (num < 0.001) {
-            return '<0.001';
+            return digits === 2 ? '<0.01' : '<0.001';
         }
         return numbro(num).format({
             average: true,
@@ -267,7 +265,8 @@ export class CurrencyInt extends Fraction {
                 billion: 'B',
             },
             trimMantissa: false,
-            // totalLength: num > 1000 ? 2 : digits,
+
+            // totalLength: num > 1000 ? 2 : digits ,
         });
     }
 
