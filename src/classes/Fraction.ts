@@ -420,10 +420,10 @@ export class PairInt {
 
     public static fromUsdPrice(
         eth: Fractionish,
-        usdPrice: UsdInt,
+        usdPrice: number,
         preference = 'ETH' as 'ETH' | 'USD',
     ) {
         const ether = EthInt.tryParseFrac(eth);
-        return new PairInt(ether, ether.copy().asUsd(usdPrice), preference);
+        return new PairInt(ether, ether.copy().asUsd(new UsdInt(usdPrice)), preference);
     }
 }

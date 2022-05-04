@@ -3,7 +3,6 @@
 import React from 'react';
 
 import client from '@src/client';
-import useRecursiveTimeout from '@src/hooks/useRecursiveTimeout';
 import { Health } from '@src/client/interfaces';
 
 export const useRpcBackup = () => {
@@ -22,16 +21,9 @@ const ok = (abc: Health): abc is Required<Health> => {
 export const useHealth = () => {
     const health = client.live.health();
 
-    const [blockdiff, setBlockDiff] = React.useState(0);
-
-    useRecursiveTimeout(
-        React.useCallback(() => {
-            setBlockDiff(
-                (ok(health) && Math.abs(health.lastBlockGraph - health.lastBlockRpc)) || Number(0),
-            );
-        }, [health]),
-        5000,
-    );
+    const blockdiff = React.useMemo(() => {
+        return (ok(health) && Math.abs(health.lastBlockGraph - health.lastBlockRpc)) || Number(0);
+    }, [health]);
 
     const graphProblem = React.useMemo(() => {
         if (!ok(health)) return false;

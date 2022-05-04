@@ -11,6 +11,7 @@ import fontSize from './fontSize';
 import layout from './layout';
 import parse from './parse';
 import errors from './errors';
+import txdata from './txdata';
 import { userAgent } from './userAgent';
 
 // 6287103
@@ -443,6 +444,17 @@ export const rangeEnd = (start: number, end: number) => {
         .map((_, idx) => start + 1 + idx);
 };
 
-const lib = { colors, constants, conversion, fontSize, layout, parse, lodash, errors, userAgent };
+const lib = {
+    colors,
+    constants,
+    conversion,
+    fontSize,
+    layout,
+    parse,
+    lodash,
+    errors,
+    userAgent,
+    txdata,
+};
 
 export default lib;

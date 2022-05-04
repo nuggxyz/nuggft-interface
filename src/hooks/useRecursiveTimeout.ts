@@ -14,6 +14,7 @@ function useRecursiveTimeout<T>(callback: () => Promise<T> | void, delay: number
     useEffect(() => {
         let id: NodeJS.Timeout;
         function tick() {
+            console.log('Tick');
             const ret = savedCallback.current();
 
             if (ret instanceof Promise) {
@@ -32,6 +33,8 @@ function useRecursiveTimeout<T>(callback: () => Promise<T> | void, delay: number
         }
         return undefined;
     }, [delay]);
+
+    return null;
 }
 
 export default useRecursiveTimeout;

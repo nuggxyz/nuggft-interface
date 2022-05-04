@@ -50,7 +50,7 @@ const store = create(
 
 export const useCloseModalOnKeyboardClose = () => {
     // const close = store((state) => state.closeModal);
-    // emitter.on({
+    // emitter.useOn({
     //     type: emitter.events.KeyboardClosed,
     //     callback: React.useCallback(close, [close]),
     // });

@@ -4,21 +4,21 @@ import { combine } from 'zustand/middleware';
 import React from 'react';
 import { EtherscanProvider } from '@ethersproject/providers';
 
-import { EthInt, UsdInt, PairInt, Fractionish } from '@src/classes/Fraction';
+import { EthInt, PairInt, Fractionish } from '@src/classes/Fraction';
 
 const etherscan = new EtherscanProvider('mainnet', process.env.NUGG_APP_ETHERSCAN_KEY as string);
 
 const store = create(
     combine(
         {
-            price: new UsdInt(0),
+            price: 0,
             preference: 'USD' as 'ETH' | 'USD',
         },
         (set) => {
             const update = async () => {
                 const price = await etherscan.getEtherPrice();
                 set((draft) => {
-                    draft.price = new UsdInt(price);
+                    draft.price = price;
                 });
             };
 
@@ -53,7 +53,7 @@ export const useUsdPair = (input?: Fractionish | undefined | null) => {
     const preference = store((state) => state.preference);
 
     return React.useMemo(() => {
-        if (!input) return PairInt.fromUsdPrice(new EthInt(0), price, preference);
+        if (!input) return PairInt.fromUsdPrice(0, price, preference);
 
         return PairInt.fromUsdPrice(input, price, preference);
     }, [price, input, preference]);

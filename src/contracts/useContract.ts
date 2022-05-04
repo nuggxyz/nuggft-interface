@@ -1,4 +1,4 @@
-import { BaseContract, ContractInterface, PopulatedTransaction } from 'ethers';
+import { BaseContract, ContractInterface, PopulatedTransaction, BigNumber } from 'ethers';
 import React, { useMemo, useCallback } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
 import { t } from '@lingui/macro';
@@ -19,6 +19,9 @@ import client from '@src/client';
 import { Connector, CoreProvider } from '@src/web3/core/types';
 import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 import usePrevious from '@src/hooks/usePrevious';
+import useInterval from '@src/hooks/useInterval';
+import useDebounce from '@src/hooks/useDebounce';
+import { EtherscanProvider } from '@src/web3/classes/EtherscanProvider';
 
 function useContract<C extends BaseContract>(
     address: string,
@@ -105,6 +108,15 @@ export const useEstimateTransaction = (provider?: Web3Provider, from?: AddressSt
     return { error, gasLimit, estimate };
 };
 
+type SimpleTransactionData = {
+    to: AddressString;
+    value: BigNumber;
+    data: Hash;
+    from: AddressString;
+    startBlock: number;
+    sentAt: Date;
+};
+
 function useSendTransaction(
     network?: Web3Provider,
     authenticatedProvider?: Web3Provider,
@@ -135,17 +147,23 @@ function useSendTransaction(
 
     const estimation = useEstimateTransaction(network, from);
 
-    emitter.on({
+    const [pop, setPop] = React.useState<SimpleTransactionData>();
+
+    emitter.hook.useOn({
         type: emitter.events.PotentialTransactionReceipt,
         callback: React.useCallback(
             (arg) => {
-                if (hash === undefined && from && arg.from === from) {
+                if (hash === undefined && pop && arg.validate(pop.from, pop.data)) {
                     setHash(arg.txhash);
                 }
             },
-            [hash, setHash, from],
+            [hash, setHash, pop],
         ),
     });
+
+    const blocknum = client.live.blocknum();
+
+    useCheckEtherscanForUnknownTransactionHash(hash, setHash, setError, pop);
 
     const send = useCallback(
         async (
@@ -157,10 +175,18 @@ function useSendTransaction(
                     authenticatedConnector &&
                     authenticatedCoreProvider &&
                     authenticatedProvider &&
-                    from
+                    from &&
+                    blocknum
                 ) {
                     const tx = await ptx;
-
+                    setPop({
+                        to: tx!.to as AddressString,
+                        from: tx!.from as AddressString,
+                        value: tx.value || (BigNumber.from(0) as BigNumber),
+                        data: tx!.data as Hash,
+                        startBlock: blocknum - 10,
+                        sentAt: new Date(),
+                    });
                     if (authenticatedConnector.refreshPeer) authenticatedConnector.refreshPeer();
 
                     return Promise.all([
@@ -245,6 +271,7 @@ function useSendTransaction(
             from,
             addToast,
             toasts.length,
+            blocknum,
         ],
     );
     return { send, hash, error, estimation, rejected, clear };
@@ -265,6 +292,61 @@ export function usePrioritySendTransaction() {
         address as AddressString,
         undefined,
     );
+}
+
+export const useEtherscan = () => {
+    const chainId = web3.hook.usePriorityChainId();
+    return React.useMemo(() => {
+        return new EtherscanProvider(
+            web3.config.CHAIN_INFO[chainId || 1].label,
+            process.env.NUGG_APP_ETHERSCAN_KEY as string,
+        );
+    }, [chainId]);
+};
+
+export function useCheckEtherscanForUnknownTransactionHash(
+    found?: Hash,
+    setFound?: (input: Hash) => void,
+    setError?: (input: CustomError | Error) => void,
+    request?: SimpleTransactionData,
+) {
+    const etherscan = useEtherscan();
+
+    const isInactive = React.useMemo(() => {
+        if (!setFound || !request || found) return null;
+        return 5000;
+    }, [request, found, setFound]);
+
+    const val = useDebounce(isInactive, 5000);
+
+    const callback = React.useCallback(async () => {
+        if (!setFound || !request || found) return;
+
+        // https://docs.etherscan.io/api-endpoints/accounts
+        const res = await etherscan.getHistory(request.from, request.startBlock);
+
+        console.log({ res, request });
+        res.forEach((element) => {
+            if (
+                element.data === request.data &&
+                element.to === request.to &&
+                element.value.eq(request.value)
+            ) {
+                setFound(element.hash as Hash);
+                if (element.isError && element.errorCode && setError) {
+                    setError(lib.errors.parseJsonRpcError(element.errorCode));
+                }
+                emitter.emit({
+                    type: emitter.events.TransactionResponse,
+                    response: element,
+                });
+            }
+        });
+    }, [etherscan, request, setFound, found, setError]);
+
+    useInterval(callback, val);
+
+    return null;
 }
 
 export function useTransactionManager2(

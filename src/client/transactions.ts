@@ -114,7 +114,7 @@ export const useUpdateTransactionOnEmit = () => {
     const handleReceipt = useStore((store) => store.handleReceipt);
     const handleResult = useStore((store) => store.handleResult);
 
-    emitter.on({
+    emitter.hook.useOn({
         type: emitter.events.TransactionResponse,
         callback: React.useCallback(
             (args) => {
@@ -125,7 +125,7 @@ export const useUpdateTransactionOnEmit = () => {
         ),
     });
 
-    emitter.on({
+    emitter.hook.useOn({
         type: emitter.events.TransactionReceipt,
         callback: React.useCallback(
             (args) => {
@@ -135,7 +135,7 @@ export const useUpdateTransactionOnEmit = () => {
         ),
     });
 
-    emitter.on({
+    emitter.hook.useOn({
         type: emitter.events.PotentialTransactionReceipt,
         callback: React.useCallback(
             (args) => {
@@ -145,7 +145,7 @@ export const useUpdateTransactionOnEmit = () => {
         ),
     });
 
-    emitter.on({
+    emitter.hook.useOn({
         type: emitter.events.PotentialTransactionResponse,
         callback: React.useCallback(
             (args) => {

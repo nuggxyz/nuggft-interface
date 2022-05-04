@@ -41,10 +41,13 @@ interface EmitTransactionReceipt extends EmitEventBase {
 
 interface EmitPotentialTransactionReceipt extends EmitEventBase {
     type: EmitEventNames.PotentialTransactionReceipt;
-    from: AddressString;
+    from: AddressString | null;
+    to: AddressString;
+    log: Log;
     txhash: Hash;
     success: boolean;
     error?: RevertError;
+    validate: (from: AddressString, data: Hash) => boolean;
 }
 
 interface EmitTransactionResponse extends EmitEventBase {

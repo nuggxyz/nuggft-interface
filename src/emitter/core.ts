@@ -14,11 +14,11 @@ const emitter = Object.freeze({
 const wrapper = {
     on: (input: EmitEventsListCallback): { off: () => void } => {
         void emitter.on(input.type, input.callback);
-        return { off: () => emitter.off(input.type, () => undefined) };
+        return { off: () => emitter.off(input.type, input.callback) };
     },
     once: (input: EmitEventsListCallback): { off: () => void } => {
         void emitter.once(input.type, input.callback);
-        return { off: () => emitter.off(input.type, () => undefined) };
+        return { off: () => emitter.off(input.type, input.callback) };
     },
     emit: (input: EmitEventsListPayload) => emitter.emit(input.type, input),
 };
