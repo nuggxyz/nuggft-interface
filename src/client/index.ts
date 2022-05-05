@@ -97,8 +97,8 @@ export default {
 
         myNuggs: () =>
             core((state) => {
-                return state.myNuggs;
-            }, shallow),
+                return [...state.myNuggs].sort((a, b) => Number(a.tokenId) - Number(b.tokenId));
+            }),
         myLoans: () =>
             core((state) =>
                 [...state.myLoans].sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1)),

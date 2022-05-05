@@ -3,7 +3,8 @@ import React, { FC, useEffect, useState } from 'react';
 import { ethers, BigNumber, BigNumberish } from 'ethers';
 import { useNavigate, useMatch, NavigateFunction } from 'react-router-dom';
 import { t } from '@lingui/macro';
-import { IoArrowDown, IoArrowUp, IoReload } from 'react-icons/io5';
+import { IoArrowBack, IoArrowDown, IoArrowForward, IoArrowUp, IoReload } from 'react-icons/io5';
+import Confetti from 'react-confetti';
 
 import client from '@src/client';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -58,40 +59,90 @@ export const HotRotateOController = () => {
     return <HotRotateO />;
 };
 
-const RenderItem: FC<
-    ListRenderItemProps<Item, { items: ItemList; type: 'storage' | 'displayed' }, Item>
+const RenderItemMobile: FC<
+    ListRenderItemProps<
+        Item,
+        { items: ItemList; type: 'storage' | 'displayed'; screen: 'desktop' | 'tablet' | 'phone' },
+        Item
+    >
 > = ({ item, action, extraData }) => {
     return (
-        <div
-            style={{
-                borderRadius: lib.layout.borderRadius.medium,
-                transition: '.2s background ease',
-                position: 'relative',
-                margin: '.6rem 1rem',
-            }}
-        >
+        <Button onClick={() => action && action(item)} buttonStyle={styles.renderItemButtonMobile}>
+            <div style={styles.renderItemContainer}>
+                <TokenViewer
+                    forceCache
+                    tokenId={item.tokenId}
+                    style={styles.renderToken}
+                    showLabel
+                    disableOnClick
+                />
+                {item.duplicates > 1 && (
+                    <Label containerStyles={styles.duplicateItem} text={String(item.duplicates)} />
+                )}
+                {item.feature !== 0 && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'centter',
+                            marginTop: '.5rem',
+                        }}
+                    >
+                        {extraData.type === 'displayed' && (
+                            <IoArrowBack color={lib.colors.nuggRedText} />
+                        )}
+                        <Text
+                            size="small"
+                            textStyle={{
+                                color:
+                                    extraData.type === 'displayed'
+                                        ? lib.colors.nuggRedText
+                                        : lib.colors.nuggBlueText,
+                                padding: '0rem .2rem',
+                            }}
+                        >
+                            {extraData.type === 'storage'
+                                ? extraData.items.active.find(
+                                      (list) => list.feature === item.feature,
+                                  )
+                                    ? 'Replace'
+                                    : 'Show'
+                                : t`Hide`}
+                        </Text>
+                        {extraData.type === 'storage' && (
+                            <IoArrowForward color={lib.colors.nuggBlueText} />
+                        )}
+                    </div>
+                )}
+            </div>
+        </Button>
+    );
+};
+
+const RenderItem: FC<
+    ListRenderItemProps<
+        Item,
+        { items: ItemList; type: 'storage' | 'displayed'; screen: 'desktop' | 'tablet' | 'phone' },
+        Item
+    >
+> = ({ item, action, extraData }) => {
+    return (
+        <div style={styles.renderItemContainer}>
             <TokenViewer
                 forceCache
                 tokenId={item.tokenId}
-                style={{ width: '80px', height: '80px', padding: '.3rem' }}
+                style={styles.renderToken}
                 showLabel
                 disableOnClick
             />
             {item.duplicates > 1 && (
-                <Label
-                    containerStyles={{ position: 'absolute', top: -5, right: -5 }}
-                    text={String(item.duplicates)}
-                />
+                <Label containerStyles={styles.duplicateItem} text={String(item.duplicates)} />
             )}
             {item.feature !== 0 && (
                 <Button
                     size="small"
                     onClick={() => action && action(item)}
-                    buttonStyle={{
-                        borderRadius: lib.layout.borderRadius.large,
-                        padding: '.3rem .4rem .3rem .6rem',
-                        marginTop: '.3rem',
-                    }}
+                    buttonStyle={styles.renderItemButton}
                     textStyle={{
                         paddingRight: '.2rem',
                     }}
@@ -153,12 +204,7 @@ const HotRotateO = () => {
             const fmtTokenId = ethers.BigNumber.from(tokenId.toRawId());
 
             const floopCheck = async () => {
-                console.log('starting floop');
-                let val = Date.now();
                 return nuggft.floop(fmtTokenId).then((x) => {
-                    console.log('floop length: ', Date.now() - val);
-                    val = Date.now();
-                    console.log('starting reduce');
                     const res = x.reduce(
                         (prev: ItemList, curr, activeIndex) => {
                             const parsed = parseItmeIdToNum(curr);
@@ -226,7 +272,6 @@ const HotRotateO = () => {
                         },
                         { active: [], hidden: [], duplicates: [] },
                     );
-                    console.log('done reduce ', Date.now() - val);
                     return res;
                 });
             };
@@ -257,7 +302,7 @@ const HotRotateO = () => {
 
     if (needsToClaim) {
         return (
-            <animated.div style={{ ...styles.containerDesktop, ...style }}>
+            <animated.div style={{ ...styles.desktopContainer, ...style }}>
                 <Label text="Needs to claim" />
             </animated.div>
         );
@@ -265,7 +310,7 @@ const HotRotateO = () => {
 
     if (cannotProveOwnership) {
         return (
-            <animated.div style={{ ...styles.containerDesktop, ...style }}>
+            <animated.div style={{ ...styles.desktopContainer, ...style }}>
                 <Label text="Canot prove ownership" />
             </animated.div>
         );
@@ -274,62 +319,44 @@ const HotRotateO = () => {
     return (
         <animated.div
             style={{
-                ...(screen === 'desktop' ? styles.containerDesktop : styles.container),
+                ...styles[`${screen}Container`],
                 ...style,
                 opacity: items ? 1 : 0,
             }}
         >
+            <Confetti
+                numberOfPieces={50}
+                run={savedToChain}
+                style={{
+                    transition: `opacity .5s ${lib.layout.animation}`,
+                    opacity: savedToChain ? 1 : 0,
+                }}
+            />
             {tokenId && items && (
                 <>
-                    <div
-                        style={
-                            screen === 'desktop'
-                                ? styles.controlContainerDesktop
-                                : styles.controlContainer
-                        }
-                    >
-                        {savedToChain ? (
-                            <>
-                                <Text
-                                    size="larger"
-                                    textStyle={styles.title}
-                                >{t`Nugg ${tokenId.toRawId()} saved!`}</Text>
-                                <div style={styles.buttonsContainer}>
-                                    <Button
-                                        buttonStyle={styles.button}
-                                        textStyle={{ color: lib.colors.nuggRedText }}
-                                        label={t`Exit`}
-                                        onClick={() => {
-                                            navigate(-1);
-                                        }}
-                                    />
-
-                                    <Button
-                                        buttonStyle={styles.button}
-                                        textStyle={{ color: lib.colors.nuggBlueText }}
-                                        label={t`Edit again`}
-                                        onClick={() => {
-                                            setSavedToChain(false);
-                                            setSaving(false);
-                                        }}
-                                    />
-                                </div>
-                            </>
-                        ) : (
-                            <RotateOSelector
-                                {...{
-                                    tokenId,
-                                    items,
-                                    navigate,
-                                    nuggft,
-                                    setItems,
-                                    setSaving,
-                                }}
-                            />
-                        )}
-                    </div>
+                    <RotateOSelector
+                        {...{
+                            tokenId,
+                            items,
+                            navigate,
+                            nuggft,
+                            setItems,
+                            setSaving,
+                            savedToChain,
+                            screen,
+                        }}
+                    />
                     <RotateOViewer
-                        {...{ items, tokenId, savedToChain, extraLarge: screen === 'desktop' }}
+                        {...{
+                            items,
+                            tokenId,
+                            savedToChain,
+                            screen,
+                            setItems,
+                            navigate,
+                            setSavedToChain,
+                            setSaving,
+                        }}
                     />
                 </>
             )}
@@ -340,13 +367,21 @@ const HotRotateO = () => {
 const RotateOViewer = ({
     tokenId,
     items,
+    setItems,
     savedToChain,
-    extraLarge,
+    navigate,
+    setSaving,
+    setSavedToChain,
+    screen,
 }: {
     tokenId: TokenId;
     items: ItemList;
     savedToChain: boolean;
-    extraLarge: boolean;
+    setItems: React.Dispatch<React.SetStateAction<ItemList | null | undefined>>;
+    setSaving: React.Dispatch<React.SetStateAction<boolean>>;
+    setSavedToChain: React.Dispatch<React.SetStateAction<boolean>>;
+    navigate: NavigateFunction;
+    screen: 'desktop' | 'tablet' | 'phone';
 }) => {
     const provider = web3.hook.usePriorityProvider();
     const dotnugg = useDotnuggV1(provider);
@@ -376,23 +411,71 @@ const RotateOViewer = ({
     useEffect(() => {
         if (savedToChain && svg) {
             inject(tokenId, svg);
+            setItems({
+                active: items.active.map((item, index) => ({ ...item, activeIndex: index })),
+                hidden: items.hidden.map((item, index) => ({ ...item, activeIndex: index + 8 })),
+                duplicates: items.duplicates,
+            });
         }
     }, [savedToChain, svg, inject, tokenId]);
 
+    console.log('savedToChain', savedToChain);
+
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ ...styles.loadingIndicator, opacity: loading ? 1 : 0 }}>
-                <Text
-                    textStyle={{ color: lib.colors.textColor, paddingRight: '.3rem' }}
-                >{t`Loading`}</Text>
-                <Loader color={lib.colors.textColor} />
+        <div
+            style={
+                screen === 'phone'
+                    ? { height: '40%', width: '100%', display: 'flex', justifyContent: 'center' }
+                    : {}
+            }
+        >
+            <div style={styles[`${screen}TokenContainer`]}>
+                <div style={{ ...styles.loadingIndicator, opacity: loading ? 1 : 0 }}>
+                    <Text
+                        textStyle={{ color: lib.colors.textColor, paddingRight: '.3rem' }}
+                    >{t`Loading`}</Text>
+                    <Loader color={lib.colors.textColor} />
+                </div>
+                <TokenViewer
+                    tokenId={tokenId}
+                    svgNotFromGraph={svg}
+                    showcase
+                    style={styles[`${screen}Token`]}
+                />
             </div>
-            <TokenViewer
-                tokenId={tokenId}
-                svgNotFromGraph={svg}
-                showcase
-                style={extraLarge ? { height: 600, width: 600 } : { height: 400, width: 400 }}
-            />
+            <div
+                style={{
+                    opacity: savedToChain ? 1 : 0,
+                    pointerEvents: savedToChain ? 'auto' : 'none',
+                    // display: savedToChain ? 'auto' : 'none',
+                    transition: `opacity .5s ${lib.layout.animation}`,
+                }}
+            >
+                <Text
+                    size="larger"
+                    textStyle={styles.title}
+                >{t`Nugg ${tokenId.toRawId()} saved!`}</Text>
+                <div style={styles.buttonsContainer}>
+                    <Button
+                        buttonStyle={styles.button}
+                        textStyle={{ color: lib.colors.nuggRedText }}
+                        label={t`Exit`}
+                        onClick={() => {
+                            navigate(-1);
+                        }}
+                    />
+
+                    <Button
+                        buttonStyle={styles.button}
+                        textStyle={{ color: lib.colors.nuggBlueText }}
+                        label={t`Edit again`}
+                        onClick={() => {
+                            setSavedToChain(false);
+                            setSaving(false);
+                        }}
+                    />
+                </div>
+            </div>
         </div>
     );
 };
@@ -404,6 +487,8 @@ const RotateOSelector = ({
     nuggft,
     setItems,
     setSaving,
+    savedToChain,
+    screen,
 }: {
     tokenId: TokenId;
     items: ItemList;
@@ -411,6 +496,8 @@ const RotateOSelector = ({
     nuggft: NuggftV1;
     setItems: React.Dispatch<React.SetStateAction<ItemList | null | undefined>>;
     setSaving: React.Dispatch<React.SetStateAction<boolean>>;
+    savedToChain: boolean;
+    screen: 'desktop' | 'tablet' | 'phone';
 }) => {
     const { send, revert } = useTransactionManager();
 
@@ -453,12 +540,39 @@ const RotateOSelector = ({
         return undefined;
     }, [items, tokenId]);
 
-    const [original, setOriginal] = useState(items);
+    const [originalItems, setOriginalItems] = useState(items);
     useEffect(() => {
-        setOriginal(items);
-    }, [tokenId]);
+        setOriginalItems(items);
+    }, [tokenId, savedToChain]);
+
+    const width = React.useMemo(() => {
+        if (savedToChain) {
+            return '0%';
+        }
+        switch (screen) {
+            case 'desktop':
+                return '45%';
+            case 'tablet':
+                return '55%';
+            case 'phone':
+                return '100%';
+            default:
+                return '45%';
+        }
+    }, [screen, savedToChain]);
+
     return (
-        <>
+        <div
+            style={{
+                ...styles[`${screen}ControlContainer`],
+                transition: `opacity .5s ${savedToChain ? '0s' : '.5s'} ${
+                    lib.layout.animation
+                }, width 1s ${savedToChain ? '.5s' : '0s'} ${lib.layout.animation}`,
+                opacity: savedToChain ? 0 : 1,
+                pointerEvents: savedToChain ? 'none' : 'auto',
+                width,
+            }}
+        >
             <Text size="larger" textStyle={styles.title}>{t`Edit Nugg ${tokenId.toRawId()}`}</Text>
             <Button
                 label={t`Reset`}
@@ -470,51 +584,75 @@ const RotateOSelector = ({
                     right: '1rem',
                 }}
                 textStyle={{ paddingRight: '.3rem' }}
-                onClick={() => setItems(original)}
-                disabled={JSON.stringify(original) === JSON.stringify(items)}
+                onClick={() => setItems(originalItems)}
+                disabled={JSON.stringify(originalItems) === JSON.stringify(items)}
                 rightIcon={<IoReload />}
             />
             {revert && <Label text={revert.message} />}
-            <List
-                data={items.active.sort((a, b) => a.feature - b.feature)}
-                label={t`Displayed`}
-                labelStyle={globalStyles.textBlack}
-                action={(item) => {
-                    if (items)
-                        setItems({
-                            active: [...items.active.filter((x) => x.feature !== item.feature)],
-                            hidden: [item, ...items.hidden],
-                            duplicates: items.duplicates,
-                        });
+            <div
+                style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: screen === 'phone' ? 'row-reverse' : 'column',
+                    justifyContent: 'space-between',
+                    height: '70%',
+                    position: 'relative',
                 }}
-                extraData={{ items, type: 'displayed' as const }}
-                RenderItem={RenderItem}
-                horizontal
-                style={styles.list}
-            />
-            <List
-                data={items.hidden}
-                label={t`In storage`}
-                labelStyle={globalStyles.textBlack}
-                extraData={{ items, type: 'storage' as const }}
-                RenderItem={RenderItem}
-                horizontal
-                action={(item) => {
-                    if (items)
-                        setItems({
-                            active: [
-                                ...items.active.filter((x) => x.feature !== item.feature),
-                                item,
-                            ],
-                            hidden: [
-                                ...items.hidden.filter((x) => x.tokenId !== item.tokenId),
-                                ...items.active.filter((x) => x.feature === item.feature),
-                            ],
-                            duplicates: items.duplicates,
-                        });
-                }}
-                style={styles.list}
-            />
+            >
+                <div
+                    style={styles[`${screen === 'phone' ? 'vertical' : 'horizontal'}ListContainer`]}
+                >
+                    <List
+                        data={items.active}
+                        label={t`Displayed`}
+                        labelStyle={globalStyles.textBlack}
+                        action={(item) => {
+                            if (items)
+                                setItems({
+                                    active: [
+                                        ...items.active.filter((x) => x.feature !== item.feature),
+                                    ].sort((a, b) => a.feature - b.feature),
+                                    hidden: [item, ...items.hidden].sort(
+                                        (a, b) => a.feature - b.feature,
+                                    ),
+                                    duplicates: items.duplicates,
+                                });
+                        }}
+                        extraData={{ items, type: 'displayed' as const, screen }}
+                        RenderItem={screen === 'phone' ? RenderItemMobile : RenderItem}
+                        horizontal={screen !== 'phone'}
+                        style={styles.list}
+                    />
+                </div>
+                <div
+                    style={styles[`${screen === 'phone' ? 'vertical' : 'horizontal'}ListContainer`]}
+                >
+                    <List
+                        data={items.hidden}
+                        label={t`In storage`}
+                        listEmptyText={t`All items are displayed`}
+                        labelStyle={globalStyles.textBlack}
+                        extraData={{ items, type: 'storage' as const, screen }}
+                        RenderItem={screen === 'phone' ? RenderItemMobile : RenderItem}
+                        horizontal={screen !== 'phone'}
+                        action={(item) => {
+                            if (items)
+                                setItems({
+                                    active: [
+                                        ...items.active.filter((x) => x.feature !== item.feature),
+                                        item,
+                                    ].sort((a, b) => a.feature - b.feature),
+                                    hidden: [
+                                        ...items.hidden.filter((x) => x.tokenId !== item.tokenId),
+                                        ...items.active.filter((x) => x.feature === item.feature),
+                                    ].sort((a, b) => a.feature - b.feature),
+                                    duplicates: items.duplicates,
+                                });
+                        }}
+                        style={styles.list}
+                    />
+                </div>
+            </div>
             <div style={styles.buttonsContainer}>
                 <Button
                     buttonStyle={styles.button}
@@ -540,7 +678,7 @@ const RotateOSelector = ({
                     }}
                 />
             </div>
-        </>
+        </div>
     );
 };
 

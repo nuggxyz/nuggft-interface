@@ -14,6 +14,8 @@ import { HotRotateOController } from '@src/pages/HotRotateO';
 
 import MobileViewScreen2 from './mobile/MobileViewScreen2';
 import MobileWalletScreen2 from './mobile/MobileWalletScreen2';
+import StupidMfingHack from './mobile/StupidMfingHack';
+import MobileHotRotateOWrapper from './mobile/MobileHotRotateOWrapper';
 
 // const MobileWalletView = React.lazy(() => import('@src/pages/mobile/MobileWalletView'));
 // const HotRotateO = React.lazy(() => import('@src/pages/HotRotateO'));
@@ -30,13 +32,8 @@ const Router = () => {
             element: <Outlet />,
             children: [
                 {
-                    path: 'view/*',
-                    element: <SearchOverlay />,
-                    overlay: 997,
-                },
-                {
                     path: 'edit/:id',
-                    element: <HotRotateOController />,
+                    element: isPhone ? <MobileHotRotateOWrapper /> : <HotRotateOController />,
                     overlay: 997,
                 },
                 ...(isPhone
@@ -59,6 +56,7 @@ const Router = () => {
         },
     ]);
 
+    console.log(route, isPhone);
 
     return <React.Suspense fallback={<div />}>{route} </React.Suspense>;
 };
@@ -73,7 +71,6 @@ const App = () => {
             <NuggBook />
             <Helmet />
             <NavigationBar />
-            {!isPhone && <HotRotateO />}
             <StupidMfingHack />
 
             {/* <HotRotateO /> */}

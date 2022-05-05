@@ -125,6 +125,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
             {showLabel && (
                 <Text
                     textStyle={{
+                        whiteSpace: 'nowrap',
                         textAlign: 'center',
                         color: labelColor || 'black',
                     }}

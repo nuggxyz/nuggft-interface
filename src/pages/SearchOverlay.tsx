@@ -8,12 +8,8 @@ import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
 import { NLStyleSheetCreator } from '@src/lib';
 import client from '@src/client';
 import useDimentions from '@src/client/hooks/useDimentions';
-<<<<<<< HEAD
-import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import BackButton from '@src/components/mobile/BackButton';
-=======
 import { useOverlayRouteStyle } from '@src/lib/router';
->>>>>>> 7a643ad (improvements)
 
 type Props = Record<string, never>;
 

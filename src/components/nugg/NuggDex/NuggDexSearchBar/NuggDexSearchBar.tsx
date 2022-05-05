@@ -235,7 +235,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                 : '0% 100% 0% 0%',
     });
     const animatedBR = useSpring({
-        borderRadius: lib.layout.borderRadius.medium,
+        borderRadius: isViewOpen && (!isPhone || mobileExpanded) ? '7px' : '20px',
         config: config.gentle,
     });
 

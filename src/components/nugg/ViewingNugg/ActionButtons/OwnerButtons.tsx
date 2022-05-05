@@ -15,6 +15,7 @@ type Props = { tokenId: NuggId };
 const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
     const navigate = useNavigate();
     const openModal = client.modal.useOpenModal();
+    console.log('IN HERE');
 
     return (
         <div style={styles.ownerButtonContainer}>
@@ -28,7 +29,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                     <IoPricetagsOutline
                         color={Colors.nuggBlueText}
                         size={25}
-                        style={{ marginRight: '.75rem' }}
+                        // style={{ marginRight: '.75rem' }}
                     />
                 }
                 onClick={() => {
@@ -51,7 +52,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                     <IoCashOutline
                         color={Colors.nuggBlueText}
                         size={25}
-                        style={{ marginRight: '.75rem' }}
+                        // style={{ marginRight: '.75rem' }}
                     />
                 }
                 onClick={() => {
@@ -101,7 +102,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                     <IoPencil
                         color={Colors.nuggBlueText}
                         size={25}
-                        style={{ marginRight: '.75rem' }}
+                        // style={{ marginRight: '.75rem' }}
                     />
                 }
                 onClick={() => navigate(`/edit/${tokenId}`)}

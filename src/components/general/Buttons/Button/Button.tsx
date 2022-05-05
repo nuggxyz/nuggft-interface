@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useCallback, useMemo, CSSProperties } from 'react';
+import React, { FunctionComponent, useCallback, useMemo, CSSProperties, PropsWithChildren } from 'react';
 
 import useOnHover from '@src/hooks/useOnHover';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
@@ -19,7 +19,7 @@ export type ButtonProps = {
     disableHoverAnimation?: boolean;
 } & Partial<TextProps>;
 
-const Button: FunctionComponent<ButtonProps> = ({
+const Button: FunctionComponent<PropsWithChildren<ButtonProps>> = ({
     onClick,
     label,
     buttonStyle,
@@ -30,6 +30,7 @@ const Button: FunctionComponent<ButtonProps> = ({
     hoverStyle,
     className,
     disableHoverAnimation = false,
+    children,
     ...textProps
 }) => {
     const [ref, hover] = useOnHover(isHovering);
@@ -62,6 +63,7 @@ const Button: FunctionComponent<ButtonProps> = ({
             {LeftIcon && <LeftIcon />}
             {label ? <Text {...textProps}>{label}</Text> : null}
             {RightIcon && <RightIcon />}
+            {children}
         </div>
     );
 };

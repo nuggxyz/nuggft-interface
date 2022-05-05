@@ -27,7 +27,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                     <IoHourglassOutline
                         color={Colors.nuggBlueText}
                         size={25}
-                        style={{ marginRight: '.75rem' }}
+                        // style={{ marginRight: '.75rem' }}
                     />
                 }
                 onClick={() =>
@@ -51,7 +51,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                     <IoPricetagOutline
                         color={Colors.nuggBlueText}
                         size={25}
-                        style={{ marginRight: '.75rem' }}
+                        // style={{ marginRight: '.75rem' }}
                     />
                 }
                 onClick={() =>
@@ -75,7 +75,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                     <IoPencil
                         color={Colors.nuggBlueText}
                         size={25}
-                        style={{ marginRight: '.75rem' }}
+                        // style={{ marginRight: '.75rem' }}
                     />
                 }
                 onClick={() => navigate(`/edit/${tokenId}`)}

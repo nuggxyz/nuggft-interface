@@ -30,13 +30,13 @@ const SaleButtons: FunctionComponent<Props> = ({ tokenId, reclaim = false }) => 
                         <IoSync
                             color={Colors.nuggBlueText}
                             size={25}
-                            style={{ marginRight: '.75rem' }}
+                            // style={{ marginRight: '.75rem' }}
                         />
                     ) : (
                         <IoArrowDown
                             color={Colors.nuggBlueText}
                             size={25}
-                            style={{ marginRight: '.75rem' }}
+                            // style={{ marginRight: '.75rem' }}
                         />
                     )
                 }
