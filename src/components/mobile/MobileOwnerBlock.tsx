@@ -60,7 +60,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
     const lifecycle = useLifecycleEnhanced(swap);
 
     const dynamicTextColor = React.useMemo(() => {
-        if (!lifecycle?.active || swap?.endingEpoch === null) {
+        if (swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) {
             return lib.colors.primaryColor;
         }
         return lib.colors.white;
