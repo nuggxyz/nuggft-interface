@@ -7,25 +7,6 @@ import { NuggftV1 } from '@src/typechain/NuggftV1';
 
 import { SwapRoutes } from './router';
 
-// declare type Combine<T, U> = Omit<T, keyof U> & U;
-
-// export declare const combine: <
-//     RootState extends object,
-//     PrimaryState extends object,
-//     SecondaryState extends object,
-// >(
-//     initialState: PrimaryState,
-//     create: (
-//         set: SetState<PrimaryState & RootState> & NamedSet<PrimaryState & RootState>,
-//         get: GetState<PrimaryState & RootState>,
-//         api: StoreApi<PrimaryState & RootState>,
-//     ) => SecondaryState,
-// ) => (
-//     set: SetState<Combine<RootState, Combine<PrimaryState, SecondaryState>>>,
-//     get: GetState<Combine<RootState, Combine<PrimaryState, SecondaryState>>>,
-//     api: StoreApi<Combine<RootState, Combine<PrimaryState, SecondaryState>>>,
-// ) => Combine<RootState, Combine<PrimaryState, SecondaryState>>;
-
 interface OfferDataBase extends TokenIdFactoryBase {
     user?: AddressString | NuggId;
     eth: EthInt;

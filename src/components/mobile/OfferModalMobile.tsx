@@ -310,7 +310,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         styleInput={{
                             fontSize: 32,
                             color: lib.colors.primaryColor,
-                            textAlign: 'center',
+                            textAlign: 'right',
+                            padding: '.3rem .5rem',
                         }}
                         // styleHeading={styles.heading}
                         styleInputContainer={{

@@ -112,6 +112,7 @@ export const DualCurrencyInputWithIcon: FunctionComponent<DualIconProps> = ({
     iconStyle,
     currencyPref,
     style,
+    styleInput,
     ...props
 }) => {
     return (
@@ -133,6 +134,14 @@ export const DualCurrencyInputWithIcon: FunctionComponent<DualIconProps> = ({
             ]}
             currencyPref={currencyPref}
             style={{ position: 'relative', ...style } as React.CSSProperties}
+            styleInput={
+                {
+                    color: lib.colors.primaryColor,
+                    textAlign: 'right',
+                    padding: '.3rem .5rem',
+                    ...styleInput,
+                } as React.CSSProperties
+            }
             {...props}
         />
     );
