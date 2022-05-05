@@ -3,8 +3,7 @@ import { State, StoreApi, UseBoundStore } from 'zustand';
 
 import { Chain, Connector } from '@src/web3/core/interfaces';
 import { SupportedLocale } from '@src/lib/i18n/locales';
-
-import { NuggftV1 } from '../typechain/NuggftV1';
+import { NuggftV1 } from '@src/typechain/NuggftV1';
 
 import { SwapRoutes } from './router';
 
