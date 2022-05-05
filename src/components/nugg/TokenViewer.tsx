@@ -79,7 +79,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             flexDirection: 'column',
-            opacity: tokenId || showPending ? 1 : 0,
+            opacity: tokenId || svgNotFromGraph || showPending ? 1 : 0,
         },
         config: springConfig.default,
     });

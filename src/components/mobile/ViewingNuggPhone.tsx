@@ -34,6 +34,8 @@ import BradPittList from '@src/components/general/List/BradPittList';
 import { useUsdPair } from '@src/client/usd';
 import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 
+import NuggSnapshotListMobile from './NuggSnapshotItemMobile';
+
 const Info = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
     const totalNuggs = client.live.totalNuggs();
@@ -631,7 +633,28 @@ const ViewingNuggPhone: FunctionComponent<{
                         />
                     </>
                 ) : (
-                    <></>
+                    <>
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'flex-start',
+                                alignItems: 'flex-start',
+                                textAlign: 'left',
+                                width: '100%',
+                                padding: '2rem 1rem 1rem 1.5rem',
+                            }}
+                        >
+                            <Text
+                                size="larger"
+                                textStyle={{
+                                    color: lib.colors.primaryColor,
+                                }}
+                            >
+                                History
+                            </Text>
+                        </div>
+                        <NuggSnapshotListMobile tokenId={token.tokenId} />
+                    </>
                 )}
 
                 <div

@@ -90,6 +90,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     );
 
     React.useEffect(() => {
+        /// sets "Amount" on start
         if (eps && epsUsd && epsUsd.eth && !valueIsSet) {
             wrappedSetAmount(epsUsd.eth.copy().increase(BigInt(5)).number.toFixed(5));
             setValue();
@@ -175,7 +176,10 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const [localCurrencyPref, setLocalCurrencyPref] = useCurrencyTogglerState(globalCurrencyPref);
 
     const ethclaims = React.useMemo(() => {
-        return unclaimedOffers.reduce((prev, curr) => prev.add(curr.eth), new EthInt(0));
+        return unclaimedOffers.reduce(
+            (prev, curr) => prev.add(curr.leader ? 0 : curr.eth),
+            new EthInt(0),
+        );
     }, [unclaimedOffers]);
 
     const ethclaimsUsd = useUsdPair(ethclaims);
@@ -233,14 +237,6 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                         fontSize: 30,
                     }}
                 />
-
-                {/* <Button
-                    className="mobile-pressable-div"
-                    size="small"
-                    buttonStyle={{ background: 'transparent', marginTop: 10, marginBottom: -10 }}
-                    label="cancel"
-                    onClick={closeModal}
-                /> */}
             </>
         ),
         [amount, setPage, calculating, localCurrencyPref, IncrementButton, estimator.error, epsUsd],

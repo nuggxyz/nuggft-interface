@@ -40,17 +40,11 @@ export const useMultiClaimArgs = () => {
             },
             { sellingTokenIds: [], addresses: [], buyingTokenIds: [], itemIds: [] },
         );
-        console.log([
-            [hello.sellingTokenIds[20]],
-            [hello.addresses[20]],
-            [hello.buyingTokenIds[20]],
-            [hello.itemIds[20]],
-        ]);
         return [
-            [hello.sellingTokenIds[20]],
-            [hello.addresses[20]],
-            [hello.buyingTokenIds[20]],
-            [hello.itemIds[20]],
+            hello.sellingTokenIds,
+            hello.addresses,
+            hello.buyingTokenIds,
+            hello.itemIds,
         ] as Parameters<NuggftV1['claim']>;
     }, [unclaimedOffers]);
 };

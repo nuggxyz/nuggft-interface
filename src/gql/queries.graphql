@@ -17,6 +17,22 @@ query getAllNuggs(
         idnum
     }
 }
+query getNuggSnapshots($tokenId: ID!) {
+    nugg(id: $tokenId) {
+        id
+        snapshots {
+            id
+            snapshotNum
+            block
+            user {
+                id
+            }
+            chunk
+            chunkError
+            proof
+        }
+    }
+}
 
 query getAllNuggsSearch(
     $first: Int
