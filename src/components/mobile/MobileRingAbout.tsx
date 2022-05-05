@@ -6,9 +6,9 @@ import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
 import useLiveToken from '@src/client/subscriptions/useLiveToken';
 import lib from '@src/lib';
 import styles from '@src/components/nugg/RingAbout/RingAbout.styles';
-import OwnerBlock from '@src/components/nugg/RingAbout/OwnerBlock';
 import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
-import OfferTextMobile from '@src/components/nugg/RingAbout/OfferTextMobile';
+
+import MobileOwnerBlock from './MobileOwnerBlock';
 
 type Props = {
     tokenId?: TokenId;
@@ -36,8 +36,8 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId }) => {
                 }}
             >
                 <div style={styles.bodyContainer}>
-                    <OwnerBlock tokenId={tokenId} />
-                    <OfferTextMobile tokenId={tokenId} />
+                    <MobileOwnerBlock tokenId={tokenId} />
+                    {/* <OfferTextMobile tokenId={tokenId} /> */}
                     {/* <OffersList tokenId={tokenId} /> */}
                 </div>
                 {/* <OfferButton tokenId={tokenId} /> */}
