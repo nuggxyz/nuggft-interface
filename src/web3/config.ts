@@ -51,10 +51,6 @@ export const isValidChainId = (input: number) => {
 
 export const FEATURE_NAMES = ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Hold', 'Neck'];
 
-// export const NETWORKS: {[_: NetworkName]: Chain} = {
-//     'rinkeby': Chain.RINKEBY
-// }
-
 export const CONTRACTS = {
     [Chain.MAINNET]: {
         NuggftV1: ethers.constants.AddressZero,
@@ -77,10 +73,10 @@ export const CONTRACTS = {
         GraphId: 'QmNYd7mzNPnpt4yEB6VvzuboaRKWr1pScXP3jAvAKzXrhv',
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0xdde2fc725e5516e10ca537620f9cb0ef06ce0aac',
-        xNuggftV1: '0x76e92e5d15c9089a5d1720bd5afe6ca4fe403bd8',
-        DotnuggV1: '0xccb8af0f7ab835f0606d2e9a36d5659d4ad2e1a7',
-        Genesis: 10624128,
+        NuggftV1: '0x2488cd8d736c9bb9eb3b3222adf60bbbea393180',
+        xNuggftV1: '0x759030db6412da2e53e46f8e4d2061a26e72b777',
+        DotnuggV1: '0x62d18c67956f3b5349d24caefd4c9579a097e7cd',
+        Genesis: 10631104,
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
