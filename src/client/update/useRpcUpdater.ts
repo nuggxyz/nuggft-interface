@@ -9,7 +9,7 @@ import { InterfacedEvent } from '@src/interfaces/events';
 import lib from '@src/lib';
 import emitter from '@src/emitter';
 import { useNuggftV1 } from '@src/contracts/useContract';
-import { WebSocketProvider } from '@src/web3/classes/WebSocketProvider';
+import type { CustomWebSocketProvider } from '@src/web3/classes/CustomWebSocketProvider';
 
 // eslint-disable-next-line import/no-cycle
 
@@ -30,7 +30,7 @@ export default () => {
     const removeNuggClaim = client.mutate.removeNuggClaim();
     const removeItemClaimIfMine = client.mutate.removeItemClaimIfMine();
 
-    const [rpc, setRpc] = React.useState<WebSocketProvider>();
+    const [rpc, setRpc] = React.useState<CustomWebSocketProvider>();
 
     const provider = web3.hook.useNetworkProvider();
 

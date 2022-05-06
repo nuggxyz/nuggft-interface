@@ -1,8 +1,8 @@
 import { BaseContract, ContractInterface, PopulatedTransaction, BigNumber } from 'ethers';
 import React, { useMemo, useCallback } from 'react';
-import { Web3Provider } from '@ethersproject/providers';
 import { t } from '@lingui/macro';
 
+import type { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
 import web3 from '@src/web3';
 import { RevertError, RejectionError, CustomError } from '@src/lib/errors';
 import {
@@ -21,19 +21,19 @@ import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 import usePrevious from '@src/hooks/usePrevious';
 import useInterval from '@src/hooks/useInterval';
 import useDebounce from '@src/hooks/useDebounce';
-import { EtherscanProvider } from '@src/web3/classes/EtherscanProvider';
+import { CustomEtherscanProvider } from '@src/web3/classes/CustomEtherscanProvider';
 
 function useContract<C extends BaseContract>(
     address: string,
     abi: ContractInterface,
-    provider?: Web3Provider,
+    provider?: CustomWeb3Provider,
 ) {
     return useMemo(() => {
         return new BaseContract(address, abi, provider) as C;
     }, [address, provider, abi]);
 }
 
-export function useNuggftV1(provider?: Web3Provider) {
+export function useNuggftV1(provider?: CustomWeb3Provider) {
     const chainId = web3.hook.usePriorityChainId();
 
     const address = useMemo(() => {
@@ -43,7 +43,7 @@ export function useNuggftV1(provider?: Web3Provider) {
     return useContract<NuggftV1>(address, NuggftV1__factory.abi, provider);
 }
 
-export function useXNuggftV1(provider?: Web3Provider) {
+export function useXNuggftV1(provider?: CustomWeb3Provider) {
     const chainId = web3.hook.usePriorityChainId();
 
     const address = useMemo(() => {
@@ -53,7 +53,7 @@ export function useXNuggftV1(provider?: Web3Provider) {
     return useContract<XNuggftV1>(address, XNuggftV1__factory.abi, provider);
 }
 
-export function useDotnuggV1(provider?: Web3Provider) {
+export function useDotnuggV1(provider?: CustomWeb3Provider) {
     const chainId = web3.hook.usePriorityChainId();
 
     const address = useMemo(() => {
@@ -63,7 +63,7 @@ export function useDotnuggV1(provider?: Web3Provider) {
     return useContract<DotnuggV1>(address, DotnuggV1__factory.abi, provider);
 }
 
-export const useEstimateTransaction = (provider?: Web3Provider, from?: AddressString) => {
+export const useEstimateTransaction = (provider?: CustomWeb3Provider, from?: AddressString) => {
     const [error, setError] = React.useState<RevertError | Error>();
 
     const [gasLimit, setGasLimit] = React.useState<number>();
@@ -118,8 +118,8 @@ type SimpleTransactionData = {
 };
 
 function useSendTransaction(
-    network?: Web3Provider,
-    authenticatedProvider?: Web3Provider,
+    network?: CustomWeb3Provider,
+    authenticatedProvider?: CustomWeb3Provider,
     authenticatedCoreProvider?: CoreProvider,
     authenticatedConnector?: Connector,
     from?: AddressString,
@@ -297,7 +297,7 @@ export function usePrioritySendTransaction() {
 export const useEtherscan = () => {
     const chainId = web3.hook.usePriorityChainId();
     return React.useMemo(() => {
-        return new EtherscanProvider(
+        return new CustomEtherscanProvider(
             web3.config.CHAIN_INFO[chainId || 1].label,
             process.env.NUGG_APP_ETHERSCAN_KEY as string,
         );
@@ -350,7 +350,7 @@ export function useCheckEtherscanForUnknownTransactionHash(
 }
 
 export function useTransactionManager2(
-    network?: Web3Provider,
+    network?: CustomWeb3Provider,
     hash?: Hash,
     onResponse?: (response: Hash) => void,
     onReceipt?: (response: Hash) => void,

@@ -2,7 +2,6 @@ import React, { FC, useEffect, useState } from 'react';
 import { animated, config as springConfig, useSpring } from '@react-spring/web';
 import { IoAdd, IoCheckmarkDoneOutline, IoRemove } from 'react-icons/io5';
 import { t } from '@lingui/macro';
-import { Web3Provider } from '@ethersproject/providers';
 
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
@@ -18,12 +17,13 @@ import useDistribution from '@src/client/hooks/useDistribution';
 import useDimentions from '@src/client/hooks/useDimentions';
 import { SwapData } from '@src/client/swaps';
 import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
+import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
 
 import styles from './RingAbout.styles';
 
 type OfferExtraData = {
     chainId?: Chain;
-    provider?: Web3Provider;
+    provider?: CustomWeb3Provider;
     type?: 'item' | 'nugg';
 };
 

@@ -1,4 +1,3 @@
-import { Web3Provider } from '@ethersproject/providers';
 import React, { FunctionComponent, useMemo } from 'react';
 import { HiArrowRight } from 'react-icons/hi';
 import { plural, t } from '@lingui/macro';
@@ -16,6 +15,7 @@ import { LiveItem, LiveToken, SwapData } from '@src/client/interfaces';
 import Label from '@src/components/general/Label/Label';
 import globalStyles from '@src/lib/globalStyles';
 import { useUsdPair } from '@src/client/usd';
+import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
 
 import styles from './ViewingNugg.styles';
 
@@ -91,7 +91,7 @@ const SwapItem: FunctionComponent<
         SwapDataWithTryout,
         {
             chainId: Chain;
-            provider: Web3Provider;
+            provider: CustomWeb3Provider;
             token: LiveToken;
             epoch: number;
         },

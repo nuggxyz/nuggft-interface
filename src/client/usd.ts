@@ -4,9 +4,12 @@ import { combine } from 'zustand/middleware';
 import React from 'react';
 
 import { EthInt, PairInt, Fractionish } from '@src/classes/Fraction';
-import { EtherscanProvider } from '@src/web3/classes/EtherscanProvider';
+import { CustomEtherscanProvider } from '@src/web3/classes/CustomEtherscanProvider';
 
-const etherscan = new EtherscanProvider('mainnet', process.env.NUGG_APP_ETHERSCAN_KEY as string);
+const etherscan = new CustomEtherscanProvider(
+    'mainnet',
+    process.env.NUGG_APP_ETHERSCAN_KEY as string,
+);
 
 const store = create(
     combine(

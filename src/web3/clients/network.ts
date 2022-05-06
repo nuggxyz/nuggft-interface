@@ -54,17 +54,17 @@ export class Network extends Connector {
 
         // eslint-disable-next-line no-return-assign
         return (this.providerCache[chainId] = Promise.all([
-            import('@ethersproject/providers').then(({ JsonRpcProvider, FallbackProvider }) => ({
-                JsonRpcProvider,
-                FallbackProvider,
-            })),
+            import('@src/web3/classes/CustomJsonRpcProvider').then(
+                ({ CustomJsonRpcProvider }) => CustomJsonRpcProvider,
+            ),
+            import('@ethersproject/providers').then(({ FallbackProvider }) => FallbackProvider),
             // eslint-disable-next-line no-shadow
             import('@ethersproject/experimental').then(({ Eip1193Bridge }) => Eip1193Bridge),
             // eslint-disable-next-line no-shadow
-        ]).then(([{ JsonRpcProvider, FallbackProvider }, Eip1193Bridge]) => {
+        ]).then(([CustomJsonRpcProvider, FallbackProvider, Eip1193Bridge]) => {
             const urls = this.urlMap[chainId];
 
-            const providers = urls.map((_url) => new JsonRpcProvider(_url, chainId));
+            const providers = urls.map((_url) => new CustomJsonRpcProvider(chainId, _url, chainId));
 
             return new Eip1193Bridge(
                 new VoidSigner(constants.AddressZero),

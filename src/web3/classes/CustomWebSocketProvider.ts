@@ -6,49 +6,7 @@ import { Event } from '@ethersproject/providers/lib/base-provider';
 
 import { EthersWebSocketProvider, getEventTag } from './EthersWebSocketProvider';
 
-// export class PersistantWebSocketProvider {
-//     private _wsprovider: WebSocketProvider | undefined;
-
-//     public reset(url: string, network: Networkish, onClose: (e: CloseEvent) => void) {
-//         if (this._wsprovider && this._wsprovider._websocket.readyState !== WebSocket.CLOSED) {
-//             void this._wsprovider.destroy();
-//         }
-//         // @ts-ignore
-//         Object.assign(this._wsprovider, new WebSocketProvider(url, network, onClose));
-//     }
-
-//     public resetTo(update: WebSocketProvider) {
-//         if (this._wsprovider && this._wsprovider._websocket.readyState !== WebSocket.CLOSED) {
-//             void this._wsprovider.destroy();
-//         }
-//         // @ts-ignore
-//         Object.assign(this._wsprovider, update);
-//     }
-
-//     public get provider() {
-//         if (!this._wsprovider) throw new Error('PersistantWebSocketProvider: not initialized');
-//         return this._wsprovider;
-//     }
-// }
-
-// export class PersistantWebSocketProvider2 {
-//     private _wsprovider: WebSocketProvider | undefined;
-
-//     public reset(update: WebSocketProvider) {
-//         if (this._wsprovider && this._wsprovider._websocket.readyState !== WebSocket.CLOSED) {
-//             void this._wsprovider.destroy();
-//         }
-//         // @ts-ignore
-//         Object.assign(this._wsprovider, update);
-//     }
-
-//     public get provider() {
-//         if (!this._wsprovider) throw new Error('PersistantWebSocketProvider: not initialized');
-//         return this._wsprovider;
-//     }
-// }
-
-export class WebSocketProvider extends EthersWebSocketProvider {
+export class CustomWebSocketProvider extends EthersWebSocketProvider {
     private _destroy;
 
     constructor(url: string, network: Networkish, onClose: (e: CloseEvent) => void) {
@@ -73,7 +31,7 @@ export class WebSocketProvider extends EthersWebSocketProvider {
     }
 }
 
-export class InfuraWebSocketProvider extends WebSocketProvider {
+export class InfuraWebSocketProvider extends CustomWebSocketProvider {
     readonly apiKey!: string;
 
     readonly projectId!: string;
@@ -102,7 +60,7 @@ export class InfuraWebSocketProvider extends WebSocketProvider {
     }
 }
 
-export class AlchemyWebSocketProvider extends WebSocketProvider {
+export class AlchemyWebSocketProvider extends CustomWebSocketProvider {
     readonly apiKey!: string;
 
     constructor(network: Networkish, apiKey: string, onClose: (e: CloseEvent) => void) {

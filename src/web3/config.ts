@@ -2,7 +2,7 @@
 import { BigNumber, ethers } from 'ethers';
 import { useEffect } from 'react';
 import { ApolloClient } from '@apollo/client';
-import { InfuraProvider, JsonRpcProvider } from '@ethersproject/providers';
+import { InfuraProvider, JsonRpcProvider, Network } from '@ethersproject/providers';
 
 import { buildApolloSplitLink, buildCache } from '@src/gql';
 
@@ -24,12 +24,12 @@ import {
 import { CoinbaseWallet } from './clients/coinbasewallet';
 import { MetaMask } from './clients/metamask';
 import { WalletConnect } from './clients/walletconnect';
-import { Network } from './clients/network';
+import { Network as NetworkConnector } from './clients/network';
 import {
     InfuraWebSocketProvider,
-    WebSocketProvider,
+    CustomWebSocketProvider,
     AlchemyWebSocketProvider,
-} from './classes/WebSocketProvider';
+} from './classes/CustomWebSocketProvider';
 
 export function supportedChainIds() {
     // @ts-ignore
@@ -300,9 +300,9 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
               ),
           }
         : {}),
-    rpc: initializeConnector<Network>(
+    rpc: initializeConnector<NetworkConnector>(
         (actions) =>
-            new Network(
+            new NetworkConnector(
                 peer_rpc,
                 actions,
                 supportedChainIds().reduce((prev, curr) => {
@@ -387,7 +387,7 @@ export const gotoEtherscan = (chainId: Chain, route: 'tx' | 'address', value: st
 export const createInfuraWebSocket = (
     chainId: Chain,
     onClose: (e: CloseEvent) => void,
-): WebSocketProvider => {
+): CustomWebSocketProvider => {
     return new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY, onClose);
 };
 
@@ -398,8 +398,8 @@ export const createInfuraProvider = (chainId: Chain): JsonRpcProvider => {
 export const createAlchemyWebSocket = (
     chainId: Chain,
     onClose: (e: CloseEvent) => void,
-): WebSocketProvider => {
-    return new AlchemyWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY, onClose);
+): CustomWebSocketProvider => {
+    return new AlchemyWebSocketProvider(CHAIN_INFO[chainId].label, ALCHEMY_KEY, onClose);
 };
 
 export const apolloClient = new ApolloClient<any>({
@@ -504,4 +504,109 @@ export const useActivate = () => {
 //     };
 
 //     return rpc;
+// };
+
+export const ENS_REGISTRAR_ADDRESSES = {
+    [Chain.MAINNET]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    [Chain.ROPSTEN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    [Chain.GOERLI]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    [Chain.RINKEBY]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+};
+
+export const getNetwork = (chainId: Chain): Network => ({
+    name: CHAIN_INFO[chainId].label,
+    chainId,
+    ensAddress: ENS_REGISTRAR_ADDRESSES[chainId],
+});
+
+// const lookupEnsResolver = async (
+//     address: AddressString,
+//     chainId: Chain,
+//     provider: Web3Provider,
+// ) => {
+//     const transaction = {
+//         to: ENS_REGISTRAR_ADDRESSES[chainId],
+//         data: `0x0178b8bf${namehash(address).substring(2)}`,
+//     };
+//     try {
+//         return provider.formatter.callAddress(await provider.call(transaction));
+//     } catch (error) {
+//         return null;
+//     }
+// };
+
+// export const resolveName = async (
+//     address: AddressString,
+//     chainId: Chain,
+//     provider: Web3Provider,
+// ): Promise<null | string> => {
+//     const resolver = lookupEnsResolver(address, chainId, provider);
+
+// }
+
+// export const lookupEnsAddress = async (
+//     address: AddressString,
+//     chainId: Chain,
+//     provider: Web3Provider,
+// ): Promise<null | string> => {
+//     if (address.isNuggId()) return null;
+
+//     address = provider.formatter.address(address) as AddressString;
+//     // const check = await provider.lookupAddress(address);
+//     // console.log({ check });
+
+//     const resolver = await lookupEnsResolver(address, chainId, provider);
+
+//     if (!resolver) return null;
+
+//     const reverseName = `${address.substring(2).toLowerCase()}.addr.reverse`;
+
+//     // keccak("name(bytes32)")
+//     let bytes = arrayify(
+//         await provider.call({
+//             to: resolver,
+//             data: `0x691f3431${namehash(reverseName).substring(2)}`,
+//         }),
+//     );
+//     // Strip off the dynamic string pointer (0x20)
+//     if (bytes.length < 32 || !BigNumber.from(bytes.slice(0, 32)).eq(32)) {
+//         return null;
+//     }
+//     bytes = bytes.slice(32);
+
+//     // Not a length-prefixed string
+//     if (bytes.length < 32) {
+//         return null;
+//     }
+
+//     // Get the length of the string (from the length-prefix)
+//     const length = BigNumber.from(bytes.slice(0, 32)).toNumber();
+//     bytes = bytes.slice(32);
+
+//     // Length longer than available data
+//     if (length > bytes.length) {
+//         return null;
+//     }
+
+//     const name = toUtf8String(bytes.slice(0, length));
+
+//     // Make sure the reverse record matches the foward record
+//     const addr = await provider.resolveName(name);
+//     if (addr !== address) {
+//         return null;
+//     }
+
+//     return name;
+// };
+
+// export const getBalance = async (
+//     address: AddressString,
+//     provider: Web3Provider,
+// ): Promise<BigNumber> => {
+//     const result = (await provider.send('eth_getBalance', [
+//         address.toLowerCase(),
+//     ])) as Promise<BigNumber>;
+
+//     if (!(result instanceof BigNumber)) return BigNumber.from(0);
+//     return result;
 // };

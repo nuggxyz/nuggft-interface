@@ -12,6 +12,7 @@ import layout from './layout';
 import parse from './parse';
 import errors from './errors';
 import txdata from './txdata';
+import date from './date';
 import { userAgent } from './userAgent';
 
 // 6287103
@@ -455,6 +456,7 @@ const lib = {
     errors,
     userAgent,
     txdata,
+    date,
 };
 
 export default lib;

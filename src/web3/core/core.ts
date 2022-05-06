@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import type { Networkish } from '@ethersproject/networks';
-import type { TransactionReceipt, Web3Provider } from '@ethersproject/providers';
+import type { TransactionReceipt } from '@ethersproject/providers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { EqualityChecker, UseBoundStore } from 'zustand';
 import create from 'zustand';
@@ -11,6 +11,7 @@ import client from '@src/client';
 import { EthInt } from '@src/classes/Fraction';
 // eslint-disable-next-line import/no-cycle
 import { CONTRACTS } from '@src/web3/config';
+import type { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
 // eslint-disable-next-line import/no-cycle
 // eslint-disable-next-line import/no-cycle
 
@@ -143,7 +144,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         return values[index];
     }
 
-    function useSelectedENSName(connector: Connector, provider: Web3Provider | undefined) {
+    function useSelectedENSName(connector: Connector, provider: CustomWeb3Provider | undefined) {
         const index = getIndex(connector);
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const values = initializedConnectors.map((x, i) =>
@@ -152,7 +153,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         return values[index];
     }
 
-    function useSelectedWeb3React(connector: Connector, provider: Web3Provider | undefined) {
+    function useSelectedWeb3React(connector: Connector, provider: CustomWeb3Provider | undefined) {
         const index = getIndex(connector);
         const values = initializedConnectors.map((x, i) =>
             x.hooks.useWeb3React(i === index ? provider : undefined),
@@ -162,7 +163,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
 
     function useSelectedAnyENSName(
         connector: Connector,
-        provider: Web3Provider | 'nugg' | undefined,
+        provider: CustomWeb3Provider | 'nugg' | undefined,
         account: string,
     ) {
         const index = getIndex(connector);
@@ -172,7 +173,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         return values[index];
     }
 
-    function useSelectedBalance(connector: Connector, provider: Web3Provider | undefined) {
+    function useSelectedBalance(connector: Connector, provider: CustomWeb3Provider | undefined) {
         const account = useSelectedAccount(connector);
         return useBalance(provider, account);
     }
@@ -269,19 +270,22 @@ export function getNetworkConnector(initializedConnectors: {
         return useSelectedProvider(useNetworkConnector(), network);
     }
 
-    function useNetworkENSName(provider: Web3Provider | undefined) {
+    function useNetworkENSName(provider: CustomWeb3Provider | undefined) {
         return useSelectedENSName(useNetworkConnector(), provider);
     }
 
-    function useNetworkWeb3React(provider: Web3Provider | undefined) {
+    function useNetworkWeb3React(provider: CustomWeb3Provider | undefined) {
         return useSelectedWeb3React(useNetworkConnector(), provider);
     }
 
-    function useNetworkAnyENSName(provider: Web3Provider | 'nugg' | undefined, account: string) {
+    function useNetworkAnyENSName(
+        provider: CustomWeb3Provider | 'nugg' | undefined,
+        account: string,
+    ) {
         return useSelectedAnyENSName(useNetworkConnector(), provider, account);
     }
 
-    function useNetworkBalance(provider: Web3Provider | undefined) {
+    function useNetworkBalance(provider: CustomWeb3Provider | undefined) {
         return useSelectedBalance(useNetworkConnector(), provider);
     }
 
@@ -385,19 +389,22 @@ export function getPriorityConnector(initializedConnectors: {
         return useSelectedCoreProvider(usePriorityConnector(), network);
     }
 
-    function usePriorityENSName(provider: Web3Provider | undefined) {
+    function usePriorityENSName(provider: CustomWeb3Provider | undefined) {
         return useSelectedENSName(usePriorityConnector(), provider);
     }
 
-    function usePriorityWeb3React(provider: Web3Provider | undefined) {
+    function usePriorityWeb3React(provider: CustomWeb3Provider | undefined) {
         return useSelectedWeb3React(usePriorityConnector(), provider);
     }
 
-    function usePriorityAnyENSName(provider: Web3Provider | 'nugg' | undefined, account: string) {
+    function usePriorityAnyENSName(
+        provider: CustomWeb3Provider | 'nugg' | undefined,
+        account: string,
+    ) {
         return useSelectedAnyENSName(usePriorityConnector(), provider, account);
     }
 
-    function usePriorityBalance(provider: Web3Provider | undefined) {
+    function usePriorityBalance(provider: CustomWeb3Provider | undefined) {
         return useSelectedBalance(usePriorityConnector(), provider);
     }
 
@@ -503,7 +510,7 @@ function getDerivedHooks({
     return { useAccount, useIsActive };
 }
 
-function useTx(provider: Web3Provider | undefined, hash: string) {
+function useTx(provider: CustomWeb3Provider | undefined, hash: string) {
     const [data, setData] = useState<TransactionReceipt>();
 
     useEffect(() => {
@@ -531,7 +538,7 @@ function useTx(provider: Web3Provider | undefined, hash: string) {
     return data;
 }
 
-function useTransactionManager(provider: Web3Provider | undefined) {
+function useTransactionManager(provider: CustomWeb3Provider | undefined) {
     const [receipt, setReceipt] = useState<TransactionReceipt>();
     const [response, setActiveResponse] = useState<TransactionResponse>();
 
@@ -599,7 +606,7 @@ function useTransactionManager(provider: Web3Provider | undefined) {
     return { response, receipt, send };
 }
 
-function useBalance(provider: Web3Provider | undefined, account: string | undefined) {
+function useBalance(provider: CustomWeb3Provider | undefined, account: string | undefined) {
     const [balance, setBalance] = useState<EthInt>();
     useEffect(() => {
         if (provider && account) {
@@ -607,7 +614,7 @@ function useBalance(provider: Web3Provider | undefined, account: string | undefi
             setBalance(new EthInt(0));
 
             provider
-                .getBalance(account)
+                .getBalance(account as AddressString)
                 .then((result) => {
                     if (!stale) {
                         setBalance(new EthInt(result));
@@ -628,8 +635,8 @@ function useBalance(provider: Web3Provider | undefined, account: string | undefi
 }
 
 function useENS(
-    provider: Web3Provider | 'nugg' | undefined,
-    account: string | undefined,
+    provider: CustomWeb3Provider | 'nugg' | undefined,
+    account: Lowercase<string> | undefined,
     chainId: Chain | undefined,
 ): (string | null) | undefined {
     const [ENSName, setENSName] = useState<string | null | undefined>(
@@ -657,8 +664,9 @@ function useENS(
                     setENSName(Address.shortenAddressHash(account));
 
                     provider
-                        .lookupAddress(account.toLowerCase())
+                        .lookupAddress(account as AddressString)
                         .then((result) => {
+                            console.log({ result });
                             if (!stale) {
                                 if (result) void updatePersistedEns(result);
                                 setENSName(result || Address.shortenAddressHash(account));
@@ -677,7 +685,7 @@ function useENS(
             }
         }
         return undefined;
-    }, [provider, account, chainId, persistedEns]);
+    }, [provider, account, chainId, persistedEns, updatePersistedEns]);
 
     return persistedEns || ENSName;
 }
@@ -687,7 +695,7 @@ function getAugmentedHooks<T extends Connector>(
     { useChainId, useAccounts, useError }: ReturnType<typeof getStateHooks>,
     { useAccount, useIsActive }: ReturnType<typeof getDerivedHooks>,
 ) {
-    function useProvider(network?: Networkish, enabled = true): Web3Provider | undefined {
+    function useProvider(network?: Networkish, enabled = true): CustomWeb3Provider | undefined {
         const isActive = useIsActive();
 
         const chainId = useChainId();
@@ -695,10 +703,10 @@ function getAugmentedHooks<T extends Connector>(
 
         // trigger the dynamic import on mount
         const [providers, setProviders] = useState<
-            { Web3Provider: typeof Web3Provider } | undefined
+            { CustomWeb3Provider: typeof CustomWeb3Provider } | undefined
         >(undefined);
         useEffect(() => {
-            import('@ethersproject/providers').then(setProviders).catch(() => {
+            import('@src/web3/classes/CustomWeb3Provider').then(setProviders).catch(() => {
                 console.debug('@ethersproject/providers not available');
             });
         }, []);
@@ -706,7 +714,7 @@ function getAugmentedHooks<T extends Connector>(
         return useMemo(() => {
             // we use chainId and accounts to re-render in case connector.provider changes in place
             if (providers && enabled && isActive && chainId && accounts && connector.provider) {
-                return new providers.Web3Provider(connector.provider, network);
+                return new providers.CustomWeb3Provider(chainId, connector.provider, network);
             }
             return undefined;
         }, [providers, enabled, isActive, chainId, accounts, network]);
@@ -730,7 +738,7 @@ function getAugmentedHooks<T extends Connector>(
         }, [enabled, isActive, chainId, accounts]);
     }
 
-    function useENSName(provider: Web3Provider | undefined): string | null | undefined {
+    function useENSName(provider: CustomWeb3Provider | undefined): string | null | undefined {
         const account = useAccount();
         const chainId = useChainId();
 
@@ -738,7 +746,7 @@ function getAugmentedHooks<T extends Connector>(
     }
 
     function useAnyENSName(
-        provider: Web3Provider | 'nugg' | undefined,
+        provider: CustomWeb3Provider | 'nugg' | undefined,
         account: string,
     ): (string | null) | undefined {
         const chainId = useChainId();
@@ -747,7 +755,7 @@ function getAugmentedHooks<T extends Connector>(
     }
 
     // for backwards compatibility only
-    function useWeb3React(provider: Web3Provider | undefined) {
+    function useWeb3React(provider: CustomWeb3Provider | undefined) {
         const chainId = useChainId();
         const account = useAccount();
         const error = useError();
