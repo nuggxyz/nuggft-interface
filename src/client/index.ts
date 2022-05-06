@@ -17,6 +17,7 @@ import swaps from './swaps';
 import viewport from './viewport';
 import transactions from './transactions';
 import usd from './usd';
+import ens from './ens';
 
 export default {
     core,
@@ -167,4 +168,5 @@ export default {
     viewport,
     transactions,
     usd,
+    ens,
 };

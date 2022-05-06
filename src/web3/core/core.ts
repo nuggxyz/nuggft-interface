@@ -635,6 +635,11 @@ function useENS(
     const [ENSName, setENSName] = useState<string | null | undefined>(
         account ? Address.shortenAddressHash(account) : '',
     );
+
+    const updatePersistedEns = client.ens.useUpdatePersistedEns(account as AddressString);
+
+    const persistedEns = client.ens.usePersistedEns(account as AddressString);
+
     useEffect(() => {
         if (provider && account && chainId) {
             if (account === Address.ZERO.hash) setENSName('black-hole');
@@ -646,20 +651,25 @@ function useENS(
                 setENSName('nuggftv1.nugg.xyz');
             else {
                 let stale = false;
-                setENSName(Address.shortenAddressHash(account));
+                if (persistedEns) {
+                    setENSName(persistedEns);
+                } else {
+                    setENSName(Address.shortenAddressHash(account));
 
-                provider
-                    .lookupAddress(account.toLowerCase())
-                    .then((result) => {
-                        if (!stale) {
-                            setENSName(result || Address.shortenAddressHash(account));
-                        }
-                    })
-                    .catch((error) => {
-                        setENSName(Address.shortenAddressHash(account));
+                    provider
+                        .lookupAddress(account.toLowerCase())
+                        .then((result) => {
+                            if (!stale) {
+                                if (result) void updatePersistedEns(result);
+                                setENSName(result || Address.shortenAddressHash(account));
+                            }
+                        })
+                        .catch((error) => {
+                            setENSName(Address.shortenAddressHash(account));
 
-                        console.debug('Could not fetch ENS names', error);
-                    });
+                            console.debug('Could not fetch ENS names', error);
+                        });
+                }
 
                 return () => {
                     stale = true;
@@ -667,9 +677,9 @@ function useENS(
             }
         }
         return undefined;
-    }, [provider, account, chainId]);
+    }, [provider, account, chainId, persistedEns]);
 
-    return ENSName;
+    return persistedEns || ENSName;
 }
 
 function getAugmentedHooks<T extends Connector>(

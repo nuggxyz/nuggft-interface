@@ -18,29 +18,10 @@ import { Address } from '@src/classes/Address';
 import useRemaining, { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import Label from '@src/components/general/Label/Label';
 
-// const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>> = ({ item }) => {
-//     return (
-//         <div
-//             style={{
-//                 borderRadius: lib.layout.borderRadius.medium,
-//                 transition: '.2s background ease',
-//             }}
-//         >
-//             <TokenViewer tokenId={item.tokenId} style={{ width: '60px', height: '60px' }} />
-//         </div>
-//     );
-// };
-
 const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
 
     const swap = client.swaps.useSwap(tokenId);
-
-    // const lifecycle = useLifecycle(swap);
-
-    // const leader = React.useMemo(() => {
-    //     return { user: swap?.leader, eth: swap?.eth };
-    // }, [swap]);
 
     const darkmode = useDarkMode();
 
@@ -173,6 +154,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                                 image="eth"
                                 value={leaderCurrency}
                                 decimals={3}
+                                loadingOnZero
                             />
                             <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
                                 {`${leaderEns || leader?.account || ''} is selling`}
@@ -194,6 +176,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                                 image="eth"
                                 value={minTryoutCurrency}
                                 decimals={3}
+                                loadingOnZero
                             />
                             <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
                                 {t`minimum price`}
@@ -212,6 +195,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                                 image="eth"
                                 value={leaderCurrency}
                                 decimals={3}
+                                loadingOnZero
                             />
                             <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
                                 {`${

@@ -7,6 +7,8 @@ import useLiveToken from '@src/client/subscriptions/useLiveToken';
 import lib from '@src/lib';
 import styles from '@src/components/nugg/RingAbout/RingAbout.styles';
 import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
+import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
+import { Lifecycle } from '@src/client/interfaces';
 
 import MobileOwnerBlock from './MobileOwnerBlock';
 
@@ -16,6 +18,7 @@ type Props = {
 
 const RingAbout: FunctionComponent<Props> = ({ tokenId }) => {
     const swap = client.swaps.useSwap(tokenId);
+    const lifecycle = useLifecycleEnhanced(swap);
 
     useLiveToken(tokenId);
 
@@ -28,7 +31,7 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId }) => {
             <animated.div
                 style={{
                     ...styles.container,
-                    ...(swap?.endingEpoch === null && {
+                    ...((swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) && {
                         background: lib.colors.transparentGrey2,
                     }),
                     boxShadow: lib.layout.boxShadow.dark,

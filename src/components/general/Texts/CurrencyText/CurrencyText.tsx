@@ -5,6 +5,7 @@ import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import usePrevious from '@src/hooks/usePrevious';
 import { NLStaticImageKey } from '@src/components/general/NLStaticImage';
 import { PairInt, CurrencyInt } from '@src/classes/Fraction';
+import Loader from '@src/components/general/Loader/Loader';
 
 import styles from './CurrencyText.styles';
 
@@ -26,6 +27,7 @@ interface BalanceProps extends PartialText {
     showIncrementAnimation?: boolean;
     loadOnZero?: boolean;
     str?: string;
+    loadingOnZero?: boolean;
 
     unitOverride?: 'ETH' | 'USD';
 }
@@ -46,6 +48,8 @@ const CurrencyText: React.FC<BalanceProps> = ({
     showIncrementAnimation = false,
     loadOnZero = false,
     unitOverride,
+    loadingOnZero,
+
     str,
     // image,
     ...props
@@ -124,7 +128,21 @@ const CurrencyText: React.FC<BalanceProps> = ({
                     ...props.textStyle,
                 }}
             >
-                {str && value === 0 ? (
+                {(_value === 0 && loadingOnZero) ||
+                (_value instanceof PairInt && _value.eth.number === 0 && loadingOnZero) ? (
+                    <div
+                        style={{
+                            width: 50,
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        {' '}
+                        <Loader color={props?.textStyle?.color ?? 'white'} />
+                    </div>
+                ) : str && value === 1 ? (
                     str
                 ) : (
                     <animated.div className="number" style={{ paddingRight: '.5rem' }}>
@@ -138,7 +156,11 @@ const CurrencyText: React.FC<BalanceProps> = ({
                     </animated.div>
                 )}
                 {percent && '%'}
-                {showUnit && <div style={{ paddingRight: '0rem' }}>{isGwei ? 'gwei' : unit}</div>}
+                {showUnit && (
+                    <div style={{ paddingRight: '0rem' }}>
+                        {unit === 'ETH' && isGwei ? 'gwei' : unit}
+                    </div>
+                )}
             </Text>
         </>
     );
