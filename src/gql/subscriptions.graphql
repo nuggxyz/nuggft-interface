@@ -165,6 +165,7 @@ fragment swapdata on Swap {
     owner {
         id
     }
+    canceledEpoch
     leader {
         id
     }
@@ -188,6 +189,8 @@ fragment itemswapdata on ItemSwap {
         status
         starttime
     }
+    canceledEpoch
+
     num
     top
     topUsd

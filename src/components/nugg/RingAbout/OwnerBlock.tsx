@@ -198,8 +198,8 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                                           other: '# seconds',
                                       })}`
                                     : `${plural(minutes, {
-                                          1: '# mintue',
-                                          other: '# mintues',
+                                          1: '# minute',
+                                          other: '# minutes',
                                       })}`}
                             </Text>
                         </div>

@@ -120,6 +120,7 @@ const styles = NLStyleSheetCreator({
         width: '100%',
         background: 'transparent',
         padding: '0rem',
+        marginTop: 20,
         position: 'relative',
     },
     leadingOfferAmount: {

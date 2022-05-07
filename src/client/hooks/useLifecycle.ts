@@ -6,7 +6,7 @@ import { Address } from '@src/classes/Address';
 import { SwapData } from '@src/client/swaps';
 import web3 from '@src/web3';
 
-export default (token?: LiveToken | SwapData): Lifecycle | undefined => {
+export default (token?: LiveToken | Omit<SwapData, 'offers'>): Lifecycle | undefined => {
     const epoch = client.live.epoch.default();
 
     const blocknum = client.live.blocknum();

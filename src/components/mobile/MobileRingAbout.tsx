@@ -9,6 +9,7 @@ import styles from '@src/components/nugg/RingAbout/RingAbout.styles';
 import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import { Lifecycle } from '@src/client/interfaces';
+import useRemaining from '@src/client/hooks/useRemaining';
 
 import MobileOwnerBlock from './MobileOwnerBlock';
 
@@ -19,6 +20,8 @@ type Props = {
 const RingAbout: FunctionComponent<Props> = ({ tokenId }) => {
     const swap = client.swaps.useSwap(tokenId);
     const lifecycle = useLifecycleEnhanced(swap);
+
+    const { minutes } = useRemaining(swap?.epoch);
 
     useLiveToken(tokenId);
 
@@ -33,6 +36,9 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId }) => {
                     ...styles.container,
                     ...((swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) && {
                         background: lib.colors.transparentGrey2,
+                    }),
+                    ...(minutes <= 5 && {
+                        background: lib.colors.gradient,
                     }),
                     boxShadow: lib.layout.boxShadow.dark,
                     width: '90%',

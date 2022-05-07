@@ -5,7 +5,7 @@ import { SwapData } from '@src/client/swaps';
 
 import client from '..';
 
-export default (swap: SwapData | undefined) => {
+export default (swap: Omit<SwapData, 'offers'> | undefined) => {
     const lifecycle = useLifecycle(swap);
 
     const epoch = client.live.epoch.endblock();

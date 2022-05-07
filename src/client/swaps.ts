@@ -17,6 +17,7 @@ interface SwapDataBase extends TokenIdFactoryBase {
     eth: BigNumber;
     epoch: EpochData | null;
     endingEpoch: number | null;
+    canceledEpoch: number | null;
     leader?: unknown;
     owner: unknown;
     num: number | null;

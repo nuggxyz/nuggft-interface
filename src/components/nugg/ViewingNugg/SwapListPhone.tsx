@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent } from 'react';
 import { HiArrowRight } from 'react-icons/hi';
 import { plural, t } from '@lingui/macro';
 
@@ -9,13 +9,15 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import client from '@src/client';
 import { ListRenderItemProps } from '@src/components/general/List/List';
 import { Chain } from '@src/web3/core/interfaces';
-import lib, { isUndefinedOrNull, isUndefinedOrNullOrArrayEmpty } from '@src/lib';
+import lib, { isUndefinedOrNull } from '@src/lib';
 import { Address } from '@src/classes/Address';
 import { LiveItem, LiveToken, SwapData, TryoutData } from '@src/client/interfaces';
 import Label from '@src/components/general/Label/Label';
 import globalStyles from '@src/lib/globalStyles';
 import { useUsdPair } from '@src/client/usd';
 import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
+import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
+import useRemaining, { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 
 import styles from './ViewingNugg.styles';
 
@@ -70,22 +72,6 @@ type SwapDataWithTryout = SwapData & {
 //     ) : null;
 // };
 
-const SwapDesc = ({ item, epoch }: { item: SwapDataWithTryout; epoch: number }) => {
-    const blocknum = client.live.blocknum();
-
-    return epoch && blocknum ? (
-        <Text textStyle={{ color: lib.colors.primaryColor }}>
-            {!item.endingEpoch && !item.epoch
-                ? t`Awaiting bid!`
-                : !item.epoch
-                ? t`Swap is cancelled`
-                : item.epoch.id < epoch
-                ? t`Swap is over`
-                : t`Swap ending in ${item.epoch.endblock - blocknum} blocks`}
-        </Text>
-    ) : null;
-};
-
 const SwapItem: FunctionComponent<
     ListRenderItemProps<
         SwapDataWithTryout,
@@ -112,12 +98,17 @@ const SwapItem: FunctionComponent<
 
     const epoch = client.live.epoch.id();
 
+    const lifecycle = useLifecycleEnhanced(item);
+
+    const { minutes, seconds } = useRemaining(item.epoch);
+    const trueSeconds = useRemainingTrueSeconds(seconds);
+
     // const navigate = useNavigate();
 
     return epoch ? (
         <div
             style={{
-                padding: '1rem 0rem',
+                padding: '.2rem 0rem',
                 // margin: '.25rem 0rem',
                 flexDirection: 'column',
                 ...globalStyles.centered,
@@ -148,17 +139,40 @@ const SwapItem: FunctionComponent<
                         ...styles.swap,
                         zIndex: 101,
 
-                        background:
-                            !item.epoch && !item.endingEpoch
-                                ? lib.colors.gradient
-                                : isUndefinedOrNull(item.epoch) || item.epoch?.id < extraData.epoch
-                                ? lib.colors.gradient2Transparent
-                                : lib.colors.gradient3,
+                        background: item.canceledEpoch
+                            ? lib.colors.gradient4Transparent
+                            : lifecycle?.active
+                            ? lib.colors.gradient2
+                            : isUndefinedOrNull(item.epoch) || item.epoch?.id < extraData.epoch
+                            ? lib.colors.gradient3Transparent
+                            : lib.colors.gradientTransparent,
                     }}
                 >
                     <div style={styles.swapButton}>
-                        <SwapDesc item={item} epoch={epoch} />
-                        <CurrencyText image="eth" value={amount} />
+                        <Text textStyle={{ color: lib.colors.primaryColor }}>
+                            {item.canceledEpoch
+                                ? t`canceled`
+                                : !item.endingEpoch && !item.epoch
+                                ? t`waiting for bid`
+                                : item.epoch && item.epoch.id < epoch
+                                ? t`over`
+                                : minutes === 0
+                                ? `ending in ${plural(trueSeconds, {
+                                      1: '# second',
+                                      other: '# seconds',
+                                  })}`
+                                : `ending in ${plural(minutes, {
+                                      1: '# minute',
+                                      other: '# minutes',
+                                  })}`}
+                        </Text>{' '}
+                        {amount.eth.number === 0 ? (
+                            <Text type="text" textStyle={{ color: lib.colors.primaryColor }}>
+                                no bids yet
+                            </Text>
+                        ) : (
+                            <CurrencyText image="eth" value={amount} />
+                        )}
                     </div>
                     <div
                         style={{
@@ -175,11 +189,11 @@ const SwapItem: FunctionComponent<
                                     color: Colors.textColor,
                                 }}
                             >
-                                {!item.endingEpoch || (epoch <= item.endingEpoch && item.epoch)
-                                    ? t`On sale by`
-                                    : !item.epoch
-                                    ? t`Cancelled by`
-                                    : t`Sold by`}
+                                {item.canceledEpoch
+                                    ? t`canceled by`
+                                    : !item.endingEpoch || (epoch <= item.endingEpoch && item.epoch)
+                                    ? t`on sale by`
+                                    : t`sold by`}
                             </Text>
                             <Text
                                 textStyle={{
@@ -297,48 +311,48 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
     const provider = web3.hook.usePriorityProvider();
     const epoch = client.live.epoch.id();
 
-    const { listData } = useMemo(() => {
-        const _listData: { title: string; items: SwapDataWithTryout[] }[] = [];
-        let _activeSwap = undefined;
-        let tempSwaps = token?.swaps ? [...token.swaps] : [];
-        if (token && token.activeSwap && token.activeSwap.tokenId) {
-            _listData.push({ title: t`Ongoing Swap`, items: [token.activeSwap] });
-            tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'tokenId');
-            _activeSwap = token.activeSwap;
-        }
-        if (token && token.type === 'item') {
-            if ((token?.swaps as SwapDataWithTryout[]).find((swap) => swap.endingEpoch === null)) {
-                const tempTemp: SwapData[] = tempSwaps as SwapData[];
-                const count = tempTemp.find((x) => x.isTryout);
-                if (count) {
-                    tempSwaps = tempTemp.filter((x) => !x.isTryout);
-                    _activeSwap = { ...count, tryout: token.tryout };
-                    _listData.push({
-                        title: t`Other Sales`,
-                        items: [_activeSwap],
-                    });
-                }
-            }
-            const upcoming = tempSwaps.find(
-                (x) => x.epoch && epoch && x.endingEpoch && epoch <= x.endingEpoch,
-            );
-            if (upcoming) {
-                _listData.push({
-                    title: t`Ending in epoch ${upcoming.endingEpoch}`,
-                    items: [upcoming],
-                });
-                tempSwaps = tempSwaps.smartRemove(upcoming, 'tokenId');
-            }
-        }
-        if (!isUndefinedOrNullOrArrayEmpty(tempSwaps)) {
-            _listData.push({
-                title: t`Previous Swaps`,
-                items: tempSwaps,
-            });
-        }
+    // const { listData } = useMemo(() => {
+    //     const _listData: { title: string; items: SwapDataWithTryout[] }[] = [];
+    //     let _activeSwap = undefined;
+    //     let tempSwaps = token?.swaps ? [...token.swaps] : [];
+    //     if (token && token.activeSwap && token.activeSwap.tokenId) {
+    //         _listData.push({ title: t`Ongoing Swap`, items: [token.activeSwap] });
+    //         tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'tokenId');
+    //         _activeSwap = token.activeSwap;
+    //     }
+    //     if (token && token.type === 'item') {
+    //         if ((token?.swaps as SwapDataWithTryout[]).find((swap) => swap.endingEpoch === null)) {
+    //             const tempTemp: SwapData[] = tempSwaps as SwapData[];
+    //             const count = tempTemp.find((x) => x.isTryout);
+    //             if (count) {
+    //                 tempSwaps = tempTemp.filter((x) => !x.isTryout);
+    //                 _activeSwap = { ...count, tryout: token.tryout };
+    //                 _listData.push({
+    //                     title: t`Other Sales`,
+    //                     items: [_activeSwap],
+    //                 });
+    //             }
+    //         }
+    //         const upcoming = tempSwaps.find(
+    //             (x) => x.epoch && epoch && x.endingEpoch && epoch <= x.endingEpoch,
+    //         );
+    //         if (upcoming) {
+    //             _listData.push({
+    //                 title: t`Ending in epoch ${upcoming.endingEpoch}`,
+    //                 items: [upcoming],
+    //             });
+    //             tempSwaps = tempSwaps.smartRemove(upcoming, 'tokenId');
+    //         }
+    //     }
+    //     if (!isUndefinedOrNullOrArrayEmpty(tempSwaps)) {
+    //         _listData.push({
+    //             title: t`Previous Swaps`,
+    //             items: tempSwaps,
+    //         });
+    //     }
 
-        return { listData: _listData, activeSwap: _activeSwap };
-    }, [token, epoch]);
+    //     return { listData: _listData, activeSwap: _activeSwap };
+    // }, [token, epoch]);
 
     // const navigate = useNavigate();
 
@@ -352,7 +366,7 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
                 height: '100%',
             }}
         >
-            {listData.length === 0 ? (
+            {token.swaps.length === 0 ? (
                 <div
                     style={{
                         display: 'flex',
@@ -365,15 +379,13 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
                 </div>
             ) : (
                 <>
-                    {listData.map((item) =>
-                        item.items.map((abc, index) => (
-                            <SwapItem
-                                index={index}
-                                item={abc}
-                                extraData={{ chainId, provider, token, epoch }}
-                            />
-                        )),
-                    )}
+                    {token.swaps.map((item, index) => (
+                        <SwapItem
+                            index={index}
+                            item={item}
+                            extraData={{ chainId, provider, token, epoch }}
+                        />
+                    ))}
                 </>
             )}
         </div>

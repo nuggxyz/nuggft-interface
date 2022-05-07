@@ -64,6 +64,7 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
                           bottom: new EthInt(0).bignumber,
                           isBackup: true,
                           listDataType: 'swap' as const,
+                          canceledEpoch: null,
                       })
                     : undefined;
 

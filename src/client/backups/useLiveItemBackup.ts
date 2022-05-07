@@ -71,6 +71,7 @@ export default (activate: boolean, tokenId: ItemId | undefined) => {
                               count: 0,
                               isBackup: true,
                               listDataType: 'swap' as const,
+                              canceledEpoch: null,
                           })
                         : undefined;
                 }),

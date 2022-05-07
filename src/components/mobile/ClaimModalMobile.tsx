@@ -1,4 +1,4 @@
-import React, { startTransition, useState } from 'react';
+import React, { startTransition } from 'react';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
 import { BigNumber } from 'ethers';
 import { IoChevronBackCircle } from 'react-icons/io5';
@@ -34,8 +34,6 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const isOpen = client.modal.useOpen();
     const unclaimedOffers = client.live.myUnclaimedOffers();
 
-    const stake = client.static.stake();
-
     const network = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
     const peer = web3.hook.usePriorityPeer();
@@ -44,8 +42,6 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const [page, setPage] = client.modal.usePhase();
     const { send, estimation: estimator, hash } = usePrioritySendTransaction();
     const transaction = useTransactionManager2(network, hash);
-    const [amount, setAmount] = useState('0');
-    const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');
 
     const args = useMultiClaimArgs();
 
@@ -68,61 +64,6 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
 
         return undefined;
     }, [populatedTransaction, network]);
-
-    const eps = useAsyncState(() => {
-        return nuggft.eps();
-    }, [nuggft, stake]);
-
-    const epsUsd = useUsdPair(eps);
-
-    const [valueIsSet, setValue] = React.useReducer(() => true, false);
-
-    const wrappedSetAmount = React.useCallback(
-        (amt: string) => {
-            setAmount(amt);
-            setLastPressed(undefined);
-        },
-        [setAmount, setLastPressed],
-    );
-
-    React.useEffect(() => {
-        /// sets "Amount" on start
-        if (eps && epsUsd && epsUsd.eth && !valueIsSet) {
-            wrappedSetAmount(epsUsd.eth.copy().increase(BigInt(5)).number.toFixed(5));
-            setValue();
-        }
-    }, [amount, eps, epsUsd, epsUsd.eth, valueIsSet, setValue, wrappedSetAmount]);
-
-    const IncrementButton = React.memo(({ increment }: { increment: bigint }) => {
-        return (
-            <Button
-                className="mobile-pressable-div"
-                label={`+${increment.toString()}%`}
-                onClick={() => {
-                    wrappedSetAmount(
-                        epsUsd.eth.copy().increase(increment).number.toFixed(5) || '0',
-                    );
-                    setLastPressed(increment.toString());
-                }}
-                buttonStyle={{
-                    borderRadius: lib.layout.borderRadius.large,
-                    background:
-                        lastPressed === increment.toString()
-                            ? lib.colors.white
-                            : lib.colors.primaryColor,
-                    marginRight: '10px',
-                }}
-                textStyle={{
-                    color:
-                        lastPressed === increment.toString()
-                            ? lib.colors.primaryColor
-                            : lib.colors.white,
-                    fontSize: 24,
-                }}
-                disableHoverAnimation
-            />
-        );
-    });
 
     const [tabFadeTransition] = useTransition(
         page,
@@ -185,7 +126,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
         () => (
             <>
                 <Text size="larger" textStyle={{ marginTop: 10 }}>
-                    Pending Claims
+                    Claim
                 </Text>
 
                 <div
@@ -196,24 +137,31 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                         marginTop: 10,
                     }}
                 >
-                    <Text size="larger">New Bid</Text>
                     <div
                         style={{
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
+                            width: '100%',
                         }}
                     >
                         {calculating ? (
                             <Loader style={{ color: lib.colors.primaryColor }} />
                         ) : estimator.error ? (
                             <Label
-                                size="small"
+                                size="large"
                                 containerStyles={{ background: lib.colors.red }}
                                 textStyle={{ color: 'white' }}
                                 text={lib.errors.prettify('claim-modal', estimator.error)}
                             />
-                        ) : null}
+                        ) : (
+                            <Label
+                                size="large"
+                                containerStyles={{ background: lib.colors.green }}
+                                textStyle={{ color: 'white' }}
+                                text="transaction should succeed"
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -235,7 +183,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                 />
             </>
         ),
-        [amount, setPage, calculating, localCurrencyPref, IncrementButton, estimator.error, epsUsd],
+        [setPage, calculating, estimator.error],
     );
 
     const Page1 = React.useMemo(

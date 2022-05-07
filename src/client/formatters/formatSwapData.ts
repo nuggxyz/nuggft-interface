@@ -28,6 +28,7 @@ export const formatSwapData = <T extends TokenId>(
             account: 'nugg' in x ? x.nugg.id : x.user.id,
             txhash: x.txhash,
         })),
+        canceledEpoch: z.canceledEpoch ? Number(z.canceledEpoch) : null,
     };
 
     if (tokenId.isItemId()) {

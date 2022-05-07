@@ -33,6 +33,10 @@ import { ItemListPhone } from '@src/components/nugg/ViewingNugg/ItemList';
 import BradPittList from '@src/components/general/List/BradPittList';
 import { useUsdPair } from '@src/client/usd';
 import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
+import { buildTokenIdFactory } from '@src/prototypes';
+import { ModalEnum } from '@src/interfaces/modals';
+import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
+import Button from '@src/components/general/Buttons/Button/Button';
 
 import NuggSnapshotListMobile from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
@@ -436,8 +440,8 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                                       other: '# seconds',
                                   })}`
                                 : `${plural(minutes, {
-                                      1: '# mintue',
-                                      other: '# mintues',
+                                      1: '# minute',
+                                      other: '# minutes',
                                   })}`}
                         </Text>
                     </div>
@@ -455,7 +459,7 @@ const ViewingNuggPhone: FunctionComponent<{
     tokenId: TokenId | undefined;
 }> = ({ tokenId }) => {
     const epoch = client.live.epoch.id();
-
+    const openModal = client.modal.useOpenModal();
     const sender = web3.hook.usePriorityAccount();
 
     const tokenQuery = useTokenQuery();
@@ -483,8 +487,6 @@ const ViewingNuggPhone: FunctionComponent<{
     const coreRef = React.useRef(null);
 
     const ider = React.useId();
-
-    console.log(data);
 
     return provider && epoch && tokenId && token ? (
         <>
@@ -665,6 +667,29 @@ const ViewingNuggPhone: FunctionComponent<{
                                 My Nugg
                             </Text>
                         </div>
+                        <Button
+                            className="mobile-pressable-div"
+                            buttonStyle={{
+                                ...styles.goToSwap,
+                                position: 'relative',
+                            }}
+                            textStyle={{
+                                ...styles.goToSwapGradient,
+                                padding: '.2rem .5rem',
+                                fontSize: '24px',
+                            }}
+                            label={t`put up for sale`}
+                            // rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
+                            onClick={() => {
+                                openModal(
+                                    buildTokenIdFactory({
+                                        modalType: ModalEnum.Sell as const,
+                                        tokenId: token.tokenId,
+                                        sellingNuggId: null,
+                                    }),
+                                );
+                            }}
+                        />
                         <MyNuggActions />
                     </>
                 )}
