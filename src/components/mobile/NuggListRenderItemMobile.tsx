@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FC, FunctionComponent, PropsWithChildren } from 'react';
 
 import lib from '@src/lib';
 import Label from '@src/components/general/Label/Label';
@@ -38,6 +38,40 @@ export const NuggListRenderItemMobileBig: FunctionComponent<PropsBig> = ({
         </div>
     );
 };
+type HoldingTokenId = { tokenId: NuggId; since: number };
+type PropsBigHoldingItem = InfiniteListRenderItemProps<
+    HoldingTokenId,
+    { cardType: 'swap' | 'all' | 'recent' } | undefined,
+    undefined
+>;
+
+export const NuggListRenderItemMobileBigHoldingItem: FunctionComponent<PropsBigHoldingItem> = ({
+    item,
+    // action,
+    // extraData: { cardType },
+}) => {
+    return (
+        <div
+            aria-hidden="true"
+            role="button"
+            style={{
+                width: '100%',
+                // height: '200px',
+                display: 'flex',
+                marginBottom: 10,
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                transition: `background .7s ${lib.layout.animation}`,
+                // cursor: 'pointer',
+                position: 'relative',
+                // overflow: 'hidden',
+            }}
+            // onClick={() => action && action(item)}
+        >
+            <MobileContainerBigHoldingItem tokenId={item.tokenId} since={item.since} />
+        </div>
+    );
+};
 type Props = InfiniteListRenderItemProps<
     [TokenId | undefined, TokenId | undefined],
     { cardType: 'swap' | 'all' | 'recent' } | undefined,
@@ -70,6 +104,42 @@ const NuggListRenderItemMobile: FunctionComponent<Props> = ({
             {/* <div> */}
             {item[0] && <MobileContainer tokenId={item[0]} />}
             {item[1] && <MobileContainer tokenId={item[1]} />}
+        </div>
+    );
+};
+
+type PropsLittleHolding = InfiniteListRenderItemProps<
+    [HoldingTokenId | undefined, HoldingTokenId | undefined],
+    { cardType: 'swap' | 'all' | 'recent' } | undefined,
+    undefined
+>;
+
+export const NuggListRenderItemMobileHolding: FunctionComponent<PropsLittleHolding> = ({
+    item,
+    // action,
+    // extraData: { cardType },
+}) => {
+    return (
+        <div
+            aria-hidden="true"
+            role="button"
+            style={{
+                width: '100%',
+                // height: '200px',
+                display: 'flex',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                // padding: '0px 20px',
+                transition: `background .7s ${lib.layout.animation}`,
+                // cursor: 'pointer',
+                position: 'relative',
+                overflow: 'hidden',
+            }}
+            // onClick={() => action && action(item)}
+        >
+            {/* <div> */}
+            {item[0] && <MobileContainer tokenId={item[0].tokenId} />}
+            {item[1] && <MobileContainer tokenId={item[1].tokenId} />}
         </div>
     );
 };
@@ -141,7 +211,43 @@ export const MobileContainer = ({ tokenId }: { tokenId: TokenId }) => {
     );
 };
 
-export const MobileContainerBig = ({ tokenId }: { tokenId: TokenId }) => {
+export const MobileContainerBigHoldingItem: FC<HoldingTokenId> = ({ tokenId, since }) => {
+    return (
+        <MobileContainerBig tokenId={tokenId}>
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '.3rem',
+                    borderRadius: lib.layout.borderRadius.large,
+                    position: 'absolute',
+                    bottom: '.5rem',
+                    // right: '.1rem',
+                    paddingBottom: 5,
+                }}
+            >
+                <Label
+                    // type="text"
+                    size="small"
+                    textStyle={{
+                        color: lib.colors.transparentDarkGrey,
+                        // marginLeft: '.5rem',
+                        // fontSize: '10px',
+                        // fontWeight: 'bold',
+                        // paddingBottom: 5,
+                        position: 'relative',
+                    }}
+                    text={`holding since ${new Date(since * 1000).toLocaleDateString()}`}
+                />
+            </div>
+        </MobileContainerBig>
+    );
+};
+
+export const MobileContainerBig: FC<PropsWithChildren<{ tokenId: TokenId }>> = ({
+    tokenId,
+    children,
+}) => {
     return (
         <div
             className="mobile-pressable-div"
@@ -160,6 +266,7 @@ export const MobileContainerBig = ({ tokenId }: { tokenId: TokenId }) => {
                 borderRadius: lib.layout.borderRadius.mediumish,
             }}
         >
+            {children}
             <div
                 style={{
                     display: 'flex',

@@ -50,6 +50,7 @@ export default {
         },
         locale: () => core((state) => state.locale),
         route: () => core((state) => state.route),
+        featureTotals: () => core((state) => state.featureTotals),
 
         dimentions: () => core((state) => state.dimentions),
         editingNugg: () => core((state) => state.editingNugg),

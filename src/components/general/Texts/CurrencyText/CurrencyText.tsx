@@ -149,6 +149,10 @@ const CurrencyText: React.FC<BalanceProps> = ({
                         {spring.val.to((val) =>
                             isGwei
                                 ? (val * 10 ** 9).toFixed(decimals)
+                                : percent
+                                ? val >= 1
+                                    ? val.toFixed(1)
+                                    : val.toFixed(2)
                                 : val > 1
                                 ? CurrencyInt.format(val, unit === 'USD' ? 2 : 3)
                                 : val.toFixed(percent ? 2 : decimals || 5),
@@ -156,7 +160,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
                     </animated.div>
                 )}
                 {percent && '%'}
-                {showUnit && (
+                {!percent && showUnit && (
                     <div style={{ paddingRight: '0rem' }}>
                         {unit === 'ETH' && isGwei ? 'gwei' : unit}
                     </div>

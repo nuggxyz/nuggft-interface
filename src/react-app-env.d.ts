@@ -214,6 +214,8 @@ interface String extends tokenId {
 interface Number {
     toItemId(): ItemId;
     toNuggId(): NuggId;
+    toItemFeature(): 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+    toItemPosition(): number;
     toTokenId: typeof IdFixture;
     isTokenId: typeof IsIdFixture;
 

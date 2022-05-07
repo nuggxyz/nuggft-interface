@@ -23,8 +23,9 @@ import SideCar from '@src/components/nugg/RingAbout/SideCar';
 import Label from '@src/components/general/Label/Label';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import { useGetNuggsThatHoldQuery } from '@src/gql/types.generated';
-import NuggListRenderItemMobile, {
-    NuggListRenderItemMobileBig,
+import {
+    NuggListRenderItemMobileBigHoldingItem,
+    NuggListRenderItemMobileHolding,
 } from '@src/components/mobile/NuggListRenderItemMobile';
 import MyNuggActions from '@src/components/nugg/ViewingNugg/MyNuggActions';
 import SwapListPhone from '@src/components/nugg/ViewingNugg/SwapListPhone';
@@ -36,29 +37,172 @@ import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 import NuggSnapshotListMobile from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
 
-const Info = ({ tokenId }: { tokenId?: TokenId }) => {
-    const token = client.live.token(tokenId);
-    const totalNuggs = client.live.totalNuggs();
-
-    const observedRarity = useMemo(() => {
-        if (!token || token.type === 'nugg') return new Fraction(0);
-        return new Fraction(token.count, totalNuggs);
-    }, [token, totalNuggs]);
-
-    return token && token.type === 'item' ? (
+const Ver = ({ left, right, label }: { left: number; right: number; label: string }) => {
+    return (
         <div
             style={{
                 width: '100%',
-                padding: '1rem 0rem',
-                // margin: '.25rem 0rem',
+                display: 'flex',
                 flexDirection: 'column',
-                ...globalStyles.centered,
+                alignItems: 'center',
             }}
         >
-            <Text>rarity: {(token.rarity.number * 10000).toFixed(0)} / 10k</Text>
-            <Text>observed rarity: {(observedRarity.number * 10000).toFixed(0)} / 10k</Text>
+            <Label
+                text={`"${label}"`}
+                containerStyles={{
+                    background: lib.colors.primaryColor,
+                    padding: '.3rem .5rem',
+                    borderRadius: lib.layout.borderRadius.medium,
+                }}
+                textStyle={{ color: 'white', fontSize: '16px' }}
+            />
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    width: '100%',
+                    padding: '10px',
+                }}
+            >
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <CurrencyText
+                        forceEth
+                        value={left}
+                        percent
+                        decimals={3}
+                        textStyle={{ fontSize: '30px' }}
+                    />
+                    <Text>actual</Text>
+                </div>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <CurrencyText
+                        forceEth
+                        value={right}
+                        percent
+                        decimals={3}
+                        textStyle={{ fontSize: '30px' }}
+                    />{' '}
+                    <Text>predicted</Text>
+                </div>
+            </div>
         </div>
-    ) : null;
+    );
+};
+
+const Info = ({ tokenId }: { tokenId?: ItemId }) => {
+    const token = client.live.token(tokenId);
+    const totalNuggs = client.live.totalNuggs();
+    const featureTotals = client.live.featureTotals();
+
+    const feature = React.useMemo(() => {
+        return tokenId ? tokenId.toRawIdNum().toItemFeature() : 0;
+    }, [tokenId]);
+
+    const observedPositionRarity = useMemo(() => {
+        if (!token) return 0;
+        return new Fraction(token.count, featureTotals[feature]).number;
+    }, [token, featureTotals, feature]);
+
+    const positionRarity = useMemo(() => {
+        if (!token) return 0;
+        return token.rarity.number;
+    }, [token]);
+
+    const featureRarity = useMemo(() => {
+        if (!token) return 0;
+        return web3.config.FEATURE_RARITY[feature];
+    }, [token, feature]);
+
+    const observedFeatureRarity = useMemo(() => {
+        if (!token) return 0;
+        return new Fraction(featureTotals[feature], totalNuggs).number;
+    }, [token, totalNuggs, featureTotals, feature]);
+
+    // const [showPercent, setShowPercent] = React.useState<0 | 1>(0);
+    if (!tokenId || !token) return null;
+
+    return (
+        <>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    textAlign: 'left',
+                    width: '100%',
+                    padding: '2rem 1rem 1rem 1.5rem',
+                    // background: lib.colors.transparentWhite,
+                    // borderRadius: lib.layout.borderRadius.medium,
+                }}
+            >
+                <Text
+                    size="larger"
+                    textStyle={{
+                        color: lib.colors.primaryColor,
+                        // textShadow: lib.layout.boxShadow.dark,
+                    }}
+                >
+                    Chances
+                </Text>
+                {/* <DualToggler
+                    LeftIcon={BsPercent}
+                    RightIcon={BsHash}
+                    activeIndex={showPercent}
+                    toggleActiveIndex={setShowPercent as (arg: 0 | 1) => undefined}
+                /> */}
+            </div>
+            <div
+                style={{
+                    // width: '100%',
+                    // padding: '1rem 0rem',
+                    // margin: '.25rem 0rem',
+                    flexDirection: 'column',
+                    ...globalStyles.centered,
+                    background: lib.colors.transparentWhite,
+                    borderRadius: lib.layout.borderRadius.medium,
+                    width: '90%',
+                    height: '100%',
+                    padding: '1rem .5rem',
+                }}
+            >
+                <div style={{ width: '100%', marginTop: 15 }}> </div>{' '}
+                <Ver
+                    left={observedPositionRarity * observedFeatureRarity * 100}
+                    right={featureRarity * positionRarity * 100}
+                    label={`a new nugg has ${tokenId.toPrettyId().toLowerCase()}`}
+                />
+                <div style={{ width: '100%', marginTop: 20 }}> </div>
+                <Ver
+                    left={observedPositionRarity * 100}
+                    right={positionRarity * 100}
+                    label={`a given ${web3.config.FEATURE_NAMES[feature].toLowerCase()} is
+            ${tokenId.toPrettyId().toLowerCase()}`}
+                />
+                <div style={{ width: '100%', marginTop: 20 }}> </div>
+                <Ver
+                    left={observedFeatureRarity * 100}
+                    right={featureRarity * 100}
+                    label={`a nugg is minted with ${web3.config.FEATURE_NAMES[
+                        feature
+                    ].toLowerCase()}`}
+                />
+            </div>
+        </>
+    );
 };
 
 const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
@@ -82,63 +226,78 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
     return text ? (
         <div
             style={{
-                height: 'auto',
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
+                // width: '95%',
                 display: 'flex',
+                width: '90%',
+                justifyContent: 'center',
                 flexDirection: 'column',
+                alignItems: 'center',
+                background: lib.colors.transparentWhite,
+                borderRadius: lib.layout.borderRadius.medium,
+                padding: '1rem .5rem',
+                marginTop: '1rem',
             }}
         >
-            {token && token.tryout.min && (
-                <div
-                    style={{
-                        alignItems: 'center',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        marginBottom: '20px',
-                        marginTop: '10px',
-                    }}
-                >
-                    <CurrencyText
-                        textStyle={{
-                            color: lib.colors.primaryColor,
-                            fontSize: '28px',
-                        }}
-                        image="eth"
-                        value={currency}
-                        decimals={3}
-                    />
-                    <Text
-                        textStyle={{
-                            fontSize: '13px',
-                            color: lib.colors.primaryColor,
+            <div
+                style={{
+                    height: 'auto',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
+                {token && token.tryout.min && (
+                    <div
+                        style={{
+                            alignItems: 'center',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            marginBottom: '20px',
+                            marginTop: '10px',
                         }}
                     >
-                        {selected
-                            ? t`${selected.nugg.toPrettyId()}'s asking price`
-                            : t`minimum price`}
+                        <CurrencyText
+                            textStyle={{
+                                color: lib.colors.primaryColor,
+                                fontSize: '28px',
+                            }}
+                            image="eth"
+                            value={currency}
+                            decimals={3}
+                        />
+                        <Text
+                            textStyle={{
+                                fontSize: '13px',
+                                color: lib.colors.primaryColor,
+                            }}
+                        >
+                            {selected
+                                ? t`${selected.nugg.toPrettyId()}'s asking price`
+                                : t`minimum price`}
+                        </Text>
+                    </div>
+                )}
+                <>
+                    <Text textStyle={{ color: lib.colors.primaryColor }}>
+                        {continued
+                            ? !selectedMyNugg
+                                ? t`which nugg should bid on your behalf?`
+                                : t`you will bid as ${selectedMyNugg.toPrettyId()}`
+                            : text}
                     </Text>
-                </div>
-            )}
-            <>
-                <Text textStyle={{ color: lib.colors.primaryColor }}>
-                    {continued
-                        ? !selectedMyNugg
-                            ? t`which nugg should bid on your behalf?`
-                            : t`you will bid as ${selectedMyNugg.toPrettyId()}`
-                        : text}
-                </Text>
-                <SideCar tokenId={tokenId} />
-                <Caboose
-                    tokenId={tokenId}
-                    onSelectNugg={setSelected}
-                    onSelectMyNugg={setSelectedMyNugg}
-                    onContinue={() => {
-                        setContinued(true);
-                    }}
-                />
-            </>
+                    <SideCar tokenId={tokenId} />
+                    <Caboose
+                        tokenId={tokenId}
+                        onSelectNugg={setSelected}
+                        onSelectMyNugg={setSelectedMyNugg}
+                        onContinue={() => {
+                            setContinued(true);
+                        }}
+                    />
+                </>
+            </div>{' '}
         </div>
     ) : null;
 };
@@ -325,6 +484,8 @@ const ViewingNuggPhone: FunctionComponent<{
 
     const ider = React.useId();
 
+    console.log(data);
+
     return provider && epoch && tokenId && token ? (
         <>
             <div
@@ -477,43 +638,9 @@ const ViewingNuggPhone: FunctionComponent<{
                                 </Text>
                             </div>
                         )}
-                        <div
-                            style={{
-                                // width: '95%',
-                                display: 'flex',
-                                width: '90%',
-                                justifyContent: 'center',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                background: lib.colors.transparentWhite,
-                                borderRadius: lib.layout.borderRadius.medium,
-                                padding: '1rem .5rem',
-                                marginTop: '1rem',
-                            }}
-                        >
-                            <NextSwap tokenId={token.tokenId} />
-                        </div>
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'flex-start',
-                                alignItems: 'flex-start',
-                                textAlign: 'left',
-                                width: '100%',
-                                padding: '2rem 1rem 1rem 1.5rem',
-                            }}
-                        >
-                            <Text
-                                size="larger"
-                                textStyle={{
-                                    color: lib.colors.primaryColor,
-                                    // textShadow: lib.layout.boxShadow.dark,
-                                }}
-                            >
-                                Info
-                            </Text>
-                        </div>
-                        <Info tokenId={tokenId} />{' '}
+                        <NextSwap tokenId={token.tokenId} />
+
+                        {tokenId.isItemId() && <Info tokenId={tokenId} />}
                     </>
                 )}
 
@@ -608,9 +735,14 @@ const ViewingNuggPhone: FunctionComponent<{
                             coreRef={coreRef}
                             itemHeightBig={340}
                             itemHeightSmall={160}
-                            data={data?.nuggItems.map((x) => x.nugg.id.toNuggId()) || []}
-                            RenderItemSmall={NuggListRenderItemMobile}
-                            RenderItemBig={NuggListRenderItemMobileBig}
+                            data={
+                                data?.nuggItems.map((x) => ({
+                                    tokenId: x.nugg.id.toNuggId(),
+                                    since: Number(x?.displayedSinceUnix || 0),
+                                })) || []
+                            }
+                            RenderItemSmall={NuggListRenderItemMobileHolding}
+                            RenderItemBig={NuggListRenderItemMobileBigHoldingItem}
                             disableScroll
                             extraData={undefined}
                             headerStyle={{ padding: '2rem 1rem 1rem 1.5rem' }}

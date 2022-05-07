@@ -80,6 +80,7 @@ const core = create(
     subscribeWithSelector(
         combine(
             {
+                featureTotals: [0, 0, 0, 0, 0, 0, 0, 0],
                 stake: undefined,
                 myUnclaimedOffers: [],
                 nuggft: undefined,
@@ -162,11 +163,16 @@ const core = create(
                 }
 
                 function updateProtocolSimple(
-                    upd: Pick<ClientStateUpdate, 'epoch' | 'stake' | 'totalNuggs' | 'health'>,
+                    upd: Pick<
+                        ClientStateUpdate,
+                        'epoch' | 'stake' | 'totalNuggs' | 'health' | 'featureTotals'
+                    >,
                 ): void {
                     set((draft) => {
                         if (upd.epoch) draft.epoch = upd.epoch;
                         if (upd.stake) draft.stake = upd.stake;
+                        if (upd.featureTotals) draft.featureTotals = upd.featureTotals;
+
                         if (upd.health?.lastBlockGraph)
                             draft.health.lastBlockGraph = upd.health.lastBlockGraph;
                         if (upd.totalNuggs || upd.totalNuggs === 0)
@@ -181,6 +187,9 @@ const core = create(
                         if (stateUpdate.totalNuggs) draft.totalNuggs = stateUpdate.totalNuggs;
                         if (stateUpdate.stake) draft.stake = stateUpdate.stake;
                         if (stateUpdate.editingNugg) draft.editingNugg = stateUpdate.editingNugg;
+                        if (stateUpdate.featureTotals)
+                            draft.featureTotals = stateUpdate.featureTotals;
+
                         // if (stateUpdate.notableSwaps) draft.notableSwaps = stateUpdate.notableSwaps;
                         // if (stateUpdate.recentSwaps) draft.recentSwaps = stateUpdate.recentSwaps;
                         // if (stateUpdate.recentItems) draft.recentItems = stateUpdate.recentItems;

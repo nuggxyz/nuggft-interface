@@ -16,6 +16,7 @@ const Label: FunctionComponent<Props> = ({
     text,
     containerStyles = {},
     leftDotColor,
+    textStyle,
     ...props
 }) => {
     return (
@@ -51,7 +52,8 @@ const Label: FunctionComponent<Props> = ({
             )}
             <Text
                 textStyle={{
-                    fontSize: '.7rem',
+                    ...(!props.size && { fontSize: '.7rem' }),
+                    ...textStyle,
                 }}
                 {...props}
             >

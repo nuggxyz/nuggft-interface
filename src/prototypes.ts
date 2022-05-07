@@ -127,6 +127,14 @@ String.prototype.toRawIdNum = function fn() {
     return +this.toRawId();
 };
 
+Number.prototype.toItemFeature = function fn() {
+    return Math.floor(Number(this) / 1000) as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+};
+
+Number.prototype.toItemPosition = function fn() {
+    return Number(this) % 1000;
+};
+
 Number.prototype.toItemId = function fn() {
     return this.toTokenId('item');
 };

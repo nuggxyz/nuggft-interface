@@ -17,6 +17,11 @@ query getAllNuggs(
         idnum
     }
 }
+# query getNuggItemSince($nuggItemId: ID! ) {
+#     nuggItem({
+
+#     }
+# }
 query getNuggSnapshots($tokenId: ID!) {
     nugg(id: $tokenId) {
         id
@@ -137,15 +142,9 @@ query health {
     }
 }
 
-query getNuggsThatHold(
-    $first: Int
-    $skip: Int
-    $orderDirection: OrderDirection
-    $orderBy: NuggItem_orderBy
-    $itemId: String!
-) {
+query getNuggsThatHold($first: Int, $skip: Int, $orderDirection: OrderDirection, $itemId: String!) {
     nuggItems(
-        orderBy: $orderBy
+        orderBy: displayedSinceUnix
         orderDirection: $orderDirection
         first: $first
         skip: $skip
@@ -155,6 +154,8 @@ query getNuggsThatHold(
         nugg {
             id
         }
+        displayedSinceUnix
+        displayedSinceBlock
     }
 }
 

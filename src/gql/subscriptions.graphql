@@ -9,6 +9,7 @@ subscription liveProtocol {
             _upcomingActiveItemSwaps
             ...epochswapdata
         }
+        featureTotals
         nuggftStakedEth
         nuggftStakedShares
         activeNuggs(orderBy: idnum) {
@@ -21,6 +22,7 @@ subscription liveProtocol {
                 # endingEpoch
             }
         }
+        featureTotals
         activeNuggItems {
             id
             activeSwap {

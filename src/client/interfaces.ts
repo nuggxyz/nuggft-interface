@@ -167,6 +167,7 @@ export type ClientStateUpdate = {
         shares: BigNumber;
         eps: EthInt;
     };
+    featureTotals?: FixedLengthArray<number, 8, number[]>;
     epoch?: {
         startblock: number;
         endblock: number;
@@ -257,7 +258,10 @@ export interface Actions {
     updateBlocknum: (blocknum: number, chainId: Chain, startup?: boolean) => void;
     updateProtocol: (stateUpdate: ClientStateUpdate) => void;
     updateProtocolSimple: (
-        stateUpdate: Pick<ClientStateUpdate, 'epoch' | 'stake' | 'totalNuggs' | 'health'>,
+        stateUpdate: Pick<
+            ClientStateUpdate,
+            'epoch' | 'stake' | 'totalNuggs' | 'health' | 'featureTotals'
+        >,
     ) => void;
 
     setLastSwap: (tokenId: TokenId | undefined) => void;
@@ -315,6 +319,7 @@ export interface ClientState {
     activeSearch: SearchResults;
     dimentions: Dimentions;
     totalNuggs: number;
+    featureTotals: FixedLengthArray<number, 8, number[]>;
 }
 
 export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;

@@ -347,6 +347,7 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
             style={{
                 // display: 'flex',
                 // flexDirection: 'column',
+                padding: 10,
                 width: '100%',
                 height: '100%',
             }}
@@ -360,7 +361,7 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
                         width: '100%',
                     }}
                 >
-                    <Label size="large" text="none" />
+                    <Label text="none" size="large" textStyle={{ padding: '.2rem .5rem' }} />
                 </div>
             ) : (
                 <>

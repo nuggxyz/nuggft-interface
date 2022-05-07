@@ -49,7 +49,21 @@ export const isValidChainId = (input: number) => {
     return supportedChainIds().indexOf(input) !== -1;
 };
 
-export const FEATURE_NAMES = ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Hold', 'Neck'];
+export const FEATURE_NAMES = [
+    'Base',
+    'Eyes',
+    'Mouth',
+    'Hair',
+    'Hat',
+    'Back',
+    'Hold',
+    'Neck',
+] as unknown as FixedLengthArray<string, 8>;
+
+// chances any nugg will have get a given feature
+export const FEATURE_RARITY = [8, 10, 10, 5, 5, 2, 2, 2].map(
+    (x) => x / 8,
+) as unknown as FixedLengthArray<number, 8>;
 
 export const CONTRACTS = {
     [Chain.MAINNET]: {

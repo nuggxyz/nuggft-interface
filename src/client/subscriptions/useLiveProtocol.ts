@@ -149,7 +149,6 @@ export default () => {
                     ...Object.values(activeNuggs).flat(),
                     ...Object.values(activeItems).flat(),
                 ]);
-
                 updateProtocolSimple({
                     stake: {
                         staked,
@@ -157,6 +156,11 @@ export default () => {
                         eps: EthInt.fromFraction(new Fraction(staked, shares)),
                     },
                     totalNuggs: Number(protocol.totalNuggs),
+                    featureTotals: protocol.featureTotals as FixedLengthArray<
+                        number,
+                        8,
+                        typeof protocol.featureTotals
+                    >,
                     // recentSwaps,
                     // recentItems,
                     // potentialItems,
