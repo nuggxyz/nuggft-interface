@@ -4,25 +4,23 @@ import { combine } from 'zustand/middleware';
 import { useCallback } from 'react';
 import shallow from 'zustand/shallow';
 
-import { EthInt } from '@src/classes/Fraction';
-
 import { EpochData } from './interfaces';
 
 interface Offer<T> {
     account: T;
-    eth: EthInt;
+    eth: BigNumber;
     txhash: string;
 }
 
 interface SwapDataBase extends TokenIdFactoryBase {
     listDataType: 'swap';
-    eth: EthInt;
+    eth: BigNumber;
     epoch: EpochData | null;
     endingEpoch: number | null;
     leader?: unknown;
     owner: unknown;
     num: number | null;
-    bottom: EthInt;
+    bottom: BigNumber;
     isBackup: boolean;
     count?: unknown;
     isTryout?: unknown;

@@ -8,7 +8,6 @@ import useLiveUser from './subscriptions/useLiveUser';
 import useSwapUpdater from './update/useSwapUpdater';
 import useLiveGraphHealth from './subscriptions/useLiveGraphHealth';
 import useDimentionsUpdater from './update/useDimentionsUpdater';
-import useLiveStakeBackup from './backups/useLiveStakeBackup';
 import { useVisualViewportUpdater, useEmitOnKeyboardClose } from './viewport';
 import { useCloseModalOnKeyboardClose } from './modal';
 // import useGraphUpdater from './update/useGraphUpdater';
@@ -32,7 +31,7 @@ export default () => {
 
     useMountLogger('ClientUpdater');
 
-    useLiveStakeBackup();
+    // useLiveStakeBackup();
 
     useVisualViewportUpdater();
 

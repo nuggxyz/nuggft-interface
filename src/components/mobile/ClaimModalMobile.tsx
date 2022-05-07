@@ -36,8 +36,6 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
 
     const stake = client.static.stake();
 
-    const provider = web3.hook.usePriorityProvider();
-
     const network = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
     const peer = web3.hook.usePriorityPeer();
@@ -50,8 +48,6 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');
 
     const args = useMultiClaimArgs();
-
-    useTransactionManager2(provider, hash, closeModal);
 
     const populatedTransaction = React.useMemo(() => {
         return { amount: args[0].length, tx: nuggft.populateTransaction.claim(...args) };

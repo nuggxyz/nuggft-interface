@@ -11,7 +11,7 @@ import { ListRenderItemProps } from '@src/components/general/List/List';
 import { Chain } from '@src/web3/core/interfaces';
 import lib, { isUndefinedOrNull, isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import { Address } from '@src/classes/Address';
-import { LiveItem, LiveToken, SwapData } from '@src/client/interfaces';
+import { LiveItem, LiveToken, SwapData, TryoutData } from '@src/client/interfaces';
 import Label from '@src/components/general/Label/Label';
 import globalStyles from '@src/lib/globalStyles';
 import { useUsdPair } from '@src/client/usd';
@@ -248,47 +248,48 @@ const SwapItem: FunctionComponent<
                         }}
                     >
                         {item.tryout.swaps.map((x, i) => (
-                            <div
-                                key={`${i}-swaplist`}
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    width: '100%',
-                                    padding: '.5rem',
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <Label text={(i + 1).toString()} size="small" />
-                                    <Text
-                                        size="small"
-                                        textStyle={{
-                                            color: 'white',
-                                            paddingLeft: '.5rem',
-                                        }}
-                                    >
-                                        Nugg {x.nugg}
-                                    </Text>
-                                </div>
-                                <CurrencyText
-                                    size="small"
-                                    image="eth"
-                                    value={x.eth.number}
-                                    stopAnimation
-                                />
-                            </div>
+                            <TryoutItem key={`${i}-swaplist`} data={x} index={i} />
                         ))}
                     </div>
                 )}
             </div>
         </div>
     ) : null;
+};
+
+const TryoutItem = ({ data, index }: { data: TryoutData; index: number }) => {
+    const usd = client.usd.useUsdPair(data.eth);
+    return (
+        <div
+            style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '100%',
+                padding: '.5rem',
+            }}
+        >
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                }}
+            >
+                <Label text={(index + 1).toString()} size="small" />
+                <Text
+                    size="small"
+                    textStyle={{
+                        color: 'white',
+                        paddingLeft: '.5rem',
+                    }}
+                >
+                    {data.nugg.toPrettyId()}
+                </Text>
+            </div>
+            <CurrencyText size="small" image="eth" value={usd} stopAnimation />
+        </div>
+    );
 };
 
 const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {

@@ -16,6 +16,7 @@ import useRemaining from '@src/client/hooks/useRemaining';
 import SimpleList from '@src/components/general/List/SimpleList';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
+import { EthInt } from '@src/classes/Fraction';
 
 import styles from './ActiveTab.styles';
 import SeeAllButton from './SeeAllButton';
@@ -70,7 +71,10 @@ export const ActiveRenderItem = ({
                             background: fancy,
                         }}
                     />
-                    <CurrencyText textStyle={{ color: fancy }} value={swap?.eth.number || 0} />
+                    <CurrencyText
+                        textStyle={{ color: fancy }}
+                        value={new EthInt(swap?.eth || 0).number || 0}
+                    />
                 </div>
             </div>
 

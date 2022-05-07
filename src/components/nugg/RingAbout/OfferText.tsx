@@ -121,14 +121,12 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
             <CurrencyText
                 textStyle={{ color: 'white', fontSize: '28px' }}
                 image="eth"
-                value={leader?.eth?.number || vfo?.number || 0}
+                value={new EthInt(leader?.eth).number || vfo?.number || 0}
                 decimals={0}
             />
             <Text textStyle={{ fontSize: '13px', color: 'white', marginTop: 5 }}>
                 {`${
-                    leader?.eth?.number
-                        ? `${leaderEns || leader?.user || ''} is leading`
-                        : 'starting price'
+                    leader?.eth ? `${leaderEns || leader?.user || ''} is leading` : 'starting price'
                 } | ${offers.length} offers`}
             </Text>
         </div>

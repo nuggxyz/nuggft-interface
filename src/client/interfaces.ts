@@ -9,7 +9,7 @@ import { SwapRoutes } from './router';
 
 interface OfferDataBase extends TokenIdFactoryBase {
     user?: AddressString | NuggId;
-    eth: EthInt;
+    eth: BigNumber;
     txhash: string;
     isBackup: boolean;
     sellingTokenId: null | NuggId;
@@ -34,13 +34,13 @@ export interface BasicData extends ListDataBase {
 
 interface SwapDataBase extends ListDataBase {
     listDataType: 'swap';
-    eth: EthInt;
+    eth: BigNumber;
     epoch: EpochData | null;
     endingEpoch: number | null;
     leader?: unknown;
     owner: unknown;
     num: number | null;
-    bottom: EthInt;
+    bottom: BigNumber;
     isBackup: boolean;
     count?: unknown;
     isTryout?: unknown;
@@ -219,7 +219,7 @@ export interface LiveNugg extends NuggIdFactory<Live> {
     isBackup: boolean;
 }
 
-export type TryoutData = { nugg: NuggId; eth: EthInt };
+export type TryoutData = { nugg: NuggId; eth: BigNumber };
 
 export interface LiveItem extends ItemIdFactory<Live> {
     activeSwap?: IsolateItemIdFactory<SwapData>;
@@ -246,6 +246,7 @@ export enum Lifecycle {
     Tryout = 'tryout', // [     item] a token that has no active sale, but one to many non-active sales
     Cut = 'cut', //       [nugg     ] a token that no one bid on but still exists in the graph
     Egg = 'egg', //       [nugg     ] a token that will be minting in the next epoch --- SAME AS DECK, BUT NON OFFERABLE
+    Concessions = 'concessions', // [nugg item] a nugg that is being sold by the user viewing it and no one else has bid on it - same as bench but not offerable by the given user
 }
 
 // }

@@ -11,6 +11,7 @@ import styles from './NuggDexComponents.styles';
 
 const NuggListRenderItemSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const swap = client.swaps.useSwap(tokenId);
+    const usd = client.usd.useUsdPair(swap?.eth);
     return swap ? (
         <div
             style={{
@@ -28,7 +29,7 @@ const NuggListRenderItemSwap = ({ tokenId }: { tokenId: TokenId }) => {
             <CurrencyText
                 textStyle={{ color: lib.colors.primaryColor }}
                 image="eth"
-                value={swap.eth.number}
+                value={usd}
                 stopAnimation
             />
             {swap.leader && (

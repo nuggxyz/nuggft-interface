@@ -4,11 +4,14 @@ import client from '@src/client';
 import { Lifecycle, LiveToken } from '@src/client/interfaces';
 import { Address } from '@src/classes/Address';
 import { SwapData } from '@src/client/swaps';
+import web3 from '@src/web3';
 
 export default (token?: LiveToken | SwapData): Lifecycle | undefined => {
     const epoch = client.live.epoch.default();
 
     const blocknum = client.live.blocknum();
+
+    const address = web3.hook.usePriorityAccount();
 
     return React.useMemo(() => {
         if (!token) return undefined;
@@ -33,7 +36,10 @@ export default (token?: LiveToken | SwapData): Lifecycle | undefined => {
         }
 
         if (abc && epoch !== undefined) {
-            if (!abc.endingEpoch) return Lifecycle.Bench;
+            if (!abc.endingEpoch) {
+                if (address === abc.owner && address === abc.leader) return Lifecycle.Concessions;
+                return Lifecycle.Bench;
+            }
 
             if (+abc.endingEpoch === epoch.id + 1) {
                 if (abc.type === 'nugg' && abc.owner === Address.ZERO.hash) {

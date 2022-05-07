@@ -60,10 +60,8 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
         return lib.colors.white;
     }, [swap, isPhone]);
 
-    const leaderCurrency = useUsdPair(leader?.eth?.number);
-    const minTryoutCurrency = useUsdPair(
-        token?.isItem() ? token?.tryout.min?.eth.number : undefined,
-    );
+    const leaderCurrency = useUsdPair(leader?.eth);
+    const minTryoutCurrency = useUsdPair(token?.isItem() ? token?.tryout.min?.eth : undefined);
 
     return (
         <div

@@ -18,6 +18,7 @@ import useDimentions from '@src/client/hooks/useDimentions';
 import { SwapData } from '@src/client/swaps';
 import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
+import { EthInt } from '@src/classes/Fraction';
 
 import styles from './RingAbout.styles';
 
@@ -124,6 +125,7 @@ export default ({
 
     return token &&
         lifecycle &&
+        lifecycle !== Lifecycle.Concessions &&
         lifecycle !== Lifecycle.Bench &&
         lifecycle !== Lifecycle.Tryout &&
         lifecycle !== Lifecycle.Stands ? (
@@ -195,10 +197,10 @@ export default ({
                                 <div>
                                     <Text>Distribution:</Text>
                                     <Text>
-                                        {ownerEns}: {distribution.owner.number}
+                                        {ownerEns}: {new EthInt(distribution.owner).number}
                                     </Text>
-                                    <Text>Protocol: {distribution.proto.number}</Text>
-                                    <Text>Staked: {distribution.stake.number}</Text>
+                                    <Text>Protocol: {new EthInt(distribution.proto).number}</Text>
+                                    <Text>Staked: {new EthInt(distribution.stake).number}</Text>
                                 </div>
                             )}
                             <List

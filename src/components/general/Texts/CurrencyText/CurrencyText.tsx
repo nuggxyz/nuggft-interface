@@ -142,7 +142,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
                         {' '}
                         <Loader color={props?.textStyle?.color ?? 'white'} />
                     </div>
-                ) : str && value === 1 ? (
+                ) : str && value === 0 ? (
                     str
                 ) : (
                     <animated.div className="number" style={{ paddingRight: '.5rem' }}>

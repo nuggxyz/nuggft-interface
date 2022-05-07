@@ -109,7 +109,7 @@ export default () => {
 
                     const data = buildTokenIdFactory({
                         tokenId: event.args.tokenId.toNuggId(),
-                        eth: EthInt.fromNuggftV1Agency(event.args.agency),
+                        eth: EthInt.fromNuggftV1Agency(event.args.agency).bignumber,
                         user: agency.mask(160)._hex as AddressString,
                         txhash: log.transactionHash,
                         isBackup: false,
@@ -158,7 +158,7 @@ export default () => {
                         buildTokenIdFactory({
                             type: 'item' as const,
                             tokenId: event.args.itemId.toItemId(),
-                            eth: EthInt.fromNuggftV1Agency(event.args.agency),
+                            eth: EthInt.fromNuggftV1Agency(event.args.agency).bignumber,
                             user: agency.mask(160).toNumber().toString().toNuggId(),
                             txhash: log.transactionHash,
                             sellingTokenId: event.args.sellingTokenId.toNuggId(),

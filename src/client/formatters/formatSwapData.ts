@@ -1,4 +1,5 @@
-import { EthInt } from '@src/classes/Fraction';
+import { BigNumber } from 'ethers';
+
 import { SwapdataFragment, ItemswapdataFragment } from '@src/gql/types.generated';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { SwapData } from '@src/client/swaps';
@@ -8,7 +9,7 @@ export const formatSwapData = <T extends TokenId>(
     tokenId: T,
 ): SwapData & PickFromTokenId<T, { type: 'nugg' }, { type: 'item' }> => {
     const a = {
-        eth: new EthInt(z?.eth || 0),
+        eth: BigNumber.from(z?.top || z.bottom),
         endingEpoch: z.endingEpoch ? Number(z.endingEpoch) : null,
         epoch: z.epoch
             ? {
@@ -20,10 +21,10 @@ export const formatSwapData = <T extends TokenId>(
             : null,
         listDataType: 'swap' as const,
         isBackup: false,
-        bottom: new EthInt(z.bottom),
+        bottom: BigNumber.from(z.bottom),
         num: 1,
         offers: z.offers.map((x) => ({
-            eth: new EthInt(x.eth),
+            eth: BigNumber.from(x.eth),
             account: 'nugg' in x ? x.nugg.id : x.user.id,
             txhash: x.txhash,
         })),

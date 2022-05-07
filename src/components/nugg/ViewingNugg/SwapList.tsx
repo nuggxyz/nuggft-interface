@@ -17,6 +17,7 @@ import { Address } from '@src/classes/Address';
 import { LiveToken, SwapData } from '@src/client/interfaces';
 import Button from '@src/components/general/Buttons/Button/Button';
 import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
+import { EthInt } from '@src/classes/Fraction';
 
 import styles from './ViewingNugg.styles';
 
@@ -118,7 +119,7 @@ const SwapItem: FunctionComponent<
             >
                 <div style={styles.swapButton}>
                     <SwapDesc item={item} epoch={epoch} />
-                    <CurrencyText image="eth" value={item.eth.decimal.toNumber()} />
+                    <CurrencyText image="eth" value={new EthInt(item.eth).number} />
                 </div>
                 <div
                     style={{ justifyContent: 'flex-start', display: 'flex', alignItems: 'center' }}

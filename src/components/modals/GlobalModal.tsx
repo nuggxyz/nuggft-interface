@@ -31,6 +31,7 @@ export const ModalSwitch = () => {
             );
         case ModalEnum.Claim:
             return isPhone ? <ClaimModalMobile data={data} /> : null;
+
         case ModalEnum.Mint:
             return <MintModal data={data} />;
 

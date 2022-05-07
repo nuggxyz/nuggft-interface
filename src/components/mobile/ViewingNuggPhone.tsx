@@ -10,7 +10,6 @@ import useTokenQuery from '@src/client/hooks/useTokenQuery';
 import globalStyles from '@src/lib/globalStyles';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
-import OfferButton from '@src/components/nugg/RingAbout/OfferButton';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import useRemaining, { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import { Lifecycle, TryoutData } from '@src/client/interfaces';
@@ -35,6 +34,7 @@ import { useUsdPair } from '@src/client/usd';
 import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 
 import NuggSnapshotListMobile from './NuggSnapshotItemMobile';
+import MobileOfferButton from './MobileOfferButton';
 
 const Info = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
@@ -77,9 +77,7 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
         return undefined;
     }, [token, selected]);
 
-    const currency = client.usd.useUsdPair(
-        selected ? selected.eth : token?.tryout?.min?.eth.number,
-    );
+    const currency = client.usd.useUsdPair(selected ? selected.eth : token?.tryout?.min?.eth);
 
     return text ? (
         <div
@@ -187,7 +185,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                     alignItems: 'center',
                 }}
             >
-                {lifecycle === Lifecycle.Bench ? (
+                {lifecycle === Lifecycle.Bench || lifecycle === Lifecycle.Concessions ? (
                     <div
                         style={{
                             alignItems: 'center',
@@ -287,13 +285,9 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                 )}
             </div>
             {(swap?.offers.length || 0) > 0 && lifecycle !== Lifecycle.Bench && (
-                <div style={{ width: '100%', padding: '20px 10px ', overflow: 'hidden' }}>
-                    <OffersList tokenId={tokenId} />
-                </div>
+                <OffersList tokenId={tokenId} />
             )}
-            <div style={{ width: '100%', padding: '0rem 20px', paddingTop: '.8rem' }}>
-                <OfferButton tokenId={tokenId} inOverlay />
-            </div>
+            <MobileOfferButton tokenId={tokenId} />
         </>
     );
 };

@@ -55,13 +55,13 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
                     ? buildTokenIdFactory({
                           tokenId,
                           epoch,
-                          eth: agency.eth,
+                          eth: agency.eth.bignumber,
                           leader: agency.address as AddressString,
                           owner,
                           endingEpoch: epoch && epoch.id,
                           num: Number(0),
                           isActive: false,
-                          bottom: new EthInt(0),
+                          bottom: new EthInt(0).bignumber,
                           isBackup: true,
                           listDataType: 'swap' as const,
                       })

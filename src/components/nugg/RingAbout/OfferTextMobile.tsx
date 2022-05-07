@@ -117,7 +117,7 @@ export const BuntOfferTextMobile = ({ tokenId }: { tokenId: TokenId }) => {
         leader?.user || '',
     );
 
-    const leaderCurrency = useUsdPair(leader?.eth?.number || vfo?.number || 0);
+    const leaderCurrency = useUsdPair(leader?.eth || vfo?.number || 0);
 
     return !isPhone ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -178,9 +178,7 @@ export const BuntOfferTextMobile = ({ tokenId }: { tokenId: TokenId }) => {
             />
             <Text textStyle={{ fontSize: '13px', color: dynamicTextColor, marginTop: 5 }}>
                 {`${
-                    leader?.eth?.number
-                        ? `${leaderEns || leader?.user || ''} is leading`
-                        : 'starting price'
+                    leader?.eth ? `${leaderEns || leader?.user || ''} is leading` : 'starting price'
                 } | ${offers.length} offers`}
             </Text>
         </div>

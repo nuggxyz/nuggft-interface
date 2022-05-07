@@ -15,9 +15,9 @@ export default (swapData?: SwapData) => {
         if (swapData) {
             const extra = swapData.eth.sub(swapData.bottom);
 
-            const isMint = swapData.bottom.number === 0;
+            const isMint = swapData.bottom.isZero();
 
-            const proto = extra.divide(isMint ? 2 : 10);
+            const proto = extra.div(isMint ? 2 : 10);
 
             return {
                 proto,

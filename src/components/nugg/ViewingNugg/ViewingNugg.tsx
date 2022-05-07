@@ -89,6 +89,9 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
 
     const navigate = useNavigate();
 
+    const usdMin = client.usd.useUsdPair(token?.isItem() ? token?.tryout?.min?.eth : undefined);
+    const usdMax = client.usd.useUsdPair(token?.isItem() ? token?.tryout?.max?.eth : undefined);
+
     return provider && epoch && tokenId && token ? (
         <div style={styles.container}>
             {MobileBackButton && (
@@ -191,7 +194,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                         size="small"
                                                         type="text"
                                                         image="eth"
-                                                        value={token.tryout.min.eth.decimal.toNumber()}
+                                                        value={usdMin}
                                                     />
                                                 ) : (
                                                     <div>
@@ -200,7 +203,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                                 image="eth"
                                                                 size="small"
                                                                 type="text"
-                                                                value={token.tryout.min.eth.decimal.toNumber()}
+                                                                value={usdMin}
                                                             />
                                                             <Text
                                                                 size="small"
@@ -214,7 +217,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                                 image="eth"
                                                                 size="small"
                                                                 type="text"
-                                                                value={token.tryout.max.eth.decimal.toNumber()}
+                                                                value={usdMax}
                                                             />
                                                             <Text
                                                                 size="small"

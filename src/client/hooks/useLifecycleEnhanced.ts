@@ -34,6 +34,7 @@ export default (swap: SwapData | undefined) => {
             };
         case Lifecycle.Stands:
             return { color: lib.colors.primaryColor, label: 'staked', lifecycle, active: false };
+        case Lifecycle.Concessions:
         case Lifecycle.Tryout:
         case Lifecycle.Bench:
             return {
@@ -56,7 +57,6 @@ export default (swap: SwapData | undefined) => {
                 lifecycle,
                 active: true,
             };
-
         default:
             return undefined;
     }

@@ -2,6 +2,7 @@ import React, { startTransition, useState } from 'react';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
 import { BigNumber } from 'ethers';
 import { IoChevronBackCircle } from 'react-icons/io5';
+import { t } from '@lingui/macro';
 
 import lib, { shortenTxnHash } from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -26,9 +27,9 @@ import CurrencyToggler, {
 import Label from '@src/components/general/Label/Label';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-import OffersList from '@src/components/nugg/RingAbout/OffersList';
 import Loader from '@src/components/general/Loader/Loader';
 import { DualCurrencyInputWithIcon } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
+import { Address } from '@src/classes/Address';
 
 import { AnimatedConfirmation } from './OfferModalMobile';
 
@@ -38,7 +39,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     const address = web3.hook.usePriorityAccount();
     const stake = client.static.stake();
 
-    const provider = web3.hook.usePriorityProvider();
+    const swap = client.swaps.useSwap(data.tokenId);
 
     const network = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
@@ -51,11 +52,43 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     const [amount, setAmount] = useState('0');
     const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');
 
-    useTransactionManager2(provider, hash, closeModal);
+    React.useEffect(() => {
+        if (swap && address) {
+            if (swap.endingEpoch || swap.owner !== address) {
+                // idk hoooooow you got here, but buh byeeeee
+                window.location.reload();
+            }
+        }
+    }, [swap, address]);
+
+    const [isCanceling, setIsCanceling] = React.useState(false);
+
+    React.useEffect(() => {
+        if (isCanceling && page === 0) {
+            setIsCanceling(false);
+        }
+    }, [isCanceling, page, setIsCanceling]);
 
     const amountUsd = useUsdPair(amount);
 
     const populatedTransaction = React.useMemo(() => {
+        if (swap && isCanceling && address) {
+            if (data.isItem()) {
+                return {
+                    tx: nuggft.populateTransaction.claim(
+                        [data.sellingNuggId.toRawId()],
+                        [Address.ZERO.hash],
+                        [data.sellingNuggId.toRawId()],
+                        [data.tokenId.toRawId()],
+                    ),
+                    amount: BigNumber.from(0),
+                };
+            }
+            return {
+                tx: nuggft.populateTransaction.claim([data.tokenId.toRawId()], [address], [0], [0]),
+                amount: BigNumber.from(0),
+            };
+        }
         const value = amountUsd.eth.bignumber;
         if (!value.isZero()) {
             if (data.isItem()) {
@@ -98,8 +131,8 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     }, [populatedTransaction, network]);
 
     const eps = useAsyncState(() => {
-        return nuggft.eps();
-    }, [nuggft, stake]);
+        return swap ? Promise.resolve(swap.eth) : nuggft.eps();
+    }, [nuggft, stake, swap]);
 
     const epsUsd = useUsdPair(eps);
 
@@ -202,7 +235,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
         () => (
             <>
                 <Text size="larger" textStyle={{ marginTop: 10 }}>
-                    Minimum
+                    {swap ? 'Current Price' : 'Minimum'}
                 </Text>
 
                 <CurrencyText
@@ -255,15 +288,12 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                             display: 'flex',
                             flexDirection: 'column',
                             justifyContent: 'space-between',
-                            alignItems: 'center',
                             width: '100%',
                             color: lib.colors.primaryColor,
-                            position: 'relative',
                         }}
                         styleInput={{
                             fontSize: 32,
                             color: lib.colors.primaryColor,
-                            textAlign: 'center',
                         }}
                         // styleHeading={styles.heading}
                         styleInputContainer={{
@@ -300,7 +330,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
 
                 <Button
                     className="mobile-pressable-div"
-                    label="Review"
+                    label={swap ? t`Update` : t`Review`}
                     // leftIcon={calculating ? <Loader /> : undefined}
                     onClick={() => setPage(1)}
                     disabled={calculating || !!estimator.error}
@@ -315,16 +345,39 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                     }}
                 />
 
-                {/* <Button
-                    className="mobile-pressable-div"
-                    size="small"
-                    buttonStyle={{ background: 'transparent', marginTop: 10, marginBottom: -10 }}
-                    label="cancel"
-                    onClick={closeModal}
-                /> */}
+                {swap && (
+                    <Button
+                        className="mobile-pressable-div"
+                        label={t`Cancel Sale`}
+                        onClick={() => {
+                            setPage(1);
+                            setIsCanceling(true);
+                        }}
+                        disabled={calculating || !!estimator.error}
+                        buttonStyle={{
+                            borderRadius: lib.layout.borderRadius.large,
+                            background: lib.colors.red,
+                            marginTop: '20px',
+                        }}
+                        textStyle={{
+                            color: lib.colors.white,
+                            fontSize: 30,
+                        }}
+                    />
+                )}
             </>
         ),
-        [amount, setPage, calculating, localCurrencyPref, IncrementButton, estimator.error, epsUsd],
+        [
+            amount,
+            setPage,
+            calculating,
+            localCurrencyPref,
+            IncrementButton,
+            estimator.error,
+            epsUsd,
+            swap,
+            wrappedSetAmount,
+        ],
     );
 
     const Page1 = React.useMemo(
@@ -336,59 +389,45 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                         tokenId={data.tokenId}
                         style={{ width: '150px', height: '150px' }}
                     />
+
                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                        Token Being Sold
+                        {isCanceling ? t`Ending Sale For` : t`Token Being Sold`}
                     </Text>
                     <CurrencyText
                         size="large"
                         stopAnimation
                         showUnit={false}
                         value={0}
-                        str={`${data.tokenId.toPrettyId()} [ERC 721]`}
+                        str={`${data.tokenId.toPrettyId()}`}
                     />
-                    {/* <Text size="large" textStyle={{ marginTop: 10 }}>
-                        Minimum
-                    </Text>
-                    <CurrencyText
-                        unitOverride={localCurrencyPref}
-                        forceEth
-                        size="large"
-                        stopAnimation
-                        value={epsUsd}
-                    /> */}
-                    <Text size="large" textStyle={{ marginTop: 10 }}>
-                        My Asking Price
-                    </Text>
-                    <CurrencyText
-                        unitOverride={localCurrencyPref}
-                        forceEth
-                        size="large"
-                        stopAnimation
-                        value={amountUsd}
-                    />
-
-                    {localCurrencyPref === 'USD' && (
+                    {!isCanceling && (
                         <>
+                            {' '}
                             <Text size="large" textStyle={{ marginTop: 10 }}>
-                                My Asking Price (saved on-chain)
+                                My Asking Price
                             </Text>
-                            {/* <div
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    width: '100%',
-                                    justifyContent: 'flex-start',
-                                }}
-                            > */}
                             <CurrencyText
-                                unitOverride="ETH"
+                                unitOverride={localCurrencyPref}
                                 forceEth
                                 size="large"
                                 stopAnimation
                                 value={amountUsd}
                             />
-                            {/* <Label text={"stored on "}/>
-                            </div> */}
+                            {localCurrencyPref === 'USD' && (
+                                <>
+                                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                                        My Asking Price (saved on-chain)
+                                    </Text>
+
+                                    <CurrencyText
+                                        unitOverride="ETH"
+                                        forceEth
+                                        size="large"
+                                        stopAnimation
+                                        value={amountUsd}
+                                    />
+                                </>
+                            )}
                         </>
                     )}
 
@@ -486,9 +525,9 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
             send,
             populatedTransaction,
             peer,
-            epsUsd,
             data.tokenId,
             localCurrencyPref,
+            isCanceling,
         ],
     );
 
@@ -567,11 +606,14 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                             }}
                         >
                             <Label
-                                text="boom, you're in the lead"
+                                text="success."
                                 textStyle={{ color: 'white' }}
                                 containerStyles={{ background: lib.colors.green, marginBottom: 20 }}
                             />
-                            <OffersList tokenId={data.tokenId} onlyLeader />
+                            <Text textStyle={{ marginBottom: 20, textAlign: 'center' }}>
+                                {t`Please wait a few moments for the changes to reflect accross the
+                                interface`}
+                            </Text>
                         </div>
                     )}
 

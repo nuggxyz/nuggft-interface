@@ -1,6 +1,5 @@
 import { CSSProperties } from 'react';
 
-import { LiveNugg, LiveItem } from '@src/client/interfaces';
 import { PeerInfo } from '@src/web3/core/interfaces';
 
 export enum ModalEnum {
@@ -11,6 +10,7 @@ export enum ModalEnum {
     QrCode,
     Sell,
     Claim,
+    Adjust,
 }
 
 export interface ModalDataBase {
@@ -33,24 +33,13 @@ export interface OfferModalDataBase extends TokenIdFactoryBase, ModalDataBase {
     modalType: ModalEnum.Offer;
     nuggToBuyFrom: null | NuggId;
     nuggToBuyFor: null | NuggId;
-
-    token: LiveNugg | LiveItem;
 }
 
 export type OfferModalData = TokenIdFactoryCreator<
     OfferModalDataBase,
-    { nuggToBuyFrom: null; token: LiveNugg; nuggToBuyFor: null },
-    { nuggToBuyFrom: NuggId; token: LiveItem; nuggToBuyFor: NuggId }
+    { nuggToBuyFrom: null; nuggToBuyFor: null },
+    { nuggToBuyFrom: NuggId; nuggToBuyFor: NuggId }
 >;
-
-// export type OfferModalData = IdDiff<
-//     {
-//         modalType: ModalEnum.Offer;
-//     } & ModalDataBase,
-//     { nuggToBuyFrom: null | NuggId; token: LiveNugg | LiveItem },
-//     { nuggToBuyFrom: null; token: LiveNugg },
-//     { nuggToBuyFrom: NuggId; token: LiveItem }
-// >;
 
 export interface MintModalData extends ModalDataBase {
     modalType: ModalEnum.Mint;

@@ -25,6 +25,7 @@ const TryoutRenderItem: FC<ListRenderItemProps<TryoutData, undefined, TryoutData
     selected,
     action,
 }) => {
+    const usd = client.usd.useUsdPair(tryoutData.eth);
     return (
         <div
             style={{
@@ -42,11 +43,7 @@ const TryoutRenderItem: FC<ListRenderItemProps<TryoutData, undefined, TryoutData
                 disableOnClick
             />
 
-            <CurrencyText
-                textStyle={{ fontSize: '10px' }}
-                value={tryoutData.eth.number}
-                stopAnimation
-            />
+            <CurrencyText textStyle={{ fontSize: '10px' }} value={usd} stopAnimation />
         </div>
     );
 };

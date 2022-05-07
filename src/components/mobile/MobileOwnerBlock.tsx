@@ -17,6 +17,7 @@ import { useNuggftV1 } from '@src/contracts/useContract';
 import { Address } from '@src/classes/Address';
 import useRemaining, { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import Label from '@src/components/general/Label/Label';
+import { EthInt } from '@src/classes/Fraction';
 
 const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
@@ -47,9 +48,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
         return lib.colors.white;
     }, [swap, lifecycle]);
 
-    const minTryoutCurrency = useUsdPair(
-        token?.isItem() ? token?.tryout.min?.eth.number : undefined,
-    );
+    const minTryoutCurrency = useUsdPair(token?.isItem() ? token?.tryout.min?.eth : undefined);
 
     const vfo = useAsyncState(() => {
         if (token && provider && tokenId && lifecycle?.lifecycle === Lifecycle.Bunt) {
@@ -199,7 +198,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             />
                             <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
                                 {`${
-                                    leader?.eth?.number
+                                    new EthInt(leader?.eth || 0).number
                                         ? `${leaderEns || leader?.account || ''} is leading`
                                         : 'starting price'
                                 }`}

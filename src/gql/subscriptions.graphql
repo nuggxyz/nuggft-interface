@@ -157,8 +157,8 @@ fragment swapdata on Swap {
         starttime
     }
     num
-    eth
-    ethUsd
+    top
+    topUsd
     bottom
     owner {
         id
@@ -187,8 +187,8 @@ fragment itemswapdata on ItemSwap {
         starttime
     }
     num
-    eth
-    ethUsd
+    top
+    topUsd
     bottom
     owner {
         id

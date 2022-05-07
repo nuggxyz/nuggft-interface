@@ -72,7 +72,9 @@ export function prettify(
             return 'auction is over';
         }
         case 'Revert(0x72)': // Error__0x72__IncrementTooLow
-        case 'Revert(0x71)': {
+        case 'Revert(0x71)':
+        case 'Revert(0x70)': {
+            // Error__0x70__FloorTooLow
             return 'value too low';
         }
         case 'Revert(0xa3)': {
