@@ -112,7 +112,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
         }
 
         return undefined;
-    }, [nuggft, amountUsd, address, data]);
+    }, [nuggft, amountUsd, address, data, isCanceling, swap]);
 
     const estimation = useAsyncState(() => {
         if (populatedTransaction && network) {
