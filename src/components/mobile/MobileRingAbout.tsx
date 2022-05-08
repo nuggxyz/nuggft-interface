@@ -34,12 +34,15 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId }) => {
             <animated.div
                 style={{
                     ...styles.container,
+
+                    ...(minutes <= 5 &&
+                        lifecycle?.active && {
+                            background: lib.colors.gradient,
+                        }),
                     ...((swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) && {
                         background: lib.colors.transparentGrey2,
                     }),
-                    ...(minutes <= 5 && {
-                        background: lib.colors.gradient,
-                    }),
+
                     boxShadow: lib.layout.boxShadow.dark,
                     width: '90%',
                 }}

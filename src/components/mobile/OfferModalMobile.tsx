@@ -619,6 +619,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             }}
                         >
                             <Label
+                                size="large"
                                 text="boom, you're in the lead"
                                 textStyle={{ color: 'white' }}
                                 containerStyles={{ background: lib.colors.green, marginBottom: 20 }}

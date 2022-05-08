@@ -381,7 +381,7 @@ export abstract class ImmutableUsdInt extends ImmutableCurrencyInt {
 }
 export class UsdInt extends CurrencyInt {
     constructor(value: number) {
-        super(value * 100, 100, 'USD');
+        super(Math.round(value * 100), 100, 'USD');
     }
 
     public static convert(input: Fraction) {
