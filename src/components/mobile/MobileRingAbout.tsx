@@ -49,10 +49,7 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId }) => {
             >
                 <div style={styles.bodyContainer}>
                     <MobileOwnerBlock tokenId={tokenId} />
-                    {/* <OfferTextMobile tokenId={tokenId} /> */}
-                    {/* <OffersList tokenId={tokenId} /> */}
                 </div>
-                {/* <OfferButton tokenId={tokenId} /> */}
             </animated.div>
         </>
     );

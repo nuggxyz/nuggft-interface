@@ -77,11 +77,11 @@ type SmartPickFromTokenId<A extends TokenId, B extends TokenIdFactory> = PickFro
 //     | ItemIdFactory<A & C>;
 
 type TokenIdFactoryCreator<A extends TokenIdFactoryBase, B, C> =
-    | NuggIdFactory<B & A>
-    | ItemIdFactory<C & A>;
+    | NuggIdFactory<Remap<B & A>>
+    | ItemIdFactory<Remap<C & A>>;
 
-type IsolateItemIdFactory<T extends TokenIdFactory> = { type: 'item' } & T;
-type IsolateNuggIdFactory<T extends TokenIdFactory> = T & { type: 'nugg' };
+type IsolateItemIdFactory<T extends TokenIdFactory> = Remap<{ type: 'item' } & T>;
+type IsolateNuggIdFactory<T extends TokenIdFactory> = Remap<T & { type: 'nugg' }>;
 
 type TokenIdDictionary<T extends TokenIdFactory> = {
     [x: ItemId]: IsolateItemIdFactory<T>;

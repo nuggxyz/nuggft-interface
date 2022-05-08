@@ -45,7 +45,6 @@ root.render(
             <GlobalHooks />
 
             <React.StrictMode>
-                {/* <div style={{ width: '100%', height: '100%' }}> */}
                 <ErrorBoundary>
                     <I18N>
                         <ContentBlock>
@@ -53,7 +52,6 @@ root.render(
                         </ContentBlock>
                     </I18N>
                 </ErrorBoundary>
-                {/* </div> */}
             </React.StrictMode>
         </ApolloProvider>
     </HashRouter>,

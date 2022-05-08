@@ -6,6 +6,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import { NuggBookPage, Page, NuggBookPageProps } from '@src/interfaces/nuggbook';
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
+import client from '@src/client';
 
 const ListItem = ({
     text,
@@ -69,13 +70,13 @@ const ListItemGroup = ({
     header,
     items,
     setPage,
-    visits,
 }: {
     header: string;
     items: ListItemDescription[];
-    visits: NuggBookPageProps['visits'];
     setPage: NuggBookPageProps['setPage'];
 }) => {
+    const visits = client.nuggbook.useVisits();
+
     return (
         <div
             style={{
@@ -102,7 +103,7 @@ type ListItemDescription = {
     page: Page;
 };
 
-const TableOfContents: NuggBookPage = ({ setPage, visits, clear }) => {
+const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
     const rundown: ListItemDescription[] = [
         {
             header: 'who makes the money?',
@@ -180,18 +181,13 @@ const TableOfContents: NuggBookPage = ({ setPage, visits, clear }) => {
                 welcome to nuggft
             </Text>
 
-            <ListItemGroup header="the rundown" items={rundown} setPage={setPage} visits={visits} />
+            <ListItemGroup header="the rundown" items={rundown} setPage={setPage} />
 
-            {/* <ListItemGroup header="intro to defi" items={defi} setPage={setPage} visits={visits} /> */}
+            {/* <ListItemGroup header="intro to defi" items={defi} setPage={setPage}  /> */}
 
-            <ListItemGroup
-                header="into the weeds"
-                items={weeds}
-                setPage={setPage}
-                visits={visits}
-            />
+            <ListItemGroup header="into the weeds" items={weeds} setPage={setPage} />
 
-            <ListItemGroup header="lol wut" items={wut} setPage={setPage} visits={visits} />
+            <ListItemGroup header="lol wut" items={wut} setPage={setPage} />
 
             {__DEV__ && (
                 <Button

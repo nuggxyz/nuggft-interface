@@ -56,7 +56,6 @@ export const useUsdPair = (input?: Fractionish | undefined | null) => {
     const preference = store((state) => state.preference);
 
     return React.useMemo(() => {
-        console.log({ price });
         if (!input) return PairInt.fromUsdPrice(0, price, preference);
 
         return PairInt.fromUsdPrice(input, price, preference);

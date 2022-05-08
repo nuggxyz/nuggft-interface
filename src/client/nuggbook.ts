@@ -1,42 +1,62 @@
 /* eslint-disable no-param-reassign */
 import create from 'zustand';
-import { combine } from 'zustand/middleware';
+import { combine, persist } from 'zustand/middleware';
 
 import { Page } from '@src/interfaces/nuggbook';
 
-const store = create(
-    combine(
-        {
-            page: Page.Close,
-        },
-        (set) => {
-            const closeNuggBook = () => {
-                set(() => {
-                    return {
-                        page: Page.Close,
-                    };
-                });
-            };
+const useStore = create(
+    persist(
+        combine(
+            {
+                page: Page.Close,
+                visits: {
+                    [Page.Start]: false,
+                    [Page.Welcome]: false,
+                    [Page.TableOfContents]: false,
+                    [Page.Close]: false,
+                    [Page.WhatIsAWallet]: false,
+                    [Page.WhatIsAnNFT]: false,
+                    [Page.WhatIsDefi]: false,
+                } as { [i in Page]: boolean },
+            },
+            (set) => {
+                const setVisit = (p: Page) => {
+                    set((data) => {
+                        data.visits[p] = true;
+                    });
+                };
 
-            const openNuggBook = (page: Page) => {
-                set(() => {
-                    return {
-                        page,
-                    };
-                });
-            };
+                const closeNuggBook = () => {
+                    set(() => {
+                        return {
+                            page: Page.Close,
+                        };
+                    });
+                };
 
-            return { closeNuggBook, openNuggBook };
-        },
+                const openNuggBook = (page: Page) => {
+                    set(() => {
+                        return {
+                            page,
+                        };
+                    });
+                };
+
+                return { closeNuggBook, openNuggBook, setVisit };
+            },
+        ),
+        { name: 'nugg.xyz-nuggbook' },
     ),
 );
 
-export type NuggBookState = ReturnType<typeof store['getState']>;
+export type NuggBookState = ReturnType<typeof useStore['getState']>;
 
 export default {
-    useNuggBookPage: () => store((state) => state.page),
-    useOpenNuggBook: () => store((state) => state.openNuggBook),
+    useNuggBookPage: () => useStore((state) => state.page),
+    useOpenNuggBook: () => useStore((state) => state.openNuggBook),
+    useVisits: () => useStore((state) => state.visits),
+    useSetVisit: () => useStore((state) => state.setVisit),
 
-    useCloseNuggBook: () => store((state) => state.closeNuggBook),
-    ...store,
+    useCloseNuggBook: () => useStore((state) => state.closeNuggBook),
+    ...useStore,
 };

@@ -77,6 +77,7 @@ export function prettify(
             // Error__0x70__FloorTooLow
             return 'value too low';
         }
+        case 'Revert(0x77)': // Error__xNuggftV1__NotOwner
         case 'Revert(0xa3)': {
             return 'must claim nugg';
         }

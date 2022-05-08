@@ -4,9 +4,8 @@ import { animated, config, useSpring, useTransition } from '@react-spring/web';
 import client from '@src/client';
 import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import lib from '@src/lib';
-import { Page, initialNuggBookLocalStorage } from '@src/interfaces/nuggbook';
+import { Page } from '@src/interfaces/nuggbook';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
-import useLocalStorage from '@src/hooks/useLocaleStorage';
 import useDimentions from '@src/client/hooks/useDimentions';
 import BackButton from '@src/components/mobile/BackButton';
 
@@ -43,9 +42,10 @@ const useNuggBookHandler = () => {
     const close = client.nuggbook.useCloseNuggBook();
     const setPage = client.nuggbook.useOpenNuggBook();
 
-    const [, startTransiton] = React.useTransition();
+    const visits = client.nuggbook.useVisits();
+    const setVisit = client.nuggbook.useSetVisit();
 
-    const { value: visits, setKey } = useLocalStorage('nugg-book', initialNuggBookLocalStorage);
+    const [, startTransiton] = React.useTransition();
 
     // this triggers for people who have have not seen it
     React.useEffect(() => {
@@ -55,16 +55,16 @@ const useNuggBookHandler = () => {
     }, [visits, setPage]);
 
     const handleClose = React.useCallback(() => {
-        setKey(Page.Start, true);
+        setVisit(Page.Start);
         startTransiton(close);
-    }, [close, startTransiton, setKey]);
+    }, [close, startTransiton, setVisit]);
 
     const handleVisit = React.useCallback(
         (_page: Page) => {
-            setKey(_page, true);
+            setVisit(_page);
             startTransiton(() => setPage(_page));
         },
-        [startTransiton, setKey, setPage],
+        [startTransiton, setVisit, setPage],
     );
 
     const handleClear = React.useCallback(() => {
@@ -80,7 +80,7 @@ const BOTTOM_OFFSET = 500;
 const Modal: FC<PropsWithChildren<unknown>> = () => {
     const book = useNuggBook();
 
-    const { handleClear, handleClose, handleVisit, visits } = useNuggBookHandler();
+    const { handleClear, handleClose, handleVisit } = useNuggBookHandler();
 
     const [draggedTop, setDraggedTop] = React.useState<number>(book.top);
 
@@ -203,7 +203,6 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                                         kid.comp({
                                             clear: handleClear,
                                             close: handleClose,
-                                            visits,
                                             setPage: handleVisit,
                                         })}
                                 </animated.div>
