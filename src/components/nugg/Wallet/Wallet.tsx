@@ -6,7 +6,7 @@ import web3 from '@src/web3';
 import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
 import lib from '@src/lib';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import HomeTabMobile from '@src/components/mobile/MobileWallet';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
@@ -19,7 +19,7 @@ import ActiveTab from './tabs/ActiveTab/ActiveTab';
 type Props = Record<string, never>;
 
 const Wallet: FunctionComponent<Props> = () => {
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
     const account = web3.hook.usePriorityAccount();
 
     const happytabs: HappyTabberItem[] = useMemo(

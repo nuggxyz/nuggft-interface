@@ -46,7 +46,7 @@ const MobileHotRotateOWrapper: FunctionComponent<Props> = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     overflow: 'scroll',
-                    background: 'red', // 'transparent',
+                    background: 'transparent',
                 }}
             >
                 {/* <BackButton /> */}

@@ -9,7 +9,7 @@ import client from '@src/client';
 import GlobalModal from '@src/components/modals/GlobalModal';
 import ToastContainer from '@src/components/general/Toast/ToastContainer';
 import NuggBook from '@src/components/nuggbook/NuggBook';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import { HotRotateOController } from '@src/pages/HotRotateO';
 
 import MobileViewScreen2 from './mobile/MobileViewScreen2';
@@ -22,7 +22,7 @@ import MobileHotRotateOWrapper from './mobile/MobileHotRotateOWrapper';
 const SearchOverlay = React.lazy(() => import('@src/pages/SearchOverlay'));
 
 const Router = () => {
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
 
     const epoch = client.live.epoch.id();
 
@@ -34,7 +34,7 @@ const Router = () => {
                 {
                     path: 'edit/:id',
                     element: isPhone ? <MobileHotRotateOWrapper /> : <HotRotateOController />,
-                    overlay: 997,
+                    // overlay: 997,
                 },
                 ...(isPhone
                     ? [{ path: 'wallet', element: <MobileWalletScreen2 /> }]
@@ -62,11 +62,13 @@ const Router = () => {
 };
 
 const App = () => {
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
+    console.log(isPhone);
 
     return (
         <>
-            {!isPhone && <ToastContainer />}
+            {/* {!isPhone && <ToastContainer />} */}
+            <ToastContainer />
             <GlobalModal />
             <NuggBook />
             <Helmet />

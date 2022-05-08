@@ -52,7 +52,7 @@ export default {
         route: () => core((state) => state.route),
         featureTotals: () => core((state) => state.featureTotals),
 
-        dimentions: () => core((state) => state.dimentions),
+        dimensions: () => core((state) => state.dimentions),
         editingNugg: () => core((state) => state.editingNugg),
 
         blocknum: () => core((state) => state.blocknum),
@@ -148,7 +148,7 @@ export default {
         updateSearchFilterSearchValue: () => core((state) => state.updateSearchFilterSearchValue),
         updateUserDarkMode: () => core((state) => state.updateUserDarkMode),
         updateMediaDarkMode: () => core((state) => state.updateMediaDarkMode),
-        updateDimentions: () => core((state) => state.updateDimentions),
+        updateDimensions: () => core((state) => state.updateDimensions),
     },
 
     static: {

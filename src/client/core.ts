@@ -10,7 +10,7 @@ import { parseItmeIdToNum } from '@src/lib/index';
 import {
     ClientState,
     UnclaimedOffer,
-    Dimentions,
+    Dimensions,
     SearchResults,
     LiveToken,
     OfferData,
@@ -356,7 +356,7 @@ const core = create(
                     });
                 }
 
-                function updateDimentions(dim: Dimentions): void {
+                function updateDimensions(dim: Dimensions): void {
                     set((draft) => {
                         draft.dimentions = dim;
                     });
@@ -435,7 +435,7 @@ const core = create(
                     setLastSwap,
                     setActiveSearch,
                     addToSubscritpionQueue,
-                    updateDimentions,
+                    updateDimensions,
                     updateProtocolSimple,
                 };
             },

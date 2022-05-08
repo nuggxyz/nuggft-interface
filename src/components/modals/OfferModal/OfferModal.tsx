@@ -3,7 +3,6 @@ import { BigNumber } from 'ethers';
 import { t } from '@lingui/macro';
 
 import useAsyncState from '@src/hooks/useAsyncState';
-import { toGwei } from '@src/lib';
 import { fromEth, toEth } from '@src/lib/conversion';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
@@ -21,7 +20,7 @@ import { MyNuggsData } from '@src/client/interfaces';
 import Label from '@src/components/general/Label/Label';
 import { EthInt } from '@src/classes/Fraction';
 import { OfferModalData } from '@src/interfaces/modals';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import {
     useNuggftV1,
     usePrioritySendTransaction,
@@ -35,7 +34,7 @@ type FormatedMyNuggsData = MyNuggsData & { lastBid: EthInt | 'unable-to-bid' };
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const address = web3.hook.usePriorityAccount();
 
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
     const provider = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
     const _myNuggs = client.live.myNuggs();
@@ -284,7 +283,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                             data.tokenId.toRawId(),
                                             {
                                                 value: toEth(amount).sub(check.curr),
-                                                gasLimit: toGwei('120000'),
+                                                // gasLimit: toGwei('120000'),
                                             },
                                         ),
                                     );
@@ -307,7 +306,7 @@ const MyNuggRenderItem: FC<
         return undefined;
     }, [item]);
 
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
 
     return (
         <Button

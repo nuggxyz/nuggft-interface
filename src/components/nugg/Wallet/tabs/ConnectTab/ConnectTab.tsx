@@ -8,7 +8,7 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
 import HappyTipper from '@src/components/general/HappyTipper/HappyTipper';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import lib from '@src/lib';
 
 import styles from './ConnectTab.styles';
@@ -16,7 +16,7 @@ import styles from './ConnectTab.styles';
 type Props = Record<string, never>;
 
 const ConnectTab: FunctionComponent<Props> = () => {
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
 
     const [forceDesktopAction, setForceDesktopAction] = React.useState(false);
 

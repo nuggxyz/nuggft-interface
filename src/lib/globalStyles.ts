@@ -16,6 +16,7 @@ const globalStyles = NLStyleSheetCreator({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        textAlign: 'center',
     },
     centeredSpaceBetween: {
         display: 'flex',

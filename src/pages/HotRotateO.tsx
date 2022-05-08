@@ -12,7 +12,12 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import lib, { parseItmeIdToNum } from '@src/lib';
 import { useAsyncSetState } from '@src/hooks/useAsyncState';
-import { useNuggftV1, useDotnuggV1, usePrioritySendTransaction } from '@src/contracts/useContract';
+import {
+    useNuggftV1,
+    useDotnuggV1,
+    usePrioritySendTransaction,
+    useTransactionManager2,
+} from '@src/contracts/useContract';
 import Label from '@src/components/general/Label/Label';
 import web3 from '@src/web3';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
@@ -24,7 +29,7 @@ import globalStyles from '@src/lib/globalStyles';
 import { NuggftV1 } from '@src/typechain';
 import { useDotnuggInjectToCache } from '@src/client/hooks/useDotnugg';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 import styles from './HotRotateO.styles';
 
@@ -67,12 +72,17 @@ const RenderItemMobile: FC<
     >
 > = ({ item, action, extraData }) => {
     return (
-        <Button onClick={() => action && action(item)} buttonStyle={styles.renderItemButtonMobile}>
+        <Button
+            onClick={() => action && action(item)}
+            disabled={item.feature === 0}
+            bypassDisableStyle
+            buttonStyle={styles.renderItemButtonMobile}
+        >
             <div style={styles.renderItemContainer}>
                 <TokenViewer
                     forceCache
                     tokenId={item.tokenId}
-                    style={styles.renderToken}
+                    style={styles.renderTokenMobile}
                     showLabel
                     disableOnClick
                 />
@@ -298,7 +308,7 @@ const HotRotateO = () => {
 
     const navigate = useNavigate();
 
-    const { screen } = useDimentions();
+    const { screen } = useDimensions();
 
     if (needsToClaim) {
         return (
@@ -419,13 +429,18 @@ const RotateOViewer = ({
         }
     }, [savedToChain, svg, inject, tokenId]);
 
-    console.log('savedToChain', savedToChain);
-
     return (
         <div
             style={
                 screen === 'phone'
-                    ? { height: '40%', width: '100%', display: 'flex', justifyContent: 'center' }
+                    ? {
+                          height: '40%',
+                          width: '100%',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          flexDirection: 'column',
+                      }
                     : {}
             }
         >
@@ -447,8 +462,8 @@ const RotateOViewer = ({
                 style={{
                     opacity: savedToChain ? 1 : 0,
                     pointerEvents: savedToChain ? 'auto' : 'none',
-                    // display: savedToChain ? 'auto' : 'none',
-                    transition: `opacity .5s ${lib.layout.animation}`,
+                    position: savedToChain ? 'relative' : 'absolute',
+                    transition: `opacity .5s ${lib.layout.animation}, display .5s ${lib.layout.animation}`,
                 }}
             >
                 <Text
@@ -499,7 +514,9 @@ const RotateOSelector = ({
     savedToChain: boolean;
     screen: 'desktop' | 'tablet' | 'phone';
 }) => {
-    const { send } = usePrioritySendTransaction();
+    const { send, hash } = usePrioritySendTransaction(true);
+    const provider = web3.hook.useNetworkProvider();
+    useTransactionManager2(provider, hash);
 
     const algo: Parameters<typeof nuggft.rotate> | undefined = React.useMemo(() => {
         if (items && tokenId) {
@@ -561,16 +578,26 @@ const RotateOSelector = ({
         }
     }, [screen, savedToChain]);
 
+    const height = React.useMemo(() => {
+        if (screen === 'phone' && savedToChain) {
+            return '0%';
+        }
+        return '60%';
+    }, [screen, savedToChain]);
+
     return (
         <div
             style={{
                 ...styles[`${screen}ControlContainer`],
                 transition: `opacity .5s ${savedToChain ? '0s' : '.5s'} ${
                     lib.layout.animation
-                }, width 1s ${savedToChain ? '.5s' : '0s'} ${lib.layout.animation}`,
+                }, width 1s ${savedToChain ? '.5s' : '0s'} ${lib.layout.animation}, height 1s ${
+                    savedToChain ? '.5s' : '0s'
+                } ${lib.layout.animation}`,
                 opacity: savedToChain ? 0 : 1,
                 pointerEvents: savedToChain ? 'none' : 'auto',
                 width,
+                height,
             }}
         >
             <Text size="larger" textStyle={styles.title}>{t`Edit Nugg ${tokenId.toRawId()}`}</Text>
@@ -630,6 +657,7 @@ const RotateOSelector = ({
                         data={items.hidden}
                         label={t`In storage`}
                         listEmptyText={t`All items are displayed`}
+                        listEmptyStyle={globalStyles.centered}
                         labelStyle={globalStyles.textBlack}
                         extraData={{ items, type: 'storage' as const, screen }}
                         RenderItem={screen === 'phone' ? RenderItemMobile : RenderItem}

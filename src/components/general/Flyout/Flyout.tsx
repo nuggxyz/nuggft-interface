@@ -4,7 +4,7 @@ import { animated, AnimatedProps, config, useTransition } from '@react-spring/we
 
 import useOnHover from '@src/hooks/useOnHover';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
-// import useDimentions from '@src/client/hooks/useDimentions';
+// import useDimensions from '@src/client/hooks/useDimensions';
 // import client from '@src/client';
 
 import styles from './Flyout.styles';
@@ -39,7 +39,7 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
         if (openOnHover && !closing) setOpen(openHover || closeHover);
         else if (open && !closeHover) setOpen(false);
     });
-    // const { screen } = useDimentions();
+    // const { screen } = useDimensions();
     // const dimentions = client.live.dimentions();
 
     useOnClickOutside<HTMLDivElement>(closeRef, () => {

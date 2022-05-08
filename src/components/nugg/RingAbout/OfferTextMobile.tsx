@@ -10,7 +10,7 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import Loader from '@src/components/general/Loader/Loader';
 import { Address } from '@src/classes/Address';
 import web3 from '@src/web3';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import lib from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
@@ -24,7 +24,7 @@ const OfferTextMobile = ({ tokenId }: { tokenId?: TokenId }) => {
     const swap = client.swaps.useSwap(tokenId);
     const lifecycle = useLifecycleEnhanced(swap);
 
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
 
     // const hasBids = client.live.offers(tokenId).length !== 0;
 
@@ -99,7 +99,7 @@ export const BuntOfferTextMobile = ({ tokenId }: { tokenId: TokenId }) => {
     }, [token, nuggft, tokenId, provider]);
 
     const offers = client.live.offers(tokenId);
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
 
     const dynamicTextColor = React.useMemo(() => {
         if (isPhone && swap?.endingEpoch === null) {

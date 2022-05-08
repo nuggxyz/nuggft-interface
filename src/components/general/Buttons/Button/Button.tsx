@@ -1,4 +1,10 @@
-import React, { FunctionComponent, useCallback, useMemo, CSSProperties, PropsWithChildren } from 'react';
+import React, {
+    FunctionComponent,
+    useCallback,
+    useMemo,
+    CSSProperties,
+    PropsWithChildren,
+} from 'react';
 
 import useOnHover from '@src/hooks/useOnHover';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
@@ -17,6 +23,7 @@ export type ButtonProps = {
     className?: string;
     isHovering?: (hover: boolean) => void;
     disableHoverAnimation?: boolean;
+    bypassDisableStyle?: boolean;
 } & Partial<TextProps>;
 
 const Button: FunctionComponent<PropsWithChildren<ButtonProps>> = ({
@@ -31,6 +38,7 @@ const Button: FunctionComponent<PropsWithChildren<ButtonProps>> = ({
     className,
     disableHoverAnimation = false,
     children,
+    bypassDisableStyle,
     ...textProps
 }) => {
     const [ref, hover] = useOnHover(isHovering);
@@ -39,12 +47,12 @@ const Button: FunctionComponent<PropsWithChildren<ButtonProps>> = ({
         return {
             ...styles.button,
             ...(hover && !disableHoverAnimation && !disabled ? { filter: 'brightness(.8)' } : {}),
-            ...(disabled ? { opacity: '0.3' } : {}),
-            cursor: disabled ? 'not-allowed' : 'pointer',
+            ...(disabled && !bypassDisableStyle ? { opacity: '0.3' } : {}),
+            cursor: disabled && !bypassDisableStyle ? 'not-allowed' : 'pointer',
             ...buttonStyle,
             ...(hover && !disableHoverAnimation && hoverStyle),
         };
-    }, [hover, disabled, buttonStyle, hoverStyle]);
+    }, [hover, disabled, buttonStyle, hoverStyle, bypassDisableStyle]);
 
     const RightIcon = useCallback(() => rightIcon || null, [rightIcon]);
 

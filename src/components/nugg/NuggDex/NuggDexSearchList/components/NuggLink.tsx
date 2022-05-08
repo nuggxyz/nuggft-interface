@@ -7,7 +7,7 @@ import { SearchView } from '@src/client/interfaces';
 import client from '@src/client';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 import Label from '@src/components/general/Label/Label';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import Loader from '@src/components/general/Loader/Loader';
 import lib from '@src/lib';
 
@@ -87,7 +87,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                     ),
             );
     }, [previewNuggs, limit]);
-    const { screen: screenType, isPhone } = useDimentions();
+    const { screen: screenType, isPhone } = useDimensions();
 
     return (
         <animated.div

@@ -5,7 +5,7 @@ import lib, { NLStyleSheetCreator } from '@src/lib';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import client from '@src/client';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 const Modal: FC<PropsWithChildren<any>> = ({ children }) => {
     const isOpen = client.modal.useOpen();
@@ -14,7 +14,7 @@ const Modal: FC<PropsWithChildren<any>> = ({ children }) => {
 
     const node = useRef<HTMLDivElement>(null);
 
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
 
     const containerStyle = useSpring({
         to: {

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useMatch } from 'react-router-dom';
 
 import lib from '@src/lib';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 
 const PREFIX = lib.constants.VIEWING_PREFIX;
@@ -12,7 +12,7 @@ export default () => {
 
     const { goto: gotoMobile } = useMobileViewingNugg();
 
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
 
     const gotoViewingNugg = React.useCallback(
         (tokenId: TokenId) => {

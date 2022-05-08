@@ -7,7 +7,7 @@ import FloorPrice from '@src/components/nugg/FloorPrice';
 import NuggDexSearchBar from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar';
 import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
 import useBlur from '@src/hooks/useBlur';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
 import NavigationBarMobile from '@src/components/mobile/NavigationBarMobile';
 
@@ -18,7 +18,7 @@ type Props = {
 };
 
 const NavigationBar: FC<Props> = () => {
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
 
     const navigate = useNavigate();
 

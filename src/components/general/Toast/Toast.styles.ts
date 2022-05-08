@@ -13,6 +13,7 @@ const styles = NLStyleSheetCreator({
         overflow: 'hidden',
         height: '100%',
         width: '100%',
+        zIndex: 1000,
     },
     closeButton: {
         position: 'absolute',

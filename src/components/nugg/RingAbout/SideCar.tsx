@@ -5,14 +5,14 @@ import Text from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import lib from '@src/lib';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 import styles from './RingAbout.styles';
 import OffersList from './OffersList';
 import OfferButton from './OfferButton';
 
 export default ({ tokenId }: { tokenId?: TokenId }) => {
-    const { screen: screenType, isPhone } = useDimentions();
+    const { screen: screenType, isPhone } = useDimensions();
     const darkmode = useDarkMode();
 
     const token = client.live.token(tokenId);

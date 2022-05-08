@@ -13,7 +13,7 @@ import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import { useUsdPair } from '@src/client/usd';
 
 const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>> = ({ item }) => {
@@ -51,7 +51,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
         swap && swap.type === 'item' ? 'nugg' : provider,
         leader?.user || '',
     );
-    const { screen: screenType, isPhone } = useDimentions();
+    const { screen: screenType, isPhone } = useDimensions();
 
     const dynamicTextColor = React.useMemo(() => {
         if (isPhone && swap?.endingEpoch === null) {

@@ -3,17 +3,17 @@ import React, { useEffect } from 'react';
 import client from '@src/client';
 
 export default () => {
-    const updateDimentions = client.mutate.updateDimentions();
+    const updateDimensions = client.mutate.updateDimensions();
 
     const resizer = React.useCallback(() => {
-        updateDimentions({
+        updateDimensions({
             height: window.innerHeight,
             width: window.innerWidth,
         });
-    }, [updateDimentions]);
+    }, [updateDimensions]);
 
     useEffect(() => {
-        updateDimentions({
+        updateDimensions({
             height: window.innerHeight,
             width: window.innerWidth,
         });

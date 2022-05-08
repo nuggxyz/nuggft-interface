@@ -64,8 +64,9 @@ const styles = NLStyleSheetCreator({
         marginTop: '1rem',
     },
     button: {
-        width: '40%',
+        minWidth: '40%',
         borderRadius: lib.layout.borderRadius.large,
+        whiteSpace: 'nowrap',
     },
     loadingIndicator: {
         borderRadius: lib.layout.borderRadius.large,
@@ -85,6 +86,7 @@ const styles = NLStyleSheetCreator({
         margin: '.6rem 1rem',
     },
     renderToken: { width: '80px', height: '80px', padding: '.3rem' },
+    renderTokenMobile: { width: '50px', height: '50px', padding: '.3rem' },
     duplicateItem: { position: 'absolute', top: -5, right: -5 },
     renderItemButton: {
         borderRadius: lib.layout.borderRadius.large,
@@ -95,6 +97,7 @@ const styles = NLStyleSheetCreator({
         borderRadius: lib.layout.borderRadius.largish,
         padding: '.3rem .3rem',
         margin: '.5rem 0rem',
+        width: '90%',
     },
     phoneToken: { height: 200, width: 200 },
     tabletToken: { height: 400, width: 400 },

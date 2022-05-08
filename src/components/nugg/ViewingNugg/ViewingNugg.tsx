@@ -19,7 +19,7 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 import Button from '@src/components/general/Buttons/Button/Button';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 import styles from './ViewingNugg.styles';
 import SwapList from './SwapList';
@@ -41,7 +41,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
         if (tokenId) void tokenQuery(tokenId);
     }, [tokenId, tokenQuery]);
 
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 

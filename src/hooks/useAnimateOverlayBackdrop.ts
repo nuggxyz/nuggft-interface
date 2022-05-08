@@ -2,7 +2,7 @@ import { PickAnimated, useSpring } from '@react-spring/web';
 import { CSSProperties } from 'react';
 
 import { NLStyleSheetCreator } from '@src/lib';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 const styles = NLStyleSheetCreator({
     wrapper: {
@@ -24,7 +24,7 @@ const styles = NLStyleSheetCreator({
 });
 
 export default (isOpen: boolean, style?: CSSProperties, delay?: number) => {
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
     const [wrapperStyle]: [PickAnimated<CSSProperties>, any] = useSpring(
         {
             ...styles.wrapper,

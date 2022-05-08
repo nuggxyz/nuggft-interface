@@ -22,7 +22,7 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import lib, { isUndefinedOrNullOrStringEmpty, parseTokenIdSmart } from '@src/lib/index';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import globalStyles from '@src/lib/globalStyles';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import { buildTokenIdFactory } from '@src/prototypes';
 
 import styles from './NuggDexSearchBar.styles';
@@ -63,7 +63,7 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const isViewOpen = useMatch('view/*');
     const sort = client.live.searchFilter.sort();
     const searchValue = client.live.searchFilter.searchValue();
-    const { screen: screenType, isPhone } = useDimentions();
+    const { screen: screenType, isPhone } = useDimensions();
 
     const [mobileExpanded, setMobileExpanded] = useState(false);
     const [loading, setLoading] = useState(false);

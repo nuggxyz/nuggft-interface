@@ -15,7 +15,7 @@ import web3 from '@src/web3';
 import useRemaining from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import useDesktopSwappingNugg from '@src/client/hooks/useDesktopSwappingNugg';
 import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
 import CircleTimerMobile from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimerMobile';
@@ -47,7 +47,7 @@ const TheRing: FunctionComponent<Props> = ({
     strokeWidth,
     defaultColor = lib.colors.nuggBlue,
 }) => {
-    const { screen: screenType, isPhone } = useDimentions();
+    const { screen: screenType, isPhone } = useDimensions();
 
     const chainId = web3.hook.usePriorityChainId();
 

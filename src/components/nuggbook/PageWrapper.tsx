@@ -6,7 +6,8 @@ import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import lib from '@src/lib';
 import { Page } from '@src/interfaces/nuggbook';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useLocalStorage from '@src/hooks/useLocaleStorage';
+import useDimensions from '@src/client/hooks/useDimensions';
 import BackButton from '@src/components/mobile/BackButton';
 
 import Start from './pages/Start';
@@ -88,7 +89,7 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
         setDraggedTop(book.top);
     }, [book.top]);
 
-    const dim = useDimentions();
+    const dim = useDimensions();
 
     const containerStyle = useSpring({
         from: {

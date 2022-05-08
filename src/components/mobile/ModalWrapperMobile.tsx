@@ -50,7 +50,7 @@ const Modal: FC<PropsWithChildren<unknown>> = ({ children }) => {
 
     // const node = useRef<HTMLDivElement>(null);
 
-    // const { screen: screenType } = useDimentions();
+    // const { screen: screenType } = useDimensions();
 
     const style = useAnimateOverlay(isOpen, { zIndex: 999000 });
 

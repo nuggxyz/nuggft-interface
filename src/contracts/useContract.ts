@@ -22,6 +22,7 @@ import usePrevious from '@src/hooks/usePrevious';
 import useInterval from '@src/hooks/useInterval';
 import useDebounce from '@src/hooks/useDebounce';
 import { CustomEtherscanProvider } from '@src/web3/classes/CustomEtherscanProvider';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 function useContract<C extends BaseContract>(
     address: string,
@@ -124,9 +125,12 @@ function useSendTransaction(
     authenticatedConnector?: Connector,
     from?: AddressString,
     onHash?: (hash: Hash) => void,
+    bypassMobile?: boolean,
 ) {
     const [error, setError] = React.useState<CustomError | Error>();
     const [rejected, setRejected] = React.useState<boolean>(false);
+
+    const { screen } = useDimensions();
 
     const [hash, setHash] = React.useState<Hash>();
 
@@ -227,21 +231,23 @@ function useSendTransaction(
                                     response: y,
                                 });
                             }
-                            addToast({
-                                duration: 0,
-                                title: t`Pending Transaction`,
-                                message: shortenTxnHash(txhash),
-                                error: false,
-                                id: txhash,
-                                index: toasts.length,
-                                loading: true,
-                                action: () =>
-                                    web3.config.gotoEtherscan(
-                                        authenticatedProvider.network.chainId,
-                                        'tx',
-                                        txhash,
-                                    ),
-                            });
+                            if (screen !== 'phone' || bypassMobile) {
+                                addToast({
+                                    duration: 0,
+                                    title: t`Pending Transaction`,
+                                    message: shortenTxnHash(txhash),
+                                    error: false,
+                                    id: txhash,
+                                    index: toasts.length,
+                                    loading: true,
+                                    action: () =>
+                                        web3.config.gotoEtherscan(
+                                            authenticatedProvider.network.chainId,
+                                            'tx',
+                                            txhash,
+                                        ),
+                                });
+                            }
                             return txhash;
                         })
                         .catch((err: Error) => {
@@ -272,12 +278,14 @@ function useSendTransaction(
             addToast,
             toasts.length,
             blocknum,
+            bypassMobile,
+            screen,
         ],
     );
     return { send, hash, error, estimation, rejected, clear };
 }
 
-export function usePrioritySendTransaction() {
+export function usePrioritySendTransaction(bypassMobile?: boolean) {
     const connector = web3.hook.usePriorityConnector();
     const network = web3.hook.useNetworkProvider();
     const provider = web3.hook.usePriorityProvider();
@@ -291,6 +299,7 @@ export function usePrioritySendTransaction() {
         connector,
         address as AddressString,
         undefined,
+        bypassMobile,
     );
 }
 
@@ -382,8 +391,10 @@ export function useTransactionManager2(
                     onResponse
                 )
                     onResponse(hash);
-                if (txdata.receipt !== null && prevTxdata.receipt !== txdata.receipt && onReceipt) {
-                    onReceipt(hash);
+                if (txdata.receipt && !prevTxdata.receipt) {
+                    if (onReceipt) {
+                        onReceipt(hash);
+                    }
                     /// lol, this always says success
                     const isSuccess = txdata.receipt;
                     replaceToast({

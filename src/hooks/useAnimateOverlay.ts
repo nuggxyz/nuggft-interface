@@ -1,7 +1,7 @@
 import { CSSProperties } from 'react';
 
 import lib, { NLStyleSheetCreator } from '@src/lib';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 const styles = NLStyleSheetCreator({
     wrapper: {
@@ -24,7 +24,7 @@ const styles = NLStyleSheetCreator({
 });
 
 const useAnimateOverlay = (isOpen: boolean, style?: CSSProperties) => {
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
     const wrapperStyle: Partial<CSSProperties> = {
         ...styles.wrapper,
         opacity: isOpen ? 1 : 0,
