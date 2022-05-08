@@ -499,7 +499,7 @@ const RotateOSelector = ({
     savedToChain: boolean;
     screen: 'desktop' | 'tablet' | 'phone';
 }) => {
-    const { send, revert } = useTransactionManager();
+    const { send } = usePrioritySendTransaction();
 
     const algo: Parameters<typeof nuggft.rotate> | undefined = React.useMemo(() => {
         if (items && tokenId) {
@@ -588,7 +588,6 @@ const RotateOSelector = ({
                 disabled={JSON.stringify(originalItems) === JSON.stringify(items)}
                 rightIcon={<IoReload />}
             />
-            {revert && <Label text={revert.message} />}
             <div
                 style={{
                     width: '100%',
