@@ -74,7 +74,7 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
             ...styles.toast,
             cursor: 'pointer',
             marginTop: '1rem',
-            zIndex: 10000,
+            zIndex: 1000,
         };
     }, [hidden, error]);
 

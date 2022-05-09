@@ -60,11 +60,11 @@ const styles = NLStyleSheetCreator({
     buttonsContainer: {
         display: 'flex',
         width: '100%',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         marginTop: '1rem',
     },
     button: {
-        minWidth: '40%',
+        minWidth: '45%',
         borderRadius: lib.layout.borderRadius.large,
         whiteSpace: 'nowrap',
     },

@@ -1,9 +1,10 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { startTransition } from 'react';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
 import { BigNumber } from 'ethers';
 import { IoChevronBackCircle } from 'react-icons/io5';
 
-import lib, { shortenTxnHash } from '@src/lib';
+import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
 import Button from '@src/components/general/Buttons/Button/Button';
@@ -17,7 +18,6 @@ import {
 import { EthInt } from '@src/classes/Fraction';
 import { useUsdPair } from '@src/client/usd';
 import useAsyncState from '@src/hooks/useAsyncState';
-import { gotoEtherscan } from '@src/web3/config';
 import CurrencyToggler, {
     useCurrencyTogglerState,
 } from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
@@ -26,8 +26,7 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Loader from '@src/components/general/Loader/Loader';
 import { useMultiClaimArgs } from '@src/components/nugg/Wallet/tabs/ClaimTab/MultiClaimButton';
-
-import { AnimatedConfirmation } from './OfferModalMobile';
+import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
@@ -338,110 +337,20 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
 
     const Page2 = React.useMemo(() => {
         return isOpen && chainId ? (
-            <>
-                <div
-                    style={{
-                        width: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <AnimatedConfirmation confirmed={!!transaction?.receipt} />
-
-                    {!transaction?.response && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                padding: 20,
-                                marginTop: 20,
-                            }}
-                        >
-                            <Label
-                                text="looking for your transaction..."
-                                textStyle={{ color: 'white' }}
-                                containerStyles={{ background: lib.colors.nuggGold }}
-                            />
-                        </div>
-                    )}
-
-                    {transaction?.response && !transaction?.receipt && hash && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                padding: 20,
-                                marginTop: 20,
-                                marginBottom: 20,
-                            }}
-                        >
-                            <Label
-                                text={shortenTxnHash(hash)}
-                                textStyle={{ color: 'white' }}
-                                containerStyles={{
-                                    background: lib.colors.etherscanBlue,
-                                    marginBottom: 20,
-                                }}
-                            />
-                            <Text textStyle={{ marginBottom: 20 }}>it should be included soon</Text>
-                            <Button
-                                onClick={() => gotoEtherscan(chainId, 'tx', hash)}
-                                label="view on etherscan"
-                                textStyle={{ color: lib.colors.etherscanBlue }}
-                                buttonStyle={{ borderRadius: lib.layout.borderRadius.large }}
-                            />
-                        </div>
-                    )}
-
-                    {transaction?.response && transaction?.receipt && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                padding: 20,
-                                marginTop: 20,
-                                marginBottom: 20,
-                            }}
-                        >
-                            <Label
-                                text="boom, you're in the lead"
-                                textStyle={{ color: 'white' }}
-                                containerStyles={{ background: lib.colors.green, marginBottom: 20 }}
-                            />
-                        </div>
-                    )}
-
-                    <Button
-                        label="dismiss"
-                        onClick={() => {
-                            closeModal();
-
-                            startTransition(() => {
-                                setTimeout(() => {
-                                    setPage(0);
-                                }, 2000);
-                            });
-                        }}
-                        buttonStyle={{
-                            borderRadius: lib.layout.borderRadius.large,
-                            background: lib.colors.primaryColor,
-                            marginTop: '20px',
-                            width: '100%',
-                        }}
-                        textStyle={{
-                            color: lib.colors.white,
-                            fontSize: 30,
-                        }}
-                    />
-                </div>
-            </>
+            <TransactionVisualConfirmation
+                {...{
+                    transaction,
+                    hash,
+                    onDismiss: () => {
+                        closeModal();
+                        startTransition(() => {
+                            setTimeout(() => {
+                                setPage(0);
+                            }, 2000);
+                        });
+                    },
+                }}
+            />
         ) : null;
     }, [transaction, isOpen, closeModal, setPage, chainId, hash]);
 
