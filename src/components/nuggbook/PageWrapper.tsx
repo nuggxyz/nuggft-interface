@@ -6,7 +6,6 @@ import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import lib from '@src/lib';
 import { Page } from '@src/interfaces/nuggbook';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
-import useLocalStorage from '@src/hooks/useLocaleStorage';
 import useDimensions from '@src/client/hooks/useDimensions';
 import BackButton from '@src/components/mobile/BackButton';
 
