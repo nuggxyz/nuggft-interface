@@ -197,7 +197,7 @@ export type ClientStateUpdate = {
 
 export type SearchResults = BasicData[];
 
-export type Dimentions = { height: number; width: number };
+export type Dimensions = { height: number; width: number };
 
 export interface Live extends TokenIdFactoryBase {
     activeSwap?: SwapData;
@@ -287,7 +287,7 @@ export interface Actions {
     updateSearchFilterViewing: (value: SearchFilter['viewing']) => void;
     updateUserDarkMode: (value: Theme | undefined) => void;
     updateMediaDarkMode: (value: Theme | undefined) => void;
-    updateDimentions: (window: Dimentions) => void;
+    updateDimensions: (window: Dimensions) => void;
     addToSubscritpionQueue: (update: TokenId) => void;
 }
 
@@ -319,7 +319,7 @@ export interface ClientState {
     health: Health;
     started: boolean;
     activeSearch: SearchResults;
-    dimentions: Dimentions;
+    dimentions: Dimensions;
     totalNuggs: number;
     featureTotals: FixedLengthArray<number, 8, number[]>;
 }

@@ -1,10 +1,11 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { startTransition, useState } from 'react';
 import { BigNumber } from 'ethers';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
 import { IoChevronBackCircle } from 'react-icons/io5';
 
 import useAsyncState from '@src/hooks/useAsyncState';
-import lib, { shortenTxnHash } from '@src/lib';
+import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -25,13 +26,12 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import Loader from '@src/components/general/Loader/Loader';
 import useMountLogger from '@src/hooks/useMountLogger';
 import NLStaticImage from '@src/components/general/NLStaticImage';
-import { gotoEtherscan } from '@src/web3/config';
-import OffersList from '@src/components/nugg/RingAbout/OffersList';
 import { useUsdPair, useUsdPairWithCalculation } from '@src/client/usd';
 import CurrencyToggler, {
     useCurrencyTogglerState,
 } from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import { DualCurrencyInputWithIcon } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
+import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
 
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
@@ -546,112 +546,21 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const Page2 = React.useMemo(() => {
         return isOpen && chainId ? (
-            <>
-                <div
-                    style={{
-                        width: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <AnimatedConfirmation confirmed={!!transaction?.receipt} />
-
-                    {!transaction?.response && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                padding: 20,
-                                marginTop: 20,
-                            }}
-                        >
-                            <Label
-                                text="looking for your transaction..."
-                                textStyle={{ color: 'white' }}
-                                containerStyles={{ background: lib.colors.nuggGold }}
-                            />
-                        </div>
-                    )}
-
-                    {transaction?.response && !transaction?.receipt && hash && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                padding: 20,
-                                marginTop: 20,
-                                marginBottom: 20,
-                            }}
-                        >
-                            <Label
-                                text={shortenTxnHash(hash)}
-                                textStyle={{ color: 'white' }}
-                                containerStyles={{
-                                    background: lib.colors.etherscanBlue,
-                                    marginBottom: 20,
-                                }}
-                            />
-                            <Text textStyle={{ marginBottom: 20 }}>it should be included soon</Text>
-                            <Button
-                                onClick={() => gotoEtherscan(chainId, 'tx', hash)}
-                                label="view on etherscan"
-                                textStyle={{ color: lib.colors.etherscanBlue }}
-                                buttonStyle={{ borderRadius: lib.layout.borderRadius.large }}
-                            />
-                        </div>
-                    )}
-
-                    {transaction?.response && transaction?.receipt && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                padding: 20,
-                                marginTop: 20,
-                                marginBottom: 20,
-                            }}
-                        >
-                            <Label
-                                size="large"
-                                text="boom, you're in the lead"
-                                textStyle={{ color: 'white' }}
-                                containerStyles={{ background: lib.colors.green, marginBottom: 20 }}
-                            />
-                            <OffersList tokenId={data.tokenId} onlyLeader />
-                        </div>
-                    )}
-
-                    <Button
-                        label="dismiss"
-                        onClick={() => {
-                            closeModal();
-
-                            startTransition(() => {
-                                setTimeout(() => {
-                                    setPage(0);
-                                }, 2000);
-                            });
-                        }}
-                        buttonStyle={{
-                            borderRadius: lib.layout.borderRadius.large,
-                            background: lib.colors.primaryColor,
-                            marginTop: '20px',
-                            width: '100%',
-                        }}
-                        textStyle={{
-                            color: lib.colors.white,
-                            fontSize: 30,
-                        }}
-                    />
-                </div>
-            </>
+            <TransactionVisualConfirmation
+                {...{
+                    transaction,
+                    hash,
+                    tokenId: data.tokenId,
+                    onDismiss: () => {
+                        closeModal();
+                        startTransition(() => {
+                            setTimeout(() => {
+                                setPage(0);
+                            }, 2000);
+                        });
+                    },
+                }}
+            />
         ) : null;
     }, [transaction, isOpen, closeModal, setPage, chainId, data.tokenId, hash]);
 
@@ -746,48 +655,3 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 };
 
 export default OfferModal;
-
-export const AnimatedConfirmation = ({ confirmed }: { confirmed: boolean }) => {
-    return (
-        <div style={{ height: '90px', width: '90px' }}>
-            {!confirmed ? (
-                <Loader diameter="90px" color={lib.colors.primaryColor} />
-            ) : (
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
-                    <circle
-                        className="path circle"
-                        fill="none"
-                        stroke={lib.colors.green}
-                        strokeWidth="6"
-                        strokeMiterlimit="10"
-                        cx="65.1"
-                        cy="65.1"
-                        r="62.1"
-                        style={{
-                            strokeDasharray: 1000,
-                            strokeDashoffset: 0,
-                            WebkitAnimation: `Dash 0.9s ease-in-out`,
-                            animation: `Dash 0.9s ease-in-out`,
-                        }}
-                    />
-                    <polyline
-                        className="path check"
-                        fill="none"
-                        stroke={lib.colors.green}
-                        strokeWidth="6"
-                        strokeLinecap="round"
-                        strokeMiterlimit="10"
-                        points="100.2,40.2 51.5,88.8 29.8,67.5 "
-                        style={{
-                            strokeDasharray: 1000,
-                            // strokeDashoffset: 0,
-                            strokeDashoffset: -100,
-                            WebkitAnimation: `DashChecked 0.9s 0.35s ease-in-out forwards`,
-                            animation: `DashChecked 0.9s 0.35s ease-in-out forwards`,
-                        }}
-                    />
-                </svg>
-            )}
-        </div>
-    );
-};

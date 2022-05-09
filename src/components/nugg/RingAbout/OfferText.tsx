@@ -12,7 +12,7 @@ import Loader from '@src/components/general/Loader/Loader';
 import { Address } from '@src/classes/Address';
 import web3 from '@src/web3';
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 import styles from './RingAbout.styles';
 
@@ -81,7 +81,7 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
         token && token.type === 'item' ? 'nugg' : provider,
         leader?.user || '',
     );
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
 
     return !isPhone ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

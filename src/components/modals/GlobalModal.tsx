@@ -2,7 +2,7 @@ import React from 'react';
 
 import { ModalEnum } from '@src/interfaces/modals';
 import client from '@src/client';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import ModalWrapperMobile from '@src/components/mobile/ModalWrapperMobile';
 import OfferModalMobile from '@src/components/mobile/OfferModalMobile';
 import SellNuggOrItemModalMobile from '@src/components/mobile/SellModalMobile';
@@ -18,7 +18,7 @@ import SellNuggOrItemModal from './SellNuggOrItemModal/SellNuggOrItemModal';
 
 export const ModalSwitch = () => {
     const data = client.modal.useData();
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
 
     switch (data?.modalType) {
         case ModalEnum.Offer:
@@ -48,7 +48,7 @@ export const ModalSwitch = () => {
 };
 
 export default () => {
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
 
     return isPhone ? (
         <ModalWrapperMobile>

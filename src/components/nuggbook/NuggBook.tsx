@@ -1,11 +1,11 @@
 import React from 'react';
 
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 import PageWrapper from './PageWrapper';
 
 export default () => {
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
 
     return isPhone ? <PageWrapper /> : null;
 };

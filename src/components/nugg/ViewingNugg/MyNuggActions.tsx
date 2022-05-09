@@ -1,7 +1,8 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 
 import client from '@src/client';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
+import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 
 import LoanButtons from './ActionButtons/LoanButtons';
 import OwnerButtons from './ActionButtons/OwnerButtons';
@@ -10,7 +11,9 @@ import SaleButtons from './ActionButtons/SaleButtons';
 type Props = Record<string, never>;
 
 const MyNuggActions: FunctionComponent<Props> = () => {
-    const { safeTokenId: tokenId } = useViewingNugg();
+    const { safeTokenId: regular } = useViewingNugg();
+    const { tokenId: mobile } = useMobileViewingNugg();
+    const tokenId = useMemo(() => regular || mobile, [regular, mobile]);
     const token = client.live.token(tokenId);
 
     return tokenId && token && token.isNugg() ? (

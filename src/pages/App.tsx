@@ -9,18 +9,20 @@ import client from '@src/client';
 import GlobalModal from '@src/components/modals/GlobalModal';
 import ToastContainer from '@src/components/general/Toast/ToastContainer';
 import NuggBook from '@src/components/nuggbook/NuggBook';
-import useDimentions from '@src/client/hooks/useDimentions';
-import HotRotateO, { HotRotateOController } from '@src/pages/HotRotateO';
+import useDimensions from '@src/client/hooks/useDimensions';
+import { HotRotateOController } from '@src/pages/HotRotateO';
 
 import MobileViewScreen2 from './mobile/MobileViewScreen2';
 import MobileWalletScreen2 from './mobile/MobileWalletScreen2';
+import StupidMfingHack from './mobile/StupidMfingHack';
+import MobileHotRotateOWrapper from './mobile/MobileHotRotateOWrapper';
 
 // const MobileWalletView = React.lazy(() => import('@src/pages/mobile/MobileWalletView'));
 // const HotRotateO = React.lazy(() => import('@src/pages/HotRotateO'));
 const SearchOverlay = React.lazy(() => import('@src/pages/SearchOverlay'));
 
 const Router = () => {
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
 
     const epoch = client.live.epoch.id();
 
@@ -29,6 +31,11 @@ const Router = () => {
             path: '/',
             element: <Outlet />,
             children: [
+                {
+                    path: 'edit/:id',
+                    element: isPhone ? <MobileHotRotateOWrapper /> : <HotRotateOController />,
+                    // overlay: 997,
+                },
                 ...(isPhone
                     ? [{ path: 'wallet', element: <MobileWalletScreen2 /> }]
                     : [
@@ -49,20 +56,26 @@ const Router = () => {
         },
     ]);
 
+    console.log(route, isPhone);
+
     return <React.Suspense fallback={<div />}>{route} </React.Suspense>;
 };
 
 const App = () => {
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
+    console.log(isPhone);
 
     return (
         <>
-            {!isPhone && <ToastContainer />}
+            {/* {!isPhone && <ToastContainer />} */}
+            <ToastContainer />
             <GlobalModal />
             <NuggBook />
             <Helmet />
             <NavigationBar />
-            {!isPhone && <HotRotateO />}
+            <StupidMfingHack />
+
+            {/* <HotRotateO /> */}
             <Router />
             <SwapPage />
         </>

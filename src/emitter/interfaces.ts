@@ -13,6 +13,7 @@ import {
     RpcLoan,
     RpcRebalance,
     RpcOfferItem,
+    RpcRotate,
 } from '@src/interfaces/events';
 import { OfferData } from '@src/client/interfaces';
 import { RevertError } from '@src/lib/errors';
@@ -119,6 +120,11 @@ interface EmitLocalRpcRebalance extends EmitEventBase, EmitOnChainEventBase {
     event: RpcRebalance;
 }
 
+interface EmitLocalRpcRotate extends EmitEventBase, EmitOnChainEventBase {
+    type: EmitEventNames.Rotate;
+    event: RpcRotate;
+}
+
 /*  EXPORTS: must be manually updated  */
 
 export enum EmitEventNames {
@@ -140,6 +146,7 @@ export enum EmitEventNames {
     Claim = 'local.rpc.event.Claim',
     ClaimItem = 'local.rpc.event.ClaimItem',
     KeyboardClosed = 'local.viewport.KeyboardClosed',
+    Rotate = 'local.rpc.event.Rotate',
     // Sell = 'local.rpc.event.Sell',
 }
 
@@ -160,6 +167,8 @@ export type EmitEventsListPayload =
     | BuildPayload<EmitLocalRpcTransfer>
     | BuildPayload<EmitTransactionSent>
     | BuildPayload<EmitKeyboardClosed>
+    | BuildPayload<EmitLocalRpcRotate>
+    // | BuildPayload<EmitRpcSell>
     | BuildPayload<EmitModalOpen>;
 
 export type EmitEventsListCallback =
@@ -176,6 +185,7 @@ export type EmitEventsListCallback =
     | BuildCallback<EmitLocalRpcLoan>
     | BuildCallback<EmitLocalRpcLiquidate>
     | BuildCallback<EmitLocalRpcRebalance>
+    | BuildCallback<EmitLocalRpcRotate>
     | BuildCallback<EmitLocalRpcTransfer>
     | BuildCallback<EmitTransactionSent>
     | BuildCallback<EmitKeyboardClosed>

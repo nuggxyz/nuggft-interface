@@ -12,7 +12,7 @@ import {
     useGetAllItemsSearchQuery,
     useGetAllNuggsSearchQuery,
 } from '@src/gql/types.generated';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
 
 import NuggList from './components/NuggList';
@@ -31,7 +31,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     // const activeNuggs = client.live.activeSwaps();
     // const potentialNuggs = client.live.potentialSwaps();
 
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
 
     const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
     const updateSearchFilterSort = client.mutate.updateSearchFilterSort();

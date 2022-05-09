@@ -12,7 +12,7 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import useRemaining from '@src/client/hooks/useRemaining';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import { ModalEnum } from '@src/interfaces/modals';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { EthInt } from '@src/classes/Fraction';
@@ -57,7 +57,7 @@ const MyNuggRenderItem: FC<
         return undefined;
     }, [item]);
 
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
 
     return (
         <Button
@@ -101,7 +101,7 @@ export default ({
     onContinue?: () => void;
     onSelectMyNugg?: (tokenId: NuggId) => void;
 }) => {
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
     const address = web3.hook.usePriorityAccount();
     const epoch = client.live.epoch.id();
     const swap = client.swaps.useSwap(tokenId);

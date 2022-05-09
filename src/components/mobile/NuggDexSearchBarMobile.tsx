@@ -22,7 +22,7 @@ import {
 } from '@src/gql/types.generated';
 import lib, { isUndefinedOrNullOrStringEmpty, parseTokenIdSmart } from '@src/lib/index';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import { buildTokenIdFactory } from '@src/prototypes';
 import styles from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.styles';
 import formatLiveItem from '@src/client/formatters/formatLiveItem';
@@ -63,7 +63,7 @@ export interface BunchOfItemsFilter extends FilterBase {
 export type Filter = NuggsThatOwnThisItemFilter;
 
 const SearchBarNuggDex = ({ onBack }: { onBack: () => void }) => {
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
     return (
         <div style={{ width: '100%', height: '100%', padding: '10px' }}>
             <NuggDexSearchListMobile2 />
@@ -262,7 +262,7 @@ const NuggDexSearchBarMobile: FunctionComponent<{
     const isViewOpen = useMatch('view/*');
     const sort = client.live.searchFilter.sort();
     const searchValue = client.live.searchFilter.searchValue();
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
 
     // const [open, setMobileExpanded] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -462,7 +462,7 @@ const NuggDexSearchBarMobile: FunctionComponent<{
             : lib.layout.borderRadius.large,
     });
 
-    const { height, width } = useDimentions();
+    const { height, width } = useDimensions();
 
     // const resultStyle = useSpring({
     //     width: show ? '115%' : '100%',

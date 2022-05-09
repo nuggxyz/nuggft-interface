@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useMatch } from 'react-router-dom';
 
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 export default () => {
     const navigate = useNavigate();
@@ -15,7 +15,7 @@ export default () => {
 
     const tokenId = useMatch(`/swap/:tokenId`);
 
-    const { isPhone } = useDimentions();
+    const { isPhone } = useDimensions();
 
     const show = React.useMemo(() => {
         return !!tokenId?.params.tokenId && isPhone;

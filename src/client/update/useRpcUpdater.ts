@@ -58,6 +58,9 @@ export default () => {
             };
 
             switch (event.name) {
+                case 'Rotate':
+                    void emitter.emit({ type: emitter.events.Rotate, event, log });
+                    break;
                 case 'Offer':
                 case 'OfferMint':
                 case 'OfferItem':

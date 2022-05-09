@@ -8,7 +8,7 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import { ModalEnum } from '@src/interfaces/modals';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { Lifecycle } from '@src/client/interfaces';
 
@@ -23,7 +23,7 @@ export default ({
     sellingNuggId?: NuggId;
     inOverlay?: boolean;
 }) => {
-    const { screen: screenType, isPhone } = useDimentions();
+    const { screen: screenType, isPhone } = useDimensions();
     const address = web3.hook.usePriorityAccount();
     const token = client.live.token(tokenId);
 

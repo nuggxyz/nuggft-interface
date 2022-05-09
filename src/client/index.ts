@@ -52,7 +52,7 @@ export default {
         route: () => core((state) => state.route),
         featureTotals: () => core((state) => state.featureTotals),
 
-        dimentions: () => core((state) => state.dimentions),
+        dimensions: () => core((state) => state.dimentions),
         editingNugg: () => core((state) => state.editingNugg),
 
         blocknum: () => core((state) => state.blocknum),
@@ -97,8 +97,8 @@ export default {
 
         myNuggs: () =>
             core((state) => {
-                return state.myNuggs;
-            }, shallow),
+                return [...state.myNuggs].sort((a, b) => Number(a.tokenId) - Number(b.tokenId));
+            }),
         myLoans: () =>
             core((state) =>
                 [...state.myLoans].sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1)),
@@ -148,7 +148,7 @@ export default {
         updateSearchFilterSearchValue: () => core((state) => state.updateSearchFilterSearchValue),
         updateUserDarkMode: () => core((state) => state.updateUserDarkMode),
         updateMediaDarkMode: () => core((state) => state.updateMediaDarkMode),
-        updateDimentions: () => core((state) => state.updateDimentions),
+        updateDimensions: () => core((state) => state.updateDimensions),
     },
 
     static: {

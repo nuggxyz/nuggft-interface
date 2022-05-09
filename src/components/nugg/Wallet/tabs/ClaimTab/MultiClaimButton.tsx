@@ -4,7 +4,11 @@ import { t } from '@lingui/macro';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import web3 from '@src/web3';
 import client from '@src/client';
-import { useNuggftV1, usePrioritySendTransaction } from '@src/contracts/useContract';
+import {
+    useNuggftV1,
+    usePrioritySendTransaction,
+    useTransactionManager2,
+} from '@src/contracts/useContract';
 import { NuggftV1 } from '@src/typechain';
 
 import styles from './ClaimTab.styles';
@@ -61,7 +65,9 @@ const MultiClaimButton: FunctionComponent<Props> = () => {
 
     const args = useMultiClaimArgs();
 
-    const { send } = usePrioritySendTransaction();
+    const { send, hash } = usePrioritySendTransaction();
+
+    useTransactionManager2(provider, hash);
 
     return unclaimedOffers?.length > 0 ? (
         <FeedbackButton

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import client from '@src/client';
 
 export default () => {
-    const dim = client.live.dimentions();
+    const dim = client.live.dimensions();
 
     const screen = useMemo(() => {
         return dim.width > 1300

@@ -4,7 +4,7 @@ import { animated } from '@react-spring/web';
 import useOnHover from '@src/hooks/useOnHover';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 
@@ -25,7 +25,7 @@ const NuggLinkThumbnail: FunctionComponent<{
             ...customStyle,
         };
     }, [tokenId, isHovering, customStyle]);
-    const { screen: screenType, isPhone } = useDimentions();
+    const { screen: screenType, isPhone } = useDimensions();
 
     const { gotoViewingNugg } = useViewingNugg();
     const { goto } = useMobileViewingNugg();

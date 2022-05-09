@@ -6,7 +6,7 @@ import useAsyncState from '@src/hooks/useAsyncState';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import web3 from '@src/web3';
 import { useDotnuggInjectToCache } from '@src/client/hooks/useDotnugg';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 import TokenViewer, { TokenViewerProps } from './TokenViewer';
 
@@ -17,7 +17,7 @@ interface Props extends TokenViewerProps {
 }
 
 export default ({ tokenId, style, validated, ...props }: Props) => {
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
 
     const [initial, setInitial] = React.useState<null | Base64EncodedSvg>();
 

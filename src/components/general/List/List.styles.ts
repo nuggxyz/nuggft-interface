@@ -25,7 +25,7 @@ const styles = NLStyleSheetCreator({
     horizontal: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        // justifyContent: 'space-between',
         // flexWrap: 'wrap',
     },
     separator: {

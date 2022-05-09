@@ -5,7 +5,7 @@ import { ChevronLeft } from 'react-feather';
 import { t } from '@lingui/macro';
 
 import TransitionText from '@src/components/general/Texts/TransitionText/TransitionText';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import client from '@src/client';
 import { SearchView } from '@src/client/interfaces';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
@@ -61,7 +61,7 @@ const NuggList: FunctionComponent<NuggListProps> = ({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     horribleMFingHack2 = false,
 }) => {
-    const { screen: screenType, isPhone } = useDimentions();
+    const { screen: screenType, isPhone } = useDimensions();
 
     const viewing = client.live.searchFilter.viewing();
 

@@ -30,18 +30,18 @@ const SaleButtons: FunctionComponent<Props> = ({ tokenId, reclaim = false }) => 
                         <IoSync
                             color={Colors.nuggBlueText}
                             size={25}
-                            style={{ marginRight: '.75rem' }}
+                            // style={{ marginRight: '.75rem' }}
                         />
                     ) : (
                         <IoArrowDown
                             color={Colors.nuggBlueText}
                             size={25}
-                            style={{ marginRight: '.75rem' }}
+                            // style={{ marginRight: '.75rem' }}
                         />
                     )
                 }
                 onClick={() =>
-                    send(nuggft.populateTransaction.claim([tokenId], [sender], [0], [0]))
+                    send(nuggft.populateTransaction.claim([tokenId.toRawId()], [sender], [0], [0]))
                 }
             />
         </div>

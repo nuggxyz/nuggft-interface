@@ -5,7 +5,7 @@ import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
 import useMeasure from '@src/hooks/useMeasure';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 import styles from './HappyTabber.styles';
 
@@ -49,7 +49,7 @@ const HappyTabber = ({
         return () => undefined;
     }, [items, activeIndex]);
 
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
 
     const [headerRef, { width: WIDTH }] = useMeasure();
 

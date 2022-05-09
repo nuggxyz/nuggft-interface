@@ -5,7 +5,7 @@ import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import useOnHover from '@src/hooks/useOnHover';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import { useDotnuggCacheOnlyLazy, useDotnuggSubscription } from '@src/client/hooks/useDotnugg';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 import DangerouslySetNugg from './DangerouslySetNugg';
 
@@ -47,7 +47,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     shouldLoad = true,
     forceCache = false,
 }) => {
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
 
     const { width } = useMemo(() => {
         return { width: window.innerWidth };
@@ -74,19 +74,25 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     const animatedStyle = useSpring({
         to: {
             // ...style,
-            position: 'relative',
+            position: 'relative' as const,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flexDirection: 'column',
-            opacity: tokenId || svgNotFromGraph || showPending ? 1 : 0,
+            flexDirection: 'column' as const,
+            opacity: src || showPending ? 1 : 0,
         },
         config: springConfig.default,
     });
 
     return (
         // @ts-ignore
-        <animated.div style={animatedStyle}>
+        <animated.div
+            style={{
+                ...animatedStyle,
+                // opacity: src || showPending ? 1 : 0,
+                // transition: `opacity .5s ease`,
+            }}
+        >
             <div
                 role="presentation"
                 onClick={
@@ -119,6 +125,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
             {showLabel && (
                 <Text
                     textStyle={{
+                        whiteSpace: 'nowrap',
                         textAlign: 'center',
                         color: labelColor || 'black',
                     }}

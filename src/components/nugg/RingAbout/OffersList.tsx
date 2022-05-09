@@ -14,7 +14,7 @@ import { Lifecycle } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { Chain } from '@src/web3/core/interfaces';
 import useDistribution from '@src/client/hooks/useDistribution';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import { SwapData } from '@src/client/swaps';
 import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
@@ -77,7 +77,7 @@ export default ({
     const type = client.live.lastSwap.type();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
 
     const [open, setOpen] = useState(screenType === 'tablet');
 

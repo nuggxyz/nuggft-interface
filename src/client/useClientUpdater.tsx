@@ -7,13 +7,13 @@ import useLiveProtocol from './subscriptions/useLiveProtocol';
 import useLiveUser from './subscriptions/useLiveUser';
 import useSwapUpdater from './update/useSwapUpdater';
 import useLiveGraphHealth from './subscriptions/useLiveGraphHealth';
-import useDimentionsUpdater from './update/useDimentionsUpdater';
+import useDimensionsUpdater from './update/useDimensionsUpdater';
 import { useVisualViewportUpdater, useEmitOnKeyboardClose } from './viewport';
 import { useCloseModalOnKeyboardClose } from './modal';
 // import useGraphUpdater from './update/useGraphUpdater';
 
 export default () => {
-    useDimentionsUpdater();
+    useDimensionsUpdater();
 
     useMediaUpdater();
 

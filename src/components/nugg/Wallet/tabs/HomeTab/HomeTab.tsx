@@ -7,7 +7,7 @@ import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
 import web3 from '@src/web3';
 import client from '@src/client';
 import globalStyles from '@src/lib/globalStyles';
-import useDimentions from '@src/client/hooks/useDimentions';
+import useDimensions from '@src/client/hooks/useDimensions';
 import InfiniteList from '@src/components/general/List/InfiniteList';
 
 import styles from './HomeTab.styles';
@@ -17,7 +17,7 @@ import MyNuggRenderItem from './MyNuggRenderItem';
 type Props = Record<string, never>;
 
 const HomeTab: FunctionComponent<Props> = () => {
-    const { screen: screenType } = useDimentions();
+    const { screen: screenType } = useDimensions();
 
     const address = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
