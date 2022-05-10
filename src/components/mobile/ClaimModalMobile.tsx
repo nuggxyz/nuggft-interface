@@ -10,11 +10,7 @@ import web3 from '@src/web3';
 import Button from '@src/components/general/Buttons/Button/Button';
 import client from '@src/client';
 import { ClaimModalData } from '@src/interfaces/modals';
-import {
-    useNuggftV1,
-    usePrioritySendTransaction,
-    useTransactionManager2,
-} from '@src/contracts/useContract';
+import { useNuggftV1, usePrioritySendTransaction } from '@src/contracts/useContract';
 import { EthInt } from '@src/classes/Fraction';
 import { useUsdPair } from '@src/client/usd';
 import useAsyncState from '@src/hooks/useAsyncState';
@@ -34,13 +30,11 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const unclaimedOffers = client.live.myUnclaimedOffers();
 
     const network = web3.hook.useNetworkProvider();
-    const chainId = web3.hook.usePriorityChainId();
     const peer = web3.hook.usePriorityPeer();
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
     const [page, setPage] = client.modal.usePhase();
     const { send, estimation: estimator, hash } = usePrioritySendTransaction();
-    const transaction = useTransactionManager2(network, hash);
 
     const args = useMultiClaimArgs();
 
@@ -336,23 +330,20 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     );
 
     const Page2 = React.useMemo(() => {
-        return isOpen && chainId ? (
+        return isOpen ? (
             <TransactionVisualConfirmation
-                {...{
-                    transaction,
-                    hash,
-                    onDismiss: () => {
-                        closeModal();
-                        startTransition(() => {
-                            setTimeout(() => {
-                                setPage(0);
-                            }, 2000);
-                        });
-                    },
+                hash={hash}
+                onDismiss={() => {
+                    closeModal();
+                    startTransition(() => {
+                        setTimeout(() => {
+                            setPage(0);
+                        }, 2000);
+                    });
                 }}
             />
         ) : null;
-    }, [transaction, isOpen, closeModal, setPage, chainId, hash]);
+    }, [isOpen, closeModal, setPage, hash]);
 
     return (
         <>

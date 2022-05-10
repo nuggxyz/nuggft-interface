@@ -14,7 +14,6 @@ import { HotRotateOController } from '@src/pages/HotRotateO';
 
 import MobileViewScreen2 from './mobile/MobileViewScreen2';
 import MobileWalletScreen2 from './mobile/MobileWalletScreen2';
-import StupidMfingHack from './mobile/StupidMfingHack';
 import MobileHotRotateOWrapper from './mobile/MobileHotRotateOWrapper';
 
 // const MobileWalletView = React.lazy(() => import('@src/pages/mobile/MobileWalletView'));
@@ -56,26 +55,17 @@ const Router = () => {
         },
     ]);
 
-    console.log(route, isPhone);
-
     return <React.Suspense fallback={<div />}>{route} </React.Suspense>;
 };
 
 const App = () => {
-    const { isPhone } = useDimensions();
-    console.log(isPhone);
-
     return (
         <>
-            {/* {!isPhone && <ToastContainer />} */}
             <ToastContainer />
             <GlobalModal />
             <NuggBook />
             <Helmet />
             <NavigationBar />
-            <StupidMfingHack />
-
-            {/* <HotRotateO /> */}
             <Router />
             <SwapPage />
         </>

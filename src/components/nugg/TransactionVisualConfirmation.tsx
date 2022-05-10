@@ -7,28 +7,28 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import Label from '@src/components/general/Label/Label';
 import web3 from '@src/web3';
+import { useTransactionManager2 } from '@src/contracts/useContract';
 
 import OffersList from './RingAbout/OffersList';
 
 type Props = {
-    transaction: {
-        response: boolean | undefined;
-        receipt: boolean | undefined;
-    };
-    hash: `0x${string}` | undefined;
+    hash: Hash | undefined;
     tokenId?: TokenId;
     onDismiss?: () => void;
     ConfirmationView?: () => JSX.Element;
 };
 
 const TransactionVisualConfirmation: FunctionComponent<Props> = ({
-    transaction,
     hash,
     tokenId,
     onDismiss,
     ConfirmationView,
 }) => {
     const chainId = web3.hook.usePriorityChainId();
+
+    const network = web3.hook.useNetworkProvider();
+
+    const transaction = useTransactionManager2(network, hash);
 
     return (
         <div

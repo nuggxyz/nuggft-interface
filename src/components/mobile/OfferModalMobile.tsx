@@ -16,11 +16,7 @@ import Colors from '@src/lib/colors';
 import Label from '@src/components/general/Label/Label';
 import { EthInt } from '@src/classes/Fraction';
 import { OfferModalData } from '@src/interfaces/modals';
-import {
-    useNuggftV1,
-    usePrioritySendTransaction,
-    useTransactionManager2,
-} from '@src/contracts/useContract';
+import { useNuggftV1, usePrioritySendTransaction } from '@src/contracts/useContract';
 import styles from '@src/components/modals/OfferModal/OfferModal.styles';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Loader from '@src/components/general/Loader/Loader';
@@ -47,7 +43,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const closeModal = client.modal.useCloseModal();
     const [page, setPage] = client.modal.usePhase();
     const { send, estimation: estimator, hash } = usePrioritySendTransaction();
-    const transaction = useTransactionManager2(network, hash);
     const [amount, setAmount] = useState('0');
     const [lastPressed, setLastPressed] = React.useState('5');
 
@@ -545,24 +540,21 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     );
 
     const Page2 = React.useMemo(() => {
-        return isOpen && chainId ? (
+        return isOpen ? (
             <TransactionVisualConfirmation
-                {...{
-                    transaction,
-                    hash,
-                    tokenId: data.tokenId,
-                    onDismiss: () => {
-                        closeModal();
-                        startTransition(() => {
-                            setTimeout(() => {
-                                setPage(0);
-                            }, 2000);
-                        });
-                    },
+                hash={hash}
+                tokenId={data.tokenId}
+                onDismiss={() => {
+                    closeModal();
+                    startTransition(() => {
+                        setTimeout(() => {
+                            setPage(0);
+                        }, 2000);
+                    });
                 }}
             />
         ) : null;
-    }, [transaction, isOpen, closeModal, setPage, chainId, data.tokenId, hash]);
+    }, [isOpen, closeModal, setPage, data.tokenId, hash]);
 
     return (
         <>

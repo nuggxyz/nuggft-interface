@@ -13,11 +13,7 @@ import web3 from '@src/web3';
 import Button from '@src/components/general/Buttons/Button/Button';
 import client from '@src/client';
 import { SellModalData } from '@src/interfaces/modals';
-import {
-    useNuggftV1,
-    usePrioritySendTransaction,
-    useTransactionManager2,
-} from '@src/contracts/useContract';
+import { useNuggftV1, usePrioritySendTransaction } from '@src/contracts/useContract';
 import { EthInt } from '@src/classes/Fraction';
 import { useUsdPair } from '@src/client/usd';
 import useAsyncState from '@src/hooks/useAsyncState';
@@ -42,13 +38,11 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     const swap = client.swaps.useSwap(data.tokenId);
 
     const network = web3.hook.useNetworkProvider();
-    const chainId = web3.hook.usePriorityChainId();
     const peer = web3.hook.usePriorityPeer();
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
     const [page, setPage] = client.modal.usePhase();
     const { send, estimation: estimator, hash } = usePrioritySendTransaction();
-    const transaction = useTransactionManager2(network, hash);
     const [amount, setAmount] = useState('0');
     const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');
 
@@ -555,24 +549,22 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                 </Text>
             </div>
         );
-        return isOpen && chainId ? (
+        return isOpen ? (
             <TransactionVisualConfirmation
-                {...{
-                    transaction,
-                    hash,
-                    ConfirmationView,
-                    onDismiss: () => {
-                        closeModal();
-                        startTransition(() => {
-                            setTimeout(() => {
-                                setPage(0);
-                            }, 2000);
-                        });
-                    },
+                hash={hash}
+                tokenId={data.tokenId}
+                ConfirmationView={ConfirmationView}
+                onDismiss={() => {
+                    closeModal();
+                    startTransition(() => {
+                        setTimeout(() => {
+                            setPage(0);
+                        }, 2000);
+                    });
                 }}
             />
         ) : null;
-    }, [transaction, isOpen, closeModal, setPage, chainId, data.tokenId, hash]);
+    }, [isOpen, closeModal, setPage, data.tokenId, hash]);
 
     return (
         <>

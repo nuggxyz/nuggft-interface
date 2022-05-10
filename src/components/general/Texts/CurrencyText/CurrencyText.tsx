@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSpring, animated, config, useTransition } from '@react-spring/web';
+import { useSpring, animated, config } from '@react-spring/web';
 
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import usePrevious from '@src/hooks/usePrevious';
@@ -45,6 +45,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
     forceEth = false,
     showUnit = true,
     stopAnimation = false,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     showIncrementAnimation = false,
     loadOnZero = false,
     unitOverride,
@@ -67,13 +68,13 @@ const CurrencyText: React.FC<BalanceProps> = ({
     // if (value === 0) value = MIN;
     const [isGwei, setIsGwei] = useState(forceGwei);
     const prevValue = usePrevious(value);
-    const [jumpValue, setJumpValue] = React.useState(MIN);
-    React.useEffect(() => {
-        if (showIncrementAnimation && prevValue && prevValue !== 0 && prevValue < value) {
-            setJumpValue(value - prevValue);
-        }
-        return undefined;
-    }, [value, prevValue, showIncrementAnimation]);
+    // const [jumpValue, setJumpValue] = React.useState(MIN);
+    // React.useEffect(() => {
+    //     if (showIncrementAnimation && prevValue && prevValue !== 0 && prevValue < value) {
+    //         setJumpValue(value - prevValue);
+    //     }
+    //     return undefined;
+    // }, [value, prevValue, showIncrementAnimation]);
     useEffect(() => {
         if (!forceEth) setIsGwei(value < 0.001);
     }, [value, forceGwei, forceEth]);
@@ -94,18 +95,18 @@ const CurrencyText: React.FC<BalanceProps> = ({
         [prevValue, value, stopAnimation],
     );
 
-    const transitions = useTransition(jumpValue, {
-        from: { opacity: 1, marginBottom: 30 },
-        enter: { opacity: 0, marginBottom: 45 },
-        delay: 300,
-        cancel: !showIncrementAnimation,
-        config: config.molasses,
-        onRest: () => setJumpValue(MIN),
-    });
+    // const transitions = useTransition(jumpValue, {
+    //     from: { opacity: 1, marginBottom: 30 },
+    //     enter: { opacity: 0, marginBottom: 45 },
+    //     delay: 300,
+    //     cancel: !showIncrementAnimation,
+    //     config: config.molasses,
+    //     onRest: () => setJumpValue(MIN),
+    // });
 
     return (
         <>
-            {showIncrementAnimation &&
+            {/* {showIncrementAnimation &&
                 jumpValue !== 0 &&
                 transitions(
                     (_styles, item) =>
@@ -120,7 +121,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
                                 +{jumpValue.toFixed(5)}
                             </animated.div>
                         ),
-                )}
+                )} */}
             <Text
                 {...props}
                 textStyle={{
@@ -170,7 +171,4 @@ const CurrencyText: React.FC<BalanceProps> = ({
     );
 };
 
-export default React.memo(
-    CurrencyText,
-    (prev, curr) => prev.value === curr.value && prev.unitOverride === curr.unitOverride,
-);
+export default CurrencyText;
