@@ -377,7 +377,12 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                     background: lib.colors.nuggBlueTransparent,
                     ...animatedBR,
                 }}
+                disabled={!isViewOpen}
                 styleInputContainer={styleInput}
+                styleInput={{
+                    margin: '0px',
+                    padding: '0px',
+                }}
                 leftToggles={[
                     <Button
                         buttonStyle={{
