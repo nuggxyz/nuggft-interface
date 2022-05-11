@@ -17,11 +17,10 @@ const useStore = create(
     subscribeWithSelector(
         combine(
             {
-                potential: {} as { [_: `potential-${string}`]: Transaction },
                 data: {} as { [_: Hash]: Transaction },
             },
             (set, get) => {
-                function ensureEsists(txhash: Hash) {
+                function ensureExists(txhash: Hash) {
                     if (!get().data[txhash])
                         set((draft) => {
                             draft.data[txhash] = {
@@ -34,7 +33,7 @@ const useStore = create(
 
                 function handleResult(res: TransactionReceipt): void {
                     const hash = res.transactionHash as Hash;
-                    ensureEsists(hash);
+                    ensureExists(hash);
 
                     const dat = get().data[hash];
 
@@ -46,7 +45,7 @@ const useStore = create(
                 }
 
                 async function handleReceipt(txhash: Hash, provider: Web3Provider): Promise<void> {
-                    ensureEsists(txhash);
+                    ensureExists(txhash);
 
                     const dat = get().data[txhash];
 
@@ -69,7 +68,7 @@ const useStore = create(
                 }
 
                 async function handleResponse(txhash: Hash, provider: Web3Provider): Promise<void> {
-                    ensureEsists(txhash);
+                    ensureExists(txhash);
 
                     if (!get().data[txhash].response) {
                         set((draft) => {
@@ -139,9 +138,10 @@ export const useUpdateTransactionOnEmit = () => {
         type: emitter.events.PotentialTransactionReceipt,
         callback: React.useCallback(
             (args) => {
-                if (args.from === address && provider) void handleResponse(args.txhash, provider);
+                console.log('ayyyooooooooooooooo', address, args.from, args);
+                if (args.from === address && provider) void handleReceipt(args.txhash, provider);
             },
-            [handleResponse, address, provider],
+            [handleReceipt, address, provider],
         ),
     });
 
@@ -149,9 +149,11 @@ export const useUpdateTransactionOnEmit = () => {
         type: emitter.events.PotentialTransactionResponse,
         callback: React.useCallback(
             (args) => {
-                if (args.from === address && provider) void handleReceipt(args.txhash, provider);
+                console.log('ayyyooooooooooooooo22222222', address, args.from, args);
+
+                if (args.from === address && provider) void handleResponse(args.txhash, provider);
             },
-            [address, handleReceipt, provider],
+            [address, handleResponse, provider],
         ),
     });
 };

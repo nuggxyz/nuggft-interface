@@ -58,9 +58,6 @@ export default () => {
             };
 
             switch (event.name) {
-                case 'Rotate':
-                    void emitter.emit({ type: emitter.events.Rotate, event, log });
-                    break;
                 case 'Offer':
                 case 'OfferMint':
                 case 'OfferItem':
@@ -256,6 +253,10 @@ export default () => {
 
                     break;
                 }
+                case 'Rotate': {
+                    void emitter.emit({ type: emitter.events.Rotate, event, log });
+                    break;
+                }
                 default:
                     break;
             }
@@ -268,6 +269,7 @@ export default () => {
             removeNuggClaim,
             updateOffers,
             updateProtocolSimple,
+            nuggft.address,
         ],
     );
 
