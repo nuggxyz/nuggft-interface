@@ -315,49 +315,19 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                             )}
                                         </AnimatedCard>
                                     </div>
-                                    <div
-                                        style={{
-                                            ...(screenType === 'phone'
-                                                ? styles.nuggContainerMobile
-                                                : styles.nuggContainer),
-                                            marginTop: token.type === 'item' ? '1.5rem' : '0rem',
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                height: '400px',
-                                                width: '400px',
-                                                position: 'relative',
-                                                padding: '.5rem',
-                                            }}
-                                        >
-                                            <div style={{ position: 'fixed' }}>
-                                                <AnimatedCard>
-                                                    {tokenId && (
-                                                        <TokenViewer
-                                                            tokenId={tokenId}
-                                                            showcase
-                                                            disableOnClick
-                                                        />
-                                                    )}
-                                                </AnimatedCard>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <HappyTabber
-                                        defaultActiveIndex={0}
-                                        items={happyTabs}
-                                        selectionIndicatorStyle={{ background: lib.colors.white }}
-                                        bodyStyle={styles.tabberList}
-                                        headerContainerStyle={{
-                                            marginTop: '1.5rem',
-                                            padding: '0rem 1rem',
-                                            borderRadius: 0,
-                                        }}
-                                    />
                                 </div>
                             </div>
+                            <HappyTabber
+                                defaultActiveIndex={0}
+                                items={happyTabs}
+                                selectionIndicatorStyle={{ background: lib.colors.white }}
+                                bodyStyle={styles.tabberList}
+                                headerContainerStyle={{
+                                    marginTop: '1.5rem',
+                                    padding: '0rem 1rem',
+                                    borderRadius: 0,
+                                }}
+                            />
                         </div>
                     </div>
                 </>
