@@ -326,7 +326,7 @@ export function useCheckEtherscanForUnknownTransactionHash(
         return 5000;
     }, [request, found, setFound]);
 
-    const val = useDebounce(isInactive, 5000);
+    const val = useDebounce(isInactive, 0);
 
     const callback = React.useCallback(async () => {
         if (!setFound || !request || found) return;
