@@ -42,9 +42,13 @@ export default ({
                 }}
                 textStyle={{
                     color: lib.colors.white,
-                    fontSize: 30,
+                    fontSize: 24,
                 }}
-                disabled={!lifecycle.active && lifecycle.lifecycle !== Lifecycle.Concessions}
+                disabled={
+                    !lifecycle.active &&
+                    lifecycle.lifecycle !== Lifecycle.Concessions &&
+                    lifecycle.lifecycle !== Lifecycle.Bench
+                }
                 onClick={() => {
                     if (lifecycle.lifecycle === Lifecycle.Concessions && tokenId.isNuggId()) {
                         openModal(
@@ -80,12 +84,12 @@ export default ({
                         ? 'Loading...'
                         : lifecycle.lifecycle === Lifecycle.Concessions
                         ? 'Adjust'
+                        : lifecycle.lifecycle === Lifecycle.Bench
+                        ? 'Accept and Start Auction'
                         : !lifecycle.active
                         ? 'swap is over'
                         : isUndefinedOrNullOrStringEmpty(address)
                         ? t`Connect wallet`
-                        : lifecycle.lifecycle === Lifecycle.Bench
-                        ? 'Accept and Start Auction'
                         : t`Place offer`
                 }
             />
