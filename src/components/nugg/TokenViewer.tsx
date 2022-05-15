@@ -79,7 +79,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             flexDirection: 'column' as const,
-            opacity: src || showPending ? 1 : 0,
+            opacity: pendingSrc || showPending ? 1 : 0,
         },
         config: springConfig.default,
     });
