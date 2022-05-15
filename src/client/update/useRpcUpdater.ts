@@ -25,6 +25,7 @@ export default () => {
     const updateOffers = client.mutate.updateOffers();
     const updateBlocknum = client.mutate.updateBlocknum();
     const updateProtocolSimple = client.mutate.updateProtocolSimple();
+    const updateLastBlockRpc = client.health.useUpdateLastBlockRpc();
 
     const removeLoan = client.mutate.removeLoan();
     const removeNuggClaim = client.mutate.removeNuggClaim();
@@ -276,9 +277,12 @@ export default () => {
     const blockListener = React.useCallback(
         (log: number) => {
             console.log(chainId, log);
-            if (chainId && log !== 0) updateBlocknum(log, chainId);
+            if (chainId && log !== 0) {
+                updateBlocknum(log, chainId);
+                updateLastBlockRpc(log);
+            }
         },
-        [chainId, updateBlocknum],
+        [chainId, updateBlocknum, updateLastBlockRpc],
     );
 
     React.useEffect(() => {

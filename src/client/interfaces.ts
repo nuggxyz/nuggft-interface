@@ -157,11 +157,6 @@ export type SearchFilter = {
     searchValue?: string;
 };
 
-export interface Health {
-    lastBlockRpc?: number;
-    lastBlockGraph?: number;
-}
-
 export type ClientStateUpdate = {
     manualPriority?: Connector;
     stake?: {
@@ -192,7 +187,6 @@ export type ClientStateUpdate = {
     myUnclaimedNuggOffers: ClientState['myUnclaimedNuggOffers'];
     myUnclaimedItemOffers: ClientState['myUnclaimedItemOffers'];
     myLoans?: LoanData[];
-    health?: MakeOptional<Health, keyof Health>;
 };
 
 export type SearchResults = BasicData[];
@@ -260,10 +254,7 @@ export interface Actions {
     updateBlocknum: (blocknum: number, chainId: Chain, startup?: boolean) => void;
     updateProtocol: (stateUpdate: ClientStateUpdate) => void;
     updateProtocolSimple: (
-        stateUpdate: Pick<
-            ClientStateUpdate,
-            'epoch' | 'stake' | 'totalNuggs' | 'health' | 'featureTotals'
-        >,
+        stateUpdate: Pick<ClientStateUpdate, 'epoch' | 'stake' | 'totalNuggs' | 'featureTotals'>,
     ) => void;
 
     setLastSwap: (tokenId: TokenId | undefined) => void;
@@ -316,7 +307,6 @@ export interface ClientState {
     darkmode: DarkModePreferences;
     locale: SupportedLocale | undefined;
     searchFilter: SearchFilter;
-    health: Health;
     started: boolean;
     activeSearch: SearchResults;
     dimentions: Dimensions;

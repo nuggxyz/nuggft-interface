@@ -2,7 +2,6 @@ import { useWatchLiveNuggSubscription } from '@src/gql/types.generated';
 import formatLiveNugg from '@src/client/formatters/formatLiveNugg';
 import useLiveNuggBackup from '@src/client/backups/useLiveNuggBackup';
 import client from '@src/client';
-import { useHealth } from '@src/client/hooks/useHealth';
 import useDevStable from '@src/hooks/useDevStable';
 
 export default (_tokenId: NuggId | undefined) => {
@@ -29,8 +28,9 @@ export default (_tokenId: NuggId | undefined) => {
             }
         },
     });
+    const { graphProblem } = client.health.useHealth();
 
-    useLiveNuggBackup(useHealth().graphProblem, tokenId);
+    useLiveNuggBackup(graphProblem, tokenId);
 
     return null;
 };

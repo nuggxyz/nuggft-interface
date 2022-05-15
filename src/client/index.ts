@@ -18,6 +18,7 @@ import viewport from './viewport';
 import transactions from './transactions';
 import usd from './usd';
 import ens from './ens';
+import health from './health';
 
 export default {
     core,
@@ -85,8 +86,6 @@ export default {
                     [tokenId],
                 ),
             ),
-        health: () => core((state) => state.health),
-        // lastGraphRefresh: () => coreNonImmer((state) => state.lastRefresh),
 
         myRecents: () =>
             core((state) =>
@@ -170,4 +169,5 @@ export default {
     transactions,
     usd,
     ens,
+    health,
 };

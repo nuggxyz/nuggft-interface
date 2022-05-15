@@ -2,7 +2,6 @@ import { useWatchLiveItemSubscription } from '@src/gql/types.generated';
 import useLiveItemBackup from '@src/client/backups/useLiveItemBackup';
 import formatLiveItem from '@src/client/formatters/formatLiveItem';
 import client from '@src/client';
-import { useHealth } from '@src/client/hooks/useHealth';
 import useDevStable from '@src/hooks/useDevStable';
 
 export default (_tokenId: ItemId | undefined) => {
@@ -31,7 +30,9 @@ export default (_tokenId: ItemId | undefined) => {
         },
     });
 
-    useLiveItemBackup(useHealth().graphProblem, tokenId);
+    const { graphProblem } = client.health.useHealth();
+
+    useLiveItemBackup(graphProblem, tokenId);
 
     return null;
 };

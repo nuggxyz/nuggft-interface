@@ -4,7 +4,8 @@ import client from '@src/client';
 import { HealthDocument, useHealthQuery } from '@src/gql/types.generated';
 
 export default () => {
-    const updateProtocolSimple = client.mutate.updateProtocolSimple();
+    const useUpdateLastBlockGraph = client.health.useUpdateLastBlockGraph();
+
     const { data: healthQueryData } = useHealthQuery({
         query: HealthDocument,
         fetchPolicy: 'network-only',
@@ -13,12 +14,9 @@ export default () => {
     });
 
     useEffect(() => {
-        updateProtocolSimple({
-            health: {
-                lastBlockGraph: healthQueryData?._meta?.block.number ?? null,
-            },
-        });
-    }, [healthQueryData, updateProtocolSimple]);
+        if (healthQueryData?._meta?.block.number)
+            useUpdateLastBlockGraph(healthQueryData?._meta?.block.number);
+    }, [healthQueryData, useUpdateLastBlockGraph]);
 
     return null;
 };

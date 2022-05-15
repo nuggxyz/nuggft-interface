@@ -115,10 +115,7 @@ const core = create(
                     sort: undefined,
                     searchValue: undefined,
                 },
-                health: {
-                    lastBlockRpc: 0,
-                    lastBlockGraph: 0,
-                },
+
                 dimentions: { width: window.innerWidth, height: window.innerHeight },
                 totalNuggs: 0,
                 activeSearch: [],
@@ -158,14 +155,13 @@ const core = create(
                         }
 
                         draft.blocknum = blocknum;
-                        draft.health.lastBlockRpc = blocknum;
                     });
                 }
 
                 function updateProtocolSimple(
                     upd: Pick<
                         ClientStateUpdate,
-                        'epoch' | 'stake' | 'totalNuggs' | 'health' | 'featureTotals'
+                        'epoch' | 'stake' | 'totalNuggs' | 'featureTotals'
                     >,
                 ): void {
                     set((draft) => {
@@ -173,8 +169,6 @@ const core = create(
                         if (upd.stake) draft.stake = upd.stake;
                         if (upd.featureTotals) draft.featureTotals = upd.featureTotals;
 
-                        if (upd.health?.lastBlockGraph)
-                            draft.health.lastBlockGraph = upd.health.lastBlockGraph;
                         if (upd.totalNuggs || upd.totalNuggs === 0)
                             draft.totalNuggs = upd.totalNuggs;
                     });
@@ -182,8 +176,6 @@ const core = create(
 
                 function updateProtocol(stateUpdate: ClientStateUpdate): void {
                     set((draft) => {
-                        if (stateUpdate.health?.lastBlockGraph)
-                            draft.health.lastBlockGraph = stateUpdate.health.lastBlockGraph;
                         if (stateUpdate.totalNuggs) draft.totalNuggs = stateUpdate.totalNuggs;
                         if (stateUpdate.stake) draft.stake = stateUpdate.stake;
                         if (stateUpdate.editingNugg) draft.editingNugg = stateUpdate.editingNugg;

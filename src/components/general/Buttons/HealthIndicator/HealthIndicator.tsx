@@ -3,7 +3,7 @@ import { useSpring, animated, config as springConfig } from '@react-spring/web';
 import { IoSyncCircle } from 'react-icons/io5';
 
 import lib from '@src/lib';
-import { useHealth } from '@src/client/hooks/useHealth';
+import client from '@src/client';
 
 const DisplayOk = () => {
     const rotate = useSpring({
@@ -47,7 +47,7 @@ const DisplayProblem = () => {
 };
 
 export default () => {
-    const { blockdiff } = useHealth();
+    const { blockdiff } = client.health.useHealth();
 
     return blockdiff < 5 ? <DisplayOk /> : <DisplayProblem />;
 };
