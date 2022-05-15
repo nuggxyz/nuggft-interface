@@ -100,7 +100,7 @@ const NavigationBarMobile: FC<Props> = () => {
                         <animated.div
                             style={{
                                 ...styles.linkAccountContainer,
-                                padding: '0rem .5rem',
+                                // padding: '0rem .5rem',
                                 alignItems: 'center',
                                 justifyContent: 'flex-end',
                             }}

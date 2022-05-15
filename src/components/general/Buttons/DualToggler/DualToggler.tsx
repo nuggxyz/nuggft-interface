@@ -23,10 +23,10 @@ const DualToggler = ({
     const [headerRef, { width: WIDTH }] = useMeasure();
 
     const selectionIndicatorSpring = useSpring({
-        from: {
-            x: 0,
-            opacity: 1,
-        },
+        // from: {
+        //     x: 0,
+        //     opacity: 1,
+        // },
         to: {
             opacity: 1,
             x: activeIndex * (WIDTH / 2) - 22.5,

@@ -1,7 +1,4 @@
-/* eslint-disable import/no-cycle */
 import { useCallback } from 'react';
-
-// eslint-disable-next-line import/no-named-as-default
 import shallow from 'zustand/shallow';
 
 import web3 from '@src/web3';

@@ -30,7 +30,7 @@ export interface TextInputProps {
     shouldFocus?: boolean;
     triggerFocus?: boolean;
     onFocus?: () => void;
-    onClick?: () => void;
+    onClick?: React.DOMAttributes<HTMLTextAreaElement | HTMLInputElement>['onClick'];
     // https://stackoverflow.com/a/53803282
     restrictToNumbers?: boolean;
     // restrictToNumbersWithDecimal?: boolean;

@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 
 import {
     GetAllNuggsSearchQuery,
@@ -12,8 +12,6 @@ import BradPittList from '@src/components/general/List/BradPittList';
 import Button from '@src/components/general/Buttons/Button/Button';
 
 import NuggListRenderItemMobile, { NuggListRenderItemMobileBig } from './NuggListRenderItemMobile';
-
-type Props = Record<string, never>;
 
 const INFINITE_INTERVAL = 25;
 const START_INTERVAL = 3;
@@ -46,15 +44,27 @@ const AllNuggs = ({ back }: { back: () => void }) => {
     const id = React.useId();
     const reff = React.useRef(null);
     return (
-        <div ref={reff} style={{ height: '100%', overflow: 'scroll', width: '100%' }}>
+        <div
+            ref={reff}
+            style={{
+                height: '100%',
+                overflow: 'scroll',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+            }}
+        >
             <BradPittList
-                id={`${id}ALL-NUGGS-brad`}
+                id={`${id}-of-brad`}
                 listStyle={{
                     overflow: undefined,
                     position: 'relative',
                     justifyContent: 'flex-start',
-                    padding: '0 20px',
+                    // padding: '0 20px',
                     width: '100%',
+                }}
+                headerStyle={{
+                    marginTop: 20,
                 }}
                 style={{
                     width: '100%',
@@ -64,8 +74,8 @@ const AllNuggs = ({ back }: { back: () => void }) => {
                         label="back"
                         onClick={back}
                         buttonStyle={{
-                            position: 'absolute',
-                            top: 80,
+                            // position: 'absolute',
+                            // top: 80,
                             WebkitBackdropFilter: 'blur(30px)',
                             left: '1.4rem',
                             zIndex: 1000,
@@ -86,12 +96,12 @@ const AllNuggs = ({ back }: { back: () => void }) => {
                 extraData={{ cardType: 'swap' }}
                 itemHeightBig={340}
                 itemHeightSmall={160}
-                startGap={110}
-                floaterWrapperStyle={{
-                    position: 'absolute',
-                    top: 83,
-                    right: '1rem',
-                }}
+                startGap={25}
+                // floaterWrapperStyle={{
+                //     position: 'absolute',
+                //     top: 83,
+                //     right: '1rem',
+                // }}
                 floaterColor={lib.colors.transparentWhite}
             />
         </div>
@@ -127,15 +137,27 @@ const AllItems = ({ back }: { back: () => void }) => {
     const id = React.useId();
     const reff = React.useRef(null);
     return (
-        <div ref={reff} style={{ height: '100%', overflow: 'scroll', width: '100%' }}>
+        <div
+            ref={reff}
+            style={{
+                height: '100%',
+                overflow: 'scroll',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+            }}
+        >
             <BradPittList
                 id={`${id}-of-brad`}
                 listStyle={{
                     overflow: undefined,
                     position: 'relative',
                     justifyContent: 'flex-start',
-                    padding: '0 20px',
+                    // padding: '0 20px',
                     width: '100%',
+                }}
+                headerStyle={{
+                    marginTop: 20,
                 }}
                 style={{
                     width: '100%',
@@ -145,10 +167,9 @@ const AllItems = ({ back }: { back: () => void }) => {
                         label="back"
                         onClick={back}
                         buttonStyle={{
-                            position: 'absolute',
-                            top: 80,
+                            // position: 'absolute',
+                            // top: 80,
                             WebkitBackdropFilter: 'blur(30px)',
-                            left: '1.4rem',
                             zIndex: 1000,
                             borderRadius: lib.layout.borderRadius.large,
                             background: lib.colors.primaryColor,
@@ -167,12 +188,14 @@ const AllItems = ({ back }: { back: () => void }) => {
                 extraData={{ cardType: 'swap' }}
                 itemHeightBig={340}
                 itemHeightSmall={160}
-                startGap={110}
-                floaterWrapperStyle={{
-                    position: 'absolute',
-                    top: 83,
-                    right: '1rem',
-                }}
+                startGap={25}
+                floaterWrapperStyle={
+                    {
+                        // position: 'absolute',
+                        // top: 83,
+                        // right: '1rem',
+                    }
+                }
                 floaterColor={lib.colors.transparentWhite}
             />
         </div>
@@ -181,9 +204,13 @@ const AllItems = ({ back }: { back: () => void }) => {
 
 // const NuggList = React.lazy(() => import('./components/NuggList'));
 
-const NuggDexSearchListMobile2: FunctionComponent<Props> = () => {
-    const [page, setPage] = React.useState<'search' | 'home' | 'all nuggs' | 'all items'>('home');
-
+const NuggDexSearchListMobile2 = ({
+    page,
+    setPage,
+}: {
+    page: 'search' | 'home' | 'all nuggs' | 'all items';
+    setPage: (input: 'search' | 'home' | 'all nuggs' | 'all items') => void;
+}) => {
     return page === 'home' ? (
         <div
             style={{

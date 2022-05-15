@@ -13,6 +13,7 @@ const useStore = create(
                 height: window.visualViewport.height,
                 width: window.visualViewport.width,
                 offsetTop: window.visualViewport.offsetTop,
+
                 pageTop: window.visualViewport.pageTop,
             },
         },
