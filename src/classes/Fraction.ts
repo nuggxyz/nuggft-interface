@@ -259,7 +259,7 @@ export class CurrencyInt extends Fraction {
         }
         return numbro(num).format({
             average: true,
-            mantissa: num > 100 ? 2 : digits,
+            mantissa: num > 100 ? 0 : num > 10 ? 1 : digits,
             abbreviations: {
                 million: 'M',
                 billion: 'B',

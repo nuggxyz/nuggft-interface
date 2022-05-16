@@ -47,6 +47,7 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId, visible }) => {
 
                     boxShadow: lib.layout.boxShadow.dark,
                     width: '90%',
+                    height: '450px',
                 }}
             >
                 <div style={styles.bodyContainer}>

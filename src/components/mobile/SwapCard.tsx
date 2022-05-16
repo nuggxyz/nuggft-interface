@@ -26,7 +26,7 @@ const SwapCard = ({
                 justifyContent: 'flex-end',
                 alignItems: 'center',
                 position: 'relative',
-                height: '451px',
+                height: '500px',
             }}
             onClick={(event) => {
                 event.stopPropagation();

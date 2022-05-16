@@ -9,14 +9,15 @@ export default (tokenId?: TokenId) => {
 
     const supp = client.live.offers(tokenId);
 
-    return React.useMemo(
+    const yo = React.useMemo(
         () =>
-            [...(swap?.offers || [])].mergeInPlaceReturnRef(
+            [...(swap?.offers || [])].merge(
                 [...supp],
                 'account',
                 (a, b) => b.eth.gt(a.eth),
                 (a, b) => (a.eth.gt(b.eth) ? -1 : 1),
             ),
-        [swap, supp],
+        [swap?.offers, supp],
     );
+    return yo;
 };

@@ -114,7 +114,7 @@ const GodList = <T, B, A>({
     const scrollTop = useMemo(
         () =>
             scrollTopOffset === 0
-                ? trueScrollTop + screenHeight
+                ? trueScrollTop + screenHeight - (startGap || 0)
                 : trueScrollTop - scrollTopOffset - (startGap || 0),
         [trueScrollTop, scrollTopOffset, startGap, screenHeight],
     );
@@ -130,17 +130,21 @@ const GodList = <T, B, A>({
 
     const endIndex = useMemo(() => {
         const check = Math.min(
-            Math.min(startIndex + interval, data.length - 1),
+            Math.min(startIndex + interval, Math.max(0, data.length - 1)),
             scrollTop + windowHeight === 0 ? 0 : Math.ceil((scrollTop + windowHeight) / itemHeight),
         );
         return check;
-    }, [scrollTop, data.length, windowHeight, itemHeight, startIndex, interval]);
+    }, [scrollTop, data, windowHeight, itemHeight, startIndex, interval]);
 
     // const prevStart = usePrevious(startIndex);
     const prevEnd = usePrevious(endIndex);
     // const prevData = usePrevious(data);
 
     const items = React.useMemo(() => range(startIndex, endIndex), [startIndex, endIndex]);
+
+    // React.useEffect(() => {
+    //     if (items[0] !== data[0])
+    // }, [])
 
     // console.log({ interval, endIndex, startIndex, scrollTop, items, data });
 
@@ -238,43 +242,50 @@ const GodList = <T, B, A>({
 
     const [uno, uno_i, uno_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 0) as number;
-        const visible = items.indexOf(yeh) < 3;
+        const checker = items.indexOf(yeh);
+        const visible = checker < 4 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [dos, dos_i, dos_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 1) as number;
-        const visible = items.indexOf(yeh) < 3;
+        const checker = items.indexOf(yeh);
+        const visible = checker < 4 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [tres, tres_i, tres_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 2) as number;
-        const visible = items.indexOf(yeh) < 3;
+        const checker = items.indexOf(yeh);
+        const visible = checker < 4 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [qu, qu_i, qu_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 3) as number;
-        const visible = items.indexOf(yeh) < 3;
+        const checker = items.indexOf(yeh);
+        const visible = checker < 4 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [cin, cin_i, cin_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 4) as number;
-        const visible = items.indexOf(yeh) < 3;
+        const checker = items.indexOf(yeh);
+        const visible = checker < 4 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [sei, sei_i, sei_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 5) as number;
-        const visible = items.indexOf(yeh) < 3;
+        const checker = items.indexOf(yeh);
+        const visible = checker < 4 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [ses, ses_i, ses_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 6) as number;
-        const visible = items.indexOf(yeh) < 3;
+        const checker = items.indexOf(yeh);
+        const visible = checker < 3 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 

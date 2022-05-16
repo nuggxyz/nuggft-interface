@@ -67,13 +67,7 @@ export default {
         offers: <A extends TokenId>(tokenId: A | undefined) =>
             core(
                 // eslint-disable-next-line react-hooks/rules-of-hooks
-                useCallback(
-                    (state) =>
-                        [...(tokenId ? state.liveOffers[tokenId] ?? [] : [])].sort((a, b) =>
-                            a.eth.gt(b.eth) ? -1 : 1,
-                        ),
-                    [tokenId],
-                ),
+                useCallback((state) => (tokenId ? state.liveOffers[tokenId] ?? [] : []), [tokenId]),
             ),
         token: <A extends TokenId>(tokenId: A | undefined) =>
             core(

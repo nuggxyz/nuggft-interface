@@ -169,13 +169,30 @@ fragment swapdata on Swap {
     leader {
         id
     }
-    offers(first: 5, orderBy: eth, orderDirection: desc) {
+    offers(orderBy: eth, orderDirection: desc) {
         id
         user {
             id
         }
         eth
         txhash
+    }
+}
+
+fragment simpleitemswapdata on ItemSwap {
+    id
+    endingEpoch
+    canceledEpoch
+    num
+    top
+    owner {
+        id
+    }
+    leader {
+        id
+    }
+    sellingItem {
+        id
     }
 }
 
@@ -204,7 +221,7 @@ fragment itemswapdata on ItemSwap {
     sellingItem {
         id
     }
-    offers(first: 5, orderBy: eth, orderDirection: desc) {
+    offers(orderBy: eth, orderDirection: desc) {
         id
         nugg {
             id

@@ -43,8 +43,8 @@ const SwapView = () => {
                 RenderItem={SwapCard}
                 data={[sortedAll.current, sortedAll.next, sortedAll.potential].flat()}
                 extraData={undefined}
-                itemHeight={451}
-                startGap={100}
+                itemHeight={475}
+                startGap={75}
                 // screenHeight={height}
                 LIST_PADDING={0}
                 skipSelectedCheck
