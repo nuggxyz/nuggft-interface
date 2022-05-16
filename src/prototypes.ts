@@ -78,15 +78,16 @@ String.prototype.isTokenId = function fn(input: `nugg` | `item`) {
 };
 
 String.prototype.toPrettyId = function fn() {
+    const raw = this.toRawIdNum();
+
     if (this.isItemId()) {
         return `${
-            ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][
-                Math.floor(Number(this.toRawId()) / 1000)
-            ]
-        } ${Number(this.toRawId()) % 1000}`;
+            ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][Math.floor(raw / 1000)]
+        } ${raw % 1000}`;
     }
     if (this.isNuggId()) {
-        return `Nugg ${this.toRawId()}`;
+        const prefix = ['G', 'M'][Math.floor(raw / 1000000)];
+        return `Nugg ${raw % 1000000}${prefix}`;
     }
     return this as string;
 };
