@@ -273,7 +273,7 @@ const InfiniteList = <T, B, A>({
     useEffect(() => {
         lastGrab(endIndex);
     }, [endIndex]);
-    console.log({ scrollTop, endIndex, startIndex, trueScrollTop, scrollTopOffset });
+    // console.log({ scrollTop, endIndex, startIndex, trueScrollTop, scrollTopOffset });
     const _onScroll = useCallback(
         (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
             const st = ev.currentTarget.scrollTop;
@@ -281,15 +281,6 @@ const InfiniteList = <T, B, A>({
                 // st = windowRef.current.offsetTop - st;
                 setScrollTopOffset(ev.currentTarget.offsetHeight || 0);
             }
-            // @ts-ignore
-            console.log(
-                offsetListRef,
-                !!windowRef?.current,
-                st,
-                // @ts-ignore
-                ev.currentTarget.offsetHeight,
-                // windowRef?.current?.offsetParent?.offsetParent,
-            );
 
             setTrueScrollTop(st);
             if (onScroll) onScroll();
