@@ -42,6 +42,8 @@ const SwapView = () => {
     //     }, 3000);
     // }, []);
 
+    // console.log({ sortedAll });
+
     return (
         <div
             style={{
@@ -72,9 +74,9 @@ const SwapView = () => {
                 <SwapCard tokenId={x} key={`SwapCard-Next-${x}`} />
             ))}
 
-            {sortedAll.potential.map((x) => (
+            {/* {sortedAll.potential.map((x) => (
                 <SwapCard tokenId={x} key={`SwapCard-Potential-${x}`} />
-            ))}
+            ))} */}
         </div>
     );
 };
