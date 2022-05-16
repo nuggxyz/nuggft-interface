@@ -28,6 +28,8 @@ interface BalanceProps extends PartialText {
     loadOnZero?: boolean;
     str?: string;
     loadingOnZero?: boolean;
+    onlyAnimateOnIncrease?: boolean;
+    stopAnimationOnStart?: boolean;
 
     unitOverride?: 'ETH' | 'USD';
 }
@@ -42,32 +44,32 @@ const CurrencyText: React.FC<BalanceProps> = ({
     // duration = 2,
     percent = false,
     forceGwei = false,
-    forceEth = false,
+    forceEth = true,
     showUnit = true,
     stopAnimation = false,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     showIncrementAnimation = false,
     loadOnZero = false,
     unitOverride,
-    loadingOnZero,
-
+    loadingOnZero = true,
+    stopAnimationOnStart = true,
+    // onlyAnimateOnIncrease = false,
     str,
     // image,
     ...props
 }) => {
-    const { value, unit } = React.useMemo(() => {
-        if (typeof _value === 'number') return { value: _value, unit: unitOverride ?? 'ETH' };
+    const [value, unit] = React.useMemo(() => {
+        if (typeof _value === 'number') return [_value, unitOverride ?? 'ETH'];
         if (unitOverride)
-            return {
-                value: _value[unitOverride.toLowerCase() as 'eth' | 'usd'].number,
-                unit: unitOverride,
-            };
-        return { value: _value.selected.number, unit: _value.preference };
+            return [_value[unitOverride.toLowerCase() as 'eth' | 'usd'].number, unitOverride];
+        return [_value.selected.number, _value.preference];
     }, [_value, unitOverride]);
 
     // if (value === 0) value = MIN;
-    const [isGwei, setIsGwei] = useState(forceGwei);
+    const [isGwei, setIsGwei] = useState(forceGwei && !forceEth);
     const prevValue = usePrevious(value);
+    // const prevValue2 = usePrevious(prevValue);
+
     // const [jumpValue, setJumpValue] = React.useState(MIN);
     // React.useEffect(() => {
     //     if (showIncrementAnimation && prevValue && prevValue !== 0 && prevValue < value) {
@@ -79,22 +81,32 @@ const CurrencyText: React.FC<BalanceProps> = ({
         if (!forceEth) setIsGwei(value < 0.001);
     }, [value, forceGwei, forceEth]);
 
+    const okayAfterStart = React.useMemo(() => {
+        return (
+            !stopAnimationOnStart ||
+            (prevValue !== undefined && prevValue !== 0 && prevValue !== value)
+        );
+    }, [prevValue, value, stopAnimationOnStart]);
+
+    // console.log({ value, prevValue, okayAfterStart }, okayAfterStart ? 'AHHHHHHHH' : '');
+
+    // const cancle = React.useMemo(() => {
+    //     return (stopAnimationOnStart && (prevValue === 0 || prevValue === MIN)) ||
+    //     stopAnimation || (onlyAnimateOnIncrease && prevValue2 === )
+    // }, [])
+
     const [spring] = useSpring(
         {
             val: value || MIN,
             from: {
-                val: stopAnimation
-                    ? value
-                    : loadOnZero && prevValue === 0
-                    ? MIN
-                    : prevValue || value * 0.5,
+                val: loadOnZero && prevValue === undefined ? MIN : prevValue || value * 0.5,
             },
             config: config.molasses,
-            cancel: stopAnimation,
+            immediate: stopAnimation || !okayAfterStart,
         },
-        [prevValue, value, stopAnimation],
+        [prevValue, value, stopAnimation, okayAfterStart, loadOnZero],
     );
-
+    // if (value < 13) console.log(spring.val.get());
     // const transitions = useTransition(jumpValue, {
     //     from: { opacity: 1, marginBottom: 30 },
     //     enter: { opacity: 0, marginBottom: 45 },
