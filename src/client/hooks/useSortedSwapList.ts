@@ -7,6 +7,8 @@ export default () => {
     const epoch = client.live.epoch.id();
 
     return React.useMemo(() => {
+        const init = { current: [], next: [], recent: [], potential: [] };
+        if (!epoch) return init;
         return abc.reduce(
             (
                 prev: {
@@ -17,20 +19,19 @@ export default () => {
                 },
                 curr,
             ) => {
-                if (epoch) {
-                    if (curr.endingEpoch === epoch) {
-                        prev.current.push(curr.tokenId);
-                    } else if (curr.endingEpoch === epoch + 1) {
-                        prev.next.push(curr.tokenId);
-                    } else if (!curr.endingEpoch) {
-                        prev.potential.push(curr.tokenId);
-                    } else if (curr.endingEpoch && curr.endingEpoch < epoch) {
-                        prev.recent.push(curr.tokenId);
-                    }
+                if (curr.endingEpoch === epoch) {
+                    prev.current.push(curr.tokenId);
+                } else if (curr.endingEpoch === epoch + 1) {
+                    prev.next.push(curr.tokenId);
+                } else if (!curr.endingEpoch) {
+                    prev.potential.push(curr.tokenId);
+                } else if (curr.endingEpoch && curr.endingEpoch < epoch) {
+                    prev.recent.push(curr.tokenId);
                 }
+
                 return prev;
             },
-            { current: [], next: [], recent: [], potential: [] },
+            init,
         );
     }, [abc, epoch]);
 };
