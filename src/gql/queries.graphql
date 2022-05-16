@@ -178,18 +178,81 @@ query getItemSwapData($tokenId: ID!) {
 
 query getLiveProtocol {
     protocol(id: "0x42069") {
+        ...liveProtocol
+    }
+}
+fragment liveProtocolBase on Protocol {
+    id
+    totalNuggs
+    lastEpoch {
+        ...epochswapdata
+    }
+    nextEpoch {
+        _upcomingActiveItemSwaps
+        ...epochswapdata
+    }
+    featureTotals
+    nuggftStakedEth
+    nuggftStakedShares
+
+    featureTotals
+}
+fragment liveProtocol on Protocol {
+    ...liveProtocolBase
+    activeNuggs(orderBy: idnum) {
         id
-        totalNuggs
-        lastEpoch {
-            ...epochswapdata
+        idnum
+        activeSwap {
+            ...swapdata
+            # id
+            # eth
+            # endingEpoch
         }
-        nextEpoch {
-            _upcomingActiveItemSwaps
-            ...epochswapdata
+    }
+    activeNuggItems {
+        id
+        activeSwap {
+            ...itemswapdata
+
+            # id
+            # sellingNuggItem {
+            #     id
+            #     item {
+            #         id
+            #     }
+            # }
+            # eth
+            # endingEpoch
         }
-        nuggftStakedEth
-        nuggftStakedShares
-        activeNuggs(orderBy: idnum) {
+    }
+    activeItems {
+        id
+        activeSwap {
+            ...itemswapdata
+            # id
+            # sellingItem {
+            #     id
+            # }
+            # eth
+            # endingEpoch
+        }
+        upcomingActiveSwap {
+            ...itemswapdata
+
+            # id
+            # sellingItem {
+            #     id
+            # }
+            # eth
+            # endingEpoch
+        }
+    }
+}
+
+query getMassiveLiveProtocol {
+    protocol(id: "0x42069") {
+        ...liveProtocolBase
+        activeNuggs(orderBy: idnum, first: 1000) {
             id
             idnum
             activeSwap {
@@ -199,7 +262,7 @@ query getLiveProtocol {
                 # endingEpoch
             }
         }
-        activeNuggItems {
+        activeNuggItems(first: 1000) {
             id
             activeSwap {
                 ...itemswapdata
@@ -215,7 +278,7 @@ query getLiveProtocol {
                 # endingEpoch
             }
         }
-        activeItems {
+        activeItems(first: 1000) {
             id
             activeSwap {
                 ...itemswapdata

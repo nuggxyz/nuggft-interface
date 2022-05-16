@@ -1,66 +1,6 @@
 subscription liveProtocol {
     protocol(id: "0x42069") {
-        id
-        totalNuggs
-        lastEpoch {
-            ...epochswapdata
-        }
-        nextEpoch {
-            _upcomingActiveItemSwaps
-            ...epochswapdata
-        }
-        featureTotals
-        nuggftStakedEth
-        nuggftStakedShares
-        activeNuggs(orderBy: idnum) {
-            id
-            idnum
-            activeSwap {
-                ...swapdata
-                # id
-                # eth
-                # endingEpoch
-            }
-        }
-        featureTotals
-        activeNuggItems {
-            id
-            activeSwap {
-                ...itemswapdata
-
-                # id
-                # sellingNuggItem {
-                #     id
-                #     item {
-                #         id
-                #     }
-                # }
-                # eth
-                # endingEpoch
-            }
-        }
-        activeItems {
-            id
-            activeSwap {
-                ...itemswapdata
-                # id
-                # sellingItem {
-                #     id
-                # }
-                # eth
-                # endingEpoch
-            }
-            upcomingActiveSwap {
-                ...itemswapdata
-
-                # id
-                # sellingItem {
-                #     id
-                # }
-                # eth
-                # endingEpoch
-            }
-        }
+        ...liveProtocol
     }
 }
 

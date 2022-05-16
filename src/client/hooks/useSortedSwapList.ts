@@ -9,7 +9,7 @@ export default () => {
     return React.useMemo(() => {
         const init = { current: [], next: [], recent: [], potential: [] };
         if (!epoch) return init;
-        return abc.reduce(
+        const go = abc.reduce(
             (
                 prev: {
                     current: TokenId[];
@@ -33,5 +33,7 @@ export default () => {
             },
             init,
         );
+        go.potential.sort((a, b) => (a > b ? 1 : -1));
+        return go;
     }, [abc, epoch]);
 };
