@@ -15,7 +15,6 @@ import Label from '@src/components/general/Label/Label';
 import SimpleList from '@src/components/general/List/SimpleList';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
-import { EthInt } from '@src/classes/Fraction';
 
 import styles from './ActiveTab.styles';
 import SeeAllButton from './SeeAllButton';
@@ -31,7 +30,7 @@ export const ActiveRenderItem = ({
 }) => {
     const { gotoViewingNugg } = useViewingNugg();
     const swap = client.swaps.useSwap(tokenId);
-
+    const swapValue = client.usd.useUsdPair(swap?.eth);
     return tokenId ? (
         <div
             aria-hidden="true"
@@ -71,10 +70,7 @@ export const ActiveRenderItem = ({
                             background: fancy,
                         }}
                     />
-                    <CurrencyText
-                        textStyle={{ color: fancy }}
-                        value={new EthInt(swap?.eth || 0).number || 0}
-                    />
+                    <CurrencyText textStyle={{ color: fancy }} value={swapValue} />
                 </div>
             </div>
 

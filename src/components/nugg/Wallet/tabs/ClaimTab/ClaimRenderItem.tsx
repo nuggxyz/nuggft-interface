@@ -38,7 +38,14 @@ const ClaimRenderItem: FunctionComponent<
                 ) : (
                     <NLStaticImage image="eth" style={styles.renderItemETH} />
                 )}
-                <div>
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        flexDirection: 'column',
+                        marginLeft: '.5rem',
+                    }}
+                >
                     <Text textStyle={styles.textBlue} size="small">
                         {item.leader
                             ? `${item.tokenId.toPrettyId()}`

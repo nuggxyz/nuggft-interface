@@ -113,7 +113,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                         color: dynamicTextColor,
                     }}
                 >
-                    {t`Unfortuantly, Nugg ${tokenId} did not make it.`}
+                    {t`Unfortuantly, Nugg ${tokenId?.toRawId()} did not make it.`}
                 </Text>
             )}
             {/* {token && lifecycle !== Lifecycle.Stands && lifecycle !== Lifecycle.Cut && (

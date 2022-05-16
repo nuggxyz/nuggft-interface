@@ -28,6 +28,8 @@ const HomeTab: FunctionComponent<Props> = () => {
     const loans = client.live.myLoans();
     const unclaimedOffers = client.live.myUnclaimedOffers();
 
+    const balancePair = client.usd.useUsdPair(stake__eps && stake__eps.multiply(nuggs.length));
+
     return chainId && provider && address ? (
         <div style={styles.container}>
             <div>
@@ -39,8 +41,8 @@ const HomeTab: FunctionComponent<Props> = () => {
                                 width: screenType === 'phone' ? '48%' : '100%',
                             }}
                             label={t`Balance`}
-                            value={stake__eps.multiply(nuggs.length).number}
-                            image="eth"
+                            value={balancePair}
+                            // image="eth"
                         />
                     )}
                     {screenType === 'phone' && (
