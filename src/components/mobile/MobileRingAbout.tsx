@@ -3,27 +3,29 @@ import { animated } from '@react-spring/web';
 
 import client from '@src/client';
 import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
-import useLiveToken from '@src/client/subscriptions/useLiveToken';
 import lib from '@src/lib';
 import styles from '@src/components/nugg/RingAbout/RingAbout.styles';
 import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import { Lifecycle } from '@src/client/interfaces';
 import useRemaining from '@src/client/hooks/useRemaining';
+import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 
 import MobileOwnerBlock from './MobileOwnerBlock';
 
 type Props = {
     tokenId?: TokenId;
+    visible: boolean;
 };
 
-const RingAbout: FunctionComponent<Props> = ({ tokenId }) => {
+const RingAbout: FunctionComponent<Props> = ({ tokenId, visible }) => {
     const swap = client.swaps.useSwap(tokenId);
+    useLiveTokenPoll(visible, tokenId);
     const lifecycle = useLifecycleEnhanced(swap);
 
     const { minutes } = useRemaining(swap?.epoch);
 
-    useLiveToken(tokenId);
+    // useLiveToken(tokenId);
 
     useLiveOffers(tokenId);
 

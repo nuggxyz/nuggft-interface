@@ -1,13 +1,14 @@
 import React from 'react';
 
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
-import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
+import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 
 import MobileRingAbout from './MobileRingAbout';
 
 const SwapCard = ({
     item: tokenId,
-}: InfiniteListRenderItemProps<TokenId, undefined, undefined>) => {
+    visible,
+}: GodListRenderItemProps<TokenId, undefined, undefined>) => {
     const { goto } = useMobileViewingNugg();
 
     // const [, startTransition] = React.useTransition();
@@ -32,7 +33,7 @@ const SwapCard = ({
                 goto(tokenId);
             }}
         >
-            <MobileRingAbout tokenId={tokenId} />
+            <MobileRingAbout tokenId={tokenId} visible={!!visible} />
         </div>
     );
 };

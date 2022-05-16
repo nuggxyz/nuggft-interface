@@ -1,8 +1,8 @@
 import React from 'react';
 
 import SwapCard from '@src/components/mobile/SwapCard';
-import InfiniteList from '@src/components/general/List/InfiniteList';
 import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
+import GodList from '@src/components/general/List/GodList';
 
 const SwapView = () => {
     const sortedAll = useSortedSwapList();
@@ -14,6 +14,8 @@ const SwapView = () => {
     // }, []);
 
     // console.log({ sortedAll });
+
+    // const { height } = useDimensions();
 
     return (
         <div
@@ -37,13 +39,15 @@ const SwapView = () => {
                 key={`SwapCard-Current-${sortedAll.current[0]}`}
             /> */}
 
-            <InfiniteList
+            <GodList
                 RenderItem={SwapCard}
                 data={[sortedAll.current, sortedAll.next, sortedAll.potential].flat()}
                 extraData={undefined}
                 itemHeight={451}
-                interval={5}
                 startGap={100}
+                // screenHeight={height}
+                LIST_PADDING={0}
+                skipSelectedCheck
             />
 
             {/* {sortedAll.current.map((x) => (

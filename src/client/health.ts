@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import React from 'react';
 import create from 'zustand';
-import { combine, persist } from 'zustand/middleware';
+import { combine, persist, subscribeWithSelector } from 'zustand/middleware';
 
 export interface Health {
     lastBlockRpc: number;
@@ -10,21 +10,23 @@ export interface Health {
 
 const useStore = create(
     persist(
-        combine({ lastBlockRpc: 0, lastBlockGraph: 0 } as Health, (set) => {
-            const updateLastRpcBlock = (blocknum: number) => {
-                set((draft) => {
-                    draft.lastBlockRpc = blocknum;
-                });
-            };
+        subscribeWithSelector(
+            combine({ lastBlockRpc: 0, lastBlockGraph: 0 } as Health, (set) => {
+                const updateLastRpcBlock = (blocknum: number) => {
+                    set((draft) => {
+                        draft.lastBlockRpc = blocknum;
+                    });
+                };
 
-            const updateLastBlockGraph = (blocknum: number) => {
-                set((draft) => {
-                    draft.lastBlockGraph = blocknum;
-                });
-            };
+                const updateLastBlockGraph = (blocknum: number) => {
+                    set((draft) => {
+                        draft.lastBlockGraph = blocknum;
+                    });
+                };
 
-            return { updateLastRpcBlock, updateLastBlockGraph };
-        }),
+                return { updateLastRpcBlock, updateLastBlockGraph };
+            }),
+        ),
         { name: 'nugg.xyz-health' },
     ),
 );
@@ -44,8 +46,20 @@ const useHealth = () => {
     return { blockdiff, graphProblem };
 };
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
+
+const useCallbackOnGraphBlockChange = (callback: (() => Promise<unknown>) | (() => unknown)) => {
+    const kill = useStore((data) => data.lastBlockGraph);
+
+    React.useEffect(() => {
+        console.log('YOLLLOOOOOOOOOOOOOOO');
+        void callback();
+    }, [kill]);
+};
+
 export default {
     useHealth,
+    useCallbackOnGraphBlockChange,
     useUpdateLastBlockRpc: () => useStore((draft) => draft.updateLastRpcBlock),
     useUpdateLastBlockGraph: () => useStore((draft) => draft.updateLastBlockGraph),
     useStore,
