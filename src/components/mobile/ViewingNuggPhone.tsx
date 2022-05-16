@@ -760,6 +760,7 @@ const ViewingNuggPhone: FunctionComponent<{
                             coreRef={coreRef}
                             itemHeightBig={340}
                             itemHeightSmall={160}
+                            endGap={100}
                             data={
                                 data?.nuggItems.map((x) => ({
                                     tokenId: x.nugg.id.toNuggId(),

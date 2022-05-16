@@ -78,7 +78,7 @@ const useStore = create(
 
 export default {
     useUpdateSwaps: () => useStore((x) => x.update),
-    useSwapList: () => useStore((x) => Object.values(x.data)),
+    useSwapList: () => useStore((x) => Object.values(x.data), shallow),
     useSwap: <A extends TokenId>(tokenId: A | undefined) =>
         useStore(
             useCallback(

@@ -136,9 +136,7 @@ const BradPittList = <T, B, A>({
                     containerStyle={floaterWrapperStyle}
                 />
             </div>
-            {/* <div style={{ height: '100%', width: '100%', position: 'relative' }}> */}
             {squishedData.length > 0 && activeIndex !== undefined ? (
-                // activeIndex === 1 - 2 &&
                 activeIndex === 0 ? (
                     <InfiniteList
                         {...props}
@@ -154,6 +152,7 @@ const BradPittList = <T, B, A>({
                         animationToggle={false}
                         disableScroll={disableScroll}
                         coreRef={useBradRef ? brad : coreRef}
+                        offsetListRef={!!(useBradRef ? brad : coreRef)}
                         interval={3}
                         endGap={endGap}
                     />
@@ -173,6 +172,7 @@ const BradPittList = <T, B, A>({
                         animationToggle={false}
                         disableScroll={disableScroll}
                         squishFactor={0.5}
+                        offsetListRef={!!(useBradRef ? brad : coreRef)}
                         coreRef={useBradRef ? brad : coreRef}
                         endGap={endGap}
                     />

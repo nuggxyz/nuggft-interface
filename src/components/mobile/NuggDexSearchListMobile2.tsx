@@ -88,7 +88,6 @@ const AllNuggs = ({ back }: { back: () => void }) => {
                 data={allNuggsData?.map((x) => x.id.toNuggId()) || []}
                 RenderItemSmall={NuggListRenderItemMobile}
                 RenderItemBig={NuggListRenderItemMobileBig}
-                interval={25}
                 disableScroll
                 // useBradRef
                 coreRef={reff}
@@ -97,6 +96,7 @@ const AllNuggs = ({ back }: { back: () => void }) => {
                 itemHeightBig={340}
                 itemHeightSmall={160}
                 startGap={25}
+                endGap={100}
                 // floaterWrapperStyle={{
                 //     position: 'absolute',
                 //     top: 83,
@@ -180,7 +180,6 @@ const AllItems = ({ back }: { back: () => void }) => {
                 data={allItemsData}
                 RenderItemSmall={NuggListRenderItemMobile}
                 RenderItemBig={NuggListRenderItemMobileBig}
-                interval={25}
                 disableScroll
                 // useBradRef
                 coreRef={reff}
@@ -189,6 +188,7 @@ const AllItems = ({ back }: { back: () => void }) => {
                 itemHeightBig={340}
                 itemHeightSmall={160}
                 startGap={25}
+                endGap={100}
                 floaterWrapperStyle={
                     {
                         // position: 'absolute',

@@ -62,6 +62,7 @@ export interface InfiniteListProps<T, B, A> {
     scrollTopOffset?: number;
 
     coreRef?: React.RefObject<HTMLDivElement> | null;
+    offsetListRef?: boolean;
 }
 
 const LIST_PADDING = 4;
@@ -99,6 +100,7 @@ const InfiniteList = <T, B, A>({
     // externalScrollTop,
     // scrollTopOffset,
     squishFactor = 1,
+    offsetListRef = false,
 }: InfiniteListProps<T, B, A>) => {
     const [interval] = React.useState(_interval * squishFactor);
 
@@ -108,29 +110,30 @@ const InfiniteList = <T, B, A>({
 
     useEffect(() => {
         if (coreRef?.current) {
-            console.log(coreRef.current.scrollHeight);
-            setWindowHeight(coreRef.current.scrollHeight);
+            let check = coreRef.current.scrollHeight;
+            if (offsetListRef && windowRef?.current) check -= windowRef.current.offsetHeight;
+            setWindowHeight(check);
         } else if (windowRef.current) {
             setWindowHeight(windowRef.current.scrollHeight);
         }
-    }, [coreRef, windowRef, animationToggle]);
+    }, [coreRef, windowRef, animationToggle, offsetListRef]);
 
-    const [scrollTop, setScrollTop] = useState(0);
+    const [trueScrollTop, setTrueScrollTop] = useState(0);
+    const [scrollTopOffset, setScrollTopOffset] = useState(0);
 
-    // const scrollTop = React.useMemo(() => {
-    //     return _scrollTop + (scrollTopOffset || 0);
-    // }, [scrollTopOffset, _scrollTop]);
-
-    // useEffect(() => {
-    //     if (externalScrollTop) {
-    //         setScrollTop(externalScrollTop);
-    //     }
-    // }, [setScrollTop, externalScrollTop]);
+    const scrollTop = useMemo(
+        () =>
+            scrollTopOffset === 0
+                ? trueScrollTop
+                : trueScrollTop - scrollTopOffset - (startGap || 0),
+        [trueScrollTop, scrollTopOffset, startGap],
+    );
 
     const innerHeight = useMemo(
         () => data.length * itemHeight * squishFactor,
         [data, itemHeight, squishFactor],
     );
+
     const startIndex = useMemo(
         () => Math.max(Math.floor(scrollTop / itemHeight) - LIST_PADDING, 0),
         [scrollTop, itemHeight],
@@ -270,13 +273,28 @@ const InfiniteList = <T, B, A>({
     useEffect(() => {
         lastGrab(endIndex);
     }, [endIndex]);
-
+    console.log({ scrollTop, endIndex, startIndex, trueScrollTop, scrollTopOffset });
     const _onScroll = useCallback(
         (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
-            setScrollTop(ev.currentTarget.scrollTop);
+            const st = ev.currentTarget.scrollTop;
+            if (offsetListRef) {
+                // st = windowRef.current.offsetTop - st;
+                setScrollTopOffset(ev.currentTarget.offsetHeight || 0);
+            }
+            // @ts-ignore
+            console.log(
+                offsetListRef,
+                !!windowRef?.current,
+                st,
+                // @ts-ignore
+                ev.currentTarget.offsetHeight,
+                // windowRef?.current?.offsetParent?.offsetParent,
+            );
+
+            setTrueScrollTop(st);
             if (onScroll) onScroll();
         },
-        [onScroll],
+        [onScroll, offsetListRef, windowRef],
     );
 
     useEffect(() => {
@@ -324,7 +342,7 @@ const InfiniteList = <T, B, A>({
                     )}
                 </div>
             ),
-        [items, listEmptyText, loading, innerHeight, listEmptyStyle, startGap],
+        [items, listEmptyText, loading, innerHeight, listEmptyStyle],
     );
 
     const Loading = useCallback(
