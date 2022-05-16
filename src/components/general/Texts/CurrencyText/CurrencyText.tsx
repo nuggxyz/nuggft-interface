@@ -141,8 +141,10 @@ const CurrencyText: React.FC<BalanceProps> = ({
                     ...props.textStyle,
                 }}
             >
-                {(_value === 0 && loadingOnZero) ||
-                (_value instanceof PairInt && _value.eth.number === 0 && loadingOnZero) ? (
+                {str && value === 0 ? (
+                    str
+                ) : (_value === 0 && loadingOnZero) ||
+                  (_value instanceof PairInt && _value.eth.number === 0 && loadingOnZero) ? (
                     <div
                         style={{
                             width: 50,
@@ -155,8 +157,6 @@ const CurrencyText: React.FC<BalanceProps> = ({
                         {' '}
                         <Loader color={props?.textStyle?.color ?? 'white'} />
                     </div>
-                ) : str && value === 0 ? (
-                    str
                 ) : (
                     <animated.div className="number" style={{ paddingRight: '.5rem' }}>
                         {spring.val.to((val) =>
