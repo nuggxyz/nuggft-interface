@@ -1,12 +1,12 @@
 import lib from '@src/lib';
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import { Lifecycle } from '@src/client/interfaces';
+import { Lifecycle, LiveToken } from '@src/client/interfaces';
 import { SwapData } from '@src/client/swaps';
 
 import client from '..';
 
-export default (swap: Omit<SwapData, 'offers'> | undefined) => {
-    const lifecycle = useLifecycle(swap);
+export default (swap: Omit<SwapData, 'offers'> | undefined, sup?: LiveToken) => {
+    const lifecycle = useLifecycle(sup || swap);
 
     const epoch = client.live.epoch.endblock();
     const blocknum = client.live.blocknum();

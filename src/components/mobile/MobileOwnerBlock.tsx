@@ -39,7 +39,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
         leader?.account || '',
     );
 
-    const lifecycle = useLifecycleEnhanced(swap);
+    const lifecycle = useLifecycleEnhanced(swap, token);
 
     const dynamicTextColor = React.useMemo(() => {
         if (swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) {

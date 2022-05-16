@@ -109,6 +109,10 @@ export default () => {
                     },
                 );
 
+                // protocol.activeItems.forEach((y) => {
+                //     updateToken(y.id.toItemId(), formatLiveItem(y));
+                // });
+
                 const activeItems = protocol.activeItems.reduce(
                     (
                         prev: {
