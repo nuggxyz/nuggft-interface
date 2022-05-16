@@ -1,40 +1,11 @@
 import React from 'react';
 
-import client from '@src/client';
 import SwapCard from '@src/components/mobile/SwapCard';
+import InfiniteList from '@src/components/general/List/InfiniteList';
+import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
 
 const SwapView = () => {
-    const epoch = client.live.epoch.id();
-
-    const abc = client.swaps.useSwapList();
-
-    const sortedAll = React.useMemo(() => {
-        return abc.reduce(
-            (
-                prev: {
-                    current: TokenId[];
-                    next: TokenId[];
-                    recent: TokenId[];
-                    potential: TokenId[];
-                },
-                curr,
-            ) => {
-                if (epoch) {
-                    if (curr.endingEpoch === epoch) {
-                        prev.current.push(curr.tokenId);
-                    } else if (curr.endingEpoch === epoch + 1) {
-                        prev.next.push(curr.tokenId);
-                    } else if (!curr.endingEpoch) {
-                        prev.potential.push(curr.tokenId);
-                    } else if (curr.endingEpoch && curr.endingEpoch < epoch) {
-                        prev.recent.push(curr.tokenId);
-                    }
-                }
-                return prev;
-            },
-            { current: [], next: [], recent: [], potential: [] },
-        );
-    }, [abc, epoch]);
+    const sortedAll = useSortedSwapList();
 
     // React.useEffect(() => {
     //     setTimeout(() => {
@@ -60,19 +31,28 @@ const SwapView = () => {
                 zIndex: 0,
             }}
         >
-            <div style={{ marginTop: '100px' }} />
+            {/* <div style={{ marginTop: '100px' }} /> */}
             {/* <SwapCard
                 tokenId={sortedAll.current[0]}
                 key={`SwapCard-Current-${sortedAll.current[0]}`}
             /> */}
 
-            {sortedAll.current.map((x) => (
+            <InfiniteList
+                RenderItem={SwapCard}
+                data={[sortedAll.current, sortedAll.next, sortedAll.potential].flat()}
+                extraData={undefined}
+                itemHeight={451}
+                interval={5}
+                startGap={100}
+            />
+
+            {/* {sortedAll.current.map((x) => (
                 <SwapCard tokenId={x} key={`SwapCard-Current-${x}`} />
             ))}
 
             {sortedAll.next.map((x) => (
                 <SwapCard tokenId={x} key={`SwapCard-Next-${x}`} />
-            ))}
+            ))} */}
 
             {/* {sortedAll.potential.map((x) => (
                 <SwapCard tokenId={x} key={`SwapCard-Potential-${x}`} />

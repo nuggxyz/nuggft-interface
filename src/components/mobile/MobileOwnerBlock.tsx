@@ -111,7 +111,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                         color: dynamicTextColor,
                     }}
                 >
-                    {t`Unfortuantly, Nugg ${tokenId} did not make it.`}
+                    {t`Unfortuantly, Nugg ${tokenId} did not make it. --- this should not show up and we need to fix this`}
                 </Text>
             )}
             {/* {token && lifecycle !== Lifecycle.Stands && lifecycle !== Lifecycle.Cut && (
@@ -151,6 +151,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             <CurrencyText
                                 textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
                                 image="eth"
+                                stopAnimationOnStart
                                 value={leaderCurrency}
                                 decimals={3}
                                 loadingOnZero
@@ -173,6 +174,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             <CurrencyText
                                 textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
                                 image="eth"
+                                stopAnimationOnStart
                                 value={minTryoutCurrency}
                                 decimals={3}
                                 loadingOnZero
@@ -192,6 +194,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             <CurrencyText
                                 textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
                                 image="eth"
+                                stopAnimationOnStart
                                 value={leaderCurrency}
                                 decimals={3}
                                 loadingOnZero
