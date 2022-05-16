@@ -13,6 +13,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import Loader from '@src/components/general/Loader/Loader';
 import { isUndefinedOrNullOrArrayEmpty, range } from '@src/lib';
 import usePrevious from '@src/hooks/usePrevious';
+import useForceUpdate from '@src/hooks/useForceUpdate';
 
 import styles from './List.styles';
 
@@ -147,13 +148,94 @@ const InfiniteList = <T, B, A>({
                     ? 0
                     : Math.ceil((scrollTop + windowHeight) / itemHeight) + LIST_PADDING,
             ),
-        [scrollTop, data, windowHeight, itemHeight],
+        [scrollTop, data.length, windowHeight, itemHeight],
     );
     const prevStart = usePrevious(startIndex);
     const prevEnd = usePrevious(endIndex);
     const prevData = usePrevious(data);
 
     const [items, setItems] = useState<JSX.Element[]>([]);
+    // const prevItems = usePrevious(items);
+
+    const force = useForceUpdate();
+
+    // useEffect(() => {
+    //     console.log('WHOA', items.length, prevItems?.length);
+    //     if (items.length !== (prevItems?.length || 0)) force();
+    // }, [items.length, prevItems?.length, force]);
+
+    const builderCallback = React.useCallback(() => {
+        const key = (i: number) => `infinte-item-${id || 'unknown'}-${i}`;
+
+        const buildItem = (i: number) => (
+            <div
+                key={key(i)}
+                style={{
+                    position: 'absolute',
+                    top: `${i * itemHeight}px`,
+                    width: '100%',
+                    height: `${itemHeight}px`,
+                }}
+            >
+                <RenderItem
+                    item={data[i]}
+                    index={i}
+                    extraData={extraData}
+                    action={action}
+                    selected={
+                        !skipSelectedCheck && JSON.stringify(selected) === JSON.stringify(data[i])
+                    }
+                />
+            </div>
+        );
+        setItems((_items) => {
+            if (
+                data &&
+                prevData &&
+                (data.length < prevData.length ||
+                    (data.length > 0 &&
+                        prevData.length > 0 &&
+                        JSON.stringify(data[0]) !== JSON.stringify(prevData[0])))
+            ) {
+                _items = data.map((_, i) => buildItem(i));
+                return _items;
+            }
+
+            if (!(startIndex === endIndex && endIndex === 0)) {
+                range(startIndex, endIndex).forEach((i) => {
+                    if (!_items[i - startIndex] || _items[i - startIndex].key !== key(i)) {
+                        const check = _items.findIndex(
+                            (x) => x.key !== undefined && x.key === key(i),
+                        );
+                        if (check !== -1) {
+                            _items.splice(check, 1);
+                        }
+
+                        _items[i - startIndex] = buildItem(i);
+                    }
+                });
+            } else if (_items.length === 0 && data.length > 0) {
+                for (let i = 0; i < Math.min(data.length, 25); i++) {
+                    _items[i] = buildItem(i);
+                }
+            }
+            return _items;
+        });
+    }, [
+        id,
+        endIndex,
+        startIndex,
+        RenderItem,
+        action,
+        data,
+        prevData,
+        extraData,
+        selected,
+        itemHeight,
+        skipSelectedCheck,
+    ]);
+
+    // console.log({ data, items });
 
     useEffect(() => {
         if (
@@ -163,80 +245,21 @@ const InfiniteList = <T, B, A>({
                 ? JSON.stringify(prevData) !== JSON.stringify(data)
                 : prevData?.length !== data.length)
         ) {
-            const key = (i: number) => `infinte-item-${id || 'unknown'}-${i}`;
-
-            const buildItem = (i: number) => (
-                <div
-                    key={key(i)}
-                    style={{
-                        position: 'absolute',
-                        top: `${i * itemHeight}px`,
-                        width: '100%',
-                        height: `${itemHeight}px`,
-                    }}
-                >
-                    <RenderItem
-                        item={data[i]}
-                        index={i}
-                        extraData={extraData}
-                        action={action}
-                        selected={
-                            !skipSelectedCheck &&
-                            JSON.stringify(selected) === JSON.stringify(data[i])
-                        }
-                    />
-                </div>
-            );
-            setItems((_items) => {
-                if (
-                    data &&
-                    prevData &&
-                    (data.length < prevData.length ||
-                        (data.length > 0 &&
-                            prevData.length > 0 &&
-                            JSON.stringify(data[0]) !== JSON.stringify(prevData[0])))
-                ) {
-                    _items = data.map((_, i) => buildItem(i));
-                    return _items;
-                }
-
-                if (!(startIndex === endIndex && endIndex === 0)) {
-                    range(startIndex, endIndex).forEach((i) => {
-                        if (!_items[i - startIndex] || _items[i - startIndex].key !== key(i)) {
-                            const check = _items.findIndex(
-                                (x) => x.key !== undefined && x.key === key(i),
-                            );
-                            if (check !== -1) {
-                                _items.splice(check, 1);
-                            }
-
-                            _items[i - startIndex] = buildItem(i);
-                        }
-                    });
-                } else if (_items.length === 0 && data.length > 0) {
-                    for (let i = 0; i < Math.min(data.length, 25); i++) {
-                        _items[i] = buildItem(i);
-                    }
-                }
-                return _items;
-            });
+            builderCallback();
+            force();
         }
     }, [
-        id,
+        builderCallback,
         endIndex,
         startIndex,
         prevEnd,
         prevStart,
-        RenderItem,
-        action,
         data,
-        prevData,
-        extraData,
-        selected,
-        items,
-        itemHeight,
+        data.length,
         deep,
-        skipSelectedCheck,
+        prevData,
+        force,
+        items,
     ]);
 
     const [lastGrabValue, setLastGrabValue] = React.useState<number>(0);
@@ -272,7 +295,8 @@ const InfiniteList = <T, B, A>({
 
     useEffect(() => {
         lastGrab(endIndex);
-    }, [endIndex]);
+    }, [lastGrab, endIndex]);
+
     // console.log({ scrollTop, endIndex, startIndex, trueScrollTop, scrollTopOffset });
     const _onScroll = useCallback(
         (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -298,6 +322,7 @@ const InfiniteList = <T, B, A>({
             windowRef.current.onscroll = _onScroll;
         }
     }, [coreRef, _onScroll]);
+
     const containerStyle = useMemo(() => {
         return {
             ...styles.container,
