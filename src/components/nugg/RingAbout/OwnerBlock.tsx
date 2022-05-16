@@ -24,7 +24,10 @@ const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>>
                 transition: '.2s background ease',
             }}
         >
-            <TokenViewer tokenId={item.tokenId} style={{ width: '60px', height: '60px' }} />
+            <TokenViewer
+                tokenId={item.tokenId}
+                style={{ width: '60px', height: '60px', margin: '0rem .5rem' }}
+            />
         </div>
     );
 };

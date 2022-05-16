@@ -70,6 +70,8 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
         // config: constants.ANIMATION_CONFIG,
     });
 
+    console.log(opacityText);
+
     const isPageLoaded = client.live.pageIsLoaded();
 
     const previewNuggsStable = useMemo(() => {
@@ -167,7 +169,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                             size="small"
                             containerStyles={{
                                 marginTop: '10px',
-                                opacity: opacityText.get(),
+                                opacity: opacityText,
                             }}
                             text={formatSearchFilter(type)}
                         />
@@ -176,7 +178,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
                             size="small"
                             textStyle={{
                                 ...styles.nuggLinkCategoryTitle,
-                                opacity: opacityText.get(),
+                                opacity: opacityText,
                             }}
                         >
                             {formatSearchFilter(type)}

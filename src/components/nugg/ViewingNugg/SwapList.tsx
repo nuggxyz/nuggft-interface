@@ -124,7 +124,7 @@ const SwapItem: FunctionComponent<
                 <div
                     style={{ justifyContent: 'flex-start', display: 'flex', alignItems: 'center' }}
                 >
-                    <div>
+                    <div style={{ textAlign: 'left' }}>
                         <Text
                             type="text"
                             size="smaller"
@@ -160,7 +160,7 @@ const SwapItem: FunctionComponent<
                                     color={lib.colors.primaryColor}
                                     style={{ margin: '0rem 1rem' }}
                                 />
-                                <div>
+                                <div style={{ textAlign: 'left' }}>
                                     <Text
                                         type="text"
                                         size="smaller"
