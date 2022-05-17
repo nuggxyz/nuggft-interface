@@ -460,7 +460,7 @@ const NuggDexSearchBarMobile: FunctionComponent<{
         WebkitBackdropFilter: open ? 'blur(50px)' : undefined,
     });
 
-    const { height, offsetTop, width } = client.viewport.useVisualViewport();
+    const { height, width } = client.viewport.useVisualViewport();
 
     // const resultStyle = useSpring({
     //     width: show ? '115%' : '100%',
@@ -475,8 +475,6 @@ const NuggDexSearchBarMobile: FunctionComponent<{
         zIndex: 998,
         width: `${width + 1}px`,
     });
-
-    console.log({ height, width, offsetTop });
 
     return (
         <animated.div
