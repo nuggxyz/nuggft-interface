@@ -73,12 +73,6 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
 
     const animatedStyle = useSpring({
         to: {
-            // ...style,
-            position: 'relative' as const,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'column' as const,
             opacity: pendingSrc || showPending ? 1 : 0,
         },
         config: springConfig.default,
@@ -88,9 +82,12 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
         // @ts-ignore
         <animated.div
             style={{
-                ...animatedStyle,
-                // opacity: src || showPending ? 1 : 0,
-                // transition: `opacity .5s ease`,
+                position: 'relative' as const,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column' as const,
+                ...animatedStyle, // transition: `opacity .5s ease`,
             }}
         >
             <div
