@@ -21,7 +21,6 @@ import {
     initializeConnector,
     ResWithStore,
 } from './core/core';
-import { CoinbaseWallet } from './clients/coinbasewallet';
 import { MetaMask } from './clients/metamask';
 import { WalletConnect } from './clients/walletconnect';
 import { Network as NetworkConnector } from './clients/network';
@@ -281,13 +280,13 @@ export const peers: {
 };
 
 export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connector> } = {
-    coinbasewallet: initializeConnector<CoinbaseWallet>(
-        (actions) =>
-            new CoinbaseWallet(peer_coinbase, actions, {
-                url: ALCHEMY_URLS[1][0],
-                appName: 'NuggftV1',
-            }),
-    ),
+    // coinbasewallet: initializeConnector<CoinbaseWallet>(
+    //     (actions) =>
+    //         new CoinbaseWallet(peer_coinbase, actions, {
+    //             url: ALCHEMY_URLS[1][0],
+    //             appName: 'NuggftV1',
+    //         }),
+    // ),
     walletconnect: initializeConnector<WalletConnect>(
         (actions) =>
             new WalletConnect(
@@ -452,7 +451,7 @@ export const useActivate = () => {
         [
             connector_instances.metamask,
             connector_instances.walletconnect,
-            connector_instances.coinbasewallet,
+            // connector_instances.coinbasewallet,
         ].forEach((x) => {
             if (x !== undefined && x.connector && x.connector.connectEagerly)
                 void x.connector.connectEagerly(Chain.RINKEBY);

@@ -12,8 +12,11 @@ type ErrorBoundaryState = {
 
 const IS_PRODUCTION = window.location.hostname === 'app.nugg.xyz';
 
-export default class ErrorBoundary extends React.Component<unknown, ErrorBoundaryState> {
-    constructor(props: unknown) {
+export default class ErrorBoundary extends React.Component<
+    React.PropsWithChildren<unknown>,
+    ErrorBoundaryState
+> {
+    constructor(props: React.PropsWithChildren<unknown>) {
         super(props);
         this.state = { error: null };
     }

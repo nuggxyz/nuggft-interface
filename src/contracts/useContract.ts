@@ -74,7 +74,7 @@ export const useEstimateTransaction = (provider?: CustomWeb3Provider, from?: Add
             try {
                 if (provider && from) {
                     const tx = await ptx;
-                    return provider
+                    return await provider
                         .estimateGas({ ...tx, from })
                         .then((_gasLimit) => {
                             setError(undefined);
@@ -193,7 +193,7 @@ function useSendTransaction(
                     });
                     if (authenticatedConnector.refreshPeer) authenticatedConnector.refreshPeer();
 
-                    return Promise.all([
+                    return await Promise.all([
                         authenticatedCoreProvider.type === ConnectorEnum.WalletConnect
                             ? (authenticatedCoreProvider.provider.connector.sendTransaction({
                                   to: tx.to,

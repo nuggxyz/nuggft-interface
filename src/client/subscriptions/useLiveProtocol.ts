@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers';
 import React from 'react';
 
+import useDebounce from '@src/hooks/useDebounce';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import client from '@src/client';
 import { SwapData } from '@src/client/swaps';
@@ -38,10 +39,14 @@ export default () => {
 
     const updateSwaps = client.swaps.useUpdateSwaps();
 
-    const { data, fetchMore } = useGetMassiveLiveProtocolQuery({ fetchPolicy: 'network-only' });
+    const { data, refetch } = useGetMassiveLiveProtocolQuery({
+        fetchPolicy: 'network-only',
+        skip: true,
+    });
 
     const onData = React.useCallback(
         (protocol: LiveProtocolFragment) => {
+            console.log({ protocol });
             if (!protocol) return;
 
             const shares = BigNumber.from(protocol.nuggftStakedShares);
@@ -78,8 +83,6 @@ export default () => {
                 potentialItems: IsolateItemIdFactory<SwapData>[];
                 incomingItems: IsolateItemIdFactory<SwapData>[];
             };
-
-            console.log(sortedPotentialItems);
 
             const recentItems = protocol.lastEpoch.itemSwaps.map((z) => {
                 return formatSwapData(z, z.sellingItem.id.toItemId());
@@ -178,27 +181,29 @@ export default () => {
         },
         [updateProtocolSimple, updateSwaps],
     );
+    const debouncedData = useDebounce(data, 500);
 
     React.useEffect(() => {
-        if (data?.protocol) onData(data.protocol);
-    }, [data, onData]);
+        if (debouncedData?.protocol) onData(debouncedData.protocol);
+    }, [debouncedData, onData]);
 
-    useLiveProtocolSubscription({
+    const { data: data2 } = useLiveProtocolSubscription({
         shouldResubscribe: true,
         fetchPolicy: 'network-only',
-        onSubscriptionData: (x) => {
-            if (
-                x.subscriptionData &&
-                x.subscriptionData.data &&
-                x.subscriptionData &&
-                x.subscriptionData.data &&
-                x.subscriptionData.data.protocol
-            ) {
-                onData(x.subscriptionData.data.protocol);
-                void fetchMore({});
-            }
-        },
     });
+
+    const debouncedData2 = useDebounce(data2, 500);
+
+    React.useEffect(() => {
+        if (debouncedData2?.protocol) {
+            onData(debouncedData2.protocol);
+            console.log('HERERE');
+
+            void refetch({}).then((ayo) => {
+                if (ayo.data.protocol) onData(ayo.data.protocol);
+            });
+        }
+    }, [debouncedData2, onData, refetch]);
 
     return null;
 };

@@ -21,7 +21,7 @@ export default function useLocalStorage<T>(key: string, initialValue: T) {
     });
     // Return a wrapped version of useState's setter function that ...
     // ... persists the new value to localStorage.
-    const setValue: SetState<T> = React.useCallback(
+    const setValue: ReactSetState<T> = React.useCallback(
         (value) => {
             try {
                 // Allow value to be a function so we have same API as useState

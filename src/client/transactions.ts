@@ -28,6 +28,7 @@ const useStore = create(
                                 receipt: false,
                                 result: null,
                             };
+                            return draft;
                         });
                 }
 
@@ -41,6 +42,7 @@ const useStore = create(
                         if (!dat.receipt) draft.data[hash].receipt = true;
                         if (!dat.response) draft.data[hash].response = true;
                         if (!dat.result) draft.data[hash].result = res;
+                        return draft;
                     });
                 }
 
@@ -52,6 +54,7 @@ const useStore = create(
                     if (!dat.receipt) {
                         set((draft) => {
                             draft.data[txhash].receipt = true;
+                            return draft;
                         });
                     }
 
@@ -63,6 +66,7 @@ const useStore = create(
                         }
                         set((draft) => {
                             if (!get().data[txhash].result) draft.data[txhash].result = check;
+                            return draft;
                         });
                     }
                 }
@@ -73,6 +77,7 @@ const useStore = create(
                     if (!get().data[txhash].response) {
                         set((draft) => {
                             draft.data[txhash].response = true;
+                            return draft;
                         });
                     }
 
@@ -85,6 +90,7 @@ const useStore = create(
                     set((draft) => {
                         if (!get().data[txhash].receipt) draft.data[txhash].receipt = true;
                         if (!get().data[txhash].result) draft.data[txhash].result = check;
+                        return draft;
                     });
                 }
 

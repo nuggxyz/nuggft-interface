@@ -121,23 +121,21 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
                     feedbackText={t`Check Wallet`}
                     buttonStyle={styles.button}
                     label={`${actionType === 'liquidate' ? t`Payoff` : t`Extend`}`}
-                    onClick={() =>
-                        tokenId &&
-                        chainId &&
-                        provider &&
-                        address &&
-                        (actionType === 'liquidate'
-                            ? send(
-                                  nuggft.populateTransaction.liquidate(tokenId, {
-                                      value: amount,
-                                  }),
-                              )
-                            : send(
-                                  nuggft.populateTransaction.rebalance([tokenId], {
-                                      value: amount,
-                                  }),
-                              ))
-                    }
+                    onClick={() => {
+                        if (tokenId && chainId && provider && address)
+                            if (actionType === 'liquidate')
+                                void send(
+                                    nuggft.populateTransaction.liquidate(tokenId, {
+                                        value: amount,
+                                    }),
+                                );
+                            else
+                                void send(
+                                    nuggft.populateTransaction.rebalance([tokenId], {
+                                        value: amount,
+                                    }),
+                                );
+                    }}
                 />
             </div>
         </div>

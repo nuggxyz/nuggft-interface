@@ -125,7 +125,9 @@ const AccountViewer = () => {
                             style={{ marginRight: '.75rem' }}
                         />
                     }
-                    onClick={() => connector.deactivate()}
+                    onClick={() => {
+                        void connector.deactivate();
+                    }}
                 />
             </>
         </Flyout>

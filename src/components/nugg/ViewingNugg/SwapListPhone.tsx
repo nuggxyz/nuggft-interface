@@ -306,7 +306,7 @@ const TryoutItem = ({ data, index }: { data: TryoutData; index: number }) => {
     );
 };
 
-const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
+const SwapListPhone: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const epoch = client.live.epoch.id();
@@ -381,6 +381,7 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
                 <>
                     {token.swaps.map((item, index) => (
                         <SwapItem
+                            key={`SwapItem${token.tokenId}${index}`}
                             index={index}
                             item={item}
                             extraData={{ chainId, provider, token, epoch }}
@@ -392,4 +393,4 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
     ) : null;
 };
 
-export default SwapList;
+export default SwapListPhone;

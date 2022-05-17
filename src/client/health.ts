@@ -13,12 +13,14 @@ const useStore = create(
         subscribeWithSelector(
             combine({ lastBlockRpc: 0, lastBlockGraph: 0 } as Health, (set) => {
                 const updateLastRpcBlock = (blocknum: number) => {
+                    // @ts-ignore
                     set((draft) => {
                         draft.lastBlockRpc = blocknum;
                     });
                 };
 
                 const updateLastBlockGraph = (blocknum: number) => {
+                    // @ts-ignore
                     set((draft) => {
                         draft.lastBlockGraph = blocknum;
                     });
@@ -52,7 +54,6 @@ const useCallbackOnGraphBlockChange = (callback: (() => Promise<unknown>) | (() 
     const kill = useStore((data) => data.lastBlockGraph);
 
     React.useEffect(() => {
-        console.log('YOLLLOOOOOOOOOOOOOOO');
         void callback();
     }, [kill]);
 };

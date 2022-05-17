@@ -64,11 +64,11 @@ const LoanOrBurnModal = ({ data: { tokenId, actionType } }: { data: LoanModalDat
                     feedbackText={t`Check wallet...`}
                     buttonStyle={styles.button}
                     label={`${actionType === 'loan' ? t`Loan` : t`Burn`}`}
-                    onClick={() =>
-                        actionType === 'loan'
-                            ? send(nuggft.populateTransaction.loan([tokenId]))
-                            : send(nuggft.populateTransaction.burn(tokenId))
-                    }
+                    onClick={() => {
+                        if (actionType === 'loan')
+                            void send(nuggft.populateTransaction.loan([tokenId]));
+                        else void send(nuggft.populateTransaction.burn(tokenId));
+                    }}
                 />
             </div>
         </div>

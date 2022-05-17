@@ -20,9 +20,10 @@ const store = create(
         (set) => {
             const update = async () => {
                 const price = await etherscan.getEtherPrice();
-                set((draft) => {
-                    draft.price = Number(price.toFixed(2));
-                });
+
+                set(() => ({
+                    price: Number(price.toFixed(2)),
+                }));
             };
 
             const poll = () => {
@@ -36,9 +37,9 @@ const store = create(
             };
 
             const setCurrencyPreference = (input: 'USD' | 'ETH') => {
-                set((draft) => {
-                    draft.preference = input;
-                });
+                set(() => ({
+                    preference: input,
+                }));
             };
 
             return { poll, now, setCurrencyPreference };

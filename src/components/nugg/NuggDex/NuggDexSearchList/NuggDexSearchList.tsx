@@ -223,7 +223,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     previewNuggs={
                         allItemsData
                             ?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT)
-                            .map((x) => x.id.toItemId()) || []
+                            ?.map((x) => x.id.toItemId()) ?? []
                     }
                 >
                     <NuggList
@@ -247,7 +247,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                     previewNuggs={
                         allNuggsData
                             ?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT)
-                            .map((x) => x.id.toNuggId()) || []
+                            ?.map((x) => x.id.toNuggId()) ?? []
                     }
                 >
                     <NuggList

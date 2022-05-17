@@ -21,8 +21,9 @@ const useStore = create(
             },
             (set) => {
                 const setVisit = (p: Page) => {
-                    set((data) => {
-                        data.visits[p] = true;
+                    // @ts-ignore
+                    set((draft) => {
+                        draft.visits[p] = true;
                     });
                 };
 

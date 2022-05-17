@@ -63,6 +63,7 @@ const ConnectTab: FunctionComponent<Props> = () => {
                                     border: `5px solid ${curriedLighten(0.1)(peer.color)}`,
                                 }}
                                 rightIcon={<NLStaticImage image={peer.peer} />}
+                                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                                 onClick={async () => {
                                     const check = web3.config.connector_instances[peer.type];
 

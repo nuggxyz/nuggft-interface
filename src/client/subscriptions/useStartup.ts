@@ -18,7 +18,9 @@ export const useStartupCallback = () => {
     const [itemLazyQuery] = useGetLiveItemLazyQuery({ client: graph });
     const [nuggLazyQuery] = useGetLiveNuggLazyQuery({ client: graph });
 
-    const match = useMatch('/:id');
+    const match = useMatch('/swap/:id');
+
+    console.log({ match });
 
     return useCallback(async () => {
         if (provider && chainId) {

@@ -38,6 +38,7 @@
         ["@babel/preset-env"],
         ["@babel/preset-react"]
     ],
+    "sourceType": "unambiguous",
     "env": {
         "test": {
             "plugins": ["dynamic-import-node"]

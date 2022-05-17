@@ -73,6 +73,7 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
     const isPageLoaded = client.live.pageIsLoaded();
 
     const previewNuggsStable = useMemo(() => {
+        if (previewNuggs.length === 0) return [];
         return previewNuggs
             .first(limit)
             .map(

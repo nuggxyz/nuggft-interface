@@ -4,22 +4,28 @@ import create from 'zustand';
 import { combine, persist } from 'zustand/middleware';
 import shallow from 'zustand/shallow';
 
-import lib from '@src/lib/index';
+import lib, { shortenAddress } from '@src/lib/index';
 
 const useStore = create(
     persist(
-        combine({} as { [_: Lowercase<AddressString>]: string | number }, (set) => {
+        combine({} as { [_: Lowercase<AddressString>]: string | number }, (set, get) => {
             const update = (address: AddressString, ens: string) => {
                 address = address.toLowerCase() as Lowercase<AddressString>;
+                const a = get();
+                console.log({ ...a });
                 set((draft) => {
                     if (draft[address] !== ens) draft[address] = ens;
+                    return draft;
                 });
+                const b = get();
+                console.log({ ...b });
             };
 
             const setTtl = (address: AddressString) => {
                 set((draft) => {
                     if (typeof draft[address] !== 'string')
                         draft[address] = lib.date.getUnix() + 60 * 60 * 24; // one day
+                    return draft;
                 });
             };
 
@@ -49,7 +55,7 @@ const usePersistedEns = (address?: Lowercase<AddressString>) =>
                     state.setTtl(address);
                     return undefined;
                 }
-                if (typeof state[address] === 'number') return undefined;
+                if (typeof state[address] === 'number') return shortenAddress(address);
 
                 return state[address] as string;
             },

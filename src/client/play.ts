@@ -1,21 +1,28 @@
 /* eslint-disable no-param-reassign */
-import create, { GetState, SetState, StoreApi } from 'zustand';
-import { NamedSet } from 'zustand/middleware/devtools';
+import create from 'zustand';
+import { combine } from 'zustand/middleware';
 
-declare type Combine<T, U> = Omit<T, keyof U> & U;
+// declare type Combine<T, U> = Omit<T, keyof U> & U;
 
-export declare const combine: <PrimaryState extends object, SecondaryState extends object>(
-    initialState: PrimaryState,
-    create: (
-        set: SetState<PrimaryState> & NamedSet<PrimaryState>,
-        get: GetState<PrimaryState>,
-        api: StoreApi<PrimaryState>,
-    ) => SecondaryState,
-) => (
-    set: SetState<Combine<PrimaryState, SecondaryState>>,
-    get: GetState<Combine<PrimaryState, SecondaryState>>,
-    api: StoreApi<Combine<PrimaryState, SecondaryState>>,
-) => Combine<PrimaryState, SecondaryState>;
+// export declare type SetState<T extends State> = {
+//     _(
+//         partial: T | Partial<T> | ((state: T) => T | Partial<T>) | void,
+//         replace?: boolean | undefined,
+//     ): void;
+// }['_'];
+
+// export declare const combine: <PrimaryState extends object, SecondaryState extends object>(
+//     initialState: PrimaryState,
+//     create: (
+//         set: SetState<PrimaryState> & NamedSet<PrimaryState>,
+//         get: GetState<PrimaryState>,
+//         api: StoreApi<PrimaryState>,
+//     ) => SecondaryState,
+// ) => (
+//     set: SetState<Combine<PrimaryState, SecondaryState>>,
+//     get: GetState<Combine<PrimaryState, SecondaryState>>,
+//     api: StoreApi<Combine<PrimaryState, SecondaryState>>,
+// ) => Combine<PrimaryState, SecondaryState>;
 
 const stateA = combine(
     {
@@ -30,6 +37,7 @@ const stateA = combine(
                 // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 // data.stateA.dataA = 0;
+                return data;
             });
         };
 
@@ -58,6 +66,7 @@ const stateB = combine(
                 // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 // data.dataB = -98;
+                return data;
             });
         };
         const openDataB = (dataB: string) => {

@@ -81,7 +81,7 @@ type TokenIdFactoryCreator<A extends TokenIdFactoryBase, B, C> =
     | ItemIdFactory<Remap<C & A>>;
 
 type IsolateItemIdFactory<T extends TokenIdFactory> = Remap<{ type: 'item' } & T>;
-type IsolateNuggIdFactory<T extends TokenIdFactory> = Remap<T & { type: 'nugg' }>;
+type IsolateNuggIdFactory<T extends TokenIdFactory> = Remap<{ type: 'nugg' } & T>;
 
 type TokenIdDictionary<T extends TokenIdFactory> = {
     [x: ItemId]: IsolateItemIdFactory<T>;

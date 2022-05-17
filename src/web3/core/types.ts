@@ -16,7 +16,11 @@ export interface Web3ReactState extends State {
 
 export type Web3ReactStore = StoreApi<Web3ReactState>;
 
-export type Web3ReactStateUpdate = { chainId?: Chain; accounts?: string[]; peer?: PeerInfo };
+export type Web3ReactStateUpdate = {
+    chainId?: Chain;
+    accounts?: string[];
+    peer?: PeerInfo | undefined;
+};
 
 export interface Actions {
     startActivation: () => () => void;

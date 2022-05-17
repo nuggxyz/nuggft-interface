@@ -56,7 +56,7 @@ export function createWeb3ReactStoreAndActions(
         throw new Error(`allowedChainIds is length 0`);
     }
 
-    const store = create<Web3ReactState>(() => DEFAULT_STATE);
+    const store = create<Web3ReactState>()(() => DEFAULT_STATE);
 
     // flag for tracking updates so we don't clobber data when cancelling activation
     let nullifier = 0;
@@ -105,7 +105,7 @@ export function createWeb3ReactStoreAndActions(
         // eslint-disable-next-line no-plusplus
         nullifier++;
 
-        store.setState((existingState): Web3ReactState => {
+        store.setState((existingState) => {
             // determine the next chainId and accounts
             const chainId = stateUpdate.chainId ?? existingState.chainId;
             const accounts = stateUpdate.accounts ?? existingState.accounts;

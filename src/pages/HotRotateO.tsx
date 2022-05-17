@@ -1,6 +1,6 @@
 import { animated } from '@react-spring/web';
 import React, { FC, useEffect, useState } from 'react';
-import { ethers, BigNumber, BigNumberish } from 'ethers';
+import { ethers, BigNumber, BigNumberish, PopulatedTransaction } from 'ethers';
 import { useNavigate, useMatch, NavigateFunction } from 'react-router-dom';
 import { t } from '@lingui/macro';
 import { IoArrowBack, IoArrowDown, IoArrowForward, IoArrowUp, IoReload } from 'react-icons/io5';
@@ -11,12 +11,12 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import Button from '@src/components/general/Buttons/Button/Button';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import lib, { parseItmeIdToNum } from '@src/lib';
-import { useAsyncSetState } from '@src/hooks/useAsyncState';
+import useAsyncState, { useAsyncSetState } from '@src/hooks/useAsyncState';
 import {
     useNuggftV1,
     useDotnuggV1,
     usePrioritySendTransaction,
-    useTransactionManager2,
+    useEstimateTransaction,
 } from '@src/contracts/useContract';
 import Label from '@src/components/general/Label/Label';
 import web3 from '@src/web3';
@@ -31,6 +31,7 @@ import { useDotnuggInjectToCache } from '@src/client/hooks/useDotnugg';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import useDimensions from '@src/client/hooks/useDimensions';
 import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
+import { useCurrencyTogglerState } from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 
 import styles from './HotRotateO.styles';
 
@@ -177,17 +178,7 @@ const RenderItem: FC<
     );
 };
 
-const HotRotateO = () => {
-    const openEditScreen = client.editscreen.useEditScreenOpen();
-    const tokenId = client.editscreen.useEditScreenTokenId();
-
-    const [saving, setSaving] = useState(false);
-    const [savedToChain, setSavedToChain] = useState(false);
-
-    const style = useAnimateOverlay(openEditScreen, {
-        zIndex: 998,
-    });
-
+export const useHotRotateO = (tokenId?: NuggId) => {
     const provider = web3.hook.usePriorityProvider();
     const address = web3.hook.usePriorityAccount();
 
@@ -195,6 +186,8 @@ const HotRotateO = () => {
 
     const [needsToClaim, setNeedsToClaim] = React.useState<boolean>();
     const [cannotProveOwnership, setCannotProveOwnership] = React.useState<boolean>();
+    const [saving, setSaving] = useState(false);
+    const [savedToChain, setSavedToChain] = useState(false);
 
     emitter.on({
         type: emitter.events.Rotate,
@@ -311,6 +304,138 @@ const HotRotateO = () => {
 
     const { screen } = useDimensions();
 
+    const algo: Parameters<typeof nuggft.rotate> | undefined = React.useMemo(() => {
+        if (items && tokenId) {
+            const active = items.active.map((x, i) => ({ ...x, desiredIndex: i }));
+            const hidden = items.hidden.map((x, i) => ({ ...x, desiredIndex: i + 8 }));
+            const duplicates = items.duplicates.map((x, i) => ({ ...x, desiredIndex: i + 8 }));
+
+            const current = [...active, ...hidden, ...duplicates].reduce(
+                (prev: (Item | undefined)[], curr) => {
+                    prev[curr.activeIndex] = curr;
+                    return prev;
+                },
+                new Array(16).fill(undefined) as undefined[],
+            );
+
+            const moves: { from: number; to: number }[] = [];
+
+            let check = 0;
+
+            while (current.findIndex((x, i) => x !== undefined && x.desiredIndex !== i) !== -1) {
+                if (check++ > 100) break;
+                for (let i = 0; i < 16; i++) {
+                    let desired = current[i]?.desiredIndex;
+                    if (desired && desired !== i) {
+                        while (current[desired] !== undefined) desired++;
+                        current[desired] = current[i];
+                        current[i] = undefined;
+                        moves.push({ from: i, to: desired });
+                    }
+                }
+            }
+            return [
+                BigNumber.from(tokenId.toRawId()),
+                moves.map((x) => x.from),
+                moves.map((x) => x.to),
+            ];
+        }
+        return undefined;
+    }, [items, tokenId]);
+    const populatedTransaction = React.useMemo(() => {
+        if (!tokenId || !address) return undefined;
+        return {
+            tx: nuggft.populateTransaction['offer(uint24)'](tokenId.toRawId(), {
+                from: address,
+                // gasLimit: toGwei('120000'),
+            }),
+        };
+    }, [nuggft, address]);
+
+    const { send, estimation: estimator, hash } = usePrioritySendTransaction();
+
+    const network = web3.hook.useNetworkProvider();
+
+    const estimation = useAsyncState(() => {
+        if (populatedTransaction && network) {
+            return Promise.all([
+                estimator.estimate(populatedTransaction.tx),
+                network?.getGasPrice(),
+            ]).then((_data) => ({
+                gasLimit: _data[0] || BigNumber.from(0),
+                // gasPrice: new EthInt(_data[1] || 0),
+                // mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
+                // amount: populatedTransaction.amount,
+            }));
+        }
+
+        return undefined;
+    }, [populatedTransaction, network]);
+    const calculating = React.useMemo(() => {
+        if (estimator.error) return false;
+        if (populatedTransaction && estimation) {
+            return false;
+        }
+        return true;
+    }, [populatedTransaction, estimation]);
+
+    const globalCurrencyPref = client.usd.useCurrencyPreferrence();
+
+    const [localCurrencyPref, setLocalCurrencyPref] = useCurrencyTogglerState(globalCurrencyPref);
+
+    return {
+        navigate,
+        screen,
+        items,
+        setItems,
+        needsToClaim,
+        savedToChain,
+        cannotProveOwnership,
+        nuggft,
+        setSavedToChain,
+        saving,
+        setSaving,
+        algo,
+        estimation,
+        send,
+        hash,
+        calculating,
+        populatedTransaction,
+        estimator,
+        localCurrencyPref,
+        setLocalCurrencyPref,
+        globalCurrencyPref,
+    };
+};
+
+const HotRotateO = () => {
+    const openEditScreen = client.editscreen.useEditScreenOpen();
+    const tokenId = client.editscreen.useEditScreenTokenId();
+
+    const style = useAnimateOverlay(openEditScreen, {
+        zIndex: 998,
+    });
+
+    const {
+        navigate,
+        screen,
+        items,
+        setItems,
+        needsToClaim,
+        savedToChain,
+        cannotProveOwnership,
+        nuggft,
+        setSavedToChain,
+        saving,
+        setSaving,
+        algo,
+        send,
+        hash,
+        calculating,
+        populatedTransaction,
+        estimator,
+    } = useHotRotateO(tokenId);
+
     if (needsToClaim) {
         return (
             <animated.div style={{ ...styles.desktopContainer, ...style }}>
@@ -356,6 +481,16 @@ const HotRotateO = () => {
                             saving,
                             savedToChain,
                             screen,
+                            algo,
+                            send,
+
+                            hash,
+
+                            calculating,
+
+                            populatedTransaction,
+
+                            estimator,
                         }}
                     />
                     <RotateOViewer
@@ -376,7 +511,7 @@ const HotRotateO = () => {
     );
 };
 
-const RotateOViewer = ({
+export const RotateOViewer = ({
     tokenId,
     items,
     setItems,
@@ -498,7 +633,7 @@ const RotateOViewer = ({
     );
 };
 
-const RotateOSelector = ({
+export const RotateOSelector = ({
     tokenId,
     items,
     navigate,
@@ -508,6 +643,10 @@ const RotateOSelector = ({
     saving,
     savedToChain,
     screen,
+    algo,
+    send,
+    hash,
+    estimator,
 }: {
     tokenId: TokenId;
     items: ItemList;
@@ -518,50 +657,14 @@ const RotateOSelector = ({
     saving: boolean;
     savedToChain: boolean;
     screen: 'desktop' | 'tablet' | 'phone';
+    algo?: Parameters<NuggftV1['rotate']>;
+    send: (
+        ptx: Promise<ethers.PopulatedTransaction>,
+        onSend?: (() => void) | undefined,
+    ) => Promise<`0x${string}` | undefined>;
+    hash?: Hash;
+    estimator: ReturnType<typeof useEstimateTransaction>;
 }) => {
-    const { send, hash } = usePrioritySendTransaction(true);
-    const provider = web3.hook.useNetworkProvider();
-    const transaction = useTransactionManager2(provider, hash);
-
-    const algo: Parameters<typeof nuggft.rotate> | undefined = React.useMemo(() => {
-        if (items && tokenId) {
-            const active = items.active.map((x, i) => ({ ...x, desiredIndex: i }));
-            const hidden = items.hidden.map((x, i) => ({ ...x, desiredIndex: i + 8 }));
-            const duplicates = items.duplicates.map((x, i) => ({ ...x, desiredIndex: i + 8 }));
-
-            const current = [...active, ...hidden, ...duplicates].reduce(
-                (prev: (Item | undefined)[], curr) => {
-                    prev[curr.activeIndex] = curr;
-                    return prev;
-                },
-                new Array(16).fill(undefined) as undefined[],
-            );
-
-            const moves: { from: number; to: number }[] = [];
-
-            let check = 0;
-
-            while (current.findIndex((x, i) => x !== undefined && x.desiredIndex !== i) !== -1) {
-                if (check++ > 100) break;
-                for (let i = 0; i < 16; i++) {
-                    let desired = current[i]?.desiredIndex;
-                    if (desired && desired !== i) {
-                        while (current[desired] !== undefined) desired++;
-                        current[desired] = current[i];
-                        current[i] = undefined;
-                        moves.push({ from: i, to: desired });
-                    }
-                }
-            }
-            return [
-                BigNumber.from(tokenId.toRawId()),
-                moves.map((x) => x.from),
-                moves.map((x) => x.to),
-            ];
-        }
-        return undefined;
-    }, [items, tokenId]);
-
     const [originalItems, setOriginalItems] = useState(items);
     useEffect(() => {
         setOriginalItems(items);
@@ -606,7 +709,7 @@ const RotateOSelector = ({
             }}
         >
             {saving ? (
-                <TransactionVisualConfirmation {...{ transaction, hash }} />
+                <TransactionVisualConfirmation hash={hash} />
             ) : (
                 <>
                     <Text
@@ -726,7 +829,7 @@ const RotateOSelector = ({
                         feedbackText={t`Check Wallet`}
                         buttonStyle={styles.button}
                         textStyle={{ color: lib.colors.nuggBlueText }}
-                        disabled={!(algo && algo[1] && algo[1].length > 0)}
+                        disabled={!(algo && algo[1] && algo[1].length > 0) || !!estimator.error}
                         label={t`Save`}
                         onClick={() => {
                             if (algo) {

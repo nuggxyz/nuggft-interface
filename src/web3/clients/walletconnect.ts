@@ -60,7 +60,7 @@ export class WalletConnect extends Connector {
 
     private __DEV__forceDesktopAction = false;
 
-    private eagerConnection?: Promise<void>;
+    private eagerConnection?: Promise<void> | undefined;
 
     private treatModalCloseAsError: boolean;
 
@@ -68,7 +68,7 @@ export class WalletConnect extends Connector {
 
     declare peers: { [key in Peer]?: PeerInfo__WalletConnect };
 
-    private peer_try?: Peer;
+    private peer_try?: Peer | undefined;
 
     /**
      * @param options - Options to pass to `@walletconnect/ethereum-provider`
@@ -340,7 +340,7 @@ export class WalletConnect extends Connector {
 
             // if we're here, we can try to switch networks, ignoring errors
             const desiredChainIdHex = `0x${desiredChainId.toString(16)}`;
-            return this.provider
+            return await this.provider
                 ?.request<void>({
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: desiredChainIdHex }],

@@ -22,9 +22,10 @@ const TWOPI = Math.PI * 2;
 const HALFPI = Math.PI / 2;
 
 const CircleTimerMobile: FunctionComponent<Props> = (props) => {
-    if (props.staticColor || props.remaining / props.duration >= 1) return Basic(props);
+    const { staticColor, remaining, duration } = props;
+    if (staticColor || remaining / duration >= 1) return <Basic {...props} />;
 
-    return Normal(props);
+    return <Normal {...props} />;
 };
 
 const Basic: FunctionComponent<Props> = ({

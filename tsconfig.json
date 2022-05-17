@@ -18,6 +18,7 @@
         "paths": {
             "@src/*": ["src/*"]
         },
+        // "exactOptionalPropertyTypes": true,
         "types": ["node", "jest"],
         "strict": true
     },

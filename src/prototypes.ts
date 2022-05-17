@@ -224,7 +224,7 @@ Array.prototype.filterInPlace = function fn(callbackfn, thisArg) {
 };
 
 Array.prototype.first = function fn(count: number) {
-    if (!this || this === []) {
+    if (!this || this.length === 0) {
         return undefined;
     }
 
@@ -243,7 +243,7 @@ Array.prototype.first = function fn(count: number) {
 };
 
 Array.prototype.last = function fn(count?: number) {
-    if (!this || this === []) {
+    if (!this || this.length === 0) {
         return undefined;
     }
 

@@ -204,47 +204,21 @@ fragment liveProtocol on Protocol {
         idnum
         activeSwap {
             ...swapdata
-            # id
-            # eth
-            # endingEpoch
         }
     }
     activeNuggItems {
         id
         activeSwap {
             ...itemswapdata
-
-            # id
-            # sellingNuggItem {
-            #     id
-            #     item {
-            #         id
-            #     }
-            # }
-            # eth
-            # endingEpoch
         }
     }
     activeItems {
         id
         activeSwap {
             ...itemswapdata
-            # id
-            # sellingItem {
-            #     id
-            # }
-            # eth
-            # endingEpoch
         }
         upcomingActiveSwap {
             ...itemswapdata
-
-            # id
-            # sellingItem {
-            #     id
-            # }
-            # eth
-            # endingEpoch
         }
     }
 }
@@ -252,52 +226,26 @@ fragment liveProtocol on Protocol {
 query getMassiveLiveProtocol {
     protocol(id: "0x42069") {
         ...liveProtocolBase
-        activeNuggs(orderBy: idnum, first: 1000) {
+        activeNuggs(orderBy: idnum, first: 1000, skip: 100) {
             id
             idnum
             activeSwap {
                 ...swapdata
-                # id
-                # eth
-                # endingEpoch
             }
         }
-        activeNuggItems(first: 1000) {
+        activeNuggItems(first: 1000, skip: 100) {
             id
             activeSwap {
                 ...itemswapdata
-
-                # id
-                # sellingNuggItem {
-                #     id
-                #     item {
-                #         id
-                #     }
-                # }
-                # eth
-                # endingEpoch
             }
         }
-        activeItems(first: 1000) {
+        activeItems(first: 1000, skip: 100) {
             id
             activeSwap {
                 ...itemswapdata
-                # id
-                # sellingItem {
-                #     id
-                # }
-                # eth
-                # endingEpoch
             }
             upcomingActiveSwap {
                 ...itemswapdata
-
-                # id
-                # sellingItem {
-                #     id
-                # }
-                # eth
-                # endingEpoch
             }
         }
     }

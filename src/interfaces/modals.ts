@@ -11,6 +11,7 @@ export enum ModalEnum {
     Sell,
     Claim,
     Adjust,
+    RotateO,
 }
 
 export interface ModalDataBase {
@@ -45,6 +46,11 @@ export interface MintModalData extends ModalDataBase {
     modalType: ModalEnum.Mint;
 }
 
+export interface RotateOModalData extends ModalDataBase {
+    modalType: ModalEnum.RotateO;
+    tokenId: NuggId;
+}
+
 export interface LoanInputModalData extends ModalDataBase {
     modalType: ModalEnum.LoanInput;
     actionType: 'liquidate' | 'rebalance';
@@ -76,4 +82,5 @@ export type ModalType =
     | LoanInputModalData
     | MintModalData
     | ClaimModalData
-    | SellModalData;
+    | SellModalData
+    | RotateOModalData;

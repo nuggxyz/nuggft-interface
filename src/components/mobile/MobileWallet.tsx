@@ -82,7 +82,8 @@ const MobileWallet: FunctionComponent<Props> = () => {
     const peer = web3.hook.usePriorityPeer();
 
     // const stake__eps = client.live.stake.eps();
-    const nuggs = client.live.myNuggs().first(20);
+    const nuggs = client.live.myNuggs();
+
     const loans = client.live.myLoans();
     const unclaimedOffers = client.live.myUnclaimedOffers();
 
@@ -99,7 +100,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
 
     const setCurrencyPreference = client.usd.useSetCurrencyPreferrence();
     const currencyPreferrence = client.usd.useCurrencyPreferrence();
-
+    console.log({ nuggs });
     const items = React.useMemo(() => {
         return Object.values(
             nuggs.reduce(
@@ -173,7 +174,9 @@ const MobileWallet: FunctionComponent<Props> = () => {
                         size="small"
                         textStyle={{ color: lib.colors.primaryColor }}
                         buttonStyle={{ background: 'transparent', padding: 0 }}
-                        onClick={() => connector.deactivate()}
+                        onClick={() => {
+                            void connector.deactivate();
+                        }}
                         label="change accounts"
                     />
                 </div>

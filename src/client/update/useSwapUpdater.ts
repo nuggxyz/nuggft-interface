@@ -18,6 +18,7 @@ export default () => {
     const epoch = client.live.epoch.id();
 
     const startup = useTokenQuery();
+
     const { isPhone } = useDimensions();
     useEffect(() => {
         if (epoch && !isPhone) {
@@ -29,6 +30,8 @@ export default () => {
             }
             if ((lastSwap === undefined || match?.params.id) && lastSwap !== goto) {
                 setLastSwap(goto);
+
+                console.log({ goto });
                 void startup(goto);
             }
         }

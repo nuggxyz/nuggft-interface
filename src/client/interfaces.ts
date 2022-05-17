@@ -314,6 +314,6 @@ export interface ClientState {
     featureTotals: FixedLengthArray<number, 8, number[]>;
 }
 
-export type ClientStore = StoreApi<ClientState> & UseBoundStore<ClientState>;
+export type ClientStore = StoreApi<ClientState> & UseBoundStore<StoreApi<ClientState>>;
 
 export interface FullClientState extends ClientState, State, Actions {}

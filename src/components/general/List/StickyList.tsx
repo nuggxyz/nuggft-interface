@@ -226,7 +226,7 @@ Props<T, B, A>) => {
                     </Text>
                 )}
             </div>
-            {children && children}
+            <>{children && children}</>
         </animated.div>
     ) : null;
 };

@@ -4,6 +4,8 @@ import { combine } from 'zustand/middleware';
 import { useCallback } from 'react';
 import shallow from 'zustand/shallow';
 
+import { timer } from '@src/classes/Timer';
+
 import { EpochData } from './interfaces';
 
 interface Offer<T> {
@@ -45,35 +47,33 @@ interface SwapDataBase__Item {
 export type SwapData = TokenIdFactoryCreator<SwapDataBase, SwapDataBase__Nugg, SwapDataBase__Item>;
 
 const useStore = create(
-    combine(
-        {
-            data: {} as TokenIdDictionary<SwapData>,
-        },
-        (set, get) => {
-            function updateSingle(data: SwapData): void {
+    combine({ data: {} as TokenIdDictionary<SwapData> }, (set, get) => {
+        function updateSingle(data: SwapData): void {
+            if (JSON.stringify(data) !== JSON.stringify(get().data[data.tokenId])) {
+                // @ts-ignore
                 set((draft) => {
-                    if (JSON.stringify(data) !== JSON.stringify(get().data[data.tokenId])) {
-                        if (data.isItem()) {
-                            draft.data[data.tokenId] = Object.freeze(data);
-                        } else {
-                            draft.data[data.tokenId] = Object.freeze(data);
-                        }
+                    if (data.isItem()) {
+                        draft.data[data.tokenId] = Object.freeze(data);
+                    } else {
+                        draft.data[data.tokenId] = Object.freeze(data);
                     }
                 });
             }
+        }
 
-            function updateBatch(data: SwapData[]): void {
-                data.forEach((x) => updateSingle(x));
-            }
+        function updateBatch(data: SwapData[]): void {
+            timer.start('a');
+            data.forEach((x) => updateSingle(x));
+            timer.stop('a');
+        }
 
-            function update(data: SwapData | SwapData[]): void {
-                if (Array.isArray(data)) updateBatch(data);
-                else updateSingle(data);
-            }
+        function update(data: SwapData | SwapData[]): void {
+            if (Array.isArray(data)) updateBatch(data);
+            else updateSingle(data);
+        }
 
-            return { update };
-        },
-    ),
+        return { update };
+    }),
 );
 
 export default {
