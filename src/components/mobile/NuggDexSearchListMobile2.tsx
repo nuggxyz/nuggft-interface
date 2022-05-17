@@ -76,6 +76,7 @@ const AllNuggs = ({ back }: { back: () => void }) => {
                         buttonStyle={{
                             // position: 'absolute',
                             // top: 80,
+                            backdropFilter: 'blur(30px)',
                             WebkitBackdropFilter: 'blur(30px)',
                             left: '1.4rem',
                             zIndex: 1000,
@@ -169,6 +170,8 @@ const AllItems = ({ back }: { back: () => void }) => {
                         buttonStyle={{
                             // position: 'absolute',
                             // top: 80,
+                            backdropFilter: 'blur(30px)',
+
                             WebkitBackdropFilter: 'blur(30px)',
                             zIndex: 1000,
                             borderRadius: lib.layout.borderRadius.large,

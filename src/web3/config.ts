@@ -29,6 +29,7 @@ import {
     CustomWebSocketProvider,
     AlchemyWebSocketProvider,
 } from './classes/CustomWebSocketProvider';
+import { CoinbaseWallet } from './clients/coinbasewallet';
 
 export function supportedChainIds() {
     // @ts-ignore
@@ -280,13 +281,13 @@ export const peers: {
 };
 
 export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connector> } = {
-    // coinbasewallet: initializeConnector<CoinbaseWallet>(
-    //     (actions) =>
-    //         new CoinbaseWallet(peer_coinbase, actions, {
-    //             url: ALCHEMY_URLS[1][0],
-    //             appName: 'NuggftV1',
-    //         }),
-    // ),
+    coinbasewallet: initializeConnector<CoinbaseWallet>(
+        (actions) =>
+            new CoinbaseWallet(peer_coinbase, actions, {
+                url: ALCHEMY_URLS[1][0],
+                appName: 'NuggftV1',
+            }),
+    ),
     walletconnect: initializeConnector<WalletConnect>(
         (actions) =>
             new WalletConnect(
@@ -451,16 +452,17 @@ export const useActivate = () => {
         [
             connector_instances.metamask,
             connector_instances.walletconnect,
-            // connector_instances.coinbasewallet,
+            connector_instances.coinbasewallet,
         ].forEach((x) => {
             if (x !== undefined && x.connector && x.connector.connectEagerly)
-                void x.connector.connectEagerly(Chain.RINKEBY);
+                void x.connector.connectEagerly(DEFAULT_CHAIN);
         });
 
         const { rpc } = connector_instances;
 
-        if (rpc !== undefined && rpc.connector && rpc.connector.activate)
-            void rpc.connector.activate(Chain.RINKEBY);
+        if (rpc !== undefined && rpc.connector && rpc.connector.activate) {
+            void rpc.connector.activate(DEFAULT_CHAIN);
+        }
     }, []);
 
     return null;

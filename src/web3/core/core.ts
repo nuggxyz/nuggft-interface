@@ -54,7 +54,7 @@ export function initializeConnector<T extends Connector>(
     const [store, actions] = createWeb3ReactStoreAndActions(allowedChainIds);
 
     const connector = f(actions);
-    const useConnector = create(store);
+    const useConnector = create<Web3ReactStore>(store);
 
     const stateHooks = getStateHooks(useConnector);
     const derivedHooks = getDerivedHooks(stateHooks);
@@ -234,12 +234,20 @@ export function getNetworkConnector(initializedConnectors: {
     } = getSelectedConnector(...Object.values(initializedConnectors));
 
     function useNetworkConnector() {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const values = Object.values(initializedConnectors).map((x) => x.hooks.usePeer()?.fallback);
+        return initializedConnectors.rpc!.connector;
 
-        const index = values.findIndex((x) => x);
-        const res = Object.values(initializedConnectors)[index === -1 ? 0 : index];
-        return res.connector;
+        // // eslint-disable-next-line react-hooks/rules-of-hooks
+        // const values = Object.values(initializedConnectors).map((x) => {
+        //     const peer = Object.values(x.connector.peers)[0];
+        //     // console.log(peer);
+        //     return !!peer?.fallback;
+        // });
+        // console.log(values);
+        // const index = values.findIndex((x) => x);
+        // const res = Object.values(initializedConnectors)[index === -1 ? 0 : index];
+
+        // console.log({ res });
+        // return res.connector;
     }
 
     function useNetworkChainId() {
@@ -658,7 +666,7 @@ function useENS(
                 setENSName('nuggftv1.nugg.xyz');
             else {
                 let stale = false;
-                if (persistedEns) {
+                if (persistedEns && !persistedEns.startsWith('0x')) {
                     setENSName(persistedEns);
                 } else {
                     setENSName(Address.shortenAddressHash(account));
@@ -687,7 +695,7 @@ function useENS(
         return undefined;
     }, [provider, account, chainId, persistedEns, updatePersistedEns]);
 
-    return persistedEns || ENSName;
+    return persistedEns ? (persistedEns.startsWith('0x') ? ENSName : persistedEns) : ENSName;
 }
 
 function getAugmentedHooks<T extends Connector>(

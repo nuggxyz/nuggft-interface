@@ -27,6 +27,20 @@ interface EtherscanTransactionResponse {
 }
 
 export class CustomEtherscanProvider extends EtherscanProvider {
+    // async getEtherPrice(): Promise<number> {
+    //     await this.getNetwork();
+
+    //     const url = `https://api.etherscan.io/api?module=stats&action=ethprice&apikey=${
+    //         process.env.NUGG_APP_ETHERSCAN_KEY || ''
+    //     }`;
+
+    //     console.log(url);
+    //     const response = await fetch(url, { method: 'GET' });
+
+    //     console.log({ response });
+    //     return 0;
+    // }
+
     // Note: The `page` page parameter only allows pagination within the
     //       10,000 window available without a page and offset parameter
     //       Error: Result window is too large, PageNo x Offset size must

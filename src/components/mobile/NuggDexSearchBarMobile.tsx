@@ -458,6 +458,7 @@ const NuggDexSearchBarMobile: FunctionComponent<{
         padding: open ? 5 : 0,
         background: open ? lib.colors.transparentWhite : 'transparent',
         WebkitBackdropFilter: open ? 'blur(50px)' : undefined,
+        backdropFilter: open ? 'blur(50px)' : undefined,
     });
 
     const { height, width } = client.viewport.useVisualViewport();
@@ -495,7 +496,7 @@ const NuggDexSearchBarMobile: FunctionComponent<{
                     // borderRadius: lib.layout.borderRadius.mediumish,
                     display: 'flex',
                     flexDirection: 'column',
-                    boxShadow: `${lib.layout.boxShadow.prefix} ${lib.layout.boxShadow.dark}`,
+                    // boxShadow: `${lib.layout.boxShadow.prefix} ${lib.layout.boxShadow.dark}`,
                     ...over,
                     top: page === 'search' || page === 'home' ? -23 : -47,
                     left: -22,

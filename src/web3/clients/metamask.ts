@@ -190,4 +190,9 @@ export class MetaMask extends Connector {
                 this.actions.reportError(error);
             });
     }
+
+    public deactivate(): void | Promise<void> {
+        void super.deactivate([]);
+        // void window.ethereum!.request!({ method: 'eth_disconnect' });
+    }
 }

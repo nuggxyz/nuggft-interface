@@ -16,6 +16,7 @@ const SwapView = () => {
     // console.log({ sortedAll });
 
     // const { height } = useDimensions();
+    // console.log({ sortedAll });
 
     return (
         <div

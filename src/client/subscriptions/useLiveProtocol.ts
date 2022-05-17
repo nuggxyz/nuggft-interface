@@ -46,7 +46,6 @@ export default () => {
 
     const onData = React.useCallback(
         (protocol: LiveProtocolFragment) => {
-            console.log({ protocol });
             if (!protocol) return;
 
             const shares = BigNumber.from(protocol.nuggftStakedShares);

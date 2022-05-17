@@ -7,7 +7,6 @@ import ModalWrapperMobile from '@src/components/mobile/ModalWrapperMobile';
 import OfferModalMobile from '@src/components/mobile/OfferModalMobile';
 import SellNuggOrItemModalMobile from '@src/components/mobile/SellModalMobile';
 import ClaimModalMobile from '@src/components/mobile/ClaimModalMobile';
-import MobileHotRotateOModal from '@src/components/mobile/MobileHotRotateOModal';
 
 import LoanInputModal from './LoanInputModal/LoanInputModal';
 import LoanOrBurnModal from './LoanOrBurnModal/LoanOrBurnModal';
@@ -38,8 +37,7 @@ export const ModalSwitch = () => {
 
         case ModalEnum.QrCode:
             return <QrCodeModal data={data} />;
-        case ModalEnum.RotateO:
-            return isPhone ? <MobileHotRotateOModal data={data} /> : null;
+
         case ModalEnum.LoanInput:
             return <LoanInputModal data={data} />;
         case ModalEnum.Loan:

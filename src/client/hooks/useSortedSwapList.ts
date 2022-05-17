@@ -6,6 +6,8 @@ export default () => {
     const abc = client.swaps.useSwapList();
     const epoch = client.live.epoch.id();
 
+    // console.log({ abc, epoch });
+
     return React.useMemo(() => {
         const init = { current: [], next: [], recent: [], potential: [] };
         if (!epoch) return init;

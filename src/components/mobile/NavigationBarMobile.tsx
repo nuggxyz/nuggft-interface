@@ -51,6 +51,8 @@ const NavigationBarMobile: FC<Props> = () => {
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     WebkitBackdropFilter: 'blur(20px)',
+                    backdropFilter: 'blur(20px)',
+
                     height: '75px',
 
                     borderRadius: lib.layout.borderRadius.medium,

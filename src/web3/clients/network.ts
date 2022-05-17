@@ -96,7 +96,11 @@ export class Network extends Connector {
         return this.provider
             .request({ method: 'eth_chainId' })
             .then((chainId: number) => {
-                this.actions.update({ chainId, accounts: [], peer: this.peers.rpc });
+                this.actions.update({
+                    chainId: Number(chainId),
+                    accounts: [],
+                    peer: this.peers.rpc,
+                });
             })
             .catch((error: Error) => {
                 this.actions.reportError(error);
