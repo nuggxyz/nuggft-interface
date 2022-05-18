@@ -408,16 +408,21 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         value={0}
                         str={`${data.tokenId.toPrettyId()} [ERC 721]`}
                     />
-                    <Text size="large" textStyle={{ marginTop: 10 }}>
-                        My Current Bid
-                    </Text>
-                    <CurrencyText
-                        unitOverride={localCurrencyPref}
-                        forceEth
-                        size="large"
-                        stopAnimation
-                        value={currentBid}
-                    />
+                    {currentBid.eth.number !== 0 && (
+                        <>
+                            <Text size="large" textStyle={{ marginTop: 10 }}>
+                                My Current Bid
+                            </Text>
+                            <CurrencyText
+                                unitOverride={localCurrencyPref}
+                                forceEth
+                                size="large"
+                                stopAnimation
+                                value={currentBid}
+                            />
+                        </>
+                    )}
+
                     <Text size="large" textStyle={{ marginTop: 10 }}>
                         My Desired Bid
                     </Text>

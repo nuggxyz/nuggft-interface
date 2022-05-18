@@ -29,6 +29,8 @@ interface BalanceProps extends PartialText {
     loadOnZero?: boolean;
     str?: string;
     loadingOnZero?: boolean;
+    dashOnZero?: boolean;
+
     onlyAnimateOnIncrease?: boolean;
     stopAnimationOnStart?: boolean;
 
@@ -56,6 +58,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
     stopAnimationOnStart = true,
     // onlyAnimateOnIncrease = false,
     str,
+    dashOnZero = false,
     // image,
     ...props
 }) => {
@@ -148,8 +151,10 @@ const CurrencyText: React.FC<BalanceProps> = ({
             >
                 {str && value === 0 ? (
                     str
-                ) : (_value === 0 && loadingOnZero) ||
-                  (_value instanceof PairInt && _value.eth.number === 0 && loadingOnZero) ? (
+                ) : (_value === 0 && (loadingOnZero || dashOnZero)) ||
+                  (_value instanceof PairInt &&
+                      _value.eth.number === 0 &&
+                      (loadingOnZero || dashOnZero)) ? (
                     <div
                         style={{
                             width: 50,
@@ -159,8 +164,11 @@ const CurrencyText: React.FC<BalanceProps> = ({
                             justifyContent: 'center',
                         }}
                     >
-                        {' '}
-                        <Loader color={props?.textStyle?.color ?? 'white'} />
+                        {dashOnZero ? (
+                            <span>-</span>
+                        ) : (
+                            <Loader color={props?.textStyle?.color ?? 'white'} />
+                        )}
                     </div>
                 ) : (
                     <animated.div className="number" style={{ paddingRight: '.5rem' }}>
