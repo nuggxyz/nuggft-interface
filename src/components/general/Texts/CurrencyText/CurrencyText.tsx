@@ -147,7 +147,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
                     ...styles.textStyle,
                     ...props.textStyle,
                 }}
-                loading={value === 0 && loadingOnZero}
+                loading={value === 0 && loadingOnZero && !str}
             >
                 {value === 0 && str ? (
                     str

@@ -538,7 +538,7 @@ const ViewingNuggPhone: FunctionComponent<{
                             paddingTop: '20px',
                         }}
                     >
-                        {token.activeSwap ? (
+                        {swap ? (
                             <div
                                 style={{
                                     width: '100%',
@@ -567,7 +567,7 @@ const ViewingNuggPhone: FunctionComponent<{
                 </div>
                 <div
                     style={{
-                        marginTop: token.activeSwap ? -10 : '1rem',
+                        marginTop: swap ? -10 : '1rem',
                         // width: '95%',
                         display: 'flex',
                         // width: '90%',
@@ -606,9 +606,10 @@ const ViewingNuggPhone: FunctionComponent<{
                     )}
                 </div>
 
-                {token.activeSwap &&
-                    (token.activeSwap.endingEpoch || 0) <= epoch &&
-                    lifecycle?.lifecycle !== Lifecycle.Cut && (
+                {swap &&
+                    (swap.endingEpoch || 0) <= epoch + 1 &&
+                    lifecycle &&
+                    lifecycle.lifecycle !== Lifecycle.Cut && (
                         <>
                             <div
                                 style={{
@@ -631,7 +632,7 @@ const ViewingNuggPhone: FunctionComponent<{
 
                 {token.type === 'item' && (
                     <>
-                        {token.activeSwap && (
+                        {swap && (
                             <div
                                 style={{
                                     display: 'flex',
