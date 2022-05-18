@@ -52,11 +52,12 @@ const Layout = {
         font: {},
         loadingText: {
             overflow: 'hidden',
-            zIndex: 1 /* Necessary for overflow: hidden to work correctly in Safari */,
+            zIndex: '1' /* Necessary for overflow: hidden to work correctly in Safari */,
             backgroundClip: 'text',
             backgroundRepeat: 'repeat',
             WebkitBackgoundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            WebkitTextFillColorss: 'transparent',
+            color: 'transparent',
             animation: 'loading-text 3s ease infinite',
             backgroundImage: `linear-gradient(
     90deg,
@@ -67,7 +68,7 @@ const Layout = {
             backgroundSize: '500% 100%',
         },
     },
-};
+} as const;
 
 export type SimpleSizes = 'small' | 'medium' | 'large' | 'larger' | 'smaller' | 'largest';
 

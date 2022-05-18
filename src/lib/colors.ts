@@ -67,7 +67,7 @@ const Colors = {
     shadowNuggBlue: '#255aa8',
     shadowGrey: '#788796',
     shadowLightGrey: 'rgba(0, 0, 0, 0.1)',
-};
+} as const;
 
 export const gradify = (col: string) => {
     // console.log(

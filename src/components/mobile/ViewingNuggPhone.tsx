@@ -322,8 +322,6 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
         leader?.account || swap?.leader || '',
     );
 
-    console.log({ leaderEns });
-
     const nuggft = useNuggftV1();
 
     const vfo = useAsyncState(() => {

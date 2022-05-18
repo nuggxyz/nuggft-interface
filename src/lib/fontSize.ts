@@ -11,6 +11,6 @@ const FontSize = {
     h6: 13.5,
     p: 12,
     button: 22,
-};
+} as const;
 
 export default FontSize;

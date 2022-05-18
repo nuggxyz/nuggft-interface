@@ -19,6 +19,6 @@ export default {
     FEATURE_BASE: 0 as const,
 
     VIEWING_PREFIX: 'id' as const,
-};
+} as const;
 
 export type ITEM_ID = `item-${string}`;
