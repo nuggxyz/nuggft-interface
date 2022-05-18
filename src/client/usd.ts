@@ -5,11 +5,9 @@ import React from 'react';
 
 import { EthInt, PairInt, Fractionish } from '@src/classes/Fraction';
 import { CustomEtherscanProvider } from '@src/web3/classes/CustomEtherscanProvider';
+import { Chain } from '@src/web3/core/interfaces';
 
-const etherscan = new CustomEtherscanProvider(
-    'mainnet',
-    process.env.NUGG_APP_ETHERSCAN_KEY as string,
-);
+const etherscan = new CustomEtherscanProvider(Chain.MAINNET);
 
 const store = create(
     combine(

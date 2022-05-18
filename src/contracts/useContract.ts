@@ -304,13 +304,8 @@ export function usePrioritySendTransaction(bypassMobile?: boolean) {
 }
 
 export const useEtherscan = () => {
-    const chainId = web3.hook.usePriorityChainId();
-    return React.useMemo(() => {
-        return new CustomEtherscanProvider(
-            web3.config.CHAIN_INFO[chainId || 1].label,
-            process.env.NUGG_APP_ETHERSCAN_KEY as string,
-        );
-    }, [chainId]);
+    const [prov] = React.useState(new CustomEtherscanProvider(web3.config.DEFAULT_CHAIN));
+    return prov;
 };
 
 export function useCheckEtherscanForUnknownTransactionHash(

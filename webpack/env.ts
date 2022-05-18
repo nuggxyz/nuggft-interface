@@ -3,6 +3,9 @@ import path from 'path';
 
 import paths from './paths';
 
+import expand from 'dotenv-expand';
+import dotenv from 'dotenv';
+
 // Make sure that including paths.js after env.js will read .env variables.
 delete require.cache[require.resolve('./paths')];
 
@@ -29,12 +32,10 @@ const dotenvFiles = [
 // https://github.com/motdotla/dotenv-expand
 dotenvFiles.forEach((dotenvFile) => {
     if (fs.existsSync(dotenvFile)) {
-        import('dotenv-expand').then(() =>
-            import('dotenv').then((x) =>
-                x.config({
-                    path: dotenvFile,
-                }),
-            ),
+        expand.expand(
+            dotenv.config({
+                path: dotenvFile,
+            }),
         );
     }
 });
@@ -60,35 +61,39 @@ process.env.NODE_PATH = (process.env.NODE_PATH || '')
 const NUGG_APP = /^NUGG_APP_/i;
 
 function getClientEnvironment(publicUrl) {
-    const raw = Object.keys(process.env)
-        .filter((key) => NUGG_APP.test(key))
-        .reduce(
-            (env, key) => {
-                env[key] = process.env[key];
-                return env;
-            },
-            {
-                // Useful for determining whether we’re running in production mode.
-                // Most importantly, it switches React into the correct mode.
-                NODE_ENV: process.env.NODE_ENV || 'development',
-                // Useful for resolving the correct path to static assets in `public`.
-                // For example, <img src={process.env.PUBLIC_URL + '/img/logo.png'} />.
-                // This should only be used as an escape hatch. Normally you would put
-                // images into the `src` and `import` them in code to get their paths.
-                PUBLIC_URL: publicUrl,
-                // We support configuring the sockjs pathname during development.
-                // These settings let a developer run multiple simultaneous projects.
-                // They are used as the connection `hostname`, `pathname` and `port`
-                // in webpackHotDevClient. They are used as the `sockHost`, `sockPath`
-                // and `sockPort` options in webpack-dev-server.
-                WDS_SOCKET_HOST: process.env.WDS_SOCKET_HOST,
-                WDS_SOCKET_PATH: process.env.WDS_SOCKET_PATH,
-                WDS_SOCKET_PORT: process.env.WDS_SOCKET_PORT,
-                // Whether or not react-refresh is enabled.
-                // It is defined here so it is available in the webpackHotDevClient.
-                FAST_REFRESH: process.env.FAST_REFRESH !== 'false',
-            },
-        );
+    const raw1 = Object.keys(process.env).filter((key) => NUGG_APP.test(key));
+
+    if (raw1.length === 0) throw Error(`no NUGG_APP environment vars found`);
+
+    const raw = raw1.reduce(
+        (env, key) => {
+            env[key] = process.env[key];
+            return env;
+        },
+        {
+            // Useful for determining whether we’re running in production mode.
+            // Most importantly, it switches React into the correct mode.
+            NODE_ENV: process.env.NODE_ENV || 'development',
+            // Useful for resolving the correct path to static assets in `public`.
+            // For example, <img src={process.env.PUBLIC_URL + '/img/logo.png'} />.
+            // This should only be used as an escape hatch. Normally you would put
+            // images into the `src` and `import` them in code to get their paths.
+            PUBLIC_URL: publicUrl,
+            // We support configuring the sockjs pathname during development.
+            // These settings let a developer run multiple simultaneous projects.
+            // They are used as the connection `hostname`, `pathname` and `port`
+            // in webpackHotDevClient. They are used as the `sockHost`, `sockPath`
+            // and `sockPort` options in webpack-dev-server.
+            WDS_SOCKET_HOST: process.env.WDS_SOCKET_HOST,
+            WDS_SOCKET_PATH: process.env.WDS_SOCKET_PATH,
+            WDS_SOCKET_PORT: process.env.WDS_SOCKET_PORT,
+            // Whether or not react-refresh is enabled.
+            // It is defined here so it is available in the webpackHotDevClient.
+            FAST_REFRESH: process.env.FAST_REFRESH !== 'false',
+        },
+    );
+
+    // console.log('injecting into process.env: ', raw1);
     // Stringify all values so we can feed into webpack DefinePlugin
     const stringified = {
         'process.env': Object.keys(raw).reduce((env, key) => {
