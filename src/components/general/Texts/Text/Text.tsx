@@ -1,6 +1,8 @@
 import React, { CSSProperties, FunctionComponent, ReactNode } from 'react';
 import { animated } from '@react-spring/web';
 
+import lib from '@src/lib';
+
 import styles from './Text.styles';
 
 export interface TextProps {
@@ -18,14 +20,18 @@ export interface TextProps {
         | 'largest';
     type?: 'title' | 'text' | 'code';
     textStyle?: CSSProperties;
+    // className?: string;
+    loading?: boolean;
 }
 
 const Text: FunctionComponent<TextProps> = ({
+    // className,
     children,
     weight = 'regular',
     size = 'medium',
     type = 'title',
     textStyle,
+    loading = false,
 }) => {
     const style = {
         userSelect: 'none' as const,
@@ -33,8 +39,13 @@ const Text: FunctionComponent<TextProps> = ({
         ...styles[weight],
         ...styles[size],
         ...textStyle,
+        ...(loading ? lib.layout.presets.loadingText : {}),
     };
-    return <animated.div style={style}>{children}</animated.div>;
+    return (
+        <animated.div className={loading ? 'loading-text' : undefined} style={style}>
+            {children}
+        </animated.div>
+    );
 };
 
 export default React.memo(Text);

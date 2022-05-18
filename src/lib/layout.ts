@@ -47,8 +47,25 @@ const Layout = {
             semibold: 'SF-Mono',
         },
     },
+
     presets: {
         font: {},
+        loadingText: {
+            overflow: 'hidden',
+            zIndex: 1 /* Necessary for overflow: hidden to work correctly in Safari */,
+            backgroundClip: 'text',
+            backgroundRepeat: 'repeat',
+            WebkitBackgoundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            animation: 'loading-text 3s ease infinite',
+            backgroundImage: `linear-gradient(
+    90deg,
+    #aaaaaa 0%,
+    #d9d9d9 50%,
+    #aaaaaa 100%
+)`,
+            backgroundSize: '500% 100%',
+        },
     },
 };
 

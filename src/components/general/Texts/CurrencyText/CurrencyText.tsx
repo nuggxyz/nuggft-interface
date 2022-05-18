@@ -5,7 +5,6 @@ import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
 import usePrevious from '@src/hooks/usePrevious';
 import { NLStaticImageKey } from '@src/components/general/NLStaticImage';
 import { PairInt, CurrencyInt } from '@src/classes/Fraction';
-import Loader from '@src/components/general/Loader/Loader';
 import client from '@src/client';
 
 import styles from './CurrencyText.styles';
@@ -58,7 +57,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
     stopAnimationOnStart = true,
     // onlyAnimateOnIncrease = false,
     str,
-    dashOnZero = false,
+    // dashOnZero = false,
     // image,
     ...props
 }) => {
@@ -148,41 +147,25 @@ const CurrencyText: React.FC<BalanceProps> = ({
                     ...styles.textStyle,
                     ...props.textStyle,
                 }}
+                loading={value === 0 && loadingOnZero}
             >
-                {str && value === 0 ? (
+                {value === 0 && str ? (
                     str
-                ) : (_value === 0 && (loadingOnZero || dashOnZero)) ||
-                  (_value instanceof PairInt &&
-                      _value.eth.number === 0 &&
-                      (loadingOnZero || dashOnZero)) ? (
-                    <div
-                        style={{
-                            width: 50,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}
-                    >
-                        {dashOnZero ? (
-                            <span>-</span>
-                        ) : (
-                            <Loader color={props?.textStyle?.color ?? 'white'} />
-                        )}
-                    </div>
                 ) : (
                     <animated.div className="number" style={{ paddingRight: '.5rem' }}>
-                        {spring.val.to((val) =>
-                            isGwei
-                                ? (val * 10 ** 9).toFixed(decimals)
-                                : percent
-                                ? val >= 1
-                                    ? val.toFixed(1)
-                                    : val.toFixed(2)
-                                : val > 1
-                                ? CurrencyInt.format(val, unit === 'USD' ? 2 : 3)
-                                : val.toFixed(percent ? 2 : decimals || 5),
-                        )}
+                        {value === 0 && loadingOnZero
+                            ? '----'
+                            : spring.val.to((val) =>
+                                  isGwei
+                                      ? (val * 10 ** 9).toFixed(decimals)
+                                      : percent
+                                      ? val >= 1
+                                          ? val.toFixed(1)
+                                          : val.toFixed(2)
+                                      : val > 1
+                                      ? CurrencyInt.format(val, unit === 'USD' ? 2 : 3)
+                                      : val.toFixed(percent ? 2 : decimals || 5),
+                              )}
                     </animated.div>
                 )}
                 {percent && '%'}

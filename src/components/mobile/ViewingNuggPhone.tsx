@@ -319,8 +319,10 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         token && token.type === 'item' ? 'nugg' : provider,
-        leader?.account || '',
+        leader?.account || swap?.leader || '',
     );
+
+    console.log({ leaderEns });
 
     const nuggft = useNuggftV1();
 
@@ -373,15 +375,27 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                         >
                             asking price
                         </Text>
-                        <Text
-                            size="large"
-                            textStyle={{
-                                paddingTop: '1rem',
-                                color: lib.colors.primaryColor,
-                            }}
-                        >
-                            {`for sale by ${leaderEns || Address.ZERO.hash}`}
-                        </Text>
+                        <div style={{ display: 'flex' }}>
+                            <Text
+                                size="large"
+                                textStyle={{
+                                    paddingTop: '1rem',
+                                    paddingRight: '.5em',
+                                    // color: lib.colors.primaryColor,
+                                }}
+                            >
+                                {t`for sale by`}
+                            </Text>
+                            <Text
+                                loading={!leaderEns}
+                                size="large"
+                                textStyle={{
+                                    paddingTop: '1rem',
+                                }}
+                            >
+                                {leaderEns || 'XXXX...XXXX'}
+                            </Text>
+                        </div>
                     </div>
                 ) : (
                     <div
