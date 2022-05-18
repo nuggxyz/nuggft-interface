@@ -3,6 +3,7 @@ import { IoLogoUsd } from 'react-icons/io5';
 import { SiEthereum } from 'react-icons/si';
 
 import DualToggler from '@src/components/general/Buttons/DualToggler/DualToggler';
+import client from '@src/client/index';
 
 export const useCurrencyTogglerState = (initial = 'ETH' as 'ETH' | 'USD') => {
     return React.useState<'ETH' | 'USD'>(initial);
@@ -19,7 +20,8 @@ export default ({
     floaterStyle?: React.CSSProperties;
     containerStyle?: React.CSSProperties;
 }) => {
-    return (
+    const usdError = client.usd.useUsdError();
+    return !usdError ? (
         <DualToggler
             LeftIcon={SiEthereum}
             RightIcon={IoLogoUsd}
@@ -31,5 +33,5 @@ export default ({
             floaterStyle={floaterStyle}
             containerStyle={containerStyle}
         />
-    );
+    ) : null;
 };

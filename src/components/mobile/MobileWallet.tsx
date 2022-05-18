@@ -1,8 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { IoIosArrowDroprightCircle } from 'react-icons/io';
 import { plural } from '@lingui/macro';
-import { IoLogoUsd } from 'react-icons/io5';
-import { SiEthereum } from 'react-icons/si';
 
 import web3 from '@src/web3';
 import client from '@src/client';
@@ -15,8 +13,8 @@ import InfoClicker from '@src/components/nuggbook/InfoClicker';
 import { LiveNuggItem } from '@src/client/interfaces';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
-import DualToggler from '@src/components/general/Buttons/DualToggler/DualToggler';
 import { ModalEnum } from '@src/interfaces/modals';
+import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 
 import MyNuggItemListPhone from './MyNuggItemMobile';
 
@@ -180,14 +178,12 @@ const MobileWallet: FunctionComponent<Props> = () => {
                         label="change accounts"
                     />
                 </div>
-                <DualToggler
-                    LeftIcon={SiEthereum}
-                    RightIcon={IoLogoUsd}
-                    toggleActiveIndex={(input) => {
-                        setCurrencyPreference(input === 0 ? 'ETH' : 'USD');
+                <CurrencyToggler
+                    setPref={(input) => {
+                        setCurrencyPreference(input);
                         return undefined;
                     }}
-                    activeIndex={currencyPreferrence === 'ETH' ? 0 : 1}
+                    pref={currencyPreferrence}
                     // floaterStyle={{ background: floaterColor }}
                     // containerStyle={floaterWrapperStyle}
                 />

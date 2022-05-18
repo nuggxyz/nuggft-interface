@@ -6,6 +6,7 @@ import usePrevious from '@src/hooks/usePrevious';
 import { NLStaticImageKey } from '@src/components/general/NLStaticImage';
 import { PairInt, CurrencyInt } from '@src/classes/Fraction';
 import Loader from '@src/components/general/Loader/Loader';
+import client from '@src/client';
 
 import styles from './CurrencyText.styles';
 
@@ -58,6 +59,10 @@ const CurrencyText: React.FC<BalanceProps> = ({
     // image,
     ...props
 }) => {
+    const usdError = client.usd.useUsdError();
+
+    if (usdError) unitOverride = 'ETH';
+
     const [value, unit] = React.useMemo(() => {
         if (typeof _value === 'number') return [_value, unitOverride ?? 'ETH'];
         if (unitOverride)

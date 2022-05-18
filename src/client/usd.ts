@@ -14,14 +14,23 @@ const store = create(
         {
             price: 0,
             preference: 'USD' as 'ETH' | 'USD',
+            error: false,
         },
         (set) => {
             const update = async () => {
-                const price = await etherscan.getEtherPrice();
+                try {
+                    const price = await etherscan.getEtherPrice();
+                    if (price === 0) throw Error();
 
-                set(() => ({
-                    price: Number(price.toFixed(2)),
-                }));
+                    set(() => ({
+                        price: Number(price.toFixed(2)),
+                        error: false,
+                    }));
+                } catch {
+                    set(() => ({
+                        error: true,
+                    }));
+                }
             };
 
             const poll = () => {
@@ -49,10 +58,13 @@ store.getState().now();
 
 store.getState().poll();
 
+const useCurrencyPreferrence = () => store((state) => (state.error ? 'ETH' : state.preference));
+const useUsdError = () => store((state) => state.error);
+
 export const useUsdPair = (input?: Fractionish | undefined | null) => {
     const price = store((state) => state.price);
 
-    const preference = store((state) => state.preference);
+    const preference = useCurrencyPreferrence();
 
     return React.useMemo(() => {
         if (!input) return PairInt.fromUsdPrice(0, price, preference);
@@ -67,7 +79,7 @@ export const useUsdPairWithCalculation = <T extends Fractionish, R extends numbe
 ) => {
     const price = store((state) => state.price);
 
-    const preference = store((state) => state.preference);
+    const preference = useCurrencyPreferrence();
 
     return React.useMemo(() => {
         const abc = input.map((x) =>
@@ -82,10 +94,9 @@ export const useUsdPairWithCalculation = <T extends Fractionish, R extends numbe
 
 export default {
     useUsd: () => store((state) => state.price),
-    useCurrencyPreferrence: () => store((state) => state.preference),
-
+    useCurrencyPreferrence,
     useSetCurrencyPreferrence: () => store((state) => state.setCurrencyPreference),
-
     useUsdPair,
+    useUsdError,
     ...store,
 };
