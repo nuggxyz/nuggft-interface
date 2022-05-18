@@ -174,6 +174,8 @@ function useSendTransaction(
             ptx: Promise<PopulatedTransaction>,
             onSend?: () => void,
         ): Promise<Hash | undefined> => {
+            if (estimation.error) return undefined;
+
             try {
                 if (
                     authenticatedConnector &&
@@ -280,6 +282,7 @@ function useSendTransaction(
             blocknum,
             bypassMobile,
             screen,
+            estimation.error,
         ],
     );
     return { send, hash, error, estimation, rejected, clear };
