@@ -10,6 +10,7 @@ import useLiveGraphHealth from './subscriptions/useLiveGraphHealth';
 import useDimensionsUpdater from './update/useDimensionsUpdater';
 import { useVisualViewportUpdater, useEmitOnKeyboardClose } from './viewport';
 import { useCloseModalOnKeyboardClose } from './modal';
+import { useUpdateTransactionOnEmit } from './transactions';
 // import useGraphUpdater from './update/useGraphUpdater';
 
 export default () => {
@@ -38,6 +39,8 @@ export default () => {
     useEmitOnKeyboardClose();
 
     useCloseModalOnKeyboardClose();
+
+    useUpdateTransactionOnEmit();
 
     // useGraphUpdater();
 

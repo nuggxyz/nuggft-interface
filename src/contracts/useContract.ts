@@ -125,7 +125,7 @@ function useSendTransaction(
     authenticatedConnector?: Connector,
     from?: AddressString,
     onHash?: (hash: Hash) => void,
-    bypassMobile?: boolean,
+    bypassMobile = false,
 ) {
     const [error, setError] = React.useState<CustomError | Error>();
     const [rejected, setRejected] = React.useState<boolean>(false);
@@ -153,6 +153,9 @@ function useSendTransaction(
 
     const [pop, setPop] = React.useState<SimpleTransactionData>();
 
+    /// /////////////////////////
+    // this is here just to see if we can find the hash based on event data
+    /// /////////////////////////
     emitter.hook.useOn({
         type: emitter.events.PotentialTransactionReceipt,
         callback: React.useCallback(
@@ -174,7 +177,10 @@ function useSendTransaction(
             ptx: Promise<PopulatedTransaction>,
             onSend?: () => void,
         ): Promise<Hash | undefined> => {
-            if (estimation.error) return undefined;
+            if (estimation.error) {
+                console.error('OOPS - forgot to check for successful estimation');
+                return undefined;
+            }
 
             try {
                 if (
@@ -283,6 +289,7 @@ function useSendTransaction(
             bypassMobile,
             screen,
             estimation.error,
+            setHash,
         ],
     );
     return { send, hash, error, estimation, rejected, clear };

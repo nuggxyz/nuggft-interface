@@ -38,11 +38,11 @@ const useStore = create(
 
                     const dat = get().data[hash];
 
+                    // @ts-ignore
                     set((draft) => {
                         if (!dat.receipt) draft.data[hash].receipt = true;
                         if (!dat.response) draft.data[hash].response = true;
                         if (!dat.result) draft.data[hash].result = res;
-                        return draft;
                     });
                 }
 
@@ -52,9 +52,9 @@ const useStore = create(
                     const dat = get().data[txhash];
 
                     if (!dat.receipt) {
+                        // @ts-ignore
                         set((draft) => {
                             draft.data[txhash].receipt = true;
-                            return draft;
                         });
                     }
 
@@ -64,10 +64,13 @@ const useStore = create(
                         if (check === null) {
                             check = await provider.waitForTransaction(txhash);
                         }
-                        set((draft) => {
-                            if (!get().data[txhash].result) draft.data[txhash].result = check;
-                            return draft;
-                        });
+
+                        if (!get().data[txhash].result) {
+                            // @ts-ignore
+                            set((draft) => {
+                                draft.data[txhash].result = check;
+                            });
+                        }
                     }
                 }
 
@@ -87,10 +90,10 @@ const useStore = create(
                         check = await provider.waitForTransaction(txhash);
                     }
 
+                    // @ts-ignore
                     set((draft) => {
                         if (!get().data[txhash].receipt) draft.data[txhash].receipt = true;
                         if (!get().data[txhash].result) draft.data[txhash].result = check;
-                        return draft;
                     });
                 }
 

@@ -330,7 +330,6 @@ export const network = getNetworkConnector(connector_instances);
 export const selected = getSelectedConnector();
 
 export const gotoDeepLink = (link: string) => {
-    console.log('BOK BA GOK');
     window.open(link);
 };
 
