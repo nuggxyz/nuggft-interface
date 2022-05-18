@@ -4,8 +4,6 @@ import { combine } from 'zustand/middleware';
 import { useCallback } from 'react';
 import shallow from 'zustand/shallow';
 
-import { timer } from '@src/classes/Timer';
-
 import { EpochData } from './interfaces';
 
 interface Offer<T> {
@@ -62,9 +60,7 @@ const useStore = create(
         }
 
         function updateBatch(data: SwapData[]): void {
-            timer.start('a');
             data.forEach((x) => updateSingle(x));
-            timer.stop('a');
         }
 
         function update(data: SwapData | SwapData[]): void {

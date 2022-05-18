@@ -2,30 +2,30 @@
 import React from 'react';
 import create from 'zustand';
 import { combine, persist } from 'zustand/middleware';
-import shallow from 'zustand/shallow';
+import { Web3Provider } from '@ethersproject/providers';
 
-import lib, { shortenAddress } from '@src/lib/index';
+import lib from '@src/lib/index';
+import { Address } from '@src/classes/Address';
 
 const useStore = create(
     persist(
-        combine({} as { [_: Lowercase<AddressString>]: string | number }, (set, get) => {
-            const update = (address: AddressString, ens: string) => {
-                address = address.toLowerCase() as Lowercase<AddressString>;
-                const a = get();
-                console.log({ ...a });
-                set((draft) => {
-                    if (draft[address] !== ens) draft[address] = ens;
-                    return draft;
-                });
-                const b = get();
-                console.log({ ...b });
-            };
-
+        combine({} as { [_: Lowercase<AddressString>]: string | number }, (set) => {
             const setTtl = (address: AddressString) => {
+                // @ts-ignore
                 set((draft) => {
                     if (typeof draft[address] !== 'string')
                         draft[address] = lib.date.getUnix() + 60 * 60 * 24; // one day
-                    return draft;
+                });
+            };
+            const update = (address: AddressString, ens: string | null) => {
+                if (!ens) {
+                    setTtl(address);
+                    return;
+                }
+                address = address.toLowerCase() as Lowercase<AddressString>;
+                // @ts-ignore
+                set((draft) => {
+                    if (draft[address] !== ens) draft[address] = ens;
                 });
             };
 
@@ -35,37 +35,54 @@ const useStore = create(
     ),
 );
 
-const useUpdatePersistedEns = (address?: Lowercase<AddressString>) =>
-    useStore(
-        React.useCallback((state) => state.update.bind(undefined, address || '0x'), [address]),
-    );
+const useUpdatePersistedEns = () => useStore((state) => state.update);
 
-const usePersistedEns = (address?: Lowercase<AddressString>) =>
-    useStore(
+const usePersistedEnsRaw = (address?: Lowercase<AddressString>) => {
+    return useStore(
         React.useCallback(
-            (state): string | undefined => {
-                address = address?.toLowerCase() as Lowercase<AddressString> | undefined;
-
-                if (!address || address.isNuggId()) return undefined;
-
-                if (
-                    !state[address] ||
-                    (typeof state[address] === 'number' && new Date().getTime() < state[address])
-                ) {
-                    state.setTtl(address);
-                    return undefined;
-                }
-                if (typeof state[address] === 'number') return shortenAddress(address);
-
-                return state[address] as string;
-            },
+            (state) =>
+                state[address ? (address.toLowerCase() as Lowercase<AddressString>) : '0x'] ||
+                undefined,
             [address],
         ),
-        shallow,
     );
+};
+const useEns = (provider?: Web3Provider, address?: Lowercase<AddressString>) => {
+    const me = usePersistedEnsRaw(address);
+    const update = useUpdatePersistedEns();
+
+    React.useEffect(() => {
+        if (!provider) return;
+
+        address = address?.toLowerCase() as Lowercase<AddressString> | undefined;
+
+        if (!address || address.isNuggId()) return;
+
+        if (me === undefined || (typeof me === 'number' && new Date().getTime() < me)) {
+            void provider
+                .lookupAddress(address as AddressString)
+                .then((result) => {
+                    console.log({ result });
+                    update(address as AddressString, result);
+                })
+                .catch(() => {
+                    update(address as AddressString, null);
+                });
+        }
+    }, [me, address, provider]);
+
+    if (!provider) return undefined;
+    if (!address) return undefined;
+    if (me === undefined || typeof me === 'number') return Address.shortenAddressHash(address);
+    if (typeof me === 'string') {
+        if (me.startsWith('0x')) return Address.shortenAddressHash(address);
+        return me;
+    }
+
+    return undefined;
+};
 
 export default {
-    useUpdatePersistedEns,
-    usePersistedEns,
+    useEns,
     useStore,
 };

@@ -647,55 +647,24 @@ function useENS(
     account: Lowercase<string> | undefined,
     chainId: Chain | undefined,
 ): (string | null) | undefined {
-    const [ENSName, setENSName] = useState<string | null | undefined>(
-        account ? Address.shortenAddressHash(account) : '',
+    // const [ENSName, setENSName] = useState<string | null | undefined>();
+    // account ? Address.shortenAddressHash(account) : '',
+
+    const persistedEns = client.ens.useEns(
+        typeof provider === 'string' ? undefined : provider,
+        account as AddressString,
     );
 
-    const updatePersistedEns = client.ens.useUpdatePersistedEns(account as AddressString);
+    if (!account || !provider || !chainId) return undefined;
 
-    const persistedEns = client.ens.usePersistedEns(account as AddressString);
-
-    useEffect(() => {
-        if (provider && account && chainId) {
-            if (account === Address.ZERO.hash) setENSName('black-hole');
-            else if (provider === 'nugg') setENSName(account.toPrettyId());
-            else if (
-                account.toLowerCase() === CONTRACTS[chainId].NuggftV1.toLowerCase() ||
-                account.toLowerCase() === Address.ZERO.hash
-            )
-                setENSName('nuggftv1.nugg.xyz');
-            else {
-                let stale = false;
-                if (persistedEns && !persistedEns.startsWith('0x')) {
-                    setENSName(persistedEns);
-                } else {
-                    setENSName(Address.shortenAddressHash(account));
-
-                    provider
-                        .lookupAddress(account as AddressString)
-                        .then((result) => {
-                            console.log({ result });
-                            if (!stale) {
-                                if (result) void updatePersistedEns(result);
-                                setENSName(result || Address.shortenAddressHash(account));
-                            }
-                        })
-                        .catch((error) => {
-                            setENSName(Address.shortenAddressHash(account));
-
-                            console.debug('Could not fetch ENS names', error);
-                        });
-                }
-
-                return () => {
-                    stale = true;
-                };
-            }
-        }
-        return undefined;
-    }, [provider, account, chainId, persistedEns, updatePersistedEns]);
-
-    return persistedEns ? (persistedEns.startsWith('0x') ? ENSName : persistedEns) : ENSName;
+    if (account === Address.ZERO.hash) return 'black-hole';
+    if (provider === 'nugg') return account.toPrettyId();
+    if (
+        account.toLowerCase() === CONTRACTS[chainId].NuggftV1.toLowerCase() ||
+        account.toLowerCase() === Address.ZERO.hash
+    )
+        return 'nuggftv1.nugg.xyz';
+    return persistedEns;
 }
 
 function getAugmentedHooks<T extends Connector>(

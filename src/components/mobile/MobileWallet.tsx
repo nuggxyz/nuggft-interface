@@ -100,7 +100,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
 
     const setCurrencyPreference = client.usd.useSetCurrencyPreferrence();
     const currencyPreferrence = client.usd.useCurrencyPreferrence();
-    console.log({ nuggs });
+
     const items = React.useMemo(() => {
         return Object.values(
             nuggs.reduce(

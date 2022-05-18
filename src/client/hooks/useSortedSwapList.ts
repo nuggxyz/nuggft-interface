@@ -35,7 +35,7 @@ export default () => {
             },
             init,
         );
-        go.potential.sort((a, b) => (a > b ? 1 : -1));
+        go.potential.sort((a, b) => (a > b ? 1 : -1)).sort((a) => (a.startsWith('nugg') ? -1 : 1));
         return go;
     }, [abc, epoch]);
 };

@@ -90,7 +90,7 @@ export function useRoutes(
     });
 
     matches?.filterInPlace((x) => x.route.element !== null);
-    console.log(parentMatches);
+    // console.log(parentMatches);
 
     return _renderMatches(
         matches &&
