@@ -26,19 +26,16 @@ const store = create(
             };
 
             const updatePhase = (input: number) => {
-                set((draft) => {
-                    draft.phase = input;
-                    return draft;
-                });
+                set(() => ({
+                    phase: input,
+                }));
             };
 
             const closeModal = () => {
                 document.documentElement.classList.remove('is-locked');
                 window.onscroll = () => undefined;
-                set((draft) => {
-                    draft.open = false;
+                set(() => {
                     return {
-                        ...draft,
                         open: false,
                     };
                 });

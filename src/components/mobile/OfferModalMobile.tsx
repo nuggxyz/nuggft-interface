@@ -352,7 +352,10 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     className="mobile-pressable-div"
                     label="Review"
                     // leftIcon={calculating ? <Loader /> : undefined}
-                    onClick={() => setPage(1)}
+                    onClick={() => {
+                        setPage(1);
+                        console.log('yep');
+                    }}
                     disabled={calculating || !!estimator.error}
                     buttonStyle={{
                         borderRadius: lib.layout.borderRadius.large,
@@ -385,7 +388,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             myBalance,
         ],
     );
-
+    console.log({ page });
     const Page1 = React.useMemo(
         () =>
             isOpen && peer ? (

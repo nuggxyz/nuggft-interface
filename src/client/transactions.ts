@@ -22,13 +22,13 @@ const useStore = create(
             (set, get) => {
                 function ensureExists(txhash: Hash) {
                     if (!get().data[txhash])
+                        // @ts-ignore
                         set((draft) => {
                             draft.data[txhash] = {
                                 response: false,
                                 receipt: false,
                                 result: null,
                             };
-                            return draft;
                         });
                 }
 
@@ -78,9 +78,9 @@ const useStore = create(
                     ensureExists(txhash);
 
                     if (!get().data[txhash].response) {
+                        // @ts-ignore
                         set((draft) => {
                             draft.data[txhash].response = true;
-                            return draft;
                         });
                     }
 
