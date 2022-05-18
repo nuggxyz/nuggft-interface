@@ -331,7 +331,7 @@ const core = create(
                     if (!draft.liveOffers[tokenId]) draft.liveOffers[tokenId] = [];
                     if (!draft.liveOffers[tokenId]) draft.liveOffers[tokenId] = [];
 
-                    draft.liveOffers[tokenId].mergeInPlace(
+                    draft.liveOffers[tokenId] = draft.liveOffers[tokenId].merge(
                         offers,
                         'user',
                         (a, b) => b.eth.gt(a.eth),
