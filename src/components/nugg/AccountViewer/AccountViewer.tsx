@@ -30,8 +30,6 @@ const AccountViewer = () => {
     const currencyPref = client.usd.useCurrencyPreferrence();
     const setCurrencyPref = client.usd.useSetCurrencyPreferrence();
 
-    console.log({ currencyPref });
-
     const navigate = useNavigate();
 
     const darkmode = useDarkMode();

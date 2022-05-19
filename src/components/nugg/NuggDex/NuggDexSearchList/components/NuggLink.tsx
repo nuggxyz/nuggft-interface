@@ -70,8 +70,6 @@ const NuggLink: FunctionComponent<PropsWithChildren<Props>> = ({
         // config: constants.ANIMATION_CONFIG,
     });
 
-    console.log(opacityText);
-
     const isPageLoaded = client.live.pageIsLoaded();
 
     const previewNuggsStable = useMemo(() => {
