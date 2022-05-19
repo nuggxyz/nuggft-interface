@@ -44,7 +44,6 @@ export class CoinbaseWallet extends Connector {
         connectEagerly = false,
     ) {
         super(ConnectorEnum.CoinbaseWallet, actions, [peer]);
-
         this.options = options;
 
         if (connectEagerly) void this.connectEagerly();
@@ -64,7 +63,7 @@ export class CoinbaseWallet extends Connector {
             this.provider = this.coinbaseWallet.makeWeb3Provider(url);
 
             this.provider.on('connect', ({ chainId }: ProviderConnectInfo): void => {
-                this.actions.update({ chainId: parseChainId(chainId) });
+                this.actions.update({ chainId: parseChainId(chainId), peer: this.peers.coinbase });
             });
 
             this.provider.on('disconnect', (error: ProviderRpcError): void => {
@@ -98,7 +97,11 @@ export class CoinbaseWallet extends Connector {
             ])
                 .then(([chainId, accounts]) => {
                     if (accounts.length) {
-                        this.actions.update({ chainId: parseChainId(chainId), accounts });
+                        this.actions.update({
+                            chainId: parseChainId(chainId),
+                            accounts,
+                            peer: this.peers.coinbase,
+                        });
                     } else {
                         throw new Error('No accounts returned');
                     }

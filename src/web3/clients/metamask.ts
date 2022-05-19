@@ -48,7 +48,7 @@ const store = create(
                 return { disconnect, connect };
             },
         ),
-        { name: 'nugg.xyz-metamask-disconnect' },
+        { name: 'nugg.xyz-metamask-disconnect', version: 0 },
     ),
 );
 

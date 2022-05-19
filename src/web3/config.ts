@@ -13,6 +13,7 @@ import {
     Peer,
     PeerInfo,
     PeerInfo__WalletConnect,
+    PeerInfo__CoinbaseWallet,
 } from './core/interfaces';
 import {
     getNetworkConnector,
@@ -239,7 +240,7 @@ export const peer_cryptodotcom: PeerInfo = {
     desktopAction: 'qrcode',
 };
 
-export const peer_coinbase: PeerInfo = {
+export const peer_coinbase: PeerInfo__CoinbaseWallet = {
     type: ConnectorEnum.CoinbaseWallet,
     name: 'Coinbase Wallet',
     peer: Peer.Coinbase,
@@ -284,7 +285,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
     coinbasewallet: initializeConnector<CoinbaseWallet>(
         (actions) =>
             new CoinbaseWallet(peer_coinbase, actions, {
-                url: ALCHEMY_URLS[1][0],
+                url: INFURA_URLS[DEFAULT_CHAIN],
                 appName: 'NuggftV1',
             }),
     ),
