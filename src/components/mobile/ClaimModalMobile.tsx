@@ -106,10 +106,9 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const [localCurrencyPref, setLocalCurrencyPref] = useCurrencyTogglerState(globalCurrencyPref);
 
     const ethclaims = React.useMemo(() => {
-        return unclaimedOffers.reduce(
-            (prev, curr) => prev.add(curr.leader ? 0 : curr.eth),
-            new EthInt(0),
-        );
+        return unclaimedOffers.reduce((prev, curr) => {
+            return prev.add(curr.leader ? 0 : curr.eth);
+        }, new EthInt(0));
     }, [unclaimedOffers]);
 
     const ethclaimsUsd = useUsdPair(ethclaims);

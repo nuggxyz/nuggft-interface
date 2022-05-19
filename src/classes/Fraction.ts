@@ -9,10 +9,21 @@ import { toGwei } from '@src/lib/index';
 // eslint-disable-next-line no-use-before-define
 export type Fractionish = BigNumberish | { num: BigNumber; den: BigNumber };
 
-export class ImmutableFraction {
-    public readonly num: BigNumber;
+export class Fraction {
+    public num: BigNumber;
 
-    public readonly den: BigNumber;
+    public den: BigNumber;
+
+    public static ZERO = new Fraction(BigNumber.from(0));
+
+    public static ONE = new Fraction(BigNumber.from(1));
+
+    public scale(denominator: BigNumberish) {
+        const me = this.copy();
+        me.num = me.num.mul(denominator);
+        me.den = me.den.mul(denominator);
+        return me;
+    }
 
     constructor(num: BigNumberish, den: BigNumberish = BigNumber.from(1)) {
         this.num = BigNumber.from(num);
@@ -52,17 +63,17 @@ export class ImmutableFraction {
     }
 
     public lt(other: Fractionish): boolean {
-        const otherParsed = ImmutableFraction.tryParseFraction(other);
+        const otherParsed = Fraction.tryParseFraction(other);
         return this.num.mul(otherParsed.den).lt(otherParsed.num.mul(this.den));
     }
 
     public eq(other: Fractionish): boolean {
-        const otherParsed = ImmutableFraction.tryParseFraction(other);
+        const otherParsed = Fraction.tryParseFraction(other);
         return this.num.mul(otherParsed.den).eq(otherParsed.num.mul(this.den));
     }
 
     public gt(other: Fractionish): boolean {
-        const otherParsed = ImmutableFraction.tryParseFraction(other);
+        const otherParsed = Fraction.tryParseFraction(other);
         return this.num.mul(otherParsed.den).gt(otherParsed.num.mul(this.den));
     }
 
@@ -73,9 +84,9 @@ export class ImmutableFraction {
     protected static tryParseFraction(
         fractionish: Fractionish,
         base = BigNumber.from(1),
-    ): ImmutableFraction {
+    ): Fraction {
         try {
-            if (fractionish instanceof ImmutableFraction) {
+            if (fractionish instanceof Fraction) {
                 return fractionish;
             }
             // const gcd = function (a, b) {
@@ -94,7 +105,7 @@ export class ImmutableFraction {
 
                 const integer = BigNumber.from(abc.toString().replaceAll('.', ''));
 
-                const ret = new ImmutableFraction(integer, poww);
+                const ret = new Fraction(integer, poww);
 
                 return ret;
             }
@@ -104,11 +115,11 @@ export class ImmutableFraction {
                 typeof fractionish === 'string' ||
                 typeof fractionish === 'bigint'
             )
-                return new ImmutableFraction(fractionish, base);
+                return new Fraction(fractionish, base);
 
             const unsafe = fractionish as unknown as { den: BigNumberish; num: BigNumberish };
-            if ((unsafe as ImmutableFraction).num && (unsafe as ImmutableFraction).den)
-                return new ImmutableFraction(unsafe.num, unsafe.den);
+            if ((unsafe as Fraction).num && (unsafe as Fraction).den)
+                return new Fraction(unsafe.num, unsafe.den);
 
             console.log({ unsafe });
             throw new Error('Could not parse fraction');
@@ -117,68 +128,53 @@ export class ImmutableFraction {
             throw new Error('Could not parse fraction');
         }
     }
-}
-
-export class Fraction extends ImmutableFraction {
-    public override num: BigNumber;
-
-    public den: BigNumber;
-
-    public static ZERO = new Fraction(BigNumber.from(0));
-
-    public static ONE = new Fraction(BigNumber.from(1));
-
-    public scale(denominator: BigNumberish) {
-        this.num = this.num.mul(denominator);
-        this.den = this.den.mul(denominator);
-        return this;
-    }
-
-    constructor(num: BigNumberish, den: BigNumberish = BigNumber.from(1)) {
-        super(num, den);
-        this.num = BigNumber.from(num);
-        this.den = BigNumber.from(den);
-    }
 
     public increase(percent: bigint) {
-        this.multiply(new Fraction(percent + BigInt(100), 100));
-        return this;
+        const me = this.copy();
+        me.multiply(new Fraction(percent + BigInt(100), 100));
+        return me;
     }
 
     public add(other: Fractionish) {
+        const me = this.copy();
         const otherParsed = Fraction.tryParseFraction(other);
-        if (this.den.eq(otherParsed.num)) {
-            this.num = this.num.add(otherParsed.num);
-            return this;
+        if (me.den.eq(otherParsed.num)) {
+            me.num = me.num.add(otherParsed.num);
+            return me;
         }
-        this.num = this.num.mul(otherParsed.den).add(otherParsed.num.mul(this.den));
-        this.den = this.den.mul(otherParsed.den);
-        return this;
+        me.num = me.num.mul(otherParsed.den).add(otherParsed.num.mul(me.den));
+        me.den = me.den.mul(otherParsed.den);
+        return me;
     }
 
     public sub(other: Fractionish) {
+        const me = this.copy();
         const otherParsed = Fraction.tryParseFraction(other);
-        if (this.den.eq(otherParsed.num)) {
-            this.num = this.num.sub(otherParsed.num);
-            return this;
+        if (me.den.eq(otherParsed.num)) {
+            me.num = me.num.sub(otherParsed.num);
+            return me;
         }
-        this.num = this.num.mul(otherParsed.den).sub(otherParsed.num.mul(this.den));
-        this.den = this.den.mul(otherParsed.den);
-        return this;
+        me.num = me.num.mul(otherParsed.den).sub(otherParsed.num.mul(me.den));
+        me.den = me.den.mul(otherParsed.den);
+        return me;
     }
 
-    public multiply(other: Fractionish): Fraction {
+    public multiply(other: Fractionish) {
+        const me = this.copy();
+
         const otherParsed = Fraction.tryParseFraction(other);
-        this.num = this.num.mul(otherParsed.num);
-        this.den = this.den.mul(otherParsed.den);
-        return this;
+        me.num = me.num.mul(otherParsed.num);
+        me.den = me.den.mul(otherParsed.den);
+        return me;
     }
 
     public divide(other: Fractionish) {
+        const me = this.copy();
+
         const otherParsed = Fraction.tryParseFraction(other);
-        this.num = this.num.mul(otherParsed.den);
-        this.den = this.den.mul(otherParsed.num);
-        return this;
+        me.num = me.num.mul(otherParsed.den);
+        me.den = me.den.mul(otherParsed.num);
+        return me;
     }
 
     public asFraction(): Fraction {
@@ -205,15 +201,6 @@ export class Fraction2x16 extends Fraction {
 export class Fraction2x96 extends Fraction {
     constructor(num: BigNumberish) {
         super(BigNumber.from(num), TWO_96);
-    }
-}
-
-export abstract class ImmutableCurrencyInt extends ImmutableFraction {
-    public readonly symbol: string;
-
-    constructor(value: BigNumberish, base: BigNumberish, symbol: string) {
-        super(BigNumber.from(value), base);
-        this.symbol = symbol;
     }
 }
 
@@ -276,16 +263,6 @@ export class CurrencyInt extends Fraction {
     }
 }
 
-export abstract class ImmutableEthInt extends ImmutableCurrencyInt {
-    constructor(value: BigNumberish, base: BigNumberish) {
-        super(BigNumber.from(value), base, 'ETH');
-    }
-
-    public get mutable(): EthInt {
-        return EthInt.tryParseFrac(this);
-    }
-}
-
 export class EthInt extends CurrencyInt {
     public base = ETH_ONE;
 
@@ -306,7 +283,7 @@ export class EthInt extends CurrencyInt {
         return {
             shares: bn.shr(192),
             staked: bn.shr(96).mask(96),
-            eps: EthInt.fromFraction(new Fraction(bn.shr(96).mask(96), bn.shr(192))),
+            eps: EthInt.fromFractionRaw(new Fraction(bn.shr(96).mask(96), bn.shr(192))),
         };
     }
 
@@ -369,16 +346,28 @@ export class EthInt extends CurrencyInt {
         me.den = this.den;
         return me;
     }
-}
-export abstract class ImmutableUsdInt extends ImmutableCurrencyInt {
-    constructor(value: BigNumberish, base: BigNumberish) {
-        super(BigNumber.from(value), base, 'ETH');
+
+    public override increase(other: bigint) {
+        return EthInt.fromFractionRaw(super.increase(other));
     }
 
-    public get mutable(): UsdInt {
-        return UsdInt.convert(EthInt.tryParseFrac(this));
+    public add(other: Fractionish) {
+        return EthInt.fromFractionRaw(super.add(other));
+    }
+
+    public sub(other: Fractionish) {
+        return EthInt.fromFractionRaw(super.sub(other));
+    }
+
+    public multiply(other: Fractionish) {
+        return EthInt.fromFractionRaw(super.multiply(other));
+    }
+
+    public divide(other: Fractionish) {
+        return EthInt.fromFractionRaw(super.divide(other));
     }
 }
+
 export class UsdInt extends CurrencyInt {
     constructor(value: number) {
         super(Math.round(value * 100), 100, 'USD');
@@ -396,6 +385,37 @@ export class UsdInt extends CurrencyInt {
         me.num = this.num;
         me.den = this.den;
         return me;
+    }
+
+    public static fromFraction(value: Fraction): UsdInt {
+        try {
+            const bob = new UsdInt(0);
+            bob.num = value.num;
+            bob.den = value.den;
+            return bob;
+        } catch (err) {
+            return new UsdInt(0);
+        }
+    }
+
+    public override increase(other: bigint) {
+        return UsdInt.fromFraction(super.increase(other));
+    }
+
+    public add(other: Fractionish) {
+        return UsdInt.fromFraction(super.add(other));
+    }
+
+    public sub(other: Fractionish) {
+        return UsdInt.fromFraction(super.sub(other));
+    }
+
+    public multiply(other: Fractionish) {
+        return UsdInt.fromFraction(super.multiply(other));
+    }
+
+    public divide(other: Fractionish) {
+        return UsdInt.fromFraction(super.divide(other));
     }
 }
 

@@ -39,7 +39,7 @@ const HomeTab: FunctionComponent<Props> = () => {
                                 width: screenType === 'phone' ? '48%' : '100%',
                             }}
                             label={t`Balance`}
-                            value={stake__eps.multiply(nuggs.length).decimal.toNumber()}
+                            value={stake__eps.multiply(nuggs.length).number}
                             image="eth"
                         />
                     )}
