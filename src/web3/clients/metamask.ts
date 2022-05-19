@@ -1,6 +1,8 @@
 /* eslint-disable max-classes-per-file */
 
 import type detectEthereumProvider from '@metamask/detect-provider/dist';
+import create from 'zustand';
+import { combine, persist } from 'zustand/middleware';
 
 import {
     Connector,
@@ -19,6 +21,36 @@ export class NoMetaMaskError extends Error {
         Object.setPrototypeOf(this, NoMetaMaskError.prototype);
     }
 }
+
+const store = create(
+    persist(
+        combine(
+            {
+                hasDisconnected: false,
+            },
+            (set) => {
+                const disconnect = () => {
+                    set(() => {
+                        return {
+                            hasDisconnected: true,
+                        };
+                    });
+                };
+
+                const connect = () => {
+                    set(() => {
+                        return {
+                            hasDisconnected: false,
+                        };
+                    });
+                };
+
+                return { disconnect, connect };
+            },
+        ),
+        { name: 'nugg.xyz-metamask-disconnect' },
+    ),
+);
 
 function parseChainId(chainId: string) {
     return Number.parseInt(chainId, 16);
@@ -68,6 +100,7 @@ export class MetaMask extends Connector {
                             chainId: parseChainId(chainId),
                             peer: this.peers.metamask,
                         });
+                        store.getState().connect();
                     });
 
                     this.provider.on('disconnect', (error: ProviderRpcError): void => {
@@ -96,6 +129,8 @@ export class MetaMask extends Connector {
 
     /** {@inheritdoc Connector.connectEagerly} */
     public async connectEagerly(): Promise<void> {
+        if (store.getState().hasDisconnected) return undefined;
+
         const cancelActivation = this.actions.startActivation();
 
         await this.isomorphicInitialize();
@@ -134,6 +169,12 @@ export class MetaMask extends Connector {
     public async activate(
         desiredChainIdOrChainParameters?: number | AddEthereumChainParameter,
     ): Promise<void> {
+        if (store.getState().hasDisconnected) {
+            store.getState().connect();
+            await this.connectEagerly();
+            if (this.provider) return undefined;
+        }
+
         this.actions.startActivation();
 
         await this.isomorphicInitialize();
@@ -193,6 +234,8 @@ export class MetaMask extends Connector {
 
     public deactivate(): void | Promise<void> {
         void super.deactivate([]);
+        store.getState().disconnect();
+
         // void window.ethereum!.request!({ method: 'eth_disconnect' });
     }
 }
