@@ -1,8 +1,8 @@
 import React, { FC, PropsWithChildren } from 'react';
 import { animated } from '@react-spring/web';
 
-import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import client from '@src/client';
+import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 // eslint-disable-next-line import/no-cycle
 
 // type SpecialDiv = JSX.IntrinsicElements['div'] & {
@@ -52,7 +52,7 @@ const Modal: FC<PropsWithChildren<unknown>> = ({ children }) => {
 
     // const { screen: screenType } = useDimensions();
 
-    const style = useAnimateOverlay(isOpen, { zIndex: 999000 });
+    const style = useAnimateOverlayBackdrop(isOpen, { zIndex: 999000 });
 
     // useOnClickOutside(node, closeModal);
 

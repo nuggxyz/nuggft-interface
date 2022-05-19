@@ -1,8 +1,12 @@
 import type { EventEmitter } from 'node:events';
 
 import type { IWCEthRpcConnectionOptions } from '@walletconnect/types';
+import type { SignerConnection } from '@walletconnect/signer-connection';
+import type Core from '@walletconnect/core';
+import type SocketTransport from '@walletconnect/socket-transport';
 import EventEmitter3 from 'eventemitter3';
 import curriedLighten from 'polished/lib/color/lighten';
+import { JsonRpcProvider } from '@ethersproject/providers';
 
 import type { Actions, ProviderRpcError } from '@src/web3/core/types';
 import { Connector, WalletConnectCoreProvider } from '@src/web3/core/types';
@@ -147,6 +151,53 @@ export class WalletConnect extends Connector {
         }
     };
 
+    private get _signer() {
+        return (this.provider as unknown as { signer?: JsonRpcProvider })?.signer;
+    }
+
+    private get _signer_connection() {
+        return (
+            this._signer as unknown as {
+                connection?: Merge<
+                    SignerConnection,
+                    {
+                        _transport?: SocketTransport;
+                        _nextSocket?: WebSocket;
+                        _socket?: WebSocket;
+                        wc: Core;
+                    }
+                >;
+            }
+        )?.connection;
+    }
+
+    private get _signer_connection_transport() {
+        return (this._signer_connection as unknown as { wc?: { _transport?: SocketTransport } })?.wc
+            ?._transport as
+            | Merge<
+                  SocketTransport,
+                  { _socketClose: () => void; _nextSocket?: WebSocket; _socket?: WebSocket }
+              >
+            | undefined;
+    }
+
+    private get _signer_connection_transport_socket() {
+        const a = this._signer_connection_transport;
+
+        console.log({ ...a });
+
+        // eslint-disable-next-line prefer-object-spread
+        const g = Object.assign({}, a?._nextSocket);
+        // eslint-disable-next-line prefer-object-spread
+        const r = Object.assign({}, a?._socket);
+
+        console.log(g, { ...g, ...r });
+
+        return a?._nextSocket;
+        // return (this._signer_connection_transport as unknown as { _nextSocket?: WebSocket })
+        //     ?._nextSocket;
+    }
+
     private async isomorphicInitialize(
         chainId = Number(Object.keys(this.rpc)[0]),
         peerId = Peer.WalletConnect,
@@ -184,6 +235,18 @@ export class WalletConnect extends Connector {
             this.provider.on('chainChanged', this.chainChangedListener);
             this.provider.on('accountsChanged', this.accountsChangedListener);
             this.provider.connector.on('display_uri', this.URIListener);
+
+            const c = this._signer_connection_transport_socket;
+            const g = this._signer_connection_transport_socket?.onmessage;
+
+            if (c) {
+                c.onmessage = function (ev) {
+                    console.log('AYOOOOOOOOO');
+                    if (g) g.bind(this)(ev);
+                    console.log(ev);
+                };
+            }
+            // this._signer_connection_transport_socket?.close();
         }));
         return undefined;
     }
@@ -262,9 +325,14 @@ export class WalletConnect extends Connector {
                 }
             } catch (error) {
                 console.debug('Could not connect eagerly', error);
+
+                void this.deactivate();
+
                 cancelActivation();
             }
         } else {
+            void this.deactivate();
+
             cancelActivation();
         }
     }
@@ -372,6 +440,17 @@ export class WalletConnect extends Connector {
             'connect',
             this.connectListener,
         );
+        // YO
+        const c = this._signer_connection_transport_socket;
+        if (c) {
+            c.onmessage = () => undefined;
+        }
+        this._signer_connection_transport_socket?.close();
+        this._signer_connection?.wc?.transportClose();
+        // await this._signer_connection?.wc?.killSession();
+        void this._signer_connection?.close();
+        // YO
+
         await this.provider?.disconnect();
 
         window.localStorage.removeItem('walletconnect');

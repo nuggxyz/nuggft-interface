@@ -494,7 +494,7 @@ const NuggDexSearchBarMobile: FunctionComponent<{
             <animated.div
                 style={{
                     // borderRadius: lib.layout.borderRadius.mediumish,
-                    display: 'flex',
+                    // display: 'flex',
                     flexDirection: 'column',
                     // boxShadow: `${lib.layout.boxShadow.prefix} ${lib.layout.boxShadow.dark}`,
                     ...over,

@@ -35,6 +35,13 @@ import AnimatedConfirmation from '@src/components/general/AnimatedTimers/Animate
 import { gotoEtherscan } from '@src/web3/config';
 import OffersList from '@src/components/nugg/RingAbout/OffersList';
 
+// const hello = (num: number, val: number) => {
+//     console.log('yep');
+//     document.documentElement.style.setProperty.bind(undefined, `--${num}-dumb`, String(val));
+// };
+
+// const hello2 = hello.bind(undefined);
+
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
 
@@ -203,26 +210,20 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         page,
         {
             initial: {
-                opacity: 0,
-                zIndex: 0,
-                left: 0,
+                transform: 'translate(0px, 0px)',
             },
             from: (p, i) => ({
-                opacity: 0,
-                zIndex: 0,
-                left: p === i ? 1000 : -1000,
+                transform: p === i ? 'translate(1000px, 0px)' : 'translate(-1000px, 0px)',
             }),
-            enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto', zIndex: 40000 },
+            expires: 500,
+            enter: { transform: 'translate(0px, 0px)' },
             leave: (p, i) => {
                 return {
-                    opacity: 0,
-                    zIndex: 0,
-                    left: p === i ? -1000 : 1000,
+                    transform: p === i ? 'translate(-1000px, 0px)' : 'translate(1000px, 0px)',
                 };
             },
-
             keys: (item) => `tabFadeTransition${item}5`,
-            config: config.gentle,
+            config: config.default,
         },
         [page, isOpen],
     );
@@ -716,6 +717,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                 WebkitBackdropFilter: 'blur(10px)',
                                 ...containerStyle,
                                 ...sty,
+                                // transform: `translate(var(--${pager}-dumb)px, 0px)`,
                             }}
                         >
                             <>{pager === 0 ? Page0 : pager === 1 ? Page1 : Page2}</>{' '}

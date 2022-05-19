@@ -1,5 +1,9 @@
 import type { CoinbaseWalletSDK } from '@coinbase/wallet-sdk';
 import { CoinbaseWalletProvider } from '@coinbase/wallet-sdk';
+import create from 'zustand';
+import { combine, persist } from 'zustand/middleware';
+import { WalletSDKRelayAbstract } from '@coinbase/wallet-sdk/dist/relay/WalletSDKRelayAbstract';
+import { WalletSDKConnection } from '@coinbase/wallet-sdk/dist/connection/WalletSDKConnection';
 
 import {
     Actions,
@@ -19,6 +23,36 @@ function parseChainId(chainId: string | number) {
 type CoinbaseWalletSDKOptions = ConstructorParameters<typeof CoinbaseWalletSDK>[0] & {
     url: string;
 };
+
+const store = create(
+    persist(
+        combine(
+            {
+                hasDisconnected: false,
+            },
+            (set) => {
+                const disconnect = () => {
+                    set(() => {
+                        return {
+                            hasDisconnected: true,
+                        };
+                    });
+                };
+
+                const connect = () => {
+                    set(() => {
+                        return {
+                            hasDisconnected: false,
+                        };
+                    });
+                };
+
+                return { disconnect, connect };
+            },
+        ),
+        { name: 'nugg.xyz-coinbase-wallet-disconnect', version: 0 },
+    ),
+);
 
 export class CoinbaseWallet extends Connector {
     /** {@inheritdoc Connector.provider} */
@@ -54,20 +88,32 @@ export class CoinbaseWallet extends Connector {
         return !!this.provider?.selectedAddress;
     }
 
+    private get _relay() {
+        return (this.coinbaseWallet as unknown as { _relay?: WalletSDKRelayAbstract })?._relay;
+    }
+
+    private get _relay_connection() {
+        return (this._relay as unknown as { connection: WalletSDKConnection }).connection;
+    }
+
     private async isomorphicInitialize(): Promise<void> {
         if (this.eagerConnection) return this.eagerConnection;
 
         await (this.eagerConnection = import('@coinbase/wallet-sdk').then((m) => {
             const { url, ...options } = this.options;
             this.coinbaseWallet = new m.default(options);
+
             this.provider = this.coinbaseWallet.makeWeb3Provider(url);
 
             this.provider.on('connect', ({ chainId }: ProviderConnectInfo): void => {
+                store.getState().connect();
+
                 this.actions.update({ chainId: parseChainId(chainId), peer: this.peers.coinbase });
             });
 
             this.provider.on('disconnect', (error: ProviderRpcError): void => {
                 this.actions.reportError(error);
+                store.getState().disconnect();
             });
 
             this.provider.on('chainChanged', (chainId: string): void => {
@@ -84,11 +130,17 @@ export class CoinbaseWallet extends Connector {
 
     /** {@inheritdoc Connector.connectEagerly} */
     public async connectEagerly(): Promise<void> {
+        if (store.getState().hasDisconnected) return undefined;
+
         const cancelActivation = this.actions.startActivation();
 
         await this.isomorphicInitialize();
 
         if (this.connected) {
+            store.getState().connect();
+
+            // this._relay_connection.connect();
+
             return Promise.all([
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 this.provider!.request<string>({ method: 'eth_chainId' }),
@@ -111,7 +163,16 @@ export class CoinbaseWallet extends Connector {
                     cancelActivation();
                 });
         }
-        return cancelActivation();
+
+        // manually destroy relay connection, killing unnessesary websocket (without page reload)
+        this._relay_connection?.destroy();
+
+        // destroy the eager connection so we can retry later
+        delete this.eagerConnection;
+
+        cancelActivation();
+
+        return undefined;
     }
 
     /**
@@ -126,6 +187,12 @@ export class CoinbaseWallet extends Connector {
     public async activate(
         desiredChainIdOrChainParameters?: number | AddEthereumChainParameter,
     ): Promise<void> {
+        if (store.getState().hasDisconnected) {
+            store.getState().connect();
+            await this.connectEagerly();
+            if (this.connected) return undefined;
+        }
+
         const desiredChainId =
             typeof desiredChainIdOrChainParameters === 'number'
                 ? desiredChainIdOrChainParameters

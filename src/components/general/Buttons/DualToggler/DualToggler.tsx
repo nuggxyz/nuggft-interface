@@ -27,10 +27,14 @@ const DualToggler = ({
         //     x: 0,
         //     opacity: 1,
         // },
+
         to: {
-            opacity: 1,
             x: activeIndex * (WIDTH / 2) - 22.5,
         },
+        // immediate: {
+        //     opacity: 1,
+        //     x: activeIndex * (WIDTH / 2) - 22.5,
+        // },
         config: config.stiff,
     });
 

@@ -5,7 +5,7 @@ import { SiEthereum } from 'react-icons/si';
 import DualToggler from '@src/components/general/Buttons/DualToggler/DualToggler';
 import client from '@src/client/index';
 
-export const useCurrencyTogglerState = (initial = 'ETH' as 'ETH' | 'USD') => {
+export const useCurrencyTogglerState = (initial = 'USD' as 'ETH' | 'USD') => {
     return React.useState<'ETH' | 'USD'>(initial);
 };
 
@@ -23,13 +23,13 @@ export default ({
     const usdError = client.usd.useUsdError();
     return !usdError ? (
         <DualToggler
-            LeftIcon={SiEthereum}
-            RightIcon={IoLogoUsd}
+            LeftIcon={IoLogoUsd}
+            RightIcon={SiEthereum}
             toggleActiveIndex={(input) => {
-                setPref(input === 0 ? 'ETH' : 'USD');
+                setPref(input === 0 ? 'USD' : 'ETH');
                 return undefined;
             }}
-            activeIndex={pref === 'ETH' ? 0 : 1}
+            activeIndex={pref === 'USD' ? 0 : 1}
             floaterStyle={floaterStyle}
             containerStyle={containerStyle}
         />

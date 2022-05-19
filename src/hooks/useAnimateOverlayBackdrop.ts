@@ -25,26 +25,29 @@ export default (isOpen: boolean, style?: CSSProperties, delay?: number) => {
     const { screen: screenType } = useDimensions();
     const [wrapperStyle]: [PickAnimated<CSSProperties>, any] = useSpring(
         {
-            ...styles.wrapper,
             opacity: isOpen ? 1 : 0,
-            pointerEvents: isOpen ? 'auto' : 'none',
             delay,
-
-            ...(screenType === 'phone'
-                ? {
-                      justifyContent: 'center',
-                      alignItems: 'flex-start',
-                  }
-                : {
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                  }),
-            ...style,
-            backdropFilter: 'blur(10px)',
-            // @danny7even this seemed to cause problems with issue #67 - but it didnt solve any
-            WebkitBackdropFilter: 'blur(10px)',
         },
         [isOpen],
     );
-    return wrapperStyle;
+    return {
+        ...styles.wrapper,
+
+        pointerEvents: isOpen ? ('auto' as const) : ('none' as const),
+
+        ...(screenType === 'phone'
+            ? {
+                  justifyContent: 'center',
+                  alignItems: 'flex-start',
+              }
+            : {
+                  justifyContent: 'center',
+                  alignItems: 'center',
+              }),
+        ...style,
+        backdropFilter: 'blur(50px)',
+        // @danny7even this seemed to cause problems with issue #67 - but it didnt solve any
+        WebkitBackdropFilter: 'blur(50px)',
+        ...wrapperStyle,
+    } as const;
 };

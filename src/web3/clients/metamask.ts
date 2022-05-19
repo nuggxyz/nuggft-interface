@@ -105,6 +105,7 @@ export class MetaMask extends Connector {
 
                     this.provider.on('disconnect', (error: ProviderRpcError): void => {
                         this.actions.reportError(error);
+                        store.getState().disconnect();
                     });
 
                     this.provider.on('chainChanged', (chainId: string): void => {
@@ -135,6 +136,8 @@ export class MetaMask extends Connector {
 
         await this.isomorphicInitialize();
         if (!this.provider) return cancelActivation();
+
+        store.getState().connect();
 
         return Promise.all([
             this.provider.request({ method: 'eth_chainId' }) as Promise<string>,
