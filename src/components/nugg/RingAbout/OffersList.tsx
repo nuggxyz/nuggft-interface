@@ -96,6 +96,7 @@ export default ({
         height: open ? (screenType === 'tablet' ? '100%' : '300px') : '0px',
         opacity: open ? 1 : 0,
         padding: open ? '0.75rem' : '0rem',
+        pointerEvents: open ? ('auto' as const) : ('none' as const),
     });
 
     const [flashStyle] = useSpring(() => {

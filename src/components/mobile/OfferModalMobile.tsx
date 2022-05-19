@@ -175,7 +175,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 className="mobile-pressable-div"
                 label={`+${increment.toString()}%`}
                 onClick={() => {
-                    setAmount(check?.eth?.copy().increase(increment).number.toFixed(5) || '0');
+                    const a = check?.eth?.copy().increase(increment).number.toFixed(5) || '0';
+                    setAmount(a);
                     setLastPressed(increment.toString());
                 }}
                 buttonStyle={{
@@ -388,7 +389,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             myBalance,
         ],
     );
-    console.log({ page });
     const Page1 = React.useMemo(
         () =>
             isOpen && peer ? (
@@ -554,7 +554,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         ],
     );
 
-    console.log(transaction);
+    // console.log(transaction);
 
     const Page2 = React.useMemo(() => {
         return isOpen && chainId ? (

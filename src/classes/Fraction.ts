@@ -130,9 +130,7 @@ export class Fraction {
     }
 
     public increase(percent: bigint) {
-        const me = this.copy();
-        me.multiply(new Fraction(percent + BigInt(100), 100));
-        return me;
+        return this.multiply(new Fraction(percent + BigInt(100), 100));
     }
 
     public add(other: Fractionish) {
