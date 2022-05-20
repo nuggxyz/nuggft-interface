@@ -20,6 +20,7 @@ type Props = React.PropsWithChildren<{
     width: number;
     strokeWidth?: number;
     defaultColor: string;
+    tokenId?: TokenId;
 }>;
 const TWOPI = Math.PI * 2;
 const HALFPI = Math.PI / 2;
@@ -30,6 +31,7 @@ const CircleTimer: FunctionComponent<Props> = ({
     remaining,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     blocktime,
+
     staticColor,
     style,
     width,
@@ -140,4 +142,7 @@ const CircleTimer: FunctionComponent<Props> = ({
     );
 };
 
-export default React.memo(CircleTimer);
+export default React.memo(
+    CircleTimer,
+    (a, b) => a.remaining === b.remaining && a.tokenId === b.tokenId,
+);
