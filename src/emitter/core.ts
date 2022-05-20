@@ -12,15 +12,15 @@ const emitter = Object.freeze({
 });
 
 const wrapper = {
-    on: (input: EmitEventsListCallback): { off: () => void } => {
+    on: (input: Remap<EmitEventsListCallback>): { off: () => void } => {
         void emitter.on(input.type, input.callback);
         return { off: () => emitter.off(input.type, input.callback) };
     },
-    once: (input: EmitEventsListCallback): { off: () => void } => {
+    once: (input: Remap<EmitEventsListCallback>): { off: () => void } => {
         void emitter.once(input.type, input.callback);
         return { off: () => emitter.off(input.type, input.callback) };
     },
-    emit: (input: EmitEventsListPayload) => emitter.emit(input.type, input),
+    emit: (input: Remap<EmitEventsListPayload>) => emitter.emit(input.type, input),
 };
 
 export default wrapper;

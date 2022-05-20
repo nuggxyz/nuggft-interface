@@ -3,6 +3,8 @@ import React from 'react';
 import create from 'zustand';
 import { combine, persist, subscribeWithSelector } from 'zustand/middleware';
 
+import block from './block';
+
 export interface Health {
     lastBlockRpc: number;
     lastBlockGraph: number;
@@ -34,7 +36,7 @@ const useStore = create(
 );
 
 const useHealth = () => {
-    const lastBlockRpc = useStore((state) => state.lastBlockRpc);
+    const lastBlockRpc = block.useBlock();
     const lastBlockGraph = useStore((state) => state.lastBlockGraph);
 
     const blockdiff = React.useMemo(() => {
@@ -61,7 +63,6 @@ const useCallbackOnGraphBlockChange = (callback: (() => Promise<unknown>) | (() 
 export default {
     useHealth,
     useCallbackOnGraphBlockChange,
-    useUpdateLastBlockRpc: () => useStore((draft) => draft.updateLastRpcBlock),
     useUpdateLastBlockGraph: () => useStore((draft) => draft.updateLastBlockGraph),
     useStore,
 };

@@ -12,6 +12,7 @@ import { useVisualViewportUpdater, useEmitOnKeyboardClose } from './viewport';
 import { useCloseModalOnKeyboardClose } from './modal';
 import { useUpdateTransactionOnEmit } from './transactions';
 import { useEpochUpdater } from './epoch';
+import { useBlockUpdater } from './block';
 
 // import useGraphUpdater from './update/useGraphUpdater';
 
@@ -45,6 +46,8 @@ export default () => {
     useUpdateTransactionOnEmit();
 
     useEpochUpdater();
+
+    useBlockUpdater();
 
     // useGraphUpdater();
 

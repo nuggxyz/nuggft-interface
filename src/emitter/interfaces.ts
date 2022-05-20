@@ -125,28 +125,50 @@ interface EmitLocalRpcRotate extends EmitEventBase, EmitOnChainEventBase {
     event: RpcRotate;
 }
 
+export interface EmitWorkerEventBase extends EmitEventBase {
+    type: EmitEventNames;
+    data: InterfacedEvent | number;
+    log: Log | number;
+}
+
+interface EmitWorkerIncomingRpcEvent extends EmitEventBase, EmitWorkerEventBase {
+    type: EmitEventNames.IncomingRpcEvent;
+    data: InterfacedEvent;
+    log: Log;
+}
+
+interface EmitWorkerIncomingRpcBlock extends EmitEventBase, EmitWorkerEventBase {
+    type: EmitEventNames.IncomingRpcBlock;
+    data: number;
+    log: number;
+}
+
 /*  EXPORTS: must be manually updated  */
 
 export enum EmitEventNames {
-    PotentialTransactionReceipt = 'local.PotentialTransactionReceipt',
-    PotentialTransactionResponse = 'local.PotentialTransactionResponse',
-    TransactionReceipt = 'local.TransactionReceipt',
-    TransactionResponse = 'local.TransactionResponse',
-    OfferModalOpened = 'local.OfferModalOpened',
-    TransactionSent = 'local.TransactionSent',
+    PotentialTransactionReceipt = 'main.PotentialTransactionReceipt',
+    PotentialTransactionResponse = 'main.PotentialTransactionResponse',
+    TransactionReceipt = 'main.TransactionReceipt',
+    TransactionResponse = 'main.TransactionResponse',
+    OfferModalOpened = 'main.OfferModalOpened',
+    TransactionSent = 'main.TransactionSent',
     // on chain events
-    Mint = 'local.rpc.event.Mint',
-    Transfer = 'local.rpc.event.Transfer',
-    Offer = 'local.rpc.event.Offer',
-    OfferMint = 'local.rpc.event.OfferMint',
-    Stake = 'local.rpc.event.Stake',
-    Loan = 'local.rpc.event.Loan',
-    Liquidate = 'local.rpc.event.Liquidate',
-    Rebalance = 'local.rpc.event.Rebalance',
-    Claim = 'local.rpc.event.Claim',
-    ClaimItem = 'local.rpc.event.ClaimItem',
-    KeyboardClosed = 'local.viewport.KeyboardClosed',
-    Rotate = 'local.rpc.event.Rotate',
+    Mint = 'main.rpc.event.Mint',
+    Transfer = 'main.rpc.event.Transfer',
+    Offer = 'main.rpc.event.Offer',
+    OfferMint = 'main.rpc.event.OfferMint',
+    Stake = 'main.rpc.event.Stake',
+    Loan = 'main.rpc.event.Loan',
+    Liquidate = 'main.rpc.event.Liquidate',
+    Rebalance = 'main.rpc.event.Rebalance',
+    Claim = 'main.rpc.event.Claim',
+    ClaimItem = 'main.rpc.event.ClaimItem',
+    KeyboardClosed = 'main.viewport.KeyboardClosed',
+    Rotate = 'main.rpc.event.Rotate',
+
+    IncomingRpcEvent = 'worker.rpc.event',
+    IncomingRpcBlock = 'worker.rpc.block',
+
     // Sell = 'local.rpc.event.Sell',
 }
 
@@ -169,7 +191,10 @@ export type EmitEventsListPayload =
     | BuildPayload<EmitKeyboardClosed>
     | BuildPayload<EmitLocalRpcRotate>
     // | BuildPayload<EmitRpcSell>
-    | BuildPayload<EmitModalOpen>;
+    | BuildPayload<EmitModalOpen>
+    | BuildPayload<EmitWorkerEventBase>
+    | BuildPayload<EmitWorkerIncomingRpcEvent>
+    | BuildPayload<EmitWorkerIncomingRpcBlock>;
 
 export type EmitEventsListCallback =
     | BuildCallback<EmitTransactionReceipt>
@@ -189,4 +214,6 @@ export type EmitEventsListCallback =
     | BuildCallback<EmitLocalRpcTransfer>
     | BuildCallback<EmitTransactionSent>
     | BuildCallback<EmitKeyboardClosed>
-    | BuildCallback<EmitModalOpen>;
+    | BuildCallback<EmitModalOpen>
+    | BuildCallback<EmitWorkerIncomingRpcEvent>
+    | BuildCallback<EmitWorkerIncomingRpcBlock>;
