@@ -1,13 +1,17 @@
 import { RefCallback, useEffect, useRef, useState } from 'react';
 
+import useDimensions from '@src/client/hooks/useDimensions';
+
 const useOnHover = (
     callback?: RefCallback<unknown>,
 ): [React.RefObject<HTMLDivElement>, boolean] => {
     const ref = useRef<HTMLDivElement>(null);
     const [isHovering, setIsHovering] = useState(false);
 
+    const { screen } = useDimensions();
+
     useEffect(() => {
-        if (ref.current) {
+        if (screen === 'desktop' && ref.current) {
             const { current } = ref;
             const enter = () => setIsHovering(true);
             const leave = () => setIsHovering(false);
@@ -28,7 +32,7 @@ const useOnHover = (
         }
         setIsHovering(false);
         return () => undefined;
-    }, [ref]);
+    }, [ref, screen]);
 
     useEffect(() => {
         if (callback) callback(isHovering);
