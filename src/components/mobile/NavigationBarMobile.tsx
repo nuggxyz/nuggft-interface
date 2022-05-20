@@ -9,10 +9,10 @@ import lib from '@src/lib';
 import web3 from '@src/web3';
 import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
 import Jazzicon from '@src/components/nugg/Jazzicon';
-import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import NuggDexSearchBarMobile from '@src/components/mobile/NuggDexSearchBarMobile';
 import styles from '@src/components/nugg/PageLayout/NavigationBar/NavigationBar.styles';
+import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
 
 type Props = {
     showBackButton?: boolean;

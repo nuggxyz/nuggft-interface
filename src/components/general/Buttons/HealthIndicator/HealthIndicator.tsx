@@ -8,6 +8,7 @@ import client from '@src/client';
 const DisplayOk = () => {
     const rotate = useSpring({
         loop: true,
+        // delay: 3000,
         config: springConfig.molasses,
         from: { rotateZ: 0 },
         to: { rotateZ: 180 },

@@ -1,9 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { BigNumber, ethers } from 'ethers';
-import { ApolloClient } from '@apollo/client';
 import { Network } from '@ethersproject/providers';
-
-import { buildApolloSplitLink, buildCache } from '@src/gql';
 
 export function supportedChainIds() {
     // @ts-ignore
@@ -231,11 +228,11 @@ export const CHAIN_INFO: {
 //     return new AlchemyWebSocketProvider(CHAIN_INFO[chainId].label, ALCHEMY_KEY, onClose);
 // };
 
-export const apolloClient = new ApolloClient<any>({
-    link: buildApolloSplitLink(GRAPH_ENPOINTS[DEFAULT_CHAIN], GRAPH_WSS_ENDPOINTS[DEFAULT_CHAIN]),
-    // connectToDevTools: true,
-    cache: buildCache(),
-});
+// export const apolloClient = new ApolloClient<any>({
+//     link: buildApolloSplitLink(GRAPH_ENPOINTS[DEFAULT_CHAIN], GRAPH_WSS_ENDPOINTS[DEFAULT_CHAIN]),
+//     // connectToDevTools: true,
+//     cache: buildCache(),
+// });
 
 // interface WalletInfo {
 //     name: string;

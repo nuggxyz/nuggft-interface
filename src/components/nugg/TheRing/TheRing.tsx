@@ -4,7 +4,6 @@ import { IoWarning } from 'react-icons/io5';
 
 import lib from '@src/lib';
 import constants from '@src/lib/constants';
-import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
@@ -16,6 +15,7 @@ import useDimensions from '@src/client/hooks/useDimensions';
 import useDesktopSwappingNugg from '@src/client/hooks/useDesktopSwappingNugg';
 import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
 import CircleTimerMobile from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimerMobile';
+import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
 
 import styles from './TheRing.styles';
 
@@ -54,7 +54,7 @@ const TheRing: FunctionComponent<Props> = ({
 
     const startblock = client.epoch.active.useStartBlock();
 
-    useTriggerPageLoad(swap, 5000);
+    useTriggerPageLoad(!isPhone && swap, 5000);
 
     const showWarning = React.useMemo(() => {
         if (
@@ -67,19 +67,19 @@ const TheRing: FunctionComponent<Props> = ({
             return +startblock + 255 - blocknum - 17;
 
         return 0;
-    }, [startblock, blocknum, lifecycle]);
+    }, [startblock, blocknum, lifecycle, swap]);
 
     const { blocksRemaining } = client.epoch.useEpoch(swap?.epoch?.id, blocknum);
 
     const CircleTimerWrap = React.useMemo(() => {
         return isPhone ? CircleTimerMobile : CircleTimer;
     }, [isPhone]);
-
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
             <CircleTimerWrap
                 duration={web3.config.DEFAULT_CONTRACTS.Interval}
                 remaining={blocksRemaining ?? 0}
+                tokenId={tokenId}
                 blocktime={constants.BLOCKTIME}
                 width={circleWidth}
                 childrenContainerStyle={circleChildrenContainerStyle}
@@ -110,7 +110,14 @@ const TheRing: FunctionComponent<Props> = ({
                     strokeWidth || (screenType === 'phone' ? 10 : screenType === 'tablet' ? 13 : 20)
                 }
             >
-                {tokenId && (
+                {isPhone ? (
+                    <TokenViewer
+                        tokenId={tokenId}
+                        style={tokenStyle}
+                        showcase
+                        disableOnClick={disableClick}
+                    />
+                ) : (
                     <>
                         {/* {chainId && swap && lifecycle === Lifecycle.Deck && (
                             <Label
@@ -172,4 +179,7 @@ const TheRing: FunctionComponent<Props> = ({
     );
 };
 
-export default React.memo(TheRing);
+export default React.memo(
+    TheRing,
+    (a, b) => a.manualTokenId === b.manualTokenId && a.defaultColor === b.defaultColor,
+);

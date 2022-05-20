@@ -12,9 +12,6 @@ import { useVisualViewportUpdater, useEmitOnKeyboardClose } from './viewport';
 import { useCloseModalOnKeyboardClose } from './modal';
 import { useUpdateTransactionOnEmit } from './transactions';
 import { useEpochUpdater } from './epoch';
-import { useBlockUpdater } from './block';
-
-// import useGraphUpdater from './update/useGraphUpdater';
 
 export default () => {
     useDimensionsUpdater();
@@ -35,8 +32,6 @@ export default () => {
 
     useMountLogger('ClientUpdater');
 
-    // useLiveStakeBackup();
-
     useVisualViewportUpdater();
 
     useEmitOnKeyboardClose();
@@ -46,10 +41,6 @@ export default () => {
     useUpdateTransactionOnEmit();
 
     useEpochUpdater();
-
-    useBlockUpdater();
-
-    // useGraphUpdater();
 
     return null;
 };

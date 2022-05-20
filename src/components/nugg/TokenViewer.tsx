@@ -135,11 +135,10 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     );
 };
 
-export default React.memo(
-    TokenViewer,
-    (prev, props) =>
-        prev.tokenId === props.tokenId && prev.svgNotFromGraph === props.svgNotFromGraph,
-);
+export default React.memo(TokenViewer, (prev, props) => {
+    const a = prev.tokenId === props.tokenId && prev.svgNotFromGraph === props.svgNotFromGraph;
+    return a;
+});
 
 const usePending = (main: null | undefined | Base64EncodedSvg, activated: boolean) => {
     // eslint-disable-next-line no-nested-ternary

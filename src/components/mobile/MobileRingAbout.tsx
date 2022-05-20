@@ -30,30 +30,28 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId, visible }) => {
     useLiveOffers(tokenId);
 
     return (
-        <>
-            <animated.div
-                style={{
-                    ...styles.container,
+        <animated.div
+            style={{
+                ...styles.container,
 
-                    ...((minutes ?? 0) <= 5 &&
-                        lifecycle?.active && {
-                            background: lib.colors.gradient,
-                        }),
-                    ...((swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) && {
-                        background: lib.colors.transparentGrey2,
+                ...((minutes ?? 0) <= 5 &&
+                    lifecycle?.active && {
+                        background: lib.colors.gradient,
                     }),
+                ...((swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) && {
+                    background: lib.colors.transparentGrey2,
+                }),
 
-                    boxShadow: lib.layout.boxShadow.dark,
-                    width: '90%',
-                    height: '450px',
-                }}
-            >
-                <div style={styles.bodyContainer}>
-                    <MobileOwnerBlock tokenId={tokenId} visible={visible} lifecycle={lifecycle} />
-                </div>
-            </animated.div>
-        </>
+                boxShadow: lib.layout.boxShadow.dark,
+                width: '90%',
+                height: '450px',
+            }}
+        >
+            <div style={styles.bodyContainer}>
+                <MobileOwnerBlock tokenId={tokenId} visible={visible} lifecycle={lifecycle} />
+            </div>
+        </animated.div>
     );
 };
 
-export default React.memo(RingAbout);
+export default RingAbout;

@@ -325,7 +325,7 @@ const MobileOwnerBlock = ({
     );
 };
 
-export default React.memo(MobileOwnerBlock);
+export default MobileOwnerBlock;
 
 // const ens = web3.hook.usePriorityAnyENSName(
 //     token?.type === 'item' ? 'nugg' : provider,

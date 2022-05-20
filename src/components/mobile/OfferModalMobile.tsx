@@ -24,7 +24,6 @@ import {
 import styles from '@src/components/modals/OfferModal/OfferModal.styles';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Loader from '@src/components/general/Loader/Loader';
-import useMountLogger from '@src/hooks/useMountLogger';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import { useUsdPair, useUsdPairWithCalculation } from '@src/client/usd';
 import CurrencyToggler, {
@@ -47,7 +46,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const address = web3.hook.usePriorityAccount();
 
-    useMountLogger('OfferModal');
     const network = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
     const userBalance = web3.hook.usePriorityBalance(network);

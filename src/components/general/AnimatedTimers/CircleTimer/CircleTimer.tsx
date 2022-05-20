@@ -1,11 +1,4 @@
-import React, {
-    CSSProperties,
-    FunctionComponent,
-    ReactChild,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react';
+import React, { CSSProperties, FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 
 import {
@@ -17,8 +10,7 @@ import Colors from '@src/lib/colors';
 
 import styles from './CircleTimer.styles';
 
-type Props = {
-    children?: ReactChild | ReactChild[];
+type Props = React.PropsWithChildren<{
     duration: number;
     remaining: number;
     blocktime: number;
@@ -28,7 +20,7 @@ type Props = {
     width: number;
     strokeWidth?: number;
     defaultColor: string;
-};
+}>;
 const TWOPI = Math.PI * 2;
 const HALFPI = Math.PI / 2;
 

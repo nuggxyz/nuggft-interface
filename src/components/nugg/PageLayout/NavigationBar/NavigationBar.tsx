@@ -9,7 +9,6 @@ import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/Hea
 import useBlur from '@src/hooks/useBlur';
 import useDimensions from '@src/client/hooks/useDimensions';
 import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
-import NavigationBarMobile from '@src/components/mobile/NavigationBarMobile';
 
 import styles from './NavigationBar.styles';
 
@@ -33,9 +32,7 @@ const NavigationBar: FC<Props> = () => {
 
     // const openNuggBook = client.nuggbook.useOpenNuggBook();
 
-    return screenType === 'phone' ? (
-        <NavigationBarMobile />
-    ) : (
+    return (
         <animated.div
             style={{
                 ...styles.navBarContainer,

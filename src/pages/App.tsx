@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet';
 import { Navigate, Outlet } from 'react-router-dom';
 
 import SwapPage from '@src/pages/SwapPage';
-import NavigationBar from '@src/components/nugg/PageLayout/NavigationBar/NavigationBar';
 import { useRoutes } from '@src/lib/router';
 import client from '@src/client';
 import GlobalModal from '@src/components/modals/GlobalModal';
@@ -11,6 +10,7 @@ import ToastContainer from '@src/components/general/Toast/ToastContainer';
 import NuggBook from '@src/components/nuggbook/NuggBook';
 import useDimensions from '@src/client/hooks/useDimensions';
 import { HotRotateOController } from '@src/pages/HotRotateO';
+import NavigationWrapper from '@src/components/nugg/PageLayout/NavigationWrapper/NavigationWrapper';
 
 import MobileViewScreen2 from './mobile/MobileViewScreen2';
 import MobileWalletScreen2 from './mobile/MobileWalletScreen2';
@@ -59,13 +59,15 @@ const Router = () => {
 };
 
 const App = () => {
+    const { isPhone } = useDimensions();
+
     return (
         <>
-            <ToastContainer />
+            {!isPhone && <ToastContainer />}
             <GlobalModal />
             <NuggBook />
             <Helmet />
-            <NavigationBar />
+            <NavigationWrapper />
             <Router />
             <SwapPage />
         </>

@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import create from 'zustand';
 import { combine } from 'zustand/middleware';
-import React from 'react';
 
 import useDebounce from '@src/hooks/useDebounce';
 import emitter from '@src/emitter';
@@ -18,24 +17,19 @@ const store = create(
                 }));
             };
 
-            return { update };
+            const emit = emitter.on.bind(undefined, {
+                type: emitter.events.IncomingRpcBlock,
+                callback: (data) => {
+                    update(data.data);
+                },
+            });
+
+            return { update, emit };
         },
     ),
 );
 
-export const useBlockUpdater = () => {
-    const update = store((state) => state.update);
-    emitter.hook.useOn({
-        type: emitter.events.IncomingRpcBlock,
-        callback: React.useCallback(
-            (data) => {
-                console.log('AYYYYEEEE', data.data);
-                update(data.data);
-            },
-            [update],
-        ),
-    });
-};
+store.getState().emit();
 
 export default {
     useBlock: () => store((state) => state.block),
@@ -43,7 +37,7 @@ export default {
         const block = store((state) => state.block);
         return useDebounce(block, delay);
     },
-    useBlockUpdater,
+
     useUpdateBlock: () => store((state) => state.update),
     ...store,
 };
