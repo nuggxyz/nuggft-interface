@@ -19,8 +19,6 @@ import client from '@src/client';
 import { Connector, CoreProvider } from '@src/web3/core/types';
 import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 import usePrevious from '@src/hooks/usePrevious';
-import useInterval from '@src/hooks/useInterval';
-import useDebounce from '@src/hooks/useDebounce';
 import { CustomEtherscanProvider } from '@src/web3/classes/CustomEtherscanProvider';
 import useDimensions from '@src/client/hooks/useDimensions';
 
@@ -326,39 +324,43 @@ export function useCheckEtherscanForUnknownTransactionHash(
 ) {
     const etherscan = useEtherscan();
 
-    const isInactive = React.useMemo(() => {
-        if (!setFound || !request || found) return null;
-        return 5000;
-    }, [request, found, setFound]);
+    //     const isInactive = React.useMemo(() => {
+    //         if (!setFound || !request || found) return null;
+    //         return 5000;
+    //     }, [request, found, setFound]);
 
-    const val = useDebounce(isInactive, 0);
-
-    const callback = React.useCallback(async () => {
+    // //
+    const callback = React.useCallback(() => {
         if (!setFound || !request || found) return;
 
         // https://docs.etherscan.io/api-endpoints/accounts
-        const res = await etherscan.getHistory(request.from, request.startBlock);
-
-        console.log({ res, request });
-        res.forEach((element) => {
-            if (
-                element.data === request.data &&
-                element.to === request.to &&
-                element.value.eq(request.value)
-            ) {
-                setFound(element.hash as Hash);
-                if (element.isError && element.errorCode && setError) {
-                    setError(lib.errors.parseJsonRpcError(element.errorCode));
+        void etherscan.getHistory(request.from, request.startBlock).then((res) => {
+            console.log({ res, request });
+            res.forEach((element) => {
+                if (
+                    element.data === request.data &&
+                    element.to === request.to &&
+                    element.value.eq(request.value)
+                ) {
+                    setFound(element.hash as Hash);
+                    if (element.isError && element.errorCode && setError) {
+                        setError(lib.errors.parseJsonRpcError(element.errorCode));
+                    }
+                    emitter.emit({
+                        type: emitter.events.TransactionResponse,
+                        response: element,
+                    });
                 }
-                emitter.emit({
-                    type: emitter.events.TransactionResponse,
-                    response: element,
-                });
-            }
+            });
         });
     }, [etherscan, request, setFound, found, setError]);
 
-    useInterval(callback, val);
+    emitter.on({
+        type: emitter.events.HealthCheck,
+        callback,
+    });
+
+    // useInterval(callback, val);
 
     return null;
 }
