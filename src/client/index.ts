@@ -16,6 +16,8 @@ import transactions from './transactions';
 import usd from './usd';
 import ens from './ens';
 import health from './health';
+import epoch from './epoch';
+import block from './block';
 
 export default {
     core,
@@ -25,13 +27,13 @@ export default {
         graph: () => web3.config.apolloClient,
         activeSearch: () => core((state) => state.activeSearch, shallow),
 
-        epoch: {
-            default: () => core((state) => state.epoch),
-            id: () => core((state) => state.epoch?.id),
-            startblock: () => core((state) => state.epoch?.startblock),
-            endblock: () => core((state) => state.epoch?.endblock),
-            status: () => core((state) => state.epoch?.status),
-        },
+        // epoch: {
+        //     default: () => core((state) => React.useDeferredValue(state.epoch)),
+        //     id: () => core((state) => state.epoch?.id),
+        //     startblock: () => core((state) => state.epoch?.startblock),
+        //     endblock: () => core((state) => state.epoch?.endblock),
+        //     status: () => core((state) => state.epoch?.status),
+        // },
 
         lastSwap: {
             tokenId: () => core((state) => state.lastSwap?.tokenId),
@@ -53,7 +55,6 @@ export default {
         dimensions: () => core((state) => state.dimentions),
         editingNugg: () => core((state) => state.editingNugg),
 
-        blocknum: () => core((state) => state.blocknum),
         manualPriority: () => core((state) => state.manualPriority),
         searchFilter: {
             viewing: () => core((state) => state.searchFilter?.viewing ?? SearchView.Home),
@@ -113,7 +114,6 @@ export default {
             ),
     },
     mutate: {
-        updateBlocknum: () => core((state) => state.updateBlocknum),
         updateProtocol: () => core((state) => state.updateProtocol),
         updateProtocolSimple: () => core((state) => state.updateProtocolSimple),
 
@@ -161,4 +161,6 @@ export default {
     usd,
     ens,
     health,
+    block,
+    epoch,
 };

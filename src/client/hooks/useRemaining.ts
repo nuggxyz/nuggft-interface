@@ -5,21 +5,10 @@ import client from '@src/client';
 import web3 from '@src/web3';
 import useInterval from '@src/hooks/useInterval';
 
+const interval = web3.config.DEFAULT_CONTRACTS.Interval;
+
 export default (epoch: EpochData | undefined | null) => {
-    const blocknum = client.live.blocknum();
-
-    const chainId = web3.hook.usePriorityChainId();
-
-    const blockDuration = useMemo(() => {
-        let remaining = 0;
-        if (epoch) {
-            remaining = +epoch.endblock - +epoch.startblock;
-        }
-        if (remaining <= 0) {
-            remaining = 0;
-        }
-        return remaining;
-    }, [epoch]);
+    const blocknum = client.block.useBlock();
 
     const blocksRemaining = useMemo(() => {
         let remaining = 0;
@@ -40,18 +29,16 @@ export default (epoch: EpochData | undefined | null) => {
     }, [blocknum, epoch]);
 
     const time = useMemo(() => {
+        // console.log('AYO');
         const seconds = blocksRemaining * 12;
         const minutes = Math.floor(seconds / 60);
 
         let countdownSeconds;
         let countdownMinutes;
 
-        if (chainId) {
-            const interval = web3.config.CONTRACTS[chainId].Interval;
-            if (blocksRemaining >= interval) {
-                countdownSeconds = (blocksRemaining % interval) * 12;
-                countdownMinutes = Math.floor(countdownSeconds / 60);
-            }
+        if (blocksRemaining >= interval) {
+            countdownSeconds = (blocksRemaining % interval) * 12;
+            countdownMinutes = Math.floor(countdownSeconds / 60);
         }
 
         return {
@@ -60,16 +47,15 @@ export default (epoch: EpochData | undefined | null) => {
             countdownMinutes,
             countdownSeconds,
         };
-    }, [blocksRemaining, chainId]);
+    }, [blocksRemaining]);
 
     return {
-        blockDuration,
         blocksRemaining,
         ...time,
     };
 };
 
-export const useRemainingTrueSeconds = (seconds: number) => {
+export const useRemainingTrueSeconds = (seconds: number | null) => {
     const [trueSeconds, setTrueSeconds] = React.useState(seconds);
 
     const activate = React.useMemo(() => {
@@ -78,7 +64,7 @@ export const useRemainingTrueSeconds = (seconds: number) => {
 
     useInterval(
         React.useCallback(() => {
-            setTrueSeconds(trueSeconds - 1);
+            if (trueSeconds) setTrueSeconds(trueSeconds - 1);
         }, [trueSeconds, setTrueSeconds]),
         activate ? 1000 : null,
     );

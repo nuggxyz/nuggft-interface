@@ -15,7 +15,7 @@ export default () => {
 
     const setLastSwap = client.mutate.setLastSwap();
 
-    const epoch = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
 
     const startup = useTokenQuery();
 

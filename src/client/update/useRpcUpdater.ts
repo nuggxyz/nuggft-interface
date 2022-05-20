@@ -23,7 +23,7 @@ export default () => {
     const address = web3.hook.usePriorityAccount();
 
     const updateOffers = client.mutate.updateOffers();
-    const updateBlocknum = client.mutate.updateBlocknum();
+    const updateBlocknum = client.block.useUpdateBlock();
     const updateProtocolSimple = client.mutate.updateProtocolSimple();
     const updateLastBlockRpc = client.health.useUpdateLastBlockRpc();
 
@@ -276,13 +276,13 @@ export default () => {
 
     const blockListener = React.useCallback(
         (log: number) => {
-            console.log(chainId, log);
-            if (chainId && log !== 0) {
-                updateBlocknum(log, chainId);
+            console.log(log);
+            if (log !== 0) {
+                updateBlocknum(log);
                 updateLastBlockRpc(log);
             }
         },
-        [chainId, updateBlocknum, updateLastBlockRpc],
+        [updateBlocknum, updateLastBlockRpc],
     );
 
     React.useEffect(() => {

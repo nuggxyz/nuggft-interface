@@ -56,7 +56,7 @@ const SwapButton = ({
 };
 
 const SwapDesc = ({ item, epoch }: { item: SwapData; epoch: number }) => {
-    const blocknum = client.live.blocknum();
+    const blocknum = client.block.useBlock();
 
     return epoch && blocknum ? (
         <Text textStyle={{ color: lib.colors.primaryColor }}>
@@ -93,7 +93,7 @@ const SwapItem: FunctionComponent<
         item.leader || '',
     );
 
-    const epoch = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
 
     const navigate = useNavigate();
 
@@ -190,7 +190,7 @@ const SwapItem: FunctionComponent<
 const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const epoch = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
 
     const listData = useMemo(() => {
         const res: { title: string; items: SwapData[] }[] = [];

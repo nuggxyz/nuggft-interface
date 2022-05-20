@@ -292,7 +292,6 @@ export interface ClientState {
     stake: StakeData | undefined;
     epoch: EpochData | undefined;
     nextEpoch: EpochData | undefined;
-    blocknum: number | undefined;
     liveOffers: Dictionary<OfferData[]>;
     myNuggs: MyNuggsData[];
     myUnclaimedNuggOffers: IsolateNuggIdFactory<UnclaimedOffer>[];

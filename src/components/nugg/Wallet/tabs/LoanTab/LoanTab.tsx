@@ -19,7 +19,7 @@ const Buttons = () => (
 );
 
 const LoanTab: FunctionComponent<Props> = () => {
-    const epochId = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
     const loanedNuggs = client.live.myLoans();
 
     return (
@@ -30,7 +30,7 @@ const LoanTab: FunctionComponent<Props> = () => {
                 TitleButton={Buttons}
                 label={t`Loaned Nuggs`}
                 style={styles.list}
-                extraData={epochId}
+                extraData={epoch ?? 0}
                 listEmptyText={t`You haven't loaned any nuggs yet!`}
                 labelStyle={styles.listLabel}
                 listEmptyStyle={styles.textWhite}

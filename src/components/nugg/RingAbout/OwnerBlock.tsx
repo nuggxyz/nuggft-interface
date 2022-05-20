@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { plural, t } from '@lingui/macro';
 
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import useRemaining, { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
+import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
@@ -42,9 +42,11 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 
     const darkmode = useDarkMode();
 
-    const { minutes, seconds } = useRemaining(swap?.epoch);
+    const blocknum = client.block.useBlock();
 
-    const trueSeconds = useRemainingTrueSeconds(seconds);
+    const { minutes, seconds } = client.epoch.useEpoch(swap?.epoch?.id, blocknum);
+
+    const trueSeconds = useRemainingTrueSeconds(seconds ?? 0);
     const provider = web3.hook.usePriorityProvider();
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
@@ -192,8 +194,8 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             </Text>
                             <Text textStyle={{ color: dynamicTextColor, fontSize: '28px' }}>
                                 {' '}
-                                {minutes === 0
-                                    ? `${plural(trueSeconds, {
+                                {!minutes
+                                    ? `${plural(trueSeconds ?? 0, {
                                           1: '# second',
                                           other: '# seconds',
                                       })}`

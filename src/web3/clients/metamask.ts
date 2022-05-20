@@ -75,11 +75,11 @@ export class MetaMask extends Connector {
     ) {
         super(ConnectorEnum.MetaMask, actions, [peer]);
 
-        if (connectEagerly && typeof window === 'undefined') {
-            throw new Error(
-                'connectEagerly = true is invalid for SSR, instead use the connectEagerly method in a useEffect',
-            );
-        }
+        // if (connectEagerly && typeof window === 'undefined') {
+        //     throw new Error(
+        //         'connectEagerly = true is invalid for SSR, instead use the connectEagerly method in a useEffect',
+        //     );
+        // }
 
         this.options = options;
 

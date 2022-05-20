@@ -19,11 +19,11 @@ type Props = {
 };
 
 const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick }) => {
-    const epoch = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
+    const endblock = client.epoch.active.useEndBlock();
 
-    const epoch__endblock = client.live.epoch.endblock();
+    const blocknum = client.block.useBlock();
 
-    const blocknum = client.live.blocknum();
     const error = web3.hook.usePriorityError();
 
     const navigate = useNavigate();
@@ -79,14 +79,14 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
                         </div>
                     )}
 
-                    {epoch && epoch__endblock && blocknum ? (
+                    {epoch && endblock && blocknum ? (
                         <Text
                             textStyle={{
                                 fontFamily: lib.layout.font.code.regular,
                                 ...textStyle,
                             }}
                         >
-                            {`${epoch} | ${epoch__endblock - blocknum}`}
+                            {`${epoch} | ${endblock - blocknum}`}
                         </Text>
                     ) : null}
                 </div>

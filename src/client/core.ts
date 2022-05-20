@@ -2,8 +2,6 @@
 import create from 'zustand';
 import { combine } from 'zustand/middleware';
 
-import { Chain } from '@src/web3/core/interfaces';
-import web3 from '@src/web3';
 import { SupportedLocale } from '@src/lib/i18n/locales';
 import { parseItmeIdToNum } from '@src/lib/index';
 
@@ -99,7 +97,6 @@ const core = create(
             subscriptionQueue: [],
             myLoans: [],
             activating: false,
-            blocknum: undefined,
             error: undefined,
             manualPriority: undefined,
             liveTokens: {},
@@ -124,39 +121,39 @@ const core = create(
 
         // devtools(
         (set, get) => {
-            function updateBlocknum(blocknum: number, chainId: Chain, startup = false) {
-                const epochId = web3.config.calculateEpochId(blocknum, chainId);
+            // function updateBlocknum(blocknum: number, chainId: Chain, startup = false) {
+            //     const epochId = web3.config.calculateEpochId(blocknum, chainId);
 
-                const hasStarted = startup || get().started;
-                // @ts-ignore
+            //     // const hasStarted = startup || get().started;
+            //     // @ts-ignore
 
-                set((draft) => {
-                    if (startup) {
-                        draft.started = true;
-                    }
+            //     set((draft) => {
+            //         if (startup) {
+            //             draft.started = true;
+            //         }
 
-                    if (hasStarted && !draft.route) {
-                        draft.route = window.location.hash;
-                    }
+            //         // if (hasStarted && !draft.route) {
+            //         //     draft.route = window.location.hash;
+            //         // }
 
-                    if (!draft.epoch || epochId !== draft.epoch.id) {
-                        draft.epoch = {
-                            id: epochId,
-                            startblock: web3.config.calculateStartBlock(epochId, chainId),
-                            endblock: web3.config.calculateStartBlock(epochId + 1, chainId) - 1,
-                            status: 'ACTIVE',
-                        };
-                        draft.nextEpoch = {
-                            id: epochId + 1,
-                            startblock: web3.config.calculateStartBlock(epochId + 2, chainId),
-                            endblock: web3.config.calculateStartBlock(epochId + 2, chainId) - 1,
-                            status: 'PENDING',
-                        };
-                    }
+            //         if (!draft.epoch || epochId !== draft.epoch.id) {
+            //             draft.epoch = {
+            //                 id: epochId,
+            //                 startblock: web3.config.calculateStartBlock(epochId, chainId),
+            //                 endblock: web3.config.calculateStartBlock(epochId + 1, chainId) - 1,
+            //                 status: 'ACTIVE',
+            //             };
+            //             draft.nextEpoch = {
+            //                 id: epochId + 1,
+            //                 startblock: web3.config.calculateStartBlock(epochId + 2, chainId),
+            //                 endblock: web3.config.calculateStartBlock(epochId + 2, chainId) - 1,
+            //                 status: 'PENDING',
+            //             };
+            //         }
 
-                    draft.blocknum = blocknum;
-                });
-            }
+            //         draft.blocknum = blocknum;
+            //     });
+            // }
 
             function updateProtocolSimple(
                 upd: Pick<ClientStateUpdate, 'epoch' | 'stake' | 'totalNuggs' | 'featureTotals'>,
@@ -450,7 +447,6 @@ const core = create(
             };
 
             return {
-                updateBlocknum,
                 updateProtocol,
                 removeLoan,
                 removeNugg,

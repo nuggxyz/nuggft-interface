@@ -15,22 +15,30 @@ import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import { Address } from '@src/classes/Address';
-import useRemaining, { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
+import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import Label from '@src/components/general/Label/Label';
 import { EthInt } from '@src/classes/Fraction';
 
-const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
+const MobileOwnerBlock = ({
+    tokenId,
+    visible,
+    lifecycle,
+}: {
+    tokenId?: TokenId;
+    visible?: boolean;
+    lifecycle: ReturnType<typeof useLifecycleEnhanced>;
+}) => {
     const token = client.live.token(tokenId);
 
     const swap = client.swaps.useSwap(tokenId);
 
     const darkmode = useDarkMode();
 
-    const [leader, ...offers] = useAggregatedOffers(tokenId);
+    const [leader, ...offers] = useAggregatedOffers(visible ? tokenId : undefined);
 
-    const { minutes, seconds } = useRemaining(swap?.epoch);
+    const { minutes, seconds } = client.epoch.useEpoch(swap?.epoch?.id);
 
-    const trueSeconds = useRemainingTrueSeconds(seconds);
+    const trueSeconds = useRemainingTrueSeconds(seconds ?? 0);
     const provider = web3.hook.usePriorityProvider();
     const nuggft = useNuggftV1(provider);
 
@@ -38,8 +46,6 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
         swap && swap.type === 'item' ? 'nugg' : provider,
         leader?.account || '',
     );
-
-    const lifecycle = useLifecycleEnhanced(swap, token);
 
     const dynamicTextColor = React.useMemo(() => {
         if (swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) {
@@ -51,7 +57,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
     const minTryoutCurrency = useUsdPair(token?.isItem() ? token?.tryout.min?.eth : undefined);
 
     const vfo = useAsyncState(() => {
-        if (token && provider && tokenId && lifecycle?.lifecycle === Lifecycle.Bunt) {
+        if (visible && token && provider && tokenId && lifecycle?.lifecycle === Lifecycle.Bunt) {
             const check = nuggft['vfo(address,uint24)'].bind(undefined, Address.NULL.hash);
             return check(tokenId.toRawId()).then((x) => {
                 if (x.isZero()) return nuggft.msp();
@@ -59,7 +65,7 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
             });
         }
         return undefined;
-    }, [token, nuggft, tokenId, provider]);
+    }, [visible, token, nuggft, tokenId, provider]);
 
     const leaderCurrency = useUsdPair(leader?.eth || vfo || 0);
 
@@ -301,8 +307,8 @@ const MobileOwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                             </Text>
                             <Text textStyle={{ color: dynamicTextColor, fontSize: '28px' }}>
                                 {' '}
-                                {minutes === 0
-                                    ? `${plural(trueSeconds, {
+                                {!minutes
+                                    ? `${plural(trueSeconds ?? 0, {
                                           1: '# second',
                                           other: '# seconds',
                                       })}`

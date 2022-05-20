@@ -11,7 +11,7 @@ import client from '..';
 export default () => {
     const provider = web3.hook.usePriorityProvider();
     const nuggft = useNuggftV1(provider);
-    const blocknum = client.live.blocknum();
+    const blocknum = client.block.useBlock();
     const updateProtocolSimple = client.mutate.updateProtocolSimple();
 
     const callback = useCallback(async () => {

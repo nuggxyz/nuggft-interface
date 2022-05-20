@@ -182,7 +182,9 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
     };
 
     return {
+        stats: { children: true },
         experiments: { topLevelAwait: true },
+
         target: ['browserslist'],
         mode: isEnvProduction ? 'production' : isEnvDevelopment ? 'development' : 'none',
         // Stop compilation early in production
@@ -196,6 +198,7 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
         // This means they will be the "root" imports that are included in JS bundle.
         entry: paths.appIndexJs,
         output: {
+            globalObject: `(typeof self !== 'undefined' ? self : this)`,
             // The build folder.
             path: paths.appBuild,
             // Add /* filename */ comments to generated require()s in the output.
@@ -376,6 +379,27 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
                         },
                     ],
                 },
+                // {
+                //     // test: /\.worker\.js$/,
+                //     // use: {
+                //     //     loader: 'worker-loader',
+                //     //     options: {
+                //     //         inline: true,
+                //     //     },
+                //     // },
+                //     test: /\.worker\.ts$/,
+                //     use: [
+                //         {
+                //             loader: 'worker-loader',
+                //             options: {
+                //                 // inline: true,
+                //                 // Use directory structure & typical names of chunks produces by "react-scripts"
+                //                 filename: 'static/js/[name].[contenthash:8].js',
+                //                 // esModule: false,
+                //             },
+                //         },
+                //     ],
+                // },
                 {
                     // "oneOf" will traverse all following loaders until one will
                     // match the requirements. When no loader matches it will fall
@@ -431,6 +455,7 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
                                 and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
                             },
                         },
+
                         // Process application JS with Babel.
                         // The preset includes JSX, Flow, TypeScript, and some ESnext features.
                         {
@@ -464,6 +489,7 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
                                 compact: isEnvProduction,
                             },
                         },
+
                         // Process any JS outside of the app with Babel.
                         // Unlike the application JS, we only compile the standard ES features.
                         {
@@ -491,6 +517,7 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
                                 inputSourceMap: shouldUseSourceMap,
                             },
                         },
+
                         // "postcss" loader applies autoprefixer to our CSS.
                         // "css" loader resolves paths in CSS and adds assets as dependencies.
                         // "style" loader turns CSS into JS modules that inject <style> tags.
@@ -579,6 +606,7 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
                                 'sass-loader',
                             ),
                         },
+
                         // "file" loader makes sure those assets get served by WebpackDevServer.
                         // When you `import` an asset, you get its (virtual) filename.
                         // In production, they would get copied to the `build` folder.
@@ -717,6 +745,7 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
                     // See https://github.com/cra-template/pwa/issues/13#issuecomment-722667270
                     maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
                 }),
+
             // TypeScript type checking
             useTypeScript &&
                 new ForkTsCheckerWebpackPlugin({

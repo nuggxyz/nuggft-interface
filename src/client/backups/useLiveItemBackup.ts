@@ -5,20 +5,16 @@ import web3 from '@src/web3';
 import lib from '@src/lib';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import { EthInt, Fraction } from '@src/classes/Fraction';
-
-// eslint-disable-next-line import/no-cycle
-
 import { buildTokenIdFactory } from '@src/prototypes';
 
 import client from '..';
 
 export default (activate: boolean, tokenId: ItemId | undefined) => {
     const chainId = web3.hook.usePriorityChainId();
-    const liveEpoch = client.live.epoch.default();
-
+    const liveEpoch = client.epoch.active.useId();
     const provider = web3.hook.usePriorityProvider();
     const nuggft = useNuggftV1(provider);
-    const blocknum = client.live.blocknum();
+    const blocknum = client.block.useBlock();
 
     const updateOffers = client.mutate.updateOffers();
     const updateToken = client.mutate.updateToken();
@@ -27,8 +23,8 @@ export default (activate: boolean, tokenId: ItemId | undefined) => {
         if (activate && tokenId && chainId && liveEpoch) {
             const items = lib.parse.lastItemSwap(await nuggft.lastItemSwap(tokenId.toRawId()));
 
-            const active = items.find((x) => x.endingEpoch === liveEpoch.id);
-            const upcoming = items.find((x) => x.endingEpoch === liveEpoch.id + 1);
+            const active = items.find((x) => x.endingEpoch === liveEpoch);
+            const upcoming = items.find((x) => x.endingEpoch === liveEpoch + 1);
 
             const check = await Promise.all(
                 [active, upcoming].map(async (arg) => {

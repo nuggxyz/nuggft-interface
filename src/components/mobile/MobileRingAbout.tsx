@@ -5,10 +5,8 @@ import client from '@src/client';
 import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
 import lib from '@src/lib';
 import styles from '@src/components/nugg/RingAbout/RingAbout.styles';
-import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import { Lifecycle } from '@src/client/interfaces';
-import useRemaining from '@src/client/hooks/useRemaining';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 
 import MobileOwnerBlock from './MobileOwnerBlock';
@@ -20,16 +18,16 @@ type Props = {
 
 const RingAbout: FunctionComponent<Props> = ({ tokenId, visible }) => {
     const swap = client.swaps.useSwap(tokenId);
-    useLiveTokenPoll(visible, tokenId);
-    const lifecycle = useLifecycleEnhanced(swap);
 
-    const { minutes } = useRemaining(swap?.epoch);
+    useLiveTokenPoll(visible, tokenId);
+
+    const lifecycle = useLifecycleEnhanced(visible ? swap : undefined);
+
+    const { minutes } = client.epoch.useEpoch(swap?.epoch?.id);
 
     // useLiveToken(tokenId);
 
     useLiveOffers(tokenId);
-
-    useTriggerPageLoad(swap, 5000);
 
     return (
         <>
@@ -37,7 +35,7 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId, visible }) => {
                 style={{
                     ...styles.container,
 
-                    ...(minutes <= 5 &&
+                    ...((minutes ?? 0) <= 5 &&
                         lifecycle?.active && {
                             background: lib.colors.gradient,
                         }),
@@ -51,7 +49,7 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId, visible }) => {
                 }}
             >
                 <div style={styles.bodyContainer}>
-                    <MobileOwnerBlock tokenId={tokenId} />
+                    <MobileOwnerBlock tokenId={tokenId} visible={visible} lifecycle={lifecycle} />
                 </div>
             </animated.div>
         </>

@@ -208,6 +208,7 @@
         "tiny-invariant": "^1.2.0",
         "ua-parser-js": "^1.0.2",
         "web-vitals": "^2.1.4",
+        "worker-loader": "^3.0.8",
         "ws": "^8.5.0",
         "zustand": "^4.0.0-rc.1"
     }

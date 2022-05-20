@@ -29,7 +29,7 @@ import MyNuggActions from './MyNuggActions';
 type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
 
 const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
-    const epoch = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
 
     const { safeTokenId: tokenId } = useViewingNugg();
 

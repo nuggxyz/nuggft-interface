@@ -24,7 +24,7 @@ type Props = Record<string, never>;
 const INFINITE_INTERVAL = 25;
 
 const NuggDexSearchList: FunctionComponent<Props> = () => {
-    const epoch__id = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
     const target = client.live.searchFilter.target();
     const sort = client.live.searchFilter.sort();
     const viewing = client.live.searchFilter.viewing();
@@ -131,7 +131,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         () =>
             [...all.current, ...all.next, ...all.potential].reduce((acc: TokenId[], curr) => {
                 let tmp: TokenId[] = acc;
-                if (epoch__id && +curr.toRawId() <= +epoch__id) {
+                if (epoch && +curr.toRawId() <= +epoch) {
                     if (sortAsc[SearchView.OnSale]) {
                         tmp = [...acc, curr];
                     } else {
@@ -140,7 +140,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 }
                 return tmp;
             }, []),
-        [epoch__id, all, sortAsc],
+        [epoch, all, sortAsc],
     );
 
     const recentEverything = useMemo(() => {

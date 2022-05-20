@@ -8,8 +8,8 @@ import client from '..';
 export default (swap: Omit<SwapData, 'offers'> | undefined, sup?: LiveToken) => {
     const lifecycle = useLifecycle(sup || swap);
 
-    const epoch = client.live.epoch.endblock();
-    const blocknum = client.live.blocknum();
+    const epoch = client.epoch.active.useId();
+    const blocknum = client.block.useBlock();
 
     if (!epoch || !blocknum || !swap) return undefined;
 

@@ -1,6 +1,5 @@
 /* eslint-disable no-nested-ternary */
 import React, { CSSProperties, FunctionComponent } from 'react';
-import { t } from '@lingui/macro';
 import { IoWarning } from 'react-icons/io5';
 
 import lib from '@src/lib';
@@ -9,10 +8,8 @@ import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/Circ
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
-import Label from '@src/components/general/Label/Label';
 import { Lifecycle } from '@src/client/interfaces';
 import web3 from '@src/web3';
-import useRemaining from '@src/client/hooks/useRemaining';
 import Text from '@src/components/general/Texts/Text/Text';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import useDimensions from '@src/client/hooks/useDimensions';
@@ -49,13 +46,13 @@ const TheRing: FunctionComponent<Props> = ({
 }) => {
     const { screen: screenType, isPhone } = useDimensions();
 
-    const chainId = web3.hook.usePriorityChainId();
-
     const tokenId = useDesktopSwappingNugg(manualTokenId);
 
     const swap = client.swaps.useSwap(tokenId);
     const lifecycle = useLifecycle(swap);
-    const blocknum = client.live.blocknum();
+    const blocknum = client.block.useBlock();
+
+    const startblock = client.epoch.active.useStartBlock();
 
     useTriggerPageLoad(swap, 5000);
 
@@ -64,15 +61,15 @@ const TheRing: FunctionComponent<Props> = ({
             lifecycle === Lifecycle.Bunt &&
             swap &&
             blocknum &&
-            swap?.epoch &&
-            +swap.epoch.startblock + 255 - blocknum < 75
+            startblock &&
+            +startblock + 255 - blocknum < 75
         )
-            return +swap.epoch.startblock + 255 - blocknum - 17;
+            return +startblock + 255 - blocknum - 17;
 
         return 0;
-    }, [swap, blocknum, lifecycle]);
+    }, [startblock, blocknum, lifecycle]);
 
-    const { blocksRemaining, blockDuration, countdownMinutes } = useRemaining(swap?.epoch);
+    const { blocksRemaining } = client.epoch.useEpoch(swap?.epoch?.id, blocknum);
 
     const CircleTimerWrap = React.useMemo(() => {
         return isPhone ? CircleTimerMobile : CircleTimer;
@@ -81,8 +78,8 @@ const TheRing: FunctionComponent<Props> = ({
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
             <CircleTimerWrap
-                duration={blockDuration}
-                remaining={blocksRemaining}
+                duration={web3.config.DEFAULT_CONTRACTS.Interval}
+                remaining={blocksRemaining ?? 0}
                 blocktime={constants.BLOCKTIME}
                 width={circleWidth}
                 childrenContainerStyle={circleChildrenContainerStyle}
@@ -115,7 +112,7 @@ const TheRing: FunctionComponent<Props> = ({
             >
                 {tokenId && (
                     <>
-                        {chainId && swap && lifecycle === Lifecycle.Deck && (
+                        {/* {chainId && swap && lifecycle === Lifecycle.Deck && (
                             <Label
                                 text={t`countdown begins in ${countdownMinutes} minutes`}
                                 containerStyles={{
@@ -124,7 +121,7 @@ const TheRing: FunctionComponent<Props> = ({
                                         : {}),
                                 }}
                             />
-                        )}
+                        )} */}
                         <AnimatedCard disable={disableHover}>
                             <TokenViewer
                                 tokenId={tokenId}

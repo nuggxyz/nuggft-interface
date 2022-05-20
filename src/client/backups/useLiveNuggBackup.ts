@@ -1,24 +1,20 @@
 import { useCallback, useEffect } from 'react';
 
-// eslint-disable-next-line import/no-cycle
 import web3 from '@src/web3';
 import lib from '@src/lib';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import { EthInt } from '@src/classes/Fraction';
 import { Address } from '@src/classes/Address';
-
-// eslint-disable-next-line import/no-cycle
-
 import { buildTokenIdFactory } from '@src/prototypes';
 
 import client from '..';
 
 export default (activate: boolean, tokenId: NuggId | undefined) => {
     const chainId = web3.hook.usePriorityChainId();
-    const liveEpoch = client.live.epoch.default();
+    const liveEpoch = client.epoch.active.useId();
     const provider = web3.hook.usePriorityProvider();
     const nuggft = useNuggftV1(provider);
-    const blocknum = client.live.blocknum();
+    const blocknum = client.block.useBlock();
     const updateToken = client.mutate.updateToken();
     const updateOffers = client.mutate.updateOffers();
 
@@ -35,8 +31,8 @@ export default (activate: boolean, tokenId: NuggId | undefined) => {
                     ? (Address.ZERO.hash as AddressString)
                     : (nuggft.address as AddressString);
 
-            if (agency.flag === 0 && Number(tokenId.toRawId()) === liveEpoch.id) {
-                agency.epoch = liveEpoch.id;
+            if (agency.flag === 0 && Number(tokenId.toRawId()) === liveEpoch) {
+                agency.epoch = liveEpoch;
                 agency.flag = 0x3;
             }
 

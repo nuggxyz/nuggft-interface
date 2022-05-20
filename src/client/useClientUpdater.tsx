@@ -11,6 +11,8 @@ import useDimensionsUpdater from './update/useDimensionsUpdater';
 import { useVisualViewportUpdater, useEmitOnKeyboardClose } from './viewport';
 import { useCloseModalOnKeyboardClose } from './modal';
 import { useUpdateTransactionOnEmit } from './transactions';
+import { useEpochUpdater } from './epoch';
+
 // import useGraphUpdater from './update/useGraphUpdater';
 
 export default () => {
@@ -41,6 +43,8 @@ export default () => {
     useCloseModalOnKeyboardClose();
 
     useUpdateTransactionOnEmit();
+
+    useEpochUpdater();
 
     // useGraphUpdater();
 

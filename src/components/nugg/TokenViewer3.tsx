@@ -17,7 +17,7 @@ interface Props extends TokenViewerProps {
 }
 
 export default ({ tokenId, validated, onTokenQuery, ...props }: Props) => {
-    const blocknum = client.live.blocknum();
+    const blocknum = client.block.useBlock();
 
     const nuggft = useNuggftV1();
 

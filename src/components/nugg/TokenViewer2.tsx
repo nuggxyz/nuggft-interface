@@ -27,7 +27,7 @@ export default ({ tokenId, style, validated, ...props }: Props) => {
         return { width: window.innerWidth };
     }, []);
 
-    const blocknum = client.live.blocknum();
+    const blocknum = client.block.useBlock();
 
     const nuggft = useNuggftV1();
 

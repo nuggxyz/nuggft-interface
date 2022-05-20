@@ -7,7 +7,7 @@ import formatLiveItem from '@src/client/formatters/formatLiveItem';
 import formatLiveNugg from '@src/client/formatters/formatLiveNugg';
 
 export default () => {
-    const epoch = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
 
     const updateToken = client.mutate.updateToken();
     const navigate = useNavigate();

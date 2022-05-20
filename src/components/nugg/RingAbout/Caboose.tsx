@@ -11,7 +11,6 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import web3 from '@src/web3';
 import client from '@src/client';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
-import useRemaining from '@src/client/hooks/useRemaining';
 import useDimensions from '@src/client/hooks/useDimensions';
 import { ModalEnum } from '@src/interfaces/modals';
 import { buildTokenIdFactory } from '@src/prototypes';
@@ -103,7 +102,8 @@ export default ({
 }) => {
     const { isPhone } = useDimensions();
     const address = web3.hook.usePriorityAccount();
-    const epoch = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
+    const { minutes } = client.epoch.useEpoch(epoch);
     const swap = client.swaps.useSwap(tokenId);
 
     const myNuggs = client.live.myNuggs();
@@ -113,8 +113,6 @@ export default ({
     const [selectedMyNugg, setSelectedMyNugg] = React.useState<FormatedMyNuggsData>();
     const [continued, setContinued] = React.useState<boolean>(false);
     const openModal = client.modal.useOpenModal();
-
-    const { minutes } = useRemaining(client.live.epoch.default());
 
     const darkmode = useDarkMode();
 

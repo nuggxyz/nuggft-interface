@@ -20,10 +20,7 @@ import lib from '@src/lib';
 import { isPhone } from '@src/lib/userAgent';
 import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
-//
-// eslint-disable-next-line import/no-cycle
-import { DEFAULT_CHAIN } from '@src/web3/config';
-// eslint-disable-next-line import/no-cycle
+import { DEFAULT_CHAIN } from '@src/web3/constants';
 
 interface PeerMeta {
     url: string;
@@ -133,7 +130,7 @@ export class WalletConnect extends Connector {
 
             if (!isPhone || this.__DEV__forceDesktopAction) {
                 if (peer.desktopAction === 'deeplink') {
-                    window.open(uri);
+                    if (typeof window !== 'undefined') window?.open(uri);
                 } else {
                     client.modal.getState().openModal({
                         modalType: ModalEnum.QrCode,
@@ -144,7 +141,7 @@ export class WalletConnect extends Connector {
                     });
                 }
             } else {
-                window.open(uri);
+                window?.open(uri);
             }
         } else {
             throw new Error('web3:clients:walletconnect:URIListener | peer does not exist');
@@ -184,16 +181,7 @@ export class WalletConnect extends Connector {
     private get _signer_connection_transport_socket() {
         const a = this._signer_connection_transport;
 
-        console.log({ ...a });
-
-        // eslint-disable-next-line prefer-object-spread
-        const g = Object.assign({}, a?._nextSocket);
-        // eslint-disable-next-line prefer-object-spread
-        const r = Object.assign({}, a?._socket);
-
-        console.log(g, { ...g, ...r });
-
-        return a?._nextSocket;
+        return a?._socket || a?._nextSocket;
         // return (this._signer_connection_transport as unknown as { _nextSocket?: WebSocket })
         //     ?._nextSocket;
     }
@@ -453,7 +441,7 @@ export class WalletConnect extends Connector {
 
         await this.provider?.disconnect();
 
-        window.localStorage.removeItem('walletconnect');
+        window?.localStorage.removeItem('walletconnect');
         this.provider = undefined;
         this.eagerConnection = undefined;
         this.actions.reportError(error);

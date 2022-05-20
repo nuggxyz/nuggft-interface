@@ -168,7 +168,7 @@ function useSendTransaction(
         ),
     });
 
-    const blocknum = client.live.blocknum();
+    const blocknum = client.block.useBlock();
 
     useCheckEtherscanForUnknownTransactionHash(hash, setHash, setError, pop);
 

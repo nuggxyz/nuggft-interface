@@ -12,7 +12,6 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import lib from '@src/lib';
 import Label from '@src/components/general/Label/Label';
-import useRemaining from '@src/client/hooks/useRemaining';
 import SimpleList from '@src/components/general/List/SimpleList';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
@@ -32,6 +31,7 @@ export const ActiveRenderItem = ({
 }) => {
     const { gotoViewingNugg } = useViewingNugg();
     const swap = client.swaps.useSwap(tokenId);
+
     return tokenId ? (
         <div
             aria-hidden="true"
@@ -96,7 +96,7 @@ export default () => {
 
     const swaps = useSortedSwapList();
 
-    const { minutes } = useRemaining(client.live.epoch.default());
+    const minutes = client.epoch.active.useMinutes();
 
     return chainId && provider ? (
         <div style={styles.container}>

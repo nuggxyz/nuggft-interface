@@ -10,7 +10,7 @@ import { Address } from '@src/classes/Address';
 import client from '@src/client';
 import { EthInt } from '@src/classes/Fraction';
 // eslint-disable-next-line import/no-cycle
-import { CONTRACTS } from '@src/web3/config';
+import { CONTRACTS } from '@src/web3/constants';
 import type { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
 // eslint-disable-next-line import/no-cycle
 // eslint-disable-next-line import/no-cycle

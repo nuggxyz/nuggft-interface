@@ -6,7 +6,7 @@ import { constants, VoidSigner } from 'ethers';
 import { Connector, Actions } from '@src/web3/core/types';
 import { PeerInfo__Rpc, Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 // eslint-disable-next-line import/no-cycle
-import { DEFAULT_CHAIN } from '@src/web3/config';
+import { DEFAULT_CHAIN } from '@src/web3/constants';
 
 export type url = string | ConnectionInfo;
 

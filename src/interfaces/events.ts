@@ -11,7 +11,7 @@ import {
     LiquidateEvent,
     RebalanceEvent,
     RotateEvent,
-} from '../typechain/NuggftV1';
+} from '@src/typechain/NuggftV1';
 
 export enum EventNames {
     Mint = 'Mint',

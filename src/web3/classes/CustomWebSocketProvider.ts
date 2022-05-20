@@ -4,6 +4,8 @@ import { logger } from 'ethers';
 import { defineReadOnly, Logger } from 'ethers/lib/utils';
 import { Event } from '@ethersproject/providers/lib/base-provider';
 
+import { DEFAULT_CHAIN, INFURA_KEY } from '@src/web3/constants';
+
 import { EthersWebSocketProvider, getEventTag } from './EthersWebSocketProvider';
 
 export class CustomWebSocketProvider extends EthersWebSocketProvider {
@@ -38,7 +40,11 @@ export class InfuraWebSocketProvider extends CustomWebSocketProvider {
 
     readonly projectSecret!: string;
 
-    constructor(network: Networkish, apiKey: string, onClose: (e: CloseEvent) => void) {
+    constructor(
+        network: Networkish = DEFAULT_CHAIN,
+        apiKey: string = INFURA_KEY,
+        onClose: (e: CloseEvent) => void = () => undefined,
+    ) {
         const provider = new InfuraProvider(network, apiKey);
         const { connection } = provider;
         if (connection.password) {

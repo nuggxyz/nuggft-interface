@@ -7,14 +7,15 @@ import { SwapData } from '@src/client/swaps';
 import web3 from '@src/web3';
 
 export default (token?: LiveToken | Omit<SwapData, 'offers'>): Lifecycle | undefined => {
-    const epoch = client.live.epoch.default();
-
-    const blocknum = client.live.blocknum();
+    const epoch = client.epoch.active.useId();
+    const warning = client.epoch.active.useWarning();
 
     const address = web3.hook.usePriorityAccount();
 
     return React.useMemo(() => {
         if (!token) return undefined;
+
+        // console.log('AYOOOOO');
 
         const isToken = 'swaps' in token;
 
@@ -28,36 +29,31 @@ export default (token?: LiveToken | Omit<SwapData, 'offers'>): Lifecycle | undef
             token.upcomingActiveSwap
         ) {
             abc = token.upcomingActiveSwap;
-            delete token.upcomingActiveSwap;
+            // delete token.upcomingActiveSwap;
         }
 
         if (isToken && !abc && token.isItem() && token.tryout.count > 0) {
             return Lifecycle.Tryout;
         }
 
-        if (abc && epoch !== undefined) {
+        if (abc && epoch !== null) {
             if (!abc.endingEpoch) {
                 if (address === abc.owner && address === abc.leader) return Lifecycle.Concessions;
                 return Lifecycle.Bench;
             }
 
-            if (+abc.endingEpoch === epoch.id + 1) {
+            if (+abc.endingEpoch === epoch + 1) {
                 if (abc.type === 'nugg' && abc.owner === Address.ZERO.hash) {
                     return Lifecycle.Egg;
                 }
                 return Lifecycle.Deck;
             }
 
-            if (
-                abc.leader === Address.ZERO.hash &&
-                abc.epoch &&
-                blocknum &&
-                (+abc.epoch.startblock + 255 - blocknum < 16 || +abc.epoch.endblock < blocknum)
-            ) {
+            if (abc.leader === Address.ZERO.hash && abc.epoch && warning) {
                 return Lifecycle.Cut;
             }
 
-            if (+abc.endingEpoch === epoch.id) {
+            if (+abc.endingEpoch === epoch) {
                 if (abc.type === 'nugg' && abc.owner === Address.ZERO.hash) {
                     return Lifecycle.Bunt;
                 }
@@ -67,5 +63,5 @@ export default (token?: LiveToken | Omit<SwapData, 'offers'>): Lifecycle | undef
             return Lifecycle.Shower;
         }
         return Lifecycle.Stands;
-    }, [epoch, blocknum, token]);
+    }, [epoch, token, warning, address]);
 };

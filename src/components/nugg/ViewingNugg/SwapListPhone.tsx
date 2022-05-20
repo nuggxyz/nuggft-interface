@@ -17,7 +17,7 @@ import globalStyles from '@src/lib/globalStyles';
 import { useUsdPair } from '@src/client/usd';
 import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
-import useRemaining, { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
+import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 
 import styles from './ViewingNugg.styles';
 
@@ -96,16 +96,16 @@ const SwapItem: FunctionComponent<
 
     const amount = useUsdPair(item.eth);
 
-    const epoch = client.live.epoch.id();
-
     const lifecycle = useLifecycleEnhanced(item);
 
-    const { minutes, seconds } = useRemaining(item.epoch);
+    const blocknum = client.block.useBlockWithDebounce(500);
+
+    const { epoch, minutes, seconds } = client.epoch.useEpoch(item.epoch?.id, blocknum);
     const trueSeconds = useRemainingTrueSeconds(seconds);
 
     // const navigate = useNavigate();
 
-    return epoch ? (
+    return (
         <div
             style={{
                 padding: '.2rem 0rem',
@@ -154,10 +154,10 @@ const SwapItem: FunctionComponent<
                                 ? t`canceled`
                                 : !item.endingEpoch && !item.epoch
                                 ? t`waiting for bid`
-                                : item.epoch && item.epoch.id < epoch
+                                : item.epoch && item.epoch.id < (epoch ?? 0)
                                 ? t`over`
-                                : minutes === 0
-                                ? `ending in ${plural(trueSeconds, {
+                                : !minutes
+                                ? `ending in ${plural(trueSeconds ?? 0, {
                                       1: '# second',
                                       other: '# seconds',
                                   })}`
@@ -191,7 +191,8 @@ const SwapItem: FunctionComponent<
                             >
                                 {item.canceledEpoch
                                     ? t`canceled by`
-                                    : !item.endingEpoch || (epoch <= item.endingEpoch && item.epoch)
+                                    : !item.endingEpoch ||
+                                      (epoch && epoch <= item.endingEpoch && item.epoch)
                                     ? t`on sale by`
                                     : t`sold by`}
                             </Text>
@@ -229,7 +230,9 @@ const SwapItem: FunctionComponent<
                                                 color: Colors.textColor,
                                             }}
                                         >
-                                            {item.endingEpoch >= epoch ? t`Leader` : t`Buyer`}
+                                            {epoch && item.endingEpoch >= epoch
+                                                ? t`Leader`
+                                                : t`Buyer`}
                                         </Text>
                                         <Text
                                             textStyle={{
@@ -268,7 +271,7 @@ const SwapItem: FunctionComponent<
                 )}
             </div>
         </div>
-    ) : null;
+    );
 };
 
 const TryoutItem = ({ data, index }: { data: TryoutData; index: number }) => {
@@ -309,7 +312,7 @@ const TryoutItem = ({ data, index }: { data: TryoutData; index: number }) => {
 const SwapListPhone: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const epoch = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
 
     // const { listData } = useMemo(() => {
     //     const _listData: { title: string; items: SwapDataWithTryout[] }[] = [];

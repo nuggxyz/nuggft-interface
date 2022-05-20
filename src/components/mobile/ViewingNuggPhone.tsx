@@ -11,7 +11,7 @@ import globalStyles from '@src/lib/globalStyles';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import useRemaining, { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
+import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import { Lifecycle, TryoutData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useAsyncState from '@src/hooks/useAsyncState';
@@ -311,10 +311,12 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const swap = client.swaps.useSwap(tokenId);
     const lifecycle = useLifecycle(token);
 
-    const { minutes, seconds } = useRemaining(token?.activeSwap?.epoch);
+    const blocknum = client.block.useBlock();
+
+    const { minutes, seconds } = client.epoch.useEpoch(token?.activeSwap?.epoch?.id, blocknum);
     const [leader] = useAggregatedOffers(tokenId);
 
-    const trueSeconds = useRemainingTrueSeconds(seconds);
+    const trueSeconds = useRemainingTrueSeconds(seconds ?? 0);
     const provider = web3.hook.usePriorityProvider();
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
@@ -446,8 +448,8 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                                 fontSize: '28px',
                             }}
                         >
-                            {minutes === 0
-                                ? `${plural(trueSeconds, {
+                            {!minutes
+                                ? `${plural(trueSeconds ?? 0, {
                                       1: '# second',
                                       other: '# seconds',
                                   })}`
@@ -470,7 +472,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
 const ViewingNuggPhone: FunctionComponent<{
     tokenId: TokenId | undefined;
 }> = ({ tokenId }) => {
-    const epoch = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
     const openModal = client.modal.useOpenModal();
     const sender = web3.hook.usePriorityAccount();
 

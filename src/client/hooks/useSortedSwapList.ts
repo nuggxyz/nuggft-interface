@@ -4,7 +4,7 @@ import client from '@src/client';
 
 export default () => {
     const abc = client.swaps.useSwapList();
-    const epoch = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
 
     // console.log({ abc, epoch });
 

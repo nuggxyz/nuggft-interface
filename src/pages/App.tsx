@@ -23,7 +23,7 @@ const SearchOverlay = React.lazy(() => import('@src/pages/SearchOverlay'));
 const Router = () => {
     const { isPhone } = useDimensions();
 
-    const epoch = client.live.epoch.id();
+    const epoch = client.epoch.active.useId();
 
     const route = useRoutes([
         {
