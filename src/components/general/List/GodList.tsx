@@ -318,7 +318,7 @@ const GodList = <T, B, A>({
                             opacity: uno ? 1 : 0,
 
                             position: 'absolute',
-                            top: `${uno_i * itemHeight}px`,
+                            transform: `translate(0px,${uno_i * itemHeight}px)`,
                             width: '100%',
                             height: `${itemHeight}px`,
                         }}
@@ -337,7 +337,7 @@ const GodList = <T, B, A>({
                         style={{
                             opacity: dos ? 1 : 0,
                             position: 'absolute',
-                            top: `${dos_i * itemHeight}px`,
+                            transform: `translate(0px,${dos_i * itemHeight}px)`,
                             width: '100%',
                             height: `${itemHeight}px`,
                         }}
@@ -357,7 +357,7 @@ const GodList = <T, B, A>({
                             opacity: tres ? 1 : 0,
 
                             position: 'absolute',
-                            top: `${tres_i * itemHeight}px`,
+                            transform: `translate(0px,${tres_i * itemHeight}px)`,
                             width: '100%',
                             height: `${itemHeight}px`,
                         }}
@@ -377,7 +377,7 @@ const GodList = <T, B, A>({
                             opacity: qu ? 1 : 0,
 
                             position: 'absolute',
-                            top: `${qu_i * itemHeight}px`,
+                            transform: `translate(0px,${qu_i * itemHeight}px)`,
                             width: '100%',
                             height: `${itemHeight}px`,
                         }}
@@ -396,7 +396,7 @@ const GodList = <T, B, A>({
                         style={{
                             opacity: cin ? 1 : 0,
                             position: 'absolute',
-                            top: `${cin_i * itemHeight}px`,
+                            transform: `translate(0px,${cin_i * itemHeight}px)`,
                             width: '100%',
                             height: `${itemHeight}px`,
                         }}
@@ -416,7 +416,7 @@ const GodList = <T, B, A>({
                             opacity: sei ? 1 : 0,
 
                             position: 'absolute',
-                            top: `${sei_i * itemHeight}px`,
+                            transform: `translate(0px,${sei_i * itemHeight}px)`,
                             width: '100%',
                             height: `${itemHeight}px`,
                         }}
@@ -435,7 +435,7 @@ const GodList = <T, B, A>({
                         style={{
                             opacity: ses ? 1 : 0,
                             position: 'absolute',
-                            top: `${ses_i * itemHeight}px`,
+                            transform: `translate(0px,${ses_i * itemHeight}px)`,
                             width: '100%',
                             height: `${itemHeight}px`,
                         }}
