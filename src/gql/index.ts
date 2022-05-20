@@ -25,6 +25,13 @@ import { StrictTypedTypePolicies } from './types.generated';
 //     // },
 // });
 
+export const buildApolloHttpLink = (http: string) => {
+    return new HttpLink({
+        uri: http,
+        fetch,
+    });
+};
+
 export const buildApolloSplitLink = (http: string, wss: string) => {
     return split(
         ({ query }) => {
@@ -49,10 +56,7 @@ export const buildApolloSplitLink = (http: string, wss: string) => {
 
             webSocketImpl: WebSocket,
         }),
-        new HttpLink({
-            uri: http,
-            fetch,
-        }),
+        buildApolloHttpLink(http),
     );
 };
 

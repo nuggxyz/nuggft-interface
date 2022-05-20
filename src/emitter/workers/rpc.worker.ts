@@ -22,7 +22,7 @@ const inter = NuggftV1__factory.createInterface();
 
 console.log('[MyWorker] Running.');
 
-const socket = new InfuraWebSocketProvider();
+let socket: InfuraWebSocketProvider;
 
 const blockListener = (log: number) => {
     console.log('block ', log);
@@ -45,14 +45,32 @@ const eventListener = (log: Log) => {
     });
 };
 
-void socket.getBlockNumber().then(blockListener);
+const buildSocket = () => {
+    if (socket) void socket.destroy();
 
-socket.on(
-    {
-        address: DEFAULT_CONTRACTS.NuggftV1,
-        topics: [],
-    },
-    eventListener,
-);
+    console.log('BUILDSOCKET');
+    socket = new InfuraWebSocketProvider();
+    void socket.getBlockNumber().then(blockListener);
+    socket.on(
+        {
+            address: DEFAULT_CONTRACTS.NuggftV1,
+            topics: [],
+        },
+        eventListener,
+    );
+    socket.on('block', blockListener);
+};
 
-socket.on('block', blockListener);
+buildSocket();
+
+ctx.addEventListener('message', ({ data }: MessageEvent<EmitEventsListPayload>) => {
+    if (data.type === emitter.events.IncomingRpcBlock) {
+        console.log('a');
+    }
+
+    if (data.type === emitter.events.HealthCheck) {
+        if (!socket._websocket.OPEN) {
+            buildSocket();
+        }
+    }
+});

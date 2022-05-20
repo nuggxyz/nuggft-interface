@@ -23,6 +23,7 @@ import { RevertError } from '@src/lib/errors';
 interface EmitEventBase {
     type: EmitEventNames;
     callback: (arg: Omit<this, 'callback'>) => void;
+    waitFor?: EmitEventNames;
 }
 
 type BuildPayload<T> = Omit<T, 'callback'>;
@@ -143,6 +144,21 @@ interface EmitWorkerIncomingRpcBlock extends EmitEventBase, EmitWorkerEventBase 
     log: number;
 }
 
+interface EmitRequestTokenSvgQuery extends EmitEventBase {
+    type: EmitEventNames.RequestTokenSvgQuery;
+    data: TokenId;
+    waitFor?: EmitEventNames.ReturnTokenSvgQuery;
+}
+
+interface EmitReturnTokenSvgQuery extends EmitEventBase {
+    type: EmitEventNames.ReturnTokenSvgQuery;
+    data: string | null;
+}
+
+interface EmitHealthCheck extends EmitEventBase {
+    type: EmitEventNames.HealthCheck;
+}
+
 /*  EXPORTS: must be manually updated  */
 
 export enum EmitEventNames {
@@ -169,6 +185,10 @@ export enum EmitEventNames {
     IncomingRpcEvent = 'worker.rpc.event',
     IncomingRpcBlock = 'worker.rpc.block',
 
+    RequestTokenSvgQuery = 'main.graphql.RequestTokenSvgQuery',
+    ReturnTokenSvgQuery = 'worker.graphql.ReturnTokenSvgQuery',
+    HealthCheck = 'main.health.HealthCheck',
+
     // Sell = 'local.rpc.event.Sell',
 }
 
@@ -190,9 +210,13 @@ export type EmitEventsListPayload =
     | BuildPayload<EmitTransactionSent>
     | BuildPayload<EmitKeyboardClosed>
     | BuildPayload<EmitLocalRpcRotate>
+    | BuildPayload<EmitHealthCheck>
+
     // | BuildPayload<EmitRpcSell>
-    | BuildPayload<EmitModalOpen>
+    | BuildPayload<EmitRequestTokenSvgQuery>
     | BuildPayload<EmitWorkerEventBase>
+    | BuildPayload<EmitModalOpen>
+    | BuildPayload<EmitReturnTokenSvgQuery>
     | BuildPayload<EmitWorkerIncomingRpcEvent>
     | BuildPayload<EmitWorkerIncomingRpcBlock>;
 
@@ -211,9 +235,12 @@ export type EmitEventsListCallback =
     | BuildCallback<EmitLocalRpcLiquidate>
     | BuildCallback<EmitLocalRpcRebalance>
     | BuildCallback<EmitLocalRpcRotate>
+    | BuildCallback<EmitHealthCheck>
     | BuildCallback<EmitLocalRpcTransfer>
     | BuildCallback<EmitTransactionSent>
     | BuildCallback<EmitKeyboardClosed>
     | BuildCallback<EmitModalOpen>
+    | BuildCallback<EmitRequestTokenSvgQuery>
+    | BuildCallback<EmitReturnTokenSvgQuery>
     | BuildCallback<EmitWorkerIncomingRpcEvent>
     | BuildCallback<EmitWorkerIncomingRpcBlock>;
