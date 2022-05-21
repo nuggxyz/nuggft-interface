@@ -15,7 +15,6 @@ type Props = { tokenId: NuggId };
 const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
     const navigate = useNavigate();
     const openModal = client.modal.useOpenModal();
-    console.log('IN HERE');
 
     return (
         <div style={styles.ownerButtonContainer}>

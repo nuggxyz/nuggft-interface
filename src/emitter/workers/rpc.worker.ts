@@ -21,7 +21,7 @@ export default {} as typeof Worker & { new (): Worker };
 
 const inter = NuggftV1__factory.createInterface();
 
-console.log('[MyWorker] Running.');
+console.log('[rpc.worker] Worker running');
 
 let socket: InfuraWebSocketProvider;
 
@@ -100,20 +100,33 @@ const buildSocket = () => {
 
 buildSocket();
 
-ctx.addEventListener('message', ({ data }: MessageEvent<EmitEventsListPayload>) => {
-    if (data.type === emitter.events.HealthCheck) {
-        ctx.emitMessage({ type: emitter.events.WorkerIsRunning, label: 'rpc' });
-
-        // console.log();
-
-        if (
-            socket._websocket.readyState === socket._websocket.CLOSED ||
-            new Date().getTime() - lastBlockTime > 30000
-        ) {
-            buildSocket();
-        }
+setInterval(() => {
+    ctx.emitMessage({
+        type: emitter.events.WorkerIsRunning,
+        label: 'rpc',
+    });
+    if (
+        socket._websocket.readyState === socket._websocket.CLOSED ||
+        new Date().getTime() - lastBlockTime > 30000
+    ) {
+        buildSocket();
     }
-});
+}, 4000);
+
+// ctx.addEventListener('message', ({ data }: MessageEvent<EmitEventsListPayload>) => {
+//     if (data.type === emitter.events.HealthCheck) {
+//         ctx.emitMessage({ type: emitter.events.WorkerIsRunning, label: 'rpc' });
+
+//         // console.log();
+
+//         if (
+//             socket._websocket.readyState === socket._websocket.CLOSED ||
+//             new Date().getTime() - lastBlockTime > 30000
+//         ) {
+//             buildSocket();
+//         }
+//     }
+// });
 
 // setTimeout(() => {
 //     socket._websocket.close();

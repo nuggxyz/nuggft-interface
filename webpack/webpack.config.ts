@@ -307,6 +307,15 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
             ],
         },
         resolve: {
+            fallback: {
+                // querystring: false, // require.resolve("querystring-es3")
+                // zlib: false, // require.resolve("browserify-zlib")
+                // crypto: false, // require.resolve("crypto-browserify")
+                // stream: false, // require.resolve("stream-browserify")
+                // url: false, // require.resolve("url/")
+                // path: false, // require.resolve("path-browserify")
+                // http: false, // require.resolve("stream-http")
+            },
             // This allows you to set a fallback for where webpack should look for modules.
             // We placed these paths second because we want `node_modules` to "win"
             // if there are any conflicts. This matches Node resolution mechanism.
@@ -455,7 +464,9 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
                                 and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
                             },
                         },
-
+                        {
+                            test: /\.(dev)\.$/,
+                        },
                         // Process application JS with Babel.
                         // The preset includes JSX, Flow, TypeScript, and some ESnext features.
                         {
@@ -818,6 +829,6 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
         ].filter(Boolean),
         // Turn off performance processing because we utilize
         // our own hints via the FileSizeReporter
-        performance: false,
+        performance: { hints: 'warning' },
     };
 }

@@ -196,7 +196,6 @@ export default () => {
     React.useEffect(() => {
         if (debouncedData2?.protocol) {
             onData(debouncedData2.protocol);
-            console.log('HERERE');
 
             void refetch({}).then((ayo) => {
                 setTimeout(() => {

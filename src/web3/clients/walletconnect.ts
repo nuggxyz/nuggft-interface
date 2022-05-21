@@ -21,6 +21,7 @@ import { isPhone } from '@src/lib/userAgent';
 import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
 import { DEFAULT_CHAIN } from '@src/web3/constants';
+import emitter from '@src/emitter';
 
 interface PeerMeta {
     url: string;
@@ -227,17 +228,29 @@ export class WalletConnect extends Connector {
             this.provider.on('chainChanged', this.chainChangedListener);
             this.provider.on('accountsChanged', this.accountsChangedListener);
             this.provider.connector.on('display_uri', this.URIListener);
+            const g = this._signer_connection_transport_next_socket?.onmessage;
+            const z = this._signer_connection_transport_next_socket?.onerror;
+            const sock = this._signer_connection_transport_next_socket;
 
-            const c = this._signer_connection_transport_socket;
-            const g = this._signer_connection_transport_socket?.onmessage;
-
-            if (c) {
-                c.onmessage = function (ev) {
-                    console.log('messaged received from wallet connect');
-                    if (g) g.bind(this)(ev);
-                    console.log(ev);
+            if (sock) {
+                sock.onerror = function (ev) {
+                    emitter.emit({
+                        type: emitter.events.DevLog,
+                        data: ev,
+                        name: 'error received from wallet connect',
+                    });
+                    if (z) z.bind(sock)(ev);
+                };
+                sock.onmessage = function (ev) {
+                    emitter.emit({
+                        type: emitter.events.DevLog,
+                        data: ev,
+                        name: 'messaged received from wallet connect',
+                    });
+                    if (g) g.bind(sock)(ev);
                 };
             }
+
             // this._signer_connection_transport_socket?.close();
         }));
         return undefined;
@@ -249,6 +262,7 @@ export class WalletConnect extends Connector {
         console.log('refreshing peer found - ', { peer });
 
         if (peer) return this.actions.update({ peer });
+
         return undefined;
     }
 

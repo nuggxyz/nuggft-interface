@@ -38,4 +38,31 @@ const wrapper = {
     },
 };
 
+if (__DEV__) {
+    eventEmitter.on('dev.log', (data) => {
+        console.log(data);
+    });
+
+    // console.log('AYODHSG:LSDHGL:SDUH Q');
+    // eventEmitter.on('dev.log', (data: { data?: { data?: string } }) => {
+    //     console.log(JSON.stringify(data?.data?.data ? data.data.data : 'NOPE'));
+    //     console.log({ ...data }, JSON.stringify({ ...data } as object));
+    //     fetch(`https://en92vutpmg03l.x.pipedream.net`, {
+    //         method: 'POST',
+    //         body: JSON.stringify(data?.data?.data ? data.data.data : 'NOPE'),
+    //     })
+    //         .then(function (response) {
+    //             console.log('AYODHSG:LSDHGL:SDUH');
+    //             return response.json();
+    //         })
+    //         .then(function (dat) {
+    //             console.log(dat);
+    //         })
+    //         .catch(function () {
+    //             console.log('Booo');
+    //         });
+    // });
+    // void import('@src/dev/express-logger.dev');
+}
+
 export default wrapper;

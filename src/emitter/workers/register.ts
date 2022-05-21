@@ -15,24 +15,26 @@ const buildWorker = () => {
 
     worker = new Worker(new URL('./rpc.worker.ts', import.meta.url));
 
-    console.log('[App] MyWorker instance:', worker);
+    console.log(`[App:buildWorker] Worker instance ${workerCount++}:`, worker);
 
     worker.onmessage = ({ data }: { data: EmitWorkerEventBase }) => {
         lastWorkerResponse = new Date().getTime();
+
         emitter.emit(data);
     };
 
-    worker.onerror = () => {
+    worker.onerror = (err) => {
+        console.log('[App:worker.onerror]', err);
         worker.terminate();
     };
 
-    if (!__DEV__) ReactGA.set({ cd3__workers: workerCount++ });
+    ReactGA.set({ cd3__workers: workerCount });
 };
 
 buildWorker();
 
 const workerIsDead = () => {
-    return new Date().getTime() - lastWorkerResponse > 2000;
+    return new Date().getTime() - lastWorkerResponse > 10000;
 };
 
 setInterval(() => {

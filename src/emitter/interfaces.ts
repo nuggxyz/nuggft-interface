@@ -167,6 +167,11 @@ interface EmitWorkerIsRunning extends EmitEventBase {
     type: EmitEventNames.WorkerIsRunning;
     label: string;
 }
+interface EmitDevLog extends EmitEventBase {
+    type: EmitEventNames.DevLog;
+    data: object;
+    name: string;
+}
 
 /*  EXPORTS: must be manually updated  */
 
@@ -190,7 +195,7 @@ export enum EmitEventNames {
     ClaimItem = 'main.rpc.event.ClaimItem',
     KeyboardClosed = 'main.viewport.KeyboardClosed',
     Rotate = 'main.rpc.event.Rotate',
-
+    DevLog = 'dev.log',
     IncomingRpcEvent = 'worker.rpc.event',
     IncomingRpcBlock = 'worker.rpc.block',
     IncomingEtherscanPrice = 'worker.etherscan.price',
@@ -222,6 +227,7 @@ export type EmitEventsListPayload =
     | BuildPayload<EmitHealthCheck>
     | BuildPayload<EmitWorkerIsRunning>
     | BuildPayload<EmitWorkerIncomingEtherscanPrice>
+    | BuildPayload<EmitDevLog>
 
     // | BuildPayload<EmitRpcSell>
     | BuildPayload<EmitRequestTokenSvgQuery>
@@ -246,6 +252,7 @@ export type EmitEventsListCallback =
     | BuildCallback<EmitLocalRpcLiquidate>
     | BuildCallback<EmitLocalRpcRebalance>
     | BuildCallback<EmitLocalRpcRotate>
+    | BuildCallback<EmitDevLog>
     | BuildCallback<EmitHealthCheck>
     | BuildCallback<EmitLocalRpcTransfer>
     | BuildCallback<EmitTransactionSent>

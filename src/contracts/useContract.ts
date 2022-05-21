@@ -219,6 +219,11 @@ function useSendTransaction(
                             : authenticatedProvider.getSigner().sendTransaction(tx)
                         )
                             .then((y) => {
+                                emitter.emit({
+                                    type: emitter.events.DevLog,
+                                    data: y,
+                                    name: 'YYYYYYY',
+                                });
                                 console.log('YYYYYY', y);
                                 let txhash: ResponseHash;
                                 if (y === null) {
@@ -269,6 +274,11 @@ function useSendTransaction(
                                 return txhash;
                             })
                             .catch((err: Error) => {
+                                emitter.emit({
+                                    type: emitter.events.DevLog,
+                                    data: err,
+                                    name: 'catch A',
+                                });
                                 const fmt = lib.errors.parseJsonRpcError(err);
                                 if (fmt instanceof RejectionError) {
                                     setRejected(true);
@@ -287,6 +297,11 @@ function useSendTransaction(
                 }
                 throw Error('authenticatedConnector, authenticatedProvider, or from is undefined');
             } catch (err) {
+                emitter.emit({
+                    type: emitter.events.DevLog,
+                    data: err,
+                    name: 'FINAL CATCH',
+                });
                 const fmt = lib.errors.parseJsonRpcError(err);
                 setError(fmt);
                 console.error(fmt);
