@@ -181,9 +181,13 @@ export class WalletConnect extends Connector {
     private get _signer_connection_transport_socket() {
         const a = this._signer_connection_transport;
 
-        return a?._socket || a?._nextSocket;
-        // return (this._signer_connection_transport as unknown as { _nextSocket?: WebSocket })
-        //     ?._nextSocket;
+        return a?._socket;
+    }
+
+    private get _signer_connection_transport_next_socket() {
+        const a = this._signer_connection_transport;
+
+        return a?._nextSocket;
     }
 
     private async isomorphicInitialize(
@@ -229,7 +233,7 @@ export class WalletConnect extends Connector {
 
             if (c) {
                 c.onmessage = function (ev) {
-                    console.log('AYOOOOOOOOO');
+                    console.log('messaged received from wallet connect');
                     if (g) g.bind(this)(ev);
                     console.log(ev);
                 };
@@ -428,12 +432,24 @@ export class WalletConnect extends Connector {
             'connect',
             this.connectListener,
         );
-        // YO
-        const c = this._signer_connection_transport_socket;
-        if (c) {
-            c.onmessage = () => undefined;
+
+        const next_socket = this._signer_connection_transport_next_socket;
+        const socket = this._signer_connection_transport_socket;
+
+        if (next_socket) {
+            next_socket.onmessage = () => undefined;
+            next_socket.onclose = () => undefined;
+
+            next_socket.close();
         }
-        this._signer_connection_transport_socket?.close();
+        // YO
+        if (socket) {
+            socket.onmessage = () => undefined;
+            socket.onclose = () => undefined;
+
+            socket.close();
+        }
+
         this._signer_connection?.wc?.transportClose();
         // await this._signer_connection?.wc?.killSession();
         void this._signer_connection?.close();
