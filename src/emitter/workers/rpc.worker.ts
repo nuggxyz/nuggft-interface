@@ -10,16 +10,11 @@ import { EmitEventsListPayload } from '@src/emitter/interfaces';
 // @ts-ignore
 const ctx: Worker & {
     emitMessage: (arg: EmitEventsListPayload) => void;
-    // close: () => void;
-    // isRunning: boolean;
-    // _selfClose: () => void;
 } =
     // eslint-disable-next-line no-restricted-globals
     self as DedicatedWorkerGlobalScope;
 
 ctx.emitMessage = (data: unknown) => ctx.postMessage.call(ctx, data);
-
-// ctx._selfClose = ctx.close;
 
 export default {} as typeof Worker & { new (): Worker };
 
@@ -29,24 +24,18 @@ console.log('[MyWorker] Running.');
 
 let socket: InfuraWebSocketProvider;
 
+let lastBlock: number = new Date().getTime();
+
 const blockListener = (log: number) => {
     console.log('block ', log);
+
+    lastBlock = new Date().getTime();
     ctx.emitMessage({
         type: emitter.events.IncomingRpcBlock,
         data: log,
         log,
     });
 };
-
-// ctx.isRunning = true;
-
-// ctx.close = function () {
-//     // Mark it as no longer running
-//     ctx.isRunning = false;
-
-//     // Call original close function
-//     this._selfClose();
-// };
 
 const eventListener = (log: Log) => {
     const event = inter.parseLog(log) as unknown as InterfacedEvent;
@@ -80,16 +69,10 @@ const buildSocket = () => {
 buildSocket();
 
 ctx.addEventListener('message', ({ data }: MessageEvent<EmitEventsListPayload>) => {
-    // if (data.type === emitter.events.IncomingRpcBlock) {
-    //     console.log('a');
-    // }
-
     if (data.type === emitter.events.HealthCheck) {
-        // if (ctx.isRunning) {
         ctx.emitMessage({ type: emitter.events.WorkerIsRunning, label: 'rpc' });
-        // }
 
-        if (!socket._websocket.OPEN) {
+        if (socket._websocket.CLOSED || new Date().getTime() - lastBlock > 30000) {
             buildSocket();
         }
     }

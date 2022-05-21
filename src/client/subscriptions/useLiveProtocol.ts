@@ -199,7 +199,9 @@ export default () => {
             console.log('HERERE');
 
             void refetch({}).then((ayo) => {
-                if (ayo.data.protocol) onData(ayo.data.protocol);
+                setTimeout(() => {
+                    if (ayo.data.protocol) onData(ayo.data.protocol);
+                }, 3000);
             });
         }
     }, [debouncedData2, onData, refetch]);
