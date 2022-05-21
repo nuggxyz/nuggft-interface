@@ -4,7 +4,7 @@ import { t } from '@lingui/macro';
 
 import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
-import { fromEth } from '@src/lib/conversion';
+import { fromEth, toEth } from '@src/lib/conversion';
 import Button from '@src/components/general/Buttons/Button/Button';
 import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -43,14 +43,18 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             if (actionType === 'liquidate') {
                 // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                return new NuggftV1Helper(chainId, provider).contract.vfl([tokenId]).then((v) => {
-                    return v;
-                });
+                return new NuggftV1Helper(chainId, provider).contract
+                    .vfl([tokenId.toRawId()])
+                    .then((v) => {
+                        return v;
+                    });
             }
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            return new NuggftV1Helper(chainId, provider).contract.vfr([tokenId]).then((v) => {
-                return v;
-            });
+            return new NuggftV1Helper(chainId, provider).contract
+                .vfr([tokenId.toRawId()])
+                .then((v) => {
+                    return v;
+                });
         }
         // eslint-disable-next-line no-promise-executor-return
         return new Promise((resolve) => resolve([]));
@@ -60,7 +64,7 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>{`${
                 actionType === 'liquidate' ? t`Payoff` : t`Extend`
-            } Nugg #${tokenId}`}</Text>
+            } Nugg ${tokenId.toRawId()}`}</Text>
             <AnimatedCard>
                 <TokenViewer tokenId={tokenId} labelColor="white" showcase />
             </AnimatedCard>
@@ -81,12 +85,12 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
                                 amountFromChain &&
                                 amountFromChain.length > 0 &&
                                 setAmount(
-                                    `${fromEth(
+                                    fromEth(
                                         amountFromChain[0]
                                             .div(10 ** 13)
                                             .add(1)
                                             .mul(10 ** 13),
-                                    )}`,
+                                    ),
                                 )
                             }
                             label={t`Min`}
@@ -124,14 +128,14 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
                         if (tokenId && chainId && provider && address)
                             if (actionType === 'liquidate')
                                 void send(
-                                    nuggft.populateTransaction.liquidate(tokenId, {
-                                        value: amount,
+                                    nuggft.populateTransaction.liquidate(tokenId.toRawId(), {
+                                        value: toEth(amount),
                                     }),
                                 );
                             else
                                 void send(
-                                    nuggft.populateTransaction.rebalance([tokenId], {
-                                        value: amount,
+                                    nuggft.populateTransaction.rebalance([tokenId.toRawId()], {
+                                        value: toEth(amount),
                                     }),
                                 );
                     }}

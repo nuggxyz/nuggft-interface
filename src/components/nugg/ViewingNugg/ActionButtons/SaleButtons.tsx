@@ -6,7 +6,7 @@ import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import web3 from '@src/web3';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
-import { usePrioritySendTransaction, useNuggftV1 } from '@src/contracts/useContract';
+import { usePrioritySendTransaction, useNuggftV1, useTransactionManager2 } from '@src/contracts/useContract';
 
 type Props = { tokenId: string; reclaim?: boolean };
 
@@ -15,7 +15,9 @@ const SaleButtons: FunctionComponent<Props> = ({ tokenId, reclaim = false }) => 
     const provider = web3.hook.usePriorityProvider();
     const sender = web3.hook.usePriorityAccount();
     const nuggft = useNuggftV1(provider);
-    const { send } = usePrioritySendTransaction();
+    const { send, hash } = usePrioritySendTransaction();
+
+    useTransactionManager2(provider, hash);
 
     return sender && provider && chainId ? (
         <div style={styles.ownerButtonContainer}>

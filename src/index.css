@@ -39,7 +39,7 @@ body {
     html {
         background: white;
     }
-    /* body {
+    body {
         background: white;
     }
     #root {
@@ -48,7 +48,7 @@ body {
             rgb(80, 144, 234, 0.1) 0%,
             rgba(80, 144, 234, 0.34) 100%
         );
-    } */
+    }
 }
 
 @media (prefers-color-scheme: dark) {

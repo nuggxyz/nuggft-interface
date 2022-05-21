@@ -17,6 +17,7 @@ import {
     useDotnuggV1,
     usePrioritySendTransaction,
     useEstimateTransaction,
+    useTransactionManager2,
 } from '@src/contracts/useContract';
 import Label from '@src/components/general/Label/Label';
 import web3 from '@src/web3';
@@ -345,14 +346,16 @@ export const useHotRotateO = (tokenId?: NuggId) => {
     const populatedTransaction = React.useMemo(() => {
         if (!tokenId || !address) return undefined;
         return {
-            tx: nuggft.populateTransaction['offer(uint24)'](tokenId.toRawId(), {
-                from: address,
-                // gasLimit: toGwei('120000'),
-            }),
+            tx: nuggft.populateTransaction['rotate(uint24,uint8[],uint8[])'](
+                tokenId.toRawId(),
+                [],
+                [],
+            ),
         };
     }, [nuggft, address]);
 
     const { send, estimation: estimator, hash } = usePrioritySendTransaction();
+    useTransactionManager2(provider, hash);
 
     const network = web3.hook.useNetworkProvider();
 

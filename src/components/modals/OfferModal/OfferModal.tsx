@@ -24,9 +24,9 @@ import {
     usePrioritySendTransaction,
     useTransactionManager2,
 } from '@src/contracts/useContract';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 
 import styles from './OfferModal.styles';
-import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 
 type FormatedMyNuggsData = MyNuggsData & { lastBid: EthInt | 'unable-to-bid' };
 
@@ -94,8 +94,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         }
         return undefined;
     }, [data.nuggToBuyFrom]);
-
-
 
     const check = useAsyncState<{
         canOffer: boolean | undefined;
@@ -201,6 +199,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             onClick={() => {
                                 try {
                                     const next = check && check.next ? fromEth(check.next) : '';
+                                    console.log(next);
                                     setAmount(next);
                                 } catch (err) {
                                     console.error(err);
@@ -230,7 +229,11 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 {preferenceBalance && (
                     <Text type="text" size="smaller" textStyle={styles.text} weight="bolder">
                         {t`You currently have`}
-                        <CurrencyText value={preferenceBalance} />
+                        <CurrencyText
+                            value={preferenceBalance}
+                            textStyle={{ marginLeft: '.5rem' }}
+                            size="smaller"
+                        />
                         {/* <Text
                             type="code"
                             size="smaller"

@@ -12,7 +12,7 @@ import { LiveNuggItem } from '@src/client/interfaces';
 import Text from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
-import { useNuggftV1, usePrioritySendTransaction } from '@src/contracts/useContract';
+import { useNuggftV1, usePrioritySendTransaction, useTransactionManager2 } from '@src/contracts/useContract';
 import web3 from '@src/web3';
 import { Address } from '@src/classes/Address';
 import List from '@src/components/general/List/List';
@@ -39,7 +39,9 @@ const Item: FC<{ item: LiveNuggItem; extraData: ExtraData }> = ({ item, extraDat
 
     const nuggft = useNuggftV1(provider);
 
-    const { send } = usePrioritySendTransaction();
+    const { send, hash } = usePrioritySendTransaction();
+
+    useTransactionManager2(provider, hash);
 
     return (
         <div style={styles.itemListItem}>
