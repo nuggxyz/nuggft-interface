@@ -106,8 +106,8 @@ export default {
                         .filter(
                             (x) =>
                                 x.endingEpoch !== null &&
-                                state.epoch?.id &&
-                                x.endingEpoch < state.epoch?.id,
+                                epoch.getState().active &&
+                                x.endingEpoch < epoch.getState().active,
                         )
                         .sort((a, b) => ((a.endingEpoch ?? 0) > (b.endingEpoch ?? 0) ? -1 : 1)),
                 shallow,
