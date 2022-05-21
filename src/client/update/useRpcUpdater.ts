@@ -113,7 +113,7 @@ export default () => {
 
                         emitCompletedTx(txFrom, (from, dat) => {
                             console.log({ from, dat, txFrom, txData });
-                            return from === txFrom && txData === dat;
+                            return from.toLowerCase() === txFrom.toLowerCase() && txData === dat;
                         });
 
                         void emitter.emit({
@@ -140,7 +140,7 @@ export default () => {
                         ) as Hash;
 
                         emitCompletedTx(null, (_, dat) => {
-                            return dat === txData;
+                            return dat.toLowerCase() === txData.toLowerCase();
                         });
 
                         updateOffers(event.args.itemId.toItemId(), [

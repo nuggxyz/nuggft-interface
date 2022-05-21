@@ -3,9 +3,10 @@ import { Log } from '@ethersproject/abstract-provider';
 import { InterfacedEvent } from '@src/interfaces/events';
 import { InfuraWebSocketProvider } from '@src/web3/classes/CustomWebSocketProvider';
 import emitter from '@src/emitter';
-import { DEFAULT_CONTRACTS } from '@src/web3/constants';
+import { Chain, DEFAULT_CONTRACTS } from '@src/web3/constants';
 import { NuggftV1__factory } from '@src/typechain';
 import { EmitEventsListPayload } from '@src/emitter/interfaces';
+import { CustomEtherscanProvider } from '@src/web3/classes/CustomEtherscanProvider';
 
 // @ts-ignore
 const ctx: Worker & {
@@ -24,17 +25,40 @@ console.log('[MyWorker] Running.');
 
 let socket: InfuraWebSocketProvider;
 
-let lastBlock: number = new Date().getTime();
+const etherscan = new CustomEtherscanProvider(Chain.MAINNET);
+
+let lastBlockTime: number = new Date().getTime();
+let lastBlock = 0;
 
 const blockListener = (log: number) => {
-    console.log('block ', log);
+    if (lastBlock !== log) {
+        console.log('block ', log);
 
-    lastBlock = new Date().getTime();
-    ctx.emitMessage({
-        type: emitter.events.IncomingRpcBlock,
-        data: log,
-        log,
-    });
+        lastBlock = log;
+
+        lastBlockTime = new Date().getTime();
+
+        ctx.emitMessage({
+            type: emitter.events.IncomingRpcBlock,
+            data: log,
+            log,
+        });
+
+        void etherscan
+            .getEtherPrice()
+            .then((price) => {
+                ctx.emitMessage({
+                    type: emitter.events.IncomingEtherscanPrice,
+                    data: price,
+                });
+            })
+            .catch(() => {
+                ctx.emitMessage({
+                    type: emitter.events.IncomingEtherscanPrice,
+                    data: null,
+                });
+            });
+    }
 };
 
 const eventListener = (log: Log) => {
@@ -49,7 +73,15 @@ const eventListener = (log: Log) => {
     });
 };
 
+let lastBuild = 0;
+
 const buildSocket = () => {
+    if (socket && new Date().getTime() - lastBuild < 30000) {
+        return;
+    }
+
+    lastBuild = new Date().getTime();
+
     if (socket) void socket.destroy();
 
     console.log('BUILDSOCKET');
@@ -72,8 +104,17 @@ ctx.addEventListener('message', ({ data }: MessageEvent<EmitEventsListPayload>) 
     if (data.type === emitter.events.HealthCheck) {
         ctx.emitMessage({ type: emitter.events.WorkerIsRunning, label: 'rpc' });
 
-        if (socket._websocket.CLOSED || new Date().getTime() - lastBlock > 30000) {
+        // console.log();
+
+        if (
+            socket._websocket.readyState === socket._websocket.CLOSED ||
+            new Date().getTime() - lastBlockTime > 30000
+        ) {
             buildSocket();
         }
     }
 });
+
+// setTimeout(() => {
+//     socket._websocket.close();
+// }, 3000);

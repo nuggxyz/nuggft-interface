@@ -21,7 +21,6 @@ function useInterval(callback: () => Promise<void> | void, delay: number | null)
         }
 
         const id = setInterval(() => {
-            console.log('Tick');
             void savedCallback.current();
         }, delay);
 

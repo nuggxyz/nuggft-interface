@@ -435,6 +435,7 @@ const GodList = <T, B, A>({
                         style={{
                             opacity: ses ? 1 : 0,
                             position: 'absolute',
+                            // top: `${ses_i * itemHeight}px,
                             transform: `translate(0px,${ses_i * itemHeight}px)`,
                             width: '100%',
                             height: `${itemHeight}px`,

@@ -661,8 +661,8 @@ export const RotateOSelector = ({
     send: (
         ptx: Promise<ethers.PopulatedTransaction>,
         onSend?: (() => void) | undefined,
-    ) => Promise<`0x${string}` | undefined>;
-    hash?: Hash;
+    ) => Promise<ResponseHash | undefined>;
+    hash?: ResponseHash;
     estimator: ReturnType<typeof useEstimateTransaction>;
 }) => {
     const [originalItems, setOriginalItems] = useState(items);

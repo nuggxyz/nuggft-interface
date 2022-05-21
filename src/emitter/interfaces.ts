@@ -59,7 +59,7 @@ interface EmitTransactionResponse extends EmitEventBase {
 
 interface EmitPotentialTransactionResponse extends EmitEventBase {
     type: EmitEventNames.PotentialTransactionResponse;
-    txhash: Hash;
+    txhash: ResponseHash;
     from: AddressString;
 }
 
@@ -128,8 +128,7 @@ interface EmitLocalRpcRotate extends EmitEventBase, EmitOnChainEventBase {
 
 export interface EmitWorkerEventBase extends EmitEventBase {
     type: EmitEventNames;
-    data: InterfacedEvent | number;
-    log: Log | number;
+    data: unknown;
 }
 
 interface EmitWorkerIncomingRpcEvent extends EmitEventBase, EmitWorkerEventBase {
@@ -142,6 +141,11 @@ interface EmitWorkerIncomingRpcBlock extends EmitEventBase, EmitWorkerEventBase 
     type: EmitEventNames.IncomingRpcBlock;
     data: number;
     log: number;
+}
+
+interface EmitWorkerIncomingEtherscanPrice extends EmitEventBase, EmitWorkerEventBase {
+    type: EmitEventNames.IncomingEtherscanPrice;
+    data: null | number;
 }
 
 interface EmitRequestTokenSvgQuery extends EmitEventBase {
@@ -189,7 +193,7 @@ export enum EmitEventNames {
 
     IncomingRpcEvent = 'worker.rpc.event',
     IncomingRpcBlock = 'worker.rpc.block',
-
+    IncomingEtherscanPrice = 'worker.etherscan.price',
     RequestTokenSvgQuery = 'main.graphql.RequestTokenSvgQuery',
     ReturnTokenSvgQuery = 'worker.graphql.ReturnTokenSvgQuery',
     HealthCheck = 'main.health.HealthCheck',
@@ -217,6 +221,7 @@ export type EmitEventsListPayload =
     | BuildPayload<EmitLocalRpcRotate>
     | BuildPayload<EmitHealthCheck>
     | BuildPayload<EmitWorkerIsRunning>
+    | BuildPayload<EmitWorkerIncomingEtherscanPrice>
 
     // | BuildPayload<EmitRpcSell>
     | BuildPayload<EmitRequestTokenSvgQuery>
@@ -250,4 +255,5 @@ export type EmitEventsListCallback =
     | BuildCallback<EmitRequestTokenSvgQuery>
     | BuildCallback<EmitReturnTokenSvgQuery>
     | BuildCallback<EmitWorkerIncomingRpcEvent>
-    | BuildCallback<EmitWorkerIncomingRpcBlock>;
+    | BuildCallback<EmitWorkerIncomingRpcBlock>
+    | BuildCallback<EmitWorkerIncomingEtherscanPrice>;

@@ -556,7 +556,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     // console.log(transaction);
 
     const Page2 = React.useMemo(() => {
-        return isOpen && chainId ? (
+        return isOpen && chainId && address ? (
             <>
                 <div
                     style={{
@@ -600,7 +600,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             }}
                         >
                             <Label
-                                text={shortenTxnHash(hash)}
+                                size="large"
+                                text={hash.isHash() ? shortenTxnHash(hash) : 'submitted'}
                                 textStyle={{ color: 'white' }}
                                 containerStyles={{
                                     background: lib.colors.etherscanBlue,
@@ -609,10 +610,16 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             />
                             <Text textStyle={{ marginBottom: 20 }}>it should be included soon</Text>
                             <Button
-                                onClick={() => gotoEtherscan(chainId, 'tx', hash)}
+                                onClick={() =>
+                                    hash.isHash()
+                                        ? gotoEtherscan(chainId, 'tx', hash)
+                                        : gotoEtherscan(chainId, 'address', address)
+                                }
                                 label="view on etherscan"
                                 textStyle={{ color: lib.colors.etherscanBlue }}
-                                buttonStyle={{ borderRadius: lib.layout.borderRadius.large }}
+                                buttonStyle={{
+                                    borderRadius: lib.layout.borderRadius.large,
+                                }}
                             />
                         </div>
                     )}
@@ -664,7 +671,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 </div>
             </>
         ) : null;
-    }, [transaction, isOpen, closeModal, setPage, chainId, data.tokenId, hash]);
+    }, [transaction, isOpen, closeModal, setPage, chainId, data.tokenId, hash, address]);
 
     // const Page2 = React.useMemo(() => {
     //     return isOpen ? (

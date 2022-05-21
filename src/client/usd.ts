@@ -4,10 +4,7 @@ import { combine } from 'zustand/middleware';
 import React from 'react';
 
 import { EthInt, PairInt, Fractionish } from '@src/classes/Fraction';
-import { CustomEtherscanProvider } from '@src/web3/classes/CustomEtherscanProvider';
-import { Chain } from '@src/web3/core/interfaces';
-
-const etherscan = new CustomEtherscanProvider(Chain.MAINNET);
+import emitter from '@src/emitter';
 
 const store = create(
     combine(
@@ -15,48 +12,55 @@ const store = create(
             price: 0,
             preference: 'USD' as 'ETH' | 'USD',
             error: false,
+            errorStart: null as number | null,
         },
-        (set) => {
-            const update = async () => {
-                try {
-                    const price = await etherscan.getEtherPrice();
-                    if (price === 0) throw Error();
-
-                    set(() => ({
-                        price: Number(price.toFixed(2)),
-                        error: false,
-                    }));
-                } catch {
-                    set(() => ({
-                        error: true,
-                    }));
-                }
-            };
-
-            const poll = () => {
-                setInterval(() => {
-                    void update();
-                }, 60000);
-            };
-
-            const now = () => {
-                void update();
-            };
-
+        (set, get) => {
             const setCurrencyPreference = (input: 'USD' | 'ETH') => {
                 set(() => ({
                     preference: input,
                 }));
             };
 
-            return { poll, now, setCurrencyPreference };
+            const update = (price: number | null) => {
+                try {
+                    if (price === 0) throw Error();
+                    if (price === null) throw Error();
+
+                    if (price !== get().price)
+                        set(() => ({
+                            price: Number(price.toFixed(2)),
+                            error: false,
+                        }));
+                } catch {
+                    const { errorStart, price: prevPrice, error } = get();
+                    if (!error) {
+                        if (errorStart === null) {
+                            set(() => ({
+                                errorStart: new Date().getTime(),
+                                ...(prevPrice === 0 && { error: true }),
+                            }));
+                        } else if (new Date().getTime() - errorStart > 60000) {
+                            set(() => ({
+                                error: true,
+                            }));
+                        }
+                    }
+                }
+            };
+
+            const watch = emitter.on.bind(emitter, {
+                type: emitter.events.IncomingEtherscanPrice,
+                callback: (arg) => {
+                    update(arg.data);
+                },
+            });
+
+            return { setCurrencyPreference, watch };
         },
     ),
 );
 
-store.getState().now();
-
-store.getState().poll();
+store.getState().watch();
 
 const useCurrencyPreferrence = () => store((state) => (state.error ? 'ETH' : state.preference));
 const useUsdError = () => store((state) => state.error);

@@ -12,7 +12,7 @@ import { useTransactionManager2 } from '@src/contracts/useContract';
 import OffersList from './RingAbout/OffersList';
 
 type Props = {
-    hash: Hash | undefined;
+    hash: ResponseHash | undefined;
     tokenId?: TokenId;
     onDismiss?: () => void;
     ConfirmationView?: () => JSX.Element;
@@ -25,6 +25,7 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
     ConfirmationView,
 }) => {
     const chainId = web3.hook.usePriorityChainId();
+    const address = web3.hook.usePriorityAccount();
 
     const network = web3.hook.useNetworkProvider();
 
@@ -60,7 +61,7 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
                 </div>
             )}
 
-            {transaction?.response && !transaction?.receipt && hash && chainId && (
+            {transaction?.response && !transaction?.receipt && hash && chainId && address && (
                 <div
                     style={{
                         display: 'flex',
@@ -73,7 +74,8 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
                     }}
                 >
                     <Label
-                        text={shortenTxnHash(hash)}
+                        size="large"
+                        text={hash.isHash() ? shortenTxnHash(hash) : 'submitted'}
                         textStyle={{ color: 'white' }}
                         containerStyles={{
                             background: lib.colors.etherscanBlue,
@@ -82,10 +84,16 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
                     />
                     <Text textStyle={{ marginBottom: 20 }}>it should be included soon</Text>
                     <Button
-                        onClick={() => gotoEtherscan(chainId, 'tx', hash)}
+                        onClick={() =>
+                            hash.isHash()
+                                ? gotoEtherscan(chainId, 'tx', hash)
+                                : gotoEtherscan(chainId, 'address', address)
+                        }
                         label="view on etherscan"
                         textStyle={{ color: lib.colors.etherscanBlue }}
-                        buttonStyle={{ borderRadius: lib.layout.borderRadius.large }}
+                        buttonStyle={{
+                            borderRadius: lib.layout.borderRadius.large,
+                        }}
                     />
                 </div>
             )}

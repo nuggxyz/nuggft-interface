@@ -17,10 +17,10 @@ const useStore = create(
     subscribeWithSelector(
         combine(
             {
-                data: {} as { [_: Hash]: Transaction },
+                data: {} as { [_: ResponseHash]: Transaction },
             },
             (set, get) => {
-                function ensureExists(txhash: Hash) {
+                function ensureExists(txhash: ResponseHash) {
                     if (!get().data[txhash])
                         // @ts-ignore
                         set((draft) => {
@@ -51,6 +51,13 @@ const useStore = create(
 
                     const dat = get().data[txhash];
 
+                    if (!dat.response) {
+                        // @ts-ignore
+                        set((draft) => {
+                            draft.data[txhash].response = true;
+                        });
+                    }
+
                     if (!dat.receipt) {
                         // @ts-ignore
                         set((draft) => {
@@ -74,7 +81,10 @@ const useStore = create(
                     }
                 }
 
-                async function handleResponse(txhash: Hash, provider: Web3Provider): Promise<void> {
+                async function handleResponse(
+                    txhash: ResponseHash,
+                    provider: Web3Provider,
+                ): Promise<void> {
                     ensureExists(txhash);
 
                     if (!get().data[txhash].response) {
@@ -167,7 +177,7 @@ export const useUpdateTransactionOnEmit = () => {
     });
 };
 
-const useTransaction = (txhash?: Hash) => {
+const useTransaction = (txhash?: ResponseHash) => {
     const response = useStore(
         useCallback(
             (state) => (txhash !== undefined ? state.data[txhash]?.response : undefined),
@@ -177,7 +187,10 @@ const useTransaction = (txhash?: Hash) => {
 
     const receipt = useStore(
         useCallback(
-            (state) => (txhash !== undefined ? state.data[txhash]?.receipt : undefined),
+            (state) =>
+                txhash !== undefined && txhash.startsWith('0x')
+                    ? state.data[txhash]?.receipt
+                    : undefined,
             [txhash],
         ),
     );

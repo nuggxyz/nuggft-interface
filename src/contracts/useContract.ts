@@ -122,7 +122,7 @@ function useSendTransaction(
     authenticatedCoreProvider?: CoreProvider,
     authenticatedConnector?: Connector,
     from?: AddressString,
-    onHash?: (hash: Hash) => void,
+    onHash?: (hash: ResponseHash) => void,
     bypassMobile = false,
 ) {
     const [error, setError] = React.useState<CustomError | Error>();
@@ -130,7 +130,7 @@ function useSendTransaction(
 
     const { screen } = useDimensions();
 
-    const [hash, setHash] = React.useState<Hash>();
+    const [hash, setHash] = React.useState<ResponseHash>();
 
     const prevHash = usePrevious(hash);
 
@@ -158,7 +158,11 @@ function useSendTransaction(
         type: emitter.events.PotentialTransactionReceipt,
         callback: React.useCallback(
             (arg) => {
-                if (hash === undefined && pop && arg.validate(pop.from, pop.data)) {
+                if (
+                    (hash === undefined || arg.txhash !== hash) &&
+                    pop &&
+                    arg.validate(pop.from, pop.data)
+                ) {
                     setHash(arg.txhash);
                 }
             },
@@ -174,7 +178,7 @@ function useSendTransaction(
         async (
             ptx: Promise<PopulatedTransaction>,
             onSend?: () => void,
-        ): Promise<Hash | undefined> => {
+        ): Promise<ResponseHash | undefined> => {
             if (estimation.error) {
                 console.error('OOPS - forgot to check for successful estimation');
                 return undefined;
@@ -211,7 +215,7 @@ function useSendTransaction(
                                           .replace('0x0', '')
                                           .replace('0x', '') || 0,
                                   data: tx.data,
-                              }) as Promise<Hash>)
+                              }) as Promise<Hash | null>)
                             : authenticatedProvider.getSigner().sendTransaction(tx),
                         onSend ? onSend() : undefined,
                         emitter.emit({
@@ -220,13 +224,23 @@ function useSendTransaction(
                     ])
                         .then(([y]) => {
                             console.log('YYYYYY', y);
-                            let txhash: Hash;
-                            if (typeof y === 'string') {
-                                txhash = y;
-                                setHash(y as Hash);
+                            let txhash: ResponseHash;
+                            if (y === null) {
+                                txhash = `unknown-${from}_${tx.data ?? ''}` as ResponseHash;
+
+                                setHash(txhash);
                                 emitter.emit({
                                     type: emitter.events.PotentialTransactionResponse,
                                     txhash,
+                                    from,
+                                });
+                            } else if (typeof y === 'string') {
+                                // txhash = `unknown-${from}_${tx.data ?? ''}`;
+                                txhash = y;
+                                setHash(y);
+                                emitter.emit({
+                                    type: emitter.events.PotentialTransactionResponse,
+                                    txhash: y,
                                     from,
                                 });
                             } else {
@@ -241,7 +255,7 @@ function useSendTransaction(
                                 addToast({
                                     duration: 0,
                                     title: t`Pending Transaction`,
-                                    message: shortenTxnHash(txhash),
+                                    message: txhash.isHash() ? shortenTxnHash(txhash) : 'submitted',
                                     error: false,
                                     id: txhash,
                                     index: toasts.length,
@@ -249,8 +263,8 @@ function useSendTransaction(
                                     action: () =>
                                         web3.config.gotoEtherscan(
                                             authenticatedProvider.network.chainId,
-                                            'tx',
-                                            txhash,
+                                            txhash.isHash() ? 'tx' : 'address',
+                                            txhash.isHash() ? txhash : from,
                                         ),
                                 });
                             }
@@ -317,7 +331,7 @@ export const useEtherscan = () => {
 };
 
 export function useCheckEtherscanForUnknownTransactionHash(
-    found?: Hash,
+    found?: ResponseHash,
     setFound?: (input: Hash) => void,
     setError?: (input: CustomError | Error) => void,
     request?: SimpleTransactionData,
@@ -331,32 +345,33 @@ export function useCheckEtherscanForUnknownTransactionHash(
 
     // //
     const callback = React.useCallback(() => {
-        if (!setFound || !request || found) return;
-
-        // https://docs.etherscan.io/api-endpoints/accounts
-        void etherscan.getHistory(request.from, request.startBlock).then((res) => {
-            console.log({ res, request });
-            res.forEach((element) => {
-                if (
-                    element.data === request.data &&
-                    element.to === request.to &&
-                    element.value.eq(request.value)
-                ) {
-                    setFound(element.hash as Hash);
-                    if (element.isError && element.errorCode && setError) {
-                        setError(lib.errors.parseJsonRpcError(element.errorCode));
+        if (!setFound || !request || (found && found.startsWith('0x'))) return;
+        setTimeout(() => {
+            // https://docs.etherscan.io/api-endpoints/accounts
+            void etherscan.getHistory(request.from, request.startBlock).then((res) => {
+                console.log({ res, request });
+                res.forEach((element) => {
+                    if (
+                        element.data === request.data &&
+                        element.to === request.to &&
+                        element.value.eq(request.value)
+                    ) {
+                        setFound(element.hash as Hash);
+                        if (element.isError && element.errorCode && setError) {
+                            setError(lib.errors.parseJsonRpcError(element.errorCode));
+                        }
+                        emitter.emit({
+                            type: emitter.events.TransactionResponse,
+                            response: element,
+                        });
                     }
-                    emitter.emit({
-                        type: emitter.events.TransactionResponse,
-                        response: element,
-                    });
-                }
+                });
             });
-        });
+        }, 3000);
     }, [etherscan, request, setFound, found, setError]);
 
-    emitter.on({
-        type: emitter.events.HealthCheck,
+    emitter.hook.useOn({
+        type: emitter.events.IncomingRpcBlock,
         callback,
     });
 
@@ -367,8 +382,8 @@ export function useCheckEtherscanForUnknownTransactionHash(
 
 export function useTransactionManager2(
     network?: CustomWeb3Provider,
-    hash?: Hash,
-    onResponse?: (response: Hash) => void,
+    hash?: ResponseHash,
+    onResponse?: (response: ResponseHash) => void,
     onReceipt?: (response: Hash) => void,
 ) {
     const txdata = client.transactions.useTransaction(hash);
@@ -390,7 +405,7 @@ export function useTransactionManager2(
         if (txdata && hash) {
             if (!prevTxdata) {
                 if (txdata.response && onResponse) onResponse(hash);
-                if (txdata.receipt && onReceipt) onReceipt(hash);
+                if (txdata.receipt && onReceipt) onReceipt(hash as Hash);
             } else {
                 if (
                     txdata.response !== null &&
@@ -400,7 +415,7 @@ export function useTransactionManager2(
                     onResponse(hash);
                 if (txdata.receipt && !prevTxdata.receipt) {
                     if (onReceipt) {
-                        onReceipt(hash);
+                        onReceipt(hash as Hash);
                     }
                     /// lol, this always says success
                     const isSuccess = txdata.receipt;

@@ -50,6 +50,8 @@ declare type Hex = `0x${
 
 declare type AddressString = `0x${string}`;
 declare type Hash = `0x${string}`;
+declare type GetBetterWalletConnect = `unknown-${string}`;
+declare type ResponseHash = Hash | GetBetterWalletConnect;
 
 // const atMost32 = <T extends string>(str: TruncateTo32<T>) => str;
 
@@ -195,6 +197,7 @@ declare function FIXX<K extends TokenType>(): TokenId extends infer R
 declare type CusotomID = `${string}`;
 
 interface String extends tokenId {
+    isHash: () => this is Hash;
     isItemId: () => this is ItemId;
     isNuggId(): this is NuggId;
     toItemId(): ItemId;

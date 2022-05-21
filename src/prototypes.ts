@@ -95,7 +95,9 @@ String.prototype.toPrettyId = function fn() {
 String.prototype.isItemId = function fn() {
     return this.isTokenId('item');
 };
-
+String.prototype.isHash = function fn() {
+    return this.startsWith('0x');
+};
 String.prototype.isNuggId = function fn() {
     return this.isTokenId('nugg');
 };
