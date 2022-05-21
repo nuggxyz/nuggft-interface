@@ -36,6 +36,13 @@ export default () => {
         ReactGA.set({ cd1: chainId ?? 0 });
     }, [chainId]);
 
+    const peer = web3.hook.usePriorityPeer();
+
+    useEffect(() => {
+        // cd1 - custom dimension 1 - chainId
+        ReactGA.set({ cd2__peer: peer?.name });
+    }, [peer]);
+
     useEffect(() => {
         // typed as 'any' in react-ga4 -.-
         ReactGA.ga((tracker: { get: (arg: string) => string }) => {

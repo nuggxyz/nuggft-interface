@@ -159,6 +159,11 @@ interface EmitHealthCheck extends EmitEventBase {
     type: EmitEventNames.HealthCheck;
 }
 
+interface EmitWorkerIsRunning extends EmitEventBase {
+    type: EmitEventNames.WorkerIsRunning;
+    label: string;
+}
+
 /*  EXPORTS: must be manually updated  */
 
 export enum EmitEventNames {
@@ -188,7 +193,7 @@ export enum EmitEventNames {
     RequestTokenSvgQuery = 'main.graphql.RequestTokenSvgQuery',
     ReturnTokenSvgQuery = 'worker.graphql.ReturnTokenSvgQuery',
     HealthCheck = 'main.health.HealthCheck',
-
+    WorkerIsRunning = 'worker.health.WorkerIsRunning',
     // Sell = 'local.rpc.event.Sell',
 }
 
@@ -211,6 +216,7 @@ export type EmitEventsListPayload =
     | BuildPayload<EmitKeyboardClosed>
     | BuildPayload<EmitLocalRpcRotate>
     | BuildPayload<EmitHealthCheck>
+    | BuildPayload<EmitWorkerIsRunning>
 
     // | BuildPayload<EmitRpcSell>
     | BuildPayload<EmitRequestTokenSvgQuery>
@@ -240,6 +246,7 @@ export type EmitEventsListCallback =
     | BuildCallback<EmitTransactionSent>
     | BuildCallback<EmitKeyboardClosed>
     | BuildCallback<EmitModalOpen>
+    | BuildCallback<EmitWorkerIsRunning>
     | BuildCallback<EmitRequestTokenSvgQuery>
     | BuildCallback<EmitReturnTokenSvgQuery>
     | BuildCallback<EmitWorkerIncomingRpcEvent>
