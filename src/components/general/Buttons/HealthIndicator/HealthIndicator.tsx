@@ -1,18 +1,18 @@
 import React from 'react';
-import { useSpring, animated, config as springConfig } from '@react-spring/web';
+import { animated } from '@react-spring/web';
 import { IoSyncCircle } from 'react-icons/io5';
 
 import lib from '@src/lib';
 import client from '@src/client';
 
 const DisplayOk = () => {
-    const rotate = useSpring({
-        loop: true,
-        // delay: 3000,
-        config: springConfig.molasses,
-        from: { rotateZ: 0 },
-        to: { rotateZ: 180 },
-    });
+    // const rotate = useSpring({
+    //     loop: true,
+    //     // delay: 3000,
+    //     config: springConfig.molasses,
+    //     from: { rotateZ: 0 },
+    //     to: { rotateZ: 180 },
+    // });
 
     return (
         <animated.div
@@ -24,7 +24,7 @@ const DisplayOk = () => {
                 // height: 30,
                 // background: 'white',
                 // borderRadius: lib.layout.borderRadius.large,
-                ...rotate,
+                animation: `Rotate 2s ${lib.layout.animation} infinite`,
             }}
         >
             <IoSyncCircle color={lib.colors.nuggGreenSemiTransparent} size={45} />

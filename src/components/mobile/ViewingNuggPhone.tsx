@@ -559,7 +559,7 @@ const ViewingNuggPhone: FunctionComponent<{
                                     disableClick
                                     manualTokenId={tokenId}
                                     disableHover
-                                    tokenStyle={{ width: '225px', height: '225px' }}
+                                    tokenStyle={{ width: '275px', height: '275px' }}
                                 />
                             </div>
                         ) : (

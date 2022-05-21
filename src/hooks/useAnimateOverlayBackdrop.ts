@@ -1,7 +1,7 @@
-import { PickAnimated, useSpring } from '@react-spring/web';
 import { CSSProperties } from 'react';
+import { PickAnimated } from '@react-spring/web';
 
-import { NLStyleSheetCreator } from '@src/lib';
+import lib, { NLStyleSheetCreator } from '@src/lib';
 import useDimensions from '@src/client/hooks/useDimensions';
 
 const styles = NLStyleSheetCreator({
@@ -23,14 +23,16 @@ const styles = NLStyleSheetCreator({
 
 export default (isOpen: boolean, style?: CSSProperties, delay?: number) => {
     const { screen: screenType } = useDimensions();
-    const [wrapperStyle]: [PickAnimated<CSSProperties>, any] = useSpring(
-        {
-            opacity: isOpen ? 1 : 0,
-            delay,
-        },
-        [isOpen],
-    );
+    // const [wrapperStyle]: [PickAnimated<CSSProperties>, any] = useSpring(
+    //     {
+    //         opacity: isOpen ? 1 : 0,
+    //         delay,
+    //     },
+    //     [isOpen],
+    // );
     return {
+        animationDelay: delay,
+        animation: `all 1s ${lib.layout.animation}`,
         ...styles.wrapper,
 
         pointerEvents: isOpen ? ('auto' as const) : ('none' as const),
@@ -48,6 +50,6 @@ export default (isOpen: boolean, style?: CSSProperties, delay?: number) => {
         backdropFilter: 'blur(50px)',
         // @danny7even this seemed to cause problems with issue #67 - but it didnt solve any
         WebkitBackdropFilter: 'blur(50px)',
-        ...wrapperStyle,
-    } as const;
+        opacity: isOpen ? 1 : 0,
+    } as const as PickAnimated<CSSProperties>;
 };

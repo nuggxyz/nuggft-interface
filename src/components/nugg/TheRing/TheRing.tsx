@@ -14,8 +14,8 @@ import useLifecycle from '@src/client/hooks/useLifecycle';
 import useDimensions from '@src/client/hooks/useDimensions';
 import useDesktopSwappingNugg from '@src/client/hooks/useDesktopSwappingNugg';
 import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
-import CircleTimerMobile from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimerMobile';
 import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
+import CircleTimerMobileCSS from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimerMobileCSS';
 
 import styles from './TheRing.styles';
 
@@ -72,7 +72,7 @@ const TheRing: FunctionComponent<Props> = ({
     const { blocksRemaining } = client.epoch.useEpoch(swap?.epoch?.id, blocknum);
 
     const CircleTimerWrap = React.useMemo(() => {
-        return isPhone ? CircleTimerMobile : CircleTimer;
+        return isPhone ? CircleTimerMobileCSS : CircleTimer;
     }, [isPhone]);
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
