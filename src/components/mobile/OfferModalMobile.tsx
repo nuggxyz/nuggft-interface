@@ -53,7 +53,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
     const [page, setPage] = client.modal.usePhase();
-    const { send, estimation: estimator, hash } = usePrioritySendTransaction();
+    const { send, estimation: estimator, hash, error } = usePrioritySendTransaction();
     const [amount, setAmount] = useState('0');
     const [lastPressed, setLastPressed] = React.useState('5');
     const transaction = useTransactionManager2(network, hash);
@@ -568,7 +568,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 >
                     <AnimatedConfirmation confirmed={!!transaction?.receipt} />
 
-                    {!transaction?.response && (
+                    {!transaction?.response && !error && (
                         <div
                             style={{
                                 display: 'flex',
@@ -584,6 +584,23 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                 textStyle={{ color: 'white' }}
                                 containerStyles={{ background: lib.colors.nuggGold }}
                             />
+                        </div>
+                    )}
+
+                    {!transaction?.response && error && (
+                        <div
+                            style={{
+                                display: 'flex',
+                                width: '100%',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                padding: 20,
+                                marginTop: 20,
+                            }}
+                        >
+                            <Text textStyle={{ color: lib.colors.primaryColor }}>
+                                Error: {error.message}
+                            </Text>
                         </div>
                     )}
 
