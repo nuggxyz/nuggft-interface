@@ -241,6 +241,12 @@ export const apolloClient = new ApolloClient<any>({
     link: buildApolloSplitLink(GRAPH_ENPOINTS[DEFAULT_CHAIN], GRAPH_WSS_ENDPOINTS[DEFAULT_CHAIN]),
     // connectToDevTools: true,
     cache: buildCache(),
+    defaultOptions: {
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
 });
 
 // interface WalletInfo {

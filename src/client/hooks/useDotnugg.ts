@@ -119,8 +119,8 @@ export const useDotnuggSubscription = (
     const { data: nuggSrc } = useGetDotnuggNuggQuery({
         pollInterval: 5000,
         skip: !tokenId || !activate || isItem,
-        fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
+        nextFetchPolicy: 'no-cache',
         variables: {
             tokenId: tokenId?.toRawId() || '',
         },
@@ -140,7 +140,7 @@ export const useDotnuggSubscription = (
         pollInterval: 5000,
         skip: !tokenId || !activate || !isItem,
 
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
 
         variables: {
             tokenId: tokenId?.toRawId() || '',

@@ -191,8 +191,9 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
 
             {__DEV__ && (
                 <Button
-                    label="[DEV] clear local storage"
+                    label="[For Testing] Clear History"
                     buttonStyle={{
+                        borderRadius: lib.layout.borderRadius.large,
                         marginTop: '20px',
                         background: lib.colors.red,
                         color: lib.colors.white,
@@ -202,6 +203,8 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
                     }}
                 />
             )}
+
+            <div style={{ marginTop: 150 }} />
         </div>
     );
 };

@@ -8,7 +8,7 @@ export default () => {
 
     const { data: healthQueryData } = useHealthQuery({
         query: HealthDocument,
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
         notifyOnNetworkStatusChange: true,
         pollInterval: 12000,
     });

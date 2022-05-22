@@ -40,7 +40,7 @@ export default () => {
     const updateSwaps = client.swaps.useUpdateSwaps();
 
     const { data, refetch } = useGetMassiveLiveProtocolQuery({
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
         skip: true,
     });
 
@@ -188,7 +188,7 @@ export default () => {
 
     const { data: data2 } = useLiveProtocolSubscription({
         shouldResubscribe: true,
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
     });
 
     const debouncedData2 = useDebounce(data2, 500);

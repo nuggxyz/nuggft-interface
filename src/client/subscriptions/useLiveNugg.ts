@@ -51,7 +51,7 @@ export const useLiveTokenPoll = (activate: boolean, _tokenId: TokenId | undefine
 
     const options = React.useMemo(() => {
         return {
-            fetchPolicy: 'network-only' as const,
+            fetchPolicy: 'no-cache' as const,
             variables: { tokenId: tokenId?.toRawId() || '' },
             skip: !tokenId || !activate,
         };

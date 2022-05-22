@@ -57,7 +57,14 @@ const MobileOwnerBlock = ({
     const minTryoutCurrency = useUsdPair(token?.isItem() ? token?.tryout.min?.eth : undefined);
 
     const vfo = useAsyncState(() => {
-        if (visible && token && provider && tokenId && lifecycle?.lifecycle === Lifecycle.Bunt) {
+        if (
+            visible &&
+            token &&
+            provider &&
+            tokenId &&
+            lifecycle?.lifecycle === Lifecycle.Bunt &&
+            !leader?.eth
+        ) {
             const check = nuggft['vfo(address,uint24)'].bind(undefined, Address.NULL.hash);
             return check(tokenId.toRawId()).then((x) => {
                 if (x.isZero()) return nuggft.msp();
@@ -65,7 +72,7 @@ const MobileOwnerBlock = ({
             });
         }
         return undefined;
-    }, [visible, token, nuggft, tokenId, provider]);
+    }, [visible, token, nuggft, tokenId, provider, leader?.eth]);
 
     const leaderCurrency = useUsdPair(leader?.eth || vfo || 0);
 
@@ -325,7 +332,10 @@ const MobileOwnerBlock = ({
     );
 };
 
-export default MobileOwnerBlock;
+export default React.memo(
+    MobileOwnerBlock,
+    (a, b) => (b.tokenId === undefined || a.tokenId === b.tokenId) && a.visible === b.visible,
+);
 
 // const ens = web3.hook.usePriorityAnyENSName(
 //     token?.type === 'item' ? 'nugg' : provider,

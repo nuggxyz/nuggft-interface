@@ -105,11 +105,11 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
     const [searchedItemsData, setSearchedItemsData] = React.useState<GetAllItemsQuery['items']>();
 
     const { fetchMore: getAllNuggs } = useGetAllNuggsQuery({
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
     });
 
     const { fetchMore: getAllItems } = useGetAllItemsQuery({
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
     });
 
     const blankItemQuery = React.useCallback(() => {

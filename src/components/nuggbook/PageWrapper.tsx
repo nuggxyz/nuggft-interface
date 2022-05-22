@@ -6,7 +6,6 @@ import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import lib from '@src/lib';
 import { Page } from '@src/interfaces/nuggbook';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
-import useDimensions from '@src/client/hooks/useDimensions';
 import BackButton from '@src/components/mobile/BackButton';
 
 import Start from './pages/Start';
@@ -68,7 +67,7 @@ const useNuggBookHandler = () => {
     );
 
     const handleClear = React.useCallback(() => {
-        window.localStorage.removeItem('nugg-book');
+        window.localStorage.removeItem('nugg.xyz-nuggbook');
         startTransiton(() => window.location.reload());
     }, [startTransiton]);
 
@@ -88,7 +87,7 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
         setDraggedTop(book.top);
     }, [book.top]);
 
-    const dim = useDimensions();
+    const { height } = client.viewport.useVisualViewport();
 
     const containerStyle = useSpring({
         from: {
@@ -104,22 +103,17 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
 
     const tabFadeTransition = useTransition(book, {
         initial: {
-            opacity: 0,
-            zIndex: 0,
-            left: 0,
+            transform: `translate(0px,0px)`,
         },
         from: (page) => ({
-            opacity: 0,
-            zIndex: 0,
-            left: page.page === Page.TableOfContents ? -1000 : 1000,
+            transform: `translate(${page.page === Page.TableOfContents ? -1000 : 1000}px,0px)`,
         }),
-        enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto' },
+        // enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto' },
+        enter: { pointerEvents: 'auto', transform: `translate(0px,0px)` },
         leave: (page) => ({
-            opacity: 0,
-            zIndex: 0,
-            left: page.page === Page.TableOfContents ? -1000 : 1000,
+            transform: `translate(${page.page === Page.TableOfContents ? -1000 : 1000}px,0px)`,
         }),
-        keys: (item) => `tabFadeTransition${item.page}`,
+        keys: (item) => `AtabFadeTransition${item.page}`,
         config: config.stiff,
     });
 
@@ -164,14 +158,14 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                     alignItems: 'center',
                     display: 'flex',
                     flexDirection: 'column',
-                    height: dim.height + BOTTOM_OFFSET,
+                    height: height + BOTTOM_OFFSET,
 
                     // paddingBottom: BOTTOM_OFFSET,
                 }}
             >
                 <div
                     style={{
-                        height: dim.height - book.top,
+                        height: height - book.top,
                         width: '100%',
                         justifyContent: 'flex-start',
                         display: 'flex',
@@ -195,8 +189,13 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                                         position: 'absolute',
                                         ..._styles,
                                         overflow: 'scroll',
-
-                                        maxHeight: dim.height - book.top,
+                                        opacity: 1,
+                                        // zIndex: 100000000,
+                                        left: 0,
+                                        right: 0,
+                                        pointerEvents: 'auto',
+                                        height: '100%',
+                                        maxHeight: height - book.top,
                                     }}
                                 >
                                     {!!kid.comp &&
@@ -208,17 +207,20 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                                 </animated.div>
                             </>
                         ))}
-                        <BackButton noNavigate onClick={() => handleClose()} />
-
-                        <div
-                            style={{
-                                position: 'absolute',
-                                left: 0,
-                                width: '20%',
-                                top: 0,
-                                height: '100%',
-                            }}
-                        />
+                        {book.page !== Page.Start && (
+                            <>
+                                <BackButton noNavigate onClick={() => handleClose()} />
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        left: 0,
+                                        width: '20%',
+                                        top: 0,
+                                        height: '100%',
+                                    }}
+                                />{' '}
+                            </>
+                        )}
                     </div>
                 </div>
             </animated.div>

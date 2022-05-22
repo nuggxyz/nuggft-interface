@@ -29,7 +29,7 @@ export default () => {
         variables: { address: address ? address.toLowerCase() : '' },
         shouldResubscribe: true,
         skip: !address,
-        fetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
         onSubscriptionData: (x) => {
             if (
                 address &&
