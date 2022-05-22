@@ -351,3 +351,28 @@ input[type='number'] {
         background-position: 0% 0%;
     }
 }
+
+@keyframes JoeWiden {
+    0% {
+        width: 0px;
+    }
+    100% {
+        width: 30px;
+    }
+}
+@-webkit-keyframes JoeWiden {
+    0% {
+        width: 0px;
+    }
+    100% {
+        width: 30px;
+    }
+}
+@-moz-keyframes JoeWiden {
+    0% {
+        width: 0px;
+    }
+    100% {
+        width: 30px;
+    }
+}

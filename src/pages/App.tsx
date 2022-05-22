@@ -59,11 +59,11 @@ const Router = () => {
 };
 
 const App = () => {
-    const { isPhone } = useDimensions();
+    // const { isPhone } = useDimensions();
 
     return (
         <>
-            {!isPhone && <ToastContainer />}
+            <ToastContainer />
             <GlobalModal />
             <NuggBook />
             <Helmet />

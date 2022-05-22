@@ -43,10 +43,10 @@ import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 //     return <Comp style={mem} />;
 // };
 
-const Modal: FC<PropsWithChildren<unknown>> = ({ children }) => {
+const ModalWrapperMobile: FC<PropsWithChildren<unknown>> = ({ children }) => {
     const isOpen = client.modal.useOpen();
     // const data = client.modal.useData();
-    // const closeModal = client.modal.useCloseModal();
+    // const closeModalWrapperMobile = client.modal.useCloseModalWrapperMobile();
 
     // const node = useRef<HTMLDivElement>(null);
 
@@ -54,7 +54,7 @@ const Modal: FC<PropsWithChildren<unknown>> = ({ children }) => {
 
     const style = useAnimateOverlayBackdrop(isOpen, { zIndex: 999000 });
 
-    // useOnClickOutside(node, closeModal);
+    // useOnClickOutside(node, closeModalWrapperMobile);
 
     // const footerRef = React.useRef<HTMLDivElement>(null);
 
@@ -139,7 +139,7 @@ const Modal: FC<PropsWithChildren<unknown>> = ({ children }) => {
     ) : null;
 };
 
-export default React.memo(Modal);
+export default React.memo(ModalWrapperMobile);
 //    {/* <animated.div
 //                 ref={footerRef}
 //                 style={{

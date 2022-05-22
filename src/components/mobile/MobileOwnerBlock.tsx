@@ -334,51 +334,8 @@ const MobileOwnerBlock = ({
 
 export default React.memo(
     MobileOwnerBlock,
-    (a, b) => (b.tokenId === undefined || a.tokenId === b.tokenId) && a.visible === b.visible,
+    (a, b) =>
+        (b.tokenId === undefined || a.tokenId === b.tokenId) &&
+        a.visible === b.visible &&
+        a.lifecycle?.lifecycle === b.lifecycle?.lifecycle,
 );
-
-// const ens = web3.hook.usePriorityAnyENSName(
-//     token?.type === 'item' ? 'nugg' : provider,
-//     token
-//         ? token.activeSwap
-//             ? token.activeSwap.owner
-//             : token.type === 'nugg'
-//             ? token.owner
-//             : ''
-//         : '',
-// );
-
-// @danny7even what is the purpose of this? bypassing it fixes a small rendering delay
-//   which makes the ring about not appear as jumpy on first render
-// const isItemTryout = useCallback(
-//     (_token?: LiveToken | null): _token is RecursiveRequired<LiveItem> =>
-//         !isUndefinedOrNullOrBooleanFalse(
-//             lifecycle === Lifecycle.Tryout &&
-//                 _token &&
-//                 _token.type === 'item' &&
-//                 !isUndefinedOrNullOrObjectEmpty(_token.tryout.min) &&
-//                 !isUndefinedOrNullOrObjectEmpty(_token.tryout.max),
-//         ),
-//     [lifecycle],
-// );
-
-// {
-// /* <div style={{ display: 'flex', marginTop: '20px' }}>
-//                     <Text
-//                         size="small"
-//                         textStyle={{
-//                             fontFamily: lib.layout.font.sf.light,
-//                             marginRight: '5px',
-//                         }}
-//                     >
-//                         Current Price |{' '}
-//                     </Text>
-//                     <CurrencyText
-//                         size="small"
-//                         value={Math.max(
-//                             floor?.decimal.toNumber() || 0,
-//                             token && token.activeSwap ? token.activeSwap?.eth.number : 0,
-//                         )}
-//                     />
-//                 </div> */
-// }

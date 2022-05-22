@@ -17,7 +17,7 @@ import WhatIsDefi from './pages/WhatIsDefi';
 
 const useNuggBook = () => {
     const page = client.nuggbook.useNuggBookPage();
-
+    console.log({ page });
     switch (page) {
         case Page.Start:
             return { top: 450, comp: Start, page };
@@ -163,7 +163,7 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                     // paddingBottom: BOTTOM_OFFSET,
                 }}
             >
-                <div
+                <animated.div
                     style={{
                         height: height - book.top,
                         width: '100%',
@@ -174,7 +174,7 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                         position: 'relative',
                     }}
                 >
-                    <div
+                    <animated.div
                         style={{
                             height: '100%',
                             overflow: 'scroll',
@@ -198,12 +198,13 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                                         maxHeight: height - book.top,
                                     }}
                                 >
-                                    {!!kid.comp &&
-                                        kid.comp({
-                                            clear: handleClear,
-                                            close: handleClose,
-                                            setPage: handleVisit,
-                                        })}
+                                    {!!kid.comp && (
+                                        <kid.comp
+                                            clear={handleClear}
+                                            close={handleClose}
+                                            setPage={handleVisit}
+                                        />
+                                    )}
                                 </animated.div>
                             </>
                         ))}
@@ -221,8 +222,8 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                                 />{' '}
                             </>
                         )}
-                    </div>
-                </div>
+                    </animated.div>
+                </animated.div>
             </animated.div>
         </animated.div>
     );
