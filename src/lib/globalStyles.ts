@@ -45,6 +45,6 @@ const globalStyles = NLStyleSheetCreator({
     textRed: {
         color: lib.colors.nuggRedText,
     },
-});
+} as const);
 
 export default globalStyles;

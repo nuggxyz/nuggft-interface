@@ -77,8 +77,11 @@ const ListItemGroup = ({
 }) => {
     const visits = client.nuggbook.useVisits();
 
+    const id = React.useId();
+
     return (
         <div
+            key={id}
             style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -88,8 +91,9 @@ const ListItemGroup = ({
             }}
         >
             <Text size="large">{header}</Text>
-            {items.map((x) => (
+            {items.map((x, index) => (
                 <ListItem
+                    key={`${id}-${index}`}
                     text={x.header}
                     onClick={() => setPage(x.page)}
                     visited={visits[x.page]}
@@ -103,7 +107,7 @@ type ListItemDescription = {
     page: Page;
 };
 
-const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
+const TableOfContents: NuggBookPage = ({ setPage, clear, close }) => {
     const rundown: ListItemDescription[] = [
         {
             header: 'who makes the money?',
@@ -181,6 +185,11 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
                 welcome to nuggft
             </Text>
 
+            <Button label="get me up and running" onClick={() => setPage(Page.WhatIsAWallet)} />
+            <Button label={"i'll figure it out"} onClick={() => close()} />
+
+            <ListItemGroup header="get up and running" items={rundown} setPage={setPage} />
+
             <ListItemGroup header="the rundown" items={rundown} setPage={setPage} />
 
             {/* <ListItemGroup header="intro to defi" items={defi} setPage={setPage}  /> */}
@@ -189,20 +198,18 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
 
             <ListItemGroup header="lol wut" items={wut} setPage={setPage} />
 
-            {__DEV__ && (
-                <Button
-                    label="[For Testing] Clear History"
-                    buttonStyle={{
-                        borderRadius: lib.layout.borderRadius.large,
-                        marginTop: '20px',
-                        background: lib.colors.red,
-                        color: lib.colors.white,
-                    }}
-                    onClick={() => {
-                        clear();
-                    }}
-                />
-            )}
+            <Button
+                label="[For Testing] Clear History"
+                buttonStyle={{
+                    borderRadius: lib.layout.borderRadius.large,
+                    marginTop: '20px',
+                    background: lib.colors.red,
+                    color: lib.colors.white,
+                }}
+                onClick={() => {
+                    clear();
+                }}
+            />
 
             <div style={{ marginTop: 150 }} />
         </div>

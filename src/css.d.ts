@@ -19,6 +19,8 @@ declare module 'react' {
         '--dotnugg-stroke-width'?: number;
         '--info-clicker-filter'?: string;
     }
+
+    type FCC<T> = FunctionComponent<PropsWithChildren<T>>;
 }
 
 // declare interface CSSPropertiesWithVars extends React.CSSProperties {

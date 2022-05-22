@@ -15,6 +15,7 @@ import * as WorkboxWebpackPlugin from 'workbox-webpack-plugin';
 import ModuleScopePlugin from 'react-dev-utils/ModuleScopePlugin';
 import getCSSModuleLocalIdent from 'react-dev-utils/getCSSModuleLocalIdent';
 import ESLintPlugin from 'eslint-webpack-plugin';
+import WebpackBundleAnalyzer from 'webpack-bundle-analyzer';
 
 import ModuleNotFoundPlugin from 'react-dev-utils/ModuleNotFoundPlugin';
 
@@ -92,6 +93,8 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
     // Variable used for enabling profiling in Production
     // passed into alias object. Uses a flag if passed into the build command
     const isEnvProductionProfile = isEnvProduction && process.argv.includes('--profile');
+
+    const shouldAnalyzeBundle = isEnvProduction && process.argv.includes('--analyze-bundle');
 
     // We will provide `paths.publicUrlOrPath` to our app
     // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
@@ -464,9 +467,6 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
                                 and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
                             },
                         },
-                        {
-                            test: /\.(dev)\.$/,
-                        },
                         // Process application JS with Babel.
                         // The preset includes JSX, Flow, TypeScript, and some ESnext features.
                         {
@@ -490,6 +490,17 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
                                     isEnvDevelopment &&
                                         shouldUseReactRefresh &&
                                         require.resolve('react-refresh/babel'),
+
+                                    // [
+                                    //     'import',
+                                    //     {
+                                    //         libraryName: 'react-icons/si',
+                                    //         // 'react-icons/bs',
+                                    //         // 'react-icons/io5',
+                                    //         libraryDirectory: 'lib',
+                                    //     },
+                                    //     'react-icons',
+                                    // ],
                                 ].filter(Boolean),
                                 // This is a feature of `babel-loader` for webpack (not Babel itself).
                                 // It enables caching results in ./node_modules/.cache/babel-loader/
@@ -500,7 +511,6 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
                                 compact: isEnvProduction,
                             },
                         },
-
                         // Process any JS outside of the app with Babel.
                         // Unlike the application JS, we only compile the standard ES features.
                         {
@@ -826,6 +836,8 @@ export default function (webpackEnv: 'production' | 'development'): webpack.Conf
                         },
                     },
                 }),
+            // https://www.useanvil.com/blog/engineering/minimizing-webpack-bundle-size/
+            shouldAnalyzeBundle && new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
         ].filter(Boolean),
         // Turn off performance processing because we utilize
         // our own hints via the FileSizeReporter

@@ -14,6 +14,7 @@ import TableOfContents from './pages/TableOfContents';
 import WhatIsAWallet from './pages/WhatIsAWallet';
 import WhatIsAnNFT from './pages/WhatIsAnNFT';
 import WhatIsDefi from './pages/WhatIsDefi';
+import Close from './pages/Close';
 
 const useNuggBook = () => {
     const page = client.nuggbook.useNuggBookPage();
@@ -33,7 +34,7 @@ const useNuggBook = () => {
             return { top: 100, comp: WhatIsDefi, page };
         case Page.Close:
         default:
-            return { top: 1000, comp: null, page };
+            return { top: 1000, comp: Close, page };
     }
 };
 
@@ -190,7 +191,6 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                                         ..._styles,
                                         overflow: 'scroll',
                                         opacity: 1,
-                                        // zIndex: 100000000,
                                         left: 0,
                                         right: 0,
                                         pointerEvents: 'auto',

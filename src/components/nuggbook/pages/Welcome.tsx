@@ -1,45 +1,74 @@
 import React from 'react';
-import { useSpring, animated, config } from '@react-spring/web';
+import { useSpring, animated, config, a } from '@react-spring/web';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
 import Button from '@src/components/general/Buttons/Button/Button';
 import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
+import packages from '@src/packages';
+
+const items = [
+    'no more scams',
+    'no more gimmics',
+    'no more mints',
+    'no more luck',
+    'no more phishing',
+    'no more trust',
+    'no more roadmaps',
+    'no more lottery',
+    'no more monkeys',
+    'no more bull shit',
+].map((val, index) => ({ val, index }));
 
 const Start: NuggBookPage = ({ setPage }) => {
-    // console.log('ayyyeeeeeeeeee');
-
     const spring = useSpring({
         from: {
             width: '0px',
+            opacity: 0,
         },
         to: {
             width: '30px',
+            opacity: 1,
         },
-        delay: 2000,
+        delay: 500 + items.length * 1000,
         config: config.molasses,
     });
 
     const spring2 = useSpring({
         from: {
-            width: '100px',
+            width: '95px',
+            opacity: 1,
         },
         to: {
+            opacity: 0,
             width: '0px',
         },
-        delay: 2000,
-        config: config.molasses,
+
+        delay: 1500 + items.length * 1000,
+        config: config.gentle,
     });
 
     const spring3 = useSpring({
         from: {
             width: '10px',
+            opacity: 1,
         },
         to: {
             width: '0px',
+            opacity: 0,
         },
-        delay: 2000,
-        config: config.molasses,
+        delay: 1500 + items.length * 1000,
+        config: config.gentle,
+    });
+
+    const transition = packages.spring.useTransition(items, {
+        config: packages.spring.config.molasses,
+        enter: { width: 200 },
+        from: { width: 0 },
+        delay: (x: string) => {
+            return Number((x as `${number}-welcome-transition`).split('-')[0]) * 1000;
+        },
+        keys: (x) => `${x.index}-welcome-transition`,
     });
 
     return (
@@ -51,9 +80,38 @@ const Start: NuggBookPage = ({ setPage }) => {
                 flexDirection: 'column',
             }}
         >
-            <Text size="larger" textStyle={{ padding: '10px' }}>
-                welcome to nuggft
-            </Text>
+            <animated.div
+                style={{
+                    width: '100%',
+                    padding: 20,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    justifyContent: 'flex-start',
+                }}
+            >
+                {transition(({ width, ...style }, kid, _, index) => (
+                    <a.div
+                        key={index}
+                        style={{
+                            width,
+                            overflow: 'hidden',
+
+                            ...style,
+                        }}
+                    >
+                        <a.div
+                            style={{
+                                width: 200,
+                                // display: 'inline-flex',
+                                // flexWrap: 'nowrap',
+                            }}
+                        >
+                            <Text>{kid.val}</Text>
+                        </a.div>
+                    </a.div>
+                ))}
+            </animated.div>
 
             <Text
                 size="medium"
@@ -62,9 +120,10 @@ const Start: NuggBookPage = ({ setPage }) => {
                 welcome to{' '}
                 <animated.span
                     style={{
-                        overflow: 'hidden',
+                        overflow: 'auto',
                         display: 'inline-flex',
                         height: '1rem',
+                        flexWrap: 'nowrap',
                         lineHeight: 1,
                         ...spring2,
                     }}

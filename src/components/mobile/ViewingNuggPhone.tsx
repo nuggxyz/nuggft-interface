@@ -1,9 +1,10 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { plural, t } from '@lingui/macro';
+import { useNavigate } from 'react-router';
+import { animated } from '@react-spring/web';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
-import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
 import client from '@src/client';
 import useTokenQuery from '@src/client/hooks/useTokenQuery';
@@ -37,9 +38,13 @@ import { buildTokenIdFactory } from '@src/prototypes';
 import { ModalEnum } from '@src/interfaces/modals';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
 import Button from '@src/components/general/Buttons/Button/Button';
+import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
+import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
+import undefined from '@src/lib/dotnugg/util';
 
 import NuggSnapshotListMobile from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
+import BackButton from './BackButton';
 
 const Ver = ({ left, right, label }: { left: number; right: number; label: string }) => {
     return (
@@ -469,372 +474,435 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     );
 };
 
-const ViewingNuggPhone: FunctionComponent<{
-    tokenId: TokenId | undefined;
-}> = ({ tokenId }) => {
-    const epoch = client.epoch.active.useId();
-    const openModal = client.modal.useOpenModal();
-    const sender = web3.hook.usePriorityAccount();
+export const ViewingNuggPhoneController = () => {
+    const openViewScreen = client.viewscreen.useOpenViewScreen();
+    const closeViewScreen = client.viewscreen.useCloseViewScreen();
 
-    const tokenQuery = useTokenQuery();
+    const { tokenId } = useMobileViewingNugg();
+
+    const navigate = useNavigate();
 
     React.useEffect(() => {
-        if (tokenId) void tokenQuery(tokenId);
-    }, [tokenId, tokenQuery]);
+        if (tokenId) openViewScreen(tokenId);
+        return () => {
+            closeViewScreen();
+        };
+    }, [tokenId, openViewScreen, closeViewScreen, navigate]);
 
-    const provider = web3.hook.usePriorityProvider();
+    return <ViewingNuggPhone />;
+};
 
-    const token = client.live.token(tokenId);
-    const swap = client.swaps.useSwap(tokenId);
-    const lifecycle = useLifecycleEnhanced(swap);
+export const MemoizedViewingNuggPhone = () => {
+    const tokenId = client.viewscreen.useViewScreenTokenId();
+    return <ViewingNuggPhone tokenId={tokenId} />;
+};
 
-    const { data } = useGetNuggsThatHoldQuery({
-        fetchPolicy: 'network-only',
-        skip: !token || !token.isItem(),
-        variables: {
-            skip: 0,
-            first: 1000,
-            itemId: token?.tokenId.toRawId() || '',
-        },
-    });
+const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
+    ({ tokenId }) => {
+        const isOpen = client.viewscreen.useViewScreenOpen();
 
-    const coreRef = React.useRef(null);
+        const epoch = client.epoch.active.useId();
+        const openModal = client.modal.useOpenModal();
+        const sender = web3.hook.usePriorityAccount();
 
-    const ider = React.useId();
+        const tokenQuery = useTokenQuery();
 
-    return provider && epoch && tokenId && token ? (
-        <>
-            <div
-                ref={coreRef}
+        React.useEffect(() => {
+            if (tokenId) void tokenQuery(tokenId);
+        }, [tokenId, tokenQuery]);
+
+        const token = client.live.token(tokenId);
+        const swap = client.swaps.useSwap(tokenId);
+        const lifecycle = useLifecycleEnhanced(swap);
+
+        const { data } = useGetNuggsThatHoldQuery({
+            fetchPolicy: 'network-only',
+            skip: !token || !token.isItem(),
+            variables: {
+                skip: 0,
+                first: 1000,
+                itemId: token?.tokenId.toRawId() || '',
+            },
+        });
+
+        const coreRef = React.useRef(null);
+
+        const ider = React.useId();
+
+        const overlay = useAnimateOverlayBackdrop(isOpen);
+
+        return (
+            <animated.div
                 style={{
-                    position: 'relative',
-                    display: 'flex',
-                    flexDirection: 'column',
+                    // transition: 'all .3s ease-in',
+                    animation: 'mobile-fade .3s ease-out',
+                    position: 'absolute',
                     width: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'start',
-                    backdropFilter: 'blur(5px)',
-                    WebkitBackdropFilter: 'blur(5px)',
                     height: '100%',
-                    overflow: 'scroll',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+
+                    overflow: 'hidden',
+
+                    flexDirection: 'column',
+                    zIndex: 100000,
+                    ...overlay,
                 }}
             >
                 <div
+                    draggable="true"
                     style={{
-                        position: 'relative',
+                        height: '100%',
                         width: '100%',
-                        top: 0,
+                        borderTopLeftRadius: lib.layout.borderRadius.largish,
+                        borderTopRightRadius: lib.layout.borderRadius.largish,
+                        position: 'absolute',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
                         display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'flex-end',
-                        zIndex: 1000,
+                        flexDirection: 'column',
+                        background: 'transparent',
                     }}
                 >
+                    <BackButton />
                     <div
+                        ref={coreRef}
                         style={{
+                            position: 'relative',
                             display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
+                            flexDirection: 'column',
                             width: '100%',
+                            alignItems: 'center',
+                            justifyContent: 'start',
+                            backdropFilter: 'blur(5px)',
+                            WebkitBackdropFilter: 'blur(5px)',
                             height: '100%',
-                            paddingTop: '20px',
+                            overflow: 'scroll',
                         }}
                     >
-                        {swap ? (
+                        <div
+                            style={{
+                                position: 'relative',
+                                width: '100%',
+                                top: 0,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'flex-end',
+                                zIndex: 1000,
+                            }}
+                        >
                             <div
                                 style={{
-                                    width: '100%',
-                                    height: '375px',
                                     display: 'flex',
-                                    flexDirection: 'column',
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    // marginBottom: '-10px',
-                                    marginTop: '-30px',
+                                    width: '100%',
+                                    height: '100%',
+                                    paddingTop: '20px',
                                 }}
                             >
-                                <TheRing
-                                    circleWidth={1000}
-                                    strokeWidth={10}
-                                    disableClick
-                                    manualTokenId={tokenId}
-                                    disableHover
-                                    tokenStyle={{ width: '275px', height: '275px' }}
-                                />
+                                {/* {swap ? ( */}
+                                <div
+                                    style={{
+                                        width: '100%',
+                                        height: '375px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        // marginBottom: '-10px',
+                                        marginTop: '-30px',
+                                    }}
+                                >
+                                    <TheRing
+                                        circleWidth={1000}
+                                        strokeWidth={10}
+                                        disableClick
+                                        manualTokenId={tokenId}
+                                        disableHover
+                                        tokenStyle={{ width: '275px', height: '275px' }}
+                                    />
+                                </div>
+                                {/* ) : (
+                                    <TokenViewer tokenId={tokenId} showcase disableOnClick />
+                                )} */}
                             </div>
-                        ) : (
-                            <TokenViewer tokenId={tokenId} showcase disableOnClick />
+                        </div>
+                        <div
+                            style={{
+                                marginTop: swap ? -10 : '1rem',
+                                // width: '95%',
+                                display: 'flex',
+                                // width: '90%',
+                                justifyContent: 'center',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                background: lib.colors.transparentWhite,
+                                borderRadius: lib.layout.borderRadius.medium,
+                                padding: '.7rem .8rem',
+                            }}
+                        >
+                            <Text
+                                textStyle={{
+                                    color: lib.colors.primaryColor,
+                                    borderRadius: lib.layout.borderRadius.large,
+                                }}
+                                size="larger"
+                            >
+                                {tokenId && tokenId.toPrettyId()}
+                            </Text>
+                            {lifecycle && (
+                                <Label
+                                    // type="text"
+                                    containerStyles={{
+                                        background: 'transparent',
+                                    }}
+                                    size="small"
+                                    textStyle={{
+                                        color: lib.colors.primaryColor,
+
+                                        position: 'relative',
+                                    }}
+                                    text={lifecycle?.label}
+                                    leftDotColor={lifecycle.color}
+                                />
+                            )}
+                        </div>
+
+                        {tokenId &&
+                            swap &&
+                            epoch &&
+                            (swap.endingEpoch || 0) <= epoch + 1 &&
+                            lifecycle &&
+                            lifecycle.lifecycle !== Lifecycle.Cut && (
+                                <>
+                                    <div
+                                        style={{
+                                            // width: '95%',
+                                            display: 'flex',
+                                            width: '90%',
+                                            justifyContent: 'center',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            background: lib.colors.transparentWhite,
+                                            borderRadius: lib.layout.borderRadius.medium,
+                                            padding: '1rem .5rem',
+                                            marginTop: '1rem',
+                                        }}
+                                    >
+                                        <ActiveSwap tokenId={tokenId} />{' '}
+                                    </div>
+                                </>
+                            )}
+
+                        {token && token.type === 'item' && (
+                            <>
+                                {swap && (
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'flex-start',
+                                            alignItems: 'flex-start',
+                                            textAlign: 'left',
+                                            width: '100%',
+                                            padding: '2rem 1rem 1rem 1.5rem',
+                                        }}
+                                    >
+                                        <Text
+                                            size="larger"
+                                            textStyle={{
+                                                color: lib.colors.primaryColor,
+                                            }}
+                                        >
+                                            Start the next auction
+                                        </Text>
+                                    </div>
+                                )}
+                                <NextSwap tokenId={token.tokenId} />
+
+                                {token.tokenId.isItemId() && <Info tokenId={token.tokenId} />}
+                            </>
                         )}
+
+                        {token && token.type === 'nugg' && token.owner === sender && (
+                            <>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'flex-start',
+                                        textAlign: 'left',
+                                        width: '100%',
+                                        padding: '2rem 1rem 1rem 1.5rem',
+                                    }}
+                                >
+                                    <Text
+                                        size="larger"
+                                        textStyle={{
+                                            color: lib.colors.primaryColor,
+                                        }}
+                                    >
+                                        My Nugg
+                                    </Text>
+                                </div>
+                                <Button
+                                    className="mobile-pressable-div"
+                                    buttonStyle={{
+                                        ...styles.goToSwap,
+                                        position: 'relative',
+                                    }}
+                                    textStyle={{
+                                        ...styles.goToSwapGradient,
+                                        padding: '.2rem .5rem',
+                                        fontSize: '24px',
+                                    }}
+                                    label={t`put up for sale`}
+                                    // rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
+                                    onClick={() => {
+                                        openModal(
+                                            buildTokenIdFactory({
+                                                modalType: ModalEnum.Sell as const,
+                                                tokenId: token.tokenId,
+                                                sellingNuggId: null,
+                                            }),
+                                        );
+                                    }}
+                                />
+                                <MyNuggActions />
+                            </>
+                        )}
+
+                        {tokenId && tokenId.isNuggId() && (
+                            <>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'flex-start',
+                                        textAlign: 'left',
+                                        width: '100%',
+                                        padding: '2rem 1rem 1rem 1.5rem',
+                                    }}
+                                >
+                                    <Text
+                                        size="larger"
+                                        textStyle={{
+                                            color: lib.colors.primaryColor,
+                                        }}
+                                    >
+                                        Items
+                                    </Text>
+                                </div>
+                                <ItemListPhone tokenId={tokenId} />
+                            </>
+                        )}
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'flex-start',
+                                alignItems: 'flex-start',
+                                textAlign: 'left',
+                                width: '100%',
+                                padding: '2rem 1rem 1rem 1.5rem',
+                            }}
+                        >
+                            <Text
+                                size="larger"
+                                textStyle={{
+                                    color: lib.colors.primaryColor,
+                                }}
+                            >
+                                Previous Auctions
+                            </Text>
+                        </div>
+
+                        <SwapListPhone token={token} />
+
+                        {token &&
+                            (token.isItem() ? (
+                                <>
+                                    <BradPittList
+                                        id={ider}
+                                        listStyle={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            textAlign: 'left',
+                                            width: '100%',
+                                            padding: '.3rem 1rem 1rem 1.5rem',
+                                        }}
+                                        style={{
+                                            position: 'relative',
+                                            width: '100%',
+                                            overflow: undefined,
+                                            flexDirection: 'column',
+                                        }}
+                                        coreRef={coreRef}
+                                        itemHeightBig={340}
+                                        itemHeightSmall={160}
+                                        endGap={100}
+                                        data={
+                                            data?.nuggItems.map((x) => ({
+                                                tokenId: x.nugg.id.toNuggId(),
+                                                since: Number(x?.displayedSinceUnix || 0),
+                                            })) || []
+                                        }
+                                        RenderItemSmall={NuggListRenderItemMobileHolding}
+                                        RenderItemBig={NuggListRenderItemMobileBigHoldingItem}
+                                        disableScroll
+                                        extraData={undefined}
+                                        headerStyle={{ padding: '2rem 1rem 1rem 1.5rem' }}
+                                        Title={React.memo(() => (
+                                            <Text
+                                                size="larger"
+                                                textStyle={{
+                                                    color: lib.colors.primaryColor,
+                                                }}
+                                            >
+                                                Nuggs Holding
+                                            </Text>
+                                        ))}
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'flex-start',
+                                            alignItems: 'flex-start',
+                                            textAlign: 'left',
+                                            width: '100%',
+                                            padding: '2rem 1rem 1rem 1.5rem',
+                                        }}
+                                    >
+                                        <Text
+                                            size="larger"
+                                            textStyle={{
+                                                color: lib.colors.primaryColor,
+                                            }}
+                                        >
+                                            History
+                                        </Text>
+                                    </div>
+                                    <NuggSnapshotListMobile tokenId={token.tokenId} />
+                                </>
+                            ))}
+
+                        <div
+                            style={{
+                                width: '100%',
+                                marginTop: '400px',
+                                position: 'relative',
+                                display: 'flex',
+                            }}
+                        />
                     </div>
                 </div>
-                <div
-                    style={{
-                        marginTop: swap ? -10 : '1rem',
-                        // width: '95%',
-                        display: 'flex',
-                        // width: '90%',
-                        justifyContent: 'center',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        background: lib.colors.transparentWhite,
-                        borderRadius: lib.layout.borderRadius.medium,
-                        padding: '.7rem .8rem',
-                    }}
-                >
-                    <Text
-                        textStyle={{
-                            color: lib.colors.primaryColor,
-                            borderRadius: lib.layout.borderRadius.large,
-                        }}
-                        size="larger"
-                    >
-                        {tokenId && tokenId.toPrettyId()}
-                    </Text>
-                    {lifecycle && (
-                        <Label
-                            // type="text"
-                            containerStyles={{
-                                background: 'transparent',
-                            }}
-                            size="small"
-                            textStyle={{
-                                color: lib.colors.primaryColor,
-
-                                position: 'relative',
-                            }}
-                            text={lifecycle?.label}
-                            leftDotColor={lifecycle.color}
-                        />
-                    )}
-                </div>
-
-                {swap &&
-                    (swap.endingEpoch || 0) <= epoch + 1 &&
-                    lifecycle &&
-                    lifecycle.lifecycle !== Lifecycle.Cut && (
-                        <>
-                            <div
-                                style={{
-                                    // width: '95%',
-                                    display: 'flex',
-                                    width: '90%',
-                                    justifyContent: 'center',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    background: lib.colors.transparentWhite,
-                                    borderRadius: lib.layout.borderRadius.medium,
-                                    padding: '1rem .5rem',
-                                    marginTop: '1rem',
-                                }}
-                            >
-                                <ActiveSwap tokenId={tokenId} />{' '}
-                            </div>
-                        </>
-                    )}
-
-                {token.type === 'item' && (
-                    <>
-                        {swap && (
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'flex-start',
-                                    textAlign: 'left',
-                                    width: '100%',
-                                    padding: '2rem 1rem 1rem 1.5rem',
-                                }}
-                            >
-                                <Text
-                                    size="larger"
-                                    textStyle={{
-                                        color: lib.colors.primaryColor,
-                                    }}
-                                >
-                                    Start the next auction
-                                </Text>
-                            </div>
-                        )}
-                        <NextSwap tokenId={token.tokenId} />
-
-                        {tokenId.isItemId() && <Info tokenId={tokenId} />}
-                    </>
-                )}
-
-                {token.type === 'nugg' && token.owner === sender && (
-                    <>
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'flex-start',
-                                alignItems: 'flex-start',
-                                textAlign: 'left',
-                                width: '100%',
-                                padding: '2rem 1rem 1rem 1.5rem',
-                            }}
-                        >
-                            <Text
-                                size="larger"
-                                textStyle={{
-                                    color: lib.colors.primaryColor,
-                                }}
-                            >
-                                My Nugg
-                            </Text>
-                        </div>
-                        <Button
-                            className="mobile-pressable-div"
-                            buttonStyle={{
-                                ...styles.goToSwap,
-                                position: 'relative',
-                            }}
-                            textStyle={{
-                                ...styles.goToSwapGradient,
-                                padding: '.2rem .5rem',
-                                fontSize: '24px',
-                            }}
-                            label={t`put up for sale`}
-                            // rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
-                            onClick={() => {
-                                openModal(
-                                    buildTokenIdFactory({
-                                        modalType: ModalEnum.Sell as const,
-                                        tokenId: token.tokenId,
-                                        sellingNuggId: null,
-                                    }),
-                                );
-                            }}
-                        />
-                        <MyNuggActions />
-                    </>
-                )}
-
-                {tokenId.isNuggId() && (
-                    <>
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'flex-start',
-                                alignItems: 'flex-start',
-                                textAlign: 'left',
-                                width: '100%',
-                                padding: '2rem 1rem 1rem 1.5rem',
-                            }}
-                        >
-                            <Text
-                                size="larger"
-                                textStyle={{
-                                    color: lib.colors.primaryColor,
-                                }}
-                            >
-                                Items
-                            </Text>
-                        </div>
-                        <ItemListPhone tokenId={tokenId} />
-                    </>
-                )}
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'flex-start',
-                        alignItems: 'flex-start',
-                        textAlign: 'left',
-                        width: '100%',
-                        padding: '2rem 1rem 1rem 1.5rem',
-                    }}
-                >
-                    <Text
-                        size="larger"
-                        textStyle={{
-                            color: lib.colors.primaryColor,
-                        }}
-                    >
-                        Previous Auctions
-                    </Text>
-                </div>
-
-                <SwapListPhone token={token} />
-
-                {token.isItem() ? (
-                    <>
-                        <BradPittList
-                            id={ider}
-                            listStyle={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                textAlign: 'left',
-                                width: '100%',
-                                padding: '.3rem 1rem 1rem 1.5rem',
-                            }}
-                            style={{
-                                position: 'relative',
-                                width: '100%',
-                                overflow: undefined,
-                                flexDirection: 'column',
-                            }}
-                            coreRef={coreRef}
-                            itemHeightBig={340}
-                            itemHeightSmall={160}
-                            endGap={100}
-                            data={
-                                data?.nuggItems.map((x) => ({
-                                    tokenId: x.nugg.id.toNuggId(),
-                                    since: Number(x?.displayedSinceUnix || 0),
-                                })) || []
-                            }
-                            RenderItemSmall={NuggListRenderItemMobileHolding}
-                            RenderItemBig={NuggListRenderItemMobileBigHoldingItem}
-                            disableScroll
-                            extraData={undefined}
-                            headerStyle={{ padding: '2rem 1rem 1rem 1.5rem' }}
-                            Title={React.memo(() => (
-                                <Text
-                                    size="larger"
-                                    textStyle={{
-                                        color: lib.colors.primaryColor,
-                                    }}
-                                >
-                                    Nuggs Holding
-                                </Text>
-                            ))}
-                        />
-                    </>
-                ) : (
-                    <>
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'flex-start',
-                                alignItems: 'flex-start',
-                                textAlign: 'left',
-                                width: '100%',
-                                padding: '2rem 1rem 1rem 1.5rem',
-                            }}
-                        >
-                            <Text
-                                size="larger"
-                                textStyle={{
-                                    color: lib.colors.primaryColor,
-                                }}
-                            >
-                                History
-                            </Text>
-                        </div>
-                        <NuggSnapshotListMobile tokenId={token.tokenId} />
-                    </>
-                )}
-
-                <div
-                    style={{
-                        width: '100%',
-                        marginTop: '400px',
-                        position: 'relative',
-                        display: 'flex',
-                    }}
-                />
-            </div>
-        </>
-    ) : null;
-};
+            </animated.div>
+        );
+    },
+    (a, b) => a.tokenId === b.tokenId || b.tokenId === undefined,
+);
 
 export default ViewingNuggPhone;

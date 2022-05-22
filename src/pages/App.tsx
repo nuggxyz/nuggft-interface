@@ -11,8 +11,11 @@ import NuggBook from '@src/components/nuggbook/NuggBook';
 import useDimensions from '@src/client/hooks/useDimensions';
 import { HotRotateOController } from '@src/pages/HotRotateO';
 import NavigationWrapper from '@src/components/nugg/PageLayout/NavigationWrapper/NavigationWrapper';
+import {
+    MemoizedViewingNuggPhone,
+    ViewingNuggPhoneController,
+} from '@src/components/mobile/ViewingNuggPhone';
 
-import MobileViewScreen2 from './mobile/MobileViewScreen2';
 import MobileWalletScreen2 from './mobile/MobileWalletScreen2';
 import MobileHotRotateOWrapper from './mobile/MobileHotRotateOWrapper';
 
@@ -39,23 +42,24 @@ const Router = () => {
                     ? [{ path: 'wallet', element: <MobileWalletScreen2 /> }]
                     : [
                           {
-                              path: 'edit/:id',
-                              element: <HotRotateOController />,
-                          },
-                          {
                               path: 'view/*',
                               element: <SearchOverlay />,
                           },
                       ]),
 
-                { path: 'swap/:id', element: isPhone ? <MobileViewScreen2 /> : null },
+                { path: 'swap/:id', element: isPhone ? <ViewingNuggPhoneController /> : null },
                 { path: 'live', element: null },
                 { path: '*', element: <Navigate to={isPhone ? `swap/${epoch || ''}` : 'live'} /> },
             ],
         },
     ]);
 
-    return <React.Suspense fallback={<div />}>{route} </React.Suspense>;
+    return (
+        <React.Suspense fallback={<div />}>
+            {route}
+            {isPhone && <MemoizedViewingNuggPhone />}
+        </React.Suspense>
+    );
 };
 
 const App = () => {
