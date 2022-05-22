@@ -902,7 +902,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
             </animated.div>
         );
     },
-    (a, b) => a.tokenId === b.tokenId || b.tokenId === undefined,
+    (a, b) => a.tokenId === b.tokenId || a.tokenId === undefined,
 );
 
 export default ViewingNuggPhone;

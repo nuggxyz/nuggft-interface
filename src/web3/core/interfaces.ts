@@ -77,8 +77,8 @@ export interface PeerInfo__WalletConnect extends PeerBaseInfo {
         | Peer.LedgerLive
         | Peer.WalletConnect;
     desktopAction: 'qrcode' | 'deeplink' | 'default';
-    deeplink_href: string | null;
-    peerurl: string | null;
+    deeplink_href: string;
+    peerurl: string;
     injected: false;
     fallback: false;
     ios_href?: string;
@@ -97,11 +97,14 @@ export interface PeerInfo__MetaMask extends PeerBaseInfo {
     peer: Peer.MetaMask;
     injected: true;
     fallback: false;
+    deeplink_href: string;
+    peerurl: string;
 }
 
 export interface PeerInfo__CoinbaseWallet extends PeerBaseInfo {
     type: Connector.CoinbaseWallet;
     peer: Peer.Coinbase;
+    deeplink_href: string;
 
     injected: false;
     fallback: false;

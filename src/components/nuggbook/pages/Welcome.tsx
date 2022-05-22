@@ -20,7 +20,7 @@ const items = [
     'no more bull shit',
 ].map((val, index) => ({ val, index }));
 
-const Start: NuggBookPage = ({ setPage }) => {
+const Start: NuggBookPage = ({ setPage, close }) => {
     const spring = useSpring({
         from: {
             width: '0px',
@@ -69,6 +69,17 @@ const Start: NuggBookPage = ({ setPage }) => {
             return Number((x as `${number}-welcome-transition`).split('-')[0]) * 1000;
         },
         keys: (x) => `${x.index}-welcome-transition`,
+    });
+
+    const spring4 = useSpring({
+        from: {
+            opacity: 0,
+        },
+        to: {
+            opacity: 1,
+        },
+        delay: 500 + 1500 + items.length * 1000,
+        config: config.default,
     });
 
     return (
@@ -157,7 +168,7 @@ const Start: NuggBookPage = ({ setPage }) => {
                 </animated.span>
             </Text>
 
-            <Button
+            {/* <Button
                 label="next"
                 buttonStyle={{
                     background: lib.colors.gradient,
@@ -168,7 +179,7 @@ const Start: NuggBookPage = ({ setPage }) => {
                     // width: '5rem',
                 }}
                 onClick={() => setPage(Page.TableOfContents)}
-            />
+            /> */}
 
             {/* <Button
                 buttonStyle={{
@@ -182,6 +193,60 @@ const Start: NuggBookPage = ({ setPage }) => {
                 label="give me the rundown"
                 onClick={() => setPage(Page.Welcome)}
             /> */}
+
+            <animated.div
+                style={{
+                    alignItems: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: 10,
+                    ...spring4,
+                }}
+            >
+                <Button
+                    className="mobile-pressable-div"
+                    label="i got time ⌛️"
+                    onClick={() => setPage(Page.TableOfContents)}
+                    size="largerish"
+                    buttonStyle={{
+                        color: lib.colors.white,
+                        boxShadow: lib.layout.boxShadow.basic,
+                        padding: '.7rem 1.3rem',
+                        background: lib.colors.gradient3,
+                        borderRadius: lib.layout.borderRadius.large,
+                        marginBottom: 15,
+                    }}
+                />
+                <Button
+                    className="mobile-pressable-div"
+                    label="imma need a tldr 🤠"
+                    onClick={() => setPage(Page.WhatIsAWallet)}
+                    size="largerish"
+                    buttonStyle={{
+                        color: lib.colors.white,
+                        boxShadow: lib.layout.boxShadow.basic,
+                        padding: '.7rem 1.3rem',
+
+                        background: lib.colors.gradient2,
+                        borderRadius: lib.layout.borderRadius.large,
+                        marginBottom: 15,
+                    }}
+                />
+                <Button
+                    className="mobile-pressable-div"
+                    label={"i'll figure it out 💪"}
+                    onClick={() => close()}
+                    size="largerish"
+                    buttonStyle={{
+                        color: lib.colors.white,
+                        padding: '.7rem 1.3rem',
+
+                        boxShadow: lib.layout.boxShadow.basic,
+                        background: lib.colors.gradient,
+                        borderRadius: lib.layout.borderRadius.large,
+                    }}
+                />
+            </animated.div>
         </div>
     );
 };

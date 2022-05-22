@@ -8,6 +8,8 @@ export enum Page {
     WhatIsAWallet,
     WhatIsAnNFT,
     WhatIsDefi,
+    TheRundown,
+    SetUpAWallet,
 }
 
 export type NuggBookPageProps = {

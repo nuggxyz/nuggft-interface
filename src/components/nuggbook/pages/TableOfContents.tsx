@@ -107,26 +107,7 @@ type ListItemDescription = {
     page: Page;
 };
 
-const TableOfContents: NuggBookPage = ({ setPage, clear, close }) => {
-    const rundown: ListItemDescription[] = [
-        {
-            header: 'who makes the money?',
-            page: Page.WhatIsDefi,
-        },
-        {
-            header: 'who contributed?',
-            page: Page.WhatIsDefi,
-        },
-        {
-            header: 'where are the images stored?',
-            page: Page.WhatIsAWallet,
-        },
-        {
-            header: 'are nuggs tradeable?',
-            page: Page.WhatIsAWallet,
-        },
-    ];
-
+const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
     const weeds: ListItemDescription[] = [
         {
             header: 'what are dynamic items?',
@@ -135,6 +116,17 @@ const TableOfContents: NuggBookPage = ({ setPage, clear, close }) => {
         {
             header: 'where are the images stored?',
             page: Page.WhatIsAWallet,
+        },
+    ];
+
+    const upAndRunning: ListItemDescription[] = [
+        {
+            header: 'the rundown',
+            page: Page.TheRundown,
+        },
+        {
+            header: 'set up a wallet',
+            page: Page.SetUpAWallet,
         },
     ];
 
@@ -185,12 +177,7 @@ const TableOfContents: NuggBookPage = ({ setPage, clear, close }) => {
                 welcome to nuggft
             </Text>
 
-            <Button label="get me up and running" onClick={() => setPage(Page.WhatIsAWallet)} />
-            <Button label={"i'll figure it out"} onClick={() => close()} />
-
-            <ListItemGroup header="get up and running" items={rundown} setPage={setPage} />
-
-            <ListItemGroup header="the rundown" items={rundown} setPage={setPage} />
+            <ListItemGroup header="get up and running" items={upAndRunning} setPage={setPage} />
 
             {/* <ListItemGroup header="intro to defi" items={defi} setPage={setPage}  /> */}
 

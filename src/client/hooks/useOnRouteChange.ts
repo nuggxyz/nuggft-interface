@@ -10,9 +10,7 @@ export default () => {
     const prevLocation = usePrevious(location);
 
     React.useEffect(() => {
-        console.log({ location: location.pathname, prevLocation: prevLocation?.pathname });
         if (location.pathname !== prevLocation?.pathname) {
-            console.log('AYYYEEEEEEEEEEEEEEEEEE');
             emitter.emit({
                 type: emitter.events.RouteChange,
                 newRoute: location.pathname,

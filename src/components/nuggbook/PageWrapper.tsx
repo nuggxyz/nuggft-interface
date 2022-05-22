@@ -15,6 +15,8 @@ import WhatIsAWallet from './pages/WhatIsAWallet';
 import WhatIsAnNFT from './pages/WhatIsAnNFT';
 import WhatIsDefi from './pages/WhatIsDefi';
 import Close from './pages/Close';
+import TheRundown from './pages/1-the-rundown/TheRundown';
+import SetUpAWallet from './pages/1-the-rundown/SetUpAWallet';
 
 const useNuggBook = () => {
     const page = client.nuggbook.useNuggBookPage();
@@ -23,7 +25,7 @@ const useNuggBook = () => {
         case Page.Start:
             return { top: 450, comp: Start, page };
         case Page.Welcome:
-            return { top: 200, comp: Welcome, page };
+            return { top: 100, comp: Welcome, page };
         case Page.TableOfContents:
             return { top: 100, comp: TableOfContents, page };
         case Page.WhatIsAWallet:
@@ -32,6 +34,10 @@ const useNuggBook = () => {
             return { top: 100, comp: WhatIsAnNFT, page };
         case Page.WhatIsDefi:
             return { top: 100, comp: WhatIsDefi, page };
+        case Page.TheRundown:
+            return { top: 100, comp: TheRundown, page };
+        case Page.SetUpAWallet:
+            return { top: 100, comp: SetUpAWallet, page };
         case Page.Close:
         default:
             return { top: 1000, comp: Close, page };
@@ -132,6 +138,7 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 zIndex: 200000,
+                boxShadow: '',
             }}
         >
             <animated.div
@@ -160,7 +167,7 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     height: height + BOTTOM_OFFSET,
-
+                    boxShadow: lib.layout.boxShadow.dark,
                     // paddingBottom: BOTTOM_OFFSET,
                 }}
             >
@@ -208,7 +215,7 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
                                 </animated.div>
                             </>
                         ))}
-                        {book.page !== Page.Start && (
+                        {book.page !== Page.Start && book.page !== Page.Welcome && (
                             <>
                                 <BackButton noNavigate onClick={() => handleClose()} />
                                 <div

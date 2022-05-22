@@ -57,7 +57,7 @@ export const peer_rainbow: PeerInfo = {
     ios_href: 'ios-app://1457119021/rainbow/open?',
     android_href: 'android-app://me.rainbow/rainbow/open?',
     peerurl: 'https://rainbow.me',
-};
+} as const;
 
 export const peer_metamask: PeerInfo = {
     ...(window?.ethereum
@@ -69,14 +69,14 @@ export const peer_metamask: PeerInfo = {
               type: ConnectorEnum.WalletConnect,
               desktopAction: 'qrcode',
               injected: false,
-              peerurl: 'https://metamask.io',
-              deeplink_href: 'https://metamask.app.link/',
           }),
     peer: Peer.MetaMask,
     fallback: false,
     color: 'rgba(232,131,29,1.0)',
     name: 'MetaMask',
-};
+    peerurl: 'https://metamask.io',
+    deeplink_href: 'https://metamask.app.link/',
+} as const;
 
 export const peer_ledgerlive: PeerInfo = {
     type: ConnectorEnum.WalletConnect,
@@ -89,7 +89,7 @@ export const peer_ledgerlive: PeerInfo = {
     deeplink_href: 'ledgerlive://',
 
     peerurl: 'https://www.ledger.com/',
-};
+} as const;
 
 export const peer_trust: PeerInfo = {
     type: ConnectorEnum.WalletConnect,
@@ -101,7 +101,7 @@ export const peer_trust: PeerInfo = {
     injected: false,
     fallback: false,
     desktopAction: 'qrcode',
-};
+} as const;
 
 export const peer_cryptodotcom: PeerInfo = {
     type: ConnectorEnum.WalletConnect,
@@ -113,7 +113,7 @@ export const peer_cryptodotcom: PeerInfo = {
     injected: false,
     fallback: false,
     desktopAction: 'qrcode',
-};
+} as const;
 
 export const peer_coinbase: PeerInfo__CoinbaseWallet = {
     type: ConnectorEnum.CoinbaseWallet,
@@ -122,18 +122,19 @@ export const peer_coinbase: PeerInfo__CoinbaseWallet = {
     color: 'rgba(22,82,240,1.0)',
     injected: false,
     fallback: false,
-};
+    deeplink_href: '',
+} as const;
 export const peer_walletconnect: PeerInfo__WalletConnect = {
     type: ConnectorEnum.WalletConnect,
     name: 'Wallet Connect',
     peer: Peer.WalletConnect,
-    deeplink_href: null,
+    deeplink_href: 'null',
     desktopAction: 'default',
-    peerurl: null,
+    peerurl: 'null',
     color: 'rgba(65,150,252,1.0)',
     injected: false,
     fallback: false,
-};
+} as const;
 export const peer_rpc: PeerInfo = {
     type: ConnectorEnum.Rpc,
     name: 'Rpc',
@@ -141,11 +142,9 @@ export const peer_rpc: PeerInfo = {
     color: 'rgba(22,82,240,1.0)',
     injected: false,
     fallback: true,
-};
+} as const;
 
-export const peers: {
-    [key in Peer]: PeerInfo;
-} = {
+export const peers = {
     rainbow: peer_rainbow,
     metamask: peer_metamask,
     ledgerlive: peer_ledgerlive,
@@ -154,7 +153,7 @@ export const peers: {
     coinbase: peer_coinbase,
     walletconnect: peer_walletconnect,
     rpc: peer_rpc,
-};
+} as const;
 
 export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connector> } = {
     coinbasewallet: initializeConnector<CoinbaseWallet>(
