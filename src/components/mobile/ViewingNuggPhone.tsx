@@ -489,11 +489,11 @@ export const ViewingNuggPhoneController = () => {
         };
     }, [tokenId, openViewScreen, closeViewScreen, navigate]);
 
-    return <ViewingNuggPhone />;
+    return null;
 };
 
 export const MemoizedViewingNuggPhone = () => {
-    const tokenId = client.viewscreen.useViewScreenTokenId();
+    const { tokenId } = useMobileViewingNugg();
     return <ViewingNuggPhone tokenId={tokenId} />;
 };
 
@@ -524,7 +524,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                 itemId: token?.tokenId.toRawId() || '',
             },
         });
-
+        console.log('hello', swap, token);
         const coreRef = React.useRef(null);
 
         const ider = React.useId();
@@ -902,7 +902,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
             </animated.div>
         );
     },
-    (a, b) => a.tokenId === b.tokenId || a.tokenId === undefined,
+    (prev, curr) => prev.tokenId === curr.tokenId || curr.tokenId === undefined,
 );
 
 export default ViewingNuggPhone;

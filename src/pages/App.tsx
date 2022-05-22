@@ -54,6 +54,8 @@ const Router = () => {
         },
     ]);
 
+    // const mem = React.memo(<MemoizedViewingNuggPhone/>, (a,b) => isPhone === isPhone);
+
     return (
         <React.Suspense fallback={<div />}>
             {route}
