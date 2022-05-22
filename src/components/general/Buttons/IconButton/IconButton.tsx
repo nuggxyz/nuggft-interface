@@ -42,4 +42,4 @@ const IconButton: FunctionComponent<Props> = ({
     );
 };
 
-export default React.memo(IconButton);
+export default IconButton;

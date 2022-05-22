@@ -12,6 +12,7 @@ import { useVisualViewportUpdater, useEmitOnKeyboardClose } from './viewport';
 import { useCloseModalOnKeyboardClose } from './modal';
 import { useUpdateTransactionOnEmit } from './transactions';
 import { useEpochUpdater } from './epoch';
+import useOnRouteChange from './hooks/useOnRouteChange';
 
 export default () => {
     useDimensionsUpdater();
@@ -41,6 +42,8 @@ export default () => {
     useUpdateTransactionOnEmit();
 
     useEpochUpdater();
+
+    useOnRouteChange();
 
     return null;
 };

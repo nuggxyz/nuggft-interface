@@ -43,6 +43,6 @@ const styles = NLStyleSheetCreator({
         alignItems: 'center',
         // pointerEvents: 'none',
     },
-});
+} as const);
 
 export default styles;

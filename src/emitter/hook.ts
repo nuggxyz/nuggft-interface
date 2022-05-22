@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import emitter from '@src/emitter/core';
 import { EmitEventsListCallback } from '@src/emitter/interfaces';
@@ -23,20 +23,20 @@ const useOn = (a: EmitEventsListCallback) => {
     return null;
 };
 
-const usePipe = <T extends EmitEventsListCallback>(a: T['type']) => {
-    const [pipe, setPipe] = React.useState<Parameters<T['callback']>[0]>();
+// const usePipe = <T extends EmitEventsListCallback>(a: T['type']) => {
+//     const [pipe, setPipe] = React.useState<Parameters<T['callback']>[0]>();
 
-    useOn({
-        type: a,
-        callback: React.useCallback(
-            (arg: typeof pipe) => {
-                if (pipe !== arg && arg) setPipe(arg);
-            },
-            [setPipe, pipe],
-        ),
-    });
+//     useOn({
+//         type: a,
+//         callback: React.useCallback(
+//             (arg: typeof pipe) => {
+//                 if (pipe !== arg && arg) setPipe(arg);
+//             },
+//             [setPipe, pipe],
+//         ),
+//     });
 
-    return pipe;
-};
+//     return pipe;
+// };
 
-export default { useOn, useOnce, usePipe };
+export default { useOn, useOnce };

@@ -63,7 +63,7 @@ const Router = () => {
 };
 
 const App = () => {
-    // const { isPhone } = useDimensions();
+    const { isPhone } = useDimensions();
 
     return (
         <>
@@ -71,7 +71,7 @@ const App = () => {
             <GlobalModal />
             <NuggBook />
             <Helmet />
-            <NavigationWrapper />
+            <NavigationWrapper isPhone={isPhone} />
             <Router />
             <SwapPage />
         </>

@@ -173,6 +173,12 @@ interface EmitDevLog extends EmitEventBase {
     name: string;
 }
 
+interface EmitRouteChange extends EmitEventBase {
+    type: EmitEventNames.RouteChange;
+    prevRoute: string | null;
+    newRoute: string;
+}
+
 /*  EXPORTS: must be manually updated  */
 
 export enum EmitEventNames {
@@ -203,6 +209,7 @@ export enum EmitEventNames {
     ReturnTokenSvgQuery = 'worker.graphql.ReturnTokenSvgQuery',
     HealthCheck = 'main.health.HealthCheck',
     WorkerIsRunning = 'worker.health.WorkerIsRunning',
+    RouteChange = 'main.local.RouteChange',
     // Sell = 'local.rpc.event.Sell',
 }
 
@@ -228,6 +235,7 @@ export type EmitEventsListPayload =
     | BuildPayload<EmitWorkerIsRunning>
     | BuildPayload<EmitWorkerIncomingEtherscanPrice>
     | BuildPayload<EmitDevLog>
+    | BuildPayload<EmitRouteChange>
 
     // | BuildPayload<EmitRpcSell>
     | BuildPayload<EmitRequestTokenSvgQuery>
@@ -253,6 +261,7 @@ export type EmitEventsListCallback =
     | BuildCallback<EmitLocalRpcRebalance>
     | BuildCallback<EmitLocalRpcRotate>
     | BuildCallback<EmitDevLog>
+    | BuildCallback<EmitRouteChange>
     | BuildCallback<EmitHealthCheck>
     | BuildCallback<EmitLocalRpcTransfer>
     | BuildCallback<EmitTransactionSent>

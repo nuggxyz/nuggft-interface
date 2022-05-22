@@ -7,12 +7,13 @@ import { Page } from '@src/interfaces/nuggbook';
 import InfoClicker from '@src/components/nuggbook/InfoClicker';
 import lib from '@src/lib';
 import web3 from '@src/web3';
-import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
 import Jazzicon from '@src/components/nugg/Jazzicon';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import NuggDexSearchBarMobile from '@src/components/mobile/NuggDexSearchBarMobile';
-import styles from '@src/components/nugg/PageLayout/NavigationBar/NavigationBar.styles';
 import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
+import { useMatchArray } from '@src/hooks/useBlur';
+import Button from '@src/components/general/Buttons/Button/Button';
+import useOnClickOutside from '@src/hooks/useOnClickOutside';
 
 type Props = {
     showBackButton?: boolean;
@@ -25,13 +26,85 @@ const NavigationBarMobile: FC<Props> = () => {
 
     const [searchOpen, setSearchOpen] = React.useState<boolean>(false);
 
-    const abc = useSpring({
-        opacity: searchOpen ? 0 : 1,
-        height: searchOpen ? 0 : 1,
+    const [manualMatch, setManualMatch] = React.useState<boolean>(false);
+
+    const match = useMatchArray(['/swap/:id', '/live']);
+
+    const isFull = React.useMemo(() => {
+        return match || manualMatch;
+    }, [match, manualMatch]);
+
+    React.useEffect(() => {
+        setManualMatch(false);
+        setSearchOpen(false);
+    }, [match]);
+
+    const [floaterA] = useSpring(
+        {
+            delay: isFull ? 250 : 0,
+            justifyContent: isFull ? 'space-between' : 'flex-end',
+            // onRest: (s) => {
+            //     s.value.justifyContent = 'center';
+            //     // return {
+            //     //     justifyContent: isFull ? 'space-between' : 'center',
+            //     // };
+            // },
+        },
+        [isFull],
+    );
+
+    const [floater] = useSpring(
+        {
+            width: isFull ? '100%' : '20%',
+        },
+        [isFull],
+    );
+
+    const [floaterExit] = useSpring(
+        {
+            opacity: isFull ? 1 : 0,
+            // ...(!isFull && { width: '0px' }),
+        },
+        [isFull],
+    );
+
+    // const [floaterExit12] = useSpring(
+    //     {
+    //         // width: isFull && !searchOpen ? undefined : 0,
+    //         opacity: isFull && !searchOpen ? 1 : 0,
+    //     },
+    //     [isFull, searchOpen],
+    // );
+
+    // emitter.hook.useOn({
+    //     type: emitter.events.RouteChange,
+    //     callback: React.useCallback(
+    //         (dat) => {
+    //             setSearchOpen(false);
+    //             setManualMatch(false);
+    //         },
+    //         [setSearchOpen, setManualMatch],
+    //     ),
+    // });
+
+    const [searchOpenUp] = useSpring(
+        {
+            height: searchOpen ? '450px' : '75px',
+        },
+        [searchOpen],
+    );
+
+    const ref = React.useRef(null);
+
+    useOnClickOutside(ref, () => {
+        setSearchOpen(false);
+        setManualMatch(false);
     });
 
     return (
-        <animated.div
+        <div
+            ref={ref}
+            className={!isFull ? 'mobile-pressable-div' : undefined}
             style={{
                 display: 'flex',
                 position: 'absolute',
@@ -39,104 +112,139 @@ const NavigationBarMobile: FC<Props> = () => {
                 width: '100%',
                 zIndex: 1000,
                 alignItems: 'center',
-                justifyContent: 'center',
+                justifyContent: 'flex-end',
                 transition: `all 0.3s ${lib.layout.animation}`,
                 marginTop: 10,
+                paddingRight: 10,
+                paddingLeft: 10,
             }}
         >
-            <div
+            <animated.div
                 style={{
                     display: 'flex',
-                    width: '93%',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    WebkitBackdropFilter: 'blur(20px)',
-                    backdropFilter: 'blur(20px)',
-
-                    height: '75px',
-
+                    alignItems: searchOpen ? 'flex-start' : 'center',
+                    WebkitBackdropFilter: 'blur(50px)',
+                    backdropFilter: 'blur(50px)',
+                    ...searchOpenUp,
+                    paddingRight: 10,
+                    paddingLeft: 10,
                     borderRadius: lib.layout.borderRadius.medium,
                     background: lib.colors.transparentWhite,
                     boxShadow: lib.layout.boxShadow.medium,
+                    ...floater,
+                    ...floaterA,
                 }}
             >
-                <div
+                <animated.div
+                    className={isFull && !searchOpen ? 'mobile-pressable-div' : undefined}
                     style={{
-                        padding: '0rem .5rem',
                         position: 'relative',
                         display: 'flex',
-                        width: '50%',
+                        width: '43px',
+                        height: '100%',
                         justifyContent: 'flex-start',
                         pointerEvents: 'none',
+                        // ...(!isFull ? { width: '0%', overflow: 'hidden' } : {}),
+                        ...floaterExit,
                         ...(searchOpen ? { width: '100%', position: 'absolute' } : {}),
                     }}
                 >
                     <NuggDexSearchBarMobile setOpen={setSearchOpen} open={searchOpen} />
-                </div>
-
-                <animated.div style={{ ...abc, display: searchOpen ? 'none' : 'flex' }}>
-                    {!searchOpen && (
-                        <animated.div
-                            style={{
-                                width: '100%',
-                                display: 'flex',
-                                justifyContent: 'space-around',
-                                alignItems: 'center',
-                            }}
-                        >
-                            {/* <div style={{ marginRight: '10px' }}> */}
-                            <HealthIndicator />
-                            {/* </div> */}
-                            <NLStaticImage image="nuggbutton" />
-                            <InfoClicker
-                                to={Page.TableOfContents}
-                                size={45}
-                                color={lib.colors.nuggBlueSemiTransparent}
-                                buttonStyle={{ padding: 0 }}
-                                // iconDropShadow={lib.layout.boxShadow.medium}
-                            />
-                        </animated.div>
-                    )}
-
-                    {!searchOpen ? (
-                        <animated.div
-                            style={{
-                                ...styles.linkAccountContainer,
-                                // padding: '0rem .5rem',
-                                alignItems: 'center',
-                                justifyContent: 'flex-end',
-                            }}
-                        >
-                            <IconButton
-                                aria-hidden="true"
-                                buttonStyle={{
-                                    padding: 0,
-                                    background: 'transparent',
-                                    borderRadius: lib.layout.borderRadius.large,
-                                    // boxShadow: lib.layout.boxShadow.medium,
-                                }}
-                                onClick={() => {
-                                    navigate('/wallet');
-                                }}
-                                iconComponent={
-                                    address ? (
-                                        <Jazzicon address={address || ''} size={50} />
-                                    ) : (
-                                        <IoQrCode
-                                            style={{
-                                                color: lib.colors.semiTransparentPrimaryColor,
-                                            }}
-                                            size={50}
-                                        />
-                                    )
-                                }
-                            />
-                        </animated.div>
-                    ) : null}
                 </animated.div>
-            </div>
-        </animated.div>
+
+                <animated.div
+                    style={{
+                        // ...abc,
+                        // display: searchOpen ? 'none' : 'flex',
+                        // width: 100,
+                        // ...(!isFull || searchOpen ? { width: 0 } : {}),
+
+                        ...floaterExit,
+                        // ...(!isFull && { position: 'absolute' }),
+                        ...(!isFull || searchOpen ? { overflow: 'hidden' } : {}),
+                        ...(searchOpen && { width: 0 }),
+                        // opacity: isFull && !searchOpen ? 1 : 0,
+                        // ...(searchOpen && { width: 0 }),
+                        // padding: '0rem 1rem',
+                    }}
+                >
+                    <animated.div
+                        style={{
+                            width: '100%',
+                            display: 'flex',
+                            justifyContent: 'space-around',
+                            alignItems: 'center',
+                        }}
+                    >
+                        {/* <div style={{ marginRight: '10px' }}> */}
+                        <HealthIndicator />
+                        {/* </div> */}
+                        <NLStaticImage image="nuggbutton" />
+                        <InfoClicker
+                            to={Page.TableOfContents}
+                            size={45}
+                            color={lib.colors.nuggBlueSemiTransparent}
+                            buttonStyle={{ padding: 0 }}
+                            // iconDropShadow={lib.layout.boxShadow.medium}
+                        />
+                    </animated.div>
+                </animated.div>
+
+                <div
+                    className={isFull && !searchOpen ? 'mobile-pressable-div' : undefined}
+                    style={{
+                        position: 'relative',
+                        display: 'flex',
+                        alignItems: 'center',
+                        // width: searchOpen ? 0 : '50%',
+                        opacity: searchOpen ? 0 : 1,
+                        // margin: 'auto',
+                        // padding: '0px 10px',
+                        justifySelf: 'center',
+                        // justifyContent: 'flex-end',
+                        zIndex: 10000000000,
+                    }}
+                >
+                    <NoFlash
+                        address={address}
+                        onClick={() => {
+                            if (isFull) navigate('/wallet');
+                            else setManualMatch(true);
+                        }}
+                        isFull={isFull}
+                    />
+                </div>
+            </animated.div>
+        </div>
     );
 };
 
-export default React.memo(NavigationBarMobile);
+const NoFlash = React.memo<{ address?: string; isFull: boolean; onClick: () => void }>(
+    ({ address, onClick }) => {
+        return (
+            <Button
+                rightIcon={
+                    address ? (
+                        <Jazzicon address={address || ''} size={50} />
+                    ) : (
+                        <IoQrCode
+                            style={{
+                                color: lib.colors.semiTransparentPrimaryColor,
+                            }}
+                            size={50}
+                        />
+                    )
+                }
+                buttonStyle={{
+                    padding: 0,
+                    background: 'transparent',
+                    borderRadius: lib.layout.borderRadius.large,
+                }}
+                onClick={onClick}
+            />
+        );
+    },
+    (a, b) => a.address === b.address && a.isFull === b.isFull,
+);
+
+export default NavigationBarMobile;

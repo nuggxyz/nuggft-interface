@@ -4,7 +4,13 @@ import { matchPath, useLocation } from 'react-router-dom';
 
 import client from '@src/client';
 
-const useNoMatchArray = (pattern: string[]) => {
+export const useMatchArray = (pattern: Parameters<typeof matchPath>[0][]) => {
+    // const location = useLocation();
+
+    return useNoMatchArray(pattern);
+};
+
+export const useNoMatchArray = (pattern: Parameters<typeof matchPath>[0][]) => {
     const location = useLocation();
 
     return React.useMemo(
