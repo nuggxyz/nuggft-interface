@@ -17,7 +17,7 @@ import WhatIsDefi from './pages/WhatIsDefi';
 
 const useNuggBook = () => {
     const page = client.nuggbook.useNuggBookPage();
-    console.log({ page });
+
     switch (page) {
         case Page.Start:
             return { top: 450, comp: Start, page };
