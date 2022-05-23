@@ -1,4 +1,4 @@
-import lib, { NLStyleSheetCreator } from '@src/lib';
+import lib from '@src/lib';
 
 const styles = lib.layout.NLStyleSheetCreator({
     badge: {

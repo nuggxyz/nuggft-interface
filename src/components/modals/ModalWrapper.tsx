@@ -1,7 +1,7 @@
 import React, { FC, PropsWithChildren, useRef } from 'react';
 import { animated, config, useSpring } from '@react-spring/web';
 
-import lib, { NLStyleSheetCreator } from '@src/lib';
+import lib from '@src/lib';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import client from '@src/client';

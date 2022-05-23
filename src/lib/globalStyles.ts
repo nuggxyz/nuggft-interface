@@ -1,4 +1,4 @@
-import lib, { NLStyleSheetCreator } from './index';
+import lib from './index';
 
 const globalStyles = lib.layout.NLStyleSheetCreator({
     absoluteFill: {
