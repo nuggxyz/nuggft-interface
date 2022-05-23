@@ -6,9 +6,9 @@ const DEFAULTS = {
             'SFRounded, ui-rounded, "SF Pro Rounded", system-ui, "Helvetica Neue", Arial, Helvetica, sans-serif',
     },
     fontWeight: {
-        thin: '100',
-        normal: '400',
-        bold: '700',
+        thin: '200',
+        normal: '500',
+        bold: '750',
         heavy: '900',
         relative: {
             lighter: 'lighter',
@@ -100,7 +100,12 @@ const Layout = {
                 },
             },
         },
-
+        weight: {
+            thin: DEFAULTS.fontWeight.thin,
+            normal: DEFAULTS.fontWeight.normal,
+            bold: DEFAULTS.fontWeight.bold,
+            heavy: DEFAULTS.fontWeight.heavy,
+        },
         loadingText: {
             overflow: 'hidden',
             zIndex: '1' /* Necessary for overflow: hidden to work correctly in Safari */,

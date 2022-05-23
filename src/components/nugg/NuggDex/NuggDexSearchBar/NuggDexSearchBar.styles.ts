@@ -15,7 +15,7 @@ const styles = lib.layout.NLStyleSheetCreator({
     },
     searchBarButton: {
         background: lib.colors.transparent,
-        padding: '.5rem .3rem',
+        padding: '.5rem .5rem',
     },
 
     searchBarIcon: {
