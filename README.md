@@ -20,5 +20,20 @@ An open source interface for nuggft v1 -- a protocol for decentralized exchange 
   - all money except for protocol goes to pool
   - pool/floor can only go up (?)
 - briefly selling nuggs/items and editing nugg
+
 ### set up wallet 
-(mmostly done)
+(mostly done)
+
+### more detail about the protocol
+- little paragraph on selling
+- little paragraph loaning
+- little paragraph on editing / extra item slots
+
+### everything about the money
+- what we get
+- what they get
+- reasoning behind our choices
+
+### dotnugg 
+- image creation / storage
+
