@@ -3,7 +3,6 @@ import { IoEllipsisHorizontal, IoSearch } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 
 import { MyNuggsData } from '@src/client/interfaces';
-import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import globalStyles from '@src/lib/globalStyles';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -14,11 +13,12 @@ import LoanButtons from '@src/components/nugg/ViewingNugg/ActionButtons/LoanButt
 import OwnerButtons from '@src/components/nugg/ViewingNugg/ActionButtons/OwnerButtons';
 import SaleButtons from '@src/components/nugg/ViewingNugg/ActionButtons/SaleButtons';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
+import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 
 import styles from './HomeTab.styles';
 
 const MyNuggRenderItem: FunctionComponent<
-    InfiniteListRenderItemProps<MyNuggsData, undefined, unknown>
+    GodListRenderItemProps<MyNuggsData, undefined, unknown>
 > = ({ item, style }) => {
     const { gotoViewingNugg } = useViewingNugg();
 

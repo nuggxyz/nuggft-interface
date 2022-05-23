@@ -8,7 +8,7 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import globalStyles from '@src/lib/globalStyles';
 import useDimensions from '@src/client/hooks/useDimensions';
-import InfiniteList from '@src/components/general/List/InfiniteList';
+import GodList from '@src/components/general/List/GodList';
 
 import styles from './HomeTab.styles';
 import MintNuggButton from './MintNuggButton';
@@ -70,7 +70,7 @@ const HomeTab: FunctionComponent<Props> = () => {
                 </div>
             </div>
             {/* <MyNuggItemListPhone /> */}
-            <InfiniteList
+            <GodList
                 id="home-tab-myNuggs"
                 TitleButton={MintNuggButton}
                 labelStyle={styles.listLabel}

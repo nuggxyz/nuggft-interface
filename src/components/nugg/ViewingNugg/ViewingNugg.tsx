@@ -168,7 +168,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                     }`}
                                                 </Text>
                                                 <Flyout
-                                                    openOnHover
+                                                    // openOnHover
                                                     float="left"
                                                     top={25}
                                                     triggerWidth="130px"
