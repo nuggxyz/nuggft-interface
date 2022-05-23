@@ -1,9 +1,7 @@
-import { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
 import globalStyles from '@src/lib/globalStyles';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     navBarContainer: {
         display: 'flex',
         position: 'absolute',
@@ -12,19 +10,19 @@ const styles = NLStyleSheetCreator({
         zIndex: 1000,
         justifyContent: 'space-between',
         alignItems: 'center',
-        transition: `all 0.3s ${Layout.animation}`,
+        transition: `all 0.3s ${lib.layout.animation}`,
         padding: '1rem 0rem',
-        height: Layout.header.height,
+        height: lib.layout.header.height,
     },
     navBarBackground: {
         ...globalStyles.absoluteFill,
         // background: 'transparent',
         // backdropFilter: 'blur(20px)',
         // WebkitBackdropFilter: 'blur(20px)',
-        // transition: `all 0.6s ${Layout.animation}`,
+        // transition: `all 0.6s ${lib.layout.animation}`,
     },
     navBarHover: {
-        background: Colors.nuggBlueTransparent,
+        background: lib.colors.nuggBlueTransparent,
         cursor: 'pointer',
     },
     searchBarContainer: {

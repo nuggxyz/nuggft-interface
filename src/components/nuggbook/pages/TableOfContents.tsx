@@ -54,7 +54,10 @@ const ListItem = ({
                         </div>
 
                         <Text
-                            textStyle={{ fontFamily: lib.layout.font.sf.regular, fontSize: '20px' }}
+                            textStyle={{
+                                ...lib.layout.presets.font.main.regular,
+                                fontSize: '20px',
+                            }}
                         >
                             {text}
                         </Text>

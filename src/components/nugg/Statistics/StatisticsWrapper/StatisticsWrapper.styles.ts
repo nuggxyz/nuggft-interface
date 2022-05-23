@@ -1,8 +1,6 @@
-import  lib, { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
         display: 'flex',
         alignItems: 'start',
@@ -13,20 +11,20 @@ const styles = NLStyleSheetCreator({
         boxShadow: `0px 1px 3px ${lib.colors.shadowNuggPink}`,
     },
     background: {
-        background: Colors.transparentWhite,
+        background: lib.colors.transparentWhite,
         // backgroundSize: '400% 400%',
         // WebkitAnimation: 'AnimatedBackground 20s ease infinite',
         // animation: 'AnimatedBackground 20s ease infinite',
         padding: '10px',
-        borderRadius: Layout.borderRadius.medium,
+        borderRadius: lib.layout.borderRadius.medium,
     },
     title: {
-        fontFamily: Layout.font.sf.bold,
+        ...lib.layout.presets.font.main.bold,
         // fontWeight: 'bold',
         color: 'white',
     },
     titleRed: {
-        color: Colors.gradientRed,
+        color: lib.colors.gradientRed,
     },
 });
 

@@ -95,7 +95,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
             </Text>
             {/* <Text
                 size="medium"
-                textStyle={{ padding: '15px', fontFamily: lib.layout.font.sf.regular }}
+                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
             >
                 this will help you get set up so you can play with nuggft
             </Text> */}
@@ -108,14 +108,14 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                 size="medium"
                 textStyle={{
                     padding: '15px',
-                    fontFamily: lib.layout.font.sf.regular,
+                    ...lib.layout.presets.font.main.regular,
                     textAlign: 'left',
                 }}
             >
                 <Text
                     size="medium"
                     textStyle={{
-                        fontFamily: lib.layout.font.sf.regular,
+                        ...lib.layout.presets.font.main.regular,
                         textAlign: 'left',
                     }}
                 >
@@ -125,7 +125,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                 <Text
                     size="medium"
                     textStyle={{
-                        fontFamily: lib.layout.font.sf.regular,
+                        ...lib.layout.presets.font.main.regular,
                         textAlign: 'left',
                     }}
                 >
@@ -135,7 +135,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                     size="small"
                     textStyle={{
                         color: lib.colors.orange,
-                        fontFamily: lib.layout.font.sf.regular,
+                        ...lib.layout.presets.font.main.regular,
                         textAlign: 'left',
                     }}
                 >
@@ -144,7 +144,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                 <Text
                     size="medium"
                     textStyle={{
-                        fontFamily: lib.layout.font.sf.regular,
+                        ...lib.layout.presets.font.main.regular,
                         textAlign: 'left',
                     }}
                 >
@@ -158,14 +158,14 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
 
             {/* <Text
                 size="medium"
-                textStyle={{ padding: '15px', fontFamily: lib.layout.font.sf.regular }}
+                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
             >
                 nuggft works best with either <b>coinbase wallet</b> or <b>metamask</b>
             </Text> */}
             <Text textStyle={{ padding: 5 }}>
                 <Text
                     size="large"
-                    textStyle={{ fontFamily: lib.layout.font.sf.regular, padding: 10 }}
+                    textStyle={{ ...lib.layout.presets.font.main.regular, padding: 10 }}
                 >
                     nice for <b>coinbase users</b>
                 </Text>
@@ -175,7 +175,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
             <Text textStyle={{ padding: 5 }}>
                 <Text
                     size="large"
-                    textStyle={{ fontFamily: lib.layout.font.sf.regular, padding: 10 }}
+                    textStyle={{ ...lib.layout.presets.font.main.regular, padding: 10 }}
                 >
                     good for <b>everyone</b>
                 </Text>
@@ -189,7 +189,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
             <Text textStyle={{ padding: 5 }}>
                 <Text
                     size="large"
-                    textStyle={{ fontFamily: lib.layout.font.sf.regular, padding: 10 }}
+                    textStyle={{ ...lib.layout.presets.font.main.regular, padding: 10 }}
                 >
                     something about apple pay and bank with coinbase
                 </Text>
@@ -201,14 +201,14 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
             >
                 3️⃣ <span style={{ paddingLeft: 5 }}>leggo</span>
             </Text>
-            <Text size="large" textStyle={{ fontFamily: lib.layout.font.sf.regular, padding: 10 }}>
+            <Text size="large" textStyle={{ ...lib.layout.presets.font.main.regular, padding: 10 }}>
                 <PeerButton
                     peer={Peer.Coinbase}
                     text="connect to nuggft"
                     color={lib.colors.gradient}
                 />
             </Text>
-            <Text size="large" textStyle={{ fontFamily: lib.layout.font.sf.regular, padding: 10 }}>
+            <Text size="large" textStyle={{ ...lib.layout.presets.font.main.regular, padding: 10 }}>
                 <PeerButton
                     peer={Peer.MetaMask}
                     text="connect to nuggft"
@@ -218,19 +218,19 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
 
             <Text
                 size="medium"
-                textStyle={{ padding: '15px', fontFamily: lib.layout.font.sf.regular }}
+                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
             >
                 FAQ
             </Text>
             <Text
                 size="medium"
-                textStyle={{ padding: '15px', fontFamily: lib.layout.font.sf.regular }}
+                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
             >
                 what other wallets can i use?
             </Text>
             <Text
                 size="medium"
-                textStyle={{ padding: '15px', fontFamily: lib.layout.font.sf.regular }}
+                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
             >
                 where do i get eth from?
             </Text>

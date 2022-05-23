@@ -1,6 +1,6 @@
 import lib, { NLStyleSheetCreator } from './index';
 
-const globalStyles = NLStyleSheetCreator({
+const globalStyles = lib.layout.NLStyleSheetCreator({
     absoluteFill: {
         position: 'absolute',
         width: '100%',

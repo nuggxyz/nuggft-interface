@@ -68,7 +68,7 @@ const Modal: FC<PropsWithChildren<any>> = ({ children }) => {
     );
 };
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     wrapper: {
         position: 'absolute',
         width: '100%',

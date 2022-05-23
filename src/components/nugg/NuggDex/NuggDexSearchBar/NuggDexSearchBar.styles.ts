@@ -1,13 +1,11 @@
-import lib, { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
+import lib from '@src/lib';
 import globalStyles from '@src/lib/globalStyles';
-import Layout from '@src/lib/layout';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     searchBar: {
         zIndex: 999,
-        borderRadius: Layout.borderRadius.small,
-        fontFamily: Layout.font.sf.regular,
+        borderRadius: lib.layout.borderRadius.small,
+        ...lib.layout.presets.font.main.regular,
         pointerEvents: 'auto',
         width: '93%',
         position: 'relative',
@@ -15,15 +13,15 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'center',
     },
     searchBarButton: {
-        background: Colors.transparent,
+        background: lib.colors.transparent,
         padding: '.5rem .3rem',
     },
     searchBarIcon: {
-        color: Colors.nuggBlueText,
+        color: lib.colors.nuggBlueText,
     },
     filterButton: {
-        borderRadius: Layout.borderRadius.large,
-        background: Colors.transparentWhite,
+        borderRadius: lib.layout.borderRadius.large,
+        background: lib.colors.transparentWhite,
         padding: '.44rem .45rem',
         marginRight: '.3rem',
     },

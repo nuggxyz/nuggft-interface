@@ -1,14 +1,12 @@
-import { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     button: {
-        background: Colors.secondaryColor,
+        background: lib.colors.secondaryColor,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: Layout.borderRadius.small,
+        borderRadius: lib.layout.borderRadius.small,
         flexDirection: 'row',
         padding: '.5rem 1rem',
         cursor: 'pointer',

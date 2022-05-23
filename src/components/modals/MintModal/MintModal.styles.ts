@@ -1,7 +1,7 @@
 import lib, { NLStyleSheetCreator } from '@src/lib';
 import globalStyles from '@src/lib/globalStyles';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
         width: '100%',
         alignItems: 'center',

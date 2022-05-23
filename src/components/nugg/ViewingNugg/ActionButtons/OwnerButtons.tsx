@@ -3,12 +3,12 @@ import { IoCashOutline, IoPencil, IoPricetagsOutline } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 import { useNavigate } from 'react-router-dom';
 
-import Colors from '@src/lib/colors';
 import Button from '@src/components/general/Buttons/Button/Button';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
 import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
 import { buildTokenIdFactory } from '@src/prototypes';
+import lib from '@src/lib';
 
 type Props = { tokenId: NuggId };
 
@@ -26,7 +26,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 label={t`Sell`}
                 leftIcon={
                     <IoPricetagsOutline
-                        color={Colors.nuggBlueText}
+                        color={lib.colors.nuggBlueText}
                         size={25}
                         // style={{ marginRight: '.75rem' }}
                     />
@@ -49,7 +49,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 label={t`Loan`}
                 leftIcon={
                     <IoCashOutline
-                        color={Colors.nuggBlueText}
+                        color={lib.colors.nuggBlueText}
                         size={25}
                         // style={{ marginRight: '.75rem' }}
                     />
@@ -60,7 +60,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                         tokenId,
                         actionType: 'loan',
                         backgroundStyle: {
-                            background: Colors.gradient2,
+                            background: lib.colors.gradient2,
                         },
                     });
                 }}
@@ -73,7 +73,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 label={t`Burn`}
                 leftIcon={
                     <IoTrashBinOutline
-                        color={Colors.nuggRedText}
+                        color={lib.colors.nuggRedText}
                         size={25}
                         style={{ marginRight: '.75rem' }}
                     />
@@ -85,7 +85,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                             targetId: tokenId,
                             type: 'BurnNugg',
                             backgroundStyle: {
-                                background: Colors.gradient3,
+                                background: lib.colors.gradient3,
                             },
                         },
                     })
@@ -99,7 +99,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 label={t`Edit`}
                 leftIcon={
                     <IoPencil
-                        color={Colors.nuggBlueText}
+                        color={lib.colors.nuggBlueText}
                         size={25}
                         // style={{ marginRight: '.75rem' }}
                     />

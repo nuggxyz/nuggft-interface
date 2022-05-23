@@ -5,7 +5,6 @@ import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { IoArrowRedo } from 'react-icons/io5';
 
 import Text from '@src/components/general/Texts/Text/Text';
-import Colors from '@src/lib/colors';
 import StickyList from '@src/components/general/List/StickyList';
 import web3 from '@src/web3';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
@@ -129,7 +128,7 @@ const SwapItem: FunctionComponent<
                             type="text"
                             size="smaller"
                             textStyle={{
-                                color: Colors.textColor,
+                                color: lib.colors.textColor,
                             }}
                         >
                             {!item.endingEpoch ||
@@ -165,7 +164,7 @@ const SwapItem: FunctionComponent<
                                         type="text"
                                         size="smaller"
                                         textStyle={{
-                                            color: Colors.textColor,
+                                            color: lib.colors.textColor,
                                         }}
                                     >
                                         {item.endingEpoch >= epoch ? t`Leader` : t`Buyer`}

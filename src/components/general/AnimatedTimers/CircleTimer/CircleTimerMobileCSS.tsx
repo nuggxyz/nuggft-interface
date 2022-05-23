@@ -1,6 +1,5 @@
 import React, { CSSProperties, FunctionComponent, ReactChild, useMemo } from 'react';
 
-import Colors from '@src/lib/colors';
 import lib from '@src/lib';
 
 import styles from './CircleTimer.styles';
@@ -50,10 +49,10 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
         if (staticColor || percent >= 1) return staticColor || defaultColor;
 
         if (percent <= 0.1) {
-            return Colors.nuggRedText;
+            return lib.colors.nuggRedText;
         }
         if (percent <= 0.25) {
-            return Colors.nuggGold;
+            return lib.colors.nuggGold;
         }
         return defaultColor;
     }, [remaining, duration, defaultColor, staticColor]);

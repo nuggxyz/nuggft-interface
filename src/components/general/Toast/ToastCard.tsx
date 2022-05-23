@@ -3,8 +3,7 @@ import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { IoClose, IoOpenOutline } from 'react-icons/io5';
 
 import useOnHover from '@src/hooks/useOnHover';
-import { isUndefinedOrNullOrBooleanFalse, isUndefinedOrNullOrNumberZero } from '@src/lib';
-import Colors from '@src/lib/colors';
+import lib, { isUndefinedOrNullOrBooleanFalse, isUndefinedOrNullOrNumberZero } from '@src/lib';
 import AnimatedBarTimer from '@src/components/general/AnimatedTimers/BarTimer/BarTimer';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Loader from '@src/components/general/Loader/Loader';
@@ -104,13 +103,13 @@ const ToastCard: FunctionComponent<Props> = ({ toast }) => {
                     </Text>
                 </div>
                 {!isUndefinedOrNullOrBooleanFalse(toast.loading) && (
-                    <Loader style={styles.toastLoader} color={Colors.green} />
+                    <Loader style={styles.toastLoader} color={lib.colors.green} />
                 )}
                 {!isUndefinedOrNullOrNumberZero(duration) && (
                     <AnimatedBarTimer
                         duration={duration}
                         style={styles.toastTimer}
-                        color={error ? Colors.gradient3 : Colors.gradient2}
+                        color={error ? lib.colors.gradient3 : lib.colors.gradient2}
                     />
                 )}
             </animated.div>

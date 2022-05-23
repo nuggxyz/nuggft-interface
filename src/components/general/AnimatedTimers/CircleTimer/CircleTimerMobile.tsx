@@ -1,7 +1,7 @@
 import React, { CSSProperties, FunctionComponent, useMemo } from 'react';
 import { animated, config, useSpring } from '@react-spring/web';
 
-import Colors from '@src/lib/colors';
+import lib from '@src/lib';
 
 import styles from './CircleTimer.styles';
 
@@ -108,10 +108,10 @@ const Normal: FunctionComponent<Props> = ({
             return staticColor || defaultColor;
         }
         if (percent <= 0.1) {
-            return Colors.nuggRedText;
+            return lib.colors.nuggRedText;
         }
         if (percent <= 0.25) {
-            return Colors.nuggGold;
+            return lib.colors.nuggGold;
         }
         return defaultColor;
     }, [remaining, duration, staticColor, defaultColor]);

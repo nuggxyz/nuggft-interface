@@ -1,14 +1,10 @@
-/** @format */
+import lib from '@src/lib';
 
-import Colors from '@src/lib/colors';
-import { NLStyleSheetCreator } from '@src/lib';
-import Layout from '@src/lib/layout';
-
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
-        backgroundColor: Colors.background,
-        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadowLightGrey}`,
-        borderRadius: Layout.borderRadius.mediumish,
+        backgroundColor: lib.colors.background,
+        boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowLightGrey}`,
+        borderRadius: lib.layout.borderRadius.mediumish,
         display: 'inline-block',
         position: 'absolute',
         zIndex: 10000,

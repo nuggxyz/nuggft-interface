@@ -1,9 +1,8 @@
-import { NLStyleSheetCreator } from '@src/lib';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     textStyle: {
-        fontFamily: Layout.font.code.regular,
+        ...lib.layout.presets.font.code.regular,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',

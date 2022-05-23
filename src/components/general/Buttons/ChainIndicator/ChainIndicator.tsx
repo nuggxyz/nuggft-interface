@@ -82,7 +82,7 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
                     {epoch && endblock && blocknum ? (
                         <Text
                             textStyle={{
-                                fontFamily: lib.layout.font.code.regular,
+                                ...lib.layout.presets.font.code.regular,
                                 ...textStyle,
                             }}
                         >

@@ -1,7 +1,6 @@
-import Colors from '@src/lib/colors';
-import { NLStyleSheetCreator } from '@src/lib/index';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     barContainer: {
         width: '100%',
         height: '5px',
@@ -11,7 +10,7 @@ const styles = NLStyleSheetCreator({
     timer: {
         width: '100%',
         height: '100%',
-        background: Colors.primaryColor,
+        background: lib.colors.primaryColor,
         transition: `width .1s ease`,
     },
 });

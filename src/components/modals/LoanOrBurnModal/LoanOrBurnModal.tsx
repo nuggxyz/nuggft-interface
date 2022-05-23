@@ -3,9 +3,7 @@ import { t } from '@lingui/macro';
 
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import Text from '@src/components/general/Texts/Text/Text';
-import FontSize from '@src/lib/fontSize';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
-import Colors from '@src/lib/colors';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import web3 from '@src/web3';
 import client from '@src/client';
@@ -15,6 +13,7 @@ import {
     usePrioritySendTransaction,
     useTransactionManager2,
 } from '@src/contracts/useContract';
+import lib from '@src/lib';
 
 import styles from './LoanOrBurnModal.styles';
 
@@ -47,8 +46,8 @@ const LoanOrBurnModal = ({ data: { tokenId, actionType } }: { data: LoanModalDat
                         weight="bold"
                         textStyle={{
                             ...styles.text,
-                            color: Colors.nuggRedText,
-                            fontSize: FontSize.h5,
+                            color: lib.colors.nuggRedText,
+                            fontSize: lib.fontSize.h5,
                         }}
                     >
                         {t`This cannot be undone`}

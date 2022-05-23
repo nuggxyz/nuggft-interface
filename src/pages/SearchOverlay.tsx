@@ -5,15 +5,15 @@ import { useMatch, useNavigate } from 'react-router-dom';
 import NuggDexSearchList from '@src/components/nugg/NuggDex/NuggDexSearchList/NuggDexSearchList';
 import useBlur from '@src/hooks/useBlur';
 import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
-import { NLStyleSheetCreator } from '@src/lib';
 import client from '@src/client';
 import useDimensions from '@src/client/hooks/useDimensions';
 import BackButton from '@src/components/mobile/BackButton';
 import { useOverlayRouteStyle } from '@src/lib/router';
+import lib from '@src/lib';
 
 type Props = Record<string, never>;
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
         display: 'flex',
         justifyContent: 'space-between',

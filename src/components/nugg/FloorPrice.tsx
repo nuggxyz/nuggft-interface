@@ -3,12 +3,11 @@ import { animated, useSpring } from '@react-spring/web';
 import { BigNumber } from 'ethers';
 import { t } from '@lingui/macro';
 
-import Colors from '@src/lib/colors';
-import Layout from '@src/lib/layout';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Text from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
+import lib from '@src/lib';
 
 type Props = { style?: CSSProperties };
 
@@ -19,7 +18,7 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
     const springStyle = useSpring({
         // zIndex: 1000,
         display: 'flex',
-        borderRadius: Layout.borderRadius.large,
+        borderRadius: lib.layout.borderRadius.large,
         alignItems: 'center',
         justifyContent: 'center',
         margin: '.3rem 0rem',
@@ -37,15 +36,15 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
                 weight="bolder"
                 textStyle={{
                     paddingRight: '.6rem',
-                    color: Colors.nuggBlueText,
-                    font: Layout.font.sf.bold,
+                    color: lib.colors.nuggBlueText,
+                    ...lib.layout.presets.font.main.bold,
                     marginTop: '.1rem',
                 }}
             >
                 {t`FLOOR`}
             </Text>
             <CurrencyText
-                textStyle={{ color: darkmode ? Colors.white : Colors.primaryColor }}
+                textStyle={{ color: darkmode ? lib.colors.white : lib.colors.primaryColor }}
                 size="small"
                 image="eth"
                 value={stake__eps?.decimal.toNumber() || 0}

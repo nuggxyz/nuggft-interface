@@ -1,9 +1,7 @@
-import lib, { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
+import lib from '@src/lib';
 import globalStyles from '@src/lib/globalStyles';
-import Layout from '@src/lib/layout';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
         display: 'flex',
         alignItems: 'center',
@@ -17,8 +15,8 @@ const styles = NLStyleSheetCreator({
     nuggId: {
         color: lib.colors.nuggBlueText,
         padding: '.5rem .8rem',
-        background: Colors.transparentWhite,
-        borderRadius: Layout.borderRadius.small,
+        background: lib.colors.transparentWhite,
+        borderRadius: lib.layout.borderRadius.small,
         whiteSpace: 'nowrap',
     },
     nuggContainer: {
@@ -41,14 +39,14 @@ const styles = NLStyleSheetCreator({
         zIndex: 100,
     },
     titleText: {
-        color: Colors.white,
+        color: lib.colors.white,
         display: 'flex',
         alignItems: 'center',
     },
     owner: {
-        background: Colors.nuggBlueTransparent,
+        background: lib.colors.nuggBlueTransparent,
         padding: '.5rem',
-        borderRadius: Layout.borderRadius.mediumish,
+        borderRadius: lib.layout.borderRadius.mediumish,
         postion: 'relative',
         display: 'flex',
         alignItems: 'center',
@@ -67,8 +65,8 @@ const styles = NLStyleSheetCreator({
         alignItems: 'center',
     },
     swaps: {
-        borderRadius: Layout.borderRadius.mediumish,
-        background: Colors.transparentGrey,
+        borderRadius: lib.layout.borderRadius.mediumish,
+        background: lib.colors.transparentGrey,
         // marginTop: '1rem',
         width: '100%',
         position: 'relative',
@@ -84,9 +82,9 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        borderRadius: Layout.borderRadius.mediumish,
+        borderRadius: lib.layout.borderRadius.mediumish,
         // overflow: 'hidden',
-        background: Colors.transparentGrey,
+        background: lib.colors.transparentGrey,
         width: '95%',
     },
     swapItemContainer: {
@@ -96,9 +94,9 @@ const styles = NLStyleSheetCreator({
         ...globalStyles.centered,
     },
     swap: {
-        background: Colors.gradient2Transparent,
+        background: lib.colors.gradient2Transparent,
         padding: '.5rem 1rem',
-        borderRadius: Layout.borderRadius.mediumish,
+        borderRadius: lib.layout.borderRadius.mediumish,
         postion: 'relative',
         display: 'flex',
         flexDirection: 'column',
@@ -116,7 +114,7 @@ const styles = NLStyleSheetCreator({
         justifyContent: 'center',
         boxShadow: lib.layout.boxShadow.medium,
     },
-    textBlack: { color: Colors.primaryColor },
+    textBlack: { color: lib.colors.primaryColor },
     textBlue: { color: lib.colors.nuggBlueText },
     flyout: {
         position: 'absolute',
@@ -125,8 +123,8 @@ const styles = NLStyleSheetCreator({
         left: '.7rem',
     },
     flyoutButton: {
-        background: Colors.white,
-        borderRadius: Layout.borderRadius.large,
+        background: lib.colors.white,
+        borderRadius: lib.layout.borderRadius.large,
         padding: '.4rem .4rem 0rem .4rem',
     },
     ownerButtonContainer: {
@@ -163,7 +161,7 @@ const styles = NLStyleSheetCreator({
     },
     listTitle: {
         padding: '.5rem',
-        background: Colors.transparentWhite,
+        background: lib.colors.transparentWhite,
         width: '100%',
         ...globalStyles.backdropFilter,
     },
@@ -183,13 +181,13 @@ const styles = NLStyleSheetCreator({
         borderRadius: lib.layout.borderRadius.mediumish,
     },
     itemListButton: {
-        borderRadius: Layout.borderRadius.large,
-        background: Colors.gradient2Transparent,
+        borderRadius: lib.layout.borderRadius.large,
+        background: lib.colors.gradient2Transparent,
         position: 'absolute',
         right: '1rem',
     },
     itemListButtonText: {
-        color: Colors.white,
+        color: lib.colors.white,
         marginLeft: '.5rem',
     },
     zoom: {

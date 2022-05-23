@@ -1,12 +1,11 @@
 import React, { CSSProperties, FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 
-import {
+import lib, {
     isUndefinedOrNullOrNotNumber,
     isUndefinedOrNullOrNumberZero,
     isUndefinedOrNullOrStringEmpty,
 } from '@src/lib';
-import Colors from '@src/lib/colors';
 
 import styles from './CircleTimer.styles';
 
@@ -102,10 +101,10 @@ const CircleTimer: FunctionComponent<Props> = ({
             return staticColor;
         }
         if (percent <= 0.1) {
-            return Colors.nuggRedText;
+            return lib.colors.nuggRedText;
         }
         if (percent <= 0.25) {
-            return Colors.nuggGold;
+            return lib.colors.nuggGold;
         }
         return defaultColor;
     }, [remaining, duration, staticColor, defaultColor]);

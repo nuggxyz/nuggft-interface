@@ -1,11 +1,11 @@
 import { CSSProperties } from 'react';
 import { PickAnimated } from '@react-spring/web';
 
-import { NLStyleSheetCreator } from '@src/lib';
 import useDimensions from '@src/client/hooks/useDimensions';
 import packages from '@src/packages';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     wrapper: {
         position: 'absolute',
         width: '100%',

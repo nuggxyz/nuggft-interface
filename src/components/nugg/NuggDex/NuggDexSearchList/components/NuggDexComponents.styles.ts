@@ -1,9 +1,7 @@
-import { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
 import globalStyles from '@src/lib/globalStyles';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     nuggLinkContainer: {
         display: 'flex',
         flexDirection: 'column',
@@ -13,8 +11,8 @@ const styles = NLStyleSheetCreator({
         height: '40%',
     },
     nuggLinkPreviewContainer: {
-        background: Colors.transparentGrey,
-        borderRadius: Layout.borderRadius.medium,
+        background: lib.colors.transparentGrey,
+        borderRadius: lib.layout.borderRadius.medium,
         width: '100%',
         height: '100%',
         position: 'relative',
@@ -38,13 +36,13 @@ const styles = NLStyleSheetCreator({
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 1,
-        borderRadius: Layout.borderRadius.large,
-        background: Colors.transparentGrey2,
+        borderRadius: lib.layout.borderRadius.large,
+        background: lib.colors.transparentGrey2,
         paddingRight: '.7rem',
         ...globalStyles.backdropFilter,
     },
     nuggListDefault: {
-        borderRadius: Layout.borderRadius.medium,
+        borderRadius: lib.layout.borderRadius.medium,
         overflow: 'hidden',
         WebkitMaskImage: '-webkit-radial-gradient(white, black)',
     },
@@ -54,7 +52,7 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        transition: `background .7s ${Layout.animation}`,
+        transition: `background .7s ${lib.layout.animation}`,
         cursor: 'pointer',
         position: 'relative',
         overflow: 'hidden',
@@ -71,13 +69,13 @@ const styles = NLStyleSheetCreator({
         flexDirection: 'column',
         height: '40%',
         width: '40%',
-        borderRadius: Layout.borderRadius.mediumish,
+        borderRadius: lib.layout.borderRadius.mediumish,
         justifyContent: 'center',
         alignItems: 'center',
-        background: Colors.transparentWhite,
+        background: lib.colors.transparentWhite,
         padding: '1rem',
         cursor: 'pointer',
-        transition: `background .4s ${Layout.animation}`,
+        transition: `background .4s ${lib.layout.animation}`,
     },
     nuggLinkThumbnailContainerBig: {
         height: '40%',
@@ -85,10 +83,10 @@ const styles = NLStyleSheetCreator({
         margin: '.5rem 2%',
     },
     hover: {
-        background: Colors.nuggBlueTransparent,
+        background: lib.colors.nuggBlueTransparent,
     },
     selected: {
-        background: Colors.nuggBlueTransparent,
+        background: lib.colors.nuggBlueTransparent,
     },
     nugg: {
         cursor: 'pointer',
@@ -100,8 +98,7 @@ const styles = NLStyleSheetCreator({
         textAlign: 'center',
     },
     nuggLinkCategoryTitle: {
-        fontFamily: Layout.font.sf.bold,
-        fontWeight: 'bold',
+        ...lib.layout.presets.font.main.bold,
         marginTop: '.5rem',
     },
 });

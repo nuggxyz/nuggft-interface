@@ -1,13 +1,11 @@
-import { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
-        background: Colors.gradient3,
-        borderRadius: Layout.borderRadius.medium,
+        background: lib.colors.gradient3,
+        borderRadius: lib.layout.borderRadius.medium,
         display: 'flex',
-        boxShadow: `${Layout.boxShadow.prefix} ${Colors.shadowNuggPink}`,
+        boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggPink}`,
         flexDirection: 'column',
         padding: '.5rem',
         width: '50%',
@@ -20,8 +18,8 @@ const styles = NLStyleSheetCreator({
         padding: '0rem .25rem',
     },
     chart: {
-        background: Colors.transparentWhite,
-        borderRadius: Layout.borderRadius.smallish,
+        background: lib.colors.transparentWhite,
+        borderRadius: lib.layout.borderRadius.smallish,
         padding: 0,
     },
 });

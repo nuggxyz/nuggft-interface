@@ -1,12 +1,9 @@
-import { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
-import FontSize from '@src/lib/fontSize';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     button: {
-        borderRadius: Layout.borderRadius.large,
-        fontSize: FontSize.p,
+        borderRadius: lib.layout.borderRadius.large,
+        fontSize: lib.fontSize.p,
         transition: `all 0.5s ease`,
         flexWrap: 'nowrap',
         flexGrow: 2,
@@ -15,19 +12,19 @@ const styles = NLStyleSheetCreator({
         padding: '.1rem 1rem .1rem .5rem',
     },
     normal: {
-        background: Colors.nuggBlueTransparent,
-        color: Colors.nuggBlueText,
+        background: lib.colors.nuggBlueTransparent,
+        color: lib.colors.nuggBlueText,
     },
     warning: {
-        background: Colors.nuggRedTransparent,
-        color: Colors.nuggRedText,
+        background: lib.colors.nuggRedTransparent,
+        color: lib.colors.nuggRedText,
     },
     buttonDefault: {
-        background: Colors.secondaryColor,
+        background: lib.colors.secondaryColor,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: Layout.borderRadius.small,
+        borderRadius: lib.layout.borderRadius.small,
         flexDirection: 'row',
         padding: '.5rem 1rem',
         cursor: 'pointer',

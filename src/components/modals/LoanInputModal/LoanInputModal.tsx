@@ -11,8 +11,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
-import FontSize from '@src/lib/fontSize';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 import web3 from '@src/web3';
 import { LoanInputModalData } from '@src/interfaces/modals';
 import {
@@ -92,11 +91,11 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
                             }
                             label={t`Min`}
                             textStyle={{
-                                fontFamily: Layout.font.sf.bold,
-                                fontSize: FontSize.h6,
+                                ...lib.layout.presets.font.main.bold,
+                                fontSize: lib.fontSize.h6,
                             }}
                             buttonStyle={{
-                                borderRadius: Layout.borderRadius.large,
+                                borderRadius: lib.layout.borderRadius.large,
                                 padding: '.2rem .5rem',
                             }}
                         />,

@@ -1,9 +1,7 @@
-import { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
+import lib from '@src/lib';
 import globalStyles from '@src/lib/globalStyles';
-import Layout from '@src/lib/layout';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     wrapperContainer: {
         width: '100%',
         height: '100%',
@@ -19,7 +17,7 @@ const styles = NLStyleSheetCreator({
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        borderRadius: Layout.borderRadius.medium,
+        borderRadius: lib.layout.borderRadius.medium,
         height: '44px',
         padding: '4px',
         width: '100%',
@@ -33,13 +31,15 @@ const styles = NLStyleSheetCreator({
         cursor: 'pointer',
         zIndex: 5,
     },
-    headerTextBold: { fontWeight: 'bold', fontFamily: Layout.font.sf.bold },
+    headerTextBold: {
+        ...lib.layout.presets.font.main.bold,
+    },
     headerText: {
-        fontFamily: Layout.font.sf.regular,
+        ...lib.layout.presets.font.main.regular,
     },
     headerTextMobile: {
-        fontFamily: Layout.font.sf.regular,
-        textShadow: `0 0 20px ${Colors.textColor}`,
+        ...lib.layout.presets.font.main.regular,
+        textShadow: `0 0 20px ${lib.colors.textColor}`,
     },
     body: {
         display: 'flex',
@@ -55,7 +55,7 @@ const styles = NLStyleSheetCreator({
         position: 'absolute',
     },
     activeButton: {
-        // background: Colors.gradient,
+        // background: lib.colors.gradient,
         color: 'white',
     },
     wrapper: {
@@ -68,8 +68,8 @@ const styles = NLStyleSheetCreator({
         position: 'absolute',
         zIndex: 4,
         // backgroundColor: 'rgba(80, 144, 234, 0.4)',
-        background: Colors.transparentWhite,
-        borderRadius: Layout.borderRadius.mediumish,
+        background: lib.colors.transparentWhite,
+        borderRadius: lib.layout.borderRadius.mediumish,
         ...globalStyles.backdropFilter,
     },
 });

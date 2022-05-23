@@ -126,7 +126,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
 
             <Text
                 size="medium"
-                textStyle={{ padding: '15px', fontFamily: lib.layout.font.sf.regular }}
+                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
             >
                 welcome to{' '}
                 <animated.span

@@ -1,19 +1,17 @@
-import FontSize from '@src/lib/fontSize';
-import { NLStyleSheetCreator } from '@src/lib';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     title: {
-        fontFamily: Layout.font.sf.bold,
-        // color: Colors.textColor,
+        ...lib.layout.presets.font.main.bold,
+        // color: lib.colors.textColor,
     },
     text: {
-        fontFamily: Layout.font.sf.regular,
-        // color: Colors.textColor,
+        ...lib.layout.presets.fontFamily.rounded,
+        // color: lib.colors.textColor,
     },
     code: {
-        fontFamily: Layout.font.code.regular,
-        // color: Colors.textColor,
+        ...lib.layout.presets.fontFamily.monospace,
+        // color: lib.colors.textColor,
     },
     light: {
         fontWeight: 'lighter',
@@ -28,31 +26,31 @@ const styles = NLStyleSheetCreator({
         fontWeight: 'bolder',
     },
     smaller: {
-        fontSize: FontSize.p,
+        fontSize: lib.fontSize.p,
     },
     small: {
-        fontSize: FontSize.h5,
+        fontSize: lib.fontSize.h5,
     },
     medium: {
-        fontSize: FontSize.h4,
+        fontSize: lib.fontSize.h4,
     },
     large: {
-        fontSize: FontSize.h3,
+        fontSize: lib.fontSize.h3,
     },
     largerish: {
-        fontSize: FontSize.h2_small,
+        fontSize: lib.fontSize.h2_small,
     },
     larger: {
-        fontSize: FontSize.h2,
+        fontSize: lib.fontSize.h2,
     },
     largermax: {
-        fontSize: FontSize.h2_large,
+        fontSize: lib.fontSize.h2_large,
     },
     largestish: {
-        fontSize: FontSize.h1_small,
+        fontSize: lib.fontSize.h1_small,
     },
     largest: {
-        fontSize: FontSize.h1,
+        fontSize: lib.fontSize.h1,
     },
 });
 

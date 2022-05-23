@@ -1,12 +1,10 @@
-import { NLStyleSheetCreator } from '@src/lib';
-import FontSize from '@src/lib/fontSize';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     value: {
-        fontFamily: Layout.font.code.regular,
+        ...lib.layout.presets.font.code.regular,
         // marginLeft: '.5rem',
-        fontSize: FontSize.h4,
+        fontSize: lib.fontSize.h4,
     },
 });
 

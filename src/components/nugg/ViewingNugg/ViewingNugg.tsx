@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { IoArrowRedo } from 'react-icons/io5';
 
 import lib from '@src/lib';
-import Colors from '@src/lib/colors';
 import Loader from '@src/components/general/Loader/Loader';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -123,7 +122,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                 type="text"
                                                 size="smaller"
                                                 textStyle={{
-                                                    color: Colors.white,
+                                                    color: lib.colors.white,
                                                 }}
                                             >
                                                 {t`Owner`}
@@ -140,7 +139,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                             </div>
                                         </div>
                                     ) : (
-                                        <Loader color={Colors.nuggBlueText} />
+                                        <Loader color={lib.colors.nuggBlueText} />
                                     )
                                 ) : token ? (
                                     token.type === 'item' &&

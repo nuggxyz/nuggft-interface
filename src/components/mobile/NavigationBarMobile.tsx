@@ -46,7 +46,7 @@ const NavigationBarMobile: FC<Props> = () => {
 
     const [floaterA] = useSpring(
         {
-            delay: isFull ? 250 + 0 : 0,
+            delay: isFull ? 400 : 0,
             justifyContent: isFull ? 'space-between' : 'flex-end',
             config: packages.spring.config.stiff,
         },
@@ -122,6 +122,7 @@ const NavigationBarMobile: FC<Props> = () => {
                 marginBottom: 15,
                 paddingRight: 15,
                 paddingLeft: 15,
+                pointerEvents: 'none',
             }}
         >
             <animated.div

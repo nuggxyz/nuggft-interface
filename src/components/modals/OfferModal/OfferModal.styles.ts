@@ -1,8 +1,6 @@
-import { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
         width: '100%',
         alignItems: 'center',
@@ -28,7 +26,7 @@ const styles = NLStyleSheetCreator({
         color: 'white',
     },
     button: {
-        borderRadius: Layout.borderRadius.large,
+        borderRadius: lib.layout.borderRadius.large,
     },
     heading: {
         width: '100%',
@@ -37,12 +35,12 @@ const styles = NLStyleSheetCreator({
     inputCurrency: {
         textAlign: 'left',
         width: '100%',
-        background: Colors.transparentLightGrey,
+        background: lib.colors.transparentLightGrey,
         padding: '.3rem .6rem',
-        borderRadius: Layout.borderRadius.mediumish,
+        borderRadius: lib.layout.borderRadius.mediumish,
     },
     text: {
-        color: Colors.transparentWhite,
+        color: lib.colors.transparentWhite,
         textAlign: 'center',
         flexDirection: 'row',
         display: 'flex',

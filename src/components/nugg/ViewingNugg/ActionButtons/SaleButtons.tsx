@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { t } from '@lingui/macro';
 import { IoArrowDown, IoSync } from 'react-icons/io5';
 
-import Colors from '@src/lib/colors';
+import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import web3 from '@src/web3';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
@@ -28,13 +28,13 @@ const SaleButtons: FunctionComponent<Props> = ({ tokenId, reclaim = false }) => 
                 leftIcon={
                     reclaim ? (
                         <IoSync
-                            color={Colors.nuggBlueText}
+                            color={lib.colors.nuggBlueText}
                             size={25}
                             // style={{ marginRight: '.75rem' }}
                         />
                     ) : (
                         <IoArrowDown
-                            color={Colors.nuggBlueText}
+                            color={lib.colors.nuggBlueText}
                             size={25}
                             // style={{ marginRight: '.75rem' }}
                         />

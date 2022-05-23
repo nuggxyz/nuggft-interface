@@ -223,7 +223,7 @@ const MobileOwnerBlock = ({
                                 textStyle={{
                                     fontSize: '13px',
                                     color: dynamicTextColor,
-                                    fontFamily: lib.layout.font.sf.light,
+                                    ...lib.layout.presets.font.main.light,
                                 }}
                             >
                                 {offers &&

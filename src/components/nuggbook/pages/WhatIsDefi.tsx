@@ -20,7 +20,7 @@ const WhatIsDefi: NuggBookPage = ({ setPage }) => {
             </Text>
             <Text
                 size="medium"
-                textStyle={{ padding: '15px', fontFamily: lib.layout.font.sf.regular }}
+                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
             >
                 a decentralized art project on ethereum
             </Text>

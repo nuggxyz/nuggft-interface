@@ -1,14 +1,12 @@
-import { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
         display: 'flex',
         justifyContent: 'center',
         padding: '0.3em 0.5em',
-        borderRadius: Layout.borderRadius.large,
-        background: Colors.transparentWhite,
+        borderRadius: lib.layout.borderRadius.large,
+        background: lib.colors.transparentWhite,
     },
     basic: {
         background: 'none #ffffff',

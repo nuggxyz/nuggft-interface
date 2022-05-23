@@ -1,8 +1,7 @@
-import Colors from '@src/lib/colors';
+import lib from '@src/lib';
 import globalStyles from '@src/lib/globalStyles';
-import { NLStyleSheetCreator } from '@src/lib/index';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
         display: 'flex',
         flexDirection: 'column',
@@ -19,7 +18,7 @@ const styles = NLStyleSheetCreator({
         paddingTop: '1rem',
     },
     border: {
-        border: `1px solid ${Colors.darkerGray}`,
+        border: `1px solid ${lib.colors.darkerGray}`,
         borderRadius: '.3rem',
     },
     horizontal: {

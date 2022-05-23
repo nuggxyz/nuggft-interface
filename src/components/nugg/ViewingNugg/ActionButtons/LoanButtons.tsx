@@ -3,11 +3,11 @@ import { IoHourglassOutline, IoPencil, IoPricetagOutline } from 'react-icons/io5
 import { t } from '@lingui/macro';
 import { useNavigate } from 'react-router-dom';
 
-import Colors from '@src/lib/colors';
 import Button from '@src/components/general/Buttons/Button/Button';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
 import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
+import lib from '@src/lib';
 
 type Props = { tokenId: NuggId };
 
@@ -25,7 +25,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 label={t`Extend`}
                 leftIcon={
                     <IoHourglassOutline
-                        color={Colors.nuggBlueText}
+                        color={lib.colors.nuggBlueText}
                         size={25}
                         // style={{ marginRight: '.75rem' }}
                     />
@@ -36,7 +36,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                         tokenId,
                         actionType: 'rebalance',
                         backgroundStyle: {
-                            background: Colors.gradient3,
+                            background: lib.colors.gradient3,
                         },
                     })
                 }
@@ -49,7 +49,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 label={t`Pay off`}
                 leftIcon={
                     <IoPricetagOutline
-                        color={Colors.nuggBlueText}
+                        color={lib.colors.nuggBlueText}
                         size={25}
                         // style={{ marginRight: '.75rem' }}
                     />
@@ -60,7 +60,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                         tokenId,
                         actionType: 'liquidate',
                         backgroundStyle: {
-                            background: Colors.gradient3,
+                            background: lib.colors.gradient3,
                         },
                     })
                 }
@@ -73,7 +73,7 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 label={t`Edit`}
                 leftIcon={
                     <IoPencil
-                        color={Colors.nuggBlueText}
+                        color={lib.colors.nuggBlueText}
                         size={25}
                         // style={{ marginRight: '.75rem' }}
                     />

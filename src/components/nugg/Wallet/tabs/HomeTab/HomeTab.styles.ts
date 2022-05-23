@@ -1,6 +1,6 @@
-import lib, { NLStyleSheetCreator } from '@src/lib';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     badge: {
         color: lib.colors.secondaryColor,
         background: lib.colors.nuggRedText,
@@ -51,7 +51,7 @@ const styles = NLStyleSheetCreator({
     mintNuggButtonText: {
         color: lib.colors.nuggRedText,
         fontSize: lib.fontSize.h6,
-        fontFamily: lib.layout.font.sf.regular,
+        ...lib.layout.presets.font.main.regular,
     },
     myNuggItemContainer: {
         display: 'flex',

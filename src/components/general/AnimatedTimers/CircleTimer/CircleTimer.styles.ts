@@ -1,6 +1,6 @@
-import { NLStyleSheetCreator } from '@src/lib';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
         zIndex: 1,
     },

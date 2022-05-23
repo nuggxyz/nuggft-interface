@@ -3,7 +3,6 @@ import { HiArrowRight } from 'react-icons/hi';
 import { plural, t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
-import Colors from '@src/lib/colors';
 import web3 from '@src/web3';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
@@ -29,7 +28,7 @@ type SwapDataWithTryout = SwapData & {
 //     <Text
 //         textStyle={{
 //             padding: '.5rem',
-//             background: Colors.transparentWhite,
+//             background: lib.colors.transparentWhite,
 //             width: '100%',
 //             ...globalStyles.backdropFilter,
 //         }}
@@ -186,7 +185,7 @@ const SwapItem: FunctionComponent<
                                 type="text"
                                 size="smaller"
                                 textStyle={{
-                                    color: Colors.textColor,
+                                    color: lib.colors.textColor,
                                 }}
                             >
                                 {item.canceledEpoch
@@ -227,7 +226,7 @@ const SwapItem: FunctionComponent<
                                             type="text"
                                             size="smaller"
                                             textStyle={{
-                                                color: Colors.textColor,
+                                                color: lib.colors.textColor,
                                             }}
                                         >
                                             {epoch && item.endingEpoch >= epoch
@@ -251,7 +250,7 @@ const SwapItem: FunctionComponent<
                     <div
                         style={{
                             marginTop: '-20px',
-                            background: Colors.gradientTransparent,
+                            background: lib.colors.gradientTransparent,
                             padding: '0rem .2rem',
                             paddingTop: '1.5rem',
 

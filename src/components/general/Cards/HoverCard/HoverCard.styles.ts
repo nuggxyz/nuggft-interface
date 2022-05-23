@@ -1,7 +1,6 @@
-import { NLStyleSheetCreator } from '@src/lib';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
         display: 'flex',
         alignItems: 'center',
@@ -12,7 +11,7 @@ const styles = NLStyleSheetCreator({
         textDecoration: 'none',
         overflow: 'hidden',
         padding: '1rem 1rem',
-        transition: `filter .5s ${Layout.animation}`,
+        transition: `filter .5s ${lib.layout.animation}`,
     },
     link: {
         cursor: 'pointer',

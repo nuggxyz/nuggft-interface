@@ -17,7 +17,6 @@ import { useNuggftV1, usePrioritySendTransaction } from '@src/contracts/useContr
 import { EthInt } from '@src/classes/Fraction';
 import { useUsdPair } from '@src/client/usd';
 import useAsyncState from '@src/hooks/useAsyncState';
-import Colors from '@src/lib/colors';
 import CurrencyToggler, {
     useCurrencyTogglerState,
 } from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
@@ -293,7 +292,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                         styleInputContainer={{
                             textAlign: 'left',
                             width: '100%',
-                            background: Colors.transparentPrimaryColorSuper,
+                            background: lib.colors.transparentPrimaryColorSuper,
                             padding: '.3rem .6rem',
                             borderRadius: lib.layout.borderRadius.mediumish,
                         }}

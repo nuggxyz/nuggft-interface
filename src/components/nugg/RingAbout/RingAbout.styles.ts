@@ -1,7 +1,6 @@
-import lib, { NLStyleSheetCreator } from '@src/lib';
-import FontSize from '@src/lib/fontSize';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
         boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggBlue}`,
         display: 'flex',
@@ -65,7 +64,7 @@ const styles = NLStyleSheetCreator({
         borderRadius: lib.layout.borderRadius.mediumish,
     },
     title: {
-        fontFamily: lib.layout.font.sf.bold,
+        ...lib.layout.presets.font.main.bold,
         fontWeight: 'bold',
         color: 'white',
         paddingLeft: '.5rem',
@@ -83,8 +82,8 @@ const styles = NLStyleSheetCreator({
         color: lib.colors.nuggBlueText,
     },
     code: {
-        fontFamily: lib.layout.font.code.regular,
-        fontSize: FontSize.p,
+        ...lib.layout.presets.font.code.regular,
+        fontSize: lib.fontSize.p,
         textAlign: 'right',
         marginTop: '.2rem',
     },

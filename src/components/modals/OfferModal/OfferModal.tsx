@@ -10,11 +10,9 @@ import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
-import Layout from '@src/lib/layout';
-import FontSize from '@src/lib/fontSize';
+import lib from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
-import Colors from '@src/lib/colors';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import { MyNuggsData } from '@src/client/interfaces';
 import Label from '@src/components/general/Label/Label';
@@ -176,10 +174,10 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     selected={selectedNuggForItem}
                     style={{
                         width: '100%',
-                        background: Colors.transparentLightGrey,
+                        background: lib.colors.transparentLightGrey,
                         height: screenType === 'phone' ? '100px' : '140px',
                         padding: '0rem .4rem',
-                        borderRadius: Layout.borderRadius.medium,
+                        borderRadius: lib.layout.borderRadius.medium,
                     }}
                 />
             )}
@@ -207,11 +205,11 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             disabled={data.tokenId.isItemId() && !selectedNuggForItem}
                             label={t`Min`}
                             textStyle={{
-                                fontFamily: Layout.font.sf.bold,
-                                fontSize: FontSize.h6,
+                                ...lib.layout.presets.font.main.bold,
+                                fontSize: lib.fontSize.h6,
                             }}
                             buttonStyle={{
-                                borderRadius: Layout.borderRadius.large,
+                                borderRadius: lib.layout.borderRadius.large,
                                 padding: '.2rem .5rem',
                             }}
                         />,
@@ -312,8 +310,8 @@ const MyNuggRenderItem: FC<
         <Button
             disabled={!!disabled}
             buttonStyle={{
-                background: selected ? Colors.transparentGrey2 : Colors.transparent,
-                borderRadius: Layout.borderRadius.medium,
+                background: selected ? lib.colors.transparentGrey2 : lib.colors.transparent,
+                borderRadius: lib.layout.borderRadius.medium,
                 transition: '.2s background ease',
             }}
             rightIcon={

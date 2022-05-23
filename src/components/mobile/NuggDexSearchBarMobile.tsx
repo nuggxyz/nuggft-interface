@@ -479,7 +479,7 @@ const NuggDexSearchBarMobile: FunctionComponent<{
             ref={ref}
             style={{
                 zIndex: 999,
-                fontFamily: lib.layout.font.sf.regular,
+                ...lib.layout.presets.font.main.regular,
                 pointerEvents: 'auto',
                 width: '93%',
                 position: 'relative',
@@ -575,12 +575,12 @@ const NuggDexSearchBarMobile: FunctionComponent<{
                                   //                     sortAsc ? (
                                   //                         <CornerRightUp
                                   //                             size={14}
-                                  //                             color={Colors.nuggBlueText}
+                                  //                             color={lib.colors.nuggBlueText}
                                   //                         />
                                   //                     ) : (
                                   //                         <CornerRightDown
                                   //                             size={14}
-                                  //                             color={Colors.nuggBlueText}
+                                  //                             color={lib.colors.nuggBlueText}
                                   //                         />
                                   //                     )
                                   //                 }

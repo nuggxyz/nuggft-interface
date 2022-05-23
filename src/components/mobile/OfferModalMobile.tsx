@@ -9,10 +9,8 @@ import lib, { shortenTxnHash } from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import Layout from '@src/lib/layout';
 import web3 from '@src/web3';
 import client from '@src/client';
-import Colors from '@src/lib/colors';
 import Label from '@src/components/general/Label/Label';
 import { EthInt } from '@src/classes/Fraction';
 import { OfferModalData } from '@src/interfaces/modals';
@@ -319,9 +317,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         styleInputContainer={{
                             textAlign: 'left',
                             width: '100%',
-                            background: Colors.transparentPrimaryColorSuper,
+                            background: lib.colors.transparentPrimaryColorSuper,
                             padding: '.3rem .6rem',
-                            borderRadius: Layout.borderRadius.mediumish,
+                            borderRadius: lib.layout.borderRadius.mediumish,
                         }}
                         // label={t`Enter amount`}
                         setValue={setAmount}

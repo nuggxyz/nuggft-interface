@@ -1,16 +1,14 @@
-import Colors from '@src/lib/colors';
-import Layout from '@src/lib/layout';
-import { NLStyleSheetCreator } from '@src/lib';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+export default lib.layout.NLStyleSheetCreator({
     container: {
         cursor: 'pointer',
     },
     text: {
-        transition: `.5s ${Layout.animation} color`,
+        transition: `.5s ${lib.layout.animation} color`,
     },
     selected: {
-        color: Colors.tintColor,
+        color: lib.colors.tintColor,
     },
     innerContainer: {
         display: 'flex',
@@ -22,27 +20,25 @@ const styles = NLStyleSheetCreator({
         marginTop: '.1rem',
         marginBottom: '.2rem',
         background: 'white',
-        transition: `.5s ${Layout.animation} width, .5s ${Layout.animation} background`,
+        transition: `.5s ${lib.layout.animation} width, .5s ${lib.layout.animation} background`,
     },
     borderSelected: {
         width: '100%',
-        background: Colors.tintColor,
+        background: lib.colors.tintColor,
     },
     badgeStyle: {
         height: '2rem',
         width: '2rem',
         borderRadius: '50%',
-        background: Colors.darkerGray,
+        background: lib.colors.darkerGray,
         justifyContent: 'center',
         alignItems: 'center',
         display: 'flex',
         marginLeft: '3rem',
         fontWeight: 'bold',
-        transition: `.5s ${Layout.animation} background`,
+        transition: `.5s ${lib.layout.animation} background`,
     },
     badgeSelected: {
-        background: Colors.tintColor,
+        background: lib.colors.tintColor,
     },
 });
-
-export default styles;

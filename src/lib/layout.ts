@@ -1,3 +1,22 @@
+const DEFAULTS = {
+    fontFamily: {
+        monospace:
+            "'SF Mono', SFMono-Regular, ui-monospace,'DejaVu Sans Mono', Menlo, Consolas, monospace",
+        rounded:
+            'SFRounded, ui-rounded, "SF Pro Rounded", system-ui, "Helvetica Neue", Arial, Helvetica, sans-serif',
+    },
+    fontWeight: {
+        thin: '100',
+        normal: '400',
+        bold: '700',
+        heavy: '900',
+        relative: {
+            lighter: 'lighter',
+            bolder: 'bolder',
+        },
+    },
+} as const;
+
 const Layout = {
     window: {
         width: window.innerWidth,
@@ -25,7 +44,6 @@ const Layout = {
         basic: '0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01)',
         medium: '2px 3px 5px rgba(102, 102, 102,0.2)',
         dark: '0 6px 10px rgba(102, 102, 102,0.4)',
-
         prefix: '0 6px 10px',
         overlay: '2px 3px 5px rgba(0, 0, 0, 0.3)',
     },
@@ -33,23 +51,56 @@ const Layout = {
         heavy: '0px 3px 3px rgba(0,0,0,0.4),0px 8px 13px rgba(0,0,0,0.1), 0px 18px 23px rgba(0,0,0,0.1)',
         basic: '2px 3px 5px rgba(0,0,0,0.5)',
     },
-    font: {
-        sf: {
-            light: 'SFProRounded-Light',
-            regular: 'SFProRounded-Regular',
-            bold: 'SFProRounded-Bold',
-            semibold: 'SFProRounded-Semibold',
-        },
-        code: {
-            light: 'SF-Mono',
-            regular: 'SF-Mono',
-            bold: 'SF-Mono',
-            semibold: 'SF-Mono',
-        },
-    },
-
     presets: {
-        font: {},
+        fontFamily: {
+            rounded: {
+                fontFamily: DEFAULTS.fontFamily.rounded,
+                WebkitFontSmoothing: 'antialiased',
+            },
+            // https://webkit.org/blog/10247/new-webkit-features-in-safari-13-1/
+            // https://stackoverflow.com/a/64133415/18967032
+            monospace: {
+                fontFamily: DEFAULTS.fontFamily.monospace,
+                WebkitFontSmoothing: 'antialiased',
+            },
+        },
+        font: {
+            main: {
+                bold: {
+                    fontFamily: DEFAULTS.fontFamily.rounded,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.bold,
+                },
+                regular: {
+                    fontFamily: DEFAULTS.fontFamily.rounded,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.normal,
+                },
+                light: {
+                    fontFamily: DEFAULTS.fontFamily.rounded,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.thin,
+                },
+            },
+            code: {
+                bold: {
+                    fontFamily: DEFAULTS.fontFamily.monospace,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.bold,
+                },
+                regular: {
+                    fontFamily: DEFAULTS.fontFamily.monospace,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.normal,
+                },
+                light: {
+                    fontFamily: DEFAULTS.fontFamily.monospace,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.thin,
+                },
+            },
+        },
+
         loadingText: {
             overflow: 'hidden',
             zIndex: '1' /* Necessary for overflow: hidden to work correctly in Safari */,
@@ -59,17 +110,16 @@ const Layout = {
             WebkitTextFillColorss: 'transparent',
             color: 'transparent',
             animation: 'loading-text 3s ease infinite',
-            backgroundImage: `linear-gradient(
-    90deg,
-    #aaaaaa 0%,
-    #d9d9d9 50%,
-    #aaaaaa 100%
-)`,
+            backgroundImage: `linear-gradient(90deg,#aaaaaa 0%,#d9d9d9 50%,#aaaaaa 100%)`,
             backgroundSize: '500% 100%',
         },
     },
 } as const;
 
+const NLStyleSheetCreator = <T extends NLStyleSheet>(arg: T): T => {
+    return arg;
+};
+
 export type SimpleSizes = 'small' | 'medium' | 'large' | 'larger' | 'smaller' | 'largest';
 
-export default Layout;
+export default { ...Layout, NLStyleSheetCreator };

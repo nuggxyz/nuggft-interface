@@ -2,7 +2,6 @@ import React, { FunctionComponent } from 'react';
 import curriedLighten from 'polished/lib/color/lighten';
 import { t } from '@lingui/macro';
 
-import Colors from '@src/lib/colors';
 import Button from '@src/components/general/Buttons/Button/Button';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -30,7 +29,7 @@ const ConnectTab: FunctionComponent<Props> = () => {
                         : styles.disclaimerContainer.background,
                 }}
             >
-                <Text type="text" size="smaller" textStyle={{ color: Colors.textColor }}>
+                <Text type="text" size="smaller" textStyle={{ color: lib.colors.textColor }}>
                     {t`By connecting a wallet, you agree to nugg.xyz's Terms of Service and acknowledge
                     that you have read and understood the nugg.xyz Protocol Disclaimer.`}
                 </Text>

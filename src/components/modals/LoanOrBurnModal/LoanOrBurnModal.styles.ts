@@ -1,11 +1,8 @@
 /** @format */
 
-import { NLStyleSheetCreator } from '@src/lib';
-import Colors from '@src/lib/colors';
-import FontSize from '@src/lib/fontSize';
-import Layout from '@src/lib/layout';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
         position: 'relative',
         display: 'flex',
@@ -20,15 +17,15 @@ const styles = NLStyleSheetCreator({
         color: 'white',
     },
     button: {
-        borderRadius: Layout.borderRadius.large,
+        borderRadius: lib.layout.borderRadius.large,
         width: '100%',
     },
     text: {
-        color: Colors.grey,
+        color: lib.colors.grey,
         marginBottom: '.5rem',
         marginLeft: '.5rem',
         textAlign: 'center',
-        fontSize: FontSize.h6,
+        fontSize: lib.fontSize.h6,
     },
     textWhite: {
         color: 'white',

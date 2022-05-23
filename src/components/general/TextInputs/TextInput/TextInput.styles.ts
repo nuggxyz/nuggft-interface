@@ -1,14 +1,12 @@
-import Colors from '@src/lib/colors';
-import FontSize from '@src/lib/fontSize';
-import { NLStyleSheetCreator } from '@src/lib/index';
+import lib from '@src/lib';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     container: {
         width: '100%',
         display: 'flex',
     },
     bottomBorder: {
-        borderBottom: `1px solid ${Colors.darkerGray}`,
+        borderBottom: `1px solid ${lib.colors.darkerGray}`,
     },
     containerMulti: {
         marginBottom: '1rem',
@@ -57,14 +55,14 @@ const styles = NLStyleSheetCreator({
     code: {
         fontFamily: 'Monaco',
         color: 'white',
-        fontSize: FontSize.button,
+        fontSize: lib.fontSize.button,
     },
     multi: {
         resize: 'none',
         height: '15rem',
     },
     border: {
-        border: `1px solid ${Colors.darkerGray}`,
+        border: `1px solid ${lib.colors.darkerGray}`,
         borderRadius: '.3rem',
         background: 'white',
     },

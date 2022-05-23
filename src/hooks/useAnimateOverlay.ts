@@ -1,9 +1,9 @@
 import { CSSProperties } from 'react';
 
-import lib, { NLStyleSheetCreator } from '@src/lib';
+import lib from '@src/lib';
 import useDimensions from '@src/client/hooks/useDimensions';
 
-const styles = NLStyleSheetCreator({
+const styles = lib.layout.NLStyleSheetCreator({
     wrapper: {
         position: 'absolute',
         width: '100%',

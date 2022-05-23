@@ -286,7 +286,7 @@ export default React.memo(OwnerBlock);
 //                     <Text
 //                         size="small"
 //                         textStyle={{
-//                             fontFamily: lib.layout.font.sf.light,
+//                             ...lib.layout.presets.font.main.light,
 //                             marginRight: '5px',
 //                         }}
 //                     >

@@ -471,12 +471,12 @@ const NuggDexSearchBar: FunctionComponent<Props> = () => {
                               //                     sortAsc ? (
                               //                         <CornerRightUp
                               //                             size={14}
-                              //                             color={Colors.nuggBlueText}
+                              //                             color={lib.colors.nuggBlueText}
                               //                         />
                               //                     ) : (
                               //                         <CornerRightDown
                               //                             size={14}
-                              //                             color={Colors.nuggBlueText}
+                              //                             color={lib.colors.nuggBlueText}
                               //                         />
                               //                     )
                               //                 }
