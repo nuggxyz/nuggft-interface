@@ -523,7 +523,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                 itemId: token?.tokenId.toRawId() || '',
             },
         });
-        console.log('hello', swap, token);
+        // console.log('hello', swap, token);
         const coreRef = React.useRef(null);
 
         const ider = React.useId();

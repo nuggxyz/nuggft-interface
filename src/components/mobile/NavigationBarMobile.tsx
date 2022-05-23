@@ -106,10 +106,12 @@ const NavigationBarMobile: FC<Props> = () => {
         setManualMatch(false);
     });
 
+    console.log({ searchOpen, isFull });
+
     return (
         <div
             ref={ref}
-            className={!isFull ? 'mobile-pressable-div' : undefined}
+            aria-hidden="true"
             style={{
                 display: 'flex',
                 position: 'absolute',
@@ -124,14 +126,20 @@ const NavigationBarMobile: FC<Props> = () => {
                 paddingLeft: 15,
                 pointerEvents: 'none',
             }}
+            // onClick={(event) => {
+            //     // event.preventDefault();
+            //     event.persist();
+            // }}
         >
             <animated.div
+                className={!isFull ? 'mobile-pressable-div' : undefined}
                 style={{
                     display: 'flex',
                     alignItems: searchOpen ? 'flex-start' : 'center',
                     WebkitBackdropFilter: 'blur(50px)',
                     backdropFilter: 'blur(50px)',
                     minWidth: '75px',
+                    // pointerEvents: 'painted',
 
                     ...searchOpenUp,
                     // paddingRight: 10,
@@ -148,16 +156,19 @@ const NavigationBarMobile: FC<Props> = () => {
                     style={{
                         position: 'relative',
                         display: 'flex',
-                        width: '43px',
+                        width: '75px',
                         height: '100%',
                         justifyContent: 'flex-start',
-                        pointerEvents: 'none',
                         // ...(!isFull ? { width: '0%', overflow: 'hidden' } : {}),
                         ...floaterExit,
                         ...(searchOpen ? { width: '100%', position: 'absolute' } : {}),
                     }}
                 >
-                    <NuggDexSearchBarMobile setOpen={setSearchOpen} open={searchOpen} />
+                    <NuggDexSearchBarMobile
+                        openable={isFull}
+                        setOpen={setSearchOpen}
+                        open={searchOpen}
+                    />
                 </animated.div>
 
                 <animated.div
@@ -211,6 +222,7 @@ const NavigationBarMobile: FC<Props> = () => {
                         // opacity: searchOpen ? 0 : 1,
                         // WebkitBackdropFilter: 'blur(30px)',
                         // backdropFilter: 'blur(30px)',
+                        pointerEvents: 'auto',
 
                         justifySelf: 'center',
                         // justifyContent: 'flex-end',
@@ -219,9 +231,11 @@ const NavigationBarMobile: FC<Props> = () => {
                 >
                     <NoFlash
                         address={address}
-                        onClick={() => {
-                            if (isFull) navigate('/wallet');
-                            else navigate('/');
+                        onClick={(full: boolean) => {
+                            if (full) navigate('/wallet');
+                            else {
+                                navigate('/');
+                            }
                         }}
                         isFull={isFull}
                     />
@@ -231,8 +245,8 @@ const NavigationBarMobile: FC<Props> = () => {
     );
 };
 
-const NoFlash = React.memo<{ address?: string; isFull: boolean; onClick: () => void }>(
-    ({ address, onClick }) => {
+const NoFlash = React.memo<{ address?: string; isFull: boolean; onClick: (full: boolean) => void }>(
+    ({ address, onClick, isFull }) => {
         return (
             <Button
                 rightIcon={
@@ -252,7 +266,11 @@ const NoFlash = React.memo<{ address?: string; isFull: boolean; onClick: () => v
                     background: 'transparent',
                     borderRadius: lib.layout.borderRadius.large,
                 }}
-                onClick={onClick}
+                onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onClick(isFull);
+                }}
             />
         );
     },

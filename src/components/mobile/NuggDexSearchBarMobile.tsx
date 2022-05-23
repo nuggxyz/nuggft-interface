@@ -264,8 +264,10 @@ const SearchBarResults = ({
 
 const NuggDexSearchBarMobile: FunctionComponent<{
     open: boolean;
+    openable: boolean;
+
     setOpen: (arg: boolean) => void;
-}> = ({ open, setOpen }) => {
+}> = ({ open, setOpen, openable }) => {
     const sort = client.live.searchFilter.sort();
     const searchValue = client.live.searchFilter.searchValue();
     const { isPhone } = useDimensions();
@@ -490,114 +492,117 @@ const NuggDexSearchBarMobile: FunctionComponent<{
                 // ...style,
             }}
         >
-            {page === 'search' || page === 'home' ? (
-                <TextInput
-                    triggerFocus={open}
-                    onClick={() => {
-                        setOpen(true);
-                    }}
-                    placeholder={t`Type a number to search`}
-                    restrictToNumbers
-                    value={localSearchValue || ''}
-                    setValue={setSearchValue}
-                    className={isPhone ? 'placeholder-dark' : 'placeholder-blue'}
-                    style={{
-                        marginTop: 12,
+            {openable &&
+                (page === 'search' || page === 'home' ? (
+                    <TextInput
+                        triggerFocus={open}
+                        onClick={() => {
+                            setOpen(true);
+                        }}
+                        placeholder={t`Type a number to search`}
+                        restrictToNumbers
+                        value={localSearchValue || ''}
+                        setValue={setSearchValue}
+                        className={isPhone ? 'placeholder-dark' : 'placeholder-blue'}
+                        style={{
+                            marginTop: 12,
 
-                        // height: 75,
-                        width: open ? '100%' : 0,
-                        position: 'relative',
-                        ...animatedBR,
+                            // height: 75,
+                            width: open ? '100%' : 0,
+                            position: 'relative',
+                            ...animatedBR,
 
-                        // opacity: page === 'search' || page === 'home' ? 1 : 0,
-                        borderRadius: lib.layout.borderRadius.large,
-                        // WebkitBackdropFilter: 'blur(50px)',
-                        zIndex: 1000,
-                        background: 'transparent',
-                        display: 'flex',
-                    }}
-                    styleInputContainer={styleInput}
-                    leftToggles={[
-                        <IconButton
-                            aria-hidden="true"
-                            buttonStyle={{
-                                padding: 0,
-                                background: 'transparent',
-                                borderRadius: lib.layout.borderRadius.large,
-                                // boxShadow: lib.layout.boxShadow.medium,
-                            }}
-                            onClick={() => {
-                                setOpen(!open);
-                            }}
-                            iconComponent={
-                                <IoSearch
-                                    style={{
-                                        color: lib.colors.semiTransparentPrimaryColor,
-                                        // padding: 0,
-                                    }}
-                                    size={50}
-                                />
-                            }
-                        />,
-                    ]}
-                    rightToggles={
-                        open
-                            ? [
-                                  ...(localSearchValue || open
-                                      ? [
-                                            <Button
-                                                buttonStyle={styles.searchBarButton}
-                                                onClick={() => {
-                                                    if (
-                                                        isUndefinedOrNullOrStringEmpty(searchValue)
-                                                    ) {
-                                                        setOpen(false);
-                                                        setPage('home');
-                                                    } else {
-                                                        setSearchValue('');
+                            // opacity: page === 'search' || page === 'home' ? 1 : 0,
+                            borderRadius: lib.layout.borderRadius.large,
+                            // WebkitBackdropFilter: 'blur(50px)',
+                            zIndex: 1000,
+                            background: 'transparent',
+                            display: 'flex',
+                        }}
+                        styleInputContainer={styleInput}
+                        leftToggles={[
+                            <IconButton
+                                aria-hidden="true"
+                                buttonStyle={{
+                                    padding: 0,
+                                    background: 'transparent',
+                                    borderRadius: lib.layout.borderRadius.large,
+                                    // boxShadow: lib.layout.boxShadow.medium,
+                                }}
+                                onClick={() => {
+                                    setOpen(!open);
+                                }}
+                                iconComponent={
+                                    <IoSearch
+                                        style={{
+                                            color: lib.colors.semiTransparentPrimaryColor,
+                                            // padding: 0,
+                                        }}
+                                        size={50}
+                                    />
+                                }
+                            />,
+                        ]}
+                        rightToggles={
+                            open
+                                ? [
+                                      ...(localSearchValue || open
+                                          ? [
+                                                <Button
+                                                    buttonStyle={styles.searchBarButton}
+                                                    onClick={() => {
+                                                        if (
+                                                            isUndefinedOrNullOrStringEmpty(
+                                                                searchValue,
+                                                            )
+                                                        ) {
+                                                            setOpen(false);
+                                                            setPage('home');
+                                                        } else {
+                                                            setSearchValue('');
+                                                        }
+                                                    }}
+                                                    rightIcon={
+                                                        <X
+                                                            style={{
+                                                                color: lib.colors.primaryColor,
+                                                            }}
+                                                        />
                                                     }
-                                                }}
-                                                rightIcon={
-                                                    <X
-                                                        style={{
-                                                            color: lib.colors.primaryColor,
-                                                        }}
-                                                    />
-                                                }
-                                            />,
-                                        ]
-                                      : []),
-                                  //   ...(viewing !== SearchView.Home && !activeFilter
-                                  //       ? [
-                                  //             <Button
-                                  //                 buttonStyle={styles.filterButton}
-                                  //                 rightIcon={
-                                  //                     sortAsc ? (
-                                  //                         <CornerRightUp
-                                  //                             size={14}
-                                  //                             color={lib.colors.nuggBlueText}
-                                  //                         />
-                                  //                     ) : (
-                                  //                         <CornerRightDown
-                                  //                             size={14}
-                                  //                             color={lib.colors.nuggBlueText}
-                                  //                         />
-                                  //                     )
-                                  //                 }
-                                  //                 onClick={() => {
-                                  //                     setSortAsc(!sortAsc);
-                                  //                     setIsUserInput(true);
-                                  //                 }}
-                                  //             />,
-                                  //         ]
-                                  //       : []),
-                              ]
-                            : []
-                    }
-                />
-            ) : (
-                <div style={{ position: 'relative' }} />
-            )}
+                                                />,
+                                            ]
+                                          : []),
+                                      //   ...(viewing !== SearchView.Home && !activeFilter
+                                      //       ? [
+                                      //             <Button
+                                      //                 buttonStyle={styles.filterButton}
+                                      //                 rightIcon={
+                                      //                     sortAsc ? (
+                                      //                         <CornerRightUp
+                                      //                             size={14}
+                                      //                             color={lib.colors.nuggBlueText}
+                                      //                         />
+                                      //                     ) : (
+                                      //                         <CornerRightDown
+                                      //                             size={14}
+                                      //                             color={lib.colors.nuggBlueText}
+                                      //                         />
+                                      //                     )
+                                      //                 }
+                                      //                 onClick={() => {
+                                      //                     setSortAsc(!sortAsc);
+                                      //                     setIsUserInput(true);
+                                      //                 }}
+                                      //             />,
+                                      //         ]
+                                      //       : []),
+                                  ]
+                                : []
+                        }
+                    />
+                ) : (
+                    <div style={{ position: 'relative' }} />
+                ))}
 
             {/* <animated.div
                 style={{
