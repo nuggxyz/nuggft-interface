@@ -3,16 +3,18 @@ import React, { FunctionComponent, useMemo } from 'react';
 import lib, { shortenAddress } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
+import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 
 import styles from './NuggDexComponents.styles';
 
-const NuggListRenderItemSwap = ({ tokenId }: { tokenId: TokenId }) => {
+const NuggListRenderItemSwap = ({
+    item: tokenId,
+}: GodListRenderItemProps<TokenId, undefined, undefined>) => {
     const swap = client.swaps.useSwap(tokenId);
-    const usd = client.usd.useUsdPair(swap?.eth);
-    return swap ? (
+    const preference = client.usd.useUsdPair(swap?.eth);
+    return swap && tokenId ? (
         <div
             style={{
                 display: 'flex',
@@ -28,8 +30,8 @@ const NuggListRenderItemSwap = ({ tokenId }: { tokenId: TokenId }) => {
             />
             <CurrencyText
                 textStyle={{ color: lib.colors.primaryColor }}
-                image="eth"
-                value={usd}
+                // image="eth"
+                value={preference}
                 stopAnimation
             />
             {swap.leader && (
@@ -41,13 +43,9 @@ const NuggListRenderItemSwap = ({ tokenId }: { tokenId: TokenId }) => {
     ) : null;
 };
 
-type Props = InfiniteListRenderItemProps<TokenId, { cardType: 'swap' | 'all' | 'recent' }, TokenId>;
+type Props = GodListRenderItemProps<TokenId, { cardType: 'swap' | 'all' | 'recent' }, TokenId>;
 
-const NuggListRenderItem: FunctionComponent<Props> = ({
-    item: tokenId,
-    action,
-    extraData: { cardType },
-}) => {
+const NuggListRenderItem: FunctionComponent<Props> = ({ item: tokenId, action, extraData }) => {
     const style = useMemo(() => {
         return {
             ...(tokenId ? styles.nuggListRenderItemContainer : {}),
@@ -56,6 +54,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({
 
     return (
         <div
+            id={`item-${tokenId}`}
             aria-hidden="true"
             role="button"
             style={style}
@@ -80,23 +79,25 @@ const NuggListRenderItem: FunctionComponent<Props> = ({
                     alignItems: 'center',
                 }}
             >
-                {cardType === 'swap' ? (
-                    <NuggListRenderItemSwap tokenId={tokenId} />
+                {extraData?.cardType === 'swap' ? (
+                    <NuggListRenderItemSwap item={tokenId} />
                 ) : (
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Label
-                            text={tokenId.toPrettyId()}
-                            size="larger"
-                            containerStyles={{ marginBottom: '10px' }}
-                        />
-                    </div>
+                    tokenId && (
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Label
+                                text={tokenId.toPrettyId()}
+                                size="larger"
+                                containerStyles={{ marginBottom: '10px' }}
+                            />
+                        </div>
+                    )
                 )}
             </div>
         </div>

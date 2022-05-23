@@ -46,13 +46,14 @@ const DualToggler = ({
                 zIndex: 300010,
                 width: 90,
                 justifyContent: 'space-around',
+                alignItems: 'center',
                 position: 'relative',
                 ...containerStyle,
             }}
         >
             <animated.div
                 style={{
-                    top: -5,
+                    // top: -5,
                     width: `40px`,
                     height: `40px`,
                     ...selectionIndicatorSpring,

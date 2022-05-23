@@ -83,10 +83,17 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
     );
     const { isPhone } = useDimensions();
 
+    const startingOfferPair = client.usd.useUsdPair(vfo);
+    const leadingOfferPair = client.usd.useUsdPair(leader?.eth);
+
     return !isPhone ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {vfo ? (
-                <CurrencyText textStyle={styles.title} value={vfo?.number || 0} stopAnimation />
+                <CurrencyText
+                    textStyle={styles.title}
+                    value={startingOfferPair || 0}
+                    stopAnimation
+                />
             ) : (
                 <>
                     <Loader color="white" />
@@ -121,7 +128,7 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
             <CurrencyText
                 textStyle={{ color: 'white', fontSize: '28px' }}
                 image="eth"
-                value={new EthInt(leader?.eth).number || vfo?.number || 0}
+                value={leadingOfferPair || startingOfferPair || 0}
                 decimals={0}
             />
             <Text textStyle={{ fontSize: '13px', color: 'white', marginTop: 5 }}>

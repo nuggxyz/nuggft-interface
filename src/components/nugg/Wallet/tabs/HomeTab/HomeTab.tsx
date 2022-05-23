@@ -8,7 +8,7 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import globalStyles from '@src/lib/globalStyles';
 import useDimensions from '@src/client/hooks/useDimensions';
-import InfiniteList from '@src/components/general/List/InfiniteList';
+import GodList from '@src/components/general/List/GodList';
 
 import styles from './HomeTab.styles';
 import MintNuggButton from './MintNuggButton';
@@ -28,6 +28,8 @@ const HomeTab: FunctionComponent<Props> = () => {
     const loans = client.live.myLoans();
     const unclaimedOffers = client.live.myUnclaimedOffers();
 
+    const balancePair = client.usd.useUsdPair(stake__eps && stake__eps.multiply(nuggs.length));
+
     return chainId && provider && address ? (
         <div style={styles.container}>
             <div>
@@ -39,8 +41,8 @@ const HomeTab: FunctionComponent<Props> = () => {
                                 width: screenType === 'phone' ? '48%' : '100%',
                             }}
                             label={t`Balance`}
-                            value={stake__eps.multiply(nuggs.length).number}
-                            image="eth"
+                            value={balancePair}
+                            // image="eth"
                         />
                     )}
                     {screenType === 'phone' && (
@@ -68,7 +70,7 @@ const HomeTab: FunctionComponent<Props> = () => {
                 </div>
             </div>
             {/* <MyNuggItemListPhone /> */}
-            <InfiniteList
+            <GodList
                 id="home-tab-myNuggs"
                 TitleButton={MintNuggButton}
                 labelStyle={styles.listLabel}

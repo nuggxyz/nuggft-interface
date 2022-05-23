@@ -24,6 +24,7 @@ import {
     usePrioritySendTransaction,
     useTransactionManager2,
 } from '@src/contracts/useContract';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 
 import styles from './OfferModal.styles';
 
@@ -129,15 +130,16 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         return undefined;
     }, [data, address, chainId, provider, selectedNuggForItem, sellingNugg]);
 
+    const preferenceBalance = client.usd.useUsdPair(userBalance);
+
     return (
         <div style={styles.container}>
-            <Text textStyle={{ color: 'white', fontSize: 12 }}>
+            <Text textStyle={{ color: 'white', paddingBottom: '.5rem' }}>
                 {`${
                     check && check.curr && check.curr.toString() !== '0'
                         ? t`Change offer for`
                         : t`Offer on`
                 } ${data.tokenId.toPrettyId()}`}
-                {address}
             </Text>
             {screenType === 'phone' ? (
                 <TokenViewer
@@ -197,6 +199,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             onClick={() => {
                                 try {
                                     const next = check && check.next ? fromEth(check.next) : '';
+                                    console.log(next);
                                     setAmount(next);
                                 } catch (err) {
                                     console.error(err);
@@ -223,17 +226,22 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     marginBottom: '.5rem',
                 }}
             >
-                {userBalance && (
+                {preferenceBalance && (
                     <Text type="text" size="smaller" textStyle={styles.text} weight="bolder">
                         {t`You currently have`}
-                        <Text
+                        <CurrencyText
+                            value={preferenceBalance}
+                            textStyle={{ marginLeft: '.5rem' }}
+                            size="smaller"
+                        />
+                        {/* <Text
                             type="code"
                             size="smaller"
                             textStyle={{ marginLeft: '.5rem' }}
                             weight="bolder"
                         >
                             {userBalance.decimal.toNumber().toPrecision(5)} ETH
-                        </Text>
+                        </Text> */}
                     </Text>
                 )}
             </div>

@@ -18,10 +18,10 @@ import styles from './List.styles';
 export interface GodListRenderItemProps<T, B, A> {
     item: T;
     visible?: boolean;
-    extraData: B;
+    extraData?: B;
     action?: (arg: A) => void;
     onScrollEnd?: ({ addToList }: { addToList: boolean }) => void;
-    index: number;
+    index?: number;
     rootRef?: LegacyRef<HTMLDivElement>;
     selected?: boolean;
     style?: CSSProperties;
@@ -129,11 +129,12 @@ const GodList = <T, B, A>({
     }, [scrollTop, itemHeight]);
 
     const endIndex = useMemo(() => {
-        const check = Math.min(
-            Math.min(startIndex + interval, Math.max(0, data.length - 1)),
-            scrollTop + windowHeight === 0 ? 0 : Math.ceil((scrollTop + windowHeight) / itemHeight),
-        );
-        return check;
+        // const check = Math.min(
+        //     Math.min(startIndex + interval, Math.max(0, data.length - 1)),
+        //     scrollTop + windowHeight === 0 ? 0 : Math.ceil((scrollTop + windowHeight) / itemHeight),
+        // );
+        // return check;
+        return Math.min(startIndex + interval, Math.max(0, data.length - 1));
     }, [scrollTop, data, windowHeight, itemHeight, startIndex, interval]);
 
     // const prevStart = usePrevious(startIndex);
@@ -141,7 +142,6 @@ const GodList = <T, B, A>({
     // const prevData = usePrevious(data);
 
     const items = React.useMemo(() => range(startIndex, endIndex), [startIndex, endIndex]);
-
     // React.useEffect(() => {
     //     if (items[0] !== data[0])
     // }, [])

@@ -13,6 +13,8 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import lib from '@src/lib';
 import globalStyles from '@src/lib/globalStyles';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
+import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
+import client from '@src/client';
 
 import styles from './AccountViewer.styles';
 
@@ -24,6 +26,9 @@ const AccountViewer = () => {
     const balance = web3.hook.usePriorityBalance(provider);
     const peer = web3.hook.usePriorityPeer();
     const connector = web3.hook.usePriorityConnector();
+
+    const currencyPref = client.usd.useCurrencyPreferrence();
+    const setCurrencyPref = client.usd.useSetCurrencyPreferrence();
 
     const navigate = useNavigate();
 
@@ -101,6 +106,20 @@ const AccountViewer = () => {
                         }}
                     />
                 )} */}
+                <div
+                    style={{
+                        width: '100%',
+                        ...globalStyles.centered,
+                        padding: '.5rem 0rem',
+                        borderBottom: `1px solid ${lib.colors.transparentLightGrey}`,
+                    }}
+                >
+                    <CurrencyToggler
+                        pref={currencyPref}
+                        setPref={setCurrencyPref}
+                        floaterStyle={{ background: lib.colors.nuggBlueTransparent }}
+                    />
+                </div>
                 <Button
                     label={t`Explore`}
                     type="text"

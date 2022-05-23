@@ -19,6 +19,7 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useDimensions from '@src/client/hooks/useDimensions';
+import useLiveToken from '@src/client/subscriptions/useLiveToken';
 
 import styles from './ViewingNugg.styles';
 import SwapList from './SwapList';
@@ -45,6 +46,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const provider = web3.hook.usePriorityProvider();
 
     const token = client.live.token(tokenId);
+    useLiveToken(tokenId);
 
     const happyTabs = useMemo(() => {
         return [
@@ -155,10 +157,10 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                             <div style={{ marginLeft: '1rem' }}>
                                                 <Text
                                                     type="text"
-                                                    size="medium"
+                                                    size="small"
                                                     textStyle={{
                                                         color: lib.colors.white,
-                                                        marginLeft: '1rem',
+                                                        // marginLeft: '1rem',
                                                     }}
                                                 >
                                                     {t`Owned by ${token.count} Nugg${
@@ -166,7 +168,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                                     }`}
                                                 </Text>
                                                 <Flyout
-                                                    openOnHover
+                                                    // openOnHover
                                                     float="left"
                                                     top={25}
                                                     triggerWidth="130px"
@@ -315,49 +317,19 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                                             )}
                                         </AnimatedCard>
                                     </div>
-                                    <div
-                                        style={{
-                                            ...(screenType === 'phone'
-                                                ? styles.nuggContainerMobile
-                                                : styles.nuggContainer),
-                                            marginTop: token.type === 'item' ? '1.5rem' : '0rem',
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                height: '400px',
-                                                width: '400px',
-                                                position: 'relative',
-                                                padding: '.5rem',
-                                            }}
-                                        >
-                                            <div style={{ position: 'fixed' }}>
-                                                <AnimatedCard>
-                                                    {tokenId && (
-                                                        <TokenViewer
-                                                            tokenId={tokenId}
-                                                            showcase
-                                                            disableOnClick
-                                                        />
-                                                    )}
-                                                </AnimatedCard>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <HappyTabber
-                                        defaultActiveIndex={0}
-                                        items={happyTabs}
-                                        selectionIndicatorStyle={{ background: lib.colors.white }}
-                                        bodyStyle={styles.tabberList}
-                                        headerContainerStyle={{
-                                            marginTop: '1.5rem',
-                                            padding: '0rem 1rem',
-                                            borderRadius: 0,
-                                        }}
-                                    />
                                 </div>
                             </div>
+                            <HappyTabber
+                                defaultActiveIndex={0}
+                                items={happyTabs}
+                                selectionIndicatorStyle={{ background: lib.colors.white }}
+                                bodyStyle={styles.tabberList}
+                                headerContainerStyle={{
+                                    marginTop: '1.5rem',
+                                    padding: '0rem 1rem',
+                                    borderRadius: 0,
+                                }}
+                            />
                         </div>
                     </div>
                 </>

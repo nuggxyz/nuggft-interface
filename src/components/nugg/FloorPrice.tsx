@@ -26,6 +26,8 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
         ...style,
     });
 
+    const preferenceValue = client.usd.useUsdPair(stake__eps);
+
     const darkmode = useDarkMode();
 
     return (
@@ -47,7 +49,7 @@ const FloorPrice: FunctionComponent<Props> = ({ style }) => {
                 textStyle={{ color: darkmode ? lib.colors.white : lib.colors.primaryColor }}
                 size="small"
                 image="eth"
-                value={stake__eps?.decimal.toNumber() || 0}
+                value={preferenceValue}
             />
         </animated.div>
     );

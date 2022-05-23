@@ -98,10 +98,7 @@
             }
         ],
         "import/extensions": "off",
-        "react/jsx-props-no-spreading": [
-            "warn",
-            { "exceptions": ["TextInput", "Text", "Button", "RotateOViewer", "RotateOSelector"] }
-        ],
+        "react/jsx-props-no-spreading": "off", //["warn", { "exceptions": ["TextInput", "Text", "Button","RotateOViewer", "RotateOSelector"] }],
         "react/function-component-definition": [
             "error",
             { "namedComponents": "arrow-function", "unnamedComponents": "arrow-function" }

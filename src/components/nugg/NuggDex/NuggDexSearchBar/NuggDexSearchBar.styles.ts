@@ -11,11 +11,13 @@ const styles = lib.layout.NLStyleSheetCreator({
         position: 'relative',
         display: 'flex',
         justifyContent: 'center',
+        alignItems: 'center',
     },
     searchBarButton: {
         background: lib.colors.transparent,
-        padding: '.5rem .3rem',
+        padding: '.5rem .5rem',
     },
+
     searchBarIcon: {
         color: lib.colors.nuggBlueText,
     },

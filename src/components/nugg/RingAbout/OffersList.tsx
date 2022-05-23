@@ -7,7 +7,7 @@ import useLifecycle from '@src/client/hooks/useLifecycle';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import client from '@src/client';
 import web3 from '@src/web3';
-import lib from '@src/lib';
+import lib, { shortenAddress } from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import { Lifecycle } from '@src/client/interfaces';
@@ -36,13 +36,15 @@ const OfferRenderItem: FC<
         item?.account || '',
     );
 
+    console.log(leader);
+
     const amount = client.usd.useUsdPair(item.eth);
     return (
         <div style={styles.offerAmount}>
             <CurrencyText image="eth" value={amount} stopAnimation />
             {leader ? (
                 <Text type="text" size="smaller" textStyle={{ color: lib.colors.textColor }}>
-                    {leader}
+                    {shortenAddress(leader)}
                 </Text>
             ) : null}
 

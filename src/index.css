@@ -116,6 +116,7 @@ svg:has(.DN) {
     width: 100%;
     /* border-radius: 0.85rem; */
     overflow: hidden;
+    background: radial-gradient(153.32% 100% at 47.26% 0%, rgb(80, 144, 234, .15) 0%, rgba(80, 144, 234, 0.06) 1000%), #FFFFFF;
 }
 
 * {

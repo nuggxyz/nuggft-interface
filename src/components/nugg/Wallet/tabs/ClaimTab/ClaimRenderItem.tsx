@@ -8,7 +8,7 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import Text from '@src/components/general/Texts/Text/Text';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import { ListRenderItemProps } from '@src/components/general/List/List';
-import { useNuggftV1, usePrioritySendTransaction } from '@src/contracts/useContract';
+import { useNuggftV1, usePrioritySendTransaction, useTransactionManager2 } from '@src/contracts/useContract';
 import web3 from '@src/web3';
 
 import styles from './ClaimTab.styles';
@@ -20,7 +20,9 @@ const ClaimRenderItem: FunctionComponent<
 
     const nuggft = useNuggftV1(provider);
 
-    const { send } = usePrioritySendTransaction();
+    const { send, hash } = usePrioritySendTransaction();
+
+    useTransactionManager2(provider, hash);
 
     const swapText = useMemo(
         () =>
@@ -38,7 +40,14 @@ const ClaimRenderItem: FunctionComponent<
                 ) : (
                     <NLStaticImage image="eth" style={styles.renderItemETH} />
                 )}
-                <div>
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        flexDirection: 'column',
+                        marginLeft: '.5rem',
+                    }}
+                >
                     <Text textStyle={styles.textBlue} size="small">
                         {item.leader
                             ? `${item.tokenId.toPrettyId()}`

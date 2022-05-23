@@ -32,7 +32,7 @@ const LoanOrBurnModal = ({ data: { tokenId, actionType } }: { data: LoanModalDat
     return tokenId && chainId && provider && address ? (
         <div style={styles.container}>
             <Text textStyle={styles.textWhite}>
-                {actionType === 'loan' ? t`Loan` : t`Burn`} {t`Nugg ${tokenId}`}
+                {actionType === 'loan' ? t`Loan` : t`Burn`} {t`Nugg ${tokenId.toRawId()}`}
             </Text>
             <AnimatedCard>
                 <TokenViewer tokenId={tokenId} />
@@ -65,8 +65,8 @@ const LoanOrBurnModal = ({ data: { tokenId, actionType } }: { data: LoanModalDat
                     label={`${actionType === 'loan' ? t`Loan` : t`Burn`}`}
                     onClick={() => {
                         if (actionType === 'loan')
-                            void send(nuggft.populateTransaction.loan([tokenId]));
-                        else void send(nuggft.populateTransaction.burn(tokenId));
+                            void send(nuggft.populateTransaction.loan([tokenId.toRawId()]));
+                        else void send(nuggft.populateTransaction.burn(tokenId.toRawId()));
                     }}
                 />
             </div>

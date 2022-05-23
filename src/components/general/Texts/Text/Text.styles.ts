@@ -14,16 +14,16 @@ const styles = lib.layout.NLStyleSheetCreator({
         // color: lib.colors.textColor,
     },
     light: {
-        fontWeight: 'lighter',
+        fontWeight: lib.layout.presets.weight.thin,
     },
     regular: {
-        fontWeight: 'normal',
+        fontWeight: lib.layout.presets.weight.normal,
     },
     bold: {
-        fontWeight: 'bold',
+        fontWeight: lib.layout.presets.weight.bold,
     },
     bolder: {
-        fontWeight: 'bolder',
+        fontWeight: lib.layout.presets.weight.heavy,
     },
     smaller: {
         fontSize: lib.fontSize.p,

@@ -16,7 +16,6 @@ import { Address } from '@src/classes/Address';
 import { LiveToken, SwapData } from '@src/client/interfaces';
 import Button from '@src/components/general/Buttons/Button/Button';
 import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
-import { EthInt } from '@src/classes/Fraction';
 
 import styles from './ViewingNugg.styles';
 
@@ -96,6 +95,8 @@ const SwapItem: FunctionComponent<
 
     const navigate = useNavigate();
 
+    const itemValue = client.usd.useUsdPair(item.eth);
+
     return epoch ? (
         <div style={styles.swapItemContainer}>
             <SwapButton
@@ -118,12 +119,12 @@ const SwapItem: FunctionComponent<
             >
                 <div style={styles.swapButton}>
                     <SwapDesc item={item} epoch={epoch} />
-                    <CurrencyText image="eth" value={new EthInt(item.eth).number} />
+                    <CurrencyText image="eth" value={itemValue} />
                 </div>
                 <div
                     style={{ justifyContent: 'flex-start', display: 'flex', alignItems: 'center' }}
                 >
-                    <div>
+                    <div style={{ textAlign: 'left' }}>
                         <Text
                             type="text"
                             size="smaller"
@@ -159,7 +160,7 @@ const SwapItem: FunctionComponent<
                                     color={lib.colors.primaryColor}
                                     style={{ margin: '0rem 1rem' }}
                                 />
-                                <div>
+                                <div style={{ textAlign: 'left' }}>
                                     <Text
                                         type="text"
                                         size="smaller"
