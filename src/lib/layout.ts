@@ -1,7 +1,7 @@
 const DEFAULTS = {
     fontFamily: {
         monospace:
-            "'SF Mono', SFMono-Regular, ui-monospace,'DejaVu Sans Mono', Menlo, Consolas, monospace",
+            '"SF Mono", SFMono-Regular, ui-monospace,"DejaVu Sans Mono", Menlo, Consolas, monospace',
         rounded:
             'SFRounded, ui-rounded, "SF Pro Rounded", system-ui, "Helvetica Neue", Arial, Helvetica, sans-serif',
     },
