@@ -42,7 +42,11 @@ const PeerButton = React.memo<{
                 }}
                 // label="open"
                 size="largerish"
-                textStyle={{ color: lib.colors.white, marginLeft: 10 }}
+                textStyle={{
+                    color: lib.colors.white,
+                    marginLeft: 10,
+                    ...lib.layout.presets.font.main.bold,
+                }}
                 leftIcon={<NLStaticImage image={`${peer}_icon`} />}
                 rightIcon={
                     <div
@@ -59,6 +63,7 @@ const PeerButton = React.memo<{
                             textStyle={{
                                 color: lib.colors.white,
                                 fontSize: 20,
+                                ...lib.layout.presets.font.main.bold,
                             }}
                         >
                             {text}
@@ -67,6 +72,7 @@ const PeerButton = React.memo<{
                             textStyle={{
                                 color: lib.colors.white,
                                 fontSize: 25,
+                                ...lib.layout.presets.font.main.bold,
                             }}
                         >
                             {web3.config.peers[peer].name}
@@ -76,7 +82,7 @@ const PeerButton = React.memo<{
             />
         </div>
     ),
-    (a, b) => a.peer === b.peer && a.text === b.text && a.color === b.color,
+    (prev, curr) => prev.peer === curr.peer && prev.text === curr.text && prev.color === curr.color,
 );
 
 const SetUpAWallet: NuggBookPage = ({ setPage }) => {
@@ -108,14 +114,14 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                 size="medium"
                 textStyle={{
                     padding: '15px',
-                    ...lib.layout.presets.font.main.regular,
+                    ...lib.layout.presets.font.main.bold,
                     textAlign: 'left',
                 }}
             >
                 <Text
                     size="medium"
                     textStyle={{
-                        ...lib.layout.presets.font.main.regular,
+                        ...lib.layout.presets.font.main.bold,
                         textAlign: 'left',
                     }}
                 >
@@ -125,7 +131,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                 <Text
                     size="medium"
                     textStyle={{
-                        ...lib.layout.presets.font.main.regular,
+                        ...lib.layout.presets.font.main.bold,
                         textAlign: 'left',
                     }}
                 >
@@ -135,7 +141,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                     size="small"
                     textStyle={{
                         color: lib.colors.orange,
-                        ...lib.layout.presets.font.main.regular,
+                        ...lib.layout.presets.font.main.bold,
                         textAlign: 'left',
                     }}
                 >
@@ -144,7 +150,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                 <Text
                     size="medium"
                     textStyle={{
-                        ...lib.layout.presets.font.main.regular,
+                        ...lib.layout.presets.font.main.bold,
                         textAlign: 'left',
                     }}
                 >
@@ -158,7 +164,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
 
             {/* <Text
                 size="medium"
-                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
+                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.bold }}
             >
                 nuggft works best with either <b>coinbase wallet</b> or <b>metamask</b>
             </Text> */}
@@ -189,7 +195,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
             <Text textStyle={{ padding: 5 }}>
                 <Text
                     size="large"
-                    textStyle={{ ...lib.layout.presets.font.main.regular, padding: 10 }}
+                    textStyle={{ ...lib.layout.presets.font.main.bold, padding: 10 }}
                 >
                     something about apple pay and bank with coinbase
                 </Text>
@@ -201,14 +207,14 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
             >
                 3️⃣ <span style={{ paddingLeft: 5 }}>leggo</span>
             </Text>
-            <Text size="large" textStyle={{ ...lib.layout.presets.font.main.regular, padding: 10 }}>
+            <Text size="large" textStyle={{ ...lib.layout.presets.font.main.bold, padding: 10 }}>
                 <PeerButton
                     peer={Peer.Coinbase}
                     text="connect to nuggft"
                     color={lib.colors.gradient}
                 />
             </Text>
-            <Text size="large" textStyle={{ ...lib.layout.presets.font.main.regular, padding: 10 }}>
+            <Text size="large" textStyle={{ ...lib.layout.presets.font.main.bold, padding: 10 }}>
                 <PeerButton
                     peer={Peer.MetaMask}
                     text="connect to nuggft"
@@ -218,19 +224,19 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
 
             <Text
                 size="medium"
-                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
+                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.bold }}
             >
                 FAQ
             </Text>
             <Text
                 size="medium"
-                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
+                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.bold }}
             >
                 what other wallets can i use?
             </Text>
             <Text
                 size="medium"
-                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
+                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.bold }}
             >
                 where do i get eth from?
             </Text>

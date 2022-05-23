@@ -116,7 +116,12 @@ svg:has(.DN) {
     width: 100%;
     /* border-radius: 0.85rem; */
     overflow: hidden;
-    background: radial-gradient(153.32% 100% at 47.26% 0%, rgb(80, 144, 234, .15) 0%, rgba(80, 144, 234, 0.06) 1000%), #FFFFFF;
+    background: radial-gradient(
+            153.32% 100% at 47.26% 0%,
+            rgb(80, 144, 234, 0.15) 0%,
+            rgba(80, 144, 234, 0.06) 1000%
+        ),
+        #ffffff;
 }
 
 * {
@@ -130,10 +135,21 @@ svg:has(.DN) {
 }
 
 .mobile-pressable-div {
-    transition: all 0.3s ease-in-out;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
+    -webkit-transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
+    transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
+}
+
+.mobile-pressable-div:hover {
+    -webkit-transform: scale(1.03);
+    -ms-transform: scale(1.03);
+    transform: scale(1.03);
 }
 
 .mobile-pressable-div:active {
+    -webkit-transform: scale(0.95);
+    -ms-transform: scale(0.95);
     transform: scale(0.95);
 }
 

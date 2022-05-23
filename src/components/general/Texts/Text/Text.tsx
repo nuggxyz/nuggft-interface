@@ -20,7 +20,7 @@ export interface TextProps {
         | 'largest';
     type?: 'title' | 'text' | 'code';
     textStyle?: PickAnimated<CSSProperties>;
-    loading?: boolean
+    loading?: boolean;
 }
 
 const Text: FunctionComponent<TextProps> = ({
