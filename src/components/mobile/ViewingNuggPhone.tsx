@@ -44,7 +44,6 @@ import undefined from '@src/lib/dotnugg/util';
 
 import NuggSnapshotListMobile from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
-import BackButton from './BackButton';
 
 const Ver = ({ left, right, label }: { left: number; right: number; label: string }) => {
     return (
@@ -565,7 +564,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                         background: 'transparent',
                     }}
                 >
-                    <BackButton />
+                    {/* <BackButton /> */}
                     <div
                         ref={coreRef}
                         style={{

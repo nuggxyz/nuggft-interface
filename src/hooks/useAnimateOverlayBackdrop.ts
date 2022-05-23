@@ -28,6 +28,7 @@ export default (isOpen: boolean, style?: CSSProperties, delay?: number) => {
         {
             opacity: isOpen ? 1 : 0,
             pointerEvents: isOpen ? ('auto' as const) : ('none' as const),
+            config: packages.spring.config.stiff,
 
             delay,
         },

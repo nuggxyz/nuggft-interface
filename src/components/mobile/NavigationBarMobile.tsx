@@ -14,6 +14,8 @@ import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/Hea
 import { useMatchArray } from '@src/hooks/useBlur';
 import Button from '@src/components/general/Buttons/Button/Button';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
+import packages from '@src/packages';
+import useDebounce from '@src/hooks/useDebounce';
 
 type Props = {
     showBackButton?: boolean;
@@ -24,13 +26,13 @@ const NavigationBarMobile: FC<Props> = () => {
 
     const address = web3.hook.usePriorityAccount();
 
-    const [searchOpen, setSearchOpen] = React.useState<boolean>(false);
+    const [searchOpenCore, setSearchOpen] = React.useState<boolean>(false);
 
     const [manualMatch, setManualMatch] = React.useState<boolean>(false);
 
     const match = useMatchArray(['/swap/:id', '/live']);
 
-    const isFull = React.useMemo(() => {
+    const isFullCore = React.useMemo(() => {
         return match || manualMatch;
     }, [match, manualMatch]);
 
@@ -39,23 +41,23 @@ const NavigationBarMobile: FC<Props> = () => {
         setSearchOpen(false);
     }, [match]);
 
+    const isFull = React.useDeferredValue(useDebounce(isFullCore, 200));
+    const searchOpen = React.useDeferredValue(useDebounce(searchOpenCore, 200));
+
     const [floaterA] = useSpring(
         {
-            delay: isFull ? 250 : 0,
+            delay: isFull ? 250 + 0 : 0,
             justifyContent: isFull ? 'space-between' : 'flex-end',
-            // onRest: (s) => {
-            //     s.value.justifyContent = 'center';
-            //     // return {
-            //     //     justifyContent: isFull ? 'space-between' : 'center',
-            //     // };
-            // },
+            config: packages.spring.config.stiff,
         },
         [isFull],
     );
 
     const [floater] = useSpring(
         {
-            width: isFull ? '100%' : '20%',
+            width: isFull ? '100%' : '0%',
+            delay: 0,
+            config: packages.spring.config.stiff,
         },
         [isFull],
     );
@@ -64,6 +66,8 @@ const NavigationBarMobile: FC<Props> = () => {
         {
             opacity: isFull ? 1 : 0,
             // ...(!isFull && { width: '0px' }),
+            delay: 0,
+            config: packages.spring.config.stiff,
         },
         [isFull],
     );
@@ -90,6 +94,7 @@ const NavigationBarMobile: FC<Props> = () => {
     const [searchOpenUp] = useSpring(
         {
             height: searchOpen ? '450px' : '75px',
+            config: packages.spring.config.stiff,
         },
         [searchOpen],
     );
@@ -108,15 +113,15 @@ const NavigationBarMobile: FC<Props> = () => {
             style={{
                 display: 'flex',
                 position: 'absolute',
-                top: 0,
+                bottom: 0,
                 width: '100%',
                 zIndex: 1000,
                 alignItems: 'center',
                 justifyContent: 'flex-end',
                 transition: `all 0.3s ${lib.layout.animation}`,
-                marginTop: 10,
-                paddingRight: 10,
-                paddingLeft: 10,
+                marginBottom: 15,
+                paddingRight: 15,
+                paddingLeft: 15,
             }}
         >
             <animated.div
@@ -125,8 +130,10 @@ const NavigationBarMobile: FC<Props> = () => {
                     alignItems: searchOpen ? 'flex-start' : 'center',
                     WebkitBackdropFilter: 'blur(50px)',
                     backdropFilter: 'blur(50px)',
+                    minWidth: '75px',
+
                     ...searchOpenUp,
-                    paddingRight: 10,
+                    // paddingRight: 10,
                     paddingLeft: 10,
                     borderRadius: lib.layout.borderRadius.medium,
                     background: lib.colors.transparentWhite,
@@ -196,10 +203,14 @@ const NavigationBarMobile: FC<Props> = () => {
                         position: 'relative',
                         display: 'flex',
                         alignItems: 'center',
+                        // background: isFull ? 'transparent' : lib.colors.transparentWhite,
+                        padding: 12,
+                        borderRadius: lib.layout.borderRadius.medium,
                         // width: searchOpen ? 0 : '50%',
-                        opacity: searchOpen ? 0 : 1,
-                        // margin: 'auto',
-                        // padding: '0px 10px',
+                        // opacity: searchOpen ? 0 : 1,
+                        // WebkitBackdropFilter: 'blur(30px)',
+                        // backdropFilter: 'blur(30px)',
+
                         justifySelf: 'center',
                         // justifyContent: 'flex-end',
                         zIndex: 10000000000,
@@ -209,7 +220,7 @@ const NavigationBarMobile: FC<Props> = () => {
                         address={address}
                         onClick={() => {
                             if (isFull) navigate('/wallet');
-                            else setManualMatch(true);
+                            else navigate('/');
                         }}
                         isFull={isFull}
                     />

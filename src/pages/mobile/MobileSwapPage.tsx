@@ -45,7 +45,7 @@ const SwapView = () => {
                 data={[sortedAll.current, sortedAll.next, sortedAll.potential].flat()}
                 extraData={undefined}
                 itemHeight={475}
-                startGap={75}
+                // startGap={75}
                 // screenHeight={height}
                 LIST_PADDING={0}
                 skipSelectedCheck
