@@ -43,6 +43,8 @@ export default ({
             hoverStyle={{ filter: 'brightness(1)' }}
             buttonStyle={{
                 background: 'transparent',
+                pointerEvents: 'auto',
+
                 ...(iconDropShadow && {
                     '--info-clicker-filter': `drop-shadow(${iconDropShadow})`,
                 }),

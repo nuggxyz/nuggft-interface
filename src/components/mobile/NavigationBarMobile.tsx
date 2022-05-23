@@ -15,7 +15,6 @@ import { useMatchArray } from '@src/hooks/useBlur';
 import Button from '@src/components/general/Buttons/Button/Button';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import packages from '@src/packages';
-import useDebounce from '@src/hooks/useDebounce';
 
 type Props = {
     showBackButton?: boolean;
@@ -41,12 +40,14 @@ const NavigationBarMobile: FC<Props> = () => {
         setSearchOpen(false);
     }, [match]);
 
-    const isFull = React.useDeferredValue(useDebounce(isFullCore, 200));
-    const searchOpen = React.useDeferredValue(useDebounce(searchOpenCore, 200));
+    const MOVE_DELAY = 800;
+
+    const isFull = React.useDeferredValue(isFullCore);
+    const searchOpen = React.useDeferredValue(searchOpenCore);
 
     const [floaterA] = useSpring(
         {
-            delay: isFull ? 400 : 0,
+            delay: isFull ? MOVE_DELAY + 200 : 0,
             justifyContent: isFull ? 'space-between' : 'flex-end',
             config: packages.spring.config.stiff,
         },
@@ -56,7 +57,7 @@ const NavigationBarMobile: FC<Props> = () => {
     const [floater] = useSpring(
         {
             width: isFull ? '100%' : '0%',
-            delay: 0,
+            delay: MOVE_DELAY,
             config: packages.spring.config.stiff,
         },
         [isFull],
@@ -66,7 +67,7 @@ const NavigationBarMobile: FC<Props> = () => {
         {
             opacity: isFull ? 1 : 0,
             // ...(!isFull && { width: '0px' }),
-            delay: 0,
+            delay: MOVE_DELAY,
             config: packages.spring.config.stiff,
         },
         [isFull],
