@@ -89,7 +89,7 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
     //     setDraggedTop(book.top);
     // }, [book.top]);
 
-    const { height } = client.viewport.useVisualViewport();
+    // const { height } = client.viewport.useVisualViewport();
 
     // const containerStyle = useSpring({
     //     from: {
@@ -181,7 +181,7 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
                                         right: 0,
                                         pointerEvents: 'auto',
                                         height: '100%',
-                                        maxHeight: height - book.top,
+                                        // maxHeight: height - book.top,
                                         paddingBottom: 100,
                                     }}
                                 >

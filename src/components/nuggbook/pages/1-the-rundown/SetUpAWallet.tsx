@@ -102,7 +102,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                 size="largest"
                 textStyle={{ padding: '20px', fontWeight: lib.layout.fontWeight.semibold }}
             >
-                set up a wallet
+                set up
             </Text>
 
             <Text
@@ -123,7 +123,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                     }}
                 >
                     1️⃣ 📲 <span style={{ paddingLeft: 8, fontWeight: 'bolder' }}> download</span> an
-                    ethereum wallet
+                    eth wallet
                 </Text>
 
                 <Text
@@ -135,8 +135,8 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                         fontSize: '20px',
                     }}
                 >
-                    2️⃣ 💸 <span style={{ paddingLeft: 8, fontWeight: 'bolder' }}>send</span>{' '}
-                    ethereum to the wallet
+                    2️⃣ 💸 <span style={{ paddingLeft: 8, fontWeight: 'bolder' }}>send</span> eth to
+                    the wallet
                 </Text>
                 {/* <Text
                     size="small"
@@ -172,7 +172,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                     fontWeight: lib.layout.fontWeight.thicc,
                 }}
             >
-                1️⃣ 📲 <span style={{ paddingLeft: 5 }}>download a wallet</span>
+                1️⃣ 📲 <span style={{ paddingLeft: 5 }}>download</span>
             </Text>
 
             <div style={{ padding: '10px 0px' }}>
@@ -236,7 +236,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                     fontWeight: lib.layout.fontWeight.thicc,
                 }}
             >
-                2️⃣ 💸 <span style={{ paddingLeft: 5 }}>get some ethereum</span>
+                2️⃣ 💸 <span style={{ paddingLeft: 5 }}>buy some eth</span>
             </Text>
             <div style={{ padding: '10px 0px' }}>
                 <Text
@@ -406,7 +406,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                             justifyContent: 'center',
                             textAlign: 'center',
                             alignItems: 'center',
-                            padding: 15,
+                            padding: 10,
                         }}
                     >
                         <div
@@ -421,7 +421,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                             <BsApple size={23} style={{ marginRight: 3 }} />
                             <span style={{ fontSize: 30 }}>Pay</span>
                         </div>
-                        <Text textStyle={{ padding: 15, fontSize: 30 }}>🏛</Text>
+                        <Text textStyle={{ padding: 10, fontSize: 30 }}>🏛</Text>
                         <Text textStyle={{ fontSize: 30 }}>💳 </Text>
                         <HiArrowRight size={23} style={{ marginRight: 3, margin: '0px 30px' }} />
                         <NLStaticImage image="metamask_icon" />
