@@ -2,7 +2,6 @@ import React, { FC, PropsWithChildren, useEffect } from 'react';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
 
 import client from '@src/client';
-import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import lib from '@src/lib';
 import { Page } from '@src/interfaces/nuggbook';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
@@ -38,7 +37,6 @@ const useNuggBook = () => {
             return { top: 100, comp: TheRundown, page };
         case Page.SetUpAWallet:
             return { top: 100, comp: SetUpAWallet, page };
-        case Page.Close:
         default:
             return { top: 1000, comp: Close, page };
     }
@@ -106,7 +104,7 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
         config: config.gentle,
     });
 
-    const style: CSSPropertiesAnimated = useAnimateOverlayBackdrop(book.page !== Page.Close);
+    // const style: CSSPropertiesAnimated = useAnimateOverlayBackdrop(book.page !== Page.Close);
 
     const tabFadeTransition = useTransition(book, {
         initial: {
@@ -131,7 +129,7 @@ const Modal: FC<PropsWithChildren<unknown>> = () => {
     return (
         <animated.div
             style={{
-                ...style,
+                // ...style,
                 height: '100%',
                 width: '100%',
                 justifyContent: 'flex-end',

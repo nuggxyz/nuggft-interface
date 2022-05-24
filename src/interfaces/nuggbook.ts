@@ -1,7 +1,6 @@
 import { PropsWithChildren, FC } from 'react';
 
 export enum Page {
-    Close,
     Start,
     Welcome,
     TableOfContents,

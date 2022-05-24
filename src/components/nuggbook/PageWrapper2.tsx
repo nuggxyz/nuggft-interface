@@ -36,7 +36,6 @@ const useNuggBook = () => {
             return { top: 100, comp: TheRundown, page };
         case Page.SetUpAWallet:
             return { top: 100, comp: SetUpAWallet, page };
-        case Page.Close:
         default:
             return { top: 1000, comp: Close, page };
     }

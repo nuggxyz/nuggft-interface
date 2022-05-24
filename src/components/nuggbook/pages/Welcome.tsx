@@ -6,6 +6,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import Button from '@src/components/general/Buttons/Button/Button';
 import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
 import packages from '@src/packages';
+import client from '@src/client';
 
 const items = [
     'no more scams',
@@ -81,6 +82,8 @@ const Start: NuggBookPage = ({ setPage, close }) => {
         delay: 500 + 1500 + items.length * 1000,
         config: config.default,
     });
+
+    const setInit = client.nuggbook.useSetInit();
 
     return (
         <div
@@ -206,7 +209,10 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                 <Button
                     className="mobile-pressable-div"
                     label="i got time ⌛️"
-                    onClick={() => setPage(Page.TableOfContents)}
+                    onClick={() => {
+                        setInit();
+                        setPage(Page.TableOfContents);
+                    }}
                     size="largerish"
                     buttonStyle={{
                         color: lib.colors.white,
@@ -220,7 +226,11 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                 <Button
                     className="mobile-pressable-div"
                     label="imma need a tldr 🤠"
-                    onClick={() => setPage(Page.WhatIsAWallet)}
+                    onClick={() => {
+                        setInit();
+
+                        setPage(Page.SetUpAWallet);
+                    }}
                     size="largerish"
                     buttonStyle={{
                         color: lib.colors.white,
@@ -235,12 +245,14 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                 <Button
                     className="mobile-pressable-div"
                     label={"i'll figure it out 💪"}
-                    onClick={() => close()}
+                    onClick={() => {
+                        setInit();
+                        close();
+                    }}
                     size="largerish"
                     buttonStyle={{
                         color: lib.colors.white,
                         padding: '.7rem 1.3rem',
-
                         boxShadow: lib.layout.boxShadow.basic,
                         background: lib.colors.gradient,
                         borderRadius: lib.layout.borderRadius.large,

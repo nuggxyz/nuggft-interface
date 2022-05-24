@@ -9,8 +9,9 @@ const useStore = create(
         combine(
             {
                 page: Page.Start,
-                open: true,
-                height: 300 as number | null,
+                init: false,
+                open: false,
+                height: null as number | null,
                 visits: {
                     [Page.Start]: false,
                     [Page.Welcome]: false,
@@ -29,12 +30,37 @@ const useStore = create(
                     });
                 };
 
+                const checkInit = () => {
+                    if (!get().init) {
+                        setTimeout(() => {
+                            set(() => ({
+                                open: true,
+                            }));
+                        }, 3000);
+                    } else {
+                        set(() => ({
+                            open: false,
+                        }));
+                    }
+                };
+
+                const setInit = () => {
+                    set(() => ({
+                        open: true,
+                    }));
+                };
+
                 const toggle = (page?: Page) => {
-                    const { open } = get();
+                    const { open, page: pager } = get();
+
+                    if (pager === null) {
+                        page = Page.TableOfContents;
+                    }
 
                     set(() => {
                         return {
                             ...(page && { page }),
+                            init: true,
 
                             open: !open,
                             height: null,
@@ -47,6 +73,7 @@ const useStore = create(
                         return {
                             ...(page && { page }),
                             height: null,
+                            init: true,
                         };
                     });
                 };
@@ -56,6 +83,7 @@ const useStore = create(
                         return {
                             ...(page && { page }),
                             ...(height && { height }),
+                            init: true,
                         };
                     });
                 };
@@ -74,12 +102,14 @@ const useStore = create(
                     if (open) toggle();
                 };
 
-                return { goto, visit, toggle, gotoOpen, close, gotoHeight };
+                return { goto, visit, toggle, gotoOpen, close, gotoHeight, checkInit, setInit };
             },
         ),
         { name: 'nugg.xyz-nuggbook' },
     ),
 );
+
+useStore.getState().checkInit();
 
 export type NuggBookState = ReturnType<typeof useStore['getState']>;
 
@@ -94,6 +124,7 @@ export default {
     useGotoOpen: () => useStore((state) => state.gotoOpen),
     useToggle: () => useStore((state) => state.toggle),
     useHeight: () => useStore((state) => state.height),
+    useSetInit: () => useStore((state) => state.setInit),
 
     useGoto: () => useStore((state) => state.goto),
     useCloseNuggBook: () => useStore((state) => state.close),
