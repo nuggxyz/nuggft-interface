@@ -101,7 +101,6 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
 
     React.useEffect(() => {
         if (yep.book.page !== book.page) {
-            console.log(direction);
             setYep({ book, direction });
         }
     }, [book, direction, setYep, prevYep?.book.page, yep.book.page, yep]);
@@ -115,14 +114,7 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
             from: () => ({
                 transform: `translate(${direction ? 1000 : -1000}px,0px)`,
             }),
-            // update: (x, y) => {
-            //     // if (y === 1) x.direction = direction;
 
-            //     console.log({ ...x, y });
-            //     return x;
-            // },
-
-            // enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto' },
             enter: { pointerEvents: 'auto', transform: `translate(0px,0px)` },
             leave: () => ({
                 transform: `translate(${direction ? -1000 : 1000}px,0px)`,
@@ -150,10 +142,6 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
         >
             <animated.div
                 ref={node}
-                draggable="true"
-                onDragStart={(event) => {
-                    event.dataTransfer.setData('text/plain', 'draggable');
-                }}
                 style={{
                     height: '100%',
                     width: '100%',

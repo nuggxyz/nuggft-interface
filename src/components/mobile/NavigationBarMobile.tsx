@@ -108,8 +108,6 @@ const NavigationBarMobile: FC<Props> = () => {
         setManualMatch(false);
     });
 
-    console.log({ searchOpen, isFull });
-
     return (
         <animated.div
             ref={ref}

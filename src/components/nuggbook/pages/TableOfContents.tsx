@@ -99,7 +99,7 @@ const ListItemGroup = ({
                 <ListItem
                     key={`${id}-${index}`}
                     text={x.header}
-                    onClick={() => setPage(x.page)}
+                    onClick={() => setPage(x.page, true)}
                     visited={visits[x.page]}
                 />
             ))}
