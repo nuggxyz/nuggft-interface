@@ -447,6 +447,7 @@ const NuggDexSearchBarMobile: FunctionComponent<{
 
     const styleInput = useSpring({
         width: open ? '100%' : '0%',
+
         background: 'transparent',
         display: open ? 'flex' : 'none',
     });
@@ -489,7 +490,6 @@ const NuggDexSearchBarMobile: FunctionComponent<{
                 height: '100%',
                 flexDirection: 'column',
                 pointerEvents: openable ? 'auto' : 'none',
-                // ...style,
             }}
         >
             {page === 'search' || page === 'home' ? (
@@ -505,15 +505,11 @@ const NuggDexSearchBarMobile: FunctionComponent<{
                     className={isPhone ? 'placeholder-dark' : 'placeholder-blue'}
                     style={{
                         marginTop: 12,
-
-                        // height: 75,
                         width: open ? '100%' : 0,
+
                         position: 'relative',
                         ...animatedBR,
-
-                        // opacity: page === 'search' || page === 'home' ? 1 : 0,
                         borderRadius: lib.layout.borderRadius.large,
-                        // WebkitBackdropFilter: 'blur(50px)',
                         zIndex: 1000,
                         background: 'transparent',
                         display: 'flex',
@@ -523,12 +519,11 @@ const NuggDexSearchBarMobile: FunctionComponent<{
                         <IconButton
                             aria-hidden="true"
                             buttonStyle={{
-                                // paddingLeft: 10,
-
-                                // padding: 0,
+                                padding: 0,
+                                height: 75,
+                                width: 75,
                                 background: 'transparent',
                                 borderRadius: lib.layout.borderRadius.large,
-                                // boxShadow: lib.layout.boxShadow.medium,
                             }}
                             onClick={() => {
                                 setOpen(!open);
@@ -537,7 +532,6 @@ const NuggDexSearchBarMobile: FunctionComponent<{
                                 <IoSearch
                                     style={{
                                         color: lib.colors.semiTransparentPrimaryColor,
-                                        // padding: 0,
                                     }}
                                     size={50}
                                 />

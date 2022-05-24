@@ -10,15 +10,15 @@ import client from '@src/client';
 
 const items = [
     'no more scams',
-    'no more gimmics',
+    // 'no more gimmics',
     'no more mints',
-    'no more luck',
-    'no more phishing',
-    'no more trust',
-    'no more roadmaps',
-    'no more lottery',
+    // 'no more luck',
+    // 'no more phishing',
+    // 'no more trust',
+    // 'no more roadmaps',
+    // 'no more lottery',
     'no more monkeys',
-    'no more bull shit',
+    'no more bullshit',
 ].map((val, index) => ({ val, index }));
 
 const Start: NuggBookPage = ({ setPage, close }) => {
@@ -28,7 +28,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
             opacity: 0,
         },
         to: {
-            width: '30px',
+            width: '31px',
             opacity: 1,
         },
         delay: 500 + items.length * 1000,
@@ -37,7 +37,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
 
     const spring2 = useSpring({
         from: {
-            width: '95px',
+            width: '103px',
             opacity: 1,
         },
         to: {
@@ -51,7 +51,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
 
     const spring3 = useSpring({
         from: {
-            width: '10px',
+            width: '12px',
             opacity: 1,
         },
         to: {
@@ -213,7 +213,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                         setInit();
                         setPage(Page.TableOfContents);
                     }}
-                    size="largerish"
+                    size="large"
                     buttonStyle={{
                         color: lib.colors.white,
                         boxShadow: lib.layout.boxShadow.basic,
@@ -222,6 +222,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                         borderRadius: lib.layout.borderRadius.large,
                         marginBottom: 15,
                     }}
+                    textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}
                 />
                 <Button
                     className="mobile-pressable-div"
@@ -231,7 +232,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
 
                         setPage(Page.SetUpAWallet);
                     }}
-                    size="largerish"
+                    size="large"
                     buttonStyle={{
                         color: lib.colors.white,
                         boxShadow: lib.layout.boxShadow.basic,
@@ -241,6 +242,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                         borderRadius: lib.layout.borderRadius.large,
                         marginBottom: 15,
                     }}
+                    textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}
                 />
                 <Button
                     className="mobile-pressable-div"
@@ -249,7 +251,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                         setInit();
                         close();
                     }}
-                    size="largerish"
+                    size="large"
                     buttonStyle={{
                         color: lib.colors.white,
                         padding: '.7rem 1.3rem',
@@ -257,6 +259,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                         background: lib.colors.gradient,
                         borderRadius: lib.layout.borderRadius.large,
                     }}
+                    textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}
                 />
             </animated.div>
         </div>

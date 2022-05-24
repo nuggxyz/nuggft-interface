@@ -11,7 +11,6 @@ const useStore = create(
                 page: Page.Start,
                 init: false,
                 open: false,
-                height: null as number | null,
                 visits: {
                     [Page.Start]: false,
                     [Page.Welcome]: false,
@@ -120,12 +119,9 @@ export default {
     useSetVisit: () => useStore((state) => state.visit),
     useOpen: () => useStore((state) => state.open),
     useGotoHeight: () => useStore((state) => state.gotoHeight),
-
     useGotoOpen: () => useStore((state) => state.gotoOpen),
     useToggle: () => useStore((state) => state.toggle),
-    useHeight: () => useStore((state) => state.height),
     useSetInit: () => useStore((state) => state.setInit),
-
     useGoto: () => useStore((state) => state.goto),
     useCloseNuggBook: () => useStore((state) => state.close),
     ...useStore,

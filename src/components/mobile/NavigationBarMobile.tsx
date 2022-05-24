@@ -16,6 +16,7 @@ import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import packages from '@src/packages';
 import client from '@src/client';
 import PageWrapper2 from '@src/components/nuggbook/PageWrapper2';
+import { Page } from '@src/interfaces/nuggbook';
 
 type Props = {
     showBackButton?: boolean;
@@ -42,13 +43,11 @@ const NavigationBarMobile: FC<Props> = () => {
     }, [match]);
 
     const MOVE_DELAY = 800;
-    const nuggbookHeight = React.useDeferredValue(client.nuggbook.useHeight());
+    const nuggbookPage = client.nuggbook.useNuggBookPage();
 
     const nuggbookOpen = React.useDeferredValue(client.nuggbook.useOpen());
     const isFull = React.useDeferredValue(isFullCore);
     const searchOpen = React.useDeferredValue(searchOpenCore);
-    // const nuggbookOpen = client.nuggbook.useOpenNuggBook();
-    // const nuggbookClose = client.nuggbook.useCloseNuggBook();
 
     const [floaterA] = useSpring(
         {
@@ -80,11 +79,17 @@ const NavigationBarMobile: FC<Props> = () => {
 
     const [searchOpenUp] = useSpring(
         {
-            height: searchOpen ? '450px' : nuggbookOpen ? nuggbookHeight ?? '600px' : '75px',
+            height: searchOpen
+                ? '450px'
+                : nuggbookOpen
+                ? nuggbookPage === Page.Start
+                    ? '250px'
+                    : '600px'
+                : '75px',
 
             config: packages.spring.config.stiff,
         },
-        [searchOpen, nuggbookOpen, nuggbookHeight],
+        [searchOpen, nuggbookOpen, nuggbookPage],
     );
 
     const [nuggbookFade] = useSpring(
