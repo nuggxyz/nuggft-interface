@@ -15,7 +15,10 @@ import WhatIsAnNFT from './pages/WhatIsAnNFT';
 import WhatIsDefi from './pages/WhatIsDefi';
 import Close from './pages/Close';
 import TheRundown from './pages/1-the-rundown/TheRundown';
-import SetUpAWallet from './pages/1-the-rundown/SetUpAWallet';
+import Setup_0 from './pages/set-up/Setup_0';
+import Setup_1 from './pages/set-up/Setup_1';
+import Setup_2 from './pages/set-up/Setup_2';
+import Setup_3 from './pages/set-up/Setup_3';
 
 const useNuggBook = () => {
     const page = client.nuggbook.useNuggBookPage();
@@ -35,8 +38,15 @@ const useNuggBook = () => {
             return { top: 100, comp: WhatIsDefi, page };
         case Page.TheRundown:
             return { top: 100, comp: TheRundown, page };
-        case Page.SetUpAWallet:
-            return { top: 100, comp: SetUpAWallet, page };
+        case Page.Setup_0:
+            return { top: 100, comp: Setup_0, page };
+        case Page.Setup_1:
+            return { top: 100, comp: Setup_1, page };
+        case Page.Setup_2:
+            return { top: 100, comp: Setup_2, page };
+        case Page.Setup_3:
+            return { top: 100, comp: Setup_3, page };
+
         default:
             return { top: 1000, comp: Close, page };
     }

@@ -5,6 +5,7 @@ import client from '@src/client';
 import lib from '@src/lib';
 import { Page } from '@src/interfaces/nuggbook';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
+import usePrevious from '@src/hooks/usePrevious';
 
 import Start from './pages/Start';
 import Welcome from './pages/Welcome';
@@ -14,7 +15,10 @@ import WhatIsAnNFT from './pages/WhatIsAnNFT';
 import WhatIsDefi from './pages/WhatIsDefi';
 import Close from './pages/Close';
 import TheRundown from './pages/1-the-rundown/TheRundown';
-import SetUpAWallet from './pages/1-the-rundown/SetUpAWallet';
+import Setup_0 from './pages/set-up/Setup_0';
+import Setup_1 from './pages/set-up/Setup_1';
+import Setup_2 from './pages/set-up/Setup_2';
+import Setup_3 from './pages/set-up/Setup_3';
 
 const useNuggBook = () => {
     const page = client.nuggbook.useNuggBookPage();
@@ -34,8 +38,14 @@ const useNuggBook = () => {
             return { top: 100, comp: WhatIsDefi, page };
         case Page.TheRundown:
             return { top: 100, comp: TheRundown, page };
-        case Page.SetUpAWallet:
-            return { top: 100, comp: SetUpAWallet, page };
+        case Page.Setup_0:
+            return { top: 100, comp: Setup_0, page };
+        case Page.Setup_1:
+            return { top: 100, comp: Setup_1, page };
+        case Page.Setup_2:
+            return { top: 100, comp: Setup_2, page };
+        case Page.Setup_3:
+            return { top: 100, comp: Setup_3, page };
         default:
             return { top: 1000, comp: Close, page };
     }
@@ -46,7 +56,7 @@ const useNuggBookHandler = () => {
     const setPage = client.nuggbook.useOpenNuggBook();
 
     const visits = client.nuggbook.useVisits();
-    const setVisit = client.nuggbook.useSetVisit();
+    const goto = client.nuggbook.useGoto();
 
     const [, startTransiton] = React.useTransition();
 
@@ -58,16 +68,18 @@ const useNuggBookHandler = () => {
     }, [visits, setPage]);
 
     const handleClose = React.useCallback(() => {
-        setVisit(Page.Start);
+        // setVisit(Page.Start);
         startTransiton(close);
-    }, [close, startTransiton, setVisit]);
+    }, [close, startTransiton]);
 
     const handleVisit = React.useCallback(
-        (_page: Page) => {
-            setVisit(_page);
+        (_page: Page, direction?: boolean) => {
+            // setVisit(_page);
+            goto(_page, direction);
+
             startTransiton(() => setPage(_page));
         },
-        [startTransiton, setVisit, setPage],
+        [startTransiton, goto, setPage],
     );
 
     const handleClear = React.useCallback(() => {
@@ -82,42 +94,44 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
     const book = useNuggBook();
 
     const { handleClear, handleClose, handleVisit } = useNuggBookHandler();
+    const direction = client.nuggbook.useDirection();
 
-    // const [draggedTop, setDraggedTop] = React.useState<number>(book.top);
+    const [yep, setYep] = React.useState({ book, direction });
+    const prevYep = usePrevious(yep);
 
-    // useEffect(() => {
-    //     setDraggedTop(book.top);
-    // }, [book.top]);
+    React.useEffect(() => {
+        if (yep.book.page !== book.page) {
+            console.log(direction);
+            setYep({ book, direction });
+        }
+    }, [book, direction, setYep, prevYep?.book.page, yep.book.page, yep]);
 
-    // const { height } = client.viewport.useVisualViewport();
+    const [tabFadeTransition] = useTransition(
+        yep,
+        {
+            initial: {
+                transform: `translate(0px,0px)`,
+            },
+            from: () => ({
+                transform: `translate(${direction ? 1000 : -1000}px,0px)`,
+            }),
+            update: (x, y) => {
+                // if (y === 1) x.direction = direction;
 
-    // const containerStyle = useSpring({
-    //     from: {
-    //         height: 0,
-    //     },
-    //     to: {
-    //         height: 1000 - draggedTop,
-    //     },
-    //     config: config.gentle,
-    // });
+                console.log({ ...x, y });
+                return x;
+            },
 
-    // const style: CSSPropertiesAnimated = useAnimateOverlayBackdrop(book.page !== Page.Close);
-
-    const tabFadeTransition = useTransition(book, {
-        initial: {
-            transform: `translate(0px,0px)`,
+            // enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto' },
+            enter: { pointerEvents: 'auto', transform: `translate(0px,0px)` },
+            leave: () => ({
+                transform: `translate(${direction ? -1000 : 1000}px,0px)`,
+            }),
+            keys: (item) => `AtabFadeTransition${item.book.page}`,
+            config: config.default,
         },
-        from: (page) => ({
-            transform: `translate(${page.page === Page.TableOfContents ? -1000 : 1000}px,0px)`,
-        }),
-        // enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto' },
-        enter: { pointerEvents: 'auto', transform: `translate(0px,0px)` },
-        leave: (page) => ({
-            transform: `translate(${page.page === Page.TableOfContents ? -1000 : 1000}px,0px)`,
-        }),
-        keys: (item) => `AtabFadeTransition${item.page}`,
-        config: config.default,
-    });
+        [yep, direction],
+    );
 
     const node = React.useRef<HTMLDivElement>(null);
 
@@ -185,8 +199,8 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
                                         paddingBottom: 100,
                                     }}
                                 >
-                                    {!!kid.comp && (
-                                        <kid.comp
+                                    {!!kid.book.comp && (
+                                        <kid.book.comp
                                             clear={handleClear}
                                             close={handleClose}
                                             setPage={handleVisit}

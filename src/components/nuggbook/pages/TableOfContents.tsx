@@ -130,11 +130,11 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
         },
         {
             header: 'set up a wallet',
-            page: Page.SetUpAWallet,
+            page: Page.Setup_0,
         },
         {
             header: 'helping us test?',
-            page: Page.SetUpAWallet,
+            page: Page.Setup_0,
         },
     ];
 

@@ -230,7 +230,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                     onClick={() => {
                         setInit();
 
-                        setPage(Page.SetUpAWallet);
+                        setPage(Page.Setup_0);
                     }}
                     size="large"
                     buttonStyle={{

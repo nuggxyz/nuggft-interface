@@ -8,11 +8,14 @@ export enum Page {
     WhatIsAnNFT,
     WhatIsDefi,
     TheRundown,
-    SetUpAWallet,
+    Setup_0,
+    Setup_1,
+    Setup_2,
+    Setup_3,
 }
 
 export type NuggBookPageProps = {
-    setPage: (page: Page) => void;
+    setPage: (page: Page, direction?: boolean) => void;
     close: () => void;
     clear: () => void;
 };

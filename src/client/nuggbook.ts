@@ -11,6 +11,7 @@ const useStore = create(
                 page: Page.Start,
                 init: false,
                 open: false,
+                direction: true,
                 visits: {
                     [Page.Start]: false,
                     [Page.Welcome]: false,
@@ -67,10 +68,12 @@ const useStore = create(
                     });
                 };
 
-                const goto = (page?: Page) => {
+                const goto = (page?: Page, direction?: boolean) => {
                     set(() => {
                         return {
                             ...(page && { page }),
+                            ...(direction !== undefined && { direction }),
+
                             height: null,
                             init: true,
                         };
@@ -118,6 +121,8 @@ export default {
     useVisits: () => useStore((state) => state.visits),
     useSetVisit: () => useStore((state) => state.visit),
     useOpen: () => useStore((state) => state.open),
+    useDirection: () => useStore((state) => state.direction),
+
     useGotoHeight: () => useStore((state) => state.gotoHeight),
     useGotoOpen: () => useStore((state) => state.gotoOpen),
     useToggle: () => useStore((state) => state.toggle),
