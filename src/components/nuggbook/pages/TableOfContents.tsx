@@ -111,16 +111,16 @@ type ListItemDescription = {
 };
 
 const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
-    const weeds: ListItemDescription[] = [
-        {
-            header: 'what are dynamic items?',
-            page: Page.WhatIsDefi,
-        },
-        {
-            header: 'where are the images stored?',
-            page: Page.WhatIsAWallet,
-        },
-    ];
+    // const weeds: ListItemDescription[] = [
+    //     {
+    //         header: 'what are dynamic items?',
+    //         page: Page.WhatIsDefi,
+    //     },
+    //     {
+    //         header: 'where are the images stored?',
+    //         page: Page.WhatIsAWallet,
+    //     },
+    // ];
 
     const upAndRunning: ListItemDescription[] = [
         {
@@ -133,20 +133,20 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
         },
     ];
 
-    const wut: ListItemDescription[] = [
-        {
-            header: 'what is a wallet?',
-            page: Page.WhatIsDefi,
-        },
-        {
-            header: 'what is an nft?',
-            page: Page.WhatIsAnNFT,
-        },
-        {
-            header: 'what is defi?',
-            page: Page.WhatIsDefi,
-        },
-    ];
+    // const wut: ListItemDescription[] = [
+    //     {
+    //         header: 'what is a wallet?',
+    //         page: Page.WhatIsDefi,
+    //     },
+    //     {
+    //         header: 'what is an nft?',
+    //         page: Page.WhatIsAnNFT,
+    //     },
+    //     {
+    //         header: 'what is defi?',
+    //         page: Page.WhatIsDefi,
+    //     },
+    // ];
     // const defi: ListItemDescription[] = [
     //     {
     //         header: 'what is defi',
@@ -176,7 +176,10 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
                 overflow: 'scroll',
             }}
         >
-            <Text size="larger" textStyle={{ padding: '10px' }}>
+            <Text
+                size="larger"
+                textStyle={{ padding: '10px', fontWeight: lib.layout.fontWeight.semibold }}
+            >
                 welcome to nuggft
             </Text>
 
@@ -184,9 +187,9 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
 
             {/* <ListItemGroup header="intro to defi" items={defi} setPage={setPage}  /> */}
 
-            <ListItemGroup header="into the weeds" items={weeds} setPage={setPage} />
+            {/* <ListItemGroup header="into the weeds" items={weeds} setPage={setPage} />
 
-            <ListItemGroup header="lol wut" items={wut} setPage={setPage} />
+            <ListItemGroup header="lol wut" items={wut} setPage={setPage} /> */}
 
             <Button
                 label="[For Testing] Clear History"

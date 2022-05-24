@@ -6,7 +6,7 @@ import lib from '@src/lib';
 import styles from './Text.styles';
 
 export interface TextProps {
-    children: string | string[] | ReactNode;
+    children: string | string[] | ReactNode | ReactNode[];
     weight?: 'light' | 'regular' | 'bold' | 'bolder';
     size?:
         | 'smaller'

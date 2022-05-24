@@ -4,11 +4,17 @@ const DEFAULTS = {
             '"SF Mono", SFMono-Regular, ui-monospace,"DejaVu Sans Mono", Menlo, Consolas, monospace',
         rounded:
             'SFRounded, ui-rounded, "SF Pro Rounded", system-ui, "Helvetica Neue", Arial, Helvetica, sans-serif',
+        sansserif:
+            'SF, ui-sans-serif, "SF Pro", system-ui, "Helvetica Neue", Arial, Helvetica, sans-serif',
     },
     fontWeight: {
-        thin: '200',
-        normal: '500',
-        bold: '750',
+        thin: '100',
+        light: '300', // !!!
+        normal: '400',
+        medium: '500', // !!!
+        semibold: '600',
+        bold: '700',
+        thicc: '750', // !!!
         heavy: '900',
         relative: {
             lighter: 'lighter',
@@ -66,43 +72,103 @@ const Layout = {
         },
         font: {
             main: {
+                thin: {
+                    fontFamily: DEFAULTS.fontFamily.rounded,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.thin,
+                },
+                light: {
+                    fontFamily: DEFAULTS.fontFamily.rounded,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.light,
+                },
+                normal: {
+                    fontFamily: DEFAULTS.fontFamily.rounded,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.normal,
+                },
+                medium: {
+                    fontFamily: DEFAULTS.fontFamily.rounded,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.medium,
+                },
+                regular: {
+                    fontFamily: DEFAULTS.fontFamily.rounded,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.medium,
+                },
+                semibold: {
+                    fontFamily: DEFAULTS.fontFamily.rounded,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.semibold,
+                },
                 bold: {
                     fontFamily: DEFAULTS.fontFamily.rounded,
                     WebkitFontSmoothing: 'antialiased',
                     fontWeight: DEFAULTS.fontWeight.bold,
                 },
-                regular: {
+                thicc: {
                     fontFamily: DEFAULTS.fontFamily.rounded,
                     WebkitFontSmoothing: 'antialiased',
-                    fontWeight: DEFAULTS.fontWeight.normal,
+                    fontWeight: DEFAULTS.fontWeight.thicc,
                 },
-                light: {
+                heavy: {
                     fontFamily: DEFAULTS.fontFamily.rounded,
                     WebkitFontSmoothing: 'antialiased',
-                    fontWeight: DEFAULTS.fontWeight.thin,
+                    fontWeight: DEFAULTS.fontWeight.heavy,
                 },
             },
             code: {
+                thin: {
+                    fontFamily: DEFAULTS.fontFamily.monospace,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.thin,
+                },
+                light: {
+                    fontFamily: DEFAULTS.fontFamily.monospace,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.light,
+                },
+                normal: {
+                    fontFamily: DEFAULTS.fontFamily.monospace,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.normal,
+                },
+                medium: {
+                    fontFamily: DEFAULTS.fontFamily.monospace,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.medium,
+                },
+                regular: {
+                    fontFamily: DEFAULTS.fontFamily.monospace,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.medium,
+                },
+                semibold: {
+                    fontFamily: DEFAULTS.fontFamily.monospace,
+                    WebkitFontSmoothing: 'antialiased',
+                    fontWeight: DEFAULTS.fontWeight.semibold,
+                },
                 bold: {
                     fontFamily: DEFAULTS.fontFamily.monospace,
                     WebkitFontSmoothing: 'antialiased',
                     fontWeight: DEFAULTS.fontWeight.bold,
                 },
-                regular: {
+                thicc: {
                     fontFamily: DEFAULTS.fontFamily.monospace,
                     WebkitFontSmoothing: 'antialiased',
-                    fontWeight: DEFAULTS.fontWeight.normal,
+                    fontWeight: DEFAULTS.fontWeight.thicc,
                 },
-                light: {
+                heavy: {
                     fontFamily: DEFAULTS.fontFamily.monospace,
                     WebkitFontSmoothing: 'antialiased',
-                    fontWeight: DEFAULTS.fontWeight.thin,
+                    fontWeight: DEFAULTS.fontWeight.heavy,
                 },
             },
         },
         weight: {
             thin: DEFAULTS.fontWeight.thin,
-            normal: DEFAULTS.fontWeight.normal,
+            normal: DEFAULTS.fontWeight.medium,
             bold: DEFAULTS.fontWeight.bold,
             heavy: DEFAULTS.fontWeight.heavy,
         },
@@ -127,4 +193,4 @@ const NLStyleSheetCreator = <T extends NLStyleSheet>(arg: T): T => {
 
 export type SimpleSizes = 'small' | 'medium' | 'large' | 'larger' | 'smaller' | 'largest';
 
-export default { ...Layout, NLStyleSheetCreator };
+export default { ...Layout, NLStyleSheetCreator, ...DEFAULTS };

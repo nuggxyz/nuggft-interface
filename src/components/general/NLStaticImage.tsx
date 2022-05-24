@@ -4,6 +4,7 @@ import metamask_icon from '@src/assets/images/app_icons/metamask.webp';
 import cryptodotcom_icon from '@src/assets/images/app_icons/cryptodotcom.webp';
 import ledgerlive_icon from '@src/assets/images/app_icons/ledger.webp';
 import coinbase_icon from '@src/assets/images/app_icons/coinbase.webp';
+import coinbasewallet_icon from '@src/assets/images/app_icons/coinbasewallet.webp';
 import rainbow_icon from '@src/assets/images/app_icons/rainbow.webp';
 import trust_icon from '@src/assets/images/app_icons/trust.webp';
 import walletconnect_icon from '@src/assets/images/app_icons/walletconnect.webp';
@@ -13,6 +14,7 @@ import metamask from '@src/assets/images/app_logos/metamask.png';
 import walletconnect from '@src/assets/images/app_logos/walletconnect.png';
 import nugg from '@src/assets/images/nugg/nugg-white.png';
 import nuggbutton from '@src/assets/images/nugg/nuggbutton.png';
+import coinbasewallet from '@src/assets/images/app_logos/coinbasewallet.png';
 import coinbase from '@src/assets/images/app_logos/coinbase.png';
 import rainbow from '@src/assets/images/app_logos/rainbow.png';
 import trust from '@src/assets/images/app_logos/trust.svg';
@@ -80,6 +82,8 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                 return StaticAppIcon({ ...props, icon: ledgerlive_icon });
             case 'coinbase_icon':
                 return StaticAppIcon({ ...props, icon: coinbase_icon });
+            case 'coinbasewallet_icon':
+                return StaticAppIcon({ ...props, icon: coinbasewallet_icon });
             case 'rainbow_icon':
                 return StaticAppIcon({ ...props, icon: rainbow_icon });
             case 'walletconnect_icon':
@@ -94,6 +98,8 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                 return StaticAppIconSmall({ ...props, icon: ledgerlive_icon });
             case 'coinbase_icon_small':
                 return StaticAppIconSmall({ ...props, icon: coinbase_icon });
+            case 'coinbasewallet_icon_small':
+                return StaticAppIconSmall({ ...props, icon: coinbasewallet_icon });
             case 'rainbow_icon_small':
                 return StaticAppIconSmall({ ...props, icon: rainbow_icon });
             case 'walletconnect_icon_small':
@@ -136,6 +142,16 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                         height={55}
                         width={110}
                         style={{ objectFit: 'contain', ...props.style }}
+                        alt={props.image}
+                    />
+                );
+            case 'coinbasewallet':
+                return (
+                    <img
+                        src={coinbasewallet}
+                        height={48}
+                        width={128}
+                        style={{ objectFit: 'contain', height: 23.8, ...props.style }}
                         alt={props.image}
                     />
                 );

@@ -12,6 +12,7 @@ export type SupportedConnector =
     | 'cryptodotcom'
     | 'trust'
     | 'coinbase'
+    | 'coinbasewallet'
     | 'walletconnect'
     | 'metamask'
     | 'rpc';
@@ -36,6 +37,8 @@ export enum Connector {
     WalletConnect = 'walletconnect',
     MetaMask = 'metamask',
     CoinbaseWallet = 'coinbasewallet',
+    Coinbase = 'coinbase',
+
     Rpc = 'rpc',
 }
 
@@ -45,6 +48,7 @@ export enum Peer {
     Rainbow = 'rainbow',
     LedgerLive = 'ledgerlive',
     Coinbase = 'coinbase',
+    CoinbaseWallet = 'coinbasewallet',
     WalletConnect = 'walletconnect',
     CryptoDotCom = 'cryptodotcom',
     Trust = 'trust',
@@ -103,14 +107,21 @@ export interface PeerInfo__MetaMask extends PeerBaseInfo {
 
 export interface PeerInfo__CoinbaseWallet extends PeerBaseInfo {
     type: Connector.CoinbaseWallet;
-    peer: Peer.Coinbase;
+    peer: Peer.CoinbaseWallet;
     deeplink_href: string;
-
     injected: false;
     fallback: false;
 }
 
+export interface PeerInfo__Coinbase extends PeerBaseInfo {
+    type: Connector.Coinbase;
+    peer: Peer.Coinbase;
+    deeplink_href: string;
+    injected: false;
+    fallback: false;
+}
 export type PeerInfo =
+    | PeerInfo__Coinbase
     | PeerInfo__WalletConnect
     | PeerInfo__Rpc
     | PeerInfo__MetaMask

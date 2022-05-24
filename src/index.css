@@ -101,8 +101,6 @@ svg:has(.DN) {
 
 .DN {
     stroke-width: var(--dotnugg-stroke-width);
-    /* overflow: unset;
-    z-index: 6000; */
 }
 
 #root {
@@ -135,17 +133,17 @@ svg:has(.DN) {
 }
 
 .mobile-pressable-div {
-    -webkit-tap-highlight-color: transparent;
-    will-change: transform;
+    /* -webkit-tap-highlight-color: transparent; */
+    /* will-change: transform; */
     -webkit-transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
     transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
 }
 
-.mobile-pressable-div:hover {
+/* .mobile-pressable-div:hover {
     -webkit-transform: scale(1.03);
     -ms-transform: scale(1.03);
     transform: scale(1.03);
-}
+} */
 
 .mobile-pressable-div:active {
     -webkit-transform: scale(0.95);

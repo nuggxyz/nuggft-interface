@@ -115,15 +115,26 @@ export const peer_cryptodotcom: PeerInfo = {
     desktopAction: 'qrcode',
 } as const;
 
-export const peer_coinbase: PeerInfo__CoinbaseWallet = {
-    type: ConnectorEnum.CoinbaseWallet,
-    name: 'Coinbase Wallet',
+export const peer_coinbase: PeerInfo = {
+    type: ConnectorEnum.Coinbase,
+    name: 'Coinbase',
     peer: Peer.Coinbase,
     color: 'rgba(22,82,240,1.0)',
     injected: false,
     fallback: false,
     deeplink_href: '',
 } as const;
+
+export const peer_coinbasewallet: PeerInfo__CoinbaseWallet = {
+    type: ConnectorEnum.CoinbaseWallet,
+    name: 'Coinbase Wallet',
+    peer: Peer.CoinbaseWallet,
+    color: 'rgba(22,82,240,1.0)',
+    injected: false,
+    fallback: false,
+    deeplink_href: 'https://go.cb-w.com/dapp/',
+} as const;
+
 export const peer_walletconnect: PeerInfo__WalletConnect = {
     type: ConnectorEnum.WalletConnect,
     name: 'Wallet Connect',
@@ -150,7 +161,9 @@ export const peers = {
     ledgerlive: peer_ledgerlive,
     trust: peer_trust,
     cryptodotcom: peer_cryptodotcom,
+    coinbasewallet: peer_coinbasewallet,
     coinbase: peer_coinbase,
+
     walletconnect: peer_walletconnect,
     rpc: peer_rpc,
 } as const;
@@ -158,7 +171,7 @@ export const peers = {
 export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connector> } = {
     coinbasewallet: initializeConnector<CoinbaseWallet>(
         (actions) =>
-            new CoinbaseWallet(peer_coinbase, actions, {
+            new CoinbaseWallet(peer_coinbasewallet, actions, {
                 url: INFURA_URLS[DEFAULT_CHAIN],
                 appName: 'NuggftV1',
             }),

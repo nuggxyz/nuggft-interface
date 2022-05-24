@@ -1,5 +1,7 @@
 import React from 'react';
-import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from 'react-icons/io';
+import { IoIosArrowDropleftCircle } from 'react-icons/io';
+import { BsApple } from 'react-icons/bs';
+import { HiArrowRight } from 'react-icons/hi';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -10,7 +12,7 @@ import NLStaticImage from '@src/components/general/NLStaticImage';
 import { Peer } from '@src/web3/core/interfaces';
 
 const PeerButton = React.memo<{
-    peer: Peer.Coinbase | Peer.MetaMask;
+    peer: Peer.CoinbaseWallet | Peer.MetaMask;
     text: string;
     color?: string;
 }>(
@@ -96,24 +98,17 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                 textAlign: 'center',
             }}
         >
-            <Text size="larger" textStyle={{ padding: '10px' }}>
+            <Text
+                size="largest"
+                textStyle={{ padding: '20px', fontWeight: lib.layout.fontWeight.semibold }}
+            >
                 set up a wallet
             </Text>
-            {/* <Text
-                size="medium"
-                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
-            >
-                this will help you get set up so you can play with nuggft
-            </Text> */}
-
-            {/* <Text size="medium" textStyle={{}}>
-                steps
-            </Text> */}
 
             <Text
                 size="medium"
                 textStyle={{
-                    padding: '15px',
+                    padding: '10px',
                     ...lib.layout.presets.font.main.bold,
                     textAlign: 'left',
                 }}
@@ -121,108 +116,347 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                 <Text
                     size="medium"
                     textStyle={{
-                        ...lib.layout.presets.font.main.bold,
+                        ...lib.layout.presets.font.main.semibold,
                         textAlign: 'left',
+                        padding: '5px 0px',
+                        fontSize: '20px',
                     }}
                 >
-                    1️⃣ <b style={{ paddingLeft: 5 }}> download</b> an ethereum wallet
+                    1️⃣ 📲 <span style={{ paddingLeft: 8, fontWeight: 'bolder' }}> download</span> an
+                    ethereum wallet
                 </Text>
 
                 <Text
                     size="medium"
                     textStyle={{
-                        ...lib.layout.presets.font.main.bold,
+                        ...lib.layout.presets.font.main.semibold,
                         textAlign: 'left',
+                        padding: '5px 0px',
+                        fontSize: '20px',
                     }}
                 >
-                    2️⃣ <b style={{ paddingLeft: 5 }}> send</b> ethereum to the wallet
+                    2️⃣ 💸 <span style={{ paddingLeft: 8, fontWeight: 'bolder' }}>send</span>{' '}
+                    ethereum to the wallet
                 </Text>
                 {/* <Text
                     size="small"
                     textStyle={{
                         color: lib.colors.orange,
-                        ...lib.layout.presets.font.main.bold,
+                        ...lib.layout.presets.font.main.semibold,
                         textAlign: 'left',
+                        fontSize: '20px',
                     }}
                 >
-                    🤑 [testers] <b style={{ paddingLeft: 5 }}> ask us for some test ethereum</b>
+                    🤑 <span style={{ paddingLeft: 8 }}>[testers]</span> ask for some test eth
                 </Text> */}
                 <Text
                     size="medium"
                     textStyle={{
-                        ...lib.layout.presets.font.main.bold,
+                        ...lib.layout.presets.font.main.semibold,
                         textAlign: 'left',
+                        padding: '5px 0px',
                     }}
                 >
-                    3️⃣ <b style={{ paddingLeft: 5 }}> connect</b> to nuggft
+                    3️⃣ 🐣 <span style={{ paddingLeft: 8, fontWeight: 'bolder' }}>connect</span> to
+                    nuggft
                 </Text>
             </Text>
-
-            <Text size="larger" textStyle={{ textAlign: 'center', marginTop: 15 }}>
-                1️⃣ <span style={{ paddingLeft: 5 }}>download a wallet</span>
-            </Text>
-
-            {/* <Text
-                size="medium"
-                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.bold }}
-            >
-                nuggft works best with either <b>coinbase wallet</b> or <b>metamask</b>
+            {/* <Text size="largest" textStyle={{ textAlign: 'center', marginTop: 15, padding: 10 }}>
+                📲
             </Text> */}
-            <Text textStyle={{ padding: 5 }}>
-                <Text
-                    size="large"
-                    textStyle={{ ...lib.layout.presets.font.main.regular, padding: 10 }}
-                >
-                    nice for <b>coinbase users</b>
-                </Text>
-                <PeerButton peer={Peer.Coinbase} text="tap to download" />
+            <Text
+                size="larger"
+                textStyle={{
+                    marginTop: 30,
+                    textAlign: 'center',
+                    fontWeight: lib.layout.fontWeight.thicc,
+                }}
+            >
+                1️⃣ 📲 <span style={{ paddingLeft: 5 }}>download a wallet</span>
             </Text>
-            <div style={{ marginTop: 5 }} />
-            <Text textStyle={{ padding: 5 }}>
+
+            <div style={{ padding: '10px 0px' }}>
                 <Text
                     size="large"
-                    textStyle={{ ...lib.layout.presets.font.main.regular, padding: 10 }}
+                    textStyle={{ ...lib.layout.presets.font.main.regular, padding: 20 }}
                 >
-                    good for <b>everyone</b>
+                    <span
+                        style={{
+                            alignItems: 'center',
+                            padding: '.3rem .5rem',
+                            display: 'inline-flex',
+                            justifyContent: 'flex-start',
+                            background: lib.colors.green,
+                            color: 'white',
+                            fontSize: '16px',
+                            borderRadius: lib.layout.borderRadius.large,
+                            ...lib.layout.presets.font.main.semibold,
+                        }}
+                    >
+                        <span>easy for </span>
+                        <span style={{ fontWeight: 'bolder', marginLeft: 4 }}>coinbase users</span>
+                    </span>{' '}
+                </Text>
+                <PeerButton peer={Peer.CoinbaseWallet} text="tap to download" />
+            </div>
+            {/* <div style={{ marginTop: 5 }} /> */}
+            <div style={{ padding: 5 }}>
+                <Text
+                    size="large"
+                    textStyle={{ ...lib.layout.presets.font.main.regular, padding: 20 }}
+                >
+                    <span
+                        style={{
+                            alignItems: 'center',
+                            padding: '.3rem .5rem',
+                            display: 'inline-flex',
+                            justifyContent: 'flex-start',
+                            background: lib.colors.green,
+                            color: 'white',
+                            fontSize: '16px',
+                            borderRadius: lib.layout.borderRadius.large,
+                            ...lib.layout.presets.font.main.semibold,
+                        }}
+                    >
+                        <span>easy for </span>
+                        <span style={{ fontWeight: 'bolder', marginLeft: 4 }}>everyone</span>
+                    </span>{' '}
                 </Text>
                 <PeerButton peer={Peer.MetaMask} text="tap to download" />
-            </Text>
+            </div>
+            {/* <Text size="largest" textStyle={{ textAlign: 'center', marginTop: 30, padding: 10 }}>
+                💸
+            </Text> */}
 
-            <Text size="larger" textStyle={{ textAlign: 'center', marginTop: 30 }}>
-                2️⃣ <span style={{ paddingLeft: 5 }}>get some ethereum</span>
+            <Text
+                size="larger"
+                textStyle={{
+                    marginTop: 50,
+                    textAlign: 'center',
+                    fontWeight: lib.layout.fontWeight.thicc,
+                }}
+            >
+                2️⃣ 💸 <span style={{ paddingLeft: 5 }}>get some ethereum</span>
             </Text>
+            <div style={{ padding: '10px 0px' }}>
+                <Text
+                    size="large"
+                    textStyle={{ ...lib.layout.presets.font.main.regular, padding: 20 }}
+                >
+                    <span
+                        style={{
+                            alignItems: 'center',
+                            padding: '.3rem .5rem',
+                            display: 'inline-flex',
+                            justifyContent: 'flex-start',
+                            background: lib.colors.orange,
+                            color: 'white',
+                            fontSize: '16px',
+                            borderRadius: lib.layout.borderRadius.large,
+                            ...lib.layout.presets.font.main.semibold,
+                        }}
+                    >
+                        <span>helping us test?</span>
+                    </span>
+                </Text>
+                <div
+                    style={{
+                        // marginTop: 10,
+                        padding: 20,
+                        borderRadius: lib.layout.borderRadius.medium,
+                        // border: `${lib.colors.primaryColor} solid 3px`,
+                        boxShadow: lib.layout.boxShadow.basic,
+                    }}
+                >
+                    <Text
+                        size="large"
+                        textStyle={{
+                            ...lib.layout.presets.font.main.regular,
+                            // margin: '15px 0px',
+                            fontWeight: lib.layout.fontWeight.thicc,
+                            // marginBottom: 10,
+                        }}
+                    >
+                        ask us for some testnet ethereum
+                    </Text>
+                    <Text
+                        size="small"
+                        textStyle={{
+                            ...lib.layout.presets.font.main.regular,
+                            marginTop: '10px',
+                            fontWeight: lib.layout.fontWeight.thicc,
+                            // marginBottom: 10,
+                        }}
+                    >
+                        ps: you rock 💙
+                    </Text>
+                </div>
+            </div>
+            <div style={{ padding: '10px 0px', marginTop: 10 }}>
+                <Text
+                    size="large"
+                    textStyle={{ ...lib.layout.presets.font.main.regular, padding: 20 }}
+                >
+                    <span
+                        style={{
+                            alignItems: 'center',
+                            padding: '.3rem .5rem',
+                            display: 'inline-flex',
+                            justifyContent: 'flex-start',
+                            background: lib.colors.green,
+                            color: 'white',
+                            fontSize: '16px',
+                            borderRadius: lib.layout.borderRadius.large,
+                            ...lib.layout.presets.font.main.semibold,
+                        }}
+                    >
+                        <span>easy for </span>
+                        <span style={{ fontWeight: 'bolder', marginLeft: 4 }}>coinbase users</span>
+                    </span>
+                </Text>
+                <div
+                    style={{
+                        // marginTop: 10,
+                        padding: 10,
+                        borderRadius: lib.layout.borderRadius.medium,
+                        // border: `${lib.colors.primaryColor} solid 3px`,
+                        boxShadow: lib.layout.boxShadow.basic,
+                    }}
+                >
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            textAlign: 'center',
+                            alignItems: 'center',
+                            padding: 10,
+                        }}
+                    >
+                        <NLStaticImage image={Peer.Coinbase} />{' '}
+                        <HiArrowRight size={23} style={{ marginRight: 3, margin: '0px 30px' }} />
+                        <NLStaticImage image="coinbasewallet_icon" />
+                    </div>
 
-            <Text textStyle={{ padding: 5 }}>
+                    <Text
+                        size="large"
+                        textStyle={{
+                            marginBottom: 10,
+                            ...lib.layout.presets.font.main.regular,
+                            fontWeight: lib.layout.fontWeight.thicc,
+                        }}
+                    >
+                        transfer from exchange
+                    </Text>
+                </div>
+            </div>
+            <div style={{ padding: '10px 0px' }}>
+                <Text
+                    size="large"
+                    textStyle={{ ...lib.layout.presets.font.main.regular, padding: 20 }}
+                >
+                    <span
+                        style={{
+                            alignItems: 'center',
+                            padding: '.3rem .5rem',
+                            display: 'inline-flex',
+                            justifyContent: 'flex-start',
+                            background: lib.colors.green,
+                            color: 'white',
+                            fontSize: '16px',
+                            borderRadius: lib.layout.borderRadius.large,
+                            ...lib.layout.presets.font.main.semibold,
+                        }}
+                    >
+                        <span>easy for </span>
+                        <span style={{ fontWeight: 'bolder', marginLeft: 4 }}>everyone</span>
+                    </span>
+                </Text>
+                <div
+                    style={{
+                        // marginTop: 10,
+                        padding: 10,
+                        borderRadius: lib.layout.borderRadius.medium,
+                        // border: `${lib.colors.primaryColor} solid 3px`,
+                        boxShadow: lib.layout.boxShadow.basic,
+                    }}
+                >
+                    <div
+                        style={{
+                            fontSize: 30,
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            textAlign: 'center',
+                            alignItems: 'center',
+                            padding: 15,
+                        }}
+                    >
+                        <div
+                            style={{
+                                fontFamily: lib.layout.fontFamily.sansserif,
+                                display: 'flex',
+                                justifyContent: 'center',
+
+                                alignItems: 'center',
+                            }}
+                        >
+                            <BsApple size={23} style={{ marginRight: 3 }} />
+                            <span style={{ fontSize: 30 }}>Pay</span>
+                        </div>
+                        <Text textStyle={{ padding: 15, fontSize: 30 }}>🏛</Text>
+                        <Text textStyle={{ fontSize: 30 }}>💳 </Text>
+                        <HiArrowRight size={23} style={{ marginRight: 3, margin: '0px 30px' }} />
+                        <NLStaticImage image="metamask_icon" />
+                    </div>
+
+                    <Text
+                        size="large"
+                        textStyle={{
+                            ...lib.layout.presets.font.main.regular,
+                            // margin: '15px 0px',
+                            fontWeight: lib.layout.fontWeight.thicc,
+                            marginBottom: 10,
+                        }}
+                    >
+                        buy in wallet
+                    </Text>
+                </div>
+            </div>
+
+            <Text
+                size="larger"
+                textStyle={{
+                    marginTop: 40,
+                    textAlign: 'center',
+                    fontWeight: lib.layout.fontWeight.thicc,
+                }}
+            >
+                3️⃣ 🐣 <span style={{ paddingLeft: 5 }}>leggo</span>
+            </Text>
+            <div style={{ padding: '20px 0px', marginTop: 15 }}>
                 <Text
                     size="large"
                     textStyle={{ ...lib.layout.presets.font.main.bold, padding: 10 }}
                 >
-                    something about apple pay and bank with coinbase
+                    <PeerButton
+                        peer={Peer.CoinbaseWallet}
+                        text="connect to nuggft"
+                        color={lib.colors.gradient}
+                    />
                 </Text>
-            </Text>
-
-            <Text
-                size="larger"
-                textStyle={{ textAlign: 'center', marginTop: 30, marginBottom: 10 }}
-            >
-                3️⃣ <span style={{ paddingLeft: 5 }}>leggo</span>
-            </Text>
-            <Text size="large" textStyle={{ ...lib.layout.presets.font.main.bold, padding: 10 }}>
-                <PeerButton
-                    peer={Peer.Coinbase}
-                    text="connect to nuggft"
-                    color={lib.colors.gradient}
-                />
-            </Text>
-            <Text size="large" textStyle={{ ...lib.layout.presets.font.main.bold, padding: 10 }}>
-                <PeerButton
-                    peer={Peer.MetaMask}
-                    text="connect to nuggft"
-                    color={lib.colors.gradient}
-                />{' '}
-            </Text>
-
-            <Text
+                <Text
+                    size="large"
+                    textStyle={{ ...lib.layout.presets.font.main.bold, padding: 10, marginTop: 10 }}
+                >
+                    <PeerButton
+                        peer={Peer.MetaMask}
+                        text="connect to nuggft"
+                        color={lib.colors.gradient}
+                    />
+                </Text>
+            </div>
+            {/* <Text
                 size="medium"
                 textStyle={{ padding: '15px', ...lib.layout.presets.font.main.bold }}
             >
@@ -233,15 +467,10 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                 textStyle={{ padding: '15px', ...lib.layout.presets.font.main.bold }}
             >
                 what other wallets can i use?
-            </Text>
-            <Text
-                size="medium"
-                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.bold }}
-            >
-                where do i get eth from?
-            </Text>
-            <div>
-                <Button
+            </Text> */}
+
+            <div style={{ marginTop: 20 }}>
+                {/* <Button
                     label="next"
                     buttonStyle={{
                         background: lib.colors.gradient,
@@ -259,7 +488,7 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                         />
                     }
                     onClick={() => setPage(Page.TableOfContents)}
-                />
+                /> */}
 
                 <Button
                     buttonStyle={{
