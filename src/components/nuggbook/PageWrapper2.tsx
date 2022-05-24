@@ -115,12 +115,12 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
             from: () => ({
                 transform: `translate(${direction ? 1000 : -1000}px,0px)`,
             }),
-            update: (x, y) => {
-                // if (y === 1) x.direction = direction;
+            // update: (x, y) => {
+            //     // if (y === 1) x.direction = direction;
 
-                console.log({ ...x, y });
-                return x;
-            },
+            //     console.log({ ...x, y });
+            //     return x;
+            // },
 
             // enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto' },
             enter: { pointerEvents: 'auto', transform: `translate(0px,0px)` },
