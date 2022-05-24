@@ -482,10 +482,10 @@ const NuggDexSearchBarMobile: FunctionComponent<{
             style={{
                 zIndex: 999,
                 ...lib.layout.presets.font.main.regular,
-                width: '93%',
+                width: '100%',
                 position: 'relative',
                 display: 'flex',
-                justifyContent: 'flex-start',
+                justifyContent: open ? 'flex-start' : 'flex-end',
                 height: '100%',
                 flexDirection: 'column',
                 pointerEvents: openable ? 'auto' : 'none',
@@ -523,7 +523,9 @@ const NuggDexSearchBarMobile: FunctionComponent<{
                         <IconButton
                             aria-hidden="true"
                             buttonStyle={{
-                                padding: 0,
+                                // paddingLeft: 10,
+
+                                // padding: 0,
                                 background: 'transparent',
                                 borderRadius: lib.layout.borderRadius.large,
                                 // boxShadow: lib.layout.boxShadow.medium,

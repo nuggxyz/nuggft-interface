@@ -7,7 +7,6 @@ import { useRoutes } from '@src/lib/router';
 import client from '@src/client';
 import GlobalModal from '@src/components/modals/GlobalModal';
 import ToastContainer from '@src/components/general/Toast/ToastContainer';
-import NuggBook from '@src/components/nuggbook/NuggBook';
 import useDimensions from '@src/client/hooks/useDimensions';
 import { HotRotateOController } from '@src/pages/HotRotateO';
 import NavigationWrapper from '@src/components/nugg/PageLayout/NavigationWrapper/NavigationWrapper';
@@ -71,7 +70,7 @@ const App = () => {
         <>
             <ToastContainer />
             <GlobalModal />
-            <NuggBook />
+            {/* <NuggBook /> */}
             <Helmet />
             <NavigationWrapper isPhone={isPhone} />
             <Router />

@@ -14,7 +14,7 @@ export default ({
     iconDropShadow,
     buttonStyle,
 }: {
-    to: Page;
+    to?: Page;
     color?: string;
     style?: CSSProperties;
     buttonStyle?: CSSProperties;
@@ -22,13 +22,13 @@ export default ({
     size?: number;
     iconDropShadow?: string;
 }) => {
-    const openNuggBook = client.nuggbook.useOpenNuggBook();
+    const toggle = client.nuggbook.useToggle();
 
     return (
         <Button
             onClick={(event) => {
                 event?.stopPropagation();
-                openNuggBook(to);
+                toggle(to);
             }}
             leftIcon={
                 <IoInformationCircle

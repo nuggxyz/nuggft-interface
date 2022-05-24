@@ -3,7 +3,6 @@ import { animated, useSpring } from '@react-spring/web';
 import { useNavigate } from 'react-router-dom';
 import { IoQrCode } from 'react-icons/io5';
 
-import { Page } from '@src/interfaces/nuggbook';
 import InfoClicker from '@src/components/nuggbook/InfoClicker';
 import lib from '@src/lib';
 import web3 from '@src/web3';
@@ -15,6 +14,8 @@ import { useMatchArray } from '@src/hooks/useBlur';
 import Button from '@src/components/general/Buttons/Button/Button';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import packages from '@src/packages';
+import client from '@src/client';
+import PageWrapper2 from '@src/components/nuggbook/PageWrapper2';
 
 type Props = {
     showBackButton?: boolean;
@@ -41,9 +42,13 @@ const NavigationBarMobile: FC<Props> = () => {
     }, [match]);
 
     const MOVE_DELAY = 800;
+    const nuggbookHeight = React.useDeferredValue(client.nuggbook.useHeight());
 
+    const nuggbookOpen = React.useDeferredValue(client.nuggbook.useOpen());
     const isFull = React.useDeferredValue(isFullCore);
     const searchOpen = React.useDeferredValue(searchOpenCore);
+    // const nuggbookOpen = client.nuggbook.useOpenNuggBook();
+    // const nuggbookClose = client.nuggbook.useCloseNuggBook();
 
     const [floaterA] = useSpring(
         {
@@ -73,31 +78,22 @@ const NavigationBarMobile: FC<Props> = () => {
         [isFull],
     );
 
-    // const [floaterExit12] = useSpring(
-    //     {
-    //         // width: isFull && !searchOpen ? undefined : 0,
-    //         opacity: isFull && !searchOpen ? 1 : 0,
-    //     },
-    //     [isFull, searchOpen],
-    // );
-
-    // emitter.hook.useOn({
-    //     type: emitter.events.RouteChange,
-    //     callback: React.useCallback(
-    //         (dat) => {
-    //             setSearchOpen(false);
-    //             setManualMatch(false);
-    //         },
-    //         [setSearchOpen, setManualMatch],
-    //     ),
-    // });
-
     const [searchOpenUp] = useSpring(
         {
-            height: searchOpen ? '450px' : '75px',
+            height: searchOpen ? '450px' : nuggbookOpen ? nuggbookHeight ?? '600px' : '75px',
+
             config: packages.spring.config.stiff,
         },
-        [searchOpen],
+        [searchOpen, nuggbookOpen, nuggbookHeight],
+    );
+
+    const [nuggbookFade] = useSpring(
+        {
+            opacity: nuggbookOpen ? 1 : 0,
+
+            config: packages.spring.config.stiff,
+        },
+        [nuggbookOpen],
     );
 
     const ref = React.useRef(null);
@@ -110,7 +106,7 @@ const NavigationBarMobile: FC<Props> = () => {
     console.log({ searchOpen, isFull });
 
     return (
-        <div
+        <animated.div
             ref={ref}
             aria-hidden="true"
             style={{
@@ -123,8 +119,8 @@ const NavigationBarMobile: FC<Props> = () => {
                 justifyContent: 'flex-end',
                 transition: `all 0.3s ${lib.layout.animation}`,
                 marginBottom: 15,
-                paddingRight: 15,
-                paddingLeft: 15,
+                // paddingRight: 15,
+                // paddingLeft: 15,
                 pointerEvents: 'none',
             }}
             // onClick={(event) => {
@@ -132,22 +128,26 @@ const NavigationBarMobile: FC<Props> = () => {
             //     event.persist();
             // }}
         >
+            {/* <div style={{position: 'absolute', }}></div> */}
             <animated.div
                 className={!isFull ? 'mobile-pressable-div' : undefined}
                 style={{
+                    zIndex: 3,
+
                     display: 'flex',
-                    alignItems: searchOpen ? 'flex-start' : 'center',
+                    alignItems: searchOpen ? 'flex-start' : nuggbookOpen ? 'flex-end' : 'flex-end',
                     WebkitBackdropFilter: 'blur(50px)',
                     backdropFilter: 'blur(50px)',
                     minWidth: '75px',
-                    // pointerEvents: 'painted',
-
+                    marginRight: 15,
+                    marginLeft: 15,
                     ...searchOpenUp,
+                    position: 'relative',
+                    // pointerEvents: 'painted',
                     // paddingRight: 10,
-                    paddingLeft: 10,
                     borderRadius: lib.layout.borderRadius.medium,
                     background: lib.colors.transparentWhite,
-                    boxShadow: lib.layout.boxShadow.medium,
+                    boxShadow: lib.layout.boxShadow.dark,
                     ...floater,
                     ...floaterA,
                 }}
@@ -155,14 +155,20 @@ const NavigationBarMobile: FC<Props> = () => {
                 <animated.div
                     className={isFull && !searchOpen ? 'mobile-pressable-div' : undefined}
                     style={{
+                        zIndex: 5,
+
                         position: 'relative',
                         display: 'flex',
                         width: '75px',
-                        height: '100%',
+                        height: '75px',
                         justifyContent: 'flex-start',
                         // ...(!isFull ? { width: '0%', overflow: 'hidden' } : {}),
                         ...floaterExit,
-                        ...(searchOpen ? { width: '100%', position: 'absolute' } : {}),
+                        // ...(nuggbookOpen ? { height: '75px' } : {}),
+
+                        ...(searchOpen
+                            ? { width: '100%', position: 'absolute', height: '100%' }
+                            : {}),
                     }}
                 >
                     <NuggDexSearchBarMobile
@@ -172,24 +178,61 @@ const NavigationBarMobile: FC<Props> = () => {
                     />
                 </animated.div>
 
+                {/* {nuggbookOpen && (
+                    <Button
+                        className="mobile-pressable-div"
+                        size="small"
+                        buttonStyle={{
+                            // position: 'absolute',
+                            // left: 3,
+                            // bottom: -50,
+                            borderRadius: lib.layout.borderRadius.mediumish,
+                            background: lib.colors.transparentWhite,
+                            WebkitBackdropFilter: 'blur(30px)',
+                            backdropFilter: 'blur(30px)',
+                            boxShadow: lib.layout.boxShadow.basic,
+                        }}
+                        leftIcon={
+                            <IoChevronDownCircle
+                                size={24}
+                                color={lib.colors.primaryColor}
+                                style={{
+                                    marginRight: 5,
+                                    marginLeft: -5,
+                                }}
+                            />
+                        }
+                        textStyle={{
+                            color: lib.colors.primaryColor,
+                            fontSize: 18,
+                        }}
+                        label="go back"
+                        onClick={() => nuggbookClose()}
+                    />
+                )} */}
+
                 <animated.div
                     style={{
-                        // ...abc,
+                        zIndex: 5,
                         // display: searchOpen ? 'none' : 'flex',
                         // width: 100,
                         // ...(!isFull || searchOpen ? { width: 0 } : {}),
 
                         ...floaterExit,
                         // ...(!isFull && { position: 'absolute' }),
-                        ...(!isFull || searchOpen ? { overflow: 'hidden' } : {}),
-                        ...(searchOpen && { width: 0 }),
+                        ...(!isFull || searchOpen
+                            ? { overflow: 'hidden', opacity: 0, pointerEvents: 'none' }
+                            : {}),
+                        // ...(searchOpen && { width: 0 }),
                         // opacity: isFull && !searchOpen ? 1 : 0,
                         // ...(searchOpen && { width: 0 }),
                         // padding: '0rem 1rem',
+                        height: '75px',
                     }}
                 >
                     <animated.div
                         style={{
+                            height: '100%',
                             width: '100%',
                             display: 'flex',
                             justifyContent: 'space-around',
@@ -201,7 +244,7 @@ const NavigationBarMobile: FC<Props> = () => {
                         {/* </div> */}
                         <NLStaticImage image="nuggbutton" />
                         <InfoClicker
-                            to={Page.TableOfContents}
+                            // to={Page.TableOfContents}
                             size={45}
                             color={lib.colors.nuggBlueSemiTransparent}
                             buttonStyle={{ padding: 0 }}
@@ -213,6 +256,11 @@ const NavigationBarMobile: FC<Props> = () => {
                 <div
                     className={isFull && !searchOpen ? 'mobile-pressable-div' : undefined}
                     style={{
+                        zIndex: 5,
+                        ...(searchOpen
+                            ? { opacity: 0, pointerEvents: 'none' }
+                            : { pointerEvents: 'auto' }),
+
                         position: 'relative',
                         display: 'flex',
                         alignItems: 'center',
@@ -223,11 +271,9 @@ const NavigationBarMobile: FC<Props> = () => {
                         // opacity: searchOpen ? 0 : 1,
                         // WebkitBackdropFilter: 'blur(30px)',
                         // backdropFilter: 'blur(30px)',
-                        pointerEvents: 'auto',
 
                         justifySelf: 'center',
                         // justifyContent: 'flex-end',
-                        zIndex: 10000000000,
                     }}
                 >
                     <NoFlash
@@ -241,8 +287,31 @@ const NavigationBarMobile: FC<Props> = () => {
                         isFull={isFull}
                     />
                 </div>
+                <animated.div
+                    // className={isFull && !searchOpen ? 'mobile-pressable-div' : undefined}
+                    style={{
+                        zIndex: 4,
+
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        display: 'flex',
+                        // width: 0,
+                        width: '100%',
+                        height: '100%',
+                        overflow: 'hidden',
+                        justifyContent: 'flex-start',
+                        // ...(!isFull ? { width: '0%', overflow: 'hidden' } : {}),
+                        // ...floaterExit,
+                        WebkitMaskImage: 'linear-gradient(180deg, #000 70%, transparent)',
+                        ...nuggbookFade,
+                        // ...(nuggbookOpen ? { width: '100%' } : { width: '100%' }),
+                    }}
+                >
+                    <PageWrapper2 />
+                </animated.div>
             </animated.div>
-        </div>
+        </animated.div>
     );
 };
 
@@ -251,16 +320,45 @@ const NoFlash = React.memo<{ address?: string; isFull: boolean; onClick: (full: 
         return (
             <Button
                 rightIcon={
-                    address ? (
-                        <Jazzicon address={address || ''} size={50} />
-                    ) : (
-                        <IoQrCode
+                    <div style={{ position: 'relative' }}>
+                        <div>
+                            {address ? (
+                                <Jazzicon address={address || ''} size={50} className="concave" />
+                            ) : (
+                                <IoQrCode
+                                    style={{
+                                        color: lib.colors.semiTransparentPrimaryColor,
+                                    }}
+                                    size={50}
+                                />
+                            )}
+                        </div>
+                        {/* <div
                             style={{
-                                color: lib.colors.semiTransparentPrimaryColor,
+                                position: 'absolute',
+                                top: 0,
+                                bottom: 0,
+                                right: 0,
+                                left: 0,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                // background: 'white',
+                                // borderRadius: '50%',
+                                // transform:
+                                //     'translateX(68px) translateY(-60px) skewX(15deg) skewY(2deg)',
                             }}
-                            size={50}
-                        />
-                    )
+                        >
+                            <div
+                                style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    borderRadius: '3px',
+                                    border: '3px solid white',
+                                }}
+                            />
+                        </div> */}
+                    </div>
                 }
                 buttonStyle={{
                     padding: 0,

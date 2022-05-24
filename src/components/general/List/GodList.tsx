@@ -64,6 +64,7 @@ export interface GodListProps<T, B, A> {
     coreRef?: React.RefObject<HTMLDivElement> | null;
     offsetListRef?: boolean;
     LIST_PADDING?: number;
+    mobileFluid?: boolean;
 }
 
 const GodList = <T, B, A>({
@@ -91,6 +92,7 @@ const GodList = <T, B, A>({
     squishFactor = 1,
     offsetListRef = false,
     screenHeight = 0,
+    mobileFluid = false,
 }: GodListProps<T, B, A>) => {
     const interval = 7;
 
@@ -129,13 +131,13 @@ const GodList = <T, B, A>({
     }, [scrollTop, itemHeight]);
 
     const endIndex = useMemo(() => {
-        // const check = Math.min(
-        //     Math.min(startIndex + interval, Math.max(0, data.length - 1)),
-        //     scrollTop + windowHeight === 0 ? 0 : Math.ceil((scrollTop + windowHeight) / itemHeight),
-        // );
-        // return check;
-        return Math.min(startIndex + interval, Math.max(0, data.length - 1));
-    }, [scrollTop, data, windowHeight, itemHeight, startIndex, interval]);
+        const check = Math.min(startIndex + interval, Math.max(0, data.length - 1));
+        if (!mobileFluid) return check;
+        return Math.min(
+            check,
+            scrollTop + windowHeight === 0 ? 0 : Math.ceil((scrollTop + windowHeight) / itemHeight),
+        );
+    }, [scrollTop, data, windowHeight, itemHeight, startIndex, interval, mobileFluid]);
 
     // const prevStart = usePrevious(startIndex);
     const prevEnd = usePrevious(endIndex);
@@ -208,15 +210,6 @@ const GodList = <T, B, A>({
         }
     }, [coreRef, _onScroll]);
 
-    const containerStyle = useMemo(() => {
-        return {
-            ...styles.container,
-            ...(border && styles.border),
-            ...(horizontal && styles.horizontal),
-            ...style,
-        };
-    }, [border, horizontal, style]);
-
     const Loading = useCallback(
         () =>
             loading ? (
@@ -243,42 +236,42 @@ const GodList = <T, B, A>({
     const [uno, uno_i, uno_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 0) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 4 && checker !== -1;
+        const visible = checker < 3 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [dos, dos_i, dos_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 1) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 4 && checker !== -1;
+        const visible = checker < 3 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [tres, tres_i, tres_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 2) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 4 && checker !== -1;
+        const visible = checker < 3 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [qu, qu_i, qu_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 3) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 4 && checker !== -1;
+        const visible = checker < 3 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [cin, cin_i, cin_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 4) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 4 && checker !== -1;
+        const visible = checker < 3 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [sei, sei_i, sei_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 5) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 4 && checker !== -1;
+        const visible = checker < 3 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
@@ -295,7 +288,10 @@ const GodList = <T, B, A>({
                 id={`${id || 0}God`}
                 ref={windowRef}
                 style={{
-                    ...containerStyle,
+                    ...styles.container,
+                    ...(border && styles.border),
+                    ...(horizontal && styles.horizontal),
+                    ...style,
                     ...(!disableScroll ? { overflow: 'scroll' } : { overflow: undefined }),
                     justifySelf: 'flex-start',
                 }}
@@ -451,7 +447,7 @@ const GodList = <T, B, A>({
                         />
                     </div>
                 </div>
-                <Loading />
+                {loading && <Loading />}
 
                 {endGap && endGap !== 0 && <div style={{ width: '100%', marginTop: endGap }} />}
             </div>

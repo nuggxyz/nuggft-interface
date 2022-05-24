@@ -103,6 +103,25 @@ svg:has(.DN) {
     stroke-width: var(--dotnugg-stroke-width);
 }
 
+/* .concave {
+    border-radius: 50px;
+    background: linear-gradient(145deg, #cacacaaa, #f0f0f0aa);
+    box-shadow: inset 20px 20px 60px #bebebeaa, inset -20px -20px 60px #ffffffaa;
+} */
+
+/* .concave:before {
+    content: '';
+    position: absolute;
+    top: 1%;
+    left: 5%;
+    width: 90%;
+    height: 90%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 0px, #ffffff, rgba(255, 255, 255, 0) 58%);
+    filter: blur(5px);
+    z-index: 2;
+} */
+
 #root {
     /* background: radial-gradient(
         50% 50% at 50% 50%,
@@ -114,12 +133,12 @@ svg:has(.DN) {
     width: 100%;
     /* border-radius: 0.85rem; */
     overflow: hidden;
-    background: radial-gradient(
+    /* background: radial-gradient(
             153.32% 100% at 47.26% 0%,
             rgb(80, 144, 234, 0.15) 0%,
             rgba(80, 144, 234, 0.06) 1000%
         ),
-        #ffffff;
+        #ffffff; */
 }
 
 * {

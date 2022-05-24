@@ -8,42 +8,73 @@ const useStore = create(
     persist(
         combine(
             {
-                page: Page.Close,
+                page: Page.Start,
+                open: true,
+                height: 300 as number | null,
                 visits: {
                     [Page.Start]: false,
                     [Page.Welcome]: false,
                     [Page.TableOfContents]: false,
-                    [Page.Close]: false,
+                    // [Page.Close]: false,
                     [Page.WhatIsAWallet]: false,
                     [Page.WhatIsAnNFT]: false,
                     [Page.WhatIsDefi]: false,
                 } as { [i in Page]: boolean },
             },
-            (set) => {
-                const setVisit = (p: Page) => {
+            (set, get) => {
+                const visit = (p: Page) => {
                     // @ts-ignore
                     set((draft) => {
                         draft.visits[p] = true;
                     });
                 };
 
-                const closeNuggBook = () => {
+                const toggle = (page?: Page) => {
+                    const { open } = get();
+
                     set(() => {
                         return {
-                            page: Page.Close,
+                            ...(page && { page }),
+
+                            open: !open,
+                            height: null,
                         };
                     });
                 };
 
-                const openNuggBook = (page: Page) => {
+                const goto = (page?: Page) => {
                     set(() => {
                         return {
-                            page,
+                            ...(page && { page }),
+                            height: null,
                         };
                     });
                 };
 
-                return { closeNuggBook, openNuggBook, setVisit };
+                const gotoHeight = (page?: Page, height?: number) => {
+                    set(() => {
+                        return {
+                            ...(page && { page }),
+                            ...(height && { height }),
+                        };
+                    });
+                };
+
+                const gotoOpen = (page?: Page) => {
+                    const { open } = get();
+
+                    if (!open) toggle();
+
+                    goto(page);
+                };
+
+                const close = () => {
+                    const { open } = get();
+
+                    if (open) toggle();
+                };
+
+                return { goto, visit, toggle, gotoOpen, close, gotoHeight };
             },
         ),
         { name: 'nugg.xyz-nuggbook' },
@@ -54,10 +85,17 @@ export type NuggBookState = ReturnType<typeof useStore['getState']>;
 
 export default {
     useNuggBookPage: () => useStore((state) => state.page),
-    useOpenNuggBook: () => useStore((state) => state.openNuggBook),
+    useOpenNuggBook: () => useStore((state) => state.goto),
     useVisits: () => useStore((state) => state.visits),
-    useSetVisit: () => useStore((state) => state.setVisit),
+    useSetVisit: () => useStore((state) => state.visit),
+    useOpen: () => useStore((state) => state.open),
+    useGotoHeight: () => useStore((state) => state.gotoHeight),
 
-    useCloseNuggBook: () => useStore((state) => state.closeNuggBook),
+    useGotoOpen: () => useStore((state) => state.gotoOpen),
+    useToggle: () => useStore((state) => state.toggle),
+    useHeight: () => useStore((state) => state.height),
+
+    useGoto: () => useStore((state) => state.goto),
+    useCloseNuggBook: () => useStore((state) => state.close),
     ...useStore,
 };

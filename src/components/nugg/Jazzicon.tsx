@@ -15,6 +15,8 @@ const Jazzicon: FC<{
         const { current } = ref;
         if (current && address) {
             const jazzman = jazziconer(size, parseInt(address.slice(2, 10), 16));
+
+            if (className) jazzman.classList.add(className);
             current.appendChild(jazzman);
 
             return () => {

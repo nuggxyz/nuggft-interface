@@ -27,6 +27,7 @@ const ListItem = ({
                 justifyContent: 'space-between',
                 width: '100%',
                 padding: '.7rem',
+                background: 'transparent',
             }}
             onClick={onClick}
             rightIcon={
@@ -70,7 +71,7 @@ const ListItem = ({
 };
 
 const ListItemGroup = ({
-    header,
+    // header,
     items,
     setPage,
 }: {
@@ -89,11 +90,11 @@ const ListItemGroup = ({
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'start',
-                width: '100%',
+                width: '90%',
                 marginTop: '1rem',
             }}
         >
-            <Text size="large">{header}</Text>
+            {/* <Text size="large">{header}</Text> */}
             {items.map((x, index) => (
                 <ListItem
                     key={`${id}-${index}`}
@@ -129,6 +130,10 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
         },
         {
             header: 'set up a wallet',
+            page: Page.SetUpAWallet,
+        },
+        {
+            header: 'helping us test?',
             page: Page.SetUpAWallet,
         },
     ];

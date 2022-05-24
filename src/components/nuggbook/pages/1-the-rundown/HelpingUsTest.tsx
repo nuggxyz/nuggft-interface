@@ -87,7 +87,7 @@ const PeerButton = React.memo<{
     (prev, curr) => prev.peer === curr.peer && prev.text === curr.text && prev.color === curr.color,
 );
 
-const SetUpAWallet: NuggBookPage = ({ setPage }) => {
+const HelpingUsTest: NuggBookPage = ({ setPage }) => {
     return (
         <div
             style={{
@@ -252,7 +252,6 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                             background: lib.colors.orange,
                             color: 'white',
                             fontSize: '16px',
-
                             borderRadius: lib.layout.borderRadius.large,
                             ...lib.layout.presets.font.main.semibold,
                         }}
@@ -267,7 +266,6 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                         borderRadius: lib.layout.borderRadius.medium,
                         // border: `${lib.colors.primaryColor} solid 3px`,
                         boxShadow: lib.layout.boxShadow.basic,
-                        background: lib.colors.transparentWhite,
                     }}
                 >
                     <Text
@@ -336,7 +334,6 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                         borderRadius: lib.layout.borderRadius.medium,
                         // border: `${lib.colors.primaryColor} solid 3px`,
                         boxShadow: lib.layout.boxShadow.basic,
-                        background: lib.colors.transparentWhite,
                     }}
                 >
                     <div
@@ -395,7 +392,6 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
                         borderRadius: lib.layout.borderRadius.medium,
                         // border: `${lib.colors.primaryColor} solid 3px`,
                         boxShadow: lib.layout.boxShadow.basic,
-                        background: lib.colors.transparentWhite,
                     }}
                 >
                     <div
@@ -532,4 +528,4 @@ const SetUpAWallet: NuggBookPage = ({ setPage }) => {
     );
 };
 
-export default SetUpAWallet;
+export default HelpingUsTest;
