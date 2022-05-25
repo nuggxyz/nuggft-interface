@@ -19,22 +19,37 @@ import client from '@src/client';
 import PageWrapper2 from '@src/components/nuggbook/PageWrapper2';
 import { Page } from '@src/interfaces/nuggbook';
 
-// const useOpacitate = <Props extends UseSpringProps>(
-//     arg: boolean | undefined,
-//     props?: Props,
-//     extraDeps?: DependencyList,
-// ) => {
-//     const [check] = useSpring<Props>(
-//         {
-//             opacity: arg ? 1 : 0,
-//             pointerEvents: arg ? 'none' : 'auto',
-//             ...props,
-//         },
-//         [arg, ...(extraDeps ?? [])],
-//     );
+const useOpacitate = (arg: boolean | undefined) => {
+    const [exit, exitToAnimate] = React.useMemo(() => {
+        const opacity = arg ? 1 : 0;
 
-//     return check;
-// };
+        const pointerEvents = opacity === 0 ? ('all' as const) : ('auto' as const);
+
+        const zIndex = opacity === 0 ? { zIndex: -1 } : {};
+
+        return [
+            {
+                pointerEvents,
+                ...zIndex,
+            },
+            {
+                opacity,
+            },
+        ];
+    }, [arg]);
+
+    const [exitAnimated] = useSpring(() => {
+        return {
+            ...exitToAnimate,
+            config: packages.spring.config.stiff,
+        };
+    }, [exitToAnimate]);
+
+    return {
+        ...exit,
+        ...exitAnimated,
+    };
+};
 
 const NavigationBarMobile: FC<unknown> = () => {
     const navigate = useNavigate();
@@ -76,129 +91,34 @@ const NavigationBarMobile: FC<unknown> = () => {
        search
     //////////////////////////////////////////////////////////////////////// */
 
-    const [searchExit, searchExitToAnimate] = React.useMemo(() => {
-        const opacity = isFull && !nuggbookOpen ? 1 : 0;
-
-        const pointerEvents = opacity === 0 ? ('all' as const) : ('auto' as const);
-
-        const zIndex = opacity === 0 ? { zIndex: -1 } : {};
-
-        return [
-            {
-                pointerEvents,
-                ...zIndex,
-            },
-            {
-                opacity,
-            },
-        ];
-    }, [nuggbookOpen, isFull]);
-
-    const [searchExitAnimated] = useSpring(() => {
-        return {
-            ...searchExitToAnimate,
-            config: packages.spring.config.stiff,
-        };
-    }, [searchExitToAnimate]);
+    const searchOpacitate = useOpacitate(
+        React.useMemo(() => isFull && !nuggbookOpen, [isFull, nuggbookOpen]),
+    );
 
     /* ////////////////////////////////////////////////////////////////////////
        middle
     //////////////////////////////////////////////////////////////////////// */
 
-    const [middleExit, middleExitToAnimate] = React.useMemo(() => {
-        const opacity = isFull && !nuggbookOpen && !searchOpen ? 1 : 0;
-
-        const pointerEvents = opacity === 0 ? ('all' as const) : ('auto' as const);
-
-        const zIndex = opacity === 0 ? { zIndex: -1 } : {};
-
-        return [
-            {
-                pointerEvents,
-                ...zIndex,
-            },
-            {
-                opacity,
-            },
-        ];
-    }, [isFull, searchOpen, nuggbookOpen]);
-
-    const [middleExitAnimated] = useSpring(() => {
-        return {
-            ...middleExitToAnimate,
-            config: packages.spring.config.stiff,
-        };
-    }, [middleExitToAnimate]);
+    const middleOpacitate = useOpacitate(
+        React.useMemo(
+            () => isFull && !nuggbookOpen && !searchOpen,
+            [isFull, nuggbookOpen, searchOpen],
+        ),
+    );
 
     /* ////////////////////////////////////////////////////////////////////////
        close
     //////////////////////////////////////////////////////////////////////// */
 
-    const [closeExit, closeExitToAnimate] = React.useMemo(() => {
-        const opacity = nuggbookOpen ? 1 : 0;
-
-        const pointerEvents = opacity === 0 ? ('all' as const) : ('auto' as const);
-
-        const zIndex = opacity === 0 ? { zIndex: -1 } : {};
-
-        return [
-            {
-                pointerEvents,
-                ...zIndex,
-            },
-            {
-                opacity,
-            },
-        ];
-    }, [nuggbookOpen]);
-
-    const [closeExitAnimated] = useSpring(() => {
-        return {
-            ...closeExitToAnimate,
-            config: packages.spring.config.stiff,
-        };
-    }, [closeExitToAnimate]);
+    const closeOpacitate = useOpacitate(React.useMemo(() => nuggbookOpen, [nuggbookOpen]));
 
     /* ////////////////////////////////////////////////////////////////////////
        jazz
     //////////////////////////////////////////////////////////////////////// */
 
-    const [jazzExit, jazzExitToAnimate] = React.useMemo(() => {
-        const opacity = !searchOpen && !nuggbookOpen ? 1 : 0;
-
-        const pointerEvents = opacity === 0 ? ('all' as const) : ('auto' as const);
-
-        const zIndex = opacity === 0 ? { zIndex: -1 } : {};
-
-        return [
-            {
-                pointerEvents,
-                ...zIndex,
-            },
-            {
-                opacity,
-            },
-        ];
-    }, [nuggbookOpen, searchOpen]);
-
-    const [jazzExitAnimated] = useSpring(() => {
-        return {
-            ...jazzExitToAnimate,
-            config: packages.spring.config.stiff,
-        };
-    }, [jazzExitToAnimate]);
-
-    // const [searchExit] = useSpring(
-    //     {
-    //         overflow: nuggbookOpen ? 'hidden' : 'auto',
-    //         opacity: nuggbookOpen ? 0 : 1,
-    //         width: isFull ? '75px' : '0px',
-    //         // delay: MOVE_DELAY + 200,
-    //         pointerEvents: nuggbookOpen ? ('all' as const) : ('auto' as const),
-    //         config: packages.spring.config.stiff,
-    //     },
-    //     [nuggbookOpen, isFull],
-    // );
+    const jazzOpacitate = useOpacitate(
+        React.useMemo(() => !searchOpen && !nuggbookOpen, [nuggbookOpen, searchOpen]),
+    );
 
     const [searchOpenUp] = useSpring(
         {
@@ -262,7 +182,6 @@ const NavigationBarMobile: FC<unknown> = () => {
                     marginLeft: 15,
                     ...searchOpenUp,
                     position: 'relative',
-
                     borderRadius: lib.layout.borderRadius.medium,
                     background: lib.colors.transparentWhite,
                     boxShadow: lib.layout.boxShadow.dark,
@@ -270,7 +189,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                 }}
             >
                 {/* ////////////////////////////////////////////////////////////////////////
-                    search bar
+                    search
                 //////////////////////////////////////////////////////////////////////// */}
                 <animated.div
                     className={isFull && !searchOpen ? 'mobile-pressable-div' : undefined}
@@ -280,8 +199,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         justifyContent: 'flex-start',
                         position: 'absolute',
                         ...(searchOpen ? { width: '100%', height: '100%' } : { left: 0 }),
-                        ...searchExit,
-                        ...searchExitAnimated,
+                        ...searchOpacitate,
                     }}
                 >
                     <NuggDexSearchBarMobile
@@ -292,7 +210,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                 </animated.div>
 
                 {/* ////////////////////////////////////////////////////////////////////////
-                    middle 3 icons
+                    middle
                 //////////////////////////////////////////////////////////////////////// */}
                 <animated.div
                     style={{
@@ -305,8 +223,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         justifyContent: 'center',
                         right: 0,
                         left: 0,
-                        ...middleExit,
-                        ...middleExitAnimated,
+                        ...middleOpacitate,
                     }}
                 >
                     <animated.div
@@ -314,11 +231,9 @@ const NavigationBarMobile: FC<unknown> = () => {
                             height: '100%',
                             width: '200px',
                             margin: 'none',
-                            // width: '100%',
                             display: 'flex',
                             justifyContent: 'space-around',
                             alignItems: 'center',
-                            // ...middleExit,
                         }}
                     >
                         <HealthIndicator />
@@ -349,8 +264,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         width: '100%',
                         padding: 10,
                         zIndex: 8,
-                        ...closeExit,
-                        ...closeExitAnimated,
+                        ...closeOpacitate,
                     }}
                 >
                     <Button
@@ -409,8 +323,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         padding: 12,
                         borderRadius: lib.layout.borderRadius.medium,
                         justifySelf: 'center',
-                        ...jazzExit,
-                        ...jazzExitAnimated,
+                        ...jazzOpacitate,
                     }}
                 >
                     <NoFlash
