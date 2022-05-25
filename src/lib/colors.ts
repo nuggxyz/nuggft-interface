@@ -55,7 +55,7 @@ const Colors = {
     gradient3: 'linear-gradient(-90deg, #e856d0 0%, #FF6871 100%)',
     gradient3Transparent: 'linear-gradient(-90deg, #e856d088 0%, #FF687188 100%)',
     gradient4Transparent:
-        'linear-gradient(270deg,  rgba(80, 144, 234, .34) 0%, rgb(80, 144, 234, .1) 100%)',
+        'linear-gradient(90deg,  rgba(0, 0, 0, 0.1) 0%, rgb(80, 144, 234, .1) 100%)',
 
     gradientRadialTransparent:
         'radial-gradient(50% 50% at 50% 50%, rgb(80, 144, 234, .1) 0%, rgba(80, 144, 234, .34) 100%)',

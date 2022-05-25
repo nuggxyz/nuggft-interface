@@ -36,19 +36,6 @@ const WhatIsAWallet: NuggBookPage = ({ setPage }) => {
                 }}
                 onClick={() => setPage(Page.TableOfContents)}
             />
-
-            {/* <Button
-                buttonStyle={{
-                    background: lib.colors.gradient2,
-                    color: 'white',
-                    borderRadius: lib.layout.borderRadius.large,
-                    marginBottom: '.4rem',
-                    backgroundColor: lib.colors.white,
-                    width: '13rem',
-                }}
-                label="give me the rundown"
-                onClick={() => setPage(Page.Welcome)}
-            /> */}
         </div>
     );
 };

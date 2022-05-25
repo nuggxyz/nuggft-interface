@@ -39,7 +39,7 @@ const RingAbout: FunctionComponent<Props> = ({ tokenId, visible }) => {
                         background: lib.colors.gradient,
                     }),
                 ...((swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) && {
-                    background: lib.colors.gradientRadialPurpleTransparent,
+                    background: lib.colors.gradient4Transparent,
                 }),
 
                 boxShadow: lib.layout.boxShadow.dark,
