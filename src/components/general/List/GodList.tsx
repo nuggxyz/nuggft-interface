@@ -65,6 +65,7 @@ export interface GodListProps<T, B, A> {
     offsetListRef?: boolean;
     LIST_PADDING?: number;
     mobileFluid?: boolean;
+    faded?: boolean;
 }
 
 const GodList = <T, B, A>({
@@ -88,7 +89,7 @@ const GodList = <T, B, A>({
     endGap,
     disableScroll = false,
     coreRef = null,
-
+    faded = false,
     squishFactor = 1,
     offsetListRef = false,
     screenHeight = 0,
@@ -296,6 +297,9 @@ const GodList = <T, B, A>({
                     ...style,
                     ...(!disableScroll ? { overflow: 'scroll' } : { overflow: undefined }),
                     justifySelf: 'flex-start',
+                    ...(faded && {
+                        WebkitMaskImage: 'linear-gradient(0deg, #000 95%, transparent)',
+                    }),
                 }}
                 onScroll={_onScroll}
             >

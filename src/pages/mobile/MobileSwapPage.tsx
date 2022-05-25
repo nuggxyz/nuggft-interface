@@ -48,6 +48,7 @@ const MobileSwapPage = () => {
                 LIST_PADDING={0}
                 skipSelectedCheck
                 mobileFluid
+                faded
             />
         </div>
     );

@@ -346,10 +346,8 @@ const NavigationBarMobile: FC<unknown> = () => {
                     the nuggbook
                 //////////////////////////////////////////////////////////////////////// */}
                 <animated.div
-                    // className={isFull && !searchOpen ? 'mobile-pressable-div' : undefined}
                     style={{
                         zIndex: 4,
-
                         position: 'absolute',
                         top: 0,
                         left: 0,
@@ -359,11 +357,9 @@ const NavigationBarMobile: FC<unknown> = () => {
                         height: '100%',
                         overflow: 'hidden',
                         justifyContent: 'flex-start',
-                        // ...(!isFull ? { width: '0%', overflow: 'hidden' } : {}),
-                        // ...middleExit,
+
                         WebkitMaskImage: 'linear-gradient(180deg, #000 90%, transparent)',
                         ...nuggbookFade,
-                        // ...(nuggbookOpen ? { width: '100%' } : { width: '100%' }),
                     }}
                 >
                     <PageWrapper2 />
