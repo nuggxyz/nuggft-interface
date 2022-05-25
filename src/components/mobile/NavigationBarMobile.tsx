@@ -56,7 +56,7 @@ const NavigationBarMobile: FC<unknown> = () => {
         setSearchOpen(false);
     }, [match]);
 
-    const MOVE_DELAY = 800;
+    // const MOVE_DELAY = 800;
     const nuggbookPage = client.nuggbook.useNuggBookPage();
     const toggle = client.nuggbook.useToggle();
 
@@ -64,84 +64,141 @@ const NavigationBarMobile: FC<unknown> = () => {
     const isFull = React.useDeferredValue(isFullCore);
     const searchOpen = React.useDeferredValue(searchOpenCore);
 
-    const [floaterA] = useSpring(
-        {
-            delay: isFull ? MOVE_DELAY + 200 : 0,
-            justifyContent: isFull ? 'space-between' : 'flex-end',
-            config: packages.spring.config.stiff,
-        },
-        [isFull],
-    );
-
     const [floater] = useSpring(
         {
             width: isFull ? '100%' : '0%',
-            delay: MOVE_DELAY,
             config: packages.spring.config.stiff,
         },
         [isFull],
     );
 
-    const [floaterExit] = useSpring(
-        {
-            opacity: isFull ? 1 : 0,
-            // width: isFull ? 'auto' : '0%',
-            ...(!isFull || searchOpen ? { width: '0px' } : { width: 'auto' }),
-            delay: MOVE_DELAY,
-            pointerEvents: nuggbookOpen ? ('none' as const) : ('auto' as const),
-            overflow: searchOpen || nuggbookOpen ? 'hidden' : 'auto',
+    /* ////////////////////////////////////////////////////////////////////////
+       search
+    //////////////////////////////////////////////////////////////////////// */
 
+    const [searchExit, searchExitToAnimate] = React.useMemo(() => {
+        const opacity = isFull && !nuggbookOpen ? 1 : 0;
+
+        const pointerEvents = opacity === 0 ? ('all' as const) : ('auto' as const);
+
+        const zIndex = opacity === 0 ? { zIndex: -1 } : {};
+
+        return [
+            {
+                pointerEvents,
+                ...zIndex,
+            },
+            {
+                opacity,
+            },
+        ];
+    }, [nuggbookOpen, isFull]);
+
+    const [searchExitAnimated] = useSpring(() => {
+        return {
+            ...searchExitToAnimate,
             config: packages.spring.config.stiff,
-        },
-        [isFull, searchOpen],
-    );
+        };
+    }, [searchExitToAnimate]);
 
-    const [jazziconExit] = useSpring(
-        {
-            overflow: searchOpen || nuggbookOpen ? 'hidden' : 'auto',
-            opacity: searchOpen || nuggbookOpen ? 0 : 1,
-            pointerEvents: searchOpen || nuggbookOpen ? ('none' as const) : ('auto' as const),
+    /* ////////////////////////////////////////////////////////////////////////
+       middle
+    //////////////////////////////////////////////////////////////////////// */
+
+    const [middleExit, middleExitToAnimate] = React.useMemo(() => {
+        const opacity = isFull && !nuggbookOpen && !searchOpen ? 1 : 0;
+
+        const pointerEvents = opacity === 0 ? ('all' as const) : ('auto' as const);
+
+        const zIndex = opacity === 0 ? { zIndex: -1 } : {};
+
+        return [
+            {
+                pointerEvents,
+                ...zIndex,
+            },
+            {
+                opacity,
+            },
+        ];
+    }, [isFull, searchOpen, nuggbookOpen]);
+
+    const [middleExitAnimated] = useSpring(() => {
+        return {
+            ...middleExitToAnimate,
             config: packages.spring.config.stiff,
-        },
-        [nuggbookOpen, searchOpen],
-    );
+        };
+    }, [middleExitToAnimate]);
 
-    const [searchExit] = useSpring(
-        {
-            overflow: nuggbookOpen ? 'hidden' : 'auto',
-            opacity: nuggbookOpen ? 0 : 1,
-            width: isFull ? '75px' : '0px',
-            delay: MOVE_DELAY + 200,
+    /* ////////////////////////////////////////////////////////////////////////
+       close
+    //////////////////////////////////////////////////////////////////////// */
 
-            pointerEvents: nuggbookOpen ? ('none' as const) : ('auto' as const),
+    const [closeExit, closeExitToAnimate] = React.useMemo(() => {
+        const opacity = nuggbookOpen ? 1 : 0;
+
+        const pointerEvents = opacity === 0 ? ('all' as const) : ('auto' as const);
+
+        const zIndex = opacity === 0 ? { zIndex: -1 } : {};
+
+        return [
+            {
+                pointerEvents,
+                ...zIndex,
+            },
+            {
+                opacity,
+            },
+        ];
+    }, [nuggbookOpen]);
+
+    const [closeExitAnimated] = useSpring(() => {
+        return {
+            ...closeExitToAnimate,
             config: packages.spring.config.stiff,
-        },
-        [nuggbookOpen, isFull],
-    );
+        };
+    }, [closeExitToAnimate]);
 
-    const [mainExit] = useSpring(
-        {
-            overflow: !isFull || nuggbookOpen || searchOpen ? 'hidden' : 'auto',
-            opacity: !isFull || nuggbookOpen || searchOpen ? 0 : 1,
-            pointerEvents:
-                !isFull || nuggbookOpen || searchOpen ? ('none' as const) : ('auto' as const),
-            width: !isFull || nuggbookOpen || searchOpen ? '0%' : '100%',
-            delay: MOVE_DELAY + 200,
+    /* ////////////////////////////////////////////////////////////////////////
+       jazz
+    //////////////////////////////////////////////////////////////////////// */
 
+    const [jazzExit, jazzExitToAnimate] = React.useMemo(() => {
+        const opacity = !searchOpen && !nuggbookOpen ? 1 : 0;
+
+        const pointerEvents = opacity === 0 ? ('all' as const) : ('auto' as const);
+
+        const zIndex = opacity === 0 ? { zIndex: -1 } : {};
+
+        return [
+            {
+                pointerEvents,
+                ...zIndex,
+            },
+            {
+                opacity,
+            },
+        ];
+    }, [nuggbookOpen, searchOpen]);
+
+    const [jazzExitAnimated] = useSpring(() => {
+        return {
+            ...jazzExitToAnimate,
             config: packages.spring.config.stiff,
-        },
-        [nuggbookOpen, searchOpen, isFull],
-    );
+        };
+    }, [jazzExitToAnimate]);
 
-    const [closeNuggbookEnter] = useSpring(
-        {
-            overflow: !nuggbookOpen ? 'hidden' : 'auto',
-            opacity: !nuggbookOpen ? 0 : 1,
-            pointerEvents: !nuggbookOpen ? ('none' as const) : ('auto' as const),
-            config: packages.spring.config.stiff,
-        },
-        [nuggbookOpen],
-    );
+    // const [searchExit] = useSpring(
+    //     {
+    //         overflow: nuggbookOpen ? 'hidden' : 'auto',
+    //         opacity: nuggbookOpen ? 0 : 1,
+    //         width: isFull ? '75px' : '0px',
+    //         // delay: MOVE_DELAY + 200,
+    //         pointerEvents: nuggbookOpen ? ('all' as const) : ('auto' as const),
+    //         config: packages.spring.config.stiff,
+    //     },
+    //     [nuggbookOpen, isFull],
+    // );
 
     const [searchOpenUp] = useSpring(
         {
@@ -188,16 +245,9 @@ const NavigationBarMobile: FC<unknown> = () => {
                 justifyContent: 'flex-end',
                 transition: `all 0.3s ${lib.layout.animation}`,
                 marginBottom: 15,
-                // paddingRight: 15,
-                // paddingLeft: 15,
                 pointerEvents: 'none',
             }}
-            // onClick={(event) => {
-            //     // event.preventDefault();
-            //     event.persist();
-            // }}
         >
-            {/* <div style={{position: 'absolute', }}></div> */}
             <animated.div
                 className={!isFull ? 'mobile-pressable-div' : undefined}
                 style={{
@@ -212,13 +262,11 @@ const NavigationBarMobile: FC<unknown> = () => {
                     marginLeft: 15,
                     ...searchOpenUp,
                     position: 'relative',
-                    // pointerEvents: 'painted',
-                    // paddingRight: 10,
+
                     borderRadius: lib.layout.borderRadius.medium,
                     background: lib.colors.transparentWhite,
                     boxShadow: lib.layout.boxShadow.dark,
                     ...floater,
-                    ...floaterA,
                 }}
             >
                 {/* ////////////////////////////////////////////////////////////////////////
@@ -227,20 +275,13 @@ const NavigationBarMobile: FC<unknown> = () => {
                 <animated.div
                     className={isFull && !searchOpen ? 'mobile-pressable-div' : undefined}
                     style={{
-                        zIndex: 5,
-
-                        position: 'relative',
+                        zIndex: 8,
                         display: 'flex',
-                        // width: '75px',
-                        height: '75px',
                         justifyContent: 'flex-start',
-                        // ...(!isFull ? { width: '0%', overflow: 'hidden' } : {}),
+                        position: 'absolute',
+                        ...(searchOpen ? { width: '100%', height: '100%' } : { left: 0 }),
                         ...searchExit,
-                        // ...(nuggbookOpen ? { height: '75px' } : {}),
-                        // ...floaterExit,
-                        ...(searchOpen
-                            ? { width: '100%', position: 'absolute', height: '100%' }
-                            : {}),
+                        ...searchExitAnimated,
                     }}
                 >
                     <NuggDexSearchBarMobile
@@ -256,22 +297,28 @@ const NavigationBarMobile: FC<unknown> = () => {
                 <animated.div
                     style={{
                         zIndex: 7,
-                        ...floaterExit,
-                        // ...(!isFull || searchOpen
-                        //     ? { overflow: 'hidden', opacity: 0, pointerEvents: 'none', width: 0 }
-                        //     : {}),
+                        width: '100%',
+                        position: 'absolute',
                         height: '75px',
-                        position: 'relative',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        right: 0,
+                        left: 0,
+                        ...middleExit,
+                        ...middleExitAnimated,
                     }}
                 >
                     <animated.div
                         style={{
                             height: '100%',
+                            width: '200px',
+                            margin: 'none',
                             // width: '100%',
                             display: 'flex',
                             justifyContent: 'space-around',
                             alignItems: 'center',
-                            ...mainExit,
+                            // ...middleExit,
                         }}
                     >
                         <HealthIndicator />
@@ -301,8 +348,9 @@ const NavigationBarMobile: FC<unknown> = () => {
 
                         width: '100%',
                         padding: 10,
-                        zIndex: nuggbookOpen ? 8 : 6,
-                        ...closeNuggbookEnter,
+                        zIndex: 8,
+                        ...closeExit,
+                        ...closeExitAnimated,
                     }}
                 >
                     <Button
@@ -346,20 +394,23 @@ const NavigationBarMobile: FC<unknown> = () => {
                         onClick={() => toggle()}
                     />
                 </animated.div>
+
                 {/* ////////////////////////////////////////////////////////////////////////
-                    jazzicon
+                    jazz
                 //////////////////////////////////////////////////////////////////////// */}
                 <animated.div
-                    className={isFull && !searchOpen ? 'mobile-pressable-div' : undefined}
+                    className="mobile-pressable-div"
                     style={{
-                        zIndex: 5,
-                        position: 'relative',
+                        zIndex: 8,
+                        position: 'absolute',
+                        right: 0,
                         display: 'flex',
                         alignItems: 'center',
                         padding: 12,
                         borderRadius: lib.layout.borderRadius.medium,
                         justifySelf: 'center',
-                        ...jazziconExit,
+                        ...jazzExit,
+                        ...jazzExitAnimated,
                     }}
                 >
                     <NoFlash
@@ -392,7 +443,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         overflow: 'hidden',
                         justifyContent: 'flex-start',
                         // ...(!isFull ? { width: '0%', overflow: 'hidden' } : {}),
-                        // ...floaterExit,
+                        // ...middleExit,
                         WebkitMaskImage: 'linear-gradient(180deg, #000 90%, transparent)',
                         ...nuggbookFade,
                         // ...(nuggbookOpen ? { width: '100%' } : { width: '100%' }),
