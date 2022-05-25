@@ -68,7 +68,7 @@ export interface GodListProps<T, B, A> {
 }
 
 const GodList = <T, B, A>({
-    id,
+    // id,
     data,
     RenderItem,
     loading = false,
@@ -282,10 +282,12 @@ const GodList = <T, B, A>({
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
+    const genid = React.useId();
+
     return (
         <>
             <div
-                id={`${id || 0}God`}
+                id={`${genid}wrapper`}
                 ref={windowRef}
                 style={{
                     ...styles.container,
@@ -309,7 +311,7 @@ const GodList = <T, B, A>({
                     }}
                 >
                     <div
-                        // key={key(0)}
+                        id={`${genid}1`}
                         style={{
                             opacity: uno ? 1 : 0,
 
@@ -329,7 +331,7 @@ const GodList = <T, B, A>({
                         />
                     </div>
                     <div
-                        // key={key(1)}
+                        id={`${genid}2`}
                         style={{
                             opacity: dos ? 1 : 0,
                             position: 'absolute',
@@ -348,7 +350,7 @@ const GodList = <T, B, A>({
                         />
                     </div>
                     <div
-                        // key={key(2)}
+                        id={`${genid}3`}
                         style={{
                             opacity: tres ? 1 : 0,
 
@@ -368,7 +370,7 @@ const GodList = <T, B, A>({
                         />
                     </div>
                     <div
-                        // key={key(2)}
+                        id={`${genid}4`}
                         style={{
                             opacity: qu ? 1 : 0,
 
@@ -388,7 +390,7 @@ const GodList = <T, B, A>({
                         />
                     </div>
                     <div
-                        // key={key(2)}
+                        id={`${genid}5`}
                         style={{
                             opacity: cin ? 1 : 0,
                             position: 'absolute',
@@ -407,7 +409,7 @@ const GodList = <T, B, A>({
                         />
                     </div>
                     <div
-                        // key={key(2)}
+                        id={`${genid}6`}
                         style={{
                             opacity: sei ? 1 : 0,
 
@@ -427,7 +429,7 @@ const GodList = <T, B, A>({
                         />
                     </div>
                     <div
-                        // key={key(2)}
+                        id={`${genid}7`}
                         style={{
                             opacity: ses ? 1 : 0,
                             position: 'absolute',

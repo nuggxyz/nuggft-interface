@@ -19,11 +19,11 @@ import client from '@src/client';
 import PageWrapper2 from '@src/components/nuggbook/PageWrapper2';
 import { Page } from '@src/interfaces/nuggbook';
 
-const useOpacitate = (arg: boolean | undefined) => {
+export const useOpacitate = (arg: boolean | undefined) => {
     const [exit, exitToAnimate] = React.useMemo(() => {
         const opacity = arg ? 1 : 0;
 
-        const pointerEvents = opacity === 0 ? ('all' as const) : ('auto' as const);
+        const pointerEvents = opacity === 0 ? ('none' as const) : ('auto' as const);
 
         const zIndex = opacity === 0 ? { zIndex: -1 } : {};
 
@@ -73,7 +73,7 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     // const MOVE_DELAY = 800;
     const nuggbookPage = client.nuggbook.useNuggBookPage();
-    const toggle = client.nuggbook.useToggle();
+    const close = client.nuggbook.useCloseNuggBook();
 
     const nuggbookOpen = React.useDeferredValue(client.nuggbook.useOpen());
     const isFull = React.useDeferredValue(isFullCore);
@@ -262,7 +262,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         justifyContent: 'space-between',
 
                         width: '100%',
-                        padding: 10,
+                        padding: 20,
                         zIndex: 8,
                         ...closeOpacitate,
                     }}
@@ -285,7 +285,9 @@ const NavigationBarMobile: FC<unknown> = () => {
                                 size={20}
                             />
                         }
-                        onClick={() => toggle()}
+                        onClick={() => {
+                            close();
+                        }}
                     />
                     <Button
                         className="mobile-pressable-div"
@@ -305,7 +307,9 @@ const NavigationBarMobile: FC<unknown> = () => {
                                 size={20}
                             />
                         }
-                        onClick={() => toggle()}
+                        onClick={() => {
+                            close();
+                        }}
                     />
                 </animated.div>
 

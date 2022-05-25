@@ -1,22 +1,29 @@
 import React from 'react';
 
-import SwapCard from '@src/components/mobile/SwapCard';
 import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
 import GodList from '@src/components/general/List/GodList';
+import usePrevious from '@src/hooks/usePrevious';
+import MobileRingAbout from '@src/components/mobile/MobileRingAbout';
 
-const SwapView = () => {
+const MobileSwapPage = () => {
     const sortedAll = useSortedSwapList();
 
-    // React.useEffect(() => {
-    //     setTimeout(() => {
-    //         setRest(true);
-    //     }, 3000);
-    // }, []);
+    const prevSortedAll = usePrevious(sortedAll);
 
-    // console.log({ sortedAll });
+    const [dat, setDat] = React.useState(
+        [sortedAll.current, sortedAll.next, sortedAll.potential].flat(),
+    );
 
-    // const { height } = useDimensions();
-    // console.log({ sortedAll });
+    React.useEffect(() => {
+        if (
+            !prevSortedAll ||
+            sortedAll.current !== prevSortedAll.current ||
+            sortedAll.next !== prevSortedAll.next ||
+            sortedAll.potential !== prevSortedAll.potential
+        ) {
+            setDat([sortedAll.current, sortedAll.next, sortedAll.potential].flat());
+        }
+    }, [sortedAll, prevSortedAll]);
 
     return (
         <div
@@ -25,7 +32,6 @@ const SwapView = () => {
                 flexDirection: 'column',
                 height: '100%',
                 width: '100%',
-                // marginTop: '20px',
                 marginBottom: '500px',
                 alignItems: 'center',
                 justifyContent: 'flex-start',
@@ -34,36 +40,17 @@ const SwapView = () => {
                 zIndex: 0,
             }}
         >
-            {/* <div style={{ marginTop: '100px' }} /> */}
-            {/* <SwapCard
-                tokenId={sortedAll.current[0]}
-                key={`SwapCard-Current-${sortedAll.current[0]}`}
-            /> */}
-
             <GodList
-                RenderItem={SwapCard}
-                data={[sortedAll.current, sortedAll.next, sortedAll.potential].flat()}
+                RenderItem={MobileRingAbout}
+                data={dat}
                 extraData={undefined}
                 itemHeight={475}
-                // startGap={75}
-                // screenHeight={height}
                 LIST_PADDING={0}
                 skipSelectedCheck
+                mobileFluid
             />
-
-            {/* {sortedAll.current.map((x) => (
-                <SwapCard tokenId={x} key={`SwapCard-Current-${x}`} />
-            ))}
-
-            {sortedAll.next.map((x) => (
-                <SwapCard tokenId={x} key={`SwapCard-Next-${x}`} />
-            ))} */}
-
-            {/* {sortedAll.potential.map((x) => (
-                <SwapCard tokenId={x} key={`SwapCard-Potential-${x}`} />
-            ))} */}
         </div>
     );
 };
 
-export default SwapView;
+export default MobileSwapPage;

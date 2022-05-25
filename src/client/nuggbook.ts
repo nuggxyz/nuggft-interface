@@ -57,6 +57,8 @@ const useStore = create(
                         page = Page.TableOfContents;
                     }
 
+                    console.log(open, pager);
+
                     set(() => {
                         return {
                             ...(page && { page }),

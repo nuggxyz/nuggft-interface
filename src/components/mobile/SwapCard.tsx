@@ -1,15 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router';
 
-import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
-
-import MobileRingAbout from './MobileRingAbout';
 
 const SwapCard = ({
     item: tokenId,
-    visible,
-}: GodListRenderItemProps<TokenId, undefined, undefined>) => {
-    const { goto } = useMobileViewingNugg();
+}: // visible,
+GodListRenderItemProps<TokenId, undefined, undefined>) => {
+    const navigate = useNavigate();
 
     // const [, startTransition] = React.useTransition();
 
@@ -30,10 +28,10 @@ const SwapCard = ({
             }}
             onClick={(event) => {
                 event.stopPropagation();
-                goto(tokenId);
+                navigate(`/swap/${tokenId}`);
             }}
         >
-            <MobileRingAbout tokenId={tokenId} visible={!!visible} />
+            {/* <MobileRingAbout tokenId={tokenId} visible={!!visible} /> */}
         </div>
     );
 };

@@ -44,7 +44,11 @@ const Start: NuggBookPage = ({ setPage, close }) => {
 
                         // width: '5rem',
                     }}
-                    onClick={() => close()}
+                    onClick={() => {
+                        console.log('CALLING CLOSE ON START PAGE');
+
+                        close();
+                    }}
                 />
             </div>
 
