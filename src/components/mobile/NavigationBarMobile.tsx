@@ -17,6 +17,8 @@ import client from '@src/client';
 import PageWrapper2 from '@src/components/nuggbook/PageWrapper2';
 import { Page } from '@src/interfaces/nuggbook';
 import Jazzicon from '@src/components/nugg/Jazzicon';
+import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
+import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
 
 export const useOpacitate = (arg: boolean | undefined) => {
     const [exit, exitToAnimate] = React.useMemo(() => {
@@ -56,6 +58,7 @@ const NavigationBarMobile: FC<unknown> = () => {
     const address = web3.hook.usePriorityAccount();
 
     const [searchOpenCore, setSearchOpen] = React.useState<boolean>(false);
+    const [walletOpenCore, setWalletOpen] = React.useState<boolean>(false);
 
     const [manualMatch, setManualMatch] = React.useState<boolean>(false);
 
@@ -64,10 +67,13 @@ const NavigationBarMobile: FC<unknown> = () => {
     // const MOVE_DELAY = 800;
     const nuggbookPage = client.nuggbook.useNuggBookPage();
     const close = client.nuggbook.useCloseNuggBook();
+    const setCurrencyPreference = client.usd.useSetCurrencyPreferrence();
+    const currencyPreferrence = client.usd.useCurrencyPreferrence();
 
     const nuggbookOpen = React.useDeferredValue(client.nuggbook.useOpen());
     const isFull = React.useDeferredValue(manualMatch);
     const searchOpen = React.useDeferredValue(searchOpenCore);
+    const walletOpen = React.useDeferredValue(walletOpenCore);
 
     const [floater] = useSpring(
         {
@@ -82,7 +88,10 @@ const NavigationBarMobile: FC<unknown> = () => {
     //////////////////////////////////////////////////////////////////////// */
 
     const searchOpacitate = useOpacitate(
-        React.useMemo(() => isFull && !nuggbookOpen, [isFull, nuggbookOpen]),
+        React.useMemo(
+            () => isFull && !nuggbookOpen && !walletOpen,
+            [isFull, nuggbookOpen, walletOpen],
+        ),
     );
 
     /* ////////////////////////////////////////////////////////////////////////
@@ -91,8 +100,8 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const middleOpacitate = useOpacitate(
         React.useMemo(
-            () => isFull && !nuggbookOpen && !searchOpen,
-            [isFull, nuggbookOpen, searchOpen],
+            () => isFull && !nuggbookOpen && !searchOpen && !walletOpen,
+            [isFull, nuggbookOpen, searchOpen, walletOpen],
         ),
     );
 
@@ -115,23 +124,33 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const [searchOpenUp] = useSpring(
         {
-            height: searchOpen
-                ? '450px'
-                : nuggbookOpen
-                ? nuggbookPage === Page.Start
-                    ? '250px'
-                    : '600px'
-                : '75px',
+            height:
+                searchOpen || walletOpen
+                    ? '450px'
+                    : nuggbookOpen
+                    ? nuggbookPage === Page.Start
+                        ? '250px'
+                        : '600px'
+                    : '75px',
 
             config: packages.spring.config.stiff,
         },
-        [searchOpen, nuggbookOpen, nuggbookPage],
+        [searchOpen, nuggbookOpen, nuggbookPage, walletOpen],
     );
+
+    const walletOpacitate = useOpacitate(walletOpen);
+
+    // const [walletOpenUp] = useSpring(
+    //     {
+    //         height: walletOpen ? '450px' : '0px',
+    //         config: packages.spring.config.stiff,
+    //     },
+    //     [walletOpen],
+    // );
 
     const [nuggbookFade] = useSpring(
         {
             opacity: nuggbookOpen ? 1 : 0,
-
             config: packages.spring.config.stiff,
         },
         [nuggbookOpen],
@@ -142,7 +161,6 @@ const NavigationBarMobile: FC<unknown> = () => {
     useOnTapOutside(
         ref,
         React.useCallback(() => {
-            console.log('YEP');
             if (nuggbookOpen) close();
             else if (searchOpen) setSearchOpen(false);
             else if (manualMatch) setManualMatch(false);
@@ -315,7 +333,6 @@ const NavigationBarMobile: FC<unknown> = () => {
                     jazz
                 //////////////////////////////////////////////////////////////////////// */}
                 <animated.div
-                    // className="mobile-pressable-div"
                     style={{
                         zIndex: 8,
                         position: 'absolute',
@@ -333,14 +350,13 @@ const NavigationBarMobile: FC<unknown> = () => {
                 >
                     <HomeButton
                         onClick={React.useCallback(() => {
-                            console.log('ahhhhhhhhh');
-
                             if (nuggbookOpen) close();
+                            else if (walletOpen) setWalletOpen(false);
+                            else if (searchOpen) setSearchOpen(false);
                             else {
-                                console.log('yeppers');
                                 setManualMatch(!manualMatch);
                             }
-                        }, [manualMatch, nuggbookOpen, close])}
+                        }, [manualMatch, nuggbookOpen, close, searchOpen, walletOpen])}
                         isFull={isFull}
                     />
                 </animated.div>
@@ -367,7 +383,29 @@ const NavigationBarMobile: FC<unknown> = () => {
                 >
                     <PageWrapper2 />
                 </animated.div>
+
+                {/* ////////////////////////////////////////////////////////////////////////
+                    wallet
+                //////////////////////////////////////////////////////////////////////// */}
+                <animated.div
+                    style={{
+                        zIndex: 4,
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        display: 'flex',
+                        // height: '100%',
+                        width: '100%',
+                        justifyContent: 'flex-start',
+                        overflow: 'scroll',
+                        WebkitMaskImage: 'linear-gradient(180deg, #000 90%, transparent)',
+                        ...walletOpacitate,
+                    }}
+                >
+                    <ConnectTab />
+                </animated.div>
             </animated.div>
+
             {/* ////////////////////////////////////////////////////////////////////////
                     account
                 //////////////////////////////////////////////////////////////////////// */}
@@ -388,7 +426,39 @@ const NavigationBarMobile: FC<unknown> = () => {
                     ...searchOpacitate,
                 }}
             >
-                <NoFlash2 address={address} isFull={isFull} />
+                <NoFlash2
+                    address={address}
+                    onClick={React.useCallback(() => {
+                        if (address) navigate('/wallet');
+                        else setWalletOpen(true);
+                    }, [address, navigate])}
+                />
+            </animated.div>
+
+            {/* ////////////////////////////////////////////////////////////////////////
+                    currency toggler
+                //////////////////////////////////////////////////////////////////////// */}
+            <animated.div
+                // className="mobile-pressable-div"
+                style={{
+                    zIndex: 10,
+                    position: 'absolute',
+                    left: 15,
+                    top: -100,
+                    display: 'flex',
+                    alignItems: 'center',
+                    borderRadius: lib.layout.borderRadius.medium,
+                    justifySelf: 'center',
+                    ...searchOpacitate,
+                }}
+            >
+                <CurrencyToggler
+                    setPref={(input) => {
+                        setCurrencyPreference(input);
+                        return undefined;
+                    }}
+                    pref={currencyPreferrence}
+                />
             </animated.div>
 
             {/* ////////////////////////////////////////////////////////////////////////
@@ -435,7 +505,7 @@ const NavigationBarMobile: FC<unknown> = () => {
             </animated.div>
 
             {/* ////////////////////////////////////////////////////////////////////////
-                    home button
+                    home-back button
                 //////////////////////////////////////////////////////////////////////// */}
             <animated.div
                 style={{
@@ -482,10 +552,9 @@ const NavigationBarMobile: FC<unknown> = () => {
 
 export const NoFlash2 = React.memo<{
     address?: string;
-    isFull: boolean;
-    // onClick: (full: boolean) => void;
+    onClick: (full: boolean) => void;
 }>(
-    ({ address }) => {
+    ({ address, onClick }) => {
         const provider = web3.hook.usePriorityProvider();
         const ens = web3.hook.usePriorityAnyENSName(provider, address || '');
         return (
@@ -524,11 +593,13 @@ export const NoFlash2 = React.memo<{
                         )}
                     </div>
                 }
-                onClick={() => {}}
+                onClick={() => {
+                    onClick(true);
+                }}
             />
         );
     },
-    (a, b) => a.address === b.address && a.isFull === b.isFull,
+    (a, b) => a.address === b.address && a.onClick === b.onClick,
 );
 
 export const NoFlash = React.memo<{
@@ -629,7 +700,6 @@ export const HomeButton = React.memo<{
                 onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
-                    console.log('yo');
                     onClick(isFull);
                 }}
             />

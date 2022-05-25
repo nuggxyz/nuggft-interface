@@ -20,28 +20,6 @@ import MyNuggItemListPhone from './MyNuggItemMobile';
 
 type Props = Record<string, never>;
 
-// const TryoutRenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, undefined>> = ({
-//     item,
-// }) => {
-//     return (
-//         <div
-//             style={{
-//                 borderRadius: lib.layout.borderRadius.medium,
-//                 transition: '.2s background ease',
-//                 // background: selected ? lib.colors.transparentGrey2 : lib.colors.transparent,
-//                 padding: '10px',
-//             }}
-//             aria-hidden="true"
-//         >
-//             <TokenViewer
-//                 tokenId={item.tokenId}
-//                 style={{ width: '60px', height: '60px' }}
-//                 disableOnClick
-//             />
-//         </div>
-//     );
-// };
-
 const MobileConnectTab = () => {
     return (
         <div style={{ width: '100%', height: '100%', overflow: 'scroll', padding: 10 }}>
@@ -79,22 +57,14 @@ const MobileWallet: FunctionComponent<Props> = () => {
     const chainId = web3.hook.usePriorityChainId();
     const peer = web3.hook.usePriorityPeer();
 
-    // const stake__eps = client.live.stake.eps();
     const nuggs = client.live.myNuggs();
 
     const loans = client.live.myLoans();
     const unclaimedOffers = client.live.myUnclaimedOffers();
 
-    // const [pendingClaimsOpen, setPendingClaimsOpen] = React.useState(false);
     const [loansOpen, setLoansOpen] = React.useState(false);
 
     const ens = web3.hook.usePriorityENSName(provider);
-
-    // const nuggft = useNuggftV1(provider);
-
-    // const args = useMultiClaimArgs();
-
-    // const { send } = usePrioritySendTransaction();
 
     const setCurrencyPreference = client.usd.useSetCurrencyPreferrence();
     const currencyPreferrence = client.usd.useCurrencyPreferrence();
