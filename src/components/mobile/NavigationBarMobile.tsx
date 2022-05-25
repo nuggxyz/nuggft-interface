@@ -1,13 +1,12 @@
 import React, { FC } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import { useNavigate } from 'react-router-dom';
-import { IoQrCode } from 'react-icons/io5';
 import { IoIosCloseCircle, IoIosMenu } from 'react-icons/io';
+import { IoQrCode } from 'react-icons/io5';
 
 import InfoClicker from '@src/components/nuggbook/InfoClicker';
 import lib from '@src/lib';
 import web3 from '@src/web3';
-import Jazzicon from '@src/components/nugg/Jazzicon';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import NuggDexSearchBarMobile from '@src/components/mobile/NuggDexSearchBarMobile';
 import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
@@ -18,6 +17,7 @@ import packages from '@src/packages';
 import client from '@src/client';
 import PageWrapper2 from '@src/components/nuggbook/PageWrapper2';
 import { Page } from '@src/interfaces/nuggbook';
+import Jazzicon from '@src/components/nugg/Jazzicon';
 
 export const useOpacitate = (arg: boolean | undefined) => {
     const [exit, exitToAnimate] = React.useMemo(() => {
@@ -172,7 +172,7 @@ const NavigationBarMobile: FC<unknown> = () => {
             }}
         >
             <animated.div
-                className={!isFull ? 'mobile-pressable-div' : undefined}
+                // className={!isFull ? 'mobile-pressable-div' : undefined}
                 style={{
                     zIndex: 3,
 
@@ -188,6 +188,8 @@ const NavigationBarMobile: FC<unknown> = () => {
                     borderRadius: lib.layout.borderRadius.medium,
                     background: lib.colors.transparentWhite,
                     boxShadow: lib.layout.boxShadow.dark,
+                    overflow: 'hidden',
+
                     ...floater,
                 }}
             >
@@ -320,20 +322,22 @@ const NavigationBarMobile: FC<unknown> = () => {
                     jazz
                 //////////////////////////////////////////////////////////////////////// */}
                 <animated.div
-                    className="mobile-pressable-div"
+                    // className="mobile-pressable-div"
                     style={{
                         zIndex: 8,
                         position: 'absolute',
                         right: 0,
                         display: 'flex',
                         alignItems: 'center',
-                        padding: 12,
+                        // padding: 12,
+                        height: '75px',
+                        width: '75px',
                         borderRadius: lib.layout.borderRadius.medium,
                         justifySelf: 'center',
                         ...jazzOpacitate,
                     }}
                 >
-                    <NoFlash
+                    <HomeButton
                         address={address}
                         onClick={(full: boolean) => {
                             if (full) navigate('/wallet');
@@ -371,31 +375,101 @@ const NavigationBarMobile: FC<unknown> = () => {
         </animated.div>
     );
 };
-
-const NoFlash = React.memo<{ address?: string; isFull: boolean; onClick: (full: boolean) => void }>(
+export const NoFlash = React.memo<{
+    address?: string;
+    isFull: boolean;
+    onClick: (full: boolean) => void;
+}>(
     ({ address, onClick, isFull }) => {
         return (
             <Button
                 rightIcon={
-                    <div style={{ position: 'relative' }}>
-                        <div>
-                            {address ? (
-                                <Jazzicon address={address || ''} size={50} className="concave" />
-                            ) : (
-                                <IoQrCode
-                                    style={{
-                                        color: lib.colors.semiTransparentPrimaryColor,
-                                    }}
-                                    size={50}
-                                />
-                            )}
-                        </div>
+                    <div
+                        className="mobile-pressable-div-deep"
+                        style={{
+                            height: 55,
+                            width: 55,
+                            position: 'relative',
+                            justifyContent: 'center',
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}
+                    >
+                        {address ? (
+                            <Jazzicon address={address || ''} size={50} className="" />
+                        ) : (
+                            <IoQrCode
+                                style={{
+                                    color: lib.colors.semiTransparentPrimaryColor,
+                                }}
+                                size={50}
+                            />
+                        )}
                     </div>
                 }
                 buttonStyle={{
+                    width: '100%',
+                    height: '100%',
+                    justifyContent: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+
                     padding: 0,
                     background: 'transparent',
                     borderRadius: lib.layout.borderRadius.large,
+                }}
+                onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onClick(isFull);
+                }}
+            />
+        );
+    },
+    (a, b) => a.address === b.address && a.isFull === b.isFull,
+);
+
+export const HomeButton = React.memo<{
+    address?: string;
+    isFull: boolean;
+    onClick: (full: boolean) => void;
+}>(
+    ({ onClick, isFull }) => {
+        return (
+            <Button
+                rightIcon={
+                    <div
+                        className="concave mobile-pressable-div-deep"
+                        style={{
+                            height: 55,
+                            width: 55,
+                            position: 'relative',
+                            justifyContent: 'center',
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <div
+                            style={{
+                                border: `2px solid ${lib.colors.transparentPrimaryColor}`,
+                                height: 18,
+                                width: 18,
+
+                                borderRadius: '5px',
+                            }}
+                        />
+                    </div>
+                }
+                buttonStyle={{
+                    width: '100%',
+                    height: '100%',
+                    justifyContent: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: 0,
+                    background: 'transparent',
+                    borderRadius: !isFull ? lib.layout.borderRadius.medium : 0,
+                    WebkitTapHighlightColor: 'transparent',
                 }}
                 onClick={(event) => {
                     event.preventDefault();

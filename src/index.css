@@ -103,12 +103,19 @@ svg:has(.DN) {
     stroke-width: var(--dotnugg-stroke-width);
 }
 
-/* .concave {
+.concave {
+    background-color: #e0e0e0;
     border-radius: 50px;
-    background: linear-gradient(145deg, #cacacaaa, #f0f0f0aa);
-    box-shadow: inset 20px 20px 60px #bebebeaa, inset -20px -20px 60px #ffffffaa;
-} */
+    background: linear-gradient(145deg, #cacaca, #f0f0f0);
+    box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+}
+.pressed {
+    /* background-color: #e0e0e0; */
 
+    border-radius: 50px;
+    /* background: #e0e0e0; */
+    box-shadow: inset 20px 20px 60px #bebebe, inset -20px -20px 60px #ffffff;
+}
 /* .concave:before {
     content: '';
     position: absolute;
@@ -152,22 +159,27 @@ svg:has(.DN) {
 }
 
 .mobile-pressable-div {
-    /* -webkit-tap-highlight-color: transparent; */
-    /* will-change: transform; */
     -webkit-transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
     transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
+    -webkit-tap-highlight-color: transparent;
 }
-
-/* .mobile-pressable-div:hover {
-    -webkit-transform: scale(1.03);
-    -ms-transform: scale(1.03);
-    transform: scale(1.03);
-} */
 
 .mobile-pressable-div:active {
     -webkit-transform: scale(0.95);
     -ms-transform: scale(0.95);
     transform: scale(0.95);
+}
+
+.mobile-pressable-div-deep {
+    -webkit-transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
+    transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-pressable-div-deep:active {
+    -webkit-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    transform: scale(0.9);
 }
 
 @keyframes mobile-fade {
