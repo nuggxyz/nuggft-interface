@@ -13,7 +13,7 @@ import NuggDexSearchBarMobile from '@src/components/mobile/NuggDexSearchBarMobil
 import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
 import { useMatchArray } from '@src/hooks/useBlur';
 import Button from '@src/components/general/Buttons/Button/Button';
-import useOnClickOutside from '@src/hooks/useOnClickOutside';
+import { useOnTapOutside } from '@src/hooks/useOnClickOutside';
 import packages from '@src/packages';
 import client from '@src/client';
 import PageWrapper2 from '@src/components/nuggbook/PageWrapper2';
@@ -146,10 +146,13 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const ref = React.useRef(null);
 
-    useOnClickOutside(ref, () => {
-        setSearchOpen(false);
-        setManualMatch(false);
-    });
+    useOnTapOutside(
+        ref,
+        React.useCallback(() => {
+            if (searchOpen) setSearchOpen(false);
+            if (manualMatch) setManualMatch(false);
+        }, [searchOpen, manualMatch]),
+    );
 
     return (
         <animated.div
@@ -335,7 +338,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         onClick={(full: boolean) => {
                             if (full) navigate('/wallet');
                             else {
-                                navigate('/');
+                                setManualMatch(true);
                             }
                         }}
                         isFull={isFull}
