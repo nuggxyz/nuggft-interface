@@ -6,14 +6,20 @@ import TheRing from '@src/components/nugg/TheRing/TheRing';
 import Wallet from '@src/components/nugg/Wallet/Wallet';
 import useBlur from '@src/hooks/useBlur';
 import useDimensions from '@src/client/hooks/useDimensions';
+import client from '@src/client';
+import Button from '@src/components/general/Buttons/Button/Button';
+import { ModalEnum } from '@src/interfaces/modals';
+import lib from '@src/lib';
 
-import MobileSwapPage from './mobile/MobileSwapPage';
 import styles from './SwapPage.styles';
+import MobileSwapPage from './mobile/MobileSwapPage';
 
 type Props = Record<string, never>;
 
 const SwapPage: FunctionComponent<Props> = () => {
-    const { screen } = useDimensions();
+    const { screen, height } = useDimensions();
+
+    const openModal = client.modal.useOpenModal();
 
     const blur = useBlur(['/', '/swap/:id', '/live']);
 
@@ -56,6 +62,24 @@ const SwapPage: FunctionComponent<Props> = () => {
                             <div style={styles.theRingContainer}>
                                 <TheRing />
                             </div>
+                            <Button
+                                buttonStyle={{
+                                    position: 'absolute',
+                                    bottom: '1rem',
+                                    right: '1rem',
+                                }}
+                                onClick={() =>
+                                    openModal({
+                                        modalType: ModalEnum.NuggBook,
+                                        containerStyle: {
+                                            padding: '0rem',
+                                            height: height / 2,
+                                            background: lib.colors.transparentWhite,
+                                            // overflow: 'scroll',
+                                        },
+                                    })
+                                }
+                            />
                         </>
                     )}
                 </animated.div>
