@@ -19,6 +19,7 @@ import { Page } from '@src/interfaces/nuggbook';
 import Jazzicon from '@src/components/nugg/Jazzicon';
 import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
+import { ModalEnum } from '@src/interfaces/modals';
 
 export const useOpacitate = (arg: boolean | undefined) => {
     const [exit, exitToAnimate] = React.useMemo(() => {
@@ -94,34 +95,6 @@ const NavigationBarMobile: FC<unknown> = () => {
         ),
     );
 
-    /* ////////////////////////////////////////////////////////////////////////
-       middle
-    //////////////////////////////////////////////////////////////////////// */
-
-    const middleOpacitate = useOpacitate(
-        React.useMemo(
-            () => isFull && !nuggbookOpen && !searchOpen && !walletOpen,
-            [isFull, nuggbookOpen, searchOpen, walletOpen],
-        ),
-    );
-
-    /* ////////////////////////////////////////////////////////////////////////
-       close
-    //////////////////////////////////////////////////////////////////////// */
-
-    // const closeOpacitate = useOpacitate(React.useMemo(() => nuggbookOpen, [nuggbookOpen]));
-
-    /* ////////////////////////////////////////////////////////////////////////
-       jazz
-    //////////////////////////////////////////////////////////////////////// */
-
-    const backOpacitate = useOpacitate(
-        React.useMemo(
-            () => isFull && !!matchToken && !searchOpen && !nuggbookOpen,
-            [nuggbookOpen, searchOpen, matchToken, isFull],
-        ),
-    );
-
     const [searchOpenUp] = useSpring(
         {
             height:
@@ -138,15 +111,37 @@ const NavigationBarMobile: FC<unknown> = () => {
         [searchOpen, nuggbookOpen, nuggbookPage, walletOpen],
     );
 
+    /* ////////////////////////////////////////////////////////////////////////
+       middle
+    //////////////////////////////////////////////////////////////////////// */
+
+    const middleOpacitate = useOpacitate(
+        React.useMemo(
+            () => isFull && !nuggbookOpen && !searchOpen && !walletOpen,
+            [isFull, nuggbookOpen, searchOpen, walletOpen],
+        ),
+    );
+
+    /* ////////////////////////////////////////////////////////////////////////
+       jazz
+    //////////////////////////////////////////////////////////////////////// */
+
+    const backOpacitate = useOpacitate(
+        React.useMemo(
+            () => isFull && !!matchToken && !searchOpen && !nuggbookOpen,
+            [nuggbookOpen, searchOpen, matchToken, isFull],
+        ),
+    );
+
+    /* ////////////////////////////////////////////////////////////////////////
+       wallet
+    //////////////////////////////////////////////////////////////////////// */
+
     const walletOpacitate = useOpacitate(walletOpen);
 
-    // const [walletOpenUp] = useSpring(
-    //     {
-    //         height: walletOpen ? '450px' : '0px',
-    //         config: packages.spring.config.stiff,
-    //     },
-    //     [walletOpen],
-    // );
+    /* ////////////////////////////////////////////////////////////////////////
+       nuggbook
+    //////////////////////////////////////////////////////////////////////// */
 
     const [nuggbookFade] = useSpring(
         {
@@ -163,8 +158,10 @@ const NavigationBarMobile: FC<unknown> = () => {
         React.useCallback(() => {
             if (nuggbookOpen) close();
             else if (searchOpen) setSearchOpen(false);
+            else if (walletOpen) setWalletOpen(false);
+            // purposfully last - dont want to fully close the square if something is open
             else if (manualMatch) setManualMatch(false);
-        }, [searchOpen, manualMatch, nuggbookOpen, close]),
+        }, [searchOpen, manualMatch, nuggbookOpen, close, walletOpen]),
     );
 
     return (
@@ -330,7 +327,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                 </animated.div> */}
 
                 {/* ////////////////////////////////////////////////////////////////////////
-                    jazz
+                    home
                 //////////////////////////////////////////////////////////////////////// */}
                 <animated.div
                     style={{
@@ -345,7 +342,6 @@ const NavigationBarMobile: FC<unknown> = () => {
                         borderRadius: lib.layout.borderRadius.medium,
                         justifySelf: 'center',
                         pointerEvents: 'auto',
-                        // ...jazzOpacitate,
                     }}
                 >
                     <HomeButton
@@ -407,10 +403,29 @@ const NavigationBarMobile: FC<unknown> = () => {
             </animated.div>
 
             {/* ////////////////////////////////////////////////////////////////////////
+                    claims
+                //////////////////////////////////////////////////////////////////////// */}
+            <animated.div
+                style={{
+                    zIndex: 10,
+                    position: 'absolute',
+                    left: 15,
+                    top: -100,
+                    display: 'flex',
+                    alignItems: 'center',
+                    borderRadius: lib.layout.borderRadius.medium,
+                    justifySelf: 'center',
+                    ...searchOpacitate,
+                    boxShadow: lib.layout.boxShadow.dark,
+                }}
+            >
+                <NoFlashClaims address={address} />
+            </animated.div>
+
+            {/* ////////////////////////////////////////////////////////////////////////
                     account
                 //////////////////////////////////////////////////////////////////////// */}
             <animated.div
-                // className="mobile-pressable-div"
                 style={{
                     zIndex: 10,
                     position: 'absolute',
@@ -418,12 +433,10 @@ const NavigationBarMobile: FC<unknown> = () => {
                     top: -50,
                     display: 'flex',
                     alignItems: 'center',
-                    // padding: 12,
-                    // height: '75px',
-                    // width: '75px',
                     borderRadius: lib.layout.borderRadius.medium,
                     justifySelf: 'center',
                     ...searchOpacitate,
+                    boxShadow: lib.layout.boxShadow.dark,
                 }}
             >
                 <NoFlash2
@@ -443,8 +456,8 @@ const NavigationBarMobile: FC<unknown> = () => {
                 style={{
                     zIndex: 10,
                     position: 'absolute',
-                    left: 15,
-                    top: -100,
+                    right: 15,
+                    top: -50,
                     display: 'flex',
                     alignItems: 'center',
                     borderRadius: lib.layout.borderRadius.medium,
@@ -457,6 +470,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         setCurrencyPreference(input);
                         return undefined;
                     }}
+                    floaterStyle={{ boxShadow: lib.layout.boxShadow.dark }}
                     pref={currencyPreferrence}
                 />
             </animated.div>
@@ -550,6 +564,61 @@ const NavigationBarMobile: FC<unknown> = () => {
     );
 };
 
+export const NoFlashClaims = React.memo<{
+    address?: string;
+}>(
+    ({ address }) => {
+        const openModal = client.modal.useOpenModal();
+        const unclaimedOffers = client.live.myUnclaimedOffers();
+
+        return (
+            <Button
+                className="mobile-pressable-div"
+                buttonStyle={{
+                    background: lib.colors.gradient2,
+                    color: lib.colors.white,
+                    borderRadius: lib.layout.borderRadius.mediumish,
+                    alignItems: 'center',
+                    ...(address
+                        ? {
+                              opacity: 1,
+                              pointerEvents: 'auto',
+                          }
+                        : {
+                              opacity: 0,
+                              pointerEvents: 'none',
+                          }),
+                }}
+                textStyle={{ ...lib.layout.presets.font.main.thicc, fontSize: 21 }}
+                label="pending claims"
+                leftIcon={
+                    <div
+                        style={{
+                            position: 'relative',
+                            justifyContent: 'center',
+                            display: 'flex',
+                            width: 20,
+                            height: 20,
+                            alignItems: 'center',
+                            borderRadius: lib.layout.borderRadius.large,
+                            background: lib.colors.transparentWhite,
+                            ...lib.layout.presets.font.main.thicc,
+                            color: lib.colors.primaryColor,
+                            marginRight: 10,
+                        }}
+                    >
+                        <span>{unclaimedOffers.length}</span>
+                    </div>
+                }
+                onClick={() => {
+                    openModal({ modalType: ModalEnum.Claim });
+                }}
+            />
+        );
+    },
+    (a, b) => a.address === b.address,
+);
+
 export const NoFlash2 = React.memo<{
     address?: string;
     onClick: (full: boolean) => void;
@@ -568,7 +637,7 @@ export const NoFlash2 = React.memo<{
                     backdropFilter: 'blur(50px)',
                     alignItems: 'center',
                 }}
-                textStyle={{ ...lib.layout.presets.font.main.thicc }}
+                textStyle={{ ...lib.layout.presets.font.main.thicc, fontSize: 21 }}
                 label={ens || 'connect wallet'}
                 leftIcon={
                     <div
@@ -667,8 +736,8 @@ export const HomeButton = React.memo<{
                     <div
                         className="concave mobile-pressable-div-deep"
                         style={{
-                            height: 55,
-                            width: 55,
+                            height: 65,
+                            width: 65,
                             position: 'relative',
                             justifyContent: 'center',
                             display: 'flex',
