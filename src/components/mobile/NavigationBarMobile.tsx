@@ -69,6 +69,7 @@ const NavigationBarMobile: FC<unknown> = () => {
     // const MOVE_DELAY = 800;
     const nuggbookPage = client.nuggbook.useNuggBookPage();
     const close = client.nuggbook.useCloseNuggBook();
+
     const setCurrencyPreference = client.usd.useSetCurrencyPreferrence();
     const currencyPreferrence = client.usd.useCurrencyPreferrence();
 
@@ -477,6 +478,26 @@ const NavigationBarMobile: FC<unknown> = () => {
             </animated.div>
 
             {/* ////////////////////////////////////////////////////////////////////////
+                    connection health
+                //////////////////////////////////////////////////////////////////////// */}
+            <animated.div
+                // className="mobile-pressable-div"
+                style={{
+                    zIndex: 10,
+                    position: 'absolute',
+                    right: 15,
+                    top: -100,
+                    display: 'flex',
+                    alignItems: 'center',
+                    borderRadius: lib.layout.borderRadius.medium,
+                    justifySelf: 'center',
+                    ...searchOpacitate,
+                }}
+            >
+                <NoFlashStatus address={address} />
+            </animated.div>
+
+            {/* ////////////////////////////////////////////////////////////////////////
                     back button
                 //////////////////////////////////////////////////////////////////////// */}
             <animated.div
@@ -626,6 +647,38 @@ export const NoFlashClaims = React.memo<{
                 }
                 onClick={() => {
                     openModal({ modalType: ModalEnum.Claim });
+                }}
+            />
+        );
+    },
+    (a, b) => a.address === b.address,
+);
+
+export const NoFlashStatus = React.memo<{
+    address?: string;
+}>(
+    () => {
+        const openNuggbook = client.nuggbook.useGotoOpen();
+
+        const health = client.health.useHealth();
+
+        return (
+            <Button
+                className="mobile-pressable-div"
+                buttonStyle={{
+                    backgroundColor: health.graphProblem
+                        ? lib.colors.transparentRed
+                        : lib.colors.transparentWhite,
+                    color: lib.colors.primaryColor,
+                    borderRadius: lib.layout.borderRadius.mediumish,
+                    WebkitBackdropFilter: 'blur(50px)',
+                    backdropFilter: 'blur(50px)',
+                    alignItems: 'center',
+                }}
+                textStyle={{ ...lib.layout.presets.font.main.thicc, fontSize: 21 }}
+                label={health.graphProblem ? '📱 ⚠️' : '📲 🆗'}
+                onClick={() => {
+                    openNuggbook(Page.Status);
                 }}
             />
         );

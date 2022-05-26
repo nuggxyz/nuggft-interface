@@ -9,11 +9,16 @@ const store = create(
     combine(
         {
             block: 0 as number,
+            lastUpdate: 0 as number,
+            lastChange: 0 as number,
         },
-        (set) => {
+        (set, get) => {
             const update = (block: number) => {
+                const change = block !== get().block;
                 set(() => ({
                     block,
+                    lastUpdate: new Date().getTime(),
+                    ...(change && { lastChange: new Date().getTime() }),
                 }));
             };
 
@@ -33,6 +38,9 @@ store.getState().emit();
 
 export default {
     useBlock: () => store((state) => state.block),
+    useLastUpdate: () => store((state) => state.lastUpdate),
+    useLastChange: () => store((state) => state.lastChange),
+
     useBlockWithDebounce: (delay: number) => {
         const block = store((state) => state.block);
         return useDebounce(block, delay);

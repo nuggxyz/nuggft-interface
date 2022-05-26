@@ -6,6 +6,7 @@ import lib from '@src/lib';
 import { Page } from '@src/interfaces/nuggbook';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import usePrevious from '@src/hooks/usePrevious';
+import MobileStatus from '@src/components/mobile/MobileStatus';
 
 import Start from './pages/Start';
 import Welcome from './pages/Welcome';
@@ -46,6 +47,8 @@ const useNuggBook = () => {
             return { top: 100, comp: Setup_2, page };
         case Page.Setup_3:
             return { top: 100, comp: Setup_3, page };
+        case Page.Status:
+            return { top: 100, comp: MobileStatus, page };
         default:
             return { top: 1000, comp: Close, page };
     }

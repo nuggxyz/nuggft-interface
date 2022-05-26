@@ -10,6 +10,8 @@ const store = create(
     combine(
         {
             price: 0,
+            timestamp: 0,
+            lastSeen: 0,
             preference: 'USD' as 'ETH' | 'USD',
             error: false,
             errorStart: null as number | null,
@@ -21,16 +23,21 @@ const store = create(
                 }));
             };
 
-            const update = (price: number | null) => {
+            const update = (
+                price: {
+                    ethusd: number;
+                    ethusd_timestamp: number;
+                } | null,
+            ) => {
                 try {
-                    if (price === 0) throw Error();
                     if (price === null) throw Error();
-
-                    if (price !== get().price)
-                        set(() => ({
-                            price: Number(price.toFixed(2)),
-                            error: false,
-                        }));
+                    if (price.ethusd === 0) throw Error();
+                    set(() => ({
+                        price: Number(price.ethusd.toFixed(2)),
+                        error: false,
+                        timestamp: price.ethusd_timestamp,
+                        lastSeen: new Date().getTime(),
+                    }));
                 } catch {
                     const { errorStart, price: prevPrice, error } = get();
                     if (!error) {
@@ -98,6 +105,7 @@ export const useUsdPairWithCalculation = <T extends Fractionish, R extends numbe
 
 export default {
     useUsd: () => store((state) => state.price),
+    useTimestamp: () => store((state) => state.timestamp),
     useCurrencyPreferrence,
     useSetCurrencyPreferrence: () => store((state) => state.setCurrencyPreference),
     useUsdPair,

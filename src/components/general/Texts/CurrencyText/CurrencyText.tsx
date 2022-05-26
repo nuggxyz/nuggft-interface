@@ -34,6 +34,7 @@ interface BalanceProps extends PartialText {
     stopAnimationOnStart?: boolean;
 
     unitOverride?: 'ETH' | 'USD';
+    full?: boolean;
 }
 
 const MIN = 0.000000000001;
@@ -55,6 +56,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
     unitOverride,
     loadingOnZero = true,
     stopAnimationOnStart = true,
+    full = false,
     // onlyAnimateOnIncrease = false,
     str,
     // dashOnZero = false,
@@ -156,7 +158,9 @@ const CurrencyText: React.FC<BalanceProps> = ({
                         {value === 0 && loadingOnZero
                             ? '----'
                             : spring.val.to((val) =>
-                                  isGwei
+                                  full
+                                      ? val.toFixed(2)
+                                      : isGwei
                                       ? (val * 10 ** 9).toFixed(decimals)
                                       : percent
                                       ? val >= 1

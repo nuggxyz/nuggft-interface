@@ -145,7 +145,10 @@ interface EmitWorkerIncomingRpcBlock extends EmitEventBase, EmitWorkerEventBase 
 
 interface EmitWorkerIncomingEtherscanPrice extends EmitEventBase, EmitWorkerEventBase {
     type: EmitEventNames.IncomingEtherscanPrice;
-    data: null | number;
+    data: null | {
+        ethusd: number;
+        ethusd_timestamp: number;
+    };
 }
 
 interface EmitRequestTokenSvgQuery extends EmitEventBase {

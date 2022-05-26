@@ -20,15 +20,18 @@ import rainbow from '@src/assets/images/app_logos/rainbow.png';
 import trust from '@src/assets/images/app_logos/trust.svg';
 import ledger from '@src/assets/images/app_logos/ledger.svg';
 import cryptodotcom from '@src/assets/images/app_logos/cryptodotcom.png';
+import graph from '@src/assets/images/app_logos/graph.png';
 import { Peer } from '@src/web3/core/interfaces';
+
+type Images = Peer | 'graph';
 
 export type NLStaticImageKey =
     | 'nuggbutton'
     | 'nugg'
     | 'eth'
-    | Peer
-    | `${Peer}_icon`
-    | `${Peer}_icon_small`;
+    | Images
+    | `${Images}_icon`
+    | `${Images}_icon_small`;
 
 type Props = {
     image: NLStaticImageKey;
@@ -198,6 +201,16 @@ const NLStaticImage: FunctionComponent<Props> = (props) => {
                 return (
                     <img
                         src={cryptodotcom}
+                        height={48}
+                        width={128}
+                        style={{ objectFit: 'contain', height: 23.8, ...props.style }}
+                        alt={props.image}
+                    />
+                );
+            case 'graph':
+                return (
+                    <img
+                        src={graph}
                         height={48}
                         width={128}
                         style={{ objectFit: 'contain', height: 23.8, ...props.style }}

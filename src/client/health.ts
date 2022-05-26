@@ -1,4 +1,6 @@
 /* eslint-disable no-param-reassign */
+import { ApolloLink, FetchResult } from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
 import React from 'react';
 import create from 'zustand';
 import { combine, persist, subscribeWithSelector } from 'zustand/middleware';
@@ -8,6 +10,11 @@ import block from './block';
 export interface Health {
     lastBlockRpc: number;
     lastBlockGraph: number;
+    lastGraphResponse: FetchResult<
+        'null' | 'non-null',
+        Record<string, any>,
+        Record<string, any>
+    > & { time: number };
 }
 
 const useStore = create(
@@ -28,7 +35,66 @@ const useStore = create(
                     });
                 };
 
-                return { updateLastRpcBlock, updateLastBlockGraph };
+                const generateApolloResponseErrorMiddleware = () => {
+                    return onError(({ graphQLErrors, networkError, operation }) => {
+                        if (graphQLErrors)
+                            graphQLErrors.forEach((hi) => {
+                                console.log(
+                                    `[GraphQL error:${operation.operationName}:${JSON.stringify(
+                                        operation.variables,
+                                    )}]: Message: ${hi.message}`,
+                                );
+                            });
+
+                        if (networkError)
+                            console.log(
+                                `[Network error:${operation.operationName}:${JSON.stringify(
+                                    operation.variables,
+                                )}]: ${networkError.message}`,
+                            );
+                    });
+                };
+
+                const generateApolloResponseMiddleware = () => {
+                    return new ApolloLink((operation, forward) => {
+                        return forward(operation).map((response) => {
+                            const lastGraphResponse = {
+                                ...response,
+                                data:
+                                    response.data === null
+                                        ? ('null' as const)
+                                        : ('non-null' as const),
+                                time: new Date().getTime(),
+                            };
+                            set(() => ({
+                                lastGraphResponse,
+                            }));
+
+                            const { data } = response as {
+                                data?: {
+                                    _meta?: {
+                                        __typename: '_Meta_';
+                                        block: { __typename: '_Block_'; number: number };
+                                    };
+                                };
+                            };
+
+                            if (data?._meta) {
+                                const lastBlockGraph = data._meta.block.number;
+                                set(() => ({ lastBlockGraph }));
+                            }
+
+                            return response;
+                        });
+                    });
+                };
+
+                return {
+                    updateLastRpcBlock,
+                    updateLastBlockGraph,
+                    generateApolloResponseMiddleware,
+                    generateApolloResponseErrorMiddleware,
+                };
             }),
         ),
         { name: 'nugg.xyz-health' },
@@ -61,6 +127,10 @@ const useCallbackOnGraphBlockChange = (callback: (() => Promise<unknown>) | (() 
 };
 
 export default {
+    useLastGraphBlock: () => useStore((draft) => draft.lastBlockGraph),
+    useLastRpcBlock: () => useStore((draft) => draft.lastBlockRpc),
+    useLastGraphResponse: () => useStore((draft) => draft.lastGraphResponse),
+
     useHealth,
     useCallbackOnGraphBlockChange,
     useUpdateLastBlockGraph: () => useStore((draft) => draft.updateLastBlockGraph),

@@ -45,7 +45,7 @@ const blockListener = (log: number) => {
         });
 
         void etherscan
-            .getEtherPrice()
+            .getCustomEtherPrice()
             .then((price) => {
                 ctx.emitMessage({
                     type: emitter.events.IncomingEtherscanPrice,

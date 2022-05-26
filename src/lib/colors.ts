@@ -29,6 +29,10 @@ const Colors = {
     purple: '#8A2BE2',
     darkRed: '#8a3434',
     green: '#00C781',
+    transparentGreen: '#00C78199',
+    transparentYellow: '#F3BE1E44',
+    transparentRed: '#FF404044',
+
     darkGreen: '#22a879',
     beige: '#EDEAE5',
     nuggGold: 'rgb(246,168,0)',

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { BlockTag, TransactionResponse } from '@ethersproject/abstract-provider';
@@ -31,6 +32,23 @@ interface EtherscanTransactionResponse {
 export class CustomEtherscanProvider extends EtherscanProvider {
     constructor(network = Chain.MAINNET, apiKey = process.env.NUGG_APP_ETHERSCAN_KEY || '') {
         super(network as number, apiKey);
+    }
+
+    async getCustomEtherPrice(): Promise<{
+        ethusd: number;
+        ethusd_timestamp: number;
+    }> {
+        const res = (await this.fetch('stats', { action: 'ethprice' })) as {
+            ethbtc: string;
+            ethbtc_timestamp: string;
+            ethusd: string;
+            ethusd_timestamp: string;
+        };
+
+        return {
+            ethusd: parseFloat(res.ethusd),
+            ethusd_timestamp: Number(res.ethusd_timestamp),
+        };
     }
 
     // Note: The `page` page parameter only allows pagination within the
