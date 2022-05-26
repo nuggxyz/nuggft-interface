@@ -59,7 +59,6 @@ const Button: FunctionComponent<PropsWithChildren<ButtonProps>> = ({
     const LeftIcon = useCallback(() => leftIcon || null, [leftIcon]);
 
     return (
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         <div
             className={className}
             aria-hidden="true"

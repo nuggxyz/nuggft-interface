@@ -254,6 +254,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         <NLStaticImage image="nuggbutton" />
                         <InfoClicker
                             size={45}
+                            to={Page.TableOfContents}
                             color={lib.colors.nuggBlueSemiTransparent}
                             buttonStyle={{ padding: 0 }}
                         />
@@ -797,8 +798,16 @@ export const HomeButton = React.memo<{
     onClick: (full: boolean) => void;
 }>(
     ({ onClick, isFull }) => {
+        // const ref = React.useRef<HTMLDivElement>(null)
+
+        // useEffect(() => {
+        //     // ref.current?.ontouchstart = (ev) => {
+        //     //     ev.returnValue
+        //     // }
+        // }, [ref])
         return (
             <Button
+                // ref={ref}
                 rightIcon={
                     <div
                         className="concave"
@@ -833,9 +842,8 @@ export const HomeButton = React.memo<{
                     borderRadius: !isFull ? lib.layout.borderRadius.medium : 0,
                     WebkitTapHighlightColor: 'transparent',
                 }}
-                onClick={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
+                onClick={(ev) => {
+                    ev.preventDefault();
                     onClick(isFull);
                 }}
             />

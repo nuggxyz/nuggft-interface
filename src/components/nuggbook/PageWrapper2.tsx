@@ -12,14 +12,14 @@ import Start from './pages/Start';
 import Welcome from './pages/Welcome';
 import TableOfContents from './pages/TableOfContents';
 import WhatIsAWallet from './pages/WhatIsAWallet';
-import WhatIsAnNFT from './pages/WhatIsAnNFT';
-import WhatIsDefi from './pages/WhatIsDefi';
 import Close from './pages/Close';
 import TheRundown from './pages/1-the-rundown/TheRundown';
 import Setup_0 from './pages/set-up/Setup_0';
 import Setup_1 from './pages/set-up/Setup_1';
 import Setup_2 from './pages/set-up/Setup_2';
 import Setup_3 from './pages/set-up/Setup_3';
+import HelpingTest_0 from './pages/helping-test/HelpingTest_0';
+import Feedback from './pages/helping-test/Feedback';
 
 const useNuggBook = () => {
     const page = client.nuggbook.useNuggBookPage();
@@ -33,10 +33,10 @@ const useNuggBook = () => {
             return { top: 100, comp: TableOfContents, page };
         case Page.WhatIsAWallet:
             return { top: 100, comp: WhatIsAWallet, page };
-        case Page.WhatIsAnNFT:
-            return { top: 100, comp: WhatIsAnNFT, page };
-        case Page.WhatIsDefi:
-            return { top: 100, comp: WhatIsDefi, page };
+        case Page.Feedback:
+            return { top: 100, comp: Feedback, page };
+        case Page.HelpingTest_0:
+            return { top: 100, comp: HelpingTest_0, page };
         case Page.TheRundown:
             return { top: 100, comp: TheRundown, page };
         case Page.Setup_0:

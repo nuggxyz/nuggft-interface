@@ -12,15 +12,7 @@ const useStore = create(
                 init: false,
                 open: false,
                 direction: true,
-                visits: {
-                    [Page.Start]: false,
-                    [Page.Welcome]: false,
-                    [Page.TableOfContents]: false,
-                    // [Page.Close]: false,
-                    [Page.WhatIsAWallet]: false,
-                    [Page.WhatIsAnNFT]: false,
-                    [Page.WhatIsDefi]: false,
-                } as { [i in Page]: boolean },
+                visits: {} as { [i in Page]: boolean },
             },
             (set, get) => {
                 const visit = (p: Page) => {
@@ -104,6 +96,12 @@ const useStore = create(
                     const { open } = get();
 
                     if (open) toggle();
+
+                    // if (page) {
+                    //     setTimeout(() => {
+
+                    //     }, [])
+                    // }
                 };
 
                 return { goto, visit, toggle, gotoOpen, close, gotoHeight, checkInit, setInit };

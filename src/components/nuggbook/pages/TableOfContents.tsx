@@ -134,7 +134,7 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
         },
         {
             header: 'helping us test?',
-            page: Page.Setup_0,
+            page: Page.HelpingTest_0,
         },
     ];
 

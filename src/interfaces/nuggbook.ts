@@ -13,6 +13,8 @@ export enum Page {
     Setup_2,
     Setup_3,
     Status,
+    HelpingTest_0,
+    Feedback,
 }
 
 export type NuggBookPageProps = {
