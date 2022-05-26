@@ -20,6 +20,7 @@ import Jazzicon from '@src/components/nugg/Jazzicon';
 import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
 import { ModalEnum } from '@src/interfaces/modals';
+import usePrevious from '@src/hooks/usePrevious';
 
 export const useOpacitate = (arg: boolean | undefined) => {
     const [exit, exitToAnimate] = React.useMemo(() => {
@@ -27,7 +28,7 @@ export const useOpacitate = (arg: boolean | undefined) => {
 
         const pointerEvents = opacity === 0 ? ('none' as const) : ('auto' as const);
 
-        const zIndex = opacity === 0 ? { zIndex: -1 } : {};
+        const zIndex = opacity === 0 ? { zIndex: -1, boxShadow: undefined } : {};
 
         return [
             {
@@ -403,7 +404,7 @@ const NavigationBarMobile: FC<unknown> = () => {
             </animated.div>
 
             {/* ////////////////////////////////////////////////////////////////////////
-                    claims
+                    claim button
                 //////////////////////////////////////////////////////////////////////// */}
             <animated.div
                 style={{
@@ -415,8 +416,8 @@ const NavigationBarMobile: FC<unknown> = () => {
                     alignItems: 'center',
                     borderRadius: lib.layout.borderRadius.medium,
                     justifySelf: 'center',
+                    boxShadow: address ? lib.layout.boxShadow.dark : undefined,
                     ...searchOpacitate,
-                    boxShadow: lib.layout.boxShadow.dark,
                 }}
             >
                 <NoFlashClaims address={address} />
@@ -457,7 +458,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                     zIndex: 10,
                     position: 'absolute',
                     right: 15,
-                    top: -50,
+                    top: -45,
                     display: 'flex',
                     alignItems: 'center',
                     borderRadius: lib.layout.borderRadius.medium,
@@ -571,18 +572,31 @@ export const NoFlashClaims = React.memo<{
         const openModal = client.modal.useOpenModal();
         const unclaimedOffers = client.live.myUnclaimedOffers();
 
+        const [numClaims, setNumClaims] = React.useState(unclaimedOffers.length);
+        const prevNumClaims = usePrevious(numClaims);
+
+        React.useEffect(() => {
+            if (unclaimedOffers.length !== prevNumClaims) setNumClaims(unclaimedOffers.length);
+        }, [unclaimedOffers.length, prevNumClaims]);
+
         return (
             <Button
                 className="mobile-pressable-div"
                 buttonStyle={{
-                    background: lib.colors.gradient2,
-                    color: lib.colors.white,
                     borderRadius: lib.layout.borderRadius.mediumish,
                     alignItems: 'center',
                     ...(address
                         ? {
                               opacity: 1,
                               pointerEvents: 'auto',
+                              ...(numClaims === 0
+                                  ? {
+                                        background: lib.colors.transparentWhite,
+                                        WebkitBackdropFilter: 'blur(50px)',
+                                        backdropFilter: 'blur(50px)',
+                                        color: lib.colors.primaryColor,
+                                    }
+                                  : { background: lib.colors.gradient2, color: lib.colors.white }),
                           }
                         : {
                               opacity: 0,
@@ -607,7 +621,7 @@ export const NoFlashClaims = React.memo<{
                             marginRight: 10,
                         }}
                     >
-                        <span>{unclaimedOffers.length}</span>
+                        <span>{numClaims}</span>
                     </div>
                 }
                 onClick={() => {

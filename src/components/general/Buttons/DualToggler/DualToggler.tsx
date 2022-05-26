@@ -23,18 +23,9 @@ const DualToggler = ({
     const [headerRef, { width: WIDTH }] = useMeasure();
 
     const selectionIndicatorSpring = useSpring({
-        // from: {
-        //     x: 0,
-        //     opacity: 1,
-        // },
-
         to: {
             x: activeIndex * (WIDTH / 2) - 22.5,
         },
-        // immediate: {
-        //     opacity: 1,
-        //     x: activeIndex * (WIDTH / 2) - 22.5,
-        // },
         config: config.stiff,
     });
 
@@ -71,11 +62,13 @@ const DualToggler = ({
                 color={lib.colors.primaryColor}
                 size={30}
                 onClick={() => toggleActiveIndex(0)}
+                className={activeIndex === 1 ? 'apply-drop-shadow' : ''}
             />
             <RightIcon
                 color={lib.colors.primaryColor}
                 size={30}
                 onClick={() => toggleActiveIndex(1)}
+                className={activeIndex === 0 ? 'apply-drop-shadow' : ''}
             />
         </div>
     );

@@ -99,6 +99,10 @@ svg:has(.DN) {
     filter: drop-shadow(2px 3px 5px rgb(0 0 0 / 0.4));
 }
 
+.apply-drop-shadow {
+    filter: drop-shadow(2px 3px 5px rgb(0 0 0 / 0.4));
+}
+
 .DN {
     stroke-width: var(--dotnugg-stroke-width);
 }
