@@ -100,7 +100,7 @@ svg:has(.DN) {
 }
 
 .apply-drop-shadow {
-    filter: drop-shadow(2px 3px 5px rgb(0 0 0 / 0.4));
+    filter: drop-shadow(2px 3px 5px rgb(255 255 255 / 0.8));
 }
 
 .DN {
@@ -110,8 +110,13 @@ svg:has(.DN) {
 .concave {
     background-color: #e0e0e0;
     border-radius: 50px;
-    background: linear-gradient(145deg, #cacaca, #f0f0f0);
-    box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+    background: linear-gradient(325deg, #cacaca, #f0f0f0);
+    box-shadow: 20px 20px 60px #ffffff, -20px -20px 60px #cecece;
+}
+
+.concave:active {
+    box-shadow: 20px 20px 60px #ffffff, -20px -20px 60px #ffffff;
+    background: linear-gradient(325deg, #cacaca, #e8e8e8);
 }
 .pressed {
     /* background-color: #e0e0e0; */
