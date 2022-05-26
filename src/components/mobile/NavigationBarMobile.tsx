@@ -748,7 +748,7 @@ export const HomeButton = React.memo<{
             <Button
                 rightIcon={
                     <div
-                        className="concave mobile-pressable-div-deep"
+                        className="concave"
                         style={{
                             height: 65,
                             width: 65,

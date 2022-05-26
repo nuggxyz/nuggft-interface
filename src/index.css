@@ -112,11 +112,17 @@ svg:has(.DN) {
     border-radius: 50px;
     background: linear-gradient(325deg, #cacaca, #f0f0f0);
     box-shadow: 20px 20px 60px #ffffff, -20px -20px 60px #cecece;
+    -webkit-transition: 0.1s cubic-bezier(0.34, 0.55, 0.06, 0.99);
+    transition: 0.1s cubic-bezier(0.34, 0.55, 0.06, 0.99);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .concave:active {
     box-shadow: 20px 20px 60px #ffffff, -20px -20px 60px #ffffff;
     background: linear-gradient(325deg, #cacaca, #e8e8e8);
+    -webkit-transform: scale(0.6);
+    -ms-transform: scale(0.6);
+    transform: scale(0.6);
 }
 .pressed {
     /* background-color: #e0e0e0; */
