@@ -6,6 +6,7 @@ import useOnHover from '@src/hooks/useOnHover';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import { useDotnuggCacheOnlyLazy, useDotnuggSubscription } from '@src/client/hooks/useDotnugg';
 import useDimensions from '@src/client/hooks/useDimensions';
+import lib from '@src/lib';
 
 import DangerouslySetNugg from './DangerouslySetNugg';
 
@@ -72,11 +73,18 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
     const { gotoViewingNugg } = useViewingNugg();
 
     const animatedStyle = useSpring({
+        from: {
+            opacity: 0,
+        },
         to: {
             opacity: pendingSrc || showPending ? 1 : 0,
         },
-        config: springConfig.default,
+        config: springConfig.gentle,
     });
+
+    // const strokeWidth = useDotnuggStrokeWidth(
+    //     React.useMemo(() => (!showcase ? 'small' : 'large'), [showcase]),
+    // );
 
     return (
         // @ts-ignore
@@ -87,7 +95,10 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexDirection: 'column' as const,
+                ...(style?.zIndex && { zIndex: style?.zIndex }),
                 ...animatedStyle, // transition: `opacity .5s ease`,
+                width: '100%',
+                height: '100%',
             }}
         >
             <div
@@ -101,30 +112,29 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
                           }
                         : undefined
                 }
-                ref={hoverRef}
                 style={{
                     ...(screenType === 'phone'
                         ? { width: width / 1.2, height: width / 1.2 }
                         : { width: '400px', height: '400px' }),
                     // width: '100%',
                     ...style,
-                    transform: 'translate3d(0,0,0)',
+                    // transform: 'translate3d(0,0,0)',
                     ...(isHovering && !disableOnClick ? { cursor: 'pointer' } : {}),
+                    // ...strokeWidth,
                 }}
+                ref={hoverRef}
             >
-                {pendingSrc && (
-                    <DangerouslySetNugg
-                        imageUri={pendingSrc}
-                        size={showcase ? 'showcase' : 'thumbnail'}
-                    />
-                )}
+                <DangerouslySetNugg
+                    imageUri={pendingSrc}
+                    size={showcase ? 'showcase' : 'thumbnail'}
+                />
             </div>
             {showLabel && (
                 <Text
                     textStyle={{
                         whiteSpace: 'nowrap',
                         textAlign: 'center',
-                        color: labelColor || 'black',
+                        color: labelColor || lib.colors.primaryColor,
                     }}
                     {...textProps}
                 >

@@ -113,7 +113,7 @@ const TheRing: FunctionComponent<Props> = ({
                 {isPhone ? (
                     <TokenViewer
                         tokenId={tokenId}
-                        style={tokenStyle}
+                        style={{ ...tokenStyle, zIndex: 101 }}
                         showcase
                         disableOnClick={disableClick}
                     />

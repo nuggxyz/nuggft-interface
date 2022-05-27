@@ -1,23 +1,22 @@
 import React from 'react';
-import { plural, t } from '@lingui/macro';
+import { t, plural } from '@lingui/macro';
 
-import Text from '@src/components/general/Texts/Text/Text';
-import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
 import { Lifecycle } from '@src/client/interfaces';
 import lib from '@src/lib';
-import { useDarkMode } from '@src/client/hooks/useDarkMode';
-import web3 from '@src/web3';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
-import { useUsdPair } from '@src/client/usd';
-import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
-import useAsyncState from '@src/hooks/useAsyncState';
-import { useNuggftV1 } from '@src/contracts/useContract';
+import Text from '@src/components/general/Texts/Text/Text';
 import { Address } from '@src/classes/Address';
+import { EthInt } from '@src/classes/Fraction';
+import { useUsdPair } from '@src/client/usd';
+import useAsyncState from '@src/hooks/useAsyncState';
+import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
+import { useNuggftV1 } from '@src/contracts/useContract';
+import web3 from '@src/web3';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import Label from '@src/components/general/Label/Label';
-import { EthInt } from '@src/classes/Fraction';
 
 const MobileOwnerBlock = ({
     tokenId,
@@ -32,14 +31,14 @@ const MobileOwnerBlock = ({
 
     const swap = client.swaps.useSwap(tokenId);
 
-    const darkmode = useDarkMode();
-
     const [leader, ...offers] = useAggregatedOffers(visible ? tokenId : undefined);
+
+    const provider = web3.hook.usePriorityProvider();
 
     const { minutes, seconds } = client.epoch.useEpoch(swap?.epoch?.id);
 
     const trueSeconds = useRemainingTrueSeconds(seconds ?? 0);
-    const provider = web3.hook.usePriorityProvider();
+    // const provider = web3.hook.usePriorityProvider();
     const nuggft = useNuggftV1(provider);
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
@@ -80,7 +79,8 @@ const MobileOwnerBlock = ({
         if (leader && lifecycle?.lifecycle === Lifecycle.Bench) {
             return {
                 currency: leaderCurrency,
-                text: `${leaderEns || leader?.account || ''} is selling`,
+                text: `seller`,
+                user: leaderEns || leader?.account || '',
             };
         }
         if (
@@ -91,20 +91,22 @@ const MobileOwnerBlock = ({
         ) {
             return {
                 currency: minTryoutCurrency,
-                text: t`minimum price`,
+                text: t`being sold by`,
+                user: token.tryout.count === 1 ? swap?.leader : `${token.tryout.count} Nuggs`,
             };
         }
         return {
             currency: leaderCurrency,
             text: new EthInt(leader?.eth || 0).number
                 ? `${leaderEns || leader?.account || ''} is leading`
-                : 'starting price',
+                : 'now',
             subtext:
                 offers.length !== 0 &&
                 plural(offers.length, {
                     1: '# other bidder',
                     other: '# other bidders',
                 }),
+            user: leaderEns || leader?.account || 'minting',
         };
     }, [
         leaderCurrency,
@@ -114,6 +116,7 @@ const MobileOwnerBlock = ({
         leader,
         lifecycle?.lifecycle,
         token,
+        swap?.leader,
     ]);
 
     return (
@@ -121,7 +124,6 @@ const MobileOwnerBlock = ({
             style={{
                 width: '100%',
                 height: '100%',
-                padding: '.5rem',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -130,8 +132,213 @@ const MobileOwnerBlock = ({
                 marginBottom: 0,
                 // boxShadow: `0px 1px 3px ${lib.colors.shadowNuggBlue}`,
                 textAlign: 'center',
+                position: 'relative',
             }}
         >
+            <div
+                style={{
+                    width: '100%',
+                    minHeight: '300px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: -25,
+                }}
+            >
+                <TheRing
+                    circleWidth={935}
+                    manualTokenId={swap?.tokenId}
+                    disableHover
+                    disableClick
+                    defaultColor={dynamicTextColor}
+                    tokenStyle={{ width: '275px', height: '275px' }}
+                />
+            </div>
+            <div
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    // width: '95%',
+                    display: 'flex',
+                    // width: '90%',
+                    margin: 'auto',
+                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    background: lib.colors.transparentWhite,
+                    borderRadius: lib.layout.borderRadius.mediumish,
+                    WebkitBackdropFilter: 'blur(50px)',
+                    backdropFilter: 'blur(50px)',
+                    padding: '.5rem .8rem',
+                }}
+            >
+                <Text
+                    textStyle={{
+                        color: lib.colors.primaryColor,
+                        fontWeight: lib.layout.fontWeight.thicc,
+                    }}
+                >
+                    {tokenId && tokenId.toPrettyId()}
+                </Text>
+            </div>
+            <div
+                style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    right: 0,
+                    // width: '95%',
+                    display: 'flex',
+                    // width: '90%',
+                    margin: 'auto',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    background: lib.colors.transparentWhite,
+                    borderRadius: lib.layout.borderRadius.mediumish,
+                    WebkitBackdropFilter: 'blur(50px)',
+                    backdropFilter: 'blur(50px)',
+                    padding: '.5rem .6rem',
+                }}
+            >
+                <CurrencyText
+                    textStyle={{
+                        color: lib.colors.primaryColor,
+                        fontSize: '30px',
+                        display: 'flex',
+                        alignItems: 'flex-end',
+                        fontWeight: lib.layout.fontWeight.semibold,
+                    }}
+                    image="eth"
+                    stopAnimationOnStart
+                    value={currencyData.currency}
+                    decimals={3}
+                    loadingOnZero
+                    unitStyle={{
+                        fontSize: '18px',
+                        paddingBottom: 4,
+                        marginLeft: -2,
+                        fontWeight: lib.layout.fontWeight.medium,
+                    }}
+                />
+            </div>
+
+            <div
+                style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    // width: '95%',
+                    display: 'flex',
+                    // width: '90%',
+                    margin: 'auto',
+                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    background: lib.colors.transparentWhite,
+                    borderRadius: lib.layout.borderRadius.mediumish,
+                    WebkitBackdropFilter: 'blur(50px)',
+                    backdropFilter: 'blur(50px)',
+                    padding: '.5rem .8rem',
+                }}
+            >
+                {' '}
+                <Text textStyle={{ fontSize: '13px', color: lib.colors.primaryColor }}>
+                    {currencyData.text}
+                </Text>
+                <Text
+                    textStyle={{
+                        color: lib.colors.primaryColor,
+
+                        fontWeight: lib.layout.fontWeight.semibold,
+                    }}
+                >
+                    {currencyData.user}
+                </Text>
+            </div>
+            {lifecycle?.active ? (
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        background: lib.colors.transparentWhite,
+                        borderRadius: lib.layout.borderRadius.mediumish,
+                        WebkitBackdropFilter: 'blur(50px)',
+                        backdropFilter: 'blur(50px)',
+                        right: 0,
+                        // width: '95%',
+                        display: 'flex',
+                        // width: '90%',
+                        margin: 'auto',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        // background: lib.colors.transparentWhite,
+                        // WebkitBackdropFilter: 'blur(50px)',
+                        // backdropFilter: 'blur(50px)',
+                        padding: '.5rem .8rem',
+                    }}
+                >
+                    {' '}
+                    <Text
+                        textStyle={{
+                            color: lib.colors.primaryColor,
+                            fontWeight: lib.layout.fontWeight.thicc,
+                            fontSize: '26px',
+                        }}
+                    >
+                        {!minutes ? trueSeconds ?? 0 : minutes}
+                    </Text>
+                    <Text
+                        textStyle={{
+                            marginTop: -3,
+                            color: lib.colors.primaryColor,
+                            fontWeight: lib.layout.fontWeight.semibold,
+
+                            fontSize: '13px',
+                        }}
+                    >
+                        {!minutes ? 'sec' : 'min'}
+                    </Text>
+                </div>
+            ) : (
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        // width: '95%',
+                        display: 'flex',
+                        // width: '90%',
+                        margin: 'auto',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        background: lib.colors.transparentWhite,
+                        borderRadius: lib.layout.borderRadius.mediumish,
+                        WebkitBackdropFilter: 'blur(50px)',
+                        backdropFilter: 'blur(50px)',
+                        padding: '.5rem .8rem',
+                    }}
+                >
+                    <Label
+                        // type="text"
+                        containerStyles={{
+                            background: 'transparent',
+                        }}
+                        size="small"
+                        textStyle={{
+                            color: lib.colors.primaryColor,
+
+                            position: 'relative',
+                        }}
+                        text={lifecycle?.label ?? ''}
+                        leftDotColor={lifecycle?.color}
+                    />
+                </div>
+            )}
+
             {/* {swap && lifecycle?.lifecycle === Lifecycle.Stands && (
                 <>
                     <Text
@@ -169,93 +376,73 @@ const MobileOwnerBlock = ({
             {/* {token && lifecycle !== Lifecycle.Stands && lifecycle !== Lifecycle.Cut && (
             // @danny7even is this logic okay, shoud be same as before but less conditional
             rerendering, i think */}
-            <div
+
+            {/* <div
                 style={{
-                    width: '100%',
-                    minHeight: '300px',
                     display: 'flex',
+                    width: '100%',
                     flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginTop: -25,
+                    zIndex: 2000000,
+                    marginTop: -40,
                 }}
             >
-                <TheRing
-                    circleWidth={800}
-                    manualTokenId={swap?.tokenId}
-                    disableHover
-                    disableClick
-                    defaultColor={dynamicTextColor}
-                    tokenStyle={{ width: '200px', height: '200px' }}
-                />
-            </div>
-            <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
                 <div
                     style={{
+                        // width: '95%',
                         display: 'flex',
-                        justifyContent: 'space-between',
-                        width: '100%',
+                        // width: '90%',
+                        margin: 'auto',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
                         alignItems: 'center',
+                        background: lib.colors.transparentWhite,
+                        borderRadius: lib.layout.borderRadius.medium,
+                        WebkitBackdropFilter: 'blur(50px)',
+                        backdropFilter: 'blur(50px)',
+                        padding: '.7rem .8rem',
                     }}
                 >
                     <Text
                         textStyle={{
-                            color: dynamicTextColor,
-                            padding: '1rem',
-                            background: darkmode
-                                ? lib.colors.nuggBlueTransparent
-                                : lib.colors.transparentGrey,
-                            borderRadius: lib.layout.borderRadius.medium,
-                            fontSize: '23px',
+                            color: lib.colors.primaryColor,
+                            borderRadius: lib.layout.borderRadius.large,
                         }}
+                        size="larger"
                     >
                         {tokenId && tokenId.toPrettyId()}
                     </Text>
+                    {lifecycle && (
+                        <Label
+                            // type="text"
+                            containerStyles={{
+                                background: 'transparent',
+                            }}
+                            size="small"
+                            textStyle={{
+                                color: lib.colors.primaryColor,
 
-                    <div
-                        style={{
-                            alignItems: 'center',
-                            display: 'flex',
-                            flexDirection: 'column',
-                        }}
-                    >
-                        {lifecycle &&
-                            (!lifecycle.active ? (
-                                <Label
-                                    // type="text"
-                                    containerStyles={{
-                                        background: 'transparent',
-                                    }}
-                                    size="small"
-                                    textStyle={{
-                                        color: dynamicTextColor,
-
-                                        position: 'relative',
-                                    }}
-                                    text={lifecycle?.label}
-                                    leftDotColor={lifecycle.color}
-                                />
-                            ) : (
-                                <>
-                                    <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
-                                        ending in about
-                                    </Text>
-                                    <Text textStyle={{ color: dynamicTextColor, fontSize: '28px' }}>
-                                        {!minutes
-                                            ? `${plural(trueSeconds ?? 0, {
-                                                  other: '# sec',
-                                              })}`
-                                            : `${plural(minutes, {
-                                                  other: '# min',
-                                              })}`}
-                                    </Text>
-                                </>
-                            ))}
-                    </div>
+                                position: 'relative',
+                            }}
+                            text={
+                                lifecycle.active
+                                    ? !minutes
+                                        ? `ends in about ${plural(trueSeconds ?? 0, {
+                                              other: '# sec',
+                                          })}`
+                                        : `ends in about ${plural(minutes, {
+                                              other: '# min',
+                                          })}`
+                                    : lifecycle?.label
+                            }
+                            leftDotColor={lifecycle.color}
+                        />
+                    )}
                 </div>
-            </div>
-            <div
+            </div> */}
+
+            {/* <div
                 style={{
+                    marginTop: -10,
                     height: '100%',
                     justifyContent: 'center',
                     display: 'flex',
@@ -264,7 +451,7 @@ const MobileOwnerBlock = ({
                 }}
             >
                 <CurrencyText
-                    textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
+                    textStyle={{ color: dynamicTextColor, fontSize: '35px' }}
                     image="eth"
                     stopAnimationOnStart
                     value={currencyData.currency}
@@ -285,7 +472,46 @@ const MobileOwnerBlock = ({
                         {currencyData.subtext}
                     </Text>
                 )}
-            </div>
+            </div> */}
+            {/* <div
+                style={{
+                    alignItems: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
+                {lifecycle &&
+                    (!lifecycle.active ? (
+                        <></>
+                    ) : (
+                        // <Label
+                        //     // type="text"
+                        //     containerStyles={{
+                        //         background: 'transparent',
+                        //     }}
+                        //     size="small"
+                        //     textStyle={{
+                        //         color: dynamicTextColor,
+
+                        //         position: 'relative',
+                        //     }}
+                        //     text={lifecycle?.label}
+                        //     leftDotColor={lifecycle.color}
+                        // />
+                        <div style={{}}>
+                            <Text textStyle={{ color: dynamicTextColor }}>
+                                ends in about{' '}
+                                {!minutes
+                                    ? `${plural(trueSeconds ?? 0, {
+                                          other: '# sec',
+                                      })}`
+                                    : `${plural(minutes, {
+                                          other: '# min',
+                                      })}`}
+                            </Text>
+                        </div>
+                    ))}
+            </div> */}
         </div>
     );
 };

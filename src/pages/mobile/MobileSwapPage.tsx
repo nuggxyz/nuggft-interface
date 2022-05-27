@@ -44,11 +44,11 @@ const MobileSwapPage = () => {
                 RenderItem={MobileRingAbout}
                 data={dat}
                 extraData={undefined}
-                itemHeight={475}
+                itemHeight={415}
                 LIST_PADDING={0}
                 skipSelectedCheck
                 mobileFluid
-                faded
+                // faded
             />
         </div>
     );

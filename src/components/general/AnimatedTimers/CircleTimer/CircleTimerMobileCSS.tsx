@@ -58,11 +58,24 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     }, [remaining, duration, defaultColor, staticColor]);
 
     return (
-        <div style={{ ...styles.container, ...style }}>
-            <div style={{ ...styles.childrenContainer, ...childrenContainerStyle }}>{children}</div>
+        <div style={{ zIndex: 1, ...style }}>
+            <div
+                style={{
+                    position: 'absolute',
+                    alignItems: 'center',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    overflow: 'visible',
+
+                    flexDirection: 'column',
+                    ...childrenContainerStyle,
+                }}
+            >
+                {children}
+            </div>
             <svg
-                height="100%"
-                width="100%"
+                height="200%"
+                width="200%"
                 filter={`drop-shadow(-10px 0px 15px ${shadowColor})`}
                 style={styles.svgTransition}
             >

@@ -55,7 +55,7 @@ const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible, ind
                 justifyContent: 'flex-end',
                 alignItems: 'center',
                 position: 'relative',
-                height: '500px',
+                height: '450px',
             }}
             onClick={(event) => {
                 event.stopPropagation();
@@ -75,8 +75,8 @@ const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible, ind
                     position: 'relative',
                     ...background,
                     boxShadow: lib.layout.boxShadow.dark,
-                    width: '90%',
-                    height: '450px',
+                    width: '93%',
+                    height: '380px',
                 }}
             >
                 <MobileOwnerBlock tokenId={tokenId} visible={visible} lifecycle={lifecycle} />

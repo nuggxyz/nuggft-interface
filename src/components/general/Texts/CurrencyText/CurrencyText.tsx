@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, CSSProperties } from 'react';
 import { useSpring, animated, config } from '@react-spring/web';
 
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
@@ -14,6 +14,7 @@ type PartialText = Partial<TextProps>;
 interface BalanceProps extends PartialText {
     value: number | PairInt;
     decimals?: number;
+    unitStyle?: CSSProperties;
     // unit?: string;
     // prefix?: string;
     // duration?: number;
@@ -32,7 +33,7 @@ interface BalanceProps extends PartialText {
 
     onlyAnimateOnIncrease?: boolean;
     stopAnimationOnStart?: boolean;
-
+    removeZeroAtBeggining?: boolean;
     unitOverride?: 'ETH' | 'USD';
     full?: boolean;
 }
@@ -42,6 +43,7 @@ const MIN = 0.000000000001;
 const CurrencyText: React.FC<BalanceProps> = ({
     value: _value,
     decimals = 0,
+    unitStyle,
     // unit = '',
     // prefix = '',
     // duration = 2,
@@ -50,6 +52,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
     forceEth = true,
     showUnit = true,
     stopAnimation = false,
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     showIncrementAnimation = false,
     loadOnZero = false,
@@ -157,8 +160,9 @@ const CurrencyText: React.FC<BalanceProps> = ({
                     <animated.div className="number" style={{ paddingRight: '.5rem' }}>
                         {value === 0 && loadingOnZero
                             ? '----'
-                            : spring.val.to((val) =>
-                                  full
+                            : spring.val.to((val) => {
+                                  const replace = val < 1;
+                                  const res = full
                                       ? val.toFixed(2)
                                       : isGwei
                                       ? (val * 10 ** 9).toFixed(decimals)
@@ -168,13 +172,16 @@ const CurrencyText: React.FC<BalanceProps> = ({
                                           : val.toFixed(2)
                                       : val > 1
                                       ? CurrencyInt.format(val, unit === 'USD' ? 2 : 3)
-                                      : val.toFixed(percent ? 2 : decimals || 5),
-                              )}
+                                      : val.toFixed(percent ? 2 : decimals || 5);
+                                  const resB = res.replace(replace ? '0.' : '.', '.');
+
+                                  return resB;
+                              })}
                     </animated.div>
                 )}
                 {percent && '%'}
                 {!percent && showUnit && (
-                    <div style={{ paddingRight: '0rem' }}>
+                    <div style={{ paddingRight: '0rem', ...unitStyle }}>
                         {unit === 'ETH' && isGwei ? 'gwei' : unit}
                     </div>
                 )}
