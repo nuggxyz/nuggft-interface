@@ -9,7 +9,6 @@ import lib from '@src/lib';
 import web3 from '@src/web3';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import NuggDexSearchBarMobile from '@src/components/mobile/NuggDexSearchBarMobile';
-import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
 import Button from '@src/components/general/Buttons/Button/Button';
 import { useOnTapOutside } from '@src/hooks/useOnClickOutside';
 import packages from '@src/packages';
@@ -69,6 +68,7 @@ const NavigationBarMobile: FC<unknown> = () => {
     // const MOVE_DELAY = 800;
     const nuggbookPage = client.nuggbook.useNuggBookPage();
     const close = client.nuggbook.useCloseNuggBook();
+    const nuggbookGoto = client.nuggbook.useGotoOpen();
 
     const setCurrencyPreference = client.usd.useSetCurrencyPreferrence();
     const currencyPreferrence = client.usd.useCurrencyPreferrence();
@@ -250,7 +250,14 @@ const NavigationBarMobile: FC<unknown> = () => {
                             alignItems: 'center',
                         }}
                     >
-                        <HealthIndicator />
+                        <Button
+                            buttonStyle={{
+                                padding: 0,
+                                background: 'transparent',
+                            }}
+                            rightIcon={<span>💬</span>}
+                            onClick={() => nuggbookGoto(Page.Feedback)}
+                        />
                         <NLStaticImage image="nuggbutton" />
                         <InfoClicker
                             size={45}
@@ -258,6 +265,14 @@ const NavigationBarMobile: FC<unknown> = () => {
                             color={lib.colors.nuggBlueSemiTransparent}
                             buttonStyle={{ padding: 0 }}
                         />
+                        {/* <Button
+                            buttonStyle={{
+                                padding: 0,
+                                background: 'transparent',
+                            }}
+                            rightIcon={<span>ℹ️</span>}
+                            onClick={() => nuggbookGoto(Page.TableOfContents)}
+                        /> */}
                     </animated.div>
                 </animated.div>
 

@@ -17,62 +17,111 @@ const HelpingTest_0: NuggBookPage = ({ setPage }) => {
                 textAlign: 'center',
             }}
         >
-            <Text
+            {/* <Text
                 size="larger"
                 textStyle={{
-                    marginTop: 50,
+                    marginTop: 10,
                     textAlign: 'center',
                     fontWeight: lib.layout.fontWeight.thicc,
                 }}
             >
-                2️⃣ 💸 <span style={{ paddingLeft: 5 }}>get some ethereum</span>
-            </Text>
+                <span style={{ paddingLeft: 5 }}>thank you! 🤠</span>
+            </Text> */}
             <div style={{ padding: '10px 0px' }}>
-                <Text
-                    size="large"
-                    textStyle={{ ...lib.layout.presets.font.main.regular, padding: 20 }}
-                >
-                    <span
-                        style={{
-                            alignItems: 'center',
-                            padding: '.3rem .5rem',
-                            display: 'inline-flex',
-                            justifyContent: 'flex-start',
-                            background: lib.colors.orange,
-                            color: 'white',
-                            fontSize: '16px',
-                            borderRadius: lib.layout.borderRadius.large,
-                            ...lib.layout.presets.font.main.semibold,
-                        }}
-                    >
-                        <span>helping us test?</span>
-                    </span>
-                </Text>
                 <div
                     style={{
                         // marginTop: 10,
-                        padding: 20,
                         borderRadius: lib.layout.borderRadius.medium,
                         // border: `${lib.colors.primaryColor} solid 3px`,
-                        boxShadow: lib.layout.boxShadow.basic,
+                        // boxShadow: lib.layout.boxShadow.basic,
                     }}
                 >
-                    <Text
-                        size="large"
-                        textStyle={{
-                            ...lib.layout.presets.font.main.regular,
-                            // margin: '15px 0px',
-                            fontWeight: lib.layout.fontWeight.semibold,
-                            // marginBottom: 10,
+                    <div
+                        style={{
+                            padding: 10,
+                            justifyContent: 'center',
+                            alignItems: 'flex-start',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            borderRadius: lib.layout.borderRadius.medium,
+                            background: lib.colors.transparentWhite,
                         }}
                     >
-                        ask us for some testnet ethereum
-                    </Text>
-                    <Text
+                        <Text
+                            size="large"
+                            textStyle={{
+                                padding: '5px',
+                                width: '100%',
+
+                                ...lib.layout.presets.font.main.regular,
+                                // margin: '15px 0px',
+                                fontWeight: lib.layout.fontWeight.bold,
+                                // marginBottom: 10,
+                            }}
+                        >
+                            your mission
+                        </Text>
+
+                        <Text
+                            size="large"
+                            textStyle={{
+                                padding: 5,
+
+                                ...lib.layout.presets.font.main.regular,
+                                // margin: '15px 0px',
+                                fontWeight: lib.layout.fontWeight.semibold,
+                                // marginBottom: 10,
+                            }}
+                        >
+                            1️⃣ get a nugg in your wallet
+                        </Text>
+                        <Text
+                            size="large"
+                            textStyle={{
+                                padding: 5,
+
+                                ...lib.layout.presets.font.main.regular,
+                                // margin: '15px 0px',
+                                fontWeight: lib.layout.fontWeight.semibold,
+                                // marginBottom: 10,
+                            }}
+                        >
+                            2️⃣ re-dress your nugg
+                        </Text>
+                        <Text
+                            size="large"
+                            textStyle={{
+                                padding: 5,
+
+                                ...lib.layout.presets.font.main.regular,
+                                // margin: '15px 0px',
+                                fontWeight: lib.layout.fontWeight.semibold,
+                                // marginBottom: 10,
+                            }}
+                        >
+                            3️⃣ HAVE FUN 🤠
+                        </Text>
+                    </div>
+                    <div style={{ padding: 5 }}>
+                        <Text
+                            size="large"
+                            textStyle={{
+                                padding: '10px 0px',
+
+                                ...lib.layout.presets.font.main.regular,
+                                // margin: '15px 0px',
+                                fontWeight: lib.layout.fontWeight.semibold,
+                                // marginBottom: 10,
+                            }}
+                        >
+                            follow the setup, but dont purchase anything --- we can send you free
+                            testnet ethereum, just ask!
+                        </Text>
+                        {/* <Text
                         size="large"
                         textStyle={{
                             ...lib.layout.presets.font.main.regular,
-                            padding: 10,
+                            padding: '10px 0px',
                             fontWeight: lib.layout.fontWeight.semibold,
                             // marginBottom: 10,
                         }}
@@ -80,23 +129,53 @@ const HelpingTest_0: NuggBookPage = ({ setPage }) => {
                         you must switch to the{' '}
                         <b style={{ fontWeight: lib.layout.fontWeight.relative.bolder }}>rinkeby</b>{' '}
                         blockchain
-                    </Text>
-                    <Text
-                        size="small"
-                        textStyle={{
-                            ...lib.layout.presets.font.main.regular,
-                            // marginTop: '10px',
-                            fontWeight: lib.layout.fontWeight.thicc,
-                            // marginBottom: 10,
-                        }}
-                    >
-                        ps: you rock 💙
-                    </Text>
+                    </Text> */}
+
+                        <Text
+                            size="large"
+                            textStyle={{
+                                ...lib.layout.presets.font.main.regular,
+                                padding: '10px 0px',
+                                fontWeight: lib.layout.fontWeight.semibold,
+                                // marginBottom: 10,
+                            }}
+                        >
+                            never hesistate to reach out to us!
+                        </Text>
+
+                        <Text
+                            size="large"
+                            textStyle={{
+                                ...lib.layout.presets.font.main.regular,
+                                padding: '10px 0px',
+                                fontWeight: lib.layout.fontWeight.semibold,
+                                fontSize: '15px',
+                                // marginBottom: 10,
+                            }}
+                        >
+                            we know this stuff is not easy... but give it a shot on your own! we
+                            want to make this easier for everyone (across all crypto). together we
+                            can make crypto onboarding better and safer for everyone
+                        </Text>
+
+                        <Text
+                            size="small"
+                            textStyle={{
+                                ...lib.layout.presets.font.main.regular,
+                                // marginTop: '10px',
+                                fontWeight: lib.layout.fontWeight.thicc,
+                                // marginBottom: 10,
+                            }}
+                        >
+                            ps: you rock 💙
+                        </Text>
+                    </div>
                 </div>
             </div>
 
             <Button
-                label="give feedback"
+                buttonStyle={{ background: 'transparent' }}
+                label="just click the little 💬 to give feedback"
                 onClick={() => {
                     setPage(Page.Feedback);
                 }}

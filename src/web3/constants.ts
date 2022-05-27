@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { BigNumber, ethers } from 'ethers';
-import { Network } from '@ethersproject/providers';
+import { BlockTag, Formatter, Network } from '@ethersproject/providers';
 
 export function supportedChainIds() {
     // @ts-ignore
@@ -59,7 +59,6 @@ export const CONTRACTS = {
         Interval: 0,
         Offset: 1,
         MintOffset: 1000000,
-        GraphId: 'QmNYd7mzNPnpt4yEB6VvzuboaRKWr1pScXP3jAvAKzXrhv',
     },
     [Chain.ROPSTEN]: {
         NuggftV1: '0x420690c1b1519a32fa36768dc2cefe128160a9b7',
@@ -69,7 +68,6 @@ export const CONTRACTS = {
         Interval: 32,
         Offset: 1,
         MintOffset: 1000000,
-        GraphId: 'QmNYd7mzNPnpt4yEB6VvzuboaRKWr1pScXP3jAvAKzXrhv',
     },
     [Chain.RINKEBY]: {
         NuggftV1: '0x0a0b5f32b72c0b5269750050e287bffb33748452',
@@ -79,7 +77,6 @@ export const CONTRACTS = {
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
-        GraphId: 'QmVzfjtGvQVwfYCp76FAoKkivzaTP3mumvnb8Y5Vr5YxBB',
     },
     [Chain.GOERLI]: {
         NuggftV1: '0xf5622e697d1821b8e83e4beed9e897b49de81011',
@@ -89,11 +86,12 @@ export const CONTRACTS = {
         Interval: 32,
         Offset: 1,
         MintOffset: 1000000,
-        GraphId: 'QmNYd7mzNPnpt4yEB6VvzuboaRKWr1pScXP3jAvAKzXrhv',
     },
 } as const;
 
 export const DEFAULT_CONTRACTS = CONTRACTS[DEFAULT_CHAIN];
+
+export const globalFormatter = new Formatter();
 
 export const calculateStartBlock = (epoch: BigNumberish, chainId: Chain = DEFAULT_CHAIN) => {
     return BigNumber.from(epoch)
@@ -171,6 +169,7 @@ export const CHAIN_INFO: {
         logoUrl: 'assets/images/ethereum-logo.png',
         nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
         label: 'mainnet',
+        etherscanApiHost: 'api.etherscan.io',
     },
     [Chain.RINKEBY]: {
         docs: 'https://docs.uniswap.org/',
@@ -183,6 +182,7 @@ export const CHAIN_INFO: {
             decimals: 18,
         },
         label: 'rinkeby',
+        etherscanApiHost: 'api-rinkeby.etherscan.io',
     },
     [Chain.ROPSTEN]: {
         docs: 'https://docs.uniswap.org/',
@@ -195,6 +195,7 @@ export const CHAIN_INFO: {
             decimals: 18,
         },
         label: 'ropsten',
+        etherscanApiHost: 'api-ropsten.etherscan.io',
     },
     [Chain.GOERLI]: {
         docs: 'https://docs.uniswap.org/',
@@ -207,45 +208,9 @@ export const CHAIN_INFO: {
             decimals: 18,
         },
         label: 'goerli',
+        etherscanApiHost: 'api-goerli.etherscan.io',
     },
 };
-
-// export const createInfuraWebSocket = (
-//     chainId: Chain = DEFAULT_CHAIN,
-//     onClose: (e: CloseEvent) => void = () => undefined,
-// ): CustomWebSocketProvider => {
-//     return new InfuraWebSocketProvider(CHAIN_INFO[chainId].label, INFURA_KEY, onClose);
-// };
-
-// export const createInfuraProvider = (chainId: Chain): JsonRpcProvider => {
-//     return new InfuraProvider(CHAIN_INFO[chainId].label, INFURA_KEY);
-// };
-
-// export const createAlchemyWebSocket = (
-//     chainId: Chain,
-//     onClose: (e: CloseEvent) => void,
-// ): CustomWebSocketProvider => {
-//     return new AlchemyWebSocketProvider(CHAIN_INFO[chainId].label, ALCHEMY_KEY, onClose);
-// };
-
-// export const apolloClient = new ApolloClient<any>({
-//     link: buildApolloSplitLink(GRAPH_ENPOINTS[DEFAULT_CHAIN], GRAPH_WSS_ENDPOINTS[DEFAULT_CHAIN]),
-//     // connectToDevTools: true,
-//     cache: buildCache(),
-// });
-
-// interface WalletInfo {
-//     name: string;
-//     label: string;
-//     description: string;
-//     href: string | null;
-//     color: string;
-//     primary?: true;
-//     mobile?: true;
-//     mobileOnly?: true;
-//     peerName?: string;
-//     peerurl?: string;
-// }
 
 interface L1ChainInfo {
     readonly blockWaitMsBeforeWarning?: number;
@@ -261,6 +226,7 @@ interface L1ChainInfo {
         decimals: number; // 18,
     };
     readonly name: string;
+    readonly etherscanApiHost: string;
 }
 
 export const ENS_REGISTRAR_ADDRESSES = {
@@ -275,3 +241,127 @@ export const getNetwork = (chainId: Chain): Network => ({
     chainId,
     ensAddress: ENS_REGISTRAR_ADDRESSES[chainId],
 });
+
+export const getCustomEtherPrice = async () => {
+    try {
+        const resonse = await fetch(
+            `https://api.etherscan.io/api?module=stats&action=ethprice&apikey=${ETHERSCAN_KEY}`,
+        );
+
+        if (resonse.ok) {
+            const { result } = (await resonse.json()) as {
+                status: string;
+                message: string;
+                result: {
+                    ethbtc: string;
+                    ethbtc_timestamp: string;
+                    ethusd: string;
+                    ethusd_timestamp: string;
+                };
+            };
+
+            return {
+                ethusd: parseFloat(result.ethusd),
+                ethusd_timestamp: Number(result.ethusd_timestamp),
+            };
+        }
+        return {
+            ethusd: null,
+            ethusd_timestamp: null,
+        };
+    } catch (err) {
+        return {
+            ethusd: null,
+            ethusd_timestamp: null,
+        };
+    }
+};
+
+interface EtherscanTransactionResponse {
+    blockNumber: string;
+    timeStamp: string;
+    hash: string;
+    nonce: string;
+    blockHash: string;
+    transactionIndex: string;
+    from: string;
+    to: string;
+    value: string;
+    gas: string;
+    gasPrice: string;
+    isError: string;
+    txreceipt_status: string;
+    input: string;
+    contractAddress: string;
+    cumulativeGasUsed: string;
+    gasUsed: string;
+    creates: string;
+    confirmations: string;
+    errorCode: string;
+}
+
+export const fetchEtherscanTransactionHistory = async (
+    address: AddressString,
+    startBlock?: BlockTag,
+    endBlock?: BlockTag,
+): Promise<Array<EtherscanTransactionResponse>> => {
+    // Note: The `page` page parameter only allows pagination within the
+    //       10,000 window available without a page and offset parameter
+    //       Error: Result window is too large, PageNo x Offset size must
+    //              be less than or equal to 10000
+
+    // const params = {
+    //     action: 'txlist',
+    //     address,
+    //     startblock: startBlock == null ? 0 : startBlock,
+    //     endblock: endBlock == null ? 99999999 : endBlock,
+    //     sort: 'asc',
+    // };
+    try {
+        const request = await fetch(
+            `https://${
+                CHAIN_INFO[DEFAULT_CHAIN].etherscanApiHost
+            }/api?module=account&action=txlist&address=${address}&startblock=${
+                startBlock ?? 0
+            }&endblock=${endBlock ?? '99999999'}&sort=asc&apikey=${ETHERSCAN_KEY}`,
+        );
+
+        if (request.ok) {
+            const { result } = (await request.json()) as {
+                status: string;
+                message: string;
+                result: EtherscanTransactionResponse[];
+            };
+
+            return result;
+        }
+        throw new Error();
+    } catch (err) {
+        return [];
+    }
+
+    // // const result = (await this.fetch('account', params)) as Array<EtherscanTransactionResponse>;
+
+    // return result.map((tx) => {
+    //     ['contractAddress' as const, 'to' as const].forEach(function (key) {
+    //         if (tx[key] === '') {
+    //             delete tx[key];
+    //         }
+    //     });
+    //     if (tx.creates == null && tx.contractAddress != null) {
+    //         tx.creates = tx.contractAddress;
+    //     }
+    //     const item = this.formatter.transactionResponse(tx);
+
+    //     Object.assign(item, {
+    //         isError: Number(tx.isError) === 1,
+    //         errorCode: tx.errorCode ?? null,
+    //     });
+
+    //     if (tx.timeStamp) {
+    //         item.timestamp = parseInt(tx.timeStamp, 10);
+    //     }
+
+    //     return item as typeof item & { isError: boolean; errorCode: string | null };
+    // });
+};
