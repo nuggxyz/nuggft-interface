@@ -76,12 +76,51 @@ const MobileOwnerBlock = ({
 
     const leaderCurrency = useUsdPair(leader?.eth || vfo || 0);
 
+    const currencyData = React.useMemo(() => {
+        if (leader && lifecycle?.lifecycle === Lifecycle.Bench) {
+            return {
+                currency: leaderCurrency,
+                text: `${leaderEns || leader?.account || ''} is selling`,
+            };
+        }
+        if (
+            lifecycle?.lifecycle === Lifecycle.Tryout &&
+            token &&
+            token.isItem() &&
+            token.tryout.min
+        ) {
+            return {
+                currency: minTryoutCurrency,
+                text: t`minimum price`,
+            };
+        }
+        return {
+            currency: leaderCurrency,
+            text: new EthInt(leader?.eth || 0).number
+                ? `${leaderEns || leader?.account || ''} is leading`
+                : 'starting price',
+            subtext:
+                offers.length !== 0 &&
+                plural(offers.length, {
+                    1: '# other bidder',
+                    other: '# other bidders',
+                }),
+        };
+    }, [
+        leaderCurrency,
+        minTryoutCurrency,
+        offers.length,
+        leaderEns,
+        leader,
+        lifecycle?.lifecycle,
+        token,
+    ]);
+
     return (
         <div
             style={{
                 width: '100%',
-                // background: lib.colors.transparentWhite,
-                // borderRadius: lib.layout.borderRadius.medium,
+                height: '100%',
                 padding: '.5rem',
                 display: 'flex',
                 flexDirection: 'column',
@@ -93,7 +132,7 @@ const MobileOwnerBlock = ({
                 textAlign: 'center',
             }}
         >
-            {swap && lifecycle?.lifecycle === Lifecycle.Stands && (
+            {/* {swap && lifecycle?.lifecycle === Lifecycle.Stands && (
                 <>
                     <Text
                         textStyle={{
@@ -126,10 +165,30 @@ const MobileOwnerBlock = ({
                 >
                     {t`Unfortuantly, Nugg ${tokenId} did not make it. --- this should not show up and we need to fix this`}
                 </Text>
-            )}
+            )} */}
             {/* {token && lifecycle !== Lifecycle.Stands && lifecycle !== Lifecycle.Cut && (
             // @danny7even is this logic okay, shoud be same as before but less conditional
             rerendering, i think */}
+            <div
+                style={{
+                    width: '100%',
+                    height: '300px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: -25,
+                }}
+            >
+                <TheRing
+                    circleWidth={800}
+                    manualTokenId={swap?.tokenId}
+                    disableHover
+                    disableClick
+                    defaultColor={dynamicTextColor}
+                    tokenStyle={{ width: '200px', height: '200px' }}
+                />
+            </div>
             <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
                 <div
                     style={{
@@ -153,181 +212,80 @@ const MobileOwnerBlock = ({
                         {tokenId && tokenId.toPrettyId()}
                     </Text>
 
-                    {leader && lifecycle?.lifecycle === Lifecycle.Bench ? (
-                        <div
-                            style={{
-                                alignItems: 'flex-end',
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}
-                        >
-                            <CurrencyText
-                                textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
-                                image="eth"
-                                stopAnimationOnStart
-                                value={leaderCurrency}
-                                decimals={3}
-                                loadingOnZero
-                            />
-                            <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
-                                {`${leaderEns || leader?.account || ''} is selling`}
-                            </Text>
-                        </div>
-                    ) : lifecycle?.lifecycle === Lifecycle.Tryout &&
-                      token &&
-                      token.type === 'item' &&
-                      token.tryout.min ? (
-                        <div
-                            style={{
-                                alignItems: 'flex-end',
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}
-                        >
-                            <CurrencyText
-                                textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
-                                image="eth"
-                                stopAnimationOnStart
-                                value={minTryoutCurrency}
-                                decimals={3}
-                                loadingOnZero
-                            />
-                            <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
-                                {t`minimum price`}
-                            </Text>
-                        </div>
-                    ) : (
-                        <div
-                            style={{
-                                alignItems: 'flex-end',
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}
-                        >
-                            <CurrencyText
-                                textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
-                                image="eth"
-                                stopAnimationOnStart
-                                value={leaderCurrency}
-                                decimals={3}
-                                loadingOnZero
-                            />
-                            <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
-                                {`${
-                                    new EthInt(leader?.eth || 0).number
-                                        ? `${leaderEns || leader?.account || ''} is leading`
-                                        : 'starting price'
-                                }`}
-                            </Text>
-                            <Text
-                                textStyle={{
-                                    fontSize: '13px',
-                                    color: dynamicTextColor,
-                                    ...lib.layout.presets.font.main.light,
-                                }}
-                            >
-                                {offers &&
-                                    offers.length !== 0 &&
-                                    plural(offers.length, {
-                                        1: '# other bidder',
-                                        other: '# other bidders',
-                                    })}
-                            </Text>
-                        </div>
-                    )}
+                    <div
+                        style={{
+                            alignItems: 'center',
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}
+                    >
+                        {lifecycle &&
+                            (!lifecycle.active ? (
+                                <Label
+                                    // type="text"
+                                    containerStyles={{
+                                        background: 'transparent',
+                                    }}
+                                    size="small"
+                                    textStyle={{
+                                        color: dynamicTextColor,
 
-                    {/*
-<div
-                            style={{
-                                alignItems: 'flex-end',
-                                display: 'flex',
-                                flexDirection: 'column',
-                            }}
-                        >
-                            <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
-                                ending in about
-                            </Text>
-                            <Text textStyle={{ color: dynamicTextColor, fontSize: '28px' }}>
-                                {' '}
-                                {minutes === 0
-                                    ? `${plural(trueSeconds, {
-                                          1: '# second',
-                                          other: '# seconds',
-                                      })}`
-                                    : `${plural(minutes, {
-                                          1: '# minute',
-                                          other: '# minutes',
-                                      })}`}
-                            </Text>
-                        </div> */}
-                </div>
-                <div
-                    style={{
-                        width: '100%',
-                        height: '300px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        // marginBottom: '20px',
-                    }}
-                >
-                    <TheRing
-                        circleWidth={800}
-                        manualTokenId={swap?.tokenId}
-                        disableHover
-                        disableClick
-                        defaultColor={dynamicTextColor}
-                        tokenStyle={{ width: '200px', height: '200px' }}
-                    />
+                                        position: 'relative',
+                                    }}
+                                    text={lifecycle?.label}
+                                    leftDotColor={lifecycle.color}
+                                />
+                            ) : (
+                                <>
+                                    <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
+                                        ending in about
+                                    </Text>
+                                    <Text textStyle={{ color: dynamicTextColor, fontSize: '28px' }}>
+                                        {!minutes
+                                            ? `${plural(trueSeconds ?? 0, {
+                                                  other: '# sec',
+                                              })}`
+                                            : `${plural(minutes, {
+                                                  other: '# min',
+                                              })}`}
+                                    </Text>
+                                </>
+                            ))}
+                    </div>
                 </div>
             </div>
-
             <div
                 style={{
-                    alignItems: 'center',
+                    height: '100%',
+                    justifyContent: 'center',
                     display: 'flex',
                     flexDirection: 'column',
-                    // marginTop: '-20px',
+                    alignItems: 'center',
                 }}
             >
-                {lifecycle &&
-                    (!lifecycle.active ? (
-                        <Label
-                            // type="text"
-                            containerStyles={{
-                                background: 'transparent',
-                            }}
-                            size="small"
-                            textStyle={{
-                                color: dynamicTextColor,
-
-                                position: 'relative',
-                            }}
-                            text={lifecycle?.label}
-                            leftDotColor={lifecycle.color}
-                        />
-                    ) : (
-                        <>
-                            <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
-                                ending in about
-                            </Text>
-                            <Text textStyle={{ color: dynamicTextColor, fontSize: '28px' }}>
-                                {' '}
-                                {!minutes
-                                    ? `${plural(trueSeconds ?? 0, {
-                                          1: '# second',
-                                          other: '# seconds',
-                                      })}`
-                                    : `${plural(minutes, {
-                                          1: '# minute',
-                                          other: '# minutes',
-                                      })}`}
-                            </Text>
-                        </>
-                    ))}
+                <CurrencyText
+                    textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
+                    image="eth"
+                    stopAnimationOnStart
+                    value={currencyData.currency}
+                    decimals={3}
+                    loadingOnZero
+                />
+                <Text textStyle={{ fontSize: '13px', color: dynamicTextColor }}>
+                    {currencyData.text}
+                </Text>
+                {currencyData.subtext && (
+                    <Text
+                        textStyle={{
+                            fontSize: '13px',
+                            color: dynamicTextColor,
+                            ...lib.layout.presets.font.main.light,
+                        }}
+                    >
+                        {currencyData.subtext}
+                    </Text>
+                )}
             </div>
-            {/* )} */}
         </div>
     );
 };

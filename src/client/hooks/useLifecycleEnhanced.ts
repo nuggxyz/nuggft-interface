@@ -46,7 +46,7 @@ export default (swap: Omit<SwapData, 'offers'> | undefined, sup?: LiveToken) => 
         case Lifecycle.Egg:
             return {
                 color: lib.colors.orange,
-                label: 'auction about to start',
+                label: 'about to start',
                 lifecycle,
                 active: false,
             };

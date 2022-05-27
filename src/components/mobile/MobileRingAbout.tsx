@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router';
 import client from '@src/client';
 import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
 import lib from '@src/lib';
-import styles from '@src/components/nugg/RingAbout/RingAbout.styles';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import { Lifecycle } from '@src/client/interfaces';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
@@ -27,11 +26,21 @@ const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible, ind
 
     const { minutes } = client.epoch.useEpoch(swap?.epoch?.id);
 
-    // useLiveToken(tokenId);
-
     useLiveOffers(tokenId);
 
     useMountLogger(`${index || 'unknown'}`);
+
+    const background = React.useMemo(() => {
+        return {
+            ...((minutes ?? 0) <= 5 &&
+                lifecycle?.active && {
+                    background: lib.colors.gradient,
+                }),
+            ...((swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) && {
+                background: lib.colors.gradient4Transparent,
+            }),
+        };
+    }, [swap?.endingEpoch, minutes, lifecycle?.active, lifecycle?.lifecycle]);
 
     return (
         <div
@@ -55,24 +64,22 @@ const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible, ind
         >
             <animated.div
                 style={{
-                    ...styles.container,
-
-                    ...((minutes ?? 0) <= 5 &&
-                        lifecycle?.active && {
-                            background: lib.colors.gradient,
-                        }),
-                    ...((swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) && {
-                        background: lib.colors.gradient4Transparent,
-                    }),
-
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    overflow: 'hidden',
+                    borderRadius: lib.layout.borderRadius.medium,
+                    background: lib.colors.gradient2,
+                    padding: '.75rem',
+                    position: 'relative',
+                    ...background,
                     boxShadow: lib.layout.boxShadow.dark,
                     width: '90%',
                     height: '450px',
                 }}
             >
-                <div style={styles.bodyContainer}>
-                    <MobileOwnerBlock tokenId={tokenId} visible={visible} lifecycle={lifecycle} />
-                </div>
+                <MobileOwnerBlock tokenId={tokenId} visible={visible} lifecycle={lifecycle} />
             </animated.div>
         </div>
     );
