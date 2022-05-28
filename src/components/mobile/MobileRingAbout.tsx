@@ -10,6 +10,7 @@ import { Lifecycle } from '@src/client/interfaces';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 import useMountLogger from '@src/hooks/useMountLogger';
+import useRemaining from '@src/client/hooks/useRemaining';
 
 import MobileOwnerBlock from './MobileOwnerBlock';
 
@@ -24,7 +25,7 @@ const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible, ind
 
     const lifecycle = useLifecycleEnhanced(visible ? swap : undefined);
 
-    const { minutes } = client.epoch.useEpoch(swap?.epoch?.id);
+    const [, minutes] = useRemaining(swap?.epoch);
 
     useLiveOffers(tokenId);
 

@@ -12,7 +12,7 @@ import globalStyles from '@src/lib/globalStyles';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
+import useRemaining, { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import { Lifecycle, TryoutData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useAsyncState from '@src/hooks/useAsyncState';
@@ -41,6 +41,7 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import undefined from '@src/lib/dotnugg/util';
+import useMountLogger from '@src/hooks/useMountLogger';
 
 import NuggSnapshotListMobile from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
@@ -315,9 +316,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const swap = client.swaps.useSwap(tokenId);
     const lifecycle = useLifecycle(token);
 
-    const blocknum = client.block.useBlock();
-
-    const { minutes, seconds } = client.epoch.useEpoch(token?.activeSwap?.epoch?.id, blocknum);
+    const [, minutes, seconds] = useRemaining(swap?.epoch);
     const [leader] = useAggregatedOffers(tokenId);
 
     const trueSeconds = useRemainingTrueSeconds(seconds ?? 0);
@@ -328,6 +327,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
         leader?.account || swap?.leader || '',
     );
 
+    useMountLogger('activeSwap');
     const nuggft = useNuggftV1();
 
     const vfo = useAsyncState(() => {
@@ -529,6 +529,8 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
         const ider = React.useId();
 
         const overlay = useAnimateOverlayBackdrop(isOpen);
+
+        // console.log(swap, lifecycle);
 
         return (
             <animated.div

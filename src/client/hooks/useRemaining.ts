@@ -49,10 +49,7 @@ export default (epoch: EpochData | undefined | null) => {
         };
     }, [blocksRemaining]);
 
-    return {
-        blocksRemaining,
-        ...time,
-    };
+    return [blocksRemaining, time.minutes, time.seconds];
 };
 
 export const useRemainingTrueSeconds = (seconds: number | null) => {

@@ -12,56 +12,65 @@ export default (token?: LiveToken | Omit<SwapData, 'offers'>): Lifecycle | undef
 
     const address = web3.hook.usePriorityAccount();
 
-    return React.useMemo(() => {
-        if (!token) return undefined;
+    const [lifecycle, setLifecycle] = React.useState<Lifecycle>();
 
-        // console.log('AYOOOOO');
+    React.useEffect(() => {
+        const find = () => {
+            if (!token) return undefined;
 
-        const isToken = 'swaps' in token;
+            const isToken = 'swaps' in token;
 
-        let abc = isToken ? token.activeSwap : token;
+            let abc = isToken ? token.activeSwap : token;
 
-        if (
-            isToken &&
-            token.isItem() &&
-            !abc &&
-            'upcomingActiveSwap' in token &&
-            token.upcomingActiveSwap
-        ) {
-            abc = token.upcomingActiveSwap;
-            // delete token.upcomingActiveSwap;
-        }
-
-        if (isToken && !abc && token.isItem() && token.tryout.count > 0) {
-            return Lifecycle.Tryout;
-        }
-
-        if (abc && epoch !== null) {
-            if (!abc.endingEpoch) {
-                if (address === abc.owner && address === abc.leader) return Lifecycle.Concessions;
-                return Lifecycle.Bench;
+            if (
+                isToken &&
+                token.isItem() &&
+                !abc &&
+                'upcomingActiveSwap' in token &&
+                token.upcomingActiveSwap
+            ) {
+                abc = token.upcomingActiveSwap;
+                // delete token.upcomingActiveSwap;
             }
 
-            if (+abc.endingEpoch === epoch + 1) {
-                if (abc.type === 'nugg' && abc.owner === Address.ZERO.hash) {
-                    return Lifecycle.Egg;
+            if (isToken && !abc && token.isItem() && token.tryout.count > 0) {
+                return Lifecycle.Tryout;
+            }
+
+            if (abc && epoch !== null) {
+                if (!abc.endingEpoch) {
+                    if (address === abc.owner && address === abc.leader)
+                        return Lifecycle.Concessions;
+                    return Lifecycle.Bench;
                 }
-                return Lifecycle.Deck;
-            }
 
-            if (abc.leader === Address.ZERO.hash && abc.epoch && warning) {
-                return Lifecycle.Cut;
-            }
-
-            if (+abc.endingEpoch === epoch) {
-                if (abc.type === 'nugg' && abc.owner === Address.ZERO.hash) {
-                    return Lifecycle.Bunt;
+                if (+abc.endingEpoch === epoch + 1) {
+                    if (abc.type === 'nugg' && abc.owner === Address.ZERO.hash) {
+                        return Lifecycle.Egg;
+                    }
+                    return Lifecycle.Deck;
                 }
-                return Lifecycle.Bat;
-            }
 
-            return Lifecycle.Shower;
-        }
-        return Lifecycle.Stands;
-    }, [epoch, token, warning, address]);
+                if (abc.leader === Address.ZERO.hash && abc.epoch && warning) {
+                    return Lifecycle.Cut;
+                }
+
+                if (+abc.endingEpoch === epoch) {
+                    if (abc.type === 'nugg' && abc.owner === Address.ZERO.hash) {
+                        return Lifecycle.Bunt;
+                    }
+                    return Lifecycle.Bat;
+                }
+
+                return Lifecycle.Shower;
+            }
+            return Lifecycle.Stands;
+        };
+
+        const check = find();
+
+        if (check !== lifecycle) setLifecycle(check);
+    }, [epoch, token, warning, address, lifecycle]);
+
+    return lifecycle;
 };

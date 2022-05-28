@@ -22,7 +22,7 @@ export const formatSwapData = <T extends TokenId>(
         listDataType: 'swap' as const,
         isBackup: false,
         bottom: BigNumber.from(z.bottom),
-        num: 1,
+        num: BigNumber.from(z.num).toNumber(),
         offers: z.offers.map((x) => ({
             eth: BigNumber.from(x.eth),
             account: 'nugg' in x ? x.nugg.id : x.user.id,

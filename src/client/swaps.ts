@@ -47,7 +47,16 @@ export type SwapData = TokenIdFactoryCreator<SwapDataBase, SwapDataBase__Nugg, S
 const useStore = create(
     combine({ data: {} as TokenIdDictionary<SwapData> }, (set, get) => {
         function updateSingle(data: SwapData): void {
-            if (JSON.stringify(data) !== JSON.stringify(get().data[data.tokenId])) {
+            const prev = get().data[data.tokenId];
+            let ok = true;
+            if (
+                prev?.num !== null &&
+                prev?.num !== undefined &&
+                data?.num !== null &&
+                data?.num !== undefined
+            )
+                ok = data.num >= prev.num;
+            if (JSON.stringify(data) !== JSON.stringify(prev) && ok) {
                 // @ts-ignore
                 set((draft) => {
                     if (data.isItem()) {

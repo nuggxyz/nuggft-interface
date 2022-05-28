@@ -1,3 +1,5 @@
+import React from 'react';
+
 import lib from '@src/lib';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import { Lifecycle, LiveToken } from '@src/client/interfaces';
@@ -11,53 +13,60 @@ export default (swap: Omit<SwapData, 'offers'> | undefined, sup?: LiveToken) => 
     const epoch = client.epoch.active.useId();
     const blocknum = client.block.useBlock();
 
-    if (!epoch || !blocknum || !swap) return undefined;
+    return React.useMemo(() => {
+        if (!epoch || !blocknum || !swap) return undefined;
 
-    switch (lifecycle) {
-        case Lifecycle.Bat:
-        case Lifecycle.Bunt:
-            if (swap.epoch && swap.epoch.endblock - blocknum < (60 / 12) * 10)
+        switch (lifecycle) {
+            case Lifecycle.Bat:
+            case Lifecycle.Bunt:
+                if (swap.epoch && swap.epoch.endblock - blocknum < (60 / 12) * 10)
+                    return {
+                        color: lib.colors.red,
+                        label: 'auction ending soon',
+                        lifecycle,
+                        active: true,
+                    };
+                return { color: lib.colors.green, label: 'live auction', lifecycle, active: true };
+
+            case Lifecycle.Cut:
                 return {
-                    color: lib.colors.red,
-                    label: 'auction ending soon',
+                    color: lib.colors.primaryColor,
+                    label: 'auction just ended',
+                    lifecycle,
+                    active: false,
+                };
+            case Lifecycle.Stands:
+                return {
+                    color: lib.colors.primaryColor,
+                    label: 'staked',
+                    lifecycle,
+                    active: false,
+                };
+            case Lifecycle.Concessions:
+            case Lifecycle.Tryout:
+            case Lifecycle.Bench:
+                return {
+                    color: lib.colors.nuggGold,
+                    label: 'waiting on bid',
+                    lifecycle,
+                    active: false,
+                };
+            case Lifecycle.Egg:
+                return {
+                    color: lib.colors.orange,
+                    label: 'about to start',
+                    lifecycle,
+                    active: false,
+                };
+            case Lifecycle.Deck:
+                return {
+                    color: lib.colors.green,
+                    label: 'auction just started',
                     lifecycle,
                     active: true,
                 };
-            return { color: lib.colors.green, label: 'live auction', lifecycle, active: true };
-
-        case Lifecycle.Cut:
-            return {
-                color: lib.colors.primaryColor,
-                label: 'auction just ended',
-                lifecycle,
-                active: false,
-            };
-        case Lifecycle.Stands:
-            return { color: lib.colors.primaryColor, label: 'staked', lifecycle, active: false };
-        case Lifecycle.Concessions:
-        case Lifecycle.Tryout:
-        case Lifecycle.Bench:
-            return {
-                color: lib.colors.nuggGold,
-                label: 'waiting on bid',
-                lifecycle,
-                active: false,
-            };
-        case Lifecycle.Egg:
-            return {
-                color: lib.colors.orange,
-                label: 'about to start',
-                lifecycle,
-                active: false,
-            };
-        case Lifecycle.Deck:
-            return {
-                color: lib.colors.green,
-                label: 'auction just started',
-                lifecycle,
-                active: true,
-            };
-        default:
-            return undefined;
-    }
+            default:
+                return undefined;
+        }
+    }, [swap, epoch, blocknum, lifecycle]);
 };

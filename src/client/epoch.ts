@@ -135,7 +135,17 @@ export default {
         useStartBlock: () => store((state) => state[state.active]?.startblock ?? null),
         useEndBlock: () => store((state) => state[state.active]?.endblock ?? null),
         useMinutes: () => store((state) => state[state.active]?.minutes ?? null),
+        useSeconds: () => store((state) => state[state.active]?.seconds ?? null),
     },
+
+    useSeconds: (epochId: number) =>
+        store(
+            React.useCallback((state) => (epochId ? state[epochId].seconds : undefined), [epochId]),
+        ),
+    useMinutes: (epochId: number) =>
+        store(
+            React.useCallback((state) => (epochId ? state[epochId].seconds : undefined), [epochId]),
+        ),
 
     ...store,
 };
