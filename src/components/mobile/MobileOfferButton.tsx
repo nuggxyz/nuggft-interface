@@ -47,6 +47,7 @@ export default ({
                 disabled={
                     !lifecycle.active &&
                     lifecycle.lifecycle !== Lifecycle.Concessions &&
+                    lifecycle.lifecycle !== Lifecycle.Minors &&
                     lifecycle.lifecycle !== Lifecycle.Bench
                 }
                 onClick={() => {
@@ -84,7 +85,8 @@ export default ({
                         ? 'Loading...'
                         : lifecycle.lifecycle === Lifecycle.Concessions
                         ? 'Adjust'
-                        : lifecycle.lifecycle === Lifecycle.Bench
+                        : lifecycle.lifecycle === Lifecycle.Bench ||
+                          lifecycle.lifecycle === Lifecycle.Minors
                         ? 'Accept and Start Auction'
                         : !lifecycle.active
                         ? 'swap is over'

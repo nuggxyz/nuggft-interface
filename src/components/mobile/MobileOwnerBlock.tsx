@@ -74,7 +74,7 @@ const MobileOwnerBlock = ({
         return undefined;
     }, [visible, token, nuggft, tokenId, provider, leader?.eth, lifecycle]);
 
-    const leaderCurrency = useUsdPair(leader?.eth || vfo || 0);
+    const leaderCurrency = useUsdPair(leader?.eth.gt(0) ? leader.eth : vfo || 0);
 
     const currencyData = React.useMemo(() => {
         if (leader && lifecycle?.lifecycle === Lifecycle.Bench) {

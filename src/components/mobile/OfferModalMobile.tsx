@@ -344,6 +344,10 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     <IncrementButton increment={BigInt(20)} />
                     <IncrementButton increment={BigInt(25)} />
                     <IncrementButton increment={BigInt(30)} />
+                    <IncrementButton increment={BigInt(35)} />
+                    <IncrementButton increment={BigInt(40)} />
+                    <IncrementButton increment={BigInt(45)} />
+                    <IncrementButton increment={BigInt(50)} />
                 </div>
 
                 <Button

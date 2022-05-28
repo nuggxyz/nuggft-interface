@@ -359,7 +359,9 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                     alignItems: 'center',
                 }}
             >
-                {lifecycle === Lifecycle.Bench || lifecycle === Lifecycle.Concessions ? (
+                {lifecycle === Lifecycle.Minors ||
+                lifecycle === Lifecycle.Bench ||
+                lifecycle === Lifecycle.Concessions ? (
                     <div
                         style={{
                             alignItems: 'center',
@@ -382,29 +384,31 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                                 color: lib.colors.primaryColor,
                             }}
                         >
-                            asking price
+                            {lifecycle === Lifecycle.Minors ? 'starting price' : 'asking price'}
                         </Text>
-                        <div style={{ display: 'flex' }}>
-                            <Text
-                                size="large"
-                                textStyle={{
-                                    paddingTop: '1rem',
-                                    paddingRight: '.5em',
-                                    // color: lib.colors.primaryColor,
-                                }}
-                            >
-                                {t`for sale by`}
-                            </Text>
-                            <Text
-                                loading={!leaderEns}
-                                size="large"
-                                textStyle={{
-                                    paddingTop: '1rem',
-                                }}
-                            >
-                                {leaderEns || 'XXXX...XXXX'}
-                            </Text>
-                        </div>
+                        {lifecycle !== Lifecycle.Minors && (
+                            <div style={{ display: 'flex' }}>
+                                <Text
+                                    size="large"
+                                    textStyle={{
+                                        paddingTop: '1rem',
+                                        paddingRight: '.5em',
+                                        // color: lib.colors.primaryColor,
+                                    }}
+                                >
+                                    {t`for sale by`}
+                                </Text>
+                                <Text
+                                    loading={!leaderEns}
+                                    size="large"
+                                    textStyle={{
+                                        paddingTop: '1rem',
+                                    }}
+                                >
+                                    {leaderEns || 'XXXX...XXXX'}
+                                </Text>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div
@@ -470,9 +474,9 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                     </div>
                 )}
             </div>
-            {(swap?.offers.length || 0) > 0 && lifecycle !== Lifecycle.Bench && (
-                <OffersList tokenId={tokenId} />
-            )}
+            {(swap?.offers.length || 0) > 0 &&
+                lifecycle !== Lifecycle.Bench &&
+                lifecycle !== Lifecycle.Minors && <OffersList tokenId={tokenId} />}
             <MobileOfferButton tokenId={tokenId} />
         </>
     );
