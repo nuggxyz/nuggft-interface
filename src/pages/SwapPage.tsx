@@ -6,10 +6,7 @@ import TheRing from '@src/components/nugg/TheRing/TheRing';
 import Wallet from '@src/components/nugg/Wallet/Wallet';
 import useBlur from '@src/hooks/useBlur';
 import useDimensions from '@src/client/hooks/useDimensions';
-import client from '@src/client';
-import Button from '@src/components/general/Buttons/Button/Button';
-import { ModalEnum } from '@src/interfaces/modals';
-import lib from '@src/lib';
+import DesktopToggleButton from '@src/components/nuggbook/DesktopToggleButton';
 
 import styles from './SwapPage.styles';
 import MobileSwapPage from './mobile/MobileSwapPage';
@@ -17,9 +14,7 @@ import MobileSwapPage from './mobile/MobileSwapPage';
 type Props = Record<string, never>;
 
 const SwapPage: FunctionComponent<Props> = () => {
-    const { screen, height } = useDimensions();
-
-    const openModal = client.modal.useOpenModal();
+    const { screen } = useDimensions();
 
     const blur = useBlur(['/', '/swap/:id', '/live']);
 
@@ -62,24 +57,7 @@ const SwapPage: FunctionComponent<Props> = () => {
                             <div style={styles.theRingContainer}>
                                 <TheRing />
                             </div>
-                            <Button
-                                buttonStyle={{
-                                    position: 'absolute',
-                                    bottom: '1rem',
-                                    right: '1rem',
-                                }}
-                                onClick={() =>
-                                    openModal({
-                                        modalType: ModalEnum.NuggBook,
-                                        containerStyle: {
-                                            padding: '0rem',
-                                            height: height / 2,
-                                            background: lib.colors.transparentWhite,
-                                            // overflow: 'scroll',
-                                        },
-                                    })
-                                }
-                            />
+                            <DesktopToggleButton />
                         </>
                     )}
                 </animated.div>

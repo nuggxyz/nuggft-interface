@@ -129,7 +129,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 
     const liveActiveEverything = useMemo(
         () =>
-            [...all.current, ...all.next, ...all.potential].reduce((acc: TokenId[], curr) => {
+            [...all.current, ...all.next].reduce((acc: TokenId[], curr) => {
                 let tmp: TokenId[] = acc;
                 if (epoch && +curr.toRawId() <= +epoch) {
                     if (sortAsc[SearchView.OnSale]) {

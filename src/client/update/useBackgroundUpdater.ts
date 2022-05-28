@@ -5,18 +5,18 @@ import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import { userAgent } from '@src/lib/userAgent';
 import useDimensions from '@src/client/hooks/useDimensions';
 
-const initialStyles = {
-    width: '200vw',
-    height: '200vh',
-    transform: 'translate(-50vw, -100vh)',
-    backgroundBlendMode: '',
-};
-const backgroundResetStyles = {
-    width: '100vw',
-    height: 'calc(var(--window-inner-height) - 1px)',
-    transform: 'unset',
-    backgroundBlendMode: '',
-};
+// const initialStyles = {
+//     width: '200vw',
+//     height: '200vh',
+//     transform: 'translate(-50vw, -100vh)',
+//     backgroundBlendMode: '',
+// };
+// const backgroundResetStyles = {
+//     width: '100vw',
+//     height: 'calc(var(--window-inner-height) - 1px)',
+//     transform: 'unset',
+//     backgroundBlendMode: '',
+// };
 
 if (
     userAgent.browser.name === 'Safari' ||
@@ -36,19 +36,19 @@ if (
     // g.setAttribute('shape-rendering', 'crispEdges');
 }
 
-type TargetBackgroundStyles = typeof initialStyles | typeof backgroundResetStyles;
+// type TargetBackgroundStyles = typeof initialStyles | typeof backgroundResetStyles;
 
 // const rootElement = document.getElementById('root');
 
-const backgroundRadialGradientElement = document.getElementById('background-radial-gradient');
+// const backgroundRadialGradientElement = document.getElementById('background-radial-gradient');
 
-const setBackground = (newValues: TargetBackgroundStyles) =>
-    Object.entries(newValues).forEach(([key, value]) => {
-        if (backgroundRadialGradientElement) {
-            backgroundRadialGradientElement.style[key as keyof typeof backgroundResetStyles] =
-                value;
-        }
-    });
+// const setBackground = (newValues: TargetBackgroundStyles) =>
+//     Object.entries(newValues).forEach(([key, value]) => {
+//         if (backgroundRadialGradientElement) {
+//             backgroundRadialGradientElement.style[key as keyof typeof backgroundResetStyles] =
+//                 value;
+//         }
+//     });
 
 // const setBackground = (newValues: TargetBackgroundStyles) =>
 //     rootElement.setAttribute('style', `stroke-width: ${size === 'thumbnail' ? 1.2 : 1.05}`);
@@ -57,6 +57,7 @@ export default (): null => {
     const darkMode = useDarkMode();
 
     const { isPhone } = useDimensions();
+    const backgroundRadialGradientElement = document.getElementById('background-radial-gradient');
 
     // // manage background color
     // useEffect(() => {
@@ -91,11 +92,11 @@ export default (): null => {
             'radial-gradient(150.6% 98.22% at 48.06% 0%, rgba(80, 144, 234, .34) 0%, rgb(80, 144, 234, 0.1) 1000%), #000000';
 
         if (darkMode) {
-            setBackground(backgroundResetStyles);
+            // setBackground(backgroundResetStyles);
 
             backgroundRadialGradientElement.style.background = darkGradient;
         } else {
-            setBackground(backgroundResetStyles);
+            // setBackground(backgroundResetStyles);
 
             backgroundRadialGradientElement.style.background = lightGradient;
         }

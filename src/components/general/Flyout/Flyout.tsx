@@ -48,13 +48,7 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
 
     const transition = useTransition(open, {
         from: {
-            width: triggerWidth,
-            height: '100px',
             pointerEvents: 'none' as const,
-            position: 'absolute' as const,
-            top: 0,
-            paddingTop: top,
-            [float]: 0,
             opacity: 0,
             y: -5,
         },
@@ -84,7 +78,17 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
             {transition((animatedStyle, isOpen) =>
                 isOpen ? (
                     <>
-                        <animated.div style={animatedStyle}>
+                        <animated.div
+                            style={{
+                                ...animatedStyle,
+                                width: triggerWidth,
+                                height: '100px',
+                                position: 'absolute' as const,
+                                top: 0,
+                                marginTop: top,
+                                [float]: 0,
+                            }}
+                        >
                             <div
                                 ref={openRef}
                                 style={{
