@@ -244,6 +244,7 @@ export enum Lifecycle {
     Cut = 'cut', //       [nugg     ] a token that no one bid on but still exists in the graph
     Egg = 'egg', //       [nugg     ] a token that will be minting in the next epoch --- SAME AS DECK, BUT NON OFFERABLE
     Concessions = 'concessions', // [nugg item] a nugg that is being sold by the user viewing it and no one else has bid on it - same as bench but not offerable by the given user
+    Minors = 'minors', // [nugg     ] a nugg that has been preminted and is waiting for a bid
 }
 
 // }

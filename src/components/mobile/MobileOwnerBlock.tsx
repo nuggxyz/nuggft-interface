@@ -61,8 +61,9 @@ const MobileOwnerBlock = ({
             token &&
             provider &&
             tokenId &&
-            lifecycle?.lifecycle === Lifecycle.Bunt &&
-            !leader?.eth
+            (lifecycle?.lifecycle === Lifecycle.Bunt ||
+                lifecycle?.lifecycle === Lifecycle.Minors) &&
+            (!leader?.eth || leader.eth.isZero())
         ) {
             const check = nuggft['vfo(address,uint24)'].bind(undefined, Address.NULL.hash);
             return check(tokenId.toRawId()).then((x) => {
@@ -71,7 +72,7 @@ const MobileOwnerBlock = ({
             });
         }
         return undefined;
-    }, [visible, token, nuggft, tokenId, provider, leader?.eth]);
+    }, [visible, token, nuggft, tokenId, provider, leader?.eth, lifecycle]);
 
     const leaderCurrency = useUsdPair(leader?.eth || vfo || 0);
 

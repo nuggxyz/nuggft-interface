@@ -46,7 +46,7 @@ export const FEATURE_NAMES = [
 ] as unknown as FixedLengthArray<string, 8>;
 
 // chances any nugg will have get a given feature
-export const FEATURE_RARITY = [8, 10, 10, 5, 5, 2, 2, 2].map(
+export const FEATURE_RARITY = [8, 11, 11, 5, 5, 2, 2, 2].map(
     (x) => x / 8,
 ) as unknown as FixedLengthArray<number, 8>;
 
@@ -70,10 +70,10 @@ export const CONTRACTS = {
         MintOffset: 1000000,
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0x6056b838d0297713cfe2f36427fc8247db3aaf75',
-        xNuggftV1: '0x8ca8962881afbf8b6b56558d81aa72b73f104d5b',
-        DotnuggV1: '0x0811aba7147adebd4245c13242701a105e3a00e5',
-        Genesis: 10756864,
+        NuggftV1: '0xa95e7bf3b12f0ee4d4078dfda67c883bfbfdddea',
+        xNuggftV1: '0x8404ef414f9cc31e2afb66a5b81d56bcdd407004',
+        DotnuggV1: '0xb73ec6767dd7d81f0056c4ea5919c91bb7b3f274',
+        Genesis: 10757312,
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,

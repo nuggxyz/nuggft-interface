@@ -42,6 +42,7 @@ export default (swap: Omit<SwapData, 'offers'> | undefined, sup?: LiveToken) => 
                     lifecycle,
                     active: false,
                 };
+            case Lifecycle.Minors:
             case Lifecycle.Concessions:
             case Lifecycle.Tryout:
             case Lifecycle.Bench:

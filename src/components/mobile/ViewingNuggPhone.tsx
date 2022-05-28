@@ -12,7 +12,7 @@ import globalStyles from '@src/lib/globalStyles';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import useRemaining, { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
+import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import { Lifecycle, TryoutData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useAsyncState from '@src/hooks/useAsyncState';
@@ -316,7 +316,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const swap = client.swaps.useSwap(tokenId);
     const lifecycle = useLifecycle(token);
 
-    const [, minutes, seconds] = useRemaining(swap?.epoch);
+    const { minutes, seconds } = client.epoch.useEpoch(swap?.epoch?.id);
     const [leader] = useAggregatedOffers(tokenId);
 
     const trueSeconds = useRemainingTrueSeconds(seconds ?? 0);
@@ -331,7 +331,12 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const nuggft = useNuggftV1();
 
     const vfo = useAsyncState(() => {
-        if (swap && provider && tokenId && lifecycle === Lifecycle.Bunt) {
+        if (
+            swap &&
+            provider &&
+            tokenId &&
+            (lifecycle === Lifecycle.Bunt || lifecycle === Lifecycle.Minors)
+        ) {
             return nuggft
                 .connect(provider)
                 ['vfo(address,uint24)'](Address.NULL.hash, tokenId.toRawId())
@@ -342,7 +347,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
         return undefined;
     }, [swap, nuggft, tokenId, provider]);
 
-    const swapCurrency = useUsdPair(leader?.eth || vfo);
+    const swapCurrency = useUsdPair(leader?.eth.gt(0) ? leader.eth : vfo);
 
     return (
         <>

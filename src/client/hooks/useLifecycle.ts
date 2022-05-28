@@ -41,6 +41,8 @@ export default (token?: LiveToken | Omit<SwapData, 'offers'>): Lifecycle | undef
                 if (!abc.endingEpoch) {
                     if (address === abc.owner && address === abc.leader)
                         return Lifecycle.Concessions;
+                    if (abc.owner === web3.constants.DEFAULT_CONTRACTS.NuggftV1)
+                        return Lifecycle.Minors;
                     return Lifecycle.Bench;
                 }
 
