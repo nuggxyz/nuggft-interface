@@ -97,8 +97,6 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
                 flexDirection: 'column' as const,
                 ...(style?.zIndex && { zIndex: style?.zIndex }),
                 ...animatedStyle, // transition: `opacity .5s ease`,
-                width: '100%',
-                height: '100%',
             }}
         >
             <div
