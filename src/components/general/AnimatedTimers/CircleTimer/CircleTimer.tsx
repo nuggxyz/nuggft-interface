@@ -112,31 +112,35 @@ const CircleTimer: FunctionComponent<Props> = ({
     return (
         <div style={{ ...styles.container, ...style }}>
             <div style={{ ...styles.childrenContainer, ...childrenContainerStyle }}>{children}</div>
-            <svg
-                height="100%"
-                width="100%"
-                filter={`drop-shadow(-10px 0px 15px ${shadowColor})`}
-                style={styles.svgTransition}
+            <div
+                style={{
+                    filter: `drop-shadow(-10px 0px 15px ${shadowColor})`,
+                    willChange: 'filter',
+                    height: '200%',
+                    width: '200%',
+                }}
             >
-                <animated.circle
-                    cx="50%"
-                    cy="50%"
-                    r={timerCircleRadius + 50}
-                    strokeDashoffset={x}
-                    fill="none"
-                />
-                <animated.circle
-                    cx="50%"
-                    cy="50%"
-                    r={timerCircleRadius}
-                    stroke={shadowColor === 'transparent' ? 'transparent' : 'white'}
-                    strokeDashoffset={x}
-                    strokeWidth={strokeWidth}
-                    fill="none"
-                    strokeDasharray={`${circumference} ${circumference}`}
-                    strokeLinecap="round"
-                />
-            </svg>
+                <svg height="100%" width="100%" style={styles.svgTransition}>
+                    <animated.circle
+                        cx="50%"
+                        cy="50%"
+                        r={timerCircleRadius + 50}
+                        strokeDashoffset={x}
+                        fill="none"
+                    />
+                    <animated.circle
+                        cx="50%"
+                        cy="50%"
+                        r={timerCircleRadius}
+                        stroke={shadowColor === 'transparent' ? 'transparent' : 'white'}
+                        strokeDashoffset={x}
+                        strokeWidth={strokeWidth}
+                        fill="none"
+                        strokeDasharray={`${circumference} ${circumference}`}
+                        strokeLinecap="round"
+                    />
+                </svg>
+            </div>
         </div>
     );
 };
