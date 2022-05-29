@@ -38,14 +38,9 @@ const CircleTimer: FunctionComponent<Props> = ({
     childrenContainerStyle,
     defaultColor,
 }) => {
-    // blocktime;
-    // const dimensions = AppState.select.dimensions();
     const timerCircleRadius = useMemo(() => width / 6.5, [width]);
     const circumference = useMemo(() => timerCircleRadius * TWOPI, [timerCircleRadius]);
-    // const jumpThreshold = useMemo(
-    //     () => ((timerCircleRadius * TWOPI) / duration) * 1.5,
-    //     [timerCircleRadius, duration],
-    // );
+
     const [stateRemaining, setStateRemaining] = useState(duration);
 
     useEffect(() => {
@@ -59,39 +54,15 @@ const CircleTimer: FunctionComponent<Props> = ({
             : 0;
     }, [stateRemaining, duration, timerCircleRadius]);
 
-    // const [previousTo, setPreviousTo] = useState(to);
-
-    // const customConfig = useMemo(
-    //     () =>
-    //         !isUndefinedOrNullOrStringEmpty(staticColor) ||
-    //         isUndefinedOrNullOrNotNumber(previousTo) ||
-    //         to < previousTo ||
-    //         Math.abs(previousTo - to) > jumpThreshold
-    //             ? config.molasses
-    //             : { duration: blocktime },
-    //     [to, previousTo, blocktime, jumpThreshold, staticColor],
-    // );
-
     const { x } = useSpring({
         to: {
             x: to,
         },
         delay: 200,
-        // from: {
-        //     x: previousTo,
-        // },
-        // onRest: () => {
-        //     if (isUndefinedOrNullOrStringEmpty(staticColor)) {
-        //         setPreviousTo(to);
-        //         const val = stateRemaining - 1 > 0 ? stateRemaining - 1 : 0;
-        //         setStateRemaining(val);
-        //     }
-        // },
+
         config: {
-            // ...springConfig.slow,
             tension: 250,
             friction: 180,
-            // easing: (r) => r * 50,
         },
     });
 

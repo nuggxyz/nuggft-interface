@@ -78,7 +78,6 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
             <div
                 style={{
                     filter: `drop-shadow(2px 3px 10px ${shadowColor})`,
-                    WebkitFilter: `drop-shadow(2px 3px 10px ${shadowColor})`,
                     willChange: 'filter',
                     height: '200%',
                     width: '200%',
@@ -90,9 +89,6 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                     style={{
                         ...styles.svgTransition,
                         transform: 'translate3d(0px,var(--a),0) rotate(-90deg)',
-
-                        // transform:
-                        // 'translate3d(0px,calc(calc(calc(var(--a) / var(--i)) * var(--i)) - var(--r)), 0) rotate(-90deg)',
                         transformOrigin: 'center',
                     }}
                 >
@@ -116,7 +112,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                         strokeLinecap="round"
                         style={{ transition: `all 2s ${lib.layout.animation}` }}
                     />
-                </svg>{' '}
+                </svg>
             </div>
         </div>
     );

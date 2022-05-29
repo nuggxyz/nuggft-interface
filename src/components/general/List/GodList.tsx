@@ -266,19 +266,10 @@ const GodList = <T, B, A>({
 
     const genid = React.useId();
 
-    const [trail, api] = useTrail(2, () => ({
-        from: {
-            y: 0,
-        },
-
-        config: packages.spring.config.slow,
-    }));
-
     const _onScroll = useCallback(
         (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
             const st = ev.currentTarget.scrollTop;
             if (offsetListRef) {
-                // st = windowRef.current.offsetTop - st;
                 setScrollTopOffset(ev.currentTarget.offsetHeight || 0);
             }
             const up = scrollTop < st;
@@ -292,9 +283,20 @@ const GodList = <T, B, A>({
 
     const prevScrollTop = usePrevious(scrollTop);
 
-    // console.log({ prevScrollTop, scrollTop });
+    const [trail, api] = useTrail(2, (i) => ({
+        from: {
+            y: 0,
+        },
+
+        onRest: () => {
+            api.start({ y: 0 });
+        },
+
+        config: i === 0 ? packages.spring.config.stiff : packages.spring.config.wobbly,
+    }));
 
     const [force, setForce] = React.useState(0);
+
     const prevForce = usePrevious(force);
 
     useEffect(() => {
@@ -310,25 +312,20 @@ const GodList = <T, B, A>({
 
     useEffect(() => {
         if (prevScrollTop !== undefined) {
-            const newForce =
+            setForce(
                 Math.floor(
                     scrollTop > prevScrollTop
-                        ? Math.min((scrollTop - prevScrollTop) / 5, 20)
-                        : Math.max((scrollTop - prevScrollTop) / 5, -20),
-                ) * -1;
-            // if (newForce !== force) {
-            setForce(newForce);
-            // }
+                        ? Math.min((scrollTop - prevScrollTop) / 1, 30)
+                        : Math.max((scrollTop - prevScrollTop) / 1, -30),
+                ) * -1,
+            );
         }
-
-        // if (prevScrollTop !== scrollTop) setForce(force + 1);
     }, [prevScrollTop, scrollTop, api, force]);
 
     useEffect(() => {
         if (coreRef && coreRef.current) {
             // @ts-ignore
             coreRef.current.onscroll = _onScroll;
-            // coreRef.current.scrollTo({ top: 0 });
         } else if (windowRef && windowRef.current) {
             // @ts-ignore
             windowRef.current.onscroll = _onScroll;
@@ -371,7 +368,6 @@ const GodList = <T, B, A>({
                         id={`${genid}1`}
                         style={{
                             transform: `translate(0px, ${uno_i * itemHeight}px)`,
-
                             height: `var(--i)`,
                             opacity: uno ? 1 : 0,
                             position: 'absolute',
