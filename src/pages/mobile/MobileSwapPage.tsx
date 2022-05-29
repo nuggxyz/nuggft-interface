@@ -47,7 +47,7 @@ const MobileSwapPage = () => {
                 RenderItem={MobileRingAbout}
                 data={dat}
                 extraData={undefined}
-                itemHeight={415}
+                itemHeight={438}
                 LIST_PADDING={0}
                 skipSelectedCheck
             />

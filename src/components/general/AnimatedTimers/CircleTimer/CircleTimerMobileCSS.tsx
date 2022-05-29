@@ -31,6 +31,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     childrenContainerStyle,
     defaultColor,
     staticColor,
+    tokenId,
 }) => {
     const to = useMemo(() => {
         return duration
@@ -40,7 +41,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                       HALFPI,
               )
             : 0;
-    }, [duration, width, staticColor, remaining]);
+    }, [duration, width, staticColor, remaining, tokenId]);
 
     const shadowColor = useMemo(() => {
         const percent = remaining / duration;
@@ -55,6 +56,10 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
         }
         return defaultColor;
     }, [remaining, duration, defaultColor, staticColor]);
+
+    if (tokenId === 'nugg-84') {
+        console.log({ shadowColor, remaining, duration, to, staticColor });
+    }
 
     return (
         <div style={{ zIndex: 1, ...style }}>
@@ -81,6 +86,8 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                     willChange: 'filter',
                     height: '100%',
                     width: '100%',
+                    transform: 'translate3d(0px,var(--a),0)',
+                    transformOrigin: 'center',
                 }}
             >
                 <svg
@@ -88,8 +95,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                     width="100%"
                     style={{
                         ...styles.svgTransition,
-                        transform: 'translate3d(0px,var(--a),0) rotate(-90deg)',
-                        transformOrigin: 'center',
+                        transform: 'rotate(-90deg)',
                     }}
                 >
                     <circle
@@ -120,5 +126,9 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
 
 export default React.memo(
     CircleTimerMobileCSS,
-    (a, b) => a.tokenId === b.tokenId && a.remaining === b.remaining,
+    (a, b) =>
+        a.tokenId === b.tokenId &&
+        a.remaining === b.remaining &&
+        b.defaultColor === a.defaultColor &&
+        a.staticColor === b.staticColor,
 );

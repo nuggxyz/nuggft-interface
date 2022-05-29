@@ -326,28 +326,8 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     );
 
     useMountLogger('activeSwap');
-    // const nuggft = useNuggftV1();
-
-    // const vfo = useAsyncState(() => {
-    //     if (
-    //         swap &&
-    //         provider &&
-    //         tokenId &&
-    //         (lifecycle === Lifecycle.Bunt || lifecycle === Lifecycle.Minors)
-    //     ) {
-    //         return nuggft
-    //             .connect(provider)
-    //             ['vfo(address,uint24)'](Address.NULL.hash, tokenId.toRawId())
-    //             .then((x) => {
-    //                 return new EthInt(x);
-    //             });
-    //     }
-    //     return undefined;
-    // }, [swap, nuggft, tokenId, provider]);
 
     const msp = client.stake.useMsp();
-
-    console.log({ msp });
 
     const swapCurrency = useUsdPair(
         leader?.eth.gt(0)

@@ -16,8 +16,6 @@ const MyNuggActions: FunctionComponent<Props> = () => {
     const tokenId = useMemo(() => regular || mobile, [regular, mobile]);
     const token = client.live.token(tokenId);
 
-    console.log(token);
-
     return tokenId && token && token.isNugg() ? (
         token?.activeSwap?.tokenId || token?.pendingClaim ? (
             <SaleButtons tokenId={tokenId} reclaim={!token?.pendingClaim} />

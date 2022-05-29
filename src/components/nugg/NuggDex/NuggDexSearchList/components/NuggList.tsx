@@ -143,12 +143,14 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                     (!isPhone ? (
                         <GodList
                             id={`${ider}infinite`}
-                            style={{
-                                zIndex: 0,
-                                overflow: 'hidden',
-                                position: 'relative',
-                                ...(screenType === 'phone' && { width: '100%' }),
-                            }}
+                            style={
+                                {
+                                    // zIndex: 0,
+                                    // overflow: 'hidden',
+                                    // position: 'relative',
+                                    // ...(screenType === 'phone' && { width: '100%' }),
+                                }
+                            }
                             data={tokenIds}
                             RenderItem={NuggListRenderItem}
                             loading={false}

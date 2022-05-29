@@ -8,12 +8,11 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import { animated, useTrail } from '@react-spring/web';
+import { animated } from '@react-spring/web';
 
 import Loader from '@src/components/general/Loader/Loader';
 import { range } from '@src/lib';
 import usePrevious from '@src/hooks/usePrevious';
-import packages from '@src/packages';
 
 import styles from './List.styles';
 
@@ -134,7 +133,7 @@ const GodList = <T, B, A>({
     );
 
     const startIndex = useMemo(() => {
-        return Math.max(Math.floor(scrollTop / itemHeight), 0);
+        return Math.max(Math.floor(scrollTop / itemHeight) - 3, 0);
     }, [scrollTop, itemHeight]);
 
     const endIndex = useMemo(() => {
@@ -218,49 +217,49 @@ const GodList = <T, B, A>({
     const [uno, uno_i, uno_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 0) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 3 && checker !== -1;
+        const visible = (checker >= 3 && checker < 6 && checker !== -1) || yeh < 3;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [dos, dos_i, dos_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 1) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 3 && checker !== -1;
+        const visible = (checker >= 3 && checker < 6 && checker !== -1) || yeh < 3;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [tres, tres_i, tres_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 2) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 3 && checker !== -1;
+        const visible = (checker >= 3 && checker < 6 && checker !== -1) || yeh < 3;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [qu, qu_i, qu_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 3) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 3 && checker !== -1;
+        const visible = checker >= 3 && checker < 6 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [cin, cin_i, cin_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 4) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 3 && checker !== -1;
+        const visible = checker >= 3 && checker < 6 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [sei, sei_i, sei_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 5) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 3 && checker !== -1;
+        const visible = checker >= 3 && checker < 6 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
     const [ses, ses_i, ses_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 6) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker < 3 && checker !== -1;
+        const visible = checker >= 3 && checker < 6 && checker !== -1;
         return [data[yeh], yeh, visible];
     }, [data, items]);
 
@@ -281,46 +280,48 @@ const GodList = <T, B, A>({
         [onScroll, offsetListRef, setScrollTopOffset, setTrueScrollTop, scrollTop],
     );
 
-    const prevScrollTop = usePrevious(scrollTop);
+    // const prevScrollTop = usePrevious(scrollTop);
 
-    const [trail, api] = useTrail(2, (i) => ({
-        from: {
-            y: 0,
-        },
+    // const [trail, api] = useTrail(8, () => ({
+    //     from: {
+    //         y: 0,
+    //     },
+    //     // config: i === 0 ? packages.spring.config.molasses : packages.spring.config.default,
+    //     config: { tension: 5000, mass: 10, friction: 100 },
+    //     // config: {
+    //     //     mass: 100,
+    //     //     friction: 50,
+    //     // },
+    // }));
 
-        // onRest: () => {
-        //     api.start({ y: 0 });
-        // },
+    // console.log(trail, dos_i);
 
-        config: i === 0 ? packages.spring.config.slow : packages.spring.config.slow,
-    }));
+    // const [force, setForce] = React.useState(0);
 
-    const [force, setForce] = React.useState(0);
+    // const prevForce = usePrevious(force);
 
-    const prevForce = usePrevious(force);
+    // useEffect(() => {
+    //     if (prevForce !== force) {
+    //         api.start(() => {
+    //             const abc = {
+    //                 y: force,
+    //             };
+    //             return abc;
+    //         });
+    //     }
+    // }, [force, api, prevForce]);
 
-    useEffect(() => {
-        if (prevForce !== force) {
-            api.start(() => {
-                const abc = {
-                    y: force,
-                };
-                return abc;
-            });
-        }
-    }, [force, api, prevForce]);
-
-    useEffect(() => {
-        if (prevScrollTop !== undefined) {
-            setForce(
-                Math.floor(
-                    scrollTop > prevScrollTop
-                        ? Math.min((scrollTop - prevScrollTop) / 2, 60)
-                        : Math.max((scrollTop - prevScrollTop) / 2, -60),
-                ) * -1,
-            );
-        }
-    }, [prevScrollTop, scrollTop, api, force]);
+    // useEffect(() => {
+    //     if (prevScrollTop !== undefined) {
+    //         setForce(
+    //             Math.floor(
+    //                 scrollTop > prevScrollTop
+    //                     ? Math.min(scrollTop - prevScrollTop, 120) * 5
+    //                     : Math.max(scrollTop - prevScrollTop, -120) * 5,
+    //             ) * -1,
+    //         );
+    //     }
+    // }, [prevScrollTop, scrollTop, api, force]);
 
     useEffect(() => {
         if (coreRef && coreRef.current) {
@@ -331,6 +332,20 @@ const GodList = <T, B, A>({
             windowRef.current.onscroll = _onScroll;
         }
     }, [coreRef, _onScroll]);
+
+    // const cheeeeck = React.useCallback(
+    //     (visible: boolean, index: number) => {
+    //         return {
+    //             '--a': visible
+    //                 ? trail[(items.indexOf(index) || 2) - 2].y.to((y) => `${y}px`)
+    //                 : `0px`,
+    //             '--b': visible
+    //                 ? trail[(items.indexOf(index) || 1) - 1].y.to((y) => `${y}px`)
+    //                 : `0px`,
+    //         };
+    //     },
+    //     [trail, items],
+    // );
 
     return (
         <>
@@ -357,14 +372,18 @@ const GodList = <T, B, A>({
                 <animated.div
                     style={{
                         position: 'relative',
-                        height: `${innerHeight}`,
+                        height: `${innerHeight}px`,
                         width: '100%',
                         '--i': itemHeight,
-                        '--a': trail[0].y.to((y) => `${y}px`),
-                        '--b': trail[1].y.to((y) => `${y}px`),
+                        // '--a': trail[0].y.to((y) => `${y}px`),
+                        // '--b': trail[1].y.to((y) => `${y}px`),
+                        // '--c': trail[2].y.to((y) => `${y}px`),
+                        // '--d': trail[3].y.to((y) => `${y}px`),
+                        // '--e': trail[4].y.to((y) => `${y}px`),
+                        // '--f': trail[5].y.to((y) => `${y}px`),
                     }}
                 >
-                    <div
+                    <animated.div
                         id={`${genid}1`}
                         style={{
                             transform: `translate(0px, ${uno_i * itemHeight}px)`,
@@ -372,6 +391,7 @@ const GodList = <T, B, A>({
                             opacity: uno ? 1 : 0,
                             position: 'absolute',
                             width: '100%',
+                            // ...cheeeeck(uno_v, uno_i),
                         }}
                     >
                         <RenderItem
@@ -382,8 +402,8 @@ const GodList = <T, B, A>({
                             action={action}
                             selected={false}
                         />
-                    </div>
-                    <div
+                    </animated.div>
+                    <animated.div
                         id={`${genid}2`}
                         style={{
                             transform: `translate(0px, ${dos_i * itemHeight}px)`,
@@ -391,6 +411,7 @@ const GodList = <T, B, A>({
                             opacity: dos ? 1 : 0,
                             position: 'absolute',
                             width: '100%',
+                            // ...cheeeeck(dos_v, dos_i),
                         }}
                     >
                         <RenderItem
@@ -401,8 +422,8 @@ const GodList = <T, B, A>({
                             action={action}
                             selected={false}
                         />
-                    </div>
-                    <div
+                    </animated.div>
+                    <animated.div
                         id={`${genid}3`}
                         style={{
                             transform: `translate(0px, ${tres_i * itemHeight}px)`,
@@ -410,6 +431,7 @@ const GodList = <T, B, A>({
                             position: 'absolute',
                             width: '100%',
                             height: `var(--i)`,
+                            // ...cheeeeck(tres_v, tres_i),
                         }}
                     >
                         <RenderItem
@@ -420,8 +442,8 @@ const GodList = <T, B, A>({
                             action={action}
                             selected={false}
                         />
-                    </div>
-                    <div
+                    </animated.div>
+                    <animated.div
                         id={`${genid}4`}
                         style={{
                             transform: `translate(0px, ${qu_i * itemHeight}px)`,
@@ -429,6 +451,7 @@ const GodList = <T, B, A>({
                             position: 'absolute',
                             width: '100%',
                             height: `var(--i)`,
+                            // ...cheeeeck(qu_v, qu_i),
                         }}
                     >
                         <RenderItem
@@ -439,8 +462,8 @@ const GodList = <T, B, A>({
                             action={action}
                             selected={false}
                         />
-                    </div>
-                    <div
+                    </animated.div>
+                    <animated.div
                         id={`${genid}5`}
                         style={{
                             transform: `translate(0px, ${cin_i * itemHeight}px)`,
@@ -448,6 +471,7 @@ const GodList = <T, B, A>({
                             position: 'absolute',
                             width: '100%',
                             height: `var(--i)`,
+                            // ...cheeeeck(cin_v, cin_i),
                         }}
                     >
                         <RenderItem
@@ -458,8 +482,8 @@ const GodList = <T, B, A>({
                             action={action}
                             selected={false}
                         />
-                    </div>
-                    <div
+                    </animated.div>
+                    <animated.div
                         id={`${genid}6`}
                         style={{
                             opacity: sei ? 1 : 0,
@@ -467,6 +491,7 @@ const GodList = <T, B, A>({
                             transform: `translate(0px, ${sei_i * itemHeight}px)`,
                             width: '100%',
                             height: `var(--i)`,
+                            // ...cheeeeck(sei_v, sei_i),
                         }}
                     >
                         <RenderItem
@@ -477,8 +502,8 @@ const GodList = <T, B, A>({
                             action={action}
                             selected={false}
                         />
-                    </div>
-                    <div
+                    </animated.div>
+                    <animated.div
                         id={`${genid}7`}
                         style={{
                             transform: `translate(0px, ${ses_i * itemHeight}px)`,
@@ -486,6 +511,7 @@ const GodList = <T, B, A>({
                             position: 'absolute',
                             width: '100%',
                             height: `var(--i)`,
+                            // ...cheeeeck(ses_v, ses_i),
                         }}
                     >
                         <RenderItem
@@ -496,7 +522,7 @@ const GodList = <T, B, A>({
                             action={action}
                             selected={false}
                         />
-                    </div>
+                    </animated.div>
                 </animated.div>
                 {loading && <Loading />}
 

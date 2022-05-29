@@ -35,7 +35,7 @@ const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible, ind
         return {
             ...((minutes ?? 0) <= 5 &&
                 lifecycle?.active && {
-                    background: lib.colors.gradient,
+                    background: lib.colors.gradient2Transparent,
                 }),
             ...((swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) && {
                 background: lib.colors.gradient4Transparent,
@@ -56,7 +56,7 @@ const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible, ind
                 justifyContent: 'flex-end',
                 alignItems: 'center',
                 position: 'relative',
-                height: '450px',
+                height: '438px',
             }}
             onClick={(event) => {
                 event.stopPropagation();
@@ -69,18 +69,23 @@ const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible, ind
                     alignItems: 'center',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    overflow: 'hidden',
+                    overflow: 'visible',
                     borderRadius: lib.layout.borderRadius.medium,
-                    background: lib.colors.gradient2,
+                    background: lib.colors.gradient2Transparent,
                     padding: '.75rem',
                     position: 'relative',
                     ...background,
                     boxShadow: lib.layout.boxShadow.dark,
                     width: '93%',
-                    height: '380px',
+                    height: '415px',
                 }}
             >
-                <MobileOwnerBlock tokenId={tokenId} visible={visible} lifecycle={lifecycle} />
+                <MobileOwnerBlock
+                    tokenId={tokenId}
+                    visible={visible}
+                    // lifecycle={lifecycle}
+                    // index={index}
+                />
             </animated.div>
         </div>
     );

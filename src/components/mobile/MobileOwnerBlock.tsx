@@ -18,15 +18,16 @@ import Label from '@src/components/general/Label/Label';
 const MobileOwnerBlock = ({
     tokenId,
     visible,
-    lifecycle,
-}: {
+}: // index,
+{
     tokenId?: TokenId;
     visible?: boolean;
-    lifecycle: ReturnType<typeof useLifecycleEnhanced>;
 }) => {
     const token = client.live.token(tokenId);
 
     const swap = client.swaps.useSwap(tokenId);
+
+    const lifecycle = useLifecycleEnhanced(visible ? swap : undefined);
 
     const [leader, ...offers] = useAggregatedOffers(visible ? tokenId : undefined);
 
@@ -52,25 +53,6 @@ const MobileOwnerBlock = ({
 
     const minTryoutCurrency = useUsdPair(token?.isItem() ? token?.tryout.min?.eth : undefined);
 
-    // const vfo = useAsyncState(() => {
-    //     if (
-    //         visible &&
-    //         token &&
-    //         provider &&
-    //         tokenId &&
-    //         (lifecycle?.lifecycle === Lifecycle.Bunt ||
-    //             lifecycle?.lifecycle === Lifecycle.Minors) &&
-    //         (!leader?.eth || leader.eth.isZero())
-    //     ) {
-    //         const check = nuggft['vfo(address,uint24)'].bind(undefined, Address.NULL.hash);
-    //         return check(tokenId.toRawId()).then((x) => {
-    //             if (x.isZero()) return nuggft.msp();
-    //             return x;
-    //         });
-    //     }
-    //     return undefined;
-    // }, [visible, token, nuggft, tokenId, provider, leader?.eth, lifecycle]);
-
     const msp = client.stake.useMsp();
 
     const leaderCurrency = useUsdPair(
@@ -84,7 +66,10 @@ const MobileOwnerBlock = ({
     // const leaderCurrency = useUsdPair(leader?.eth.gt(0) ? leader.eth : vfo || 0);
 
     const currencyData = React.useMemo(() => {
-        if (leader && lifecycle?.lifecycle === Lifecycle.Bench) {
+        if (
+            leader &&
+            (lifecycle?.lifecycle === Lifecycle.Bench || lifecycle?.lifecycle === Lifecycle.Minors)
+        ) {
             return {
                 currency: leaderCurrency,
                 text: `seller`,
@@ -107,7 +92,7 @@ const MobileOwnerBlock = ({
             currency: leaderCurrency,
             text: new EthInt(leader?.eth || 0).number
                 ? `${leaderEns || leader?.account || ''} is leading`
-                : 'now',
+                : 'live',
             subtext:
                 offers.length !== 0 &&
                 plural(offers.length, {
@@ -151,7 +136,7 @@ const MobileOwnerBlock = ({
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    marginTop: -25,
+                    marginTop: -15,
                 }}
             >
                 <TheRing
@@ -258,7 +243,7 @@ const MobileOwnerBlock = ({
                 <Text
                     textStyle={{
                         color: lib.colors.primaryColor,
-
+                        fontSize: '15px',
                         fontWeight: lib.layout.fontWeight.semibold,
                     }}
                 >
@@ -526,8 +511,5 @@ const MobileOwnerBlock = ({
 
 export default React.memo(
     MobileOwnerBlock,
-    (a, b) =>
-        (b.tokenId === undefined || a.tokenId === b.tokenId) &&
-        a.visible === b.visible &&
-        a.lifecycle?.lifecycle === b.lifecycle?.lifecycle,
+    (a, b) => (b.tokenId === undefined || a.tokenId === b.tokenId) && a.visible === b.visible,
 );

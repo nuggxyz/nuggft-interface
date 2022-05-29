@@ -266,19 +266,6 @@ export const apolloClient = new ApolloClient<any>({
     },
 });
 
-// interface WalletInfo {
-//     name: string;
-//     label: string;
-//     description: string;
-//     href: string | null;
-//     color: string;
-//     primary?: true;
-//     mobile?: true;
-//     mobileOnly?: true;
-//     peerName?: string;
-//     peerurl?: string;
-// }
-
 export const useActivate = () => {
     useEffect(() => {
         [

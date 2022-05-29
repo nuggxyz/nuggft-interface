@@ -11,6 +11,10 @@ declare module 'csstype' {
         '--info-clicker-filter'?: string;
         '--a'?: string;
         '--b'?: string;
+        '--c'?: string;
+        '--d'?: string;
+        '--e'?: string;
+        '--f'?: string;
         '--i'?: number;
         '--p'?: string;
         '--pn'?: number;
@@ -27,6 +31,10 @@ declare module 'react' {
         '--info-clicker-filter'?: string;
         '--a'?: string;
         '--b'?: string;
+        '--c'?: string;
+        '--d'?: string;
+        '--e'?: string;
+        '--f'?: string;
         '--i'?: number;
         '--p'?: string;
         '--pn'?: number;

@@ -74,6 +74,27 @@ const TheRing: FunctionComponent<Props> = ({
     const CircleTimerWrap = React.useMemo(() => {
         return isPhone ? CircleTimerMobileCSS : CircleTimer;
     }, [isPhone]);
+
+    const col = React.useMemo(() => {
+        return swap && lifecycle
+            ? lifecycle === Lifecycle.Stands
+                ? lib.colors.darkerGray
+                : lifecycle === Lifecycle.Bench
+                ? lib.colors.nuggGold
+                : lifecycle === Lifecycle.Deck
+                ? lib.colors.green
+                : lifecycle === Lifecycle.Bat || lifecycle === Lifecycle.Bunt
+                ? ''
+                : lifecycle === Lifecycle.Cut
+                ? lib.colors.red
+                : lifecycle === Lifecycle.Minors
+                ? lib.colors.nuggGold
+                : isPhone
+                ? 'white'
+                : 'purple'
+            : 'white';
+    }, [tokenId, swap, lifecycle]);
+
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
             <CircleTimerWrap
@@ -84,25 +105,7 @@ const TheRing: FunctionComponent<Props> = ({
                 width={circleWidth}
                 childrenContainerStyle={circleChildrenContainerStyle}
                 defaultColor={defaultColor}
-                staticColor={
-                    swap && lifecycle
-                        ? lifecycle === Lifecycle.Stands
-                            ? lib.colors.darkerGray
-                            : lifecycle === Lifecycle.Bench
-                            ? lib.colors.nuggGold
-                            : lifecycle === Lifecycle.Deck
-                            ? lib.colors.green
-                            : lifecycle === Lifecycle.Bat || lifecycle === Lifecycle.Bunt
-                            ? ''
-                            : lifecycle === Lifecycle.Cut
-                            ? lib.colors.red
-                            : lifecycle === Lifecycle.Minors
-                            ? lib.colors.nuggGold
-                            : isPhone
-                            ? 'white'
-                            : 'purple'
-                        : 'white'
-                }
+                staticColor={col}
                 style={{
                     ...styles.circle,
                     ...circleStyle,
