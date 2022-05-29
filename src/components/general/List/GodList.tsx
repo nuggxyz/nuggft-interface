@@ -288,11 +288,11 @@ const GodList = <T, B, A>({
             y: 0,
         },
 
-        onRest: () => {
-            api.start({ y: 0 });
-        },
+        // onRest: () => {
+        //     api.start({ y: 0 });
+        // },
 
-        config: i === 0 ? packages.spring.config.stiff : packages.spring.config.wobbly,
+        config: i === 0 ? packages.spring.config.slow : packages.spring.config.slow,
     }));
 
     const [force, setForce] = React.useState(0);
@@ -315,8 +315,8 @@ const GodList = <T, B, A>({
             setForce(
                 Math.floor(
                     scrollTop > prevScrollTop
-                        ? Math.min((scrollTop - prevScrollTop) / 1, 30)
-                        : Math.max((scrollTop - prevScrollTop) / 1, -30),
+                        ? Math.min((scrollTop - prevScrollTop) / 2, 60)
+                        : Math.max((scrollTop - prevScrollTop) / 2, -60),
                 ) * -1,
             );
         }

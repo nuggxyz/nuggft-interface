@@ -144,7 +144,7 @@ export default {
         ),
     useMinutes: (epochId: number) =>
         store(
-            React.useCallback((state) => (epochId ? state[epochId].seconds : undefined), [epochId]),
+            React.useCallback((state) => (epochId ? state[epochId].minutes : undefined), [epochId]),
         ),
 
     ...store,

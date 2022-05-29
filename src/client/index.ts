@@ -18,6 +18,7 @@ import ens from './ens';
 import health from './health';
 import epoch from './epoch';
 import block from './block';
+import stake from './stake';
 
 export default {
     core,
@@ -163,4 +164,5 @@ export default {
     health,
     block,
     epoch,
+    stake,
 };

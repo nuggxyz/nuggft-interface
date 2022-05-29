@@ -9,14 +9,12 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import useTokenQuery from '@src/client/hooks/useTokenQuery';
 import globalStyles from '@src/lib/globalStyles';
-import { EthInt, Fraction } from '@src/classes/Fraction';
+import { Fraction } from '@src/classes/Fraction';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import { Lifecycle, TryoutData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-import useAsyncState from '@src/hooks/useAsyncState';
-import { useNuggftV1 } from '@src/contracts/useContract';
 import { Address } from '@src/classes/Address';
 import OffersList from '@src/components/nugg/RingAbout/OffersList';
 import Caboose from '@src/components/nugg/RingAbout/Caboose';
@@ -328,26 +326,34 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     );
 
     useMountLogger('activeSwap');
-    const nuggft = useNuggftV1();
+    // const nuggft = useNuggftV1();
 
-    const vfo = useAsyncState(() => {
-        if (
-            swap &&
-            provider &&
-            tokenId &&
-            (lifecycle === Lifecycle.Bunt || lifecycle === Lifecycle.Minors)
-        ) {
-            return nuggft
-                .connect(provider)
-                ['vfo(address,uint24)'](Address.NULL.hash, tokenId.toRawId())
-                .then((x) => {
-                    return new EthInt(x);
-                });
-        }
-        return undefined;
-    }, [swap, nuggft, tokenId, provider]);
+    // const vfo = useAsyncState(() => {
+    //     if (
+    //         swap &&
+    //         provider &&
+    //         tokenId &&
+    //         (lifecycle === Lifecycle.Bunt || lifecycle === Lifecycle.Minors)
+    //     ) {
+    //         return nuggft
+    //             .connect(provider)
+    //             ['vfo(address,uint24)'](Address.NULL.hash, tokenId.toRawId())
+    //             .then((x) => {
+    //                 return new EthInt(x);
+    //             });
+    //     }
+    //     return undefined;
+    // }, [swap, nuggft, tokenId, provider]);
 
-    const swapCurrency = useUsdPair(leader?.eth.gt(0) ? leader.eth : vfo);
+    const msp = client.stake.useMsp();
+
+    const swapCurrency = useUsdPair(
+        leader?.eth.gt(0)
+            ? leader.eth
+            : lifecycle === Lifecycle.Bunt || lifecycle === Lifecycle.Minors
+            ? msp
+            : 0,
+    );
 
     return (
         <>

@@ -11,6 +11,7 @@ import {
     LiveProtocolFragment,
 } from '@src/gql/types.generated';
 import { formatSwapData } from '@src/client/formatters/formatSwapData';
+import stake from '@src/client/stake';
 
 const mergeUnique = <T extends SwapData>(arr: T[]) => {
     let len = arr.length;
@@ -38,6 +39,7 @@ export default () => {
     const updateProtocolSimple = client.mutate.updateProtocolSimple();
 
     const updateSwaps = client.swaps.useUpdateSwaps();
+    const updateStake = stake.useUpdate();
 
     const { data, refetch } = useGetMassiveLiveProtocolQuery({
         fetchPolicy: 'no-cache',
@@ -115,10 +117,6 @@ export default () => {
                 },
             );
 
-            // protocol.activeItems.forEach((y) => {
-            //     updateToken(y.id.toItemId(), formatLiveItem(y));
-            // });
-
             const activeItems = protocol.activeItems.reduce(
                 (
                     prev: {
@@ -159,6 +157,9 @@ export default () => {
                 ...Object.values(activeNuggs).flat(),
                 ...Object.values(activeItems).flat(),
             ]);
+
+            updateStake(shares, staked);
+
             updateProtocolSimple({
                 stake: {
                     staked,
@@ -178,7 +179,7 @@ export default () => {
                 // ...activeItems,
             });
         },
-        [updateProtocolSimple, updateSwaps],
+        [updateProtocolSimple, updateSwaps, updateStake],
     );
     const debouncedData = useDebounce(data, 500);
 

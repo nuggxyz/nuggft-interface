@@ -7,12 +7,9 @@ import lib from '@src/lib';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import Text from '@src/components/general/Texts/Text/Text';
-import { Address } from '@src/classes/Address';
 import { EthInt } from '@src/classes/Fraction';
 import { useUsdPair } from '@src/client/usd';
-import useAsyncState from '@src/hooks/useAsyncState';
 import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
-import { useNuggftV1 } from '@src/contracts/useContract';
 import web3 from '@src/web3';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
@@ -39,7 +36,7 @@ const MobileOwnerBlock = ({
 
     const trueSeconds = useRemainingTrueSeconds(seconds ?? 0);
     // const provider = web3.hook.usePriorityProvider();
-    const nuggft = useNuggftV1(provider);
+    // const nuggft = useNuggftV1(provider);
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         swap && swap.type === 'item' ? 'nugg' : provider,
@@ -55,26 +52,36 @@ const MobileOwnerBlock = ({
 
     const minTryoutCurrency = useUsdPair(token?.isItem() ? token?.tryout.min?.eth : undefined);
 
-    const vfo = useAsyncState(() => {
-        if (
-            visible &&
-            token &&
-            provider &&
-            tokenId &&
-            (lifecycle?.lifecycle === Lifecycle.Bunt ||
-                lifecycle?.lifecycle === Lifecycle.Minors) &&
-            (!leader?.eth || leader.eth.isZero())
-        ) {
-            const check = nuggft['vfo(address,uint24)'].bind(undefined, Address.NULL.hash);
-            return check(tokenId.toRawId()).then((x) => {
-                if (x.isZero()) return nuggft.msp();
-                return x;
-            });
-        }
-        return undefined;
-    }, [visible, token, nuggft, tokenId, provider, leader?.eth, lifecycle]);
+    // const vfo = useAsyncState(() => {
+    //     if (
+    //         visible &&
+    //         token &&
+    //         provider &&
+    //         tokenId &&
+    //         (lifecycle?.lifecycle === Lifecycle.Bunt ||
+    //             lifecycle?.lifecycle === Lifecycle.Minors) &&
+    //         (!leader?.eth || leader.eth.isZero())
+    //     ) {
+    //         const check = nuggft['vfo(address,uint24)'].bind(undefined, Address.NULL.hash);
+    //         return check(tokenId.toRawId()).then((x) => {
+    //             if (x.isZero()) return nuggft.msp();
+    //             return x;
+    //         });
+    //     }
+    //     return undefined;
+    // }, [visible, token, nuggft, tokenId, provider, leader?.eth, lifecycle]);
 
-    const leaderCurrency = useUsdPair(leader?.eth.gt(0) ? leader.eth : vfo || 0);
+    const msp = client.stake.useMsp();
+
+    const leaderCurrency = useUsdPair(
+        leader?.eth.gt(0)
+            ? leader.eth
+            : lifecycle?.lifecycle === Lifecycle.Bunt || lifecycle?.lifecycle === Lifecycle.Minors
+            ? msp
+            : 0,
+    );
+
+    // const leaderCurrency = useUsdPair(leader?.eth.gt(0) ? leader.eth : vfo || 0);
 
     const currencyData = React.useMemo(() => {
         if (leader && lifecycle?.lifecycle === Lifecycle.Bench) {
