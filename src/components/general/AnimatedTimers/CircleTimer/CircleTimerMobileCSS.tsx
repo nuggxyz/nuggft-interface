@@ -79,8 +79,8 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                 style={{
                     filter: `drop-shadow(2px 3px 10px ${shadowColor})`,
                     willChange: 'filter',
-                    height: '200%',
-                    width: '200%',
+                    height: '100%',
+                    width: '100%',
                 }}
             >
                 <svg
