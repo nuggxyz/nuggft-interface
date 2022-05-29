@@ -1,69 +1,72 @@
 /* eslint-disable no-param-reassign */
 import create from 'zustand';
-import { combine } from 'zustand/middleware';
+import { combine, persist } from 'zustand/middleware';
 import React from 'react';
 
 import { EthInt, PairInt, Fractionish } from '@src/classes/Fraction';
 import emitter from '@src/emitter';
 
 const store = create(
-    combine(
-        {
-            price: 0,
-            timestamp: 0,
-            lastSeen: 0,
-            preference: 'USD' as 'ETH' | 'USD',
-            error: false,
-            errorStart: null as number | null,
-        },
-        (set, get) => {
-            const setCurrencyPreference = (input: 'USD' | 'ETH') => {
-                set(() => ({
-                    preference: input,
-                }));
-            };
-
-            const update = (
-                price: {
-                    ethusd: number;
-                    ethusd_timestamp: number;
-                } | null,
-            ) => {
-                try {
-                    if (price === null) throw Error();
-                    if (price.ethusd === 0) throw Error();
+    persist(
+        combine(
+            {
+                price: 0,
+                timestamp: 0,
+                lastSeen: 0,
+                preference: 'USD' as 'ETH' | 'USD',
+                error: false,
+                errorStart: null as number | null,
+            },
+            (set, get) => {
+                const setCurrencyPreference = (input: 'USD' | 'ETH') => {
                     set(() => ({
-                        price: Number(price.ethusd.toFixed(2)),
-                        error: false,
-                        timestamp: price.ethusd_timestamp,
-                        lastSeen: new Date().getTime(),
+                        preference: input,
                     }));
-                } catch {
-                    const { errorStart, price: prevPrice, error } = get();
-                    if (!error) {
-                        if (errorStart === null) {
-                            set(() => ({
-                                errorStart: new Date().getTime(),
-                                ...(prevPrice === 0 && { error: true }),
-                            }));
-                        } else if (new Date().getTime() - errorStart > 60000) {
-                            set(() => ({
-                                error: true,
-                            }));
+                };
+
+                const update = (
+                    price: {
+                        ethusd: number;
+                        ethusd_timestamp: number;
+                    } | null,
+                ) => {
+                    try {
+                        if (price === null) throw Error();
+                        if (price.ethusd === 0) throw Error();
+                        set(() => ({
+                            price: Number(price.ethusd.toFixed(2)),
+                            error: false,
+                            timestamp: price.ethusd_timestamp,
+                            lastSeen: new Date().getTime(),
+                        }));
+                    } catch {
+                        const { errorStart, price: prevPrice, error } = get();
+                        if (!error) {
+                            if (errorStart === null) {
+                                set(() => ({
+                                    errorStart: new Date().getTime(),
+                                    ...(prevPrice === 0 && { error: true }),
+                                }));
+                            } else if (new Date().getTime() - errorStart > 60000) {
+                                set(() => ({
+                                    error: true,
+                                }));
+                            }
                         }
                     }
-                }
-            };
+                };
 
-            const watch = emitter.on.bind(emitter, {
-                type: emitter.events.IncomingEtherscanPrice,
-                callback: (arg) => {
-                    update(arg.data);
-                },
-            });
+                const watch = emitter.on.bind(emitter, {
+                    type: emitter.events.IncomingEtherscanPrice,
+                    callback: (arg) => {
+                        update(arg.data);
+                    },
+                });
 
-            return { setCurrencyPreference, watch };
-        },
+                return { setCurrencyPreference, watch };
+            },
+        ),
+        { name: 'nugg.xyz-usd' },
     ),
 );
 
