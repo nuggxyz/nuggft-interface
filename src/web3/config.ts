@@ -2,9 +2,12 @@
 import { useEffect } from 'react';
 import { ApolloClient } from '@apollo/client';
 import { InfuraProvider, JsonRpcProvider } from '@ethersproject/providers';
+import { BigNumber } from 'ethers';
 
 import { buildApolloSplitLink, buildCache } from '@src/gql';
 import * as constants from '@src/lib/constants';
+import { EthInt, Fraction } from '@src/classes/Fraction';
+import { ETH_ONE } from '@src/lib/conversion';
 
 import { Connector } from './core/types';
 import {
@@ -40,6 +43,8 @@ import {
     GRAPH_WSS_ENDPOINTS,
     INFURA_KEY,
     INFURA_URLS,
+    PREMIUM_DIV,
+    PROTOCOL_FEE_FRAC_MINT,
     supportedChainIds,
 } from './constants';
 
@@ -293,4 +298,14 @@ export const useActivate = () => {
     }, []);
 
     return null;
+};
+
+export const calculateMsp = (shares: BigNumber, eth: BigNumber) => {
+    if (!shares.eq(BigNumber.from(0))) {
+        const ethPerShare = new Fraction(eth, shares.mul(ETH_ONE));
+        const protocolFee = ethPerShare.divide(PROTOCOL_FEE_FRAC_MINT);
+        const premium = ethPerShare.multiply(shares).divide(PREMIUM_DIV);
+        return ethPerShare.add(protocolFee).add(premium);
+    }
+    return new EthInt(0);
 };

@@ -173,9 +173,8 @@ const CurrencyText: React.FC<BalanceProps> = ({
                                       : val > 1
                                       ? CurrencyInt.format(val, unit === 'USD' ? 2 : 3)
                                       : val.toFixed(percent ? 2 : decimals || 5);
-                                  const resB = res.replace(replace ? '0.' : '', '.');
-
-                                  return resB;
+                                  if (replace) return res.replace('0.', '.');
+                                  return res;
                               })}
                     </animated.div>
                 )}

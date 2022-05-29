@@ -347,6 +347,8 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
 
     const msp = client.stake.useMsp();
 
+    console.log({ msp });
+
     const swapCurrency = useUsdPair(
         leader?.eth.gt(0)
             ? leader.eth

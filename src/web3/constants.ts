@@ -89,7 +89,7 @@ export const CONTRACTS = {
     },
 } as const;
 
-export const PROTOCOL_FEE_FRAC_MINT = 2;
+export const PROTOCOL_FEE_FRAC_MINT = 1;
 export const PREMIUM_DIV = 2000;
 export const DEFAULT_CONTRACTS = CONTRACTS[DEFAULT_CHAIN];
 
