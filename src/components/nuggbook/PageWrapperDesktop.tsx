@@ -133,7 +133,7 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
             }}
         >
             {tabFadeTransition((_styles, kid) => (
-                <animated.div style={{ ..._styles, position: 'absolute' }}>
+                <animated.div style={{ ..._styles, position: 'absolute', width: '80%' }}>
                     {!!kid.book.comp && (
                         <kid.book.comp
                             clear={handleClear}

@@ -7,6 +7,7 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
 import packages from '@src/packages';
 import client from '@src/client';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 const items = [
     'no more scams',
@@ -21,23 +22,48 @@ const items = [
     'no more bullshit',
 ].map((val, index) => ({ val, index }));
 
+const layoutConfig = {
+    desktop: {
+        spring: '52px',
+        spring2: '166px',
+        spring3: '18px',
+        size: 'larger' as const,
+        width: '50%',
+    },
+    tablet: {
+        spring: '52px',
+        spring2: '170px',
+        spring3: '18px',
+        size: 'larger' as const,
+        width: '50%',
+    },
+    phone: {
+        spring: '31px',
+        spring2: '103px',
+        spring3: '12px',
+        size: 'medium' as const,
+        width: '100%',
+    },
+};
+
 const Start: NuggBookPage = ({ setPage, close }) => {
+    const { screen } = useDimensions();
     const spring = useSpring({
         from: {
             width: '0px',
             opacity: 0,
         },
         to: {
-            width: '31px',
+            width: layoutConfig[screen].spring,
             opacity: 1,
         },
-        delay: 500 + items.length * 1000,
+        delay: 700 + items.length * 1000,
         config: config.molasses,
     });
 
     const spring2 = useSpring({
         from: {
-            width: '103px',
+            width: layoutConfig[screen].spring2,
             opacity: 1,
         },
         to: {
@@ -45,29 +71,29 @@ const Start: NuggBookPage = ({ setPage, close }) => {
             width: '0px',
         },
 
-        delay: 1500 + items.length * 1000,
-        config: config.gentle,
+        delay: 700 + items.length * 1000,
+        config: config.molasses,
     });
 
     const spring3 = useSpring({
         from: {
-            width: '12px',
+            width: layoutConfig[screen].spring3,
             opacity: 1,
         },
         to: {
             width: '0px',
             opacity: 0,
         },
-        delay: 1500 + items.length * 1000,
-        config: config.gentle,
+        delay: 700 + items.length * 1000,
+        config: config.molasses,
     });
 
     const transition = packages.spring.useTransition(items, {
-        config: packages.spring.config.molasses,
+        config: config.molasses, // { duration: 1000 },
         enter: { width: 200 },
         from: { width: 0 },
         delay: (x: string) => {
-            return Number((x as `${number}-welcome-transition`).split('-')[0]) * 1000;
+            return Number((x as `${number}-welcome-transition`).split('-')[0]) * 1000 + 1000;
         },
         keys: (x) => `${x.index}-welcome-transition`,
     });
@@ -94,51 +120,19 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                 flexDirection: 'column',
             }}
         >
-            <animated.div
-                style={{
-                    width: '100%',
-                    padding: 20,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-start',
-                }}
-            >
-                {transition(({ width, ...style }, kid, _, index) => (
-                    <a.div
-                        key={index}
-                        style={{
-                            width,
-                            overflow: 'hidden',
-
-                            ...style,
-                        }}
-                    >
-                        <a.div
-                            style={{
-                                width: 200,
-                                // display: 'inline-flex',
-                                // flexWrap: 'nowrap',
-                            }}
-                        >
-                            <Text>{kid.val}</Text>
-                        </a.div>
-                    </a.div>
-                ))}
-            </animated.div>
-
             <Text
-                size="medium"
+                size={layoutConfig[screen].size}
                 textStyle={{ padding: '15px', ...lib.layout.presets.font.main.regular }}
             >
                 welcome to{' '}
                 <animated.span
                     style={{
-                        overflow: 'auto',
+                        overflow: 'hidden',
                         display: 'inline-flex',
-                        height: '1rem',
+                        // height: '1rem',
                         flexWrap: 'nowrap',
-                        lineHeight: 1,
+                        whiteSpace: 'nowrap',
+                        // lineHeight: 1,
                         ...spring2,
                     }}
                 >
@@ -170,7 +164,38 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                     s
                 </animated.span>
             </Text>
+            <animated.div
+                style={{
+                    width: layoutConfig[screen].width,
+                    padding: 20,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    justifyContent: 'flex-start',
+                }}
+            >
+                {transition(({ width, ...style }, kid, _, index) => (
+                    <a.div
+                        key={index}
+                        style={{
+                            width,
+                            overflow: 'hidden',
 
+                            ...style,
+                        }}
+                    >
+                        <a.div
+                            style={{
+                                width: 200,
+                                // display: 'inline-flex',
+                                // flexWrap: 'nowrap',
+                            }}
+                        >
+                            <Text>{kid.val}</Text>
+                        </a.div>
+                    </a.div>
+                ))}
+            </animated.div>
             {/* <Button
                 label="next"
                 buttonStyle={{

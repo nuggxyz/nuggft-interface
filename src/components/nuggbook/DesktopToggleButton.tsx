@@ -62,6 +62,7 @@ const DesktopToggleButton: FunctionComponent<Props> = () => {
     }, [isOpen, api]);
 
     useEffect(() => {
+        console.log(visits);
         if (!visits[Page.Start]) {
             setTimeout(() => setIsOpen(true), 2000);
         }
@@ -78,7 +79,10 @@ const DesktopToggleButton: FunctionComponent<Props> = () => {
                     padding: '.5rem',
                 }}
                 rightIcon={<IoInformation color={lib.colors.nuggBlueText} size={25} />}
-                onClick={() => openNuggbook()}
+                onClick={() => {
+                    openNuggbook();
+                    setIsOpen(false);
+                }}
             />
             {animation((style, _isOpen) =>
                 _isOpen ? (
@@ -157,6 +161,7 @@ const DesktopToggleButton: FunctionComponent<Props> = () => {
                             label="give me the rundown"
                             onClick={() => {
                                 openNuggbook();
+                                setVisits(Page.Start);
                                 setIsOpen(false);
                                 setPage(Page.Welcome);
                             }}
