@@ -7,6 +7,7 @@ import { Page } from '@src/interfaces/nuggbook';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import usePrevious from '@src/hooks/usePrevious';
 import MobileStatus from '@src/components/mobile/MobileStatus';
+import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
 
 import Start from './pages/Start';
 import Welcome from './pages/Welcome';
@@ -49,6 +50,8 @@ const useNuggBook = () => {
             return { top: 100, comp: Setup_3, page };
         case Page.Status:
             return { top: 100, comp: MobileStatus, page };
+        case Page.Connect:
+            return { top: 100, comp: React.memo(() => <ConnectTab />), page };
         default:
             return { top: 1000, comp: Close, page };
     }

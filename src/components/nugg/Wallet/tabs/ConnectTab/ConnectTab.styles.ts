@@ -42,6 +42,6 @@ const styles = lib.layout.NLStyleSheetCreator({
         boxShadow: lib.layout.boxShadow.dark,
         color: 'white',
     },
-});
+} as const);
 
 export default styles;

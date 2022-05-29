@@ -15,6 +15,7 @@ export enum Page {
     Status,
     HelpingTest_0,
     Feedback,
+    Connect,
 }
 
 export type NuggBookPageProps = {

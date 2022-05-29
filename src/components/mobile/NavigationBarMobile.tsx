@@ -16,7 +16,6 @@ import PageWrapper2 from '@src/components/nuggbook/PageWrapper2';
 import { Page } from '@src/interfaces/nuggbook';
 import Jazzicon from '@src/components/nugg/Jazzicon';
 import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
-import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
 import { ModalEnum } from '@src/interfaces/modals';
 import usePrevious from '@src/hooks/usePrevious';
 
@@ -58,7 +57,6 @@ const NavigationBarMobile: FC<unknown> = () => {
     const address = web3.hook.usePriorityAccount();
 
     const [searchOpenCore, setSearchOpen] = React.useState<boolean>(false);
-    const [walletOpenCore, setWalletOpen] = React.useState<boolean>(false);
 
     const [manualMatch, setManualMatch] = React.useState<boolean>(false);
 
@@ -75,7 +73,6 @@ const NavigationBarMobile: FC<unknown> = () => {
     const nuggbookOpen = React.useDeferredValue(client.nuggbook.useOpen());
     const isFull = React.useDeferredValue(manualMatch);
     const searchOpen = React.useDeferredValue(searchOpenCore);
-    const walletOpen = React.useDeferredValue(walletOpenCore);
 
     const [floater] = useSpring(
         {
@@ -90,26 +87,22 @@ const NavigationBarMobile: FC<unknown> = () => {
     //////////////////////////////////////////////////////////////////////// */
 
     const searchOpacitate = useOpacitate(
-        React.useMemo(
-            () => isFull && !nuggbookOpen && !walletOpen,
-            [isFull, nuggbookOpen, walletOpen],
-        ),
+        React.useMemo(() => isFull && !nuggbookOpen, [isFull, nuggbookOpen]),
     );
 
     const [searchOpenUp] = useSpring(
         {
-            height:
-                searchOpen || walletOpen
-                    ? '450px'
-                    : nuggbookOpen
-                    ? nuggbookPage === Page.Start
-                        ? '250px'
-                        : '600px'
-                    : '75px',
+            height: searchOpen
+                ? '450px'
+                : nuggbookOpen
+                ? nuggbookPage === Page.Start
+                    ? '250px'
+                    : '600px'
+                : '75px',
 
             config: packages.spring.config.stiff,
         },
-        [searchOpen, nuggbookOpen, nuggbookPage, walletOpen],
+        [searchOpen, nuggbookOpen, nuggbookPage],
     );
 
     /* ////////////////////////////////////////////////////////////////////////
@@ -118,8 +111,8 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const middleOpacitate = useOpacitate(
         React.useMemo(
-            () => isFull && !nuggbookOpen && !searchOpen && !walletOpen,
-            [isFull, nuggbookOpen, searchOpen, walletOpen],
+            () => isFull && !nuggbookOpen && !searchOpen,
+            [isFull, nuggbookOpen, searchOpen],
         ),
     );
 
@@ -138,7 +131,7 @@ const NavigationBarMobile: FC<unknown> = () => {
        wallet
     //////////////////////////////////////////////////////////////////////// */
 
-    const walletOpacitate = useOpacitate(walletOpen);
+    // const walletOpacitate = useOpacitate(walletOpen);
 
     /* ////////////////////////////////////////////////////////////////////////
        nuggbook
@@ -159,10 +152,9 @@ const NavigationBarMobile: FC<unknown> = () => {
         React.useCallback(() => {
             if (nuggbookOpen) close();
             else if (searchOpen) setSearchOpen(false);
-            else if (walletOpen) setWalletOpen(false);
             // purposfully last - dont want to fully close the square if something is open
             else if (manualMatch) setManualMatch(false);
-        }, [searchOpen, manualMatch, nuggbookOpen, close, walletOpen]),
+        }, [searchOpen, manualMatch, nuggbookOpen, close]),
     );
 
     return (
@@ -364,7 +356,6 @@ const NavigationBarMobile: FC<unknown> = () => {
                     <HomeButton
                         onClick={React.useCallback(() => {
                             if (nuggbookOpen) close();
-                            else if (walletOpen) setWalletOpen(false);
                             else if (searchOpen) setSearchOpen(false);
                             else if (!manualMatch) setManualMatch(true);
                             // eslint-disable-next-line no-useless-return
@@ -372,15 +363,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                             else {
                                 navigate('/');
                             }
-                        }, [
-                            manualMatch,
-                            nuggbookOpen,
-                            close,
-                            searchOpen,
-                            walletOpen,
-                            navigate,
-                            matchHome,
-                        ])}
+                        }, [manualMatch, nuggbookOpen, close, searchOpen, navigate, matchHome])}
                         isFull={isFull}
                     />
                 </animated.div>
@@ -408,9 +391,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                     <PageWrapper2 />
                 </animated.div>
 
-                {/* ////////////////////////////////////////////////////////////////////////
-                    wallet
-                //////////////////////////////////////////////////////////////////////// */}
+                {/*
                 <animated.div
                     style={{
                         zIndex: 4,
@@ -427,7 +408,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                     }}
                 >
                     <ConnectTab />
-                </animated.div>
+                </animated.div> */}
             </animated.div>
 
             {/* ////////////////////////////////////////////////////////////////////////
@@ -471,8 +452,8 @@ const NavigationBarMobile: FC<unknown> = () => {
                     address={address}
                     onClick={React.useCallback(() => {
                         if (address) navigate('/wallet');
-                        else setWalletOpen(true);
-                    }, [address, navigate])}
+                        else nuggbookGoto(Page.Connect);
+                    }, [address, navigate, nuggbookGoto])}
                 />
             </animated.div>
 

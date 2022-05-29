@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import curriedLighten from 'polished/lib/color/lighten';
 import { t } from '@lingui/macro';
-import { IoChevronDownCircle } from 'react-icons/io5';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import NLStaticImage from '@src/components/general/NLStaticImage';
@@ -9,7 +8,6 @@ import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
 import useDimensions from '@src/client/hooks/useDimensions';
 import lib from '@src/lib';
-import { Peer } from '@src/web3/core/interfaces';
 
 import styles from './ConnectTab.styles';
 
@@ -19,16 +17,16 @@ const ConnectTab: FunctionComponent<Props> = () => {
     const { isPhone } = useDimensions();
 
     const [forceDesktopAction, setForceDesktopAction] = React.useState(false);
-    const [showAll, setShowAll] = React.useState(false);
+    const [showAll] = React.useState(true);
     return (
         <div
             style={{
                 padding: '.25rem',
                 display: 'flex',
-                justifyContent: 'center',
+                justifyContent: 'flex-start',
                 alignItems: 'center',
                 flexDirection: 'column',
-                height: '100%',
+                height: isPhone ? 'auto' : '100%',
                 overflow: 'auto',
             }}
         >
@@ -49,13 +47,13 @@ const ConnectTab: FunctionComponent<Props> = () => {
                 style={{
                     background: lib.colors.transparentWhite,
                     borderRadius: lib.layout.borderRadius.medium,
-                    padding: '1rem',
+                    padding: '10px',
                     display: 'flex',
                     flexDirection: 'column',
-                    height: '100%',
+                    height: isPhone ? 'auto' : '100%',
                     alignItems: 'center',
                     width: isPhone ? '90%' : '100%',
-                    overflow: isPhone ? 'hidden' : 'scroll',
+                    overflow: isPhone ? undefined : 'scroll',
                 }}
             >
                 {isPhone && (
@@ -71,7 +69,7 @@ const ConnectTab: FunctionComponent<Props> = () => {
                         <Text textStyle={{ padding: 10, fontWeight: lib.layout.fontWeight.thicc }}>
                             tap to connect
                         </Text>
-                        <div
+                        {/* <div
                             style={{
                                 display: 'flex',
                                 width: '100%',
@@ -107,7 +105,7 @@ const ConnectTab: FunctionComponent<Props> = () => {
                             onClick={() => {
                                 setShowAll(true);
                             }}
-                        />
+                        /> */}
                     </div>
                 )}
                 {(!isPhone || showAll) &&
@@ -115,6 +113,7 @@ const ConnectTab: FunctionComponent<Props> = () => {
                         (peer) =>
                             !peer.fallback && (
                                 <Button
+                                    className="mobile-pressable-div"
                                     key={peer.name}
                                     buttonStyle={{
                                         ...styles.walletButton,

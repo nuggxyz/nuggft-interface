@@ -6,8 +6,6 @@ import GodList from '@src/components/general/List/GodList';
 import usePrevious from '@src/hooks/usePrevious';
 import MobileRingAbout from '@src/components/mobile/MobileRingAbout';
 
-// const fast = { mass: 5, tension: 1200, friction: 40 };
-// const slow = { mass: 10, tension: 200, friction: 200 };
 const MobileSwapPage = () => {
     const sortedAll = useSortedSwapList();
 

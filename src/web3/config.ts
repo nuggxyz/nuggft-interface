@@ -161,13 +161,13 @@ export const peer_rpc: PeerInfo = {
 } as const;
 
 export const peers = {
-    rainbow: peer_rainbow,
+    coinbasewallet: peer_coinbasewallet,
     metamask: peer_metamask,
+    rainbow: peer_rainbow,
     ledgerlive: peer_ledgerlive,
     trust: peer_trust,
     cryptodotcom: peer_cryptodotcom,
-    coinbasewallet: peer_coinbasewallet,
-    coinbase: peer_coinbase,
+    // coinbase: peer_coinbase,
 
     walletconnect: peer_walletconnect,
     rpc: peer_rpc,
