@@ -57,6 +57,8 @@ const AccountViewer = () => {
     ) : ens && chainId && peer ? (
         <Flyout
             style={styles.flyout}
+            triggerWidth="175px"
+            top={15}
             button={
                 <div style={styles.textContainer}>
                     <div

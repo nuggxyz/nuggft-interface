@@ -6,9 +6,10 @@ import TheRing from '@src/components/nugg/TheRing/TheRing';
 import Wallet from '@src/components/nugg/Wallet/Wallet';
 import useBlur from '@src/hooks/useBlur';
 import useDimensions from '@src/client/hooks/useDimensions';
+import DesktopToggleButton from '@src/components/nuggbook/DesktopToggleButton';
 
-import MobileSwapPage from './mobile/MobileSwapPage';
 import styles from './SwapPage.styles';
+import MobileSwapPage from './mobile/MobileSwapPage';
 
 type Props = Record<string, never>;
 
@@ -56,6 +57,7 @@ const SwapPage: FunctionComponent<Props> = () => {
                             <div style={styles.theRingContainer}>
                                 <TheRing />
                             </div>
+                            <DesktopToggleButton />
                         </>
                     )}
                 </animated.div>

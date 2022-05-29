@@ -15,6 +15,7 @@ import ModalWrapper from './ModalWrapper';
 import OfferModal from './OfferModal/OfferModal';
 import QrCodeModal from './QrCodeModal/QrCodeModal';
 import SellNuggOrItemModal from './SellNuggOrItemModal/SellNuggOrItemModal';
+import NuggBookModal from './NuggBookModal/NuggBookModal';
 
 export const ModalSwitch = () => {
     const data = client.modal.useData();
@@ -42,6 +43,8 @@ export const ModalSwitch = () => {
             return <LoanInputModal data={data} />;
         case ModalEnum.Loan:
             return <LoanOrBurnModal data={data} />;
+        case ModalEnum.NuggBook:
+            return <NuggBookModal />;
         case undefined:
         default:
             return null;
