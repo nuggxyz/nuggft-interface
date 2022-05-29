@@ -2,7 +2,7 @@
 import type { Networkish } from '@ethersproject/networks';
 import type { TransactionReceipt } from '@ethersproject/providers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { EqualityChecker, StoreApi, UseBoundStore } from 'zustand';
+import type { EqualityChecker, UseBoundStore } from 'zustand';
 import create from 'zustand';
 import { PopulatedTransaction } from 'ethers';
 
@@ -464,7 +464,7 @@ const ACCOUNTS_EQUALITY_CHECKER: EqualityChecker<Web3ReactState['accounts']> = (
 const ACTIVATING = (state: Web3ReactState) => state.activating;
 const ERROR = (state: Web3ReactState) => state.error;
 
-function getStateHooks(useConnector: UseBoundStore<StoreApi<Web3ReactState>>) {
+function getStateHooks(useConnector: UseBoundStore<Web3ReactStore>) {
     function useChainId(): Web3ReactState['chainId'] {
         return useConnector(CHAIN_ID);
     }

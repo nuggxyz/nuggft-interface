@@ -96,6 +96,8 @@ const TheRing: FunctionComponent<Props> = ({
                             ? ''
                             : lifecycle === Lifecycle.Cut
                             ? lib.colors.red
+                            : lifecycle === Lifecycle.Minors
+                            ? lib.colors.nuggGold
                             : isPhone
                             ? 'white'
                             : 'purple'

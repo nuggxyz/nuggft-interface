@@ -84,23 +84,13 @@ const DangerouslySetNugg = React.memo(
 
                 const svg = getSvgObject(svgString);
 
-                // svg.rootElement?.setAttribute("style").style.zIndex = styles?.zIndex;
-                const div = document.getElementById(id);
+                const div = document.getElementById(id) as unknown as SVGElement | undefined;
 
                 if (!div || !svg.rootElement) return;
                 svg.rootElement.id = id;
                 svg.rootElement.classList.add('customized-dotnugg');
-                div.replaceWith(svg.rootElement);
-                div.classList.add();
-                div.style.filter = 'drop-shadow(2px 3px 5px rgb(0 0 0 / 0.4))';
-                // console.log(style);
-                // if (style?.zIndex) {
-                //     svg.rootElement.style.zIndex = style.zIndex as string;
-                // }
-                // svg.rootElement.style.zIndex = '1000000';
-                // div.innerHTML = '';
 
-                // div.appendChild(svg.rootElement);
+                div.replaceWith(svg.rootElement);
             } else {
                 const div = document.getElementById(id);
                 if (!div) return;

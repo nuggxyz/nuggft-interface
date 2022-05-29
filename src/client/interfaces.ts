@@ -1,5 +1,5 @@
 import { Web3Provider } from '@ethersproject/providers';
-import { State, StoreApi, UseBoundStore } from 'zustand';
+import { State } from 'zustand';
 
 import { Chain, Connector } from '@src/web3/core/interfaces';
 import { SupportedLocale } from '@src/lib/i18n/locales';
@@ -313,7 +313,5 @@ export interface ClientState {
     totalNuggs: number;
     featureTotals: FixedLengthArray<number, 8, number[]>;
 }
-
-export type ClientStore = StoreApi<ClientState> & UseBoundStore<StoreApi<ClientState>>;
 
 export interface FullClientState extends ClientState, State, Actions {}

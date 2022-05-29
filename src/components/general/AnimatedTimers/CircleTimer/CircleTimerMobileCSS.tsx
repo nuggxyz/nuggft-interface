@@ -58,12 +58,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
 
     return (
         <div style={{ zIndex: 1, ...style }}>
-            {/* {trail.map(
-                (props, key) => arr[key]({ style: props, key }),
-                // <arr[index] key={index} style={{ transform: props.xy.to(trans) }} />
-            )} */}
             <div
-                key={1}
                 id="nugg-holder"
                 style={{
                     position: 'absolute',
@@ -71,51 +66,58 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                     display: 'flex',
                     justifyContent: 'center',
                     overflow: 'visible',
-
                     flexDirection: 'column',
-                    ...childrenContainerStyle,
-                    transform: 'translate3d(0px,var(--b),0px)',
+                    transform: 'translate3d(0px,var(--b),0)',
                     transformOrigin: 'center',
+                    zIndex: 101,
+                    ...childrenContainerStyle,
                 }}
             >
                 {children}
             </div>
-
-            <svg
-                key={2}
-                height="200%"
-                width="200%"
-                filter={`drop-shadow(-10px 0px 15px ${shadowColor})`}
+            <div
                 style={{
-                    ...styles.svgTransition,
-                    transform: 'translate3d(0px,var(--a),0) rotate(-90deg)',
-
-                    // transform:
-                    // 'translate3d(0px,calc(calc(calc(var(--a) / var(--i)) * var(--i)) - var(--r)), 0) rotate(-90deg)',
-                    transformOrigin: 'center',
+                    filter: `drop-shadow(2px 3px 10px ${shadowColor})`,
+                    WebkitFilter: `drop-shadow(2px 3px 10px ${shadowColor})`,
+                    willChange: 'filter',
+                    height: '200%',
+                    width: '200%',
                 }}
             >
-                <circle
-                    cx="50%"
-                    cy="50%"
-                    r={width / 6.5 + 50}
-                    strokeDashoffset={to}
-                    fill="none"
-                    style={{ transition: `all 2s ${lib.layout.animation}` }}
-                />
-                <circle
-                    cx="50%"
-                    cy="50%"
-                    r={width / 6.5}
-                    stroke={shadowColor === 'transparent' ? 'transparent' : 'white'}
-                    strokeDashoffset={to}
-                    strokeWidth={strokeWidth}
-                    fill="none"
-                    strokeDasharray={`${(width / 6.5) * TWOPI} ${(width / 6.5) * TWOPI}`}
-                    strokeLinecap="round"
-                    style={{ transition: `all 2s ${lib.layout.animation}` }}
-                />
-            </svg>
+                <svg
+                    height="100%"
+                    width="100%"
+                    style={{
+                        ...styles.svgTransition,
+                        transform: 'translate3d(0px,var(--a),0) rotate(-90deg)',
+
+                        // transform:
+                        // 'translate3d(0px,calc(calc(calc(var(--a) / var(--i)) * var(--i)) - var(--r)), 0) rotate(-90deg)',
+                        transformOrigin: 'center',
+                    }}
+                >
+                    <circle
+                        cx="50%"
+                        cy="50%"
+                        r={width / 6.5 + 50}
+                        strokeDashoffset={to}
+                        fill="none"
+                        style={{ transition: `all 2s ${lib.layout.animation}` }}
+                    />
+                    <circle
+                        cx="50%"
+                        cy="50%"
+                        r={width / 6.5}
+                        stroke={shadowColor === 'transparent' ? 'transparent' : 'white'}
+                        strokeDashoffset={to}
+                        strokeWidth={strokeWidth}
+                        fill="none"
+                        strokeDasharray={`${(width / 6.5) * TWOPI} ${(width / 6.5) * TWOPI}`}
+                        strokeLinecap="round"
+                        style={{ transition: `all 2s ${lib.layout.animation}` }}
+                    />
+                </svg>{' '}
+            </div>
         </div>
     );
 };

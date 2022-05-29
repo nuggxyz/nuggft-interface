@@ -28,33 +28,6 @@ const MobileSwapPage = () => {
         }
     }, [sortedAll, prevSortedAll]);
 
-    // const trans = (x: number, y: number) => `translate3d(${x}px,${y}px,0)`;
-
-    // const [going, setGoing] = React.useState<boolean>();
-
-    // const [trail, api] = useTrail(
-    //     2,
-    //     (i) => ({
-    //         from: {
-    //             xy: [0, 0],
-    //         },
-    //         // onRest: () => {
-    //         //     setGoing(undefined);
-    //         // },
-    //         config: i === 0 ? fast : slow,
-    //     }),
-    //     [going],
-    // );
-
-    // const [lastScroll, setLastScroll] = React.useState(new Date().getTime());
-
-    // const handleEndScroll = React.useMemo(() => {
-    //     return _.debounce(() => {
-    //         api.start({ xy: [0, 0] });
-    //         // setGoing(undefined);
-    //     }, 300);
-    // }, [api]);
-
     return (
         <animated.div
             style={{
@@ -68,8 +41,6 @@ const MobileSwapPage = () => {
                 overflow: 'scroll',
                 WebkitOverflowScrolling: 'touch',
                 zIndex: 0,
-                // '--a': trail[0].xy.to(trans),
-                // '--b': trail[1].xy.to(trans),
             }}
         >
             <GodList
@@ -79,17 +50,6 @@ const MobileSwapPage = () => {
                 itemHeight={415}
                 LIST_PADDING={0}
                 skipSelectedCheck
-                mobileFluid
-                // onScroll={(ev, up) => {
-                //     // api.start();
-
-                //     // api.start((i: number) => {
-                //     //     const abc = { xy: [0, (i === 0 ? 15 : 50) * (up ? -1 : 1)] };
-                //     //     return abc;
-                //     // });
-
-                //     // handleEndScroll();
-                // }}
             />
         </animated.div>
     );

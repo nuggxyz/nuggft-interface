@@ -82,7 +82,12 @@ export default (): null => {
     // }, [darkMode]);
 
     useEffect(() => {
-        if (!backgroundRadialGradientElement || isPhone) {
+        if (!backgroundRadialGradientElement) {
+            return;
+        }
+
+        if (isPhone) {
+            backgroundRadialGradientElement.style.background = 'transparent';
             return;
         }
 
