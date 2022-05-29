@@ -19,7 +19,6 @@ type Props = {
 };
 const TWOPI = Math.PI * 2;
 const HALFPI = Math.PI / 2;
-
 const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     children,
     duration,
@@ -57,9 +56,38 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
         return defaultColor;
     }, [remaining, duration, defaultColor, staticColor]);
 
+    // const [trail, api] = useTrail(2, () => ({
+    //     xy: [0, 0],
+    //     // to: {
+    //     //     transform: trans,
+    //     // },
+    //     config: packages.spring.config.molasses,
+    // }));
+
+    // // const A = React.memo(({ style: _style, key }: { style: typeof trail[0]; key: number }) => {
+    // //     return (
+
+    // //     );
+    // // });
+
+    // // const B = React.memo(({ style: _style, key }: { style: typeof trail[0]; key: number }) => (
+
+    // // ));
+
+    // // const arr = [A, B];
+
+    // const handleMouseMove = e => {
+    //   }
+
     return (
         <div style={{ zIndex: 1, ...style }}>
+            {/* {trail.map(
+                (props, key) => arr[key]({ style: props, key }),
+                // <arr[index] key={index} style={{ transform: props.xy.to(trans) }} />
+            )} */}
             <div
+                key={1}
+                id="nugg-holder"
                 style={{
                     position: 'absolute',
                     alignItems: 'center',
@@ -69,15 +97,23 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
 
                     flexDirection: 'column',
                     ...childrenContainerStyle,
+                    transform: 'var(--b)',
+                    transformOrigin: 'center',
                 }}
             >
                 {children}
             </div>
+
             <svg
+                key={2}
                 height="200%"
                 width="200%"
                 filter={`drop-shadow(-10px 0px 15px ${shadowColor})`}
-                style={styles.svgTransition}
+                style={{
+                    ...styles.svgTransition,
+                    transform: 'var(--a) rotate(-90deg)',
+                    transformOrigin: 'center',
+                }}
             >
                 <circle
                     cx="50%"

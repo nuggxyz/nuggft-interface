@@ -9,6 +9,8 @@ declare module 'csstype' {
         // Add a CSS Custom Property
         '--dotnugg-stroke-width'?: number;
         '--info-clicker-filter'?: string;
+        '--a'?: string;
+        '--b'?: string;
     }
 }
 
@@ -18,6 +20,8 @@ declare module 'react' {
         // Add a CSS Custom Property
         '--dotnugg-stroke-width'?: number;
         '--info-clicker-filter'?: string;
+        '--a'?: string;
+        '--b'?: string;
     }
 
     type FCC<T> = FunctionComponent<PropsWithChildren<T>>;

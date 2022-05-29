@@ -39,7 +39,7 @@ export interface GodListProps<T, B, A> {
     border?: boolean;
     horizontal?: boolean;
     style?: CSSProperties;
-    onScroll?: () => void;
+    onScroll?: (e: React.UIEvent<HTMLDivElement, UIEvent>, direction: boolean) => any;
     selected?: unknown;
     listEmptyText?: string;
     labelStyle?: CSSProperties;
@@ -195,9 +195,9 @@ const GodList = <T, B, A>({
             }
 
             setTrueScrollTop(st);
-            if (onScroll) onScroll();
+            if (onScroll) onScroll(ev, scrollTop < st);
         },
-        [onScroll, offsetListRef, setScrollTopOffset, setTrueScrollTop],
+        [onScroll, offsetListRef, setScrollTopOffset, setTrueScrollTop, scrollTop],
     );
 
     useEffect(() => {
