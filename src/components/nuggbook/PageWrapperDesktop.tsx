@@ -111,7 +111,7 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
                 transform: `translate(${direction ? -1000 : 1000}px,0px)`,
             }),
             // enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto' },
-            enter: { pointerEvents: 'auto', transform: `translate(0px,0px)` },
+            enter: { transform: `translate(0px,0px)` },
             leave: () => ({
                 transform: `translate(${direction ? -1000 : 1000}px,0px)`,
             }),
