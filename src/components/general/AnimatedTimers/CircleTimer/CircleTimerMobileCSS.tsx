@@ -56,29 +56,6 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
         return defaultColor;
     }, [remaining, duration, defaultColor, staticColor]);
 
-    // const [trail, api] = useTrail(2, () => ({
-    //     xy: [0, 0],
-    //     // to: {
-    //     //     transform: trans,
-    //     // },
-    //     config: packages.spring.config.molasses,
-    // }));
-
-    // // const A = React.memo(({ style: _style, key }: { style: typeof trail[0]; key: number }) => {
-    // //     return (
-
-    // //     );
-    // // });
-
-    // // const B = React.memo(({ style: _style, key }: { style: typeof trail[0]; key: number }) => (
-
-    // // ));
-
-    // // const arr = [A, B];
-
-    // const handleMouseMove = e => {
-    //   }
-
     return (
         <div style={{ zIndex: 1, ...style }}>
             {/* {trail.map(
@@ -97,7 +74,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
 
                     flexDirection: 'column',
                     ...childrenContainerStyle,
-                    transform: 'var(--b)',
+                    transform: 'translate3d(0px,var(--b),0px)',
                     transformOrigin: 'center',
                 }}
             >
@@ -111,7 +88,10 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                 filter={`drop-shadow(-10px 0px 15px ${shadowColor})`}
                 style={{
                     ...styles.svgTransition,
-                    transform: 'var(--a) rotate(-90deg)',
+                    transform: 'translate3d(0px,var(--a),0) rotate(-90deg)',
+
+                    // transform:
+                    // 'translate3d(0px,calc(calc(calc(var(--a) / var(--i)) * var(--i)) - var(--r)), 0) rotate(-90deg)',
                     transformOrigin: 'center',
                 }}
             >

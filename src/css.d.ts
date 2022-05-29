@@ -11,6 +11,11 @@ declare module 'csstype' {
         '--info-clicker-filter'?: string;
         '--a'?: string;
         '--b'?: string;
+        '--i'?: number;
+        '--p'?: string;
+        '--pn'?: number;
+
+        '--r'?: string;
     }
 }
 
@@ -22,6 +27,11 @@ declare module 'react' {
         '--info-clicker-filter'?: string;
         '--a'?: string;
         '--b'?: string;
+        '--i'?: number;
+        '--p'?: string;
+        '--pn'?: number;
+
+        '--r'?: string;
     }
 
     type FCC<T> = FunctionComponent<PropsWithChildren<T>>;
