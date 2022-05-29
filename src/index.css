@@ -98,7 +98,7 @@ html {
 .customized-dotnugg {
     filter: drop-shadow(2px 3px 5px rgb(0 0 0 / 0.4));
     box-shadow: 'none';
-    animation: Fader 0.3s 1 cubic-bezier(0.895, 0.03, 0.685, 0.22);
+    animation: Fader 0.4s 1 cubic-bezier(0.895, 0.03, 0.685, 0.22);
 }
 
 .apply-drop-shadow {

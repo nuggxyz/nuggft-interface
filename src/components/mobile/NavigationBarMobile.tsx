@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { animated, useSpring } from '@react-spring/web';
-import { IoQrCode, IoChevronBackCircle } from 'react-icons/io5';
-import { TiHome } from 'react-icons/ti';
+import { IoQrCode } from 'react-icons/io5';
 import { useMatch, useNavigate } from 'react-router';
 
 import InfoClicker from '@src/components/nuggbook/InfoClicker';
@@ -63,7 +62,7 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const [manualMatch, setManualMatch] = React.useState<boolean>(false);
 
-    const matchToken = useMatch('/swap/:id');
+    const matchHome = useMatch('/');
 
     // const MOVE_DELAY = 800;
     const nuggbookPage = client.nuggbook.useNuggBookPage();
@@ -128,12 +127,12 @@ const NavigationBarMobile: FC<unknown> = () => {
        jazz
     //////////////////////////////////////////////////////////////////////// */
 
-    const backOpacitate = useOpacitate(
-        React.useMemo(
-            () => isFull && !!matchToken && !searchOpen && !nuggbookOpen,
-            [nuggbookOpen, searchOpen, matchToken, isFull],
-        ),
-    );
+    // const backOpacitate = useOpacitate(
+    //     React.useMemo(
+    //         () => isFull && !!matchToken && !searchOpen && !nuggbookOpen,
+    //         [nuggbookOpen, searchOpen, matchToken, isFull],
+    //     ),
+    // );
 
     /* ////////////////////////////////////////////////////////////////////////
        wallet
@@ -367,10 +366,21 @@ const NavigationBarMobile: FC<unknown> = () => {
                             if (nuggbookOpen) close();
                             else if (walletOpen) setWalletOpen(false);
                             else if (searchOpen) setSearchOpen(false);
+                            else if (!manualMatch) setManualMatch(true);
+                            // eslint-disable-next-line no-useless-return
+                            else if (matchHome) setManualMatch(false);
                             else {
-                                setManualMatch(!manualMatch);
+                                navigate('/');
                             }
-                        }, [manualMatch, nuggbookOpen, close, searchOpen, walletOpen])}
+                        }, [
+                            manualMatch,
+                            nuggbookOpen,
+                            close,
+                            searchOpen,
+                            walletOpen,
+                            navigate,
+                            matchHome,
+                        ])}
                         isFull={isFull}
                     />
                 </animated.div>
@@ -516,7 +526,7 @@ const NavigationBarMobile: FC<unknown> = () => {
             {/* ////////////////////////////////////////////////////////////////////////
                     back button
                 //////////////////////////////////////////////////////////////////////// */}
-            <animated.div
+            {/* <animated.div
                 style={{
                     zIndex: 10,
                     position: 'absolute',
@@ -556,9 +566,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                 />
             </animated.div>
 
-            {/* ////////////////////////////////////////////////////////////////////////
-                    home-back button
-                //////////////////////////////////////////////////////////////////////// */}
+
             <animated.div
                 style={{
                     zIndex: 10,
@@ -597,7 +605,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         setManualMatch(false);
                     }}
                 />
-            </animated.div>
+            </animated.div> */}
         </animated.div>
     );
 };

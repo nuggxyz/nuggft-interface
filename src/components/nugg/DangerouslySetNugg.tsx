@@ -101,6 +101,10 @@ const DangerouslySetNugg = React.memo(
                 // div.innerHTML = '';
 
                 // div.appendChild(svg.rootElement);
+            } else {
+                const div = document.getElementById(id);
+                if (!div) return;
+                div.innerHTML = '';
             }
 
             // const box = getBoundingBox(svg);
