@@ -3,9 +3,10 @@ import type { Log } from '@ethersproject/abstract-provider';
 import { InterfacedEvent } from '@src/interfaces/events';
 import { InfuraWebSocketProvider } from '@src/web3/classes/CustomWebSocketProvider';
 import emitter from '@src/emitter';
-import { Chain, DEFAULT_CONTRACTS, NuggftV1__Interface } from '@src/web3/constants';
+import { Chain, DEFAULT_CONTRACTS } from '@src/web3/constants';
 import { EmitEventsListPayload } from '@src/emitter/interfaces';
 import { CustomEtherscanProvider } from '@src/web3/classes/CustomEtherscanProvider';
+import { NuggftV1__factory } from '@src/typechain/factories/NuggftV1__factory';
 
 // @ts-ignore
 const ctx: Worker & {
@@ -17,8 +18,6 @@ const ctx: Worker & {
 ctx.emitMessage = (data: unknown) => ctx.postMessage.call(ctx, data);
 
 export default {} as typeof Worker & { new (): Worker };
-
-const inter = NuggftV1__Interface;
 
 console.log('[rpc.worker] Worker running');
 
@@ -59,11 +58,9 @@ const blockListener = (log: number) => {
             });
     }
 };
-
+const inter = NuggftV1__factory.createInterface();
 const eventListener = (log: Log) => {
     const event = inter.parseLog(log) as unknown as InterfacedEvent;
-
-    console.log({ event });
 
     ctx.emitMessage({
         type: emitter.events.IncomingRpcEvent,

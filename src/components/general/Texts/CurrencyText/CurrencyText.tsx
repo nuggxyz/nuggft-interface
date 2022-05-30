@@ -36,6 +36,7 @@ interface BalanceProps extends PartialText {
     removeZeroAtBeggining?: boolean;
     unitOverride?: 'ETH' | 'USD';
     full?: boolean;
+    prefix?: string;
 }
 
 const MIN = 0.000000000001;
@@ -52,7 +53,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
     forceEth = true,
     showUnit = true,
     stopAnimation = false,
-
+    prefix,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     showIncrementAnimation = false,
     loadOnZero = false,
@@ -154,6 +155,7 @@ const CurrencyText: React.FC<BalanceProps> = ({
                 }}
                 loading={value === 0 && loadingOnZero && !str}
             >
+                {prefix && prefix}
                 {value === 0 && str ? (
                     str
                 ) : (

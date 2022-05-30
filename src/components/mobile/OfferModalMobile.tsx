@@ -134,13 +134,16 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const currentBid = useUsdPair(check?.curr);
 
     const paymentUsd = useUsdPairWithCalculation(
-        React.useMemo(() => [amount, check?.curr || 0], [amount, check]),
+        React.useMemo(
+            () => [amount, check?.curr || 0, check?.multicallRequired ? msp : 0],
+            [amount, check, msp],
+        ),
         React.useMemo(
             () =>
-                ([_amount, _check]) => {
+                ([_amount, _check, _msp]) => {
                     // was running into issue where "value" inside populatedTransaction was negative
                     const copy = _amount.copy();
-                    if (copy.gt(0)) return copy.sub(_check);
+                    if (copy.gt(0)) return copy.sub(_check).add(_msp);
                     return new EthInt(0);
                 },
             [],
@@ -456,13 +459,26 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     <IncrementButton increment={BigInt(50)} />
                 </div>
 
+                {check?.multicallRequired && (
+                    <Text>
+                        <CurrencyText
+                            prefix="+"
+                            unitOverride={localCurrencyPref}
+                            forceEth
+                            size="larger"
+                            value={mspusd}
+                            stopAnimation
+                        />
+                        for bid on {data.nuggToBuyFrom?.toPrettyId()}
+                    </Text>
+                )}
+
                 <Button
                     className="mobile-pressable-div"
-                    label="Review"
+                    label="review"
                     // leftIcon={calculating ? <Loader /> : undefined}
                     onClick={() => {
                         setPage(1);
-                        console.log('yep');
                     }}
                     disabled={calculating || !!estimator.error}
                     buttonStyle={{
@@ -478,6 +494,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             </>
         ),
         [
+            mspusd,
             amount,
             setPage,
             calculating,
@@ -486,6 +503,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             currentPrice,
             estimator.error,
             myBalance,
+            check?.multicallRequired,
+            data.nuggToBuyFrom,
         ],
     );
     const Page1 = React.useMemo(
@@ -532,22 +551,28 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         stopAnimation
                         value={amountUsd}
                     />
-                    {/* <Text size="large" textStyle={{ marginTop: 10 }}>
-                        Estimated Gas Fee
-                    </Text>
-                    <CurrencyText
-                        size="large"
-                        stopAnimation
-                        value={estimation?.mul.number || 0}
-                        forceEth
-                    />{' '} */}
+                    {check?.multicallRequired && (
+                        <>
+                            <Text size="large" textStyle={{ marginTop: 10 }}>
+                                Bid on {data.nuggToBuyFrom?.toPrettyId()}
+                            </Text>
+                            <CurrencyText
+                                unitOverride={localCurrencyPref}
+                                forceEth
+                                size="large"
+                                stopAnimation
+                                value={mspusd}
+                            />
+                        </>
+                    )}
+
                     <Text size="large" textStyle={{ marginTop: 10 }}>
                         Payment
                     </Text>
                     <CurrencyText
                         unitOverride={localCurrencyPref}
                         forceEth
-                        size="largerish"
+                        size="large"
                         stopAnimation
                         value={paymentUsd}
                     />
@@ -625,18 +650,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             }
                         />
                     </div>
-
-                    {/* <Button
-                        className="mobile-pressable-div"
-                        size="small"
-                        buttonStyle={{
-                            background: 'transparent',
-                            marginTop: 10,
-                            marginBottom: -10,
-                        }}
-                        label="go back"
-                        onClick={() => setPage(0)}
-                    /> */}
                 </>
             ) : null,
         [
@@ -649,6 +662,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             peer,
             currentBid,
             data.tokenId,
+            data.nuggToBuyFrom,
+            mspusd,
+            check?.multicallRequired,
             localCurrencyPref,
         ],
     );

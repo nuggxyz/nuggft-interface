@@ -37,7 +37,7 @@ export const isValidChainId = (input: number) => {
     return supportedChainIds().indexOf(input) !== -1;
 };
 
-export const NuggftV1__Interface = new Interface(nuggftabi);
+export const NuggftV1__Interface = () => new Interface(nuggftabi);
 
 export const MIN_SALE_PRICE = toEth('.001');
 
