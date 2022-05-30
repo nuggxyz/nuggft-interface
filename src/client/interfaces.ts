@@ -38,7 +38,7 @@ interface SwapDataBase extends ListDataBase {
     epoch: EpochData | null;
     endingEpoch: number | null;
     canceledEpoch: number | null;
-
+    startUnix?: number;
     leader?: unknown;
     owner: unknown;
     num: number | null;

@@ -105,6 +105,7 @@ fragment swapdata on Swap {
     owner {
         id
     }
+    startUnix
     canceledEpoch
     leader {
         id
@@ -125,6 +126,7 @@ fragment simpleitemswapdata on ItemSwap {
     canceledEpoch
     num
     top
+    startUnix
     owner {
         id
     }
@@ -147,7 +149,7 @@ fragment itemswapdata on ItemSwap {
         starttime
     }
     canceledEpoch
-
+    startUnix
     num
     top
     topUsd
@@ -274,6 +276,7 @@ fragment liveItemSwap on ItemSwap {
             id
         }
     }
+    startUnix
     offers(orderBy: eth, orderDirection: desc) {
         id
         nugg {

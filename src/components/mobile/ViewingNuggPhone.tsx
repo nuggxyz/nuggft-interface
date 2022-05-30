@@ -27,7 +27,7 @@ import {
     NuggListRenderItemMobileHolding,
 } from '@src/components/mobile/NuggListRenderItemMobile';
 import MyNuggActions from '@src/components/nugg/ViewingNugg/MyNuggActions';
-import SwapListPhone from '@src/components/nugg/ViewingNugg/SwapListPhone';
+import SwapListPhone from '@src/components/mobile/SwapListPhone';
 import { ItemListPhone } from '@src/components/nugg/ViewingNugg/ItemList';
 import BradPittList from '@src/components/general/List/BradPittList';
 import { useUsdPair } from '@src/client/usd';
@@ -697,9 +697,10 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                             size="larger"
                                             textStyle={{
                                                 color: lib.colors.primaryColor,
+                                                fontWeight: lib.layout.fontWeight.thicc,
                                             }}
                                         >
-                                            Start the next auction
+                                            start the next auction
                                         </Text>
                                     </div>
                                 )}
@@ -718,6 +719,8 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                         alignItems: 'flex-start',
                                         textAlign: 'left',
                                         width: '100%',
+                                        marginTop: 20,
+
                                         padding: '2rem 1rem 1rem 1.5rem',
                                     }}
                                 >
@@ -725,15 +728,18 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                         size="larger"
                                         textStyle={{
                                             color: lib.colors.primaryColor,
+                                            fontWeight: lib.layout.fontWeight.thicc,
                                         }}
                                     >
-                                        My Nugg
+                                        my nugg
                                     </Text>
                                 </div>
                                 <Button
                                     className="mobile-pressable-div"
                                     buttonStyle={{
                                         ...styles.goToSwap,
+                                        marginTop: 10,
+
                                         position: 'relative',
                                     }}
                                     textStyle={{
@@ -773,9 +779,10 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                         size="larger"
                                         textStyle={{
                                             color: lib.colors.primaryColor,
+                                            fontWeight: lib.layout.fontWeight.thicc,
                                         }}
                                     >
-                                        Items
+                                        items
                                     </Text>
                                 </div>
                                 <ItemListPhone tokenId={tokenId} />
@@ -795,13 +802,13 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                 size="larger"
                                 textStyle={{
                                     color: lib.colors.primaryColor,
+                                    fontWeight: lib.layout.fontWeight.thicc,
                                 }}
                             >
-                                Previous Auctions
+                                purchases
                             </Text>
                         </div>
-
-                        <SwapListPhone token={token} />
+                        <SwapListPhone tokenId={tokenId} />
 
                         {token &&
                             (token.isItem() ? (
@@ -840,10 +847,12 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                             <Text
                                                 size="larger"
                                                 textStyle={{
+                                                    fontWeight: lib.layout.fontWeight.thicc,
+
                                                     color: lib.colors.primaryColor,
                                                 }}
                                             >
-                                                Nuggs Holding
+                                                worn by
                                             </Text>
                                         ))}
                                     />
@@ -864,9 +873,10 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                             size="larger"
                                             textStyle={{
                                                 color: lib.colors.primaryColor,
+                                                fontWeight: lib.layout.fontWeight.thicc,
                                             }}
                                         >
-                                            History
+                                            history
                                         </Text>
                                     </div>
                                     <NuggSnapshotListMobile tokenId={token.tokenId} />

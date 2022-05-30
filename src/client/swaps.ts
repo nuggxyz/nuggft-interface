@@ -25,6 +25,7 @@ interface SwapDataBase extends TokenIdFactoryBase {
     isBackup: boolean;
     count?: unknown;
     isTryout?: unknown;
+    startUnix?: number;
     readonly offers: unknown;
 }
 
