@@ -7,7 +7,6 @@ import useBlur from '@src/hooks/useBlur';
 import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
 import client from '@src/client';
 import useDimensions from '@src/client/hooks/useDimensions';
-import BackButton from '@src/components/mobile/BackButton';
 import { useOverlayRouteStyle } from '@src/lib/router';
 import lib from '@src/lib';
 
@@ -70,38 +69,7 @@ const SearchOverlay: FunctionComponent<Props> = () => {
     //     zIndex: 997,
     // });
 
-    return screenType === 'phone' ? (
-        <>
-            <animated.div
-                style={{
-                    // ...blur,
-                    ...overlay,
-                    ...styles.container,
-                }}
-                // onClick={() => {
-                //     if (visible) {
-                //         if (lastSwap) navigate(`/swap/${lastSwap}`);
-                //         else navigate('/');
-                //     }
-                // }}
-            >
-                <BackButton to="/live" />
-                <div
-                    aria-hidden="true"
-                    role="button"
-                    style={{
-                        ...styles.nuggDexContainer,
-                        alignItems: 'center',
-                        width: '100%',
-                        padding: '20px',
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <NuggDexSearchList />
-                </div>
-            </animated.div>
-        </>
-    ) : (
+    return (
         <animated.div
             style={{
                 ...blur,

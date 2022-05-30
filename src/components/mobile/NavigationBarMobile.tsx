@@ -73,13 +73,13 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const [manualMatch, setManualMatch] = React.useState<boolean>(true);
 
-    const matchHome = useMatch('/');
-
     const close = client.nuggbook.useCloseNuggBook();
     const nuggbookGoto = client.nuggbook.useGotoOpen();
 
     const setCurrencyPreference = client.usd.useSetCurrencyPreferrence();
     const currencyPreferrence = client.usd.useCurrencyPreferrence();
+    const matchHomeCore = useMatch('/');
+    const matchHome = React.useDeferredValue(matchHomeCore);
     const nuggbookOpen = React.useDeferredValue(client.nuggbook.useOpen());
     const nuggbookPage = React.useDeferredValue(client.nuggbook.useNuggBookPage());
 
@@ -122,14 +122,33 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const ref = React.useRef(null);
 
-    useOnTapOutside(
-        ref,
-        React.useCallback(() => {
+    const prevMatchHomeCore = usePrevious(matchHomeCore);
+
+    const [, startTransition] = React.useTransition();
+
+    const tapper = React.useCallback(() => {
+        startTransition(() => {
             if (nuggbookOpen) close();
             // purposfully last - dont want to fully close the square if something is open
-            else if (manualMatch) setManualMatch(false);
-        }, [manualMatch, nuggbookOpen, close]),
-    );
+            else if (manualMatch && matchHomeCore === prevMatchHomeCore) {
+                setTimeout(() => {
+                    setManualMatch(false);
+                }, 1000);
+            }
+        });
+    }, [manualMatch, nuggbookOpen, close, matchHomeCore, prevMatchHomeCore]);
+
+    useOnTapOutside(ref, tapper);
+
+    const homeClick = React.useCallback(() => {
+        if (nuggbookOpen) close();
+        else if (!manualMatch) setManualMatch(true);
+        // eslint-disable-next-line no-useless-return
+        else if (matchHome) setManualMatch(false);
+        else {
+            navigate('/');
+        }
+    }, [manualMatch, nuggbookOpen, close, navigate, matchHome]);
 
     return (
         <animated.div
@@ -343,18 +362,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         pointerEvents: 'auto',
                     }}
                 >
-                    <HomeButton
-                        onClick={React.useCallback(() => {
-                            if (nuggbookOpen) close();
-                            else if (!manualMatch) setManualMatch(true);
-                            // eslint-disable-next-line no-useless-return
-                            else if (matchHome) setManualMatch(false);
-                            else {
-                                navigate('/');
-                            }
-                        }, [manualMatch, nuggbookOpen, close, navigate, matchHome])}
-                        isFull={isFull}
-                    />
+                    <HomeButton onClick={homeClick} isFull={isFull} />
                 </animated.div>
 
                 {/* ////////////////////////////////////////////////////////////////////////

@@ -48,7 +48,7 @@ interface Item extends ItemIdFactory<TokenIdFactoryBase> {
 
 type ItemList = { active: Item[]; hidden: Item[]; duplicates: Item[] };
 
-export const HotRotateOController = () => {
+const HotRotateOController = () => {
     const openEditScreen = client.editscreen.useOpenEditScreen();
     const closeEditScreen = client.editscreen.useCloseEditScreen();
 
@@ -847,4 +847,4 @@ export const RotateOSelector = ({
     );
 };
 
-export default HotRotateO;
+export default HotRotateOController;

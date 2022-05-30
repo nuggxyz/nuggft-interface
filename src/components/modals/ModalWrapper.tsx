@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, useRef } from 'react';
+import React, { FC, useRef } from 'react';
 import { animated, config, useSpring } from '@react-spring/web';
 
 import lib from '@src/lib';
@@ -6,8 +6,44 @@ import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import client from '@src/client';
 import useDimensions from '@src/client/hooks/useDimensions';
+import { ModalEnum } from '@src/interfaces/modals';
 
-const Modal: FC<PropsWithChildren<any>> = ({ children }) => {
+import LoanInputModal from './LoanInputModal/LoanInputModal';
+import LoanOrBurnModal from './LoanOrBurnModal/LoanOrBurnModal';
+import MintModal from './MintModal/MintModal';
+import OfferModal from './OfferModal/OfferModal';
+import QrCodeModal from './QrCodeModal/QrCodeModal';
+import SellNuggOrItemModal from './SellNuggOrItemModal/SellNuggOrItemModal';
+import NuggBookModal from './NuggBookModal/NuggBookModal';
+
+export const ModalSwitch = () => {
+    const data = client.modal.useData();
+
+    switch (data?.modalType) {
+        case ModalEnum.Offer:
+            return <OfferModal data={data} />;
+        case ModalEnum.Sell:
+            return <SellNuggOrItemModal data={data} />;
+
+        case ModalEnum.Mint:
+            return <MintModal data={data} />;
+
+        case ModalEnum.QrCode:
+            return <QrCodeModal data={data} />;
+
+        case ModalEnum.LoanInput:
+            return <LoanInputModal data={data} />;
+        case ModalEnum.Loan:
+            return <LoanOrBurnModal data={data} />;
+        case ModalEnum.NuggBook:
+            return <NuggBookModal />;
+        case undefined:
+        default:
+            return null;
+    }
+};
+
+const Modal: FC<unknown> = () => {
     const isOpen = client.modal.useOpen();
     const data = client.modal.useData();
     const closeModal = client.modal.useCloseModal();
@@ -61,7 +97,7 @@ const Modal: FC<PropsWithChildren<any>> = ({ children }) => {
                     />
                 )}
                 <animated.div style={{ ...containerStyle, ...data?.containerStyle }} ref={node}>
-                    {children}
+                    <ModalSwitch />
                 </animated.div>
             </div>
         </animated.div>

@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-import { HotRotateOController } from '@src/pages/HotRotateO';
+import HotRotateOController from '@src/pages/hot-rotate-o/HotRotateO';
 import lib from '@src/lib';
 
 type Props = Record<string, unknown>;

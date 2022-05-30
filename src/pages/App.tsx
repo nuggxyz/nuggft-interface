@@ -2,28 +2,24 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { Navigate, Outlet } from 'react-router-dom';
 
-import SwapPage from '@src/pages/SwapPage';
 import { useRoutes } from '@src/lib/router';
 import client from '@src/client';
-import GlobalModal from '@src/components/modals/GlobalModal';
 import ToastContainer from '@src/components/general/Toast/ToastContainer';
 import useDimensions from '@src/client/hooks/useDimensions';
-import { HotRotateOController } from '@src/pages/HotRotateO';
 import NavigationWrapper from '@src/components/nugg/PageLayout/NavigationWrapper/NavigationWrapper';
-import {
-    MemoizedViewingNuggPhone,
-    ViewingNuggPhoneController,
-} from '@src/components/mobile/ViewingNuggPhone';
+import { ViewingNuggPhoneController } from '@src/components/mobile/ViewingNuggPhone';
 
-import MobileWalletScreen2 from './mobile/MobileWalletScreen2';
-import MobileHotRotateOWrapper from './mobile/MobileHotRotateOWrapper';
-
-// const MobileWalletView = React.lazy(() => import('@src/pages/mobile/MobileWalletView'));
-// const HotRotateO = React.lazy(() => import('@src/pages/HotRotateO'));
-const SearchOverlay = React.lazy(() => import('@src/pages/SearchOverlay'));
+const MemoizedViewingNuggPhone = React.lazy(
+    () => import('@src/components/mobile/ViewingNuggPhoneWrapper'),
+);
+const HotRotateO = React.lazy(() => import('@src/pages/hot-rotate-o/HotRotateOWrapper'));
+const SearchOverlay = React.lazy(() => import('@src/pages/search/SearchOverlayWrapper'));
+const SwapPageWrapper = React.lazy(() => import('@src/pages/swap/SwapPageWrapper'));
+const GlobalModal = React.lazy(() => import('@src/components/modals/GlobalModal'));
+const MobileWalletScreen2 = React.lazy(() => import('@src/components/mobile/MobileWallet'));
 
 const Router = () => {
-    const { isPhone } = useDimensions();
+    const { isPhone, screen } = useDimensions();
 
     const epoch = client.epoch.active.useId();
 
@@ -34,7 +30,7 @@ const Router = () => {
             children: [
                 {
                     path: 'edit/:id',
-                    element: isPhone ? <MobileHotRotateOWrapper /> : <HotRotateOController />,
+                    element: <HotRotateO screen={screen} />,
                     // overlay: 997,
                 },
                 ...(isPhone
@@ -42,7 +38,7 @@ const Router = () => {
                     : [
                           {
                               path: 'view/*',
-                              element: <SearchOverlay />,
+                              element: <SearchOverlay isPhone={isPhone} />,
                           },
                       ]),
 
@@ -53,12 +49,12 @@ const Router = () => {
         },
     ]);
 
-    // const mem = React.memo(<MemoizedViewingNuggPhone/>, (a,b) => isPhone === isPhone);
-
     return (
         <React.Suspense fallback={<div />}>
+            <GlobalModal isPhone={isPhone} />
             {route}
-            {isPhone && <MemoizedViewingNuggPhone />}
+            <MemoizedViewingNuggPhone isPhone={isPhone} />
+            <SwapPageWrapper screen={screen} />
         </React.Suspense>
     );
 };
@@ -69,12 +65,9 @@ const App = () => {
     return (
         <>
             <ToastContainer />
-            <GlobalModal />
-            {/* <NuggBook /> */}
             <Helmet />
             <NavigationWrapper isPhone={isPhone} />
             <Router />
-            <SwapPage />
         </>
     );
 };

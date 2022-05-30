@@ -1,94 +1,36 @@
-import React, { FC, PropsWithChildren } from 'react';
+import React, { FC } from 'react';
 import { animated } from '@react-spring/web';
 
 import client from '@src/client';
 import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
-// eslint-disable-next-line import/no-cycle
+import { ModalEnum } from '@src/interfaces/modals';
 
-// type SpecialDiv = JSX.IntrinsicElements['div'] & {
-//     style: (
-//         library: typeof lib,
-//     ) => JSX.IntrinsicElements['div']['style'] | JSX.IntrinsicElements['div']['style'];
-// };
+import OfferModalMobile from './OfferModalMobile';
+import SellNuggOrItemModalMobile from './SellModalMobile';
+import ClaimModalMobile from './ClaimModalMobile';
 
-// type abc = { style: JSX.IntrinsicElements['div']['style'] | JSX.IntrinsicElements['div']['style'] };
+export const ModalSwitchMobile = () => {
+    const data = client.modal.useData();
 
-// /** The type of the `animated()` function */
-// export declare type WithStyles = {
-//     <T extends ElementType>(wrappedComponent: T): StylesComponent<T>;
-// };
-// /** The type of an `animated()` component */
-// export declare type StylesComponent<T extends ElementType> = ForwardRefExoticComponent<
-//     Merge<
-//         ComponentPropsWithRef<T>,
-//         {
-//             style?: StyleProps;
-//         }
-//     >
-// >;
+    switch (data?.modalType) {
+        case ModalEnum.Offer:
+            return <OfferModalMobile data={data} />;
+        case ModalEnum.Sell:
+            return <SellNuggOrItemModalMobile data={data} />;
 
-// declare type StyleProps = Merge<CSSProperties, abc>;
+        case ModalEnum.Claim:
+            return <ClaimModalMobile data={data} />;
 
-// const withStyles: WithStyles = (Comp) => {
-//     const mem = React.useMemo(() => {
-//         const { style } = Comp;
+        case undefined:
+        default:
+            return null;
+    }
+};
 
-//         if (typeof style === 'function') {
-//             return style(lib);
-//         }
-
-//         return style;
-//     }, []);
-
-//     return <Comp style={mem} />;
-// };
-
-const ModalWrapperMobile: FC<PropsWithChildren<unknown>> = ({ children }) => {
+const ModalWrapperMobile: FC<unknown> = () => {
     const isOpen = client.modal.useOpen();
-    // const data = client.modal.useData();
-    // const closeModalWrapperMobile = client.modal.useCloseModalWrapperMobile();
-
-    // const node = useRef<HTMLDivElement>(null);
-
-    // const { screen: screenType } = useDimensions();
 
     const style = useAnimateOverlayBackdrop(isOpen, { zIndex: 999000 });
-
-    // useOnClickOutside(node, closeModalWrapperMobile);
-
-    // const footerRef = React.useRef<HTMLDivElement>(null);
-
-    // const visualViewport = client.viewport.useVisualViewport();
-
-    // const [page, setPage] = React.useState(0);
-
-    // const [tabFadeTransition] = useTransition(
-    //     page,
-    //     {
-    //         initial: {
-    //             opacity: 0,
-    //             zIndex: 0,
-    //             left: 0,
-    //         },
-    //         from: (p, i) => ({
-    //             opacity: 0,
-    //             zIndex: 0,
-    //             left: p === i ? 1000 : -1000,
-    //         }),
-    //         enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto', zIndex: 40000 },
-    //         leave: (p, i) => {
-    //             return {
-    //                 opacity: 0,
-    //                 zIndex: 0,
-    //                 left: p === i ? -1000 : 1000,
-    //             };
-    //         },
-    //         keys: (item) => `tabFadeTransition${item}5`,
-    //         config: config.gentle,
-    //         expires: true,
-    //     },
-    //     [page],
-    // );
 
     return isOpen ? (
         <animated.div
@@ -96,7 +38,7 @@ const ModalWrapperMobile: FC<PropsWithChildren<unknown>> = ({ children }) => {
                 ...style,
             }}
         >
-            {children}
+            <ModalSwitchMobile />
 
             {/* {tabFadeTransition((sty, pager) => (
                 <animated.div

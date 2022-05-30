@@ -488,11 +488,6 @@ export const ViewingNuggPhoneController = () => {
     return null;
 };
 
-export const MemoizedViewingNuggPhone = () => {
-    const { tokenId } = useMobileViewingNugg();
-    return <ViewingNuggPhone tokenId={tokenId} />;
-};
-
 const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
     ({ tokenId }) => {
         const isOpen = client.viewscreen.useViewScreenOpen();
