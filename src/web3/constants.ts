@@ -78,10 +78,10 @@ export const CONTRACTS = {
         MintOffset: 1000000,
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0xaaa2845ab21507c21ddefcbe84d064c9b7ee4bfd',
-        xNuggftV1: '0x8745893ffcda6635c0b6f6fc475c1e1fbd86ef6c',
-        DotnuggV1: '0x829969fc27ba5fcb76112654b2eb3bed0aed8535',
-        Genesis: 10767680,
+        NuggftV1: '0xfe1db1b100ae8fadfc601a426e7a39d7d0f5a25d',
+        xNuggftV1: '0xab56902504605831cddef3948e09e544256763da',
+        DotnuggV1: '0x388f41e2f699032fc0b8a5ddb577456953f21bef',
+        Genesis: 10767936,
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
@@ -118,6 +118,13 @@ export const calculateEpochId = (blocknum: number, chainId: Chain = DEFAULT_CHAI
         .div(CONTRACTS[chainId].Interval)
         .add(CONTRACTS[chainId].Offset)
         .toNumber();
+};
+
+export const calculateRawOfferValue = (buyingNugg: NuggId, sellingNugg: NuggId, itemId: ItemId) => {
+    return BigNumber.from(buyingNugg.toRawId())
+        .shr(40)
+        .or(BigNumber.from(itemId.toRawId()).shl(24))
+        .or(sellingNugg.toRawId());
 };
 
 export const calculateEndBlock = (epoch: number, chainId: Chain = DEFAULT_CHAIN) => {
