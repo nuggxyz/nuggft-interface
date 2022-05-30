@@ -91,7 +91,9 @@ const MobileOwnerBlock = ({
         return {
             currency: leaderCurrency,
             text: new EthInt(leader?.eth || 0).number
-                ? `${leaderEns || leader?.account || ''} is leading`
+                ? offers.length > 1
+                    ? `leader of ${offers.length} bidders`
+                    : 'leader'
                 : 'live',
             subtext:
                 offers.length !== 0 &&
