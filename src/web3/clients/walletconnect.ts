@@ -310,6 +310,10 @@ export class WalletConnect extends Connector {
     public async connectEagerly(): Promise<void> {
         const cancelActivation = this.actions.startActivation();
 
+        if (window.localStorage.getItem('walletconnect') === null) {
+            return;
+        }
+
         await this.isomorphicInitialize(DEFAULT_CHAIN);
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

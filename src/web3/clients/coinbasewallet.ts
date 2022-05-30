@@ -132,6 +132,12 @@ export class CoinbaseWallet extends Connector {
     public async connectEagerly(): Promise<void> {
         if (store.getState().hasDisconnected) return undefined;
 
+        if (
+            window.localStorage.getItem('-walletlink:https://www.walletlink.org:version') === null
+        ) {
+            return undefined;
+        }
+
         const cancelActivation = this.actions.startActivation();
 
         await this.isomorphicInitialize();
@@ -280,6 +286,11 @@ export class CoinbaseWallet extends Connector {
 
     /** {@inheritdoc Connector.deactivate} */
     public deactivate(): void {
+        window?.localStorage.removeItem('-walletlink:https://www.walletlink.org:session:id');
+        window?.localStorage.removeItem('-walletlink:https://www.walletlink.org:session:linked');
+        window?.localStorage.removeItem('-walletlink:https://www.walletlink.org:session:secret');
+        window?.localStorage.removeItem('-walletlink:https://www.walletlink.org:session:version');
+
         this.coinbaseWallet?.disconnect();
     }
 }

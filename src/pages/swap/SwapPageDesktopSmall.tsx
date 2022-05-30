@@ -11,7 +11,7 @@ type Props = Record<string, never>;
 
 const SwapPageDesktopSmall: FunctionComponent<Props> = () => {
     const blur = useBlur(['/', '/swap/:id', '/live']);
-    console.log('SHOULD_NOT_EXIST');
+
     return (
         <animated.div
             style={{
