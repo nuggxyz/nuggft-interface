@@ -10,6 +10,7 @@ import Label from '@src/components/general/Label/Label';
 import globalStyles from '@src/lib/globalStyles';
 import { useUsdPair } from '@src/client/usd';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
+import { ADDRESS_ZERO } from '@src/web3/constants';
 
 type SwapDataWithTryout = SwapData & {
     tryout?: LiveItem['tryout'];
@@ -100,7 +101,9 @@ const SwapListPhone: FunctionComponent<{ tokenId?: TokenId }> = ({ tokenId }) =>
     const epoch = client.epoch.active.useId();
     const filtered = React.useMemo(() => {
         if (token && epoch && token.isNugg()) {
-            return token.swaps.filter((x) => x.endingEpoch && x.endingEpoch < epoch);
+            return token.swaps.filter(
+                (x) => x.endingEpoch && x.endingEpoch < epoch && x.leader !== ADDRESS_ZERO,
+            );
         }
         if (token && epoch && token.isItem()) {
             return token.swaps.filter((x) => x.endingEpoch && x.endingEpoch < epoch);

@@ -8,6 +8,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import Label from '@src/components/general/Label/Label';
 import web3 from '@src/web3';
 import { useTransactionManager2 } from '@src/contracts/useContract';
+import { CustomError } from '@src/lib/errors';
 
 import OffersList from './RingAbout/OffersList';
 
@@ -16,11 +17,13 @@ type Props = {
     tokenId?: TokenId;
     onDismiss?: () => void;
     ConfirmationView?: () => JSX.Element;
+    error?: Error | CustomError | undefined;
 };
 
 const TransactionVisualConfirmation: FunctionComponent<Props> = ({
     hash,
     tokenId,
+    error,
     onDismiss,
     ConfirmationView,
 }) => {
@@ -30,6 +33,14 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
     const network = web3.hook.useNetworkProvider();
 
     const transaction = useTransactionManager2(network, hash);
+
+    React.useEffect(() => {
+        if (hash && !hash.isHash()) {
+            setManualResponse(true);
+        }
+    }, [hash]);
+
+    const [manualResponse, setManualResponse] = React.useState<boolean>(false);
 
     return (
         <div
@@ -42,7 +53,7 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
         >
             <AnimatedConfirmation confirmed={!!transaction?.receipt} />
 
-            {!transaction?.response && (
+            {!transaction?.response && !manualResponse && (
                 <div
                     style={{
                         display: 'flex',
@@ -53,15 +64,35 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
                         marginTop: 20,
                     }}
                 >
-                    <Label
-                        text="looking for your transaction..."
-                        textStyle={{ color: 'white' }}
-                        containerStyles={{ background: lib.colors.nuggGold }}
+                    <Text
+                        size="large"
+                        textStyle={{
+                            color: lib.colors.primaryColor,
+                            fontWeight: lib.layout.fontWeight.thicc,
+                        }}
+                    >
+                        👀 looking...
+                    </Text>
+
+                    <Button
+                        buttonStyle={{
+                            borderRadius: lib.layout.borderRadius.large,
+                            background: lib.colors.primaryColor,
+                            marginTop: '20px',
+                        }}
+                        textStyle={{
+                            color: lib.colors.white,
+                        }}
+                        size="large"
+                        onClick={() => {
+                            setManualResponse(true);
+                        }}
+                        label="ok, i confirmed it"
                     />
                 </div>
             )}
 
-            {transaction?.response && !transaction?.receipt && hash && chainId && address && (
+            {!transaction?.response && error && (
                 <div
                     style={{
                         display: 'flex',
@@ -70,33 +101,59 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
                         alignItems: 'center',
                         padding: 20,
                         marginTop: 20,
-                        marginBottom: 20,
                     }}
                 >
-                    <Label
-                        size="large"
-                        text={hash.isHash() ? shortenTxnHash(hash) : 'submitted'}
-                        textStyle={{ color: 'white' }}
-                        containerStyles={{
-                            background: lib.colors.etherscanBlue,
-                            marginBottom: 20,
-                        }}
-                    />
-                    <Text textStyle={{ marginBottom: 20 }}>it should be included soon</Text>
-                    <Button
-                        onClick={() =>
-                            hash.isHash()
-                                ? gotoEtherscan(chainId, 'tx', hash)
-                                : gotoEtherscan(chainId, 'address', address)
-                        }
-                        label="view on etherscan"
-                        textStyle={{ color: lib.colors.etherscanBlue }}
-                        buttonStyle={{
-                            borderRadius: lib.layout.borderRadius.large,
-                        }}
-                    />
+                    <Text textStyle={{ color: lib.colors.primaryColor }}>
+                        Error: {error.message}
+                    </Text>
                 </div>
             )}
+
+            {(transaction?.response || manualResponse) &&
+                !transaction?.receipt &&
+                chainId &&
+                address && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            width: '100%',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            padding: 20,
+                            marginTop: 20,
+                            marginBottom: 20,
+                        }}
+                    >
+                        <Text
+                            size="large"
+                            textStyle={{
+                                color: lib.colors.etherscanBlue,
+                                fontWeight: lib.layout.fontWeight.thicc,
+                                marginBottom: 20,
+                            }}
+                        >
+                            {hash && hash.isHash() ? shortenTxnHash(hash) : 'submitted'}
+                        </Text>
+                        <Button
+                            className="mobile-pressable-div"
+                            onClick={() =>
+                                hash && hash.isHash()
+                                    ? gotoEtherscan(chainId, 'tx', hash)
+                                    : gotoEtherscan(chainId, 'address', address)
+                            }
+                            label="view on etherscan"
+                            textStyle={{
+                                color: lib.colors.etherscanBlue,
+                                fontWeight: lib.layout.fontWeight.thicc,
+                            }}
+                            size="large"
+                            buttonStyle={{
+                                borderRadius: lib.layout.borderRadius.large,
+                            }}
+                        />
+                        <Text textStyle={{ marginTop: 20 }}>it should be included soon</Text>
+                    </div>
+                )}
 
             {transaction?.response && transaction?.receipt && (
                 <>
@@ -127,20 +184,29 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
             )}
 
             {onDismiss && (
-                <Button
-                    label="dismiss"
-                    onClick={onDismiss}
-                    buttonStyle={{
-                        borderRadius: lib.layout.borderRadius.large,
-                        background: lib.colors.primaryColor,
-                        marginTop: '20px',
-                        width: '100%',
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
                     }}
-                    textStyle={{
-                        color: lib.colors.white,
-                        fontSize: 30,
-                    }}
-                />
+                >
+                    <Button
+                        className="mobile-pressable-div"
+                        label="dismiss"
+                        onClick={onDismiss}
+                        size="smaller"
+                        buttonStyle={{
+                            borderRadius: lib.layout.borderRadius.large,
+                            background: lib.colors.primaryColor,
+                            marginTop: '20px',
+                        }}
+                        textStyle={{
+                            fontWeight: lib.layout.fontWeight.thicc,
+
+                            color: lib.colors.white,
+                        }}
+                    />
+                </div>
             )}
         </div>
     );

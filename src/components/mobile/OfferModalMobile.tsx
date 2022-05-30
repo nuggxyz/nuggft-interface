@@ -1,11 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { startTransition, useState } from 'react';
+import React, { useState } from 'react';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
 import { IoChevronBackCircle } from 'react-icons/io5';
 
 import useAsyncState from '@src/hooks/useAsyncState';
-import lib, { shortenTxnHash } from '@src/lib';
+import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -14,11 +14,7 @@ import client from '@src/client';
 import Label from '@src/components/general/Label/Label';
 import { EthInt } from '@src/classes/Fraction';
 import { OfferModalData } from '@src/interfaces/modals';
-import {
-    useNuggftV1,
-    usePrioritySendTransaction,
-    useTransactionManager2,
-} from '@src/contracts/useContract';
+import { useNuggftV1, usePrioritySendTransaction } from '@src/contracts/useContract';
 import styles from '@src/components/modals/OfferModal/OfferModal.styles';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Loader from '@src/components/general/Loader/Loader';
@@ -28,10 +24,8 @@ import CurrencyToggler, {
     useCurrencyTogglerState,
 } from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import { DualCurrencyInputWithIcon } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
-import AnimatedConfirmation from '@src/components/general/AnimatedTimers/AnimatedConfirmation';
-import { gotoEtherscan } from '@src/web3/config';
-import OffersList from '@src/components/nugg/RingAbout/OffersList';
 import { calculateRawOfferValue } from '@src/web3/constants';
+import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
 
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
@@ -48,7 +42,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const { send, estimation: estimator, hash, error } = usePrioritySendTransaction();
     const [amount, setAmount] = useState('0');
     const [lastPressed, setLastPressed] = React.useState('5');
-    const transaction = useTransactionManager2(network, hash);
 
     const msp = client.stake.useMsp();
 
@@ -674,137 +667,15 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const Page2 = React.useMemo(() => {
         return isOpen && chainId && address ? (
             <>
-                <div
-                    style={{
-                        width: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <AnimatedConfirmation confirmed={!!transaction?.receipt} />
-
-                    {!transaction?.response && !error && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                padding: 20,
-                                marginTop: 20,
-                            }}
-                        >
-                            <Label
-                                text="looking for your transaction..."
-                                textStyle={{ color: 'white' }}
-                                containerStyles={{ background: lib.colors.nuggGold }}
-                            />
-                        </div>
-                    )}
-
-                    {!transaction?.response && error && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                padding: 20,
-                                marginTop: 20,
-                            }}
-                        >
-                            <Text textStyle={{ color: lib.colors.primaryColor }}>
-                                Error: {error.message}
-                            </Text>
-                        </div>
-                    )}
-
-                    {transaction?.response && !transaction?.receipt && hash && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                padding: 20,
-                                marginTop: 20,
-                                marginBottom: 20,
-                            }}
-                        >
-                            <Label
-                                size="large"
-                                text={hash.isHash() ? shortenTxnHash(hash) : 'submitted'}
-                                textStyle={{ color: 'white' }}
-                                containerStyles={{
-                                    background: lib.colors.etherscanBlue,
-                                    marginBottom: 20,
-                                }}
-                            />
-                            <Text textStyle={{ marginBottom: 20 }}>it should be included soon</Text>
-                            <Button
-                                onClick={() =>
-                                    hash.isHash()
-                                        ? gotoEtherscan(chainId, 'tx', hash)
-                                        : gotoEtherscan(chainId, 'address', address)
-                                }
-                                label="view on etherscan"
-                                textStyle={{ color: lib.colors.etherscanBlue }}
-                                buttonStyle={{
-                                    borderRadius: lib.layout.borderRadius.large,
-                                }}
-                            />
-                        </div>
-                    )}
-
-                    {transaction?.response && transaction?.receipt && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                padding: 20,
-                                marginTop: 20,
-                                marginBottom: 20,
-                            }}
-                        >
-                            <Label
-                                size="large"
-                                text="boom, you're in the lead"
-                                textStyle={{ color: 'white' }}
-                                containerStyles={{ background: lib.colors.green, marginBottom: 20 }}
-                            />
-                            <OffersList tokenId={data.tokenId} onlyLeader />
-                        </div>
-                    )}
-
-                    <Button
-                        label="dismiss"
-                        onClick={() => {
-                            closeModal();
-
-                            startTransition(() => {
-                                setTimeout(() => {
-                                    setPage(0);
-                                }, 2000);
-                            });
-                        }}
-                        buttonStyle={{
-                            borderRadius: lib.layout.borderRadius.large,
-                            background: lib.colors.primaryColor,
-                            marginTop: '20px',
-                            width: '100%',
-                        }}
-                        textStyle={{
-                            color: lib.colors.white,
-                            fontSize: 30,
-                        }}
-                    />
-                </div>
+                <TransactionVisualConfirmation
+                    hash={hash}
+                    onDismiss={closeModal}
+                    tokenId={data.tokenId}
+                    error={error}
+                />
             </>
         ) : null;
-    }, [transaction, isOpen, closeModal, setPage, chainId, data.tokenId, hash, address]);
+    }, [isOpen, closeModal, chainId, data.tokenId, hash, address, error]);
 
     // const Page2 = React.useMemo(() => {
     //     return isOpen ? (

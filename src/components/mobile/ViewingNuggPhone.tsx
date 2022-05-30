@@ -139,7 +139,6 @@ const Info = ({ tokenId }: { tokenId?: ItemId }) => {
         return new Fraction(featureTotals[feature], totalNuggs).number;
     }, [token, totalNuggs, featureTotals, feature]);
 
-    // const [showPercent, setShowPercent] = React.useState<0 | 1>(0);
     if (!tokenId || !token) return null;
 
     return (

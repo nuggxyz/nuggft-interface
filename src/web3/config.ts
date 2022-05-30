@@ -231,7 +231,7 @@ export const gotoLink = (link: string) => {
 };
 
 export const gotoEtherscan = (chainId: Chain, route: 'tx' | 'address', value: string) => {
-    const win = window?.open(`${CHAIN_INFO[chainId].explorer}${route}/${value}`, '_blank');
+    const win = window.open(`${CHAIN_INFO[chainId].explorer}${route}/${value}`, '_blank');
     if (win) win.focus();
 };
 
