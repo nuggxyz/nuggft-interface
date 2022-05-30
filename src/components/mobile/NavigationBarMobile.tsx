@@ -387,25 +387,6 @@ const NavigationBarMobile: FC<unknown> = () => {
                 >
                     <PageWrapper2 />
                 </animated.div>
-
-                {/*
-                <animated.div
-                    style={{
-                        zIndex: 4,
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        display: 'flex',
-                        // height: '100%',
-                        width: '100%',
-                        justifyContent: 'flex-start',
-                        overflow: 'scroll',
-                        WebkitMaskImage: 'linear-gradient(180deg, #000 90%, transparent)',
-                        ...walletOpacitate,
-                    }}
-                >
-                    <ConnectTab />
-                </animated.div> */}
             </animated.div>
 
             {/* ////////////////////////////////////////////////////////////////////////
@@ -595,13 +576,18 @@ export const NoFlashClaims = React.memo<{
     ({ address }) => {
         const openModal = client.modal.useOpenModal();
         const unclaimedOffers = client.live.myUnclaimedOffers();
-
+        const epoch = client.epoch.active.useId();
         const [numClaims, setNumClaims] = React.useState(unclaimedOffers.length);
         const prevNumClaims = usePrevious(numClaims);
 
         React.useEffect(() => {
-            if (unclaimedOffers.length !== prevNumClaims) setNumClaims(unclaimedOffers.length);
-        }, [unclaimedOffers.length, prevNumClaims]);
+            if (epoch) {
+                const now = unclaimedOffers.filter(
+                    (x) => (x?.endingEpoch || 10000000) < epoch,
+                ).length;
+                if (now !== prevNumClaims) setNumClaims(now);
+            }
+        }, [unclaimedOffers, prevNumClaims, epoch]);
 
         return (
             <Button

@@ -331,12 +331,12 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const swapCurrency = useUsdPair(
         leader?.eth.gt(0)
             ? leader.eth
-            : swap?.eth.gt(0)
-            ? swap.eth
             : lifecycle === Lifecycle.Bunt ||
               lifecycle === Lifecycle.Minors ||
               lifecycle === Lifecycle.Formality
             ? msp
+            : swap?.eth.gt(0)
+            ? swap.eth
             : 0,
     );
 
