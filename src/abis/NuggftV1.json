@@ -1391,6 +1391,24 @@
     {
         "inputs": [
             {
+                "internalType": "uint40[]",
+                "name": "tokenIds",
+                "type": "uint40[]"
+            },
+            {
+                "internalType": "uint256[]",
+                "name": "values",
+                "type": "uint256[]"
+            }
+        ],
+        "name": "offer",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "uint24",
                 "name": "tokenId",
                 "type": "uint24"
