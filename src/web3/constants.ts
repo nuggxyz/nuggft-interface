@@ -2,6 +2,7 @@ import { Interface } from '@ethersproject/abi/lib/interface';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { BlockTag, Formatter, Network } from '@ethersproject/providers';
 
+import { toEth } from '@src/lib/conversion';
 import nuggftabi from '@src/abis/NuggftV1.json';
 
 export function supportedChainIds() {
@@ -37,6 +38,8 @@ export const isValidChainId = (input: number) => {
 };
 
 export const NuggftV1__Interface = new Interface(nuggftabi);
+
+export const MIN_SALE_PRICE = toEth('.001');
 
 export const FEATURE_NAMES = [
     'Base',

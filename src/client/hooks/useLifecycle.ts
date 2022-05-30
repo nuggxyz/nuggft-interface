@@ -34,6 +34,7 @@ export default (token?: LiveToken | Omit<SwapData, 'offers'>): Lifecycle | undef
             }
 
             if (isToken && !abc && token.isItem() && token.tryout.count > 0) {
+                if (token.tryout.count === 1) return Lifecycle.Formality;
                 return Lifecycle.Tryout;
             }
 

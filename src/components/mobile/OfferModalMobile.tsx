@@ -32,13 +32,6 @@ import AnimatedConfirmation from '@src/components/general/AnimatedTimers/Animate
 import { gotoEtherscan } from '@src/web3/config';
 import OffersList from '@src/components/nugg/RingAbout/OffersList';
 
-// const hello = (num: number, val: number) => {
-//     console.log('yep');
-//     document.documentElement.style.setProperty.bind(undefined, `--${num}-dumb`, String(val));
-// };
-
-// const hello2 = hello.bind(undefined);
-
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
 
@@ -61,6 +54,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         next: BigNumber | undefined;
         curr: BigNumber | undefined;
         eth: EthInt | undefined;
+        increment: BigNumber | undefined;
+        multicallRequired: boolean | undefined;
     }>(() => {
         if (data.tokenId && address && chainId && network) {
             if (data.isNugg()) {
@@ -70,6 +65,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             canOffer: x.canOffer,
                             next: x.next,
                             curr: x.current,
+                            increment: x.incrementBps,
+                            multicallRequired: false,
                         };
                     }),
                     nuggft.msp(),
@@ -91,12 +88,17 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         canOffer: x.canOffer,
                         next: x.next,
                         curr: x.current,
+                        increment: x.incrementBps,
                     };
                 }),
 
                 nuggft.itemAgency(data.nuggToBuyFrom.toRawId(), data.tokenId.toRawId()),
             ]).then((_data) => {
-                return { ..._data[0], ...lib.parse.agency(_data[1]) };
+                console.log(_data);
+                if (_data[1].eq(0)) {
+                    return { ..._data[0], eth: new EthInt(_data[0].next), multicallRequired: true };
+                }
+                return { ..._data[0], ...lib.parse.agency(_data[1]), multicallRequired: false };
             });
         }
         return undefined;
@@ -172,11 +174,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         return undefined;
     }, [populatedTransaction, network]);
 
+    // eslint-disable-next-line react/require-default-props
     const IncrementButton = React.memo(({ increment }: { increment: bigint }) => {
         return (
             <Button
                 className="mobile-pressable-div"
-                label={`+${increment.toString()}%`}
+                label={increment !== BigInt(0) ? `+${increment.toString()}%` : 'min'}
                 onClick={() => {
                     const a = check?.eth?.copy().increase(increment).number.toFixed(5) || '0';
                     setAmount(a);
@@ -201,7 +204,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             />
         );
     });
-
     const [tabFadeTransition] = useTransition(
         page,
         {
@@ -241,8 +243,81 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const globalCurrencyPref = client.usd.useCurrencyPreferrence();
 
-    const [localCurrencyPref, setLocalCurrencyPref] = useCurrencyTogglerState(globalCurrencyPref);
+    const [handledNeg1, setHandledNeg1] = React.useState(false);
 
+    React.useEffect(() => {
+        if (check?.multicallRequired && !handledNeg1 && page !== -1) {
+            setPage(-1);
+        }
+    }, [check, handledNeg1, page]);
+
+    const msp = client.stake.useMsp();
+
+    const mspusd = client.usd.useUsdPair(msp);
+
+    const [localCurrencyPref, setLocalCurrencyPref] = useCurrencyTogglerState(globalCurrencyPref);
+    const PageNeg1 = React.useMemo(
+        () =>
+            !data.isItem() ? null : (
+                <>
+                    <Text size="larger" textStyle={{ marginTop: 10, textAlign: 'center' }}>
+                        one sec
+                    </Text>
+                    <Text size="medium" textStyle={{ marginTop: 10 }}>
+                        <b>{data.nuggToBuyFrom.toPrettyId()}</b> has never been bid on, they must be
+                        bid on before they can sell <b>{data.tokenId.toPrettyId()}</b>
+                    </Text>
+
+                    <Text size="medium" textStyle={{ marginTop: 10 }}>
+                        if you move forward, your transaction will include both a minimum bid on{' '}
+                        <b>{data.nuggToBuyFrom.toPrettyId()}</b>, and your desired bid for{' '}
+                        <b>{data.tokenId.toPrettyId()}</b>
+                    </Text>
+
+                    <Text size="larger" textStyle={{ marginTop: 10 }}>
+                        added cost
+                    </Text>
+
+                    <CurrencyText
+                        unitOverride={localCurrencyPref}
+                        forceEth
+                        stopAnimation
+                        size="larger"
+                        value={mspusd}
+                    />
+
+                    <Button
+                        className="mobile-pressable-div"
+                        label="i got it"
+                        // leftIcon={calculating ? <Loader /> : undefined}
+                        onClick={() => {
+                            setHandledNeg1(true);
+                            setPage(0);
+                        }}
+                        disabled={calculating || !!estimator.error}
+                        buttonStyle={{
+                            borderRadius: lib.layout.borderRadius.large,
+                            background: lib.colors.primaryColor,
+                            marginTop: '20px',
+                        }}
+                        textStyle={{
+                            color: lib.colors.white,
+                            fontSize: 30,
+                        }}
+                    />
+                </>
+            ),
+        [
+            amount,
+            setPage,
+            calculating,
+            localCurrencyPref,
+            IncrementButton,
+            currentPrice,
+            estimator.error,
+            myBalance,
+        ],
+    );
     const Page0 = React.useMemo(
         () => (
             <>
@@ -369,14 +444,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         fontSize: 30,
                     }}
                 />
-
-                {/* <Button
-                    className="mobile-pressable-div"
-                    size="small"
-                    buttonStyle={{ background: 'transparent', marginTop: 10, marginBottom: -10 }}
-                    label="cancel"
-                    onClick={closeModal}
-                /> */}
             </>
         ),
         [
@@ -744,7 +811,15 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                 // transform: `translate(var(--${pager}-dumb)px, 0px)`,
                             }}
                         >
-                            <>{pager === 0 ? Page0 : pager === 1 ? Page1 : Page2}</>{' '}
+                            <>
+                                {pager === -1
+                                    ? PageNeg1
+                                    : pager === 0
+                                    ? Page0
+                                    : pager === 1
+                                    ? Page1
+                                    : Page2}
+                            </>{' '}
                             {(pager === 1 || pager === 0) && (
                                 <>
                                     <Button

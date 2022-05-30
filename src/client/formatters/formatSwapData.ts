@@ -3,13 +3,15 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { SwapdataFragment, ItemswapdataFragment } from '@src/gql/types.generated';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { SwapData } from '@src/client/swaps';
+import web3 from '@src/web3';
 
 export const formatSwapData = <T extends TokenId>(
     z: SwapdataFragment | ItemswapdataFragment,
     tokenId: T,
 ): SwapData & PickFromTokenId<T, { type: 'nugg' }, { type: 'item' }> => {
+    const maybeEth = BigNumber.from(z?.top || z.bottom);
     const a = {
-        eth: BigNumber.from(z?.top || z.bottom),
+        eth: maybeEth.gt(0) ? maybeEth : web3.constants.MIN_SALE_PRICE,
         endingEpoch: z.endingEpoch ? Number(z.endingEpoch) : null,
         epoch: z.epoch
             ? {

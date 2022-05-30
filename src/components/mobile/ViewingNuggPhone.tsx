@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { plural, t } from '@lingui/macro';
-import { useNavigate } from 'react-router';
 import { animated } from '@react-spring/web';
+import { useNavigate } from 'react-router';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -36,10 +36,10 @@ import { buildTokenIdFactory } from '@src/prototypes';
 import { ModalEnum } from '@src/interfaces/modals';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
 import Button from '@src/components/general/Buttons/Button/Button';
-import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import undefined from '@src/lib/dotnugg/util';
 import useMountLogger from '@src/hooks/useMountLogger';
+import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 
 import NuggSnapshotListMobile from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
@@ -233,7 +233,6 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
     return text ? (
         <div
             style={{
-                // width: '95%',
                 display: 'flex',
                 width: '90%',
                 justifyContent: 'center',
@@ -332,7 +331,11 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const swapCurrency = useUsdPair(
         leader?.eth.gt(0)
             ? leader.eth
-            : lifecycle === Lifecycle.Bunt || lifecycle === Lifecycle.Minors
+            : swap?.eth.gt(0)
+            ? swap.eth
+            : lifecycle === Lifecycle.Bunt ||
+              lifecycle === Lifecycle.Minors ||
+              lifecycle === Lifecycle.Formality
             ? msp
             : 0,
     );
@@ -381,7 +384,6 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                                     textStyle={{
                                         paddingTop: '1rem',
                                         paddingRight: '.5em',
-                                        // color: lib.colors.primaryColor,
                                     }}
                                 >
                                     {t`for sale by`}
@@ -487,7 +489,6 @@ export const ViewingNuggPhoneController = () => {
 
     return null;
 };
-
 const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
     ({ tokenId }) => {
         const isOpen = client.viewscreen.useViewScreenOpen();
@@ -515,14 +516,12 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                 itemId: token?.tokenId.toRawId() || '',
             },
         });
-        // console.log('hello', swap, token);
+
         const coreRef = React.useRef(null);
 
         const ider = React.useId();
 
         const overlay = useAnimateOverlayBackdrop(isOpen);
-
-        // console.log(swap, lifecycle);
 
         return (
             <animated.div
@@ -558,7 +557,6 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                         background: 'transparent',
                     }}
                 >
-                    {/* <BackButton /> */}
                     <div
                         ref={coreRef}
                         style={{
@@ -595,7 +593,6 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                     paddingTop: '20px',
                                 }}
                             >
-                                {/* {swap ? ( */}
                                 <div
                                     style={{
                                         width: '100%',
@@ -617,17 +614,12 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                         tokenStyle={{ width: '275px', height: '275px' }}
                                     />
                                 </div>
-                                {/* ) : (
-                                    <TokenViewer tokenId={tokenId} showcase disableOnClick />
-                                )} */}
                             </div>
                         </div>
                         <div
                             style={{
                                 marginTop: swap ? -10 : '1rem',
-                                // width: '95%',
                                 display: 'flex',
-                                // width: '90%',
                                 justifyContent: 'center',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -664,15 +656,14 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                         </div>
 
                         {tokenId &&
-                            swap &&
+                            token?.activeSwap &&
                             epoch &&
-                            (swap.endingEpoch || 0) <= epoch + 1 &&
+                            ((swap && swap.endingEpoch) || 0) <= epoch + 1 &&
                             lifecycle &&
                             lifecycle.lifecycle !== Lifecycle.Cut && (
                                 <>
                                     <div
                                         style={{
-                                            // width: '95%',
                                             display: 'flex',
                                             width: '90%',
                                             justifyContent: 'center',
@@ -689,9 +680,9 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                 </>
                             )}
 
-                        {token && token.type === 'item' && (
+                        {token && token.isItem() && token.tryout.count > 0 && (
                             <>
-                                {swap && (
+                                {token?.activeSwap && (
                                     <div
                                         style={{
                                             display: 'flex',
@@ -713,10 +704,10 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                     </div>
                                 )}
                                 <NextSwap tokenId={token.tokenId} />
-
-                                {token.tokenId.isItemId() && <Info tokenId={token.tokenId} />}
                             </>
                         )}
+
+                        {token && token.isItem() && <Info tokenId={token.tokenId} />}
 
                         {token && token.type === 'nugg' && token.owner === sender && (
                             <>
