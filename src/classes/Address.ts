@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { ethers } from 'ethers';
 import invariant from 'tiny-invariant';
+import { getAddress } from '@ethersproject/address';
 
 import { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 
@@ -16,7 +16,7 @@ export class Address implements IAddress {
     public static NULL = new Address('0x0000000000000000000000000000000000000069');
 
     constructor(address: string) {
-        const addr = ethers.utils.getAddress(address);
+        const addr = getAddress(address);
         invariant(!!addr, 'INVALID:ADDRESS');
         this._hash = addr;
     }
@@ -39,7 +39,7 @@ export class Address implements IAddress {
 
     public static isAddress(other: string): boolean {
         try {
-            return !!ethers.utils.getAddress(other);
+            return !!getAddress(other);
         } catch (err) {
             return false;
         }

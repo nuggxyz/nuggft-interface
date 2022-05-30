@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
 import { SwapdataFragment, ItemswapdataFragment } from '@src/gql/types.generated';
 import { buildTokenIdFactory } from '@src/prototypes';

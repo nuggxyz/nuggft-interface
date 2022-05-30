@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import lib from '@src/lib';

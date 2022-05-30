@@ -8,7 +8,6 @@ import { executeQuery3 } from '@src/gql/helpers';
 import useAsyncState from '@src/hooks/useAsyncState';
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
-import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import Loader from '@src/components/general/Loader/Loader';
 import { EthInt } from '@src/classes/Fraction';
 import emitter from '@src/emitter';
@@ -76,9 +75,7 @@ const MintModal = ({ data }: { data: MintModalData }) => {
                     const vals = await Promise.map(
                         range(Number(nuggs[0].idnum) + 1, Number(nuggs[0].idnum) + 11),
                         async (id) => {
-                            return (
-                                await new NuggftV1Helper(chainId, provider).contract.agency(id)
-                            ).toString();
+                            return (await nuggft.agency(id)).toString();
                         },
                     );
 
@@ -95,7 +92,7 @@ const MintModal = ({ data }: { data: MintModalData }) => {
 
     const nuggPrice = useAsyncState(() => {
         if (chainId && provider) {
-            return new NuggftV1Helper(chainId, provider).contract.msp();
+            return nuggft.msp();
         }
         return undefined;
     }, [chainId, provider, newNugg]);

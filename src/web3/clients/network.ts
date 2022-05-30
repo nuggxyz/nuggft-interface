@@ -1,12 +1,13 @@
-import type { Eip1193Bridge } from '@ethersproject/experimental';
+import { Eip1193Bridge } from '@ethersproject/experimental';
 import type { ConnectionInfo } from '@ethersproject/web';
-import { FallbackProviderConfig } from '@ethersproject/providers';
-import { constants, VoidSigner } from 'ethers';
+import { FallbackProvider, FallbackProviderConfig } from '@ethersproject/providers';
+import { VoidSigner } from '@ethersproject/abstract-signer';
 
 import { Connector, Actions } from '@src/web3/core/types';
 import { PeerInfo__Rpc, Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 // eslint-disable-next-line import/no-cycle
-import { DEFAULT_CHAIN } from '@src/web3/constants';
+import { DEFAULT_CHAIN, ADDRESS_ZERO } from '@src/web3/constants';
+import { CustomJsonRpcProvider } from '@src/web3/classes/CustomJsonRpcProvider';
 
 export type url = string | ConnectionInfo;
 
@@ -53,21 +54,13 @@ export class Network extends Connector {
             return this.providerCache[chainId] as Promise<Eip1193Bridge>;
 
         // eslint-disable-next-line no-return-assign
-        return (this.providerCache[chainId] = Promise.all([
-            import('@src/web3/classes/CustomJsonRpcProvider').then(
-                ({ CustomJsonRpcProvider }) => CustomJsonRpcProvider,
-            ),
-            import('@ethersproject/providers').then(({ FallbackProvider }) => FallbackProvider),
-            // eslint-disable-next-line no-shadow
-            import('@ethersproject/experimental').then(({ Eip1193Bridge }) => Eip1193Bridge),
-            // eslint-disable-next-line no-shadow
-        ]).then(([CustomJsonRpcProvider, FallbackProvider, Eip1193Bridge]) => {
+        return (this.providerCache[chainId] = Promise.all([]).then(() => {
             const urls = this.urlMap[chainId];
 
             const providers = urls.map((_url) => new CustomJsonRpcProvider(chainId, _url, chainId));
 
             return new Eip1193Bridge(
-                new VoidSigner(constants.AddressZero),
+                new VoidSigner(ADDRESS_ZERO),
                 providers.length === 1
                     ? providers[0]
                     : new FallbackProvider(

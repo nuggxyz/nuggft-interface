@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { startTransition, useState } from 'react';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { IoChevronBackCircle } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 

@@ -1,6 +1,6 @@
 /* eslint-disable no-duplicate-case */
 import React from 'react';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
 import web3 from '@src/web3';
 import { EthInt } from '@src/classes/Fraction';

@@ -1,7 +1,6 @@
 /* eslint-disable max-classes-per-file */
+import { defineReadOnly } from '@ethersproject/properties';
 import { AlchemyProvider, EventType, InfuraProvider, Networkish } from '@ethersproject/providers';
-import { logger } from 'ethers';
-import { defineReadOnly, Logger } from 'ethers/lib/utils';
 import { Event } from '@ethersproject/providers/lib/base-provider';
 
 import { DEFAULT_CHAIN, INFURA_KEY } from '@src/web3/constants';
@@ -47,15 +46,15 @@ export class InfuraWebSocketProvider extends CustomWebSocketProvider {
     ) {
         const provider = new InfuraProvider(network, apiKey);
         const { connection } = provider;
-        if (connection.password) {
-            logger.throwError(
-                'INFURA WebSocket project secrets unsupported',
-                Logger.errors.UNSUPPORTED_OPERATION,
-                {
-                    operation: 'InfuraProvider.getWebSocketProvider()',
-                },
-            );
-        }
+        // if (connection.password) {
+        //     logger.throwError(
+        //         'INFURA WebSocket project secrets unsupported',
+        //         Logger.errors.UNSUPPORTED_OPERATION,
+        //         {
+        //             operation: 'InfuraProvider.getWebSocketProvider()',
+        //         },
+        //     );
+        // }
 
         const url = connection.url.replace(/^http/i, 'ws').replace('/v3/', '/ws/v3/');
         super(url, network, onClose);

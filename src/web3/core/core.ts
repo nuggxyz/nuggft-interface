@@ -4,14 +4,14 @@ import type { TransactionReceipt } from '@ethersproject/providers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { EqualityChecker, UseBoundStore } from 'zustand';
 import create from 'zustand';
-import { PopulatedTransaction } from 'ethers';
+import { PopulatedTransaction } from '@ethersproject/contracts';
 
 import { Address } from '@src/classes/Address';
 import client from '@src/client';
 import { EthInt } from '@src/classes/Fraction';
 // eslint-disable-next-line import/no-cycle
 import { CONTRACTS } from '@src/web3/constants';
-import type { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
+import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
 // eslint-disable-next-line import/no-cycle
 // eslint-disable-next-line import/no-cycle
 
@@ -679,22 +679,22 @@ function getAugmentedHooks<T extends Connector>(
         const accounts = useAccounts();
 
         // trigger the dynamic import on mount
-        const [providers, setProviders] = useState<
-            { CustomWeb3Provider: typeof CustomWeb3Provider } | undefined
-        >(undefined);
-        useEffect(() => {
-            import('@src/web3/classes/CustomWeb3Provider').then(setProviders).catch(() => {
-                console.debug('@ethersproject/providers not available');
-            });
-        }, []);
+        // const [providers, setProviders] = useState<
+        //     { CustomWeb3Provider: typeof CustomWeb3Provider } | undefined
+        // >(undefined);
+        // useEffect(() => {
+        //     import('@src/web3/classes/CustomWeb3Provider').then(setProviders).catch(() => {
+        //         console.debug('@ethersproject/providers not available');
+        //     });
+        // }, []);
 
         return useMemo(() => {
             // we use chainId and accounts to re-render in case connector.provider changes in place
-            if (providers && enabled && isActive && chainId && accounts && connector.provider) {
-                return new providers.CustomWeb3Provider(chainId, connector.provider, network);
+            if (enabled && isActive && chainId && accounts && connector.provider) {
+                return new CustomWeb3Provider(chainId, connector.provider, network);
             }
             return undefined;
-        }, [providers, enabled, isActive, chainId, accounts, network]);
+        }, [enabled, isActive, chainId, accounts, network]);
     }
 
     function useCoreProvider(network?: Networkish, enabled = true): CoreProvider | undefined {

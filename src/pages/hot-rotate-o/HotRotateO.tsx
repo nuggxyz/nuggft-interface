@@ -1,10 +1,11 @@
 import { animated } from '@react-spring/web';
 import React, { FC, useEffect, useState } from 'react';
-import { ethers, BigNumber, BigNumberish, PopulatedTransaction } from 'ethers';
 import { useNavigate, useMatch, NavigateFunction } from 'react-router-dom';
 import { t } from '@lingui/macro';
 import { IoArrowBack, IoArrowDown, IoArrowForward, IoArrowUp, IoReload } from 'react-icons/io5';
 import Confetti from 'react-confetti';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
+import { PopulatedTransaction } from '@ethersproject/contracts';
 
 import client from '@src/client';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -206,7 +207,7 @@ export const useHotRotateO = (tokenId?: NuggId) => {
                 setCannotProveOwnership(true);
                 return undefined;
             }
-            const fmtTokenId = ethers.BigNumber.from(tokenId.toRawId());
+            const fmtTokenId = BigNumber.from(tokenId.toRawId());
 
             const floopCheck = async () => {
                 return nuggft.floop(fmtTokenId).then((x) => {
@@ -662,7 +663,7 @@ export const RotateOSelector = ({
     screen: 'desktop' | 'tablet' | 'phone';
     algo?: Parameters<NuggftV1['rotate']>;
     send: (
-        ptx: Promise<ethers.PopulatedTransaction>,
+        ptx: Promise<PopulatedTransaction>,
         onSend?: (() => void) | undefined,
     ) => Promise<ResponseHash | undefined>;
     hash?: ResponseHash;

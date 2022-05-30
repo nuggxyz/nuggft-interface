@@ -1,6 +1,6 @@
 import React, { CSSProperties, FunctionComponent } from 'react';
 import { animated, useSpring } from '@react-spring/web';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { t } from '@lingui/macro';
 
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';

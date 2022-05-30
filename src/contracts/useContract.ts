@@ -1,8 +1,9 @@
-import { BaseContract, ContractInterface, PopulatedTransaction, BigNumber } from 'ethers';
 import React, { useMemo, useCallback } from 'react';
 import { t } from '@lingui/macro';
+import { BaseContract, ContractInterface, PopulatedTransaction } from '@ethersproject/contracts';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
-import type { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
+import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
 import web3 from '@src/web3';
 import { RevertError, RejectionError, CustomError } from '@src/lib/errors';
 import {

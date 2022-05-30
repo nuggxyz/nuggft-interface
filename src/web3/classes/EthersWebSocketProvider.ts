@@ -9,8 +9,8 @@ import { Event } from '@ethersproject/providers/lib/base-provider';
 import { ForkEvent } from '@ethersproject/abstract-provider';
 
 import { EventType, JsonRpcProvider } from '@ethersproject/providers';
-import { version } from 'ethers';
-import { hexDataLength } from 'ethers/lib/utils';
+import { version } from '@ethersproject/providers/lib/_version';
+import { hexDataLength } from '@ethersproject/bytes';
 
 const logger = new Logger(version);
 

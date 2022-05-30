@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { ApolloClient } from '@apollo/client';
 import { InfuraProvider, JsonRpcProvider } from '@ethersproject/providers';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
 import { buildApolloSplitLink, buildCache } from '@src/gql';
 import * as constants from '@src/lib/constants';

@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import React from 'react';
 
 import useDebounce from '@src/hooks/useDebounce';

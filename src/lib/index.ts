@@ -1,6 +1,9 @@
-import { BigNumber, ethers } from 'ethers';
-
 // import { FEATURE_NAMES } from '@src/web3/config';
+
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
+import { getAddress } from '@ethersproject/address';
+import { parseUnits } from '@ethersproject/units';
+import { hexZeroPad } from '@ethersproject/bytes';
 
 import lodash from '@src/lib/lodash';
 
@@ -148,7 +151,7 @@ export const safeNavigate = (url: string) => (window.location.href = url);
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: string): string | false {
     try {
-        return ethers.utils.getAddress(value);
+        return getAddress(value);
     } catch {
         return false;
     }
@@ -357,8 +360,8 @@ export const smartReplace = <T extends { id: string }>(array: T[], element: Part
     }, []);
 };
 
-export const toGwei = (num: string): ethers.BigNumber => {
-    return ethers.utils.parseUnits(num, 'gwei');
+export const toGwei = (num: string): BigNumber => {
+    return parseUnits(num, 'gwei');
 };
 
 export const safeResetLocalStorage = (keys: string[]) => {
@@ -407,7 +410,7 @@ export const parseItmeIdToNum = (itemId: `item-${string}` | BigNumberish) => {
 };
 
 export const padToAddress = (id: string) => {
-    return ethers.utils.hexZeroPad(BigNumber.from(id)._hex, 20);
+    return hexZeroPad(BigNumber.from(id)._hex, 20);
 };
 
 export const formatItemSwapIdForSend = (id: string) => {

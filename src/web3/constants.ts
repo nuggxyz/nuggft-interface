@@ -1,6 +1,8 @@
-/* eslint-disable import/no-cycle */
-import { BigNumber, ethers } from 'ethers';
+import { Interface } from '@ethersproject/abi/lib/interface';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { BlockTag, Formatter, Network } from '@ethersproject/providers';
+
+import nuggftabi from '@src/abis/NuggftV1.json';
 
 export function supportedChainIds() {
     // @ts-ignore
@@ -34,6 +36,8 @@ export const isValidChainId = (input: number) => {
     return supportedChainIds().indexOf(input) !== -1;
 };
 
+export const NuggftV1__Interface = new Interface(nuggftabi);
+
 export const FEATURE_NAMES = [
     'Base',
     'Eyes',
@@ -49,12 +53,13 @@ export const FEATURE_NAMES = [
 export const FEATURE_RARITY = [8, 11, 11, 5, 5, 2, 2, 2].map(
     (x) => x / 8,
 ) as unknown as FixedLengthArray<number, 8>;
+export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000' as const;
 
 export const CONTRACTS = {
     [Chain.MAINNET]: {
-        NuggftV1: ethers.constants.AddressZero,
-        xNuggftV1: ethers.constants.AddressZero,
-        DotnuggV1: ethers.constants.AddressZero,
+        NuggftV1: ADDRESS_ZERO,
+        xNuggftV1: ADDRESS_ZERO,
+        DotnuggV1: ADDRESS_ZERO,
         Genesis: 0,
         Interval: 0,
         Offset: 1,
@@ -62,7 +67,7 @@ export const CONTRACTS = {
     },
     [Chain.ROPSTEN]: {
         NuggftV1: '0x420690c1b1519a32fa36768dc2cefe128160a9b7',
-        xNuggftV1: ethers.constants.AddressZero,
+        xNuggftV1: ADDRESS_ZERO,
         DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
         Genesis: 333,
         Interval: 32,
@@ -80,7 +85,7 @@ export const CONTRACTS = {
     },
     [Chain.GOERLI]: {
         NuggftV1: '0xf5622e697d1821b8e83e4beed9e897b49de81011',
-        xNuggftV1: ethers.constants.AddressZero,
+        xNuggftV1: ADDRESS_ZERO,
         DotnuggV1: '0x69c877437dc133bbf32c8bc1acfaf93ba824f28c',
         Genesis: 333,
         Interval: 32,

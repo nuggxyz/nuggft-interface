@@ -1,4 +1,5 @@
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
+import { hexZeroPad } from '@ethersproject/bytes';
 
 import { EthInt } from '@src/classes/Fraction';
 
@@ -6,7 +7,7 @@ const agency = (_agency: BigNumberish) => {
     const bn = BigNumber.from(_agency);
     const address = bn.mask(160);
     return {
-        address: ethers.utils.hexZeroPad(address._hex, 20) as AddressString,
+        address: hexZeroPad(address._hex, 20) as AddressString,
         addressAsBigNumber: address,
         eth: EthInt.fromNuggftV1Agency(_agency),
         epoch: bn.shr(230).mask(24).toNumber(),

@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import create from 'zustand';
 import { combine } from 'zustand/middleware';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import { calculateMsp } from '@src/web3/config';

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { t } from '@lingui/macro';
 
-import NuggftV1Helper from '@src/contracts/NuggftV1Helper';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { fromEth, toEth } from '@src/lib/conversion';
 import Button from '@src/components/general/Buttons/Button/Button';
@@ -43,18 +42,14 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             if (actionType === 'liquidate') {
                 // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                return new NuggftV1Helper(chainId, provider).contract
-                    .vfl([tokenId.toRawId()])
-                    .then((v) => {
-                        return v;
-                    });
-            }
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            return new NuggftV1Helper(chainId, provider).contract
-                .vfr([tokenId.toRawId()])
-                .then((v) => {
+                return nuggft.vfl([tokenId.toRawId()]).then((v) => {
                     return v;
                 });
+            }
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            return nuggft.vfr([tokenId.toRawId()]).then((v) => {
+                return v;
+            });
         }
         // eslint-disable-next-line no-promise-executor-return
         return new Promise((resolve) => resolve([]));

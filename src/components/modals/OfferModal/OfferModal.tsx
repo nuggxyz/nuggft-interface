@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useState } from 'react';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { t } from '@lingui/macro';
 
 import useAsyncState from '@src/hooks/useAsyncState';

@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { BigNumber } from 'ethers';
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
 import web3 from '@src/web3';
 import lib from '@src/lib';
