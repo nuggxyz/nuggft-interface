@@ -36,7 +36,6 @@ import {
 import { CoinbaseWallet } from './clients/coinbasewallet';
 import {
     ALCHEMY_KEY,
-    ALCHEMY_URLS,
     CHAIN_INFO,
     DEFAULT_CHAIN,
     GRAPH_ENPOINTS,
@@ -193,7 +192,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                 ],
 
                 actions,
-                { rpc: { ...ALCHEMY_URLS }, chainId: DEFAULT_CHAIN },
+                { rpc: { ...INFURA_URLS }, chainId: DEFAULT_CHAIN },
             ),
     ),
     ...(peer_metamask.type === ConnectorEnum.MetaMask
@@ -209,7 +208,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                 peer_rpc,
                 actions,
                 supportedChainIds().reduce((prev, curr) => {
-                    return { ...prev, [curr]: [ALCHEMY_URLS[curr]] };
+                    return { ...prev, [curr]: [INFURA_URLS[curr]] };
                 }, {}),
             ),
         supportedChainIds(),
@@ -292,7 +291,7 @@ export const calculateMsp = (shares: BigNumber, eth: BigNumber) => {
         const ethPerShare = new Fraction(eth, shares.mul(ETH_ONE));
         const protocolFee = ethPerShare.divide(PROTOCOL_FEE_FRAC_MINT);
         const premium = ethPerShare.multiply(shares).divide(PREMIUM_DIV);
-        return ethPerShare.add(protocolFee).add(premium);
+        return ethPerShare.add(protocolFee).add(premium).increase(BigInt(1));
     }
     return new EthInt(0);
 };

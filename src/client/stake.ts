@@ -2,6 +2,7 @@
 import create from 'zustand';
 import { combine } from 'zustand/middleware';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
+import React from 'react';
 
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import { calculateMsp } from '@src/web3/config';
@@ -31,7 +32,19 @@ export default {
     useShares: () => store((draft) => draft.shares),
     useEth: () => store((draft) => draft.eth),
     useUpdate: () => store((draft) => draft.update),
-    useEps: () => store((draft) => EthInt.fromFraction(new Fraction(draft.eth, draft.shares))),
-    useMsp: () => store((draft) => calculateMsp(draft.shares, draft.eth)),
+    useEps: () => {
+        const eth = store((draft) => draft.eth);
+        const shares = store((draft) => draft.shares);
+        return React.useMemo(() => {
+            return EthInt.fromFraction(new Fraction(eth, shares));
+        }, [eth, shares]);
+    },
+    useMsp: () => {
+        const eth = store((draft) => draft.eth);
+        const shares = store((draft) => draft.shares);
+        return React.useMemo(() => {
+            return calculateMsp(shares, eth);
+        }, [eth, shares]);
+    },
     ...store,
 };

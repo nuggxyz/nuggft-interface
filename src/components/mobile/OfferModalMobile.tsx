@@ -31,6 +31,7 @@ import { DualCurrencyInputWithIcon } from '@src/components/general/TextInputs/Cu
 import AnimatedConfirmation from '@src/components/general/AnimatedTimers/AnimatedConfirmation';
 import { gotoEtherscan } from '@src/web3/config';
 import OffersList from '@src/components/nugg/RingAbout/OffersList';
+import { calculateRawOfferValue } from '@src/web3/constants';
 
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
@@ -49,6 +50,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const [lastPressed, setLastPressed] = React.useState('5');
     const transaction = useTransactionManager2(network, hash);
 
+    const msp = client.stake.useMsp();
+
     const check = useAsyncState<{
         canOffer: boolean | undefined;
         next: BigNumber | undefined;
@@ -57,7 +60,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         increment: BigNumber | undefined;
         multicallRequired: boolean | undefined;
     }>(() => {
-        if (data.tokenId && address && chainId && network) {
+        if (data.tokenId && address && chainId && network && msp) {
             if (data.isNugg()) {
                 return Promise.all([
                     nuggft['check(address,uint24)'](address, data.tokenId.toRawId()).then((x) => {
@@ -69,7 +72,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             multicallRequired: false,
                         };
                     }),
-                    nuggft.msp(),
+                    msp.bignumber,
                     nuggft.agency(data.tokenId.toRawId()),
                 ]).then((_data) => {
                     const agency = lib.parse.agency(_data[2]);
@@ -93,16 +96,31 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 }),
 
                 nuggft.itemAgency(data.nuggToBuyFrom.toRawId(), data.tokenId.toRawId()),
-            ]).then((_data) => {
-                console.log(_data);
-                if (_data[1].eq(0)) {
-                    return { ..._data[0], eth: new EthInt(_data[0].next), multicallRequired: true };
-                }
-                return { ..._data[0], ...lib.parse.agency(_data[1]), multicallRequired: false };
-            });
+            ])
+                .then((_data) => {
+                    const agency = lib.parse.agency(_data[1]);
+                    if (agency.eth.eq(0)) {
+                        return {
+                            ..._data[0],
+                            eth: EthInt.fromFractionRaw(msp),
+                            multicallRequired: true,
+                        };
+                    }
+                    return { ..._data[0], ...agency, multicallRequired: false };
+                })
+                .catch(() => {
+                    return {
+                        canOffer: undefined,
+                        next: undefined,
+                        curr: undefined,
+                        increment: undefined,
+                        eth: undefined,
+                        multicallRequired: false,
+                    };
+                });
         }
         return undefined;
-    }, [address, chainId, network, data.nuggToBuyFor, data.nuggToBuyFrom]);
+    }, [address, chainId, network, data.nuggToBuyFor, data.nuggToBuyFrom, msp]);
 
     React.useEffect(() => {
         if (check && check.eth && amount === '0') {
@@ -114,6 +132,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const currentPrice = useUsdPair(check?.eth);
     const myBalance = useUsdPair(userBalance?.number);
     const currentBid = useUsdPair(check?.curr);
+
     const paymentUsd = useUsdPairWithCalculation(
         React.useMemo(() => [amount, check?.curr || 0], [amount, check]),
         React.useMemo(
@@ -130,8 +149,31 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const populatedTransaction = React.useMemo(() => {
         const value = paymentUsd.eth.bignumber;
+
         if (!paymentUsd.eth.eq(0)) {
             if (data.isItem()) {
+                if (check?.multicallRequired) {
+                    const realmsp = msp.increase(BigInt(5));
+                    const updatedValue = value.add(realmsp.bignumber);
+                    return {
+                        tx: nuggft.populateTransaction['offer(uint64[],uint256[])'](
+                            [
+                                data.nuggToBuyFrom.toRawId(),
+                                calculateRawOfferValue(
+                                    data.nuggToBuyFor,
+                                    data.nuggToBuyFrom,
+                                    data.tokenId,
+                                ),
+                            ],
+                            [realmsp.bignumber, value],
+                            {
+                                value: updatedValue,
+                                from: address,
+                            },
+                        ),
+                        amount: value,
+                    };
+                }
                 return {
                     tx: nuggft.populateTransaction['offer(uint24,uint24,uint16)'](
                         data.nuggToBuyFor.toRawId(),
@@ -156,7 +198,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         }
 
         return undefined;
-    }, [nuggft, paymentUsd, address, data]);
+    }, [nuggft, paymentUsd, address, data, msp, check?.multicallRequired]);
 
     const estimation = useAsyncState(() => {
         if (populatedTransaction && network) {
@@ -251,8 +293,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         }
     }, [check, handledNeg1, page]);
 
-    const msp = client.stake.useMsp();
-
     const mspusd = client.usd.useUsdPair(msp);
 
     const [localCurrencyPref, setLocalCurrencyPref] = useCurrencyTogglerState(globalCurrencyPref);
@@ -294,7 +334,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             setHandledNeg1(true);
                             setPage(0);
                         }}
-                        disabled={calculating || !!estimator.error}
+                        // disabled={calculating || !!estimator.error}
                         buttonStyle={{
                             borderRadius: lib.layout.borderRadius.large,
                             background: lib.colors.primaryColor,
@@ -307,16 +347,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     />
                 </>
             ),
-        [
-            amount,
-            setPage,
-            calculating,
-            localCurrencyPref,
-            IncrementButton,
-            currentPrice,
-            estimator.error,
-            myBalance,
-        ],
+        [setPage, calculating, localCurrencyPref, data, mspusd],
     );
     const Page0 = React.useMemo(
         () => (

@@ -121,10 +121,12 @@ export const calculateEpochId = (blocknum: number, chainId: Chain = DEFAULT_CHAI
 };
 
 export const calculateRawOfferValue = (buyingNugg: NuggId, sellingNugg: NuggId, itemId: ItemId) => {
-    return BigNumber.from(buyingNugg.toRawId())
-        .shr(40)
+    const abc = BigNumber.from(buyingNugg.toRawId())
+        .shl(40)
         .or(BigNumber.from(itemId.toRawId()).shl(24))
         .or(sellingNugg.toRawId());
+    console.log({ abc });
+    return abc;
 };
 
 export const calculateEndBlock = (epoch: number, chainId: Chain = DEFAULT_CHAIN) => {
