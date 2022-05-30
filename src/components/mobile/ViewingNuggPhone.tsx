@@ -160,10 +160,10 @@ const Info = ({ tokenId }: { tokenId?: ItemId }) => {
                     size="larger"
                     textStyle={{
                         color: lib.colors.primaryColor,
-                        // textShadow: lib.layout.boxShadow.dark,
+                        fontWeight: lib.layout.fontWeight.thicc,
                     }}
                 >
-                    Chances
+                    chances
                 </Text>
                 {/* <DualToggler
                     LeftIcon={BsPercent}
