@@ -1,13 +1,12 @@
-import React, { FC } from 'react';
+import React, { CSSProperties, FC } from 'react';
 import { animated, useSpring } from '@react-spring/web';
-import { IoQrCode } from 'react-icons/io5';
+import { IoQrCode, IoSearch } from 'react-icons/io5';
 import { useMatch, useNavigate } from 'react-router';
 
 import InfoClicker from '@src/components/nuggbook/InfoClicker';
 import lib from '@src/lib';
 import web3 from '@src/web3';
 import NLStaticImage from '@src/components/general/NLStaticImage';
-import NuggDexSearchBarMobile from '@src/components/mobile/NuggDexSearchBarMobile';
 import Button from '@src/components/general/Buttons/Button/Button';
 import { useOnTapOutside } from '@src/hooks/useOnClickOutside';
 import packages from '@src/packages';
@@ -18,25 +17,37 @@ import Jazzicon from '@src/components/nugg/Jazzicon';
 import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import { ModalEnum } from '@src/interfaces/modals';
 import usePrevious from '@src/hooks/usePrevious';
+import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
 
-export const useOpacitate = (arg: boolean | undefined) => {
-    const [exit, exitToAnimate] = React.useMemo(() => {
+export const useOpacitate = (name: string, arg: boolean | undefined) => {
+    const [exit, exitToAnimate, staticStyles] = React.useMemo(() => {
         const opacity = arg ? 1 : 0;
 
         const pointerEvents = opacity === 0 ? ('none' as const) : ('auto' as const);
 
-        const zIndex = opacity === 0 ? { zIndex: -1, boxShadow: undefined } : {};
+        const zIndex =
+            opacity === 0
+                ? { [`--${name}-zIndex` as const]: -1, [`--${name}-boxShadow` as const]: undefined }
+                : undefined;
 
         return [
             {
-                pointerEvents,
+                [`--${name}-pointerEvents` as const]: pointerEvents,
                 ...zIndex,
+            } as const,
+            {
+                [`--${name}-opacity` as const]: opacity,
             },
             {
-                opacity,
-            },
+                pointerEvents: `var(--${name}-pointerEvents)` as CSSProperties[`pointerEvents`],
+                opacity: `var(--${name}-opacity)` as CSSProperties[`opacity`],
+                ...(zIndex && {
+                    zIndex: `var(--${name}-zIndex)` as CSSProperties[`zIndex`],
+                    boxShadow: `var(--${name}-boxShadow)` as CSSProperties[`boxShadow`],
+                }),
+            } as const,
         ];
-    }, [arg]);
+    }, [arg, name]);
 
     const [exitAnimated] = useSpring(() => {
         return {
@@ -45,10 +56,12 @@ export const useOpacitate = (arg: boolean | undefined) => {
         };
     }, [exitToAnimate]);
 
-    return {
+    const animatedStyles = {
         ...exit,
         ...exitAnimated,
-    };
+    } as const;
+
+    return [staticStyles, animatedStyles] as const;
 };
 
 const NavigationBarMobile: FC<unknown> = () => {
@@ -56,23 +69,22 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const address = web3.hook.usePriorityAccount();
 
-    const [searchOpenCore, setSearchOpen] = React.useState<boolean>(false);
+    // const [searchOpenCore, setSearchOpen] = React.useState<boolean>(false);
 
-    const [manualMatch, setManualMatch] = React.useState<boolean>(false);
+    const [manualMatch, setManualMatch] = React.useState<boolean>(true);
 
     const matchHome = useMatch('/');
 
-    // const MOVE_DELAY = 800;
-    const nuggbookPage = client.nuggbook.useNuggBookPage();
     const close = client.nuggbook.useCloseNuggBook();
     const nuggbookGoto = client.nuggbook.useGotoOpen();
 
     const setCurrencyPreference = client.usd.useSetCurrencyPreferrence();
     const currencyPreferrence = client.usd.useCurrencyPreferrence();
-
     const nuggbookOpen = React.useDeferredValue(client.nuggbook.useOpen());
+    const nuggbookPage = React.useDeferredValue(client.nuggbook.useNuggBookPage());
+
     const isFull = React.useDeferredValue(manualMatch);
-    const searchOpen = React.useDeferredValue(searchOpenCore);
+    // const searchOpen = React.useDeferredValue(searchOpenCore);
 
     const [floater] = useSpring(
         {
@@ -86,56 +98,19 @@ const NavigationBarMobile: FC<unknown> = () => {
        search
     //////////////////////////////////////////////////////////////////////// */
 
-    const searchOpacitate = useOpacitate(
+    const [opacitate, opacitateAnimated] = useOpacitate(
+        'mobile-nav',
         React.useMemo(() => isFull && !nuggbookOpen, [isFull, nuggbookOpen]),
     );
 
-    const [searchOpenUp] = useSpring(
+    const [nuggbookOpenUp] = useSpring(
         {
-            height: searchOpen
-                ? '450px'
-                : nuggbookOpen
-                ? nuggbookPage === Page.Start
-                    ? '250px'
-                    : '600px'
-                : '75px',
+            height: nuggbookOpen ? (nuggbookPage === Page.Start ? '250px' : '600px') : '75px',
 
             config: packages.spring.config.stiff,
         },
-        [searchOpen, nuggbookOpen, nuggbookPage],
+        [nuggbookOpen, nuggbookPage],
     );
-
-    /* ////////////////////////////////////////////////////////////////////////
-       middle
-    //////////////////////////////////////////////////////////////////////// */
-
-    const middleOpacitate = useOpacitate(
-        React.useMemo(
-            () => isFull && !nuggbookOpen && !searchOpen,
-            [isFull, nuggbookOpen, searchOpen],
-        ),
-    );
-
-    /* ////////////////////////////////////////////////////////////////////////
-       jazz
-    //////////////////////////////////////////////////////////////////////// */
-
-    // const backOpacitate = useOpacitate(
-    //     React.useMemo(
-    //         () => isFull && !!matchToken && !searchOpen && !nuggbookOpen,
-    //         [nuggbookOpen, searchOpen, matchToken, isFull],
-    //     ),
-    // );
-
-    /* ////////////////////////////////////////////////////////////////////////
-       wallet
-    //////////////////////////////////////////////////////////////////////// */
-
-    // const walletOpacitate = useOpacitate(walletOpen);
-
-    /* ////////////////////////////////////////////////////////////////////////
-       nuggbook
-    //////////////////////////////////////////////////////////////////////// */
 
     const [nuggbookFade] = useSpring(
         {
@@ -151,10 +126,9 @@ const NavigationBarMobile: FC<unknown> = () => {
         ref,
         React.useCallback(() => {
             if (nuggbookOpen) close();
-            else if (searchOpen) setSearchOpen(false);
             // purposfully last - dont want to fully close the square if something is open
             else if (manualMatch) setManualMatch(false);
-        }, [searchOpen, manualMatch, nuggbookOpen, close]),
+        }, [manualMatch, nuggbookOpen, close]),
     );
 
     return (
@@ -172,19 +146,20 @@ const NavigationBarMobile: FC<unknown> = () => {
                 transition: `all 0.3s ${lib.layout.animation}`,
                 marginBottom: 15,
                 pointerEvents: 'none',
+                ...opacitateAnimated,
             }}
         >
             <animated.div
                 style={{
                     zIndex: 3,
                     display: 'flex',
-                    alignItems: searchOpen ? 'flex-start' : nuggbookOpen ? 'flex-end' : 'flex-end',
+                    alignItems: 'flex-end',
                     WebkitBackdropFilter: 'blur(50px)',
                     backdropFilter: 'blur(50px)',
                     minWidth: '75px',
                     marginRight: 15,
                     marginLeft: 15,
-                    ...searchOpenUp,
+                    ...nuggbookOpenUp,
                     position: 'relative',
                     borderRadius: lib.layout.borderRadius.medium,
                     background: lib.colors.transparentWhite,
@@ -197,20 +172,35 @@ const NavigationBarMobile: FC<unknown> = () => {
                     search
                 //////////////////////////////////////////////////////////////////////// */}
                 <animated.div
-                    className={isFull && !searchOpen ? 'mobile-pressable-div' : undefined}
+                    className={isFull ? 'mobile-pressable-div' : undefined}
                     style={{
                         zIndex: 8,
                         display: 'flex',
                         justifyContent: 'flex-start',
                         position: 'absolute',
-                        ...(searchOpen ? { width: '100%', height: '100%' } : { left: 0 }),
-                        ...searchOpacitate,
+                        ...opacitate,
                     }}
                 >
-                    <NuggDexSearchBarMobile
-                        openable={isFull}
-                        setOpen={setSearchOpen}
-                        open={searchOpen}
+                    <IconButton
+                        aria-hidden="true"
+                        buttonStyle={{
+                            padding: 0,
+                            height: 75,
+                            width: 75,
+                            background: 'transparent',
+                            borderRadius: lib.layout.borderRadius.large,
+                        }}
+                        onClick={() => {
+                            nuggbookGoto(Page.Search);
+                        }}
+                        iconComponent={
+                            <IoSearch
+                                style={{
+                                    color: lib.colors.semiTransparentPrimaryColor,
+                                }}
+                                size={50}
+                            />
+                        }
                     />
                 </animated.div>
 
@@ -228,7 +218,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         justifyContent: 'center',
                         right: 0,
                         left: 0,
-                        ...middleOpacitate,
+                        ...opacitate,
                     }}
                 >
                     <animated.div
@@ -356,14 +346,13 @@ const NavigationBarMobile: FC<unknown> = () => {
                     <HomeButton
                         onClick={React.useCallback(() => {
                             if (nuggbookOpen) close();
-                            else if (searchOpen) setSearchOpen(false);
                             else if (!manualMatch) setManualMatch(true);
                             // eslint-disable-next-line no-useless-return
                             else if (matchHome) setManualMatch(false);
                             else {
                                 navigate('/');
                             }
-                        }, [manualMatch, nuggbookOpen, close, searchOpen, navigate, matchHome])}
+                        }, [manualMatch, nuggbookOpen, close, navigate, matchHome])}
                         isFull={isFull}
                     />
                 </animated.div>
@@ -425,7 +414,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                     borderRadius: lib.layout.borderRadius.medium,
                     justifySelf: 'center',
                     boxShadow: address ? lib.layout.boxShadow.dark : undefined,
-                    ...searchOpacitate,
+                    ...opacitate,
                 }}
             >
                 <NoFlashClaims address={address} />
@@ -444,7 +433,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                     alignItems: 'center',
                     borderRadius: lib.layout.borderRadius.medium,
                     justifySelf: 'center',
-                    ...searchOpacitate,
+                    ...opacitate,
                     boxShadow: lib.layout.boxShadow.dark,
                 }}
             >
@@ -471,7 +460,8 @@ const NavigationBarMobile: FC<unknown> = () => {
                     alignItems: 'center',
                     borderRadius: lib.layout.borderRadius.medium,
                     justifySelf: 'center',
-                    ...searchOpacitate,
+                    ...opacitateAnimated,
+                    ...opacitate,
                 }}
             >
                 <CurrencyToggler
@@ -487,7 +477,7 @@ const NavigationBarMobile: FC<unknown> = () => {
             {/* ////////////////////////////////////////////////////////////////////////
                     connection health
                 //////////////////////////////////////////////////////////////////////// */}
-            <animated.div
+            <div
                 // className="mobile-pressable-div"
                 style={{
                     zIndex: 10,
@@ -498,11 +488,11 @@ const NavigationBarMobile: FC<unknown> = () => {
                     alignItems: 'center',
                     borderRadius: lib.layout.borderRadius.medium,
                     justifySelf: 'center',
-                    ...searchOpacitate,
+                    ...opacitate,
                 }}
             >
                 <NoFlashStatus address={address} />
-            </animated.div>
+            </div>
 
             {/* ////////////////////////////////////////////////////////////////////////
                     back button

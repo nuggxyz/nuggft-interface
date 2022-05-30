@@ -8,6 +8,8 @@ import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import usePrevious from '@src/hooks/usePrevious';
 import MobileStatus from '@src/components/mobile/MobileStatus';
 import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
+import { AllItems, AllNuggs } from '@src/components/mobile/NuggDexSearchListMobile2';
+import NuggDexSearchBarMobile from '@src/components/mobile/NuggDexSearchBarMobile';
 
 import Start from './pages/Start';
 import Welcome from './pages/Welcome';
@@ -52,6 +54,12 @@ const useNuggBook = () => {
             return { top: 100, comp: MobileStatus, page };
         case Page.Connect:
             return { top: 100, comp: React.memo(() => <ConnectTab />), page };
+        case Page.Search:
+            return { top: 100, comp: React.memo(() => <NuggDexSearchBarMobile />), page };
+        case Page.AllItems:
+            return { top: 100, comp: React.memo(() => <AllItems />), page };
+        case Page.AllNuggs:
+            return { top: 100, comp: React.memo(() => <AllNuggs />), page };
         default:
             return { top: 1000, comp: Close, page };
     }

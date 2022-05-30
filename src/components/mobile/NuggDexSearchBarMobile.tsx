@@ -1,4 +1,4 @@
-import { animated, useSpring } from '@react-spring/web';
+import { animated } from '@react-spring/web';
 import React, { FC, FunctionComponent, useEffect, useState } from 'react';
 import { X } from 'react-feather';
 import { t } from '@lingui/macro';
@@ -63,25 +63,7 @@ export interface BunchOfItemsFilter extends FilterBase {
 }
 export type Filter = NuggsThatOwnThisItemFilter;
 
-// const SearchBarNuggDex = ({
-//     page,
-//     setPage,
-// }: {
-//     onBack: () => void;
-//     page: 'search' | 'home' | 'all nuggs' | 'all items';
-//     setPage: (input: 'search' | 'home' | 'all nuggs' | 'all items') => void;
-// }) => {
-//     return (
-//         <div style={{ width: '100%', height: '100%', padding: '0px 10px' }}>
-//             <NuggDexSearchListMobile2 page={page} setPage={setPage} />
-//             {/* <BackButton noNavigate onClick={onBack} /> */}
-//         </div>
-//     );
-// };
-
 export const SearchBarItem: FC<{ item: LiveItem }> = ({ item }) => {
-    // const openModal = client.modal.useOpenModal();
-
     const navigate = useNavigate();
     return (
         <div
@@ -202,10 +184,6 @@ const SearchBarResults = ({
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'scroll',
-
-                // overflow: 'scroll',
-                // marginTop: 90,
-                // marginBottom: 500,
             }}
         >
             <div style={{ width: '100%', marginTop: '90px' }} />
@@ -256,18 +234,11 @@ const SearchBarResults = ({
                     </>
                 ))}
             </div>
-
-            {/* <NuggDexSearchList /> */}
         </div>
     );
 };
 
-const NuggDexSearchBarMobile: FunctionComponent<{
-    open: boolean;
-    openable: boolean;
-
-    setOpen: (arg: boolean) => void;
-}> = ({ open, setOpen, openable }) => {
+const NuggDexSearchBarMobile: FunctionComponent<unknown> = () => {
     const sort = client.live.searchFilter.sort();
     const searchValue = client.live.searchFilter.searchValue();
     const { isPhone } = useDimensions();
@@ -283,15 +254,11 @@ const NuggDexSearchBarMobile: FunctionComponent<{
 
     const [activeFilter] = React.useState<Filter>();
 
-    const [page, setPage] = React.useState<'search' | 'home' | 'all nuggs' | 'all items'>('home');
+    const nuggbookClose = client.nuggbook.useCloseNuggBook();
 
     useEffect(() => {
-        if (open) {
-            updateSearchFilterSearchValue(localSearchValue);
-        } else {
-            setSearchValue('');
-        }
-    }, [localSearchValue, open, updateSearchFilterSearchValue]);
+        updateSearchFilterSearchValue(localSearchValue);
+    }, [localSearchValue, updateSearchFilterSearchValue]);
 
     useEffect(() => {
         if (sort) {
@@ -333,12 +300,6 @@ const NuggDexSearchBarMobile: FunctionComponent<{
     const blankItemQuery = React.useCallback(() => {
         setSearchedItemsData([]);
     }, [setSearchedItemsData]);
-
-    useEffect(() => {
-        if (!isUndefinedOrNullOrStringEmpty(localSearchValue)) {
-            setOpen(true);
-        }
-    }, [setOpen, localSearchValue]);
 
     useEffect(() => {
         if (isUndefinedOrNullOrStringEmpty(localSearchValue)) {
@@ -426,9 +387,8 @@ const NuggDexSearchBarMobile: FunctionComponent<{
     const ref = React.useRef<HTMLDivElement>(null);
 
     const jumpShip = React.useCallback(() => {
-        setOpen(false);
-        setPage('home');
-    }, [setOpen, setPage]);
+        nuggbookClose();
+    }, [nuggbookClose]);
 
     useOnClickOutside(ref, jumpShip);
 
@@ -445,38 +405,6 @@ const NuggDexSearchBarMobile: FunctionComponent<{
         ] as ListData[];
     }, [searchedNuggsData, searchedItemsData]);
 
-    const styleInput = useSpring({
-        width: open ? '100%' : '0%',
-
-        background: 'transparent',
-        display: open ? 'flex' : 'none',
-    });
-    // const style = useSpring({
-    //     margin: open ? '-10 0% 0% 0%' : '-10 100% 0% 0%',
-    // });
-    const animatedBR = useSpring({
-        padding: open ? 5 : 0,
-        background: open ? lib.colors.transparentWhite : 'transparent',
-        WebkitBackdropFilter: open ? 'blur(50px)' : undefined,
-        backdropFilter: open ? 'blur(50px)' : undefined,
-    });
-
-    // const { width } = client.viewport.useVisualViewport();
-
-    // const resultStyle = useSpring({
-    //     width: open ? '115%' : '100%',
-    //     height: open ?  `${height}px` : '100%',
-    //     top: open ? '-30%' : '0%',
-    //     opacity: open ? 1 : 0,
-    //     pointerEvents: open ? ('auto' as const) : ('none' as const),
-    // });
-
-    // const over = useAnimateOverlayBackdrop(open, {
-    //     // height: `50%`,
-    //     zIndex: 998,
-    //     // width: `${width + 1}px`,
-    // });
-
     return (
         <animated.div
             ref={ref}
@@ -486,173 +414,113 @@ const NuggDexSearchBarMobile: FunctionComponent<{
                 width: '100%',
                 position: 'relative',
                 display: 'flex',
-                justifyContent: open ? 'flex-start' : 'flex-end',
+                justifyContent: 'flex-start',
                 height: '100%',
                 flexDirection: 'column',
-                pointerEvents: openable ? 'auto' : 'none',
+                pointerEvents: 'auto',
             }}
         >
-            {page === 'search' || page === 'home' ? (
-                <TextInput
-                    triggerFocus={open}
-                    onClick={() => {
-                        setOpen(true);
-                    }}
-                    placeholder={t`Type a number to search`}
-                    restrictToNumbers
-                    value={localSearchValue || ''}
-                    setValue={setSearchValue}
-                    className={isPhone ? 'placeholder-dark' : 'placeholder-blue'}
-                    style={{
-                        marginTop: 12,
-                        width: open ? '100%' : 0,
+            <TextInput
+                // triggerFocus={open}
 
-                        position: 'relative',
-                        ...animatedBR,
-                        borderRadius: lib.layout.borderRadius.large,
-                        zIndex: 1000,
-                        background: 'transparent',
-                        display: 'flex',
-                    }}
-                    styleInputContainer={styleInput}
-                    leftToggles={[
-                        <IconButton
-                            aria-hidden="true"
-                            buttonStyle={{
-                                padding: 0,
-                                height: 75,
-                                width: 75,
-                                background: 'transparent',
-                                borderRadius: lib.layout.borderRadius.large,
-                            }}
-                            onClick={() => {
-                                setOpen(!open);
-                            }}
-                            iconComponent={
-                                <IoSearch
-                                    style={{
-                                        color: lib.colors.semiTransparentPrimaryColor,
-                                    }}
-                                    size={50}
-                                />
-                            }
-                        />,
-                    ]}
-                    rightToggles={
-                        open
-                            ? [
-                                  ...(localSearchValue || open
-                                      ? [
-                                            <Button
-                                                buttonStyle={styles.searchBarButton}
-                                                onClick={() => {
-                                                    if (
-                                                        isUndefinedOrNullOrStringEmpty(searchValue)
-                                                    ) {
-                                                        setOpen(false);
-                                                        setPage('home');
-                                                    } else {
-                                                        setSearchValue('');
-                                                    }
-                                                }}
-                                                rightIcon={
-                                                    <X
-                                                        style={{
-                                                            color: lib.colors.primaryColor,
-                                                        }}
-                                                    />
-                                                }
-                                            />,
-                                        ]
-                                      : []),
-                                  //   ...(viewing !== SearchView.Home && !activeFilter
-                                  //       ? [
-                                  //             <Button
-                                  //                 buttonStyle={styles.filterButton}
-                                  //                 rightIcon={
-                                  //                     sortAsc ? (
-                                  //                         <CornerRightUp
-                                  //                             size={14}
-                                  //                             color={lib.colors.nuggBlueText}
-                                  //                         />
-                                  //                     ) : (
-                                  //                         <CornerRightDown
-                                  //                             size={14}
-                                  //                             color={lib.colors.nuggBlueText}
-                                  //                         />
-                                  //                     )
-                                  //                 }
-                                  //                 onClick={() => {
-                                  //                     setSortAsc(!sortAsc);
-                                  //                     setIsUserInput(true);
-                                  //                 }}
-                                  //             />,
-                                  //         ]
-                                  //       : []),
-                              ]
-                            : []
-                    }
-                />
-            ) : (
-                <div style={{ position: 'relative' }} />
-            )}
-
-            {/* <animated.div
+                placeholder={t`Type a number to search`}
+                restrictToNumbers
+                value={localSearchValue || ''}
+                setValue={setSearchValue}
+                className={isPhone ? 'placeholder-dark' : 'placeholder-blue'}
                 style={{
-                    // borderRadius: lib.layout.borderRadius.mediumish,
-                    // display: 'flex',
+                    marginTop: 12,
+                    width: '100%',
+
+                    position: 'relative',
+                    padding: 5,
+                    background: lib.colors.transparentWhite,
+                    WebkitBackdropFilter: 'blur(50px)',
+                    backdropFilter: 'blur(50px)',
+                    borderRadius: lib.layout.borderRadius.large,
+                    zIndex: 1000,
+                    display: 'flex',
+                }}
+                styleInputContainer={{
+                    width: '100%',
+                    background: 'transparent',
+                    display: 'flex',
+                }}
+                leftToggles={[
+                    <IconButton
+                        aria-hidden="true"
+                        buttonStyle={{
+                            padding: 0,
+                            height: 75,
+                            width: 75,
+                            background: 'transparent',
+                            borderRadius: lib.layout.borderRadius.large,
+                        }}
+                        onClick={() => {}}
+                        iconComponent={
+                            <IoSearch
+                                style={{
+                                    color: lib.colors.semiTransparentPrimaryColor,
+                                }}
+                                size={50}
+                            />
+                        }
+                    />,
+                ]}
+                rightToggles={[
+                    ...(localSearchValue
+                        ? [
+                              <Button
+                                  buttonStyle={styles.searchBarButton}
+                                  onClick={() => {
+                                      if (isUndefinedOrNullOrStringEmpty(searchValue)) {
+                                          nuggbookClose();
+                                      } else {
+                                          setSearchValue('');
+                                      }
+                                  }}
+                                  rightIcon={
+                                      <X
+                                          style={{
+                                              color: lib.colors.primaryColor,
+                                          }}
+                                      />
+                                  }
+                              />,
+                          ]
+                        : []),
+                ]}
+            />
+
+            <div
+                style={{
+                    height: '100%',
+                    width: '100%',
+                    // overflow: 'auto',
+                    // marginTop: 13,
+                    zIndex: 1001,
+                    display: 'flex',
                     flexDirection: 'column',
-                    // boxShadow: `${lib.layout.boxShadow.prefix} ${lib.layout.boxShadow.dark}`,
-                    ...over,
-                    // top: page === 'search' || page === 'home' ? -23 : -47,
-                    // left: -22,
-                    // position: 'absolute',
-                    // justifyContent: 'flex-start',
+
                     // top: 0,
-                    // background: lib.colors.,
-                    // background: 'transparent',
-                    // WebkitBackdropFilter: 'blur(10px)',
-                    overflow: 'auto',
-                    // background: 'red',
                 }}
-                onScroll={() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-            > */}
-
-            {open && (
-                <div
-                    style={{
-                        height: '100%',
-                        width: '100%',
-                        // overflow: 'auto',
-                        // marginTop: 13,
-                        zIndex: 1001,
-                        display: 'flex',
-                        flexDirection: 'column',
-
-                        // top: 0,
-                    }}
-                >
-                    {isUndefinedOrNullOrStringEmpty(localSearchValue) ? (
-                        <div style={{ width: '100%', height: '100%', padding: '0px 10px' }}>
-                            <NuggDexSearchListMobile2 page={page} setPage={setPage} />
-                            {/* <BackButton noNavigate onClick={onBack} /> */}
-                        </div>
-                    ) : agg.length === 0 ? (
-                        <Text textStyle={styles.resultText}>
-                            {isUndefinedOrNullOrStringEmpty(localSearchValue)
-                                ? t`Type a number`
-                                : loading
-                                ? t`Loading`
-                                : t`No results`}
-                        </Text>
-                    ) : (
-                        <SearchBarResults tokens={[...searchedItemsData, ...searchedNuggsData]} />
-                    )}
-                </div>
-            )}
-            {/* </animated.div> */}
+            >
+                {isUndefinedOrNullOrStringEmpty(localSearchValue) ? (
+                    <div style={{ width: '100%', height: '100%', padding: '0px 10px' }}>
+                        <NuggDexSearchListMobile2 />
+                    </div>
+                ) : agg.length === 0 ? (
+                    <Text textStyle={styles.resultText}>
+                        {isUndefinedOrNullOrStringEmpty(localSearchValue)
+                            ? t`Type a number`
+                            : loading
+                            ? t`Loading`
+                            : t`No results`}
+                    </Text>
+                ) : (
+                    <SearchBarResults tokens={[...searchedItemsData, ...searchedNuggsData]} />
+                )}
+            </div>
         </animated.div>
     );
 };

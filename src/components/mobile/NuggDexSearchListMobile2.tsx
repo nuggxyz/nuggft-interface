@@ -10,13 +10,17 @@ import {
 import lib from '@src/lib';
 import BradPittList from '@src/components/general/List/BradPittList';
 import Button from '@src/components/general/Buttons/Button/Button';
+import client from '@src/client';
+import { Page } from '@src/interfaces/nuggbook';
 
 import NuggListRenderItemMobile, { NuggListRenderItemMobileBig } from './NuggListRenderItemMobile';
 
 const INFINITE_INTERVAL = 25;
 const START_INTERVAL = 3;
 
-const AllNuggs = ({ back }: { back: () => void }) => {
+export const AllNuggs = () => {
+    const goto = client.nuggbook.useGoto();
+
     const [allNuggsData, setAllNuggsData] = React.useState<GetAllNuggsSearchQuery['nuggs']>();
 
     const { fetchMore: fetchMoreNuggs } = useGetAllNuggsSearchQuery({
@@ -47,7 +51,6 @@ const AllNuggs = ({ back }: { back: () => void }) => {
         <div
             ref={reff}
             style={{
-                height: '100%',
                 overflow: 'scroll',
                 width: '100%',
                 display: 'flex',
@@ -72,7 +75,7 @@ const AllNuggs = ({ back }: { back: () => void }) => {
                 Title={React.memo(() => (
                     <Button
                         label="back"
-                        onClick={back}
+                        onClick={() => goto(Page.Search, false)}
                         buttonStyle={{
                             // position: 'absolute',
                             // top: 80,
@@ -109,8 +112,9 @@ const AllNuggs = ({ back }: { back: () => void }) => {
     );
 };
 
-const AllItems = ({ back }: { back: () => void }) => {
+export const AllItems = () => {
     const [allItemsData, setAllItemsData] = React.useState<ItemId[]>([]);
+    const goto = client.nuggbook.useGoto();
 
     const { fetchMore: fetchMoreItems } = useGetAllItemsSearchQuery({
         fetchPolicy: 'cache-first',
@@ -141,7 +145,6 @@ const AllItems = ({ back }: { back: () => void }) => {
         <div
             ref={reff}
             style={{
-                height: '100%',
                 overflow: 'scroll',
                 width: '100%',
                 display: 'flex',
@@ -166,7 +169,7 @@ const AllItems = ({ back }: { back: () => void }) => {
                 Title={React.memo(() => (
                     <Button
                         label="back"
-                        onClick={back}
+                        onClick={() => goto(Page.Search, false)}
                         buttonStyle={{
                             // position: 'absolute',
                             // top: 80,
@@ -207,14 +210,9 @@ const AllItems = ({ back }: { back: () => void }) => {
 
 // const NuggList = React.lazy(() => import('./components/NuggList'));
 
-const NuggDexSearchListMobile2 = ({
-    page,
-    setPage,
-}: {
-    page: 'search' | 'home' | 'all nuggs' | 'all items';
-    setPage: (input: 'search' | 'home' | 'all nuggs' | 'all items') => void;
-}) => {
-    return page === 'home' ? (
+const NuggDexSearchListMobile2 = () => {
+    const goto = client.nuggbook.useGoto();
+    return (
         <div
             style={{
                 width: '100%',
@@ -227,7 +225,7 @@ const NuggDexSearchListMobile2 = ({
         >
             <Button
                 label="View All Nuggs"
-                onClick={() => setPage('all nuggs')}
+                onClick={() => goto(Page.AllNuggs, true)}
                 buttonStyle={{
                     borderRadius: lib.layout.borderRadius.large,
                     background: lib.colors.primaryColor,
@@ -241,7 +239,7 @@ const NuggDexSearchListMobile2 = ({
             />
             <Button
                 label="View All Items"
-                onClick={() => setPage('all items')}
+                onClick={() => goto(Page.AllItems, true)}
                 buttonStyle={{
                     borderRadius: lib.layout.borderRadius.large,
                     background: lib.colors.primaryColor,
@@ -253,10 +251,6 @@ const NuggDexSearchListMobile2 = ({
                 }}
             />
         </div>
-    ) : page === 'all nuggs' ? (
-        <AllNuggs back={() => setPage('home')} />
-    ) : (
-        <AllItems back={() => setPage('home')} />
     );
 };
 
