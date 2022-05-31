@@ -12,7 +12,6 @@ import { Page } from '@src/interfaces/nuggbook';
 import InfoClicker from '@src/components/nuggbook/InfoClicker';
 import { LiveNuggItem } from '@src/client/interfaces';
 import NLStaticImage from '@src/components/general/NLStaticImage';
-import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
 import { ModalEnum } from '@src/interfaces/modals';
 import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 
@@ -20,41 +19,12 @@ import MyNuggItemListPhone from './MyNuggItemMobile';
 
 type Props = Record<string, never>;
 
-const MobileConnectTab = () => {
-    return (
-        <div style={{ width: '100%', height: '100%', overflow: 'scroll', padding: 10 }}>
-            <div
-                style={{
-                    // marginTop: '20px',
-                    width: '95%',
-                    display: 'flex',
-                    justifyContent: 'flex-start',
-                    marginBottom: -20,
-                }}
-            >
-                <Text
-                    size="larger"
-                    textStyle={{
-                        color: lib.colors.primaryColor,
-                        padding: '10px',
-                    }}
-                >
-                    sign in
-                </Text>
-            </div>
-            <ConnectTab />
-        </div>
-    );
-};
-
 const MobileWallet: FunctionComponent<Props> = () => {
-    const address = web3.hook.usePriorityAccount();
     const openModal = client.modal.useOpenModal();
 
     const provider = web3.hook.usePriorityProvider();
     const connector = web3.hook.usePriorityConnector();
 
-    const chainId = web3.hook.usePriorityChainId();
     const peer = web3.hook.usePriorityPeer();
 
     const nuggs = client.live.myNuggs();
@@ -81,297 +51,296 @@ const MobileWallet: FunctionComponent<Props> = () => {
         ) as LiveNuggItem[];
     }, [nuggs]);
 
-    return chainId && provider ? (
-        address ? (
+    return (
+        <div
+            style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+            }}
+        >
             <div
                 style={{
-                    width: '100%',
-                    height: '100%',
+                    marginTop: '20px',
+                    width: '95%',
                     display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
+                    justifyContent: 'flex-start',
                 }}
             >
-                <div
-                    style={{
-                        marginTop: '20px',
-                        width: '95%',
-                        display: 'flex',
-                        justifyContent: 'flex-start',
+                <Text
+                    size="larger"
+                    textStyle={{
+                        color: lib.colors.primaryColor,
+                        padding: '10px',
                     }}
                 >
+                    My Account
+                </Text>
+            </div>
+            <div
+                style={{
+                    marginTop: '10px',
+                    marginBottom: '20px',
+
+                    // width: '95%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    background: lib.colors.transparentWhite,
+                    borderRadius: lib.layout.borderRadius.medium,
+                    padding: '1rem',
+                }}
+            >
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                     <Text
                         size="larger"
                         textStyle={{
                             color: lib.colors.primaryColor,
+                            // textShadow: lib.layout.textShadow.heavy,
                             padding: '10px',
                         }}
                     >
-                        My Account
+                        {ens}
                     </Text>
+                    {peer && <NLStaticImage image={`${peer.peer}_icon`} />}
+                </div>
+                <Button
+                    size="small"
+                    textStyle={{ color: lib.colors.primaryColor }}
+                    buttonStyle={{ background: 'transparent', padding: 0 }}
+                    onClick={() => {
+                        void connector.deactivate();
+                    }}
+                    label="change accounts"
+                />
+            </div>
+            <CurrencyToggler
+                setPref={(input) => {
+                    setCurrencyPreference(input);
+                    return undefined;
+                }}
+                pref={currencyPreferrence}
+                // floaterStyle={{ background: floaterColor }}
+                // containerStyle={floaterWrapperStyle}
+            />
+            <div style={{ width: '325px', paddingTop: '20px', paddingBottom: '20px' }}>
+                <div style={{ paddingTop: '20px', paddingBottom: '20px' }}>
+                    <div
+                        style={{
+                            width: '100%',
+                            display: 'flex',
+                            justifyContent: 'space-around',
+                            paddingBottom: '20px',
+                        }}
+                    >
+                        <div
+                            style={{
+                                alignItems: 'center',
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                        >
+                            <Text
+                                textStyle={{
+                                    color: lib.colors.primaryColor,
+                                    fontSize: '28px',
+                                }}
+                            >{`${plural(items.length, {
+                                1: '# Item',
+                                other: '# Items',
+                            })}`}</Text>
+
+                            <Text
+                                textStyle={{
+                                    fontSize: '13px',
+                                    color: lib.colors.primaryColor,
+                                    textShadow: lib.layout.boxShadow.dark,
+                                }}
+                            >
+                                collected
+                            </Text>
+                        </div>
+
+                        <div
+                            style={{
+                                alignItems: 'center',
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                        >
+                            <Text
+                                textStyle={{
+                                    color: lib.colors.primaryColor,
+                                    fontSize: '28px',
+                                }}
+                            >{`${plural(nuggs.length, {
+                                1: '# Nugg',
+                                other: '# Nuggs',
+                            })}`}</Text>
+
+                            <Text
+                                textStyle={{
+                                    fontSize: '13px',
+                                    color: lib.colors.primaryColor,
+                                }}
+                            >
+                                staked
+                            </Text>
+                        </div>
+                    </div>
                 </div>
                 <div
                     style={{
-                        marginTop: '10px',
-                        marginBottom: '20px',
-
-                        // width: '95%',
                         display: 'flex',
                         justifyContent: 'center',
                         flexDirection: 'column',
-                        alignItems: 'center',
-                        background: lib.colors.transparentWhite,
-                        borderRadius: lib.layout.borderRadius.medium,
-                        padding: '1rem',
+                        width: '100%',
                     }}
                 >
-                    <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                        <Text
-                            size="larger"
-                            textStyle={{
-                                color: lib.colors.primaryColor,
-                                // textShadow: lib.layout.textShadow.heavy,
-                                padding: '10px',
-                            }}
-                        >
-                            {ens}
-                        </Text>
-                        {peer && <NLStaticImage image={`${peer.peer}_icon`} />}
-                    </div>
-                    <Button
-                        size="small"
-                        textStyle={{ color: lib.colors.primaryColor }}
-                        buttonStyle={{ background: 'transparent', padding: 0 }}
-                        onClick={() => {
-                            void connector.deactivate();
-                        }}
-                        label="change accounts"
-                    />
-                </div>
-                <CurrencyToggler
-                    setPref={(input) => {
-                        setCurrencyPreference(input);
-                        return undefined;
-                    }}
-                    pref={currencyPreferrence}
-                    // floaterStyle={{ background: floaterColor }}
-                    // containerStyle={floaterWrapperStyle}
-                />
-                <div style={{ width: '325px', paddingTop: '20px', paddingBottom: '20px' }}>
-                    <div style={{ paddingTop: '20px', paddingBottom: '20px' }}>
-                        <div
-                            style={{
-                                width: '100%',
-                                display: 'flex',
-                                justifyContent: 'space-around',
-                                paddingBottom: '20px',
-                            }}
-                        >
-                            <div
-                                style={{
-                                    alignItems: 'center',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                }}
-                            >
-                                <Text
-                                    textStyle={{
-                                        color: lib.colors.primaryColor,
-                                        fontSize: '28px',
-                                    }}
-                                >{`${plural(items.length, {
-                                    1: '# Item',
-                                    other: '# Items',
-                                })}`}</Text>
-
-                                <Text
-                                    textStyle={{
-                                        fontSize: '13px',
-                                        color: lib.colors.primaryColor,
-                                        textShadow: lib.layout.boxShadow.dark,
-                                    }}
-                                >
-                                    collected
-                                </Text>
-                            </div>
-
-                            <div
-                                style={{
-                                    alignItems: 'center',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                }}
-                            >
-                                <Text
-                                    textStyle={{
-                                        color: lib.colors.primaryColor,
-                                        fontSize: '28px',
-                                    }}
-                                >{`${plural(nuggs.length, {
-                                    1: '# Nugg',
-                                    other: '# Nuggs',
-                                })}`}</Text>
-
-                                <Text
-                                    textStyle={{
-                                        fontSize: '13px',
-                                        color: lib.colors.primaryColor,
-                                    }}
-                                >
-                                    staked
-                                </Text>
-                            </div>
-                        </div>
-                    </div>
                     <div
+                        className="mobile-pressable-div"
                         style={{
+                            width: '100%',
+                            background: lib.colors.gradient,
+                            borderRadius: lib.layout.borderRadius.medium,
+                            // margin: '1rem',
+                            marginRight: '.2rem',
+                            boxShadow: lib.layout.boxShadow.dark,
+                            // marginRight: 0,
                             display: 'flex',
-                            justifyContent: 'center',
                             flexDirection: 'column',
-                            width: '100%',
+                            alignItems: 'flex-start',
                         }}
+                        onClick={() => setLoansOpen(!loansOpen)}
+                        aria-hidden="true"
                     >
                         <div
-                            className="mobile-pressable-div"
+                            key={`${'loans'}-swaplist`}
                             style={{
-                                width: '100%',
-                                background: lib.colors.gradient,
-                                borderRadius: lib.layout.borderRadius.medium,
-                                // margin: '1rem',
-                                marginRight: '.2rem',
-                                boxShadow: lib.layout.boxShadow.dark,
-                                // marginRight: 0,
                                 display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'flex-start',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                padding: '.3rem .5rem',
                             }}
-                            onClick={() => setLoansOpen(!loansOpen)}
-                            aria-hidden="true"
                         >
                             <div
-                                key={`${'loans'}-swaplist`}
                                 style={{
                                     display: 'flex',
                                     flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    width: '100%',
-                                    padding: '.3rem .5rem',
+                                    alignItems: 'center',
                                 }}
                             >
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
+                                <Text
+                                    size="large"
+                                    textStyle={{
+                                        color: 'white',
+                                        paddingLeft: '.5rem',
                                     }}
                                 >
-                                    <Text
-                                        size="large"
-                                        textStyle={{
-                                            color: 'white',
-                                            paddingLeft: '.5rem',
-                                        }}
-                                    >
-                                        Loans ending soon
-                                    </Text>
-                                </div>
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <Label
-                                        containerStyles={{ marginRight: '10px' }}
-                                        text={loans.length.toString()}
-                                        // size="small"
-                                    />
-                                    <IoIosArrowDroprightCircle
-                                        color="white"
-                                        size={30}
-                                        transform={loansOpen ? 'rotate(90deg)' : ''}
-                                        style={{
-                                            WebkitTransform: loansOpen ? 'rotate(90deg)' : '',
-                                        }}
-                                    />
-                                </div>
+                                    Loans ending soon
+                                </Text>
                             </div>
-                            <InfoClicker
-                                to={Page.WhatIsAnNFT}
-                                text="learn about loans"
-                                size={15}
-                                buttonStyle={{ paddingTop: 0 }}
-                            />
-                        </div>
-                    </div>
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            flexDirection: 'column-reverse',
-                            width: '100%',
-                            marginTop: '1rem',
-                        }}
-                    >
-                        <div
-                            className="mobile-pressable-div"
-                            style={{
-                                width: '100%',
-                                background: lib.colors.gradient2,
-                                borderRadius: lib.layout.borderRadius.medium,
-                                marginRight: '.2rem',
-                                boxShadow: lib.layout.boxShadow.dark,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'flex-start',
-                            }}
-                            onClick={() => openModal({ modalType: ModalEnum.Claim })}
-                            aria-hidden="true"
-                        >
                             <div
-                                key={`${'claims'}-swaplist`}
                                 style={{
-                                    zIndex: 101,
-                                    background: lib.colors.gradient2,
-                                    borderRadius: lib.layout.borderRadius.large,
                                     display: 'flex',
                                     flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    width: '100%',
-                                    padding: '.3rem .5rem',
+                                    alignItems: 'center',
                                 }}
                             >
-                                <div
+                                <Label
+                                    containerStyles={{ marginRight: '10px' }}
+                                    text={loans.length.toString()}
+                                    // size="small"
+                                />
+                                <IoIosArrowDroprightCircle
+                                    color="white"
+                                    size={30}
+                                    transform={loansOpen ? 'rotate(90deg)' : ''}
                                     style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
+                                        WebkitTransform: loansOpen ? 'rotate(90deg)' : '',
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <InfoClicker
+                            to={Page.WhatIsAnNFT}
+                            text="learn about loans"
+                            size={15}
+                            buttonStyle={{ paddingTop: 0 }}
+                        />
+                    </div>
+                </div>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        flexDirection: 'column-reverse',
+                        width: '100%',
+                        marginTop: '1rem',
+                    }}
+                >
+                    <div
+                        className="mobile-pressable-div"
+                        style={{
+                            width: '100%',
+                            background: lib.colors.gradient2,
+                            borderRadius: lib.layout.borderRadius.medium,
+                            marginRight: '.2rem',
+                            boxShadow: lib.layout.boxShadow.dark,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                        }}
+                        onClick={() => openModal({ modalType: ModalEnum.Claim })}
+                        aria-hidden="true"
+                    >
+                        <div
+                            key={`${'claims'}-swaplist`}
+                            style={{
+                                zIndex: 101,
+                                background: lib.colors.gradient2,
+                                borderRadius: lib.layout.borderRadius.large,
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                padding: '.3rem .5rem',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Text
+                                    size="large"
+                                    textStyle={{
+                                        color: 'white',
+                                        paddingLeft: '.5rem',
                                     }}
                                 >
-                                    <Text
-                                        size="large"
-                                        textStyle={{
-                                            color: 'white',
-                                            paddingLeft: '.5rem',
-                                        }}
-                                    >
-                                        Pending Claims
-                                    </Text>
-                                </div>
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <Label
-                                        containerStyles={{ marginRight: '10px' }}
-                                        text={unclaimedOffers.length.toString()}
-                                        size="small"
-                                    />
-                                    {/* <IoIosArrowDroprightCircle
+                                    Pending Claims
+                                </Text>
+                            </div>
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Label
+                                    containerStyles={{ marginRight: '10px' }}
+                                    text={unclaimedOffers.length.toString()}
+                                    size="small"
+                                />
+                                {/* <IoIosArrowDroprightCircle
                                         color="white"
                                         size={30}
                                         transform={pendingClaimsOpen ? 'rotate(90deg)' : ''}
@@ -380,16 +349,16 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                                 ? 'rotate(90deg)'
                                                 : '',
                                         }} /> */}
-                                </div>
                             </div>
-                            <InfoClicker
-                                to={Page.WhatIsAnNFT}
-                                text="learn about claims"
-                                size={15}
-                                buttonStyle={{ paddingTop: 0 }}
-                            />
+                        </div>
+                        <InfoClicker
+                            to={Page.WhatIsAnNFT}
+                            text="learn about claims"
+                            size={15}
+                            buttonStyle={{ paddingTop: 0 }}
+                        />
 
-                            {/* {pendingClaimsOpen && (
+                        {/* {pendingClaimsOpen && (
                                 <div
                                     style={{
                                         marginTop: '-20px',
@@ -460,15 +429,12 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                     ))}
                                 </div>
                             )} */}
-                        </div>
                     </div>
-                    <MyNuggItemListPhone />
                 </div>
+                <MyNuggItemListPhone />
             </div>
-        ) : (
-            <MobileConnectTab />
-        )
-    ) : null;
+        </div>
+    );
 };
 
 export default MobileWallet;

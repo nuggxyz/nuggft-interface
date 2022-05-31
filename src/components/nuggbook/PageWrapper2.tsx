@@ -10,6 +10,8 @@ import MobileStatus from '@src/components/mobile/MobileStatus';
 import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
 import { AllItems, AllNuggs } from '@src/components/mobile/NuggDexSearchListMobile2';
 import NuggDexSearchBarMobile from '@src/components/mobile/NuggDexSearchBarMobile';
+import web3 from '@src/web3';
+import MobileWallet from '@src/components/mobile/MobileWallet';
 
 import Start from './pages/Start';
 import Welcome from './pages/Welcome';
@@ -23,6 +25,11 @@ import Setup_2 from './pages/set-up/Setup_2';
 import Setup_3 from './pages/set-up/Setup_3';
 import HelpingTest_0 from './pages/helping-test/HelpingTest_0';
 import Feedback from './pages/helping-test/Feedback';
+
+const MemoizedWallet = React.memo(() => {
+    const address = web3.hook.usePriorityAccount();
+    return address ? <MobileWallet /> : <ConnectTab />;
+});
 
 const useNuggBook = () => {
     const page = client.nuggbook.useNuggBookPage();
@@ -53,7 +60,11 @@ const useNuggBook = () => {
         case Page.Status:
             return { top: 100, comp: MobileStatus, page };
         case Page.Connect:
-            return { top: 100, comp: React.memo(() => <ConnectTab />), page };
+            return {
+                top: 100,
+                comp: MemoizedWallet,
+                page,
+            };
         case Page.Search:
             return { top: 100, comp: React.memo(() => <NuggDexSearchBarMobile />), page };
         case Page.AllItems:

@@ -429,9 +429,9 @@ const NavigationBarMobile: FC<unknown> = () => {
                 <NoFlash2
                     address={address}
                     onClick={React.useCallback(() => {
-                        if (address) navigate('/wallet');
-                        else nuggbookGoto(Page.Connect);
-                    }, [address, navigate, nuggbookGoto])}
+                        // if (address) navigate('/wallet');
+                        nuggbookGoto(Page.Connect);
+                    }, [nuggbookGoto])}
                 />
             </animated.div>
 
@@ -598,7 +598,6 @@ export const NoFlashClaims = React.memo<{
                     ...(address
                         ? {
                               opacity: 1,
-                              pointerEvents: 'auto',
                               ...(numClaims === 0
                                   ? {
                                         background: lib.colors.transparentWhite,

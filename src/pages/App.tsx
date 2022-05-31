@@ -16,7 +16,6 @@ const HotRotateO = React.lazy(() => import('@src/pages/hot-rotate-o/HotRotateOWr
 const SearchOverlay = React.lazy(() => import('@src/pages/search/SearchOverlayWrapper'));
 const SwapPageWrapper = React.lazy(() => import('@src/pages/swap/SwapPageWrapper'));
 const GlobalModal = React.lazy(() => import('@src/components/modals/GlobalModal'));
-const MobileWalletScreen2 = React.lazy(() => import('@src/components/mobile/MobileWallet'));
 
 const Router = () => {
     const { isPhone, screen } = useDimensions();
@@ -31,10 +30,9 @@ const Router = () => {
                 {
                     path: 'edit/:id',
                     element: <HotRotateO screen={screen} />,
-                    // overlay: 997,
                 },
                 ...(isPhone
-                    ? [{ path: 'wallet', element: <MobileWalletScreen2 /> }]
+                    ? []
                     : [
                           {
                               path: 'view/*',
