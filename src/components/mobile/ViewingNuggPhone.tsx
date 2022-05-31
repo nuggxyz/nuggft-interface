@@ -38,8 +38,8 @@ import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
 import Button from '@src/components/general/Buttons/Button/Button';
 import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import undefined from '@src/lib/dotnugg/util';
-import useMountLogger from '@src/hooks/useMountLogger';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
+import usePrevious from '@src/hooks/usePrevious';
 
 import NuggSnapshotListMobile from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
@@ -323,8 +323,6 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
         leader?.account || swap?.leader || '',
     );
 
-    useMountLogger('activeSwap');
-
     const msp = client.stake.useMsp();
 
     const swapCurrency = useUsdPair(
@@ -498,9 +496,19 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
 
         const tokenQuery = useTokenQuery();
 
+        const prevTokenId = usePrevious(tokenId);
+
+        const ref = React.useRef<HTMLDivElement>(null);
+
         React.useEffect(() => {
             if (tokenId) void tokenQuery(tokenId);
         }, [tokenId, tokenQuery]);
+
+        React.useEffect(() => {
+            if (ref && ref.current && prevTokenId !== tokenId) {
+                ref.current.scroll({ top: 0, left: 0, behavior: 'smooth' });
+            }
+        }, [tokenId, prevTokenId, ref]);
 
         const token = client.live.token(tokenId);
         const swap = client.swaps.useSwap(tokenId);
@@ -515,8 +523,6 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                 itemId: token?.tokenId.toRawId() || '',
             },
         });
-
-        const coreRef = React.useRef(null);
 
         const ider = React.useId();
 
@@ -557,7 +563,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                     }}
                 >
                     <div
-                        ref={coreRef}
+                        ref={ref}
                         style={{
                             position: 'relative',
                             display: 'flex',
@@ -827,7 +833,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                             overflow: undefined,
                                             flexDirection: 'column',
                                         }}
-                                        coreRef={coreRef}
+                                        coreRef={ref}
                                         itemHeightBig={340}
                                         itemHeightSmall={160}
                                         endGap={100}
