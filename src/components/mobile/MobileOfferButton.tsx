@@ -1,6 +1,5 @@
 import React from 'react';
 import { t } from '@lingui/macro';
-import { useNavigate } from 'react-router-dom';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
@@ -10,6 +9,7 @@ import { ModalEnum } from '@src/interfaces/modals';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { Lifecycle } from '@src/client/interfaces';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
+import { Page } from '@src/interfaces/nuggbook';
 
 export default ({
     tokenId,
@@ -23,7 +23,7 @@ export default ({
     const swap = client.swaps.useSwap(tokenId);
 
     const lifecycle = useLifecycleEnhanced(swap);
-    const navigate = useNavigate();
+    const nuggbookOpen = client.nuggbook.useGotoOpen();
 
     const openModal = client.modal.useOpenModal();
 
@@ -59,7 +59,7 @@ export default ({
                                 sellingNuggId: null,
                             }),
                         );
-                    } else if (isUndefinedOrNullOrStringEmpty(address)) navigate('/wallet');
+                    } else if (isUndefinedOrNullOrStringEmpty(address)) nuggbookOpen(Page.Connect);
                     else if (swap && swap.isNugg()) {
                         openModal(
                             buildTokenIdFactory({

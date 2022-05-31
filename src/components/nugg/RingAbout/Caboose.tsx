@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { t } from '@lingui/macro';
-import { useNavigate } from 'react-router-dom';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
@@ -16,6 +15,7 @@ import { ModalEnum } from '@src/interfaces/modals';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { EthInt } from '@src/classes/Fraction';
 import Label from '@src/components/general/Label/Label';
+import { Page } from '@src/interfaces/nuggbook';
 
 import styles from './RingAbout.styles';
 
@@ -134,7 +134,7 @@ export default ({
         );
     }, [token, epoch]);
 
-    const navigate = useNavigate();
+    const nuggbookOpen = client.nuggbook.useGotoOpen();
 
     const myNuggsFormatted = React.useMemo(() => {
         const nuggId = nuggToBuyFrom;
@@ -232,7 +232,7 @@ export default ({
                         onClick={() => {
                             if (nuggToBuyFrom) {
                                 if (isPhone && isUndefinedOrNullOrStringEmpty(address))
-                                    navigate('/wallet');
+                                    nuggbookOpen(Page.Connect);
                                 else if (!continued) {
                                     setContinued(true);
                                     if (onContinue) onContinue();

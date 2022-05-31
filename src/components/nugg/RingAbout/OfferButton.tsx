@@ -1,6 +1,5 @@
 import React from 'react';
 import { t } from '@lingui/macro';
-import { useNavigate } from 'react-router-dom';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
@@ -11,6 +10,7 @@ import { ModalEnum } from '@src/interfaces/modals';
 import useDimensions from '@src/client/hooks/useDimensions';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { Lifecycle } from '@src/client/interfaces';
+import { Page } from '@src/interfaces/nuggbook';
 
 import styles from './RingAbout.styles';
 
@@ -28,7 +28,8 @@ export default ({
     const token = client.live.token(tokenId);
 
     const lifecycle = useLifecycle(token);
-    const navigate = useNavigate();
+
+    const nuggbookOpen = client.nuggbook.useGotoOpen();
 
     const openModal = client.modal.useOpenModal();
 
@@ -65,7 +66,7 @@ export default ({
             disabled={isDisabled}
             onClick={() => {
                 if (screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address))
-                    navigate('/wallet');
+                    nuggbookOpen(Page.Connect);
                 else if (token && token.isNugg()) {
                     openModal(
                         buildTokenIdFactory({

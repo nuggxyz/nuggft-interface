@@ -71,7 +71,7 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     // const [searchOpenCore, setSearchOpen] = React.useState<boolean>(false);
 
-    const [manualMatch, setManualMatch] = React.useState<boolean>(true);
+    const [manualMatch, setManualMatch] = React.useState<boolean>(false);
 
     const close = client.nuggbook.useCloseNuggBook();
     const nuggbookGoto = client.nuggbook.useGotoOpen();
@@ -85,6 +85,14 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const isFull = React.useDeferredValue(manualMatch);
     // const searchOpen = React.useDeferredValue(searchOpenCore);
+
+    const prevNuggbookOpen = usePrevious(nuggbookOpen);
+
+    React.useEffect(() => {
+        if (prevNuggbookOpen !== nuggbookOpen && nuggbookOpen && !manualMatch) {
+            setManualMatch(true);
+        }
+    }, [manualMatch, nuggbookOpen, prevNuggbookOpen]);
 
     const [floater] = useSpring(
         {
