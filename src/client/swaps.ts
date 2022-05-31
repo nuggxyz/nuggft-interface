@@ -10,6 +10,7 @@ interface Offer<T> {
     account: T;
     eth: BigNumber;
     txhash: string;
+    incrementX64?: BigNumber;
 }
 
 interface SwapDataBase extends TokenIdFactoryBase {

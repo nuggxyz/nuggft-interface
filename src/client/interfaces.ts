@@ -14,6 +14,7 @@ interface OfferDataBase extends TokenIdFactoryBase {
     isBackup: boolean;
     sellingTokenId: null | NuggId;
     account: AddressString | NuggId;
+    incrementX64?: BigNumber;
 }
 
 export type OfferData = TokenIdFactoryCreator<

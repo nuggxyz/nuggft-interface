@@ -18,7 +18,7 @@ import useDimensions from '@src/client/hooks/useDimensions';
 import { SwapData } from '@src/client/swaps';
 import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
-import { EthInt } from '@src/classes/Fraction';
+import { EthInt, Fraction } from '@src/classes/Fraction';
 
 import styles from './RingAbout.styles';
 
@@ -77,7 +77,7 @@ export default ({
     const type = client.live.lastSwap.type();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
-    const { screen: screenType } = useDimensions();
+    const { screen: screenType, isPhone } = useDimensions();
 
     const [open, setOpen] = useState(screenType === 'tablet');
 
@@ -123,7 +123,6 @@ export default ({
         swap ? (swap.type === 'item' ? 'nugg' : provider) : undefined,
         (swap && leader?.account) || '',
     );
-
     return token &&
         lifecycle &&
         lifecycle !== Lifecycle.Concessions &&
@@ -134,13 +133,44 @@ export default ({
             {leader && chainId && token ? (
                 <div style={styles.leadingOfferAmountContainer}>
                     <animated.div style={flashStyle}>
-                        <div style={styles.leadingOfferAmountBlock}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'flex-between',
+                                background: lib.colors.transparentWhite,
+                                borderRadius: lib.layout.borderRadius.smallish,
+                                padding: '.5rem .6rem',
+                                marginRight: '.5rem',
+                            }}
+                        >
                             <CurrencyText
                                 size="small"
                                 image="eth"
-                                textStyle={styles.leadingOffer}
+                                textStyle={{
+                                    ...styles.leadingOffer,
+                                    ...(isPhone && { color: lib.colors.primaryColor }),
+                                }}
                                 value={leaderEth}
                             />
+                            {leader.incrementX64 && (
+                                <Text
+                                    textStyle={{
+                                        background: isPhone
+                                            ? lib.colors.primaryColor
+                                            : lib.colors.nuggBlueText,
+                                        color: 'white',
+                                        borderRadius: lib.layout.borderRadius.medium,
+                                        padding: '.15rem .25rem',
+                                        fontWeight: lib.layout.fontWeight.thicc,
+                                        marginLeft: 5,
+                                    }}
+                                    size="smaller"
+                                >
+                                    +{Fraction.fromX64(leader.incrementX64).percentString(0)}
+                                </Text>
+                            )}
                         </div>
                         <div style={styles.leadingOfferAmountUser}>
                             <Text size="smaller" type="text">
@@ -148,6 +178,7 @@ export default ({
                             </Text>
                             <Text size="smaller">{leaderEns}</Text>
                         </div>
+
                         {leader.txhash && (
                             <Button
                                 buttonStyle={styles.etherscanBtn}

@@ -28,6 +28,8 @@ export const ETH_MILLION = toEth('1000000');
 export const ETH_BILLION = toEth('1000000000');
 export const ETH_TRILLION = toEth('1000000000000');
 export const TWO_128 = BigNumber.from(1).shl(128).sub(1);
+export const TWO_64 = BigNumber.from(1).shl(64).sub(1);
+
 export const TWO_96 = 0xff;
 export const TWO_16 = 0xffff;
 

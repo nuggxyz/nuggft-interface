@@ -115,6 +115,7 @@ fragment swapdata on Swap {
         user {
             id
         }
+        incrementX64
         eth
         txhash
     }
@@ -168,6 +169,7 @@ fragment itemswapdata on ItemSwap {
         nugg {
             id
         }
+        incrementX64
         eth
         txhash
     }
@@ -249,6 +251,7 @@ subscription watchLiveNugg($tokenId: ID!) {
 subscription liveItemOffers($tokenId: String!) {
     itemOffers(where: { swap_starts_with: $tokenId }, orderBy: eth, orderDirection: desc) {
         id
+        incrementX64
         nugg {
             id
         }
@@ -260,6 +263,7 @@ subscription liveItemOffers($tokenId: String!) {
 subscription liveOffers($tokenId: String!) {
     offers(where: { swap_starts_with: $tokenId }, orderBy: eth, orderDirection: desc) {
         id
+        incrementX64
         user {
             id
         }
@@ -282,6 +286,7 @@ fragment liveItemSwap on ItemSwap {
         nugg {
             id
         }
+        incrementX64
         eth
         txhash
     }
@@ -309,6 +314,7 @@ subscription betterLiveOffers($tokenId: ID!) {
                 user {
                     id
                 }
+                incrementX64
                 eth
                 txhash
             }

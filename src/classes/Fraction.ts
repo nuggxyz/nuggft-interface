@@ -3,7 +3,7 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import Decimal from 'decimal.js-light';
 import numbro from 'numbro';
 
-import { toEth, TWO_128, TWO_96, ETH_ONE, TWO_16 } from '@src/lib/conversion';
+import { toEth, TWO_128, TWO_96, ETH_ONE, TWO_16, TWO_64 } from '@src/lib/conversion';
 import { toGwei } from '@src/lib/index';
 
 // eslint-disable-next-line no-use-before-define
@@ -46,6 +46,10 @@ export class Fraction {
 
     get bignumber() {
         return this.num.mul(ETH_ONE).div(this.den);
+    }
+
+    public percentString(decimals: number) {
+        return `${(this.number * 100).toFixed(decimals)}%`;
     }
 
     public toUsd() {
@@ -181,6 +185,12 @@ export class Fraction {
 
     public copy(): Fraction {
         return new Fraction(this.num, this.den);
+    }
+
+    public static fromX64(input: Fractionish) {
+        const me = this.tryParseFraction(input);
+        me.den = me.den.mul(TWO_64);
+        return me;
     }
 }
 

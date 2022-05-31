@@ -29,6 +29,7 @@ export const formatSwapData = <T extends TokenId>(
             eth: BigNumber.from(x.eth),
             account: 'nugg' in x ? x.nugg.id : x.user.id,
             txhash: x.txhash,
+            incrementX64: BigNumber.from(x.incrementX64),
         })),
         canceledEpoch: z.canceledEpoch ? Number(z.canceledEpoch) : null,
         startUnix: z?.startUnix ? BigNumber.from(z.startUnix).toNumber() : undefined,

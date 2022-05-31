@@ -53,7 +53,7 @@ export const FEATURE_NAMES = [
 ] as unknown as FixedLengthArray<string, 8>;
 
 // chances any nugg will have get a given feature
-export const FEATURE_RARITY = [8, 11, 11, 5, 5, 2, 2, 2].map(
+export const FEATURE_RARITY = [8, 11, 11, 6, 6, 3, 3, 3].map(
     (x) => x / 8,
 ) as unknown as FixedLengthArray<number, 8>;
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000' as const;
@@ -125,7 +125,6 @@ export const calculateRawOfferValue = (buyingNugg: NuggId, sellingNugg: NuggId, 
         .shl(40)
         .or(BigNumber.from(itemId.toRawId()).shl(24))
         .or(sellingNugg.toRawId());
-    console.log({ abc });
     return abc;
 };
 
