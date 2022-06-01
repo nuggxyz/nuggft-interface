@@ -506,7 +506,11 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
 
         React.useEffect(() => {
             if (ref && ref.current && prevTokenId !== tokenId) {
-                ref.current.scroll({ top: 0, left: 0, behavior: 'smooth' });
+                window.requestAnimationFrame(() => {
+                    if (ref.current) {
+                        ref.current.scrollTo({ top: 0 });
+                    }
+                });
             }
         }, [tokenId, prevTokenId, ref]);
 
@@ -565,6 +569,9 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                     <div
                         ref={ref}
                         style={{
+                            // scrollBehavior: 'smooth',
+                            WebkitScrollSnapType: 'y',
+                            WebkitOverflowScrolling: 'touch',
                             position: 'relative',
                             display: 'flex',
                             flexDirection: 'column',
@@ -574,7 +581,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                             backdropFilter: 'blur(5px)',
                             WebkitBackdropFilter: 'blur(5px)',
                             height: '100%',
-                            overflow: 'scroll',
+                            overflowY: 'auto',
                         }}
                     >
                         <div

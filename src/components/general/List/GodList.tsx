@@ -362,6 +362,10 @@ const GodList = <T, B, A>({
                     ...(faded && {
                         WebkitMaskImage: 'linear-gradient(0deg, #000 95%, transparent)',
                     }),
+                    position: 'relative',
+                    height: `${innerHeight}px`,
+                    width: '100%',
+                    '--i': itemHeight,
                 }}
                 onScroll={_onScroll}
             >
@@ -370,159 +374,142 @@ const GodList = <T, B, A>({
                 )}
 
                 <animated.div
+                    id={`${genid}1`}
                     style={{
-                        position: 'relative',
-                        height: `${innerHeight}px`,
+                        transform: `translate(0px, ${uno_i * itemHeight}px)`,
+                        height: `var(--i)`,
+                        opacity: uno ? 1 : 0,
+                        position: 'absolute',
                         width: '100%',
-                        '--i': itemHeight,
-                        // '--a': trail[0].y.to((y) => `${y}px`),
-                        // '--b': trail[1].y.to((y) => `${y}px`),
-                        // '--c': trail[2].y.to((y) => `${y}px`),
-                        // '--d': trail[3].y.to((y) => `${y}px`),
-                        // '--e': trail[4].y.to((y) => `${y}px`),
-                        // '--f': trail[5].y.to((y) => `${y}px`),
                     }}
                 >
-                    <animated.div
-                        id={`${genid}1`}
-                        style={{
-                            transform: `translate(0px, ${uno_i * itemHeight}px)`,
-                            height: `var(--i)`,
-                            opacity: uno ? 1 : 0,
-                            position: 'absolute',
-                            width: '100%',
-                            // ...cheeeeck(uno_v, uno_i),
-                        }}
-                    >
-                        <RenderItem
-                            visible={uno_v}
-                            item={uno}
-                            index={uno_i}
-                            extraData={extraData}
-                            action={action}
-                            selected={false}
-                        />
-                    </animated.div>
-                    <animated.div
-                        id={`${genid}2`}
-                        style={{
-                            transform: `translate(0px, ${dos_i * itemHeight}px)`,
-                            height: `var(--i)`,
-                            opacity: dos ? 1 : 0,
-                            position: 'absolute',
-                            width: '100%',
-                            // ...cheeeeck(dos_v, dos_i),
-                        }}
-                    >
-                        <RenderItem
-                            visible={dos_v}
-                            item={dos}
-                            index={dos_i}
-                            extraData={extraData}
-                            action={action}
-                            selected={false}
-                        />
-                    </animated.div>
-                    <animated.div
-                        id={`${genid}3`}
-                        style={{
-                            transform: `translate(0px, ${tres_i * itemHeight}px)`,
-                            opacity: tres ? 1 : 0,
-                            position: 'absolute',
-                            width: '100%',
-                            height: `var(--i)`,
-                            // ...cheeeeck(tres_v, tres_i),
-                        }}
-                    >
-                        <RenderItem
-                            visible={tres_v}
-                            item={tres}
-                            index={tres_i}
-                            extraData={extraData}
-                            action={action}
-                            selected={false}
-                        />
-                    </animated.div>
-                    <animated.div
-                        id={`${genid}4`}
-                        style={{
-                            transform: `translate(0px, ${qu_i * itemHeight}px)`,
-                            opacity: qu ? 1 : 0,
-                            position: 'absolute',
-                            width: '100%',
-                            height: `var(--i)`,
-                            // ...cheeeeck(qu_v, qu_i),
-                        }}
-                    >
-                        <RenderItem
-                            visible={qu_v}
-                            item={qu}
-                            index={qu_i}
-                            extraData={extraData}
-                            action={action}
-                            selected={false}
-                        />
-                    </animated.div>
-                    <animated.div
-                        id={`${genid}5`}
-                        style={{
-                            transform: `translate(0px, ${cin_i * itemHeight}px)`,
-                            opacity: cin ? 1 : 0,
-                            position: 'absolute',
-                            width: '100%',
-                            height: `var(--i)`,
-                            // ...cheeeeck(cin_v, cin_i),
-                        }}
-                    >
-                        <RenderItem
-                            visible={cin_v}
-                            item={cin}
-                            index={cin_i}
-                            extraData={extraData}
-                            action={action}
-                            selected={false}
-                        />
-                    </animated.div>
-                    <animated.div
-                        id={`${genid}6`}
-                        style={{
-                            opacity: sei ? 1 : 0,
-                            position: 'absolute',
-                            transform: `translate(0px, ${sei_i * itemHeight}px)`,
-                            width: '100%',
-                            height: `var(--i)`,
-                            // ...cheeeeck(sei_v, sei_i),
-                        }}
-                    >
-                        <RenderItem
-                            visible={sei_v}
-                            item={sei}
-                            index={sei_i}
-                            extraData={extraData}
-                            action={action}
-                            selected={false}
-                        />
-                    </animated.div>
-                    <animated.div
-                        id={`${genid}7`}
-                        style={{
-                            transform: `translate(0px, ${ses_i * itemHeight}px)`,
-                            opacity: ses ? 1 : 0,
-                            position: 'absolute',
-                            width: '100%',
-                            height: `var(--i)`,
-                            // ...cheeeeck(ses_v, ses_i),
-                        }}
-                    >
-                        <RenderItem
-                            visible={ses_v}
-                            item={ses}
-                            index={ses_i}
-                            extraData={extraData}
-                            action={action}
-                            selected={false}
-                        />
-                    </animated.div>
+                    <RenderItem
+                        visible={uno_v}
+                        item={uno}
+                        index={uno_i}
+                        extraData={extraData}
+                        action={action}
+                        selected={false}
+                    />
+                </animated.div>
+                <animated.div
+                    id={`${genid}2`}
+                    style={{
+                        transform: `translate(0px, ${dos_i * itemHeight}px)`,
+                        height: `var(--i)`,
+                        opacity: dos ? 1 : 0,
+                        position: 'absolute',
+                        width: '100%',
+                    }}
+                >
+                    <RenderItem
+                        visible={dos_v}
+                        item={dos}
+                        index={dos_i}
+                        extraData={extraData}
+                        action={action}
+                        selected={false}
+                    />
+                </animated.div>
+                <animated.div
+                    id={`${genid}3`}
+                    style={{
+                        transform: `translate(0px, ${tres_i * itemHeight}px)`,
+                        opacity: tres ? 1 : 0,
+                        position: 'absolute',
+                        width: '100%',
+                        height: `var(--i)`,
+                        WebkitScrollSnapType: 'y mandatory',
+                    }}
+                >
+                    <RenderItem
+                        visible={tres_v}
+                        item={tres}
+                        index={tres_i}
+                        extraData={extraData}
+                        action={action}
+                        selected={false}
+                    />
+                </animated.div>
+                <animated.div
+                    id={`${genid}4`}
+                    style={{
+                        transform: `translate(0px, ${qu_i * itemHeight}px)`,
+                        opacity: qu ? 1 : 0,
+                        position: 'absolute',
+                        width: '100%',
+                        height: `var(--i)`,
+                        // ...cheeeeck(qu_v, qu_i),
+                    }}
+                >
+                    <RenderItem
+                        visible={qu_v}
+                        item={qu}
+                        index={qu_i}
+                        extraData={extraData}
+                        action={action}
+                        selected={false}
+                    />
+                </animated.div>
+                <animated.div
+                    id={`${genid}5`}
+                    style={{
+                        transform: `translate(0px, ${cin_i * itemHeight}px)`,
+                        opacity: cin ? 1 : 0,
+                        position: 'absolute',
+                        width: '100%',
+                        height: `var(--i)`,
+                        // ...cheeeeck(cin_v, cin_i),
+                    }}
+                >
+                    <RenderItem
+                        visible={cin_v}
+                        item={cin}
+                        index={cin_i}
+                        extraData={extraData}
+                        action={action}
+                        selected={false}
+                    />
+                </animated.div>
+                <animated.div
+                    id={`${genid}6`}
+                    style={{
+                        opacity: sei ? 1 : 0,
+                        position: 'absolute',
+                        transform: `translate(0px, ${sei_i * itemHeight}px)`,
+                        width: '100%',
+                        height: `var(--i)`,
+                        // ...cheeeeck(sei_v, sei_i),
+                    }}
+                >
+                    <RenderItem
+                        visible={sei_v}
+                        item={sei}
+                        index={sei_i}
+                        extraData={extraData}
+                        action={action}
+                        selected={false}
+                    />
+                </animated.div>
+                <animated.div
+                    id={`${genid}7`}
+                    style={{
+                        transform: `translate(0px, ${ses_i * itemHeight}px)`,
+                        opacity: ses ? 1 : 0,
+                        position: 'absolute',
+                        width: '100%',
+                        height: `var(--i)`,
+                        // ...cheeeeck(ses_v, ses_i),
+                    }}
+                >
+                    <RenderItem
+                        visible={ses_v}
+                        item={ses}
+                        index={ses_i}
+                        extraData={extraData}
+                        action={action}
+                        selected={false}
+                    />
                 </animated.div>
                 {loading && <Loading />}
 
