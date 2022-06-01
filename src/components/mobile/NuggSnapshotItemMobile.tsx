@@ -43,7 +43,7 @@ const NuggSnapshotRenderItem: FC<{
         NonNullable<GetNuggSnapshotsQueryResult['data']>['nugg']
     >['snapshots'][number];
     index: number;
-}> = ({ item, index }) => {
+}> = ({ item }) => {
     return (
         <div
             className="mobile-pressable-div"
@@ -58,8 +58,7 @@ const NuggSnapshotRenderItem: FC<{
                 flexDirection: 'column',
                 justifyContent: 'center',
                 marginBottom: '1.5rem',
-                background:
-                    index === 0 ? lib.colors.gradientTransparent : lib.colors.transparentWhite,
+                background: lib.colors.transparentWhite,
                 borderRadius: lib.layout.borderRadius.mediumish,
             }}
         >
