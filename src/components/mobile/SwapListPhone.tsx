@@ -26,10 +26,6 @@ const SwapItem: FunctionComponent<{ item: SwapDataWithTryout }> = ({ item }) => 
 
     const amount = useUsdPair(item.eth);
 
-    // const lifecycle = useLifecycleEnhanced(item);
-
-    // const navigate = useNavigate();
-
     return (
         <div
             style={{
@@ -59,7 +55,7 @@ const SwapItem: FunctionComponent<{ item: SwapDataWithTryout }> = ({ item }) => 
                         flexDirection: 'column',
                         width: '100%',
                         zIndex: 101,
-                        background: lib.colors.gradient4Transparent,
+                        background: lib.colors.transparentWhite,
                     }}
                 >
                     <div style={styles.swapButton}>
