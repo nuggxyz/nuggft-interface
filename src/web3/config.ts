@@ -311,7 +311,7 @@ export const calculateIncrement = (epoch?: number, blocknum?: number) => {
         if (epoch === currepoch) {
             const increment = DEFAULT_CONTRACTS.Interval - (blocknum % DEFAULT_CONTRACTS.Interval);
 
-            if (increment < 45) return BigInt(50 - increment);
+            if (increment < 45) return BigInt(50 - (increment / 5) * 5);
         }
     }
 

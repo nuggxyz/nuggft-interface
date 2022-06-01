@@ -332,6 +332,16 @@ export class EthInt extends CurrencyInt {
         return this.increase(value).toFixedStringRoundingUp(dec);
     }
 
+    public toFixedStringRoundingUpAddOneForSafety(value: number) {
+        const fixed = this.number.toFixed(value);
+
+        if (Number(fixed) === this.number) {
+            return fixed;
+        }
+        const ceil = (Math.ceil(this.number * 10 ** value) + 1) / 10 ** value;
+        return ceil.toFixed(value);
+    }
+
     public static fromEthString(value: string): EthInt {
         return new EthInt(toEth(value));
     }

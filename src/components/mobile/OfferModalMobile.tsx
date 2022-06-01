@@ -12,7 +12,7 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
 import client from '@src/client';
 import Label from '@src/components/general/Label/Label';
-import { EthInt } from '@src/classes/Fraction';
+import { EthInt, Fraction } from '@src/classes/Fraction';
 import { OfferModalData } from '@src/interfaces/modals';
 import { useNuggftV1, usePrioritySendTransaction } from '@src/contracts/useContract';
 import styles from '@src/components/modals/OfferModal/OfferModal.styles';
@@ -36,7 +36,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const network = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
-    const userBalance = web3.hook.usePriorityBalance(network);
+    // const userBalance = web3.hook.usePriorityBalance(network);
     const peer = web3.hook.usePriorityPeer();
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
@@ -134,7 +134,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const amountUsd = useUsdPair(amount);
     const currentPrice = useUsdPair(check?.eth);
-    const myBalance = useUsdPair(userBalance?.number);
+    // const myBalance = useUsdPair(userBalance?.number);
     const currentBid = useUsdPair(check?.curr);
     const minNextBidPair = useUsdPair(minNextBid);
 
@@ -223,11 +223,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
         return undefined;
     }, [populatedTransaction, network]);
-
-    // const activeIncrement = React.useMemo(() => {
-    //     // if (data.isNugg() && data.)
-    //     return web3.config.calculateIncrement(data.endingEpoch ?? undefined, blocknum);
-    // }, [blocknum, data.endingEpoch]);
 
     const increments = React.useMemo(() => {
         const inc = check?.increment ? (check.increment.toNumber() - 10000) / 100 : 5;
@@ -421,7 +416,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 <CurrencyText
                     unitOverride={localCurrencyPref}
                     forceEth
-                    stopAnimation
                     size="larger"
                     value={currentPrice}
                 />
@@ -432,14 +426,28 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 >
                     min next bid
                 </Text>
-                <div>
+                <div
+                    style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
+                >
                     <CurrencyText
                         unitOverride={localCurrencyPref}
                         forceEth
                         size="larger"
                         value={minNextBidPair}
-                        stopAnimation
-                    />{' '}
+                    />
+                    <Text
+                        textStyle={{
+                            background: lib.colors.primaryColor,
+                            color: 'white',
+                            borderRadius: lib.layout.borderRadius.medium,
+                            padding: '.25rem .40rem',
+                            fontWeight: lib.layout.fontWeight.thicc,
+                            marginLeft: 5,
+                        }}
+                        size="small"
+                    >
+                        +{new Fraction(increments[0], 100).percentString(0)}
+                    </Text>
                 </div>
 
                 <div
@@ -560,9 +568,14 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             IncrementButton,
             currentPrice,
             estimator.error,
-            myBalance,
+            // myBalance,
             check?.multicallRequired,
             data.nuggToBuyFrom,
+            leader?.incrementX64,
+            minNextBidPair,
+            transition,
+            // check?.increment,
+            increments,
         ],
     );
     const Page1 = React.useMemo(
