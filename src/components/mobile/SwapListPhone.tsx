@@ -29,7 +29,6 @@ const SwapItem: FunctionComponent<{ item: SwapDataWithTryout }> = ({ item }) => 
     return (
         <div
             style={{
-                // margin: '.25rem 0rem',
                 marginBottom: 10,
                 flexDirection: 'column',
                 ...globalStyles.centered,

@@ -67,6 +67,7 @@ export default ({
                                 tokenId: swap.tokenId,
                                 nuggToBuyFrom: null,
                                 nuggToBuyFor: null,
+                                endingEpoch: swap.epoch?.id ?? null,
                             }),
                         );
                     } else if (swap && swap?.isItem()) {
@@ -76,6 +77,7 @@ export default ({
                                 tokenId: swap.tokenId,
                                 nuggToBuyFrom: sellingNuggId || swap.owner,
                                 nuggToBuyFor: sellingNuggId || swap.owner,
+                                endingEpoch: swap.epoch?.id ?? null,
                             }),
                         );
                     }

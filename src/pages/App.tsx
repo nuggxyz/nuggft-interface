@@ -42,7 +42,7 @@ const Router = () => {
 
                 { path: 'swap/:id', element: isPhone ? <ViewingNuggPhoneController /> : null },
                 { path: 'live', element: null },
-                { path: '*', element: <Navigate to={isPhone ? `swap/${epoch || ''}` : 'live'} /> },
+                { path: '*', element: <Navigate to={!isPhone ? `swap/${epoch || ''}` : 'live'} /> },
             ],
         },
     ]);

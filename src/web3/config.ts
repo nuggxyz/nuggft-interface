@@ -7,7 +7,7 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { buildApolloSplitLink, buildCache } from '@src/gql';
 import * as constants from '@src/lib/constants';
 import { EthInt, Fraction } from '@src/classes/Fraction';
-import { ETH_ONE } from '@src/lib/conversion';
+import { ETH_ONE, LOSS } from '@src/lib/conversion';
 
 import { Connector } from './core/types';
 import {
@@ -35,6 +35,8 @@ import {
 } from './classes/CustomWebSocketProvider';
 import { CoinbaseWallet } from './clients/coinbasewallet';
 import {
+    DEFAULT_CONTRACTS,
+    calculateEpochId,
     ALCHEMY_KEY,
     CHAIN_INFO,
     DEFAULT_CHAIN,
@@ -291,7 +293,27 @@ export const calculateMsp = (shares: BigNumber, eth: BigNumber) => {
         const ethPerShare = new Fraction(eth, shares.mul(ETH_ONE));
         const protocolFee = ethPerShare.divide(PROTOCOL_FEE_FRAC_MINT);
         const premium = ethPerShare.multiply(shares).divide(PREMIUM_DIV);
-        return ethPerShare.add(protocolFee).add(premium).increase(BigInt(1));
+        const res = ethPerShare.add(protocolFee).add(premium);
+
+        if (!res.bignumber.mod(LOSS).isZero()) {
+            return new EthInt(res.bignumber.div(LOSS).mul(LOSS).add(LOSS));
+        }
+
+        return res;
     }
     return new EthInt(0);
+};
+
+export const calculateIncrement = (epoch?: number, blocknum?: number) => {
+    if (epoch && blocknum) {
+        const currepoch = calculateEpochId(blocknum);
+
+        if (epoch === currepoch) {
+            const increment = DEFAULT_CONTRACTS.Interval - (blocknum % DEFAULT_CONTRACTS.Interval);
+
+            if (increment < 45) return BigInt(50 - increment);
+        }
+    }
+
+    return BigInt(5);
 };

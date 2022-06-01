@@ -67,6 +67,7 @@ export function prettify(
     }
 
     switch (input.message) {
+        case 'Revert(0x65)': // Error__0x99__TokenNotMintable --- offer modal
         case 'Revert(0x99)': // Error__0x99__InvalidEpoch
         case 'Revert(0xa0)': {
             return 'auction is over';

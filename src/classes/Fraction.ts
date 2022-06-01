@@ -318,6 +318,20 @@ export class EthInt extends CurrencyInt {
         return new EthInt(toEth(value));
     }
 
+    public toFixedStringRoundingUp(value: number) {
+        const fixed = this.number.toFixed(value);
+
+        if (Number(fixed) === this.number) {
+            return fixed;
+        }
+        const ceil = Math.ceil(this.number * 10 ** value) / 10 ** value;
+        return ceil.toFixed(value);
+    }
+
+    public increaseToFixedStringRoundingUp(value: bigint, dec: number) {
+        return this.increase(value).toFixedStringRoundingUp(dec);
+    }
+
     public static fromEthString(value: string): EthInt {
         return new EthInt(toEth(value));
     }

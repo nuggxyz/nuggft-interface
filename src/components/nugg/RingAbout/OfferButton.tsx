@@ -75,6 +75,7 @@ export default ({
                             token,
                             nuggToBuyFrom: null,
                             nuggToBuyFor: null,
+                            endingEpoch: token.activeSwap?.epoch?.id ?? null,
                         }),
                     );
                 } else if (token && token.type === 'item' && token.activeSwap) {
@@ -85,6 +86,7 @@ export default ({
                             token,
                             nuggToBuyFrom: sellingNuggId || token.activeSwap.owner,
                             nuggToBuyFor: sellingNuggId || token.activeSwap.owner,
+                            endingEpoch: token.activeSwap?.epoch?.id ?? null,
                         }),
                     );
                 }

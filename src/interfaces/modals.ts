@@ -12,7 +12,7 @@ export enum ModalEnum {
     Claim,
     Adjust,
     RotateO,
-    NuggBook
+    NuggBook,
 }
 
 export interface ModalDataBase {
@@ -35,6 +35,7 @@ export interface OfferModalDataBase extends TokenIdFactoryBase, ModalDataBase {
     modalType: ModalEnum.Offer;
     nuggToBuyFrom: null | NuggId;
     nuggToBuyFor: null | NuggId;
+    endingEpoch: number | null;
 }
 
 export type OfferModalData = TokenIdFactoryCreator<

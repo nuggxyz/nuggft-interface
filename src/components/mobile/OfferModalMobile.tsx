@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
-import { animated, config, useSpring, useTransition } from '@react-spring/web';
+import { animated, config, SpringValue, useSpring, useTransition } from '@react-spring/web';
 import { IoChevronBackCircle } from 'react-icons/io5';
 
 import useAsyncState from '@src/hooks/useAsyncState';
@@ -26,6 +26,8 @@ import CurrencyToggler, {
 import { DualCurrencyInputWithIcon } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import { calculateRawOfferValue } from '@src/web3/constants';
 import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
+import packages from '@src/packages';
+import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
@@ -41,9 +43,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const [page, setPage] = client.modal.usePhase();
     const { send, estimation: estimator, hash, error } = usePrioritySendTransaction();
     const [amount, setAmount] = useState('0');
-    const [lastPressed, setLastPressed] = React.useState('5');
+
+    const [lastPressed, setLastPressed] = React.useState('5' as `${bigint}` | null);
 
     const msp = client.stake.useMsp();
+
+    const blocknum = client.block.useBlock();
 
     const check = useAsyncState<{
         canOffer: boolean | undefined;
@@ -113,18 +118,25 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 });
         }
         return undefined;
-    }, [address, chainId, network, data.nuggToBuyFor, data.nuggToBuyFrom, msp]);
+    }, [address, chainId, network, data.nuggToBuyFor, data.nuggToBuyFrom, msp, blocknum]);
+
+    const minNextBid = React.useMemo(() => {
+        if (!check?.next) return 0;
+        return Number(new EthInt(check.next).toFixedStringRoundingUp(5));
+    }, [check?.next]);
 
     React.useEffect(() => {
-        if (check && check.eth && amount === '0') {
-            setAmount(check.eth.copy().increase(BigInt(5)).number.toFixed(5));
+        if (check && check.next && (amount === '0' || lastPressed === null)) {
+            setAmount(new EthInt(check.next).toFixedStringRoundingUp(5));
+            setLastPressed(null);
         }
-    }, [amount, check]);
+    }, [amount, check, lastPressed]);
 
     const amountUsd = useUsdPair(amount);
     const currentPrice = useUsdPair(check?.eth);
     const myBalance = useUsdPair(userBalance?.number);
     const currentBid = useUsdPair(check?.curr);
+    const minNextBidPair = useUsdPair(minNextBid);
 
     const paymentUsd = useUsdPairWithCalculation(
         React.useMemo(
@@ -212,36 +224,82 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         return undefined;
     }, [populatedTransaction, network]);
 
+    // const activeIncrement = React.useMemo(() => {
+    //     // if (data.isNugg() && data.)
+    //     return web3.config.calculateIncrement(data.endingEpoch ?? undefined, blocknum);
+    // }, [blocknum, data.endingEpoch]);
+
+    const increments = React.useMemo(() => {
+        const inc = check?.increment ? (check.increment.toNumber() - 10000) / 100 : 5;
+        return [
+            BigInt(inc),
+            ...[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 75, 99]
+                .filter((x) => x > inc)
+                .map((x) => BigInt(x)),
+        ];
+    }, [check?.increment]);
+
+    const [transition] = packages.spring.useTransition(increments, () => ({
+        leave: {
+            width: 0,
+        },
+        keys: (item) => `increments-${item}`,
+    }));
+
     // eslint-disable-next-line react/require-default-props
-    const IncrementButton = React.memo(({ increment }: { increment: bigint }) => {
-        return (
-            <Button
-                className="mobile-pressable-div"
-                label={increment !== BigInt(0) ? `+${increment.toString()}%` : 'min'}
-                onClick={() => {
-                    const a = check?.eth?.copy().increase(increment).number.toFixed(5) || '0';
-                    setAmount(a);
-                    setLastPressed(increment.toString());
-                }}
-                buttonStyle={{
-                    borderRadius: lib.layout.borderRadius.large,
-                    background:
-                        lastPressed === increment.toString()
-                            ? lib.colors.white
-                            : lib.colors.primaryColor,
-                    marginRight: '10px',
-                }}
-                textStyle={{
-                    color:
-                        lastPressed === increment.toString()
-                            ? lib.colors.primaryColor
-                            : lib.colors.white,
-                    fontSize: 24,
-                }}
-                disableHoverAnimation
-            />
-        );
-    });
+    const IncrementButton = React.memo(
+        ({
+            increment,
+            style,
+            index,
+        }: {
+            increment: bigint;
+            style: {
+                width: SpringValue<number>;
+            };
+            index: number;
+        }) => {
+            return (
+                <animated.div style={{ ...style }}>
+                    <Button
+                        className="mobile-pressable-div"
+                        label={increment !== BigInt(0) ? `+${increment.toString()}%` : 'min'}
+                        onClick={() => {
+                            if (Number(index) === 0) {
+                                setAmount(minNextBid.toString());
+                                setLastPressed(null);
+                                return;
+                            }
+                            const a =
+                                check?.eth?.increaseToFixedStringRoundingUp(increment, 5) || '0';
+                            setAmount(a);
+                            setLastPressed(`${increment}`);
+                        }}
+                        // disabled={activeIncrement > increment}
+                        buttonStyle={{
+                            borderRadius: lib.layout.borderRadius.large,
+                            background:
+                                lastPressed === increment.toString() ||
+                                (index === 0 && lastPressed === null)
+                                    ? lib.colors.white
+                                    : lib.colors.primaryColor,
+                            marginRight: '10px',
+                        }}
+                        textStyle={{
+                            color:
+                                lastPressed === increment.toString() ||
+                                (index === 0 && lastPressed === null)
+                                    ? lib.colors.primaryColor
+                                    : lib.colors.white,
+                            fontSize: 24,
+                        }}
+                        disableHoverAnimation
+                    />
+                </animated.div>
+            );
+        },
+    );
+
     const [tabFadeTransition] = useTransition(
         page,
         {
@@ -345,11 +403,19 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             ),
         [setPage, calculating, localCurrencyPref, data, mspusd],
     );
+
+    const [leader] = useAggregatedOffers(data.tokenId);
+
     const Page0 = React.useMemo(
         () => (
             <>
-                <Text size="larger" textStyle={{ marginTop: 10 }}>
-                    Current Price
+                <Text
+                    size="larger"
+                    textStyle={{ marginTop: 10, fontWeight: lib.layout.fontWeight.thicc }}
+                >
+                    {leader?.incrementX64 && !leader.incrementX64.isZero()
+                        ? 'last bid'
+                        : 'asking price'}
                 </Text>
 
                 <CurrencyText
@@ -360,16 +426,22 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     value={currentPrice}
                 />
 
-                <Text size="larger" textStyle={{ marginTop: 10 }}>
-                    My Balance
-                </Text>
-                <CurrencyText
-                    unitOverride={localCurrencyPref}
-                    forceEth
+                <Text
                     size="larger"
-                    value={myBalance}
-                    stopAnimation
-                />
+                    textStyle={{ marginTop: 10, fontWeight: lib.layout.fontWeight.thicc }}
+                >
+                    min next bid
+                </Text>
+                <div>
+                    <CurrencyText
+                        unitOverride={localCurrencyPref}
+                        forceEth
+                        size="larger"
+                        value={minNextBidPair}
+                        stopAnimation
+                    />{' '}
+                </div>
+
                 <div
                     style={{
                         display: 'flex',
@@ -440,16 +512,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         overflow: 'scroll',
                     }}
                 >
-                    <IncrementButton increment={BigInt(5)} />
-                    <IncrementButton increment={BigInt(10)} />
-                    <IncrementButton increment={BigInt(15)} />
-                    <IncrementButton increment={BigInt(20)} />
-                    <IncrementButton increment={BigInt(25)} />
-                    <IncrementButton increment={BigInt(30)} />
-                    <IncrementButton increment={BigInt(35)} />
-                    <IncrementButton increment={BigInt(40)} />
-                    <IncrementButton increment={BigInt(45)} />
-                    <IncrementButton increment={BigInt(50)} />
+                    {transition((sty, val, _, ind) => (
+                        <IncrementButton increment={val} style={sty} index={ind} />
+                    ))}
                 </div>
 
                 {check?.multicallRequired && (

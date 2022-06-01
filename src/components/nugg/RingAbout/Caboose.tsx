@@ -244,6 +244,7 @@ export default ({
                                             token,
                                             nuggToBuyFrom: nuggToBuyFrom.nugg,
                                             nuggToBuyFor: selectedMyNugg?.tokenId,
+                                            endingEpoch: token.activeSwap?.epoch?.id ?? null,
                                         }),
                                     );
                             }
