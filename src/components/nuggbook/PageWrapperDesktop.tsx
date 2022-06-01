@@ -12,11 +12,21 @@ import WhatIsAWallet from './pages/WhatIsAWallet';
 import WhatIsAnNFT from './pages/WhatIsAnNFT';
 import WhatIsDefi from './pages/WhatIsDefi';
 import Close from './pages/Close';
-import TheRundown from './pages/1-the-rundown/TheRundown';
 import Setup_0 from './pages/set-up/Setup_0';
 import Setup_1 from './pages/set-up/Setup_1';
 import Setup_2 from './pages/set-up/Setup_2';
 import Setup_3 from './pages/set-up/Setup_3';
+import Rundown_0 from './pages/1-the-rundown/Rundown_0';
+import Rundown_1 from './pages/1-the-rundown/Rundown_1';
+import Rundown_2 from './pages/1-the-rundown/Rundown_2';
+import Rundown_3 from './pages/1-the-rundown/Rundown_3';
+import Rundown_4 from './pages/1-the-rundown/Rundown_4';
+import Rundown_5 from './pages/1-the-rundown/Rundown_5';
+import Rundown_10 from './pages/1-the-rundown/Rundown_10';
+import Rundown_9 from './pages/1-the-rundown/Rundown_9';
+import Rundown_8 from './pages/1-the-rundown/Rundown_8';
+import Rundown_7 from './pages/1-the-rundown/Rundown_7';
+import Rundown_6 from './pages/1-the-rundown/Rundown_6';
 
 const useNuggBook = () => {
     const page = client.nuggbook.useNuggBookPage();
@@ -34,8 +44,28 @@ const useNuggBook = () => {
             return { top: 100, comp: WhatIsAnNFT, page };
         case Page.WhatIsDefi:
             return { top: 100, comp: WhatIsDefi, page };
-        case Page.TheRundown:
-            return { top: 100, comp: TheRundown, page };
+        case Page.Rundown_0:
+            return { top: 100, comp: Rundown_0, page };
+        case Page.Rundown_1:
+            return { top: 100, comp: Rundown_1, page };
+        case Page.Rundown_2:
+            return { top: 100, comp: Rundown_2, page };
+        case Page.Rundown_3:
+            return { top: 100, comp: Rundown_3, page };
+        case Page.Rundown_4:
+            return { top: 100, comp: Rundown_4, page };
+        case Page.Rundown_5:
+            return { top: 100, comp: Rundown_5, page };
+        case Page.Rundown_6:
+            return { top: 100, comp: Rundown_6, page };
+        case Page.Rundown_7:
+            return { top: 100, comp: Rundown_7, page };
+        case Page.Rundown_8:
+            return { top: 100, comp: Rundown_8, page };
+        case Page.Rundown_9:
+            return { top: 100, comp: Rundown_9, page };
+        case Page.Rundown_10:
+            return { top: 100, comp: Rundown_10, page };
         case Page.Setup_0:
             return { top: 100, comp: Setup_0, page };
         case Page.Setup_1:
