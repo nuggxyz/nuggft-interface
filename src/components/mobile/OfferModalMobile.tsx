@@ -97,6 +97,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             ])
                 .then((_data) => {
                     const agency = lib.parse.agency(_data[1]);
+                    console.log({ agency, _data });
+
                     if (agency.eth.eq(0)) {
                         return {
                             ..._data[0],
@@ -119,7 +121,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         }
         return undefined;
     }, [address, chainId, network, data.nuggToBuyFor, data.nuggToBuyFrom, msp, blocknum]);
-
+    // console.log({ check, data });
     const minNextBid = React.useMemo(() => {
         if (!check?.next) return 0;
         return Number(new EthInt(check.next).toFixedStringRoundingUp(5));
@@ -134,13 +136,17 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const amountUsd = useUsdPair(amount);
     const currentPrice = useUsdPair(check?.eth);
-    // const myBalance = useUsdPair(userBalance?.number);
+
     const currentBid = useUsdPair(check?.curr);
     const minNextBidPair = useUsdPair(minNextBid);
 
     const paymentUsd = useUsdPairWithCalculation(
         React.useMemo(
-            () => [amount, check?.curr || 0, check?.multicallRequired ? msp : 0],
+            () => [
+                amount,
+                check?.curr || 0,
+                check?.multicallRequired ? msp.increase(BigInt(5)) : 0,
+            ],
             [amount, check, msp],
         ),
         React.useMemo(
@@ -148,7 +154,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 ([_amount, _check, _msp]) => {
                     // was running into issue where "value" inside populatedTransaction was negative
                     const copy = _amount.copy();
-                    if (copy.gt(0)) return copy.sub(_check).add(_msp);
+                    if (copy.gt(0)) {
+                        return copy.sub(_check).add(_msp);
+                    }
                     return new EthInt(0);
                 },
             [],
@@ -162,7 +170,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             if (data.isItem()) {
                 if (check?.multicallRequired) {
                     const realmsp = msp.increase(BigInt(5));
-                    const updatedValue = value.add(realmsp.bignumber);
                     return {
                         tx: nuggft.populateTransaction['offer(uint64[],uint256[])'](
                             [
@@ -173,9 +180,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                     data.tokenId,
                                 ),
                             ],
-                            [realmsp.bignumber, value],
+                            [realmsp.bignumber, amountUsd.eth.bignumber],
                             {
-                                value: updatedValue,
+                                value,
                                 from: address,
                             },
                         ),

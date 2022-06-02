@@ -106,6 +106,28 @@ export const useUsdPairWithCalculation = <T extends Fractionish, R extends numbe
     }, [price, input, preference, callback]);
 };
 
+export const useUsdPairWithCalculation2 = <T extends Fractionish, R extends number>(
+    input: FixedLengthArray<T, R>,
+    callback: (arg: FixedLengthArray<Readonly<EthInt>, R>) => [EthInt, EthInt],
+) => {
+    const price = store((state) => state.price);
+
+    const preference = useCurrencyPreferrence();
+
+    return React.useMemo(() => {
+        const abc = input.map((x) =>
+            Object.freeze(EthInt.tryParseFrac(x)),
+        ) as unknown as FixedLengthArray<EthInt, R>;
+
+        const eths = callback(abc);
+
+        return [
+            PairInt.fromUsdPrice(eths[0], price, preference),
+            PairInt.fromUsdPrice(eths[1], price, preference),
+        ];
+    }, [price, input, preference, callback]);
+};
+
 export default {
     useUsd: () => store((state) => state.price),
     useTimestamp: () => store((state) => state.timestamp),

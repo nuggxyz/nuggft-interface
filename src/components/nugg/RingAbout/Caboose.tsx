@@ -252,17 +252,17 @@ export default ({
                         label={
                             continued
                                 ? selectedMyNugg
-                                    ? t`Review`
-                                    : t`Select One of Your Nuggs`
+                                    ? t`review`
+                                    : t`select a nugg from your roost`
                                 : mustWaitToBid
-                                ? t`wait ${minutes} minutes to buy from a new nugg`
+                                ? t`wait ${minutes} min`
                                 : isPhone && isUndefinedOrNullOrStringEmpty(address)
-                                ? t`Connect wallet`
+                                ? t`connect wallet`
                                 : !nuggToBuyFrom
-                                ? t`Select a Nugg`
+                                ? t`select a nugg`
                                 : !swap?.endingEpoch
-                                ? t`Continue`
-                                : t`Place offer`
+                                ? t`continue`
+                                : t`place offer`
                         }
                     />
                 </div>
