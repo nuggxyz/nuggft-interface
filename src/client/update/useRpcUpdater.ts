@@ -199,17 +199,17 @@ export default () => {
                         if (event.args.account.toLowerCase() === address?.toLowerCase()) {
                             removeNuggClaim(event.args.tokenId.toNuggId());
                         }
-                        emitCompletedTx(event.args.account as AddressString, (from, dat) => {
-                            const dec = nuggft.interface
-                                .encodeFunctionData('claim(uint24[],address[],uint24[],uint16[])', [
-                                    [],
-                                    [],
-                                    [],
-                                    [],
-                                ])
-                                .substring(0, 10);
+                        emitCompletedTx(event.args.account as AddressString, (from) => {
+                            // const dec = nuggft.interface
+                            //     .encodeFunctionData('claim(uint24[],address[],uint24[],uint16[])', [
+                            //         [],
+                            //         [],
+                            //         [],
+                            //         [],
+                            //     ])
+                            //     .substring(0, 10);
 
-                            return dat.startsWith(dec) && from === event.args.account;
+                            return from === event.args.account;
                         });
                         break;
                     }
