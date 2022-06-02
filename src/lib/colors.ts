@@ -50,13 +50,16 @@ const Colors = {
     gradientRedLight: '#ffe8ea',
     gradientGold: '#F3BE1E',
     gradientPink: '#e856d0',
+    pink: '#E644CB',
+    pinkGradient: 'linear-gradient(-45deg, #E644CB 0%, #FFFFFF 300%)',
+
     chartbg: '#8a3434',
     chargbg0: 'rgba(0, 0, 0, 0.3)',
     gradient: `linear-gradient(128.17deg, #FF6871 -14.78%, #F3BE1E 110.05%)`,
     gradientTransparent: `linear-gradient(128.17deg, #FF6871BB -14.78%, #F3BE1EBB 110.05%)`,
     gradient2: `linear-gradient(128.17deg, #5090ea -14.78%, #00C781 110.05%)`,
     gradient2Transparent: `linear-gradient(128.17deg, rgb(80, 144, 234, .5) -14.78%, #00C78188 110.05%)`,
-    gradient3: 'linear-gradient(-90deg, #e856d0 0%, #FF6871 100%)',
+    gradient3: 'linear-gradient(-45deg, #e856d0 -35%, #FF6871 100%)',
     gradient3Transparent: 'linear-gradient(-90deg, #e856d088 0%, #FF687188 100%)',
     gradient4Transparent:
         'linear-gradient(90deg,  rgba(0, 0, 0, 0.1) 0%, rgb(80, 144, 234, .1) 100%)',

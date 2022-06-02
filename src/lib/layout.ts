@@ -40,6 +40,8 @@ const Layout = {
         small: '.3rem',
         smallish: '.4rem',
         mediumish: '.85rem',
+        mediumishish: '16px',
+
         medium: '1rem',
         largish: '1.5rem',
         large: '2rem',

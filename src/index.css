@@ -197,12 +197,15 @@ html {
     -webkit-transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
     transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
     -webkit-tap-highlight-color: transparent;
+    -webkit-transform: translateY(4px) translateX(4px);
+    -ms-transform: translateY(4px) translateX(4px);
+    transform: translateY(4px) translateX(4px);
 }
 
 .mobile-pressable-div-deep:active {
-    -webkit-transform: scale(0.85);
-    -ms-transform: scale(0.85);
-    transform: scale(0.85);
+    -webkit-transform: translateY(0px) translateX(0px);
+    -ms-transform: translateY(0px) translateX(0px);
+    transform: translateY(0px) translateX(0px);
 }
 
 @keyframes mobile-fade {

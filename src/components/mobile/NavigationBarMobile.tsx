@@ -18,6 +18,7 @@ import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/Cur
 import { ModalEnum } from '@src/interfaces/modals';
 import usePrevious from '@src/hooks/usePrevious';
 import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
+import clicker from '@src/assets/images/nugg/clicker2.svg';
 
 export const useOpacitate = (name: string, arg: boolean | undefined) => {
     const [exit, exitToAnimate, staticStyles] = React.useMemo(() => {
@@ -188,10 +189,10 @@ const NavigationBarMobile: FC<unknown> = () => {
                     marginLeft: 15,
                     ...nuggbookOpenUp,
                     position: 'relative',
-                    borderRadius: lib.layout.borderRadius.medium,
+                    borderRadius: lib.layout.borderRadius.mediumishish,
                     background: lib.colors.transparentWhite,
                     boxShadow: lib.layout.boxShadow.dark,
-                    overflow: 'hidden',
+                    // overflow: 'hidden',
                     ...floater,
                 }}
             >
@@ -367,6 +368,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         width: '75px',
                         borderRadius: lib.layout.borderRadius.medium,
                         justifySelf: 'center',
+                        justifyContent: 'center',
                         pointerEvents: 'auto',
                     }}
                 >
@@ -802,29 +804,39 @@ export const HomeButton = React.memo<{
         // }, [ref])
         return (
             <Button
+                className="mobile-pressable-div-deep"
                 // ref={ref}
                 rightIcon={
-                    <div
-                        className="concave"
+                    <img
+                        alt="nugg clicker"
+                        src={clicker}
+                        height={55}
                         style={{
-                            height: 65,
-                            width: 65,
-                            position: 'relative',
-                            justifyContent: 'center',
-                            display: 'flex',
-                            alignItems: 'center',
+                            borderRadius: lib.layout.borderRadius.large,
+                            objectFit: 'cover',
                         }}
-                    >
-                        <div
-                            style={{
-                                border: `2px solid ${lib.colors.transparentPrimaryColor}`,
-                                height: 18,
-                                width: 18,
+                    />
+                    // <div
+                    //     className="concave"
+                    //     style={{
+                    //         height: 65,
+                    //         width: 65,
+                    //         position: 'relative',
+                    //         justifyContent: 'center',
+                    //         display: 'flex',
+                    //         alignItems: 'center',
+                    //     }}
+                    // >
+                    //     <div
+                    //         style={{
+                    //             border: `2px solid ${lib.colors.transparentPrimaryColor}`,
+                    //             height: 18,
+                    //             width: 18,
 
-                                borderRadius: '5px',
-                            }}
-                        />
-                    </div>
+                    //             borderRadius: '5px',
+                    //         }}
+                    //     />
+                    // </div>
                 }
                 buttonStyle={{
                     width: '100%',
@@ -832,10 +844,11 @@ export const HomeButton = React.memo<{
                     justifyContent: 'center',
                     display: 'flex',
                     alignItems: 'center',
-                    padding: 0,
-                    background: 'transparent',
-                    borderRadius: !isFull ? lib.layout.borderRadius.medium : 0,
+                    padding: 10,
+                    background: lib.colors.gradient3,
+                    borderRadius: lib.layout.borderRadius.mediumishish,
                     WebkitTapHighlightColor: 'transparent',
+                    boxShadow: lib.layout.boxShadow.dark,
                 }}
                 onClick={(ev) => {
                     ev.preventDefault();
