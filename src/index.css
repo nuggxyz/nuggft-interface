@@ -442,3 +442,17 @@ input[type='number'] {
 .animated-card-enabled * > .customized-dotnugg:hover {
     filter: drop-shadow(2px 3px 75px rgba(0, 0, 0, 0.4)) hue-rotate(0);
 }
+
+.home-button {
+    transform: translateX(0px) translateY(0px) scale(0.97);
+    box-shadow: 0 6px 10px rgba(102, 102, 102, 0.4);
+}
+
+/* .home-button:hover {
+    transform: translateX(-1px) translateY(-1px) scale(0.97);
+    box-shadow: inset 2px 3px 5px rgba(0, 0, 0, 0.4);
+} */
+.home-button:active {
+    transform: translateX(0px) translateY(0px) scale(0.9);
+    box-shadow: inset 0.5px 0.5px 5px rgba(0, 0, 0, 0.4);
+}

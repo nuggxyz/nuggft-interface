@@ -795,17 +795,10 @@ export const HomeButton = React.memo<{
     onClick: (full: boolean) => void;
 }>(
     ({ onClick, isFull }) => {
-        // const ref = React.useRef<HTMLDivElement>(null)
-
-        // useEffect(() => {
-        //     // ref.current?.ontouchstart = (ev) => {
-        //     //     ev.returnValue
-        //     // }
-        // }, [ref])
+        const [clicked, setClicked] = React.useState(false);
         return (
             <Button
-                className="mobile-pressable-div-deep"
-                // ref={ref}
+                className={` ${clicked ? 'pressed' : ''} home-button`}
                 rightIcon={
                     <img
                         alt="nugg clicker"
@@ -814,29 +807,9 @@ export const HomeButton = React.memo<{
                         style={{
                             borderRadius: lib.layout.borderRadius.large,
                             objectFit: 'cover',
+                            pointerEvents: 'none',
                         }}
                     />
-                    // <div
-                    //     className="concave"
-                    //     style={{
-                    //         height: 65,
-                    //         width: 65,
-                    //         position: 'relative',
-                    //         justifyContent: 'center',
-                    //         display: 'flex',
-                    //         alignItems: 'center',
-                    //     }}
-                    // >
-                    //     <div
-                    //         style={{
-                    //             border: `2px solid ${lib.colors.transparentPrimaryColor}`,
-                    //             height: 18,
-                    //             width: 18,
-
-                    //             borderRadius: '5px',
-                    //         }}
-                    //     />
-                    // </div>
                 }
                 buttonStyle={{
                     width: '100%',
@@ -848,11 +821,11 @@ export const HomeButton = React.memo<{
                     background: lib.colors.gradient3,
                     borderRadius: lib.layout.borderRadius.mediumishish,
                     WebkitTapHighlightColor: 'transparent',
-                    boxShadow: lib.layout.boxShadow.dark,
                 }}
                 onClick={(ev) => {
                     ev.preventDefault();
                     onClick(isFull);
+                    setClicked(!clicked);
                 }}
             />
         );
