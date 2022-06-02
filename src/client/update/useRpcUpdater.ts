@@ -200,15 +200,6 @@ export default () => {
                             removeNuggClaim(event.args.tokenId.toNuggId());
                         }
                         emitCompletedTx(event.args.account as AddressString, (from) => {
-                            // const dec = nuggft.interface
-                            //     .encodeFunctionData('claim(uint24[],address[],uint24[],uint16[])', [
-                            //         [],
-                            //         [],
-                            //         [],
-                            //         [],
-                            //     ])
-                            //     .substring(0, 10);
-
                             return from === event.args.account;
                         });
                         break;

@@ -1,12 +1,10 @@
 import React, { CSSProperties, FC } from 'react';
 import { animated, useSpring } from '@react-spring/web';
-import { IoQrCode, IoSearch } from 'react-icons/io5';
+import { IoInformationCircle, IoQrCode, IoSearch } from 'react-icons/io5';
 import { useMatch, useNavigate } from 'react-router';
 
-import InfoClicker from '@src/components/nuggbook/InfoClicker';
 import lib from '@src/lib';
 import web3 from '@src/web3';
-import NLStaticImage from '@src/components/general/NLStaticImage';
 import Button from '@src/components/general/Buttons/Button/Button';
 import { useOnTapOutside } from '@src/hooks/useOnClickOutside';
 import packages from '@src/packages';
@@ -70,8 +68,6 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const address = web3.hook.usePriorityAccount();
 
-    // const [searchOpenCore, setSearchOpen] = React.useState<boolean>(false);
-
     const [manualMatch, setManualMatch] = React.useState<boolean>(false);
 
     const close = client.nuggbook.useCloseNuggBook();
@@ -85,7 +81,6 @@ const NavigationBarMobile: FC<unknown> = () => {
     const nuggbookPage = React.useDeferredValue(client.nuggbook.useNuggBookPage());
 
     const isFull = React.useDeferredValue(manualMatch);
-    // const searchOpen = React.useDeferredValue(searchOpenCore);
 
     const prevNuggbookOpen = usePrevious(nuggbookOpen);
 
@@ -114,11 +109,17 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const [nuggbookOpenUp] = useSpring(
         {
-            height: nuggbookOpen ? (nuggbookPage === Page.Start ? '250px' : '600px') : '75px',
+            height: nuggbookOpen
+                ? nuggbookPage === Page.Start
+                    ? '250px'
+                    : '600px'
+                : isFull
+                ? '200px'
+                : '75px',
 
             config: packages.spring.config.stiff,
         },
-        [nuggbookOpen, nuggbookPage],
+        [nuggbookOpen, nuggbookPage, isFull],
     );
 
     const [nuggbookFade] = useSpring(
@@ -150,14 +151,18 @@ const NavigationBarMobile: FC<unknown> = () => {
     useOnTapOutside(ref, tapper);
 
     const homeClick = React.useCallback(() => {
-        if (nuggbookOpen) close();
-        else if (!manualMatch) setManualMatch(true);
+        if (nuggbookOpen) {
+            close();
+        } else if (!manualMatch) {
+            setManualMatch(true);
+        }
         // eslint-disable-next-line no-useless-return
-        else if (matchHome) setManualMatch(false);
-        else {
+        else if (matchHome) {
+            setManualMatch(false);
+        } else {
             navigate('/');
         }
-    }, [manualMatch, nuggbookOpen, close, navigate, matchHome]);
+    }, [manualMatch, close, navigate, matchHome, nuggbookOpen]);
 
     return (
         <animated.div
@@ -176,6 +181,10 @@ const NavigationBarMobile: FC<unknown> = () => {
                 pointerEvents: 'none',
                 ...opacitateAnimated,
             }}
+            onClick={(ev) => {
+                ev.preventDefault();
+                ev.stopPropagation();
+            }}
         >
             <animated.div
                 style={{
@@ -185,6 +194,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                     WebkitBackdropFilter: 'blur(50px)',
                     backdropFilter: 'blur(50px)',
                     minWidth: '75px',
+                    // height: isFull ? '200px' : '75px',
                     marginRight: 15,
                     marginLeft: 15,
                     ...nuggbookOpenUp,
@@ -194,6 +204,10 @@ const NavigationBarMobile: FC<unknown> = () => {
                     boxShadow: lib.layout.boxShadow.dark,
                     // overflow: 'hidden',
                     ...floater,
+                }}
+                onClick={(ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
                 }}
             >
                 {/* ////////////////////////////////////////////////////////////////////////
@@ -231,7 +245,6 @@ const NavigationBarMobile: FC<unknown> = () => {
                         }
                     />
                 </animated.div>
-
                 {/* ////////////////////////////////////////////////////////////////////////
                     middle
                 //////////////////////////////////////////////////////////////////////// */}
@@ -252,113 +265,69 @@ const NavigationBarMobile: FC<unknown> = () => {
                     <animated.div
                         style={{
                             height: '100%',
-                            width: '200px',
+                            // width: '200px',
                             margin: 'none',
                             display: 'flex',
                             justifyContent: 'space-around',
                             alignItems: 'center',
                         }}
                     >
-                        <Button
+                        {/* <Button
                             buttonStyle={{
                                 padding: 0,
                                 background: 'transparent',
                             }}
                             rightIcon={<span>💬</span>}
                             onClick={() => nuggbookGoto(Page.Feedback)}
-                        />
-                        <NLStaticImage image="nuggbutton" />
-                        <InfoClicker
-                            size={45}
-                            to={Page.TableOfContents}
-                            color={lib.colors.nuggBlueSemiTransparent}
-                            buttonStyle={{ padding: 0 }}
-                        />
-                        {/* <Button
-                            buttonStyle={{
-                                padding: 0,
-                                background: 'transparent',
-                            }}
-                            rightIcon={<span>ℹ️</span>}
-                            onClick={() => nuggbookGoto(Page.TableOfContents)}
                         /> */}
+                        {/* {matchHome ? ( */}
+                        <div
+                            style={{
+                                // display: 'flex',
+                                // justifyContent: 'center',
+                                // alignItems: 'center',
+                                position: 'relative',
+                                borderRadius: lib.layout.borderRadius.large,
+                                // boxShadow: lib.layout.boxShadow.dark,
+                                padding: '.2rem .7rem .5rem',
+                                textAlign: 'center',
+                                verticalAlign: 'center',
+                                // marginBottom: '.4rem',
+                                background: lib.colors.gradient2Transparent,
+                                WebkitBackdropFilter: 'blur(50px)',
+                                backdropFilter: 'blur(50px)',
+                                marginLeft: -8,
+                                // marginBottom: -5,
+                                // background: lib.colors.gradient2,
+                            }}
+                            role="button"
+                            aria-hidden="true"
+                            onClick={() => {
+                                navigate('/');
+                            }}
+                        >
+                            <span
+                                style={{
+                                    fontSize: '30px',
+                                    color: 'white',
+                                    // WebkitBackgroundClip: 'text',
+                                    // WebkitTextFillColor: 'transparent',
+
+                                    ...lib.layout.presets.font.main.thicc,
+                                }}
+                            >
+                                nugg.xyz
+                            </span>
+                        </div>
                     </animated.div>
                 </animated.div>
-
-                {/* ////////////////////////////////////////////////////////////////////////
-                    closer
-                //////////////////////////////////////////////////////////////////////// */}
-                {/*
-                <animated.div
-                    id="hi-there-bob"
-                    style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-
-                        width: '100%',
-                        padding: 20,
-                        zIndex: 8,
-                        ...closeOpacitate,
-                    }}
-                >
-                    <Button
-                        className="mobile-pressable-div"
-                        buttonStyle={{
-                            backgroundColor: lib.colors.transparentWhite,
-                            color: lib.colors.primaryColor,
-                            borderRadius: lib.layout.borderRadius.mediumish,
-
-                            alignItems: 'center',
-                        }}
-                        textStyle={{ ...lib.layout.presets.font.main.thicc }}
-                        label="menu"
-                        leftIcon={
-                            <IoIosMenu
-                                color={lib.colors.primaryColor}
-                                style={{ marginRight: '.3rem' }}
-                                size={20}
-                            />
-                        }
-                        onClick={() => {
-                            close();
-                        }}
-                    />
-                    <Button
-                        className="mobile-pressable-div"
-                        buttonStyle={{
-                            backgroundColor: lib.colors.transparentWhite,
-                            color: lib.colors.primaryColor,
-                            borderRadius: lib.layout.borderRadius.mediumish,
-
-                            alignItems: 'center',
-                        }}
-                        textStyle={{ ...lib.layout.presets.font.main.thicc }}
-                        label="close"
-                        leftIcon={
-                            <IoIosCloseCircle
-                                color={lib.colors.primaryColor}
-                                style={{ marginRight: '.3rem' }}
-                                size={20}
-                            />
-                        }
-                        onClick={() => {
-                            close();
-                        }}
-                    />
-                </animated.div> */}
 
                 {/* ////////////////////////////////////////////////////////////////////////
                     home
                 //////////////////////////////////////////////////////////////////////// */}
                 <animated.div
                     style={{
-                        zIndex: 8,
+                        zIndex: 100000000,
                         position: 'absolute',
                         right: 0,
                         display: 'flex',
@@ -372,7 +341,23 @@ const NavigationBarMobile: FC<unknown> = () => {
                         pointerEvents: 'auto',
                     }}
                 >
-                    <HomeButton onClick={homeClick} isFull={isFull} />
+                    <div
+                        style={{
+                            minWidth: '85px',
+                            height: '85px',
+                            background: lib.colors.transparentWhite,
+                            borderRadius: '22.5%',
+                            WebkitTapHighlightColor: 'transparent',
+                            boxShadow: '0 6px 10px rgba(102, 102, 102, 0.4)',
+                            display: 'flex',
+                            WebkitBackdropFilter: 'blur(50px)',
+                            backdropFilter: 'blur(50px)',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <HomeButton onClick={homeClick} isFull={isFull} />
+                    </div>
                 </animated.div>
 
                 {/* ////////////////////////////////////////////////////////////////////////
@@ -407,7 +392,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                     zIndex: 10,
                     position: 'absolute',
                     left: 15,
-                    top: -100,
+                    top: -45,
                     display: 'flex',
                     alignItems: 'center',
                     borderRadius: lib.layout.borderRadius.medium,
@@ -426,21 +411,28 @@ const NavigationBarMobile: FC<unknown> = () => {
                 style={{
                     zIndex: 10,
                     position: 'absolute',
-                    left: 15,
-                    top: -50,
+                    left: 25,
+                    top: 10,
                     display: 'flex',
-                    alignItems: 'center',
-                    borderRadius: lib.layout.borderRadius.medium,
+                    alignItems: 'flex-start',
+                    flexDirection: 'column',
+                    // borderRadius: lib.layout.borderRadius.medium,
                     justifySelf: 'center',
                     ...opacitate,
-                    boxShadow: lib.layout.boxShadow.dark,
                 }}
             >
-                <NoFlash2
+                <Account
                     address={address}
                     onClick={React.useCallback(() => {
                         // if (address) navigate('/wallet');
                         nuggbookGoto(Page.Connect);
+                    }, [nuggbookGoto])}
+                />
+                <div style={{ marginTop: '10px' }} />
+                <Learn
+                    onClick={React.useCallback(() => {
+                        // if (address) navigate('/wallet');
+                        nuggbookGoto(Page.TableOfContents);
                     }, [nuggbookGoto])}
                 />
             </animated.div>
@@ -453,8 +445,8 @@ const NavigationBarMobile: FC<unknown> = () => {
                 style={{
                     zIndex: 10,
                     position: 'absolute',
-                    right: 15,
-                    top: -45,
+                    right: 25,
+                    top: 15,
                     display: 'flex',
                     alignItems: 'center',
                     borderRadius: lib.layout.borderRadius.medium,
@@ -469,6 +461,18 @@ const NavigationBarMobile: FC<unknown> = () => {
                         return undefined;
                     }}
                     floaterStyle={{ boxShadow: lib.layout.boxShadow.dark }}
+                    containerStyle={
+                        {
+                            // background: lib.colors.transparentWhite,
+                            // borderRadius: lib.layout.borderRadius.mediumish,
+                            // WebkitBackdropFilter: 'blur(30px)',
+                            // backdropFilter: 'blur(30px)',
+                            // height: '50px',
+                            // // this padding is required because the width needs to be 90 for the "DualToggler"
+                            // width: '100px',
+                            // padding: '5px',
+                        }
+                    }
                     pref={currencyPreferrence}
                 />
             </animated.div>
@@ -481,8 +485,8 @@ const NavigationBarMobile: FC<unknown> = () => {
                 style={{
                     zIndex: 10,
                     position: 'absolute',
-                    right: 15,
-                    top: -100,
+                    right: 25,
+                    top: 60,
                     display: 'flex',
                     alignItems: 'center',
                     borderRadius: lib.layout.borderRadius.medium,
@@ -492,90 +496,6 @@ const NavigationBarMobile: FC<unknown> = () => {
             >
                 <NoFlashStatus address={address} />
             </div>
-
-            {/* ////////////////////////////////////////////////////////////////////////
-                    back button
-                //////////////////////////////////////////////////////////////////////// */}
-            {/* <animated.div
-                style={{
-                    zIndex: 10,
-                    position: 'absolute',
-                    right: 15,
-                    top: -100,
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                    borderRadius: lib.layout.borderRadius.medium,
-                    justifySelf: 'center',
-                    ...backOpacitate,
-                }}
-            >
-                <Button
-                    className="mobile-pressable-div"
-                    buttonStyle={{
-                        backgroundColor: lib.colors.transparentWhite,
-                        color: lib.colors.primaryColor,
-                        borderRadius: lib.layout.borderRadius.mediumish,
-                        WebkitBackdropFilter: 'blur(50px)',
-                        backdropFilter: 'blur(50px)',
-                        alignItems: 'center',
-                    }}
-                    textStyle={{ ...lib.layout.presets.font.main.thicc }}
-                    label="back"
-                    leftIcon={
-                        <IoChevronBackCircle
-                            color={lib.colors.primaryColor}
-                            style={{ marginRight: '.3rem' }}
-                            size={20}
-                        />
-                    }
-                    onClick={() => {
-                        navigate(-1);
-                        setManualMatch(false);
-                    }}
-                />
-            </animated.div>
-
-
-            <animated.div
-                style={{
-                    zIndex: 10,
-                    position: 'absolute',
-                    right: 15,
-                    top: -50,
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                    borderRadius: lib.layout.borderRadius.medium,
-                    justifySelf: 'center',
-                    ...backOpacitate,
-                }}
-            >
-                <Button
-                    className="mobile-pressable-div"
-                    buttonStyle={{
-                        backgroundColor: lib.colors.transparentWhite,
-                        color: lib.colors.primaryColor,
-                        borderRadius: lib.layout.borderRadius.mediumish,
-                        WebkitBackdropFilter: 'blur(50px)',
-                        backdropFilter: 'blur(50px)',
-                        alignItems: 'center',
-                    }}
-                    textStyle={{ ...lib.layout.presets.font.main.thicc }}
-                    label="home"
-                    leftIcon={
-                        <TiHome
-                            color={lib.colors.primaryColor}
-                            style={{ marginRight: '.3rem' }}
-                            size={20}
-                        />
-                    }
-                    onClick={() => {
-                        navigate('/');
-                        setManualMatch(false);
-                    }}
-                />
-            </animated.div> */}
         </animated.div>
     );
 };
@@ -599,7 +519,7 @@ export const NoFlashClaims = React.memo<{
             }
         }, [unclaimedOffers, prevNumClaims, epoch]);
 
-        return (
+        return numClaims !== 0 ? (
             <Button
                 className="mobile-pressable-div"
                 buttonStyle={{
@@ -647,7 +567,7 @@ export const NoFlashClaims = React.memo<{
                     openModal({ modalType: ModalEnum.Claim });
                 }}
             />
-        );
+        ) : null;
     },
     (a, b) => a.address === b.address,
 );
@@ -672,6 +592,9 @@ export const NoFlashStatus = React.memo<{
                     WebkitBackdropFilter: 'blur(50px)',
                     backdropFilter: 'blur(50px)',
                     alignItems: 'center',
+                    width: '90px',
+                    WebkitTapHighlightColor: 'transparent',
+                    boxShadow: '0 6px 10px rgba(102, 102, 102, 0.4)',
                 }}
                 textStyle={{ ...lib.layout.presets.font.main.thicc, fontSize: 21 }}
                 label={health.graphProblem ? '📱 ⚠️' : '📲 🆗'}
@@ -684,7 +607,7 @@ export const NoFlashStatus = React.memo<{
     (a, b) => a.address === b.address,
 );
 
-export const NoFlash2 = React.memo<{
+export const Account = React.memo<{
     address?: string;
     onClick: (full: boolean) => void;
 }>(
@@ -701,6 +624,7 @@ export const NoFlash2 = React.memo<{
                     WebkitBackdropFilter: 'blur(50px)',
                     backdropFilter: 'blur(50px)',
                     alignItems: 'center',
+                    boxShadow: lib.layout.boxShadow.dark,
                 }}
                 textStyle={{ ...lib.layout.presets.font.main.thicc, fontSize: 21 }}
                 label={ens || 'connect wallet'}
@@ -734,6 +658,55 @@ export const NoFlash2 = React.memo<{
         );
     },
     (a, b) => a.address === b.address && a.onClick === b.onClick,
+);
+
+export const Learn = React.memo<{
+    onClick: (full: boolean) => void;
+}>(
+    ({ onClick }) => {
+        return (
+            <Button
+                className="mobile-pressable-div"
+                buttonStyle={{
+                    backgroundColor: lib.colors.transparentWhite,
+                    color: lib.colors.primaryColor,
+                    borderRadius: lib.layout.borderRadius.mediumish,
+                    WebkitBackdropFilter: 'blur(50px)',
+                    backdropFilter: 'blur(50px)',
+                    alignItems: 'center',
+                    boxShadow: lib.layout.boxShadow.dark,
+                }}
+                textStyle={{ ...lib.layout.presets.font.main.thicc, fontSize: 21 }}
+                label="learn"
+                leftIcon={
+                    <div
+                        className="mobile-pressable-div-deep"
+                        style={{
+                            position: 'relative',
+                            justifyContent: 'center',
+                            display: 'flex',
+                            alignItems: 'center',
+                            paddingRight: '10px',
+                        }}
+                    >
+                        <IoInformationCircle
+                            size={25}
+                            color={lib.colors.nuggBlueSemiTransparent}
+                            className="info-clicker"
+                            style={{
+                                background: 'transparent',
+                                pointerEvents: 'auto',
+                            }}
+                        />
+                    </div>
+                }
+                onClick={() => {
+                    onClick(true);
+                }}
+            />
+        );
+    },
+    (a, b) => a.onClick === b.onClick,
 );
 
 export const NoFlash = React.memo<{
@@ -796,55 +769,127 @@ export const HomeButton = React.memo<{
 }>(
     ({ onClick, isFull }) => {
         return (
-            <div
-                style={{
-                    minWidth: '85px',
-                    height: '85px',
-                    background: lib.colors.transparentWhite,
+            <Button
+                className="home-button"
+                rightIcon={
+                    <img
+                        alt="nugg clicker"
+                        src={clicker}
+                        height={55}
+                        style={{
+                            borderRadius: lib.layout.borderRadius.large,
+                            objectFit: 'cover',
+                            pointerEvents: 'none',
+                        }}
+                    />
+                }
+                buttonStyle={{
+                    zIndex: 100000000,
+
+                    width: '90%',
+                    height: '90%',
+                    justifyContent: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: 10,
+                    background: lib.colors.gradient3,
                     borderRadius: '22.5%',
                     WebkitTapHighlightColor: 'transparent',
-                    boxShadow: '0 6px 10px rgba(102, 102, 102, 0.4)',
-                    display: 'flex',
-                    WebkitBackdropFilter: 'blur(50px)',
-                    backdropFilter: 'blur(50px)',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                 }}
-            >
-                <Button
-                    className="home-button"
-                    rightIcon={
-                        <img
-                            alt="nugg clicker"
-                            src={clicker}
-                            height={55}
-                            style={{
-                                borderRadius: lib.layout.borderRadius.large,
-                                objectFit: 'cover',
-                                pointerEvents: 'none',
-                            }}
-                        />
-                    }
-                    buttonStyle={{
-                        width: '90%',
-                        height: '90%',
-                        justifyContent: 'center',
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: 10,
-                        background: lib.colors.gradient3,
-                        borderRadius: '22.5%',
-                        WebkitTapHighlightColor: 'transparent',
-                    }}
-                    onClick={(ev) => {
-                        ev.preventDefault();
-                        onClick(isFull);
-                    }}
-                />
-            </div>
+                onClick={(ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    onClick(isFull);
+                }}
+            />
         );
     },
     (a, b) => a.onClick === b.onClick && a.isFull === b.isFull,
 );
 
 export default NavigationBarMobile;
+/* <div
+style={{
+    // display: 'flex',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    position: 'relative',
+    borderRadius: lib.layout.borderRadius.large,
+    boxShadow: lib.layout.boxShadow.dark,
+    padding: '.4rem 1rem .8rem',
+    textAlign: 'center',
+    verticalAlign: 'center',
+    marginBottom: '.4rem',
+    backgroundColor: lib.colors.transparentWhite,
+    WebkitBackdropFilter: 'blur(50px)',
+    backdropFilter: 'blur(50px)',
+}}
+>
+<span
+    style={{
+        fontSize: '30px',
+        background: lib.colors.gradient2,
+        color: 'black',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+
+        ...lib.layout.presets.font.main.thicc,
+    }}
+>
+    welcome to nuggft
+</span>
+</div> */
+// ) : (
+//     <div
+//         style={{
+//             display: 'flex',
+//             width: '100%',
+//             justifyContent: 'flex-start',
+//         }}
+//     >
+//         <IconButton
+//             aria-hidden="true"
+//             buttonStyle={{
+//                 padding: 0,
+//                 height: 75,
+//                 width: 75,
+//                 background: 'transparent',
+//                 borderRadius: lib.layout.borderRadius.large,
+//                 marginRight: 5,
+//                 marginLeft: -5,
+//             }}
+//             onClick={() => {
+//                 navigate('/');
+//             }}
+//             iconComponent={
+//                 <IoChevronBack
+//                     style={{
+//                         color: lib.colors.semiTransparentPrimaryColor,
+//                     }}
+//                     size={50}
+//                 />
+//             }
+//         />
+//         <IconButton
+//             aria-hidden="true"
+//             buttonStyle={{
+//                 padding: 0,
+//                 height: 75,
+//                 width: 75,
+//                 background: 'transparent',
+//                 borderRadius: lib.layout.borderRadius.large,
+//             }}
+//             onClick={() => {
+//                 navigate(-1);
+//             }}
+//             iconComponent={
+//                 <IoHome
+//                     style={{
+//                         color: lib.colors.semiTransparentPrimaryColor,
+//                     }}
+//                     size={50}
+//                 />
+//             }
+//         />
+//     </div>
+// )}

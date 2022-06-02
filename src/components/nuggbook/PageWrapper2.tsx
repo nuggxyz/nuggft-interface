@@ -4,7 +4,6 @@ import { animated, config, useTransition } from '@react-spring/web';
 import client from '@src/client';
 import lib from '@src/lib';
 import { Page } from '@src/interfaces/nuggbook';
-import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import usePrevious from '@src/hooks/usePrevious';
 import MobileStatus from '@src/components/mobile/MobileStatus';
 import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
@@ -152,7 +151,7 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
 
     const node = React.useRef<HTMLDivElement>(null);
 
-    useOnClickOutside(node, handleClose);
+    // useOnClickOutside(node, handleClose);
 
     return (
         <animated.div

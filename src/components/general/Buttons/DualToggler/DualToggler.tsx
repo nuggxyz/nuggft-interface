@@ -19,6 +19,7 @@ const DualToggler = ({
     toggleActiveIndex: (input: 0 | 1) => undefined;
     LeftIcon: IconType;
     RightIcon: IconType;
+    inverted?: boolean;
 }) => {
     const [headerRef, { width: WIDTH }] = useMeasure();
 
