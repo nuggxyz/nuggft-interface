@@ -182,9 +182,6 @@ html {
     -webkit-transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
     transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
     -webkit-tap-highlight-color: transparent;
-    -webkit-transform: translateY(4px) translateX(4px);
-    -ms-transform: translateY(4px) translateX(4px);
-    transform: translateY(4px) translateX(4px);
 }
 
 .mobile-pressable-div-deep:active {
@@ -444,7 +441,7 @@ input[type='number'] {
 }
 
 .home-button {
-    transform: translateX(0px) translateY(0px) scale(0.97);
+    /* transform: translateX(0px) translateY(0px) scale(0.95); */
     box-shadow: 0 6px 10px rgba(102, 102, 102, 0.4);
 }
 
@@ -453,6 +450,6 @@ input[type='number'] {
     box-shadow: inset 2px 3px 5px rgba(0, 0, 0, 0.4);
 } */
 .home-button:active {
-    transform: translateX(0px) translateY(0px) scale(0.9);
-    box-shadow: inset 0.5px 0.5px 5px rgba(0, 0, 0, 0.4);
+    /* transform: translateX(0px) translateY(0px) scale(0.95); */
+    box-shadow: inset 0.5px 0.5px 11px rgba(0, 0, 0, 0.4);
 }

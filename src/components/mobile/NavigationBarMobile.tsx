@@ -795,39 +795,53 @@ export const HomeButton = React.memo<{
     onClick: (full: boolean) => void;
 }>(
     ({ onClick, isFull }) => {
-        const [clicked, setClicked] = React.useState(false);
         return (
-            <Button
-                className={` ${clicked ? 'pressed' : ''} home-button`}
-                rightIcon={
-                    <img
-                        alt="nugg clicker"
-                        src={clicker}
-                        height={55}
-                        style={{
-                            borderRadius: lib.layout.borderRadius.large,
-                            objectFit: 'cover',
-                            pointerEvents: 'none',
-                        }}
-                    />
-                }
-                buttonStyle={{
-                    width: '100%',
-                    height: '100%',
-                    justifyContent: 'center',
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: 10,
-                    background: lib.colors.gradient3,
-                    borderRadius: lib.layout.borderRadius.mediumishish,
+            <div
+                style={{
+                    minWidth: '85px',
+                    height: '85px',
+                    background: lib.colors.transparentWhite,
+                    borderRadius: '22.5%',
                     WebkitTapHighlightColor: 'transparent',
+                    boxShadow: '0 6px 10px rgba(102, 102, 102, 0.4)',
+                    display: 'flex',
+                    WebkitBackdropFilter: 'blur(50px)',
+                    backdropFilter: 'blur(50px)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                 }}
-                onClick={(ev) => {
-                    ev.preventDefault();
-                    onClick(isFull);
-                    setClicked(!clicked);
-                }}
-            />
+            >
+                <Button
+                    className="home-button"
+                    rightIcon={
+                        <img
+                            alt="nugg clicker"
+                            src={clicker}
+                            height={55}
+                            style={{
+                                borderRadius: lib.layout.borderRadius.large,
+                                objectFit: 'cover',
+                                pointerEvents: 'none',
+                            }}
+                        />
+                    }
+                    buttonStyle={{
+                        width: '90%',
+                        height: '90%',
+                        justifyContent: 'center',
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: 10,
+                        background: lib.colors.gradient3,
+                        borderRadius: '22.5%',
+                        WebkitTapHighlightColor: 'transparent',
+                    }}
+                    onClick={(ev) => {
+                        ev.preventDefault();
+                        onClick(isFull);
+                    }}
+                />
+            </div>
         );
     },
     (a, b) => a.onClick === b.onClick && a.isFull === b.isFull,
