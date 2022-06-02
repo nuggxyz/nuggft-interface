@@ -25,6 +25,7 @@ const AnimatedCard: FunctionComponent<React.PropsWithChildren<{ disable?: boolea
             }}
         >
             <animated.div
+                className={!disable ? 'animated-card-enabled' : ''}
                 style={{
                     transform: props.xys.to(trans),
                 }}
