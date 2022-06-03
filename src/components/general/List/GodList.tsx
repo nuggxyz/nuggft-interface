@@ -72,6 +72,7 @@ export interface GodListProps<T, B, A> {
     mobileFluid?: boolean;
     faded?: boolean;
     displacement?: number;
+    dadRef?: React.RefObject<HTMLDivElement> | null;
 }
 
 const GodList = <T, B, A>({
@@ -101,7 +102,8 @@ const GodList = <T, B, A>({
     displacement = 0,
     screenHeight = 0,
     mobileFluid = false,
-}: GodListProps<T, B, A>) => {
+}: // dadRef = null,
+GodListProps<T, B, A>) => {
     const interval = 7;
 
     const windowRef = useRef<HTMLDivElement>(null);
@@ -263,11 +265,18 @@ const GodList = <T, B, A>({
 
     const _onScroll = useCallback(
         (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
+            // const elementOffset = $('#my-element').offset().top;
+            // const distance = ;
             const st = ev.currentTarget.scrollTop;
 
             if (offsetListRef) {
-                setScrollTopOffset(ev.currentTarget.offsetHeight || 0);
+                // console.log({ ...ev.currentTarget });
+                const ofs = windowRef?.current?.offsetTop || 0;
+                const offset = ofs;
+
+                setScrollTopOffset(offset);
             }
+
             const up = scrollTop < st;
 
             setTrueScrollTop(st);
@@ -356,6 +365,8 @@ const GodList = <T, B, A>({
                     ...styles.container,
                     ...(border && styles.border),
                     ...(horizontal && styles.horizontal),
+                    marginTop: startGap,
+                    marginBottom: startGap,
                     ...style,
                     ...(!disableScroll ? { overflow: 'scroll' } : { overflow: 'visible' }),
                     justifySelf: 'flex-start',
@@ -365,13 +376,18 @@ const GodList = <T, B, A>({
                     position: 'relative',
                     height: `${innerHeight}px`,
                     width: '100%',
+
                     '--i': itemHeight,
                 }}
                 onScroll={_onScroll}
             >
-                {startGap && startGap !== 0 && (
+                {/* {startGap && startGap !== 0 && (
                     <div style={{ width: '100%', marginTop: startGap }} />
-                )}
+                )} */}
+
+                {/* {dadRef && dadRef.current && (
+                    <div style={{ width: '100%', marginTop: dadRef.current.offsetTop - 300 }} />
+                )} */}
 
                 <animated.div
                     id={`${genid}1`}
@@ -381,6 +397,7 @@ const GodList = <T, B, A>({
                         opacity: uno ? 1 : 0,
                         position: 'absolute',
                         width: '100%',
+                        pointerEvents: uno ? 'auto' : 'none',
                     }}
                 >
                     <RenderItem
@@ -400,6 +417,7 @@ const GodList = <T, B, A>({
                         opacity: dos ? 1 : 0,
                         position: 'absolute',
                         width: '100%',
+                        pointerEvents: dos ? 'auto' : 'none',
                     }}
                 >
                     <RenderItem
@@ -420,6 +438,7 @@ const GodList = <T, B, A>({
                         width: '100%',
                         height: `var(--i)`,
                         WebkitScrollSnapType: 'y mandatory',
+                        pointerEvents: tres ? 'auto' : 'none',
                     }}
                 >
                     <RenderItem
@@ -439,6 +458,8 @@ const GodList = <T, B, A>({
                         position: 'absolute',
                         width: '100%',
                         height: `var(--i)`,
+                        pointerEvents: qu ? 'auto' : 'none',
+
                         // ...cheeeeck(qu_v, qu_i),
                     }}
                 >
@@ -459,6 +480,8 @@ const GodList = <T, B, A>({
                         position: 'absolute',
                         width: '100%',
                         height: `var(--i)`,
+                        pointerEvents: cin ? 'auto' : 'none',
+
                         // ...cheeeeck(cin_v, cin_i),
                     }}
                 >
@@ -479,6 +502,8 @@ const GodList = <T, B, A>({
                         transform: `translate(0px, ${sei_i * itemHeight}px)`,
                         width: '100%',
                         height: `var(--i)`,
+                        pointerEvents: sei ? 'auto' : 'none',
+
                         // ...cheeeeck(sei_v, sei_i),
                     }}
                 >
@@ -499,6 +524,8 @@ const GodList = <T, B, A>({
                         position: 'absolute',
                         width: '100%',
                         height: `var(--i)`,
+                        pointerEvents: ses ? 'auto' : 'none',
+
                         // ...cheeeeck(ses_v, ses_i),
                     }}
                 >

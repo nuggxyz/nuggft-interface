@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { plural, t } from '@lingui/macro';
 import { animated } from '@react-spring/web';
 import { useNavigate } from 'react-router';
+import { BigNumber } from '@ethersproject/bignumber';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -21,15 +22,11 @@ import Caboose from '@src/components/nugg/RingAbout/Caboose';
 import SideCar from '@src/components/nugg/RingAbout/SideCar';
 import Label from '@src/components/general/Label/Label';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
-import { useGetNuggsThatHoldQuery } from '@src/gql/types.generated';
-import {
-    NuggListRenderItemMobileBigHoldingItem,
-    NuggListRenderItemMobileHolding,
-} from '@src/components/mobile/NuggListRenderItemMobile';
+import { useGetNuggSnapshotsQuery, useGetNuggsThatHoldQuery } from '@src/gql/types.generated';
+import { NuggListRenderItemMobileBigHoldingItem } from '@src/components/mobile/NuggListRenderItemMobile';
 import MyNuggActions from '@src/components/nugg/ViewingNugg/MyNuggActions';
 import SwapListPhone from '@src/components/mobile/SwapListPhone';
 import { ItemListPhone } from '@src/components/nugg/ViewingNugg/ItemList';
-import BradPittList from '@src/components/general/List/BradPittList';
 import { useUsdPair } from '@src/client/usd';
 import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 import { buildTokenIdFactory } from '@src/prototypes';
@@ -40,8 +37,9 @@ import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import undefined from '@src/lib/dotnugg/util';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 import usePrevious from '@src/hooks/usePrevious';
+import GodList from '@src/components/general/List/GodList';
 
-import NuggSnapshotListMobile from './NuggSnapshotItemMobile';
+import { NuggSnapshotRenderItem } from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
 
 const Ver = ({ left, right, label }: { left: number; right: number; label: string }) => {
@@ -532,6 +530,24 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
 
         const overlay = useAnimateOverlayBackdrop(isOpen);
 
+        const { data: snapshots } = useGetNuggSnapshotsQuery({
+            skip: !tokenId || tokenId?.isItemId(),
+            variables: {
+                tokenId: tokenId?.toRawId() || '',
+            },
+        });
+
+        const renderItemData = React.useMemo(() => {
+            return token?.isItem()
+                ? data?.nuggItems.map((x) => ({
+                      tokenId: x.nugg.id.toNuggId(),
+                      since: Number(x?.displayedSinceUnix || 0),
+                  })) || []
+                : [...(snapshots?.nugg?.snapshots || [])].sort((a, b) =>
+                      BigNumber.from(a.block).gt(BigNumber.from(b.block)) ? -1 : 1,
+                  );
+        }, [token, data, snapshots]);
+
         return (
             <animated.div
                 style={{
@@ -822,78 +838,50 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                         </div>
                         <SwapListPhone tokenId={tokenId} />
 
-                        {token &&
-                            (token.isItem() ? (
-                                <>
-                                    <BradPittList
-                                        id={ider}
-                                        listStyle={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            textAlign: 'left',
-                                            width: '100%',
-                                            padding: '.3rem 1rem 1rem 1.5rem',
-                                        }}
-                                        style={{
-                                            position: 'relative',
-                                            width: '100%',
-                                            overflow: undefined,
-                                            flexDirection: 'column',
-                                        }}
-                                        coreRef={ref}
-                                        itemHeightBig={340}
-                                        itemHeightSmall={160}
-                                        endGap={100}
-                                        data={
-                                            data?.nuggItems.map((x) => ({
-                                                tokenId: x.nugg.id.toNuggId(),
-                                                since: Number(x?.displayedSinceUnix || 0),
-                                            })) || []
-                                        }
-                                        RenderItemSmall={NuggListRenderItemMobileHolding}
-                                        RenderItemBig={NuggListRenderItemMobileBigHoldingItem}
-                                        disableScroll
-                                        extraData={undefined}
-                                        headerStyle={{ padding: '2rem 1rem 1rem 1.5rem' }}
-                                        Title={React.memo(() => (
-                                            <Text
-                                                size="larger"
-                                                textStyle={{
-                                                    fontWeight: lib.layout.fontWeight.thicc,
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'flex-start',
+                                alignItems: 'flex-start',
+                                textAlign: 'left',
+                                width: '100%',
+                                padding: '2rem 1rem 1rem 1.5rem',
+                            }}
+                        >
+                            <Text
+                                size="larger"
+                                textStyle={{
+                                    color: lib.colors.primaryColor,
+                                    fontWeight: lib.layout.fontWeight.thicc,
+                                }}
+                            >
+                                {token?.isItem() ? t`worn by` : t`history`}
+                            </Text>
+                        </div>
 
-                                                    color: lib.colors.primaryColor,
-                                                }}
-                                            >
-                                                worn by
-                                            </Text>
-                                        ))}
-                                    />
-                                </>
-                            ) : (
-                                <>
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'flex-start',
-                                            alignItems: 'flex-start',
-                                            textAlign: 'left',
-                                            width: '100%',
-                                            padding: '2rem 1rem 1rem 1.5rem',
-                                        }}
-                                    >
-                                        <Text
-                                            size="larger"
-                                            textStyle={{
-                                                color: lib.colors.primaryColor,
-                                                fontWeight: lib.layout.fontWeight.thicc,
-                                            }}
-                                        >
-                                            history
-                                        </Text>
-                                    </div>
-                                    <NuggSnapshotListMobile tokenId={token.tokenId} />
-                                </>
-                            ))}
+                        <GodList
+                            id={ider}
+                            style={{
+                                position: 'relative',
+                                width: '100%',
+                                overflow: undefined,
+                                flexDirection: 'column',
+                            }}
+                            coreRef={ref}
+                            itemHeight={340}
+                            endGap={100}
+                            offsetListRef
+                            // @ts-ignore
+                            data={renderItemData}
+                            // @ts-ignore
+                            RenderItem={
+                                token?.isItem()
+                                    ? NuggListRenderItemMobileBigHoldingItem
+                                    : NuggSnapshotRenderItem
+                            }
+                            disableScroll
+                            extraData={undefined}
+                        />
 
                         <div
                             style={{

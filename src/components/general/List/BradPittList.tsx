@@ -165,6 +165,7 @@ const BradPittList = <T, B, A>({
                         coreRef={useBradRef ? brad : coreRef}
                         offsetListRef={offsetListRef && !!(useBradRef ? brad : coreRef)}
                         endGap={endGap}
+                        dadRef={brad}
                     />
                 ) : (
                     <GodList
@@ -184,6 +185,7 @@ const BradPittList = <T, B, A>({
                         offsetListRef={offsetListRef && !!(useBradRef ? brad : coreRef)}
                         coreRef={useBradRef ? brad : coreRef}
                         endGap={endGap}
+                        dadRef={brad}
                     />
                 )
             ) : (

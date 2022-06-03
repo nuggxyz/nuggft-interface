@@ -315,11 +315,3 @@ export const MobileContainerBig: FC<PropsWithChildren<{ tokenId?: TokenId }>> = 
         </div>
     );
 };
-
-export default React.memo(
-    NuggListRenderItemMobile,
-    (prevProps, props) =>
-        prevProps.item === props.item &&
-        prevProps.selected === props.selected &&
-        JSON.stringify(prevProps.action) === JSON.stringify(props.action),
-) as typeof NuggListRenderItemMobile;

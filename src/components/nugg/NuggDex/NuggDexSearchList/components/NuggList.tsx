@@ -11,7 +11,8 @@ import { SearchView } from '@src/client/interfaces';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
-import NuggListRenderItemMobile, {
+import {
+    NuggListRenderItemMobile,
     NuggListRenderItemMobileBig,
 } from '@src/components/mobile/NuggListRenderItemMobile';
 import BradPittList from '@src/components/general/List/BradPittList';
