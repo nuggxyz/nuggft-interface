@@ -23,7 +23,7 @@ export interface ListRenderItemProps<ItemType, ExtraDataType, ActionArgType> {
     extraData: ExtraDataType;
     action?: (arg: ActionArgType) => void;
     onScrollEnd?: (...args: any[]) => void;
-    index: number;
+    index?: number;
     rootRef?: LegacyRef<HTMLDivElement>;
     selected?: boolean;
     style?: CSSProperties;

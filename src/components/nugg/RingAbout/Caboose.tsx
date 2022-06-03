@@ -4,7 +4,6 @@ import { t } from '@lingui/macro';
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import { MyNuggsData, TryoutData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import web3 from '@src/web3';
@@ -16,18 +15,21 @@ import { buildTokenIdFactory } from '@src/prototypes';
 import { EthInt } from '@src/classes/Fraction';
 import Label from '@src/components/general/Label/Label';
 import { Page } from '@src/interfaces/nuggbook';
+import GodListHorizontal from '@src/components/general/List/GodListHorizontal';
+import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 
 import styles from './RingAbout.styles';
 
-const TryoutRenderItem: FC<ListRenderItemProps<TryoutData, undefined, TryoutData>> = ({
+const TryoutRenderItem: FC<GodListRenderItemProps<TryoutData, undefined, TryoutData>> = ({
     item: tryoutData,
     selected,
     action,
 }) => {
-    const usd = client.usd.useUsdPair(tryoutData.eth);
+    const usd = client.usd.useUsdPair(tryoutData?.eth);
     return (
         <div
             style={{
+                alignSelf: 'center',
                 borderRadius: lib.layout.borderRadius.medium,
                 transition: '.2s background ease',
                 background: selected ? lib.colors.transparentGrey2 : lib.colors.transparent,
@@ -37,7 +39,7 @@ const TryoutRenderItem: FC<ListRenderItemProps<TryoutData, undefined, TryoutData
             onClick={() => action && action(tryoutData)}
         >
             <TokenViewer
-                tokenId={tryoutData.nugg}
+                tokenId={tryoutData?.nugg}
                 style={{ width: '60px', height: '60px' }}
                 disableOnClick
             />
@@ -48,7 +50,7 @@ const TryoutRenderItem: FC<ListRenderItemProps<TryoutData, undefined, TryoutData
 };
 
 const MyNuggRenderItem: FC<
-    ListRenderItemProps<FormatedMyNuggsData, undefined, FormatedMyNuggsData>
+    GodListRenderItemProps<FormatedMyNuggsData, undefined, FormatedMyNuggsData>
 > = ({ item, selected, action }) => {
     const disabled = React.useMemo(() => {
         if (item.activeSwap) return t`currenlty for sale`;
@@ -62,6 +64,8 @@ const MyNuggRenderItem: FC<
         <Button
             disabled={!!disabled}
             buttonStyle={{
+                alignSelf: 'center',
+
                 background: selected ? lib.colors.transparentGrey2 : lib.colors.transparent,
                 borderRadius: lib.layout.borderRadius.medium,
                 transition: '.2s background ease',
@@ -87,6 +91,7 @@ const MyNuggRenderItem: FC<
         />
     );
 };
+
 type FormatedMyNuggsData = MyNuggsData & { lastBid: EthInt | 'unable-to-bid' | 'user-must-claim' };
 
 export default ({
@@ -164,21 +169,22 @@ export default ({
         <div
             style={{
                 ...(!isPhone && (darkmode ? styles.containerDark : styles.container)),
-                ...(isPhone && {
-                    ...styles.mobile,
-                }),
+
                 marginTop: isPhone ? 0 : '20px',
                 width: '90%',
+                height: '100%',
             }}
         >
             {showBody ? (
-                <div style={{ width: '100%', marginTop: '20px' }}>
+                <div style={{ marginTop: '20px' }}>
                     {continued ? (
-                        <List
+                        <GodListHorizontal
                             data={myNuggsFormatted}
                             extraData={undefined}
                             RenderItem={MyNuggRenderItem}
                             horizontal
+                            startGap={10}
+                            itemHeight={90}
                             action={(dat) => {
                                 setSelectedMyNugg(dat);
                                 if (onSelectMyNugg) onSelectMyNugg(dat.tokenId);
@@ -188,28 +194,29 @@ export default ({
                                 width: '100%',
                                 background: lib.colors.transparentLightGrey,
                                 height: isPhone ? '100px' : '140px',
-                                padding: '0rem .4rem',
+                                padding: '15px 0rem .4rem',
                                 borderRadius: lib.layout.borderRadius.medium,
                             }}
                         />
                     ) : (
-                        <List
+                        <GodListHorizontal
                             data={token.tryout.swaps}
                             // label={t`Select a nugg to buy this item from`}
                             extraData={undefined}
                             RenderItem={TryoutRenderItem}
                             selected={nuggToBuyFrom}
-                            action={(dat: TryoutData) => {
+                            action={(dat) => {
                                 setNuggToBuyFrom(dat);
                                 if (onSelectNugg) onSelectNugg(dat);
                             }}
+                            itemHeight={90}
                             horizontal
+                            startGap={10}
                             style={{
                                 width: '100%',
-
                                 background: lib.colors.transparentLightGrey,
                                 height: '100px',
-                                padding: '0rem .3rem',
+                                padding: '15px 0rem .4rem',
                                 borderRadius: lib.layout.borderRadius.medium,
                             }}
                         />
