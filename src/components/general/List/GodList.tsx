@@ -71,6 +71,7 @@ export interface GodListProps<T, B, A> {
     LIST_PADDING?: number;
     mobileFluid?: boolean;
     faded?: boolean;
+    displacement?: number;
 }
 
 const GodList = <T, B, A>({
@@ -97,6 +98,7 @@ const GodList = <T, B, A>({
     faded = false,
     squishFactor = 1,
     offsetListRef = false,
+    displacement = 0,
     screenHeight = 0,
     mobileFluid = false,
 }: GodListProps<T, B, A>) => {
@@ -133,8 +135,8 @@ const GodList = <T, B, A>({
     );
 
     const startIndex = useMemo(() => {
-        return Math.max(Math.floor(scrollTop / itemHeight) - 3, 0);
-    }, [scrollTop, itemHeight]);
+        return Math.max(Math.floor(scrollTop / itemHeight) - displacement, 0);
+    }, [scrollTop, itemHeight, displacement]);
 
     const endIndex = useMemo(() => {
         const check = Math.min(startIndex + interval, Math.max(0, data.length - 1));
@@ -145,16 +147,9 @@ const GodList = <T, B, A>({
         );
     }, [scrollTop, data, windowHeight, itemHeight, startIndex, interval, mobileFluid]);
 
-    // const prevStart = usePrevious(startIndex);
     const prevEnd = usePrevious(endIndex);
-    // const prevData = usePrevious(data);
 
     const items = React.useMemo(() => range(startIndex, endIndex), [startIndex, endIndex]);
-    // React.useEffect(() => {
-    //     if (items[0] !== data[0])
-    // }, [])
-
-    // console.log({ interval, endIndex, startIndex, scrollTop, items, data });
 
     const [lastGrabValue, setLastGrabValue] = React.useState<number>(0);
 
@@ -213,6 +208,7 @@ const GodList = <T, B, A>({
             ),
         [loading, loaderColor, itemHeight, endIndex],
     );
+    // console.log({ items, data, startIndex, endIndex });
 
     const [uno, uno_i, uno_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 0) as number;
@@ -268,6 +264,7 @@ const GodList = <T, B, A>({
     const _onScroll = useCallback(
         (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
             const st = ev.currentTarget.scrollTop;
+
             if (offsetListRef) {
                 setScrollTopOffset(ev.currentTarget.offsetHeight || 0);
             }
@@ -279,6 +276,8 @@ const GodList = <T, B, A>({
         },
         [onScroll, offsetListRef, setScrollTopOffset, setTrueScrollTop, scrollTop],
     );
+
+    // console.log({ scrollTop, scrollTopOffset });
 
     // const prevScrollTop = usePrevious(scrollTop);
 
@@ -327,6 +326,7 @@ const GodList = <T, B, A>({
         if (coreRef && coreRef.current) {
             // @ts-ignore
             coreRef.current.onscroll = _onScroll;
+            // console.log('yo', { ...coreRef }, coreRef.current.onscroll);
         } else if (windowRef && windowRef.current) {
             // @ts-ignore
             windowRef.current.onscroll = _onScroll;
@@ -357,7 +357,7 @@ const GodList = <T, B, A>({
                     ...(border && styles.border),
                     ...(horizontal && styles.horizontal),
                     ...style,
-                    ...(!disableScroll ? { overflow: 'scroll' } : { overflow: undefined }),
+                    ...(!disableScroll ? { overflow: 'scroll' } : { overflow: 'visible' }),
                     justifySelf: 'flex-start',
                     ...(faded && {
                         WebkitMaskImage: 'linear-gradient(0deg, #000 95%, transparent)',

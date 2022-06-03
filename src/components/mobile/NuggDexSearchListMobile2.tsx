@@ -13,38 +13,62 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import client from '@src/client';
 import { Page } from '@src/interfaces/nuggbook';
 
-import NuggListRenderItemMobile, { NuggListRenderItemMobileBig } from './NuggListRenderItemMobile';
+import { NuggListRenderItemMobileBig, NuggListRenderItemMobile } from './NuggListRenderItemMobile';
 
-const INFINITE_INTERVAL = 25;
-const START_INTERVAL = 3;
+const INFINITE_INTERVAL = 500;
+const START_INTERVAL = 1000;
 
 export const AllNuggs = () => {
     const goto = client.nuggbook.useGoto();
 
-    const [allNuggsData, setAllNuggsData] = React.useState<GetAllNuggsSearchQuery['nuggs']>();
+    const page = client.nuggbook.useNuggBookPage();
 
+    const [allNuggsData, setAllNuggsData] = React.useState<GetAllNuggsSearchQuery['nuggs']>();
+    const [go, setGo] = React.useState(false);
     const { fetchMore: fetchMoreNuggs } = useGetAllNuggsSearchQuery({
         fetchPolicy: 'cache-first',
+        skip: true,
         variables: {
             skip: 0,
             first: START_INTERVAL,
             orderBy: Nugg_OrderBy.Idnum,
         },
-        onCompleted: (x) => {
-            setAllNuggsData(x.nuggs);
-        },
     });
 
-    const loadMoreNuggs = React.useCallback(() => {
-        void fetchMoreNuggs({
-            variables: {
-                first: INFINITE_INTERVAL,
-                skip: allNuggsData?.length || 0,
-            },
-        }).then((x) => {
-            setAllNuggsData((a) => [...(a || []), ...x.data.nuggs]);
-        });
-    }, [allNuggsData, fetchMoreNuggs, setAllNuggsData]);
+    const loadMoreNuggs = React.useCallback(async () => {
+        let started = false;
+        let added = 0;
+        const allll = [] as NonNullable<typeof allNuggsData>;
+        let res = [] as NonNullable<typeof allNuggsData>;
+        while (!started || res.length === START_INTERVAL) {
+            started = true;
+            // eslint-disable-next-line no-await-in-loop
+            res = await fetchMoreNuggs({
+                variables: {
+                    first: START_INTERVAL,
+                    skip: added,
+                },
+            }).then((x) => {
+                return x.data.nuggs;
+            });
+
+            added += res.length;
+
+            allll.push(...res);
+        }
+
+        setAllNuggsData(allll);
+    }, [fetchMoreNuggs, setAllNuggsData]);
+
+    React.useEffect(() => {
+        if (page === Page.AllNuggs && !go) {
+            setGo(true);
+            void loadMoreNuggs();
+        }
+    }, [loadMoreNuggs, setGo, page, go]);
+
+    // console.log('ayo', allNuggsData?.length);
+
     const id = React.useId();
     const reff = React.useRef(null);
     return (
@@ -55,15 +79,17 @@ export const AllNuggs = () => {
                 width: '100%',
                 display: 'flex',
                 flexDirection: 'column',
+                height: '600px',
             }}
         >
             <BradPittList
                 id={`${id}-of-brad`}
                 listStyle={{
-                    overflow: undefined,
+                    overflow: 'hidden',
                     position: 'relative',
                     justifyContent: 'flex-start',
                     // padding: '0 20px',
+                    height: '100%',
                     width: '100%',
                 }}
                 headerStyle={{
@@ -89,13 +115,14 @@ export const AllNuggs = () => {
                         textStyle={{ color: 'white' }}
                     />
                 ))}
+                offsetListRef={false}
                 data={allNuggsData?.map((x) => x.id.toNuggId()) || []}
                 RenderItemSmall={NuggListRenderItemMobile}
                 RenderItemBig={NuggListRenderItemMobileBig}
                 disableScroll
                 // useBradRef
                 coreRef={reff}
-                onScrollEnd={loadMoreNuggs}
+                // onScrollEnd={loadMoreNuggs}
                 extraData={{ cardType: 'swap' }}
                 itemHeightBig={340}
                 itemHeightSmall={160}

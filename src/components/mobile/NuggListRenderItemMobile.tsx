@@ -3,9 +3,12 @@ import React, { FC, FunctionComponent, PropsWithChildren } from 'react';
 import lib from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
+import {
+    GodListRenderItemBig,
+    GodListRenderItemSmall,
+} from '@src/components/general/List/BradPittList';
 
-type PropsBig = InfiniteListRenderItemProps<
+type PropsBig = GodListRenderItemBig<
     TokenId,
     { cardType: 'swap' | 'all' | 'recent' } | undefined,
     undefined
@@ -38,8 +41,8 @@ export const NuggListRenderItemMobileBig: FunctionComponent<PropsBig> = ({
         </div>
     );
 };
-type HoldingTokenId = { tokenId: NuggId; since: number };
-type PropsBigHoldingItem = InfiniteListRenderItemProps<
+type HoldingTokenId = { tokenId?: NuggId; since?: number };
+type PropsBigHoldingItem = GodListRenderItemBig<
     HoldingTokenId,
     { cardType: 'swap' | 'all' | 'recent' } | undefined,
     undefined
@@ -68,17 +71,17 @@ export const NuggListRenderItemMobileBigHoldingItem: FunctionComponent<PropsBigH
             }}
             // onClick={() => action && action(item)}
         >
-            <MobileContainerBigHoldingItem tokenId={item.tokenId} since={item.since} />
+            <MobileContainerBigHoldingItem tokenId={item?.tokenId} since={item?.since} />
         </div>
     );
 };
-type Props = InfiniteListRenderItemProps<
-    [TokenId | undefined, TokenId | undefined],
+type Props = GodListRenderItemSmall<
+    TokenId,
     { cardType: 'swap' | 'all' | 'recent' } | undefined,
     undefined
 >;
 
-const NuggListRenderItemMobile: FunctionComponent<Props> = ({
+export const NuggListRenderItemMobile: FunctionComponent<Props> = ({
     item,
     // action,
     // extraData: { cardType },
@@ -102,14 +105,14 @@ const NuggListRenderItemMobile: FunctionComponent<Props> = ({
             // onClick={() => action && action(item)}
         >
             {/* <div> */}
-            {item[0] && <MobileContainer tokenId={item[0]} />}
-            {item[1] && <MobileContainer tokenId={item[1]} />}
+            {item && item[0] && <MobileContainer tokenId={item[0]} />}
+            {item && item[1] && <MobileContainer tokenId={item[1]} />}
         </div>
     );
 };
 
-type PropsLittleHolding = InfiniteListRenderItemProps<
-    [HoldingTokenId | undefined, HoldingTokenId | undefined],
+type PropsLittleHolding = GodListRenderItemSmall<
+    HoldingTokenId,
     { cardType: 'swap' | 'all' | 'recent' } | undefined,
     undefined
 >;
@@ -138,13 +141,13 @@ export const NuggListRenderItemMobileHolding: FunctionComponent<PropsLittleHoldi
             // onClick={() => action && action(item)}
         >
             {/* <div> */}
-            {item[0] && <MobileContainer tokenId={item[0].tokenId} />}
-            {item[1] && <MobileContainer tokenId={item[1].tokenId} />}
+            {item && item[0] && <MobileContainer tokenId={item[0]?.tokenId} />}
+            {item && item[1] && <MobileContainer tokenId={item[1]?.tokenId} />}
         </div>
     );
 };
 
-export const MobileContainer = ({ tokenId }: { tokenId: TokenId }) => {
+export const MobileContainer = ({ tokenId }: { tokenId?: TokenId }) => {
     // const swap = client.swaps.useSwap(tokenId);
     // const navigate = useNavigate();
     return (
@@ -188,7 +191,7 @@ export const MobileContainer = ({ tokenId }: { tokenId: TokenId }) => {
                         // paddingBottom: 5,
                         position: 'relative',
                     }}
-                    text={tokenId.toPrettyId()}
+                    text={tokenId?.toPrettyId() || ''}
                 />
             </div>
 
@@ -237,14 +240,14 @@ export const MobileContainerBigHoldingItem: FC<HoldingTokenId> = ({ tokenId, sin
                         // paddingBottom: 5,
                         position: 'relative',
                     }}
-                    text={`holding since ${new Date(since * 1000).toLocaleDateString()}`}
+                    text={`holding since ${new Date((since || 0) * 1000).toLocaleDateString()}`}
                 />
             </div>
         </MobileContainerBig>
     );
 };
 
-export const MobileContainerBig: FC<PropsWithChildren<{ tokenId: TokenId }>> = ({
+export const MobileContainerBig: FC<PropsWithChildren<{ tokenId?: TokenId }>> = ({
     tokenId,
     children,
 }) => {
@@ -290,7 +293,7 @@ export const MobileContainerBig: FC<PropsWithChildren<{ tokenId: TokenId }>> = (
                         // paddingBottom: 5,
                         position: 'relative',
                     }}
-                    text={tokenId.toPrettyId()}
+                    text={tokenId?.toPrettyId() || ''}
                 />
             </div>
 

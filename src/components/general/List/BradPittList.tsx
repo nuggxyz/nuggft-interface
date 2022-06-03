@@ -1,41 +1,43 @@
-import React from 'react';
+import React, { CSSProperties, LegacyRef } from 'react';
 import { IoGridOutline, IoLogoInstagram } from 'react-icons/io5';
 
 import useSquishedListData from '@src/client/hooks/useSquishedListData';
-import InfiniteList from '@src/components/general/List/InfiniteList';
+import GodList from '@src/components/general/List/GodList';
 import lib from '@src/lib';
 import Loader from '@src/components/general/Loader/Loader';
 import DualToggler from '@src/components/general/Buttons/DualToggler/DualToggler';
 
-export interface InfiniteListRenderItemProps<T, B, A> {
-    item: T | [T | undefined, T | undefined];
-    extraData: B;
+export interface GodListRenderItemProps<T, B, A> {
+    item?: T | [T | undefined, T | undefined];
+    visible?: boolean;
+    extraData?: B;
     action?: (arg: A) => void;
     onScrollEnd?: ({ addToList }: { addToList: boolean }) => void;
-    index: number;
-    rootRef?: React.LegacyRef<HTMLDivElement>;
+    index?: number;
+    rootRef?: LegacyRef<HTMLDivElement>;
     selected?: boolean;
-    style?: React.CSSProperties;
+    style?: CSSProperties;
 }
 
-export interface InfiniteListRenderItemBig<T, B, A> extends InfiniteListRenderItemProps<T, B, A> {
-    item: T;
+export interface GodListRenderItemBig<T, B, A> extends GodListRenderItemProps<T, B, A> {
+    item?: T;
 }
 
-export interface InfiniteListRenderItemSmall<T, B, A> extends InfiniteListRenderItemProps<T, B, A> {
-    item: [T | undefined, T | undefined];
+export interface GodListRenderItemSmall<T, B, A> extends GodListRenderItemProps<T, B, A> {
+    item?: [T | undefined, T | undefined];
 }
 
 interface Props<T, B, A> {
     id?: string;
     data: T[];
-    RenderItemSmall: React.FunctionComponent<InfiniteListRenderItemSmall<T, B, A>>;
-    RenderItemBig: React.FunctionComponent<InfiniteListRenderItemBig<T, B, A>>;
+    defaultActiveIndex?: 0 | 1;
+
+    RenderItemSmall: React.FunctionComponent<GodListRenderItemSmall<T, B, A>>;
+    RenderItemBig: React.FunctionComponent<GodListRenderItemBig<T, B, A>>;
     itemHeightBig: number;
     itemHeightSmall: number;
     disableScroll: boolean;
     Title?: React.FunctionComponent;
-    defaultActiveIndex?: 0 | 1;
     loading?: boolean;
     extraData: B;
     action?: (arg: A) => void;
@@ -57,14 +59,22 @@ interface Props<T, B, A> {
     floaterWrapperStyle?: React.CSSProperties;
 
     floaterColor?: string;
-    coreRef?: React.RefObject<HTMLDivElement>;
     useBradRef?: boolean;
+
+    externalScrollTop?: number;
+    scrollTopOffset?: number;
+    screenHeight?: number;
+    coreRef?: React.RefObject<HTMLDivElement> | null;
+    offsetListRef?: boolean;
+    LIST_PADDING?: number;
+    mobileFluid?: boolean;
+    faded?: boolean;
 }
 
-// interface CustomInfiniteListProps<T, B, A> extends InfiniteListProps<T, B, A> {
+// interface CustomGodListProps<T, B, A> extends GodListProps<T, B, A> {
 //     RenderItem:
-//         | React.FunctionComponent<InfiniteListRenderItemSmall<T, B, A>>
-//         | React.FunctionComponent<InfiniteListRenderItemBig<T, B, A>>;
+//         | React.FunctionComponent<GodListRenderItemSmall<T, B, A>>
+//         | React.FunctionComponent<GodListRenderItemBig<T, B, A>>;
 // }
 
 const BradPittList = <T, B, A>({
@@ -80,6 +90,7 @@ const BradPittList = <T, B, A>({
     style,
     Title,
     headerStyle,
+    offsetListRef = true,
     coreRef,
     useBradRef = false,
     floaterWrapperStyle,
@@ -138,41 +149,39 @@ const BradPittList = <T, B, A>({
             </div>
             {squishedData.length > 0 && activeIndex !== undefined ? (
                 activeIndex === 0 ? (
-                    <InfiniteList
+                    <GodList
                         {...props}
                         startGap={startGap}
                         id={`nugg-list1${id}`}
                         style={listStyle}
-                        skipSelectedCheck
                         data={data}
                         RenderItem={RenderItemBig}
+                        extraData={undefined}
                         loading={false}
                         action={undefined}
                         itemHeight={itemHeightBig}
                         animationToggle={false}
                         disableScroll={disableScroll}
                         coreRef={useBradRef ? brad : coreRef}
-                        offsetListRef={!!(useBradRef ? brad : coreRef)}
-                        interval={3}
+                        offsetListRef={offsetListRef && !!(useBradRef ? brad : coreRef)}
                         endGap={endGap}
                     />
                 ) : (
-                    <InfiniteList
+                    <GodList
                         {...props}
                         startGap={startGap}
                         id={`nugg-list2${id}`}
                         style={listStyle}
-                        skipSelectedCheck
                         data={squishedData}
                         RenderItem={RenderItemSmall}
                         loading={false}
-                        interval={50}
+                        extraData={undefined}
                         action={undefined}
                         itemHeight={itemHeightSmall}
                         animationToggle={false}
                         disableScroll={disableScroll}
                         squishFactor={0.5}
-                        offsetListRef={!!(useBradRef ? brad : coreRef)}
+                        offsetListRef={offsetListRef && !!(useBradRef ? brad : coreRef)}
                         coreRef={useBradRef ? brad : coreRef}
                         endGap={endGap}
                     />
