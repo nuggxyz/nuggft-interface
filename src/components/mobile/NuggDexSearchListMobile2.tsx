@@ -56,15 +56,23 @@ export const AllNuggs = () => {
 
             allll.push(...res);
         }
-
-        setAllNuggsData(allll);
-    }, [fetchMoreNuggs, setAllNuggsData]);
+        return allll;
+        // setAllNuggsData(allll);
+    }, [fetchMoreNuggs]);
 
     React.useEffect(() => {
+        let stale = false;
         if (page === Page.AllNuggs && !go) {
             setGo(true);
-            void loadMoreNuggs();
+            void loadMoreNuggs().then((data) => {
+                if (!stale) {
+                    setAllNuggsData(data);
+                }
+            });
         }
+        return () => {
+            stale = true;
+        };
     }, [loadMoreNuggs, setGo, page, go]);
 
     // console.log('ayo', allNuggsData?.length);

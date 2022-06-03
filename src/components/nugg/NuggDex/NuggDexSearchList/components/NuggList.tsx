@@ -82,9 +82,11 @@ const NuggList: FunctionComponent<NuggListProps> = ({
     const { goto } = useMobileViewingNugg();
 
     const onClick = useCallback(
-        (item: TokenId) => {
-            if (isPhone) goto(item);
-            else gotoViewingNugg(item);
+        (item?: TokenId) => {
+            if (item) {
+                if (isPhone) goto(item);
+                else gotoViewingNugg(item);
+            }
         },
         [gotoViewingNugg, goto, isPhone],
     );

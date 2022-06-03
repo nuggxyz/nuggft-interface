@@ -11,7 +11,7 @@ export interface GodListRenderItemProps<T, B, A> {
     item?: T | [T | undefined, T | undefined];
     visible?: boolean;
     extraData?: B;
-    action?: (arg: A) => void;
+    action?: (arg?: A) => void;
     onScrollEnd?: ({ addToList }: { addToList: boolean }) => void;
     index?: number;
     rootRef?: LegacyRef<HTMLDivElement>;

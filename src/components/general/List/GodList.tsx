@@ -17,10 +17,10 @@ import usePrevious from '@src/hooks/usePrevious';
 import styles from './List.styles';
 
 export interface GodListRenderItemProps<T, B, A> {
-    item: T;
+    item?: T;
     visible?: boolean;
     extraData?: B;
-    action?: (arg: A) => void;
+    action?: (arg?: A) => void;
     onScrollEnd?: ({ addToList }: { addToList: boolean }) => void;
     index?: number;
     rootRef?: LegacyRef<HTMLDivElement>;
@@ -38,7 +38,7 @@ export interface GodListProps<T, B, A> {
     RenderItem: FunctionComponent<GodListRenderItemProps<T, B, A>>;
     loading?: boolean;
     extraData: B;
-    action?: (arg: A) => void;
+    action?: (arg?: A) => void;
     onScrollEnd?: ({ addToList }: { addToList: boolean }) => void;
     label?: string;
     border?: boolean;
