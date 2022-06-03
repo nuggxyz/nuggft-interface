@@ -4,6 +4,7 @@ import { useNavigate, useMatch } from 'react-router-dom';
 import lib from '@src/lib';
 import useDimensions from '@src/client/hooks/useDimensions';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
+import emitter from '@src/emitter';
 
 const PREFIX = lib.constants.VIEWING_PREFIX;
 
@@ -16,8 +17,10 @@ export default () => {
 
     const gotoViewingNugg = React.useCallback(
         (tokenId: TokenId) => {
-            if (isPhone) gotoMobile(tokenId);
-            else navigate(`/view/${PREFIX}/${tokenId}`);
+            if (isPhone) {
+                gotoMobile(tokenId);
+                emitter.emit({ type: emitter.events.RequestCloseMobileNavbar });
+            } else navigate(`/view/${PREFIX}/${tokenId}`);
         },
         [navigate, isPhone, gotoMobile],
     );

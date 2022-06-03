@@ -27,7 +27,7 @@ interface EmitEventBase {
 }
 
 type BuildPayload<T> = Omit<T, 'callback'>;
-type BuildCallback<T extends { type: any; callback: any }> = Pick<T, 'type' | 'callback'>;
+type BuildCallback<T extends { type: unknown; callback: unknown }> = Pick<T, 'type' | 'callback'>;
 
 interface EmitOnChainEventBase {
     event: InterfacedEvent;
@@ -182,6 +182,10 @@ interface EmitRouteChange extends EmitEventBase {
     newRoute: string;
 }
 
+interface EmitRequestCloseMobileNavbar extends EmitEventBase {
+    type: EmitEventNames.RequestCloseMobileNavbar;
+}
+
 /*  EXPORTS: must be manually updated  */
 
 export enum EmitEventNames {
@@ -213,6 +217,7 @@ export enum EmitEventNames {
     HealthCheck = 'main.health.HealthCheck',
     WorkerIsRunning = 'worker.health.WorkerIsRunning',
     RouteChange = 'main.local.RouteChange',
+    RequestCloseMobileNavbar = 'main.local.RequestCloseMobileNavbar',
     // Sell = 'local.rpc.event.Sell',
 }
 
@@ -239,8 +244,7 @@ export type EmitEventsListPayload =
     | BuildPayload<EmitWorkerIncomingEtherscanPrice>
     | BuildPayload<EmitDevLog>
     | BuildPayload<EmitRouteChange>
-
-    // | BuildPayload<EmitRpcSell>
+    | BuildPayload<EmitRequestCloseMobileNavbar>
     | BuildPayload<EmitRequestTokenSvgQuery>
     | BuildPayload<EmitWorkerEventBase>
     | BuildPayload<EmitModalOpen>
@@ -275,4 +279,5 @@ export type EmitEventsListCallback =
     | BuildCallback<EmitReturnTokenSvgQuery>
     | BuildCallback<EmitWorkerIncomingRpcEvent>
     | BuildCallback<EmitWorkerIncomingRpcBlock>
+    | BuildCallback<EmitRequestCloseMobileNavbar>
     | BuildCallback<EmitWorkerIncomingEtherscanPrice>;

@@ -17,6 +17,7 @@ import { ModalEnum } from '@src/interfaces/modals';
 import usePrevious from '@src/hooks/usePrevious';
 import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
 import clicker from '@src/assets/images/nugg/clicker2.svg';
+import emitter from '@src/emitter';
 
 export const useOpacitate = (name: string, arg: boolean | undefined) => {
     const [exit, exitToAnimate, staticStyles] = React.useMemo(() => {
@@ -97,6 +98,14 @@ const NavigationBarMobile: FC<unknown> = () => {
         },
         [isFull],
     );
+
+    emitter.hook.useOn({
+        type: emitter.events.RequestCloseMobileNavbar,
+        callback: () => {
+            close();
+            setManualMatch(false);
+        },
+    });
 
     /* ////////////////////////////////////////////////////////////////////////
        search
