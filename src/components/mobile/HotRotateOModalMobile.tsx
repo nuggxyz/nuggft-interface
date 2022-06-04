@@ -19,85 +19,8 @@ import {
 } from '@src/pages/hot-rotate-o/HotRotateO';
 import { RotateOModalData } from '@src/interfaces/modals';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
-import Label from '@src/components/general/Label/Label';
 import eth from '@src/assets/images/app_logos/eth.png';
 
-export const RenderItemMobile: FC<
-    GodListRenderItemProps<HotRotateOItem, undefined, HotRotateOItem>
-> = ({ item, action }) => {
-    return (
-        <Button
-            onClick={() => action && action(item)}
-            disabled={item?.feature === 0}
-            bypassDisableStyle
-            buttonStyle={{
-                borderRadius: lib.layout.borderRadius.largish,
-                padding: '.3rem .3rem',
-                margin: '.5rem 0rem',
-                width: '90%',
-            }}
-        >
-            <div
-                style={{
-                    borderRadius: lib.layout.borderRadius.medium,
-                    transition: '.2s background ease',
-                    position: 'relative',
-                    margin: '.6rem 1rem',
-                }}
-            >
-                <TokenViewer
-                    forceCache
-                    tokenId={item?.tokenId}
-                    style={{ width: '50px', height: '50px', padding: '.3rem' }}
-                    showLabel
-                    disableOnClick
-                />
-                {item?.duplicates ||
-                    (0 > 1 && (
-                        <Label
-                            containerStyles={{ position: 'absolute', top: -10, right: -10 }}
-                            text={String(item?.duplicates || 0)}
-                        />
-                    ))}
-                {item?.feature !== 0 && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'centter',
-                            marginTop: '.5rem',
-                        }}
-                    >
-                        {/* {extraData.type === 'displayed' && (
-                            <IoArrowBack color={lib.colors.nuggRedText} />
-                        )} */}
-                        {/* <Text
-                            size="small"
-                            textStyle={{
-                                color:
-                                    extraData.type === 'displayed'
-                                        ? lib.colors.nuggRedText
-                                        : lib.colors.nuggBlueText,
-                                padding: '0rem .2rem',
-                            }}
-                        >
-                            {extraData.type === 'storage'
-                                ? extraData.items.active.find(
-                                      (list) => list.feature === item.feature,
-                                  )
-                                    ? 'Replace'
-                                    : 'Show'
-                                : t`Hide`}
-                        </Text> */}
-                        {/* {extraData.type === 'storage' && (
-                            <IoArrowForward color={lib.colors.nuggBlueText} />
-                        )} */}
-                    </div>
-                )}
-            </div>
-        </Button>
-    );
-};
 const RenderItemMobileTiny2: FC<
     GodListRenderItemProps<
         (HotRotateOItem | undefined)[],
@@ -107,27 +30,10 @@ const RenderItemMobileTiny2: FC<
 > = ({ item, action }) => {
     return (
         <div>
-            {' '}
             {(item ?? []).map((x, index) => (
                 <RenderItemMobileTiny item={x} action={action} index={index} />
             ))}
         </div>
-
-        // <GodList
-        //     RenderItem={RenderItemMobileTiny}
-        //     data={item ?? []}
-        //     extraData={undefined}
-        //     itemHeight={45}
-        //     style={{
-        //         // width: '100%',
-        //         // height: '60px',
-        //         display: 'flex',
-        //         alignItems: 'center',
-        //         // justifyContent: 'center',
-        //         // padding: '15px 0rem .4rem',
-        //     }}
-        //     action={action}
-        // />
     );
 };
 const RenderItemMobileTiny: FC<
@@ -141,11 +47,8 @@ const RenderItemMobileTiny: FC<
             onClick={() => action && action(item)}
             style={{
                 borderRadius: lib.layout.borderRadius.largish,
-                // padding: '.3rem .3rem',
-                // margin: '.5rem 0rem',
                 overflowY: 'visible',
                 width: '80px',
-
                 height: '100%',
             }}
         >
@@ -158,7 +61,6 @@ const RenderItemMobileTiny: FC<
                     justifyContent: 'center',
                     alignItems: 'center',
                     padding: 10,
-                    // margin: '.6rem 1rem',
                 }}
             >
                 {item === undefined && index === 0 ? (
@@ -166,8 +68,6 @@ const RenderItemMobileTiny: FC<
                         style={{
                             height: '45px',
                             width: '45px',
-                            // WebkitBackdropFilter: 'blur(20px)',
-
                             borderRadius: lib.layout.borderRadius.mediumish,
                             background: lib.colors.transparentWhite,
                         }}
@@ -193,10 +93,6 @@ const RenderItemMobileTiny: FC<
                                 zIndex: 2,
                                 WebkitBackdropFilter: 'blur(20px)',
                                 borderRadius: '100px',
-                                // // WebkitBackgroundClip: 'text',
-                                // WebkitTextFillColor: 'transparent',
-                                // backgroundColor: 'transparent',
-                                // background: 'transparent',
                             }}
                         />
                     ) : (
@@ -209,10 +105,6 @@ const RenderItemMobileTiny: FC<
                                 zIndex: 2,
                                 WebkitBackdropFilter: 'blur(20px)',
                                 borderRadius: '100px',
-                                // // WebkitBackgroundClip: 'text',
-                                // WebkitTextFillColor: 'transparent',
-                                // backgroundColor: 'transparent',
-                                // background: 'transparent',
                             }}
                         />
                     ))}
@@ -228,9 +120,7 @@ export default ({ data }: { data: RotateOModalData }) => {
 
     // const network = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
-    // const userBalance = web3.hook.usePriorityBalance(network);
     const peer = web3.hook.usePriorityPeer();
-    // const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
     const [page, setPage] = client.modal.usePhase();
 
@@ -259,9 +149,6 @@ export default ({ data }: { data: RotateOModalData }) => {
     const {
         items,
         setItems,
-        // savedToChain,
-        // cannotProveOwnership,
-        // algo,
         error,
         send,
         hash,
@@ -270,8 +157,6 @@ export default ({ data }: { data: RotateOModalData }) => {
         estimator,
         svg,
     } = useHotRotateO(data.tokenId);
-
-    // console.log({ items });
 
     const containerStyle = useSpring({
         to: {
@@ -348,14 +233,11 @@ export default ({ data }: { data: RotateOModalData }) => {
                         alignItems: 'center',
                         position: 'relative',
                         borderRadius: lib.layout.borderRadius.large,
-                        // boxShadow: lib.layout.boxShadow.dark,
                         padding: '.4rem 1rem .8rem',
                         textAlign: 'center',
                         verticalAlign: 'center',
                         marginBottom: '.4rem',
                         backgroundColor: 'transparent',
-                        // WebkitBackdropFilter: 'blur(50px)',
-                        // backdropFilter: 'blur(50px)',
                     }}
                 >
                     <img
@@ -370,11 +252,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                         style={{
                             marginLeft: 10,
                             fontSize: '18px',
-                            // background: lib.colors.gradient2,
                             color: lib.colors.transparentPrimaryColor,
-                            // WebkitBackgroundClip: 'text',
-                            // WebkitTextFillColor: 'transparent',
-
                             ...lib.layout.presets.font.main.semibold,
                         }}
                     >
@@ -399,7 +277,6 @@ export default ({ data }: { data: RotateOModalData }) => {
                 <Button
                     className="mobile-pressable-div"
                     label="save"
-                    // leftIcon={calculating ? <Loader /> : undefined}
                     onClick={() => {
                         setPage(1);
                     }}
@@ -422,7 +299,6 @@ export default ({ data }: { data: RotateOModalData }) => {
         () =>
             isOpen && peer ? (
                 <>
-                    {/* <StupidMfingHack /> */}
                     <div
                         style={{
                             display: 'flex',
@@ -545,29 +421,39 @@ export default ({ data }: { data: RotateOModalData }) => {
                 <TransactionVisualConfirmation
                     hash={hash}
                     onDismiss={closeModal}
-                    tokenId={data.tokenId}
                     error={error}
+                    ConfirmationView={React.memo(() => {
+                        return (
+                            <div>
+                                <TokenViewer
+                                    svgNotFromGraph={svg}
+                                    style={{
+                                        width: '200px',
+                                        height: '200px',
+                                        padding: 10,
+                                        margin: 30,
+                                        background: lib.colors.transparentWhite,
+                                        borderRadius: lib.layout.borderRadius.medium,
+                                        boxShadow: lib.layout.boxShadow.basic,
+                                    }}
+                                />
+                                <Text
+                                    size="large"
+                                    textStyle={{
+                                        color: lib.colors.primaryColor,
+                                        fontWeight: lib.layout.fontWeight.semibold,
+                                        padding: 10,
+                                    }}
+                                >
+                                    {data.tokenId.toPrettyId()} v{data.currentVersion + 1} 🎉
+                                </Text>
+                            </div>
+                        );
+                    })}
                 />
             </>
         ) : null;
-    }, [isOpen, closeModal, chainId, data.tokenId, hash, address, error]);
-
-    // const Page2 = React.useMemo(() => {
-    //     return isOpen ? (
-    //         <TransactionVisualConfirmation
-    //             hash={hash}
-    //             tokenId={data.tokenId}
-    //             onDismiss={() => {
-    //                 closeModal();
-    //                 startTransition(() => {
-    //                     setTimeout(() => {
-    //                         setPage(0);
-    //                     }, 2000);
-    //                 });
-    //             }}
-    //         />
-    //     ) : null;
-    // }, [isOpen, closeModal, setPage, data.tokenId, hash]);
+    }, [isOpen, closeModal, chainId, data.tokenId, hash, address, error, data.currentVersion, svg]);
 
     return (
         <>

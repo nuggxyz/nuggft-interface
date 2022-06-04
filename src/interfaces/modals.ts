@@ -51,6 +51,7 @@ export interface MintModalData extends ModalDataBase {
 export interface RotateOModalData extends ModalDataBase {
     modalType: ModalEnum.RotateO;
     tokenId: NuggId;
+    currentVersion: number;
 }
 
 export interface LoanInputModalData extends ModalDataBase {

@@ -326,8 +326,6 @@ export const useHotRotateO = (tokenId?: NuggId) => {
         return undefined;
     }, [tokenId, nuggft, provider, address, epoch]);
 
-    console.log(items, cannotProveOwnership, address);
-
     const navigate = useNavigate();
 
     const { screen } = useDimensions();
@@ -452,13 +450,16 @@ export const useHotRotateO = (tokenId?: NuggId) => {
 
     emitter.hook.useOn({
         type: emitter.events.Rotate,
-        callback: ({ event }) => {
-            if (saving && event.args.tokenId === Number(tokenId?.toRawId())) {
-                setSaving(false);
-                setSavedToChain(true);
-                if (tokenId && svg) inject(tokenId, svg);
-            }
-        },
+        callback: React.useCallback(
+            ({ event }) => {
+                if (saving) setSaving(false);
+                if (event.args.tokenId === Number(tokenId?.toRawId())) {
+                    setSavedToChain(true);
+                    if (tokenId && svg) inject(tokenId, svg);
+                }
+            },
+            [tokenId, svg, saving, inject],
+        ),
     });
 
     return {
@@ -518,14 +519,6 @@ export const HotRotateO = ({ tokenId: overridedTokenId }: { tokenId?: NuggId }) 
         loading,
         svg,
     } = useHotRotateO(tokenId);
-
-    // if (needsToClaim) {
-    //     return (
-    //         <animated.div style={{ ...styles.desktopContainer, ...style }}>
-    //             <Label text="Needs to claim" />
-    //         </animated.div>
-    //     );
-    // }
 
     if (cannotProveOwnership) {
         return (

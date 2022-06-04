@@ -835,6 +835,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                             buildTokenIdFactory({
                                                 modalType: ModalEnum.RotateO as const,
                                                 tokenId: token.tokenId,
+                                                currentVersion: renderItemData.length - 1,
                                             }),
                                         );
                                     }}

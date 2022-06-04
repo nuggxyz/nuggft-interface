@@ -1,4 +1,5 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, NamedExoticComponent } from 'react';
+import Confetti from 'react-confetti';
 
 import lib, { shortenTxnHash } from '@src/lib';
 import AnimatedConfirmation from '@src/components/general/AnimatedTimers/AnimatedConfirmation';
@@ -16,7 +17,7 @@ type Props = {
     hash: ResponseHash | undefined;
     tokenId?: TokenId;
     onDismiss?: () => void;
-    ConfirmationView?: () => JSX.Element;
+    ConfirmationView?: (() => JSX.Element) | NamedExoticComponent<unknown>;
     error?: Error | CustomError | undefined;
 };
 
@@ -52,7 +53,14 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
             }}
         >
             <AnimatedConfirmation confirmed={!!transaction?.receipt} />
-
+            <Confetti
+                numberOfPieces={100}
+                run={transaction?.response && transaction?.receipt}
+                style={{
+                    transition: `opacity .5s ${lib.layout.animation}`,
+                    opacity: transaction?.response && transaction?.receipt ? 1 : 0,
+                }}
+            />
             {!transaction?.response && !manualResponse && (
                 <div
                     style={{
