@@ -156,6 +156,7 @@ export default ({ data }: { data: RotateOModalData }) => {
         populatedTransaction,
         estimator,
         svg,
+        loading,
     } = useHotRotateO(data.tokenId);
 
     const containerStyle = useSpring({
@@ -240,6 +241,10 @@ export default ({ data }: { data: RotateOModalData }) => {
                         backgroundColor: 'transparent',
                     }}
                 >
+                    {/* <div style={{ height: 30, width: 15, display: 'flex', alignItems: 'center' }}>
+                        {loading ? (
+                            <Loader style={{ height: 15, width: 15 }} />
+                        ) : ( */}
                     <img
                         alt="ethereum logo"
                         src={eth}
@@ -248,6 +253,9 @@ export default ({ data }: { data: RotateOModalData }) => {
                             objectFit: 'cover',
                         }}
                     />
+                    {/* )}
+                    </div> */}
+
                     <span
                         style={{
                             marginLeft: 10,
@@ -293,7 +301,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                 />
             </>
         ),
-        [setPage, calculating, estimator.error, items?.byItem, svg],
+        [setPage, calculating, estimator.error, items?.byItem, svg, loading],
     );
     const Page1 = React.useMemo(
         () =>
@@ -443,9 +451,12 @@ export default ({ data }: { data: RotateOModalData }) => {
                                         color: lib.colors.primaryColor,
                                         fontWeight: lib.layout.fontWeight.semibold,
                                         padding: 10,
+                                        width: '100%',
+                                        textAlign: 'center',
                                     }}
                                 >
-                                    {data.tokenId.toPrettyId()} v{data.currentVersion + 1} 🎉
+                                    {data.tokenId.toPrettyId()} v{data.currentVersion + 1} is born!
+                                    🎉
                                 </Text>
                             </div>
                         );
