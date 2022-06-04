@@ -73,6 +73,7 @@ export interface GodListProps<T, B, A> {
     faded?: boolean;
     displacement?: number;
     dadRef?: React.RefObject<HTMLDivElement> | null;
+    noOverflow?: boolean;
 }
 
 const GodList = <T, B, A>({
@@ -102,6 +103,7 @@ const GodList = <T, B, A>({
     displacement = 0,
     screenHeight = 0,
     mobileFluid = false,
+    noOverflow = false,
 }: // dadRef = null,
 GodListProps<T, B, A>) => {
     const interval = 7;
@@ -368,7 +370,9 @@ GodListProps<T, B, A>) => {
                     marginTop: startGap,
                     marginBottom: startGap,
                     ...style,
-                    ...(!disableScroll ? { overflow: 'scroll' } : { overflow: 'visible' }),
+                    ...(!disableScroll
+                        ? { overflow: 'scroll' }
+                        : { overflow: noOverflow ? undefined : 'visible' }),
                     justifySelf: 'flex-start',
                     ...(faded && {
                         WebkitMaskImage: 'linear-gradient(0deg, #000 95%, transparent)',

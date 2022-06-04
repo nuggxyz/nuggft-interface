@@ -109,6 +109,7 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                 ref={fullRef}
                 style={{
                     ...styles.nuggListDefault,
+                    overflow: 'scroll',
                     ...style,
                     ...(screenType === 'phone' && { overflow: 'auto' }),
                 }}
@@ -150,6 +151,9 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                         data={tokenIds}
                         RenderItem={NuggListRenderItem}
                         loading={false}
+                        coreRef={fullRef}
+                        disableScroll
+                        noOverflow
                         // interval={interval}
                         onScrollEnd={_onScrollEnd}
                         action={onClick}
