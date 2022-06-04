@@ -1,11 +1,12 @@
 import React from 'react';
 
 import {
-    GetAllNuggsSearchQuery,
+    GetAllItemsQuery,
+    GetAllNuggsQuery,
     Item_OrderBy,
     Nugg_OrderBy,
-    useGetAllItemsSearchQuery,
-    useGetAllNuggsSearchQuery,
+    useGetAllItemsQuery,
+    useGetAllNuggsQuery,
 } from '@src/gql/types.generated';
 import lib from '@src/lib';
 import BradPittList from '@src/components/general/List/BradPittList';
@@ -15,67 +16,36 @@ import { Page } from '@src/interfaces/nuggbook';
 
 import { NuggListRenderItemMobileBig, NuggListRenderItemMobile } from './NuggListRenderItemMobile';
 
-const INFINITE_INTERVAL = 500;
-const START_INTERVAL = 1000;
+const INFINITE_INTERVAL = 100;
+// const START_INTERVAL = 1000;
 
 export const AllNuggs = () => {
     const goto = client.nuggbook.useGoto();
 
-    const page = client.nuggbook.useNuggBookPage();
+    const [allNuggsData, setAllNuggsData] = React.useState<GetAllNuggsQuery['nuggs']>();
 
-    const [allNuggsData, setAllNuggsData] = React.useState<GetAllNuggsSearchQuery['nuggs']>();
-    const [go, setGo] = React.useState(false);
-    const { fetchMore: fetchMoreNuggs } = useGetAllNuggsSearchQuery({
+    const { fetchMore: fetchMoreNuggs } = useGetAllNuggsQuery({
         fetchPolicy: 'cache-first',
-        skip: true,
         variables: {
             skip: 0,
-            first: START_INTERVAL,
+            first: INFINITE_INTERVAL,
             orderBy: Nugg_OrderBy.Idnum,
+        },
+        onCompleted: (x) => {
+            setAllNuggsData(x.nuggs);
         },
     });
 
-    const loadMoreNuggs = React.useCallback(async () => {
-        let started = false;
-        let added = 0;
-        const allll = [] as NonNullable<typeof allNuggsData>;
-        let res = [] as NonNullable<typeof allNuggsData>;
-        while (!started || res.length === START_INTERVAL) {
-            started = true;
-            // eslint-disable-next-line no-await-in-loop
-            res = await fetchMoreNuggs({
-                variables: {
-                    first: START_INTERVAL,
-                    skip: added,
-                },
-            }).then((x) => {
-                return x.data.nuggs;
-            });
-
-            added += res.length;
-
-            allll.push(...res);
-        }
-        return allll;
-        // setAllNuggsData(allll);
-    }, [fetchMoreNuggs]);
-
-    React.useEffect(() => {
-        let stale = false;
-        if (page === Page.AllNuggs && !go) {
-            setGo(true);
-            void loadMoreNuggs().then((data) => {
-                if (!stale) {
-                    setAllNuggsData(data);
-                }
-            });
-        }
-        return () => {
-            stale = true;
-        };
-    }, [loadMoreNuggs, setGo, page, go]);
-
-    // console.log('ayo', allNuggsData?.length);
+    const loadMoreNuggs = React.useCallback(() => {
+        void fetchMoreNuggs({
+            variables: {
+                first: INFINITE_INTERVAL,
+                skip: allNuggsData?.length || 0,
+            },
+        }).then((x) => {
+            setAllNuggsData((a) => [...(a || []), ...x.data.nuggs]);
+        });
+    }, [allNuggsData, fetchMoreNuggs, setAllNuggsData]);
 
     const id = React.useId();
     const reff = React.useRef(null);
@@ -111,8 +81,6 @@ export const AllNuggs = () => {
                         label="back"
                         onClick={() => goto(Page.Search, false)}
                         buttonStyle={{
-                            // position: 'absolute',
-                            // top: 80,
                             backdropFilter: 'blur(30px)',
                             WebkitBackdropFilter: 'blur(30px)',
                             left: '1.4rem',
@@ -128,19 +96,13 @@ export const AllNuggs = () => {
                 RenderItemSmall={NuggListRenderItemMobile}
                 RenderItemBig={NuggListRenderItemMobileBig}
                 disableScroll
-                // useBradRef
                 coreRef={reff}
-                // onScrollEnd={loadMoreNuggs}
+                onScrollEnd={loadMoreNuggs}
                 extraData={{ cardType: 'swap' }}
                 itemHeightBig={340}
                 itemHeightSmall={160}
                 startGap={25}
                 endGap={100}
-                // floaterWrapperStyle={{
-                //     position: 'absolute',
-                //     top: 83,
-                //     right: '1rem',
-                // }}
                 floaterColor={lib.colors.transparentWhite}
             />
         </div>
@@ -148,18 +110,18 @@ export const AllNuggs = () => {
 };
 
 export const AllItems = () => {
-    const [allItemsData, setAllItemsData] = React.useState<ItemId[]>([]);
+    const [allItemsData, setAllItemsData] = React.useState<GetAllItemsQuery['items']>();
     const goto = client.nuggbook.useGoto();
 
-    const { fetchMore: fetchMoreItems } = useGetAllItemsSearchQuery({
+    const { fetchMore: fetchMoreItems } = useGetAllItemsQuery({
         fetchPolicy: 'cache-first',
         variables: {
             skip: 0,
-            first: START_INTERVAL,
+            first: INFINITE_INTERVAL,
             orderBy: Item_OrderBy.Idnum,
         },
         onCompleted: (x) => {
-            setAllItemsData(x.items.map((y) => y.id.toItemId()));
+            setAllItemsData(x.items);
         },
     });
 
@@ -170,7 +132,7 @@ export const AllItems = () => {
                 skip: allItemsData?.length || 0,
             },
         }).then((x) => {
-            setAllItemsData([...allItemsData, ...x.data.items.map((y) => y.id.toItemId())]);
+            setAllItemsData((a) => [...(a || []), ...x.data.items]);
         });
     }, [allItemsData, fetchMoreItems, setAllItemsData]);
 
@@ -184,15 +146,17 @@ export const AllItems = () => {
                 width: '100%',
                 display: 'flex',
                 flexDirection: 'column',
+                height: '600px',
             }}
         >
             <BradPittList
                 id={`${id}-of-brad`}
                 listStyle={{
-                    overflow: undefined,
+                    overflow: 'hidden',
                     position: 'relative',
                     justifyContent: 'flex-start',
                     // padding: '0 20px',
+                    height: '100%',
                     width: '100%',
                 }}
                 headerStyle={{
@@ -206,11 +170,9 @@ export const AllItems = () => {
                         label="back"
                         onClick={() => goto(Page.Search, false)}
                         buttonStyle={{
-                            // position: 'absolute',
-                            // top: 80,
                             backdropFilter: 'blur(30px)',
-
                             WebkitBackdropFilter: 'blur(30px)',
+                            left: '1.4rem',
                             zIndex: 1000,
                             borderRadius: lib.layout.borderRadius.large,
                             background: lib.colors.primaryColor,
@@ -218,11 +180,11 @@ export const AllItems = () => {
                         textStyle={{ color: 'white' }}
                     />
                 ))}
-                data={allItemsData}
+                offsetListRef={false}
+                data={allItemsData?.map((x) => x.id.toItemId()) || []}
                 RenderItemSmall={NuggListRenderItemMobile}
                 RenderItemBig={NuggListRenderItemMobileBig}
                 disableScroll
-                // useBradRef
                 coreRef={reff}
                 onScrollEnd={loadMoreItems}
                 extraData={{ cardType: 'swap' }}
@@ -230,13 +192,6 @@ export const AllItems = () => {
                 itemHeightSmall={160}
                 startGap={25}
                 endGap={100}
-                floaterWrapperStyle={
-                    {
-                        // position: 'absolute',
-                        // top: 83,
-                        // right: '1rem',
-                    }
-                }
                 floaterColor={lib.colors.transparentWhite}
             />
         </div>
