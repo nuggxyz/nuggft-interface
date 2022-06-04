@@ -732,25 +732,6 @@
     {
         "inputs": [
             {
-                "internalType": "uint24",
-                "name": "tokenId",
-                "type": "uint24"
-            }
-        ],
-        "name": "calculateEarlySeed",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "seed",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "internalType": "address",
                 "name": "sender",
                 "type": "address"
@@ -775,7 +756,12 @@
             },
             {
                 "internalType": "uint96",
-                "name": "current",
+                "name": "currentUserOffer",
+                "type": "uint96"
+            },
+            {
+                "internalType": "uint96",
+                "name": "currentLeaderOffer",
                 "type": "uint96"
             },
             {
@@ -819,13 +805,28 @@
             },
             {
                 "internalType": "uint96",
-                "name": "current",
+                "name": "currentUserOffer",
+                "type": "uint96"
+            },
+            {
+                "internalType": "uint96",
+                "name": "currentLeaderOffer",
                 "type": "uint96"
             },
             {
                 "internalType": "uint96",
                 "name": "incrementBps",
                 "type": "uint96"
+            },
+            {
+                "internalType": "bool",
+                "name": "mustClaimBuyer",
+                "type": "bool"
+            },
+            {
+                "internalType": "bool",
+                "name": "mustOfferOnSeller",
+                "type": "bool"
             }
         ],
         "stateMutability": "view",
@@ -924,25 +925,6 @@
                 "internalType": "uint24",
                 "name": "",
                 "type": "uint24"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint24",
-                "name": "_epoch",
-                "type": "uint24"
-            }
-        ],
-        "name": "end",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "res",
-                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -1094,30 +1076,6 @@
             }
         ],
         "name": "imageURI",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "res",
-                "type": "string"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "startblock",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint24",
-                "name": "_epoch",
-                "type": "uint24"
-            }
-        ],
-        "name": "imageURICheat",
         "outputs": [
             {
                 "internalType": "string",
@@ -1391,14 +1349,29 @@
     {
         "inputs": [
             {
-                "internalType": "uint64[]",
-                "name": "tokenIds",
-                "type": "uint64[]"
+                "internalType": "uint24",
+                "name": "buyingTokenId",
+                "type": "uint24"
             },
             {
-                "internalType": "uint256[]",
-                "name": "values",
-                "type": "uint256[]"
+                "internalType": "uint24",
+                "name": "sellingTokenId",
+                "type": "uint24"
+            },
+            {
+                "internalType": "uint16",
+                "name": "itemId",
+                "type": "uint16"
+            },
+            {
+                "internalType": "uint96",
+                "name": "offerValue1",
+                "type": "uint96"
+            },
+            {
+                "internalType": "uint96",
+                "name": "offerValue2",
+                "type": "uint96"
             }
         ],
         "name": "offer",
@@ -1750,25 +1723,6 @@
     {
         "inputs": [
             {
-                "internalType": "uint24",
-                "name": "_epoch",
-                "type": "uint24"
-            }
-        ],
-        "name": "start",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "res",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
                 "internalType": "bytes4",
                 "name": "interfaceId",
                 "type": "bytes4"
@@ -1793,78 +1747,6 @@
                 "internalType": "string",
                 "name": "",
                 "type": "string"
-            }
-        ],
-        "stateMutability": "pure",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint24",
-                "name": "_epoch",
-                "type": "uint24"
-            },
-            {
-                "internalType": "uint256",
-                "name": "gen",
-                "type": "uint256"
-            }
-        ],
-        "name": "toEndBlock",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "res",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "pure",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "blocknum",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "gen",
-                "type": "uint256"
-            }
-        ],
-        "name": "toEpoch",
-        "outputs": [
-            {
-                "internalType": "uint24",
-                "name": "res",
-                "type": "uint24"
-            }
-        ],
-        "stateMutability": "pure",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint24",
-                "name": "_epoch",
-                "type": "uint24"
-            },
-            {
-                "internalType": "uint256",
-                "name": "gen",
-                "type": "uint256"
-            }
-        ],
-        "name": "toStartBlock",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "res",
-                "type": "uint256"
             }
         ],
         "stateMutability": "pure",

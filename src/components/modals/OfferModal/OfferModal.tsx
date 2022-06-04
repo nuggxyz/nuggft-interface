@@ -107,7 +107,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         return {
                             canOffer: x.canOffer,
                             next: x.next,
-                            curr: x.current,
+                            curr: x.currentUserOffer,
                         };
                     },
                 );
@@ -122,7 +122,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     return {
                         canOffer: x.canOffer,
                         next: x.next,
-                        curr: x.current,
+                        curr: x.currentUserOffer,
                     };
                 });
             }

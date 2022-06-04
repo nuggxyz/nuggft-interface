@@ -227,7 +227,7 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
 
     const currency = client.usd.useUsdPair(selected ? selected.eth : token?.tryout?.min?.eth);
 
-    return text ? (
+    return (
         <div
             style={{
                 display: 'flex',
@@ -302,7 +302,7 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
                 </>
             </div>{' '}
         </div>
-    ) : null;
+    );
 };
 
 const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {

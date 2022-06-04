@@ -24,7 +24,6 @@ import CurrencyToggler, {
     useCurrencyTogglerState,
 } from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import { DualCurrencyInputWithIcon } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
-import { calculateRawOfferValue } from '@src/web3/constants';
 import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
 import packages from '@src/packages';
 import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
@@ -50,102 +49,102 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const blocknum = client.block.useBlock();
 
+    // const myNuggs = client.live.myNuggs();
+
+    // // console.log(myNuggs.find((x) => x.tokenId === data.nuggToBuyFor));
+
+    // const needToClaim = React.useMemo(() => {
+    //     return (
+    //         data.isItem() &&
+    //         (myNuggs.find((x) => x.tokenId === data.nuggToBuyFor)?.pendingClaim ?? false)
+    //     );
+    // }, [myNuggs, data]);
+
+    // const [, startTransition] = React.useTransition();
+
     const check = useAsyncState<{
         canOffer: boolean | undefined;
-        next: BigNumber | undefined;
-        curr: BigNumber | undefined;
-        eth: EthInt | undefined;
+        nextUserOffer: BigNumber | undefined;
+        currentUserOffer: BigNumber | undefined;
+        currentLeaderOffer: BigNumber | undefined;
         increment: BigNumber | undefined;
-        multicallRequired: boolean | undefined;
+        mustClaimBuyer: boolean | undefined;
+        mustOfferOnSeller: boolean | undefined;
     }>(() => {
         if (data.tokenId && address && chainId && network && msp) {
             if (data.isNugg()) {
-                return Promise.all([
-                    nuggft['check(address,uint24)'](address, data.tokenId.toRawId()).then((x) => {
+                return nuggft['check(address,uint24)'](address, data.tokenId.toRawId()).then(
+                    (x) => {
                         return {
                             canOffer: x.canOffer,
-                            next: x.next,
-                            curr: x.current,
+                            nextUserOffer: x.next,
+                            currentUserOffer: x.currentUserOffer,
                             increment: x.incrementBps,
-                            multicallRequired: false,
+                            currentLeaderOffer: x.currentLeaderOffer,
+                            mustClaimBuyer: undefined,
+                            mustOfferOnSeller: undefined,
                         };
-                    }),
-                    msp.bignumber,
-                    nuggft.agency(data.tokenId.toRawId()),
-                ]).then((_data) => {
-                    const agency = lib.parse.agency(_data[2]);
-                    if (agency.eth.eq(0)) agency.eth = new EthInt(_data[1]);
-                    return { ..._data[0], ...agency };
-                });
+                    },
+                );
             }
 
-            return Promise.all([
-                nuggft['check(uint24,uint24,uint16)'](
-                    data.nuggToBuyFor.toRawIdNum(),
-                    data.nuggToBuyFrom.toRawId(),
-                    data.tokenId.toRawId(),
-                ).then((x) => {
-                    return {
-                        canOffer: x.canOffer,
-                        next: x.next,
-                        curr: x.current,
-                        increment: x.incrementBps,
-                    };
-                }),
+            return nuggft['check(uint24,uint24,uint16)'](
+                data.nuggToBuyFor.toRawIdNum(),
+                data.nuggToBuyFrom.toRawId(),
+                data.tokenId.toRawId(),
+            ).then((x) => {
+                return {
+                    canOffer: x.canOffer,
+                    nextUserOffer: x.next,
+                    currentUserOffer: x.currentUserOffer,
+                    currentLeaderOffer: x.currentLeaderOffer,
+                    increment: x.incrementBps,
+                    mustClaimBuyer: x.mustClaimBuyer,
+                    mustOfferOnSeller: x.mustOfferOnSeller,
+                };
+            });
 
-                nuggft.itemAgency(data.nuggToBuyFrom.toRawId(), data.tokenId.toRawId()),
-            ])
-                .then((_data) => {
-                    const agency = lib.parse.agency(_data[1]);
-                    console.log({ agency, _data });
-
-                    if (agency.eth.eq(0)) {
-                        return {
-                            ..._data[0],
-                            eth: EthInt.fromFractionRaw(msp),
-                            multicallRequired: true,
-                        };
-                    }
-                    return { ..._data[0], ...agency, multicallRequired: false };
-                })
-                .catch(() => {
-                    return {
-                        canOffer: undefined,
-                        next: undefined,
-                        curr: undefined,
-                        increment: undefined,
-                        eth: undefined,
-                        multicallRequired: false,
-                    };
-                });
+            // .catch(() => {
+            //     return {
+            //         canOffer: undefined,
+            //         next: undefined,
+            //         curr: undefined,
+            //         increment: undefined,
+            //         eth: undefined,
+            //         multicallRequired: false,
+            //         mustClaimBuyer: false,
+            //         mustOfferOnSeller: false,
+            //     };
+            // });
         }
         return undefined;
     }, [address, chainId, network, data.nuggToBuyFor, data.nuggToBuyFrom, msp, blocknum]);
     // console.log({ check, data });
+
     const minNextBid = React.useMemo(() => {
-        if (!check?.next) return 0;
-        return Number(new EthInt(check.next).toFixedStringRoundingUp(5));
-    }, [check?.next]);
+        if (!check?.nextUserOffer) return 0;
+        return Number(new EthInt(check.nextUserOffer).toFixedStringRoundingUp(5));
+    }, [check?.nextUserOffer]);
 
     React.useEffect(() => {
-        if (check && check.next && (amount === '0' || lastPressed === null)) {
-            setAmount(new EthInt(check.next).toFixedStringRoundingUp(5));
+        if (check && check.nextUserOffer && (amount === '0' || lastPressed === null)) {
+            setAmount(new EthInt(check.nextUserOffer).toFixedStringRoundingUp(5));
             setLastPressed(null);
         }
     }, [amount, check, lastPressed]);
 
     const amountUsd = useUsdPair(amount);
-    const currentPrice = useUsdPair(check?.eth);
+    const currentPrice = useUsdPair(check?.currentLeaderOffer);
 
-    const currentBid = useUsdPair(check?.curr);
+    const currentBid = useUsdPair(check?.currentUserOffer);
     const minNextBidPair = useUsdPair(minNextBid);
 
     const paymentUsd = useUsdPairWithCalculation(
         React.useMemo(
             () => [
                 amount,
-                check?.curr || 0,
-                check?.multicallRequired ? msp.increase(BigInt(5)) : 0,
+                check?.currentUserOffer || 0,
+                check?.mustOfferOnSeller ? msp.increase(BigInt(5)) : 0,
             ],
             [amount, check, msp],
         ),
@@ -163,24 +162,20 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         ),
     );
 
-    const populatedTransaction = React.useMemo(() => {
+    const rawPopulatedTransaction = React.useMemo(() => {
         const value = paymentUsd.eth.bignumber;
 
         if (!paymentUsd.eth.eq(0)) {
             if (data.isItem()) {
-                if (check?.multicallRequired) {
+                if (check?.mustClaimBuyer || check?.mustOfferOnSeller) {
                     const realmsp = msp.increase(BigInt(5));
                     return {
-                        tx: nuggft.populateTransaction['offer(uint64[],uint256[])'](
-                            [
-                                data.nuggToBuyFrom.toRawId(),
-                                calculateRawOfferValue(
-                                    data.nuggToBuyFor,
-                                    data.nuggToBuyFrom,
-                                    data.tokenId,
-                                ),
-                            ],
-                            [realmsp.bignumber, amountUsd.eth.bignumber],
+                        tx: nuggft.populateTransaction['offer(uint24,uint24,uint16,uint96,uint96)'](
+                            data.nuggToBuyFor.toRawId(),
+                            data.nuggToBuyFrom.toRawId(),
+                            data.tokenId.toRawId(),
+                            check?.mustOfferOnSeller ? realmsp.bignumber : BigNumber.from(0),
+                            amountUsd.eth.bignumber,
                             {
                                 value,
                                 from: address,
@@ -213,7 +208,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         }
 
         return undefined;
-    }, [nuggft, paymentUsd, address, data, msp, check?.multicallRequired]);
+    }, [nuggft, paymentUsd, address, data, msp, check, amountUsd]);
+
+    const populatedTransaction = React.useDeferredValue(rawPopulatedTransaction);
 
     const estimation = useAsyncState(() => {
         if (populatedTransaction && network) {
@@ -273,7 +270,11 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                 return;
                             }
                             const a =
-                                check?.eth?.increaseToFixedStringRoundingUp(increment, 5) || '0';
+                                (check?.currentLeaderOffer &&
+                                    new EthInt(
+                                        check.currentLeaderOffer,
+                                    ).increaseToFixedStringRoundingUp(increment, 5)) ||
+                                '0';
                             setAmount(a);
                             setLastPressed(`${increment}`);
                         }}
@@ -341,13 +342,14 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const globalCurrencyPref = client.usd.useCurrencyPreferrence();
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [handledNeg1, setHandledNeg1] = React.useState(false);
 
     React.useEffect(() => {
-        if (check?.multicallRequired && !handledNeg1 && page !== -1) {
+        if (check?.mustOfferOnSeller && !handledNeg1 && page !== -1) {
             setPage(-1);
         }
-    }, [check, handledNeg1, page]);
+    }, [check?.mustOfferOnSeller, handledNeg1, page, setPage]);
 
     const mspusd = client.usd.useUsdPair(msp);
 
@@ -532,7 +534,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     ))}
                 </div>
 
-                {check?.multicallRequired && (
+                {check?.mustOfferOnSeller && (
                     <Text>
                         <CurrencyText
                             prefix="+"
@@ -576,7 +578,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             currentPrice,
             estimator.error,
             // myBalance,
-            check?.multicallRequired,
+            check?.mustOfferOnSeller,
             data.nuggToBuyFrom,
             leader?.incrementX64,
             minNextBidPair,
@@ -629,7 +631,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         stopAnimation
                         value={amountUsd}
                     />
-                    {check?.multicallRequired && (
+                    {check?.mustOfferOnSeller && (
                         <>
                             <Text size="large" textStyle={{ marginTop: 10 }}>
                                 Bid on {data.nuggToBuyFrom?.toPrettyId()}
@@ -742,7 +744,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             data.tokenId,
             data.nuggToBuyFrom,
             mspusd,
-            check?.multicallRequired,
+            check?.mustOfferOnSeller,
             localCurrencyPref,
         ],
     );
