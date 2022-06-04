@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import React from 'react';
 import create from 'zustand';
 import { combine } from 'zustand/middleware';
 
@@ -52,6 +53,8 @@ export type EditScreenState = ReturnType<typeof store['getState']>;
 
 export default {
     useEditScreenTokenId: () => store((state) => state.tokenId),
+    useEditScreenTokenIdWithOverride: (tokenId?: NuggId) =>
+        store(React.useCallback((state) => tokenId ?? state.tokenId, [tokenId])),
 
     useEditScreenOpen: () => store((state) => state.open),
     useOpenEditScreen: () => store((state) => state.openEditScreen),

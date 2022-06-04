@@ -749,8 +749,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         ],
     );
 
-    // console.log(transaction);
-
     const Page2 = React.useMemo(() => {
         return isOpen && chainId && address ? (
             <>

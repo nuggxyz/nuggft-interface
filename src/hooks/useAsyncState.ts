@@ -17,30 +17,44 @@ export const useAsyncSetState = <T>(
     React.Dispatch<React.SetStateAction<T | null | undefined>>,
     T | null | undefined,
     boolean,
+    string | undefined,
 ] => {
     const [result, setResult] = useState<T | null | undefined>();
     const [og, setOg] = useState<T | null | undefined>();
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string>();
 
     useEffect(() => {
+        let stale = false;
+
+        console.log('EYP');
         try {
             const exec = async () => query && query();
             setLoading(true);
             void exec()
                 .then((res) => {
-                    setResult(res);
-                    setOg(res);
-                    setLoading(false);
+                    if (!stale) {
+                        setResult(res);
+                        setOg(res);
+                        setLoading(false);
+                        setError(undefined);
+                    }
                 })
                 .catch((err) => {
-                    throw new Error(String(err));
+                    if (!stale) {
+                        setError(String(error));
+                        throw new Error(String(err));
+                    }
                 });
         } catch (err: unknown) {
             console.log('error in useAsyncState', err);
         }
+        return () => {
+            stale = true;
+        };
     }, deps);
 
-    return [result, setResult, og, loading];
+    return [result, setResult, og, loading, error];
 };
 
 export default useAsyncState;

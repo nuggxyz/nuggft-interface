@@ -22,7 +22,6 @@ import Label from '@src/components/general/Label/Label';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import { useGetNuggSnapshotsQuery, useGetNuggsThatHoldQuery } from '@src/gql/types.generated';
 import { NuggListRenderItemMobileBigHoldingItem } from '@src/components/mobile/NuggListRenderItemMobile';
-import MyNuggActions from '@src/components/nugg/ViewingNugg/MyNuggActions';
 import SwapListPhone from '@src/components/mobile/SwapListPhone';
 import { ItemListPhone } from '@src/components/nugg/ViewingNugg/ItemList';
 import { useUsdPair } from '@src/client/usd';
@@ -800,6 +799,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                         ...styles.goToSwapGradient,
                                         padding: '.2rem .5rem',
                                         fontSize: '24px',
+                                        fontWeight: lib.layout.fontWeight.thicc,
                                     }}
                                     label={t`put up for sale`}
                                     // rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
@@ -813,7 +813,32 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                         );
                                     }}
                                 />
-                                <MyNuggActions />
+                                <Button
+                                    className="mobile-pressable-div"
+                                    buttonStyle={{
+                                        ...styles.goToSwap,
+                                        marginTop: 10,
+
+                                        position: 'relative',
+                                    }}
+                                    textStyle={{
+                                        ...styles.goToSwapGradient,
+                                        background: lib.colors.gradient2,
+                                        padding: '.2rem .5rem',
+                                        fontSize: '24px',
+                                        fontWeight: lib.layout.fontWeight.thicc,
+                                    }}
+                                    label={t`edit`}
+                                    // rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
+                                    onClick={() => {
+                                        openModal(
+                                            buildTokenIdFactory({
+                                                modalType: ModalEnum.RotateO as const,
+                                                tokenId: token.tokenId,
+                                            }),
+                                        );
+                                    }}
+                                />
                             </>
                         )}
 

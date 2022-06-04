@@ -37,7 +37,7 @@ import { useCurrencyTogglerState } from '@src/components/general/Buttons/Currenc
 
 import styles from './HotRotateO.styles';
 
-interface Item extends ItemIdFactory<TokenIdFactoryBase> {
+export interface HotRotateOItem extends ItemIdFactory<TokenIdFactoryBase> {
     activeIndex: number;
     tokenId: ItemId;
     position: number;
@@ -47,7 +47,12 @@ interface Item extends ItemIdFactory<TokenIdFactoryBase> {
     duplicates: number;
 }
 
-type ItemList = { active: Item[]; hidden: Item[]; duplicates: Item[] };
+export type HotRotateOItemList = {
+    active: HotRotateOItem[];
+    hidden: HotRotateOItem[];
+    duplicates: HotRotateOItem[];
+    byItem: FixedLengthArray<HotRotateOItem[], 8>;
+};
 
 const HotRotateOController = () => {
     const openEditScreen = client.editscreen.useOpenEditScreen();
@@ -70,9 +75,13 @@ const HotRotateOController = () => {
 
 const RenderItemMobile: FC<
     ListRenderItemProps<
-        Item,
-        { items: ItemList; type: 'storage' | 'displayed'; screen: 'desktop' | 'tablet' | 'phone' },
-        Item
+        HotRotateOItem,
+        {
+            items: HotRotateOItemList;
+            type: 'storage' | 'displayed';
+            screen: 'desktop' | 'tablet' | 'phone';
+        },
+        HotRotateOItem
     >
 > = ({ item, action, extraData }) => {
     return (
@@ -135,9 +144,13 @@ const RenderItemMobile: FC<
 
 const RenderItem: FC<
     ListRenderItemProps<
-        Item,
-        { items: ItemList; type: 'storage' | 'displayed'; screen: 'desktop' | 'tablet' | 'phone' },
-        Item
+        HotRotateOItem,
+        {
+            items: HotRotateOItemList;
+            type: 'storage' | 'displayed';
+            screen: 'desktop' | 'tablet' | 'phone';
+        },
+        HotRotateOItem
     >
 > = ({ item, action, extraData }) => {
     return (
@@ -182,7 +195,9 @@ const RenderItem: FC<
 
 export const useHotRotateO = (tokenId?: NuggId) => {
     const provider = web3.hook.usePriorityProvider();
+    const dotnugg = useDotnuggV1(provider);
     const address = web3.hook.usePriorityAccount();
+    const epoch = client.epoch.active.useId();
 
     const nuggft = useNuggftV1(provider);
 
@@ -190,19 +205,10 @@ export const useHotRotateO = (tokenId?: NuggId) => {
     const [cannotProveOwnership, setCannotProveOwnership] = React.useState<boolean>();
     const [saving, setSaving] = useState(false);
     const [savedToChain, setSavedToChain] = useState(false);
+    const inject = useDotnuggInjectToCache();
 
-    emitter.on({
-        type: emitter.events.Rotate,
-        callback: ({ event }) => {
-            if (saving && event.args.tokenId === Number(tokenId?.toRawId())) {
-                setSaving(false);
-                setSavedToChain(true);
-            }
-        },
-    });
-
-    const [items, setItems] = useAsyncSetState<ItemList>(() => {
-        if (tokenId && provider) {
+    const [items, setItems] = useAsyncSetState<HotRotateOItemList>(() => {
+        if (tokenId && provider && epoch) {
             if (!address) {
                 setCannotProveOwnership(true);
                 return undefined;
@@ -212,7 +218,7 @@ export const useHotRotateO = (tokenId?: NuggId) => {
             const floopCheck = async () => {
                 return nuggft.floop(fmtTokenId).then((x) => {
                     const res = x.reduce(
-                        (prev: ItemList, curr, activeIndex) => {
+                        (prev: Omit<HotRotateOItemList, 'byItem'>, curr, activeIndex) => {
                             const parsed = parseItmeIdToNum(curr);
                             if (curr === 0) return prev;
                             if (
@@ -278,9 +284,19 @@ export const useHotRotateO = (tokenId?: NuggId) => {
                         },
                         { active: [], hidden: [], duplicates: [] },
                     );
-                    return res;
+                    return {
+                        ...res,
+                        byItem: [...res.active, ...res.hidden].reduce(
+                            (prev, curr) => {
+                                prev[curr.feature].push(curr);
+                                return prev;
+                            },
+                            [[], [], [], [], [], [], [], []] as HotRotateOItemList['byItem'],
+                        ),
+                    };
                 });
             };
+
             return nuggft.ownerOf(fmtTokenId).then((y) => {
                 setNeedsToClaim(false);
                 setCannotProveOwnership(false);
@@ -289,18 +305,28 @@ export const useHotRotateO = (tokenId?: NuggId) => {
                 }
                 return nuggft.agency(fmtTokenId).then((agency) => {
                     return nuggft.offers(fmtTokenId, address).then((offer) => {
-                        if (agency._hex === offer._hex) {
+                        console.log('HIDEY HO', offer, agency);
+                        if (
+                            agency._hex === offer._hex ||
+                            (offer.isZero() &&
+                                agency.mask(160).eq(address) &&
+                                agency.shr(230).mask(24).lt(epoch))
+                        ) {
                             setNeedsToClaim(true);
-                        } else {
-                            setCannotProveOwnership(true);
+
+                            return floopCheck();
                         }
+                        setCannotProveOwnership(true);
+
                         return undefined;
                     });
                 });
             });
         }
         return undefined;
-    }, [tokenId, nuggft, provider, address]);
+    }, [tokenId, nuggft, provider, address, epoch]);
+
+    console.log(items, cannotProveOwnership, address);
 
     const navigate = useNavigate();
 
@@ -313,7 +339,7 @@ export const useHotRotateO = (tokenId?: NuggId) => {
             const duplicates = items.duplicates.map((x, i) => ({ ...x, desiredIndex: i + 8 }));
 
             const current = [...active, ...hidden, ...duplicates].reduce(
-                (prev: (Item | undefined)[], curr) => {
+                (prev: (HotRotateOItem | undefined)[], curr) => {
                     prev[curr.activeIndex] = curr;
                     return prev;
                 },
@@ -344,26 +370,43 @@ export const useHotRotateO = (tokenId?: NuggId) => {
         }
         return undefined;
     }, [items, tokenId]);
-    const populatedTransaction = React.useMemo(() => {
-        if (!tokenId || !address) return undefined;
-        return {
-            tx: nuggft.populateTransaction['rotate(uint24,uint8[],uint8[])'](
-                tokenId.toRawId(),
-                [],
-                [],
-            ),
-        };
-    }, [nuggft, address]);
 
-    const { send, estimation: estimator, hash } = usePrioritySendTransaction();
-    useTransactionManager2(provider, hash);
+    const populatedTransaction = React.useMemo(() => {
+        if (!tokenId || !address || !algo) return undefined;
+        const main = nuggft.populateTransaction['rotate(uint24,uint8[],uint8[])'](...algo);
+
+        if (needsToClaim) {
+            const check = async () => {
+                return nuggft.populateTransaction.multicall(
+                    await Promise.all([
+                        nuggft.populateTransaction
+                            .claim(
+                                [tokenId.toRawId()],
+                                [address],
+                                [BigNumber.from(0)],
+                                [BigNumber.from(0)],
+                            )
+                            .then((x) => x.data || '0x0'),
+                        main.then((x) => x.data || '0x0'),
+                    ]),
+                );
+            };
+
+            return check();
+        }
+
+        return main;
+    }, [nuggft, address, algo, needsToClaim, tokenId]);
+
+    const { send, estimation: estimator, hash, error } = usePrioritySendTransaction();
+    useTransactionManager2(provider, hash, undefined);
 
     const network = web3.hook.useNetworkProvider();
 
     const estimation = useAsyncState(() => {
         if (populatedTransaction && network) {
             return Promise.all([
-                estimator.estimate(populatedTransaction.tx),
+                estimator.estimate(populatedTransaction),
                 network?.getGasPrice(),
             ]).then((_data) => ({
                 gasLimit: _data[0] || BigNumber.from(0),
@@ -387,6 +430,37 @@ export const useHotRotateO = (tokenId?: NuggId) => {
 
     const [localCurrencyPref, setLocalCurrencyPref] = useCurrencyTogglerState(globalCurrencyPref);
 
+    const [svg, , , loading] = useAsyncSetState(() => {
+        const arr: BigNumberish[] = new Array<BigNumberish>(8);
+
+        if (provider) {
+            if (items && items.active) {
+                for (let i = 0; i < 8; i++) {
+                    arr[i] = BigNumber.from(
+                        items.active.find((x) => x.feature === i)?.hexId ?? 0,
+                    ).mod(1000);
+                }
+                return dotnugg['exec(uint8[8],bool)'](
+                    arr as Parameters<typeof dotnugg['exec(uint8[8],bool)']>[0],
+                    true,
+                ) as Promise<Base64EncodedSvg>;
+            }
+        }
+
+        return undefined;
+    }, [items, dotnugg, provider]);
+
+    emitter.hook.useOn({
+        type: emitter.events.Rotate,
+        callback: ({ event }) => {
+            if (saving && event.args.tokenId === Number(tokenId?.toRawId())) {
+                setSaving(false);
+                setSavedToChain(true);
+                if (tokenId && svg) inject(tokenId, svg);
+            }
+        },
+    });
+
     return {
         navigate,
         screen,
@@ -409,14 +483,17 @@ export const useHotRotateO = (tokenId?: NuggId) => {
         localCurrencyPref,
         setLocalCurrencyPref,
         globalCurrencyPref,
+        error,
+        loading,
+        svg,
     };
 };
 
-const HotRotateO = () => {
+export const HotRotateO = ({ tokenId: overridedTokenId }: { tokenId?: NuggId }) => {
     const openEditScreen = client.editscreen.useEditScreenOpen();
-    const tokenId = client.editscreen.useEditScreenTokenId();
+    const tokenId = client.editscreen.useEditScreenTokenIdWithOverride(overridedTokenId);
 
-    const style = useAnimateOverlay(openEditScreen, {
+    const style = useAnimateOverlay(openEditScreen || !!overridedTokenId, {
         zIndex: 998,
     });
 
@@ -425,7 +502,7 @@ const HotRotateO = () => {
         screen,
         items,
         setItems,
-        needsToClaim,
+        // needsToClaim,
         savedToChain,
         cannotProveOwnership,
         nuggft,
@@ -438,15 +515,17 @@ const HotRotateO = () => {
         calculating,
         populatedTransaction,
         estimator,
+        loading,
+        svg,
     } = useHotRotateO(tokenId);
 
-    if (needsToClaim) {
-        return (
-            <animated.div style={{ ...styles.desktopContainer, ...style }}>
-                <Label text="Needs to claim" />
-            </animated.div>
-        );
-    }
+    // if (needsToClaim) {
+    //     return (
+    //         <animated.div style={{ ...styles.desktopContainer, ...style }}>
+    //             <Label text="Needs to claim" />
+    //         </animated.div>
+    //     );
+    // }
 
     if (cannotProveOwnership) {
         return (
@@ -507,6 +586,8 @@ const HotRotateO = () => {
                             navigate,
                             setSavedToChain,
                             setSaving,
+                            loading,
+                            svg,
                         }}
                     />
                 </>
@@ -517,58 +598,37 @@ const HotRotateO = () => {
 
 export const RotateOViewer = ({
     tokenId,
-    items,
-    setItems,
+    // items,
+    // setItems,
     savedToChain,
     navigate,
     setSaving,
     setSavedToChain,
     screen,
+    loading,
+    svg,
 }: {
     tokenId: TokenId;
-    items: ItemList;
+    items: HotRotateOItemList;
     savedToChain: boolean;
-    setItems: React.Dispatch<React.SetStateAction<ItemList | null | undefined>>;
+    setItems: React.Dispatch<React.SetStateAction<HotRotateOItemList | null | undefined>>;
     setSaving: React.Dispatch<React.SetStateAction<boolean>>;
     setSavedToChain: React.Dispatch<React.SetStateAction<boolean>>;
     navigate: NavigateFunction;
     screen: 'desktop' | 'tablet' | 'phone';
+    loading?: boolean;
+    svg?: Base64EncodedSvg | null;
 }) => {
-    const provider = web3.hook.usePriorityProvider();
-    const dotnugg = useDotnuggV1(provider);
-
-    const inject = useDotnuggInjectToCache();
-
-    const [svg, , , loading] = useAsyncSetState(() => {
-        const arr: BigNumberish[] = new Array<BigNumberish>(8);
-
-        if (provider) {
-            if (items && items.active) {
-                for (let i = 0; i < 8; i++) {
-                    arr[i] = BigNumber.from(
-                        items.active.find((x) => x.feature === i)?.hexId ?? 0,
-                    ).mod(1000);
-                }
-                return dotnugg['exec(uint8[8],bool)'](
-                    arr as Parameters<typeof dotnugg['exec(uint8[8],bool)']>[0],
-                    true,
-                ) as Promise<Base64EncodedSvg>;
-            }
-        }
-
-        return undefined;
-    }, [items, dotnugg, provider]);
-
-    useEffect(() => {
-        if (savedToChain && svg) {
-            inject(tokenId, svg);
-            setItems({
-                active: items.active.map((item, index) => ({ ...item, activeIndex: index })),
-                hidden: items.hidden.map((item, index) => ({ ...item, activeIndex: index + 8 })),
-                duplicates: items.duplicates,
-            });
-        }
-    }, [savedToChain, svg, inject, tokenId]);
+    // useEffect(() => {
+    //     if (savedToChain && svg) {
+    //         inject(tokenId, svg);
+    //         // setItems({
+    //         //     active: items.active.map((item, index) => ({ ...item, activeIndex: index })),
+    //         //     hidden: items.hidden.map((item, index) => ({ ...item, activeIndex: index + 8 })),
+    //         //     duplicates: items.duplicates,
+    //         // });
+    //     }
+    // }, [savedToChain, svg, inject, tokenId]);
 
     return (
         <div
@@ -653,10 +713,10 @@ export const RotateOSelector = ({
     estimator,
 }: {
     tokenId: TokenId;
-    items: ItemList;
+    items: HotRotateOItemList;
     navigate: NavigateFunction;
     nuggft: NuggftV1;
-    setItems: React.Dispatch<React.SetStateAction<ItemList | null | undefined>>;
+    setItems: React.Dispatch<React.SetStateAction<HotRotateOItemList | null | undefined>>;
     setSaving: React.Dispatch<React.SetStateAction<boolean>>;
     saving: boolean;
     savedToChain: boolean;
@@ -758,6 +818,7 @@ export const RotateOSelector = ({
                                 action={(item) => {
                                     if (items)
                                         setItems({
+                                            ...items,
                                             active: [
                                                 ...items.active.filter(
                                                     (x) => x.feature !== item.feature,
@@ -794,6 +855,8 @@ export const RotateOSelector = ({
                                 action={(item) => {
                                     if (items)
                                         setItems({
+                                            ...items,
+
                                             active: [
                                                 ...items.active.filter(
                                                     (x) => x.feature !== item.feature,

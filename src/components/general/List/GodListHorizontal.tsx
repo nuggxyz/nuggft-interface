@@ -262,7 +262,7 @@ const GodListHorizontal = <T, B, A>({
                 }}
                 onScroll={_onScroll}
             >
-                {startGap && startGap !== 0 && (
+                {!!(startGap && startGap !== 0) && (
                     <div style={{ height: '100%', marginLeft: startGap }} />
                 )}
 

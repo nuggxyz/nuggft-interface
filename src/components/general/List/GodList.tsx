@@ -361,7 +361,7 @@ GodListProps<T, B, A>) => {
     return (
         <>
             <div
-                id={`${genid}wrapper`}
+                id={`${genid}wrapper-horiz`}
                 ref={windowRef}
                 style={{
                     ...styles.container,
