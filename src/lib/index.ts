@@ -381,24 +381,12 @@ export const safeResetLocalStorage = (keys: string[]) => {
 };
 
 export const parseTokenId = (itemId: string, long?: boolean) => {
-    if (itemId && itemId.startsWith(constants.ID_PREFIX_ITEM)) {
-        const num = +itemId.replace(constants.ID_PREFIX_ITEM, '');
-        return `${
-            ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][Math.floor(num / 1000)]
-        } ${long ? '#' : ''}${num % 1000}`;
-    }
-    return `${long ? 'Nugg ' : ''}${itemId}`;
+    return long ? itemId.toPrettyId() : itemId.toPrettyId();
 };
 
 export const parseTokenIdSmart = (itemId: string) => {
     if (!itemId) return '';
-    if (itemId.startsWith(constants.ID_PREFIX_ITEM)) {
-        const num = +itemId.replace(constants.ID_PREFIX_ITEM, '');
-        return `${
-            ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][Math.floor(num / 1000)]
-        } ${num % 1000}`;
-    }
-    return `Nugg ${itemId}`;
+    return itemId.toPrettyId();
 };
 
 export const parseItmeIdToNum = (itemId: `item-${string}` | BigNumberish) => {

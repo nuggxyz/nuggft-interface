@@ -694,7 +694,7 @@ export const RotateOSelector = ({
     tokenId,
     items,
     navigate,
-    nuggft,
+    populatedTransaction,
     setItems,
     setSaving,
     saving,
@@ -721,6 +721,7 @@ export const RotateOSelector = ({
     ) => Promise<ResponseHash | undefined>;
     hash?: ResponseHash;
     estimator: ReturnType<typeof useEstimateTransaction>;
+    populatedTransaction?: Promise<PopulatedTransaction>;
 }) => {
     const [originalItems, setOriginalItems] = useState(items);
     useEffect(() => {
@@ -892,9 +893,9 @@ export const RotateOSelector = ({
                         disabled={!(algo && algo[1] && algo[1].length > 0) || !!estimator.error}
                         label={t`Save`}
                         onClick={() => {
-                            if (algo) {
+                            if (populatedTransaction) {
                                 setSaving(true);
-                                void send(nuggft.populateTransaction.rotate(...algo));
+                                void send(populatedTransaction);
                             }
                         }}
                     />
