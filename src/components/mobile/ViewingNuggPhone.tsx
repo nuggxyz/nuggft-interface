@@ -32,7 +32,6 @@ import { ModalEnum } from '@src/interfaces/modals';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
 import Button from '@src/components/general/Buttons/Button/Button';
 import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
-import undefined from '@src/lib/dotnugg/util';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 import usePrevious from '@src/hooks/usePrevious';
 import GodList from '@src/components/general/List/GodList';
@@ -220,8 +219,8 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
         if (selected) return t`Continue to Start Auction`;
         if (token && token.tryout && token.tryout.count && token.tryout.count > 0)
             return t`accept a nugg's asking price`;
-        if (token && token.tokenId.toRawIdNum() < 1000) return `bases are non transferable`;
-        return undefined;
+        if (token && token.tokenId.toRawIdNum() < 1000) return t`bases are non transferable`;
+        return t``;
     }, [token, selected]);
 
     const currency = client.usd.useUsdPair(selected ? selected.eth : token?.tryout?.min?.eth);

@@ -50,4 +50,4 @@
 //     }
 //     return swapId;
 // };
-export default undefined;
+export default {};

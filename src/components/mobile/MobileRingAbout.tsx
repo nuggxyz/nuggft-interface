@@ -60,7 +60,7 @@ const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible, ind
             }}
             onClick={(event) => {
                 event.stopPropagation();
-                navigate(`/swap/${tokenId}`);
+                if (tokenId) navigate(`/swap/${tokenId}`);
             }}
         >
             <animated.div

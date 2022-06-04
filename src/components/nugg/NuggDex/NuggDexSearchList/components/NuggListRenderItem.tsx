@@ -45,7 +45,12 @@ const NuggListRenderItemSwap = ({
 
 type Props = GodListRenderItemProps<TokenId, { cardType: 'swap' | 'all' | 'recent' }, TokenId>;
 
-const NuggListRenderItem: FunctionComponent<Props> = ({ item: tokenId, action, extraData }) => {
+const NuggListRenderItem: FunctionComponent<Props> = ({
+    item: tokenId,
+    action,
+    extraData,
+    index,
+}) => {
     const style = useMemo(() => {
         return {
             ...(tokenId ? styles.nuggListRenderItemContainer : {}),
@@ -54,7 +59,7 @@ const NuggListRenderItem: FunctionComponent<Props> = ({ item: tokenId, action, e
 
     return (
         <div
-            id={`item-${tokenId}`}
+            id={`item-${tokenId || index || 0}`}
             aria-hidden="true"
             role="button"
             style={style}
