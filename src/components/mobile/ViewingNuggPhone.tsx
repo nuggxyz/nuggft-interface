@@ -18,8 +18,6 @@ import { Lifecycle, TryoutData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { Address } from '@src/classes/Address';
 import OffersList from '@src/components/nugg/RingAbout/OffersList';
-import Caboose from '@src/components/nugg/RingAbout/Caboose';
-import SideCar from '@src/components/nugg/RingAbout/SideCar';
 import Label from '@src/components/general/Label/Label';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import { useGetNuggSnapshotsQuery, useGetNuggsThatHoldQuery } from '@src/gql/types.generated';
@@ -41,6 +39,7 @@ import GodList from '@src/components/general/List/GodList';
 
 import { NuggSnapshotRenderItem } from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
+import MobileCaboose from './MobileCaboose';
 
 const Ver = ({ left, right, label }: { left: number; right: number; label: string }) => {
     return (
@@ -290,8 +289,36 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
                                 : t`you will bid as ${selectedMyNugg.toPrettyId()}`
                             : text}
                     </Text>
-                    <SideCar tokenId={tokenId} />
-                    <Caboose
+                    {/* <div
+                        style={{
+                            marginTop: '20px',
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                flexDirection: 'column',
+                                height: '100%',
+                            }}
+                        >
+                            <Text
+                                textStyle={{
+                                    color: lib.colors.primaryColor,
+                                    paddingBottom: '10px',
+                                }}
+                            >{t`Coming Up`}</Text>
+                        </div>
+                        <OffersList
+                            tokenId={tokenId}
+                            sellingNuggId={token.upcomingActiveSwap.owner}
+                        />
+                        <OfferButton
+                            tokenId={tokenId}
+                            sellingNuggId={token.upcomingActiveSwap.owner}
+                        />
+                    </div> */}
+                    <MobileCaboose
                         tokenId={tokenId}
                         onSelectNugg={setSelected}
                         onSelectMyNugg={setSelectedMyNugg}
@@ -300,7 +327,7 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
                         }}
                     />
                 </>
-            </div>{' '}
+            </div>
         </div>
     );
 };

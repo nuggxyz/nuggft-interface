@@ -11,11 +11,6 @@ import { SearchView } from '@src/client/interfaces';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
-import {
-    NuggListRenderItemMobile,
-    NuggListRenderItemMobileBig,
-} from '@src/components/mobile/NuggListRenderItemMobile';
-import BradPittList from '@src/components/general/List/BradPittList';
 import lib from '@src/lib';
 import GodList from '@src/components/general/List/GodList';
 
@@ -55,7 +50,6 @@ const NuggList: FunctionComponent<NuggListProps> = ({
     tokenIds,
     onScrollEnd,
     animationToggle,
-    interval = 25,
     cardType,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type,
@@ -142,81 +136,28 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                     }}
                 />
 
-                {viewing === type &&
-                    (!isPhone ? (
-                        <GodList
-                            id={`${ider}infinite`}
-                            style={
-                                {
-                                    // zIndex: 0,
-                                    // overflow: 'hidden',
-                                    // position: 'relative',
-                                    // ...(screenType === 'phone' && { width: '100%' }),
-                                }
+                {viewing === type && (
+                    <GodList
+                        id={`${ider}infinite`}
+                        style={
+                            {
+                                // zIndex: 0,
+                                // overflow: 'hidden',
+                                // position: 'relative',
+                                // ...(screenType === 'phone' && { width: '100%' }),
                             }
-                            data={tokenIds}
-                            RenderItem={NuggListRenderItem}
-                            loading={false}
-                            interval={interval}
-                            onScrollEnd={_onScrollEnd}
-                            action={isPhone ? undefined : onClick}
-                            extraData={{ cardType }}
-                            itemHeight={210}
-                            animationToggle={animationToggle}
-                        />
-                    ) : (
-                        // <InfiniteList
-                        //     id={`${ider}infinite`}
-                        //     style={{
-                        //         zIndex: 0,
-                        //         overflow: 'hidden',
-                        //         position: 'relative',
-                        //         ...(screenType === 'phone' && { width: '100%' }),
-                        //     }}
-                        //     data={tokenIds}
-                        //     RenderItem={NuggListRenderItem}
-                        //     loading={false}
-                        //     interval={interval}
-                        //     onScrollEnd={_onScrollEnd}
-                        //     action={isPhone ? undefined : onClick}
-                        //     extraData={{ cardType }}
-                        //     itemHeight={210}
-                        //     animationToggle={animationToggle}
-                        // />
-                        <BradPittList
-                            id={`${ider}brad`}
-                            listStyle={{
-                                overflow: undefined,
-                                position: 'relative',
-                                justifyContent: 'flex-start',
-                                padding: '0 20px',
-                                ...(screenType === 'phone' && { width: '100%' }),
-                            }}
-                            style={{
-                                width: '100%',
-                            }}
-                            Title={React.memo(() => (
-                                <div />
-                            ))}
-                            data={tokenIds}
-                            RenderItemSmall={NuggListRenderItemMobile}
-                            RenderItemBig={NuggListRenderItemMobileBig}
-                            interval={interval}
-                            disableScroll
-                            coreRef={fullRef}
-                            onScrollEnd={_onScrollEnd}
-                            extraData={{ cardType }}
-                            itemHeightBig={340}
-                            itemHeightSmall={160}
-                            startGap={110}
-                            floaterWrapperStyle={{
-                                position: 'absolute',
-                                top: 63,
-                                right: '1rem',
-                            }}
-                            floaterColor={lib.colors.transparentWhite}
-                        />
-                    ))}
+                        }
+                        data={tokenIds}
+                        RenderItem={NuggListRenderItem}
+                        loading={false}
+                        // interval={interval}
+                        onScrollEnd={_onScrollEnd}
+                        action={onClick}
+                        extraData={{ cardType }}
+                        itemHeight={210}
+                        animationToggle={animationToggle}
+                    />
+                )}
             </animated.div>
         </div>
     );
