@@ -73,7 +73,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     }>(() => {
         if (data.tokenId && address && chainId && network && msp) {
             if (data.isNugg()) {
-                return nuggft['check(address,uint24)'](address, data.tokenId.toRawId()).then(
+                return nuggft['check(address,uint24)'](address, data.tokenId.toRawIdNum()).then(
                     (x) => {
                         return {
                             canOffer: x.canOffer,
@@ -118,7 +118,16 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             // });
         }
         return undefined;
-    }, [address, chainId, network, data.nuggToBuyFor, data.nuggToBuyFrom, msp, blocknum]);
+    }, [
+        address,
+        chainId,
+        network,
+        data.nuggToBuyFor,
+        data.nuggToBuyFrom,
+        msp,
+        blocknum,
+        data.tokenId,
+    ]);
     // console.log({ check, data });
 
     const minNextBid = React.useMemo(() => {

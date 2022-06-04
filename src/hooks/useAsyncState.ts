@@ -27,7 +27,6 @@ export const useAsyncSetState = <T>(
     useEffect(() => {
         let stale = false;
 
-        console.log('EYP');
         try {
             const exec = async () => query && query();
             setLoading(true);
