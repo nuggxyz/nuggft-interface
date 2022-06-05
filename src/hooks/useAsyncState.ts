@@ -62,7 +62,7 @@ export const useAsyncSetState = <T, G extends DependencyList>(
 export const useMemoizedAsyncState = <T, G extends DependencyList>(
     query: () => Promise<T | undefined> | undefined | null,
     deps: Readonly<G>,
-    depsEqual?: (prev: G, curr: G) => boolean,
+    depsEqual?: (prev: G, curr: G, lastRes: T | null | undefined) => boolean,
 ) => {
     const [result] = useMemoizedAsyncSetState(query, deps, depsEqual);
 
@@ -72,7 +72,7 @@ export const useMemoizedAsyncState = <T, G extends DependencyList>(
 export const useMemoizedAsyncSetState = <T, G extends DependencyList>(
     query: () => Promise<T | undefined> | undefined | null,
     deps: Readonly<G>,
-    depsEqual?: (prev: G, curr: G) => boolean,
+    depsEqual?: (prev: G, curr: G, lastRes: T | null | undefined) => boolean,
 ): [
     T | null | undefined,
     React.Dispatch<React.SetStateAction<T | null | undefined>>,
@@ -88,9 +88,9 @@ export const useMemoizedAsyncSetState = <T, G extends DependencyList>(
     const prev = usePrevious(deps);
 
     const caller = React.useCallback(() => {
-        if (depsEqual && prev && depsEqual(prev, deps)) return undefined;
+        if (depsEqual && prev && depsEqual(prev, deps, result)) return undefined;
         return query;
-    }, [depsEqual, prev, deps, query]);
+    }, [depsEqual, prev, deps, query, result]);
 
     useEffect(() => {
         let stale = false;
@@ -98,6 +98,7 @@ export const useMemoizedAsyncSetState = <T, G extends DependencyList>(
         const query2 = caller();
 
         if (!query2) return undefined;
+
         try {
             const exec = async () => query2 && query2();
             setLoading(true);

@@ -34,94 +34,86 @@ import { useMemoizedAsyncState } from '@src/hooks/useAsyncState';
 
 const incrementers = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 75, 99] as const;
 
-const Butter = React.memo(
-    ({
-        currIncrement,
-        toggled,
-        increment,
-        endingEpoch,
-        onClick,
-        hasNoBids,
-    }: {
-        currIncrement: bigint;
-        increment: bigint;
-        endingEpoch: number;
-        toggled: boolean;
-        hasNoBids: boolean;
-        onClick: (increment: bigint) => void;
-    }) => {
-        const blocknum = client.block.useBlock();
+const Butter = ({
+    currIncrement,
+    toggled,
+    increment,
+    endingEpoch,
+    onClick,
+    hasNoBids,
+}: {
+    currIncrement: bigint;
+    increment: bigint;
+    endingEpoch: number;
+    toggled: boolean;
+    hasNoBids: boolean;
+    onClick: (increment: bigint) => void;
+}) => {
+    const blocknum = client.block.useBlock();
 
-        const activated = React.useMemo(() => {
-            return increment === currIncrement;
-        }, [increment, currIncrement]);
+    const activated = React.useMemo(() => {
+        return increment === currIncrement;
+    }, [increment, currIncrement]);
 
-        const [secsTillNextInterval, intervalLastsForSecs] = React.useMemo(() => {
-            if (activated) {
-                const checke = calculateIncrementWithRemaining(endingEpoch, blocknum, hasNoBids);
-                return [checke[1] * 12, checke[2] * 12];
-            }
-            return [12, 12];
-        }, [blocknum, endingEpoch, activated, hasNoBids]);
+    const [secsTillNextInterval, intervalLastsForSecs] = React.useMemo(() => {
+        if (activated) {
+            const checke = calculateIncrementWithRemaining(endingEpoch, blocknum, hasNoBids);
+            return [checke[1] * 12, checke[2] * 12];
+        }
+        return [12, 12];
+    }, [blocknum, endingEpoch, activated, hasNoBids]);
 
-        const trueSecsTillNextInterval = useRemainingTrueSeconds(
-            activated ? secsTillNextInterval : null,
-        );
+    const trueSecsTillNextInterval = useRemainingTrueSeconds(
+        activated ? secsTillNextInterval : null,
+    );
 
-        return (
-            <div
-                role="button"
-                aria-hidden="true"
-                className="mobile-pressable-div"
-                onClick={() => onClick(increment)}
+    return (
+        <div
+            role="button"
+            aria-hidden="true"
+            className="mobile-pressable-div"
+            onClick={() => onClick(increment)}
+            style={{
+                overflow: 'visible',
+                height: 50,
+                width: 80,
+                position: 'relative',
+            }}
+        >
+            <CircleTimerMobileCSS2
+                duration={activated ? intervalLastsForSecs : 1}
+                remaining={activated ? trueSecsTillNextInterval ?? intervalLastsForSecs : 1}
+                width={200}
+                interval={12}
+                toggled={toggled}
+                isStatic={!activated}
+                strokeWidth={4}
                 style={{
-                    overflow: 'visible',
-                    height: 50,
-                    width: 80,
+                    pointerEvents: 'none',
                     position: 'relative',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    display: 'flex',
+                    width: 50,
+                    height: 50,
+                    top: 0,
                 }}
             >
-                <CircleTimerMobileCSS2
-                    duration={activated ? intervalLastsForSecs : 1}
-                    remaining={activated ? trueSecsTillNextInterval ?? intervalLastsForSecs : 1}
-                    width={200}
-                    interval={12}
-                    toggled={toggled}
-                    isStatic={!activated}
-                    strokeWidth={4}
-                    style={{
-                        pointerEvents: 'none',
-                        position: 'relative',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        display: 'flex',
-                        width: 50,
-                        height: 50,
-                        top: 0,
+                <Text
+                    textStyle={{
+                        color: toggled ? lib.colors.primaryColor : lib.colors.white,
+                        padding: '5px',
+                        fontWeight: lib.layout.fontWeight.semibold,
+                        marginTop: -4,
+                        fontSize: 17,
                     }}
                 >
-                    <Text
-                        textStyle={{
-                            color: toggled ? lib.colors.primaryColor : lib.colors.white,
-                            padding: '5px',
-                            fontWeight: lib.layout.fontWeight.semibold,
-                            marginTop: -4,
-                            fontSize: 17,
-                        }}
-                    >
-                        +{new Fraction(increment, 100).percentString(0)}
-                    </Text>
-                </CircleTimerMobileCSS2>
-            </div>
-        );
-    },
-    (prev, curr) =>
-        prev.endingEpoch === curr.endingEpoch &&
-        prev.toggled === curr.toggled &&
-        prev.onClick === curr.onClick &&
-        prev.hasNoBids === curr.hasNoBids &&
-        prev.currIncrement === curr.currIncrement,
-);
+                    +{new Fraction(increment, 100).percentString(0)}
+                </Text>
+            </CircleTimerMobileCSS2>
+        </div>
+    );
+};
 
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
@@ -130,6 +122,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const network = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
+    const [leader] = useAggregatedOffers(data.tokenId);
 
     const peer = web3.hook.usePriorityPeer();
     const nuggft = useNuggftV1(network);
@@ -191,8 +184,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             blocknum,
             data.tokenId,
         ] as const,
-        (prev, curr) => {
-            return prev[7] === curr[7];
+        (prev, curr, res) => {
+            return res !== null && res !== undefined && prev[7] === curr[7];
         },
     );
 
@@ -211,7 +204,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     React.useEffect(() => {
         if (check && check.nextUserOffer && (amount === '0' || lastPressed === null)) {
             setAmount(new EthInt(check.nextUserOffer).toFixedStringRoundingUp(5));
-            setLastPressed(null);
+            if (lastPressed !== null) setLastPressed(null);
         }
     }, [amount, check, lastPressed]);
 
@@ -309,16 +302,22 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
             return undefined;
         },
-        [populatedTransaction, network] as const,
+        [populatedTransaction, network, epoch] as const,
         (prev, curr) => {
-            return (prev[0] && curr[0] && prev[0].amount.eq(curr[0].amount)) ?? false;
+            return (
+                (prev[2] !== curr[2] ||
+                    (prev[0] && curr[0] && prev[0].amount.eq(curr[0].amount))) ??
+                false
+            );
         },
     );
 
     const increments = React.useMemo(() => {
-        const inc = check?.increment ? (check.increment.toNumber() - 10000) / 100 : 5;
+        const [inc] = calculateIncrementWithRemaining(data.endingEpoch, blocknum, !leader);
+
+        // const inc = check?.increment ? (check.increment.toNumber() - 10000) / 100 : 5;
         return [BigInt(inc), ...incrementers.filter((x) => x > inc).map((x) => BigInt(x))];
-    }, [check?.increment]);
+    }, [data.endingEpoch, blocknum, leader]);
 
     const [shifter] = packages.spring.useSpring(
         () => ({
@@ -346,7 +345,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             setAmount(a);
             setLastPressed(`${increment}`);
         },
-        [increments],
+        [increments, check?.currentLeaderOffer, minNextBid],
     );
 
     const [tabFadeTransition] = useTransition(
@@ -453,8 +452,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             ),
         [setPage, localCurrencyPref, data, mspusd],
     );
-
-    const [leader] = useAggregatedOffers(data.tokenId);
 
     const Page0 = React.useMemo(
         () => (
@@ -745,6 +742,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             noBids,
         ],
     );
+
     const Page1 = React.useMemo(
         () =>
             isOpen && peer ? (

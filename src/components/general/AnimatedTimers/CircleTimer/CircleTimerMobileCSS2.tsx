@@ -37,12 +37,15 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
 }) => {
     const to = useMemo(() => {
         return duration && !isStatic
-            ? Math.abs(
-                  (width / 6.5) * (TWOPI - (remaining / (duration - interval)) * TWOPI) + HALFPI,
+            ? Math.round(
+                  Math.abs((width / 6.5) * (TWOPI - (remaining / duration) * TWOPI) + HALFPI),
               )
             : 0;
     }, [duration, width, remaining, isStatic, interval]);
 
+    const max = React.useMemo(() => {
+        return Math.round(Math.abs((width / 6.5) * (TWOPI - 0 * TWOPI) + HALFPI));
+    }, [width]);
     return (
         <div style={{ zIndex: 1, ...style }}>
             <div
@@ -95,13 +98,13 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                         r={width / 6.5}
                         stroke={toggled ? primaryColor : secondaryColor}
                         strokeDashoffset={to}
-                        strokeWidth={isStatic || to > 0 ? strokeWidth : 0}
+                        strokeWidth={isStatic || (!isStatic && max !== to) ? strokeWidth : 0}
                         fill={toggled ? secondaryColor : primaryColor}
                         strokeDasharray={`${(width / 6.5) * TWOPI} ${(width / 6.5) * TWOPI}`}
                         strokeLinecap="round"
                         style={{
                             transition: `all 2s ${lib.layout.animation}`,
-                            opacity: isStatic || to > 0 ? 1 : 0.5,
+                            opacity: isStatic || (!isStatic && max !== to) ? 1 : 0.5,
                         }}
                     />
                 </svg>

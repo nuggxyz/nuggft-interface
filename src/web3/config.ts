@@ -331,19 +331,15 @@ export const calculateIncrementWithRemaining = (
             increment += extra;
 
             if (hasNoBids) {
-                return [BigInt(5), extra + increment, extra + DEFAULT_CONTRACTS.Interval] as const;
+                return [BigInt(5), increment, extra + DEFAULT_CONTRACTS.Interval] as const;
             }
 
             if (increment < 45) {
-                const num = 50 - (increment / 5) * 5;
+                const num = 50 - Math.floor(increment / 5) * 5;
                 return [BigInt(num), increment % 5, 5] as const;
             }
 
-            return [
-                BigInt(5),
-                extra + increment - 45,
-                extra + DEFAULT_CONTRACTS.Interval - 45,
-            ] as const;
+            return [BigInt(5), increment - 45, extra + DEFAULT_CONTRACTS.Interval - 45] as const;
         }
     }
 
