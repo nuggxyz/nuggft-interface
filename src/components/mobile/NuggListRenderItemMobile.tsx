@@ -1,4 +1,5 @@
 import React, { FC, FunctionComponent, PropsWithChildren } from 'react';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import Label from '@src/components/general/Label/Label';
@@ -14,28 +15,20 @@ type PropsBig = GodListRenderItemBig<
     undefined
 >;
 
-export const NuggListRenderItemMobileBig: FunctionComponent<PropsBig> = ({
-    item,
-    // action,
-    // extraData: { cardType },
-}) => {
+export const NuggListRenderItemMobileBig: FunctionComponent<PropsBig> = ({ item }) => {
     return (
         <div
             aria-hidden="true"
             role="button"
             style={{
                 width: '100%',
-                // height: '200px',
                 display: 'flex',
                 marginBottom: 10,
                 justifyContent: 'space-around',
                 alignItems: 'center',
                 transition: `background .7s ${lib.layout.animation}`,
-                // cursor: 'pointer',
                 position: 'relative',
-                // overflow: 'hidden',
             }}
-            // onClick={() => action && action(item)}
         >
             <MobileContainerBig tokenId={item} />
         </div>
@@ -50,8 +43,6 @@ type PropsBigHoldingItem = GodListRenderItemBig<
 
 export const NuggListRenderItemMobileBigHoldingItem: FunctionComponent<PropsBigHoldingItem> = ({
     item,
-    // action,
-    // extraData: { cardType },
 }) => {
     return (
         <div
@@ -59,17 +50,13 @@ export const NuggListRenderItemMobileBigHoldingItem: FunctionComponent<PropsBigH
             role="button"
             style={{
                 width: '100%',
-                // height: '200px',
                 display: 'flex',
                 marginBottom: 10,
                 justifyContent: 'space-around',
                 alignItems: 'center',
                 transition: `background .7s ${lib.layout.animation}`,
-                // cursor: 'pointer',
                 position: 'relative',
-                // overflow: 'hidden',
             }}
-            // onClick={() => action && action(item)}
         >
             <MobileContainerBigHoldingItem tokenId={item?.tokenId} since={item?.since} />
         </div>
@@ -81,75 +68,28 @@ type Props = GodListRenderItemSmall<
     undefined
 >;
 
-export const NuggListRenderItemMobile: FunctionComponent<Props> = ({
-    item,
-    // action,
-    // extraData: { cardType },
-}) => {
+export const NuggListRenderItemMobile: FunctionComponent<Props> = ({ item }) => {
     return (
         <div
             aria-hidden="true"
             role="button"
             style={{
                 width: '100%',
-                // height: '200px',
                 display: 'flex',
                 justifyContent: 'space-around',
                 alignItems: 'center',
-                // padding: '0px 20px',
                 transition: `background .7s ${lib.layout.animation}`,
-                // cursor: 'pointer',
                 position: 'relative',
                 overflow: 'hidden',
             }}
-            // onClick={() => action && action(item)}
         >
-            {/* <div> */}
             {item && item[0] && <MobileContainer tokenId={item[0]} />}
             {item && item[1] && <MobileContainer tokenId={item[1]} />}
         </div>
     );
 };
 
-type PropsLittleHolding = GodListRenderItemSmall<
-    HoldingTokenId,
-    { cardType: 'swap' | 'all' | 'recent' } | undefined,
-    undefined
->;
-
-export const NuggListRenderItemMobileHolding: FunctionComponent<PropsLittleHolding> = ({
-    item,
-    // action,
-    // extraData: { cardType },
-}) => {
-    return (
-        <div
-            aria-hidden="true"
-            role="button"
-            style={{
-                width: '100%',
-                // height: '200px',
-                display: 'flex',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-                // padding: '0px 20px',
-                transition: `background .7s ${lib.layout.animation}`,
-                // cursor: 'pointer',
-                position: 'relative',
-                overflow: 'hidden',
-            }}
-            // onClick={() => action && action(item)}
-        >
-            {/* <div> */}
-            {item && item[0] && <MobileContainer tokenId={item[0]?.tokenId} />}
-            {item && item[1] && <MobileContainer tokenId={item[1]?.tokenId} />}
-        </div>
-    );
-};
-
 export const MobileContainer = ({ tokenId }: { tokenId?: TokenId }) => {
-    // const swap = client.swaps.useSwap(tokenId);
-    // const navigate = useNavigate();
     return (
         <div
             className="mobile-pressable-div"
@@ -157,13 +97,10 @@ export const MobileContainer = ({ tokenId }: { tokenId?: TokenId }) => {
                 display: 'flex',
                 alignItems: 'center',
                 position: 'relative',
-
                 width: '150px',
                 height: '150px',
-
                 flexDirection: 'column',
                 justifyContent: 'center',
-                // marginBottom: '1.5rem',
                 background: lib.colors.transparentWhite,
                 borderRadius: lib.layout.borderRadius.mediumish,
             }}
@@ -185,10 +122,8 @@ export const MobileContainer = ({ tokenId }: { tokenId?: TokenId }) => {
                     size="small"
                     textStyle={{
                         color: lib.colors.transparentDarkGrey,
-                        // marginLeft: '.5rem',
                         fontSize: '10px',
                         fontWeight: 'bold',
-                        // paddingBottom: 5,
                         position: 'relative',
                     }}
                     text={tokenId?.toPrettyId() || ''}
@@ -225,7 +160,6 @@ export const MobileContainerBigHoldingItem: FC<HoldingTokenId> = ({ tokenId, sin
                     borderRadius: lib.layout.borderRadius.large,
                     position: 'absolute',
                     bottom: '.5rem',
-                    // right: '.1rem',
                     paddingBottom: 5,
                 }}
             >
@@ -234,13 +168,9 @@ export const MobileContainerBigHoldingItem: FC<HoldingTokenId> = ({ tokenId, sin
                     size="small"
                     textStyle={{
                         color: lib.colors.transparentDarkGrey,
-                        // marginLeft: '.5rem',
-                        // fontSize: '10px',
-                        // fontWeight: 'bold',
-                        // paddingBottom: 5,
                         position: 'relative',
                     }}
-                    text={`holding since ${new Date((since || 0) * 1000).toLocaleDateString()}`}
+                    text={t`holding since ${new Date((since || 0) * 1000).toLocaleDateString()}`}
                 />
             </div>
         </MobileContainerBig>
@@ -258,13 +188,10 @@ export const MobileContainerBig: FC<PropsWithChildren<{ tokenId?: TokenId }>> = 
                 display: 'flex',
                 alignItems: 'center',
                 position: 'relative',
-
                 width: '325px',
                 height: '325px',
-
                 flexDirection: 'column',
                 justifyContent: 'center',
-                // marginBottom: '1.5rem',
                 background: lib.colors.transparentWhite,
                 borderRadius: lib.layout.borderRadius.mediumish,
             }}
@@ -287,10 +214,7 @@ export const MobileContainerBig: FC<PropsWithChildren<{ tokenId?: TokenId }>> = 
                     size="small"
                     textStyle={{
                         color: lib.colors.transparentDarkGrey,
-                        // marginLeft: '.5rem',
-                        // fontSize: '10px',
                         fontWeight: 'bold',
-                        // paddingBottom: 5,
                         position: 'relative',
                     }}
                     text={tokenId?.toPrettyId() || ''}

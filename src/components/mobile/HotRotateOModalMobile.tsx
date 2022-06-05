@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
 import { IoChevronBackCircle, IoArrowUpCircle, IoArrowDownCircle } from 'react-icons/io5';
 import { HiArrowCircleUp } from 'react-icons/hi';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
@@ -241,10 +242,6 @@ export default ({ data }: { data: RotateOModalData }) => {
                         backgroundColor: 'transparent',
                     }}
                 >
-                    {/* <div style={{ height: 30, width: 15, display: 'flex', alignItems: 'center' }}>
-                        {loading ? (
-                            <Loader style={{ height: 15, width: 15 }} />
-                        ) : ( */}
                     <img
                         alt="ethereum logo"
                         src={eth}
@@ -253,8 +250,6 @@ export default ({ data }: { data: RotateOModalData }) => {
                             objectFit: 'cover',
                         }}
                     />
-                    {/* )}
-                    </div> */}
 
                     <span
                         style={{
@@ -264,7 +259,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                             ...lib.layout.presets.font.main.semibold,
                         }}
                     >
-                        generated on ethereum
+                        {t`generated on ethereum`}
                     </span>
                 </div>
                 <div
@@ -284,7 +279,7 @@ export default ({ data }: { data: RotateOModalData }) => {
 
                 <Button
                     className="mobile-pressable-div"
-                    label="save"
+                    label={t`save`}
                     onClick={() => {
                         setPage(1);
                     }}
@@ -404,7 +399,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                                     }}
                                 >
                                     <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>
-                                        tap to finalize on
+                                        {t`tap to finalize on`}
                                     </Text>
                                     <Text
                                         textStyle={{
@@ -455,8 +450,8 @@ export default ({ data }: { data: RotateOModalData }) => {
                                         textAlign: 'center',
                                     }}
                                 >
-                                    {data.tokenId.toPrettyId()} v{data.currentVersion + 1} is born!
-                                    🎉
+                                    {data.tokenId.toPrettyId()} v{data.currentVersion + 1}
+                                    {t` is born! 🎉`}
                                 </Text>
                             </div>
                         );
@@ -531,7 +526,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                                             color: lib.colors.primaryColor,
                                             fontSize: 18,
                                         }}
-                                        label="go back"
+                                        label={t`go back`}
                                         onClick={() => (pager === 0 ? closeModal() : setPage(0))}
                                     />{' '}
                                 </>

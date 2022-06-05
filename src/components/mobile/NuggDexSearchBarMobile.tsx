@@ -496,13 +496,9 @@ const NuggDexSearchBarMobile: FunctionComponent<unknown> = () => {
                 style={{
                     height: '100%',
                     width: '100%',
-                    // overflow: 'auto',
-                    // marginTop: 13,
                     zIndex: 1001,
                     display: 'flex',
                     flexDirection: 'column',
-
-                    // top: 0,
                 }}
             >
                 {isUndefinedOrNullOrStringEmpty(localSearchValue) ? (

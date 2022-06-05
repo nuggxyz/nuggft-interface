@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import { IoIosArrowDroprightCircle } from 'react-icons/io';
-import { plural } from '@lingui/macro';
+import { plural, t } from '@lingui/macro';
 
 import web3 from '@src/web3';
 import client from '@src/client';
@@ -76,7 +76,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                         padding: '10px',
                     }}
                 >
-                    My Account
+                    {t`my account`}
                 </Text>
             </div>
             <div
@@ -114,7 +114,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                     onClick={() => {
                         void connector.deactivate();
                     }}
-                    label="change accounts"
+                    label={t`sign out`}
                 />
             </div>
             <CurrencyToggler
@@ -206,10 +206,8 @@ const MobileWallet: FunctionComponent<Props> = () => {
                             width: '100%',
                             background: lib.colors.gradient,
                             borderRadius: lib.layout.borderRadius.medium,
-                            // margin: '1rem',
                             marginRight: '.2rem',
                             boxShadow: lib.layout.boxShadow.dark,
-                            // marginRight: 0,
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'flex-start',
@@ -268,7 +266,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                         </div>
                         <InfoClicker
                             to={Page.WhatIsAnNFT}
-                            text="learn about loans"
+                            text={t`learn about loans`}
                             size={15}
                             buttonStyle={{ paddingTop: 0 }}
                         />
@@ -325,7 +323,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                         paddingLeft: '.5rem',
                                     }}
                                 >
-                                    Pending Claims
+                                    {t`pending claims`}
                                 </Text>
                             </div>
                             <div
@@ -340,95 +338,14 @@ const MobileWallet: FunctionComponent<Props> = () => {
                                     text={unclaimedOffers.length.toString()}
                                     size="small"
                                 />
-                                {/* <IoIosArrowDroprightCircle
-                                        color="white"
-                                        size={30}
-                                        transform={pendingClaimsOpen ? 'rotate(90deg)' : ''}
-                                        style={{
-                                            WebkitTransform: pendingClaimsOpen
-                                                ? 'rotate(90deg)'
-                                                : '',
-                                        }} /> */}
                             </div>
                         </div>
                         <InfoClicker
                             to={Page.WhatIsAnNFT}
-                            text="learn about claims"
+                            text={t`learn about claims`}
                             size={15}
                             buttonStyle={{ paddingTop: 0 }}
                         />
-
-                        {/* {pendingClaimsOpen && (
-                                <div
-                                    style={{
-                                        marginTop: '-20px',
-                                        background: lib.colors.gradient2Transparent,
-                                        padding: '0rem .2rem',
-                                        paddingTop: '1.5rem',
-
-                                        borderRadius: lib.layout.borderRadius.medium,
-                                        borderTopRightRadius: 0,
-                                        borderTopLeftRadius: 0,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        width: '100%',
-                                        zIndex: 102,
-                                        justifyContent: 'start',
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    {unclaimedOffers.length > 0 && (
-                                        <Button
-                                            onClick={(event) => {
-                                                event.stopPropagation();
-                                                event.preventDefault();
-                                                void send(
-                                                    nuggft.populateTransaction.claim(...args),
-                                                );
-                                            }}
-                                            buttonStyle={{ zIndex: 103 }}
-                                            label="Claim All"
-                                        />
-                                    )}
-                                    {unclaimedOffers.map((x, i) => (
-                                        <div
-                                            key={`${i}-swaplist`}
-                                            style={{
-                                                display: 'flex',
-                                                flexDirection: 'row',
-                                                justifyContent: 'space-between',
-                                                width: '100%',
-                                                padding: '.5rem',
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    alignItems: 'center',
-                                                }}
-                                            >
-                                                <Label text={(i + 1).toString()} size="small" />
-                                                <Text
-                                                    size="small"
-                                                    textStyle={{
-                                                        color: 'white',
-                                                        paddingLeft: '.5rem',
-                                                    }}
-                                                >
-                                                    Nugg {x.nugg}
-                                                </Text>
-                                            </div>
-                                            <CurrencyText
-                                                size="small"
-                                                image="eth"
-                                                value={x.eth.number}
-                                                stopAnimation
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            )} */}
                     </div>
                 </div>
                 <MyNuggItemListPhone />

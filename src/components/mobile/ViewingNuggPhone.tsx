@@ -81,7 +81,7 @@ const Ver = ({ left, right, label }: { left: number; right: number; label: strin
                         decimals={3}
                         textStyle={{ fontSize: '30px' }}
                     />
-                    <Text>actual</Text>
+                    <Text>{t`actual`}</Text>
                 </div>
                 <div
                     style={{
@@ -98,7 +98,7 @@ const Ver = ({ left, right, label }: { left: number; right: number; label: strin
                         decimals={3}
                         textStyle={{ fontSize: '30px' }}
                     />{' '}
-                    <Text>predicted</Text>
+                    <Text>{t`predicted`}</Text>
                 </div>
             </div>
         </div>
@@ -146,8 +146,6 @@ const Info = ({ tokenId }: { tokenId?: ItemId }) => {
                     textAlign: 'left',
                     width: '100%',
                     padding: '2rem 1rem 1rem 1.5rem',
-                    // background: lib.colors.transparentWhite,
-                    // borderRadius: lib.layout.borderRadius.medium,
                 }}
             >
                 <Text
@@ -159,18 +157,9 @@ const Info = ({ tokenId }: { tokenId?: ItemId }) => {
                 >
                     chances
                 </Text>
-                {/* <DualToggler
-                    LeftIcon={BsPercent}
-                    RightIcon={BsHash}
-                    activeIndex={showPercent}
-                    toggleActiveIndex={setShowPercent as (arg: 0 | 1) => undefined}
-                /> */}
             </div>
             <div
                 style={{
-                    // width: '100%',
-                    // padding: '1rem 0rem',
-                    // margin: '.25rem 0rem',
                     flexDirection: 'column',
                     ...globalStyles.centered,
                     background: lib.colors.transparentWhite,
@@ -184,20 +173,21 @@ const Info = ({ tokenId }: { tokenId?: ItemId }) => {
                 <Ver
                     left={observedPositionRarity * observedFeatureRarity * 100}
                     right={featureRarity * positionRarity * 100}
-                    label={`a new nugg has ${tokenId.toPrettyId().toLowerCase()}`}
+                    label={t`a new nugg has ${tokenId.toPrettyId().toLowerCase()}`}
                 />
                 <div style={{ width: '100%', marginTop: 20 }}> </div>
                 <Ver
                     left={observedPositionRarity * 100}
                     right={positionRarity * 100}
-                    label={`a given ${web3.config.FEATURE_NAMES[feature].toLowerCase()} is
-            ${tokenId.toPrettyId().toLowerCase()}`}
+                    label={t`a given ${web3.config.FEATURE_NAMES[
+                        feature
+                    ].toLowerCase()} is ${tokenId.toPrettyId().toLowerCase()}`}
                 />
                 <div style={{ width: '100%', marginTop: 20 }}> </div>
                 <Ver
                     left={observedFeatureRarity * 100}
                     right={featureRarity * 100}
-                    label={`a nugg is minted with ${web3.config.FEATURE_NAMES[
+                    label={t`a nugg is minted with ${web3.config.FEATURE_NAMES[
                         feature
                     ].toLowerCase()}`}
                 />
@@ -215,7 +205,7 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
     const [continued, setContinued] = React.useState<boolean>(false);
 
     const text = useMemo(() => {
-        if (selected) return t`Continue to Start Auction`;
+        if (selected) return t`continue to start auction`;
         if (token && token.tryout && token.tryout.count && token.tryout.count > 0)
             return t`accept a nugg's asking price`;
         if (token && token.tokenId.toRawIdNum() < 1000) return t`bases are non transferable`;
@@ -287,35 +277,7 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
                                 : t`you will bid as ${selectedMyNugg.toPrettyId()}`
                             : text}
                     </Text>
-                    {/* <div
-                        style={{
-                            marginTop: '20px',
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                flexDirection: 'column',
-                                height: '100%',
-                            }}
-                        >
-                            <Text
-                                textStyle={{
-                                    color: lib.colors.primaryColor,
-                                    paddingBottom: '10px',
-                                }}
-                            >{t`Coming Up`}</Text>
-                        </div>
-                        <OffersList
-                            tokenId={tokenId}
-                            sellingNuggId={token.upcomingActiveSwap.owner}
-                        />
-                        <OfferButton
-                            tokenId={tokenId}
-                            sellingNuggId={token.upcomingActiveSwap.owner}
-                        />
-                    </div> */}
+
                     <MobileCaboose
                         tokenId={tokenId}
                         onSelectNugg={setSelected}
@@ -395,7 +357,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                                 color: lib.colors.primaryColor,
                             }}
                         >
-                            {lifecycle === Lifecycle.Minors ? 'starting price' : 'asking price'}
+                            {lifecycle === Lifecycle.Minors ? t`starting price` : t`asking price`}
                         </Text>
                         {lifecycle !== Lifecycle.Minors && (
                             <div style={{ display: 'flex' }}>
@@ -444,8 +406,8 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                             }}
                         >
                             {leaderEns && swap?.leader !== Address.ZERO.hash
-                                ? `${leaderEns} is leading`
-                                : 'starting price'}
+                                ? t`${leaderEns} is leading`
+                                : t`starting pricet`}
                         </Text>
                     </div>
                 )}
@@ -463,7 +425,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                                 color: lib.colors.primaryColor,
                             }}
                         >
-                            ending in about
+                            {t`ending in about`}
                         </Text>
                         <Text
                             textStyle={{
@@ -753,7 +715,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                                 fontWeight: lib.layout.fontWeight.thicc,
                                             }}
                                         >
-                                            start the next auction
+                                            {t`start the next auction`}
                                         </Text>
                                     </div>
                                 )}
@@ -784,7 +746,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                             fontWeight: lib.layout.fontWeight.thicc,
                                         }}
                                     >
-                                        my nugg
+                                        {t`my nugg`}
                                     </Text>
                                 </div>
                                 <Button
@@ -862,7 +824,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                             fontWeight: lib.layout.fontWeight.thicc,
                                         }}
                                     >
-                                        items
+                                        {t`items`}
                                     </Text>
                                 </div>
                                 <ItemListPhone tokenId={tokenId} />
@@ -885,7 +847,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                     fontWeight: lib.layout.fontWeight.thicc,
                                 }}
                             >
-                                purchases
+                                {t`purchases`}
                             </Text>
                         </div>
                         <SwapListPhone tokenId={tokenId} />

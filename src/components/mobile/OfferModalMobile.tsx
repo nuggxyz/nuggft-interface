@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
 import { IoChevronBackCircle } from 'react-icons/io5';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
@@ -122,16 +123,6 @@ const Butter = React.memo(
         prev.currIncrement === curr.currIncrement,
 );
 
-// type CheckReturn = {
-//     canOffer: boolean | undefined;
-//     nextUserOffer: BigNumber | undefined;
-//     currentUserOffer: BigNumber | undefined;
-//     currentLeaderOffer: BigNumber | undefined;
-//     increment: BigNumber | undefined;
-//     mustClaimBuyer: boolean | undefined;
-//     mustOfferOnSeller: boolean | undefined;
-// };
-
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
 
@@ -211,7 +202,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const noBids = React.useMemo(() => {
         return data.tokenId.toRawIdNum() === epoch && swap?.leader === undefined;
     }, [epoch, swap, data.tokenId]);
-    // console.log({ check, data });
 
     const minNextBid = React.useMemo(() => {
         if (!check?.nextUserOffer) return 0;
@@ -293,7 +283,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 tx: nuggft.populateTransaction['offer(uint24)'](data.tokenId.toRawId(), {
                     from: address,
                     value,
-                    // gasLimit: toGwei('120000'),
                 }),
                 amount: value,
             };
@@ -420,18 +409,19 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         one sec
                     </Text>
                     <Text size="medium" textStyle={{ marginTop: 10 }}>
-                        <b>{data.nuggToBuyFrom.toPrettyId()}</b> has never been bid on, they must be
-                        bid on before they can sell <b>{data.tokenId.toPrettyId()}</b>
-                    </Text>
-
-                    <Text size="medium" textStyle={{ marginTop: 10 }}>
-                        if you move forward, your transaction will include both a minimum bid on{' '}
-                        <b>{data.nuggToBuyFrom.toPrettyId()}</b>, and your desired bid for{' '}
+                        <b>{data.nuggToBuyFrom.toPrettyId()}</b>{' '}
+                        {t`has never been bid on, they must be bid on before they can sell`}{' '}
                         <b>{data.tokenId.toPrettyId()}</b>
                     </Text>
 
+                    <Text size="medium" textStyle={{ marginTop: 10 }}>
+                        {t`if you move forward, your transaction will include both a minimum bid on`}{' '}
+                        <b>{data.nuggToBuyFrom.toPrettyId()}</b>
+                        {t`, and your desired bid for`} <b>{data.tokenId.toPrettyId()}</b>
+                    </Text>
+
                     <Text size="larger" textStyle={{ marginTop: 10 }}>
-                        added cost
+                        {t`added cost`}
                     </Text>
 
                     <CurrencyText
@@ -444,13 +434,11 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
                     <Button
                         className="mobile-pressable-div"
-                        label="i got it"
-                        // leftIcon={calculating ? <Loader /> : undefined}
+                        label={t`i got it`}
                         onClick={() => {
                             setHandledNeg1(true);
                             setPage(0);
                         }}
-                        // disabled={calculating || !!estimator.error}
                         buttonStyle={{
                             borderRadius: lib.layout.borderRadius.large,
                             background: lib.colors.primaryColor,
@@ -468,10 +456,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const [leader] = useAggregatedOffers(data.tokenId);
 
-    // const Trans = incrementers.map((val, ind) => (
-    //     <IncrementButton increment={BigInt(val)} index={ind} />
-    // ));
-
     const Page0 = React.useMemo(
         () => (
             <>
@@ -480,8 +464,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     textStyle={{ marginTop: 10, fontWeight: lib.layout.fontWeight.thicc }}
                 >
                     {leader?.incrementX64 && !leader.incrementX64.isZero()
-                        ? 'last bid'
-                        : 'asking price'}
+                        ? t`last bid`
+                        : t`asking price`}
                 </Text>
 
                 <CurrencyText
@@ -503,7 +487,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             size="larger"
                             textStyle={{ marginTop: 10, fontWeight: lib.layout.fontWeight.thicc }}
                         >
-                            min next bid
+                            {t`min next bid`}
                         </Text>
                         <div
                             style={{
@@ -532,7 +516,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     }}
                 >
                     <Text size="larger" textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}>
-                        new bid
+                        {t`new bid`}
                     </Text>
                     <div
                         style={{
@@ -718,13 +702,13 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             value={mspusd}
                             stopAnimation
                         />
-                        for bid on {data.nuggToBuyFrom?.toPrettyId()}
+                        {t`for bid on ${data.nuggToBuyFrom?.toPrettyId()}`}
                     </Text>
                 )}
 
                 <Button
                     className="mobile-pressable-div"
-                    label="review"
+                    label={t`review`}
                     onClick={() => {
                         setPage(1);
                     }}
@@ -750,11 +734,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             butcaller,
             lastPressed,
             increments,
-
             currentPrice,
             estimator.error,
             data.endingEpoch,
-            // myBalance,
             check?.mustOfferOnSeller,
             data.nuggToBuyFrom,
             leader?.incrementX64,
@@ -767,7 +749,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         () =>
             isOpen && peer ? (
                 <>
-                    {/* <StupidMfingHack /> */}
                     <TokenViewer
                         tokenId={data.tokenId}
                         style={{ width: '150px', height: '150px' }}
@@ -785,7 +766,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     {currentBid.eth.number !== 0 && (
                         <>
                             <Text size="large" textStyle={{ marginTop: 10 }}>
-                                My Current Bid
+                                {t`my current bid`}
                             </Text>
                             <CurrencyText
                                 unitOverride={localCurrencyPref}
@@ -798,7 +779,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     )}
 
                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                        My Desired Bid
+                        {t`my desired bid`}
                     </Text>
                     <CurrencyText
                         unitOverride={localCurrencyPref}
@@ -810,7 +791,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     {check?.mustOfferOnSeller && (
                         <>
                             <Text size="large" textStyle={{ marginTop: 10 }}>
-                                Bid on {data.nuggToBuyFrom?.toPrettyId()}
+                                {t`bid on ${data.nuggToBuyFrom?.toPrettyId()}`}
                             </Text>
                             <CurrencyText
                                 unitOverride={localCurrencyPref}
@@ -823,7 +804,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     )}
 
                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                        Payment
+                        {t`payment`}
                     </Text>
                     <CurrencyText
                         unitOverride={localCurrencyPref}
@@ -942,7 +923,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 return (
                     <animated.div
                         style={{
-                            // position: 'relative',
                             position: 'absolute',
                             display: 'flex',
                             justifyContent: 'center',
@@ -955,11 +935,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                 width: '93%',
                                 padding: '25px',
                                 position: 'relative',
-                                // pointerEvents: 'none',
-                                // ...sty,
                                 background: lib.colors.transparentWhite,
                                 transition: `.2s all ${lib.layout.animation}`,
-
                                 borderRadius: lib.layout.borderRadius.largish,
                                 boxShadow: lib.layout.boxShadow.basic,
                                 margin: '0rem',
@@ -968,7 +945,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                 WebkitBackdropFilter: 'blur(10px)',
                                 ...containerStyle,
                                 ...sty,
-                                // transform: `translate(var(--${pager}-dumb)px, 0px)`,
                             }}
                         >
                             <>
@@ -979,7 +955,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                     : pager === 1
                                     ? Page1
                                     : Page2}
-                            </>{' '}
+                            </>
                             {(pager === 1 || pager === 0) && (
                                 <>
                                     <Button
@@ -1009,9 +985,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                             color: lib.colors.primaryColor,
                                             fontSize: 18,
                                         }}
-                                        label="go back"
+                                        label={t`go back`}
                                         onClick={() => (pager === 0 ? closeModal() : setPage(0))}
-                                    />{' '}
+                                    />
                                     <CurrencyToggler
                                         pref={localCurrencyPref}
                                         setPref={setLocalCurrencyPref}

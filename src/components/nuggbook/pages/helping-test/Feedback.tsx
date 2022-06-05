@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '@lingui/macro';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib from '@src/lib';
@@ -24,7 +25,7 @@ export default () => {
                 textStyle={{
                     color: lib.colors.white,
                 }}
-                label="goto google form"
+                label={t`goto form`}
                 onClick={() => {
                     window.open(link, '_');
                 }}

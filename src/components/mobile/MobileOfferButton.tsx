@@ -84,17 +84,17 @@ export default ({
                 }}
                 label={
                     !swap
-                        ? 'Loading...'
+                        ? t`loading...`
                         : lifecycle.lifecycle === Lifecycle.Concessions
-                        ? 'Adjust'
+                        ? t`adjust`
                         : lifecycle.lifecycle === Lifecycle.Bench ||
                           lifecycle.lifecycle === Lifecycle.Minors
-                        ? 'Accept and Start Auction'
+                        ? t`accept and start auction`
                         : !lifecycle.active
-                        ? 'swap is over'
+                        ? t`swap is over`
                         : isUndefinedOrNullOrStringEmpty(address)
-                        ? t`Connect wallet`
-                        : t`Place offer`
+                        ? t`connect wallet`
+                        : t`place offer`
                 }
             />
         </div>

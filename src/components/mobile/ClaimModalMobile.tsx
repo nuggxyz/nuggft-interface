@@ -3,6 +3,7 @@ import React, { startTransition } from 'react';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { IoChevronBackCircle } from 'react-icons/io5';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -185,7 +186,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                     {/* <StupidMfingHack /> */}
 
                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                        New Nugg Claims
+                        {t`new nugg claims`}
                     </Text>
                     <CurrencyText
                         size="large"
@@ -196,7 +197,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                     />
 
                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                        New Item Claims
+                        {t`new item claims`}
                     </Text>
                     <CurrencyText
                         size="large"
@@ -207,7 +208,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                     />
 
                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                        Eth Claims
+                        {t`eth claims`}
                     </Text>
                     <CurrencyText
                         unitOverride={localCurrencyPref}
@@ -218,7 +219,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                     />
 
                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                        Estimated Gas Price
+                        {t`estimated gas price`}
                     </Text>
                     <CurrencyText
                         unitOverride={localCurrencyPref}
@@ -287,7 +288,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                                     }}
                                 >
                                     <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>
-                                        tap to finalize on
+                                        {t`tap to finalize on`}
                                     </Text>
                                     <Text
                                         textStyle={{

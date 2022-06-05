@@ -118,7 +118,7 @@ const MyNuggItem: FC<{ item: MyNuggsData; claims: UnclaimedOffer[] }> = ({ item,
                         // paddingBottom: 5,
                         position: 'relative',
                     }}
-                    text={item.activeLoan ? 'loaned' : 'unloaned'}
+                    text={item.activeLoan ? t`loaned` : t`unloaned`}
                     leftDotColor={item.activeLoan ? lib.colors.green : lib.colors.red}
                 />
             </div>
@@ -165,7 +165,7 @@ const MyNuggItem: FC<{ item: MyNuggsData; claims: UnclaimedOffer[] }> = ({ item,
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                         }}
-                        label={t`For sale`}
+                        label={t`for sale`}
                         rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
                         onClick={() => navigate(`/swap/${item.tokenId}`)}
                     />
@@ -225,7 +225,7 @@ const MyNuggItem: FC<{ item: MyNuggsData; claims: UnclaimedOffer[] }> = ({ item,
                                         paddingLeft: '.5rem',
                                     }}
                                 >
-                                    Pending Claim
+                                    {t`pending claim`}
                                 </Text>
                             </div>
                             {/* <CurrencyText size="small" image="eth" value={x.eth.number} stopAnimation /> */}

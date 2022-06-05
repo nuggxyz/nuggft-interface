@@ -108,7 +108,7 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
                             ...styles.title,
                         }}
                     >
-                        calculating
+                        {t`calculating`}
                     </Text>
                 </>
             )}
@@ -119,7 +119,7 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
                     marginRight: '3px',
                 }}
             >
-                starting offer
+                {t`starting offer`}
             </Text>
         </div>
     ) : (
@@ -138,7 +138,7 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
                 decimals={0}
             />
             <Text textStyle={{ fontSize: '13px', color: 'white', marginTop: 5 }}>
-                {`${
+                {t`${
                     leader?.eth ? `${leaderEns || leader?.user || ''} is leading` : 'starting price'
                 } | ${offers.length} offers`}
             </Text>

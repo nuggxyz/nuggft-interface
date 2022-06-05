@@ -9,8 +9,8 @@ import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 export const NuggSnapshotRenderItem: FC<
     GodListRenderItemProps<
         NonNullable<NonNullable<GetNuggSnapshotsQueryResult['data']>['nugg']>['snapshots'][number],
-        any,
-        any
+        unknown,
+        unknown
     >
 > = ({ item }) => {
     return (
@@ -66,7 +66,7 @@ export const NuggSnapshotRenderItem: FC<
                             // paddingBottom: 5,
                             position: 'relative',
                         }}
-                        text={`Version ${item?.snapshotNum || ''}`}
+                        text={`v${item?.snapshotNum || '0'}`}
                     />
                 </div>
 

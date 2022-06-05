@@ -9,14 +9,13 @@ import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import { Lifecycle } from '@src/client/interfaces';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
-import useMountLogger from '@src/hooks/useMountLogger';
 import useRemaining from '@src/client/hooks/useRemaining';
 
 import MobileOwnerBlock from './MobileOwnerBlock';
 
 type Props = GodListRenderItemProps<TokenId, undefined, undefined>;
 
-const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible, index }) => {
+const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible }) => {
     const navigate = useNavigate();
 
     const swap = client.swaps.useSwap(tokenId);
@@ -28,8 +27,6 @@ const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible, ind
     const [, minutes] = useRemaining(swap?.epoch);
 
     useLiveOffers(tokenId);
-
-    useMountLogger(`${index || 'unknown'}`);
 
     const background = React.useMemo(() => {
         return {
@@ -80,12 +77,7 @@ const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible, ind
                     height: '415px',
                 }}
             >
-                <MobileOwnerBlock
-                    tokenId={tokenId}
-                    visible={visible}
-                    // lifecycle={lifecycle}
-                    // index={index}
-                />
+                <MobileOwnerBlock tokenId={tokenId} visible={visible} />
             </animated.div>
         </div>
     );

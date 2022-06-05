@@ -1,6 +1,7 @@
 import React from 'react';
 import { BsCircle, BsCheckCircleFill } from 'react-icons/bs';
 import { IoIosArrowForward } from 'react-icons/io';
+import { t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
 import { NuggBookPage, Page, NuggBookPageProps } from '@src/interfaces/nuggbook';
@@ -125,15 +126,15 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
 
     const upAndRunning: ListItemDescription[] = [
         {
-            header: 'the rundown',
+            header: t`the rundown`,
             page: Page.TheRundown,
         },
         {
-            header: 'set up a wallet',
+            header: t`set up a wallet`,
             page: Page.Setup_0,
         },
         {
-            header: 'helping us test?',
+            header: t`helping us test?`,
             page: Page.HelpingTest_0,
         },
     ];
@@ -185,16 +186,10 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
                 size="larger"
                 textStyle={{ padding: '10px', fontWeight: lib.layout.fontWeight.semibold }}
             >
-                welcome to nuggft
+                {t`welcome to nuggft`}
             </Text>
 
-            <ListItemGroup header="get up and running" items={upAndRunning} setPage={setPage} />
-
-            {/* <ListItemGroup header="intro to defi" items={defi} setPage={setPage}  /> */}
-
-            {/* <ListItemGroup header="into the weeds" items={weeds} setPage={setPage} />
-
-            <ListItemGroup header="lol wut" items={wut} setPage={setPage} /> */}
+            <ListItemGroup header={t`get up and running`} items={upAndRunning} setPage={setPage} />
 
             <Button
                 label="[For Testing] Clear History"

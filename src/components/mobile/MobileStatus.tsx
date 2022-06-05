@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import eth from '@src/assets/images/app_logos/eth.png';
@@ -99,7 +100,7 @@ export default () => {
                     }}
                 >
                     <Text textStyle={{ color: lib.colors.primaryColor, fontSize: 14 }}>
-                        last block
+                        {t`last block`}
                     </Text>
                     <Text
                         textStyle={{
@@ -113,7 +114,7 @@ export default () => {
                     </Text>
 
                     <Text textStyle={{ color: lib.colors.primaryColor, fontSize: 14 }}>
-                        last response
+                        {t`last response`}
                     </Text>
                     <Text
                         textStyle={{
@@ -178,7 +179,7 @@ export default () => {
                     }}
                 >
                     <Text textStyle={{ color: lib.colors.primaryColor, fontSize: 14 }}>
-                        last block
+                        {t`last block`}
                     </Text>
                     <Text
                         textStyle={{
@@ -192,7 +193,7 @@ export default () => {
                     </Text>
 
                     <Text textStyle={{ color: lib.colors.primaryColor, fontSize: 14 }}>
-                        last response
+                        {t`last response`}
                     </Text>
                     <Text
                         textStyle={{
@@ -258,7 +259,7 @@ export default () => {
                     }}
                 >
                     <Text textStyle={{ color: lib.colors.primaryColor, fontSize: 14 }}>
-                        last eth price
+                        {t`last eth price`}
                     </Text>
                     <CurrencyText
                         textStyle={{
@@ -273,7 +274,7 @@ export default () => {
                     />
 
                     <Text textStyle={{ color: lib.colors.primaryColor, fontSize: 14 }}>
-                        last updated
+                        {t`last updated`}
                     </Text>
                     <Text
                         textStyle={{

@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -67,7 +68,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                     boxShadow: lib.layout.boxShadow.basic,
                     // width: '13rem',
                 }}
-                label="give me the rundown"
+                label={t`give me the rundown`}
                 onClick={() => setPage(Page.Welcome)}
             />
         </div>

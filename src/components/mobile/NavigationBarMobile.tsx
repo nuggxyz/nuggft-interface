@@ -2,6 +2,7 @@ import React, { CSSProperties, FC } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import { IoInformationCircle, IoQrCode, IoSearch } from 'react-icons/io5';
 import { useMatch, useNavigate } from 'react-router';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import web3 from '@src/web3';
@@ -164,9 +165,7 @@ const NavigationBarMobile: FC<unknown> = () => {
             close();
         } else if (!manualMatch) {
             setManualMatch(true);
-        }
-        // eslint-disable-next-line no-useless-return
-        else if (matchHome) {
+        } else if (matchHome) {
             setManualMatch(false);
         } else {
             navigate('/');
@@ -274,40 +273,23 @@ const NavigationBarMobile: FC<unknown> = () => {
                     <animated.div
                         style={{
                             height: '100%',
-                            // width: '200px',
                             margin: 'none',
                             display: 'flex',
                             justifyContent: 'space-around',
                             alignItems: 'center',
                         }}
                     >
-                        {/* <Button
-                            buttonStyle={{
-                                padding: 0,
-                                background: 'transparent',
-                            }}
-                            rightIcon={<span>💬</span>}
-                            onClick={() => nuggbookGoto(Page.Feedback)}
-                        /> */}
-                        {/* {matchHome ? ( */}
                         <div
                             style={{
-                                // display: 'flex',
-                                // justifyContent: 'center',
-                                // alignItems: 'center',
                                 position: 'relative',
                                 borderRadius: lib.layout.borderRadius.large,
-                                // boxShadow: lib.layout.boxShadow.dark,
                                 padding: '.2rem .7rem .5rem',
                                 textAlign: 'center',
                                 verticalAlign: 'center',
-                                // marginBottom: '.4rem',
                                 background: lib.colors.gradient2Transparent,
                                 WebkitBackdropFilter: 'blur(50px)',
                                 backdropFilter: 'blur(50px)',
                                 marginLeft: -8,
-                                // marginBottom: -5,
-                                // background: lib.colors.gradient2,
                             }}
                             role="button"
                             aria-hidden="true"
@@ -319,9 +301,6 @@ const NavigationBarMobile: FC<unknown> = () => {
                                 style={{
                                     fontSize: '30px',
                                     color: 'white',
-                                    // WebkitBackgroundClip: 'text',
-                                    // WebkitTextFillColor: 'transparent',
-
                                     ...lib.layout.presets.font.main.thicc,
                                 }}
                             >
@@ -425,7 +404,6 @@ const NavigationBarMobile: FC<unknown> = () => {
                     display: 'flex',
                     alignItems: 'flex-start',
                     flexDirection: 'column',
-                    // borderRadius: lib.layout.borderRadius.medium,
                     justifySelf: 'center',
                     ...opacitate,
                 }}
@@ -433,14 +411,12 @@ const NavigationBarMobile: FC<unknown> = () => {
                 <Account
                     address={address}
                     onClick={React.useCallback(() => {
-                        // if (address) navigate('/wallet');
                         nuggbookGoto(Page.Connect);
                     }, [nuggbookGoto])}
                 />
                 <div style={{ marginTop: '10px' }} />
                 <Learn
                     onClick={React.useCallback(() => {
-                        // if (address) navigate('/wallet');
                         nuggbookGoto(Page.TableOfContents);
                     }, [nuggbookGoto])}
                 />
@@ -450,7 +426,6 @@ const NavigationBarMobile: FC<unknown> = () => {
                     currency toggler
                 //////////////////////////////////////////////////////////////////////// */}
             <animated.div
-                // className="mobile-pressable-div"
                 style={{
                     zIndex: 10,
                     position: 'absolute',
@@ -470,18 +445,6 @@ const NavigationBarMobile: FC<unknown> = () => {
                         return undefined;
                     }}
                     floaterStyle={{ boxShadow: lib.layout.boxShadow.dark }}
-                    containerStyle={
-                        {
-                            // background: lib.colors.transparentWhite,
-                            // borderRadius: lib.layout.borderRadius.mediumish,
-                            // WebkitBackdropFilter: 'blur(30px)',
-                            // backdropFilter: 'blur(30px)',
-                            // height: '50px',
-                            // // this padding is required because the width needs to be 90 for the "DualToggler"
-                            // width: '100px',
-                            // padding: '5px',
-                        }
-                    }
                     pref={currencyPreferrence}
                 />
             </animated.div>
@@ -490,7 +453,6 @@ const NavigationBarMobile: FC<unknown> = () => {
                     connection health
                 //////////////////////////////////////////////////////////////////////// */}
             <div
-                // className="mobile-pressable-div"
                 style={{
                     zIndex: 10,
                     position: 'absolute',
@@ -552,7 +514,7 @@ export const NoFlashClaims = React.memo<{
                           }),
                 }}
                 textStyle={{ ...lib.layout.presets.font.main.thicc, fontSize: 21 }}
-                label="pending claims"
+                label={t`pending claims`}
                 leftIcon={
                     <div
                         style={{
@@ -725,32 +687,10 @@ export const NoFlash = React.memo<{
 }>(
     ({ address, onClick, isFull }) => {
         return (
-            <Button
-                rightIcon={
-                    <div
-                        className="mobile-pressable-div-deep"
-                        style={{
-                            height: 55,
-                            width: 55,
-                            position: 'relative',
-                            justifyContent: 'center',
-                            display: 'flex',
-                            alignItems: 'center',
-                        }}
-                    >
-                        {address ? (
-                            <Jazzicon address={address || ''} size={50} className="" />
-                        ) : (
-                            <IoQrCode
-                                style={{
-                                    color: lib.colors.semiTransparentPrimaryColor,
-                                }}
-                                size={50}
-                            />
-                        )}
-                    </div>
-                }
-                buttonStyle={{
+            <div
+                aria-hidden="true"
+                role="button"
+                style={{
                     width: '100%',
                     height: '100%',
                     justifyContent: 'center',
@@ -766,7 +706,30 @@ export const NoFlash = React.memo<{
                     event.stopPropagation();
                     onClick(isFull);
                 }}
-            />
+            >
+                <div
+                    className="mobile-pressable-div-deep"
+                    style={{
+                        height: 55,
+                        width: 55,
+                        position: 'relative',
+                        justifyContent: 'center',
+                        display: 'flex',
+                        alignItems: 'center',
+                    }}
+                >
+                    {address ? (
+                        <Jazzicon address={address || ''} size={50} className="" />
+                    ) : (
+                        <IoQrCode
+                            style={{
+                                color: lib.colors.semiTransparentPrimaryColor,
+                            }}
+                            size={50}
+                        />
+                    )}
+                </div>
+            </div>
         );
     },
     (a, b) => a.address === b.address && a.isFull === b.isFull,
@@ -778,21 +741,11 @@ export const HomeButton = React.memo<{
 }>(
     ({ onClick, isFull }) => {
         return (
-            <Button
+            <div
                 className="home-button"
-                rightIcon={
-                    <img
-                        alt="nugg clicker"
-                        src={clicker}
-                        height={55}
-                        style={{
-                            borderRadius: lib.layout.borderRadius.large,
-                            objectFit: 'cover',
-                            pointerEvents: 'none',
-                        }}
-                    />
-                }
-                buttonStyle={{
+                aria-hidden="true"
+                role="button"
+                style={{
                     zIndex: 100000000,
 
                     width: '90%',
@@ -810,7 +763,19 @@ export const HomeButton = React.memo<{
                     ev.stopPropagation();
                     onClick(isFull);
                 }}
-            />
+            >
+                {' '}
+                <img
+                    alt="nugg clicker"
+                    src={clicker}
+                    height={55}
+                    style={{
+                        borderRadius: lib.layout.borderRadius.large,
+                        objectFit: 'cover',
+                        pointerEvents: 'none',
+                    }}
+                />
+            </div>
         );
     },
     (a, b) => a.onClick === b.onClick && a.isFull === b.isFull,

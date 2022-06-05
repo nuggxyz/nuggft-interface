@@ -384,7 +384,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                     />
 
                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                        {isCanceling ? t`Ending Sale For` : t`Token Being Sold`}
+                        {isCanceling ? t`ending sale for` : t`token being sold`}
                     </Text>
                     <CurrencyText
                         size="large"
@@ -395,9 +395,8 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                     />
                     {!isCanceling && (
                         <>
-                            {' '}
                             <Text size="large" textStyle={{ marginTop: 10 }}>
-                                My Asking Price
+                                {t`my asking price`}
                             </Text>
                             <CurrencyText
                                 unitOverride={localCurrencyPref}
@@ -409,7 +408,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                             {localCurrencyPref === 'USD' && (
                                 <>
                                     <Text size="large" textStyle={{ marginTop: 10 }}>
-                                        My Asking Price (saved on-chain)
+                                        {t`my asking price (saved on-chain)`}
                                     </Text>
 
                                     <CurrencyText
@@ -468,7 +467,6 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                                     });
                                 }
                             }}
-                            // label="open"
                             size="largerish"
                             textStyle={{ color: lib.colors.white, marginLeft: 10 }}
                             leftIcon={<NLStaticImage image={`${peer.peer}_icon`} />}
@@ -478,12 +476,11 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                                         display: 'flex',
                                         alignItems: 'left',
                                         flexDirection: 'column',
-                                        // width: '100%',
                                         marginLeft: 10,
                                     }}
                                 >
                                     <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>
-                                        tap to finalize on
+                                        {t`tap to finalize on`}
                                     </Text>
                                     <Text
                                         textStyle={{
@@ -497,18 +494,6 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                             }
                         />
                     </div>
-
-                    {/* <Button
-                        className="mobile-pressable-div"
-                        size="small"
-                        buttonStyle={{
-                            background: 'transparent',
-                            marginTop: 10,
-                            marginBottom: -10,
-                        }}
-                        label="go back"
-                        onClick={() => setPage(0)}
-                    /> */}
                 </>
             ) : null,
         [
@@ -571,7 +556,6 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                 return (
                     <animated.div
                         style={{
-                            // position: 'relative',
                             position: 'absolute',
                             display: 'flex',
                             justifyContent: 'center',
@@ -584,11 +568,8 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                                 width: '93%',
                                 padding: '25px',
                                 position: 'relative',
-                                // pointerEvents: 'none',
-                                // ...sty,
                                 background: lib.colors.transparentWhite,
                                 transition: `.2s all ${lib.layout.animation}`,
-
                                 borderRadius: lib.layout.borderRadius.largish,
                                 boxShadow: lib.layout.boxShadow.basic,
                                 margin: '0rem',
@@ -629,9 +610,9 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                                             color: lib.colors.primaryColor,
                                             fontSize: 18,
                                         }}
-                                        label="go back"
+                                        label={t`go back`}
                                         onClick={() => (pager === 0 ? closeModal() : setPage(0))}
-                                    />{' '}
+                                    />
                                     <CurrencyToggler
                                         pref={localCurrencyPref}
                                         setPref={setLocalCurrencyPref}

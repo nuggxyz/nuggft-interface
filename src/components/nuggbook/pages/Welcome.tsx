@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSpring, animated, config, a } from '@react-spring/web';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -233,7 +234,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
             >
                 <Button
                     className="mobile-pressable-div"
-                    label="i got time ⌛️"
+                    label={t`i got time ⌛️`}
                     onClick={() => {
                         setInit();
                         setPage(Page.TableOfContents);
@@ -251,7 +252,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                 />
                 <Button
                     className="mobile-pressable-div"
-                    label="imma need a tldr 🤠"
+                    label={t`imma need a tldr 🤠`}
                     onClick={() => {
                         setInit();
 
@@ -271,7 +272,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                 />
                 <Button
                     className="mobile-pressable-div"
-                    label={"i'll figure it out 💪"}
+                    label={t`i'll figure it out 💪`}
                     onClick={() => {
                         setInit();
                         close();

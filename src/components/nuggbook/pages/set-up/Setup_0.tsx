@@ -1,5 +1,6 @@
 import React from 'react';
 import { IoIosArrowDropleftCircle } from 'react-icons/io';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -120,8 +121,9 @@ const Setup_0: NuggBookPage = ({ setPage }) => {
                         fontSize: '20px',
                     }}
                 >
-                    1️⃣ 📲 <span style={{ paddingLeft: 8, fontWeight: 'bolder' }}> download</span> an
-                    eth wallet
+                    1️⃣ 📲{' '}
+                    <span style={{ paddingLeft: 8, fontWeight: 'bolder' }}> {t`download`}</span>{' '}
+                    {t`an eth wallet`}
                 </Text>
 
                 <Text
@@ -133,20 +135,11 @@ const Setup_0: NuggBookPage = ({ setPage }) => {
                         fontSize: '20px',
                     }}
                 >
-                    2️⃣ 💸 <span style={{ paddingLeft: 8, fontWeight: 'bolder' }}>send</span> eth to
-                    the wallet
+                    2️⃣ 💸 <span style={{ paddingLeft: 8, fontWeight: 'bolder' }}>{t`send`}</span>{' '}
+                    {t`eth to
+                    the wallet`}
                 </Text>
-                {/* <Text
-                    size="small"
-                    textStyle={{
-                        color: lib.colors.orange,
-                        ...lib.layout.presets.font.main.semibold,
-                        textAlign: 'left',
-                        fontSize: '20px',
-                    }}
-                >
-                    🤑 <span style={{ paddingLeft: 8 }}>[testers]</span> ask for some test eth
-                </Text> */}
+
                 <Text
                     size="medium"
                     textStyle={{
@@ -155,8 +148,8 @@ const Setup_0: NuggBookPage = ({ setPage }) => {
                         padding: '5px 0px',
                     }}
                 >
-                    3️⃣ 🐣 <span style={{ paddingLeft: 8, fontWeight: 'bolder' }}>connect</span> to
-                    nuggft
+                    3️⃣ 🐣 <span style={{ paddingLeft: 8, fontWeight: 'bolder' }}>{t`connect`}</span>{' '}
+                    {t`to nuggft`}
                 </Text>
             </Text>
             <div
@@ -169,7 +162,7 @@ const Setup_0: NuggBookPage = ({ setPage }) => {
             >
                 <Button
                     className="mobile-pressable-div"
-                    label="put me in, coach 🔥"
+                    label={t`put me in, coach 🔥`}
                     onClick={() => {
                         setPage(Page.Setup_1, true);
                     }}

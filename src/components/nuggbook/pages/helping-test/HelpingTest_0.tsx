@@ -1,5 +1,6 @@
 import React from 'react';
 import { IoIosArrowDropleftCircle } from 'react-icons/io';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -73,7 +74,7 @@ const HelpingTest_0: NuggBookPage = ({ setPage }) => {
                                 // marginBottom: 10,
                             }}
                         >
-                            1️⃣ get a nugg in your wallet
+                            {t`1️⃣ get a nugg in your wallet`}
                         </Text>
                         <Text
                             size="large"
@@ -86,7 +87,7 @@ const HelpingTest_0: NuggBookPage = ({ setPage }) => {
                                 // marginBottom: 10,
                             }}
                         >
-                            2️⃣ re-dress your nugg
+                            {t`2️⃣ re-dress your nugg`}
                         </Text>
                         <Text
                             size="large"
@@ -99,7 +100,7 @@ const HelpingTest_0: NuggBookPage = ({ setPage }) => {
                                 // marginBottom: 10,
                             }}
                         >
-                            3️⃣ HAVE FUN 🤠
+                            {t`3️⃣ HAVE FUN 🤠`}
                         </Text>
                     </div>
                     <div style={{ padding: 5 }}>
@@ -114,48 +115,21 @@ const HelpingTest_0: NuggBookPage = ({ setPage }) => {
                                 // marginBottom: 10,
                             }}
                         >
-                            follow the setup, but dont purchase anything --- we can send you free
-                            testnet ethereum, just ask!
+                            {t`follow the setup, but dont purchase anything --- we can help get you
+                            free testnet ethereum, just ask!`}
                         </Text>
-                        {/* <Text
-                        size="large"
-                        textStyle={{
-                            ...lib.layout.presets.font.main.regular,
-                            padding: '10px 0px',
-                            fontWeight: lib.layout.fontWeight.semibold,
-                            // marginBottom: 10,
-                        }}
-                    >
-                        you must switch to the{' '}
-                        <b style={{ fontWeight: lib.layout.fontWeight.relative.bolder }}>rinkeby</b>{' '}
-                        blockchain
-                    </Text> */}
-
                         <Text
                             size="large"
                             textStyle={{
-                                ...lib.layout.presets.font.main.regular,
                                 padding: '10px 0px',
+
+                                ...lib.layout.presets.font.main.regular,
+                                // margin: '15px 0px',
                                 fontWeight: lib.layout.fontWeight.semibold,
                                 // marginBottom: 10,
                             }}
                         >
-                            never hesistate to reach out to us!
-                        </Text>
-
-                        <Text
-                            size="large"
-                            textStyle={{
-                                ...lib.layout.presets.font.main.regular,
-                                padding: '10px 0px',
-                                fontWeight: lib.layout.fontWeight.semibold,
-                                fontSize: '15px',
-                                // marginBottom: 10,
-                            }}
-                        >
-                            we know this stuff is not easy... but give it a shot on your own! we
-                            want to make this easier for everyone (across all crypto). together we
-                            can make crypto onboarding better and safer for everyone
+                            {t`make sure you are on the rinkeby blockchain (we can help you with this too)`}
                         </Text>
 
                         <Text
@@ -167,7 +141,7 @@ const HelpingTest_0: NuggBookPage = ({ setPage }) => {
                                 // marginBottom: 10,
                             }}
                         >
-                            ps: you rock 💙
+                            {t`ps: you rock 💙`}
                         </Text>
                     </div>
                 </div>

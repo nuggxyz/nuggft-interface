@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '@lingui/macro';
 
 import {
     GetAllItemsQuery,
@@ -17,7 +18,6 @@ import { Page } from '@src/interfaces/nuggbook';
 import { NuggListRenderItemMobileBig, NuggListRenderItemMobile } from './NuggListRenderItemMobile';
 
 const INFINITE_INTERVAL = 100;
-// const START_INTERVAL = 1000;
 
 export const AllNuggs = () => {
     const goto = client.nuggbook.useGoto();
@@ -78,7 +78,7 @@ export const AllNuggs = () => {
                 }}
                 Title={React.memo(() => (
                     <Button
-                        label="back"
+                        label={t`back`}
                         onClick={() => goto(Page.Search, false)}
                         buttonStyle={{
                             backdropFilter: 'blur(30px)',
@@ -198,8 +198,6 @@ export const AllItems = () => {
     );
 };
 
-// const NuggList = React.lazy(() => import('./components/NuggList'));
-
 const NuggDexSearchListMobile2 = () => {
     const goto = client.nuggbook.useGoto();
     return (
@@ -214,7 +212,7 @@ const NuggDexSearchListMobile2 = () => {
             }}
         >
             <Button
-                label="View All Nuggs"
+                label={t`view all nuggs`}
                 onClick={() => goto(Page.AllNuggs, true)}
                 buttonStyle={{
                     borderRadius: lib.layout.borderRadius.large,
@@ -228,7 +226,7 @@ const NuggDexSearchListMobile2 = () => {
                 }}
             />
             <Button
-                label="View All Items"
+                label={t`view all items`}
                 onClick={() => goto(Page.AllItems, true)}
                 buttonStyle={{
                     borderRadius: lib.layout.borderRadius.large,

@@ -1,6 +1,7 @@
 import React from 'react';
 import { IoIosArrowDropleftCircle } from 'react-icons/io';
 import Confetti from 'react-confetti';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -40,7 +41,7 @@ const Setup_3: NuggBookPage = ({ setPage }) => {
                     fontWeight: lib.layout.fontWeight.thicc,
                 }}
             >
-                3️⃣ 🐣 <span style={{ paddingLeft: 5 }}>leggo</span>
+                3️⃣ 🐣 <span style={{ paddingLeft: 5 }}>{t`leggo`}</span>
             </Text>
             <div style={{ padding: '20px 0px', marginTop: 15 }}>
                 <Text
@@ -49,7 +50,7 @@ const Setup_3: NuggBookPage = ({ setPage }) => {
                 >
                     <PeerButton
                         peer={Peer.CoinbaseWallet}
-                        text="connect to nuggft"
+                        text={t`connect to nuggft`}
                         color={lib.colors.gradient}
                     />
                 </Text>
@@ -59,44 +60,12 @@ const Setup_3: NuggBookPage = ({ setPage }) => {
                 >
                     <PeerButton
                         peer={Peer.MetaMask}
-                        text="connect to nuggft"
+                        text={t`connect to nuggft`}
                         color={lib.colors.gradient}
                     />
                 </Text>
             </div>
-            {/* <Text
-                size="medium"
-                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.bold }}
-            >
-                FAQ
-            </Text>
-            <Text
-                size="medium"
-                textStyle={{ padding: '15px', ...lib.layout.presets.font.main.bold }}
-            >
-                what other wallets can i use?
-            </Text> */}
             <div style={{ marginTop: 20 }}>
-                {/* <Button
-                    label="next"
-                    buttonStyle={{
-                        background: lib.colors.gradient,
-                        color: 'white',
-                        borderRadius: lib.layout.borderRadius.large,
-                        marginBottom: '.8rem',
-                        backgroundColor: lib.colors.white,
-                        alignItems: 'center',
-                    }}
-                    rightIcon={
-                        <IoIosArrowDroprightCircle
-                            color="white"
-                            style={{ marginLeft: '.3rem' }}
-                            size={20}
-                        />
-                    }
-                    onClick={() => setPage(Page.TableOfContents)}
-                /> */}
-
                 <Button
                     buttonStyle={{
                         background: lib.colors.gradient2,
@@ -107,7 +76,7 @@ const Setup_3: NuggBookPage = ({ setPage }) => {
                         // width: '13rem',
                         alignItems: 'center',
                     }}
-                    label="back"
+                    label={t`back`}
                     leftIcon={
                         <IoIosArrowDropleftCircle
                             color="white"

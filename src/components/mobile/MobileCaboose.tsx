@@ -203,27 +203,7 @@ export default ({
                         [isPhone],
                     )}
                 />
-                {/* <GodListHorizontal
-                        data={token.tryout.swaps}
-                        // label={t`Select a nugg to buy this item from`}
-                        extraData={undefined}
-                        RenderItem={TryoutRenderItem}
-                        selected={nuggToBuyFrom}
-                        action={(dat) => {
-                            setNuggToBuyFrom(dat);
-                            if (onSelectNugg && dat) onSelectNugg(dat);
-                        }}
-                        itemHeight={90}
-                        horizontal
-                        startGap={10}
-                        style={{
-                            width: '100%',
-                            background: lib.colors.transparentLightGrey,
-                            height: '100px',
-                            padding: '15px 0rem .4rem',
-                            borderRadius: lib.layout.borderRadius.medium,
-                        }}
-                    /> */}
+
                 <Button
                     buttonStyle={{
                         borderRadius: lib.layout.borderRadius.large,

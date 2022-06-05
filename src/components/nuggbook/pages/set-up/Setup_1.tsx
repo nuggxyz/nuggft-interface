@@ -1,5 +1,6 @@
 import React from 'react';
 import { IoIosArrowDropleftCircle } from 'react-icons/io';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -28,7 +29,7 @@ const Setup_1: NuggBookPage = ({ setPage }) => {
                     fontWeight: lib.layout.fontWeight.thicc,
                 }}
             >
-                1️⃣ 📲 <span style={{ paddingLeft: 5 }}>download</span>
+                1️⃣ 📲 <span style={{ paddingLeft: 5 }}>{t`download`}</span>
             </Text>
 
             <div style={{ padding: '10px 0px' }}>
@@ -53,7 +54,7 @@ const Setup_1: NuggBookPage = ({ setPage }) => {
                         <span style={{ fontWeight: 'bolder', marginLeft: 4 }}>coinbase users</span>
                     </span>{' '}
                 </Text>
-                <PeerButton peer={Peer.CoinbaseWallet} text="tap to download" />
+                <PeerButton peer={Peer.CoinbaseWallet} text={t`tap to download`} />
             </div>
             {/* <div style={{ marginTop: 5 }} /> */}
             <div style={{ padding: 5 }}>
@@ -75,7 +76,7 @@ const Setup_1: NuggBookPage = ({ setPage }) => {
                         }}
                     >
                         <span>easy for </span>
-                        <span style={{ fontWeight: 'bolder', marginLeft: 4 }}>everyone</span>
+                        <span style={{ fontWeight: 'bolder', marginLeft: 4 }}>{t`everyone`}</span>
                     </span>{' '}
                 </Text>
                 <PeerButton peer={Peer.MetaMask} text="tap to download" />
@@ -91,7 +92,7 @@ const Setup_1: NuggBookPage = ({ setPage }) => {
             >
                 <Button
                     className="mobile-pressable-div"
-                    label="ONWARD 😤" // maybe "give me something harder"
+                    label={t`ONWARD 😤`} // maybe "give me something harder"
                     onClick={() => {
                         setPage(Page.Setup_2, true);
                     }}
@@ -116,7 +117,7 @@ const Setup_1: NuggBookPage = ({ setPage }) => {
                         // width: '13rem',
                         alignItems: 'center',
                     }}
-                    label="back"
+                    label={t`back`}
                     leftIcon={
                         <IoIosArrowDropleftCircle
                             color={lib.colors.primaryColor}
