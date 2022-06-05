@@ -317,3 +317,35 @@ export const calculateIncrement = (epoch?: number, blocknum?: number) => {
 
     return BigInt(5);
 };
+
+export const calculateIncrementWithRemaining = (
+    epoch?: number | null,
+    blocknum?: number | null,
+    hasNoBids?: boolean | null,
+) => {
+    if (epoch && blocknum) {
+        const currepoch = calculateEpochId(blocknum);
+        if (epoch >= currepoch) {
+            let increment = DEFAULT_CONTRACTS.Interval - (blocknum % DEFAULT_CONTRACTS.Interval);
+            const extra = DEFAULT_CONTRACTS.Interval * (epoch - currepoch);
+            increment += extra;
+
+            if (hasNoBids) {
+                return [BigInt(5), extra + increment, extra + DEFAULT_CONTRACTS.Interval] as const;
+            }
+
+            if (increment < 45) {
+                const num = 50 - (increment / 5) * 5;
+                return [BigInt(num), increment % 5, 5] as const;
+            }
+
+            return [
+                BigInt(5),
+                extra + increment - 45,
+                extra + DEFAULT_CONTRACTS.Interval - 45,
+            ] as const;
+        }
+    }
+
+    return [BigInt(5), 100, 100] as const;
+};

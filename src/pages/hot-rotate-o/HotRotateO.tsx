@@ -207,7 +207,7 @@ export const useHotRotateO = (tokenId?: NuggId) => {
     const [savedToChain, setSavedToChain] = useState(false);
     const inject = useDotnuggInjectToCache();
 
-    const [items, setItems] = useAsyncSetState<HotRotateOItemList>(() => {
+    const [items, setItems] = useAsyncSetState(() => {
         if (tokenId && provider && epoch) {
             if (!address) {
                 setCannotProveOwnership(true);

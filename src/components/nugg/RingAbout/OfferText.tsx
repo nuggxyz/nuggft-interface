@@ -59,17 +59,23 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
 
     const provider = web3.hook.usePriorityProvider();
 
-    const vfo = useAsyncState(() => {
-        if (token && provider && tokenId && lifecycle === Lifecycle.Bunt) {
-            return nuggft
-                .connect(provider)
-                ['vfo(address,uint24)'](Address.NULL.hash, tokenId.toRawId())
-                .then((x) => {
-                    return new EthInt(x);
-                });
-        }
-        return undefined;
-    }, [token, nuggft, tokenId, provider]);
+    const vfo = useAsyncState(
+        () => {
+            if (token && provider && tokenId && lifecycle === Lifecycle.Bunt) {
+                return nuggft
+                    .connect(provider)
+                    ['vfo(address,uint24)'](Address.NULL.hash, tokenId.toRawId())
+                    .then((x) => {
+                        return new EthInt(x);
+                    });
+            }
+            return undefined;
+        },
+        [token, nuggft, tokenId, provider] as const,
+        // (prev, curr) => {
+        //     return !!(prev[0] && prev[1] && prev[2] && prev[3] && prev[3] === curr[3]);
+        // },
+    );
 
     const offers = client.live.offers(tokenId);
 

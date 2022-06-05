@@ -1,5 +1,4 @@
 import React, { FC, useMemo, useState } from 'react';
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { t } from '@lingui/macro';
 
 import useAsyncState from '@src/hooks/useAsyncState';
@@ -95,11 +94,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         return undefined;
     }, [data.nuggToBuyFrom]);
 
-    const check = useAsyncState<{
-        canOffer: boolean | undefined;
-        next: BigNumber | undefined;
-        curr: BigNumber | undefined;
-    }>(() => {
+    const check = useAsyncState(() => {
         if (data.tokenId && address && chainId && provider) {
             if (data.isNugg()) {
                 return nuggft['check(address,uint24)'](address, data.tokenId.toRawId()).then(

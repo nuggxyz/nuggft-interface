@@ -11,6 +11,6 @@ const styles = lib.layout.NLStyleSheetCreator({
         left: 0,
         zIndex: 100,
     },
-});
+} as const);
 
 export default styles;

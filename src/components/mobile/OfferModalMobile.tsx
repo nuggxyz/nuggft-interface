@@ -1,10 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
-import { animated, config, SpringValue, useSpring, useTransition } from '@react-spring/web';
+import { animated, config, useSpring, useTransition } from '@react-spring/web';
 import { IoChevronBackCircle } from 'react-icons/io5';
 
-import useAsyncState from '@src/hooks/useAsyncState';
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -27,6 +26,111 @@ import { DualCurrencyInputWithIcon } from '@src/components/general/TextInputs/Cu
 import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
 import packages from '@src/packages';
 import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
+import CircleTimerMobileCSS2 from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimerMobileCSS2';
+import { calculateIncrementWithRemaining } from '@src/web3/config';
+import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
+import { useMemoizedAsyncState } from '@src/hooks/useAsyncState';
+
+const incrementers = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 75, 99] as const;
+
+const Butter = React.memo(
+    ({
+        currIncrement,
+        toggled,
+        increment,
+        endingEpoch,
+        onClick,
+        hasNoBids,
+    }: {
+        currIncrement: bigint;
+        increment: bigint;
+        endingEpoch: number;
+        toggled: boolean;
+        hasNoBids: boolean;
+        onClick: (increment: bigint) => void;
+    }) => {
+        const blocknum = client.block.useBlock();
+
+        const activated = React.useMemo(() => {
+            return increment === currIncrement;
+        }, [increment, currIncrement]);
+
+        const [secsTillNextInterval, intervalLastsForSecs] = React.useMemo(() => {
+            if (activated) {
+                const checke = calculateIncrementWithRemaining(endingEpoch, blocknum, hasNoBids);
+                return [checke[1] * 12, checke[2] * 12];
+            }
+            return [12, 12];
+        }, [blocknum, endingEpoch, activated, hasNoBids]);
+
+        const trueSecsTillNextInterval = useRemainingTrueSeconds(
+            activated ? secsTillNextInterval : null,
+        );
+
+        return (
+            <div
+                role="button"
+                aria-hidden="true"
+                className="mobile-pressable-div"
+                onClick={() => onClick(increment)}
+                style={{
+                    overflow: 'visible',
+                    height: 50,
+                    width: 80,
+                    position: 'relative',
+                }}
+            >
+                <CircleTimerMobileCSS2
+                    duration={activated ? intervalLastsForSecs : 1}
+                    remaining={activated ? trueSecsTillNextInterval ?? intervalLastsForSecs : 1}
+                    width={200}
+                    interval={12}
+                    toggled={toggled}
+                    isStatic={!activated}
+                    strokeWidth={4}
+                    style={{
+                        pointerEvents: 'none',
+                        position: 'relative',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        display: 'flex',
+                        width: 50,
+                        height: 50,
+                        top: 0,
+                    }}
+                >
+                    <Text
+                        textStyle={{
+                            color: toggled ? lib.colors.primaryColor : lib.colors.white,
+                            padding: '5px',
+                            fontWeight: lib.layout.fontWeight.semibold,
+                            marginTop: -4,
+                            fontSize: 17,
+                        }}
+                    >
+                        +{new Fraction(increment, 100).percentString(0)}
+                    </Text>
+                </CircleTimerMobileCSS2>
+            </div>
+        );
+    },
+    (prev, curr) =>
+        prev.endingEpoch === curr.endingEpoch &&
+        prev.toggled === curr.toggled &&
+        prev.onClick === curr.onClick &&
+        prev.hasNoBids === curr.hasNoBids &&
+        prev.currIncrement === curr.currIncrement,
+);
+
+// type CheckReturn = {
+//     canOffer: boolean | undefined;
+//     nextUserOffer: BigNumber | undefined;
+//     currentUserOffer: BigNumber | undefined;
+//     currentLeaderOffer: BigNumber | undefined;
+//     increment: BigNumber | undefined;
+//     mustClaimBuyer: boolean | undefined;
+//     mustOfferOnSeller: boolean | undefined;
+// };
 
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
@@ -35,7 +139,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const network = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
-    // const userBalance = web3.hook.usePriorityBalance(network);
+
     const peer = web3.hook.usePriorityPeer();
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
@@ -49,85 +153,64 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const blocknum = client.block.useBlock();
 
-    // const myNuggs = client.live.myNuggs();
+    const check = useMemoizedAsyncState(
+        () => {
+            if (data.tokenId && address && chainId && network && msp) {
+                if (data.isNugg()) {
+                    return nuggft['check(address,uint24)'](address, data.tokenId.toRawIdNum()).then(
+                        (x) => {
+                            return {
+                                canOffer: x.canOffer,
+                                nextUserOffer: x.next,
+                                currentUserOffer: x.currentUserOffer,
+                                increment: x.incrementBps,
+                                currentLeaderOffer: x.currentLeaderOffer,
+                                mustClaimBuyer: false,
+                                mustOfferOnSeller: false,
+                            };
+                        },
+                    );
+                }
 
-    // // console.log(myNuggs.find((x) => x.tokenId === data.nuggToBuyFor));
-
-    // const needToClaim = React.useMemo(() => {
-    //     return (
-    //         data.isItem() &&
-    //         (myNuggs.find((x) => x.tokenId === data.nuggToBuyFor)?.pendingClaim ?? false)
-    //     );
-    // }, [myNuggs, data]);
-
-    // const [, startTransition] = React.useTransition();
-
-    const check = useAsyncState<{
-        canOffer: boolean | undefined;
-        nextUserOffer: BigNumber | undefined;
-        currentUserOffer: BigNumber | undefined;
-        currentLeaderOffer: BigNumber | undefined;
-        increment: BigNumber | undefined;
-        mustClaimBuyer: boolean | undefined;
-        mustOfferOnSeller: boolean | undefined;
-    }>(() => {
-        if (data.tokenId && address && chainId && network && msp) {
-            if (data.isNugg()) {
-                return nuggft['check(address,uint24)'](address, data.tokenId.toRawIdNum()).then(
-                    (x) => {
-                        return {
-                            canOffer: x.canOffer,
-                            nextUserOffer: x.next,
-                            currentUserOffer: x.currentUserOffer,
-                            increment: x.incrementBps,
-                            currentLeaderOffer: x.currentLeaderOffer,
-                            mustClaimBuyer: undefined,
-                            mustOfferOnSeller: undefined,
-                        };
-                    },
-                );
+                return nuggft['check(uint24,uint24,uint16)'](
+                    data.nuggToBuyFor.toRawIdNum(),
+                    data.nuggToBuyFrom.toRawId(),
+                    data.tokenId.toRawId(),
+                ).then((x) => {
+                    return {
+                        canOffer: x.canOffer,
+                        nextUserOffer: x.next,
+                        currentUserOffer: x.currentUserOffer,
+                        currentLeaderOffer: x.currentLeaderOffer,
+                        increment: x.incrementBps,
+                        mustClaimBuyer: x.mustClaimBuyer,
+                        mustOfferOnSeller: x.mustOfferOnSeller,
+                    };
+                });
             }
+            return undefined;
+        },
+        [
+            address,
+            chainId,
+            network,
+            data.nuggToBuyFor,
+            data.nuggToBuyFrom,
+            msp,
+            blocknum,
+            data.tokenId,
+        ] as const,
+        (prev, curr) => {
+            return prev[7] === curr[7];
+        },
+    );
 
-            return nuggft['check(uint24,uint24,uint16)'](
-                data.nuggToBuyFor.toRawIdNum(),
-                data.nuggToBuyFrom.toRawId(),
-                data.tokenId.toRawId(),
-            ).then((x) => {
-                return {
-                    canOffer: x.canOffer,
-                    nextUserOffer: x.next,
-                    currentUserOffer: x.currentUserOffer,
-                    currentLeaderOffer: x.currentLeaderOffer,
-                    increment: x.incrementBps,
-                    mustClaimBuyer: x.mustClaimBuyer,
-                    mustOfferOnSeller: x.mustOfferOnSeller,
-                };
-            });
+    const swap = client.swaps.useSwap('nugg-44');
+    const epoch = client.epoch.active.useId();
 
-            // .catch(() => {
-            //     return {
-            //         canOffer: undefined,
-            //         next: undefined,
-            //         curr: undefined,
-            //         increment: undefined,
-            //         eth: undefined,
-            //         multicallRequired: false,
-            //         mustClaimBuyer: false,
-            //         mustOfferOnSeller: false,
-            //     };
-            // });
-        }
-        return undefined;
-    }, [
-        address,
-        chainId,
-        network,
-        data.nuggToBuyFor,
-        data.nuggToBuyFrom,
-        msp,
-        blocknum,
-        data.tokenId,
-    ]);
+    const noBids = React.useMemo(() => {
+        return data.tokenId.toRawIdNum() === epoch && swap?.leader === undefined;
+    }, [epoch, swap, data.tokenId]);
     // console.log({ check, data });
 
     const minNextBid = React.useMemo(() => {
@@ -221,95 +304,60 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const populatedTransaction = React.useDeferredValue(rawPopulatedTransaction);
 
-    const estimation = useAsyncState(() => {
-        if (populatedTransaction && network) {
-            return Promise.all([
-                estimator.estimate(populatedTransaction.tx),
-                network?.getGasPrice(),
-            ]).then((_data) => ({
-                gasLimit: _data[0] || BigNumber.from(0),
-                gasPrice: new EthInt(_data[1] || 0),
-                mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
-                amount: populatedTransaction.amount,
-            }));
-        }
+    const estimation = useMemoizedAsyncState(
+        () => {
+            if (populatedTransaction && network) {
+                return Promise.all([
+                    estimator.estimate(populatedTransaction.tx),
+                    network?.getGasPrice(),
+                ]).then((_data) => ({
+                    gasLimit: _data[0] || BigNumber.from(0),
+                    gasPrice: new EthInt(_data[1] || 0),
+                    mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
+                    amount: populatedTransaction.amount,
+                }));
+            }
 
-        return undefined;
-    }, [populatedTransaction, network]);
+            return undefined;
+        },
+        [populatedTransaction, network] as const,
+        (prev, curr) => {
+            return (prev[0] && curr[0] && prev[0].amount.eq(curr[0].amount)) ?? false;
+        },
+    );
 
     const increments = React.useMemo(() => {
         const inc = check?.increment ? (check.increment.toNumber() - 10000) / 100 : 5;
-        return [
-            BigInt(inc),
-            ...[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 75, 99]
-                .filter((x) => x > inc)
-                .map((x) => BigInt(x)),
-        ];
+        return [BigInt(inc), ...incrementers.filter((x) => x > inc).map((x) => BigInt(x))];
     }, [check?.increment]);
 
-    const [transition] = packages.spring.useTransition(increments, () => ({
-        leave: {
-            width: 0,
-        },
-        keys: (item) => `increments-${item}`,
-    }));
+    const [shifter] = packages.spring.useSpring(
+        () => ({
+            to: {
+                translateX: (incrementers.length - increments.length) * -80,
+            },
+        }),
+        [increments],
+    );
 
-    // eslint-disable-next-line react/require-default-props
-    const IncrementButton = React.memo(
-        ({
-            increment,
-            style,
-            index,
-        }: {
-            increment: bigint;
-            style: {
-                width: SpringValue<number>;
-            };
-            index: number;
-        }) => {
-            return (
-                <animated.div style={{ ...style }}>
-                    <Button
-                        className="mobile-pressable-div"
-                        label={increment !== BigInt(0) ? `+${increment.toString()}%` : 'min'}
-                        onClick={() => {
-                            if (Number(index) === 0) {
-                                setAmount(minNextBid.toString());
-                                setLastPressed(null);
-                                return;
-                            }
-                            const a =
-                                (check?.currentLeaderOffer &&
-                                    new EthInt(
-                                        check.currentLeaderOffer,
-                                    ).increaseToFixedStringRoundingUp(increment, 5)) ||
-                                '0';
-                            setAmount(a);
-                            setLastPressed(`${increment}`);
-                        }}
-                        // disabled={activeIncrement > increment}
-                        buttonStyle={{
-                            borderRadius: lib.layout.borderRadius.large,
-                            background:
-                                lastPressed === increment.toString() ||
-                                (index === 0 && lastPressed === null)
-                                    ? lib.colors.white
-                                    : lib.colors.primaryColor,
-                            marginRight: '10px',
-                        }}
-                        textStyle={{
-                            color:
-                                lastPressed === increment.toString() ||
-                                (index === 0 && lastPressed === null)
-                                    ? lib.colors.primaryColor
-                                    : lib.colors.white,
-                            fontSize: 24,
-                        }}
-                        disableHoverAnimation
-                    />
-                </animated.div>
-            );
+    const butcaller = React.useCallback(
+        (increment: bigint) => {
+            if (increment === increments[0]) {
+                setAmount(minNextBid.toString());
+                setLastPressed(null);
+                return;
+            }
+            const a =
+                (check?.currentLeaderOffer &&
+                    new EthInt(check.currentLeaderOffer).increaseToFixedStringRoundingUp(
+                        increment,
+                        5,
+                    )) ||
+                '0';
+            setAmount(a);
+            setLastPressed(`${increment}`);
         },
+        [increments],
     );
 
     const [tabFadeTransition] = useTransition(
@@ -347,7 +395,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             if (populatedTransaction.amount.eq(estimation.amount)) return false;
         }
         return true;
-    }, [populatedTransaction, estimation]);
+    }, [populatedTransaction, estimation, estimator.error]);
 
     const globalCurrencyPref = client.usd.useCurrencyPreferrence();
 
@@ -363,6 +411,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const mspusd = client.usd.useUsdPair(msp);
 
     const [localCurrencyPref, setLocalCurrencyPref] = useCurrencyTogglerState(globalCurrencyPref);
+
     const PageNeg1 = React.useMemo(
         () =>
             !data.isItem() ? null : (
@@ -414,10 +463,14 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     />
                 </>
             ),
-        [setPage, calculating, localCurrencyPref, data, mspusd],
+        [setPage, localCurrencyPref, data, mspusd],
     );
 
     const [leader] = useAggregatedOffers(data.tokenId);
+
+    // const Trans = incrementers.map((val, ind) => (
+    //     <IncrementButton increment={BigInt(val)} index={ind} />
+    // ));
 
     const Page0 = React.useMemo(
         () => (
@@ -438,34 +491,36 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     value={currentPrice}
                 />
 
-                <Text
-                    size="larger"
-                    textStyle={{ marginTop: 10, fontWeight: lib.layout.fontWeight.thicc }}
-                >
-                    min next bid
-                </Text>
                 <div
-                    style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                    }}
                 >
-                    <CurrencyText
-                        unitOverride={localCurrencyPref}
-                        forceEth
-                        size="larger"
-                        value={minNextBidPair}
-                    />
-                    <Text
-                        textStyle={{
-                            background: lib.colors.primaryColor,
-                            color: 'white',
-                            borderRadius: lib.layout.borderRadius.medium,
-                            padding: '.25rem .40rem',
-                            fontWeight: lib.layout.fontWeight.thicc,
-                            marginLeft: 5,
-                        }}
-                        size="small"
-                    >
-                        +{new Fraction(increments[0], 100).percentString(0)}
-                    </Text>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <Text
+                            size="larger"
+                            textStyle={{ marginTop: 10, fontWeight: lib.layout.fontWeight.thicc }}
+                        >
+                            min next bid
+                        </Text>
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'flex-start',
+                                alignItems: 'center',
+                                position: 'relative',
+                            }}
+                        >
+                            <CurrencyText
+                                unitOverride={localCurrencyPref}
+                                forceEth
+                                size="larger"
+                                value={minNextBidPair}
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 <div
@@ -476,7 +531,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         marginTop: 10,
                     }}
                 >
-                    <Text size="larger">New Bid</Text>
+                    <Text size="larger" textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}>
+                        new bid
+                    </Text>
                     <div
                         style={{
                             display: 'flex',
@@ -513,7 +570,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             textAlign: 'right',
                             padding: '.3rem .5rem',
                         }}
-                        // styleHeading={styles.heading}
                         styleInputContainer={{
                             textAlign: 'left',
                             width: '100%',
@@ -521,7 +577,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             padding: '.3rem .6rem',
                             borderRadius: lib.layout.borderRadius.mediumish,
                         }}
-                        // label={t`Enter amount`}
                         setValue={setAmount}
                         value={amount}
                         code
@@ -534,13 +589,123 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         display: 'flex',
                         width: '100%',
                         justifyContent: 'flex-start',
-                        padding: '10px 0',
-                        overflow: 'scroll',
+                        padding: '20px 10px 10px 10px',
+                        overflowX: 'scroll',
+                        overflowY: 'hidden',
                     }}
                 >
-                    {transition((sty, val, _, ind) => (
-                        <IncrementButton increment={val} style={sty} index={ind} />
-                    ))}
+                    <animated.div style={{ overflow: 'visible', ...shifter, display: 'flex' }}>
+                        <Butter
+                            hasNoBids={noBids}
+                            onClick={butcaller}
+                            currIncrement={increments[0]}
+                            increment={BigInt(5)}
+                            toggled={
+                                lastPressed === BigInt(5).toString() ||
+                                (BigInt(5) === increments[0] && lastPressed === null)
+                            }
+                            endingEpoch={data.endingEpoch || 0}
+                        />
+                        <Butter
+                            hasNoBids={noBids}
+                            currIncrement={increments[0]}
+                            onClick={butcaller}
+                            increment={BigInt(10)}
+                            toggled={
+                                lastPressed === BigInt(10).toString() ||
+                                (BigInt(10) === increments[0] && lastPressed === null)
+                            }
+                            endingEpoch={data.endingEpoch || 0}
+                        />
+                        <Butter
+                            hasNoBids={noBids}
+                            currIncrement={increments[0]}
+                            onClick={butcaller}
+                            increment={BigInt(15)}
+                            toggled={
+                                lastPressed === BigInt(15).toString() ||
+                                (BigInt(15) === increments[0] && lastPressed === null)
+                            }
+                            endingEpoch={data.endingEpoch || 0}
+                        />
+                        <Butter
+                            hasNoBids={noBids}
+                            currIncrement={increments[0]}
+                            onClick={butcaller}
+                            increment={BigInt(20)}
+                            toggled={
+                                lastPressed === BigInt(20).toString() ||
+                                (BigInt(20) === increments[0] && lastPressed === null)
+                            }
+                            endingEpoch={data.endingEpoch || 0}
+                        />
+                        <Butter
+                            hasNoBids={noBids}
+                            currIncrement={increments[0]}
+                            onClick={butcaller}
+                            increment={BigInt(25)}
+                            toggled={
+                                lastPressed === BigInt(25).toString() ||
+                                (BigInt(25) === increments[0] && lastPressed === null)
+                            }
+                            endingEpoch={data.endingEpoch || 0}
+                        />
+                        <Butter
+                            hasNoBids={noBids}
+                            currIncrement={increments[0]}
+                            onClick={butcaller}
+                            increment={BigInt(30)}
+                            toggled={
+                                lastPressed === BigInt(30).toString() ||
+                                (BigInt(30) === increments[0] && lastPressed === null)
+                            }
+                            endingEpoch={data.endingEpoch || 0}
+                        />
+                        <Butter
+                            hasNoBids={noBids}
+                            currIncrement={increments[0]}
+                            onClick={butcaller}
+                            increment={BigInt(35)}
+                            toggled={
+                                lastPressed === BigInt(35).toString() ||
+                                (BigInt(35) === increments[0] && lastPressed === null)
+                            }
+                            endingEpoch={data.endingEpoch || 0}
+                        />
+                        <Butter
+                            hasNoBids={noBids}
+                            currIncrement={increments[0]}
+                            onClick={butcaller}
+                            increment={BigInt(40)}
+                            toggled={
+                                lastPressed === BigInt(40).toString() ||
+                                (BigInt(40) === increments[0] && lastPressed === null)
+                            }
+                            endingEpoch={data.endingEpoch || 0}
+                        />
+                        <Butter
+                            hasNoBids={noBids}
+                            currIncrement={increments[0]}
+                            onClick={butcaller}
+                            increment={BigInt(45)}
+                            toggled={
+                                lastPressed === BigInt(45).toString() ||
+                                (BigInt(45) === increments[0] && lastPressed === null)
+                            }
+                            endingEpoch={data.endingEpoch || 0}
+                        />
+                        <Butter
+                            hasNoBids={noBids}
+                            currIncrement={increments[0]}
+                            onClick={butcaller}
+                            increment={BigInt(50)}
+                            toggled={
+                                lastPressed === BigInt(50).toString() ||
+                                (BigInt(50) === increments[0] && lastPressed === null)
+                            }
+                            endingEpoch={data.endingEpoch || 0}
+                        />
+                    </animated.div>
                 </div>
 
                 {check?.mustOfferOnSeller && (
@@ -560,7 +725,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 <Button
                     className="mobile-pressable-div"
                     label="review"
-                    // leftIcon={calculating ? <Loader /> : undefined}
                     onClick={() => {
                         setPage(1);
                     }}
@@ -583,17 +747,20 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             setPage,
             calculating,
             localCurrencyPref,
-            IncrementButton,
+            butcaller,
+            lastPressed,
+            increments,
+
             currentPrice,
             estimator.error,
+            data.endingEpoch,
             // myBalance,
             check?.mustOfferOnSeller,
             data.nuggToBuyFrom,
             leader?.incrementX64,
             minNextBidPair,
-            transition,
-            // check?.increment,
-            increments,
+            shifter,
+            noBids,
         ],
     );
     const Page1 = React.useMemo(
@@ -760,33 +927,14 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const Page2 = React.useMemo(() => {
         return isOpen && chainId && address ? (
-            <>
-                <TransactionVisualConfirmation
-                    hash={hash}
-                    onDismiss={closeModal}
-                    tokenId={data.tokenId}
-                    error={error}
-                />
-            </>
+            <TransactionVisualConfirmation
+                hash={hash}
+                onDismiss={closeModal}
+                tokenId={data.tokenId}
+                error={error}
+            />
         ) : null;
     }, [isOpen, closeModal, chainId, data.tokenId, hash, address, error]);
-
-    // const Page2 = React.useMemo(() => {
-    //     return isOpen ? (
-    //         <TransactionVisualConfirmation
-    //             hash={hash}
-    //             tokenId={data.tokenId}
-    //             onDismiss={() => {
-    //                 closeModal();
-    //                 startTransition(() => {
-    //                     setTimeout(() => {
-    //                         setPage(0);
-    //                     }, 2000);
-    //                 });
-    //             }}
-    //         />
-    //     ) : null;
-    // }, [isOpen, closeModal, setPage, data.tokenId, hash]);
 
     return (
         <>

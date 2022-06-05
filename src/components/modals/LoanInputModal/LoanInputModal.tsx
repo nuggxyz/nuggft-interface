@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import { t } from '@lingui/macro';
 
 import useAsyncState from '@src/hooks/useAsyncState';
@@ -37,7 +36,7 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
 
     useTransactionManager2(provider, hash, closeModal);
 
-    const amountFromChain = useAsyncState<BigNumber[]>(() => {
+    const amountFromChain = useAsyncState(() => {
         if (tokenId && chainId && provider) {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             if (actionType === 'liquidate') {
@@ -51,8 +50,8 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
                 return v;
             });
         }
-        // eslint-disable-next-line no-promise-executor-return
-        return new Promise((resolve) => resolve([]));
+
+        return Promise.resolve([]);
     }, [address, tokenId, actionType, chainId, provider]);
 
     return (
