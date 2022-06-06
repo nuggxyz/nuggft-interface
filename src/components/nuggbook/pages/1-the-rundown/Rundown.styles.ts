@@ -2,12 +2,12 @@ import lib, { NLStyleSheetCreator } from '@src/lib';
 
 const styles = NLStyleSheetCreator({
     title: {
-        marginBottom: '1rem',
+        marginBottom: '1.5rem',
         textAlign: 'center',
         width: '100%',
     },
     text: {
-        marginBottom: '.75rem',
+        marginBottom: '1rem',
     },
     actionButton: {
         color: lib.colors.white,
@@ -24,6 +24,7 @@ const styles = NLStyleSheetCreator({
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: '1rem',
+        textAlign: 'center',
     },
 });
 

@@ -35,6 +35,16 @@ const Rundown_10: NuggBookPage = ({ setPage }) => {
                     buttonStyle={styles.actionButton}
                     textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}
                 />
+                <Button
+                    className="mobile-pressable-div"
+                    label={t`I'm still confused! 😬`}
+                    onClick={() => {
+                        window.open('https://twitter.com/nuggxyz', '_blank');
+                    }}
+                    size="large"
+                    buttonStyle={styles.actionButton}
+                    textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}
+                />
                 <NuggBookBackButton page={Page.Rundown_9} />
             </div>
         </div>

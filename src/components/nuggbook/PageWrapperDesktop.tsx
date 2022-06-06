@@ -100,9 +100,9 @@ const useNuggBookHandler = () => {
     }, [close, startTransiton, setVisit]);
 
     const handleVisit = React.useCallback(
-        (_page: Page) => {
+        (_page: Page, _direction?: boolean) => {
             setVisit(_page);
-            startTransiton(() => setPage(_page));
+            startTransiton(() => setPage(_page, _direction));
         },
         [startTransiton, setVisit, setPage],
     );
@@ -131,6 +131,8 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
         }
     }, [book, direction, setYep, prevYep?.book.page, yep.book.page, yep]);
 
+    // console.log(yep);
+
     const [tabFadeTransition] = useTransition(
         yep,
         {
@@ -138,12 +140,12 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
                 transform: `translate(0px,0px)`,
             },
             from: () => ({
-                transform: `translate(${direction ? -1000 : 1000}px,0px)`,
+                transform: `translate(${!yep.direction ? -1000 : 1000}px,0px)`,
             }),
             // enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto' },
             enter: { transform: `translate(0px,0px)` },
             leave: () => ({
-                transform: `translate(${direction ? -1000 : 1000}px,0px)`,
+                transform: `translate(${yep.direction ? -1000 : 1000}px,0px)`,
             }),
             keys: (item) => `AtabFadeTransition${item.book.page}`,
             config: config.default,
@@ -163,7 +165,17 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
             }}
         >
             {tabFadeTransition((_styles, kid) => (
-                <animated.div style={{ ..._styles, position: 'absolute', width: '80%' }}>
+                <animated.div
+                    style={{
+                        ..._styles,
+                        position: 'absolute',
+                        width: '80%',
+                        height: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
                     {!!kid.book.comp && (
                         <kid.book.comp
                             clear={handleClear}

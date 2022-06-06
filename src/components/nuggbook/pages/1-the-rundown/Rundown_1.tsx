@@ -35,7 +35,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<[string, TokenId], undef
         >
             <TokenViewer
                 tokenId={item[1]}
-                style={{ height: '40px', width: '40px' }}
+                style={{ height: '30px', width: '30px' }}
                 disableOnClick
             />
             <Text>{item[0]}</Text>
@@ -46,7 +46,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<[string, TokenId], undef
 const Rundown_1: NuggBookPage = ({ setPage }) => {
     return (
         <div>
-            <Text size="largest" textStyle={styles.title}>{t`a nugg and its items 👀`}</Text>
+            <Text size="largest" textStyle={styles.title}>{t`a nugg and its items 🐤`}</Text>
             <div>
                 <Text
                     textStyle={styles.text}

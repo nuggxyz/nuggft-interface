@@ -35,7 +35,7 @@ const Rundown_2: NuggBookPage = ({ setPage }) => {
                 <div style={styles.buttonContainer}>
                     <Button
                         className="mobile-pressable-div"
-                        label={t`nice, so how to I take part in these auctions? 🆒`}
+                        label={t`nice, so how do I get a nugg? 🆒`}
                         onClick={() => {
                             setPage(Page.Rundown_3, true);
                         }}

@@ -35,7 +35,7 @@ const Rundown_3: NuggBookPage = ({ setPage }) => {
             <div style={styles.buttonContainer}>
                 <Button
                     className="mobile-pressable-div"
-                    label={t`what's this about selling items? 🤯`}
+                    label={t`so I can sell items? 🤯`}
                     onClick={() => {
                         setPage(Page.Rundown_4, true);
                     }}

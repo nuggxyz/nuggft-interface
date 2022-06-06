@@ -37,7 +37,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<TokenId, undefined, unkn
                 flexDirection: 'column',
             }}
         >
-            <TokenViewer tokenId={item} style={{ height: '40px', width: '40px' }} disableOnClick />
+            <TokenViewer tokenId={item} style={{ height: '30px', width: '30px' }} disableOnClick />
         </div>
     );
 };
@@ -50,7 +50,7 @@ const Rundown_0: NuggBookPage = ({ setPage }) => {
                 <Text
                     textStyle={styles.text}
                 >{t`It all began with an idea to store and assemble images right on the blockchain, which led us to nuggft!`}</Text>
-                <Text>{t`Each nuggft starts out as a plain nugget, randomly selected from the following:`}</Text>
+                <Text>{t`Each nuggft (or nugg) starts out as a plain nugget, randomly selected from the following:`}</Text>
                 <List
                     data={categories}
                     extraData={undefined}
@@ -68,7 +68,7 @@ const Rundown_0: NuggBookPage = ({ setPage }) => {
             <div style={styles.buttonContainer}>
                 <Button
                     className="mobile-pressable-div"
-                    label={t`tell me more about these nuggets 🐥`}
+                    label={t`tell me more 🐥`}
                     onClick={() => {
                         setPage(Page.Rundown_1, true);
                     }}
