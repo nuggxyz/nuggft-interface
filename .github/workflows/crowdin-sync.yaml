@@ -19,7 +19,7 @@ jobs:
             - name: Set up node
               uses: actions/setup-node@v2
               with:
-                  node-version: 14
+                  node-version: 18
                   registry-url: https://registry.npmjs.org
 
             - name: Get yarn cache directory path
@@ -38,9 +38,10 @@ jobs:
 
             - name: Extract translations
               run: 'yarn i18n:extract'
-
+          - name: Extract translations
+              run: 'yarn i18n:extract'
             - name: Synchronize
-              uses: crowdin/github-action@1.1.0
+              uses: crowdin/github-action@1.4.9
               with:
                   upload_sources: false
                   download_translations: true
