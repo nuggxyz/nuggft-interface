@@ -142,6 +142,10 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         [epoch, all, sortAsc],
     );
 
+    const recentEverything = useMemo(() => {
+        return [...all.potential];
+    }, [all.potential]);
+
     const animatedStyle = useSpring({
         ...styles.nuggLinksContainer,
         transform: viewing !== SearchView.Home ? 'scale(0.9)' : 'scale(1)',
@@ -187,7 +191,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         style={styles.nuggListEnter}
                         tokenIds={[]}
                         type={SearchView.Recents}
-                        cardType="recent"
+                        cardType="swap"
                     />
                 </NuggLink>
                 <NuggLink
