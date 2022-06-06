@@ -41,7 +41,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     // const recentItems = client.live.recentItems();
 
     const [sortAsc, setSortAsc] = useState<{ [key in SearchView]: boolean }>({
-        Recents: false,
+        Pending: false,
         AllNuggs: false,
         OnSale: false,
         AllItems: false,
@@ -142,7 +142,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         [epoch, all, sortAsc],
     );
 
-    const recentEverything = useMemo(() => {
+    const pendingEverything = useMemo(() => {
         return [...all.potential];
     }, [all.potential]);
 
@@ -177,8 +177,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 </NuggLink>
                 {/* TODO -- replace */}
                 <NuggLink
-                    type={SearchView.Recents}
-                    previewNuggs={[]}
+                    type={SearchView.Pending}
+                    previewNuggs={pendingEverything}
                     style={{
                         position: 'absolute',
                         top: 0,
@@ -187,10 +187,10 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 >
                     <NuggList
                         interval={INFINITE_INTERVAL}
-                        animationToggle={viewing === SearchView.Recents}
+                        animationToggle={viewing === SearchView.Pending}
                         style={styles.nuggListEnter}
-                        tokenIds={[]}
-                        type={SearchView.Recents}
+                        tokenIds={pendingEverything}
+                        type={SearchView.Pending}
                         cardType="swap"
                     />
                 </NuggLink>

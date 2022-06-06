@@ -7,6 +7,7 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import client from '@src/client';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 import web3 from '@src/web3';
+import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
 import styles from './NuggDexComponents.styles';
 
@@ -58,11 +59,15 @@ const NuggListRenderItem: FunctionComponent<Props> = ({
     extraData,
     index,
 }) => {
+    const { safeTokenId: viewingId } = useViewingNugg();
+
     const style = useMemo(() => {
         return {
             ...(tokenId ? styles.nuggListRenderItemContainer : {}),
+            background:
+                viewingId === tokenId ? lib.colors.nuggBlueTransparent : lib.colors.transparent,
         };
-    }, [tokenId]);
+    }, [tokenId, viewingId]);
 
     return (
         <div
