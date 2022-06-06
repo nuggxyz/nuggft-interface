@@ -34,7 +34,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     staticColor,
     tokenId,
 }) => {
-    const [trueRemaining, setTrueRemaining] = React.useState(remaining * 12);
+    const [trueRemaining, setTrueRemaining] = React.useState((1 + remaining) * 12);
     const [trueDuration, setTrueDuration] = React.useState(duration * 12);
 
     useInterval(
@@ -45,7 +45,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     );
 
     React.useEffect(() => {
-        setTrueRemaining(remaining * 12);
+        setTrueRemaining((1 + remaining) * 12);
     }, [remaining, setTrueRemaining]);
 
     React.useEffect(() => {
@@ -54,11 +54,14 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
 
     const to = useMemo(() => {
         return duration
-            ? Math.abs(
-                  (width / 6.5) *
-                      (TWOPI -
-                          ((staticColor ? trueDuration : trueRemaining) / trueDuration) * TWOPI) +
-                      HALFPI,
+            ? Math.round(
+                  Math.abs(
+                      (width / 6.5) *
+                          (TWOPI -
+                              ((staticColor ? trueDuration : trueRemaining) / trueDuration) *
+                                  TWOPI) +
+                          HALFPI,
+                  ),
               )
             : 0;
     }, [trueDuration, width, staticColor, trueRemaining, tokenId, duration]);
@@ -85,9 +88,10 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
         return defaultColor;
     }, [trueRemaining, trueDuration, defaultColor, staticColor]);
 
-    const [r, strokeDashArray, _shadowColor, _style, _strokeWidth] = React.useMemo(() => {
+    const [r, r2, strokeDashArray, _shadowColor, _style, _strokeWidth] = React.useMemo(() => {
         return [
             width / 6.5,
+            width / 6.5 + 50,
             `${(width / 6.5) * TWOPI} ${(width / 6.5) * TWOPI}`,
             shadowColor === 'transparent' ? 'transparent' : 'white',
             { transition: `all 1s ${lib.layout.animation}` },
@@ -132,14 +136,14 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                         transform: 'rotate(-90deg)',
                     }}
                 >
-                    {/* <circle
+                    <circle
                         cx="50%"
                         cy="50%"
-                        r={width / 6.5 + 50}
-                        strokeDashoffset={to}
+                        r={r2}
+                        strokeDashoffset={max}
                         fill="none"
-                        style={{ transition: `all 1s ${lib.layout.animation}` }}
-                    /> */}
+                        style={_style}
+                    />
                     <circle
                         cx="50%"
                         cy="50%"

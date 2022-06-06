@@ -36,7 +36,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     isStatic = false,
     interval = 1,
 }) => {
-    const [trueRemaining, setTrueRemaining] = React.useState(remaining * interval);
+    const [trueRemaining, setTrueRemaining] = React.useState((1 + remaining) * interval);
     const [trueDuration, setTrueDuration] = React.useState(duration * interval);
 
     const to = useMemo(() => {
@@ -65,7 +65,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     );
 
     React.useEffect(() => {
-        setTrueRemaining(remaining * interval);
+        setTrueRemaining((1 + remaining) * interval);
     }, [remaining, setTrueRemaining, interval]);
 
     React.useEffect(() => {

@@ -132,6 +132,13 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const blocknum = client.block.useBlock();
 
+    const increments = React.useMemo(() => {
+        const [inc] = calculateIncrementWithRemaining(data.endingEpoch, blocknum, !leader);
+
+        // const inc = check?.increment ? (check.increment.toNumber() - 10000) / 100 : 5;
+        return [BigInt(inc), ...incrementers.filter((x) => x > inc).map((x) => BigInt(x))];
+    }, [data.endingEpoch, blocknum, leader]);
+
     const check = useMemoizedAsyncState(
         () => {
             if (data.tokenId && address && chainId && network && msp) {
@@ -178,18 +185,23 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             msp,
             blocknum,
             data.tokenId,
+            increments,
         ] as const,
         (prev, curr, res) => {
-            return res !== null && res !== undefined && prev[7] === curr[7];
+            return (
+                res !== null &&
+                res !== undefined &&
+                prev[7] === curr[7] &&
+                prev[8].length === curr[8].length
+            );
         },
     );
 
-    const swap = client.swaps.useSwap('nugg-44');
     const epoch = client.epoch.active.useId();
 
     const noBids = React.useMemo(() => {
-        return data.tokenId.toRawIdNum() === epoch && swap?.leader === undefined;
-    }, [epoch, swap, data.tokenId]);
+        return data.tokenId.toRawIdNum() === epoch && leader === undefined;
+    }, [epoch, leader, data.tokenId]);
 
     const minNextBid = React.useMemo(() => {
         if (!check?.nextUserOffer) return 0;
@@ -306,13 +318,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             );
         },
     );
-
-    const increments = React.useMemo(() => {
-        const [inc] = calculateIncrementWithRemaining(data.endingEpoch, blocknum, !leader);
-
-        // const inc = check?.increment ? (check.increment.toNumber() - 10000) / 100 : 5;
-        return [BigInt(inc), ...incrementers.filter((x) => x > inc).map((x) => BigInt(x))];
-    }, [data.endingEpoch, blocknum, leader]);
 
     const [shifter] = packages.spring.useSpring(
         () => ({
