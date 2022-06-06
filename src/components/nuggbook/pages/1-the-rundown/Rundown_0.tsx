@@ -9,6 +9,8 @@ import lib from '@src/lib';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 
+import styles from './Rundown.styles';
+
 const categories: TokenId[] = [
     'item-001',
     'item-002',
@@ -35,7 +37,7 @@ const RenderItem: FunctionComponent<ListRenderItemProps<TokenId, undefined, unkn
                 flexDirection: 'column',
             }}
         >
-            <TokenViewer tokenId={item} style={{ height: '40px', width: '40px' }} />
+            <TokenViewer tokenId={item} style={{ height: '40px', width: '40px' }} disableOnClick />
         </div>
     );
 };
@@ -43,13 +45,12 @@ const RenderItem: FunctionComponent<ListRenderItemProps<TokenId, undefined, unkn
 const Rundown_0: NuggBookPage = ({ setPage }) => {
     return (
         <div>
-            <Text size="largest">{t`what's going on here?`}</Text>
+            <Text size="largest" textStyle={styles.title}>{t`what's going on here?`}</Text>
             <div>
-                <Text>
-                    {t`we found that there was a lack of food-related nfts, so we brought the joy and deliciousness of chicken nuggets to the world 🌎`}
-                </Text>
-                <Text>{t`each nuggft is composed of one base and multiple items`}</Text>
-                <Text>{t`the base comes in many different colors:`}</Text>
+                <Text
+                    textStyle={styles.text}
+                >{t`It all began with an idea to store and assemble images right on the blockchain, which led us to nuggft!`}</Text>
+                <Text>{t`Each nuggft starts out as a plain nugget, randomly selected from the following:`}</Text>
                 <List
                     data={categories}
                     extraData={undefined}
@@ -60,9 +61,11 @@ const Rundown_0: NuggBookPage = ({ setPage }) => {
                         padding: '.7rem .4rem',
                     }}
                 />
-                <Text>{t`it is the only part of the nugg that can't be sold or changed, unless you sell the actual nft`}</Text>
+                <Text
+                    textStyle={styles.text}
+                >{t`The nugget is the only part of the nugg that can't be sold or replaced, unless you sell the actual nft`}</Text>
             </div>
-            <div>
+            <div style={styles.buttonContainer}>
                 <Button
                     className="mobile-pressable-div"
                     label={t`tell me more about these nuggets 🐥`}
@@ -70,15 +73,7 @@ const Rundown_0: NuggBookPage = ({ setPage }) => {
                         setPage(Page.Rundown_1, true);
                     }}
                     size="large"
-                    buttonStyle={{
-                        color: lib.colors.white,
-                        boxShadow: lib.layout.boxShadow.basic,
-                        padding: '.7rem 1.3rem',
-
-                        background: lib.colors.primaryColor,
-                        borderRadius: lib.layout.borderRadius.large,
-                        marginBottom: 15,
-                    }}
+                    buttonStyle={styles.actionButton}
                     textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}
                 />
                 <NuggBookBackButton />

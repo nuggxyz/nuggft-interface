@@ -9,12 +9,14 @@ import NuggBookBackButton from '@src/components/nuggbook/NuggBookBackButton';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 
+import styles from './Rundown.styles';
+
 const categories: [string, TokenId][] = [
     ['eyes', 'item-1001'],
     ['mouth', 'item-2001'],
     ['hair', 'item-3004'],
     ['head', 'item-4003'],
-    ['back', 'item-5001'],
+    ['back', 'item-5008'],
     ['neck', 'item-6006'],
     ['hold', 'item-7001'],
 ];
@@ -31,7 +33,11 @@ const RenderItem: FunctionComponent<ListRenderItemProps<[string, TokenId], undef
                 flexDirection: 'column',
             }}
         >
-            <TokenViewer tokenId={item[1]} style={{ height: '40px', width: '40px' }} />
+            <TokenViewer
+                tokenId={item[1]}
+                style={{ height: '40px', width: '40px' }}
+                disableOnClick
+            />
             <Text>{item[0]}</Text>
         </div>
     );
@@ -40,11 +46,15 @@ const RenderItem: FunctionComponent<ListRenderItemProps<[string, TokenId], undef
 const Rundown_1: NuggBookPage = ({ setPage }) => {
     return (
         <div>
-            <Text size="largest">{t`how do the items work? 👀`}</Text>
+            <Text size="largest" textStyle={styles.title}>{t`a nugg and its items 👀`}</Text>
             <div>
-                <Text>{t`your nugg is given 6 items when it is minted, however those can be sold and others can be bought`}</Text>
-                <Text>{t`that's right! You can swap items without even selling your nft!`}</Text>
-                <Text>{t`there are 7 different categories of items:`}</Text>
+                <Text
+                    textStyle={styles.text}
+                >{t`Your nugg is randomly given 6 items when it is minted, however those can be sold and others can be bought`}</Text>
+                <Text textStyle={styles.text} size="small">
+                    <i>{t`That's right! You can swap items without even selling your nft!`}</i>
+                </Text>
+                <Text>{t`There are 7 different categories of items, each containing many different items:`}</Text>
                 <List
                     data={categories}
                     extraData={undefined}
@@ -55,9 +65,11 @@ const Rundown_1: NuggBookPage = ({ setPage }) => {
                         padding: '.7rem .4rem',
                     }}
                 />
-                <Text>{t`only one of each category can be displayed at a time, but your nugg can hold up to 15 different items`}</Text>
+                <Text
+                    textStyle={styles.text}
+                >{t`Only one of each category can be displayed at a time, but your nugg can hold up to 15 different items`}</Text>
             </div>
-            <div>
+            <div style={styles.buttonContainer}>
                 <Button
                     className="mobile-pressable-div"
                     label={t`ok, so how do I buy em? 💸`}
@@ -65,15 +77,7 @@ const Rundown_1: NuggBookPage = ({ setPage }) => {
                         setPage(Page.Rundown_2, true);
                     }}
                     size="large"
-                    buttonStyle={{
-                        color: lib.colors.white,
-                        boxShadow: lib.layout.boxShadow.basic,
-                        padding: '.7rem 1.3rem',
-
-                        background: lib.colors.primaryColor,
-                        borderRadius: lib.layout.borderRadius.large,
-                        marginBottom: 15,
-                    }}
+                    buttonStyle={styles.actionButton}
                     textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}
                 />
                 <NuggBookBackButton page={Page.Rundown_0} />

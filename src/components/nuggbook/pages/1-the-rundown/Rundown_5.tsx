@@ -7,32 +7,39 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import lib from '@src/lib';
 import NuggBookBackButton from '@src/components/nuggbook/NuggBookBackButton';
 
+import styles from './Rundown.styles';
+
 const Rundown_5: NuggBookPage = ({ setPage }) => {
     return (
         <div>
-            <Text size="largest">{t`the nugg pool 🤿`}</Text>
+            <Text size="largest" textStyle={styles.title}>{t`the nugg pool 🤿`}</Text>
             <div>
-                <Text>{t`at the end of each auction, the winning bid is stored in a pool of money controlled by the nuggft platform`}</Text>
-                <Text>{t`in addition to being a fun nft, your nugg also represents a share of this pool (this is how we calculate the nugg's floor price)`}</Text>
-                <Text>{t`so the more nuggs you have, the more money is attributed to you!`}</Text>
-                <Text>{t`you can sell your nuggs to liquidate what belongs to you, or you can even take out a loan using your nugg as collateral`}</Text>
+                <Text textStyle={styles.text}>
+                    {t`At the end of each auction, the winning bid is sent to a`}&nbsp;
+                    <b>{t`pool of money `}&nbsp;</b>
+                    {t`controlled by the nuggft platform`}
+                </Text>
+                <Text textStyle={styles.text}>
+                    {t`In addition to being a fun nft, your nugg also represents`}&nbsp;
+                    <b>{t`a share`}&nbsp;</b>
+                    {t`of this pool (this is how we calculate the nugg's floor price)`}
+                </Text>
+                <Text textStyle={styles.text}>
+                    <i>{t`so the more nuggs you have, the more money is attributed to you!`}</i>
+                </Text>
+                <Text
+                    textStyle={styles.text}
+                >{t`You can sell your nuggs to liquidate what belongs to you, or you can even take out a loan using your nugg as collateral   ⚖️`}</Text>
             </div>
-            <div>
+            <div style={styles.buttonContainer}>
                 <Button
                     className="mobile-pressable-div"
-                    label={t`I certainly like money, tell me more!`}
+                    label={t`Tell me more! 🤩`}
                     onClick={() => {
                         setPage(Page.Rundown_6, true);
                     }}
                     size="large"
-                    buttonStyle={{
-                        color: lib.colors.white,
-                        boxShadow: lib.layout.boxShadow.basic,
-                        padding: '.7rem 1.3rem',
-                        background: lib.colors.primaryColor,
-                        borderRadius: lib.layout.borderRadius.large,
-                        marginBottom: 15,
-                    }}
+                    buttonStyle={styles.actionButton}
                     textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}
                 />
                 <NuggBookBackButton page={Page.Rundown_4} />

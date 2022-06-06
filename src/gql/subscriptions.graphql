@@ -27,7 +27,7 @@ subscription liveUser($address: ID!) {
                 endingEpoch
             }
         }
-        loans {
+        loans(where: { liquidated: false }) {
             id
             endingEpoch
             eth

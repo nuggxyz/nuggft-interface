@@ -6,32 +6,41 @@ import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib from '@src/lib';
 import NuggBookBackButton from '@src/components/nuggbook/NuggBookBackButton';
+import globalStyles from '@src/lib/globalStyles';
+
+import styles from './Rundown.styles';
 
 const Rundown_2: NuggBookPage = ({ setPage }) => {
     return (
         <div>
-            <Text size="largest">{t`auctions`}</Text>
+            <Text size="largest" textStyle={styles.title}>{t`auctions 🕰`}</Text>
             <div>
-                <Text>{t`the auctions take place during a period that lasts about an hour`}</Text>
-                <Text>{t`at the end of each period a new nugg is minted and the next period begins, following this cycle until all 10,000 nuggs have been minted`}</Text>
-                <Text>{t`a nugg that you have sold will follow this same pattern of periods. Say you put your nugg up for auction midway through period 100, the auction will last until the end of period 101`}</Text>
-                <Text>{t`this means that there can be any number of auctions ending at the exact same time`}</Text>
-                <div>
+                <Text textStyle={styles.text}>
+                    {t`The auctions take place during a`}
+                    <b>&nbsp;{t`period`}&nbsp;</b>
+                    {t` that lasts about an hour`}
+                </Text>
+                <Text
+                    textStyle={styles.text}
+                >{t`At the end of each period a new nugg is minted and the next period begins, following this cycle until all 10,000 nuggs have been minted`}</Text>
+                <Text size="larger" textStyle={{ ...styles.text, ...globalStyles.centered }}>
+                    🥚 🐣 🐥
+                </Text>
+                <Text
+                    textStyle={styles.text}
+                >{t`A nugg that you have sold will follow this same pattern of periods. Say you put your nugg up for auction midway through period 100, the auction will last until the end of period 101`}</Text>
+                <Text textStyle={styles.text}>
+                    <i>{t`this means that there will always be any number of auctions ending at the exact same time`}</i>
+                </Text>
+                <div style={styles.buttonContainer}>
                     <Button
                         className="mobile-pressable-div"
-                        label={t`nice, so how do I actually get a nugg? 🆒`}
+                        label={t`nice, so how to I take part in these auctions? 🆒`}
                         onClick={() => {
                             setPage(Page.Rundown_3, true);
                         }}
                         size="large"
-                        buttonStyle={{
-                            color: lib.colors.white,
-                            boxShadow: lib.layout.boxShadow.basic,
-                            padding: '.7rem 1.3rem',
-                            background: lib.colors.primaryColor,
-                            borderRadius: lib.layout.borderRadius.large,
-                            marginBottom: 15,
-                        }}
+                        buttonStyle={styles.actionButton}
                         textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}
                     />
                     <NuggBookBackButton page={Page.Rundown_1} />
