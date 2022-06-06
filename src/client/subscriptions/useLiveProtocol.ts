@@ -5,11 +5,7 @@ import useDebounce from '@src/hooks/useDebounce';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import client from '@src/client';
 import { SwapData } from '@src/client/swaps';
-import {
-    useLiveProtocolSubscription,
-    useGetMassiveLiveProtocolQuery,
-    LiveProtocolFragment,
-} from '@src/gql/types.generated';
+import { useLiveProtocolSubscription, LiveProtocolFragment } from '@src/gql/types.generated';
 import { formatSwapData } from '@src/client/formatters/formatSwapData';
 import stake from '@src/client/stake';
 
@@ -43,10 +39,10 @@ export default () => {
 
     const epoch = client.epoch.active.useId();
 
-    const { data, refetch } = useGetMassiveLiveProtocolQuery({
-        fetchPolicy: 'no-cache',
-        skip: true,
-    });
+    // const { data, refetch } = useGetMassiveLiveProtocolQuery({
+    //     fetchPolicy: 'no-cache',
+    //     skip: true,
+    // });
 
     const onData = React.useCallback(
         (protocol: LiveProtocolFragment) => {
@@ -186,11 +182,11 @@ export default () => {
         },
         [updateProtocolSimple, updateSwaps, updateStake, epoch],
     );
-    const debouncedData = useDebounce(data, 500);
+    // const debouncedData = useDebounce(data, 500);
 
-    React.useEffect(() => {
-        if (debouncedData?.protocol) onData(debouncedData.protocol);
-    }, [debouncedData, onData]);
+    // React.useEffect(() => {
+    //     if (debouncedData?.protocol) onData(debouncedData.protocol);
+    // }, [debouncedData, onData]);
 
     const { data: data2 } = useLiveProtocolSubscription({
         shouldResubscribe: true,
@@ -203,13 +199,13 @@ export default () => {
         if (debouncedData2?.protocol) {
             onData(debouncedData2.protocol);
 
-            void refetch({}).then((ayo) => {
-                setTimeout(() => {
-                    if (ayo.data.protocol) onData(ayo.data.protocol);
-                }, 3000);
-            });
+            // void refetch({}).then((ayo) => {
+            //     setTimeout(() => {
+            //         if (ayo.data.protocol) onData(ayo.data.protocol);
+            //     }, 3000);
+            // });
         }
-    }, [debouncedData2, onData, refetch]);
+    }, [debouncedData2, onData]);
 
     return null;
 };
