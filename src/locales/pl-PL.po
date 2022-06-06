@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-04-07 22:08+0000\n"
+"POT-Creation-Date: 2022-06-06 00:03+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,23 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Polish\n"
-"PO-Revision-Date: 2022-04-08 06:02\n"
+"PO-Revision-Date: 2022-06-06 06:02\n"
+
+#: src/components/mobile/OfferModalMobile.tsx
+msgid ", and your desired bid for"
+msgstr ""
+
+#: src/components/nuggbook/pages/helping-test/HelpingTest_0.tsx
+msgid "1️⃣ get a nugg in your wallet"
+msgstr ""
+
+#: src/components/nuggbook/pages/helping-test/HelpingTest_0.tsx
+msgid "2️⃣ re-dress your nugg"
+msgstr ""
+
+#: src/components/nuggbook/pages/helping-test/HelpingTest_0.tsx
+msgid "3️⃣ HAVE FUN 🤠"
+msgstr ""
 
 #: src/components/nugg/Wallet/Wallet.tsx
 #: src/components/nugg/Wallet/Wallet.tsx
@@ -32,6 +48,10 @@ msgstr ""
 
 #: src/client/formatters/formatSearchFilter.ts
 msgid "All Nuggs"
+msgstr ""
+
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "All items are displayed"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/SwapList.tsx
@@ -53,7 +73,15 @@ msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab.tsx
 msgid "By connecting a wallet, you agree to nugg.xyz's Terms of Service and acknowledge\n"
-"that you have read and understood the nugg.xyz Protocol Disclaimer."
+"that you have read and understood the nuggft Protocol Disclaimer."
+msgstr ""
+
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "Cancel"
+msgstr ""
+
+#: src/components/mobile/SellModalMobile.tsx
+msgid "Cancel Sale"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/SwapList.tsx
@@ -65,6 +93,7 @@ msgid "Change offer for"
 msgstr ""
 
 #: src/components/modals/LoanInputModal/LoanInputModal.tsx
+#: src/pages/hot-rotate-o/HotRotateO.tsx
 msgid "Check Wallet"
 msgstr ""
 
@@ -103,15 +132,10 @@ msgstr ""
 msgid "Coming Up"
 msgstr ""
 
-#: src/pages/mobile/MobileSwapPage.tsx
-msgid "Coming up"
-msgstr ""
-
 #: src/components/nugg/Wallet/Wallet.tsx
 msgid "Connect"
 msgstr ""
 
-#: src/components/nugg/RingAbout/Caboose.tsx
 #: src/components/nugg/RingAbout/OfferButton.tsx
 msgid "Connect wallet"
 msgstr ""
@@ -132,13 +156,21 @@ msgstr ""
 msgid "Disconnect"
 msgstr ""
 
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "Displayed"
+msgstr ""
+
 #: src/components/nugg/ViewingNugg/ActionButtons/LoanButtons.tsx
 #: src/components/nugg/ViewingNugg/ActionButtons/OwnerButtons.tsx
 msgid "Edit"
 msgstr ""
 
-#: src/pages/mobile/MobileSwapPage.tsx
-msgid "Ending in about {minutes, plural, =1 {{minutes} minute} other {{minutes} minutes} =0 {less than 1 minute}}"
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "Edit Nugg {0}"
+msgstr ""
+
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "Edit again"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
@@ -156,6 +188,10 @@ msgstr ""
 
 #: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 msgid "Enter floor"
+msgstr ""
+
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "Exit"
 msgstr ""
 
 #: src/components/nugg/AccountViewer/AccountViewer.tsx
@@ -177,6 +213,10 @@ msgstr ""
 msgid "For Nugg {0}"
 msgstr ""
 
+#: src/components/nugg/ViewingNugg/ItemList.tsx
+msgid "For sale"
+msgstr ""
+
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
 msgid "From epoch {0}"
 msgstr ""
@@ -194,6 +234,11 @@ msgstr ""
 msgid "Go to swap"
 msgstr ""
 
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "Hide"
+msgstr ""
+
 #: src/components/nugg/RingAbout/OfferText.tsx
 msgid "Highest offer"
 msgstr ""
@@ -203,8 +248,18 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "In storage"
+msgstr ""
+
 #: src/components/nugg/ViewingNugg/SwapList.tsx
 msgid "Leader"
+msgstr ""
+
+#: src/components/mobile/NuggDexSearchBarMobile.tsx
+#: src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.tsx
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "Loading"
 msgstr ""
 
 #: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
@@ -283,12 +338,21 @@ msgstr ""
 msgid "No more nuggs"
 msgstr ""
 
-#: src/components/modals/MintModal/MintModal.tsx
-msgid "Nugg {nextNugg}"
+#: src/components/mobile/NuggDexSearchBarMobile.tsx
+#: src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.tsx
+msgid "No results"
 msgstr ""
 
 #: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
-msgid "Nugg {tokenId}"
+msgid "Nugg {0}"
+msgstr ""
+
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "Nugg {0} saved!"
+msgstr ""
+
+#: src/components/modals/MintModal/MintModal.tsx
+msgid "Nugg {nextNugg}"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
@@ -298,6 +362,10 @@ msgstr ""
 #: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "Nuggs"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_1.tsx
+msgid "ONWARD 😤"
 msgstr ""
 
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -340,6 +408,7 @@ msgid "Payoff"
 msgstr ""
 
 #: src/contracts/useContract.ts
+#: src/contracts/useContract.ts
 msgid "Pending Transaction"
 msgstr ""
 
@@ -348,7 +417,6 @@ msgid "Pick a nugg to offer on this item"
 msgstr ""
 
 #: src/components/modals/OfferModal/OfferModal.tsx
-#: src/components/nugg/RingAbout/Caboose.tsx
 #: src/components/nugg/RingAbout/OfferButton.tsx
 msgid "Place offer"
 msgstr ""
@@ -359,6 +427,11 @@ msgstr ""
 
 #: src/components/nugg/RingAbout/OfferText.tsx
 msgid "Place the first offer!"
+msgstr ""
+
+#: src/components/mobile/SellModalMobile.tsx
+msgid "Please wait a few moments for the changes to reflect accross the\n"
+"interface"
 msgstr ""
 
 #: src/components/modals/MintModal/MintModal.tsx
@@ -379,6 +452,18 @@ msgstr ""
 
 #: src/components/nugg/ViewingNugg/ActionButtons/SaleButtons.tsx
 msgid "Reclaim"
+msgstr ""
+
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "Reset"
+msgstr ""
+
+#: src/components/mobile/SellModalMobile.tsx
+msgid "Review"
+msgstr ""
+
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "Save"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ActiveTab/SeeAllButton.tsx
@@ -458,20 +543,30 @@ msgstr ""
 msgid "This {0} has never been sold"
 msgstr ""
 
+#: src/components/mobile/NuggDexSearchBarMobile.tsx
+#: src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.tsx
+msgid "Type a number"
+msgstr ""
+
+#: src/components/mobile/NuggDexSearchBarMobile.tsx
 #: src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.tsx
 msgid "Type a number to search"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
-msgid "Unfortuantly, Nugg {tokenId} did not make it."
+msgid "Unfortuantly, Nugg {0} did not make it."
+msgstr ""
+
+#: src/components/mobile/SellModalMobile.tsx
+msgid "Update"
 msgstr ""
 
 #: src/components/modals/OfferModal/OfferModal.tsx
 msgid "Update offer"
 msgstr ""
 
-#: src/components/nugg/AccountViewer/AccountViewer.tsx
-msgid "Wallet"
+#: src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.tsx
+msgid "VIEW"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OfferText.tsx
@@ -510,31 +605,408 @@ msgstr ""
 msgid "You will receive {0} ETH"
 msgstr ""
 
-#: src/components/nugg/TheRing/TheRing.tsx
-msgid "countdown begins in {countdownMinutes} minutes"
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "a given {0} is {1}"
 msgstr ""
 
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "a new nugg has {0}"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "a nugg is minted with {0}"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "accept a nugg's asking price"
+msgstr ""
+
+#: src/components/mobile/MobileOfferButton.tsx
+msgid "accept and start auction"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "actual"
+msgstr ""
+
+#: src/components/mobile/OfferModalMobile.tsx
+msgid "added cost"
+msgstr ""
+
+#: src/components/mobile/MobileOfferButton.tsx
+msgid "adjust"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_0.tsx
+msgid "an eth wallet"
+msgstr ""
+
+#: src/components/mobile/OfferModalMobile.tsx
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "asking price"
+msgstr ""
+
+#: src/components/mobile/NuggDexSearchListMobile2.tsx
+#: src/components/nuggbook/pages/set-up/Setup_1.tsx
+#: src/components/nuggbook/pages/set-up/Setup_2.tsx
+#: src/components/nuggbook/pages/set-up/Setup_3.tsx
+msgid "back"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "bases are non transferable"
+msgstr ""
+
+#: src/components/mobile/MobileOwnerBlock.tsx
+msgid "being sold by"
+msgstr ""
+
+#: src/components/mobile/OfferModalMobile.tsx
+msgid "bid on {0}"
+msgstr ""
+
+#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
+msgid "build something"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_2.tsx
+msgid "buy in wallet"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_2.tsx
+msgid "buy some eth"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OfferText.tsx
+msgid "calculating"
+msgstr ""
+
+#: src/components/nuggbook/pages/welcome/Welcome_2.tsx
+msgid "check it out"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_2.tsx
+msgid "coinbase users"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_0.tsx
+msgid "connect"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_3.tsx
+#: src/components/nuggbook/pages/set-up/Setup_3.tsx
+msgid "connect to nuggft"
+msgstr ""
+
+#: src/components/mobile/MobileCaboose.tsx
+#: src/components/mobile/MobileOfferButton.tsx
+#: src/components/nugg/RingAbout/Caboose.tsx
+msgid "connect wallet"
+msgstr ""
+
+#: src/components/mobile/MobileCaboose.tsx
+#: src/components/nugg/RingAbout/Caboose.tsx
+msgid "continue"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "continue to start auction"
+msgstr ""
+
+#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
+msgid "cool. but why?"
+msgstr ""
+
+#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
+msgid "cop the code"
+msgstr ""
+
+#: src/components/mobile/MobileCaboose.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
+#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "currenlty for sale"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_0.tsx
+#: src/components/nuggbook/pages/set-up/Setup_1.tsx
+msgid "download"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_2.tsx
+#: src/components/nuggbook/pages/set-up/Setup_2.tsx
+msgid "easy for"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "edit"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "ending in about"
+msgstr ""
+
+#: src/components/mobile/SellModalMobile.tsx
+msgid "ending sale for"
+msgstr ""
+
+#: src/components/mobile/ClaimModalMobile.tsx
+msgid "estimated gas price"
+msgstr ""
+
+#: src/components/mobile/ClaimModalMobile.tsx
+msgid "eth claims"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_0.tsx
+msgid "eth to\n"
+"the wallet"
+msgstr ""
+
+#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
+#: src/components/nuggbook/pages/welcome/Welcome_2.tsx
+msgid "every image you see is 100% computed on ethereum"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_1.tsx
+#: src/components/nuggbook/pages/set-up/Setup_2.tsx
+msgid "everyone"
+msgstr ""
+
+#: src/components/nuggbook/pages/helping-test/HelpingTest_0.tsx
+msgid "follow the setup, but dont purchase anything --- we can help get you\n"
+"free testnet ethereum, just ask!"
+msgstr ""
+
+#: src/components/mobile/OfferModalMobile.tsx
+msgid "for bid on {0}"
+msgstr ""
+
+#: src/components/mobile/MyNuggItemMobile.tsx
+msgid "for sale"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "for sale by"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OffersList.tsx
 msgid "from"
 msgstr ""
 
+#: src/components/mobile/HotRotateOModalMobile.tsx
+msgid "generated on ethereum"
+msgstr ""
+
+#: src/components/nuggbook/pages/TableOfContents.tsx
+msgid "get up and running"
+msgstr ""
+
+#: src/components/nuggbook/pages/Start.tsx
+msgid "give me the rundown"
+msgstr ""
+
+#: src/components/mobile/HotRotateOModalMobile.tsx
+#: src/components/mobile/OfferModalMobile.tsx
+#: src/components/mobile/SellModalMobile.tsx
+msgid "go back"
+msgstr ""
+
+#: src/components/nuggbook/pages/helping-test/Feedback.tsx
+msgid "goto form"
+msgstr ""
+
+#: src/components/mobile/OfferModalMobile.tsx
+msgid "has never been bid on, they must be bid on before they can sell"
+msgstr ""
+
+#: src/components/nuggbook/pages/TableOfContents.tsx
+msgid "helping us test?"
+msgstr ""
+
 #: src/components/nugg/RingAbout/OffersList.tsx
 msgid "hide previous offers"
 msgstr ""
 
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "history"
+msgstr ""
+
+#: src/components/mobile/NuggListRenderItemMobile.tsx
+msgid "holding since {0}"
+msgstr ""
+
+#: src/components/mobile/OfferModalMobile.tsx
+msgid "i got it"
+msgstr ""
+
+#: src/components/nuggbook/pages/Welcome.tsx
+#: src/components/nuggbook/pages/welcome/Welcome_0.tsx
+#: src/components/nuggbook/pages/welcome/Welcome_2.tsx
+msgid "i got time ⌛️"
+msgstr ""
+
+#: src/components/nuggbook/pages/Welcome.tsx
+#: src/components/nuggbook/pages/welcome/Welcome_0.tsx
+msgid "i'll figure it out 💪"
+msgstr ""
+
+#: src/components/mobile/OfferModalMobile.tsx
+msgid "if you move forward, your transaction will include both a minimum bid on"
+msgstr ""
+
+#: src/components/nuggbook/pages/Welcome.tsx
+msgid "imma need a tldr 🤠"
+msgstr ""
+
+#: src/components/mobile/HotRotateOModalMobile.tsx
+msgid "is born! 🎉"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "items"
+msgstr ""
+
+#: src/components/mobile/OfferModalMobile.tsx
+msgid "last bid"
+msgstr ""
+
+#: src/components/mobile/MobileStatus.tsx
+#: src/components/mobile/MobileStatus.tsx
+msgid "last block"
+msgstr ""
+
+#: src/components/mobile/MobileStatus.tsx
+msgid "last eth price"
+msgstr ""
+
+#: src/components/mobile/MobileStatus.tsx
+#: src/components/mobile/MobileStatus.tsx
+msgid "last response"
+msgstr ""
+
+#: src/components/mobile/MobileStatus.tsx
+msgid "last updated"
+msgstr ""
+
+#: src/components/mobile/MobileOwnerBlock.tsx
+msgid "leader"
+msgstr ""
+
+#: src/components/mobile/MobileOwnerBlock.tsx
+msgid "leader of {0} bidders"
+msgstr ""
+
+#: src/components/mobile/MobileWallet.tsx
+msgid "learn about claims"
+msgstr ""
+
+#: src/components/mobile/MobileWallet.tsx
+msgid "learn about loans"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_3.tsx
+msgid "leggo"
+msgstr ""
+
+#: src/components/mobile/MobileOwnerBlock.tsx
+msgid "live"
+msgstr ""
+
+#: src/components/mobile/MobileOfferButton.tsx
+msgid "loading..."
+msgstr ""
+
+#: src/components/mobile/MyNuggItemMobile.tsx
+msgid "loaned"
+msgstr ""
+
+#: src/components/nuggbook/pages/helping-test/HelpingTest_0.tsx
+msgid "make sure you are on the rinkeby blockchain (we can help you with this too)"
+msgstr ""
+
+#: src/components/mobile/MobileOwnerBlock.tsx
+msgid "min"
+msgstr ""
+
+#: src/components/mobile/OfferModalMobile.tsx
+msgid "min next bid"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
 msgid "minimum price"
+msgstr ""
+
+#: src/components/mobile/MobileOwnerBlock.tsx
+msgid "minting"
+msgstr ""
+
+#: src/components/mobile/MobileWallet.tsx
+msgid "my account"
+msgstr ""
+
+#: src/components/mobile/SellModalMobile.tsx
+msgid "my asking price"
+msgstr ""
+
+#: src/components/mobile/SellModalMobile.tsx
+msgid "my asking price (saved on-chain)"
+msgstr ""
+
+#: src/components/mobile/OfferModalMobile.tsx
+msgid "my current bid"
+msgstr ""
+
+#: src/components/mobile/OfferModalMobile.tsx
+msgid "my desired bid"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "my nugg"
+msgstr ""
+
+#: src/components/mobile/OfferModalMobile.tsx
+msgid "new bid"
+msgstr ""
+
+#: src/components/mobile/ClaimModalMobile.tsx
+msgid "new item claims"
+msgstr ""
+
+#: src/components/mobile/ClaimModalMobile.tsx
+msgid "new nugg claims"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
 msgid "no action here..."
 msgstr ""
 
+#: src/components/mobile/OfferModalMobile.tsx
+msgid "payment"
+msgstr ""
+
+#: src/components/mobile/MyNuggItemMobile.tsx
+msgid "pending claim"
+msgstr ""
+
+#: src/components/mobile/MobileWallet.tsx
+#: src/components/mobile/NavigationBarMobile.tsx
+msgid "pending claims"
+msgstr ""
+
+#: src/components/mobile/MobileCaboose.tsx
+#: src/components/mobile/MobileOfferButton.tsx
+#: src/components/nugg/RingAbout/Caboose.tsx
+msgid "place offer"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "predicted"
+msgstr ""
+
+#: src/components/mobile/MobileCaboose.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
+#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "previous claim pending for this item"
 msgstr ""
 
@@ -542,23 +1014,205 @@ msgstr ""
 msgid "previous offers"
 msgstr ""
 
+#: src/components/nuggbook/pages/helping-test/HelpingTest_0.tsx
+msgid "ps: you rock 💙"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "purchases"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_0.tsx
+msgid "put me in, coach 🔥"
+msgstr ""
+
+#: src/components/mobile/MyNuggItemMobile.tsx
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "put up for sale"
+msgstr ""
+
+#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
+msgid "read the contract"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_2.tsx
+msgid "ready for lift off 🚀"
+msgstr ""
+
+#: src/components/mobile/MobileCaboose.tsx
+#: src/components/mobile/OfferModalMobile.tsx
+#: src/components/nugg/RingAbout/Caboose.tsx
+msgid "review"
+msgstr ""
+
+#: src/components/mobile/HotRotateOModalMobile.tsx
+msgid "save"
+msgstr ""
+
+#: src/components/mobile/MobileOwnerBlock.tsx
+msgid "sec"
+msgstr ""
+
+#: src/components/mobile/MobileCaboose.tsx
+#: src/components/nugg/RingAbout/Caboose.tsx
+msgid "select a nugg"
+msgstr ""
+
+#: src/components/mobile/MobileCaboose.tsx
+#: src/components/nugg/RingAbout/Caboose.tsx
+msgid "select a nugg from your roost"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/ItemList.tsx
+msgid "sell this item"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_0.tsx
+msgid "send"
+msgstr ""
+
+#: src/components/nuggbook/pages/TableOfContents.tsx
+msgid "set up a wallet"
+msgstr ""
+
 #: src/components/nugg/RingAbout/OffersList.tsx
 msgid "show previous offers"
+msgstr ""
+
+#: src/components/mobile/MobileWallet.tsx
+msgid "sign out"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "start the next auction"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OfferText.tsx
+msgid "starting offer"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "starting price"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "starting pricet"
+msgstr ""
+
+#: src/components/mobile/MobileOfferButton.tsx
+msgid "swap is over"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_1.tsx
+msgid "tap to download"
+msgstr ""
+
+#: src/components/mobile/ClaimModalMobile.tsx
+#: src/components/mobile/HotRotateOModalMobile.tsx
+#: src/components/mobile/SellModalMobile.tsx
+msgid "tap to finalize on"
+msgstr ""
+
+#: src/components/nuggbook/pages/TableOfContents.tsx
+msgid "the rundown"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
 msgid "this item is owned by {0} nuggs and is not currently for sale"
 msgstr ""
 
+#: src/components/nuggbook/pages/set-up/Setup_0.tsx
+msgid "to nuggft"
+msgstr ""
+
+#: src/components/mobile/SellModalMobile.tsx
+msgid "token being sold"
+msgstr ""
+
+#: src/components/nuggbook/pages/set-up/Setup_2.tsx
+msgid "transfer from exchange"
+msgstr ""
+
+#: src/components/mobile/MyNuggItemMobile.tsx
+msgid "unloaned"
+msgstr ""
+
+#: src/components/mobile/NuggDexSearchListMobile2.tsx
+msgid "view all items"
+msgstr ""
+
+#: src/components/mobile/NuggDexSearchListMobile2.tsx
+msgid "view all nuggs"
+msgstr ""
+
+#: src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.tsx
+msgid "view nuggs with this"
+msgstr ""
+
+#: src/components/mobile/MobileCaboose.tsx
 #: src/components/nugg/RingAbout/Caboose.tsx
-msgid "wait {minutes} minutes to buy from a new nugg"
+msgid "wait {minutes} min"
+msgstr ""
+
+#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
+msgid "we call it"
+msgstr ""
+
+#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
+msgid "we designed a language to define items and a smart contract to combine them into nuggs"
+msgstr ""
+
+#: src/components/nuggbook/pages/TableOfContents.tsx
+msgid "welcome to nuggft"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "which nugg should bid on your behalf?"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "worn by"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "you will bid as {0}"
+msgstr ""
+
+#: src/components/mobile/MobileWallet.tsx
+msgid "{0, plural, =1 {# Item} other {# Items}}"
+msgstr ""
+
+#: src/components/mobile/MobileWallet.tsx
+msgid "{0, plural, =1 {# Nugg} other {# Nuggs}}"
+msgstr ""
+
+#: src/components/mobile/MobileOwnerBlock.tsx
+msgid "{0, plural, =1 {# other bidder} other {# other bidders}}"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+#: src/components/nugg/RingAbout/OwnerBlock.tsx
+msgid "{0, plural, =1 {# second} other {# seconds}}"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "{0} Nugg{1} {2} swapping"
 msgstr ""
 
+#: src/components/nugg/RingAbout/OfferText.tsx
+msgid "{0} | {1} offers"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "{0}'s asking price"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "{leaderEns} is leading"
+msgstr ""
+
+#: src/components/mobile/ViewingNuggPhone.tsx
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
-msgid "{minutes, plural, =1 {minute} other {minutes}}"
+msgid "{minutes, plural, =1 {# minute} other {# minutes}}"
 msgstr ""
 
