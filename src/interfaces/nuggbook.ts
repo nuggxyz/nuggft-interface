@@ -3,6 +3,8 @@ import { PropsWithChildren, FC } from 'react';
 export enum Page {
     Start,
     Welcome,
+    Welcome_1,
+    Welcome_2,
     TableOfContents,
     WhatIsAWallet,
     WhatIsAnNFT,

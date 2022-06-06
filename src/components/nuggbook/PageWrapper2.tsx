@@ -13,7 +13,6 @@ import web3 from '@src/web3';
 import MobileWallet from '@src/components/mobile/MobileWallet';
 
 import Start from './pages/Start';
-import Welcome from './pages/Welcome';
 import TableOfContents from './pages/TableOfContents';
 import WhatIsAWallet from './pages/WhatIsAWallet';
 import Close from './pages/Close';
@@ -24,6 +23,8 @@ import Setup_2 from './pages/set-up/Setup_2';
 import Setup_3 from './pages/set-up/Setup_3';
 import HelpingTest_0 from './pages/helping-test/HelpingTest_0';
 import Feedback from './pages/helping-test/Feedback';
+import Welcome_0 from './pages/welcome/Welcome_0';
+import Welcome_1 from './pages/welcome/Welcome_1';
 
 const MemoizedWallet = React.memo(() => {
     const address = web3.hook.usePriorityAccount();
@@ -37,7 +38,9 @@ const useNuggBook = () => {
         case Page.Start:
             return { top: 450, comp: Start, page };
         case Page.Welcome:
-            return { top: 100, comp: Welcome, page };
+            return { top: 100, comp: Welcome_0, page };
+        case Page.Welcome_1:
+            return { top: 100, comp: Welcome_1, page };
         case Page.TableOfContents:
             return { top: 100, comp: TableOfContents, page };
         case Page.WhatIsAWallet:

@@ -49,8 +49,6 @@ const useStore = create(
                         page = Page.TableOfContents;
                     }
 
-                    console.log(open, pager);
-
                     set(() => {
                         return {
                             ...(page && { page }),
@@ -96,12 +94,6 @@ const useStore = create(
                     const { open } = get();
 
                     if (open) toggle();
-
-                    // if (page) {
-                    //     setTimeout(() => {
-
-                    //     }, [])
-                    // }
                 };
 
                 return { goto, visit, toggle, gotoOpen, close, gotoHeight, checkInit, setInit };

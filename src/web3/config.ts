@@ -228,7 +228,7 @@ export const gotoDeepLink = (link: string) => {
 };
 
 export const gotoLink = (link: string) => {
-    const win = window?.open(encodeURIComponent(link), '_blank');
+    const win = window.open(link, '_blank');
     if (win) win.focus();
 };
 
