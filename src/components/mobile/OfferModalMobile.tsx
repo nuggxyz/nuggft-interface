@@ -29,7 +29,6 @@ import packages from '@src/packages';
 import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 import CircleTimerMobileCSS2 from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimerMobileCSS2';
 import { calculateIncrementWithRemaining } from '@src/web3/config';
-import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import { useMemoizedAsyncState } from '@src/hooks/useAsyncState';
 
 const incrementers = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 75, 99] as const;
@@ -58,14 +57,10 @@ const Butter = ({
     const [secsTillNextInterval, intervalLastsForSecs] = React.useMemo(() => {
         if (activated) {
             const checke = calculateIncrementWithRemaining(endingEpoch, blocknum, hasNoBids);
-            return [checke[1] * 12, checke[2] * 12];
+            return [checke[1], checke[2]];
         }
-        return [12, 12];
+        return [1, 1];
     }, [blocknum, endingEpoch, activated, hasNoBids]);
-
-    const trueSecsTillNextInterval = useRemainingTrueSeconds(
-        activated ? secsTillNextInterval : null,
-    );
 
     return (
         <div
@@ -82,7 +77,7 @@ const Butter = ({
         >
             <CircleTimerMobileCSS2
                 duration={activated ? intervalLastsForSecs : 1}
-                remaining={activated ? trueSecsTillNextInterval ?? intervalLastsForSecs : 1}
+                remaining={activated ? secsTillNextInterval : 1}
                 width={200}
                 interval={12}
                 toggled={toggled}
