@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
-import { animated, config, useSpring, useTransition } from '@react-spring/web';
+import { animated, config, useTransition } from '@react-spring/web';
 import { IoChevronBackCircle } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 
@@ -244,7 +244,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         ),
     );
 
-    const rawPopulatedTransaction = React.useMemo(() => {
+    const populatedTransaction = React.useMemo(() => {
         const value = paymentUsd.eth.bignumber;
 
         if (!paymentUsd.eth.eq(0)) {
@@ -291,8 +291,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         return undefined;
     }, [nuggft, paymentUsd, address, data, msp, check, amountUsd]);
 
-    const populatedTransaction = React.useDeferredValue(rawPopulatedTransaction);
-
     const estimation = useMemoizedAsyncState(
         () => {
             if (populatedTransaction && network) {
@@ -312,9 +310,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         [populatedTransaction, network, epoch] as const,
         (prev, curr) => {
             return (
-                (prev[2] !== curr[2] ||
-                    (prev[0] && curr[0] && prev[0].amount.eq(curr[0].amount))) ??
-                false
+                prev[2] !== curr[2] ||
+                ((prev[0] && curr[0] && prev[0].amount.eq(curr[0].amount)) ?? false)
             );
         },
     );
@@ -369,13 +366,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         },
         [page, isOpen],
     );
-
-    const containerStyle = useSpring({
-        to: {
-            transform: isOpen ? 'scale(1.0)' : 'scale(0.9)',
-        },
-        config: config.default,
-    });
 
     const calculating = React.useMemo(() => {
         if (estimator.error) return false;
@@ -941,7 +931,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                 justifyContent: 'flex-start',
                                 backdropFilter: 'blur(10px)',
                                 WebkitBackdropFilter: 'blur(10px)',
-                                ...containerStyle,
                                 ...sty,
                             }}
                         >
