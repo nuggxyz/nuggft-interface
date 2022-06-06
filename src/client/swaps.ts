@@ -47,49 +47,101 @@ interface SwapDataBase__Item {
 export type SwapData = TokenIdFactoryCreator<SwapDataBase, SwapDataBase__Nugg, SwapDataBase__Item>;
 
 const useStore = create(
-    combine({ data: {} as TokenIdDictionary<SwapData> }, (set, get) => {
-        function updateSingle(data: SwapData): void {
-            const prev = get().data[data.tokenId];
-            let ok = true;
-            if (
-                prev?.num !== null &&
-                prev?.num !== undefined &&
-                data?.num !== null &&
-                data?.num !== undefined
-            )
-                ok = data.num >= prev.num;
-            if (JSON.stringify(data) !== JSON.stringify(prev) && ok) {
-                // @ts-ignore
-                set((draft) => {
-                    if (data.isItem()) {
-                        draft.data[data.tokenId] = Object.freeze(data);
-                    } else {
-                        draft.data[data.tokenId] = Object.freeze(data);
+    combine(
+        {
+            data: new Map<TokenId, SwapData>(),
+            prev: {
+                current: [] as TokenId[],
+                next: [] as TokenId[],
+                recent: [] as TokenId[],
+                potential: [] as TokenId[],
+            },
+        },
+        (set, get) => {
+            function updateSingle(data: SwapData): void {
+                const prev = get().data.get(data.tokenId);
+                let ok = true;
+                if (
+                    prev?.num !== null &&
+                    prev?.num !== undefined &&
+                    data?.num !== null &&
+                    data?.num !== undefined
+                )
+                    ok = data.num >= prev.num;
+                if (JSON.stringify(data) !== JSON.stringify(prev) && ok) {
+                    // @ts-ignore
+                    set((draft) => {
+                        if (data.isItem()) {
+                            draft.data.set(data.tokenId, Object.freeze(data));
+                        } else {
+                            draft.data.set(data.tokenId, Object.freeze(data));
+                        }
+                    });
+                }
+            }
+
+            function updateBatch(data: SwapData[], epoch: number): void {
+                data.forEach((x) => updateSingle(x));
+                sort(epoch);
+            }
+
+            function update(data: SwapData | SwapData[], epoch: number): void {
+                if (Array.isArray(data)) updateBatch(data, epoch);
+                else updateSingle(data);
+            }
+
+            function sort(epoch: number) {
+                const prev = {
+                    current: [] as TokenId[],
+                    next: [] as TokenId[],
+                    recent: [] as TokenId[],
+                    potential: [] as TokenId[],
+                };
+
+                get().data.forEach((curr) => {
+                    if (curr.endingEpoch === epoch) {
+                        prev.current.push(curr.tokenId);
+                    } else if (curr.endingEpoch === epoch + 1) {
+                        prev.next.push(curr.tokenId);
+                    } else if (!curr.endingEpoch) {
+                        prev.potential.push(curr.tokenId);
+                    } else if (curr.endingEpoch && curr.endingEpoch < epoch) {
+                        prev.recent.push(curr.tokenId);
                     }
                 });
+
+                prev.potential
+                    .sort((a, b) => (a > b ? 1 : -1))
+                    .sort((a) => (a.startsWith('nugg') ? -1 : 1));
+
+                set(() => ({
+                    prev,
+                }));
             }
-        }
 
-        function updateBatch(data: SwapData[]): void {
-            data.forEach((x) => updateSingle(x));
-        }
-
-        function update(data: SwapData | SwapData[]): void {
-            if (Array.isArray(data)) updateBatch(data);
-            else updateSingle(data);
-        }
-
-        return { update };
-    }),
+            return { update, sort };
+        },
+    ),
 );
+
+let a = 0;
 
 export default {
     useUpdateSwaps: () => useStore((x) => x.update),
-    useSwapList: () => useStore((x) => Object.values(x.data), shallow),
+    useSortedSwapList: () =>
+        useStore((s) => {
+            if (a++ % 10 === 0) console.log(a);
+            return s.prev;
+        }),
+    useSwapList: () =>
+        useStore((s) => {
+            // if (a++ % 10 === 0) console.log(a);
+            return s.data.values();
+        }, shallow),
     useSwap: <A extends TokenId>(tokenId: A | undefined) => {
         return useStore(
             useCallback(
-                (state) => (tokenId !== undefined ? state.data[tokenId] : undefined),
+                (state) => (tokenId !== undefined ? state.data.get(tokenId) : undefined),
                 [tokenId],
             ),
             shallow,

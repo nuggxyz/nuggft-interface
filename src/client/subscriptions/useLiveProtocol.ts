@@ -41,6 +41,8 @@ export default () => {
     const updateSwaps = client.swaps.useUpdateSwaps();
     const updateStake = stake.useUpdate();
 
+    const epoch = client.epoch.active.useId();
+
     const { data, refetch } = useGetMassiveLiveProtocolQuery({
         fetchPolicy: 'no-cache',
         skip: true,
@@ -149,14 +151,17 @@ export default () => {
                 },
             );
 
-            updateSwaps([
-                ...recentSwaps,
-                ...recentItems,
-                ...potentialItems,
+            updateSwaps(
+                [
+                    ...recentSwaps,
+                    ...recentItems,
+                    ...potentialItems,
 
-                ...Object.values(activeNuggs).flat(),
-                ...Object.values(activeItems).flat(),
-            ]);
+                    ...Object.values(activeNuggs).flat(),
+                    ...Object.values(activeItems).flat(),
+                ],
+                epoch ?? 0,
+            );
 
             updateStake(shares, staked);
 
@@ -179,7 +184,7 @@ export default () => {
                 // ...activeItems,
             });
         },
-        [updateProtocolSimple, updateSwaps, updateStake],
+        [updateProtocolSimple, updateSwaps, updateStake, epoch],
     );
     const debouncedData = useDebounce(data, 500);
 
