@@ -67,6 +67,23 @@ const Setup_3: NuggBookPage = ({ setPage }) => {
             </div>
             <div style={{ marginTop: 20 }}>
                 <Button
+                    className="mobile-pressable-div"
+                    label={t`got it! 🤠`}
+                    onClick={() => {
+                        setPage(Page.TableOfContents, false);
+                    }}
+                    size="large"
+                    buttonStyle={{
+                        color: lib.colors.white,
+                        boxShadow: lib.layout.boxShadow.basic,
+                        padding: '.7rem 1.3rem',
+                        background: lib.colors.primaryColor,
+                        borderRadius: lib.layout.borderRadius.large,
+                        marginBottom: 15,
+                    }}
+                    textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}
+                />
+                <Button
                     buttonStyle={{
                         background: lib.colors.gradient2,
                         color: 'white',

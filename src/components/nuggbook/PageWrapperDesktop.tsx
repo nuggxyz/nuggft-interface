@@ -12,11 +12,21 @@ import WhatIsAWallet from './pages/WhatIsAWallet';
 import WhatIsAnNFT from './pages/WhatIsAnNFT';
 import WhatIsDefi from './pages/WhatIsDefi';
 import Close from './pages/Close';
-import TheRundown from './pages/1-the-rundown/TheRundown';
 import Setup_0 from './pages/set-up/Setup_0';
 import Setup_1 from './pages/set-up/Setup_1';
 import Setup_2 from './pages/set-up/Setup_2';
 import Setup_3 from './pages/set-up/Setup_3';
+import Rundown_0 from './pages/1-the-rundown/Rundown_0';
+import Rundown_1 from './pages/1-the-rundown/Rundown_1';
+import Rundown_2 from './pages/1-the-rundown/Rundown_2';
+import Rundown_3 from './pages/1-the-rundown/Rundown_3';
+import Rundown_4 from './pages/1-the-rundown/Rundown_4';
+import Rundown_5 from './pages/1-the-rundown/Rundown_5';
+import Rundown_10 from './pages/1-the-rundown/Rundown_10';
+import Rundown_9 from './pages/1-the-rundown/Rundown_9';
+import Rundown_8 from './pages/1-the-rundown/Rundown_8';
+import Rundown_7 from './pages/1-the-rundown/Rundown_7';
+import Rundown_6 from './pages/1-the-rundown/Rundown_6';
 
 const useNuggBook = () => {
     const page = client.nuggbook.useNuggBookPage();
@@ -34,8 +44,28 @@ const useNuggBook = () => {
             return { top: 100, comp: WhatIsAnNFT, page };
         case Page.WhatIsDefi:
             return { top: 100, comp: WhatIsDefi, page };
-        case Page.TheRundown:
-            return { top: 100, comp: TheRundown, page };
+        case Page.Rundown_0:
+            return { top: 100, comp: Rundown_0, page };
+        case Page.Rundown_1:
+            return { top: 100, comp: Rundown_1, page };
+        case Page.Rundown_2:
+            return { top: 100, comp: Rundown_2, page };
+        case Page.Rundown_3:
+            return { top: 100, comp: Rundown_3, page };
+        case Page.Rundown_4:
+            return { top: 100, comp: Rundown_4, page };
+        case Page.Rundown_5:
+            return { top: 100, comp: Rundown_5, page };
+        case Page.Rundown_6:
+            return { top: 100, comp: Rundown_6, page };
+        case Page.Rundown_7:
+            return { top: 100, comp: Rundown_7, page };
+        case Page.Rundown_8:
+            return { top: 100, comp: Rundown_8, page };
+        case Page.Rundown_9:
+            return { top: 100, comp: Rundown_9, page };
+        case Page.Rundown_10:
+            return { top: 100, comp: Rundown_10, page };
         case Page.Setup_0:
             return { top: 100, comp: Setup_0, page };
         case Page.Setup_1:
@@ -70,9 +100,9 @@ const useNuggBookHandler = () => {
     }, [close, startTransiton, setVisit]);
 
     const handleVisit = React.useCallback(
-        (_page: Page) => {
+        (_page: Page, _direction?: boolean) => {
             setVisit(_page);
-            startTransiton(() => setPage(_page));
+            startTransiton(() => setPage(_page, _direction));
         },
         [startTransiton, setVisit, setPage],
     );
@@ -101,6 +131,8 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
         }
     }, [book, direction, setYep, prevYep?.book.page, yep.book.page, yep]);
 
+    // console.log(yep);
+
     const [tabFadeTransition] = useTransition(
         yep,
         {
@@ -108,12 +140,12 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
                 transform: `translate(0px,0px)`,
             },
             from: () => ({
-                transform: `translate(${direction ? -1000 : 1000}px,0px)`,
+                transform: `translate(${!yep.direction ? -1000 : 1000}px,0px)`,
             }),
             // enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto' },
             enter: { transform: `translate(0px,0px)` },
             leave: () => ({
-                transform: `translate(${direction ? -1000 : 1000}px,0px)`,
+                transform: `translate(${yep.direction ? -1000 : 1000}px,0px)`,
             }),
             keys: (item) => `AtabFadeTransition${item.book.page}`,
             config: config.default,
@@ -133,7 +165,17 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
             }}
         >
             {tabFadeTransition((_styles, kid) => (
-                <animated.div style={{ ..._styles, position: 'absolute', width: '80%' }}>
+                <animated.div
+                    style={{
+                        ..._styles,
+                        position: 'absolute',
+                        width: '80%',
+                        height: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
                     {!!kid.book.comp && (
                         <kid.book.comp
                             clear={handleClear}
