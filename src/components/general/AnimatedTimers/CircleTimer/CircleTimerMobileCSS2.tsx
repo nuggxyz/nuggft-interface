@@ -3,8 +3,6 @@ import React, { CSSProperties, FunctionComponent, ReactChild, useMemo } from 're
 import lib from '@src/lib';
 import useInterval from '@src/hooks/useInterval';
 
-import styles from './CircleTimer.styles';
-
 type Props = {
     children?: ReactChild | ReactChild[];
     duration: number;
@@ -77,7 +75,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
             width / 6.5,
             `${(width / 6.5) * TWOPI} ${(width / 6.5) * TWOPI}`,
             {
-                transition: `all 1s ${lib.layout.animation}`,
+                transition: `all .5s ${lib.layout.animation}`,
                 opacity: activated ? 1 : 0.5,
             },
             toggled ? primaryColor : secondaryColor,
@@ -106,14 +104,16 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
             </div>
             <div
                 style={{
-                    filter: `drop-shadow(2px 3px 2px rgb(0 0 0 / 0.2))`,
+                    filter: `drop-shadow(2px 3px 2px rgb(0 0 0 / 0.2)) hue-rotate(0)`,
                     willChange: 'filter',
                     transformOrigin: 'center',
                 }}
             >
                 <svg
                     style={{
-                        ...styles.svgTransition,
+                        transition: 'all .5s ease',
+                        transformBox: 'fill-box',
+                        transformOrigin: 'center',
                         transform: 'rotate(-90deg)',
                     }}
                 >

@@ -88,7 +88,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
         return defaultColor;
     }, [trueRemaining, trueDuration, defaultColor, staticColor]);
 
-    const [r, r2, strokeDashArray, _shadowColor, _style, _strokeWidth] = React.useMemo(() => {
+    const [r, , strokeDashArray, _shadowColor, _style, _strokeWidth, filter] = React.useMemo(() => {
         return [
             width / 6.5,
             width / 6.5 + 50,
@@ -96,6 +96,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
             shadowColor === 'transparent' ? 'transparent' : 'white',
             { transition: `all 1s ${lib.layout.animation}` },
             activated ? strokeWidth : 0,
+            `drop-shadow(2px 3px 10px ${shadowColor}) hue-rotate(0)`,
         ];
     }, [width, shadowColor, activated, strokeWidth]);
 
@@ -120,11 +121,10 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
             </div>
             <div
                 style={{
-                    filter: `drop-shadow(2px 3px 10px ${shadowColor})`,
+                    filter,
                     willChange: 'filter',
                     height: '100%',
                     width: '100%',
-                    transform: 'translate3d(0px,var(--a),0)',
                     transformOrigin: 'center',
                 }}
             >
@@ -136,14 +136,14 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                         transform: 'rotate(-90deg)',
                     }}
                 >
-                    <circle
+                    {/* <circle
                         cx="50%"
                         cy="50%"
                         r={r2}
-                        strokeDashoffset={max}
+                        strokeDashoffset={to}
                         fill="none"
                         style={_style}
-                    />
+                    /> */}
                     <circle
                         cx="50%"
                         cy="50%"
