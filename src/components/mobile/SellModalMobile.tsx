@@ -45,16 +45,36 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     const [amount, setAmount] = useState('0');
     const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');
 
+    const myNuggs = client.live.myNuggs();
+
     React.useEffect(() => {
         if (swap && address) {
-            if (swap.endingEpoch || swap.owner !== address) {
-                // idk hoooooow you got here, but buh byeeeee
-                window.location.reload();
+            if (data.isNugg()) {
+                if (swap.endingEpoch || swap.owner !== address) {
+                    // idk hoooooow you got here, but buh byeeeee
+                    window.location.reload();
+                }
+            } else {
+                const nugg = myNuggs.find((x) => x.tokenId === data.sellingNuggId);
+                if (!nugg) {
+                    window.location.reload();
+                }
             }
         }
-    }, [swap, address]);
+    }, [swap, address, myNuggs, data]);
 
     const [isCanceling, setIsCanceling] = React.useState(false);
+
+    const needToClaim = React.useMemo(() => {
+        if (data.isItem()) {
+            const nugg = myNuggs.find((x) => x.tokenId === data.sellingNuggId);
+
+            if (nugg && nugg.pendingClaim) {
+                return true;
+            }
+        }
+        return false;
+    }, [data, myNuggs]);
 
     React.useEffect(() => {
         if (isCanceling && page === 0) {
@@ -85,12 +105,34 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
         const value = amountUsd.eth.bignumber;
         if (!value.isZero()) {
             if (data.isItem()) {
+                const sell = nuggft.populateTransaction['sell(uint24,uint16,uint96)'](
+                    data.sellingNuggId.toRawId(),
+                    data.tokenId.toRawId(),
+                    value,
+                );
+
+                if (needToClaim && address) {
+                    const claim = nuggft.populateTransaction.claim(
+                        [data.sellingNuggId.toRawId()],
+                        [address],
+                        [0],
+                        [0],
+                    );
+
+                    const multi = async () => {
+                        return nuggft.populateTransaction.multicall([
+                            (await claim).data || '0x0',
+                            (await sell).data || '0x0',
+                        ]);
+                    };
+
+                    return {
+                        tx: multi(),
+                        amount: value,
+                    };
+                }
                 return {
-                    tx: nuggft.populateTransaction['sell(uint24,uint16,uint96)'](
-                        data.sellingNuggId.toRawId(),
-                        data.tokenId.toRawId(),
-                        value,
-                    ),
+                    tx: sell,
 
                     amount: value,
                 };
@@ -105,7 +147,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
         }
 
         return undefined;
-    }, [nuggft, amountUsd, address, data, isCanceling, swap]);
+    }, [nuggft, amountUsd, address, data, isCanceling, swap, needToClaim]);
 
     const estimation = useAsyncState(() => {
         if (populatedTransaction && network) {

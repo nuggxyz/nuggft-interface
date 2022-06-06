@@ -124,13 +124,10 @@ const useStore = create(
     ),
 );
 
-let a = 0;
-
 export default {
     useUpdateSwaps: () => useStore((x) => x.update),
     useSortedSwapList: () =>
         useStore((s) => {
-            if (a++ % 10 === 0) console.log(a);
             return s.prev;
         }),
     useSwapList: () =>
