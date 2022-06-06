@@ -1,6 +1,7 @@
 import React, { CSSProperties, FunctionComponent, ReactChild, useMemo } from 'react';
 
 import lib from '@src/lib';
+import useInterval from '@src/hooks/useInterval';
 
 import styles from './CircleTimer.styles';
 
@@ -35,17 +36,56 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     isStatic = false,
     interval = 1,
 }) => {
+    const [trueRemaining, setTrueRemaining] = React.useState(remaining * interval);
+    const [trueDuration, setTrueDuration] = React.useState(duration * interval);
+
     const to = useMemo(() => {
         return duration && !isStatic
             ? Math.round(
-                  Math.abs((width / 6.5) * (TWOPI - (remaining / duration) * TWOPI) + HALFPI),
+                  Math.abs(
+                      (width / 6.5) * (TWOPI - (trueRemaining / trueDuration) * TWOPI) + HALFPI,
+                  ),
               )
             : 0;
-    }, [duration, width, remaining, isStatic, interval]);
+    }, [trueDuration, width, trueRemaining, duration, isStatic]);
 
     const max = React.useMemo(() => {
         return Math.round(Math.abs((width / 6.5) * (TWOPI - 0 * TWOPI) + HALFPI));
     }, [width]);
+
+    const activated = useMemo(() => {
+        return isStatic || (!isStatic && max !== to);
+    }, [isStatic, to, max]);
+
+    useInterval(
+        React.useCallback(() => {
+            if (trueRemaining) setTrueRemaining(trueRemaining - 1);
+        }, [trueRemaining, setTrueRemaining]),
+        React.useMemo(() => (!activated ? null : 1000), [activated]),
+    );
+
+    React.useEffect(() => {
+        setTrueRemaining(remaining * interval);
+    }, [remaining, setTrueRemaining, interval]);
+
+    React.useEffect(() => {
+        setTrueDuration(duration * interval);
+    }, [duration, setTrueDuration, interval]);
+
+    const [r, strokeDashArray, _style, stroke, fill, _strokeWidth] = React.useMemo(() => {
+        return [
+            width / 6.5,
+            `${(width / 6.5) * TWOPI} ${(width / 6.5) * TWOPI}`,
+            {
+                transition: `all 1s ${lib.layout.animation}`,
+                opacity: activated ? 1 : 0.5,
+            },
+            toggled ? primaryColor : secondaryColor,
+            toggled ? secondaryColor : primaryColor,
+            activated ? strokeWidth : 0,
+        ];
+    }, [width, activated, toggled, primaryColor, secondaryColor, strokeWidth]);
+
     return (
         <div style={{ zIndex: 1, ...style }}>
             <div
@@ -57,7 +97,6 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                     justifyContent: 'center',
                     overflow: 'visible',
                     flexDirection: 'column',
-                    // transform: 'translate3d(0px,var(--b),0)',
                     transformOrigin: 'center',
                     zIndex: 101,
                     ...childrenContainerStyle,
@@ -69,43 +108,26 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                 style={{
                     filter: `drop-shadow(2px 3px 2px rgb(0 0 0 / 0.2))`,
                     willChange: 'filter',
-                    // height: '100%',
-                    // width: '100%',
-                    // transform: 'translate3d(0px,var(--a),0)',
                     transformOrigin: 'center',
-                    // zIndex: 102,
                 }}
             >
                 <svg
-                    // height="100%"
-                    // width="100%"
                     style={{
                         ...styles.svgTransition,
                         transform: 'rotate(-90deg)',
                     }}
                 >
-                    {/* <circle
-                        cx="50%"
-                        cy="50%"
-                        r={width / 6.5 + 50}
-                        strokeDashoffset={to}
-                        fill="none"
-                        style={{ transition: `all 2s ${lib.layout.animation}` }}
-                    /> */}
                     <circle
                         cx="50%"
                         cy="50%"
-                        r={width / 6.5}
-                        stroke={toggled ? primaryColor : secondaryColor}
+                        r={r}
+                        stroke={stroke}
                         strokeDashoffset={to}
-                        strokeWidth={isStatic || (!isStatic && max !== to) ? strokeWidth : 0}
-                        fill={toggled ? secondaryColor : primaryColor}
-                        strokeDasharray={`${(width / 6.5) * TWOPI} ${(width / 6.5) * TWOPI}`}
+                        strokeWidth={_strokeWidth}
+                        fill={fill}
+                        strokeDasharray={strokeDashArray}
                         strokeLinecap="round"
-                        style={{
-                            transition: `all 2s ${lib.layout.animation}`,
-                            opacity: isStatic || (!isStatic && max !== to) ? 1 : 0.5,
-                        }}
+                        style={_style}
                     />
                 </svg>
             </div>
@@ -113,7 +135,4 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     );
 };
 
-export default React.memo(
-    CircleTimerMobileCSS,
-    (a, b) => a.remaining === b.remaining && a.toggled === b.toggled && a.isStatic === b.isStatic,
-);
+export default CircleTimerMobileCSS;
