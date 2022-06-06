@@ -21,7 +21,7 @@ const GodListHorizontal = <T, B, A>({
     style,
     onScroll,
 
-    // loaderColor,
+    skipSelectedCheck,
     itemHeight: itemWidth = 10,
     animationToggle,
 
@@ -82,16 +82,9 @@ const GodListHorizontal = <T, B, A>({
 
     const [selected, setSelected] = React.useState<null | number>(null);
 
-    // const prevStart = usePrevious(startIndex);
     const prevEnd = usePrevious(endIndex);
-    // const prevData = usePrevious(data);
 
     const items = React.useMemo(() => range(startIndex, endIndex), [startIndex, endIndex]);
-    // React.useEffect(() => {
-    //     if (items[0] !== data[0])
-    // }, [])
-
-    // console.log({ interval, endIndex, startIndex, scrollLeft, items, data });
 
     const [lastGrabValue, setLastGrabValue] = React.useState<number>(0);
 
@@ -128,35 +121,12 @@ const GodListHorizontal = <T, B, A>({
         lastGrab(endIndex);
     }, [lastGrab, endIndex]);
 
-    // const Loading = useCallback(
-    //     () =>
-    //         loading ? (
-    //             <div
-    //                 style={{
-    //                     marginTop: '1rem',
-    //                     position: 'absolute',
-    //                     top: `${(endIndex + 1) * itemWidth + startGap}px`,
-    //                     width: '100%',
-    //                     height: `${itemWidth}px`,
-    //                     display: 'flex',
-    //                     justifyContent: 'center',
-    //                     alignItems: 'center',
-    //                 }}
-    //             >
-    //                 <Loader color={loaderColor || 'black'} />
-    //             </div>
-    //         ) : (
-    //             <div />
-    //         ),
-    //     [loading, loaderColor, itemWidth, endIndex],
-    // );
-
     const selector = React.useMemo(() => {
         return (ind: typeof selected, ...act: Parameters<NonNullable<typeof action>>) => {
-            setSelected(ind);
+            if (!skipSelectedCheck) setSelected(ind);
             if (action) action(...act);
         };
-    }, [action]);
+    }, [action, skipSelectedCheck]);
 
     const [uno, uno_i, uno_v, uno_s, uno_a] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 0) as number;

@@ -19,6 +19,11 @@ import usePrevious from '@src/hooks/usePrevious';
 import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
 import clicker from '@src/assets/images/nugg/clicker2.svg';
 import emitter from '@src/emitter';
+import GodListHorizontal from '@src/components/general/List/GodListHorizontal';
+import { GodListRenderItemProps } from '@src/components/general/List/GodList';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+
+import { MyNuggsData } from '../../../archive/interfaces copy';
 
 export const useOpacitate = (name: string, arg: boolean | undefined) => {
     const [exit, exitToAnimate, staticStyles] = React.useMemo(() => {
@@ -65,6 +70,33 @@ export const useOpacitate = (name: string, arg: boolean | undefined) => {
     return [staticStyles, animatedStyles] as const;
 };
 
+const MyNuggRenderItem: FC<GodListRenderItemProps<MyNuggsData, undefined, number>> = ({
+    item,
+    selected,
+    action,
+    index,
+}) => {
+    return (
+        <div
+            style={{
+                alignSelf: 'center',
+                borderRadius: lib.layout.borderRadius.medium,
+                transition: '.2s background ease',
+                background: selected ? lib.colors.transparentGrey2 : lib.colors.transparent,
+                padding: '10px 0px',
+            }}
+            aria-hidden="true"
+            onClick={() => action && action(index)}
+        >
+            <TokenViewer
+                // eslint-disable-next-line
+                tokenId={item?.tokenId}
+                style={{ width: '47px', height: '47px' }}
+            />
+        </div>
+    );
+};
+
 const NavigationBarMobile: FC<unknown> = () => {
     const navigate = useNavigate();
 
@@ -91,6 +123,8 @@ const NavigationBarMobile: FC<unknown> = () => {
             setManualMatch(true);
         }
     }, [manualMatch, nuggbookOpen, prevNuggbookOpen]);
+
+    const myNuggs = client.live.myNuggs();
 
     const [floater] = useSpring(
         {
@@ -124,7 +158,9 @@ const NavigationBarMobile: FC<unknown> = () => {
                     ? '250px'
                     : '600px'
                 : isFull
-                ? '200px'
+                ? myNuggs.length === 0
+                    ? '200px'
+                    : '275px'
                 : '75px',
 
             config: packages.spring.config.stiff,
@@ -385,11 +421,11 @@ const NavigationBarMobile: FC<unknown> = () => {
                     alignItems: 'center',
                     borderRadius: lib.layout.borderRadius.medium,
                     justifySelf: 'center',
-                    boxShadow: address ? lib.layout.boxShadow.dark : undefined,
+                    boxShadow: address ? lib.layout.boxShadow.basic : undefined,
                     ...opacitate,
                 }}
             >
-                <NoFlashClaims address={address} />
+                {/* <NoFlashClaims address={address} /> */}
             </animated.div>
 
             {/* ////////////////////////////////////////////////////////////////////////
@@ -423,6 +459,46 @@ const NavigationBarMobile: FC<unknown> = () => {
             </animated.div>
 
             {/* ////////////////////////////////////////////////////////////////////////
+                    nugg list
+                //////////////////////////////////////////////////////////////////////// */}
+            <animated.div
+                style={{
+                    zIndex: 10,
+                    position: 'absolute',
+                    left: 40,
+                    // right: 0,
+                    margin: 'auto',
+                    top: 115,
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    flexDirection: 'column',
+                    justifySelf: 'center',
+                    width: 300,
+                    ...opacitate,
+                }}
+            >
+                <GodListHorizontal
+                    data={myNuggs}
+                    extraData={undefined}
+                    RenderItem={MyNuggRenderItem}
+                    horizontal
+                    startGap={20}
+                    itemHeight={60}
+                    skipSelectedCheck
+                    style={{
+                        width: '100%',
+                        height: '70px',
+                        padding: '10px 0rem .4rem',
+                        borderRadius: lib.layout.borderRadius.mediumishish,
+                        background: lib.colors.transparentWhite,
+                        boxShadow: lib.layout.boxShadow.basic,
+                        WebkitBackdropFilter: 'blur(50px)',
+                        backdropFilter: 'blur(50px)',
+                    }}
+                />
+            </animated.div>
+
+            {/* ////////////////////////////////////////////////////////////////////////
                     currency toggler
                 //////////////////////////////////////////////////////////////////////// */}
             <animated.div
@@ -444,7 +520,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         setCurrencyPreference(input);
                         return undefined;
                     }}
-                    floaterStyle={{ boxShadow: lib.layout.boxShadow.dark }}
+                    floaterStyle={{ boxShadow: lib.layout.boxShadow.basic }}
                     pref={currencyPreferrence}
                 />
             </animated.div>
@@ -565,7 +641,7 @@ export const NoFlashStatus = React.memo<{
                     alignItems: 'center',
                     width: '90px',
                     WebkitTapHighlightColor: 'transparent',
-                    boxShadow: '0 6px 10px rgba(102, 102, 102, 0.4)',
+                    boxShadow: lib.layout.boxShadow.basic,
                 }}
                 textStyle={{ ...lib.layout.presets.font.main.thicc, fontSize: 21 }}
                 label={health.graphProblem ? '📱 ⚠️' : '📲 🆗'}
@@ -595,7 +671,7 @@ export const Account = React.memo<{
                     WebkitBackdropFilter: 'blur(50px)',
                     backdropFilter: 'blur(50px)',
                     alignItems: 'center',
-                    boxShadow: lib.layout.boxShadow.dark,
+                    boxShadow: lib.layout.boxShadow.basic,
                 }}
                 textStyle={{ ...lib.layout.presets.font.main.thicc, fontSize: 21 }}
                 label={ens || 'connect wallet'}
@@ -645,7 +721,7 @@ export const Learn = React.memo<{
                     WebkitBackdropFilter: 'blur(50px)',
                     backdropFilter: 'blur(50px)',
                     alignItems: 'center',
-                    boxShadow: lib.layout.boxShadow.dark,
+                    boxShadow: lib.layout.boxShadow.basic,
                 }}
                 textStyle={{ ...lib.layout.presets.font.main.thicc, fontSize: 21 }}
                 label="learn"
@@ -789,7 +865,7 @@ style={{
     // alignItems: 'center',
     position: 'relative',
     borderRadius: lib.layout.borderRadius.large,
-    boxShadow: lib.layout.boxShadow.dark,
+    boxShadow: lib.layout.boxShadow.basic,
     padding: '.4rem 1rem .8rem',
     textAlign: 'center',
     verticalAlign: 'center',
