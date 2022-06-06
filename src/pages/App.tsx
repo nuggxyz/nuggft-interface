@@ -52,13 +52,12 @@ const Router = () => {
             <GlobalModal isPhone={isPhone} />
             {route}
             <MemoizedViewingNuggPhone isPhone={isPhone} />
-            <SwapPageWrapper screen={screen} />
         </React.Suspense>
     );
 };
 
 const App = () => {
-    const { isPhone } = useDimensions();
+    const { isPhone, screen } = useDimensions();
 
     return (
         <>
@@ -66,6 +65,9 @@ const App = () => {
             <Helmet />
             <NavigationWrapper isPhone={isPhone} />
             <Router />
+            <React.Suspense>
+                <SwapPageWrapper screen={screen} />
+            </React.Suspense>
         </>
     );
 };
