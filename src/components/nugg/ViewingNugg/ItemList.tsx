@@ -12,7 +12,11 @@ import { LiveNuggItem } from '@src/client/interfaces';
 import Text from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
-import { useNuggftV1, usePrioritySendTransaction, useTransactionManager2 } from '@src/contracts/useContract';
+import {
+    useNuggftV1,
+    usePrioritySendTransaction,
+    useTransactionManager2,
+} from '@src/contracts/useContract';
 import web3 from '@src/web3';
 import { Address } from '@src/classes/Address';
 import List from '@src/components/general/List/List';
@@ -261,8 +265,9 @@ export const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggI
                             ...styles.goToSwapGradient,
                             padding: '.2rem',
                             fontSize: '10px',
+                            fontWeight: lib.layout.fontWeight.thicc,
                         }}
-                        label={t`For sale`}
+                        label={t`for sale`}
                         rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
                         onClick={() => navigate(`/swap/${item.tokenId}`)}
                     />

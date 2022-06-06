@@ -22,8 +22,7 @@ import emitter from '@src/emitter';
 import GodListHorizontal from '@src/components/general/List/GodListHorizontal';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-
-import { MyNuggsData } from '../../../archive/interfaces copy';
+import { MyNuggsData } from '@src/client/interfaces';
 
 export const useOpacitate = (name: string, arg: boolean | undefined) => {
     const [exit, exitToAnimate, staticStyles] = React.useMemo(() => {
@@ -88,11 +87,7 @@ const MyNuggRenderItem: FC<GodListRenderItemProps<MyNuggsData, undefined, number
             aria-hidden="true"
             onClick={() => action && action(index)}
         >
-            <TokenViewer
-                // eslint-disable-next-line
-                tokenId={item?.tokenId}
-                style={{ width: '47px', height: '47px' }}
-            />
+            <TokenViewer tokenId={item?.tokenId} style={{ width: '47px', height: '47px' }} />
         </div>
     );
 };
