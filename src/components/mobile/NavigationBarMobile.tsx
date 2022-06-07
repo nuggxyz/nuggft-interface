@@ -146,6 +146,10 @@ const NavigationBarMobile: FC<unknown> = () => {
         React.useMemo(() => manualMatch && !nuggbookOpen, [manualMatch, nuggbookOpen]),
     );
 
+    const showNuggs = React.useMemo(() => {
+        return myNuggs.length > 0;
+    }, [myNuggs]);
+
     const [nuggbookOpenUp] = useSpring(
         {
             height: nuggbookOpen
@@ -153,14 +157,14 @@ const NavigationBarMobile: FC<unknown> = () => {
                     ? '250px'
                     : '600px'
                 : manualMatch
-                ? myNuggs.length === 0
+                ? !showNuggs
                     ? '200px'
                     : '275px'
                 : '75px',
 
             config: packages.spring.config.stiff,
         },
-        [nuggbookOpen, nuggbookPage, manualMatch],
+        [nuggbookOpen, nuggbookPage, manualMatch, showNuggs],
     );
 
     const [nuggbookFade] = useSpring(
@@ -471,6 +475,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                     justifySelf: 'center',
                     width: 300,
                     ...opacitate,
+                    ...(!showNuggs && { opacity: 0, zIndex: -1, pointerEvents: 'none' }),
                 }}
             >
                 <GodListHorizontal
