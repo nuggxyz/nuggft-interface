@@ -268,5 +268,9 @@ export const useDotnuggCacheOnlyLazy = (
         );
     }, [itemCalled, nuggCalled, src, fallback, tokenId]);
 
-    return { src: !error ? src : fallback, isEmpty };
+    const res = React.useMemo(() => {
+        return !error ? src : fallback;
+    }, [error, src, fallback]);
+
+    return [res, isEmpty] as const;
 };

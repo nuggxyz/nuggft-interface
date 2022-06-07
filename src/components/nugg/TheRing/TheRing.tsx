@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 /* eslint-disable no-nested-ternary */
 import React, { CSSProperties, FunctionComponent } from 'react';
 import { IoWarning } from 'react-icons/io5';
@@ -16,6 +17,7 @@ import useDesktopSwappingNugg from '@src/client/hooks/useDesktopSwappingNugg';
 import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
 import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
 import CircleTimerMobileCSS from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimerMobileCSS';
+import TokenViewer4 from '@src/components/nugg/TokenViewer4';
 
 import styles from './TheRing.styles';
 
@@ -30,6 +32,7 @@ type Props = {
     disableClick?: boolean;
     strokeWidth?: number;
     defaultColor?: string;
+    ref?: React.ForwardedRef<SVGSVGElement>;
 };
 
 const TheRing: FunctionComponent<Props> = ({
@@ -116,12 +119,7 @@ const TheRing: FunctionComponent<Props> = ({
                 }
             >
                 {isPhone ? (
-                    <TokenViewer
-                        tokenId={tokenId}
-                        style={{ ...tokenStyle, zIndex: 101 }}
-                        showcase
-                        disableOnClick={disableClick}
-                    />
+                    <TokenViewer4 tokenId={tokenId} />
                 ) : (
                     <>
                         {/* {chainId && swap && lifecycle === Lifecycle.Deck && (

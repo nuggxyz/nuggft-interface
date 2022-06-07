@@ -217,51 +217,54 @@ GodListProps<T, B, A>) => {
     const [uno, uno_i, uno_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 0) as number;
         const checker = items.indexOf(yeh);
-        const visible = (checker >= 3 && checker < 6 && checker !== -1) || yeh < 3;
+        const visible =
+            (checker >= displacement && checker < 3 + displacement && checker !== -1) || yeh < 3;
         return [data[yeh], yeh, visible];
-    }, [data, items]);
+    }, [data, items, displacement]);
 
     const [dos, dos_i, dos_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 1) as number;
         const checker = items.indexOf(yeh);
-        const visible = (checker >= 3 && checker < 6 && checker !== -1) || yeh < 3;
+        const visible =
+            (checker >= displacement && checker < 3 + displacement && checker !== -1) || yeh < 3;
         return [data[yeh], yeh, visible];
-    }, [data, items]);
+    }, [data, items, displacement]);
 
     const [tres, tres_i, tres_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 2) as number;
         const checker = items.indexOf(yeh);
-        const visible = (checker >= 3 && checker < 6 && checker !== -1) || yeh < 3;
+        const visible =
+            (checker >= displacement && checker < 3 + displacement && checker !== -1) || yeh < 3;
         return [data[yeh], yeh, visible];
-    }, [data, items]);
+    }, [data, items, displacement]);
 
     const [qu, qu_i, qu_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 3) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker >= 3 && checker < 6 && checker !== -1;
+        const visible = checker >= displacement && checker < 3 + displacement && checker !== -1;
         return [data[yeh], yeh, visible];
-    }, [data, items]);
+    }, [data, items, displacement]);
 
     const [cin, cin_i, cin_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 4) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker >= 3 && checker < 6 && checker !== -1;
+        const visible = checker >= displacement && checker < 3 + displacement && checker !== -1;
         return [data[yeh], yeh, visible];
-    }, [data, items]);
+    }, [data, items, displacement]);
 
     const [sei, sei_i, sei_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 5) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker >= 3 && checker < 6 && checker !== -1;
+        const visible = checker >= displacement && checker < 3 + displacement && checker !== -1;
         return [data[yeh], yeh, visible];
-    }, [data, items]);
+    }, [data, items, displacement]);
 
     const [ses, ses_i, ses_v] = React.useMemo(() => {
         const yeh = items.find((x) => x % 7 === 6) as number;
         const checker = items.indexOf(yeh);
-        const visible = checker >= 3 && checker < 6 && checker !== -1;
+        const visible = checker >= displacement && checker < 3 + displacement && checker !== -1;
         return [data[yeh], yeh, visible];
-    }, [data, items]);
+    }, [data, items, displacement]);
 
     const genid = React.useId();
 

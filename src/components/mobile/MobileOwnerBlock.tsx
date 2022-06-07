@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import React from 'react';
 import { t, plural } from '@lingui/macro';
 
@@ -134,7 +135,7 @@ export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
                 >
                     <TheRing
                         circleWidth={935}
-                        manualTokenId={swap?.tokenId}
+                        manualTokenId={tokenId}
                         disableHover
                         disableClick
                         defaultColor={dynamicTextColor}

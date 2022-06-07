@@ -119,11 +119,13 @@ const useHealth = () => {
 // eslint-disable-next-line react-hooks/rules-of-hooks
 
 const useCallbackOnGraphBlockChange = (callback: (() => Promise<unknown>) | (() => unknown)) => {
-    const kill = useStore((data) => data.lastBlockGraph);
-
     React.useEffect(() => {
-        void callback();
-    }, [kill]);
+        const a = useStore.subscribe((data) => data.lastBlockGraph, callback);
+
+        return a;
+    }, [callback]);
+
+    return null;
 };
 
 export default {

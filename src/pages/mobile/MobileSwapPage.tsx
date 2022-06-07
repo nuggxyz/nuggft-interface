@@ -48,7 +48,7 @@ const MobileSwapPage = () => {
                 itemHeight={438}
                 LIST_PADDING={0}
                 skipSelectedCheck
-                displacement={3}
+                displacement={1}
             />
         </animated.div>
     );

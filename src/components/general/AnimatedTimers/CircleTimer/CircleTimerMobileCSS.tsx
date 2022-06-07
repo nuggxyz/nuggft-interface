@@ -94,7 +94,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
             width / 6.5 + 50,
             `${(width / 6.5) * TWOPI} ${(width / 6.5) * TWOPI}`,
             shadowColor === 'transparent' ? 'transparent' : 'white',
-            { transition: `all 1s ${lib.layout.animation}` },
+            { transition: `all 2s ${lib.layout.animation}` },
             activated ? strokeWidth : 0,
             `drop-shadow(2px 3px 10px ${shadowColor}) hue-rotate(0)`,
         ];
@@ -136,14 +136,6 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                         transform: 'rotate(-90deg)',
                     }}
                 >
-                    {/* <circle
-                        cx="50%"
-                        cy="50%"
-                        r={r2}
-                        strokeDashoffset={to}
-                        fill="none"
-                        style={_style}
-                    /> */}
                     <circle
                         cx="50%"
                         cy="50%"

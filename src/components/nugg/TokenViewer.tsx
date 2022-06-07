@@ -54,7 +54,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
         return { width: window.innerWidth };
     }, []);
 
-    const { src: dotnugg, isEmpty } = useDotnuggCacheOnlyLazy(shouldLoad, tokenId, forceCache);
+    const [dotnugg, isEmpty] = useDotnuggCacheOnlyLazy(shouldLoad, tokenId, forceCache);
 
     const triggerSubscriber = React.useMemo(() => {
         return !!(subscribe || isEmpty);

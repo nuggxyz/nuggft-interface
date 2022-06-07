@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
 import type { Networkish } from '@ethersproject/networks';
 import type { TransactionReceipt } from '@ethersproject/providers';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { EqualityChecker, UseBoundStore } from 'zustand';
 import create from 'zustand';
 import { PopulatedTransaction } from '@ethersproject/contracts';
@@ -10,7 +10,7 @@ import { Address } from '@src/classes/Address';
 import client from '@src/client';
 import { EthInt } from '@src/classes/Fraction';
 // eslint-disable-next-line import/no-cycle
-import { CONTRACTS } from '@src/web3/constants';
+import { CONTRACTS, DEFAULT_CHAIN } from '@src/web3/constants';
 import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
 // eslint-disable-next-line import/no-cycle
 // eslint-disable-next-line import/no-cycle
@@ -645,7 +645,7 @@ function useBalance(provider: CustomWeb3Provider | undefined, account: string | 
 function useENS(
     provider: CustomWeb3Provider | 'nugg' | undefined,
     account: Lowercase<string> | undefined,
-    chainId: Chain | undefined,
+    chainId: Chain = DEFAULT_CHAIN,
 ): (string | null) | undefined {
     // const [ENSName, setENSName] = useState<string | null | undefined>();
     // account ? Address.shortenAddressHash(account) : '',
@@ -655,16 +655,19 @@ function useENS(
         account as AddressString,
     );
 
-    if (!account || !provider || !chainId) return undefined;
+    return React.useMemo(() => {
+        if (!account || !provider || !chainId) return undefined;
 
-    if (account === Address.ZERO.hash) return 'black-hole';
-    if (provider === 'nugg') return account.toPrettyId();
-    if (
-        account.toLowerCase() === CONTRACTS[chainId].NuggftV1.toLowerCase() ||
-        account.toLowerCase() === Address.ZERO.hash
-    )
-        return 'nuggftv1.nugg.xyz';
-    return persistedEns;
+        if (account === Address.ZERO.hash) return 'black-hole';
+        if (provider === 'nugg') return account.toPrettyId();
+        if (
+            account.toLowerCase() === CONTRACTS[chainId].NuggftV1.toLowerCase() ||
+            account.toLowerCase() === Address.ZERO.hash
+        )
+            return 'nuggftv1.nugg.xyz';
+
+        return persistedEns;
+    }, [persistedEns, account, chainId, provider]);
 }
 
 function getAugmentedHooks<T extends Connector>(
