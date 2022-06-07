@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-06-06 00:03+0000\n"
+"POT-Creation-Date: 2022-06-06 23:26+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Romanian\n"
-"PO-Revision-Date: 2022-06-06 06:02\n"
+"PO-Revision-Date: 2022-06-07 06:04\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 msgid ", and your desired bid for"
@@ -24,12 +24,40 @@ msgstr ""
 msgid "1️⃣ get a nugg in your wallet"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_8.tsx
+msgid "1️⃣ selling your nugg"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_7.tsx
+msgid "1️⃣ you can sell your nugg"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_9.tsx
+msgid "2️⃣ loaning your nugg"
+msgstr ""
+
 #: src/components/nuggbook/pages/helping-test/HelpingTest_0.tsx
 msgid "2️⃣ re-dress your nugg"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_7.tsx
+msgid "2️⃣ you can loan your nugg"
+msgstr ""
+
 #: src/components/nuggbook/pages/helping-test/HelpingTest_0.tsx
 msgid "3️⃣ HAVE FUN 🤠"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_10.tsx
+msgid "3️⃣ editing your nugg"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_7.tsx
+msgid "3️⃣ you can edit your nugg"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
+msgid "A nugg that you have sold will follow this same pattern of periods. Say you put your nugg up for auction midway through period 100, the auction will last until the end of period 101"
 msgstr ""
 
 #: src/components/nugg/Wallet/Wallet.tsx
@@ -52,6 +80,14 @@ msgstr ""
 
 #: src/pages/hot-rotate-o/HotRotateO.tsx
 msgid "All items are displayed"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
+msgid "At the end of each auction, the winning bid is sent to a"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
+msgid "At the end of each period a new nugg is minted and the next period begins, following this cycle until all 10,000 nuggs have been minted"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/SwapList.tsx
@@ -160,6 +196,10 @@ msgstr ""
 msgid "Displayed"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_0.tsx
+msgid "Each nuggft (or nugg) starts out as a plain nugget, randomly selected from the following:"
+msgstr ""
+
 #: src/components/nugg/ViewingNugg/ActionButtons/LoanButtons.tsx
 #: src/components/nugg/ViewingNugg/ActionButtons/OwnerButtons.tsx
 msgid "Edit"
@@ -213,10 +253,6 @@ msgstr ""
 msgid "For Nugg {0}"
 msgstr ""
 
-#: src/components/nugg/ViewingNugg/ItemList.tsx
-msgid "For sale"
-msgstr ""
-
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
 msgid "From epoch {0}"
 msgstr ""
@@ -248,8 +284,24 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_10.tsx
+msgid "I'm still confused! 😬"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
+msgid "In addition to being a fun nft, your nugg also represents"
+msgstr ""
+
 #: src/pages/hot-rotate-o/HotRotateO.tsx
 msgid "In storage"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_0.tsx
+msgid "It all began with an idea to store and assemble images right on the blockchain, which led us to nuggft!"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_4.tsx
+msgid "Item auctions work exactly like nugg auctions except for one thing:"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/SwapList.tsx
@@ -321,6 +373,10 @@ msgstr ""
 msgid "My Nuggs"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_6.tsx
+msgid "Naturally, as periods pass by and auctions end, the pool will increase in value and so each share will always increase in value as well"
+msgstr ""
+
 #: src/components/nugg/Wallet/tabs/HomeTab/MyNuggRenderItem.tsx
 msgid "New"
 msgstr ""
@@ -384,8 +440,16 @@ msgstr ""
 msgid "On sale by"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_8.tsx
+msgid "Once everything is done and the nugg has been sold, you must claim your money in order for it to be sent to you"
+msgstr ""
+
 #: src/components/nugg/ViewingNugg/SwapList.tsx
 msgid "Ongoing Swap"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_1.tsx
+msgid "Only one of each category can be displayed at a time, but your nugg can hold up to 15 different items"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
@@ -503,6 +567,10 @@ msgstr ""
 msgid "Something went wrong"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_10.tsx
+msgid "Start by buying items that interest you, and then have fun mixing and matching"
+msgstr ""
+
 #: src/components/nugg/Wallet/Wallet.tsx
 msgid "Swap"
 msgstr ""
@@ -527,12 +595,40 @@ msgstr ""
 msgid "Swaps"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_1.tsx
+msgid "That's right! You can swap items without even selling your nft!"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_8.tsx
+msgid "The auction doesn't start until it receives a first bid, then it lasts until the end of the next full period"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
+msgid "The auctions take place during a"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_0.tsx
+msgid "The nugget is the only part of the nugg that can't be sold or replaced, unless you sell the actual nft"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_1.tsx
+msgid "There are 7 different categories of items, each containing many different items:"
+msgstr ""
+
 #: src/components/modals/MintModal/MintModal.tsx
 msgid "There are no more nuggs to mint. If you want a nugg, you must offer on a sale."
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_10.tsx
+msgid "This actually modifies your nft on the blockchain, so you have to pay the gas fees to save your work of art"
+msgstr ""
+
 #: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
 msgid "This cannot be undone"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_8.tsx
+msgid "This is the amount you will receive at the end of the auction. Any excess earnings are sent to the pool"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OfferText.tsx
@@ -569,6 +665,18 @@ msgstr ""
 msgid "VIEW"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_6.tsx
+msgid "We've made it mathematically impossible for the share to decrease in value, so the longer your nugg belongs to you, the more benefits you will earn"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_9.tsx
+msgid "When you loan your nugg, you receive the value of the current share price"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_9.tsx
+msgid "While your nugg is loaned, the only thing that you cannot do is sell it. It can still be edited and it still counts as a share of the pool"
+msgstr ""
+
 #: src/components/nugg/RingAbout/OfferText.tsx
 msgid "Winner"
 msgstr ""
@@ -579,6 +687,14 @@ msgstr ""
 
 #: src/components/modals/MintModal/MintModal.tsx
 msgid "You can be the proud owner of Nugg {nextNugg} for {0} ETH"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_10.tsx
+msgid "You can customize your nugg any way you like! except for the base, every category of items can be edited"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
+msgid "You can sell your nuggs to liquidate what belongs to you, or you can even take out a loan using your nugg as collateral   ⚖️"
 msgstr ""
 
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -593,6 +709,10 @@ msgstr ""
 msgid "You currently have {0} ETH"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_8.tsx
+msgid "You define the asking price."
+msgstr ""
+
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "You don't have any Nuggs yet!"
 msgstr ""
@@ -605,6 +725,14 @@ msgstr ""
 msgid "You will receive {0} ETH"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_1.tsx
+msgid "Your nugg is randomly given 6 items when it is minted, however those can be sold and others can be bought"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_9.tsx
+msgid "Your nugg will be used as collateral for 1024 periods (approx. 1024 hours). Anytime during the duration of the loan you can either extend or pay off the loan:"
+msgstr ""
+
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "a given {0} is {1}"
 msgstr ""
@@ -613,8 +741,16 @@ msgstr ""
 msgid "a new nugg has {0}"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_1.tsx
+msgid "a nugg and its items 🐤"
+msgstr ""
+
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "a nugg is minted with {0}"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
+msgid "a share"
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
@@ -637,6 +773,10 @@ msgstr ""
 msgid "adjust"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_4.tsx
+msgid "all interactions with the items happen via the nuggs"
+msgstr ""
+
 #: src/components/nuggbook/pages/set-up/Setup_0.tsx
 msgid "an eth wallet"
 msgstr ""
@@ -644,6 +784,10 @@ msgstr ""
 #: src/components/mobile/OfferModalMobile.tsx
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "asking price"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
+msgid "auctions 🕰"
 msgstr ""
 
 #: src/components/mobile/NuggDexSearchListMobile2.tsx
@@ -655,6 +799,10 @@ msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "bases are non transferable"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_4.tsx
+msgid "because of this, there can be multiple pending auctions of the same item each with different floor prices"
 msgstr ""
 
 #: src/components/mobile/MobileOwnerBlock.tsx
@@ -711,6 +859,14 @@ msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "continue to start auction"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
+msgid "controlled by the nuggft platform"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_10.tsx
+msgid "cool! it all makes sense now 🤠"
 msgstr ""
 
 #: src/components/nuggbook/pages/welcome/Welcome_1.tsx
@@ -782,6 +938,7 @@ msgid "for bid on {0}"
 msgstr ""
 
 #: src/components/mobile/MyNuggItemMobile.tsx
+#: src/components/nugg/ViewingNugg/ItemList.tsx
 msgid "for sale"
 msgstr ""
 
@@ -811,6 +968,10 @@ msgstr ""
 msgid "go back"
 msgstr ""
 
+#: src/components/nuggbook/pages/set-up/Setup_3.tsx
+msgid "got it! 🤠"
+msgstr ""
+
 #: src/components/nuggbook/pages/helping-test/Feedback.tsx
 msgid "goto form"
 msgstr ""
@@ -835,6 +996,18 @@ msgstr ""
 msgid "holding since {0}"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_8.tsx
+msgid "how do I loan it?"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_4.tsx
+msgid "how does this benefit me? ⏳"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_7.tsx
+msgid "how exactly does selling work?"
+msgstr ""
+
 #: src/components/mobile/OfferModalMobile.tsx
 msgid "i got it"
 msgstr ""
@@ -850,6 +1023,10 @@ msgstr ""
 msgid "i'll figure it out 💪"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_9.tsx
+msgid "if you let your loan expire, your nugg will be put up for sale and the winnings will all be sent to the pool"
+msgstr ""
+
 #: src/components/mobile/OfferModalMobile.tsx
 msgid "if you move forward, your transaction will include both a minimum bid on"
 msgstr ""
@@ -862,8 +1039,16 @@ msgstr ""
 msgid "is born! 🎉"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_4.tsx
+msgid "item auctions"
+msgstr ""
+
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "items"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_4.tsx
+msgid "items are put up for auction by the nuggs that own them"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
@@ -977,8 +1162,24 @@ msgstr ""
 msgid "new nugg claims"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
+msgid "nice, so how do I get a nugg? 🆒"
+msgstr ""
+
 #: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
 msgid "no action here..."
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
+msgid "of this pool (this is how we calculate the nugg's floor price)"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_3.tsx
+msgid "offering on a nugg"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_1.tsx
+msgid "ok, so how do I buy em? 💸"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
@@ -994,10 +1195,18 @@ msgstr ""
 msgid "pending claims"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
+msgid "period"
+msgstr ""
+
 #: src/components/mobile/MobileCaboose.tsx
 #: src/components/mobile/MobileOfferButton.tsx
 #: src/components/nugg/RingAbout/Caboose.tsx
 msgid "place offer"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
+msgid "pool of money"
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
@@ -1083,6 +1292,14 @@ msgstr ""
 msgid "sign out"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_3.tsx
+msgid "so I can sell items? 🤯"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
+msgid "so the more nuggs you have, the more money is attributed to you!"
+msgstr ""
+
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "start the next auction"
 msgstr ""
@@ -1113,16 +1330,48 @@ msgstr ""
 msgid "tap to finalize on"
 msgstr ""
 
-#: src/components/nuggbook/pages/TableOfContents.tsx
-msgid "the rundown"
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_0.tsx
+msgid "tell me more 🐥"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
+msgid "tell me more! 🤩"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
+msgid "that lasts about an hour"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_6.tsx
+msgid "the nugg pool pt.2"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
+msgid "the nugg pool 🤿"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
 msgid "this item is owned by {0} nuggs and is not currently for sale"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
+msgid "this means that there will always be any number of auctions ending at the exact same time"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_9.tsx
+msgid "to extend the loan you must pay at least the amount the share price increased since you took out the loan"
+msgstr ""
+
 #: src/components/nuggbook/pages/set-up/Setup_0.tsx
 msgid "to nuggft"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_4.tsx
+msgid "to offer on an item auction, you must pick which nugg of yours will place the offer on your behalf"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_9.tsx
+msgid "to pay off the loan, you pay the same amount as you would to extend it, as well as the original value of the loan and a small fee"
 msgstr ""
 
 #: src/components/mobile/SellModalMobile.tsx
@@ -1166,12 +1415,32 @@ msgstr ""
 msgid "welcome to nuggft"
 msgstr ""
 
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_6.tsx
+msgid "what can I do with a nugg? 💎"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_9.tsx
+msgid "what part of the nugg can I edit?"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_7.tsx
+msgid "what to do with your nugg 🤌"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_0.tsx
+msgid "what's going on here?"
+msgstr ""
+
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "which nugg should bid on your behalf?"
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "worn by"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_4.tsx
+msgid "you cannot own an item by itself, it will always belong to a nugg"
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
@@ -1214,5 +1483,25 @@ msgstr ""
 #: src/components/mobile/ViewingNuggPhone.tsx
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
 msgid "{minutes, plural, =1 {# minute} other {# minutes}}"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_3.tsx
+msgid "🆙 The person with the highest bid at the end of the period gets the nugg"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_3.tsx
+msgid "🏧 If you are not the highest bidder, you must reclaim your bid in order for the money to return to your wallet"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_3.tsx
+msgid "📝 note: this means that the value you type in is not added to the value of the existing bid, it replaces it entirely such that each participant only has their one bid throughout the duration of the auction"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_3.tsx
+msgid "📫 When you sell a nugg, the auction does not start until someone else offers on it. We call these pending auctions"
+msgstr ""
+
+#: src/components/nuggbook/pages/1-the-rundown/Rundown_3.tsx
+msgid "🔁 If someone outbids you, you can replace your bid with a new one"
 msgstr ""
 
