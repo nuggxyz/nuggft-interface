@@ -535,13 +535,13 @@ const NavigationBarMobile: FC<unknown> = () => {
                     ...opacitate,
                 }}
             >
-                <NoFlashStatus address={address} />
+                <Status address={address} />
             </div>
         </animated.div>
     );
 };
 
-export const NoFlashClaims = React.memo<{
+export const Claims = React.memo<{
     address?: string;
 }>(
     ({ address }) => {
@@ -613,7 +613,7 @@ export const NoFlashClaims = React.memo<{
     (a, b) => a.address === b.address,
 );
 
-export const NoFlashStatus = React.memo<{
+export const Status = React.memo<{
     address?: string;
 }>(
     () => {
