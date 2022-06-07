@@ -97,7 +97,8 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const address = web3.hook.usePriorityAccount();
 
-    const [manualMatch, setManualMatch] = React.useState<boolean>(false);
+    const [coreManualMatch, setManualMatch] = React.useState<boolean>(false);
+    const manualMatch = React.useDeferredValue(coreManualMatch);
 
     const close = client.nuggbook.useCloseNuggBook();
     const nuggbookGoto = client.nuggbook.useGotoOpen();
@@ -109,24 +110,22 @@ const NavigationBarMobile: FC<unknown> = () => {
     const nuggbookOpen = React.useDeferredValue(client.nuggbook.useOpen());
     const nuggbookPage = React.useDeferredValue(client.nuggbook.useNuggBookPage());
 
-    const isFull = React.useDeferredValue(manualMatch);
-
     const prevNuggbookOpen = usePrevious(nuggbookOpen);
 
     React.useEffect(() => {
-        if (prevNuggbookOpen !== nuggbookOpen && nuggbookOpen && !manualMatch) {
+        if (prevNuggbookOpen !== nuggbookOpen && nuggbookOpen && !coreManualMatch) {
             setManualMatch(true);
         }
-    }, [manualMatch, nuggbookOpen, prevNuggbookOpen]);
+    }, [coreManualMatch, nuggbookOpen, prevNuggbookOpen]);
 
     const myNuggs = client.live.myNuggs();
 
     const [floater] = useSpring(
         {
-            width: isFull ? '100%' : '0%',
+            width: manualMatch ? '100%' : '0%',
             config: packages.spring.config.stiff,
         },
-        [isFull],
+        [manualMatch],
     );
 
     emitter.hook.useOn({
@@ -143,7 +142,7 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const [opacitate, opacitateAnimated] = useOpacitate(
         'mobile-nav',
-        React.useMemo(() => isFull && !nuggbookOpen, [isFull, nuggbookOpen]),
+        React.useMemo(() => manualMatch && !nuggbookOpen, [manualMatch, nuggbookOpen]),
     );
 
     const [nuggbookOpenUp] = useSpring(
@@ -152,7 +151,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                 ? nuggbookPage === Page.Start
                     ? '250px'
                     : '600px'
-                : isFull
+                : manualMatch
                 ? myNuggs.length === 0
                     ? '200px'
                     : '275px'
@@ -160,7 +159,7 @@ const NavigationBarMobile: FC<unknown> = () => {
 
             config: packages.spring.config.stiff,
         },
-        [nuggbookOpen, nuggbookPage, isFull],
+        [nuggbookOpen, nuggbookPage, manualMatch],
     );
 
     const [nuggbookFade] = useSpring(
@@ -181,27 +180,27 @@ const NavigationBarMobile: FC<unknown> = () => {
         startTransition(() => {
             if (nuggbookOpen) close();
             // purposfully last - dont want to fully close the square if something is open
-            else if (manualMatch && matchHomeCore === prevMatchHomeCore) {
+            else if (coreManualMatch && matchHomeCore === prevMatchHomeCore) {
                 setTimeout(() => {
                     setManualMatch(false);
                 }, 1000);
             }
         });
-    }, [manualMatch, nuggbookOpen, close, matchHomeCore, prevMatchHomeCore]);
+    }, [coreManualMatch, nuggbookOpen, close, matchHomeCore, prevMatchHomeCore]);
 
     useOnTapOutside(ref, tapper);
 
     const homeClick = React.useCallback(() => {
         if (nuggbookOpen) {
             close();
-        } else if (!manualMatch) {
+        } else if (!coreManualMatch) {
             setManualMatch(true);
         } else if (matchHome) {
             setManualMatch(false);
         } else {
             navigate('/');
         }
-    }, [manualMatch, close, navigate, matchHome, nuggbookOpen]);
+    }, [coreManualMatch, close, navigate, matchHome, nuggbookOpen]);
 
     return (
         <animated.div
@@ -253,7 +252,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                     search
                 //////////////////////////////////////////////////////////////////////// */}
                 <animated.div
-                    className={isFull ? 'mobile-pressable-div' : undefined}
+                    className={manualMatch ? 'mobile-pressable-div' : undefined}
                     style={{
                         zIndex: 8,
                         display: 'flex',
@@ -375,7 +374,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                             justifyContent: 'center',
                         }}
                     >
-                        <HomeButton onClick={homeClick} isFull={isFull} />
+                        <HomeButton onClick={homeClick} isFull={manualMatch} />
                     </div>
                 </animated.div>
 
