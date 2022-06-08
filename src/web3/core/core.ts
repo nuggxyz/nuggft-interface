@@ -352,15 +352,9 @@ export function getPriorityConnector(initializedConnectors: {
     } = getSelectedConnector(...Object.values(initializedConnectors));
 
     function usePriorityConnector() {
-        const manualPriority = client.live.manualPriority();
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const values = Object.values(initializedConnectors).map((x) => x.hooks.useIsActive());
         const index = values.findIndex((x) => x);
-        const check = manualPriority && initializedConnectors[manualPriority];
-
-        if (check !== undefined) {
-            return check.connector;
-        }
 
         return Object.values(initializedConnectors)[index === -1 ? 0 : index].connector;
     }

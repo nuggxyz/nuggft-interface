@@ -119,7 +119,7 @@ const NavigationBarMobile: FC<unknown> = () => {
         }
     }, [coreManualMatch, nuggbookOpen, prevNuggbookOpen]);
 
-    const myNuggs = client.live.myNuggs();
+    const myNuggs = client.user.useNuggs();
 
     const [floater] = useSpring(
         {
@@ -553,7 +553,7 @@ export const Claims = React.memo<{
 }>(
     ({ address }) => {
         const openModal = client.modal.useOpenModal();
-        const unclaimedOffers = client.live.myUnclaimedOffers();
+        const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
         const epoch = client.epoch.active.useId();
         const [numClaims, setNumClaims] = React.useState(unclaimedOffers.length);
         const prevNumClaims = usePrevious(numClaims);

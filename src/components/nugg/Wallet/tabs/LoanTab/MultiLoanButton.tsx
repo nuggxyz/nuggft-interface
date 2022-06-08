@@ -19,7 +19,7 @@ const MultiLoanButton: FunctionComponent<Props> = () => {
     const provider = web3.hook.usePriorityProvider();
 
     const chainId = web3.hook.usePriorityChainId();
-    const unclaimedOffers = client.live.myNuggs();
+    const unclaimedOffers = client.user.useNuggs();
 
     const nuggft = useNuggftV1();
 

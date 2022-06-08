@@ -107,8 +107,8 @@ const Ver = ({ left, right, label }: { left: number; right: number; label: strin
 
 const Info = ({ tokenId }: { tokenId?: ItemId }) => {
     const token = client.live.token(tokenId);
-    const totalNuggs = client.live.totalNuggs();
-    const featureTotals = client.live.featureTotals();
+    const totalNuggs = client.stake.useTotalNuggs();
+    const featureTotals = client.stake.useFeatureTotals();
 
     const feature = React.useMemo(() => {
         return tokenId ? tokenId.toRawIdNum().toItemFeature() : 0;

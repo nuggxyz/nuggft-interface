@@ -18,7 +18,7 @@ import lib from '@src/lib';
 import styles from './LoanOrBurnModal.styles';
 
 const LoanOrBurnModal = ({ data: { tokenId, actionType } }: { data: LoanModalData }) => {
-    const stake__eps = client.live.stake.eps();
+    const stake__eps = client.stake.useEps();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const address = web3.hook.usePriorityAccount();

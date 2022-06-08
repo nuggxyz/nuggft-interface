@@ -20,7 +20,7 @@ const Buttons = () => (
 
 const LoanTab: FunctionComponent<Props> = () => {
     const epoch = client.epoch.active.useId();
-    const loanedNuggs = client.live.myLoans();
+    const loanedNuggs = client.user.useLoans();
 
     return (
         <div style={styles.container}>

@@ -1,40 +1,45 @@
 /* eslint-disable no-param-reassign */
 import create from 'zustand';
-import { combine } from 'zustand/middleware';
+import { combine, persist } from 'zustand/middleware';
 
 import useDebounce from '@src/hooks/useDebounce';
 import emitter from '@src/emitter';
 
 const store = create(
-    combine(
-        {
-            block: 0 as number,
-            lastUpdate: 0 as number,
-            lastChange: 0 as number,
-        },
-        (set, get) => {
-            const update = (block: number) => {
-                const change = block !== get().block;
-                set(() => ({
-                    block,
-                    lastUpdate: new Date().getTime(),
-                    ...(change && { lastChange: new Date().getTime() }),
-                }));
-            };
+    persist(
+        combine(
+            {
+                block: 0 as number,
+                lastUpdate: 0 as number,
+                lastChange: 0 as number,
+            },
+            (set, get) => {
+                const update = (block: number) => {
+                    const change = block !== get().block;
+                    set(() => ({
+                        block,
+                        lastUpdate: new Date().getTime(),
+                        ...(change && { lastChange: new Date().getTime() }),
+                    }));
+                };
 
-            const emit = emitter.on.bind(undefined, {
-                type: emitter.events.IncomingRpcBlock,
-                callback: (data) => {
-                    update(data.data);
-                },
-            });
-
-            return { update, emit };
-        },
+                return { update };
+            },
+        ),
+        { name: 'nugg.xyz-ens' },
     ),
 );
 
-store.getState().emit();
+export const useBlockUpdater = () => {
+    const update = store((state) => state.update);
+
+    emitter.hook.useOn({
+        type: emitter.events.IncomingRpcBlock,
+        callback: (data) => {
+            update(data.data);
+        },
+    });
+};
 
 export default {
     useBlock: () => store((state) => state.block),

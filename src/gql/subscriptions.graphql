@@ -1,9 +1,3 @@
-subscription liveProtocol {
-    protocol(id: "0x42069") {
-        ...liveProtocol
-    }
-}
-
 subscription liveDotnugg($tokenId: ID!) {
     nugg(id: $tokenId) {
         id
@@ -11,7 +5,7 @@ subscription liveDotnugg($tokenId: ID!) {
     }
 }
 
-subscription liveUser($address: ID!) {
+query liveUser($address: ID!) {
     user(id: $address) {
         offers(where: { claimed: false }) {
             id

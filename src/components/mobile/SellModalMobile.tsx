@@ -32,7 +32,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     const isOpen = client.modal.useOpen();
 
     const address = web3.hook.usePriorityAccount();
-    const stake = client.static.stake();
+    const stake = client.stake.useEps();
 
     const token = client.live.token(data.tokenId);
 
@@ -49,7 +49,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     const [amount, setAmount] = useState('0');
     const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');
 
-    const myNuggs = client.live.myNuggs();
+    const myNuggs = client.user.useNuggs();
 
     React.useEffect(() => {
         if (swap && address) {

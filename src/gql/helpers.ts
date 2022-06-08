@@ -84,29 +84,29 @@ export const executeQuery3c = async <T extends { data?: any }>(
     return undefined;
 };
 
-export const executeQuery3 = async <T>(query: DocumentNode, variables: object): Promise<T> => {
-    try {
-        const check = client.static.graph();
+// export const executeQuery3 = async <T>(query: DocumentNode, variables: object): Promise<T> => {
+//     try {
+//         const check = client.static.graph();
 
-        if (check === undefined) throw new Error('executeQuery3 | graph is undefined');
+//         if (check === undefined) throw new Error('executeQuery3 | graph is undefined');
 
-        const result = await check.query<T>({
-            query,
-            fetchPolicy: 'cache-first',
-            canonizeResults: true,
-            // notifyOnNetworkStatusChange: true,
-            variables,
-        });
+//         const result = await check.query<T>({
+//             query,
+//             fetchPolicy: 'cache-first',
+//             canonizeResults: true,
+//             // notifyOnNetworkStatusChange: true,
+//             variables,
+//         });
 
-        if (result && result.data) {
-            return result.data;
-        }
+//         if (result && result.data) {
+//             return result.data;
+//         }
 
-        throw new Error('executeQuery3 failed');
-    } catch (error: unknown) {
-        throw new Error(error as string);
-    }
-};
+//         throw new Error('executeQuery3 failed');
+//     } catch (error: unknown) {
+//         throw new Error(error as string);
+//     }
+// };
 
 export const executeQuery4 = async <T>(
     graph: ApolloClient<any>,

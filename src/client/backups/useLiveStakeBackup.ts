@@ -12,15 +12,14 @@ export default () => {
     const provider = web3.hook.usePriorityProvider();
     const nuggft = useNuggftV1(provider);
     const blocknum = client.block.useBlock();
-    const updateProtocolSimple = client.mutate.updateProtocolSimple();
+    const updateStake = client.stake.useUpdate();
 
     const callback = useCallback(async () => {
         if (nuggft) {
-            updateProtocolSimple({
-                stake: EthInt.fromNuggftV1Stake(await nuggft.stake()),
-            });
+            const stake = EthInt.fromNuggftV1Stake(await nuggft.stake());
+            updateStake(stake.shares, stake.staked);
         }
-    }, [nuggft, updateProtocolSimple]);
+    }, [nuggft, updateStake]);
 
     useEffect(() => {
         void callback();

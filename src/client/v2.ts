@@ -18,6 +18,7 @@ import web3 from '@src/web3';
 
 import { OfferData } from './interfaces';
 import health from './health';
+import stake from './stake';
 
 interface SwapDataBase extends TokenIdFactoryBase {
     leader: unknown;
@@ -138,7 +139,6 @@ const useStore = create(
                         },
                     }));
                 }
-                console.log(get().v2);
             }
 
             function handleRpcHit(data: OfferData, log: Log) {
@@ -211,6 +211,7 @@ const useStore = create(
 export const usePollV2 = () => {
     const handleV2 = useStore((dat) => dat.handleV2);
     const handleRpcHit = useStore((dat) => dat.handleRpcHit);
+    const updateStake = stake.useHandleActiveV2();
 
     const [lazy] = useGetV2ActiveLazyQuery();
 
@@ -219,7 +220,8 @@ export const usePollV2 = () => {
     const callback = React.useCallback(async () => {
         const res = await lazy({ fetchPolicy: 'network-only' });
         handleV2(res, blocknum);
-    }, [lazy, handleV2, blocknum]);
+        updateStake(res);
+    }, [lazy, handleV2, blocknum, updateStake]);
 
     emitter.hook.useOn({
         type: emitter.events.Offer,

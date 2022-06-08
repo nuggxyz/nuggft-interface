@@ -4,7 +4,7 @@ import { ApolloClient } from '@apollo/client';
 import { InfuraProvider, JsonRpcProvider } from '@ethersproject/providers';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
-import { buildApolloSplitLink, buildCache } from '@src/gql';
+import { buildApolloHttpLink, buildCache } from '@src/gql';
 import * as constants from '@src/lib/constants';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import { ETH_ONE, LOSS } from '@src/lib/conversion';
@@ -41,7 +41,6 @@ import {
     CHAIN_INFO,
     DEFAULT_CHAIN,
     GRAPH_ENPOINTS,
-    GRAPH_WSS_ENDPOINTS,
     INFURA_KEY,
     INFURA_URLS,
     PREMIUM_DIV,
@@ -256,7 +255,7 @@ export const createAlchemyWebSocket = (
 };
 
 export const apolloClient = new ApolloClient<any>({
-    link: buildApolloSplitLink(GRAPH_ENPOINTS[DEFAULT_CHAIN], GRAPH_WSS_ENDPOINTS[DEFAULT_CHAIN]),
+    link: buildApolloHttpLink(GRAPH_ENPOINTS[DEFAULT_CHAIN]),
     // connectToDevTools: true,
     cache: buildCache(),
     defaultOptions: {

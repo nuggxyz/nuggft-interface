@@ -12,8 +12,8 @@ import lib from '@src/lib';
 type Props = { style?: CSSProperties };
 
 const FloorPrice: FunctionComponent<Props> = ({ style }) => {
-    const stake__eps = client.live.stake.eps();
-    const stake__shares = client.live.stake.shares();
+    const stake__eps = client.stake.useEps();
+    const stake__shares = client.stake.useShares();
 
     const springStyle = useSpring({
         // zIndex: 1000,

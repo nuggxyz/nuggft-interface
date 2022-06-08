@@ -35,7 +35,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const { screen: screenType } = useDimensions();
     const provider = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
-    const _myNuggs = client.live.myNuggs();
+    const _myNuggs = client.user.useNuggs();
     const userBalance = web3.hook.usePriorityBalance(provider);
 
     const nuggft = useNuggftV1(provider);

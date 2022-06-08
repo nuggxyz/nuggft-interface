@@ -16,7 +16,7 @@ import styles from './ClaimTab.styles';
 type Props = Record<string, never>;
 
 export const useMultiClaimArgs = () => {
-    const unclaimedOffers = client.live.myUnclaimedOffers();
+    const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
 
     return useMemo(() => {
         const hello = unclaimedOffers.reduce(
@@ -61,7 +61,7 @@ const MultiClaimButton: FunctionComponent<Props> = () => {
 
     const nuggft = useNuggftV1(provider);
 
-    const unclaimedOffers = client.live.myUnclaimedOffers();
+    const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
 
     const args = useMultiClaimArgs();
 

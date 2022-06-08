@@ -15,11 +15,7 @@ export default () => {
     const address = web3.hook.usePriorityAccount();
 
     const updateOffers = client.mutate.updateOffers();
-    const updateProtocolSimple = client.mutate.updateProtocolSimple();
-
-    const removeLoan = client.mutate.removeLoan();
-    const removeNuggClaim = client.mutate.removeNuggClaim();
-    const removeItemClaimIfMine = client.mutate.removeItemClaimIfMine();
+    const updateStake = client.stake.useUpdate();
 
     const provider = web3.hook.useNetworkProvider();
 
@@ -57,10 +53,8 @@ export default () => {
                             event,
                             log,
                         });
-
-                        void updateProtocolSimple({
-                            stake: EthInt.fromNuggftV1Stake(event.args.stake),
-                        });
+                        const stake = EthInt.fromNuggftV1Stake(event.args.stake);
+                        void updateStake(stake.shares, stake.staked);
                         break;
                     }
                     default:
@@ -192,13 +186,10 @@ export default () => {
                         }
                         break;
                     }
-                    case 'Liquidate':
-                        removeLoan(event.args.tokenId.toNuggId());
-                        break;
+                    // case 'Liquidate':
+                    //     removeLoan(event.args.tokenId.toNuggId());
+                    //     break;
                     case 'Claim': {
-                        if (event.args.account.toLowerCase() === address?.toLowerCase()) {
-                            removeNuggClaim(event.args.tokenId.toNuggId());
-                        }
                         emitCompletedTx(event.args.account as AddressString, (from) => {
                             return from === event.args.account;
                         });
@@ -210,7 +201,6 @@ export default () => {
                                 'claim(uint24[],address[],uint24[],uint16[])',
                                 dat,
                             ) as [BigNumber[], string[], BigNumber[], BigNumber[]];
-                            console.log({ dec });
 
                             let check = false;
                             dec[0].forEach((x, i) => {
@@ -226,11 +216,6 @@ export default () => {
                             return check;
                         });
 
-                        removeItemClaimIfMine(
-                            event.args.buyerTokenId.toNuggId(),
-                            event.args.itemId.toItemId(),
-                        );
-
                         break;
                     }
                     case 'Rotate': {
@@ -241,16 +226,7 @@ export default () => {
                         break;
                 }
             },
-            [
-                address,
-                nuggft.interface,
-                removeItemClaimIfMine,
-                removeLoan,
-                removeNuggClaim,
-                updateOffers,
-                updateProtocolSimple,
-                nuggft.address,
-            ],
+            [address, nuggft.interface, updateOffers, updateStake, nuggft.address],
         ),
     });
 

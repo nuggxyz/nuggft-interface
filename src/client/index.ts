@@ -20,6 +20,7 @@ import block from './block';
 import stake from './stake';
 import v2 from './v2';
 import v3 from './v3';
+import user from './user';
 
 export default {
     core,
@@ -37,19 +38,12 @@ export default {
                 core(useCallback((state) => tokenId || state.lastSwap?.tokenId, [tokenId])),
         },
 
-        stake: {
-            eps: () => core((state) => state.stake?.eps),
-            shares: () => core((state) => state.stake?.shares),
-            staked: () => core((state) => state.stake?.staked),
-        },
         locale: () => core((state) => state.locale),
         route: () => core((state) => state.route),
-        featureTotals: () => core((state) => state.featureTotals),
 
         dimensions: () => core((state) => state.dimentions),
         editingNugg: () => core((state) => state.editingNugg),
 
-        manualPriority: () => core((state) => state.manualPriority),
         searchFilter: {
             viewing: () => core((state) => state.searchFilter?.viewing ?? SearchView.Home),
             target: () => core((state) => state.searchFilter?.target),
@@ -57,7 +51,6 @@ export default {
             searchValue: () => core((state) => state.searchFilter?.searchValue),
         },
         darkmode: () => core((state) => state.darkmode, shallow),
-        totalNuggs: () => core((state) => state.totalNuggs),
         /// ///// complex ////////
         offers: <A extends TokenId>(tokenId: A | undefined) =>
             core(
@@ -79,49 +72,11 @@ export default {
                     .map((x) => JSON.parse(x) as ListData)
                     .reverse(),
             ),
-
-        myNuggs: () =>
-            core((state) => {
-                return [...state.myNuggs].sort((a, b) => Number(a.tokenId) - Number(b.tokenId));
-            }),
-        myLoans: () =>
-            core((state) =>
-                [...state.myLoans].sort((a, b) => (a.endingEpoch < b.endingEpoch ? -1 : 1)),
-            ),
-
-        myUnclaimedNuggOffers: () => core((state) => state.myUnclaimedNuggOffers),
-        myUnclaimedItemOffers: () => core((state) => state.myUnclaimedItemOffers),
         pageIsLoaded: () => core((state) => state.pageIsLoaded),
-        myUnclaimedOffers: () =>
-            core(
-                (state) =>
-                    [state.myUnclaimedItemOffers, state.myUnclaimedNuggOffers]
-                        .flat()
-                        .filter(
-                            (x) =>
-                                x.endingEpoch !== null &&
-                                epoch.getState().active &&
-                                x.endingEpoch < epoch.getState().active,
-                        )
-                        .sort((a, b) => ((a.endingEpoch ?? 0) > (b.endingEpoch ?? 0) ? -1 : 1)),
-                shallow,
-            ),
     },
     mutate: {
-        updateProtocol: () => core((state) => state.updateProtocol),
-        updateProtocolSimple: () => core((state) => state.updateProtocolSimple),
-
         setActiveSearch: () => core((state) => state.setActiveSearch),
         updateOffers: () => core((state) => state.updateOffers),
-        removeLoan: () => core((state) => state.removeLoan),
-        removeNuggClaim: () => core((state) => state.removeNuggClaim),
-        removeItemClaimIfMine: () => core((state) => state.removeItemClaimIfMine),
-        addNuggClaim: () => core((state) => state.addNuggClaim),
-        addItemClaim: () => core((state) => state.addItemClaim),
-        addLoan: () => core((state) => state.addLoan),
-        updateLoan: () => core((state) => state.updateLoan),
-        addNugg: () => core((state) => state.addNugg),
-        removeNugg: () => core((state) => state.removeNugg),
         setLastSwap: () => core((state) => state.setLastSwap),
         setPageIsLoaded: () => core((state) => state.setPageIsLoaded),
         updateToken: () => core((state) => state.updateToken),
@@ -135,15 +90,6 @@ export default {
         updateDimensions: () => core((state) => state.updateDimensions),
     },
 
-    static: {
-        graph: () => web3.config.apolloClient,
-
-        myNuggs: () => core.getState().myNuggs,
-        myLoans: () => core.getState().myLoans,
-        epoch: () => core.getState().epoch,
-        stake: () => core.getState().stake,
-        route: () => core.getState().route,
-    },
     modal,
     toast,
     nuggbook,
@@ -159,4 +105,5 @@ export default {
     stake,
     v2,
     v3,
+    user,
 };

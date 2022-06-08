@@ -27,10 +27,10 @@ const MobileWallet: FunctionComponent<Props> = () => {
 
     const peer = web3.hook.usePriorityPeer();
 
-    const nuggs = client.live.myNuggs();
+    const nuggs = client.user.useNuggs();
 
-    const loans = client.live.myLoans();
-    const unclaimedOffers = client.live.myUnclaimedOffers();
+    const loans = client.user.useLoans();
+    const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
 
     const [loansOpen, setLoansOpen] = React.useState(false);
 

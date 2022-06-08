@@ -28,7 +28,7 @@ import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisua
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const isOpen = client.modal.useOpen();
-    const unclaimedOffers = client.live.myUnclaimedOffers();
+    const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
 
     const network = web3.hook.useNetworkProvider();
     const peer = web3.hook.usePriorityPeer();

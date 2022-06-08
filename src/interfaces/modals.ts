@@ -5,7 +5,6 @@ import { PeerInfo } from '@src/web3/core/interfaces';
 export enum ModalEnum {
     Offer,
     Loan,
-    Mint,
     LoanInput,
     QrCode,
     Sell,
@@ -43,10 +42,6 @@ export type OfferModalData = TokenIdFactoryCreator<
     { nuggToBuyFrom: null; nuggToBuyFor: null },
     { nuggToBuyFrom: NuggId; nuggToBuyFor: NuggId }
 >;
-
-export interface MintModalData extends ModalDataBase {
-    modalType: ModalEnum.Mint;
-}
 
 export interface RotateOModalData extends ModalDataBase {
     modalType: ModalEnum.RotateO;
@@ -87,7 +82,6 @@ export type ModalType =
     | OfferModalData
     | QRCodeModalData
     | LoanInputModalData
-    | MintModalData
     | ClaimModalData
     | SellModalData
     | RotateOModalData

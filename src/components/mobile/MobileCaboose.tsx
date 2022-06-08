@@ -106,7 +106,7 @@ export default ({
     const swap = React.useMemo(() => {
         return token?.activeSwap;
     }, [token?.activeSwap]);
-    const myNuggs = client.live.myNuggs();
+    const myNuggs = client.user.useNuggs();
 
     const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<NuggId>();
     const [selectedMyNugg, setSelectedMyNugg] = React.useState<NuggId>();

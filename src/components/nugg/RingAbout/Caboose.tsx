@@ -110,7 +110,7 @@ export default ({
         return token?.activeSwap;
     }, [token?.activeSwap]);
 
-    const myNuggs = client.live.myNuggs();
+    const myNuggs = client.user.useNuggs();
 
     const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<TryoutData>();
     const [selectedMyNugg, setSelectedMyNugg] = React.useState<FormatedMyNuggsData>();

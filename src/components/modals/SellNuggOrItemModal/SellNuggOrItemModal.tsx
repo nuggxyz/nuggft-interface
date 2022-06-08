@@ -23,7 +23,7 @@ import styles from './SellNuggOrItemModal.styles';
 const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
     const [amount, setAmount] = useState('');
     const address = web3.hook.usePriorityAccount();
-    const stake = client.static.stake();
+    const stake = client.stake.useEps();
     const nuggft = useNuggftV1();
 
     const provider = web3.hook.usePriorityProvider();
@@ -59,7 +59,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
                         rightToggles={[
                             data.tokenId.isNuggId() ? (
                                 <Button
-                                    onClick={() => setAmount(stake.eps.decimal.toPrecision(5))}
+                                    onClick={() => setAmount(stake.decimal.toPrecision(5))}
                                     label={t`Min`}
                                     size="small"
                                     buttonStyle={styles.minButton}

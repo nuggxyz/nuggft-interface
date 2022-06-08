@@ -10,7 +10,6 @@ import { ModalEnum } from '@src/interfaces/modals';
 
 import LoanInputModal from './LoanInputModal/LoanInputModal';
 import LoanOrBurnModal from './LoanOrBurnModal/LoanOrBurnModal';
-import MintModal from './MintModal/MintModal';
 import OfferModal from './OfferModal/OfferModal';
 import QrCodeModal from './QrCodeModal/QrCodeModal';
 import SellNuggOrItemModal from './SellNuggOrItemModal/SellNuggOrItemModal';
@@ -24,9 +23,6 @@ export const ModalSwitch = () => {
             return <OfferModal data={data} />;
         case ModalEnum.Sell:
             return <SellNuggOrItemModal data={data} />;
-
-        case ModalEnum.Mint:
-            return <MintModal data={data} />;
 
         case ModalEnum.QrCode:
             return <QrCodeModal data={data} />;

@@ -3,8 +3,6 @@ import useMountLogger from '@src/hooks/useMountLogger';
 import useRpcUpdater from './update/useRpcUpdater';
 import useMediaUpdater from './update/useMediaUpdater';
 import useBackgroundUpdater from './update/useBackgroundUpdater';
-import useLiveProtocol from './subscriptions/useLiveProtocol';
-import useLiveUser from './subscriptions/useLiveUser';
 import useSwapUpdater from './update/useSwapUpdater';
 import useLiveGraphHealth from './subscriptions/useLiveGraphHealth';
 import useDimensionsUpdater from './update/useDimensionsUpdater';
@@ -14,8 +12,12 @@ import { useUpdateTransactionOnEmit } from './transactions';
 import { useEpochUpdater } from './epoch';
 import useOnRouteChange from './hooks/useOnRouteChange';
 import { usePollV2 } from './v2';
+import { useUserUpdater } from './user';
+import { useBlockUpdater } from './block';
 
 export default () => {
+    useBlockUpdater();
+
     useDimensionsUpdater();
 
     useMediaUpdater();
@@ -24,9 +26,7 @@ export default () => {
 
     useRpcUpdater();
 
-    useLiveProtocol();
-
-    useLiveUser();
+    useUserUpdater();
 
     useLiveGraphHealth();
 

@@ -23,10 +23,10 @@ const HomeTab: FunctionComponent<Props> = () => {
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
 
-    const stake__eps = client.live.stake.eps();
-    const nuggs = client.live.myNuggs();
-    const loans = client.live.myLoans();
-    const unclaimedOffers = client.live.myUnclaimedOffers();
+    const stake__eps = client.stake.useEps();
+    const nuggs = client.user.useNuggs();
+    const loans = client.user.useLoans();
+    const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
 
     const balancePair = client.usd.useUsdPair(stake__eps && stake__eps.multiply(nuggs.length));
 

@@ -29,6 +29,10 @@ fragment v2Epoch on Epoch {
 
 query getV2Active {
     protocol(id: "0x42069") {
+        totalNuggs
+        featureTotals
+        nuggftStakedEth
+        nuggftStakedShares
         nextEpoch {
             ...v2Epoch
         }

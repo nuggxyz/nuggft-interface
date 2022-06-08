@@ -15,9 +15,9 @@ import { buildTokenIdFactory } from '@src/prototypes';
 import { ModalEnum } from '@src/interfaces/modals';
 
 const MyNuggItemListMobile: FC<unknown> = () => {
-    const nuggs = client.live.myNuggs();
+    const nuggs = client.user.useNuggs();
 
-    const claims = client.live.myUnclaimedOffers();
+    const claims = client.user.useUnclaimedOffersFilteredByEpoch();
 
     return (
         <div

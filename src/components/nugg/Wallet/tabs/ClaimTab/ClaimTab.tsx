@@ -15,7 +15,7 @@ const ClaimTab: FunctionComponent<Props> = () => {
     const sender = web3.hook.usePriorityAccount();
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
-    const unclaimedOffers = client.live.myUnclaimedOffers();
+    const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
 
     return sender && chainId && provider ? (
         <div style={styles.container}>

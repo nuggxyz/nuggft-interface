@@ -3,7 +3,6 @@ import { State } from 'zustand';
 
 import { Chain, Connector } from '@src/web3/core/interfaces';
 import { SupportedLocale } from '@src/lib/i18n/locales';
-import { NuggftV1 } from '@src/typechain/NuggftV1';
 
 import { SwapRoutes } from './router';
 
@@ -160,34 +159,10 @@ export type SearchFilter = {
 
 export type ClientStateUpdate = {
     manualPriority?: Connector;
-    stake?: {
-        staked: BigNumber;
-        shares: BigNumber;
-        eps: EthInt;
-    };
-    featureTotals?: FixedLengthArray<number, 8, number[]>;
-    epoch?: {
-        startblock: number;
-        endblock: number;
-        id: number;
-        status: 'OVER' | 'ACTIVE' | 'PENDING';
-    };
-    nextEpoch?: {
-        startblock: number;
-        endblock: number;
-        id: number;
-        status: 'OVER' | 'ACTIVE' | 'PENDING';
-    };
-    totalNuggs?: number;
+
     error?: Error;
     activating?: boolean;
-    myNuggs?: MyNuggsData[];
     editingNugg?: NuggId | null;
-    myUnclaimedOffers?: ClientState['myUnclaimedOffers'];
-
-    myUnclaimedNuggOffers: ClientState['myUnclaimedNuggOffers'];
-    myUnclaimedItemOffers: ClientState['myUnclaimedItemOffers'];
-    myLoans?: LoanData[];
 };
 
 export type SearchResults = BasicData[];
@@ -254,24 +229,9 @@ export enum Lifecycle {
 export type LiveToken = LiveNugg | LiveItem;
 
 export interface Actions {
-    updateBlocknum: (blocknum: number, chainId: Chain, startup?: boolean) => void;
-    updateProtocol: (stateUpdate: ClientStateUpdate) => void;
-    updateProtocolSimple: (
-        stateUpdate: Pick<ClientStateUpdate, 'epoch' | 'stake' | 'totalNuggs' | 'featureTotals'>,
-    ) => void;
-
     setLastSwap: (tokenId: TokenId | undefined) => void;
     setActiveSearch: (input: SearchResults | undefined) => void;
     updateOffers: (tokenId: TokenId, offers: OfferData[]) => void;
-    removeLoan: (tokenId: NuggId) => void;
-    removeNuggClaim: (tokenId: NuggId) => void;
-    removeItemClaimIfMine: (buyingNuggId: NuggId, itemId: ItemId) => void;
-    addNuggClaim: (update: UnclaimedOffer) => void;
-    addItemClaim: (update: UnclaimedOffer) => void;
-    addLoan: (update: LoanData) => void;
-    updateLoan: (update: LoanData) => void;
-    addNugg: (update: MyNuggsData) => void;
-    removeNugg: (tokenId: NuggId) => void;
     setPageIsLoaded: () => void;
     updateToken: (tokenId: TokenId, data: LiveToken) => void;
     updateLocale: (locale: SupportedLocale | undefined) => void;
@@ -282,24 +242,13 @@ export interface Actions {
     updateUserDarkMode: (value: Theme | undefined) => void;
     updateMediaDarkMode: (value: Theme | undefined) => void;
     updateDimensions: (window: Dimensions) => void;
-    addToSubscritpionQueue: (update: TokenId) => void;
 }
 
 export interface ClientState {
-    subscriptionQueue: Array<TokenId>;
-    nuggft: NuggftV1 | undefined;
-    manualPriority: Connector | undefined;
     route: string | undefined;
     lastSwap: SwapRoutes | undefined;
     pageIsLoaded: boolean;
-    stake: StakeData | undefined;
-    epoch: EpochData | undefined;
-    nextEpoch: EpochData | undefined;
     liveOffers: Dictionary<OfferData[]>;
-    myNuggs: MyNuggsData[];
-    myUnclaimedNuggOffers: IsolateNuggIdFactory<UnclaimedOffer>[];
-    myUnclaimedItemOffers: IsolateItemIdFactory<UnclaimedOffer>[];
-    myUnclaimedOffers: UnclaimedOffer[];
     editingNugg: NuggId | undefined;
     myLoans: LoanData[];
     myRecents: Set<string>;
@@ -312,8 +261,6 @@ export interface ClientState {
     started: boolean;
     activeSearch: SearchResults;
     dimentions: Dimensions;
-    totalNuggs: number;
-    featureTotals: FixedLengthArray<number, 8, number[]>;
 }
 
 export interface FullClientState extends ClientState, State, Actions {}
