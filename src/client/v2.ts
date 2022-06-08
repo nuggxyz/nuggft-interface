@@ -90,6 +90,7 @@ const formatter = (
             leader: a.leader!.id as AddressString,
             swapId: Number(splt[1]),
             top: BigNumber.from(a.top),
+            // nuggs that are about to be mining will have
             commitBlock: Number(a.commitBlock),
             tokenId,
             updatedAtBlock: block,

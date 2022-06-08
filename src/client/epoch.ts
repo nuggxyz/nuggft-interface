@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 import create from 'zustand';
-import { combine } from 'zustand/middleware';
+import { combine, subscribeWithSelector } from 'zustand/middleware';
 import React from 'react';
 
 import web3 from '@src/web3';
@@ -73,22 +73,24 @@ const EMPTY = {
 };
 
 const store = create(
-    combine({} as Record<number, Epoch> & Record<'active', number>, (set) => {
-        const update = (blocknum: number) => {
-            const epoch = web3.config.calculateEpochId(blocknum);
-            const active = calculateStaticData(epoch, blocknum);
+    subscribeWithSelector(
+        combine({} as Record<number, Epoch> & Record<'active', number>, (set) => {
+            const update = (blocknum: number) => {
+                const epoch = web3.config.calculateEpochId(blocknum);
+                const active = calculateStaticData(epoch, blocknum);
 
-            // @ts-ignore
-            set((draft) => {
-                draft.active = epoch;
-                draft[epoch] = active;
-                draft[epoch + 1] = calculateStaticData(epoch + 1, blocknum);
-                draft[epoch - 1] = calculateStaticData(epoch - 1, blocknum);
-            });
-        };
+                // @ts-ignore
+                set((draft) => {
+                    draft.active = epoch;
+                    draft[epoch] = active;
+                    draft[epoch + 1] = calculateStaticData(epoch + 1, blocknum);
+                    draft[epoch - 1] = calculateStaticData(epoch - 1, blocknum);
+                });
+            };
 
-        return { update };
-    }),
+            return { update };
+        }),
+    ),
 );
 
 const useEpoch = (epochId: number | null | undefined, blocknum?: number) => {
@@ -127,6 +129,29 @@ export const useEpochUpdater = () => {
     return null;
 };
 
+const useCallbackOnEpochChange = (
+    callback: ((currEpoch?: number, prevEpoch?: number) => Promise<unknown>) | (() => unknown),
+) => {
+    React.useEffect(() => {
+        const a = store.subscribe(
+            (data) => data.active,
+            (...args) => {
+                setTimeout(() => {
+                    callback(...args);
+                }, 20000);
+            },
+        );
+
+        return a;
+    }, [callback]);
+
+    React.useEffect(() => {
+        callback();
+    }, []);
+
+    return null;
+};
+
 export default {
     useEpoch,
     active: {
@@ -146,6 +171,6 @@ export default {
         store(
             React.useCallback((state) => (epochId ? state[epochId].minutes : undefined), [epochId]),
         ),
-
+    useCallbackOnEpochChange,
     ...store,
 };

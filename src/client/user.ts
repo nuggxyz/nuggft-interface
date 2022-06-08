@@ -205,13 +205,19 @@ export const useUserUpdater = () => {
     const fetch = store((draft) => draft.fetch);
     const wipe = store((draft) => draft.wipe);
 
-    React.useEffect(() => {
+    const callback = React.useCallback(() => {
         if (address) {
             void fetch(address as AddressString, apolloClient);
         } else {
             void wipe();
         }
     }, [address, fetch, wipe]);
+
+    React.useEffect(() => {
+        callback();
+    }, [callback, address]);
+
+    epoch.useCallbackOnEpochChange(callback);
 };
 
 const useUnclaimedOffersFilteredByEpoch = () => {

@@ -227,7 +227,7 @@ export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
                         {currencyData?.user}
                     </Text>
                 </div>
-                {swap ? (
+                {swap && swap.commitBlock !== 0 ? (
                     <div
                         style={{
                             position: 'absolute',
@@ -294,8 +294,8 @@ export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
                                 color: lib.colors.primaryColor,
                                 position: 'relative',
                             }}
-                            text="waiting on bid"
-                            leftDotColor={lib.colors.nuggGold}
+                            text={swap ? 'about to start' : 'waiting on bid'}
+                            leftDotColor={swap ? lib.colors.green : lib.colors.nuggGold}
                         />
                     </div>
                 )}

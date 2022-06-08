@@ -24,7 +24,7 @@ export enum ConnectorEnum {
     Rpc = 'rpc',
 }
 
-export const DEFAULT_CHAIN = Chain.RINKEBY;
+export const DEFAULT_CHAIN = Chain.ROPSTEN;
 
 export const NETWORK_HEALTH_CHECK_MS = 15 * 1000;
 export const DEFAULT_MS_BEFORE_WARNING = 90 * 1000;
@@ -69,11 +69,11 @@ export const CONTRACTS = {
         MintOffset: 1000000,
     },
     [Chain.ROPSTEN]: {
-        NuggftV1: '0x420690c1b1519a32fa36768dc2cefe128160a9b7',
-        xNuggftV1: ADDRESS_ZERO,
-        DotnuggV1: '0x420690542c8DeDDe5aF93684897CE3CA7422FE57',
-        Genesis: 333,
-        Interval: 32,
+        NuggftV1: '0x69420000e30fb9095ec2a254765ff919609c1875',
+        xNuggftV1: '0xd67f4462308e6c5c236b107e8d0b77da2c359cae',
+        DotnuggV1: '0xb0ac4a039fd789fe080c8477d8e004b67fc987f1',
+        Genesis: 12351104,
+        Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
     },

@@ -313,17 +313,20 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
         swap?.leader || '',
     );
 
+    const quick = client.v2.useSwap(tokenId);
+    const potential = client.v3.useSwap(tokenId);
+
     const msp = client.stake.useMsp();
 
     const swapCurrency = useUsdPair(
-        swap?.eth.gt(0)
-            ? swap.eth
-            : lifecycle === Lifecycle.Bunt ||
-              lifecycle === Lifecycle.Minors ||
-              lifecycle === Lifecycle.Formality
-            ? msp
-            : swap?.eth.gt(0)
-            ? swap.eth
+        quick
+            ? quick.top.gt(0)
+                ? quick.top
+                : msp
+            : potential
+            ? potential.min?.eth.gt(0)
+                ? potential.min?.eth
+                : msp
             : 0,
     );
 
