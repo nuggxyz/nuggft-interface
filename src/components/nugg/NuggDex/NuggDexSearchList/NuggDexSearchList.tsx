@@ -13,6 +13,8 @@ import {
     useGetAllNuggsSearchQuery,
 } from '@src/gql/types.generated';
 import useDimensions from '@src/client/hooks/useDimensions';
+import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
+import useToggle from '@src/hooks/useToggle';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -27,6 +29,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const target = client.live.searchFilter.target();
     const sort = client.live.searchFilter.sort();
     const viewing = client.live.searchFilter.viewing();
+    console.log(target);
     // const activeNuggs = client.live.activeSwaps();
     // const potentialNuggs = client.live.potentialSwaps();
 
@@ -142,9 +145,18 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         [epoch, all, sortAsc],
     );
 
+    const pendingToggle = useToggle(['nuggs', 'items'], ['nuggs', 'items']);
+
     const pendingEverything = useMemo(() => {
-        return [...all.potential];
-    }, [all.potential]);
+        return [
+            ...all.potential.filter(
+                (elem) =>
+                    (elem.isNuggId() && pendingToggle[0].includes('nuggs')) ||
+                    (elem.isItemId() && pendingToggle[0].includes('items')),
+            ),
+        ];
+    }, [all.potential, pendingToggle]);
+    console.log(pendingToggle[0].includes('nuggs'), pendingToggle[0]);
 
     const animatedStyle = useSpring({
         ...styles.nuggLinksContainer,
@@ -161,6 +173,9 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 ...(screenType === 'phone' && { width: '100%', height: '90%', marginTop: '2rem' }),
             }}
         >
+            <button type="submit" onClick={() => pendingToggle[1]('nuggs')}>
+                nugg
+            </button>
             <animated.div style={animatedStyle}>
                 <NuggLink type={SearchView.Search} disablePreview>
                     <NuggList
