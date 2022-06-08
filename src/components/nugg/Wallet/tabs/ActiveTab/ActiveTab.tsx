@@ -14,7 +14,6 @@ import lib from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import SimpleList from '@src/components/general/List/SimpleList';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
-import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
 
 import styles from './ActiveTab.styles';
 import SeeAllButton from './SeeAllButton';
@@ -29,7 +28,11 @@ export const ActiveRenderItem = ({
     onClick?: (arg: typeof tokenId) => void;
 }) => {
     const { gotoViewingNugg } = useViewingNugg();
-    const swap = client.swaps.useSwap(tokenId);
+    const token = client.live.token(tokenId);
+
+    const swap = React.useMemo(() => {
+        return token?.activeSwap;
+    }, [token?.activeSwap]);
     const swapValue = client.usd.useUsdPair(swap?.eth);
     return tokenId ? (
         <div
@@ -90,7 +93,7 @@ export default () => {
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
 
-    const swaps = useSortedSwapList();
+    const swaps = client.v2.useCoreSwapLists();
 
     const minutes = client.epoch.active.useMinutes();
 

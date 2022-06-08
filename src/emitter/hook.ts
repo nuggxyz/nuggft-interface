@@ -23,6 +23,25 @@ const useOn = (a: EmitEventsListCallback) => {
     return null;
 };
 
+// const useOn2 = <T>(
+//     event: T extends EmitEvents
+//         ? T['type'] extends infer R
+//             ? R extends EmitEventNames
+//                 ? R
+//                 : never
+//             : never
+//         : never,
+//     callback: (arg: T) => void,
+// ) => {
+//     useEffect(() => {
+//         const _emit = emitter.on2(event, callback);
+//         return () => {
+//             _emit.off();
+//         };
+//     }, [event, callback]);
+//     return null;
+// };
+
 // const usePipe = <T extends EmitEventsListCallback>(a: T['type']) => {
 //     const [pipe, setPipe] = React.useState<Parameters<T['callback']>[0]>();
 

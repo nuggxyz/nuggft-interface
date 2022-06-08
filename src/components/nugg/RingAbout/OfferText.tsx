@@ -18,7 +18,7 @@ import styles from './RingAbout.styles';
 
 const OfferText = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
-    const lifecycle = useLifecycle(token);
+    const lifecycle = useLifecycle(tokenId);
 
     const hasBids = client.live.offers(tokenId).length !== 0;
 
@@ -55,7 +55,7 @@ const OfferText = ({ tokenId }: { tokenId?: TokenId }) => {
 export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
     const nuggft = useNuggftV1();
     const token = client.live.token(tokenId);
-    const lifecycle = useLifecycle(token);
+    const lifecycle = useLifecycle(tokenId);
 
     const provider = web3.hook.usePriorityProvider();
 

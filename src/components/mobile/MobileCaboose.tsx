@@ -101,11 +101,13 @@ export default ({
     const address = web3.hook.usePriorityAccount();
     const epoch = client.epoch.active.useId();
     const { minutes } = client.epoch.useEpoch(epoch);
-    const swap = client.swaps.useSwap(tokenId);
+    const token = client.live.token(tokenId);
 
+    const swap = React.useMemo(() => {
+        return token?.activeSwap;
+    }, [token?.activeSwap]);
     const myNuggs = client.live.myNuggs();
 
-    const token = client.live.token(tokenId);
     const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<NuggId>();
     const [selectedMyNugg, setSelectedMyNugg] = React.useState<NuggId>();
     const [continued, setContinued] = React.useState<boolean>(false);

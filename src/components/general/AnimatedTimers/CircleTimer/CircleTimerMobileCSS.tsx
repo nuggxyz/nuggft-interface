@@ -10,7 +10,7 @@ type Props = {
     duration: number;
     remaining: number;
     blocktime: number;
-    staticColor: string;
+    staticColor: string | null;
     style?: CSSProperties;
     childrenContainerStyle?: CSSProperties;
     width: number;
@@ -31,9 +31,13 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     strokeWidth = 20,
     childrenContainerStyle,
     defaultColor,
-    staticColor,
+    staticColor: _staticColor,
     tokenId,
 }) => {
+    const staticColor = React.useMemo(() => {
+        return _staticColor ?? duration === remaining ? 'white' : null;
+    }, [_staticColor, remaining, duration]);
+
     const [trueRemaining, setTrueRemaining] = React.useState((1 + remaining) * 12);
     const [trueDuration, setTrueDuration] = React.useState(duration * 12);
 

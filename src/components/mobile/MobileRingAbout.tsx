@@ -3,13 +3,8 @@ import { animated } from '@react-spring/web';
 import { useNavigate } from 'react-router';
 
 import client from '@src/client';
-import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
 import lib from '@src/lib';
-import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
-import { Lifecycle } from '@src/client/interfaces';
-import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
-import useRemaining from '@src/client/hooks/useRemaining';
 
 import MobileOwnerBlock from './MobileOwnerBlock';
 
@@ -18,27 +13,15 @@ type Props = GodListRenderItemProps<TokenId, undefined, undefined>;
 const MobileRingAbout: FunctionComponent<Props> = ({ item: tokenId, visible }) => {
     const navigate = useNavigate();
 
-    const swap = client.swaps.useSwap(tokenId);
-
-    useLiveTokenPoll(!!visible, tokenId);
-
-    const lifecycle = useLifecycleEnhanced(visible ? swap : undefined);
-
-    const [, minutes] = useRemaining(swap?.epoch);
-
-    useLiveOffers(tokenId);
+    const swap = client.v2.useSwap(tokenId);
 
     const background = React.useMemo(() => {
         return {
-            ...((minutes ?? 0) <= 5 &&
-                lifecycle?.active && {
-                    background: lib.colors.gradient2Transparent,
-                }),
-            ...((swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) && {
+            ...(swap === undefined && {
                 background: lib.colors.gradient4Transparent,
             }),
         };
-    }, [swap?.endingEpoch, minutes, lifecycle?.active, lifecycle?.lifecycle]);
+    }, [swap]);
 
     return (
         <div

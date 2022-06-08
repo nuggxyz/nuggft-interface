@@ -11,6 +11,30 @@ const emitter = Object.freeze({
     emit: (event: string, payload: any) => eventEmitter.emit(event, payload),
 });
 
+// const on2 = <T, R>(
+//     event: T extends EmitEvents
+//         ? T['type'] extends infer R
+//             ? R extends EmitEventNames
+//                 ? R
+//                 : never
+//             : never
+//         : never,
+//     callback: (arg: R) => void,
+
+// const on2 = <T, R>(
+//     event: T extends EmitEvents
+//         ? T['type'] extends infer R
+//             ? R extends EmitEventNames
+//                 ? R
+//                 : never
+//             : never
+//         : never,
+//     callback: (arg: R) => void,
+// ): { off: () => void } => {
+//     void emitter.on(event, callback);
+//     return { off: () => emitter.off(event, callback) };
+// };
+
 const on = (input: Remap<EmitEventsListCallback>): { off: () => void } => {
     void emitter.on(input.type, input.callback);
     return { off: () => emitter.off(input.type, input.callback) };
@@ -19,6 +43,7 @@ const emit = (input: Remap<EmitEventsListPayload>) => emitter.emit(input.type, i
 
 const wrapper = {
     on,
+    // on2,
     emit,
     once: (input: Remap<EmitEventsListCallback>): { off: () => void } => {
         void emitter.once(input.type, input.callback);

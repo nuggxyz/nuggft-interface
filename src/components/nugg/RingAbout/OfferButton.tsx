@@ -27,7 +27,7 @@ export default ({
     const address = web3.hook.usePriorityAccount();
     const token = client.live.token(tokenId);
 
-    const lifecycle = useLifecycle(token);
+    const lifecycle = useLifecycle(tokenId);
 
     const nuggbookOpen = client.nuggbook.useGotoOpen();
 

@@ -26,7 +26,6 @@ import CurrencyToggler, {
 import { DualCurrencyInputWithIcon } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
 import packages from '@src/packages';
-import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 import CircleTimerMobileCSS2 from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimerMobileCSS2';
 import { calculateIncrementWithRemaining } from '@src/web3/config';
 import { useMemoizedAsyncState } from '@src/hooks/useAsyncState';
@@ -117,7 +116,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const network = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
-    const [leader] = useAggregatedOffers(data.tokenId);
 
     const peer = web3.hook.usePriorityPeer();
     const nuggft = useNuggftV1(network);
@@ -132,12 +130,18 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const blocknum = client.block.useBlock();
 
+    const v2 = client.v2.useSwap(data.tokenId);
+
     const increments = React.useMemo(() => {
-        const [inc] = calculateIncrementWithRemaining(data.endingEpoch, blocknum, !leader);
+        const [inc] = calculateIncrementWithRemaining(
+            data.endingEpoch,
+            blocknum,
+            !v2 || v2?.numOffers === 0,
+        );
 
         // const inc = check?.increment ? (check.increment.toNumber() - 10000) / 100 : 5;
         return [BigInt(inc), ...incrementers.filter((x) => x > inc).map((x) => BigInt(x))];
-    }, [data.endingEpoch, blocknum, leader]);
+    }, [data.endingEpoch, blocknum, v2]);
 
     const check = useMemoizedAsyncState(
         () => {
@@ -200,8 +204,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const epoch = client.epoch.active.useId();
 
     const noBids = React.useMemo(() => {
-        return data.tokenId.toRawIdNum() === epoch && leader === undefined;
-    }, [epoch, leader, data.tokenId]);
+        return data.tokenId.toRawIdNum() === epoch && (v2 === undefined || v2.numOffers === 0);
+    }, [epoch, v2, data.tokenId]);
 
     const minNextBid = React.useMemo(() => {
         if (!check?.nextUserOffer) return 0;
@@ -450,9 +454,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     size="larger"
                     textStyle={{ marginTop: 10, fontWeight: lib.layout.fontWeight.thicc }}
                 >
-                    {leader?.incrementX64 && !leader.incrementX64.isZero()
-                        ? t`last bid`
-                        : t`asking price`}
+                    {noBids ? t`asking price` : t`last bid`}
                 </Text>
 
                 <CurrencyText
@@ -726,7 +728,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             data.endingEpoch,
             check?.mustOfferOnSeller,
             data.nuggToBuyFrom,
-            leader?.incrementX64,
             minNextBidPair,
             shifter,
             noBids,

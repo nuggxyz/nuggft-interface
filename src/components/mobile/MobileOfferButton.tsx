@@ -20,9 +20,12 @@ export default ({
     inOverlay?: boolean;
 }) => {
     const address = web3.hook.usePriorityAccount();
-    const swap = client.swaps.useSwap(tokenId);
+    const token = client.live.token(tokenId);
 
-    const lifecycle = useLifecycleEnhanced(swap);
+    const swap = React.useMemo(() => {
+        return token?.activeSwap;
+    }, [token?.activeSwap]);
+    const lifecycle = useLifecycleEnhanced(tokenId);
     const nuggbookOpen = client.nuggbook.useGotoOpen();
 
     const openModal = client.modal.useOpenModal();

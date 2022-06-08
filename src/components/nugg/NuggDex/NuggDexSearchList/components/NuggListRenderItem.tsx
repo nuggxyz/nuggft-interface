@@ -12,7 +12,11 @@ import styles from './NuggDexComponents.styles';
 const NuggListRenderItemSwap = ({
     item: tokenId,
 }: GodListRenderItemProps<TokenId, undefined, undefined>) => {
-    const swap = client.swaps.useSwap(tokenId);
+    const token = client.live.token(tokenId);
+
+    const swap = React.useMemo(() => {
+        return token?.activeSwap;
+    }, [token?.activeSwap]);
     const preference = client.usd.useUsdPair(swap?.eth);
     return swap && tokenId ? (
         <div

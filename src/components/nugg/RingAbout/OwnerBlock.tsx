@@ -35,9 +35,11 @@ const RenderItem: FC<ListRenderItemProps<LiveNuggItem, undefined, LiveNuggItem>>
 const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
 
-    const swap = client.swaps.useSwap(tokenId);
+    const swap = React.useMemo(() => {
+        return token?.activeSwap;
+    }, [token?.activeSwap]);
 
-    const lifecycle = useLifecycle(swap);
+    const lifecycle = useLifecycle(tokenId);
 
     const leader = React.useMemo(() => {
         return { user: swap?.leader, eth: swap?.eth };

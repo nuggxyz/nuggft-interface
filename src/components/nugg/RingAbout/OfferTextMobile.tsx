@@ -21,8 +21,10 @@ import styles from './RingAbout.styles';
 const OfferTextMobile = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
 
-    const swap = client.swaps.useSwap(tokenId);
-    const lifecycle = useLifecycleEnhanced(swap);
+    const swap = React.useMemo(() => {
+        return token?.activeSwap;
+    }, [token?.activeSwap]);
+    const lifecycle = useLifecycleEnhanced(tokenId);
 
     const { isPhone } = useDimensions();
 
@@ -80,11 +82,14 @@ const OfferTextMobile = ({ tokenId }: { tokenId?: TokenId }) => {
 
 export const BuntOfferTextMobile = ({ tokenId }: { tokenId: TokenId }) => {
     const nuggft = useNuggftV1();
-    const token = client.swaps.useSwap(tokenId);
-    const lifecycle = useLifecycleEnhanced(token);
+    const token = client.live.token(tokenId);
+    const lifecycle = useLifecycleEnhanced(tokenId);
 
     const provider = web3.hook.usePriorityProvider();
-    const swap = client.swaps.useSwap(tokenId);
+
+    const swap = React.useMemo(() => {
+        return token?.activeSwap;
+    }, [token?.activeSwap]);
 
     const vfo = useAsyncState(() => {
         if (token && provider && tokenId && lifecycle?.lifecycle === Lifecycle.Bunt) {

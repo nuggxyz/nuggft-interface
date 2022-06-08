@@ -22,7 +22,7 @@ import { RevertError } from '@src/lib/errors';
 
 interface EmitEventBase {
     type: EmitEventNames;
-    callback: (arg: Omit<this, 'callback'>) => void;
+    callback: (arg: Remap<Omit<this, 'callback'>>) => void;
     waitFor?: EmitEventNames;
 }
 
@@ -281,3 +281,34 @@ export type EmitEventsListCallback =
     | BuildCallback<EmitWorkerIncomingRpcBlock>
     | BuildCallback<EmitRequestCloseMobileNavbar>
     | BuildCallback<EmitWorkerIncomingEtherscanPrice>;
+
+export type EmitEvents =
+    | EmitTransactionReceipt
+    | EmitTransactionResponse
+    | EmitPotentialTransactionResponse
+    | EmitPotentialTransactionReceipt
+    | EmitLocalRpcMint
+    | EmitLocalRpcMint
+    | EmitLocalRpcOffer
+    | EmitLocalRpcStake
+    | EmitLocalRpcClaim
+    | EmitLocalRpcClaimItem
+    | EmitLocalRpcLoan
+    | EmitLocalRpcLiquidate
+    | EmitLocalRpcRebalance
+    | EmitLocalRpcTransfer
+    | EmitTransactionSent
+    | EmitKeyboardClosed
+    | EmitLocalRpcRotate
+    | EmitHealthCheck
+    | EmitWorkerIsRunning
+    | EmitWorkerIncomingEtherscanPrice
+    | EmitDevLog
+    | EmitRouteChange
+    | EmitRequestCloseMobileNavbar
+    | EmitRequestTokenSvgQuery
+    | EmitWorkerEventBase
+    | EmitModalOpen
+    | EmitReturnTokenSvgQuery
+    | EmitWorkerIncomingRpcEvent
+    | EmitWorkerIncomingRpcBlock;

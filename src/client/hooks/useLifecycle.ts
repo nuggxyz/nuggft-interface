@@ -1,16 +1,17 @@
 import React from 'react';
 
 import client from '@src/client';
-import { Lifecycle, LiveToken } from '@src/client/interfaces';
+import { Lifecycle } from '@src/client/interfaces';
 import { Address } from '@src/classes/Address';
-import { SwapData } from '@src/client/swaps';
 import web3 from '@src/web3';
 
-export default (token?: LiveToken | Omit<SwapData, 'offers'>): Lifecycle | undefined => {
+export default (tokenId?: TokenId): Lifecycle | undefined => {
     const epoch = client.epoch.active.useId();
     const warning = client.epoch.active.useWarning();
 
     const address = web3.hook.usePriorityAccount();
+
+    const token = client.live.token(tokenId);
 
     const [lifecycle, setLifecycle] = React.useState<Lifecycle>();
 

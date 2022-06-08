@@ -2,8 +2,8 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
 import { SwapdataFragment, ItemswapdataFragment } from '@src/gql/types.generated';
 import { buildTokenIdFactory } from '@src/prototypes';
-import { SwapData } from '@src/client/swaps';
 import web3 from '@src/web3';
+import { SwapData } from '@src/client/interfaces';
 
 export const formatSwapData = <T extends TokenId>(
     z: SwapdataFragment | ItemswapdataFragment,

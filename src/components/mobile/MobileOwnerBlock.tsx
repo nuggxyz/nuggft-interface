@@ -3,109 +3,99 @@ import React from 'react';
 import { t, plural } from '@lingui/macro';
 
 import client from '@src/client';
-import { Lifecycle } from '@src/client/interfaces';
 import lib from '@src/lib';
-import TheRing from '@src/components/nugg/TheRing/TheRing';
-import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
+import { useRemainingBlocks } from '@src/components/nugg/TheRing/TheRing';
 import Text from '@src/components/general/Texts/Text/Text';
 import { EthInt } from '@src/classes/Fraction';
 import { useUsdPair } from '@src/client/usd';
-import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 import web3 from '@src/web3';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import Label from '@src/components/general/Label/Label';
+import { MIN_SALE_PRICE } from '@src/web3/constants';
+import TheRingLight from '@src/components/nugg/TheRing/TheRingLight';
 
 export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
-    ({ tokenId, visible }) => {
-        const token = client.live.token(tokenId);
-
-        const swap = client.swaps.useSwap(tokenId);
-
-        const lifecycle = useLifecycleEnhanced(visible ? swap : undefined);
-
-        const [leader, ...offers] = useAggregatedOffers(visible ? tokenId : undefined);
+    ({ tokenId }) => {
+        const swap = client.v2.useSwap(tokenId);
+        const potential = client.v3.useSwap(tokenId);
 
         const provider = web3.hook.usePriorityProvider();
 
-        const { minutes, seconds } = client.epoch.useEpoch(swap?.epoch?.id);
+        const blocknum = client.block.useBlock();
 
-        const trueSeconds = useRemainingTrueSeconds(seconds ?? 0);
-
+        const [remaining] = useRemainingBlocks(blocknum, swap?.commitBlock, swap?.endingEpoch);
+        const trueSeconds = useRemainingTrueSeconds(remaining * 12);
+        const minutes = Math.floor((remaining * 12) / 60);
         const leaderEns = web3.hook.usePriorityAnyENSName(
-            swap && swap.type === 'item' ? 'nugg' : provider,
-            leader?.account || '',
+            tokenId?.isItemId() ? 'nugg' : provider,
+            swap?.leader || potential?.owner || '',
         );
 
         const dynamicTextColor = React.useMemo(() => {
-            if (swap?.endingEpoch === null || lifecycle?.lifecycle === Lifecycle.Egg) {
+            if (swap === null) {
                 return lib.colors.primaryColor;
             }
             return lib.colors.white;
-        }, [swap, lifecycle]);
+        }, [swap]);
 
-        const minTryoutCurrency = useUsdPair(token?.isItem() ? token?.tryout.min?.eth : undefined);
+        const minTryoutCurrency = useUsdPair(
+            swap?.isItem()
+                ? swap.top
+                : potential
+                ? potential.min?.eth || MIN_SALE_PRICE
+                : MIN_SALE_PRICE,
+        );
 
         const msp = client.stake.useMsp();
 
         const leaderCurrency = useUsdPair(
-            leader?.eth.gt(0)
-                ? leader.eth
-                : lifecycle?.lifecycle === Lifecycle.Bunt ||
-                  lifecycle?.lifecycle === Lifecycle.Minors
-                ? msp
+            swap
+                ? swap.top.gt(0)
+                    ? swap.top
+                    : msp
+                : potential
+                ? potential.min?.eth.gt(0)
+                    ? potential.min?.eth
+                    : msp
                 : 0,
         );
 
         const currencyData = React.useMemo(() => {
-            if (
-                leader &&
-                (lifecycle?.lifecycle === Lifecycle.Bench ||
-                    lifecycle?.lifecycle === Lifecycle.Minors)
-            ) {
+            if (potential && tokenId?.isNuggId() && !swap) {
                 return {
                     currency: leaderCurrency,
                     text: `seller`,
-                    user: leaderEns || leader?.account || '',
+                    user: leaderEns || potential.owner || '',
                 };
             }
-            if (
-                lifecycle?.lifecycle === Lifecycle.Tryout &&
-                token &&
-                token.isItem() &&
-                token.tryout.min
-            ) {
+            if (potential && potential.isItem()) {
                 return {
                     currency: minTryoutCurrency,
                     text: t`being sold by`,
-                    user: token.tryout.count === 1 ? swap?.leader : `${token.tryout.count} Nuggs`,
+                    user: plural(potential.count, {
+                        1: '# nugg',
+                        other: '# nuggs',
+                    }),
                 };
             }
+            if (!swap) return undefined;
             return {
                 currency: leaderCurrency,
-                text: new EthInt(leader?.eth || 0).number
-                    ? offers.length > 1
-                        ? t`leader of ${offers.length} bidders`
+                text: new EthInt(swap?.top || potential?.min?.eth || 0).number
+                    ? (swap?.numOffers || 0) > 1
+                        ? t`leader of ${swap?.numOffers || 0} bidders`
                         : t`leader`
                     : t`live`,
                 subtext:
-                    offers.length !== 0 &&
-                    plural(offers.length, {
+                    (swap?.numOffers || 0) !== 0 &&
+                    plural(swap?.numOffers || 0, {
                         1: '# other bidder',
                         other: '# other bidders',
                     }),
-                user: leaderEns || leader?.account || t`minting`,
+                user: leaderEns || swap.leader || t`minting`,
             };
-        }, [
-            leaderCurrency,
-            minTryoutCurrency,
-            offers.length,
-            leaderEns,
-            leader,
-            lifecycle?.lifecycle,
-            token,
-            swap?.leader,
-        ]);
+        }, [leaderCurrency, minTryoutCurrency, leaderEns, swap, potential, tokenId]);
 
         return (
             <div
@@ -133,7 +123,7 @@ export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
                         marginTop: -15,
                     }}
                 >
-                    <TheRing
+                    <TheRingLight
                         circleWidth={935}
                         manualTokenId={tokenId}
                         disableHover
@@ -195,7 +185,7 @@ export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
                         }}
                         image="eth"
                         stopAnimationOnStart
-                        value={currencyData.currency}
+                        value={currencyData?.currency || 0}
                         decimals={3}
                         loadingOnZero
                         unitStyle={{
@@ -225,7 +215,7 @@ export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
                     }}
                 >
                     <Text textStyle={{ fontSize: '13px', color: lib.colors.primaryColor }}>
-                        {currencyData.text}
+                        {currencyData?.text}
                     </Text>
                     <Text
                         textStyle={{
@@ -234,10 +224,10 @@ export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
                             fontWeight: lib.layout.fontWeight.semibold,
                         }}
                     >
-                        {currencyData.user}
+                        {currencyData?.user}
                     </Text>
                 </div>
-                {lifecycle?.active ? (
+                {swap ? (
                     <div
                         style={{
                             position: 'absolute',
@@ -304,8 +294,8 @@ export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
                                 color: lib.colors.primaryColor,
                                 position: 'relative',
                             }}
-                            text={lifecycle?.label ?? ''}
-                            leftDotColor={lifecycle?.color}
+                            text="waiting on bid"
+                            leftDotColor={lib.colors.nuggGold}
                         />
                     </div>
                 )}

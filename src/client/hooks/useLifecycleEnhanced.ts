@@ -2,24 +2,29 @@ import React from 'react';
 
 import lib from '@src/lib';
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import { Lifecycle, LiveToken } from '@src/client/interfaces';
-import { SwapData } from '@src/client/swaps';
+import { Lifecycle } from '@src/client/interfaces';
 
 import client from '..';
 
-export default (swap: Omit<SwapData, 'offers'> | undefined, sup?: LiveToken) => {
-    const lifecycle = useLifecycle(sup || swap);
+export default (tokenId?: TokenId) => {
+    const lifecycle = useLifecycle(tokenId);
+
+    const token = client.live.token(tokenId);
 
     const epoch = client.epoch.active.useId();
     const blocknum = client.block.useBlock();
 
     return React.useMemo(() => {
-        if (!epoch || !blocknum || !swap) return undefined;
+        if (!epoch || !blocknum) return undefined;
 
         switch (lifecycle) {
             case Lifecycle.Bat:
             case Lifecycle.Bunt:
-                if (swap.epoch && swap.epoch.endblock - blocknum < (60 / 12) * 10)
+                if (
+                    token?.activeSwap &&
+                    token.activeSwap.epoch &&
+                    token.activeSwap.epoch.endblock - blocknum < (60 / 12) * 10
+                )
                     return {
                         color: lib.colors.red,
                         label: 'auction ending soon',
@@ -69,5 +74,5 @@ export default (swap: Omit<SwapData, 'offers'> | undefined, sup?: LiveToken) => 
             default:
                 return undefined;
         }
-    }, [swap, epoch, blocknum, lifecycle]);
+    }, [token, epoch, blocknum, lifecycle]);
 };

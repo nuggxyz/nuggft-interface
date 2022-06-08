@@ -10,13 +10,11 @@ import web3 from '@src/web3';
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
-import { Lifecycle } from '@src/client/interfaces';
+import { Lifecycle, OfferData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { Chain } from '@src/web3/core/interfaces';
 import useDistribution from '@src/client/hooks/useDistribution';
 import useDimensions from '@src/client/hooks/useDimensions';
-import { SwapData } from '@src/client/swaps';
-import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 
@@ -28,12 +26,13 @@ type OfferExtraData = {
     type?: 'item' | 'nugg';
 };
 
-const OfferRenderItem: FC<
-    ListRenderItemProps<SwapData['offers'][number], OfferExtraData, undefined>
-> = ({ item, extraData }) => {
+const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefined>> = ({
+    item,
+    extraData,
+}) => {
     const leader = web3.hook.usePriorityAnyENSName(
         extraData.type === 'nugg' ? 'nugg' : extraData.provider,
-        item?.account || '',
+        item?.user || '',
     );
 
     const amount = client.usd.useUsdPair(item.eth);
@@ -69,11 +68,14 @@ export default ({
     sellingNuggId?: NuggId;
     onlyLeader?: boolean;
 }) => {
-    const swap = client.swaps.useSwap(tokenId);
-
-    const [leader, ...others] = useAggregatedOffers(tokenId);
     const token = client.live.token(tokenId);
-    const lifecycle = useLifecycle(token);
+
+    const swap = React.useMemo(() => {
+        return token?.activeSwap;
+    }, [token?.activeSwap]);
+
+    const [leader, ...others] = client.live.offers(tokenId);
+    const lifecycle = useLifecycle(tokenId);
     const type = client.live.lastSwap.type();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();

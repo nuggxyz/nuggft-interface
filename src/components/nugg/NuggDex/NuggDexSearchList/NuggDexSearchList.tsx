@@ -13,7 +13,6 @@ import {
     useGetAllNuggsSearchQuery,
 } from '@src/gql/types.generated';
 import useDimensions from '@src/client/hooks/useDimensions';
-import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -125,11 +124,11 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
         }
     }, [sort, target]);
 
-    const all = useSortedSwapList();
+    const all = client.v2.useSwapList();
 
     const liveActiveEverything = useMemo(
         () =>
-            [...all.current, ...all.next].reduce((acc: TokenId[], curr) => {
+            all.reduce((acc: TokenId[], curr) => {
                 let tmp: TokenId[] = acc;
                 if (epoch && +curr.toRawId() <= +epoch) {
                     if (sortAsc[SearchView.OnSale]) {
@@ -142,10 +141,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
             }, []),
         [epoch, all, sortAsc],
     );
-
-    const recentEverything = useMemo(() => {
-        return [...all.recent];
-    }, [all.recent]);
 
     const animatedStyle = useSpring({
         ...styles.nuggLinksContainer,
@@ -176,9 +171,10 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         cardType="all"
                     />
                 </NuggLink>
+                {/* TODO -- replace */}
                 <NuggLink
                     type={SearchView.Recents}
-                    previewNuggs={recentEverything}
+                    previewNuggs={[]}
                     style={{
                         position: 'absolute',
                         top: 0,
@@ -189,7 +185,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         interval={INFINITE_INTERVAL}
                         animationToggle={viewing === SearchView.Recents}
                         style={styles.nuggListEnter}
-                        tokenIds={recentEverything}
+                        tokenIds={[]}
                         type={SearchView.Recents}
                         cardType="recent"
                     />

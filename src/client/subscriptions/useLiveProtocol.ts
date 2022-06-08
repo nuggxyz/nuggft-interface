@@ -4,45 +4,37 @@ import React from 'react';
 import useDebounce from '@src/hooks/useDebounce';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import client from '@src/client';
-import { SwapData } from '@src/client/swaps';
 import { useLiveProtocolSubscription, LiveProtocolFragment } from '@src/gql/types.generated';
-import { formatSwapData } from '@src/client/formatters/formatSwapData';
 import stake from '@src/client/stake';
 
-const mergeUnique = <T extends SwapData>(arr: T[]) => {
-    let len = arr.length;
+// const mergeUnique = <T extends SwapData>(arr: T[]) => {
+//     let len = arr.length;
 
-    let tmp: number;
-    const array3: T[] = [];
-    const array5: string[] = [];
+//     let tmp: number;
+//     const array3: T[] = [];
+//     const array5: string[] = [];
 
-    while (len--) {
-        const itm = arr[len];
-        // eslint-disable-next-line no-cond-assign
-        if ((tmp = array5.indexOf(itm.tokenId)) === -1) {
-            array3.unshift(itm);
-            array5.unshift(itm.tokenId);
-        } else if (+array3[tmp].eth < +itm.eth) {
-            array3[tmp] = itm;
-            array5[tmp] = itm.tokenId;
-        }
-    }
+//     while (len--) {
+//         const itm = arr[len];
+//         // eslint-disable-next-line no-cond-assign
+//         if ((tmp = array5.indexOf(itm.tokenId)) === -1) {
+//             array3.unshift(itm);
+//             array5.unshift(itm.tokenId);
+//         } else if (+array3[tmp].eth < +itm.eth) {
+//             array3[tmp] = itm;
+//             array5[tmp] = itm.tokenId;
+//         }
+//     }
 
-    return array3;
-};
+//     return array3;
+// };
 
 export default () => {
     const updateProtocolSimple = client.mutate.updateProtocolSimple();
 
-    const updateSwaps = client.swaps.useUpdateSwaps();
     const updateStake = stake.useUpdate();
 
     const epoch = client.epoch.active.useId();
-
-    // const { data, refetch } = useGetMassiveLiveProtocolQuery({
-    //     fetchPolicy: 'no-cache',
-    //     skip: true,
-    // });
 
     const onData = React.useCallback(
         (protocol: LiveProtocolFragment) => {
@@ -52,112 +44,112 @@ export default () => {
 
             const staked = BigNumber.from(protocol.nuggftStakedEth);
 
-            const sortedPotentialItems = protocol.activeNuggItems.reduce(
-                (
-                    prev: {
-                        potentialItems: SwapData[];
-                        incomingItems: SwapData[];
-                    },
-                    curr,
-                ) => {
-                    if (curr.activeSwap) {
-                        const d = formatSwapData(
-                            curr.activeSwap,
-                            curr.activeSwap?.sellingItem.id.toItemId() || '',
-                        );
-                        if (
-                            curr.activeSwap &&
-                            protocol.nextEpoch._upcomingActiveItemSwaps.includes(curr.activeSwap.id)
-                        ) {
-                            // prev.incomingItems.push(data);
-                        } else {
-                            prev.potentialItems.push(d);
-                        }
-                    }
+            // const sortedPotentialItems = protocol.activeNuggItems.reduce(
+            //     (
+            //         prev: {
+            //             potentialItems: SwapData[];
+            //             incomingItems: SwapData[];
+            //         },
+            //         curr,
+            //     ) => {
+            //         if (curr.activeSwap) {
+            //             const d = formatSwapData(
+            //                 curr.activeSwap,
+            //                 curr.activeSwap?.sellingItem.id.toItemId() || '',
+            //             );
+            //             if (
+            //                 curr.activeSwap &&
+            //                 protocol.nextEpoch._upcomingActiveItemSwaps.includes(curr.activeSwap.id)
+            //             ) {
+            //                 // prev.incomingItems.push(data);
+            //             } else {
+            //                 prev.potentialItems.push(d);
+            //             }
+            //         }
 
-                    return prev;
-                },
-                { potentialItems: [], incomingItems: [] },
-            ) as {
-                potentialItems: IsolateItemIdFactory<SwapData>[];
-                incomingItems: IsolateItemIdFactory<SwapData>[];
-            };
+            //         return prev;
+            //     },
+            //     { potentialItems: [], incomingItems: [] },
+            // ) as {
+            //     potentialItems: IsolateItemIdFactory<SwapData>[];
+            //     incomingItems: IsolateItemIdFactory<SwapData>[];
+            // };
 
-            const recentItems = protocol.lastEpoch.itemSwaps.map((z) => {
-                return formatSwapData(z, z.sellingItem.id.toItemId());
-            });
+            // const recentItems = protocol.lastEpoch.itemSwaps.map((z) => {
+            //     return formatSwapData(z, z.sellingItem.id.toItemId());
+            // });
 
-            const recentSwaps = protocol.lastEpoch.swaps.map((z) => {
-                return formatSwapData(z, z.nugg.id.toNuggId());
-            });
+            // const recentSwaps = protocol.lastEpoch.swaps.map((z) => {
+            //     return formatSwapData(z, z.nugg.id.toNuggId());
+            // });
 
-            const potentialItems = mergeUnique(sortedPotentialItems.potentialItems);
-            const activeNuggs = protocol.activeNuggs.reduce(
-                (
-                    prev: {
-                        activeSwaps: IsolateNuggIdFactory<SwapData>[];
-                        potentialSwaps: IsolateNuggIdFactory<SwapData>[];
-                    },
-                    curr,
-                ) => {
-                    if (curr.activeSwap) {
-                        const val = formatSwapData(curr.activeSwap, curr.id.toNuggId());
-                        if (!val.endingEpoch) {
-                            prev.potentialSwaps.push(val);
-                        } else prev.activeSwaps.push(val);
-                    }
+            // const potentialItems = mergeUnique(sortedPotentialItems.potentialItems);
+            // const activeNuggs = protocol.activeNuggs.reduce(
+            //     (
+            //         prev: {
+            //             activeSwaps: IsolateNuggIdFactory<SwapData>[];
+            //             potentialSwaps: IsolateNuggIdFactory<SwapData>[];
+            //         },
+            //         curr,
+            //     ) => {
+            //         if (curr.activeSwap) {
+            //             const val = formatSwapData(curr.activeSwap, curr.id.toNuggId());
+            //             if (!val.endingEpoch) {
+            //                 prev.potentialSwaps.push(val);
+            //             } else prev.activeSwaps.push(val);
+            //         }
 
-                    return prev;
-                },
-                {
-                    activeSwaps: [],
-                    potentialSwaps: [],
-                },
-            );
+            //         return prev;
+            //     },
+            //     {
+            //         activeSwaps: [],
+            //         potentialSwaps: [],
+            //     },
+            // );
 
-            const activeItems = protocol.activeItems.reduce(
-                (
-                    prev: {
-                        activeItems: IsolateItemIdFactory<SwapData>[];
-                    },
-                    curr,
-                ) => {
-                    if (curr.activeSwap) {
-                        const val = formatSwapData(
-                            curr.activeSwap,
-                            curr.activeSwap?.sellingItem.id.toItemId() || '',
-                        );
+            // const activeItems = protocol.activeItems.reduce(
+            //     (
+            //         prev: {
+            //             activeItems: IsolateItemIdFactory<SwapData>[];
+            //         },
+            //         curr,
+            //     ) => {
+            //         if (curr.activeSwap) {
+            //             const val = formatSwapData(
+            //                 curr.activeSwap,
+            //                 curr.activeSwap?.sellingItem.id.toItemId() || '',
+            //             );
 
-                        if (val) prev.activeItems.push(val);
-                    }
+            //             if (val) prev.activeItems.push(val);
+            //         }
 
-                    if (curr.upcomingActiveSwap) {
-                        const val = formatSwapData(
-                            curr.upcomingActiveSwap,
-                            curr.upcomingActiveSwap?.sellingItem.id.toItemId() || '',
-                        );
+            //         if (curr.upcomingActiveSwap) {
+            //             const val = formatSwapData(
+            //                 curr.upcomingActiveSwap,
+            //                 curr.upcomingActiveSwap?.sellingItem.id.toItemId() || '',
+            //             );
 
-                        if (val) prev.activeItems.push(val);
-                    }
+            //             if (val) prev.activeItems.push(val);
+            //         }
 
-                    return prev;
-                },
-                {
-                    activeItems: sortedPotentialItems.incomingItems,
-                },
-            );
+            //         return prev;
+            //     },
+            //     {
+            //         activeItems: sortedPotentialItems.incomingItems,
+            //     },
+            // );
 
-            updateSwaps(
-                [
-                    ...recentSwaps,
-                    ...recentItems,
-                    ...potentialItems,
+            // updateSwaps(
+            //     [
+            //         ...recentSwaps,
+            //         ...recentItems,
+            //         ...potentialItems,
 
-                    ...Object.values(activeNuggs).flat(),
-                    ...Object.values(activeItems).flat(),
-                ],
-                epoch ?? 0,
-            );
+            //         ...Object.values(activeNuggs).flat(),
+            //         ...Object.values(activeItems).flat(),
+            //     ],
+            //     epoch ?? 0,
+            // );
 
             updateStake(shares, staked);
 
@@ -180,7 +172,7 @@ export default () => {
                 // ...activeItems,
             });
         },
-        [updateProtocolSimple, updateSwaps, updateStake, epoch],
+        [updateProtocolSimple, updateStake, epoch],
     );
     // const debouncedData = useDebounce(data, 500);
 

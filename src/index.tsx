@@ -8,6 +8,7 @@ import './prototypes';
 import './lib/analytics';
 import './index.css';
 import './styles/pulse.css';
+
 import web3 from './web3';
 import I18N from './i18n';
 import App from './pages/App';

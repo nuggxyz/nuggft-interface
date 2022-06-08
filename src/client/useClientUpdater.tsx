@@ -13,6 +13,7 @@ import { useCloseModalOnKeyboardClose } from './modal';
 import { useUpdateTransactionOnEmit } from './transactions';
 import { useEpochUpdater } from './epoch';
 import useOnRouteChange from './hooks/useOnRouteChange';
+import { usePollV2 } from './v2';
 
 export default () => {
     useDimensionsUpdater();
@@ -44,6 +45,8 @@ export default () => {
     useEpochUpdater();
 
     useOnRouteChange();
+
+    usePollV2();
 
     return null;
 };

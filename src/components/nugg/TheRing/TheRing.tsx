@@ -9,7 +9,6 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
 import { Lifecycle } from '@src/client/interfaces';
-import web3 from '@src/web3';
 import Text from '@src/components/general/Texts/Text/Text';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import useDimensions from '@src/client/hooks/useDimensions';
@@ -18,6 +17,7 @@ import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
 import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
 import CircleTimerMobileCSS from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimerMobileCSS';
 import TokenViewer4 from '@src/components/nugg/TokenViewer4';
+import { calculateEndBlock } from '@src/web3/constants';
 
 import styles from './TheRing.styles';
 
@@ -33,6 +33,23 @@ type Props = {
     strokeWidth?: number;
     defaultColor?: string;
     ref?: React.ForwardedRef<SVGSVGElement>;
+};
+
+export const useRemainingBlocks = (
+    blocknum?: number,
+    startBlock?: number,
+    endingEpoch?: number,
+) => {
+    return React.useMemo(() => {
+        if (!blocknum || !startBlock || !endingEpoch) return [1, 1];
+        const endBlock = calculateEndBlock(endingEpoch);
+
+        const duration = endBlock - startBlock;
+
+        const remaining = endBlock - blocknum;
+
+        return [remaining, duration];
+    }, [blocknum, startBlock, endingEpoch]);
 };
 
 const TheRing: FunctionComponent<Props> = ({
@@ -51,8 +68,8 @@ const TheRing: FunctionComponent<Props> = ({
 
     const tokenId = useDesktopSwappingNugg(manualTokenId);
 
-    const swap = client.swaps.useSwap(tokenId);
-    const lifecycle = useLifecycle(swap);
+    const swap = client.v2.useSwap(tokenId);
+    const lifecycle = useLifecycle(tokenId);
     const blocknum = client.block.useBlock();
 
     const startblock = client.epoch.active.useStartBlock();
@@ -72,7 +89,11 @@ const TheRing: FunctionComponent<Props> = ({
         return 0;
     }, [startblock, blocknum, lifecycle, swap]);
 
-    const { blocksRemaining } = client.epoch.useEpoch(swap?.epoch?.id, blocknum);
+    const [remaining, duration] = useRemainingBlocks(
+        blocknum,
+        swap?.commitBlock,
+        swap?.endingEpoch,
+    );
 
     const CircleTimerWrap = React.useMemo(() => {
         return isPhone ? CircleTimerMobileCSS : CircleTimer;
@@ -101,8 +122,8 @@ const TheRing: FunctionComponent<Props> = ({
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
             <CircleTimerWrap
-                duration={web3.config.DEFAULT_CONTRACTS.Interval}
-                remaining={blocksRemaining ?? 0}
+                duration={duration}
+                remaining={remaining}
                 tokenId={tokenId}
                 blocktime={constants.BLOCKTIME}
                 width={circleWidth}

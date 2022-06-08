@@ -10,7 +10,6 @@ import toast from './toast';
 import nuggbook from './nuggbook';
 import viewscreen from './viewscreen';
 import editscreen from './editscreen';
-import swaps from './swaps';
 import viewport from './viewport';
 import transactions from './transactions';
 import usd from './usd';
@@ -19,6 +18,8 @@ import health from './health';
 import epoch from './epoch';
 import block from './block';
 import stake from './stake';
+import v2 from './v2';
+import v3 from './v3';
 
 export default {
     core,
@@ -27,14 +28,6 @@ export default {
         /// ///// simple ////////
         graph: () => web3.config.apolloClient,
         activeSearch: () => core((state) => state.activeSearch, shallow),
-
-        // epoch: {
-        //     default: () => core((state) => React.useDeferredValue(state.epoch)),
-        //     id: () => core((state) => state.epoch?.id),
-        //     startblock: () => core((state) => state.epoch?.startblock),
-        //     endblock: () => core((state) => state.epoch?.endblock),
-        //     status: () => core((state) => state.epoch?.status),
-        // },
 
         lastSwap: {
             tokenId: () => core((state) => state.lastSwap?.tokenId),
@@ -156,7 +149,6 @@ export default {
     nuggbook,
     viewscreen,
     editscreen,
-    swaps,
     viewport,
     transactions,
     usd,
@@ -165,4 +157,6 @@ export default {
     block,
     epoch,
     stake,
+    v2,
+    v3,
 };

@@ -47,7 +47,7 @@ export const buildTokenIdFactory = <A extends { tokenId: TokenId }>(input: A) =>
         ...input,
     };
 
-    return yo;
+    return yo as Remap<typeof yo>;
 };
 
 // @ts-ignore

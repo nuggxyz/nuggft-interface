@@ -199,28 +199,28 @@ fragment liveProtocolBase on Protocol {
 }
 fragment liveProtocol on Protocol {
     ...liveProtocolBase
-    activeNuggs(orderBy: idnum) {
-        id
-        idnum
-        activeSwap {
-            ...swapdata
-        }
-    }
-    activeNuggItems {
-        id
-        activeSwap {
-            ...itemswapdata
-        }
-    }
-    activeItems {
-        id
-        activeSwap {
-            ...itemswapdata
-        }
-        upcomingActiveSwap {
-            ...itemswapdata
-        }
-    }
+    # activeNuggs(orderBy: idnum) {
+    #     id
+    #     idnum
+    #     activeSwap {
+    #         ...swapdata
+    #     }
+    # }
+    # activeNuggItems {
+    #     id
+    #     activeSwap {
+    #         ...itemswapdata
+    #     }
+    # }
+    # activeItems {
+    #     id
+    #     activeSwap {
+    #         ...itemswapdata
+    #     }
+    #     upcomingActiveSwap {
+    #         ...itemswapdata
+    #     }
+    # }
 }
 
 query getMassiveLiveProtocol {

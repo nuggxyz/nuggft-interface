@@ -1,30 +1,19 @@
 import React from 'react';
 import { animated } from '@react-spring/web';
 
-import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
 import GodList from '@src/components/general/List/GodList';
-import usePrevious from '@src/hooks/usePrevious';
 import MobileRingAbout from '@src/components/mobile/MobileRingAbout';
+import client from '@src/client';
 
 const MobileSwapPage = () => {
-    const sortedAll = useSortedSwapList();
+    const pollit = client.v3.usePollV3();
 
-    const prevSortedAll = usePrevious(sortedAll);
+    const swaps = client.v2.useSwapList();
+    const potential = client.v3.useSwapList();
 
-    const [dat, setDat] = React.useState(
-        [sortedAll.current, sortedAll.next, sortedAll.potential].flat(),
-    );
-
-    React.useEffect(() => {
-        if (
-            !prevSortedAll ||
-            sortedAll.current !== prevSortedAll.current ||
-            sortedAll.next !== prevSortedAll.next ||
-            sortedAll.potential !== prevSortedAll.potential
-        ) {
-            setDat([sortedAll.current, sortedAll.next, sortedAll.potential].flat());
-        }
-    }, [sortedAll, prevSortedAll]);
+    const filtered = React.useMemo(() => {
+        return [...new Set([...swaps, ...potential])];
+    }, [swaps, potential]);
 
     return (
         <animated.div
@@ -43,12 +32,13 @@ const MobileSwapPage = () => {
         >
             <GodList
                 RenderItem={MobileRingAbout}
-                data={dat}
+                data={filtered}
                 extraData={undefined}
                 itemHeight={438}
                 LIST_PADDING={0}
                 skipSelectedCheck
                 displacement={1}
+                onScrollEnd={pollit}
             />
         </animated.div>
     );

@@ -2,12 +2,11 @@ import React, { FunctionComponent } from 'react';
 import { animated } from '@react-spring/web';
 
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
-import useLiveOffers from '@src/client/subscriptions/useLiveOffers';
-import useLiveToken from '@src/client/subscriptions/useLiveToken';
 import useDimensions from '@src/client/hooks/useDimensions';
 import Loader from '@src/components/general/Loader/Loader';
 import lib from '@src/lib';
 import useDesktopSwappingNugg from '@src/client/hooks/useDesktopSwappingNugg';
+import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 
 import styles from './RingAbout.styles';
 import OffersList from './OffersList';
@@ -28,9 +27,7 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
 
     const tokenId = useDesktopSwappingNugg(manualTokenId);
 
-    useLiveToken(tokenId);
-
-    useLiveOffers(tokenId);
+    useLiveTokenPoll(true, tokenId);
 
     return tokenId ? (
         <>

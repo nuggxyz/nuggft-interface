@@ -125,6 +125,10 @@ const useCallbackOnGraphBlockChange = (callback: (() => Promise<unknown>) | (() 
         return a;
     }, [callback]);
 
+    React.useEffect(() => {
+        callback();
+    }, []);
+
     return null;
 };
 

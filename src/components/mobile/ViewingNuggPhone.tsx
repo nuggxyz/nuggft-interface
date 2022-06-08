@@ -25,7 +25,6 @@ import { NuggListRenderItemMobileBigHoldingItem } from '@src/components/mobile/N
 import SwapListPhone from '@src/components/mobile/SwapListPhone';
 import { ItemListPhone } from '@src/components/nugg/ViewingNugg/ItemList';
 import { useUsdPair } from '@src/client/usd';
-import useAggregatedOffers from '@src/client/hooks/useAggregatedOffers';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { ModalEnum } from '@src/interfaces/modals';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
@@ -34,6 +33,7 @@ import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 import usePrevious from '@src/hooks/usePrevious';
 import GodList from '@src/components/general/List/GodList';
+import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 
 import { NuggSnapshotRenderItem } from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
@@ -294,25 +294,30 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
 
 const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
     const token = client.live.token(tokenId);
-    const swap = client.swaps.useSwap(tokenId);
-    const lifecycle = useLifecycle(token);
+
+    const swap = React.useMemo(() => {
+        return token?.activeSwap;
+    }, [token?.activeSwap]);
+
+    const offers = client.live.offers(tokenId);
+
+    const lifecycle = useLifecycle(tokenId);
 
     const { minutes, seconds } = client.epoch.useEpoch(swap?.epoch?.id);
-    const [leader] = useAggregatedOffers(tokenId);
 
     const trueSeconds = useRemainingTrueSeconds(seconds ?? 0);
     const provider = web3.hook.usePriorityProvider();
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         token && token.type === 'item' ? 'nugg' : provider,
-        leader?.account || swap?.leader || '',
+        swap?.leader || '',
     );
 
     const msp = client.stake.useMsp();
 
     const swapCurrency = useUsdPair(
-        leader?.eth.gt(0)
-            ? leader.eth
+        swap?.eth.gt(0)
+            ? swap.eth
             : lifecycle === Lifecycle.Bunt ||
               lifecycle === Lifecycle.Minors ||
               lifecycle === Lifecycle.Formality
@@ -446,7 +451,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                     </div>
                 )}
             </div>
-            {(swap?.offers.length || 0) > 0 &&
+            {(offers.length || 0) > 0 &&
                 lifecycle !== Lifecycle.Bench &&
                 lifecycle !== Lifecycle.Minors && <OffersList tokenId={tokenId} />}
             <MobileOfferButton tokenId={tokenId} />
@@ -475,6 +480,8 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
     ({ tokenId }) => {
         const isOpen = client.viewscreen.useViewScreenOpen();
 
+        useLiveTokenPoll(isOpen && tokenId !== undefined, tokenId);
+
         const epoch = client.epoch.active.useId();
         const openModal = client.modal.useOpenModal();
         const sender = web3.hook.usePriorityAccount();
@@ -500,8 +507,12 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
         }, [tokenId, prevTokenId, ref]);
 
         const token = client.live.token(tokenId);
-        const swap = client.swaps.useSwap(tokenId);
-        const lifecycle = useLifecycleEnhanced(swap);
+
+        const swap = React.useMemo(() => {
+            return token?.activeSwap;
+        }, [token?.activeSwap]);
+
+        const lifecycle = useLifecycleEnhanced(tokenId);
 
         const { data } = useGetNuggsThatHoldQuery({
             fetchPolicy: 'network-only',

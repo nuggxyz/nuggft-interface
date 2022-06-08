@@ -13,7 +13,7 @@ interface OfferDataBase extends TokenIdFactoryBase {
     txhash: string;
     isBackup: boolean;
     sellingTokenId: null | NuggId;
-    account: AddressString | NuggId;
+    account: unknown;
     incrementX64?: BigNumber;
 }
 

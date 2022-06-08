@@ -34,7 +34,11 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     const address = web3.hook.usePriorityAccount();
     const stake = client.static.stake();
 
-    const swap = client.swaps.useSwap(data.tokenId);
+    const token = client.live.token(data.tokenId);
+
+    const swap = React.useMemo(() => {
+        return token?.activeSwap;
+    }, [token?.activeSwap]);
 
     const network = web3.hook.useNetworkProvider();
     const peer = web3.hook.usePriorityPeer();
