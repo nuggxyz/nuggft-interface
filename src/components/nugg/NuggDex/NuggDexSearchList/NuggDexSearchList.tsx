@@ -13,7 +13,6 @@ import {
     useGetAllNuggsSearchQuery,
 } from '@src/gql/types.generated';
 import useDimensions from '@src/client/hooks/useDimensions';
-import useSortedSwapList from '@src/client/hooks/useSortedSwapList';
 import useToggle from '@src/hooks/useToggle';
 
 import NuggList from './components/NuggList';
@@ -128,6 +127,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     }, [sort, target]);
 
     const all = client.v2.useSwapList();
+    const pending = client.v3.useSwapList();
+    console.log(pending);
 
     const liveActiveEverything = useMemo(
         () =>
@@ -149,14 +150,13 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 
     const pendingEverything = useMemo(() => {
         return [
-            ...all.potential.filter(
+            ...pending.filter(
                 (elem) =>
                     (elem.isNuggId() && pendingToggle[0].includes('nuggs')) ||
                     (elem.isItemId() && pendingToggle[0].includes('items')),
             ),
         ];
-    }, [all.potential, pendingToggle]);
-    console.log(pendingToggle[0].includes('nuggs'), pendingToggle[0]);
+    }, [pending, pendingToggle]);
 
     const animatedStyle = useSpring({
         ...styles.nuggLinksContainer,
@@ -190,7 +190,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         cardType="all"
                     />
                 </NuggLink>
-                {/* TODO -- replace */}
                 <NuggLink
                     type={SearchView.Pending}
                     previewNuggs={pendingEverything}
