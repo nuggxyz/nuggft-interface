@@ -4,7 +4,6 @@ import useRpcUpdater from './update/useRpcUpdater';
 import useMediaUpdater from './update/useMediaUpdater';
 import useBackgroundUpdater from './update/useBackgroundUpdater';
 import useSwapUpdater from './update/useSwapUpdater';
-import useLiveGraphHealth from './subscriptions/useLiveGraphHealth';
 import useDimensionsUpdater from './update/useDimensionsUpdater';
 import { useVisualViewportUpdater, useEmitOnKeyboardClose } from './viewport';
 import { useCloseModalOnKeyboardClose } from './modal';
@@ -14,9 +13,12 @@ import useOnRouteChange from './hooks/useOnRouteChange';
 import { usePollV2 } from './v2';
 import { useUserUpdater } from './user';
 import { useBlockUpdater } from './block';
+import { useHealthUpdater } from './health';
 
 export default () => {
     useBlockUpdater();
+
+    useHealthUpdater();
 
     useDimensionsUpdater();
 
@@ -27,8 +29,6 @@ export default () => {
     useRpcUpdater();
 
     useUserUpdater();
-
-    useLiveGraphHealth();
 
     useSwapUpdater();
 

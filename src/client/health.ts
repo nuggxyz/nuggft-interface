@@ -1,9 +1,13 @@
 /* eslint-disable no-param-reassign */
-import { ApolloLink, FetchResult } from '@apollo/client';
+import { ApolloClient, ApolloLink, FetchResult } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import React from 'react';
 import create from 'zustand';
 import { combine, persist, subscribeWithSelector } from 'zustand/middleware';
+
+import { HealthQuery, HealthQueryVariables, HealthDocument } from '@src/gql/types.generated';
+import useInterval from '@src/hooks/useInterval';
+import { apolloClient } from '@src/web3/config';
 
 import block from './block';
 
@@ -89,7 +93,16 @@ const useStore = create(
                     });
                 };
 
+                const fetch = (client?: ApolloClient<any>) => {
+                    if (!client) return Promise.resolve();
+                    return client.query<HealthQuery, HealthQueryVariables>({
+                        query: HealthDocument,
+                        fetchPolicy: 'network-only',
+                    });
+                };
+
                 return {
+                    fetch,
                     updateLastRpcBlock,
                     updateLastBlockGraph,
                     generateApolloResponseMiddleware,
@@ -100,6 +113,17 @@ const useStore = create(
         { name: 'nugg.xyz-health' },
     ),
 );
+
+export const useHealthUpdater = () => {
+    const fetch = useStore((state) => state.fetch);
+
+    useInterval(
+        React.useCallback(() => {
+            void fetch(apolloClient);
+        }, [fetch]),
+        4000,
+    );
+};
 
 const useHealth = () => {
     const lastBlockRpc = block.useBlock();
@@ -115,8 +139,6 @@ const useHealth = () => {
 
     return { blockdiff, graphProblem };
 };
-
-// eslint-disable-next-line react-hooks/rules-of-hooks
 
 const useCallbackOnGraphBlockChange = (callback: (() => Promise<unknown>) | (() => unknown)) => {
     React.useEffect(() => {

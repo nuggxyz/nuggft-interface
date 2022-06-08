@@ -30,10 +30,17 @@ import { StrictTypedTypePolicies } from './types.generated';
 // });
 
 export const buildApolloHttpLink = (http: string) => {
-    return new HttpLink({
-        uri: http,
-        fetch,
-    });
+    const { generateApolloResponseErrorMiddleware, generateApolloResponseMiddleware } =
+        client.health.useStore.getState();
+
+    return generateApolloResponseMiddleware().concat(
+        generateApolloResponseErrorMiddleware().concat(
+            new HttpLink({
+                uri: http,
+                fetch,
+            }),
+        ),
+    );
 };
 
 export const buildApolloSplitLink = (http: string, wss: string) => {

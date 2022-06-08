@@ -170,6 +170,7 @@ const store = create(
                         variables: {
                             address,
                         },
+                        fetchPolicy: 'network-only',
                     })
                     .then((x) => {
                         const res2 = format(address, x);

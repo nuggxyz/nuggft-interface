@@ -26,7 +26,7 @@ const store = create(
                 return { update };
             },
         ),
-        { name: 'nugg.xyz-ens' },
+        { name: 'nugg.xyz-block' },
     ),
 );
 
