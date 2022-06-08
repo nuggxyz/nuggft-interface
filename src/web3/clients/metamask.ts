@@ -13,6 +13,7 @@ import {
     MetaMaskCoreProvider,
 } from '@src/web3/core/types';
 import { PeerInfo__MetaMask, Connector as ConnectorEnum } from '@src/web3/core/interfaces';
+import { DEFAULT_CHAIN } from '@src/web3/constants';
 
 export class NoMetaMaskError extends Error {
     public constructor() {
@@ -144,15 +145,28 @@ export class MetaMask extends Connector {
             this.provider.request({ method: 'eth_accounts' }) as Promise<string[]>,
         ])
             .then(([chainId, accounts]) => {
-                if (accounts.length) {
-                    this.actions.update({
-                        chainId: parseChainId(chainId),
+                const receivedChainId = parseChainId(chainId);
+                const desiredChainId = DEFAULT_CHAIN;
+
+                // if there's no desired chain, or it's equal to the received, update
+                if (!desiredChainId || receivedChainId === desiredChainId)
+                    return this.actions.update({
+                        chainId: receivedChainId,
                         accounts,
-                        peer: this.peers.metamask,
                     });
-                } else {
-                    throw new Error('No accounts returned');
-                }
+
+                const desiredChainIdHex = `0x${desiredChainId.toString(16)}`;
+
+                // if we're here, we can try to switch networks
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                return this.provider!.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: desiredChainIdHex }],
+                })
+                    .catch((error: ProviderRpcError) => {
+                        throw error;
+                    })
+                    .then(() => this.activate(desiredChainId));
             })
             .catch((error) => {
                 console.debug('Could not connect eagerly', error);

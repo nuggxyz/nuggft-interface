@@ -5,14 +5,9 @@ import { combine, persist } from 'zustand/middleware';
 import { WalletSDKRelayAbstract } from '@coinbase/wallet-sdk/dist/relay/WalletSDKRelayAbstract';
 import { WalletSDKConnection } from '@coinbase/wallet-sdk/dist/connection/WalletSDKConnection';
 
-import {
-    Actions,
-    AddEthereumChainParameter,
-    ProviderConnectInfo,
-    ProviderRpcError,
-    Connector,
-} from '@src/web3/core/types';
+import { Actions, ProviderConnectInfo, ProviderRpcError, Connector } from '@src/web3/core/types';
 import { PeerInfo__CoinbaseWallet, Connector as ConnectorEnum } from '@src/web3/core/interfaces';
+import { DEFAULT_CHAIN } from '@src/web3/constants';
 
 function parseChainId(chainId: string | number) {
     return typeof chainId === 'number'
@@ -117,7 +112,11 @@ export class CoinbaseWallet extends Connector {
             });
 
             this.provider.on('chainChanged', (chainId: string): void => {
-                this.actions.update({ chainId: parseChainId(chainId) });
+                if (Number(chainId) === DEFAULT_CHAIN) {
+                    this.actions.update({ chainId: parseChainId(chainId) });
+                } else {
+                    this.deactivate();
+                }
             });
 
             this.provider.on('accountsChanged', (accounts: string[]): void => {
@@ -155,14 +154,29 @@ export class CoinbaseWallet extends Connector {
             ])
                 .then(([chainId, accounts]) => {
                     if (accounts.length) {
-                        this.actions.update({
-                            chainId: parseChainId(chainId),
-                            accounts,
-                            peer: this.peers.coinbase,
+                        if (DEFAULT_CHAIN === Number(chainId)) {
+                            this.actions.update({
+                                chainId: DEFAULT_CHAIN,
+                                accounts,
+                                peer: this.peers.coinbase,
+                            });
+                            return undefined;
+                        }
+
+                        const desiredChainIdHex = `0x${DEFAULT_CHAIN.toString(16)}`;
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                        return this.provider!.request<void>({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: desiredChainIdHex }],
+                        }).then(() => {
+                            this.actions.update({
+                                chainId: DEFAULT_CHAIN,
+                                accounts,
+                                peer: this.peers.coinbase,
+                            });
                         });
-                    } else {
-                        throw new Error('No accounts returned');
                     }
+                    throw new Error('No accounts returned');
                 })
                 .catch((error) => {
                     console.debug('Could not connect eagerly', error);
@@ -190,19 +204,14 @@ export class CoinbaseWallet extends Connector {
      * AddEthereumChainParameter, in which case the user will be prompted to add the chain with the specified parameters
      * first, before being prompted to switch.
      */
-    public async activate(
-        desiredChainIdOrChainParameters?: number | AddEthereumChainParameter,
-    ): Promise<void> {
+    public async activate(desiredChainIdOrChainParameters = DEFAULT_CHAIN): Promise<void> {
         if (store.getState().hasDisconnected) {
             store.getState().connect();
             await this.connectEagerly();
             if (this.connected) return undefined;
         }
 
-        const desiredChainId =
-            typeof desiredChainIdOrChainParameters === 'number'
-                ? desiredChainIdOrChainParameters
-                : desiredChainIdOrChainParameters?.chainId;
+        const desiredChainId = desiredChainIdOrChainParameters;
 
         if (this.connected) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -225,7 +234,7 @@ export class CoinbaseWallet extends Connector {
                         return this.provider!.request<void>({
                             method: 'wallet_addEthereumChain',
                             params: [
-                                { ...desiredChainIdOrChainParameters, chainId: desiredChainIdHex },
+                                { desiredChainIdOrChainParameters, chainId: desiredChainIdHex },
                             ],
                         });
                     }
@@ -270,7 +279,7 @@ export class CoinbaseWallet extends Connector {
                                 method: 'wallet_addEthereumChain',
                                 params: [
                                     {
-                                        ...desiredChainIdOrChainParameters,
+                                        desiredChainIdOrChainParameters,
                                         chainId: desiredChainIdHex,
                                     },
                                 ],

@@ -317,7 +317,7 @@ export class WalletConnect extends Connector {
         await this.isomorphicInitialize(DEFAULT_CHAIN);
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        if (this.provider!.connected) {
+        if (this.provider && this.provider.connected) {
             try {
                 // for walletconnect, we always use sequential instead of parallel fetches because otherwise
                 // chainId defaults to 1 even if the connecting wallet isn't on mainnet
@@ -325,11 +325,32 @@ export class WalletConnect extends Connector {
                 const accounts = await this.provider!.request<string[]>({ method: 'eth_accounts' });
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const chainId = parseChainId(
-                    await this.provider!.request<string | number>({ method: 'eth_chainId' }),
+                    await this.provider.request<string | number>({ method: 'eth_chainId' }),
                 );
 
                 if (accounts.length) {
-                    this.actions.update({ chainId, accounts, peer: this.findPeer() });
+                    if (DEFAULT_CHAIN !== chainId) {
+                        const desiredChainIdHex = `0x${DEFAULT_CHAIN.toString(16)}`;
+                        void this.provider
+                            .request<void>({
+                                method: 'wallet_switchEthereumChain',
+                                params: [{ chainId: desiredChainIdHex }],
+                            })
+                            .then(() => {
+                                this.actions.update({
+                                    chainId: DEFAULT_CHAIN,
+                                    accounts,
+                                    peer: this.findPeer(),
+                                });
+                            })
+                            .catch(() => undefined);
+                    } else {
+                        this.actions.update({
+                            chainId: DEFAULT_CHAIN,
+                            accounts,
+                            peer: this.findPeer(),
+                        });
+                    }
                 } else {
                     throw new Error('No accounts returned');
                 }
@@ -376,7 +397,9 @@ export class WalletConnect extends Connector {
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: desiredChainIdHex }],
                 })
-                .catch(() => undefined);
+                .catch((err) => {
+                    console.log('NOOOOPPPEEEEEEE', err);
+                });
             // .then(() => undefined)
             // ;
         }
@@ -423,7 +446,9 @@ export class WalletConnect extends Connector {
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: desiredChainIdHex }],
                 })
-                .catch(() => undefined);
+                .catch((err) => {
+                    console.log('NOOOOPPPEEEEEEE', err);
+                });
         } catch (error) {
             // this condition is a bit of a hack :/
             // if a user triggers the walletconnect modal, closes it, and then tries to connect again,
