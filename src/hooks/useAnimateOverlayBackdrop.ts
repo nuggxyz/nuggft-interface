@@ -24,22 +24,28 @@ const styles = lib.layout.NLStyleSheetCreator({
 
 export default (isOpen: boolean, style?: CSSProperties, delay?: number) => {
     const { screen: screenType } = useDimensions();
+
     const [wrapperStyle] = packages.spring.useSpring(
         {
+            from: {
+                opacity: 0,
+                pointerEvents: 'none' as const,
+            },
             opacity: isOpen ? 1 : 0,
             pointerEvents: isOpen ? ('auto' as const) : ('none' as const),
             config: packages.spring.config.stiff,
-
             delay,
         },
         [isOpen],
     );
+
     return {
         // animationDelay: delay,
         // animationDuration: '1s',
         // animationName: 'all',
         // animationDirection: isOpen ? 'normal' : 'reverse',
         // animationTimingFunction: lib.layout.animation,
+        // @ts-ignore
         ...styles.wrapper,
 
         ...(screenType === 'phone'

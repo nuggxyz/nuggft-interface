@@ -11,7 +11,6 @@ import client from '@src/client';
 import useTokenQuery from '@src/client/hooks/useTokenQuery';
 import globalStyles from '@src/lib/globalStyles';
 import { Fraction } from '@src/classes/Fraction';
-import TheRing from '@src/components/nugg/TheRing/TheRing';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import { Lifecycle, TryoutData } from '@src/client/interfaces';
@@ -34,6 +33,7 @@ import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 import usePrevious from '@src/hooks/usePrevious';
 import GodList from '@src/components/general/List/GodList';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
+import TheRingLight from '@src/components/nugg/TheRing/TheRingLight';
 
 import { NuggSnapshotRenderItem } from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
@@ -552,17 +552,13 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
         return (
             <animated.div
                 style={{
-                    // transition: 'all .3s ease-in',
-                    animation: 'mobile-fade .3s ease-out',
                     position: 'absolute',
                     width: '100%',
                     height: '100%',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-
                     overflow: 'hidden',
-
                     flexDirection: 'column',
                     zIndex: 100000,
                     ...overlay,
@@ -634,7 +630,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                                         marginTop: '-30px',
                                     }}
                                 >
-                                    <TheRing
+                                    <TheRingLight
                                         circleWidth={1000}
                                         strokeWidth={10}
                                         disableClick

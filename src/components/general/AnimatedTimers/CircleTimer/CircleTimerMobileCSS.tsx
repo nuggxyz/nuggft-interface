@@ -2,6 +2,7 @@ import React, { CSSProperties, FunctionComponent, ReactChild, useMemo } from 're
 
 import lib from '@src/lib';
 import useInterval from '@src/hooks/useInterval';
+import packages from '@src/packages';
 
 import styles from './CircleTimer.styles';
 
@@ -17,6 +18,7 @@ type Props = {
     strokeWidth?: number;
     defaultColor: string;
     tokenId?: TokenId;
+    spring?: boolean;
 };
 const TWOPI = Math.PI * 2;
 const HALFPI = Math.PI / 2;
@@ -33,6 +35,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     defaultColor,
     staticColor: _staticColor,
     tokenId,
+    spring = true,
 }) => {
     const staticColor = React.useMemo(() => {
         return _staticColor ?? duration === remaining ? 'white' : null;
@@ -98,11 +101,24 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
             width / 6.5 + 50,
             `${(width / 6.5) * TWOPI} ${(width / 6.5) * TWOPI}`,
             shadowColor === 'transparent' ? 'transparent' : 'white',
-            { transition: `all 2s ${lib.layout.animation}` },
+            spring ? {} : { transition: `all 2s ${lib.layout.animation}` },
             activated ? strokeWidth : 0,
             `drop-shadow(2px 3px 10px ${shadowColor}) hue-rotate(0)`,
         ];
-    }, [width, shadowColor, activated, strokeWidth]);
+    }, [width, shadowColor, activated, strokeWidth, spring]);
+
+    const todef = React.useDeferredValue(to);
+
+    const [{ x }] = packages.spring.useSpring(
+        {
+            to: {
+                x: todef,
+            },
+            immediate: !spring,
+            config: packages.spring.config.default,
+        },
+        [todef, spring],
+    );
 
     return (
         <div style={{ zIndex: 1, ...style }}>
@@ -140,12 +156,12 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                         transform: 'rotate(-90deg)',
                     }}
                 >
-                    <circle
+                    <packages.spring.animated.circle
                         cx="50%"
                         cy="50%"
                         r={r}
                         stroke={_shadowColor}
-                        strokeDashoffset={to}
+                        strokeDashoffset={x}
                         strokeWidth={_strokeWidth}
                         fill="none"
                         strokeDasharray={strokeDashArray}
