@@ -1,6 +1,5 @@
 import React from 'react';
 import { IoIosArrowDropleftCircle } from 'react-icons/io';
-import Confetti from 'react-confetti';
 import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
@@ -8,12 +7,10 @@ import Text from '@src/components/general/Texts/Text/Text';
 import Button from '@src/components/general/Buttons/Button/Button';
 import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
 import { Peer } from '@src/web3/core/interfaces';
-import useIsVisible from '@src/hooks/useIsVisible';
 
 import { PeerButton } from './Setup_0';
 
 const Setup_3: NuggBookPage = ({ setPage }) => {
-    const [ref, visible] = useIsVisible(null);
     return (
         <div
             style={{
@@ -23,16 +20,15 @@ const Setup_3: NuggBookPage = ({ setPage }) => {
                 flexDirection: 'column',
                 textAlign: 'center',
             }}
-            ref={ref}
         >
-            <Confetti
+            {/* <Confetti
                 numberOfPieces={60}
                 run={visible}
                 style={{
                     transition: `opacity .5s ${lib.layout.animation}`,
                     opacity: visible ? 1 : 0,
                 }}
-            />{' '}
+            /> */}
             <Text
                 size="larger"
                 textStyle={{

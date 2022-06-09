@@ -1,5 +1,4 @@
 import React, { FunctionComponent, NamedExoticComponent } from 'react';
-import Confetti from 'react-confetti';
 
 import lib, { shortenTxnHash } from '@src/lib';
 import AnimatedConfirmation from '@src/components/general/AnimatedTimers/AnimatedConfirmation';
@@ -43,6 +42,18 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
 
     const [manualResponse, setManualResponse] = React.useState<boolean>(false);
 
+    // const Con = confetti.useMe({});
+    // const tigger = confetti.useTrigger();
+
+    // const [triggered, setTriggered] = React.useState(false);
+
+    // React.useEffect(() => {
+    //     if (!triggered && transaction?.response && transaction?.receipt) {
+    //         tigger();
+    //         setTriggered(true);
+    //     }
+    // }, [triggered, transaction, tigger]);
+
     return (
         <div
             style={{
@@ -53,14 +64,19 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
             }}
         >
             <AnimatedConfirmation confirmed={!!transaction?.receipt} />
-            <Confetti
+            {/* {Con} */}
+            {/* <Confetti
+                wind={0.02}
+                tweenDuration={500}
                 numberOfPieces={100}
                 run={transaction?.response && transaction?.receipt}
                 style={{
+                    marginTop: -20,
+                    marginLeft: -10,
                     transition: `opacity .5s ${lib.layout.animation}`,
                     opacity: transaction?.response && transaction?.receipt ? 1 : 0,
                 }}
-            />
+            /> */}
             {!transaction?.response && !manualResponse && (
                 <div
                     style={{
