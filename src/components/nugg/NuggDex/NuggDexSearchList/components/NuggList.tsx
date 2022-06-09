@@ -3,6 +3,7 @@ import { Promise } from 'bluebird';
 import { animated, UseSpringProps } from '@react-spring/web';
 import { ChevronLeft } from 'react-feather';
 import { t } from '@lingui/macro';
+import { IoCheckmarkCircle, IoEllipseOutline, IoFilter } from 'react-icons/io5';
 
 import TransitionText from '@src/components/general/Texts/TransitionText/TransitionText';
 import useDimensions from '@src/client/hooks/useDimensions';
@@ -11,8 +12,14 @@ import { SearchView } from '@src/client/interfaces';
 import formatSearchFilter from '@src/client/formatters/formatSearchFilter';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
-import lib from '@src/lib';
+import lib, {
+    isUndefinedOrNullOrArrayEmpty,
+    isUndefinedOrNullOrNotArray,
+    isUndefinedOrNullOrNotFunction,
+} from '@src/lib';
 import GodList from '@src/components/general/List/GodList';
+import Button from '@src/components/general/Buttons/Button/Button';
+import Flyout from '@src/components/general/Flyout/Flyout';
 
 import NuggListRenderItem from './NuggListRenderItem';
 import styles from './NuggDexComponents.styles';
@@ -43,6 +50,9 @@ export type NuggListProps = {
         desiredSize,
         horribleMFingHack,
     }: NuggListOnScrollEndProps) => Promise<void> | void;
+    toggleValues?: string[];
+    toggleInitialState?: string[];
+    doToggle?: (_: string) => void;
 };
 
 const NuggList: FunctionComponent<NuggListProps> = ({
@@ -53,6 +63,9 @@ const NuggList: FunctionComponent<NuggListProps> = ({
     cardType,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type,
+    toggleValues,
+    toggleInitialState,
+    doToggle,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     horribleMFingHack2 = false,
 }) => {
@@ -136,6 +149,60 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                         updateSearchFilterSearchValue(undefined);
                     }}
                 />
+                {!isUndefinedOrNullOrNotArray(toggleValues) &&
+                    !isUndefinedOrNullOrArrayEmpty(toggleInitialState) &&
+                    !isUndefinedOrNullOrNotFunction(doToggle) && (
+                        <Flyout
+                            button={
+                                <Button
+                                    onClick={() => {}}
+                                    rightIcon={<IoFilter />}
+                                    buttonStyle={{
+                                        borderRadius: lib.layout.borderRadius.large,
+                                        padding: '.35rem .3rem .3rem .35rem',
+                                        background: lib.colors.semiTransparentGrey,
+                                    }}
+                                />
+                            }
+                            containerStyle={{
+                                position: 'absolute',
+                                top: '1rem',
+                                right: '1rem',
+                                zIndex: 1000000,
+                            }}
+                            style={{
+                                position: 'absolute',
+                                top: '1.5rem',
+                                right: '0rem',
+                                overeflow: 'hidden',
+                            }}
+                            openOnHover
+                        >
+                            {toggleInitialState.map((val) => (
+                                <Button
+                                    label={val}
+                                    onClick={() => doToggle(val)}
+                                    buttonStyle={{
+                                        zIndex: 1,
+                                        transition: `background .3s ${lib.layout.animation}`,
+                                        background: toggleValues.includes(val)
+                                            ? lib.colors.nuggBlueSemiTransparent
+                                            : lib.colors.transparent,
+                                        borderRadius: 0,
+                                        // marginBottom: '.25rem',
+                                        padding: '.3rem .3rem .3rem .5rem',
+                                    }}
+                                    rightIcon={
+                                        toggleValues.includes(val) ? (
+                                            <IoCheckmarkCircle style={{ marginLeft: '.3rem' }} />
+                                        ) : (
+                                            <IoEllipseOutline style={{ marginLeft: '.3rem' }} />
+                                        )
+                                    }
+                                />
+                            ))}
+                        </Flyout>
+                    )}
 
                 {viewing === type && (
                     <GodList

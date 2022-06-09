@@ -14,6 +14,7 @@ import {
 } from '@src/gql/types.generated';
 import useDimensions from '@src/client/hooks/useDimensions';
 import useToggle from '@src/hooks/useToggle';
+import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 
 import NuggList from './components/NuggList';
 import NuggLink from './components/NuggLink';
@@ -127,14 +128,30 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     }, [sort, target]);
 
     const all = client.v2.useSwapList();
+
+    const pollMore = client.v3.usePollV3();
     const pending = client.v3.useSwapList();
-    console.log(pending);
+
+    useEffect(() => {
+        if (isUndefinedOrNullOrArrayEmpty(pending)) {
+            pollMore();
+        }
+    }, [pollMore, pending, pollMore]);
+
+    const pendingToggle = useToggle<['nuggs', 'items']>(['nuggs', 'items'], ['nuggs', 'items']);
+    const liveActiveToggle = useToggle<['nuggs', 'items']>(['nuggs', 'items'], ['nuggs', 'items']);
 
     const liveActiveEverything = useMemo(
         () =>
             all.reduce((acc: TokenId[], curr) => {
                 let tmp: TokenId[] = acc;
-                if (epoch && +curr.toRawId() <= +epoch) {
+                if (
+                    (epoch &&
+                        +curr.toRawId() <= +epoch &&
+                        curr.isNuggId() &&
+                        liveActiveToggle[0].includes('nuggs')) ||
+                    (curr.isItemId() && liveActiveToggle[0].includes('items'))
+                ) {
                     if (sortAsc[SearchView.OnSale]) {
                         tmp = [...acc, curr];
                     } else {
@@ -143,10 +160,8 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 }
                 return tmp;
             }, []),
-        [epoch, all, sortAsc],
+        [epoch, all, sortAsc, liveActiveToggle],
     );
-
-    const pendingToggle = useToggle(['nuggs', 'items'], ['nuggs', 'items']);
 
     const pendingEverything = useMemo(() => {
         return [
@@ -173,9 +188,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                 ...(screenType === 'phone' && { width: '100%', height: '90%', marginTop: '2rem' }),
             }}
         >
-            <button type="submit" onClick={() => pendingToggle[1]('nuggs')}>
-                nugg
-            </button>
             <animated.div style={animatedStyle}>
                 <NuggLink type={SearchView.Search} disablePreview>
                     <NuggList
@@ -205,7 +217,11 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         style={styles.nuggListEnter}
                         tokenIds={pendingEverything}
                         type={SearchView.Pending}
-                        cardType="swap"
+                        toggleValues={pendingToggle[0]}
+                        toggleInitialState={pendingToggle[2]}
+                        doToggle={pendingToggle[1] as (_: string) => void}
+                        cardType="all"
+                        onScrollEnd={pollMore}
                     />
                 </NuggLink>
                 <NuggLink
@@ -224,6 +240,9 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         tokenIds={liveActiveEverything}
                         type={SearchView.OnSale}
                         cardType="swap"
+                        toggleValues={liveActiveToggle[0]}
+                        toggleInitialState={liveActiveToggle[2]}
+                        doToggle={liveActiveToggle[1] as (_: string) => void}
                     />
                 </NuggLink>
 
