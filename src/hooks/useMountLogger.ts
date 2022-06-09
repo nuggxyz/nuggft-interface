@@ -2,18 +2,21 @@ import React from 'react';
 
 export default (name: string) => {
     React.useEffect(() => {
-        console.log(
-            `mount   ${name}`,
-            new Date().getSeconds(), // logs minutes
-            new Date().getMilliseconds(), // logs seconds so that you can check diff in browser
-        );
-        return () => {
+        if (__DEV__) {
             console.log(
-                `unmount ${name}`,
+                `mount   ${name}`,
                 new Date().getSeconds(), // logs minutes
                 new Date().getMilliseconds(), // logs seconds so that you can check diff in browser
             );
-        };
+            return () => {
+                console.log(
+                    `unmount ${name}`,
+                    new Date().getSeconds(), // logs minutes
+                    new Date().getMilliseconds(), // logs seconds so that you can check diff in browser
+                );
+            };
+        }
+        return undefined;
     }, []);
 
     return null;

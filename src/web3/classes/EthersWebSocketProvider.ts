@@ -127,17 +127,6 @@ export class EthersWebSocketProvider extends JsonRpcProvider {
     _wsReady: boolean;
 
     constructor(url: string, network?: Networkish) {
-        // This will be added in the future; please open an issue to expedite
-        if (network === 'any') {
-            logger.throwError(
-                "WebSocketProvider does not support 'any' network yet",
-                Logger.errors.UNSUPPORTED_OPERATION,
-                {
-                    operation: 'network:any',
-                },
-            );
-        }
-
         super(url, network);
 
         this._websocket = new WebSocket(this.connection.url);

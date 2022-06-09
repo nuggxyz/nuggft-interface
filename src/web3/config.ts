@@ -1,13 +1,16 @@
 /* eslint-disable import/no-cycle */
 import { useEffect } from 'react';
 import { ApolloClient } from '@apollo/client';
-import { InfuraProvider, JsonRpcProvider } from '@ethersproject/providers';
+import { InfuraProvider, JsonRpcProvider, Log } from '@ethersproject/providers';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
 import { buildApolloHttpLink, buildCache } from '@src/gql';
 import * as constants from '@src/lib/constants';
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import { ETH_ONE, LOSS } from '@src/lib/conversion';
+import emitter from '@src/emitter';
+import { NuggftV1__factory } from '@src/typechain';
+import { InterfacedEvent } from '@src/interfaces/events';
 
 import { Connector } from './core/types';
 import {
@@ -47,6 +50,7 @@ import {
     PROTOCOL_FEE_FRAC_MINT,
     supportedChainIds,
 } from './constants';
+import { CustomEtherscanProvider } from './classes/CustomEtherscanProvider';
 
 export default { ...constants };
 
@@ -266,6 +270,9 @@ export const apolloClient = new ApolloClient<any>({
     },
 });
 
+// @ts-ignore
+// delete apolloClient.cache;
+
 export const useActivate = () => {
     useEffect(() => {
         [
@@ -343,4 +350,61 @@ export const calculateIncrementWithRemaining = (
     }
 
     return [BigInt(5), 100, 100] as const;
+};
+const inter = NuggftV1__factory.createInterface();
+
+const etherscan = new CustomEtherscanProvider(Chain.MAINNET);
+
+let triggered = false;
+
+export const buildRpcWebsocket = () => {
+    const eventListener = (log: Log) => {
+        const event = inter.parseLog(log) as unknown as InterfacedEvent;
+        emitter.emit({ type: emitter.events.IncomingRpcEvent, data: event, log });
+    };
+
+    const blockListener = (log: number) => {
+        if (log === 0) return;
+        emitter.emit({ type: emitter.events.IncomingRpcBlock, data: log });
+
+        if (!triggered || log % 5 === 0) {
+            if (!triggered) triggered = true;
+            void etherscan
+                .getCustomEtherPrice()
+                .then((price) => {
+                    emitter.emit({
+                        type: emitter.events.IncomingEtherscanPrice,
+                        data: price,
+                    });
+                })
+                .catch(() => {
+                    emitter.emit({
+                        type: emitter.events.IncomingEtherscanPrice,
+                        data: null,
+                    });
+                });
+        }
+    };
+    const _rpc = createInfuraWebSocket(undefined, () => {});
+
+    void _rpc.getBlockNumber().then(blockListener);
+
+    _rpc.on('block', blockListener);
+
+    const event = {
+        address: DEFAULT_CONTRACTS.NuggftV1,
+        topics: [],
+    };
+    _rpc.on(event, eventListener);
+
+    _rpc.setOnClose(() => {
+        _rpc.removeAllListeners('block');
+        _rpc.removeAllListeners(event);
+        void _rpc.destroy();
+        buildRpcWebsocket();
+    });
+
+    return () => {
+        _rpc.closer();
+    };
 };

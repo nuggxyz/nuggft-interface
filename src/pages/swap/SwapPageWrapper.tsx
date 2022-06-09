@@ -1,4 +1,5 @@
 import React from 'react';
+// import '@src/emitter/workers/register';
 
 const MobileSwapPage = React.lazy(() => import('@src/pages/mobile/MobileSwapPage'));
 const SwapPageDesktopLarge = React.lazy(() => import('@src/pages/swap/SwapPageDesktopLarge'));

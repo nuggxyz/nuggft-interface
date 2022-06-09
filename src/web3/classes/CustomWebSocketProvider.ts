@@ -17,6 +17,14 @@ export class CustomWebSocketProvider extends EthersWebSocketProvider {
         this._websocket.onclose = onClose;
     }
 
+    public setOnClose(onClose: (e: CloseEvent) => void) {
+        this._websocket.onclose = onClose;
+    }
+
+    public closer() {
+        this._websocket.close();
+    }
+
     public override destroy() {
         this._websocket.onclose = () => {};
         return this._destroy();

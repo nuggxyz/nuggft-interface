@@ -19,7 +19,6 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useDimensions from '@src/client/hooks/useDimensions';
-import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 
 import styles from './ViewingNugg.styles';
 import SwapList from './SwapList';
@@ -46,7 +45,6 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const provider = web3.hook.usePriorityProvider();
 
     const token = client.live.token(tokenId);
-    useLiveTokenPoll(true, tokenId);
 
     const happyTabs = useMemo(() => {
         return [

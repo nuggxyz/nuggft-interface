@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import client from '@src/client';
-import { useGetLiveItemQuery, useGetLiveNuggQuery } from '@src/gql/types.generated';
+import { useGetLiveItemLazyQuery, useGetLiveNuggLazyQuery } from '@src/gql/types.generated';
 import formatLiveItem from '@src/client/formatters/formatLiveItem';
 import formatLiveNugg from '@src/client/formatters/formatLiveNugg';
 
@@ -12,8 +12,8 @@ export default () => {
     const updateToken = client.mutate.updateToken();
     const navigate = useNavigate();
 
-    const { fetchMore: itemLazyQuery } = useGetLiveItemQuery({});
-    const { fetchMore: nuggLazyQuery } = useGetLiveNuggQuery({});
+    const [itemLazyQuery] = useGetLiveItemLazyQuery({});
+    const [nuggLazyQuery] = useGetLiveNuggLazyQuery({});
 
     return useCallback(
         async (tokenId: TokenId) => {

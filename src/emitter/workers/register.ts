@@ -15,7 +15,7 @@ const buildWorker = () => {
 
     worker = new Worker(new URL('./rpc.worker.ts', import.meta.url));
 
-    console.log(`[App:buildWorker] Worker instance ${workerCount++}:`, worker);
+    console.log(`[App:buildWorker] Worker instance ${workerCount++}:`);
 
     worker.onmessage = ({ data }: { data: EmitWorkerEventBase }) => {
         lastWorkerResponse = new Date().getTime();

@@ -115,7 +115,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
                 x: todef,
             },
             immediate: !spring,
-            config: packages.spring.config.default,
+            config: packages.spring.config.molasses,
         },
         [todef, spring],
     );

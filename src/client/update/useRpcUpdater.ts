@@ -8,6 +8,7 @@ import lib from '@src/lib';
 import emitter from '@src/emitter';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import { buildTokenIdFactory } from '@src/prototypes';
+import { buildRpcWebsocket } from '@src/web3/config';
 
 import client from '..';
 
@@ -230,67 +231,10 @@ export default () => {
         ),
     });
 
-    // const blockListener = React.useCallback(
-    //     (log: number) => {
-    //         console.log(log);
-    //         if (log !== 0) {
-    //             updateBlocknum(log);
-    //             updateLastBlockRpc(log);
-    //         }
-    //     },
-    //     [updateBlocknum, updateLastBlockRpc],
-    // );
-
-    // // React.useEffect(() => {
-    // //     if (rpc) {
-    // //         rpc.updateListener('block', blockListener);
-    // //     }
-    // // }, [blockListener, rpc]);
-
-    // React.useEffect(() => {
-    //     if (rpc) {
-    //         rpc.updateListener(
-    //             {
-    //                 address: nuggft.address,
-    //                 topics: [],
-    //             },
-    //             eventListener,
-    //         );
-    //     }
-    // }, [eventListener, rpc, nuggft.address]);
-
-    // const buildRpc = React.useCallback(
-    //     (chainIdArg: Chain) => {
-    //         const _rpc = web3.config.createInfuraWebSocket(chainIdArg, () => buildRpc(chainIdArg));
-
-    //         void _rpc.getBlockNumber().then(blockListener);
-
-    //         // _rpc.on('block', blockListener);
-
-    //         _rpc.on(
-    //             {
-    //                 address: nuggft.address,
-    //                 topics: [],
-    //             },
-    //             eventListener,
-    //         );
-
-    //         setRpc(_rpc);
-    //     },
-    //     [blockListener, eventListener, nuggft.address],
-    // );
-
-    // const destoyRpc = React.useCallback(() => {
-    //     void rpc?.destroy();
-    // }, [rpc]);
-
-    // React.useEffect(() => {
-    //     if (chainId) {
-    //         buildRpc(chainId);
-    //         return destoyRpc;
-    //     }
-    //     return () => undefined;
-    // }, [chainId]);
+    React.useEffect(() => {
+        const check = buildRpcWebsocket();
+        return check;
+    }, []);
 
     return null;
 };
