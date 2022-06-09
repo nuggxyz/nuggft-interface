@@ -30,13 +30,13 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
     openOnHover = false,
 }) => {
     const [open, setOpen] = React.useState(false);
-    const [closing, setClosing] = React.useState(false);
+    // const [closing, setClosing] = React.useState(false);
     const [openRef, openHover] = useOnHover(() => {
         if (openOnHover) setOpen(true);
     });
 
     const [closeRef, closeHover] = useOnHover(() => {
-        if (openOnHover && !closing) setOpen(openHover || closeHover);
+        if (openOnHover) setOpen(openHover || closeHover);
         else if (open && !closeHover) setOpen(false);
     });
     // const { screen } = useDimensions();
@@ -55,12 +55,12 @@ const Flyout: FunctionComponent<PropsWithChildren<Props>> = ({
         enter: { opacity: 1, pointerEvents: 'auto' as const, y: 0 },
         leave: { opacity: 0, pointerEvents: 'none' as const, y: -5 },
         config: config.stiff,
-        onStart: () => {
-            setClosing(false);
-        },
-        onDestroyed: () => {
-            setClosing(true);
-        },
+        // onStart: () => {
+        //     setClosing(false);
+        // },
+        // onDestroyed: () => {
+        //     setClosing(true);
+        // },
     });
 
     return (

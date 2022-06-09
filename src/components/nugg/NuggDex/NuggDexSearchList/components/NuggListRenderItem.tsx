@@ -1,11 +1,13 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
-import lib, { shortenAddress } from '@src/lib';
+import lib from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
+import web3 from '@src/web3';
+import useViewingNugg from '@src/client/hooks/useViewingNugg';
 
 import styles from './NuggDexComponents.styles';
 
@@ -18,6 +20,12 @@ const NuggListRenderItemSwap = ({
         return token?.activeSwap;
     }, [token?.activeSwap]);
     const preference = client.usd.useUsdPair(swap?.eth);
+    const provider = web3.hook.usePriorityProvider();
+    const ens = web3.hook.usePriorityAnyENSName(
+        swap?.isItem() ? 'nugg' : provider,
+        swap?.leader as string,
+    );
+
     return swap && tokenId ? (
         <div
             style={{
@@ -38,11 +46,7 @@ const NuggListRenderItemSwap = ({
                 value={preference}
                 stopAnimation
             />
-            {swap.leader && (
-                <Label
-                    text={swap.isItem() ? swap.leader.toPrettyId() : shortenAddress(swap.leader)}
-                />
-            )}
+            {swap.leader && ens && <Label text={ens} />}
         </div>
     ) : null;
 };
@@ -55,11 +59,15 @@ const NuggListRenderItem: FunctionComponent<Props> = ({
     extraData,
     index,
 }) => {
+    const { safeTokenId: viewingId } = useViewingNugg();
+
     const style = useMemo(() => {
         return {
             ...(tokenId ? styles.nuggListRenderItemContainer : {}),
+            background:
+                viewingId === tokenId ? lib.colors.nuggBlueTransparent : lib.colors.transparent,
         };
-    }, [tokenId]);
+    }, [tokenId, viewingId]);
 
     return (
         <div

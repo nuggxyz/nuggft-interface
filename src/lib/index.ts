@@ -110,7 +110,7 @@ export const isUndefinedOrNullOrBooleanFalse = <T>(
 ): value is null | undefined | false => {
     return isUndefinedOrNullOrNotBoolean(value) || value === false;
 };
-export const isUndefinedOrNullOrNotFunction = (value: unknown) => {
+export const isUndefinedOrNullOrNotFunction = <T>(value: unknown): value is AllTypes<T> => {
     return isUndefinedOrNull(value) || typeof value !== 'function';
 };
 export const isUndefinedOrNullOrNotNumber = <T>(

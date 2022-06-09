@@ -142,7 +142,7 @@ export enum SearchView {
     AllNuggs = 'AllNuggs',
     OnSale = 'OnSale',
     MyNuggs = 'MyNuggs',
-    Recents = 'Recents',
+    Pending = 'Pending',
     AllItems = 'AllItems',
     Search = 'Search',
 }

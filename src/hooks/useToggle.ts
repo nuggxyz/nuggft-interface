@@ -1,19 +1,22 @@
 import { useCallback, useState } from 'react';
 
-const useToggle = <T extends string[]>(
+const useToggle = <T>(
     state: T,
+    // @ts-ignore
     initialState: T[number][],
+    // @ts-ignore
 ): [T[number][], (state: T[number]) => void, T] => {
     const [toggled, setToggled] = useState(initialState);
 
     const toggle = useCallback(
-        (state: T[number]) => {
-            if (toggled.includes(state)) {
-                let temp = [...toggled];
-                temp.splice(toggled.indexOf(state), 1);
+        // @ts-ignore
+        (_state: T[number]) => {
+            if (toggled.includes(_state)) {
+                const temp = [...toggled];
+                temp.splice(toggled.indexOf(_state), 1);
                 setToggled(temp);
             } else {
-                setToggled([...toggled, state]);
+                setToggled([...toggled, _state]);
             }
         },
         [toggled, setToggled],

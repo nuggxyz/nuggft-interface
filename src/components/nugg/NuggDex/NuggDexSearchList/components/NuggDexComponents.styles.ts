@@ -37,7 +37,7 @@ const styles = lib.layout.NLStyleSheetCreator({
         justifyContent: 'center',
         zIndex: 1,
         borderRadius: lib.layout.borderRadius.large,
-        background: lib.colors.transparentGrey2,
+        background: lib.colors.semiTransparentGrey,
         paddingRight: '.7rem',
         ...globalStyles.backdropFilter,
     },
