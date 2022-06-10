@@ -1,7 +1,6 @@
 import React, { CSSProperties, FunctionComponent, ReactChild, useMemo } from 'react';
 
 import lib from '@src/lib';
-import useInterval from '@src/hooks/useInterval';
 
 import styles from './CircleTimer.styles';
 
@@ -40,18 +39,20 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
         return _staticColor ?? duration === remaining ? 'white' : null;
     }, [_staticColor, remaining, duration]);
 
-    const [trueRemaining, setTrueRemaining] = React.useState((1 + remaining) * 12);
+    const [trueRemaining, setTrueRemaining] = React.useState(
+        remaining < duration ? remaining * 12 : duration * 12,
+    );
     const [trueDuration, setTrueDuration] = React.useState(duration * 12);
 
-    useInterval(
-        React.useCallback(() => {
-            if (trueRemaining) setTrueRemaining(trueRemaining - 1);
-        }, [trueRemaining, setTrueRemaining]),
-        React.useMemo(() => (staticColor ? null : 1000), [staticColor]),
-    );
+    // useInterval(
+    //     React.useCallback(() => {
+    //         if (trueRemaining) setTrueRemaining(trueRemaining - 4);
+    //     }, [trueRemaining, setTrueRemaining]),
+    //     React.useMemo(() => (staticColor ? null : 4000), [staticColor]),
+    // );
 
     React.useEffect(() => {
-        setTrueRemaining((1 + remaining) * 12);
+        setTrueRemaining(remaining * 12);
     }, [remaining, setTrueRemaining]);
 
     React.useEffect(() => {
@@ -77,7 +78,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     }, [width]);
 
     const activated = React.useMemo(() => {
-        return staticColor || (!staticColor && max > to && to > 0);
+        return staticColor || (!staticColor && max > to);
     }, [staticColor, to, max]);
 
     const shadowColor = useMemo(() => {
@@ -101,7 +102,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
             `${(width / 6.5) * TWOPI} ${(width / 6.5) * TWOPI}`,
             shadowColor === 'transparent' ? 'transparent' : 'white',
             // spring ? {} : { transition: `all 2s ${lib.layout.animation}` },
-            { transition: `all 2s ${lib.layout.animation}` },
+            { transition: `all 4s ${lib.layout.animation}` },
 
             activated ? strokeWidth : 0,
             `drop-shadow(2px 3px 10px ${shadowColor}) hue-rotate(0)`,
