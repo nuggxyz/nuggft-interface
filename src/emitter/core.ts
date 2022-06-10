@@ -6,25 +6,15 @@ const ENABLE_LOGS = __DEV__;
 
 const eventEmitter = new EventEmitter3();
 
-const wrap = <T>(name: string, event: string, fn: (arg: T) => void) => {
-    return (args: T) => {
-        console.log(`event received: [${event}] [${name}] [payload:${JSON.stringify(args)}]`);
-        fn(args);
-    };
-};
-
 const emitter = Object.freeze({
-    on: (event: string, fn: (arg: any) => void) =>
-        eventEmitter.on(event, ENABLE_LOGS ? wrap('on', event, fn) : fn),
-    once: (event: string, fn: (arg: any) => void) =>
-        eventEmitter.once(event, ENABLE_LOGS ? wrap('once', event, fn) : fn),
-    off: (event: string) => {
-        if (ENABLE_LOGS) {
-            wrap('removeListener', event, () => undefined);
-        }
-        return eventEmitter.removeAllListeners(event);
+    on: (event: string, fn: (arg: any) => void) => eventEmitter.on(event, fn),
+    once: (event: string, fn: (arg: any) => void) => eventEmitter.once(event, fn),
+    off: (event: string, fn: (arg: any) => void) => {
+        return eventEmitter.removeListener(event, fn);
     },
     emit: (event: string, payload: any) => {
+        eventEmitter.emit(event, payload);
+
         if (ENABLE_LOGS) {
             const tmp = payload as { type?: EmitEventNames };
             if (typeof payload === 'object') {
@@ -32,7 +22,6 @@ const emitter = Object.freeze({
             }
             console.log(`event emitted:  [${event}] [payload:${JSON.stringify(tmp)}]`);
         }
-        eventEmitter.emit(event, payload);
     },
 });
 
@@ -48,21 +37,37 @@ const on = <R extends EmitEventNames, T extends EmitEvents>(
             : never,
     ) => void,
 ): (() => void) => {
-    if (ENABLE_LOGS) console.log(`on call:  [${event}]`);
+    const id = Math.random().toFixed(10);
+    const b = emitter.on(event, callback);
+    const kill = emitter.off.bind(emitter, event, callback);
 
-    void emitter.on(event, callback);
+    if (ENABLE_LOGS) {
+        console.log(
+            `sub open [on]: [${event}] [id:${id}] -- active events: [${event}:${
+                b.listeners(event).length
+            }] [total:${(b as unknown as { _eventsCount?: number })?._eventsCount || 'unknown'}]`,
+        );
+    }
     return () => {
-        if (ENABLE_LOGS) console.log(`on close: [${event}]`);
+        const a = kill();
 
-        const a = emitter.off(event);
-
-        if (ENABLE_LOGS) console.log(a.listeners(event));
+        if (ENABLE_LOGS) {
+            console.log(
+                `sub close [on]: [${event}] [id:${id}] -- active events: [${event}:${
+                    a.listeners(event).length
+                }] [total:${
+                    (a as unknown as { _eventsCount?: number })?._eventsCount || 'unknown'
+                }]`,
+            );
+        }
     };
 };
 
 const once: typeof on = (event, callback) => {
+    const me = callback;
+
     void emitter.once(event, callback);
-    return () => emitter.off(event);
+    return () => emitter.off(event, me);
 };
 
 const emit = <R extends EmitEventNames, T extends EmitEvents>(
