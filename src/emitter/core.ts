@@ -2,13 +2,38 @@ import EventEmitter3 from 'eventemitter3';
 
 import { EmitEventNames, EmitEvents } from '@src/emitter/interfaces';
 
+const ENABLE_LOGS = __DEV__;
+
 const eventEmitter = new EventEmitter3();
 
+const wrap = <T>(name: string, event: string, fn: (arg: T) => void) => {
+    return (args: T) => {
+        console.log(`event received: [${event}] [${name}] [payload:${JSON.stringify(args)}]`);
+        fn(args);
+    };
+};
+
 const emitter = Object.freeze({
-    on: (event: string, fn: (arg: any) => void) => eventEmitter.on(event, fn),
-    once: (event: string, fn: (arg: any) => void) => eventEmitter.once(event, fn),
-    off: (event: string, fn: (arg: any) => void) => eventEmitter.removeListener(event, fn),
-    emit: (event: string, payload: any) => eventEmitter.emit(event, payload),
+    on: (event: string, fn: (arg: any) => void) =>
+        eventEmitter.on(event, ENABLE_LOGS ? wrap('on', event, fn) : fn),
+    once: (event: string, fn: (arg: any) => void) =>
+        eventEmitter.once(event, ENABLE_LOGS ? wrap('once', event, fn) : fn),
+    off: (event: string) => {
+        if (ENABLE_LOGS) {
+            wrap('removeListener', event, () => undefined);
+        }
+        return eventEmitter.removeAllListeners(event);
+    },
+    emit: (event: string, payload: any) => {
+        if (ENABLE_LOGS) {
+            const tmp = payload as { type?: EmitEventNames };
+            if (typeof payload === 'object') {
+                delete tmp.type;
+            }
+            console.log(`event emitted:  [${event}] [payload:${JSON.stringify(tmp)}]`);
+        }
+        eventEmitter.emit(event, payload);
+    },
 });
 
 const on = <R extends EmitEventNames, T extends EmitEvents>(
@@ -23,13 +48,21 @@ const on = <R extends EmitEventNames, T extends EmitEvents>(
             : never,
     ) => void,
 ): (() => void) => {
+    if (ENABLE_LOGS) console.log(`on call:  [${event}]`);
+
     void emitter.on(event, callback);
-    return () => emitter.off(event, callback);
+    return () => {
+        if (ENABLE_LOGS) console.log(`on close: [${event}]`);
+
+        const a = emitter.off(event);
+
+        if (ENABLE_LOGS) console.log(a.listeners(event));
+    };
 };
 
 const once: typeof on = (event, callback) => {
     void emitter.once(event, callback);
-    return () => emitter.off(event, callback);
+    return () => emitter.off(event);
 };
 
 const emit = <R extends EmitEventNames, T extends EmitEvents>(
@@ -54,31 +87,10 @@ const wrapper = {
     once,
 };
 
-if (__DEV__) {
+if (ENABLE_LOGS) {
     eventEmitter.on('dev.log', (data) => {
         console.log(data);
     });
-
-    // console.log('AYODHSG:LSDHGL:SDUH Q');
-    // eventEmitter.on('dev.log', (data: { data?: { data?: string } }) => {
-    //     console.log(JSON.stringify(data?.data?.data ? data.data.data : 'NOPE'));
-    //     console.log({ ...data }, JSON.stringify({ ...data } as object));
-    //     fetch(`https://en92vutpmg03l.x.pipedream.net`, {
-    //         method: 'POST',
-    //         body: JSON.stringify(data?.data?.data ? data.data.data : 'NOPE'),
-    //     })
-    //         .then(function (response) {
-    //             console.log('AYODHSG:LSDHGL:SDUH');
-    //             return response.json();
-    //         })
-    //         .then(function (dat) {
-    //             console.log(dat);
-    //         })
-    //         .catch(function () {
-    //             console.log('Booo');
-    //         });
-    // });
-    // void import('@src/dev/express-logger.dev');
 }
 
 export default wrapper;

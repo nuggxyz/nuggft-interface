@@ -16,7 +16,8 @@ const ctx: Worker & {
     self as DedicatedWorkerGlobalScope;
 
 // @ts-ignore
-ctx.emitMessage = (data: unknown) => ctx.postMessage.call(ctx, data);
+ctx.emitMessage = (event: EmitEventNames, data: object) =>
+    ctx.postMessage.call(ctx, { type: event, ...data });
 
 export default {} as typeof Worker & { new (): Worker };
 
@@ -41,18 +42,20 @@ const blockListener = (log: number) => {
             data: log,
         });
 
-        void etherscan
-            .getCustomEtherPrice()
-            .then((price) => {
-                ctx.emitMessage(EmitEventNames.IncomingEtherscanPrice, {
-                    data: price,
+        if (lastBlock === 0 || log % 5 === 0) {
+            void etherscan
+                .getCustomEtherPrice()
+                .then((price) => {
+                    ctx.emitMessage(EmitEventNames.IncomingEtherscanPrice, {
+                        data: price,
+                    });
+                })
+                .catch(() => {
+                    ctx.emitMessage(EmitEventNames.IncomingEtherscanPrice, {
+                        data: null,
+                    });
                 });
-            })
-            .catch(() => {
-                ctx.emitMessage(EmitEventNames.IncomingEtherscanPrice, {
-                    data: null,
-                });
-            });
+        }
     }
 };
 const inter = NuggftV1__factory.createInterface();

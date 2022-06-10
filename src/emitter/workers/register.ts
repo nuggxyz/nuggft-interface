@@ -45,6 +45,6 @@ setInterval(() => {
     }
 
     worker.postMessage({ type: EmitEventNames.HealthCheck });
-}, 1000);
+}, 9000);
 
 export {};
