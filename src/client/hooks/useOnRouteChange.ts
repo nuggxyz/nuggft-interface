@@ -11,8 +11,7 @@ export default () => {
 
     React.useEffect(() => {
         if (location.pathname !== prevLocation?.pathname) {
-            emitter.emit({
-                type: emitter.events.RouteChange,
+            emitter.emit(emitter.events.RouteChange, {
                 newRoute: location.pathname,
                 prevRoute: prevLocation?.pathname ?? null,
             });

@@ -22,12 +22,12 @@ import { RevertError } from '@src/lib/errors';
 
 interface EmitEventBase {
     type: EmitEventNames;
-    callback: (arg: Remap<Omit<this, 'callback'>>) => void;
-    waitFor?: EmitEventNames;
+    // callback: (arg: Remap<Omit<this, 'callback'>>) => void;
+    // waitFor?: EmitEventNames;
 }
 
-type BuildPayload<T> = Omit<T, 'callback'>;
-type BuildCallback<T extends { type: unknown; callback: unknown }> = Pick<T, 'type' | 'callback'>;
+// type BuildPayload<T> = Omit<T, 'callback'>;
+// type BuildCallback<T extends { type: unknown; callback: unknown }> = Pick<T, 'type' | 'callback'>;
 
 interface EmitOnChainEventBase {
     event: InterfacedEvent;
@@ -140,7 +140,6 @@ interface EmitWorkerIncomingRpcEvent extends EmitEventBase, EmitWorkerEventBase 
 interface EmitWorkerIncomingRpcBlock extends EmitEventBase, EmitWorkerEventBase {
     type: EmitEventNames.IncomingRpcBlock;
     data: number;
-    log: number;
 }
 
 interface EmitWorkerIncomingEtherscanPrice extends EmitEventBase, EmitWorkerEventBase {
@@ -172,7 +171,7 @@ interface EmitWorkerIsRunning extends EmitEventBase {
 }
 interface EmitDevLog extends EmitEventBase {
     type: EmitEventNames.DevLog;
-    data: object;
+    data: any;
     name: string;
 }
 
@@ -220,67 +219,6 @@ export enum EmitEventNames {
     RequestCloseMobileNavbar = 'main.local.RequestCloseMobileNavbar',
     // Sell = 'local.rpc.event.Sell',
 }
-
-export type EmitEventsListPayload =
-    | BuildPayload<EmitTransactionReceipt>
-    | BuildPayload<EmitTransactionResponse>
-    | BuildPayload<EmitPotentialTransactionResponse>
-    | BuildPayload<EmitPotentialTransactionReceipt>
-    | BuildPayload<EmitLocalRpcMint>
-    | BuildPayload<EmitLocalRpcMint>
-    | BuildPayload<EmitLocalRpcOffer>
-    | BuildPayload<EmitLocalRpcStake>
-    | BuildPayload<EmitLocalRpcClaim>
-    | BuildPayload<EmitLocalRpcClaimItem>
-    | BuildPayload<EmitLocalRpcLoan>
-    | BuildPayload<EmitLocalRpcLiquidate>
-    | BuildPayload<EmitLocalRpcRebalance>
-    | BuildPayload<EmitLocalRpcTransfer>
-    | BuildPayload<EmitTransactionSent>
-    | BuildPayload<EmitKeyboardClosed>
-    | BuildPayload<EmitLocalRpcRotate>
-    | BuildPayload<EmitHealthCheck>
-    | BuildPayload<EmitWorkerIsRunning>
-    | BuildPayload<EmitWorkerIncomingEtherscanPrice>
-    | BuildPayload<EmitDevLog>
-    | BuildPayload<EmitRouteChange>
-    | BuildPayload<EmitRequestCloseMobileNavbar>
-    | BuildPayload<EmitRequestTokenSvgQuery>
-    | BuildPayload<EmitWorkerEventBase>
-    | BuildPayload<EmitModalOpen>
-    | BuildPayload<EmitReturnTokenSvgQuery>
-    | BuildPayload<EmitWorkerIncomingRpcEvent>
-    | BuildPayload<EmitWorkerIncomingRpcBlock>;
-
-export type EmitEventsListCallback =
-    | BuildCallback<EmitTransactionReceipt>
-    | BuildCallback<EmitPotentialTransactionReceipt>
-    | BuildCallback<EmitPotentialTransactionResponse>
-    | BuildCallback<EmitTransactionResponse>
-    | BuildCallback<EmitLocalRpcMint>
-    | BuildCallback<EmitLocalRpcMint>
-    | BuildCallback<EmitLocalRpcOffer>
-    | BuildCallback<EmitLocalRpcStake>
-    | BuildCallback<EmitLocalRpcClaim>
-    | BuildCallback<EmitLocalRpcClaimItem>
-    | BuildCallback<EmitLocalRpcLoan>
-    | BuildCallback<EmitLocalRpcLiquidate>
-    | BuildCallback<EmitLocalRpcRebalance>
-    | BuildCallback<EmitLocalRpcRotate>
-    | BuildCallback<EmitDevLog>
-    | BuildCallback<EmitRouteChange>
-    | BuildCallback<EmitHealthCheck>
-    | BuildCallback<EmitLocalRpcTransfer>
-    | BuildCallback<EmitTransactionSent>
-    | BuildCallback<EmitKeyboardClosed>
-    | BuildCallback<EmitModalOpen>
-    | BuildCallback<EmitWorkerIsRunning>
-    | BuildCallback<EmitRequestTokenSvgQuery>
-    | BuildCallback<EmitReturnTokenSvgQuery>
-    | BuildCallback<EmitWorkerIncomingRpcEvent>
-    | BuildCallback<EmitWorkerIncomingRpcBlock>
-    | BuildCallback<EmitRequestCloseMobileNavbar>
-    | BuildCallback<EmitWorkerIncomingEtherscanPrice>;
 
 export type EmitEvents =
     | EmitTransactionReceipt

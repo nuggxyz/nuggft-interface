@@ -224,15 +224,13 @@ export const usePollV2 = () => {
         updateStake(res);
     }, [lazy, handleV2, blocknum, updateStake]);
 
-    emitter.hook.useOn({
-        type: emitter.events.Offer,
-        callback: React.useCallback(
-            (arg) => {
-                handleRpcHit(arg.data, arg.log);
-            },
-            [handleRpcHit],
-        ),
-    });
+    emitter.hook.useOn(
+        emitter.events.Offer,
+        (arg) => {
+            handleRpcHit(arg.data, arg.log);
+        },
+        [handleRpcHit],
+    );
 
     health.useCallbackOnGraphBlockChange(callback);
 };

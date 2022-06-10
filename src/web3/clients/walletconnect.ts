@@ -234,16 +234,14 @@ export class WalletConnect extends Connector {
 
             if (sock) {
                 sock.onerror = function (ev) {
-                    emitter.emit({
-                        type: emitter.events.DevLog,
+                    emitter.emit(emitter.events.DevLog, {
                         data: ev,
                         name: 'error received from wallet connect',
                     });
                     if (z) z.bind(sock)(ev);
                 };
                 sock.onmessage = function (ev) {
-                    emitter.emit({
-                        type: emitter.events.DevLog,
+                    emitter.emit(emitter.events.DevLog, {
                         data: ev,
                         name: 'messaged received from wallet connect',
                     });

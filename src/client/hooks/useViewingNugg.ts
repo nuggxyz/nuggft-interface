@@ -19,7 +19,7 @@ export default () => {
         (tokenId: TokenId) => {
             if (isPhone) {
                 gotoMobile(tokenId);
-                emitter.emit({ type: emitter.events.RequestCloseMobileNavbar });
+                emitter.emit(emitter.events.RequestCloseMobileNavbar, {});
             } else navigate(`/view/${PREFIX}/${tokenId}`);
         },
         [navigate, isPhone, gotoMobile],

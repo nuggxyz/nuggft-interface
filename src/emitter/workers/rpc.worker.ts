@@ -2,19 +2,20 @@ import type { Log } from '@ethersproject/abstract-provider';
 
 import { InterfacedEvent } from '@src/interfaces/events';
 import { InfuraWebSocketProvider } from '@src/web3/classes/CustomWebSocketProvider';
-import emitter from '@src/emitter';
+import type emitter from '@src/emitter';
 import { Chain, DEFAULT_CONTRACTS } from '@src/web3/constants';
-import { EmitEventsListPayload } from '@src/emitter/interfaces';
 import { CustomEtherscanProvider } from '@src/web3/classes/CustomEtherscanProvider';
 import { NuggftV1__factory } from '@src/typechain/factories/NuggftV1__factory';
+import { EmitEventNames } from '@src/emitter/interfaces';
 
 // @ts-ignore
 const ctx: Worker & {
-    emitMessage: (arg: EmitEventsListPayload) => void;
+    emitMessage: typeof emitter.emit;
 } =
     // eslint-disable-next-line no-restricted-globals
     self as DedicatedWorkerGlobalScope;
 
+// @ts-ignore
 ctx.emitMessage = (data: unknown) => ctx.postMessage.call(ctx, data);
 
 export default {} as typeof Worker & { new (): Worker };
@@ -36,23 +37,19 @@ const blockListener = (log: number) => {
 
         lastBlockTime = new Date().getTime();
 
-        ctx.emitMessage({
-            type: emitter.events.IncomingRpcBlock,
+        ctx.emitMessage(EmitEventNames.IncomingRpcBlock, {
             data: log,
-            log,
         });
 
         void etherscan
             .getCustomEtherPrice()
             .then((price) => {
-                ctx.emitMessage({
-                    type: emitter.events.IncomingEtherscanPrice,
+                ctx.emitMessage(EmitEventNames.IncomingEtherscanPrice, {
                     data: price,
                 });
             })
             .catch(() => {
-                ctx.emitMessage({
-                    type: emitter.events.IncomingEtherscanPrice,
+                ctx.emitMessage(EmitEventNames.IncomingEtherscanPrice, {
                     data: null,
                 });
             });
@@ -62,8 +59,7 @@ const inter = NuggftV1__factory.createInterface();
 const eventListener = (log: Log) => {
     const event = inter.parseLog(log) as unknown as InterfacedEvent;
 
-    ctx.emitMessage({
-        type: emitter.events.IncomingRpcEvent,
+    ctx.emitMessage(EmitEventNames.IncomingRpcEvent, {
         data: event,
         log,
     });
@@ -97,8 +93,7 @@ const buildSocket = () => {
 buildSocket();
 
 setInterval(() => {
-    ctx.emitMessage({
-        type: emitter.events.WorkerIsRunning,
+    ctx.emitMessage(EmitEventNames.WorkerIsRunning, {
         label: 'rpc',
     });
     if (
@@ -110,8 +105,8 @@ setInterval(() => {
 }, 4000);
 
 // ctx.addEventListener('message', ({ data }: MessageEvent<EmitEventsListPayload>) => {
-//     if (data.type === emitter.events.HealthCheck) {
-//         ctx.emitMessage({ type: emitter.events.WorkerIsRunning, label: 'rpc' });
+//     if (data.type === emitter.EmitEventNames.HealthCheck) {
+//         ctx.emitMessage({ type: emitter.EmitEventNames.WorkerIsRunning, label: 'rpc' });
 
 //         // console.log();
 

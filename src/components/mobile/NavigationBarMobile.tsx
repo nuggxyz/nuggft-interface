@@ -128,12 +128,9 @@ const NavigationBarMobile: FC<unknown> = () => {
         [manualMatch],
     );
 
-    emitter.hook.useOn({
-        type: emitter.events.RequestCloseMobileNavbar,
-        callback: () => {
-            close();
-            setManualMatch(false);
-        },
+    emitter.hook.useOn(emitter.events.RequestCloseMobileNavbar, () => {
+        close();
+        setManualMatch(false);
     });
 
     /* ////////////////////////////////////////////////////////////////////////

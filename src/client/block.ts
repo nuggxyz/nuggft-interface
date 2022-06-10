@@ -5,7 +5,7 @@ import { combine, persist } from 'zustand/middleware';
 import useDebounce from '@src/hooks/useDebounce';
 import emitter from '@src/emitter';
 
-const store = create(
+const useStore = create(
     persist(
         combine(
             {
@@ -31,26 +31,28 @@ const store = create(
 );
 
 export const useBlockUpdater = () => {
-    const update = store((state) => state.update);
+    const update = useStore((state) => state.update);
 
-    emitter.hook.useOn({
-        type: emitter.events.IncomingRpcBlock,
-        callback: (data) => {
+    emitter.hook.useOn(
+        emitter.events.IncomingRpcBlock,
+        (data) => {
             update(data.data);
         },
-    });
+        [update],
+    );
+
+    return null;
 };
 
 export default {
-    useBlock: () => store((state) => state.block),
-    useLastUpdate: () => store((state) => state.lastUpdate),
-    useLastChange: () => store((state) => state.lastChange),
+    useBlock: () => useStore((state) => state.block),
+    useLastUpdate: () => useStore((state) => state.lastUpdate),
+    useLastChange: () => useStore((state) => state.lastChange),
 
     useBlockWithDebounce: (delay: number) => {
-        const block = store((state) => state.block);
+        const block = useStore((state) => state.block);
         return useDebounce(block, delay);
     },
 
-    useUpdateBlock: () => store((state) => state.update),
-    ...store,
+    useUpdateBlock: () => useStore((state) => state.update),
 };

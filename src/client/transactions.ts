@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import create from 'zustand';
 import { combine, subscribeWithSelector } from 'zustand/middleware';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
 
 import web3 from '@src/web3';
@@ -132,49 +132,40 @@ export const useUpdateTransactionOnEmit = () => {
     const handleReceipt = useStore((store) => store.handleReceipt);
     const handleResult = useStore((store) => store.handleResult);
 
-    emitter.hook.useOn({
-        type: emitter.events.TransactionResponse,
-        callback: React.useCallback(
-            (args) => {
-                if (args.response.from === address && provider)
-                    void handleResponse(args.response.hash as Hash, provider);
-            },
-            [handleResponse, address, provider],
-        ),
-    });
+    emitter.hook.useOn(
+        emitter.events.TransactionResponse,
+        (args) => {
+            if (args.response.from === address && provider)
+                void handleResponse(args.response.hash as Hash, provider);
+        },
+        [handleResponse, address, provider],
+    );
 
-    emitter.hook.useOn({
-        type: emitter.events.TransactionReceipt,
-        callback: React.useCallback(
-            (args) => {
-                if (address === args.recipt.from && provider) void handleResult(args.recipt);
-            },
-            [address, handleResult, provider],
-        ),
-    });
+    emitter.hook.useOn(
+        emitter.events.TransactionReceipt,
+        (args) => {
+            if (address === args.recipt.from && provider) void handleResult(args.recipt);
+        },
+        [address, handleResult, provider],
+    );
 
-    emitter.hook.useOn({
-        type: emitter.events.PotentialTransactionReceipt,
-        callback: React.useCallback(
-            (args) => {
-                console.log('ayyyooooooooooooooo', address, args.from, args);
-                if (args.from === address && provider) void handleReceipt(args.txhash, provider);
-            },
-            [handleReceipt, address, provider],
-        ),
-    });
+    emitter.hook.useOn(
+        emitter.events.PotentialTransactionReceipt,
+        (args) => {
+            console.log('PotentialTransactionReceipt: ', address, args.from, args);
+            if (args.from === address && provider) void handleReceipt(args.txhash, provider);
+        },
+        [handleReceipt, address, provider],
+    );
 
-    emitter.hook.useOn({
-        type: emitter.events.PotentialTransactionResponse,
-        callback: React.useCallback(
-            (args) => {
-                console.log('ayyyooooooooooooooo22222222', address, args.from, args);
-
-                if (args.from === address && provider) void handleResponse(args.txhash, provider);
-            },
-            [address, handleResponse, provider],
-        ),
-    });
+    emitter.hook.useOn(
+        emitter.events.PotentialTransactionResponse,
+        (args) => {
+            console.log('PotentialTransactionResponse: ', address, args.from, args);
+            if (args.from === address && provider) void handleResponse(args.txhash, provider);
+        },
+        [address, handleResponse, provider],
+    );
 };
 
 const useTransaction = (txhash?: ResponseHash) => {

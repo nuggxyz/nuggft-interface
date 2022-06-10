@@ -155,21 +155,19 @@ function useSendTransaction(
     /// /////////////////////////
     // this is here just to see if we can find the hash based on event data
     /// /////////////////////////
-    emitter.hook.useOn({
-        type: emitter.events.PotentialTransactionReceipt,
-        callback: React.useCallback(
-            (arg) => {
-                if (
-                    (hash === undefined || arg.txhash !== hash) &&
-                    pop &&
-                    arg.validate(pop.from, pop.data)
-                ) {
-                    setHash(arg.txhash);
-                }
-            },
-            [hash, setHash, pop],
-        ),
-    });
+    emitter.hook.useOn(
+        emitter.events.PotentialTransactionReceipt,
+        (arg) => {
+            if (
+                (hash === undefined || arg.txhash !== hash) &&
+                pop &&
+                arg.validate(pop.from, pop.data)
+            ) {
+                setHash(arg.txhash);
+            }
+        },
+        [hash, setHash, pop],
+    );
 
     const blocknum = client.block.useBlock();
 
@@ -220,19 +218,16 @@ function useSendTransaction(
                             : authenticatedProvider.getSigner().sendTransaction(tx)
                         )
                             .then((y) => {
-                                emitter.emit({
-                                    type: emitter.events.DevLog,
-                                    data: y,
+                                emitter.emit(emitter.events.DevLog, {
+                                    data: y ?? {},
                                     name: 'YYYYYYY',
                                 });
-                                console.log('YYYYYY', y);
                                 let txhash: ResponseHash;
                                 if (y === null) {
                                     txhash = `unknown-${from}_${tx.data ?? ''}` as ResponseHash;
 
                                     setHash(txhash);
-                                    emitter.emit({
-                                        type: emitter.events.PotentialTransactionResponse,
+                                    emitter.emit(emitter.events.PotentialTransactionResponse, {
                                         txhash,
                                         from,
                                     });
@@ -240,16 +235,14 @@ function useSendTransaction(
                                     // txhash = `unknown-${from}_${tx.data ?? ''}`;
                                     txhash = y;
                                     setHash(y);
-                                    emitter.emit({
-                                        type: emitter.events.PotentialTransactionResponse,
+                                    emitter.emit(emitter.events.PotentialTransactionResponse, {
                                         txhash: y,
                                         from,
                                     });
                                 } else {
                                     txhash = y.hash as Hash;
                                     setHash(txhash);
-                                    emitter.emit({
-                                        type: emitter.events.TransactionResponse,
+                                    emitter.emit(emitter.events.TransactionResponse, {
                                         response: y,
                                     });
                                 }
@@ -275,8 +268,7 @@ function useSendTransaction(
                                 return txhash;
                             })
                             .catch((err: Error) => {
-                                emitter.emit({
-                                    type: emitter.events.DevLog,
+                                emitter.emit(emitter.events.DevLog, {
                                     data: err,
                                     name: 'catch A',
                                 });
@@ -291,15 +283,12 @@ function useSendTransaction(
                                 throw fmt;
                             }),
                         onSend ? onSend() : undefined,
-                        emitter.emit({
-                            type: emitter.events.TransactionSent,
-                        }),
+                        emitter.emit(emitter.events.TransactionSent, {}),
                     ]).then((x) => x[0]);
                 }
                 throw Error('authenticatedConnector, authenticatedProvider, or from is undefined');
             } catch (err) {
-                emitter.emit({
-                    type: emitter.events.DevLog,
+                emitter.emit(emitter.events.DevLog, {
                     data: err,
                     name: 'FINAL CATCH',
                 });
@@ -357,44 +346,34 @@ export function useCheckEtherscanForUnknownTransactionHash(
 ) {
     const etherscan = useEtherscan();
 
-    //     const isInactive = React.useMemo(() => {
-    //         if (!setFound || !request || found) return null;
-    //         return 5000;
-    //     }, [request, found, setFound]);
-
-    // //
-    const callback = React.useCallback(() => {
-        if (!setFound || !request || (found && found.startsWith('0x'))) return;
-        setTimeout(() => {
-            // https://docs.etherscan.io/api-endpoints/accounts
-            void etherscan.getHistory(request.from, request.startBlock).then((res) => {
-                console.log({ res, request });
-                res.forEach((element) => {
-                    if (
-                        element.data === request.data &&
-                        element.to === request.to &&
-                        element.value.eq(request.value)
-                    ) {
-                        setFound(element.hash as Hash);
-                        if (element.isError && element.errorCode && setError) {
-                            setError(lib.errors.parseJsonRpcError(element.errorCode));
+    emitter.hook.useOn(
+        emitter.events.IncomingRpcBlock,
+        () => {
+            if (!setFound || !request || (found && found.startsWith('0x'))) return;
+            setTimeout(() => {
+                // https://docs.etherscan.io/api-endpoints/accounts
+                void etherscan.getHistory(request.from, request.startBlock).then((res) => {
+                    console.log({ res, request });
+                    res.forEach((element) => {
+                        if (
+                            element.data === request.data &&
+                            element.to === request.to &&
+                            element.value.eq(request.value)
+                        ) {
+                            setFound(element.hash as Hash);
+                            if (element.isError && element.errorCode && setError) {
+                                setError(lib.errors.parseJsonRpcError(element.errorCode));
+                            }
+                            emitter.emit(emitter.events.TransactionResponse, {
+                                response: element,
+                            });
                         }
-                        emitter.emit({
-                            type: emitter.events.TransactionResponse,
-                            response: element,
-                        });
-                    }
+                    });
                 });
-            });
-        }, 3000);
-    }, [etherscan, request, setFound, found, setError]);
-
-    emitter.hook.useOn({
-        type: emitter.events.IncomingRpcBlock,
-        callback,
-    });
-
-    // useInterval(callback, val);
+            }, 3000);
+        },
+        [etherscan, request, setFound, found, setError],
+    );
 
     return null;
 }

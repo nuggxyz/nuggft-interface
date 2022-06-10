@@ -1,61 +1,43 @@
-import { useEffect } from 'react';
+import React, { useEffect, DependencyList } from 'react';
 
 import emitter from '@src/emitter/core';
-import { EmitEventsListCallback } from '@src/emitter/interfaces';
 
-const useOnce = (a: EmitEventsListCallback) => {
+import { EmitEventNames, EmitEvents } from './interfaces';
+
+const useOn = <R extends EmitEventNames, T extends EmitEvents>(
+    event: R,
+    callback: (
+        arg: T extends infer G
+            ? G extends EmitEvents
+                ? G['type'] extends R
+                    ? G
+                    : never
+                : never
+            : never,
+    ) => void,
+    deps: DependencyList = [],
+) => {
+    const user = React.useCallback(callback, deps);
+
     useEffect(() => {
-        const _emit = emitter.once(a);
+        const close = emitter.on(event, user);
         return () => {
-            _emit.off();
+            close();
         };
-    }, [a]);
+    }, [user]);
     return null;
 };
 
-const useOn = (a: EmitEventsListCallback) => {
+const useOnce: typeof useOn = (event, callback, deps = []) => {
+    const user = React.useCallback(callback, deps);
+
     useEffect(() => {
-        const _emit = emitter.on(a);
+        const close = emitter.once(event, user);
         return () => {
-            _emit.off();
+            close();
         };
-    }, [a]);
+    }, [user]);
     return null;
 };
-
-// const useOn2 = <T>(
-//     event: T extends EmitEvents
-//         ? T['type'] extends infer R
-//             ? R extends EmitEventNames
-//                 ? R
-//                 : never
-//             : never
-//         : never,
-//     callback: (arg: T) => void,
-// ) => {
-//     useEffect(() => {
-//         const _emit = emitter.on2(event, callback);
-//         return () => {
-//             _emit.off();
-//         };
-//     }, [event, callback]);
-//     return null;
-// };
-
-// const usePipe = <T extends EmitEventsListCallback>(a: T['type']) => {
-//     const [pipe, setPipe] = React.useState<Parameters<T['callback']>[0]>();
-
-//     useOn({
-//         type: a,
-//         callback: React.useCallback(
-//             (arg: typeof pipe) => {
-//                 if (pipe !== arg && arg) setPipe(arg);
-//             },
-//             [setPipe, pipe],
-//         ),
-//     });
-
-//     return pipe;
-// };
 
 export default { useOn, useOnce };

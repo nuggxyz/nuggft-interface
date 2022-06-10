@@ -162,5 +162,5 @@ export default {
     useHealth,
     useCallbackOnGraphBlockChange,
     useUpdateLastBlockGraph: () => useStore((draft) => draft.updateLastBlockGraph),
-    useStore,
+    ...useStore,
 };

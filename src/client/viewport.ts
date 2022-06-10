@@ -63,7 +63,7 @@ export const useEmitOnKeyboardClose = () => {
 
     React.useEffect(() => {
         if (prev && prev * 1.25 < vp) {
-            emitter.emit({ type: emitter.events.KeyboardClosed });
+            emitter.emit(emitter.events.KeyboardClosed, {});
         }
     }, [prev, vp]);
 

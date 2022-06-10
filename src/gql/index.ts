@@ -31,7 +31,7 @@ import { StrictTypedTypePolicies } from './types.generated';
 
 export const buildApolloHttpLink = (http: string) => {
     const { generateApolloResponseErrorMiddleware, generateApolloResponseMiddleware } =
-        client.health.useStore.getState();
+        client.health.getState();
 
     return generateApolloResponseMiddleware().concat(
         generateApolloResponseErrorMiddleware().concat(
@@ -45,7 +45,7 @@ export const buildApolloHttpLink = (http: string) => {
 
 export const buildApolloSplitLink = (http: string, wss: string) => {
     const { generateApolloResponseErrorMiddleware, generateApolloResponseMiddleware } =
-        client.health.useStore.getState();
+        client.health.getState();
 
     return generateApolloResponseMiddleware().concat(
         generateApolloResponseErrorMiddleware().concat(

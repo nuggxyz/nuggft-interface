@@ -448,19 +448,17 @@ export const useHotRotateO = (tokenId?: NuggId) => {
         return undefined;
     }, [items, dotnugg, provider]);
 
-    emitter.hook.useOn({
-        type: emitter.events.Rotate,
-        callback: React.useCallback(
-            ({ event }) => {
-                if (saving) setSaving(false);
-                if (event.args.tokenId === Number(tokenId?.toRawId())) {
-                    setSavedToChain(true);
-                    if (tokenId && svg) inject(tokenId, svg);
-                }
-            },
-            [tokenId, svg, saving, inject],
-        ),
-    });
+    emitter.hook.useOn(
+        emitter.events.Rotate,
+        (event) => {
+            if (saving) setSaving(false);
+            if (event.event.args.tokenId === Number(tokenId?.toRawId())) {
+                setSavedToChain(true);
+                if (tokenId && svg) inject(tokenId, svg);
+            }
+        },
+        [tokenId, svg, saving, inject],
+    );
 
     return {
         navigate,

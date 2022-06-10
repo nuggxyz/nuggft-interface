@@ -56,21 +56,22 @@ const store = create(
                     }
                 };
 
-                const watch = emitter.on.bind(emitter, {
-                    type: emitter.events.IncomingEtherscanPrice,
-                    callback: (arg) => {
-                        update(arg.data);
-                    },
-                });
-
-                return { setCurrencyPreference, watch };
+                return { setCurrencyPreference, update };
             },
         ),
         { name: 'nugg.xyz-usd' },
     ),
 );
 
-store.getState().watch();
+export const useUsdUpdater = () => {
+    const update = store((state) => state.update);
+
+    emitter.hook.useOn(emitter.events.IncomingEtherscanPrice, (data) => update(data.data), [
+        update,
+    ]);
+
+    return null;
+};
 
 const useCurrencyPreferrence = () => store((state) => (state.error ? 'ETH' : state.preference));
 const useUsdError = () => store((state) => state.error);

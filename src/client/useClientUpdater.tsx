@@ -14,6 +14,7 @@ import { usePollV2 } from './v2';
 import { useUserUpdater } from './user';
 import { useBlockUpdater } from './block';
 import { useHealthUpdater } from './health';
+import { useUsdUpdater } from './usd';
 
 export default () => {
     useBlockUpdater();
@@ -47,6 +48,8 @@ export default () => {
     useOnRouteChange();
 
     usePollV2();
+
+    useUsdUpdater();
 
     return null;
 };

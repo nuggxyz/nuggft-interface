@@ -20,7 +20,7 @@ const buildWorker = () => {
     worker.onmessage = ({ data }: { data: EmitWorkerEventBase }) => {
         lastWorkerResponse = new Date().getTime();
 
-        emitter.emit(data);
+        emitter.emit(data.type, data);
     };
 
     worker.onerror = (err) => {
@@ -38,7 +38,7 @@ const workerIsDead = () => {
 };
 
 setInterval(() => {
-    emitter.emit({ type: emitter.events.HealthCheck });
+    emitter.emit(emitter.events.HealthCheck, {});
 
     if (workerIsDead()) {
         buildWorker();

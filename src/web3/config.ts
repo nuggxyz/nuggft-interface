@@ -360,26 +360,24 @@ let triggered = false;
 export const buildRpcWebsocket = () => {
     const eventListener = (log: Log) => {
         const event = inter.parseLog(log) as unknown as InterfacedEvent;
-        emitter.emit({ type: emitter.events.IncomingRpcEvent, data: event, log });
+        emitter.emit(emitter.events.IncomingRpcEvent, { data: event, log });
     };
 
     const blockListener = (log: number) => {
         if (log === 0) return;
-        emitter.emit({ type: emitter.events.IncomingRpcBlock, data: log });
+        emitter.emit(emitter.events.IncomingRpcBlock, { data: log });
 
         if (!triggered || log % 5 === 0) {
             if (!triggered) triggered = true;
             void etherscan
                 .getCustomEtherPrice()
                 .then((price) => {
-                    emitter.emit({
-                        type: emitter.events.IncomingEtherscanPrice,
+                    emitter.emit(emitter.events.IncomingEtherscanPrice, {
                         data: price,
                     });
                 })
                 .catch(() => {
-                    emitter.emit({
-                        type: emitter.events.IncomingEtherscanPrice,
+                    emitter.emit(emitter.events.IncomingEtherscanPrice, {
                         data: null,
                     });
                 });
