@@ -2,7 +2,7 @@ import EventEmitter3 from 'eventemitter3';
 
 import { EmitEventNames, EmitEvents } from '@src/emitter/interfaces';
 
-const ENABLE_LOGS = __DEV__;
+const ENABLE_LOGS = false;
 
 const eventEmitter = new EventEmitter3();
 

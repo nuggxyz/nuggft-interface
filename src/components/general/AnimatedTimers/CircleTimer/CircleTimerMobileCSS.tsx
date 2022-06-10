@@ -77,7 +77,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
     }, [width]);
 
     const activated = React.useMemo(() => {
-        return staticColor || (!staticColor && max !== to);
+        return staticColor || (!staticColor && max > to && to > 0);
     }, [staticColor, to, max]);
 
     const shadowColor = useMemo(() => {
