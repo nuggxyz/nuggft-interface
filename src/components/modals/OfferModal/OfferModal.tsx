@@ -35,7 +35,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const { screen: screenType } = useDimensions();
     const provider = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
-    const _myNuggs = client.user.useNuggs();
+    const [..._myNuggs] = client.user.useNuggs();
     const userBalance = web3.hook.usePriorityBalance(provider);
 
     const nuggft = useNuggftV1(provider);
@@ -51,7 +51,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const myNuggs = useMemo(() => {
         const nuggId = data.nuggToBuyFrom;
 
-        return _myNuggs.map((x) => {
+        return [..._myNuggs].map((x) => {
             const filt = x.unclaimedOffers.filter((y) => {
                 return y.itemId === data.tokenId;
             });

@@ -41,7 +41,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
 
     const items = React.useMemo(() => {
         return Object.values(
-            nuggs.reduce(
+            [...nuggs].reduce(
                 (p, c) => ({
                     ...p,
                     ...c.items.reduce((p2, c2) => ({ ...p2, [c2.tokenId]: c2 }), {}),

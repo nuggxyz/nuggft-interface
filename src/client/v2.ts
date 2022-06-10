@@ -219,7 +219,7 @@ export const usePollV2 = () => {
     const blocknum = health.useLastGraphBlock();
 
     const callback = React.useCallback(async () => {
-        const res = await lazy({ fetchPolicy: 'network-only' });
+        const res = await lazy({ fetchPolicy: 'no-cache' });
         handleV2(res, blocknum);
         updateStake(res);
     }, [lazy, handleV2, blocknum, updateStake]);

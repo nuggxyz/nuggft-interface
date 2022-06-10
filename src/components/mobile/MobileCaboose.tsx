@@ -127,7 +127,7 @@ export default ({
     const myNuggsFormatted = React.useMemo(() => {
         const nuggId = nuggToBuyFrom;
 
-        return myNuggs.map((x) => {
+        return [...myNuggs].map((x) => {
             const filt = x.unclaimedOffers.filter((y) => {
                 return y.itemId === tokenId;
             });

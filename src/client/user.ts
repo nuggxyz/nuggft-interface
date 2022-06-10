@@ -170,7 +170,7 @@ const store = create(
                         variables: {
                             address,
                         },
-                        fetchPolicy: 'network-only',
+                        fetchPolicy: 'no-cache',
                     })
                     .then((x) => {
                         const res2 = format(address, x);
@@ -202,20 +202,23 @@ const store = create(
 
 export const useUserUpdater = () => {
     const address = web3.hook.usePriorityAccount();
+
     const fetch = store((draft) => draft.fetch);
     const wipe = store((draft) => draft.wipe);
 
     const callback = React.useCallback(() => {
         if (address) {
             void fetch(address as AddressString, apolloClient);
+        }
+    }, [fetch, address]);
+
+    React.useEffect(() => {
+        if (address) {
+            void fetch(address as AddressString, apolloClient);
         } else {
             void wipe();
         }
     }, [address, fetch, wipe]);
-
-    React.useEffect(() => {
-        callback();
-    }, [callback, address]);
 
     epoch.useCallbackOnEpochChange(callback);
 };

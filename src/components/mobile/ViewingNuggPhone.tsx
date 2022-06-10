@@ -518,7 +518,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
         const lifecycle = useLifecycleEnhanced(tokenId);
 
         const { data } = useGetNuggsThatHoldQuery({
-            fetchPolicy: 'network-only',
+            fetchPolicy: 'no-cache',
             skip: !token || !token.isItem(),
             variables: {
                 skip: 0,

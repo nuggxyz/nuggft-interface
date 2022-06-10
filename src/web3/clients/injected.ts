@@ -124,8 +124,6 @@ export class Injected extends Connector {
             .then((m) => m.default(this.options))
             .then((provider) => {
                 if (provider) {
-                    console.log('before', this.provider);
-
                     this.provider = provider as InjectedCoreProvider['provider'];
 
                     const prov = provider as {
@@ -138,16 +136,12 @@ export class Injected extends Connector {
 
                     const prev = this.peer_try ?? store.getState().last;
 
-                    console.log(prev);
-
                     if (
                         prov.selectedProvider &&
                         (!prev || prev === peerCheck(prov.selectedProvider))
                     ) {
                         this.provider = prov.selectedProvider;
                     } else if (prev && prov.providers && prov.providers.length > 0) {
-                        console.log(prev);
-
                         for (let i = 0; i < prov.providers.length; i++) {
                             if (prov.providers[i]) {
                                 if (peerCheck(prov.providers[i]) !== prev) {

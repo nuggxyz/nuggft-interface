@@ -97,7 +97,7 @@ const useStore = create(
                     if (!client) return Promise.resolve();
                     return client.query<HealthQuery, HealthQueryVariables>({
                         query: HealthDocument,
-                        fetchPolicy: 'network-only',
+                        fetchPolicy: 'no-cache',
                     });
                 };
 
