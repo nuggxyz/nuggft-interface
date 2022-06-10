@@ -141,11 +141,35 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                     amount: value,
                 };
             }
+
+            const sell = nuggft.populateTransaction['sell(uint24,uint96)'](
+                data.tokenId.toRawId(),
+                value,
+            );
+
+            if (needToClaim && address) {
+                const claim = nuggft.populateTransaction.claim(
+                    [data.tokenId.toRawId()],
+                    [address],
+                    [0],
+                    [0],
+                );
+
+                const multi = async () => {
+                    return nuggft.populateTransaction.multicall([
+                        (await claim).data || '0x0',
+                        (await sell).data || '0x0',
+                    ]);
+                };
+
+                return {
+                    tx: multi(),
+                    amount: value,
+                };
+            }
             return {
-                tx: nuggft.populateTransaction['sell(uint24,uint96)'](
-                    data.tokenId.toRawId(),
-                    value,
-                ),
+                tx: sell,
+
                 amount: value,
             };
         }
@@ -493,7 +517,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                             onClick={(event) => {
                                 if (!peer || !populatedTransaction) return;
 
-                                if (peer.type === 'metamask' && peer.injected) {
+                                if (peer.injected) {
                                     void send(populatedTransaction.tx, () => {
                                         setPage(2);
                                     });
