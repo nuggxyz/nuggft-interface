@@ -45,10 +45,10 @@ import {
     DEFAULT_CHAIN,
     GRAPH_ENPOINTS,
     INFURA_KEY,
-    INFURA_URLS,
     PREMIUM_DIV,
     PROTOCOL_FEE_FRAC_MINT,
     supportedChainIds,
+    ALCHEMY_URLS,
 } from './constants';
 import { CustomEtherscanProvider } from './classes/CustomEtherscanProvider';
 
@@ -181,7 +181,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
     coinbasewallet: initializeConnector<CoinbaseWallet>(
         (actions) =>
             new CoinbaseWallet(peer_coinbasewallet, actions, {
-                url: INFURA_URLS[DEFAULT_CHAIN],
+                url: ALCHEMY_URLS[DEFAULT_CHAIN],
                 appName: 'NuggftV1',
             }),
     ),
@@ -197,7 +197,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                 ],
 
                 actions,
-                { rpc: { ...INFURA_URLS }, chainId: DEFAULT_CHAIN },
+                { rpc: { ...ALCHEMY_URLS }, chainId: DEFAULT_CHAIN },
             ),
     ),
     ...(peer_metamask.type === ConnectorEnum.MetaMask
@@ -213,7 +213,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                 peer_rpc,
                 actions,
                 supportedChainIds().reduce((prev, curr) => {
-                    return { ...prev, [curr]: [INFURA_URLS[curr]] };
+                    return { ...prev, [curr]: [ALCHEMY_URLS[curr]] };
                 }, {}),
             ),
         supportedChainIds(),
