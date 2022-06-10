@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { t } from '@lingui/macro';
+import { BigNumber } from 'ethers';
 
 import { isUndefinedOrNullOrStringEmptyOrZeroOrStringZero } from '@src/lib';
 import { toEth } from '@src/lib/conversion';
@@ -17,6 +18,8 @@ import {
     usePrioritySendTransaction,
     useTransactionManager2,
 } from '@src/contracts/useContract';
+import { useUsdPair } from '@src/client/usd';
+import { Address } from '@src/classes/Address';
 
 import styles from './SellNuggOrItemModal.styles';
 
@@ -25,6 +28,11 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
     const address = web3.hook.usePriorityAccount();
     const stake = client.stake.useEps();
     const nuggft = useNuggftV1();
+    const token = client.live.token(data.tokenId);
+
+    const swap = React.useMemo(() => {
+        return token?.activeSwap;
+    }, [token?.activeSwap]);
 
     const provider = web3.hook.usePriorityProvider();
     const chainId = web3.hook.usePriorityChainId();
@@ -33,15 +41,37 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
     const [send, , hash, , ,] = usePrioritySendTransaction();
 
     useTransactionManager2(provider, hash, closeModal);
-    return data.tokenId && chainId && provider && address ? (
+
+    const amountUsd = useUsdPair(amount);
+
+
+    const populatedTransaction = useMemo(() => {
+        if (swap && address) {
+            if (data.isItem()) {
+                return {
+                    tx: nuggft.populateTransaction.claim(
+                        [data.sellingNuggId.toRawId()],
+                        [Address.ZERO.hash],
+                        [data.sellingNuggId.toRawId()],
+                        [data.tokenId.toRawId()],
+                    ),
+                    amount: BigNumber.from(0),
+                };
+            }
+            return {
+                tx: nuggft.populateTransaction.claim([data.tokenId.toRawId()], [address], [0], [0]),
+                amount: BigNumber.from(0),
+            };
+        }
+    }, [swap]);
+
+    return token && chainId && provider && address ? (
         <div style={styles.container}>
             <Text textStyle={{ color: 'white' }}>
-                {`${
-                    data.tokenId.isNuggId() ? t`Sell` : t`Sell Item:`
-                } ${data.tokenId.toPrettyId()}`}
+                {`${token.isNugg() ? t`Sell` : t`Sell Item:`} ${token.tokenId.toPrettyId()}`}
             </Text>
             <AnimatedCard>
-                <TokenViewer tokenId={data.tokenId} showcase />
+                <TokenViewer tokenId={token.tokenId} showcase />
             </AnimatedCard>
             <div style={styles.inputContainer}>
                 {stake ? (
@@ -57,7 +87,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
                         code
                         className="placeholder-white"
                         rightToggles={[
-                            data.tokenId.isNuggId() ? (
+                            token.isNugg() ? (
                                 <Button
                                     onClick={() => setAmount(stake.decimal.toPrecision(5))}
                                     label={t`Min`}
@@ -78,19 +108,19 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
                     disabled={isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount)}
                     feedbackText={t`Check Wallet...`}
                     buttonStyle={styles.button}
-                    label={`${data.tokenId.isNuggId() ? t`Sell Nugg` : t`Sell Item`}`}
+                    label={`${token.isNugg() ? t`Sell Nugg` : t`Sell Item`}`}
                     onClick={() => {
                         void (data.isItem()
                             ? send(
                                   nuggft.populateTransaction['sell(uint24,uint16,uint96)'](
                                       data.sellingNuggId.toRawId(),
-                                      data.tokenId.toRawId(),
+                                      token.tokenId.toRawId(),
                                       toEth(amount),
                                   ),
                               )
                             : send(
                                   nuggft.populateTransaction['sell(uint24,uint96)'](
-                                      data.tokenId.toRawId(),
+                                      token.tokenId.toRawId(),
                                       toEth(amount),
                                   ),
                               ));
