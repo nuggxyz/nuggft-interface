@@ -8,7 +8,6 @@ import ToastContainer from '@src/components/general/Toast/ToastContainer';
 import useDimensions from '@src/client/hooks/useDimensions';
 import NavigationWrapper from '@src/components/nugg/PageLayout/NavigationWrapper/NavigationWrapper';
 import { ViewingNuggPhoneController } from '@src/components/mobile/ViewingNuggPhone';
-import web3 from '@src/web3';
 
 const MemoizedViewingNuggPhone = React.lazy(
     () => import('@src/components/mobile/ViewingNuggPhoneWrapper'),
@@ -20,10 +19,6 @@ const GlobalModal = React.lazy(() => import('@src/components/modals/GlobalModal'
 
 const Router = () => {
     const { isPhone, screen } = useDimensions();
-
-    const chainId = web3.hook.usePriorityChainId();
-
-    console.log(chainId);
 
     const epoch = client.epoch.active.useId();
 

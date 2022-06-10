@@ -197,14 +197,10 @@ const NavigationBarMobile: FC<unknown> = () => {
     const homeClick = React.useCallback(() => {
         if (nuggbookOpen) {
             close();
-        } else if (!coreManualMatch) {
-            setManualMatch(true);
-        } else if (matchHome) {
-            setManualMatch(false);
         } else {
-            navigate('/');
+            setManualMatch(!coreManualMatch);
         }
-    }, [coreManualMatch, close, navigate, matchHome, nuggbookOpen]);
+    }, [coreManualMatch, close, nuggbookOpen]);
 
     return (
         <animated.div
@@ -315,13 +311,16 @@ const NavigationBarMobile: FC<unknown> = () => {
                         }}
                     >
                         <div
+                            className="mobile-pressable-div"
                             style={{
                                 position: 'relative',
                                 borderRadius: lib.layout.borderRadius.large,
-                                padding: '.2rem .7rem .5rem',
+                                padding: matchHome ? '.2rem .7rem .5rem' : '.5rem .7rem .5rem',
                                 textAlign: 'center',
                                 verticalAlign: 'center',
-                                background: lib.colors.gradient2Transparent,
+                                background: matchHome
+                                    ? lib.colors.gradient2Transparent
+                                    : lib.colors.primaryColor,
                                 WebkitBackdropFilter: 'blur(50px)',
                                 backdropFilter: 'blur(50px)',
                                 marginLeft: -8,
@@ -330,6 +329,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                             aria-hidden="true"
                             onClick={() => {
                                 navigate('/');
+                                setManualMatch(false);
                             }}
                         >
                             <span
@@ -339,7 +339,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                                     ...lib.layout.presets.font.main.thicc,
                                 }}
                             >
-                                nugg.xyz
+                                {matchHome ? `nugg.xyz` : t`home`}
                             </span>
                         </div>
                     </animated.div>

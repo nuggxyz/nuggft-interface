@@ -43,9 +43,9 @@ const root = createRoot(container);
 root.render(
     <HashRouter>
         <ApolloProvider client={web3.config.apolloClient}>
-            <GlobalHooks />
-
             <React.StrictMode>
+                <GlobalHooks />
+
                 <ErrorBoundary>
                     <I18N>
                         <ContentBlock>
