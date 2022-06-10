@@ -79,20 +79,20 @@ export interface RpcCoreProvider extends BaseCoreProvider {
     type: ConnectorEnum.Rpc;
     provider: Provider;
 }
-export interface MetaMaskCoreProvider extends BaseCoreProvider {
-    type: ConnectorEnum.MetaMask;
+export interface InjectedCoreProvider extends BaseCoreProvider {
+    type: ConnectorEnum.Injected;
     provider: Provider;
 }
-export interface CoinbaseWalletCoreProvider extends BaseCoreProvider {
-    type: ConnectorEnum.CoinbaseWallet;
+export interface CoinbaseWalletSDKCoreProvider extends BaseCoreProvider {
+    type: ConnectorEnum.CoinbaseWalletSDK;
     provider: Provider;
 }
 
 export type CoreProvider =
     | WalletConnectCoreProvider
     | RpcCoreProvider
-    | MetaMaskCoreProvider
-    | CoinbaseWalletCoreProvider;
+    | InjectedCoreProvider
+    | CoinbaseWalletSDKCoreProvider;
 
 export abstract class Connector {
     /**

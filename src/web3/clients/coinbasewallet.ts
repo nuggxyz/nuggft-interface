@@ -12,7 +12,7 @@ import {
     ProviderRpcError,
     Connector,
 } from '@src/web3/core/types';
-import { PeerInfo__CoinbaseWallet, Connector as ConnectorEnum } from '@src/web3/core/interfaces';
+import { PeerInfo__CoinbaseWalletSDK, Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 
 function parseChainId(chainId: string | number) {
     return typeof chainId === 'number'
@@ -72,12 +72,12 @@ export class CoinbaseWallet extends Connector {
      * @param connectEagerly - A flag indicating whether connection should be initiated when the class is constructed.
      */
     constructor(
-        peer: PeerInfo__CoinbaseWallet,
+        peer: PeerInfo__CoinbaseWalletSDK,
         actions: Actions,
         options: CoinbaseWalletSDKOptions,
         connectEagerly = false,
     ) {
-        super(ConnectorEnum.CoinbaseWallet, actions, [peer]);
+        super(ConnectorEnum.CoinbaseWalletSDK, actions, [peer]);
         this.options = options;
 
         if (connectEagerly) void this.connectEagerly();
@@ -93,7 +93,7 @@ export class CoinbaseWallet extends Connector {
     }
 
     private get _relay_connection() {
-        return (this._relay as unknown as { connection: WalletSDKConnection }).connection;
+        return (this._relay as unknown as { connection?: WalletSDKConnection })?.connection;
     }
 
     private async isomorphicInitialize(): Promise<void> {
@@ -102,6 +102,8 @@ export class CoinbaseWallet extends Connector {
         await (this.eagerConnection = import('@coinbase/wallet-sdk').then((m) => {
             const { url, ...options } = this.options;
             this.coinbaseWallet = new m.default(options);
+
+            this.coinbaseWallet.setAppInfo('nuggft', null);
 
             this.provider = this.coinbaseWallet.makeWeb3Provider(url);
 
@@ -235,7 +237,6 @@ export class CoinbaseWallet extends Connector {
                     this.actions.reportError(error);
                 });
         }
-
         this.actions.startActivation();
         await this.isomorphicInitialize();
 

@@ -156,7 +156,8 @@ declare module '*.svg' {
 
 interface Window {
     ethereum?: {
-        isMetaMask?: true;
+        isMetaMask?: boolean;
+
         on?: (...args: any[]) => void;
         removeListener?: (...args: any[]) => void;
         autoRefreshOnNetworkChange?: boolean;
@@ -169,6 +170,11 @@ interface Window {
             isPermanentlyDisconnected: boolean;
             accounts: string[];
         };
+        providers: {
+            isMetaMask?: boolean;
+            isCoinbaseWallet?: boolean;
+            isCoinbaseBrowser?: boolean;
+        }[];
         selectedProvider?: {
             selectedAddress: string;
         };

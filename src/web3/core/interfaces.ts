@@ -14,8 +14,10 @@ export type SupportedConnector =
     | 'coinbase'
     | 'coinbasewallet'
     | 'walletconnect'
-    | 'metamask'
+    | 'injected'
     | 'rpc';
+
+export type SupportedInjectedInstances = 'metamask' | 'coinbasewallet' | 'other';
 
 export type SupportedWalletConnectInstances =
     | 'metamask'
@@ -35,10 +37,9 @@ export enum Devices {
 // eslint-disable-next-line no-shadow
 export enum Connector {
     WalletConnect = 'walletconnect',
-    MetaMask = 'metamask',
-    CoinbaseWallet = 'coinbasewallet',
+    Injected = 'injected',
+    CoinbaseWalletSDK = 'coinbasewalletsdk',
     Coinbase = 'coinbase',
-
     Rpc = 'rpc',
 }
 
@@ -53,23 +54,19 @@ export enum Peer {
     CryptoDotCom = 'cryptodotcom',
     Trust = 'trust',
     Rpc = 'rpc',
+    GenericInjected = 'injected',
+    Brave = 'brave',
 }
 
 export interface PeerBaseInfo {
     type: Connector;
     peer: Peer;
     injected: boolean;
+
     fallback: boolean;
     name: string;
     color: string;
 }
-
-// export interface ConnectorInfo__WalletConnect extends ConnectorBaseInfo {
-//     type: Connector.WalletConnect;
-//     peer: WalletConnect
-//     injected: false;
-//     fallback: false;
-// }
 
 export interface PeerInfo__WalletConnect extends PeerBaseInfo {
     type: Connector.WalletConnect;
@@ -96,17 +93,17 @@ export interface PeerInfo__Rpc extends PeerBaseInfo {
     fallback: true;
 }
 
-export interface PeerInfo__MetaMask extends PeerBaseInfo {
-    type: Connector.MetaMask;
-    peer: Peer.MetaMask;
+export interface PeerInfo__Injected extends PeerBaseInfo {
+    type: Connector.Injected;
+    peer: Peer.MetaMask | Peer.CoinbaseWallet | Peer.Brave | Peer.GenericInjected;
     injected: true;
     fallback: false;
     deeplink_href: string;
     peerurl: string;
 }
 
-export interface PeerInfo__CoinbaseWallet extends PeerBaseInfo {
-    type: Connector.CoinbaseWallet;
+export interface PeerInfo__CoinbaseWalletSDK extends PeerBaseInfo {
+    type: Connector.CoinbaseWalletSDK;
     peer: Peer.CoinbaseWallet;
     deeplink_href: string;
     injected: false;
@@ -124,5 +121,5 @@ export type PeerInfo =
     | PeerInfo__Coinbase
     | PeerInfo__WalletConnect
     | PeerInfo__Rpc
-    | PeerInfo__MetaMask
-    | PeerInfo__CoinbaseWallet;
+    | PeerInfo__Injected
+    | PeerInfo__CoinbaseWalletSDK;

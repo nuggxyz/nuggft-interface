@@ -11,16 +11,18 @@ import { ETH_ONE, LOSS } from '@src/lib/conversion';
 import emitter from '@src/emitter';
 import { NuggftV1__factory } from '@src/typechain';
 import { InterfacedEvent } from '@src/interfaces/events';
-
-import { Connector } from './core/types';
 import {
     Chain,
     Connector as ConnectorEnum,
     Peer,
     PeerInfo,
     PeerInfo__WalletConnect,
-    PeerInfo__CoinbaseWallet,
-} from './core/interfaces';
+    PeerInfo__Coinbase,
+    PeerInfo__Injected,
+    PeerInfo__CoinbaseWalletSDK,
+} from '@src/web3/core/interfaces';
+
+import { Connector } from './core/types';
 import {
     getNetworkConnector,
     getPriorityConnector,
@@ -28,7 +30,7 @@ import {
     initializeConnector,
     ResWithStore,
 } from './core/core';
-import { MetaMask } from './clients/metamask';
+import { Injected } from './clients/injected';
 import { WalletConnect } from './clients/walletconnect';
 import { Network as NetworkConnector } from './clients/network';
 import {
@@ -54,7 +56,7 @@ import { CustomEtherscanProvider } from './classes/CustomEtherscanProvider';
 
 export default { ...constants };
 
-export const peer_rainbow: PeerInfo = {
+export const peer_rainbow: PeerInfo__WalletConnect = {
     type: ConnectorEnum.WalletConnect,
     peer: Peer.Rainbow,
     desktopAction: 'qrcode',
@@ -68,17 +70,17 @@ export const peer_rainbow: PeerInfo = {
     peerurl: 'https://rainbow.me',
 } as const;
 
-export const peer_metamask: PeerInfo = {
-    ...(window?.ethereum
-        ? {
-              type: ConnectorEnum.MetaMask,
-              injected: true,
-          }
-        : {
-              type: ConnectorEnum.WalletConnect,
-              desktopAction: 'qrcode',
-              injected: false,
-          }),
+export const isInjectedCoinbaseWallet = () => {
+    if (window.ethereum && window.ethereum.providers) {
+        for (let i = 0; i < window.ethereum.providers.length; i++) {
+            const { isCoinbaseWallet, isCoinbaseBrowser } = window.ethereum.providers[i];
+            if (isCoinbaseWallet || isCoinbaseBrowser) return true;
+        }
+    }
+    return false;
+};
+
+const peer_metamask_base = {
     peer: Peer.MetaMask,
     fallback: false,
     color: 'rgba(232,131,29,1.0)',
@@ -87,7 +89,42 @@ export const peer_metamask: PeerInfo = {
     deeplink_href: 'https://metamask.app.link/',
 } as const;
 
-export const peer_ledgerlive: PeerInfo = {
+export const peer_metamask_injected: PeerInfo__Injected = {
+    type: ConnectorEnum.Injected,
+    injected: true,
+    ...peer_metamask_base,
+};
+
+export const peer_metamask_walletconnect: PeerInfo__WalletConnect = {
+    type: ConnectorEnum.WalletConnect,
+    desktopAction: 'qrcode',
+    injected: false,
+    ...peer_metamask_base,
+};
+
+export const peer_brave_injected: PeerInfo__Injected = {
+    peer: Peer.Brave,
+    fallback: false,
+    color: 'rgba(232,131,29,1.0)',
+    name: 'Brave',
+    peerurl: 'https://metamask.io',
+    deeplink_href: 'https://metamask.app.link/',
+    type: ConnectorEnum.Injected,
+    injected: true,
+} as const;
+
+export const peer_generic_injected: PeerInfo__Injected = {
+    peer: Peer.GenericInjected,
+    fallback: false,
+    color: 'rgba(232,131,29,1.0)',
+    name: 'Injected',
+    peerurl: 'https://metamask.io',
+    deeplink_href: 'https://metamask.app.link/',
+    type: ConnectorEnum.Injected,
+    injected: true,
+} as const;
+
+export const peer_ledgerlive: PeerInfo__WalletConnect = {
     type: ConnectorEnum.WalletConnect,
     peer: Peer.LedgerLive,
     desktopAction: 'qrcode',
@@ -100,7 +137,7 @@ export const peer_ledgerlive: PeerInfo = {
     peerurl: 'https://www.ledger.com/',
 } as const;
 
-export const peer_trust: PeerInfo = {
+export const peer_trust: PeerInfo__WalletConnect = {
     type: ConnectorEnum.WalletConnect,
     peer: Peer.Trust,
     name: 'Trust Wallet',
@@ -112,7 +149,7 @@ export const peer_trust: PeerInfo = {
     desktopAction: 'qrcode',
 } as const;
 
-export const peer_cryptodotcom: PeerInfo = {
+export const peer_cryptodotcom: PeerInfo__WalletConnect = {
     type: ConnectorEnum.WalletConnect,
     peer: Peer.CryptoDotCom,
     name: 'Crypto.com',
@@ -124,7 +161,7 @@ export const peer_cryptodotcom: PeerInfo = {
     desktopAction: 'qrcode',
 } as const;
 
-export const peer_coinbase: PeerInfo = {
+export const peer_coinbase: PeerInfo__Coinbase = {
     type: ConnectorEnum.Coinbase,
     name: 'Coinbase',
     peer: Peer.Coinbase,
@@ -134,15 +171,26 @@ export const peer_coinbase: PeerInfo = {
     deeplink_href: '',
 } as const;
 
-export const peer_coinbasewallet: PeerInfo__CoinbaseWallet = {
-    type: ConnectorEnum.CoinbaseWallet,
+const peer_coinbasewallet_base = {
     name: 'Coinbase Wallet',
     peer: Peer.CoinbaseWallet,
     color: 'rgba(22,82,240,1.0)',
-    injected: false,
     fallback: false,
     deeplink_href: 'https://go.cb-w.com/dapp/',
 } as const;
+
+export const peer_coinbasewallet_injected: PeerInfo__Injected = {
+    type: ConnectorEnum.Injected,
+    injected: true,
+    peerurl: 'https://www.coinbase.com/wallet',
+    ...peer_coinbasewallet_base,
+};
+
+export const peer_coinbasewallet_sdk: PeerInfo__CoinbaseWalletSDK = {
+    ...peer_coinbasewallet_base,
+    type: ConnectorEnum.CoinbaseWalletSDK,
+    injected: false,
+};
 
 export const peer_walletconnect: PeerInfo__WalletConnect = {
     type: ConnectorEnum.WalletConnect,
@@ -155,6 +203,7 @@ export const peer_walletconnect: PeerInfo__WalletConnect = {
     injected: false,
     fallback: false,
 } as const;
+
 export const peer_rpc: PeerInfo = {
     type: ConnectorEnum.Rpc,
     name: 'Rpc',
@@ -165,8 +214,11 @@ export const peer_rpc: PeerInfo = {
 } as const;
 
 export const peers = {
-    coinbasewallet: peer_coinbasewallet,
-    metamask: peer_metamask,
+    coinbasewallet:
+        window.ethereum && isInjectedCoinbaseWallet()
+            ? peer_coinbasewallet_injected
+            : peer_coinbasewallet_sdk,
+    metamask: window.ethereum ? peer_metamask_injected : peer_metamask_walletconnect,
     rainbow: peer_rainbow,
     ledgerlive: peer_ledgerlive,
     trust: peer_trust,
@@ -177,19 +229,14 @@ export const peers = {
     rpc: peer_rpc,
 } as const;
 
+// // console.log(peers);
+
 export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connector> } = {
-    coinbasewallet: initializeConnector<CoinbaseWallet>(
-        (actions) =>
-            new CoinbaseWallet(peer_coinbasewallet, actions, {
-                url: ALCHEMY_URLS[DEFAULT_CHAIN],
-                appName: 'NuggftV1',
-            }),
-    ),
     walletconnect: initializeConnector<WalletConnect>(
         (actions) =>
             new WalletConnect(
                 [
-                    ...(peer_metamask.type === ConnectorEnum.WalletConnect ? [peer_metamask] : []),
+                    peer_metamask_walletconnect,
                     peer_walletconnect,
                     peer_rainbow,
                     peer_cryptodotcom,
@@ -200,13 +247,31 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                 { rpc: { ...ALCHEMY_URLS }, chainId: DEFAULT_CHAIN },
             ),
     ),
-    ...(peer_metamask.type === ConnectorEnum.MetaMask
+    ...(window.ethereum
         ? {
-              metamask: initializeConnector<MetaMask>(
-                  (actions) => new MetaMask(peer_metamask, actions, undefined, true),
+              injected: initializeConnector<Injected>(
+                  (actions) =>
+                      new Injected(
+                          [
+                              peer_metamask_injected,
+                              peer_coinbasewallet_injected,
+                              peer_brave_injected,
+                              peer_generic_injected,
+                          ],
+                          actions,
+                          undefined,
+                          true,
+                      ),
               ),
           }
         : {}),
+    coinbasewalletsdk: initializeConnector<CoinbaseWallet>(
+        (actions) =>
+            new CoinbaseWallet(peer_coinbasewallet_sdk, actions, {
+                url: ALCHEMY_URLS[DEFAULT_CHAIN],
+                appName: 'NuggftV1',
+            }),
+    ),
     rpc: initializeConnector<NetworkConnector>(
         (actions) =>
             new NetworkConnector(
@@ -215,6 +280,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                 supportedChainIds().reduce((prev, curr) => {
                     return { ...prev, [curr]: [ALCHEMY_URLS[curr]] };
                 }, {}),
+                true,
             ),
         supportedChainIds(),
     ),
@@ -276,9 +342,9 @@ export const apolloClient = new ApolloClient<any>({
 export const useActivate = () => {
     useEffect(() => {
         [
-            connector_instances.metamask,
+            connector_instances.injected,
             connector_instances.walletconnect,
-            connector_instances.coinbasewallet,
+            connector_instances.coinbasewalletsdk,
         ].forEach((x) => {
             if (x !== undefined && x.connector && x.connector.connectEagerly)
                 void x.connector.connectEagerly(DEFAULT_CHAIN);

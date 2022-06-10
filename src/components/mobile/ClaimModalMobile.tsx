@@ -253,7 +253,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                             onClick={(event) => {
                                 if (!peer || !populatedTransaction) return;
 
-                                if (peer.type === 'metamask' && peer.injected) {
+                                if (peer.injected) {
                                     void send(populatedTransaction.tx, () => {
                                         setPage(2);
                                     });
