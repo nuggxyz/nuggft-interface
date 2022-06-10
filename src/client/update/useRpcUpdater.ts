@@ -2,25 +2,17 @@
 import React from 'react';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
-import web3 from '@src/web3';
 import { EthInt } from '@src/classes/Fraction';
-import lib from '@src/lib';
 import emitter from '@src/emitter';
-import { useNuggftV1 } from '@src/contracts/useContract';
 import { buildTokenIdFactory } from '@src/prototypes';
-import { buildRpcWebsocket } from '@src/web3/config';
+import { DEFAULT_CONTRACTS } from '@src/web3/constants';
 
 import client from '..';
 
 export default () => {
-    const address = web3.hook.usePriorityAccount();
-
     const updateOffers = client.mutate.updateOffers();
     const updateStake = client.stake.useUpdate();
-
-    const provider = web3.hook.useNetworkProvider();
-
-    const nuggft = useNuggftV1(provider);
+    const nuggs = client.user.useNuggs();
 
     emitter.hook.useOn({
         type: emitter.events.IncomingRpcEvent,
@@ -37,7 +29,7 @@ export default () => {
                         txhash: log.transactionHash as Hash,
                         success: true,
                         from,
-                        to: nuggft.address as AddressString,
+                        to: DEFAULT_CONTRACTS.NuggftV1 as AddressString,
                         log,
                         validate,
                     });
@@ -63,30 +55,6 @@ export default () => {
                 }
 
                 switch (event.name) {
-                    case 'Mint': {
-                        void emitter.emit({
-                            type: emitter.events.Mint,
-                            event,
-                            log,
-                        });
-                        const agency = BigNumber.from(event.args.agency);
-
-                        const txFrom = agency.mask(160)._hex as AddressString;
-                        const txData = nuggft.interface.encodeFunctionData('mint(uint24)', [
-                            event.args.tokenId,
-                        ]) as Hash;
-
-                        emitCompletedTx(txFrom, (from, data) => {
-                            return from === txFrom && data === txData;
-                        });
-
-                        break;
-                    }
-                    default:
-                        break;
-                }
-
-                switch (event.name) {
                     case 'Offer':
                     case 'OfferMint': {
                         const agency = BigNumber.from(event.args.agency);
@@ -102,13 +70,9 @@ export default () => {
                         });
 
                         const txFrom = data.user;
-                        const txData = nuggft.interface.encodeFunctionData('offer(uint24)', [
-                            event.args.tokenId,
-                        ]) as Hash;
 
-                        emitCompletedTx(txFrom, (from, dat) => {
-                            console.log({ from, dat, txFrom, txData });
-                            return from.toLowerCase() === txFrom.toLowerCase() && txData === dat;
+                        emitCompletedTx(txFrom, (from) => {
+                            return from.toLowerCase() === txFrom.toLowerCase();
                         });
 
                         void emitter.emit({
@@ -129,13 +93,13 @@ export default () => {
                     case 'OfferItem': {
                         const agency = BigNumber.from(event.args.agency);
 
-                        const txData = nuggft.interface.encodeFunctionData(
-                            'offer(uint24,uint24,uint16)',
-                            [event.args.sellingTokenId, event.args.itemId, agency.mask(24)],
-                        ) as Hash;
+                        const allgoood =
+                            nuggs.findIndex(
+                                (x) => x.tokenId.toRawIdNum() === agency.mask(24).toNumber(),
+                            ) !== -1;
 
-                        emitCompletedTx(null, (_, dat) => {
-                            return dat.toLowerCase() === txData.toLowerCase();
+                        emitCompletedTx(null, () => {
+                            return allgoood;
                         });
 
                         updateOffers(event.args.itemId.toItemId(), [
@@ -153,43 +117,15 @@ export default () => {
                         break;
                     }
                     case 'Transfer': {
-                        if (address && event.args._to.toLowerCase() === address.toLowerCase()) {
-                            emitter.emit({
-                                type: emitter.events.Transfer,
-                                event,
-                                log,
-                            });
-                        }
-
                         break;
                     }
                     case 'Loan': {
-                        const agency = lib.parse.agency(event.args.agency);
-                        if (agency.address === address) {
-                            // addLoan({
-                            //     startingEpoch: agency.epoch,
-                            //     endingEpoch: agency.epoch.add(1024).toNumber(),
-                            //     eth: agency.eth,
-                            //     nugg: event.args.tokenId.toString(),
-                            // });
-                        }
                         break;
                     }
                     case 'Rebalance': {
-                        const agency = lib.parse.agency(event.args.agency);
-                        if (agency.address === address) {
-                            // updateLoan({
-                            //     startingEpoch: agency.epoch.toNumber(),
-                            //     endingEpoch: agency.epoch.add(1024).toNumber(),
-                            //     eth: agency.eth,
-                            //     nugg: event.args.tokenId.toString(),
-                            // });
-                        }
                         break;
                     }
-                    // case 'Liquidate':
-                    //     removeLoan(event.args.tokenId.toNuggId());
-                    //     break;
+
                     case 'Claim': {
                         emitCompletedTx(event.args.account as AddressString, (from) => {
                             return from === event.args.account;
@@ -198,23 +134,7 @@ export default () => {
                     }
                     case 'ClaimItem': {
                         emitCompletedTx(null, (from, dat) => {
-                            const dec = nuggft.interface.decodeFunctionData(
-                                'claim(uint24[],address[],uint24[],uint16[])',
-                                dat,
-                            ) as [BigNumber[], string[], BigNumber[], BigNumber[]];
-
-                            let check = false;
-                            dec[0].forEach((x, i) => {
-                                if (
-                                    x.eq(event.args.sellingTokenId) &&
-                                    dec[2][i].eq(event.args.buyerTokenId) &&
-                                    dec[3][i].eq(event.args.itemId)
-                                ) {
-                                    check = true;
-                                }
-                            });
-
-                            return check;
+                            return log.data === dat;
                         });
 
                         break;
@@ -227,14 +147,14 @@ export default () => {
                         break;
                 }
             },
-            [address, nuggft.interface, updateOffers, updateStake, nuggft.address],
+            [updateOffers, updateStake, nuggs],
         ),
     });
 
-    React.useEffect(() => {
-        const check = buildRpcWebsocket();
-        return check;
-    }, []);
+    // React.useEffect(() => {
+    //     const check = buildRpcWebsocket();
+    //     return check;
+    // }, []);
 
     return null;
 };

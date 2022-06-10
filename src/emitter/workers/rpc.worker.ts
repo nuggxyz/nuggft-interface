@@ -21,11 +21,11 @@ export default {} as typeof Worker & { new (): Worker };
 
 console.log('[rpc.worker] Worker running');
 
-// let socket: InfuraWebSocketProvider;
-//
+let socket: InfuraWebSocketProvider;
+
 const etherscan = new CustomEtherscanProvider(Chain.MAINNET);
 
-// let lastBlockTime: number = new Date().getTime();
+let lastBlockTime: number = new Date().getTime();
 let lastBlock = 0;
 
 const blockListener = (log: number) => {
@@ -34,7 +34,7 @@ const blockListener = (log: number) => {
 
         lastBlock = log;
 
-        // lastBlockTime = new Date().getTime();
+        lastBlockTime = new Date().getTime();
 
         ctx.emitMessage({
             type: emitter.events.IncomingRpcBlock,
@@ -69,69 +69,44 @@ const eventListener = (log: Log) => {
     });
 };
 
-// let lastBuild = 0;
+let lastBuild = 0;
 
-// const buildSocket = () => {
-//     if (socket && new Date().getTime() - lastBuild < 30000) {
-//         return;
-//     }
+const buildSocket = () => {
+    if (socket && new Date().getTime() - lastBuild < 30000) {
+        return;
+    }
 
-//     lastBuild = new Date().getTime();
+    lastBuild = new Date().getTime();
 
-//     if (socket) void socket.destroy();
+    if (socket) void socket.destroy();
 
-//     console.log('BUILDSOCKET');
+    console.log('BUILDSOCKET');
 
-//     socket = new InfuraWebSocketProvider();
-//     void socket.getBlockNumber().then(blockListener);
-//     socket.on(
-//         {
-//             address: DEFAULT_CONTRACTS.NuggftV1,
-//             topics: [],
-//         },
-//         eventListener,
-//     );
-//     socket.on('block', blockListener);
-// };
-
-const buildRpcWebsocket = () => {
-    const _rpc = new InfuraWebSocketProvider();
-
-    void _rpc.getBlockNumber().then(blockListener);
-
-    _rpc.on('block', blockListener);
-
-    const event = {
-        address: DEFAULT_CONTRACTS.NuggftV1,
-        topics: [],
-    };
-    _rpc.on(event, eventListener);
-
-    _rpc.setOnClose(() => {
-        _rpc.removeAllListeners('block');
-        _rpc.removeAllListeners(event);
-        void _rpc.destroy();
-        buildRpcWebsocket();
-    });
-
-    return () => {
-        _rpc.closer();
-    };
+    socket = new InfuraWebSocketProvider();
+    void socket.getBlockNumber().then(blockListener);
+    socket.on(
+        {
+            address: DEFAULT_CONTRACTS.NuggftV1,
+            topics: [],
+        },
+        eventListener,
+    );
+    socket.on('block', blockListener);
 };
 
-buildRpcWebsocket();
+buildSocket();
 
 setInterval(() => {
     ctx.emitMessage({
         type: emitter.events.WorkerIsRunning,
         label: 'rpc',
     });
-    // if (
-    //     socket._websocket.readyState === socket._websocket.CLOSED ||
-    //     new Date().getTime() - lastBlockTime > 30000
-    // ) {
-    //     buildSocket();
-    // }
+    if (
+        socket._websocket.readyState === socket._websocket.CLOSED ||
+        new Date().getTime() - lastBlockTime > 30000
+    ) {
+        buildSocket();
+    }
 }, 4000);
 
 // ctx.addEventListener('message', ({ data }: MessageEvent<EmitEventsListPayload>) => {
