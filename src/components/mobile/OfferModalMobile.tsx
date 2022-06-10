@@ -352,24 +352,43 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const [tabFadeTransition] = useTransition(
         page,
         {
-            initial: {
-                transform: 'translate(0px, 0px)',
-            },
-            from: (p, i) => ({
-                transform: p === i ? 'translate(1000px, 0px)' : 'translate(-1000px, 0px)',
+            from: () => ({
+                opacity: 0,
             }),
             expires: 500,
-            enter: { transform: 'translate(0px, 0px)' },
-            leave: (p, i) => {
+            enter: { opacity: 1 },
+            leave: () => {
                 return {
-                    transform: p === i ? 'translate(-1000px, 0px)' : 'translate(1000px, 0px)',
+                    opacity: 0,
                 };
             },
             keys: (item) => `tabFadeTransition${item}5`,
-            config: config.default,
+            config: config.stiff,
         },
         [page, isOpen],
     );
+
+    // const [tabFadeTransition] = useTransition(
+    //     page,
+    //     {
+    //         initial: {
+    //             transform: 'translate(0px, 0px)',
+    //         },
+    //         from: (p, i) => ({
+    //             transform: p === i ? 'translate(1000px, 0px)' : 'translate(-1000px, 0px)',
+    //         }),
+    //         expires: 500,
+    //         enter: { transform: 'translate(0px, 0px)' },
+    //         leave: (p, i) => {
+    //             return {
+    //                 transform: p === i ? 'translate(-1000px, 0px)' : 'translate(1000px, 0px)',
+    //             };
+    //         },
+    //         keys: (item) => `tabFadeTransition${item}5`,
+    //         config: config.default,
+    //     },
+    //     [page, isOpen],
+    // );
 
     const calculating = React.useMemo(() => {
         if (estimator.error) return false;
@@ -460,6 +479,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 <CurrencyText
                     unitOverride={localCurrencyPref}
                     forceEth
+                    stopAnimation
                     size="larger"
                     value={currentPrice}
                 />
@@ -489,6 +509,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             <CurrencyText
                                 unitOverride={localCurrencyPref}
                                 forceEth
+                                stopAnimation
                                 size="larger"
                                 value={minNextBidPair}
                             />

@@ -250,27 +250,18 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     const [tabFadeTransition] = useTransition(
         page,
         {
-            initial: {
+            from: () => ({
                 opacity: 0,
-                zIndex: 0,
-                left: 0,
-            },
-            from: (p, i) => ({
-                opacity: 0,
-                zIndex: 0,
-                left: p === i ? 1000 : -1000,
             }),
-            enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto', zIndex: 40000 },
-            leave: (p, i) => {
+            expires: 500,
+            enter: { opacity: 1 },
+            leave: () => {
                 return {
                     opacity: 0,
-                    zIndex: 0,
-                    left: p === i ? -1000 : 1000,
                 };
             },
-
             keys: (item) => `tabFadeTransition${item}5`,
-            config: config.gentle,
+            config: config.stiff,
         },
         [page, isOpen],
     );

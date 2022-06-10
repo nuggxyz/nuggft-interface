@@ -21,6 +21,7 @@ import {
 import { RotateOModalData } from '@src/interfaces/modals';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 import eth from '@src/assets/images/app_logos/eth.png';
+import Loader from '@src/components/general/Loader/Loader';
 
 const RenderItemMobileTiny2: FC<
     GodListRenderItemProps<
@@ -119,7 +120,6 @@ export default ({ data }: { data: RotateOModalData }) => {
 
     const address = web3.hook.usePriorityAccount();
 
-    // const network = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
     const peer = web3.hook.usePriorityPeer();
     const closeModal = client.modal.useCloseModal();
@@ -128,21 +128,18 @@ export default ({ data }: { data: RotateOModalData }) => {
     const [tabFadeTransition] = useTransition(
         page,
         {
-            initial: {
-                transform: 'translate(0px, 0px)',
-            },
-            from: (p, i) => ({
-                transform: p === i ? 'translate(1000px, 0px)' : 'translate(-1000px, 0px)',
+            from: () => ({
+                opacity: 0,
             }),
             expires: 500,
-            enter: { transform: 'translate(0px, 0px)' },
-            leave: (p, i) => {
+            enter: { opacity: 1 },
+            leave: () => {
                 return {
-                    transform: p === i ? 'translate(-1000px, 0px)' : 'translate(1000px, 0px)',
+                    opacity: 0,
                 };
             },
             keys: (item) => `tabFadeTransition${item}5`,
-            config: config.default,
+            config: config.stiff,
         },
         [page, isOpen],
     );
@@ -262,6 +259,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                         {t`generated on ethereum`}
                     </span>
                 </div>
+
                 <div
                     style={{
                         marginTop: 20,
@@ -272,6 +270,18 @@ export default ({ data }: { data: RotateOModalData }) => {
                         height: 200,
                     }}
                 >
+                    {(!sortedList || sortedList.length === 0) && (
+                        <div
+                            style={{
+                                width: '100%',
+                                height: 200,
+                                display: 'flex',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <Loader style={{ color: lib.colors.primaryColor }} />{' '}
+                        </div>
+                    )}
                     {(sortedList ?? [[], [], [], [], [], [], [], []]).map((x, index) => (
                         <RenderItemMobileTiny2 item={x} action={caller} index={index} />
                     ))}

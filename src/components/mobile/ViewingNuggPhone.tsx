@@ -415,7 +415,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                         >
                             {leaderEns && swap?.leader !== Address.ZERO.hash
                                 ? t`${leaderEns} is leading`
-                                : t`starting pricet`}
+                                : t`starting price`}
                         </Text>
                     </div>
                 )}
@@ -548,6 +548,8 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                       BigNumber.from(a.block).gt(BigNumber.from(b.block)) ? -1 : 1,
                   );
         }, [token, data, snapshots]);
+
+        if (!isOpen) return null;
 
         return (
             <animated.div

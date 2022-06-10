@@ -62,27 +62,18 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const [tabFadeTransition] = useTransition(
         page,
         {
-            initial: {
+            from: () => ({
                 opacity: 0,
-                zIndex: 0,
-                left: 0,
-            },
-            from: (p, i) => ({
-                opacity: 0,
-                zIndex: 0,
-                left: p === i ? 1000 : -1000,
             }),
-            enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto', zIndex: 40000 },
-            leave: (p, i) => {
+            expires: 500,
+            enter: { opacity: 1 },
+            leave: () => {
                 return {
                     opacity: 0,
-                    zIndex: 0,
-                    left: p === i ? -1000 : 1000,
                 };
             },
-
             keys: (item) => `tabFadeTransition${item}5`,
-            config: config.gentle,
+            config: config.stiff,
         },
         [page, isOpen],
     );
@@ -115,69 +106,42 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const ethclaimsUsd = useUsdPair(ethclaims);
     const estimatedGasUsd = useUsdPair(estimation?.mul);
 
-    const Page0 = React.useMemo(
-        () => (
-            <>
-                <Text size="larger" textStyle={{ marginTop: 10 }}>
-                    Claim
-                </Text>
+    // const Page0 = React.useMemo(
+    //     () => (
+    //         <>
+    //             <Text size="larger" textStyle={{ marginTop: 10 }}>
+    //                 Claim
+    //             </Text>
 
-                <div
-                    style={{
-                        display: 'flex',
-                        width: '100%',
-                        justifyContent: 'space-between',
-                        marginTop: 10,
-                    }}
-                >
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            width: '100%',
-                        }}
-                    >
-                        {calculating ? (
-                            <Loader style={{ color: lib.colors.primaryColor }} />
-                        ) : estimator.error ? (
-                            <Label
-                                size="large"
-                                containerStyles={{ background: lib.colors.red }}
-                                textStyle={{ color: 'white' }}
-                                text={lib.errors.prettify('claim-modal', estimator.error)}
-                            />
-                        ) : (
-                            <Label
-                                size="large"
-                                containerStyles={{ background: lib.colors.green }}
-                                textStyle={{ color: 'white' }}
-                                text="transaction should succeed"
-                            />
-                        )}
-                    </div>
-                </div>
+    //             <div
+    //                 style={{
+    //                     display: 'flex',
+    //                     width: '100%',
+    //                     justifyContent: 'space-between',
+    //                     marginTop: 10,
+    //                 }}
+    //             >
 
-                <Button
-                    className="mobile-pressable-div"
-                    label="Review"
-                    // leftIcon={calculating ? <Loader /> : undefined}
-                    onClick={() => setPage(1)}
-                    disabled={calculating || !!estimator.error}
-                    buttonStyle={{
-                        borderRadius: lib.layout.borderRadius.large,
-                        background: lib.colors.primaryColor,
-                        marginTop: '20px',
-                    }}
-                    textStyle={{
-                        color: lib.colors.white,
-                        fontSize: 30,
-                    }}
-                />
-            </>
-        ),
-        [setPage, calculating, estimator.error],
-    );
+    //             <Button
+    //                 className="mobile-pressable-div"
+    //                 label="Review"
+    //                 // leftIcon={calculating ? <Loader /> : undefined}
+    //                 onClick={() => setPage(1)}
+    //                 disabled={calculating || !!estimator.error}
+    //                 buttonStyle={{
+    //                     borderRadius: lib.layout.borderRadius.large,
+    //                     background: lib.colors.primaryColor,
+    //                     marginTop: '20px',
+    //                 }}
+    //                 textStyle={{
+    //                     color: lib.colors.white,
+    //                     fontSize: 30,
+    //                 }}
+    //             />
+    //         </>
+    //     ),
+    //     [setPage, calculating, estimator.error],
+    // );
 
     const Page1 = React.useMemo(
         () =>
@@ -185,49 +149,117 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                 <>
                     {/* <StupidMfingHack /> */}
 
-                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                    <Text
+                        size="large"
+                        textStyle={{
+                            marginTop: 10,
+                            marginBottom: 4,
+                            ...lib.layout.presets.font.main.thicc,
+                        }}
+                    >
                         {t`new nugg claims`}
                     </Text>
                     <CurrencyText
-                        size="large"
+                        size="larger"
                         stopAnimation
                         showUnit={false}
                         value={0}
                         str={`${unclaimedOffers.filter((x) => x.isNugg() && x.leader).length}`}
                     />
 
-                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                    <Text
+                        size="large"
+                        textStyle={{
+                            marginTop: 10,
+                            marginBottom: 4,
+                            ...lib.layout.presets.font.main.thicc,
+                        }}
+                    >
                         {t`new item claims`}
                     </Text>
                     <CurrencyText
-                        size="large"
+                        size="larger"
                         stopAnimation
                         showUnit={false}
                         value={0}
                         str={`${unclaimedOffers.filter((x) => x.isItem() && x.leader).length}`}
                     />
 
-                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                    <Text
+                        size="large"
+                        textStyle={{
+                            marginTop: 10,
+                            marginBottom: 4,
+                            ...lib.layout.presets.font.main.thicc,
+                        }}
+                    >
                         {t`eth claims`}
                     </Text>
                     <CurrencyText
                         unitOverride={localCurrencyPref}
                         forceEth
-                        size="large"
+                        size="larger"
                         stopAnimation
                         value={ethclaimsUsd}
                     />
 
-                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                    <Text
+                        size="large"
+                        textStyle={{
+                            marginTop: 10,
+                            marginBottom: 4,
+                            ...lib.layout.presets.font.main.thicc,
+                        }}
+                    >
                         {t`estimated gas price`}
                     </Text>
                     <CurrencyText
                         unitOverride={localCurrencyPref}
                         forceEth
-                        size="large"
+                        size="larger"
                         stopAnimation
                         value={estimatedGasUsd}
                     />
+
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '100%',
+                            marginTop: 20,
+                        }}
+                    >
+                        {calculating ? (
+                            <Loader style={{ color: lib.colors.primaryColor }} />
+                        ) : estimator.error ? (
+                            <Label
+                                size="medium"
+                                containerStyles={{
+                                    background: lib.colors.red,
+                                    padding: '.5rem .8rem',
+                                }}
+                                textStyle={{
+                                    color: 'white',
+                                    ...lib.layout.presets.font.main.thicc,
+                                }}
+                                text={lib.errors.prettify('claim-modal', estimator.error)}
+                            />
+                        ) : (
+                            <Label
+                                size="medium"
+                                containerStyles={{
+                                    background: lib.colors.green,
+                                    padding: '.5rem .8rem',
+                                }}
+                                textStyle={{
+                                    color: 'white',
+                                    ...lib.layout.presets.font.main.thicc,
+                                }}
+                                text="transaction should succeed"
+                            />
+                        )}
+                    </div>
 
                     <div
                         style={{
@@ -238,18 +270,18 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                             marginTop: '20px',
                         }}
                     >
-                        <Button
+                        <div
                             className="mobile-pressable-div"
-                            // @ts-ignore
-                            buttonStyle={{
+                            style={{
                                 background: lib.colors.primaryColor,
                                 color: 'white',
                                 borderRadius: lib.layout.borderRadius.medium,
-                                boxShadow: lib.layout.boxShadow.basic,
+                                boxShadow: lib.layout.boxShadow.dark,
                                 width: 'auto',
+                                display: 'flex',
+                                padding: 10,
+                                alignItems: 'center',
                             }}
-                            hoverStyle={{ filter: 'brightness(1)' }}
-                            disabled={!peer}
                             onClick={(event) => {
                                 if (!peer || !populatedTransaction) return;
 
@@ -273,34 +305,32 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                                     });
                                 }
                             }}
-                            // label="open"
-                            size="largerish"
-                            textStyle={{ color: lib.colors.white, marginLeft: 10 }}
-                            leftIcon={<NLStaticImage image={`${peer.peer}_icon`} />}
-                            rightIcon={
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'left',
-                                        flexDirection: 'column',
-                                        // width: '100%',
-                                        marginLeft: 10,
+                            aria-hidden="true"
+                            role="button"
+                        >
+                            <NLStaticImage image={`${peer.peer}_icon`} />
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'left',
+                                    flexDirection: 'column',
+                                    // width: '100%',
+                                    marginLeft: 10,
+                                }}
+                            >
+                                <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>
+                                    {t`tap to finalize on`}
+                                </Text>
+                                <Text
+                                    textStyle={{
+                                        color: lib.colors.white,
+                                        fontSize: 30,
                                     }}
                                 >
-                                    <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>
-                                        {t`tap to finalize on`}
-                                    </Text>
-                                    <Text
-                                        textStyle={{
-                                            color: lib.colors.white,
-                                            fontSize: 32,
-                                        }}
-                                    >
-                                        {peer.name}
-                                    </Text>
-                                </div>
-                            }
-                        />
+                                    {peer.name}
+                                </Text>
+                            </div>
+                        </div>
                     </div>
 
                     {/* <Button
@@ -379,7 +409,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                                 ...sty,
                             }}
                         >
-                            <>{pager === 0 ? Page0 : pager === 1 ? Page1 : Page2}</>{' '}
+                            <>{pager === 0 ? Page1 : pager === 1 ? Page1 : Page2}</>{' '}
                             {(pager === 1 || pager === 0) && (
                                 <>
                                     <Button
