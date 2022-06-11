@@ -77,6 +77,14 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                 return true;
             }
         }
+
+        if (data.isNugg()) {
+            const nugg = myNuggs.find((x) => x.tokenId === data.tokenId);
+
+            if (nugg && nugg.pendingClaim) {
+                return true;
+            }
+        }
         return false;
     }, [data, myNuggs]);
 
