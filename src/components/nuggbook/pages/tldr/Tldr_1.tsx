@@ -5,27 +5,25 @@ import { BsGithub } from 'react-icons/bs';
 import vscode from '@src/assets/images/app_logos/vscode.svg';
 import ehterscan_dark from '@src/assets/images/app_logos/etherscan-logo-dark.svg';
 import lib from '@src/lib';
-import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
-import client from '@src/client';
+import { NuggBookPage } from '@src/interfaces/nuggbook';
 import eth from '@src/assets/images/app_logos/eth.png';
-import packages from '@src/packages';
 import { gotoLink, gotoEtherscan } from '@src/web3/config';
 import { DEFAULT_CONTRACTS, DEFAULT_CHAIN } from '@src/web3/constants';
 import useDimensions from '@src/client/hooks/useDimensions';
 
-const Welcome_0: NuggBookPage = ({ setPage }) => {
-    const setInit = client.nuggbook.useSetInit();
+const Welcome_0: NuggBookPage = () => {
+    // const setInit = client.nuggbook.useSetInit();
 
-    const spring4 = packages.spring.useSpring({
-        from: {
-            opacity: 0,
-        },
-        to: {
-            opacity: 1,
-        },
-        delay: 500 + 1500 + 1 * 1000,
-        config: packages.spring.config.default,
-    });
+    // const spring4 = packages.spring.useSpring({
+    //     from: {
+    //         opacity: 0,
+    //     },
+    //     to: {
+    //         opacity: 1,
+    //     },
+    //     delay: 500 + 1500 + 1 * 1000,
+    //     config: packages.spring.config.default,
+    // });
 
     const { screen } = useDimensions();
 
@@ -258,7 +256,7 @@ const Welcome_0: NuggBookPage = ({ setPage }) => {
                     </span>
                 </div>
             </div>
-            <packages.spring.animated.div
+            {/* <packages.spring.animated.div
                 className="mobile-pressable-div"
                 style={{
                     alignItems: 'center',
@@ -282,7 +280,7 @@ const Welcome_0: NuggBookPage = ({ setPage }) => {
                 }}
             >
                 <span style={{ ...lib.layout.presets.font.main.thicc }}>{t`next`}</span>
-            </packages.spring.animated.div>
+            </packages.spring.animated.div> */}
         </div>
     );
 };

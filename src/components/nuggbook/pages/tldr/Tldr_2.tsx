@@ -3,9 +3,8 @@ import { t } from '@lingui/macro';
 import { HiArrowCircleRight } from 'react-icons/hi';
 
 import lib from '@src/lib';
-import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
+import { NuggBookPage } from '@src/interfaces/nuggbook';
 import client from '@src/client';
-import packages from '@src/packages';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import { useHotRotateO } from '@src/pages/hot-rotate-o/HotRotateO';
 import useDimensions from '@src/client/hooks/useDimensions';
@@ -21,20 +20,20 @@ import useDimensions from '@src/client/hooks/useDimensions';
 // items
 // trading -- auctions
 // staking
-const Tldr_2: NuggBookPage = ({ setPage }) => {
-    const setInit = client.nuggbook.useSetInit();
+const Tldr_2: NuggBookPage = () => {
+    // const setInit = client.nuggbook.useSetInit();
     const { screen } = useDimensions();
 
-    const spring4 = packages.spring.useSpring({
-        from: {
-            opacity: 0,
-        },
-        to: {
-            opacity: 1,
-        },
-        delay: 500 + 1500 + 1 * 1000,
-        config: packages.spring.config.default,
-    });
+    // const spring4 = packages.spring.useSpring({
+    //     from: {
+    //         opacity: 0,
+    //     },
+    //     to: {
+    //         opacity: 1,
+    //     },
+    //     delay: 500 + 1500 + 1 * 1000,
+    //     config: packages.spring.config.default,
+    // });
 
     const epoch = client.epoch.active.useId();
 
@@ -48,6 +47,8 @@ const Tldr_2: NuggBookPage = ({ setPage }) => {
                 alignItems: 'center',
                 display: 'flex',
                 flexDirection: 'column',
+                marginTop: 20,
+                position: 'relative',
                 width: screen === 'phone' ? undefined : '80%',
             }}
         >
@@ -61,49 +62,51 @@ const Tldr_2: NuggBookPage = ({ setPage }) => {
                     padding: '.4rem 1rem .8rem',
                     textAlign: 'center',
                     verticalAlign: 'center',
-                    marginBottom: '.4rem',
+                    // marginBottom: '.4rem',
+                    backgroundColor: 'transparent',
+                    height: 50,
+                    marginBottom: 10,
+                }}
+            >
+                <span
+                    style={{
+                        marginLeft: 10,
+                        color: lib.colors.transparentPrimaryColor,
+                        ...lib.layout.presets.font.main.semibold,
+                        fontWeight: lib.layout.fontWeight.thicc,
+                        fontSize: '40px',
+                    }}
+                >
+                    🥚 🐥 🐓 🍗
+                </span>
+            </div>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    position: 'relative',
+                    borderRadius: lib.layout.borderRadius.large,
+                    padding: '.4rem 1rem .8rem',
+                    textAlign: 'center',
+                    verticalAlign: 'center',
+                    // marginBottom: '.4rem',
                     backgroundColor: 'transparent',
                 }}
             >
                 <span
                     style={{
                         marginLeft: 10,
-                        fontSize: '20px',
                         color: lib.colors.transparentPrimaryColor,
                         ...lib.layout.presets.font.main.semibold,
+                        fontWeight: lib.layout.fontWeight.thicc,
+                        fontSize: '25px',
                     }}
                 >
                     {t`nuggs are dynamic`}
                 </span>
             </div>
 
-            {/* <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'relative',
-                    borderRadius: lib.layout.borderRadius.large,
-                    padding: '.4rem 1rem 0px',
-                    textAlign: 'center',
-                    verticalAlign: 'center',
-                    marginBottom: '10px',
-                    backgroundColor: 'transparent',
-                }}
-            >
-                <span
-                    style={{
-                        marginLeft: 10,
-                        fontSize: '20px',
-                        color: lib.colors.transparentPrimaryColor,
-                        ...lib.layout.presets.font.main.semibold,
-                    }}
-                >
-                    {t`of all 400+ items, a nugg can hold 15, but only show 8`}
-
-                </span>
-            </div> */}
-
             <div
                 style={{
                     display: 'flex',
@@ -114,53 +117,28 @@ const Tldr_2: NuggBookPage = ({ setPage }) => {
                     padding: '.4rem 1rem .8rem',
                     textAlign: 'center',
                     verticalAlign: 'center',
-                    marginBottom: '.4rem',
                     backgroundColor: 'transparent',
                 }}
             >
                 <span
                     style={{
-                        marginLeft: 10,
                         fontSize: '20px',
                         color: lib.colors.transparentPrimaryColor,
                         ...lib.layout.presets.font.main.semibold,
                     }}
                 >
-                    {t`change the way your nugg looks by changing the order of its items`}
+                    {t`change the way your nugg looks by rearanging its items`}
                 </span>
             </div>
 
             <div
                 style={{
                     display: 'flex',
-                    justifyContent: 'center',
+                    justifyContent: 'space-around',
                     alignItems: 'center',
+                    width: '100%',
                     position: 'relative',
-                    borderRadius: lib.layout.borderRadius.large,
-                    padding: '.4rem 1rem .8rem',
-                    textAlign: 'center',
-                    verticalAlign: 'center',
-                    marginBottom: '.4rem',
-                    backgroundColor: 'transparent',
-                }}
-            >
-                <span
-                    style={{
-                        marginLeft: 10,
-                        fontSize: '20px',
-                        color: lib.colors.transparentPrimaryColor,
-                        ...lib.layout.presets.font.main.thicc,
-                    }}
-                >
-                    {t`try it out`}
-                </span>
-            </div>
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    width: '80%',
+                    marginBottom: -10,
                 }}
             >
                 <div
@@ -185,14 +163,14 @@ const Tldr_2: NuggBookPage = ({ setPage }) => {
                         }}
                     />
 
-                    <span
+                    {/* <span
                         style={{
                             color: lib.colors.primaryColor,
                             ...lib.layout.presets.font.main.semibold,
                         }}
                     >
                         v1
-                    </span>
+                    </span> */}
                 </div>
 
                 <HiArrowCircleRight
@@ -220,32 +198,65 @@ const Tldr_2: NuggBookPage = ({ setPage }) => {
                             boxShadow: lib.layout.boxShadow.basic,
                         }}
                     />
-                    <span
+                    {/* <span
                         style={{
                             color: lib.colors.primaryColor,
                             ...lib.layout.presets.font.main.semibold,
                         }}
                     >
                         v2
-                    </span>
+                    </span> */}
                 </div>
+                {/* <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: lib.layout.borderRadius.large,
+                        padding: '.2rem .5rem',
+                        textAlign: 'center',
+                        verticalAlign: 'center',
+                        backgroundColor: 'transparent',
+                        position: 'absolute',
+                        bottom: 0,
+
+                        left: 0,
+                        right: 0,
+                        margin: 'auto',
+
+                        width: '85px',
+                        background: lib.colors.transparentPrimaryColor,
+                    }}
+                >
+                    <span
+                        style={{
+                            color: lib.colors.white,
+                            ...lib.layout.presets.font.main.thicc,
+                        }}
+                    >
+                        {t`try it out`}
+                    </span>
+                </div> */}
             </div>
+
             {MobileList}
 
-            <packages.spring.animated.div
+            {/* <packages.spring.animated.div
                 className="mobile-pressable-div"
                 style={{
                     alignItems: 'center',
                     display: 'flex',
                     flexDirection: 'column',
+                    position: 'absolute',
                     // padding: 10,
+                    bottom: 0,
                     color: lib.colors.white,
                     boxShadow: lib.layout.boxShadow.basic,
                     padding: '.7rem 1.3rem',
                     background: lib.colors.gradient3,
                     borderRadius: lib.layout.borderRadius.large,
                     marginBottom: 15,
-                    marginTop: screen === 'phone' ? -50 : undefined,
+                    marginTop: screen === 'phone' ? -30 : undefined,
                     zIndex: 300,
                     // cursor: 'pointer',
 
@@ -259,7 +270,7 @@ const Tldr_2: NuggBookPage = ({ setPage }) => {
                 }}
             >
                 <span style={{ ...lib.layout.presets.font.main.thicc }}>{t`keep reading`}</span>
-            </packages.spring.animated.div>
+            </packages.spring.animated.div> */}
         </div>
     );
 };

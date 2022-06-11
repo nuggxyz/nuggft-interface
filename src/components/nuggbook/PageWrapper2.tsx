@@ -1,9 +1,10 @@
 import React, { FC, PropsWithChildren } from 'react';
 import { animated, config, useTransition } from '@react-spring/web';
+import { t } from '@lingui/macro';
 
 import client from '@src/client';
 import lib from '@src/lib';
-import { Page } from '@src/interfaces/nuggbook';
+import { Page, NuggBookPage } from '@src/interfaces/nuggbook';
 import usePrevious from '@src/hooks/usePrevious';
 import MobileStatus from '@src/components/mobile/MobileStatus';
 import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
@@ -42,7 +43,15 @@ const MemoizedWallet = React.memo(() => {
     return address ? <MobileWallet /> : <ConnectTab />;
 });
 
-const useNuggBook = () => {
+const useNuggBook = (): {
+    top: number;
+    comp: NuggBookPage;
+    page: Page;
+    nextButton?: {
+        text: string;
+        goto: Page;
+    };
+} => {
     const page = client.nuggbook.useNuggBookPage();
 
     switch (page) {
@@ -51,9 +60,25 @@ const useNuggBook = () => {
         case Page.Welcome:
             return { top: 100, comp: Tldr_0, page };
         case Page.Tldr_1:
-            return { top: 100, comp: Tldr_1, page };
+            return {
+                top: 100,
+                comp: Tldr_1,
+                page,
+                nextButton: {
+                    text: t`keep reading`,
+                    goto: Page.Tldr_2,
+                },
+            };
         case Page.Tldr_2:
-            return { top: 100, comp: Tldr_2, page };
+            return {
+                top: 100,
+                comp: Tldr_2,
+                page,
+                nextButton: {
+                    text: t`keep reading`,
+                    goto: Page.TableOfContents,
+                },
+            };
         case Page.TableOfContents:
             return { top: 100, comp: TableOfContents, page };
         case Page.WhatIsAWallet:
@@ -225,6 +250,7 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
                         style={{
                             height: '100%',
                             overflow: 'scroll',
+                            position: 'relative',
                         }}
                     >
                         {tabFadeTransition((_styles, kid) => (
@@ -241,7 +267,6 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
                                         right: 0,
                                         pointerEvents: 'auto',
                                         height: '100%',
-                                        // maxHeight: height - book.top,
                                         paddingBottom: 100,
                                     }}
                                 >
@@ -253,6 +278,37 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
                                         />
                                     )}
                                 </animated.div>
+                                {kid.book.nextButton && (
+                                    <div
+                                        className="mobile-pressable-div"
+                                        style={{
+                                            alignItems: 'center',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            // padding: 10,
+                                            bottom: 0,
+                                            left: 15,
+                                            pointerEvents: 'auto',
+                                            position: 'absolute',
+                                            color: lib.colors.white,
+                                            boxShadow: lib.layout.boxShadow.basic,
+                                            padding: '.7rem 1.3rem',
+                                            background: lib.colors.gradient3,
+                                            borderRadius: lib.layout.borderRadius.large,
+                                            marginBottom: 15,
+                                            zIndex: 5000000000,
+                                        }}
+                                        role="button"
+                                        aria-hidden="true"
+                                        onClick={() => {
+                                            handleVisit(kid.book.nextButton!.goto, true);
+                                        }}
+                                    >
+                                        <span style={{ ...lib.layout.presets.font.main.thicc }}>
+                                            {kid.book.nextButton.text}
+                                        </span>
+                                    </div>
+                                )}
                             </>
                         ))}
                     </animated.div>

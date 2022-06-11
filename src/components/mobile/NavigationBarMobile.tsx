@@ -396,7 +396,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                         overflow: 'hidden',
                         justifyContent: 'flex-start',
 
-                        WebkitMaskImage: 'linear-gradient(180deg, #000 90%, transparent)',
+                        // WebkitMaskImage: 'linear-gradient(180deg, #000 90%, transparent)',
                         ...nuggbookFade,
                     }}
                 >

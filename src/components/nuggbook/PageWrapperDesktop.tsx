@@ -168,7 +168,6 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
                 justifyContent: 'center',
                 overflow: 'scroll',
                 height: '100%',
-                position: 'relative',
             }}
         >
             {tabFadeTransition((_styles, kid) => (
