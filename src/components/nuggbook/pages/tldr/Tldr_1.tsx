@@ -55,6 +55,33 @@ const Welcome_0: NuggBookPage = () => {
                     alignItems: 'center',
                     position: 'relative',
                     borderRadius: lib.layout.borderRadius.large,
+                    padding: '.4rem 1rem .8rem',
+                    textAlign: 'center',
+                    verticalAlign: 'center',
+                    // marginBottom: '.4rem',
+                    backgroundColor: 'transparent',
+                }}
+            >
+                <span
+                    style={{
+                        marginLeft: 10,
+                        color: lib.colors.transparentPrimaryColor,
+                        ...lib.layout.presets.font.main.semibold,
+                        fontWeight: lib.layout.fontWeight.thicc,
+                        fontSize: '25px',
+                    }}
+                >
+                    {t`built on ethereum`}
+                </span>
+            </div>
+
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    position: 'relative',
+                    borderRadius: lib.layout.borderRadius.large,
                     padding: '.4rem 1rem 0px',
                     textAlign: 'center',
                     verticalAlign: 'center',

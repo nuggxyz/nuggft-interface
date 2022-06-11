@@ -37,7 +37,10 @@ const Tldr_2: NuggBookPage = () => {
 
     const epoch = client.epoch.active.useId();
 
-    const [tokenId] = React.useState(epoch?.toNuggId() ?? 'nugg-1000000');
+    const tokenId = React.useMemo(() => {
+        return epoch?.toNuggId() ?? 'nugg-1000000';
+    }, [epoch]);
+
     const [, , , , , , , , , , svg, , , MobileList] = useHotRotateO(tokenId, true, true);
 
     return (
@@ -103,7 +106,7 @@ const Tldr_2: NuggBookPage = () => {
                         fontSize: '25px',
                     }}
                 >
-                    {t`nuggs are dynamic`}
+                    {t`dynamic`}
                 </span>
             </div>
 
@@ -134,6 +137,30 @@ const Tldr_2: NuggBookPage = () => {
             <div
                 style={{
                     display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: lib.layout.borderRadius.large,
+                    padding: '.2rem .5rem',
+                    textAlign: 'center',
+                    verticalAlign: 'center',
+                    backgroundColor: 'transparent',
+                    margin: 10,
+                    background: lib.colors.transparentPrimaryColor,
+                }}
+            >
+                <span
+                    style={{
+                        color: lib.colors.white,
+                        ...lib.layout.presets.font.main.thicc,
+                    }}
+                >
+                    {t`try it out`}
+                </span>
+            </div>
+
+            <div
+                style={{
+                    display: 'flex',
                     justifyContent: 'space-around',
                     alignItems: 'center',
                     width: '100%',
@@ -153,8 +180,8 @@ const Tldr_2: NuggBookPage = () => {
                         tokenId={tokenId}
                         disableOnClick
                         style={{
-                            width: '100px',
-                            height: '100px',
+                            width: '125px',
+                            height: '125px',
                             padding: 10,
                             margin: 10,
                             background: lib.colors.transparentWhite,
@@ -189,8 +216,8 @@ const Tldr_2: NuggBookPage = () => {
                         svgNotFromGraph={svg}
                         disableOnClick
                         style={{
-                            width: '100px',
-                            height: '100px',
+                            width: '125px',
+                            height: '125px',
                             padding: 10,
                             margin: 10,
                             background: lib.colors.transparentWhite,
@@ -207,36 +234,6 @@ const Tldr_2: NuggBookPage = () => {
                         v2
                     </span> */}
                 </div>
-                {/* <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderRadius: lib.layout.borderRadius.large,
-                        padding: '.2rem .5rem',
-                        textAlign: 'center',
-                        verticalAlign: 'center',
-                        backgroundColor: 'transparent',
-                        position: 'absolute',
-                        bottom: 0,
-
-                        left: 0,
-                        right: 0,
-                        margin: 'auto',
-
-                        width: '85px',
-                        background: lib.colors.transparentPrimaryColor,
-                    }}
-                >
-                    <span
-                        style={{
-                            color: lib.colors.white,
-                            ...lib.layout.presets.font.main.thicc,
-                        }}
-                    >
-                        {t`try it out`}
-                    </span>
-                </div> */}
             </div>
 
             {MobileList}
