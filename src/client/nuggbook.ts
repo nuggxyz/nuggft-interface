@@ -105,8 +105,6 @@ const useStore = create(
 
 useStore.getState().checkInit();
 
-export type NuggBookState = ReturnType<typeof useStore['getState']>;
-
 export default {
     useNuggBookPage: () => useStore((state) => state.page),
     useOpenNuggBook: () => useStore((state) => state.goto),

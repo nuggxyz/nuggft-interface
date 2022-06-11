@@ -35,6 +35,7 @@ import Rundown_7 from './pages/1-the-rundown/Rundown_7';
 import Rundown_8 from './pages/1-the-rundown/Rundown_8';
 import Rundown_9 from './pages/1-the-rundown/Rundown_9';
 import Rundown_10 from './pages/1-the-rundown/Rundown_10';
+import Welcome_2 from './pages/welcome/Welcome_2';
 
 const MemoizedWallet = React.memo(() => {
     const address = web3.hook.usePriorityAccount();
@@ -51,6 +52,8 @@ const useNuggBook = () => {
             return { top: 100, comp: Welcome_0, page };
         case Page.Welcome_1:
             return { top: 100, comp: Welcome_1, page };
+        case Page.Welcome_2:
+            return { top: 100, comp: Welcome_2, page };
         case Page.TableOfContents:
             return { top: 100, comp: TableOfContents, page };
         case Page.WhatIsAWallet:

@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { FC } from 'react';
+import React from 'react';
 import { animated, config, useSpring, useTransition } from '@react-spring/web';
-import { IoChevronBackCircle, IoArrowUpCircle, IoArrowDownCircle } from 'react-icons/io5';
+import { IoChevronBackCircle } from 'react-icons/io5';
 import { HiArrowCircleUp } from 'react-icons/hi';
 import { t } from '@lingui/macro';
 
@@ -13,107 +13,9 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
-import {
-    HotRotateOItem,
-    useHotRotateO,
-    HotRotateOItemList,
-} from '@src/pages/hot-rotate-o/HotRotateO';
 import { RotateOModalData } from '@src/interfaces/modals';
-import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 import eth from '@src/assets/images/app_logos/eth.png';
-import Loader from '@src/components/general/Loader/Loader';
-
-const RenderItemMobileTiny2: FC<
-    GodListRenderItemProps<
-        (HotRotateOItem | undefined)[],
-        undefined,
-        HotRotateOItemList['byItem'][number][number]
-    >
-> = ({ item, action }) => {
-    return (
-        <div>
-            {(item ?? []).map((x, index) => (
-                <RenderItemMobileTiny item={x} action={action} index={index} />
-            ))}
-        </div>
-    );
-};
-const RenderItemMobileTiny: FC<
-    GodListRenderItemProps<HotRotateOItem, undefined, HotRotateOItem>
-> = ({ item, action, index }) => {
-    return (
-        <div
-            className="mobile-pressable-div"
-            role="button"
-            aria-hidden="true"
-            onClick={() => action && action(item)}
-            style={{
-                borderRadius: lib.layout.borderRadius.largish,
-                overflowY: 'visible',
-                width: '80px',
-                height: '100%',
-            }}
-        >
-            <div
-                style={{
-                    borderRadius: lib.layout.borderRadius.medium,
-                    transition: '.2s background ease',
-                    position: 'relative',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: 10,
-                }}
-            >
-                {item === undefined && index === 0 ? (
-                    <div
-                        style={{
-                            height: '45px',
-                            width: '45px',
-                            borderRadius: lib.layout.borderRadius.mediumish,
-                            background: lib.colors.transparentWhite,
-                        }}
-                    />
-                ) : (
-                    <TokenViewer
-                        forceCache
-                        tokenId={item?.tokenId}
-                        style={{ width: '60px', height: '60px', padding: '3px' }}
-                        disableOnClick
-                    />
-                )}
-
-                {item?.feature !== 0 &&
-                    item &&
-                    (index !== 0 ? (
-                        <IoArrowUpCircle
-                            color={lib.colors.transparentGreen}
-                            style={{
-                                position: 'absolute',
-                                top: 5,
-                                right: 5,
-                                zIndex: 2,
-                                WebkitBackdropFilter: 'blur(20px)',
-                                borderRadius: '100px',
-                            }}
-                        />
-                    ) : (
-                        <IoArrowDownCircle
-                            color={lib.colors.transparentRed}
-                            style={{
-                                position: 'absolute',
-                                top: 5,
-                                right: 5,
-                                zIndex: 2,
-                                WebkitBackdropFilter: 'blur(20px)',
-                                borderRadius: '100px',
-                            }}
-                        />
-                    ))}
-            </div>
-        </div>
-    );
-};
+import { useHotRotateOTransaction } from '@src/pages/hot-rotate-o/HotRotateO';
 
 export default ({ data }: { data: RotateOModalData }) => {
     const isOpen = client.modal.useOpen();
@@ -144,18 +46,31 @@ export default ({ data }: { data: RotateOModalData }) => {
         [page, isOpen],
     );
 
-    const {
-        items,
-        setItems,
-        error,
+    const [
+        ,
+        ,
         send,
         hash,
         calculating,
         populatedTransaction,
         estimator,
-        svg,
+        error,
+        ,
+        items,
+        ,
+        ,
+        ,
+        ,
+        ,
+        ,
+        ,
+        ,
         loading,
-    } = useHotRotateO(data.tokenId);
+        svg,
+        ,
+        ,
+        MobileList,
+    ] = useHotRotateOTransaction(data.tokenId);
 
     const containerStyle = useSpring({
         to: {
@@ -163,59 +78,6 @@ export default ({ data }: { data: RotateOModalData }) => {
         },
         config: config.default,
     });
-
-    const caller = React.useCallback(
-        (item: HotRotateOItem | undefined) => {
-            if (items && item && item.feature !== 0) {
-                if (items.active.findIndex((x) => item.tokenId === x.tokenId) === -1) {
-                    // if they are not active --- add
-                    setItems({
-                        ...items,
-
-                        active: [
-                            ...items.active.filter((x) => x.feature !== item.feature),
-                            item,
-                        ].sort((a, b) => a.feature - b.feature),
-                        hidden: [
-                            ...items.hidden.filter((x) => x.tokenId !== item.tokenId),
-                            ...items.active.filter((x) => x.feature === item.feature),
-                        ].sort((a, b) => a.feature - b.feature),
-                    });
-                } else {
-                    setItems({
-                        ...items,
-                        active: [...items.active.filter((x) => x.feature !== item.feature)].sort(
-                            (a, b) => a.feature - b.feature,
-                        ),
-                        hidden: [item, ...items.hidden].sort((a, b) => a.feature - b.feature),
-                    });
-                }
-            }
-        },
-        [items, setItems],
-    );
-
-    const sortedList = React.useMemo(() => {
-        if (items) {
-            return items.byItem.reduce(
-                (prev, curr, index) => {
-                    prev[index].push(undefined);
-
-                    curr.forEach((b) => {
-                        if (items.active.findIndex((x) => b.tokenId === x.tokenId) !== -1) {
-                            prev[index][0] = b;
-                        } else {
-                            prev[index].push(b);
-                        }
-                    });
-
-                    return prev;
-                },
-                [[], [], [], [], [], [], [], []] as Array<Array<HotRotateOItem | undefined>>,
-            );
-        }
-        return [];
-    }, [items]);
 
     const Page0 = React.useMemo(
         () => (
@@ -260,32 +122,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                     </span>
                 </div>
 
-                <div
-                    style={{
-                        marginTop: 20,
-                        width: '100%',
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        overflow: 'scroll',
-                        height: 200,
-                    }}
-                >
-                    {(!sortedList || sortedList.length === 0) && (
-                        <div
-                            style={{
-                                width: '100%',
-                                height: 200,
-                                display: 'flex',
-                                justifyContent: 'center',
-                            }}
-                        >
-                            <Loader style={{ color: lib.colors.primaryColor }} />{' '}
-                        </div>
-                    )}
-                    {(sortedList ?? [[], [], [], [], [], [], [], []]).map((x, index) => (
-                        <RenderItemMobileTiny2 item={x} action={caller} index={index} />
-                    ))}
-                </div>
+                {MobileList}
 
                 <Button
                     className="mobile-pressable-div"
@@ -322,6 +159,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                     >
                         <TokenViewer
                             svgNotFromGraph={svg}
+                            disableOnClick
                             style={{
                                 width: '200px',
                                 height: '200px',
@@ -338,6 +176,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                         />
                         <TokenViewer
                             tokenId={data.tokenId}
+                            disableOnClick
                             style={{
                                 width: '150px',
                                 height: '150px',

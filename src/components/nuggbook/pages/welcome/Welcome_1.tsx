@@ -5,7 +5,6 @@ import { BsGithub } from 'react-icons/bs';
 import vscode from '@src/assets/images/app_logos/vscode.svg';
 import ehterscan_dark from '@src/assets/images/app_logos/etherscan-logo-dark.svg';
 import lib from '@src/lib';
-import Button from '@src/components/general/Buttons/Button/Button';
 import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
 import client from '@src/client';
 import eth from '@src/assets/images/app_logos/eth.png';
@@ -72,69 +71,6 @@ const Welcome_0: NuggBookPage = ({ setPage }) => {
                     {t`every image you see is 100% computed on ethereum`}
                 </span>
             </div>
-
-            {/* <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'relative',
-                    borderRadius: lib.layout.borderRadius.large,
-                    padding: '.4rem 1rem .8rem',
-                    textAlign: 'center',
-                    verticalAlign: 'center',
-                    marginBottom: '.4rem',
-                    backgroundColor: 'transparent',
-                }}
-            >
-                <span
-                    style={{
-                        marginLeft: 10,
-                        fontSize: '20px',
-                        color: lib.colors.transparentPrimaryColor,
-                        ...lib.layout.presets.font.main.semibold,
-                    }}
-                >
-                    {t`computed? 🧐`}
-                </span>
-
-                <span
-                    style={{
-                        marginLeft: 10,
-                        fontSize: '20px',
-                        color: lib.colors.transparentPrimaryColor,
-                        ...lib.layout.presets.font.main.semibold,
-                    }}
-                >
-                    {t`yeh.`}
-                </span>
-            </div> */}
-
-            {/* <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'relative',
-                    borderRadius: lib.layout.borderRadius.large,
-                    padding: '.4rem 1rem .8rem',
-                    textAlign: 'center',
-                    verticalAlign: 'center',
-                    marginBottom: '.4rem',
-                    backgroundColor: 'transparent',
-                }}
-            >
-                <span
-                    style={{
-                        marginLeft: 10,
-                        fontSize: '20px',
-                        color: lib.colors.transparentPrimaryColor,
-                        ...lib.layout.presets.font.main.semibold,
-                    }}
-                >
-                    {t`nuggs are dynamic - they trade items to change their image`}
-                </span>
-            </div> */}
 
             <div
                 style={{
@@ -319,33 +255,29 @@ const Welcome_0: NuggBookPage = ({ setPage }) => {
                 </div>
             </div>
             <packages.spring.animated.div
+                className="mobile-pressable-div"
                 style={{
                     alignItems: 'center',
                     display: 'flex',
                     flexDirection: 'column',
-                    padding: 10,
-                    width: '100%',
+                    // padding: 10,
+                    color: lib.colors.white,
+                    boxShadow: lib.layout.boxShadow.basic,
+                    padding: '.7rem 1.3rem',
+                    background: lib.colors.gradient3,
+                    borderRadius: lib.layout.borderRadius.large,
+                    marginBottom: 15,
+                    zIndex: 300,
                     ...spring4,
                 }}
+                role="button"
+                aria-hidden="true"
+                onClick={() => {
+                    setInit();
+                    setPage(Page.Welcome_2);
+                }}
             >
-                <Button
-                    className="mobile-pressable-div"
-                    label={t`cool. but why?`}
-                    onClick={() => {
-                        setInit();
-                        setPage(Page.TableOfContents);
-                    }}
-                    size="large"
-                    buttonStyle={{
-                        color: lib.colors.white,
-                        boxShadow: lib.layout.boxShadow.basic,
-                        padding: '.7rem 1.3rem',
-                        background: lib.colors.gradient3,
-                        borderRadius: lib.layout.borderRadius.large,
-                        marginBottom: 15,
-                    }}
-                    textStyle={{ fontWeight: lib.layout.fontWeight.thicc }}
-                />
+                <span style={{ ...lib.layout.presets.font.main.thicc }}>{t`next`}</span>
             </packages.spring.animated.div>
         </div>
     );

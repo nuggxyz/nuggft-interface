@@ -126,6 +126,10 @@ const TableOfContents: NuggBookPage = ({ setPage, clear }) => {
 
     const upAndRunning: ListItemDescription[] = [
         {
+            header: 'welcome',
+            page: Page.Welcome,
+        },
+        {
             header: 'the rundown',
             page: Page.Rundown_0,
         },
