@@ -11,6 +11,7 @@ import eth from '@src/assets/images/app_logos/eth.png';
 import packages from '@src/packages';
 import { gotoLink, gotoEtherscan } from '@src/web3/config';
 import { DEFAULT_CONTRACTS, DEFAULT_CHAIN } from '@src/web3/constants';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 const Welcome_0: NuggBookPage = ({ setPage }) => {
     const setInit = client.nuggbook.useSetInit();
@@ -26,6 +27,8 @@ const Welcome_0: NuggBookPage = ({ setPage }) => {
         config: packages.spring.config.default,
     });
 
+    const { screen } = useDimensions();
+
     return (
         <div
             style={{
@@ -34,6 +37,7 @@ const Welcome_0: NuggBookPage = ({ setPage }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 marginTop: 20,
+                width: screen === 'phone' ? undefined : '80%',
             }}
         >
             <img
@@ -274,7 +278,7 @@ const Welcome_0: NuggBookPage = ({ setPage }) => {
                 aria-hidden="true"
                 onClick={() => {
                     setInit();
-                    setPage(Page.Welcome_2);
+                    setPage(Page.Tldr_2);
                 }}
             >
                 <span style={{ ...lib.layout.presets.font.main.thicc }}>{t`next`}</span>

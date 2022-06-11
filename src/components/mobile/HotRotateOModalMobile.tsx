@@ -143,7 +143,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                 />
             </>
         ),
-        [setPage, calculating, estimator.error, items?.byItem, svg, loading],
+        [setPage, calculating, estimator.error, items?.byItem, svg, loading, data.tokenId],
     );
     const Page1 = React.useMemo(
         () =>

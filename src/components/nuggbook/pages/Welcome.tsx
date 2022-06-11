@@ -256,7 +256,7 @@ const Start: NuggBookPage = ({ setPage, close }) => {
                     onClick={() => {
                         setInit();
 
-                        setPage(Page.Setup_0);
+                        setPage(Page.Tldr_1);
                     }}
                     size="large"
                     buttonStyle={{

@@ -21,6 +21,7 @@ import {
     PeerInfo__Injected,
     PeerInfo__CoinbaseWalletSDK,
 } from '@src/web3/core/interfaces';
+import lib from '@src/lib';
 
 import { Connector } from './core/types';
 import {
@@ -116,7 +117,7 @@ export const peer_brave_injected: PeerInfo__Injected = {
 export const peer_generic_injected: PeerInfo__Injected = {
     peer: Peer.GenericInjected,
     fallback: false,
-    color: 'rgba(232,131,29,1.0)',
+    color: lib.colors.primaryColor,
     name: 'Injected',
     peerurl: 'https://metamask.io',
     deeplink_href: 'https://metamask.app.link/',
@@ -172,7 +173,7 @@ export const peer_coinbase: PeerInfo__Coinbase = {
 } as const;
 
 const peer_coinbasewallet_base = {
-    name: 'Coinbase Wallet',
+    name: 'Wallet',
     peer: Peer.CoinbaseWallet,
     color: 'rgba(22,82,240,1.0)',
     fallback: false,

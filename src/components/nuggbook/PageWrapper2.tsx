@@ -22,8 +22,6 @@ import Setup_2 from './pages/set-up/Setup_2';
 import Setup_3 from './pages/set-up/Setup_3';
 import HelpingTest_0 from './pages/helping-test/HelpingTest_0';
 import Feedback from './pages/helping-test/Feedback';
-import Welcome_0 from './pages/welcome/Welcome_0';
-import Welcome_1 from './pages/welcome/Welcome_1';
 import Rundown_0 from './pages/1-the-rundown/Rundown_0';
 import Rundown_1 from './pages/1-the-rundown/Rundown_1';
 import Rundown_2 from './pages/1-the-rundown/Rundown_2';
@@ -35,7 +33,9 @@ import Rundown_7 from './pages/1-the-rundown/Rundown_7';
 import Rundown_8 from './pages/1-the-rundown/Rundown_8';
 import Rundown_9 from './pages/1-the-rundown/Rundown_9';
 import Rundown_10 from './pages/1-the-rundown/Rundown_10';
-import Welcome_2 from './pages/welcome/Welcome_2';
+import Tldr_0 from './pages/tldr/Tldr_0';
+import Tldr_1 from './pages/tldr/Tldr_1';
+import Tldr_2 from './pages/tldr/Tldr_2';
 
 const MemoizedWallet = React.memo(() => {
     const address = web3.hook.usePriorityAccount();
@@ -49,11 +49,11 @@ const useNuggBook = () => {
         case Page.Start:
             return { top: 450, comp: Start, page };
         case Page.Welcome:
-            return { top: 100, comp: Welcome_0, page };
-        case Page.Welcome_1:
-            return { top: 100, comp: Welcome_1, page };
-        case Page.Welcome_2:
-            return { top: 100, comp: Welcome_2, page };
+            return { top: 100, comp: Tldr_0, page };
+        case Page.Tldr_1:
+            return { top: 100, comp: Tldr_1, page };
+        case Page.Tldr_2:
+            return { top: 100, comp: Tldr_2, page };
         case Page.TableOfContents:
             return { top: 100, comp: TableOfContents, page };
         case Page.WhatIsAWallet:
@@ -186,8 +186,6 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
     );
 
     const node = React.useRef<HTMLDivElement>(null);
-
-    // useOnClickOutside(node, handleClose);
 
     return (
         <animated.div

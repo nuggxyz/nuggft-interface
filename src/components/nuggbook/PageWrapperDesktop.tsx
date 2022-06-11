@@ -27,6 +27,8 @@ import Rundown_9 from './pages/1-the-rundown/Rundown_9';
 import Rundown_8 from './pages/1-the-rundown/Rundown_8';
 import Rundown_7 from './pages/1-the-rundown/Rundown_7';
 import Rundown_6 from './pages/1-the-rundown/Rundown_6';
+import Tldr_2 from './pages/tldr/Tldr_2';
+import Tldr_1 from './pages/tldr/Tldr_1';
 
 const useNuggBook = () => {
     const page = client.nuggbook.useNuggBookPage();
@@ -36,6 +38,12 @@ const useNuggBook = () => {
             return { top: 450, comp: Start, page };
         case Page.Welcome:
             return { top: 100, comp: Welcome, page };
+
+        case Page.Tldr_1:
+            return { top: 100, comp: Tldr_1, page };
+        case Page.Tldr_2:
+            return { top: 100, comp: Tldr_2, page };
+
         case Page.TableOfContents:
             return { top: 100, comp: TableOfContents, page };
         case Page.WhatIsAWallet:
@@ -143,7 +151,6 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
                 transform: `translate(${!yep.direction ? -1000 : 1000}px,0px)`,
             }),
             // enter: { opacity: 1, left: 0, right: 0, pointerEvents: 'auto' },
-            enter: { transform: `translate(0px,0px)` },
             leave: () => ({
                 transform: `translate(${yep.direction ? -1000 : 1000}px,0px)`,
             }),

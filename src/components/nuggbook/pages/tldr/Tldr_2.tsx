@@ -8,6 +8,7 @@ import client from '@src/client';
 import packages from '@src/packages';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import { useHotRotateO } from '@src/pages/hot-rotate-o/HotRotateO';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 // const Basic = (props?: SVGProps<SVGSVGElement>) => {
 //     return (
@@ -20,8 +21,9 @@ import { useHotRotateO } from '@src/pages/hot-rotate-o/HotRotateO';
 // items
 // trading -- auctions
 // staking
-const Welcome_2: NuggBookPage = ({ setPage }) => {
+const Tldr_2: NuggBookPage = ({ setPage }) => {
     const setInit = client.nuggbook.useSetInit();
+    const { screen } = useDimensions();
 
     const spring4 = packages.spring.useSpring({
         from: {
@@ -37,7 +39,7 @@ const Welcome_2: NuggBookPage = ({ setPage }) => {
     const epoch = client.epoch.active.useId();
 
     const [tokenId] = React.useState(epoch?.toNuggId() ?? 'nugg-1000000');
-    const [, , , , , , , , , , svg, , , MobileList] = useHotRotateO(tokenId, true);
+    const [, , , , , , , , , , svg, , , MobileList] = useHotRotateO(tokenId, true, true);
 
     return (
         <div
@@ -46,6 +48,7 @@ const Welcome_2: NuggBookPage = ({ setPage }) => {
                 alignItems: 'center',
                 display: 'flex',
                 flexDirection: 'column',
+                width: screen === 'phone' ? undefined : '80%',
             }}
         >
             <div
@@ -191,6 +194,7 @@ const Welcome_2: NuggBookPage = ({ setPage }) => {
                         v1
                     </span>
                 </div>
+
                 <HiArrowCircleRight
                     size={30}
                     style={{ marginRight: 3, color: lib.colors.primaryColor }}
@@ -241,7 +245,7 @@ const Welcome_2: NuggBookPage = ({ setPage }) => {
                     background: lib.colors.gradient3,
                     borderRadius: lib.layout.borderRadius.large,
                     marginBottom: 15,
-                    marginTop: -50,
+                    marginTop: screen === 'phone' ? -50 : undefined,
                     zIndex: 300,
                     // cursor: 'pointer',
 
@@ -260,4 +264,4 @@ const Welcome_2: NuggBookPage = ({ setPage }) => {
     );
 };
 
-export default Welcome_2;
+export default Tldr_2;

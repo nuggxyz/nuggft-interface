@@ -218,7 +218,7 @@ const RenderItem: FC<
     );
 };
 
-export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true) => {
+export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobileList = false) => {
     const provider = web3.hook.usePriorityProvider();
     const dotnugg = useDotnuggV1(provider);
     const address = web3.hook.usePriorityAccount();
@@ -429,7 +429,7 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true) => {
     }, [items]);
 
     const MobileList = React.useMemo(() => {
-        return screen === 'phone' ? (
+        return screen === 'phone' || forceMobileList ? (
             <div
                 style={{
                     marginTop: 20,
@@ -465,7 +465,7 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true) => {
     }, [sortedList, caller, screen]);
 
     const DesktopList = React.useMemo(() => {
-        return screen !== 'phone' ? (
+        return screen !== 'phone' && !forceMobileList ? (
             <>
                 <div
                     style={{
@@ -732,11 +732,6 @@ export const HotRotateO = ({ tokenId: overridedTokenId }: { tokenId?: NuggId }) 
         DesktopList,
         og,
     ] = useHotRotateOTransaction(tokenId);
-
-    // const [originalItems, setOriginalItems] = useState(items);
-    // useEffect(() => {
-    //     setOriginalItems(items);
-    // }, [tokenId, savedToChain, items]);
 
     const navigate = useNavigate();
 

@@ -195,7 +195,7 @@ const Welcome_0: NuggBookPage = ({ setPage, close }) => {
                     label={t`i got time ⌛️`}
                     onClick={() => {
                         setInit();
-                        setPage(Page.Welcome_1);
+                        setPage(Page.Tldr_1);
                     }}
                     size="large"
                     buttonStyle={{
