@@ -16,7 +16,7 @@ import client from '@src/client';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib, { parseItmeIdToNum } from '@src/lib';
-import useAsyncState, { useAsyncSetState } from '@src/hooks/useAsyncState';
+import { useAsyncSetState, useMemoizedAsyncState } from '@src/hooks/useAsyncState';
 import {
     useNuggftV1,
     useDotnuggV1,
@@ -626,21 +626,28 @@ export const useHotRotateOTransaction = (tokenId?: NuggId) => {
 
     const network = web3.hook.useNetworkProvider();
 
-    const estimation = useAsyncState(() => {
-        if (populatedTransaction && network) {
-            return Promise.all([
-                estimator.estimate(populatedTransaction),
-                network?.getGasPrice(),
-            ]).then((_data) => ({
-                gasLimit: _data[0] || BigNumber.from(0),
-                // gasPrice: new EthInt(_data[1] || 0),
-                // mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
-                // amount: populatedTransaction.amount,
-            }));
-        }
+    const estimation = useMemoizedAsyncState(
+        () => {
+            if (populatedTransaction && network) {
+                return Promise.all([
+                    estimator.estimate(populatedTransaction),
+                    network?.getGasPrice(),
+                ]).then((_data) => ({
+                    gasLimit: _data[0] || BigNumber.from(0),
+                    // gasPrice: new EthInt(_data[1] || 0),
+                    // mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
+                    // amount: populatedTransaction.amount,
+                }));
+            }
 
-        return undefined;
-    }, [populatedTransaction, network]);
+            return undefined;
+        },
+        [populatedTransaction, network, items?.active] as const,
+        (prev, curr) => {
+            return (prev[2] && prev[2].every((v, i) => curr[2] && v === curr[2][i])) ?? false;
+        },
+    );
+
     const calculating = React.useMemo(() => {
         if (estimator.error) return false;
         if (populatedTransaction && estimation) {
