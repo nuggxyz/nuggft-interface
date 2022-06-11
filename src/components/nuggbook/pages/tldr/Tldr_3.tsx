@@ -2,25 +2,26 @@ import React from 'react';
 import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
-import { NuggBookPage } from '@src/interfaces/nuggbook';
+import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
 import useDimensions from '@src/client/hooks/useDimensions';
 import useInterval from '@src/hooks/useInterval';
 import client from '@src/client';
 import TheRingLight from '@src/components/nugg/TheRing/TheRingLight';
+import packages from '@src/packages';
 
-const Tldr_3: NuggBookPage = () => {
+const Tldr_3: NuggBookPage = ({ setPage }) => {
     const epoch = client.epoch.active.useId();
 
-    // const spring4 = packages.spring.useSpring({
-    //     from: {
-    //         opacity: 0,
-    //     },
-    //     to: {
-    //         opacity: 1,
-    //     },
-    //     delay: 500 + 1500 + 1 * 1000,
-    //     config: packages.spring.config.default,
-    // });
+    const spring4 = packages.spring.useSpring({
+        from: {
+            opacity: 0,
+        },
+        to: {
+            opacity: 1,
+        },
+        delay: 500 + 1500 + 1 * 1000,
+        config: packages.spring.config.default,
+    });
 
     const [remaining, setRemaining] = React.useState(12);
 
@@ -107,6 +108,34 @@ const Tldr_3: NuggBookPage = () => {
                     {t`nuggs can only be traded through specialized auctions`}
                 </span>
             </div>
+
+            {screen !== 'phone' && (
+                <packages.spring.animated.div
+                    className="mobile-pressable-div"
+                    style={{
+                        alignItems: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        // padding: 10,
+                        color: lib.colors.white,
+                        boxShadow: lib.layout.boxShadow.basic,
+                        padding: '.7rem 1.3rem',
+                        background: lib.colors.gradient3,
+                        borderRadius: lib.layout.borderRadius.large,
+                        marginBottom: 15,
+                        zIndex: 300,
+                        marginTop: 15,
+                        ...spring4,
+                    }}
+                    role="button"
+                    aria-hidden="true"
+                    onClick={() => {
+                        setPage(Page.Tldr_4, true);
+                    }}
+                >
+                    <span style={{ ...lib.layout.presets.font.main.thicc }}>{t`next`}</span>
+                </packages.spring.animated.div>
+            )}
         </div>
     );
 };

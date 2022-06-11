@@ -3,11 +3,12 @@ import { t } from '@lingui/macro';
 import { HiArrowCircleRight } from 'react-icons/hi';
 
 import lib from '@src/lib';
-import { NuggBookPage } from '@src/interfaces/nuggbook';
+import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
 import client from '@src/client';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import { useHotRotateO } from '@src/pages/hot-rotate-o/HotRotateO';
 import useDimensions from '@src/client/hooks/useDimensions';
+import packages from '@src/packages';
 
 // const Basic = (props?: SVGProps<SVGSVGElement>) => {
 //     return (
@@ -20,20 +21,20 @@ import useDimensions from '@src/client/hooks/useDimensions';
 // items
 // trading -- auctions
 // staking
-const Tldr_2: NuggBookPage = () => {
+const Tldr_2: NuggBookPage = ({ setPage }) => {
     // const setInit = client.nuggbook.useSetInit();
     const { screen } = useDimensions();
 
-    // const spring4 = packages.spring.useSpring({
-    //     from: {
-    //         opacity: 0,
-    //     },
-    //     to: {
-    //         opacity: 1,
-    //     },
-    //     delay: 500 + 1500 + 1 * 1000,
-    //     config: packages.spring.config.default,
-    // });
+    const spring4 = packages.spring.useSpring({
+        from: {
+            opacity: 0,
+        },
+        to: {
+            opacity: 1,
+        },
+        delay: 500 + 1500 + 1 * 1000,
+        config: packages.spring.config.default,
+    });
 
     const epoch = client.epoch.active.useId();
 
@@ -220,7 +221,35 @@ const Tldr_2: NuggBookPage = () => {
 
             {MobileList}
 
-            <div
+            {screen !== 'phone' && (
+                <packages.spring.animated.div
+                    className="mobile-pressable-div"
+                    style={{
+                        alignItems: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        // padding: 10,
+                        color: lib.colors.white,
+                        boxShadow: lib.layout.boxShadow.basic,
+                        padding: '.7rem 1.3rem',
+                        background: lib.colors.gradient3,
+                        borderRadius: lib.layout.borderRadius.large,
+                        marginBottom: 15,
+                        zIndex: 300,
+                        marginTop: 15,
+                        ...spring4,
+                    }}
+                    role="button"
+                    aria-hidden="true"
+                    onClick={() => {
+                        setPage(Page.Tldr_3, true);
+                    }}
+                >
+                    <span style={{ ...lib.layout.presets.font.main.thicc }}>{t`next`}</span>
+                </packages.spring.animated.div>
+            )}
+
+            {/* <div
                 style={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -242,7 +271,7 @@ const Tldr_2: NuggBookPage = () => {
                 >
                     {t`yep, the image is being computed by ethereum in real time`}
                 </span>
-            </div>
+            </div> */}
 
             {/* <packages.spring.animated.div
                 className="mobile-pressable-div"

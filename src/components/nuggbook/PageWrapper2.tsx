@@ -234,7 +234,7 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
                 transform: `translate(${direction ? 1000 : -1000}px,0px)`,
             }),
 
-            enter: { pointerEvents: 'auto', transform: `translate(0px,0px)` },
+            enter: { transform: `translate(0px,0px)` },
             leave: () => ({
                 transform: `translate(${direction ? -1000 : 1000}px,0px)`,
             }),

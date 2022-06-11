@@ -5,11 +5,9 @@ import lib from '@src/lib';
 import { NuggBookPage } from '@src/interfaces/nuggbook';
 import useDimensions from '@src/client/hooks/useDimensions';
 import packages from '@src/packages';
-import client from '@src/client';
 
-const Tldr_5: NuggBookPage = () => {
+const Tldr_5: NuggBookPage = ({ close }) => {
     const { screen } = useDimensions();
-    const close = client.nuggbook.useCloseNuggBook();
     const spring4 = packages.spring.useSpring({
         from: {
             opacity: 0,
@@ -188,31 +186,33 @@ const Tldr_5: NuggBookPage = () => {
                 </span>
             </div>
 
-            <packages.spring.animated.div
-                className="mobile-pressable-div"
-                style={{
-                    alignItems: 'center',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    // padding: 10,
-                    color: lib.colors.white,
-                    boxShadow: lib.layout.boxShadow.basic,
-                    padding: '.7rem 1.3rem',
-                    background: lib.colors.gradient3,
-                    borderRadius: lib.layout.borderRadius.large,
-                    marginBottom: 15,
-                    zIndex: 300,
-                    marginTop: 15,
-                    ...spring4,
-                }}
-                role="button"
-                aria-hidden="true"
-                onClick={() => {
-                    close();
-                }}
-            >
-                <span style={{ ...lib.layout.presets.font.main.thicc }}>{t`i'm ready`}</span>
-            </packages.spring.animated.div>
+            {screen !== 'phone' && (
+                <packages.spring.animated.div
+                    className="mobile-pressable-div"
+                    style={{
+                        alignItems: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        // padding: 10,
+                        color: lib.colors.white,
+                        boxShadow: lib.layout.boxShadow.basic,
+                        padding: '.7rem 1.3rem',
+                        background: lib.colors.gradient3,
+                        borderRadius: lib.layout.borderRadius.large,
+                        marginBottom: 15,
+                        zIndex: 300,
+                        marginTop: 15,
+                        ...spring4,
+                    }}
+                    role="button"
+                    aria-hidden="true"
+                    onClick={() => {
+                        close();
+                    }}
+                >
+                    <span style={{ ...lib.layout.presets.font.main.thicc }}>{t`i'm ready`}</span>
+                </packages.spring.animated.div>
+            )}
         </div>
     );
 };
