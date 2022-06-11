@@ -23,12 +23,14 @@ export type TokenViewerProps = {
     morphing?: boolean;
     shouldLoad?: boolean;
     forceCache?: boolean;
+    tokenStyle?: CSSProperties;
 };
 
 const TokenViewer4: FunctionComponent<TokenViewerProps> = ({
     tokenId,
     shouldLoad = true,
     forceCache = false,
+    tokenStyle,
 }) => {
     const [src] = useDotnuggCacheOnlyLazy(shouldLoad, tokenId, forceCache);
 
@@ -57,7 +59,7 @@ const TokenViewer4: FunctionComponent<TokenViewerProps> = ({
                 ...animatedStyle,
             }}
         >
-            <div role="presentation" style={{ width: '275px', height: '275px' }}>
+            <div role="presentation" style={{ width: '275px', height: '275px', ...tokenStyle }}>
                 <DangerouslySetNugg imageUri={src} size="showcase" />
             </div>
         </animated.div>

@@ -37,6 +37,9 @@ import Rundown_10 from './pages/1-the-rundown/Rundown_10';
 import Tldr_0 from './pages/tldr/Tldr_0';
 import Tldr_1 from './pages/tldr/Tldr_1';
 import Tldr_2 from './pages/tldr/Tldr_2';
+import Tldr_3 from './pages/tldr/Tldr_3';
+import Tldr_4 from './pages/tldr/Tldr_4';
+import Tldr_5 from './pages/tldr/Tldr_5';
 
 const MemoizedWallet = React.memo(() => {
     const address = web3.hook.usePriorityAccount();
@@ -65,7 +68,7 @@ const useNuggBook = (): {
                 comp: Tldr_1,
                 page,
                 nextButton: {
-                    text: t`keep reading`,
+                    text: t`next`,
                     goto: Page.Tldr_2,
                 },
             };
@@ -73,6 +76,37 @@ const useNuggBook = (): {
             return {
                 top: 100,
                 comp: Tldr_2,
+                page,
+                nextButton: {
+                    text: t`next`,
+                    goto: Page.Tldr_3,
+                },
+            };
+        case Page.Tldr_3:
+            return {
+                top: 100,
+                comp: Tldr_3,
+                page,
+                nextButton: {
+                    text: t`next`,
+                    goto: Page.Tldr_4,
+                },
+            };
+
+        case Page.Tldr_4:
+            return {
+                top: 100,
+                comp: Tldr_4,
+                page,
+                nextButton: {
+                    text: t`next`,
+                    goto: Page.Tldr_5,
+                },
+            };
+        case Page.Tldr_5:
+            return {
+                top: 100,
+                comp: Tldr_5,
                 page,
                 nextButton: {
                     text: t`keep reading`,

@@ -55,7 +55,7 @@ const Tldr_2: NuggBookPage = () => {
                 width: screen === 'phone' ? undefined : '80%',
             }}
         >
-            <div
+            {/* <div
                 style={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -73,7 +73,6 @@ const Tldr_2: NuggBookPage = () => {
             >
                 <span
                     style={{
-                        marginLeft: 10,
                         color: lib.colors.transparentPrimaryColor,
                         ...lib.layout.presets.font.main.semibold,
                         fontWeight: lib.layout.fontWeight.thicc,
@@ -82,7 +81,7 @@ const Tldr_2: NuggBookPage = () => {
                 >
                     🥚 🐥 🐓 🍗
                 </span>
-            </div>
+            </div> */}
             <div
                 style={{
                     display: 'flex',
@@ -106,7 +105,7 @@ const Tldr_2: NuggBookPage = () => {
                         fontSize: '25px',
                     }}
                 >
-                    {t`dynamic`}
+                    {t`modification`}
                 </span>
             </div>
 
@@ -130,7 +129,7 @@ const Tldr_2: NuggBookPage = () => {
                         ...lib.layout.presets.font.main.semibold,
                     }}
                 >
-                    {t`change the way your nugg looks by rearanging its items`}
+                    {t`change the way a nugg looks by reordering its items`}
                 </span>
             </div>
 
@@ -189,15 +188,6 @@ const Tldr_2: NuggBookPage = () => {
                             boxShadow: lib.layout.boxShadow.basic,
                         }}
                     />
-
-                    {/* <span
-                        style={{
-                            color: lib.colors.primaryColor,
-                            ...lib.layout.presets.font.main.semibold,
-                        }}
-                    >
-                        v1
-                    </span> */}
                 </div>
 
                 <HiArrowCircleRight
@@ -225,18 +215,34 @@ const Tldr_2: NuggBookPage = () => {
                             boxShadow: lib.layout.boxShadow.basic,
                         }}
                     />
-                    {/* <span
-                        style={{
-                            color: lib.colors.primaryColor,
-                            ...lib.layout.presets.font.main.semibold,
-                        }}
-                    >
-                        v2
-                    </span> */}
                 </div>
             </div>
 
             {MobileList}
+
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    position: 'relative',
+                    borderRadius: lib.layout.borderRadius.large,
+                    padding: '.4rem 1rem .8rem',
+                    textAlign: 'center',
+                    verticalAlign: 'center',
+                    backgroundColor: 'transparent',
+                }}
+            >
+                <span
+                    style={{
+                        fontSize: '12px',
+                        color: lib.colors.transparentPrimaryColor,
+                        ...lib.layout.presets.font.main.semibold,
+                    }}
+                >
+                    {t`yep, the image is being computed by ethereum in real time`}
+                </span>
+            </div>
 
             {/* <packages.spring.animated.div
                 className="mobile-pressable-div"

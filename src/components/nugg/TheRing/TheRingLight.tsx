@@ -48,7 +48,7 @@ const TheRing: FunctionComponent<Props> = ({
     circleStyle,
     circleChildrenContainerStyle,
     circleWidth = 1600,
-    // tokenStyle,
+    tokenStyle,
     manualTokenId,
     // disableHover = false,
     // disableClick = false,
@@ -89,7 +89,7 @@ const TheRing: FunctionComponent<Props> = ({
                 }}
                 strokeWidth={10}
             >
-                <TokenViewer4 tokenId={tokenId} />
+                <TokenViewer4 tokenId={tokenId} tokenStyle={tokenStyle} />
             </CircleTimerMobileCSS>
         </div>
     );

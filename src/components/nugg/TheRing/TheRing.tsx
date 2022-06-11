@@ -16,7 +16,6 @@ import useDesktopSwappingNugg from '@src/client/hooks/useDesktopSwappingNugg';
 import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
 import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
 import CircleTimerMobileCSS from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimerMobileCSS';
-import TokenViewer4 from '@src/components/nugg/TokenViewer4';
 import { calculateEndBlock } from '@src/web3/constants';
 
 import styles from './TheRing.styles';
@@ -117,7 +116,7 @@ const TheRing: FunctionComponent<Props> = ({
                 ? 'white'
                 : 'purple'
             : 'white';
-    }, [tokenId, swap, lifecycle]);
+    }, [tokenId, swap, lifecycle, isPhone]);
 
     return (
         <div style={{ width: '100%', height: '100%', ...containerStyle }}>
@@ -140,7 +139,12 @@ const TheRing: FunctionComponent<Props> = ({
                 }
             >
                 {isPhone ? (
-                    <TokenViewer4 tokenId={tokenId} />
+                    <TokenViewer
+                        tokenId={tokenId}
+                        style={tokenStyle}
+                        showcase
+                        disableOnClick={disableClick}
+                    />
                 ) : (
                     <>
                         {/* {chainId && swap && lifecycle === Lifecycle.Deck && (
