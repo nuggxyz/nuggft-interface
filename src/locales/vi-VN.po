@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-06-09 21:52+0000\n"
+"POT-Creation-Date: 2022-06-10 21:38+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Vietnamese\n"
-"PO-Revision-Date: 2022-06-10 06:04\n"
+"PO-Revision-Date: 2022-06-11 06:05\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 msgid ", and your desired bid for"
@@ -951,6 +951,10 @@ msgstr ""
 msgid "holding since {0}"
 msgstr ""
 
+#: src/components/mobile/NavigationBarMobile.tsx
+msgid "home"
+msgstr ""
+
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_8.tsx
 msgid "how do I loan it?"
 msgstr ""
@@ -1264,11 +1268,8 @@ msgid "starting offer"
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
-msgid "starting price"
-msgstr ""
-
 #: src/components/mobile/ViewingNuggPhone.tsx
-msgid "starting pricet"
+msgid "starting price"
 msgstr ""
 
 #: src/components/mobile/MobileOfferButton.tsx
