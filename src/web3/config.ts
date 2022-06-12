@@ -12,7 +12,6 @@ import emitter from '@src/emitter';
 import { NuggftV1__factory } from '@src/typechain';
 import { InterfacedEvent } from '@src/interfaces/events';
 import {
-    Chain,
     Connector as ConnectorEnum,
     Peer,
     PeerInfo,
@@ -52,6 +51,7 @@ import {
     PROTOCOL_FEE_FRAC_MINT,
     supportedChainIds,
     ALCHEMY_URLS,
+    Chain,
 } from './constants';
 import { CustomEtherscanProvider } from './classes/CustomEtherscanProvider';
 

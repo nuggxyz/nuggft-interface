@@ -4,7 +4,9 @@ import type { State, StoreApi } from 'zustand/vanilla';
 import type WalletConnectProvider from '@walletconnect/ethereum-provider';
 import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers';
 
-import { Connector as ConnectorEnum, PeerInfo, Peer, Chain } from './interfaces';
+import { Chain } from '@src/web3/constants';
+
+import { Connector as ConnectorEnum, PeerInfo, Peer } from './interfaces';
 
 export interface Web3ReactState extends State {
     chainId: Chain | undefined;

@@ -10,14 +10,14 @@ import { Address } from '@src/classes/Address';
 import client from '@src/client';
 import { EthInt } from '@src/classes/Fraction';
 // eslint-disable-next-line import/no-cycle
-import { CONTRACTS, DEFAULT_CHAIN } from '@src/web3/constants';
+import { CONTRACTS, DEFAULT_CHAIN, Chain } from '@src/web3/constants';
 import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
 // eslint-disable-next-line import/no-cycle
 // eslint-disable-next-line import/no-cycle
 
 import { createWeb3ReactStoreAndActions } from './store';
 import { Connector, Web3ReactStore, Web3ReactState, Actions, CoreProvider } from './types';
-import { Connector as ConnectorEnum, Chain } from './interfaces';
+import { Connector as ConnectorEnum } from './interfaces';
 
 export type Web3ReactHooks = ReturnType<typeof getStateHooks> &
     ReturnType<typeof getDerivedHooks> &

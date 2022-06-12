@@ -5,16 +5,18 @@ import { BlockTag, Formatter, Network } from '@ethersproject/providers';
 import { toEth } from '@src/lib/conversion';
 import nuggftabi from '@src/abis/NuggftV1.json';
 
-export function supportedChainIds() {
-    // @ts-ignore
-    return Object.values<Chain>(Chain);
-}
-
 export enum Chain {
     MAINNET = 1,
     ROPSTEN = 3,
     RINKEBY = 4,
     GOERLI = 5,
+    KOVAN = 42,
+}
+export const DEFAULT_CHAIN = Chain.GOERLI;
+
+export function supportedChainIds() {
+    // @ts-ignore
+    return Object.values<Chain>(Chain);
 }
 
 export enum ConnectorEnum {
@@ -23,8 +25,6 @@ export enum ConnectorEnum {
     CoinbaseWallet = 'coinbasewallet',
     Rpc = 'rpc',
 }
-
-export const DEFAULT_CHAIN = Chain.ROPSTEN;
 
 export const NETWORK_HEALTH_CHECK_MS = 15 * 1000;
 export const DEFAULT_MS_BEFORE_WARNING = 90 * 1000;
@@ -78,20 +78,29 @@ export const CONTRACTS = {
         MintOffset: 1000000,
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0x694200000009b6aa5f99deadd4d159a009c348da',
-        xNuggftV1: '0xc3fb6a3f67837b1940dc6418f48d572980ab1f9b',
-        DotnuggV1: '0x3de7d9800c8e5bb6c432c0bdf6253edee4b630c7',
-        Genesis: 10805120,
+        NuggftV1: '0x6942000002e83241b3d54bfd1f35645f92276d76',
+        xNuggftV1: '0x2c8e2feee7d7f5b3b23c38d08942d5dc26506d53',
+        DotnuggV1: '0x1e55896582bfb608f10fdf0d3525fb9eb19490d9',
+        Genesis: 10839104,
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
     },
     [Chain.GOERLI]: {
-        NuggftV1: '0xf5622e697d1821b8e83e4beed9e897b49de81011',
-        xNuggftV1: ADDRESS_ZERO,
-        DotnuggV1: '0x69c877437dc133bbf32c8bc1acfaf93ba824f28c',
-        Genesis: 333,
-        Interval: 32,
+        NuggftV1: '0x69420000931ba264b7064c8b6a07e839459ec24d',
+        xNuggftV1: '0xfff6e5115e7882ec7f698a706b489ef131d678b2',
+        DotnuggV1: '0x1ec28cb60edd86a70cb30e1368ab9b14c08f7ecc',
+        Genesis: 7046208,
+        Interval: 64,
+        Offset: 1,
+        MintOffset: 1000000,
+    },
+    [Chain.KOVAN]: {
+        NuggftV1: '0x69420000931ba264b7064c8b6a07e839459ec24d',
+        xNuggftV1: '0x5924949544f6b0b36d8aa43245d33760f360e4e8',
+        DotnuggV1: '0x09655e07e376df813463437b65139f0536c9da84',
+        Genesis: 32136448,
+        Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
     },
@@ -132,20 +141,36 @@ export const calculateEndBlock = (epoch: number, chainId: Chain = DEFAULT_CHAIN)
     return calculateStartBlock(epoch + 1, chainId) - 1;
 };
 
-// QmXAhEeSBXYA227ER3YK9NBE57HhpVGGWeYWQhic4nPZ6M
+export const CHAIN_LABEL = {
+    [Chain.MAINNET]: `mainnet`,
+    [Chain.RINKEBY]: `rinkeby`,
+    [Chain.ROPSTEN]: `ropsten`,
+    [Chain.GOERLI]: `goerli`,
+    [Chain.KOVAN]: `kovan`,
+} as const;
+
+const buildGraphHttpUrl = <T extends Chain>(chain: T) => {
+    return `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-${CHAIN_LABEL[chain]}` as const;
+};
+
+const buildGraphWssUrl = <T extends Chain>(chain: T) => {
+    return `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-${CHAIN_LABEL[chain]}` as const;
+};
 
 export const GRAPH_ENPOINTS = {
-    [Chain.MAINNET]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-mainnet`,
-    [Chain.RINKEBY]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby`,
-    [Chain.ROPSTEN]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
-    [Chain.GOERLI]: `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli`,
+    [Chain.MAINNET]: buildGraphHttpUrl(Chain.MAINNET),
+    [Chain.RINKEBY]: buildGraphHttpUrl(Chain.RINKEBY),
+    [Chain.ROPSTEN]: buildGraphHttpUrl(Chain.ROPSTEN),
+    [Chain.GOERLI]: buildGraphHttpUrl(Chain.GOERLI),
+    [Chain.KOVAN]: buildGraphHttpUrl(Chain.KOVAN),
 };
 
 export const GRAPH_WSS_ENDPOINTS = {
-    [Chain.MAINNET]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-mainnet`,
-    [Chain.RINKEBY]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby`,
-    [Chain.ROPSTEN]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-ropsten`,
-    [Chain.GOERLI]: `wss://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli`,
+    [Chain.MAINNET]: buildGraphWssUrl(Chain.MAINNET),
+    [Chain.RINKEBY]: buildGraphWssUrl(Chain.RINKEBY),
+    [Chain.ROPSTEN]: buildGraphWssUrl(Chain.ROPSTEN),
+    [Chain.GOERLI]: buildGraphWssUrl(Chain.GOERLI),
+    [Chain.KOVAN]: buildGraphWssUrl(Chain.KOVAN),
 };
 
 export const INFURA_URLS = {
@@ -153,6 +178,7 @@ export const INFURA_URLS = {
     [Chain.RINKEBY]: `https://rinkeby.infura.io/v3/${INFURA_KEY}`,
     [Chain.ROPSTEN]: `https://ropsten.infura.io/v3/${INFURA_KEY}`,
     [Chain.GOERLI]: `https://goerli.infura.io/v3/${INFURA_KEY}`,
+    [Chain.KOVAN]: `https://kovan.infura.io/v3/${INFURA_KEY}`,
 };
 
 export const ALCHEMY_URLS = {
@@ -160,6 +186,7 @@ export const ALCHEMY_URLS = {
     [Chain.RINKEBY]: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}`,
     [Chain.ROPSTEN]: `https://eth-ropsten.alchemyapi.io/v2/${ALCHEMY_KEY}`,
     [Chain.GOERLI]: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+    [Chain.KOVAN]: `https://eth-kovan.alchemyapi.io/v2/${ALCHEMY_KEY}`,
 };
 
 export const INFURA_WSS_URLS = {
@@ -167,6 +194,7 @@ export const INFURA_WSS_URLS = {
     [Chain.RINKEBY]: `wss://rinkeby.infura.io/v3/${INFURA_KEY}`,
     [Chain.ROPSTEN]: `wss://ropsten.infura.io/v3/${INFURA_KEY}`,
     [Chain.GOERLI]: `wss://goerli.infura.io/v3/${INFURA_KEY}`,
+    [Chain.KOVAN]: `wss://kovan.infura.io/v3/${INFURA_KEY}`,
 };
 
 export const ALCHEMY_WSS_URLS = {
@@ -174,88 +202,52 @@ export const ALCHEMY_WSS_URLS = {
     [Chain.RINKEBY]: `wss://eth-rinkeby.ws.alchemyapi.io/v2/${ALCHEMY_KEY}`,
     [Chain.ROPSTEN]: `wss://eth-ropsten.ws.alchemyapi.io/v2/${ALCHEMY_KEY}`,
     [Chain.GOERLI]: `wss://eth-goerli.ws.alchemyapi.io/v2/${ALCHEMY_KEY}`,
+    [Chain.KOVAN]: `wss://eth-kovan.ws.alchemyapi.io/v2/${ALCHEMY_KEY}`,
 };
 
-export const CHAIN_INFO: {
-    [key in Chain]: L1ChainInfo;
-} = {
+export const CHAIN_INFO = {
     [Chain.MAINNET]: {
-        docs: 'https://docs.uniswap.org/',
         explorer: 'https://etherscan.io/',
-        infoLink: 'https://nugg.xyz/',
         name: 'Ethereum',
-        logoUrl: 'assets/images/ethereum-logo.png',
-        nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
         label: 'mainnet',
         etherscanApiHost: 'api.etherscan.io',
     },
     [Chain.RINKEBY]: {
-        docs: 'https://docs.uniswap.org/',
         explorer: 'https://rinkeby.etherscan.io/',
-        infoLink: 'https://nugg.xyz/testing',
         name: 'Rinkeby',
-        nativeCurrency: {
-            name: 'Rinkeby ETH',
-            symbol: 'rinkETH',
-            decimals: 18,
-        },
         label: 'rinkeby',
         etherscanApiHost: 'api-rinkeby.etherscan.io',
     },
     [Chain.ROPSTEN]: {
-        docs: 'https://docs.uniswap.org/',
         explorer: 'https://ropsten.etherscan.io/',
-        infoLink: 'https://nugg.xyz/testing',
         name: 'Ropsten',
-        nativeCurrency: {
-            name: 'Ropsten ETH',
-            symbol: 'ropETH',
-            decimals: 18,
-        },
         label: 'ropsten',
         etherscanApiHost: 'api-ropsten.etherscan.io',
     },
     [Chain.GOERLI]: {
-        docs: 'https://docs.uniswap.org/',
         explorer: 'https://goerli.etherscan.io/',
-        infoLink: 'https://nugg.xyz/testing',
         name: 'Görli',
-        nativeCurrency: {
-            name: 'Görli ETH',
-            symbol: 'görETH',
-            decimals: 18,
-        },
         label: 'goerli',
         etherscanApiHost: 'api-goerli.etherscan.io',
     },
-};
-
-interface L1ChainInfo {
-    readonly blockWaitMsBeforeWarning?: number;
-    readonly docs: string;
-    readonly explorer: string;
-    readonly infoLink: string;
-    readonly label: string;
-    readonly logoUrl?: string;
-    readonly rpcUrls?: string[];
-    readonly nativeCurrency: {
-        name: string; // 'Goerli ETH',
-        symbol: string; // 'gorETH',
-        decimals: number; // 18,
-    };
-    readonly name: string;
-    readonly etherscanApiHost: string;
-}
+    [Chain.KOVAN]: {
+        explorer: 'https://kovan.etherscan.io/',
+        name: 'Kovan',
+        label: 'kovan',
+        etherscanApiHost: 'api-kovan.etherscan.io',
+    },
+} as const;
 
 export const ENS_REGISTRAR_ADDRESSES = {
     [Chain.MAINNET]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
     [Chain.ROPSTEN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
     [Chain.GOERLI]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
     [Chain.RINKEBY]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    [Chain.KOVAN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
 };
 
 export const getNetwork = (chainId: Chain): Network => ({
-    name: CHAIN_INFO[chainId].label,
+    name: CHAIN_LABEL[chainId],
     chainId,
     ensAddress: ENS_REGISTRAR_ADDRESSES[chainId],
 });

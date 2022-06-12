@@ -1,10 +1,4 @@
 // eslint-disable-next-line no-shadow
-export enum Chain {
-    MAINNET = 1,
-    ROPSTEN = 3,
-    RINKEBY = 4,
-    GOERLI = 5,
-}
 
 export type SupportedConnector =
     | 'rainbow'

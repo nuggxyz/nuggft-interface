@@ -4,7 +4,7 @@
 import { BlockTag, TransactionResponse } from '@ethersproject/abstract-provider';
 import { EtherscanProvider } from '@ethersproject/providers';
 
-import { Chain } from '@src/web3/core/interfaces';
+import { Chain } from '@src/web3/constants';
 
 interface EtherscanTransactionResponse {
     blockNumber: string;

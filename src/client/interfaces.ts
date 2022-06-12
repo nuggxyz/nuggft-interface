@@ -1,8 +1,9 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { State } from 'zustand';
 
-import { Chain, Connector } from '@src/web3/core/interfaces';
+import { Connector } from '@src/web3/core/interfaces';
 import { SupportedLocale } from '@src/lib/i18n/locales';
+import { Chain } from '@src/web3/constants';
 
 import { SwapRoutes } from './router';
 

@@ -10,7 +10,7 @@ import web3 from '@src/web3';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import client from '@src/client';
 import { ListRenderItemProps } from '@src/components/general/List/List';
-import { Chain } from '@src/web3/core/interfaces';
+import { Chain } from '@src/web3/constants';
 import lib, { isUndefinedOrNull, isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import { Address } from '@src/classes/Address';
 import { LiveToken, SwapData } from '@src/client/interfaces';
