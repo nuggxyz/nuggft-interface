@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-06-10 21:38+0000\n"
+"POT-Creation-Date: 2022-06-11 20:15+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: German\n"
-"PO-Revision-Date: 2022-06-11 06:05\n"
+"PO-Revision-Date: 2022-06-12 06:05\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 msgid ", and your desired bid for"
@@ -258,7 +258,6 @@ msgid "Go to swap"
 msgstr ""
 
 #: src/pages/hot-rotate-o/HotRotateO.tsx
-#: src/pages/hot-rotate-o/HotRotateO.tsx
 msgid "Hide"
 msgstr ""
 
@@ -331,6 +330,10 @@ msgstr ""
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "Max"
+msgstr ""
+
+#: src/components/nuggbook/pages/tldr/Tldr_11.tsx
+msgid "McDonlad's wont answer, so we will"
 msgstr ""
 
 #: src/components/modals/LoanInputModal/LoanInputModal.tsx
@@ -522,6 +525,10 @@ msgstr ""
 msgid "Sell Nugg"
 msgstr ""
 
+#: src/pages/hot-rotate-o/HotRotateO.tsx
+msgid "Show"
+msgstr ""
+
 #: src/components/modals/QrCodeModal/QrCodeModal.tsx
 msgid "Sign in with {0}"
 msgstr ""
@@ -700,6 +707,10 @@ msgstr ""
 msgid "a nugg and its items 🐤"
 msgstr ""
 
+#: src/components/nuggbook/pages/tldr/Tldr_11.tsx
+msgid "a nugg is a collection of items"
+msgstr ""
+
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "a nugg is minted with {0}"
 msgstr ""
@@ -741,6 +752,11 @@ msgstr ""
 msgid "asking price"
 msgstr ""
 
+#: src/components/nuggbook/pages/tldr/Tldr_10.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_3.tsx
+msgid "auctions"
+msgstr ""
+
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
 msgid "auctions 🕰"
 msgstr ""
@@ -768,8 +784,12 @@ msgstr ""
 msgid "bid on {0}"
 msgstr ""
 
-#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_1.tsx
 msgid "build something"
+msgstr ""
+
+#: src/components/nuggbook/pages/tldr/Tldr_1.tsx
+msgid "built on ethereum"
 msgstr ""
 
 #: src/components/nuggbook/pages/set-up/Setup_2.tsx
@@ -784,12 +804,16 @@ msgstr ""
 msgid "calculating"
 msgstr ""
 
-#: src/components/nuggbook/pages/welcome/Welcome_2.tsx
-msgid "check it out"
+#: src/components/nuggbook/pages/tldr/Tldr_2.tsx
+msgid "change the way a nugg looks by reordering its items"
 msgstr ""
 
 #: src/components/nuggbook/pages/set-up/Setup_2.tsx
 msgid "coinbase users"
+msgstr ""
+
+#: src/components/nuggbook/pages/tldr/Tldr_11.tsx
+msgid "composition of a nugg"
 msgstr ""
 
 #: src/components/nuggbook/pages/set-up/Setup_0.tsx
@@ -824,11 +848,7 @@ msgstr ""
 msgid "cool! it all makes sense now 🤠"
 msgstr ""
 
-#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
-msgid "cool. but why?"
-msgstr ""
-
-#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_1.tsx
 msgid "cop the code"
 msgstr ""
 
@@ -873,8 +893,7 @@ msgid "eth to\n"
 "the wallet"
 msgstr ""
 
-#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
-#: src/components/nuggbook/pages/welcome/Welcome_2.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_1.tsx
 msgid "every image you see is 100% computed on ethereum"
 msgstr ""
 
@@ -972,14 +991,17 @@ msgid "i got it"
 msgstr ""
 
 #: src/components/nuggbook/pages/Welcome.tsx
-#: src/components/nuggbook/pages/welcome/Welcome_0.tsx
-#: src/components/nuggbook/pages/welcome/Welcome_2.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_0.tsx
 msgid "i got time ⌛️"
 msgstr ""
 
 #: src/components/nuggbook/pages/Welcome.tsx
-#: src/components/nuggbook/pages/welcome/Welcome_0.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_0.tsx
 msgid "i'll figure it out 💪"
+msgstr ""
+
+#: src/components/nuggbook/pages/tldr/Tldr_5.tsx
+msgid "i'm ready"
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_9.tsx
@@ -999,6 +1021,7 @@ msgid "is born! 🎉"
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_4.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_4.tsx
 msgid "item auctions"
 msgstr ""
 
@@ -1008,6 +1031,10 @@ msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_4.tsx
 msgid "items are put up for auction by the nuggs that own them"
+msgstr ""
+
+#: src/components/nuggbook/PageWrapper2.tsx
+msgid "keep reading"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
@@ -1085,6 +1112,10 @@ msgstr ""
 msgid "minting"
 msgstr ""
 
+#: src/components/nuggbook/pages/tldr/Tldr_2.tsx
+msgid "modification"
+msgstr ""
+
 #: src/components/mobile/MobileWallet.tsx
 msgid "my account"
 msgstr ""
@@ -1121,12 +1152,36 @@ msgstr ""
 msgid "new nugg claims"
 msgstr ""
 
+#: src/components/nuggbook/PageWrapper2.tsx
+#: src/components/nuggbook/PageWrapper2.tsx
+#: src/components/nuggbook/PageWrapper2.tsx
+#: src/components/nuggbook/PageWrapper2.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_1.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_2.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_3.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_4.tsx
+msgid "next"
+msgstr ""
+
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
 msgid "nice, so how do I get a nugg? 🆒"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
 msgid "no action here..."
+msgstr ""
+
+#: src/components/nuggbook/pages/tldr/Tldr_5.tsx
+msgid "nuggft was designed from the ground up to"
+msgstr ""
+
+#: src/components/nuggbook/pages/tldr/Tldr_10.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_3.tsx
+msgid "nuggs can only be traded through specialized auctions"
+msgstr ""
+
+#: src/components/nuggbook/pages/tldr/Tldr_4.tsx
+msgid "nuggs trade items the same way"
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
@@ -1139,6 +1194,10 @@ msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_1.tsx
 msgid "ok, so how do I buy em? 💸"
+msgstr ""
+
+#: src/components/nuggbook/pages/tldr/Tldr_5.tsx
+msgid "our auction system is built in a way that eliminates any monitary incentive an attacker may have"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
@@ -1182,6 +1241,10 @@ msgstr ""
 msgid "previous offers"
 msgstr ""
 
+#: src/components/nuggbook/pages/tldr/Tldr_5.tsx
+msgid "protect users"
+msgstr ""
+
 #: src/components/nuggbook/pages/helping-test/HelpingTest_0.tsx
 msgid "ps: you rock 💙"
 msgstr ""
@@ -1199,7 +1262,7 @@ msgstr ""
 msgid "put up for sale"
 msgstr ""
 
-#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_1.tsx
 msgid "read the contract"
 msgstr ""
 
@@ -1219,6 +1282,10 @@ msgstr ""
 
 #: src/components/mobile/MobileOwnerBlock.tsx
 msgid "sec"
+msgstr ""
+
+#: src/components/nuggbook/pages/tldr/Tldr_5.tsx
+msgid "security"
 msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
@@ -1306,6 +1373,10 @@ msgstr ""
 msgid "the nugg pool 🤿"
 msgstr ""
 
+#: src/components/nuggbook/pages/tldr/Tldr_11.tsx
+msgid "the seller takes home their asking price and any proceeds go to nugg holders"
+msgstr ""
+
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
 msgid "this item is owned by {0} nuggs and is not currently for sale"
 msgstr ""
@@ -1338,6 +1409,10 @@ msgstr ""
 msgid "transfer from exchange"
 msgstr ""
 
+#: src/components/nuggbook/pages/tldr/Tldr_2.tsx
+msgid "try it out"
+msgstr ""
+
 #: src/components/mobile/MyNuggItemMobile.tsx
 msgid "unloaned"
 msgstr ""
@@ -1359,11 +1434,15 @@ msgstr ""
 msgid "wait {minutes} min"
 msgstr ""
 
-#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_1.tsx
 msgid "we call it"
 msgstr ""
 
-#: src/components/nuggbook/pages/welcome/Welcome_1.tsx
+#: src/components/nuggbook/pages/tldr/Tldr_5.tsx
+msgid "we cannot stop all attacks, but we can give nuggft users the power to fight back"
+msgstr ""
+
+#: src/components/nuggbook/pages/tldr/Tldr_1.tsx
 msgid "we designed a language to define items and a smart contract to combine them into nuggs"
 msgstr ""
 
