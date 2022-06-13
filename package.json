@@ -3,13 +3,14 @@
     "version": "1.0.0",
     "description": "nuggft web facing application",
     "main": "src/index.tsx",
-    "author": "danny7even <danny7even@nugg.xyz>",
+    "author": "nuggxyz",
     "license": "AGPL-3.0-or-later",
-    "private": true,
+    "private": false,
     "scripts": {
         "test": "ts-node webpack/scripts/test.ts",
         "dev": "yarn start",
         "start": "ts-node webpack/scripts/start.ts",
+        "prebuild": "yarn typechain:compile && yarn graphql:compile && yarn i18n:compile",
         "build": "ts-node webpack/scripts/build.ts",
         "serve": "serve -s build -l 3001",
         "webpack:develop": "ts-node webpack/scripts/develop.ts",
@@ -17,8 +18,7 @@
         "i18n:extract": "lingui extract --locale en-US",
         "i18n:compile": "yarn i18n:extract && lingui compile",
         "i18n:pseudo": "lingui extract --locale pseudo && lingui compile",
-        "typechain:compile": "typechain --target ethers-v5 --always-generate-overloads --out-dir src/typechain/ './src/abis/*'",
-        "typechain": "yarn typechain:compile && yarn graphql:compile && yarn i18n:compile"
+        "typechain:compile": "typechain --target ethers-v5 --always-generate-overloads --out-dir src/typechain/ './src/abis/*'"
     },
     "browserslist": {
         "production": [
