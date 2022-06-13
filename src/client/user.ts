@@ -213,10 +213,9 @@ export const useUserUpdater = () => {
     }, [fetch, address]);
 
     React.useEffect(() => {
+        void wipe();
         if (address) {
             void fetch(address as AddressString, apolloClient);
-        } else {
-            void wipe();
         }
     }, [address, fetch, wipe]);
 
