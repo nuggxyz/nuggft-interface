@@ -67,13 +67,16 @@ const Item: FC<{ item: LiveNuggItem; extraData: ExtraData }> = ({ item, extraDat
                         textStyle={styles.itemListButtonText}
                         type="text"
                         onClick={() => {
-                            openModal(
-                                buildTokenIdFactory({
+                            openModal({
+                                ...buildTokenIdFactory({
                                     modalType: ModalEnum.Sell as const,
                                     tokenId: item.tokenId,
                                     sellingNuggId: extraData.tokenId,
                                 }),
-                            );
+                                containerStyle: {
+                                    background: lib.colors.semiTransparentWhite,
+                                },
+                            });
                         }}
                     />
                 ) : (

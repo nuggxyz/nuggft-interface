@@ -64,12 +64,14 @@ const DualToggler = ({
                 size={30}
                 onClick={() => toggleActiveIndex(0)}
                 className={activeIndex === 1 ? 'apply-drop-shadow' : ''}
+                style={{ cursor: 'pointer' }}
             />
             <RightIcon
                 color={lib.colors.primaryColor}
                 size={30}
                 onClick={() => toggleActiveIndex(1)}
                 className={activeIndex === 0 ? 'apply-drop-shadow' : ''}
+                style={{ cursor: 'pointer' }}
             />
         </div>
     );

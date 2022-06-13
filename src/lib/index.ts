@@ -29,11 +29,12 @@ type AllTypes<T> =
     | string
     | []
     | T[]
-    | { [_: string]: object }
+    | Record<string, object>
     | Record<string, never>
     | null
     | undefined
-    | BigNumber;
+    | BigNumber
+    | (() => unknown);
 
 // export const isNotAPainNotInTheAss = (arg: unknown): arg is boolean => {
 //     if (
@@ -77,7 +78,7 @@ export const isUndefinedOrNullOrArrayEmpty = <T>(
 };
 export const isUndefinedOrNullOrNotObject = <T extends Record<string, object>>(
     value: T | Undesireable,
-): value is null | undefined => {
+): value is Exclude<AllTypes<T>, Record<string, object>> => {
     return isUndefinedOrNull(value) || typeof value !== 'object';
 };
 export const isUndefinedOrNullOrObjectEmpty = <T extends Record<string, object>>(
@@ -110,7 +111,9 @@ export const isUndefinedOrNullOrBooleanFalse = <T>(
 ): value is null | undefined | false => {
     return isUndefinedOrNullOrNotBoolean(value) || value === false;
 };
-export const isUndefinedOrNullOrNotFunction = <T>(value: unknown): value is AllTypes<T> => {
+export const isUndefinedOrNullOrNotFunction = <T>(
+    value: unknown,
+): value is Exclude<AllTypes<T>, () => unknown> => {
     return isUndefinedOrNull(value) || typeof value !== 'function';
 };
 export const isUndefinedOrNullOrNotNumber = <T>(
