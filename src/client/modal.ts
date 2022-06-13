@@ -11,7 +11,7 @@ const store = create(
             phase: 0 as number,
             open: false,
         },
-        (set) => {
+        (set, get) => {
             const openModal = (modalData: ModalType | undefined, phase = 0, lock = false) => {
                 set(() => {
                     if (lock) document.documentElement.classList.add('is-locked');
@@ -39,6 +39,15 @@ const store = create(
                         open: false,
                     };
                 });
+                setTimeout(() => {
+                    if (!get().open) {
+                        set(() => {
+                            return {
+                                data: undefined,
+                            };
+                        });
+                    }
+                }, 500);
             };
 
             return { openModal, closeModal, updatePhase };
