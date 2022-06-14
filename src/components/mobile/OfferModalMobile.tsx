@@ -859,7 +859,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                     if (populatedTransaction && peer) {
                                         void send(populatedTransaction.tx, () => {
                                             setPage(2);
-                                            window.open(peer.deeplink_href || '');
+                                            // window.open(peer.deeplink_href || '');
                                         });
                                     }
                                 } else {
