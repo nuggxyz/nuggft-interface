@@ -4,6 +4,7 @@ import { ApolloClient } from '@apollo/client';
 import { InfuraProvider, JsonRpcProvider, Log } from '@ethersproject/providers';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
+import brave_icon from '@src/assets/images/app_icons/brave.webp';
 import { buildApolloHttpLink, buildCache } from '@src/gql';
 import * as constants from '@src/lib/constants';
 import { EthInt, Fraction } from '@src/classes/Fraction';
@@ -21,24 +22,31 @@ import {
     PeerInfo__CoinbaseWalletSDK,
 } from '@src/web3/core/interfaces';
 import lib from '@src/lib';
-
-import { Connector } from './core/types';
+import rainbow_icon from '@src/assets/images/app_icons/rainbow.webp';
+import metamask_icon from '@src/assets/images/app_icons/metamask.webp';
+import coinbase_icon from '@src/assets/images/app_icons/coinbase.webp';
+import coinbasewallet_icon from '@src/assets/images/app_icons/coinbasewallet.webp';
+import ledger_icon from '@src/assets/images/app_icons/ledger.webp';
+import trust_icon from '@src/assets/images/app_icons/trust.webp';
+import walletconnect_icon from '@src/assets/images/app_icons/walletconnect.webp';
+import cryptodotcom_icon from '@src/assets/images/app_icons/cryptodotcom.webp';
+import { Connector } from '@src/web3/core/types';
 import {
     getNetworkConnector,
     getPriorityConnector,
     getSelectedConnector,
     initializeConnector,
     ResWithStore,
-} from './core/core';
-import { Injected } from './clients/injected';
-import { WalletConnect } from './clients/walletconnect';
-import { Network as NetworkConnector } from './clients/network';
+} from '@src/web3/core/core';
+import { Injected } from '@src/web3/clients/injected';
+import { WalletConnect } from '@src/web3/clients/walletconnect';
+import { Network as NetworkConnector } from '@src/web3/clients/network';
 import {
     InfuraWebSocketProvider,
     CustomWebSocketProvider,
     AlchemyWebSocketProvider,
-} from './classes/CustomWebSocketProvider';
-import { CoinbaseWallet } from './clients/coinbasewallet';
+} from '@src/web3/classes/CustomWebSocketProvider';
+import { CoinbaseWallet } from '@src/web3/clients/coinbasewallet';
 import {
     DEFAULT_CONTRACTS,
     calculateEpochId,
@@ -50,10 +58,10 @@ import {
     PREMIUM_DIV,
     PROTOCOL_FEE_FRAC_MINT,
     supportedChainIds,
-    ALCHEMY_URLS,
     Chain,
-} from './constants';
-import { CustomEtherscanProvider } from './classes/CustomEtherscanProvider';
+    INFURA_URLS,
+} from '@src/web3/constants';
+import { CustomEtherscanProvider } from '@src/web3/classes/CustomEtherscanProvider';
 
 export default { ...constants };
 
@@ -69,6 +77,7 @@ export const peer_rainbow: PeerInfo__WalletConnect = {
     ios_href: 'ios-app://1457119021/rainbow/open?',
     android_href: 'android-app://me.rainbow/rainbow/open?',
     peerurl: 'https://rainbow.me',
+    icon: rainbow_icon,
 } as const;
 
 export const isInjectedCoinbaseWallet = () => {
@@ -88,6 +97,7 @@ const peer_metamask_base = {
     name: 'MetaMask',
     peerurl: 'https://metamask.io',
     deeplink_href: 'https://metamask.app.link/',
+    icon: metamask_icon,
 } as const;
 
 export const peer_metamask_injected: PeerInfo__Injected = {
@@ -112,6 +122,7 @@ export const peer_brave_injected: PeerInfo__Injected = {
     deeplink_href: 'https://metamask.app.link/',
     type: ConnectorEnum.Injected,
     injected: true,
+    icon: brave_icon,
 } as const;
 
 export const peer_generic_injected: PeerInfo__Injected = {
@@ -123,6 +134,8 @@ export const peer_generic_injected: PeerInfo__Injected = {
     deeplink_href: 'https://metamask.app.link/',
     type: ConnectorEnum.Injected,
     injected: true,
+    // TODO update
+    icon: brave_icon,
 } as const;
 
 export const peer_ledgerlive: PeerInfo__WalletConnect = {
@@ -136,6 +149,7 @@ export const peer_ledgerlive: PeerInfo__WalletConnect = {
     deeplink_href: 'ledgerlive://',
 
     peerurl: 'https://www.ledger.com/',
+    icon: ledger_icon,
 } as const;
 
 export const peer_trust: PeerInfo__WalletConnect = {
@@ -148,6 +162,7 @@ export const peer_trust: PeerInfo__WalletConnect = {
     injected: false,
     fallback: false,
     desktopAction: 'qrcode',
+    icon: trust_icon,
 } as const;
 
 export const peer_cryptodotcom: PeerInfo__WalletConnect = {
@@ -160,6 +175,7 @@ export const peer_cryptodotcom: PeerInfo__WalletConnect = {
     injected: false,
     fallback: false,
     desktopAction: 'qrcode',
+    icon: cryptodotcom_icon,
 } as const;
 
 export const peer_coinbase: PeerInfo__Coinbase = {
@@ -170,6 +186,7 @@ export const peer_coinbase: PeerInfo__Coinbase = {
     injected: false,
     fallback: false,
     deeplink_href: '',
+    icon: coinbase_icon,
 } as const;
 
 const peer_coinbasewallet_base = {
@@ -178,6 +195,7 @@ const peer_coinbasewallet_base = {
     color: 'rgba(22,82,240,1.0)',
     fallback: false,
     deeplink_href: 'https://go.cb-w.com/dapp/',
+    icon: coinbasewallet_icon,
 } as const;
 
 export const peer_coinbasewallet_injected: PeerInfo__Injected = {
@@ -203,6 +221,7 @@ export const peer_walletconnect: PeerInfo__WalletConnect = {
     color: 'rgba(65,150,252,1.0)',
     injected: false,
     fallback: false,
+    icon: walletconnect_icon,
 } as const;
 
 export const peer_rpc: PeerInfo = {
@@ -212,6 +231,8 @@ export const peer_rpc: PeerInfo = {
     color: 'rgba(22,82,240,1.0)',
     injected: false,
     fallback: true,
+    // TODO fix
+    icon: metamask_icon,
 } as const;
 
 export const peers = {
@@ -245,7 +266,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                 ],
 
                 actions,
-                { rpc: { ...ALCHEMY_URLS }, chainId: DEFAULT_CHAIN },
+                { rpc: { ...INFURA_URLS }, chainId: DEFAULT_CHAIN },
             ),
     ),
     ...(window.ethereum
@@ -269,7 +290,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
     coinbasewalletsdk: initializeConnector<CoinbaseWallet>(
         (actions) =>
             new CoinbaseWallet(peer_coinbasewallet_sdk, actions, {
-                url: ALCHEMY_URLS[DEFAULT_CHAIN],
+                url: INFURA_URLS[DEFAULT_CHAIN],
                 appName: 'NuggftV1',
             }),
     ),
@@ -279,7 +300,7 @@ export const connector_instances: { [key in ConnectorEnum]?: ResWithStore<Connec
                 peer_rpc,
                 actions,
                 supportedChainIds().reduce((prev, curr) => {
-                    return { ...prev, [curr]: [ALCHEMY_URLS[curr]] };
+                    return { ...prev, [curr]: [INFURA_URLS[curr]] };
                 }, {}),
                 true,
             ),

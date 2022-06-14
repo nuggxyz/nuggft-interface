@@ -18,7 +18,6 @@ import { useNuggftV1, usePrioritySendTransaction } from '@src/contracts/useContr
 import styles from '@src/components/modals/OfferModal/OfferModal.styles';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Loader from '@src/components/general/Loader/Loader';
-import NLStaticImage from '@src/components/general/NLStaticImage';
 import { useUsdPair, useUsdPairWithCalculation } from '@src/client/usd';
 import CurrencyToggler, {
     useCurrencyTogglerState,
@@ -29,6 +28,8 @@ import packages from '@src/packages';
 import CircleTimerMobileCSS2 from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimerMobileCSS2';
 import { calculateIncrementWithRemaining } from '@src/web3/config';
 import { useMemoizedAsyncState } from '@src/hooks/useAsyncState';
+
+import PeerButtonMobile from './PeerButtonMobile';
 
 const incrementers = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 75, 99] as const;
 
@@ -833,18 +834,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                             marginTop: '20px',
                         }}
                     >
-                        <Button
-                            className="mobile-pressable-div"
-                            // @ts-ignore
-                            buttonStyle={{
-                                background: lib.colors.primaryColor,
-                                color: 'white',
-                                borderRadius: lib.layout.borderRadius.medium,
-                                boxShadow: lib.layout.boxShadow.basic,
-                                width: 'auto',
-                            }}
-                            hoverStyle={{ filter: 'brightness(1)' }}
-                            disabled={!peer}
+                        <PeerButtonMobile
+                            text="tap to finalize on"
                             onClick={(event) => {
                                 if (!peer || !populatedTransaction) return;
 
@@ -858,8 +849,18 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
                                     if (populatedTransaction && peer) {
                                         void send(populatedTransaction.tx, () => {
+                                            // for (let i = 0; i < 10000; i++) {
+                                            //     console.log(new Date().toISOString());
+                                            // }
+
+                                            window.open(peer.deeplink_href || '');
                                             setPage(2);
-                                            // window.open(peer.deeplink_href || '');
+
+                                            // void (async () => {
+                                            //     await new Promise((resolve) => {
+                                            //         setTimeout(() => resolve(undefined), 5000);
+                                            //     });
+                                            // })();
                                         });
                                     }
                                 } else {
@@ -868,33 +869,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                                     });
                                 }
                             }}
-                            // label="open"
-                            size="largerish"
-                            textStyle={{ color: lib.colors.white, marginLeft: 10 }}
-                            leftIcon={<NLStaticImage image={`${peer.peer}_icon`} />}
-                            rightIcon={
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'left',
-                                        flexDirection: 'column',
-                                        // width: '100%',
-                                        marginLeft: 10,
-                                    }}
-                                >
-                                    <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>
-                                        tap to finalize on
-                                    </Text>
-                                    <Text
-                                        textStyle={{
-                                            color: lib.colors.white,
-                                            fontSize: 32,
-                                        }}
-                                    >
-                                        {peer.name}
-                                    </Text>
-                                </div>
-                            }
                         />
                     </div>
                 </>

@@ -202,8 +202,8 @@ function useSendTransaction(
                     });
                     if (authenticatedConnector.refreshPeer) authenticatedConnector.refreshPeer();
 
-                    return await Promise.all([
-                        (authenticatedCoreProvider.type === ConnectorEnum.WalletConnect
+                    const abc = (
+                        authenticatedCoreProvider.type === ConnectorEnum.WalletConnect
                             ? (authenticatedCoreProvider.provider.connector.sendTransaction({
                                   to: tx.to,
                                   from,
@@ -216,75 +216,76 @@ function useSendTransaction(
                                   data: tx.data,
                               }) as Promise<Hash | null>)
                             : authenticatedProvider.getSigner().sendTransaction(tx)
-                        )
-                            .then((y) => {
-                                emitter.emit(emitter.events.DevLog, {
-                                    data: y ?? {},
-                                    name: 'YYYYYYY',
-                                });
-                                let txhash: ResponseHash;
-                                if (y === null) {
-                                    txhash = `unknown-${from}_${tx.data ?? ''}` as ResponseHash;
+                    )
+                        .then((y) => {
+                            emitter.emit(emitter.events.DevLog, {
+                                data: y ?? {},
+                                name: 'YYYYYYY',
+                            });
+                            let txhash: ResponseHash;
+                            if (y === null) {
+                                txhash = `unknown-${from}_${tx.data ?? ''}` as ResponseHash;
 
-                                    setHash(txhash);
-                                    emitter.emit(emitter.events.PotentialTransactionResponse, {
-                                        txhash,
-                                        from,
-                                    });
-                                } else if (typeof y === 'string') {
-                                    // txhash = `unknown-${from}_${tx.data ?? ''}`;
-                                    txhash = y;
-                                    setHash(y);
-                                    emitter.emit(emitter.events.PotentialTransactionResponse, {
-                                        txhash: y,
-                                        from,
-                                    });
-                                } else {
-                                    txhash = y.hash as Hash;
-                                    setHash(txhash);
-                                    emitter.emit(emitter.events.TransactionResponse, {
-                                        response: y,
-                                    });
-                                }
-                                if (screen !== 'phone' || bypassMobile) {
-                                    addToast({
-                                        duration: 0,
-                                        title: t`Pending Transaction`,
-                                        message: txhash.isHash()
-                                            ? shortenTxnHash(txhash)
-                                            : 'submitted',
-                                        error: false,
-                                        id: txhash,
-                                        index: toasts.length,
-                                        loading: true,
-                                        action: () =>
-                                            web3.config.gotoEtherscan(
-                                                authenticatedProvider.network.chainId,
-                                                txhash.isHash() ? 'tx' : 'address',
-                                                txhash.isHash() ? txhash : from,
-                                            ),
-                                    });
-                                }
-                                return txhash;
-                            })
-                            .catch((err: Error) => {
-                                emitter.emit(emitter.events.DevLog, {
-                                    data: err,
-                                    name: 'catch A',
+                                setHash(txhash);
+                                emitter.emit(emitter.events.PotentialTransactionResponse, {
+                                    txhash,
+                                    from,
                                 });
-                                const fmt = lib.errors.parseJsonRpcError(err);
-                                if (fmt instanceof RejectionError) {
-                                    setRejected(true);
-                                    console.log('transaction rejected by user');
-                                    return undefined;
-                                }
-                                setError(fmt);
-                                console.error(fmt);
-                                throw fmt;
-                            }),
-                        onSend ? onSend() : undefined,
-                        emitter.emit(emitter.events.TransactionSent, {}),
-                    ]).then((x) => x[0]);
+                            } else if (typeof y === 'string') {
+                                // txhash = `unknown-${from}_${tx.data ?? ''}`;
+                                txhash = y;
+                                setHash(y);
+                                emitter.emit(emitter.events.PotentialTransactionResponse, {
+                                    txhash: y,
+                                    from,
+                                });
+                            } else {
+                                txhash = y.hash as Hash;
+                                setHash(txhash);
+                                emitter.emit(emitter.events.TransactionResponse, {
+                                    response: y,
+                                });
+                            }
+                            if (screen !== 'phone' || bypassMobile) {
+                                addToast({
+                                    duration: 0,
+                                    title: t`Pending Transaction`,
+                                    message: txhash.isHash() ? shortenTxnHash(txhash) : 'submitted',
+                                    error: false,
+                                    id: txhash,
+                                    index: toasts.length,
+                                    loading: true,
+                                    action: () =>
+                                        web3.config.gotoEtherscan(
+                                            authenticatedProvider.network.chainId,
+                                            txhash.isHash() ? 'tx' : 'address',
+                                            txhash.isHash() ? txhash : from,
+                                        ),
+                                });
+                            }
+                            return txhash;
+                        })
+                        .catch((err: Error) => {
+                            emitter.emit(emitter.events.DevLog, {
+                                data: err,
+                                name: 'catch A',
+                            });
+                            const fmt = lib.errors.parseJsonRpcError(err);
+                            if (fmt instanceof RejectionError) {
+                                setRejected(true);
+                                console.log('transaction rejected by user');
+                                return undefined;
+                            }
+                            setError(fmt);
+                            console.error(fmt);
+                            throw fmt;
+                        });
+
+                    if (onSend) onSend();
+
+                    emitter.emit(emitter.events.TransactionSent, {});
+
+                    return await abc;
                 }
                 throw Error('authenticatedConnector, authenticatedProvider, or from is undefined');
             } catch (err) {

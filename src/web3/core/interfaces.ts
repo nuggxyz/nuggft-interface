@@ -56,7 +56,7 @@ export interface PeerBaseInfo {
     type: Connector;
     peer: Peer;
     injected: boolean;
-
+    icon: string;
     fallback: boolean;
     name: string;
     color: string;
