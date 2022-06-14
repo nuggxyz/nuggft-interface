@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { ApolloClient } from '@apollo/client';
 import { InfuraProvider, JsonRpcProvider, Log } from '@ethersproject/providers';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
+import brave_icon from '@src/assets/images/app_icons/brave.webp';
 
 import brave_icon from '@src/assets/images/app_icons/brave.webp';
 import { buildApolloHttpLink, buildCache } from '@src/gql';
