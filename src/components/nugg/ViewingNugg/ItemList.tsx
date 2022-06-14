@@ -366,7 +366,7 @@ export const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggI
     );
 };
 
-export const ItemListPhone: FunctionComponent<{ tokenId: NuggId }> = ({ tokenId }) => {
+export const ItemListPhone: FunctionComponent<{ tokenId?: NuggId }> = ({ tokenId }) => {
     const token = client.live.token(tokenId);
     const address = web3.hook.usePriorityAccount();
 
@@ -390,7 +390,7 @@ export const ItemListPhone: FunctionComponent<{ tokenId: NuggId }> = ({ tokenId 
                     <ItemPhone
                         item={x}
                         isOwner={token.owner === address}
-                        nuggId={tokenId}
+                        nuggId={token.tokenId}
                         key={`${token.tokenId}-${i}`}
                     />
                 ))}

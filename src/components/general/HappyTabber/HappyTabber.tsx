@@ -11,7 +11,7 @@ import styles from './HappyTabber.styles';
 
 export interface HappyTabberItem {
     label: string;
-    comp: NamedExoticComponent<any>;
+    comp: NamedExoticComponent<any> | (() => JSX.Element | null);
     labelStyle?: CSSProperties;
     bodyStyle?: CSSProperties;
 }

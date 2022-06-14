@@ -37,7 +37,7 @@ interface Props<T, B, A> {
     itemHeightBig: number;
     itemHeightSmall: number;
     disableScroll: boolean;
-    Title?: React.FunctionComponent;
+    Title?: JSX.Element;
     loading?: boolean;
     extraData: B;
     action?: (arg: A) => void;
@@ -136,7 +136,7 @@ const BradPittList = <T, B, A>({
                     justifySelf: 'center',
                 }}
             >
-                {Title && <Title />}
+                {Title && Title}
 
                 <DualToggler
                     LeftIcon={IoLogoInstagram}

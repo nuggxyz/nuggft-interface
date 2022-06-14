@@ -18,6 +18,8 @@ import ActiveTab from './tabs/ActiveTab/ActiveTab';
 
 type Props = Record<string, never>;
 
+const abc = React.memo(() => <RingAbout asHappyTab />);
+
 const Wallet: FunctionComponent<Props> = () => {
     const { screen: screenType } = useDimensions();
     const account = web3.hook.usePriorityAccount();
@@ -36,7 +38,7 @@ const Wallet: FunctionComponent<Props> = () => {
                           },
                           {
                               label: t`Swap`,
-                              comp: React.memo(() => <RingAbout asHappyTab />),
+                              comp: abc,
                               labelStyle: { color: lib.colors.nuggBlueText },
                               bodyStyle: {
                                   background: lib.colors.gradient2,

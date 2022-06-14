@@ -19,13 +19,16 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useDimensions from '@src/client/hooks/useDimensions';
+import { LiveToken } from '@src/client/interfaces';
 
 import styles from './ViewingNugg.styles';
 import SwapList from './SwapList';
-import ItemList from './ItemList';
 import MyNuggActions from './MyNuggActions';
+import { ItemListPhone } from './ItemList';
 
 type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
+
+const Mem = React.memo<{ token?: LiveToken }>(({ token }) => <SwapList token={token} />);
 
 const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const epoch = client.epoch.active.useId();
@@ -46,6 +49,11 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
 
     const token = client.live.token(tokenId);
 
+    const List = React.useMemo(
+        () => (tokenId && tokenId.isNuggId() ? <ItemListPhone tokenId={tokenId} /> : null),
+        [tokenId],
+    );
+
     const happyTabs = useMemo(() => {
         return [
             ...(token && token.type === 'nugg' && token.owner === sender
@@ -58,7 +66,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 : []),
             {
                 label: t`Swaps`,
-                comp: React.memo(() => <SwapList token={token} />),
+                comp: Mem,
             },
             ...(provider &&
             chainId &&
@@ -69,22 +77,12 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
                 ? [
                       {
                           label: 'Items',
-                          comp: React.memo(() => (
-                              <ItemList
-                                  items={token?.items || []}
-                                  isOwner={
-                                      !!sender &&
-                                      sender === token.owner &&
-                                      !token?.activeSwap?.tokenId
-                                  }
-                                  tokenId={tokenId}
-                              />
-                          )),
+                          comp: () => List,
                       },
                   ]
                 : []),
         ];
-    }, [token, sender, chainId, provider, tokenId]);
+    }, [token, sender, chainId, provider, tokenId, List]);
 
     const navigate = useNavigate();
 

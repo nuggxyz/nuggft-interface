@@ -76,7 +76,7 @@ export const AllNuggs = () => {
                 style={{
                     width: '100%',
                 }}
-                Title={React.memo(() => (
+                Title={
                     <Button
                         label={t`back`}
                         onClick={() => goto(Page.Search, false)}
@@ -90,7 +90,7 @@ export const AllNuggs = () => {
                         }}
                         textStyle={{ color: 'white' }}
                     />
-                ))}
+                }
                 offsetListRef={false}
                 data={allNuggsData?.map((x) => x.id.toNuggId()) || []}
                 RenderItemSmall={NuggListRenderItemMobile}
@@ -165,7 +165,7 @@ export const AllItems = () => {
                 style={{
                     width: '100%',
                 }}
-                Title={React.memo(() => (
+                Title={
                     <Button
                         label="back"
                         onClick={() => goto(Page.Search, false)}
@@ -179,7 +179,7 @@ export const AllItems = () => {
                         }}
                         textStyle={{ color: 'white' }}
                     />
-                ))}
+                }
                 offsetListRef={false}
                 data={allItemsData?.map((x) => x.id.toItemId()) || []}
                 RenderItemSmall={NuggListRenderItemMobile}

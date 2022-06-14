@@ -267,6 +267,38 @@ export default ({ data }: { data: RotateOModalData }) => {
         [setPage, isOpen, send, populatedTransaction, peer, data.tokenId, svg],
     );
 
+    const Viewer = React.useMemo(() => {
+        return (
+            <div>
+                <TokenViewer
+                    svgNotFromGraph={svg}
+                    style={{
+                        width: '200px',
+                        height: '200px',
+                        padding: 10,
+                        margin: 30,
+                        background: lib.colors.transparentWhite,
+                        borderRadius: lib.layout.borderRadius.medium,
+                        boxShadow: lib.layout.boxShadow.basic,
+                    }}
+                />
+                <Text
+                    size="large"
+                    textStyle={{
+                        color: lib.colors.primaryColor,
+                        fontWeight: lib.layout.fontWeight.semibold,
+                        padding: 10,
+                        width: '100%',
+                        textAlign: 'center',
+                    }}
+                >
+                    {data.tokenId.toPrettyId()} v{data.currentVersion + 1}
+                    {t` is born! 🎉`}
+                </Text>
+            </div>
+        );
+    }, [svg]);
+
     const Page2 = React.useMemo(() => {
         return isOpen && chainId && address ? (
             <>
@@ -274,37 +306,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                     hash={hash}
                     onDismiss={closeModal}
                     error={error}
-                    ConfirmationView={React.memo(() => {
-                        return (
-                            <div>
-                                <TokenViewer
-                                    svgNotFromGraph={svg}
-                                    style={{
-                                        width: '200px',
-                                        height: '200px',
-                                        padding: 10,
-                                        margin: 30,
-                                        background: lib.colors.transparentWhite,
-                                        borderRadius: lib.layout.borderRadius.medium,
-                                        boxShadow: lib.layout.boxShadow.basic,
-                                    }}
-                                />
-                                <Text
-                                    size="large"
-                                    textStyle={{
-                                        color: lib.colors.primaryColor,
-                                        fontWeight: lib.layout.fontWeight.semibold,
-                                        padding: 10,
-                                        width: '100%',
-                                        textAlign: 'center',
-                                    }}
-                                >
-                                    {data.tokenId.toPrettyId()} v{data.currentVersion + 1}
-                                    {t` is born! 🎉`}
-                                </Text>
-                            </div>
-                        );
-                    })}
+                    ConfirmationView={() => Viewer}
                 />
             </>
         ) : null;
