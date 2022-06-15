@@ -62,7 +62,6 @@ const DesktopToggleButton: FunctionComponent<Props> = () => {
     }, [isOpen, api]);
 
     useEffect(() => {
-        console.log(visits);
         if (!visits[Page.Start]) {
             setTimeout(() => setIsOpen(true), 2000);
         }
@@ -107,10 +106,6 @@ const DesktopToggleButton: FunctionComponent<Props> = () => {
                                 range: [0, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 1],
                                 output: [1, 0.97, 0.9, 1.1, 0.9, 1.1, 1.03, 1],
                             }),
-                            // translate: x.to({
-                            //     range: [0, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 1],
-                            //     output: [0, -25, 10, -10, 7, -4, 3, 0],
-                            // }),
                         }}
                     >
                         <div
