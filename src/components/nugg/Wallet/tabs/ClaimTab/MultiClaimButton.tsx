@@ -65,7 +65,7 @@ const MultiClaimButton: FunctionComponent<Props> = () => {
 
     const args = useMultiClaimArgs();
 
-    const { send, hash } = usePrioritySendTransaction();
+    const [send, , hash, , ,] = usePrioritySendTransaction();
 
     useTransactionManager2(provider, hash);
 

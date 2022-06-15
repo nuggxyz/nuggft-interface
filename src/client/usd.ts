@@ -66,9 +66,7 @@ const store = create(
 export const useUsdUpdater = () => {
     const update = store((state) => state.update);
 
-    emitter.hook.useOn(emitter.events.IncomingEtherscanPrice, (data) => update(data.data), [
-        update,
-    ]);
+    emitter.useOn(emitter.events.IncomingEtherscanPrice, (data) => update(data.data), [update]);
 
     return null;
 };

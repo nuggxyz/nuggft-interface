@@ -11,11 +11,12 @@ import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import web3 from '@src/web3';
 import client from '@src/client';
-import NLStaticImage from '@src/components/general/NLStaticImage';
 import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
 import { RotateOModalData } from '@src/interfaces/modals';
 import eth from '@src/assets/images/app_logos/eth.png';
 import { useHotRotateOTransaction } from '@src/pages/hot-rotate-o/HotRotateO';
+
+import PeerButtonMobile from './PeerButtonMobile';
 
 export default ({ data }: { data: RotateOModalData }) => {
     const isOpen = client.modal.useOpen();
@@ -23,7 +24,7 @@ export default ({ data }: { data: RotateOModalData }) => {
     const address = web3.hook.usePriorityAccount();
 
     const chainId = web3.hook.usePriorityChainId();
-    const peer = web3.hook.usePriorityPeer();
+
     const closeModal = client.modal.useCloseModal();
     const [page, setPage] = client.modal.usePhase();
 
@@ -147,7 +148,7 @@ export default ({ data }: { data: RotateOModalData }) => {
     );
     const Page1 = React.useMemo(
         () =>
-            isOpen && peer ? (
+            isOpen ? (
                 <>
                     <div
                         style={{
@@ -198,73 +199,21 @@ export default ({ data }: { data: RotateOModalData }) => {
                             marginTop: '20px',
                         }}
                     >
-                        <Button
-                            className="mobile-pressable-div"
-                            // @ts-ignore
-                            buttonStyle={{
-                                background: lib.colors.primaryColor,
-                                color: 'white',
-                                borderRadius: lib.layout.borderRadius.medium,
-                                boxShadow: lib.layout.boxShadow.basic,
-                                width: 'auto',
-                            }}
-                            hoverStyle={{ filter: 'brightness(1)' }}
-                            disabled={!peer}
+                        <PeerButtonMobile
+                            text="tap to finalize on"
                             onClick={(event) => {
-                                if (!peer || !populatedTransaction) return;
-
-                                if (peer.injected) {
-                                    void send(populatedTransaction, () => {
-                                        setPage(2);
-                                    });
-                                } else if ('deeplink_href' in peer) {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-
-                                    if (populatedTransaction !== undefined && peer) {
-                                        void send(populatedTransaction, () => {
-                                            setPage(2);
-                                            window.open(peer.deeplink_href || '');
-                                        });
-                                    }
-                                } else {
-                                    void send(populatedTransaction, () => {
-                                        setPage(2);
-                                    });
-                                }
+                                event.preventDefault();
+                                event.stopPropagation();
+                                if (!populatedTransaction) return;
+                                void send(populatedTransaction, () => {
+                                    setPage(2);
+                                });
                             }}
-                            // label="open"
-                            size="largerish"
-                            textStyle={{ color: lib.colors.white, marginLeft: 10 }}
-                            leftIcon={<NLStaticImage image={`${peer.peer}_icon`} />}
-                            rightIcon={
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'left',
-                                        flexDirection: 'column',
-                                        // width: '100%',
-                                        marginLeft: 10,
-                                    }}
-                                >
-                                    <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>
-                                        {t`tap to finalize on`}
-                                    </Text>
-                                    <Text
-                                        textStyle={{
-                                            color: lib.colors.white,
-                                            fontSize: 32,
-                                        }}
-                                    >
-                                        {peer.name}
-                                    </Text>
-                                </div>
-                            }
                         />
                     </div>
                 </>
             ) : null,
-        [setPage, isOpen, send, populatedTransaction, peer, data.tokenId, svg],
+        [setPage, isOpen, send, populatedTransaction, data.tokenId, svg],
     );
 
     const Viewer = React.useMemo(() => {

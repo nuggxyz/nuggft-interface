@@ -21,12 +21,13 @@ import CurrencyToggler, {
     useCurrencyTogglerState,
 } from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import Label from '@src/components/general/Label/Label';
-import NLStaticImage from '@src/components/general/NLStaticImage';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Loader from '@src/components/general/Loader/Loader';
 import { DualCurrencyInputWithIcon } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import { Address } from '@src/classes/Address';
 import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
+
+import PeerButtonMobile from './PeerButtonMobile';
 
 const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     const isOpen = client.modal.useOpen();
@@ -41,11 +42,10 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     }, [token?.activeSwap]);
 
     const network = web3.hook.useNetworkProvider();
-    const peer = web3.hook.usePriorityPeer();
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
     const [page, setPage] = client.modal.usePhase();
-    const { send, estimation: estimator, hash } = usePrioritySendTransaction();
+    const [send, estimator, hash] = usePrioritySendTransaction();
     const [amount, setAmount] = useState('0');
     const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');
 
@@ -444,7 +444,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
 
     const Page1 = React.useMemo(
         () =>
-            isOpen && peer ? (
+            isOpen && page === 1 ? (
                 <>
                     {/* <StupidMfingHack /> */}
                     <TokenViewer
@@ -501,66 +501,16 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                             marginTop: '20px',
                         }}
                     >
-                        <Button
-                            className="mobile-pressable-div"
-                            // @ts-ignore
-                            buttonStyle={{
-                                background: lib.colors.primaryColor,
-                                color: 'white',
-                                borderRadius: lib.layout.borderRadius.medium,
-                                boxShadow: lib.layout.boxShadow.basic,
-                                width: 'auto',
-                            }}
-                            hoverStyle={{ filter: 'brightness(1)' }}
-                            disabled={!peer}
+                        <PeerButtonMobile
+                            text="tap to finalize on"
                             onClick={(event) => {
-                                if (!peer || !populatedTransaction) return;
-
-                                if (peer.injected) {
-                                    void send(populatedTransaction.tx, () => {
-                                        setPage(2);
-                                    });
-                                } else if ('deeplink_href' in peer) {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-
-                                    if (populatedTransaction && peer) {
-                                        void send(populatedTransaction.tx, () => {
-                                            setPage(2);
-                                            window.open(peer.deeplink_href || '');
-                                        });
-                                    }
-                                } else {
-                                    void send(populatedTransaction.tx, () => {
-                                        setPage(2);
-                                    });
-                                }
+                                event.preventDefault();
+                                event.stopPropagation();
+                                if (!populatedTransaction) return;
+                                void send(populatedTransaction.tx, () => {
+                                    setPage(2);
+                                });
                             }}
-                            size="largerish"
-                            textStyle={{ color: lib.colors.white, marginLeft: 10 }}
-                            leftIcon={<NLStaticImage image={`${peer.peer}_icon`} />}
-                            rightIcon={
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'left',
-                                        flexDirection: 'column',
-                                        marginLeft: 10,
-                                    }}
-                                >
-                                    <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>
-                                        {t`tap to finalize on`}
-                                    </Text>
-                                    <Text
-                                        textStyle={{
-                                            color: lib.colors.white,
-                                            fontSize: 32,
-                                        }}
-                                    >
-                                        {peer.name}
-                                    </Text>
-                                </div>
-                            }
                         />
                     </div>
                 </>
@@ -570,8 +520,8 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
             setPage,
             isOpen,
             send,
+            page,
             populatedTransaction,
-            peer,
             data.tokenId,
             localCurrencyPref,
             isCanceling,

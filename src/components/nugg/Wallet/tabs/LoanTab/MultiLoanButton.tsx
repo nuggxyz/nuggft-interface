@@ -23,7 +23,7 @@ const MultiLoanButton: FunctionComponent<Props> = () => {
 
     const nuggft = useNuggftV1();
 
-    const { send, hash } = usePrioritySendTransaction();
+    const [send, , hash, , ,] = usePrioritySendTransaction();
     useTransactionManager2(provider, hash);
 
     const { tokenIds } = useMemo(() => {

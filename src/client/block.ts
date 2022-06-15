@@ -33,7 +33,7 @@ const useStore = create(
 export const useBlockUpdater = () => {
     const update = useStore((state) => state.update);
 
-    emitter.hook.useOn(
+    emitter.useOn(
         emitter.events.IncomingRpcBlock,
         (data) => {
             update(data.data);

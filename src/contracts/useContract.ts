@@ -126,10 +126,12 @@ function useSendTransaction(
     onHash?: (hash: ResponseHash) => void,
     bypassMobile = false,
 ) {
+    const peer = web3.hook.usePriorityPeer();
+
     const [error, setError] = React.useState<CustomError | Error>();
     const [rejected, setRejected] = React.useState<boolean>(false);
 
-    const { screen } = useDimensions();
+    const { screen, isPhone } = useDimensions();
 
     const [hash, setHash] = React.useState<ResponseHash>();
 
@@ -148,14 +150,14 @@ function useSendTransaction(
     const addToast = client.toast.useAddToast();
     const toasts = client.toast.useList();
 
-    const estimation = useEstimateTransaction(network, from);
+    const estimator = useEstimateTransaction(network, from);
 
     const [pop, setPop] = React.useState<SimpleTransactionData>();
 
     /// /////////////////////////
     // this is here just to see if we can find the hash based on event data
     /// /////////////////////////
-    emitter.hook.useOn(
+    emitter.useOn(
         emitter.events.PotentialTransactionReceipt,
         (arg) => {
             if (
@@ -178,8 +180,8 @@ function useSendTransaction(
             ptx: Promise<PopulatedTransaction>,
             onSend?: () => void,
         ): Promise<ResponseHash | undefined> => {
-            if (estimation.error) {
-                console.error('OOPS - forgot to check for successful estimation');
+            if (estimator.error) {
+                console.error('OOPS - forgot to check for successful estimator');
                 return undefined;
             }
 
@@ -280,7 +282,9 @@ function useSendTransaction(
                             console.error(fmt);
                             throw fmt;
                         });
-
+                    if (isPhone && peer && 'deeplink_href' in peer) {
+                        window.open(peer.deeplink_href);
+                    }
                     if (onSend) onSend();
 
                     emitter.emit(emitter.events.TransactionSent, {});
@@ -309,11 +313,15 @@ function useSendTransaction(
             blocknum,
             bypassMobile,
             screen,
-            estimation.error,
+            estimator.error,
             setHash,
+            peer,
+            isPhone,
         ],
     );
-    return { send, hash, error, estimation, rejected, clear };
+
+    return [send, estimator, hash, error, rejected, clear] as const;
+    // return { send, hash, error, estimator, rejected, clear };
 }
 
 export function usePrioritySendTransaction(bypassMobile?: boolean) {
@@ -347,7 +355,7 @@ export function useCheckEtherscanForUnknownTransactionHash(
 ) {
     const etherscan = useEtherscan();
 
-    emitter.hook.useOn(
+    emitter.useOn(
         emitter.events.IncomingRpcBlock,
         () => {
             if (!setFound || !request || (found && found.startsWith('0x'))) return;

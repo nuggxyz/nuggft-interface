@@ -224,7 +224,7 @@ export const usePollV2 = () => {
         updateStake(res);
     }, [lazy, handleV2, blocknum, updateStake]);
 
-    emitter.hook.useOn(
+    emitter.useOn(
         emitter.events.Offer,
         (arg) => {
             handleRpcHit(arg.data, arg.log);

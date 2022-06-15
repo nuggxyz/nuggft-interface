@@ -43,7 +43,7 @@ const Item: FC<{ item: LiveNuggItem; extraData: ExtraData }> = ({ item, extraDat
 
     const nuggft = useNuggftV1(provider);
 
-    const { send, hash } = usePrioritySendTransaction();
+    const [send, , hash, , ,] = usePrioritySendTransaction();
 
     useTransactionManager2(provider, hash);
 

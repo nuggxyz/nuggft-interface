@@ -132,7 +132,7 @@ export const useUpdateTransactionOnEmit = () => {
     const handleReceipt = useStore((store) => store.handleReceipt);
     const handleResult = useStore((store) => store.handleResult);
 
-    emitter.hook.useOn(
+    emitter.useOn(
         emitter.events.TransactionResponse,
         (args) => {
             if (args.response.from === address && provider)
@@ -141,7 +141,7 @@ export const useUpdateTransactionOnEmit = () => {
         [handleResponse, address, provider],
     );
 
-    emitter.hook.useOn(
+    emitter.useOn(
         emitter.events.TransactionReceipt,
         (args) => {
             if (address === args.recipt.from && provider) void handleResult(args.recipt);
@@ -149,7 +149,7 @@ export const useUpdateTransactionOnEmit = () => {
         [address, handleResult, provider],
     );
 
-    emitter.hook.useOn(
+    emitter.useOn(
         emitter.events.PotentialTransactionReceipt,
         (args) => {
             console.log('PotentialTransactionReceipt: ', address, args.from, args);
@@ -158,7 +158,7 @@ export const useUpdateTransactionOnEmit = () => {
         [handleReceipt, address, provider],
     );
 
-    emitter.hook.useOn(
+    emitter.useOn(
         emitter.events.PotentialTransactionResponse,
         (args) => {
             console.log('PotentialTransactionResponse: ', address, args.from, args);

@@ -1,4 +1,5 @@
 import useMountLogger from '@src/hooks/useMountLogger';
+import { useDevLogger } from '@src/emitter/core';
 
 import useRpcUpdater from './update/useRpcUpdater';
 import useMediaUpdater from './update/useMediaUpdater';
@@ -50,6 +51,8 @@ export default () => {
     usePollV2();
 
     useUsdUpdater();
+
+    useDevLogger();
 
     return null;
 };

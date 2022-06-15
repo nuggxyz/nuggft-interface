@@ -30,7 +30,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
     const chainId = web3.hook.usePriorityChainId();
     const closeModal = client.modal.useCloseModal();
 
-    const { send, hash } = usePrioritySendTransaction();
+    const [send, , hash, , ,] = usePrioritySendTransaction();
 
     useTransactionManager2(provider, hash, closeModal);
     return data.tokenId && chainId && provider && address ? (

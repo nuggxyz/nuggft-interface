@@ -32,7 +32,7 @@ const LoanInputModal = ({ data: { tokenId, actionType } }: { data: LoanInputModa
     const nuggft = useNuggftV1(provider);
     const closeModal = client.modal.useCloseModal();
 
-    const { send, hash } = usePrioritySendTransaction();
+    const [send, , hash, , ,] = usePrioritySendTransaction();
 
     useTransactionManager2(provider, hash, closeModal);
 

@@ -112,25 +112,17 @@ const Butter = ({
 
 const OfferModal = ({ data }: { data: OfferModalData }) => {
     const isOpen = client.modal.useOpen();
-
     const address = web3.hook.usePriorityAccount();
-
     const network = web3.hook.useNetworkProvider();
     const chainId = web3.hook.usePriorityChainId();
-
-    const peer = web3.hook.usePriorityPeer();
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
     const [page, setPage] = client.modal.usePhase();
-    const { send, estimation: estimator, hash, error } = usePrioritySendTransaction();
+    const [send, estimator, hash, error] = usePrioritySendTransaction();
     const [amount, setAmount] = useState('0');
-
     const [lastPressed, setLastPressed] = React.useState('5' as `${bigint}` | null);
-
     const msp = client.stake.useMsp();
-
     const blocknum = client.block.useBlock();
-
     const v2 = client.v2.useSwap(data.tokenId);
 
     const increments = React.useMemo(() => {
@@ -758,7 +750,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const Page1 = React.useMemo(
         () =>
-            isOpen && peer ? (
+            isOpen && page === 1 ? (
                 <>
                     <TokenViewer
                         tokenId={data.tokenId}
@@ -837,37 +829,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                         <PeerButtonMobile
                             text="tap to finalize on"
                             onClick={(event) => {
-                                if (!peer || !populatedTransaction) return;
-
-                                if (peer.injected) {
-                                    void send(populatedTransaction.tx, () => {
-                                        setPage(2);
-                                    });
-                                } else if ('deeplink_href' in peer) {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-
-                                    if (populatedTransaction && peer) {
-                                        void send(populatedTransaction.tx, () => {
-                                            // for (let i = 0; i < 10000; i++) {
-                                            //     console.log(new Date().toISOString());
-                                            // }
-
-                                            window.open(peer.deeplink_href || '');
-                                            setPage(2);
-
-                                            // void (async () => {
-                                            //     await new Promise((resolve) => {
-                                            //         setTimeout(() => resolve(undefined), 5000);
-                                            //     });
-                                            // })();
-                                        });
-                                    }
-                                } else {
-                                    void send(populatedTransaction.tx, () => {
-                                        setPage(2);
-                                    });
-                                }
+                                event.preventDefault();
+                                event.stopPropagation();
+                                if (!populatedTransaction) return;
+                                void send(populatedTransaction.tx, () => {
+                                    setPage(2);
+                                });
                             }}
                         />
                     </div>
@@ -879,8 +846,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             setPage,
             isOpen,
             send,
+            page,
             populatedTransaction,
-            peer,
             currentBid,
             data.tokenId,
             data.nuggToBuyFrom,

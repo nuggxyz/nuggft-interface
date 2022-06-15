@@ -621,7 +621,7 @@ export const useHotRotateOTransaction = (tokenId?: NuggId) => {
         return main;
     }, [nuggft, address, algo, needsToClaim, tokenId]);
 
-    const { send, estimation: estimator, hash, error } = usePrioritySendTransaction();
+    const [send, estimator, hash, error, ,] = usePrioritySendTransaction();
     useTransactionManager2(provider, hash, undefined);
 
     const network = web3.hook.useNetworkProvider();
@@ -656,7 +656,7 @@ export const useHotRotateOTransaction = (tokenId?: NuggId) => {
         return true;
     }, [populatedTransaction, estimation]);
 
-    emitter.hook.useOn(
+    emitter.useOn(
         emitter.events.Rotate,
         (event) => {
             if (saving) setSaving(false);

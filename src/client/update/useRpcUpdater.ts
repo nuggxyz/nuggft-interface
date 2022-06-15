@@ -13,7 +13,7 @@ export default () => {
     const updateStake = client.stake.useUpdate();
     const nuggs = client.user.useNuggs();
 
-    emitter.hook.useOn(
+    emitter.useOn(
         emitter.events.IncomingRpcEvent,
         ({ data: event, log }) => {
             console.log({ event });

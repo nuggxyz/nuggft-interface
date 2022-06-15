@@ -27,7 +27,7 @@ const PeerButtonMobile = React.memo<{
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }>(({ text, color = lib.colors.primaryColor, onClick }) => {
     const priorityPeer = web3.hook.usePriorityPeer();
-    console.log(priorityPeer);
+
     return (
         <div
             className="mobile-pressable-div"

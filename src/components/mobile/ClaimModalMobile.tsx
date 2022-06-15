@@ -19,24 +19,22 @@ import CurrencyToggler, {
     useCurrencyTogglerState,
 } from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import Label from '@src/components/general/Label/Label';
-import NLStaticImage from '@src/components/general/NLStaticImage';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import Loader from '@src/components/general/Loader/Loader';
 import { useMultiClaimArgs } from '@src/components/nugg/Wallet/tabs/ClaimTab/MultiClaimButton';
 import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
 
+import PeerButtonMobile from './PeerButtonMobile';
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const isOpen = client.modal.useOpen();
     const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
-
     const network = web3.hook.useNetworkProvider();
-    const peer = web3.hook.usePriorityPeer();
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
     const [page, setPage] = client.modal.usePhase();
-    const { send, estimation: estimator, hash } = usePrioritySendTransaction();
-
+    const [send, estimator, hash] = usePrioritySendTransaction();
     const args = useMultiClaimArgs();
 
     const populatedTransaction = React.useMemo(() => {
@@ -106,46 +104,9 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const ethclaimsUsd = useUsdPair(ethclaims);
     const estimatedGasUsd = useUsdPair(estimation?.mul);
 
-    // const Page0 = React.useMemo(
-    //     () => (
-    //         <>
-    //             <Text size="larger" textStyle={{ marginTop: 10 }}>
-    //                 Claim
-    //             </Text>
-
-    //             <div
-    //                 style={{
-    //                     display: 'flex',
-    //                     width: '100%',
-    //                     justifyContent: 'space-between',
-    //                     marginTop: 10,
-    //                 }}
-    //             >
-
-    //             <Button
-    //                 className="mobile-pressable-div"
-    //                 label="Review"
-    //                 // leftIcon={calculating ? <Loader /> : undefined}
-    //                 onClick={() => setPage(1)}
-    //                 disabled={calculating || !!estimator.error}
-    //                 buttonStyle={{
-    //                     borderRadius: lib.layout.borderRadius.large,
-    //                     background: lib.colors.primaryColor,
-    //                     marginTop: '20px',
-    //                 }}
-    //                 textStyle={{
-    //                     color: lib.colors.white,
-    //                     fontSize: 30,
-    //                 }}
-    //             />
-    //         </>
-    //     ),
-    //     [setPage, calculating, estimator.error],
-    // );
-
     const Page1 = React.useMemo(
         () =>
-            isOpen && peer ? (
+            isOpen && page === 1 ? (
                 <>
                     {/* <StupidMfingHack /> */}
 
@@ -270,92 +231,32 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                             marginTop: '20px',
                         }}
                     >
-                        <div
-                            className="mobile-pressable-div"
-                            style={{
-                                background: lib.colors.primaryColor,
-                                color: 'white',
-                                borderRadius: lib.layout.borderRadius.medium,
-                                boxShadow: lib.layout.boxShadow.dark,
-                                width: 'auto',
-                                display: 'flex',
-                                padding: 10,
-                                alignItems: 'center',
-                            }}
+                        <PeerButtonMobile
+                            text="tap to finalize on"
                             onClick={(event) => {
-                                if (!peer || !populatedTransaction) return;
-
-                                if (peer.injected) {
-                                    void send(populatedTransaction.tx, () => {
-                                        setPage(2);
-                                    });
-                                } else if ('deeplink_href' in peer) {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-
-                                    if (populatedTransaction && peer) {
-                                        void send(populatedTransaction.tx, () => {
-                                            setPage(2);
-                                            window.open(peer.deeplink_href || '');
-                                        });
-                                    }
-                                } else {
-                                    void send(populatedTransaction.tx, () => {
-                                        setPage(2);
-                                    });
-                                }
+                                event.preventDefault();
+                                event.stopPropagation();
+                                if (!populatedTransaction) return;
+                                void send(populatedTransaction.tx, () => {
+                                    setPage(2);
+                                });
                             }}
-                            aria-hidden="true"
-                            role="button"
-                        >
-                            <NLStaticImage image={`${peer.peer}_icon`} />
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'left',
-                                    flexDirection: 'column',
-                                    // width: '100%',
-                                    marginLeft: 10,
-                                }}
-                            >
-                                <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>
-                                    {t`tap to finalize on`}
-                                </Text>
-                                <Text
-                                    textStyle={{
-                                        color: lib.colors.white,
-                                        fontSize: 30,
-                                    }}
-                                >
-                                    {peer.name}
-                                </Text>
-                            </div>
-                        </div>
+                        />
                     </div>
-
-                    {/* <Button
-                        className="mobile-pressable-div"
-                        size="small"
-                        buttonStyle={{
-                            background: 'transparent',
-                            marginTop: 10,
-                            marginBottom: -10,
-                        }}
-                        label="go back"
-                        onClick={() => setPage(0)}
-                    /> */}
                 </>
             ) : null,
         [
             setPage,
             isOpen,
             send,
+            page,
             populatedTransaction,
-            peer,
             estimatedGasUsd,
             ethclaimsUsd,
             unclaimedOffers,
             localCurrencyPref,
+            calculating,
+            estimator.error,
         ],
     );
 

@@ -19,7 +19,7 @@ const MultiRebalanceButton: FunctionComponent<Props> = () => {
     const provider = web3.hook.usePriorityProvider();
     const nuggft = useNuggftV1();
 
-    const { send, hash } = usePrioritySendTransaction();
+    const [send, , hash, , ,] = usePrioritySendTransaction();
     useTransactionManager2(provider, hash);
     const chainId = web3.hook.usePriorityChainId();
     const unclaimedOffers = client.user.useNuggs();
