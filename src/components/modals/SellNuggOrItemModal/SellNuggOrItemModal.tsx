@@ -24,6 +24,7 @@ import { EthInt } from '@src/classes/Fraction';
 import globalStyles from '@src/lib/globalStyles';
 import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
+import Loader from '@src/components/general/Loader/Loader';
 
 import styles from './SellNuggOrItemModal.styles';
 
@@ -54,7 +55,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
     }, [nuggft, stake, swap]);
 
     const epsUsd = useUsdPair(eps);
-    const [amount, setAmount] = useState('0');
+    const [amount, setAmount] = useState(token?.isNugg() ? '0' : '');
 
     useTransactionManager2(provider, hash, closeModal);
 
@@ -82,20 +83,21 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
     const [valueIsSet, setValue] = React.useReducer(() => true, false);
 
     const wrappedSetAmount = React.useCallback(
-        (amt: string) => {
+        (amt: string, _lastPressed?: string) => {
+            console.log({ amt });
             setAmount(amt);
-            setLastPressed(undefined);
+            setLastPressed(_lastPressed);
         },
         [setAmount, setLastPressed],
     );
 
     React.useEffect(() => {
-        if (eps && epsUsd && epsUsd.eth && !valueIsSet) {
+        if (eps && epsUsd && epsUsd.eth && !valueIsSet && token?.isNugg()) {
             wrappedSetAmount(epsUsd.eth.copy().increase(BigInt(5)).number.toFixed(5));
             setLastPressed('5');
             setValue();
         }
-    }, [amount, eps, epsUsd, epsUsd.eth, valueIsSet, setValue, wrappedSetAmount]);
+    }, [amount, eps, epsUsd, epsUsd.eth, valueIsSet, setValue, wrappedSetAmount, token]);
 
     const populatedTransaction = useMemo(() => {
         if (swap && address) {
@@ -202,47 +204,15 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
     }, [populatedTransaction, network]);
 
     const calculating = React.useMemo(() => {
+        if (parseInt(amount, 10) === 0 || Number.isNaN(parseInt(amount, 10))) return false;
         if (estimator.error) return false;
         if (populatedTransaction && estimation) {
             if (populatedTransaction.amount.eq(estimation.amount)) return false;
         }
         return true;
-    }, [populatedTransaction, estimation]);
+    }, [populatedTransaction, estimation, amountUsd, amount]);
 
-    const IncrementButton = React.memo(({ increment }: { increment: bigint }) => {
-        return (
-            <Button
-                className="mobile-pressable-div"
-                label={increment.toString() === '0' ? t`Min` : `+${increment.toString()}%`}
-                onClick={() => {
-                    wrappedSetAmount(
-                        epsUsd.eth.copy().increase(increment).number.toFixed(5) || '0',
-                    );
-                    setLastPressed(increment.toString());
-                }}
-                buttonStyle={{
-                    borderRadius: lib.layout.borderRadius.large,
-                    padding: '.4rem .7rem',
-                    background:
-                        lastPressed === increment.toString()
-                            ? lib.colors.white
-                            : lib.colors.textColor,
-                    boxShadow:
-                        lastPressed === increment.toString()
-                            ? `${lib.layout.boxShadow.medium}`
-                            : '',
-                    transition: `all .5s ${lib.layout.animation}`,
-                }}
-                size="medium"
-                textStyle={{
-                    color:
-                        lastPressed === increment.toString()
-                            ? lib.colors.textColor
-                            : lib.colors.white,
-                }}
-            />
-        );
-    });
+    console.log(amount, isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount));
 
     return token && chainId && provider && address ? (
         <div style={styles.container}>
@@ -278,22 +248,45 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
                         ]}
                     />
                 ) : null}
-                <div
-                    style={{
-                        // display: 'flex',
-                        margin: '.7rem 0rem',
-                        width: '100%',
-                        ...globalStyles.centeredSpaceBetween,
-                    }}
-                >
-                    <IncrementButton increment={BigInt(0)} />
-                    <IncrementButton increment={BigInt(5)} />
-                    <IncrementButton increment={BigInt(10)} />
-                    <IncrementButton increment={BigInt(15)} />
-                    <IncrementButton increment={BigInt(20)} />
-                    <IncrementButton increment={BigInt(25)} />
-                    <IncrementButton increment={BigInt(30)} />
-                </div>
+                {!token.isItem() && (
+                    <div
+                        style={{
+                            // display: 'flex',
+                            margin: '.7rem 0rem',
+                            width: '100%',
+                            ...globalStyles.centeredSpaceBetween,
+                        }}
+                    >
+                        <IncrementButton
+                            increment={BigInt(0)}
+                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(5)}
+                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(10)}
+                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(15)}
+                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(20)}
+                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(25)}
+                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(30)}
+                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                        />
+                    </div>
+                )}
             </div>
             <div style={styles.subContainer}>
                 <FeedbackButton
@@ -307,6 +300,15 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
                     buttonStyle={styles.button}
                     textStyle={{ color: 'white' }}
                     label={`${token.isNugg() ? t`Sell Nugg` : t`Sell Item`}`}
+                    rightIcon={
+                        calculating
+                            ? ((
+                                  <div style={{ position: 'absolute', right: '.7rem' }}>
+                                      <Loader color="white" />
+                                  </div>
+                              ) as JSX.Element)
+                            : undefined
+                    }
                     onClick={() => {
                         if (populatedTransaction) {
                             void send(populatedTransaction.tx);
@@ -329,7 +331,58 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
                 />
             </div>
         </div>
-    ) : null;
+    ) : (
+        <div style={{ height: '586px', ...globalStyles.centered }}>
+            <Loader color={lib.colors.nuggBlueText} diameter={100} strokeWidth="5px" />
+        </div>
+    );
 };
+
+const IncrementButton = React.memo(
+    ({
+        increment,
+        wrappedSetAmount,
+        epsUsd,
+        lastPressed,
+    }: {
+        increment: bigint;
+        wrappedSetAmount: (amt: string, _lastPressed?: string) => void;
+        epsUsd: PairInt;
+        lastPressed: string | undefined;
+    }) => {
+        return (
+            <Button
+                className="mobile-pressable-div"
+                label={increment.toString() === '0' ? t`Min` : `+${increment.toString()}%`}
+                onClick={() => {
+                    wrappedSetAmount(
+                        epsUsd.eth.copy().increase(increment).number.toFixed(5) || '0',
+                        increment.toString(),
+                    );
+                }}
+                buttonStyle={{
+                    borderRadius: lib.layout.borderRadius.large,
+                    padding: '.4rem .7rem',
+                    background:
+                        lastPressed === increment.toString()
+                            ? lib.colors.white
+                            : lib.colors.textColor,
+                    boxShadow:
+                        lastPressed === increment.toString()
+                            ? `${lib.layout.boxShadow.medium}`
+                            : '',
+                    transition: `all .5s ${lib.layout.animation}`,
+                }}
+                size="medium"
+                textStyle={{
+                    color:
+                        lastPressed === increment.toString()
+                            ? lib.colors.textColor
+                            : lib.colors.white,
+                }}
+            />
+        );
+    },
+);
 
 export default SellNuggOrItemModal;
