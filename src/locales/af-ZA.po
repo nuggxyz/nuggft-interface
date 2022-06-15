@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-06-11 20:15+0000\n"
+"POT-Creation-Date: 2022-06-14 21:19+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Afrikaans\n"
-"PO-Revision-Date: 2022-06-12 06:05\n"
+"PO-Revision-Date: 2022-06-15 06:04\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 msgid ", and your desired bid for"
@@ -449,7 +449,6 @@ msgstr ""
 msgid "Pending Auctions"
 msgstr ""
 
-#: src/contracts/useContract.ts
 #: src/contracts/useContract.ts
 msgid "Pending Transaction"
 msgstr ""
