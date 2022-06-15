@@ -48,7 +48,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
     const chainId = web3.hook.usePriorityChainId();
     const closeModal = client.modal.useCloseModal();
 
-    const [send, , hash, , ,] = usePrioritySendTransaction();
+    const [send, estimator, hash, , ,] = usePrioritySendTransaction();
 
     const eps = useAsyncState(() => {
         return swap ? Promise.resolve(swap.eth) : nuggft.eps();
@@ -211,8 +211,6 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
         }
         return true;
     }, [populatedTransaction, estimation, amountUsd, amount]);
-
-    console.log(amount, isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount));
 
     return token && chainId && provider && address ? (
         <div style={styles.container}>
