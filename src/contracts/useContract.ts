@@ -282,7 +282,7 @@ function useSendTransaction(
                             console.error(fmt);
                             throw fmt;
                         });
-                    if (isPhone && peer && 'deeplink_href' in peer) {
+                    if (isPhone && peer && 'deeplink_href' in peer && !peer.injected) {
                         window.open(peer.deeplink_href);
                     }
                     if (onSend) onSend();
