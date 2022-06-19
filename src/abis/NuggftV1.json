@@ -69,31 +69,6 @@
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
-                "internalType": "uint24",
-                "name": "tokenId",
-                "type": "uint24"
-            },
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "ethOwed",
-                "type": "uint96"
-            }
-        ],
-        "name": "Burn",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
                 "indexed": true,
                 "internalType": "uint24",
                 "name": "tokenId",
@@ -294,43 +269,6 @@
             }
         ],
         "name": "MigratorV1Updated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "uint24",
-                "name": "tokenId",
-                "type": "uint24"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint96",
-                "name": "value",
-                "type": "uint96"
-            },
-            {
-                "indexed": false,
-                "internalType": "bytes32",
-                "name": "proof",
-                "type": "bytes32"
-            },
-            {
-                "indexed": false,
-                "internalType": "bytes32",
-                "name": "stake",
-                "type": "bytes32"
-            },
-            {
-                "indexed": false,
-                "internalType": "bytes32",
-                "name": "agency",
-                "type": "bytes32"
-            }
-        ],
-        "name": "Mint",
         "type": "event"
     },
     {
@@ -710,19 +648,6 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "uint24",
-                "name": "tokenId",
-                "type": "uint24"
-            }
-        ],
-        "name": "burn",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
         "inputs": [],
         "name": "bye",
         "outputs": [],
@@ -909,7 +834,7 @@
         "name": "dotnuggv1",
         "outputs": [
             {
-                "internalType": "contract IDotnuggV1Safe",
+                "internalType": "contract IDotnuggV1",
                 "name": "",
                 "type": "address"
             }
@@ -974,9 +899,9 @@
         "name": "floop",
         "outputs": [
             {
-                "internalType": "uint16[]",
+                "internalType": "uint16[16]",
                 "name": "arr",
-                "type": "uint16[]"
+                "type": "uint16[16]"
             }
         ],
         "stateMutability": "view",
@@ -1248,37 +1173,6 @@
                 "internalType": "address",
                 "name": "",
                 "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint24",
-                "name": "tokenId",
-                "type": "uint24"
-            }
-        ],
-        "name": "mint",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "mintTokens",
-        "outputs": [
-            {
-                "internalType": "uint24",
-                "name": "first",
-                "type": "uint24"
-            },
-            {
-                "internalType": "uint24",
-                "name": "last",
-                "type": "uint24"
             }
         ],
         "stateMutability": "view",
@@ -1805,42 +1699,6 @@
         "name": "transferFrom",
         "outputs": [],
         "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint24",
-                "name": "tokenId",
-                "type": "uint24"
-            },
-            {
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-            }
-        ],
-        "name": "trustedMint",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "trustedMintTokens",
-        "outputs": [
-            {
-                "internalType": "uint24",
-                "name": "first",
-                "type": "uint24"
-            },
-            {
-                "internalType": "uint24",
-                "name": "last",
-                "type": "uint24"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     },
     {

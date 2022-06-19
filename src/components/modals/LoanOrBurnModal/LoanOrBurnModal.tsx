@@ -66,7 +66,7 @@ const LoanOrBurnModal = ({ data: { tokenId, actionType } }: { data: LoanModalDat
                     onClick={() => {
                         if (actionType === 'loan')
                             void send(nuggft.populateTransaction.loan([tokenId.toRawId()]));
-                        else void send(nuggft.populateTransaction.burn(tokenId.toRawId()));
+                        // else void send(nuggft.populateTransaction.burn(tokenId.toRawId()));
                     }}
                 />
             </div>

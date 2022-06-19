@@ -2,7 +2,6 @@ import {
     ClaimEvent,
     ClaimItemEvent,
     LoanEvent,
-    MintEvent,
     OfferEvent,
     OfferItemEvent,
     OfferMintEvent,
@@ -33,10 +32,10 @@ interface BaseEvent {
     name: EventNames;
 }
 
-export interface RpcMint extends BaseEvent {
-    name: EventNames.Mint;
-    args: MintEvent['args'];
-}
+// export interface RpcMint extends BaseEvent {
+//     name: EventNames.Mint;
+//     args: MintEvent['args'];
+// }
 
 export interface RpcLoan extends BaseEvent {
     name: EventNames.Loan;
@@ -92,7 +91,6 @@ export interface RpcRotate extends BaseEvent {
 }
 
 export type InterfacedEvent =
-    | RpcMint
     | RpcOfferMint
     | RpcOfferItem
     | RpcClaim

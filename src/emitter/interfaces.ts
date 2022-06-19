@@ -4,7 +4,6 @@ import {
     InterfacedEvent,
     RpcOffer,
     RpcTransfer,
-    RpcMint,
     RpcOfferMint,
     RpcStake,
     RpcClaim,
@@ -76,10 +75,10 @@ interface EmitModalOpen extends EmitEventBase {
     onModalOpen: () => void;
 }
 
-interface EmitLocalRpcMint extends EmitEventBase, EmitOnChainEventBase {
-    type: EmitEventNames.Mint;
-    event: RpcMint | RpcOfferMint;
-}
+// interface EmitLocalRpcMint extends EmitEventBase, EmitOnChainEventBase {
+//     type: EmitEventNames.Mint;
+//     event: RpcMint | RpcOfferMint;
+// }
 
 interface EmitLocalRpcOffer extends EmitEventBase, EmitOnChainEventBase {
     type: EmitEventNames.Offer;
@@ -94,7 +93,7 @@ interface EmitLocalRpcTransfer extends EmitEventBase, EmitOnChainEventBase {
 
 interface EmitLocalRpcStake extends EmitEventBase, EmitOnChainEventBase {
     type: EmitEventNames.Stake;
-    event: RpcStake | RpcOffer | RpcOfferMint | RpcMint | RpcOfferItem;
+    event: RpcStake | RpcOffer | RpcOfferMint | RpcOfferItem;
 }
 
 interface EmitLocalRpcClaim extends EmitEventBase, EmitOnChainEventBase {
@@ -225,8 +224,6 @@ export type EmitEvents =
     | EmitTransactionResponse
     | EmitPotentialTransactionResponse
     | EmitPotentialTransactionReceipt
-    | EmitLocalRpcMint
-    | EmitLocalRpcMint
     | EmitLocalRpcOffer
     | EmitLocalRpcStake
     | EmitLocalRpcClaim

@@ -36,7 +36,6 @@ export default () => {
                 case 'Offer':
                 case 'OfferMint':
                 case 'OfferItem':
-                case 'Mint':
                 case 'Stake': {
                     void emitter.emit(emitter.events.Stake, {
                         event,

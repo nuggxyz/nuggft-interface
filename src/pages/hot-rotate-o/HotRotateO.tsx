@@ -136,7 +136,7 @@ const RenderItemMobileTiny: FC<
                     />
                 ) : (
                     <TokenViewer
-                        forceCache
+                        // forceCache
                         tokenId={item?.tokenId}
                         style={{ width: '60px', height: '60px', padding: '3px' }}
                         disableOnClick
@@ -219,7 +219,7 @@ const RenderItem: FC<
 };
 
 export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobileList = false) => {
-    const provider = web3.hook.usePriorityProvider();
+    const provider = web3.hook.useNetworkProvider();
     const dotnugg = useDotnuggV1(provider);
     const address = web3.hook.usePriorityAccount();
     const epoch = client.epoch.active.useId();
@@ -233,12 +233,8 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
 
     const [items, setItems, og] = useAsyncSetState(() => {
         if (tokenId && provider && epoch) {
-            if (!address) {
-                setCannotProveOwnership(true);
-                return undefined;
-            }
             const fmtTokenId = BigNumber.from(tokenId.toRawId());
-
+            console.log('hi there - floop just got called for tokenId ', tokenId);
             const floopCheck = async () => {
                 return nuggft.floop(fmtTokenId).then((x) => {
                     const res = x.reduce(
@@ -323,6 +319,11 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
 
             if (overrideOwner) {
                 return floopCheck();
+            }
+
+            if (!address) {
+                setCannotProveOwnership(true);
+                return undefined;
             }
 
             return nuggft.ownerOf(fmtTokenId).then((y) => {
@@ -462,7 +463,7 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
                 ))}
             </div>
         ) : null;
-    }, [sortedList, caller, screen]);
+    }, [sortedList, caller, screen, forceMobileList]);
 
     const DesktopList = React.useMemo(() => {
         return screen !== 'phone' && !forceMobileList ? (
