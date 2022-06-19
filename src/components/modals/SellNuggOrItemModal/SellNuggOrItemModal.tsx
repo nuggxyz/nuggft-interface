@@ -210,7 +210,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
             if (populatedTransaction.amount.eq(estimation.amount)) return false;
         }
         return true;
-    }, [populatedTransaction, estimation, amountUsd, amount]);
+    }, [populatedTransaction, estimation, amount, estimator]);
 
     return token && chainId && provider && address ? (
         <div style={styles.container}>
@@ -311,27 +311,13 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
                         if (populatedTransaction) {
                             void send(populatedTransaction.tx);
                         }
-                        // void (data.isItem()
-                        //     ? send(
-                        //           nuggft.populateTransaction['sell(uint24,uint16,uint96)'](
-                        //               data.sellingNuggId.toRawId(),
-                        //               token.tokenId.toRawId(),
-                        //               toEth(amount),
-                        //           ),
-                        //       )
-                        //     : send(
-                        //           nuggft.populateTransaction['sell(uint24,uint96)'](
-                        //               token.tokenId.toRawId(),
-                        //               toEth(amount),
-                        //           ),
-                        //       ));
                     }}
                 />
             </div>
         </div>
     ) : (
         <div style={{ height: '586px', ...globalStyles.centered }}>
-            <Loader color={lib.colors.nuggBlueText} diameter={100} strokeWidth="5px" />
+            <Loader color={lib.colors.textColor} diameter={100} strokeWidth="5px" />
         </div>
     );
 };

@@ -2,7 +2,7 @@ import React, { FunctionComponent, useCallback } from 'react';
 import { SiEthereum } from 'react-icons/si';
 import { IoLogoUsd } from 'react-icons/io5';
 
-import lib, { escapeRegExp } from '@src/lib';
+import lib, { escapeRegExp, isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import TextInput, { TextInputProps } from '@src/components/general/TextInputs/TextInput/TextInput';
 import { useUsdPair } from '@src/client/usd';
 import { EthInt } from '@src/classes/Fraction';
@@ -62,7 +62,11 @@ export const DualCurrencyInput: FunctionComponent<DualProps> = ({
         (_currencyPref: 'USD' | 'ETH') => {
             if (_currencyPref === 'USD') {
                 setLocalValue(value);
-                setInnerValue(truePrice.usd.copy().multiply(value).number.toFixed(2));
+                setInnerValue(
+                    isUndefinedOrNullOrStringEmpty(value)
+                        ? value
+                        : truePrice.usd.copy().multiply(value).number.toFixed(2),
+                );
             } else {
                 setLocalValue(value);
                 setInnerValue(value);

@@ -62,8 +62,8 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                         modalType: ModalEnum.Loan,
                         tokenId,
                         actionType: 'loan',
-                        backgroundStyle: {
-                            background: lib.colors.gradient2,
+                        containerStyle: {
+                            background: lib.colors.semiTransparentWhite,
                         },
                     });
                 }}
