@@ -56,6 +56,7 @@ export const FEATURE_NAMES = [
 export const FEATURE_RARITY = [8, 11, 11, 6, 6, 3, 3, 3].map(
     (x) => x / 8,
 ) as unknown as FixedLengthArray<number, 8>;
+
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000' as const;
 
 export const CONTRACTS = {
@@ -87,10 +88,10 @@ export const CONTRACTS = {
         MintOffset: 1000000,
     },
     [Chain.GOERLI]: {
-        NuggftV1: '0x69420000c537a53ff966610aee8c8884f02c88f8',
-        xNuggftV1: '0x028a7a584173b89ee374189168368a0142970e22',
-        DotnuggV1: '0x57be1d7ef7a4099fb0937b60027ff789de9e3337',
-        Genesis: 7047552,
+        NuggftV1: '0x69420000ac2bdb9be0d3ad607dc85b1c10f653ac',
+        xNuggftV1: '0xc9803bff5df0dadff952ffc11dc2536450256fc6',
+        DotnuggV1: '0x818f735c989245600d1c1d2c1933b803acc4b82e',
+        Genesis: 7087360,
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
