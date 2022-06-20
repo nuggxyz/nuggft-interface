@@ -34,6 +34,7 @@ const GodListHorizontal = <T, B, A>({
     offsetListRef = false,
     screenHeight: screenWidth = 0,
     mobileFluid = false,
+    onReset,
 }: GodListProps<T, B, A>) => {
     const interval = 7;
 
@@ -64,7 +65,7 @@ const GodListHorizontal = <T, B, A>({
 
     const innerWidth = useMemo(
         () => data.length * itemWidth * squishFactor,
-        [data, itemWidth, squishFactor],
+        [data.length, itemWidth, squishFactor],
     );
 
     const startIndex = useMemo(() => {
@@ -179,6 +180,29 @@ const GodListHorizontal = <T, B, A>({
 
     const genid = React.useId();
 
+    const reset = React.useCallback(() => {
+        if (coreRef && coreRef.current) {
+            // @ts-ignore
+            coreRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
+        } else if (windowRef && windowRef.current) {
+            // @ts-ignore
+            windowRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
+        }
+        if (onReset) onReset();
+        setSelected(null);
+    }, [coreRef, windowRef, onReset]);
+
+    const prevData = usePrevious(data);
+
+    const checkReset = React.useCallback(
+        (_innerWidth: number) => {
+            if (scrollLeft > _innerWidth || prevData !== data) {
+                reset();
+            }
+        },
+        [reset, scrollLeft, prevData, data],
+    );
+
     const _onScroll = useCallback(
         (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
             const st = ev.currentTarget.scrollLeft;
@@ -190,8 +214,20 @@ const GodListHorizontal = <T, B, A>({
             setTrueScrollTop(st);
 
             if (onScroll) onScroll(ev, up);
+
+            if (st > innerWidth) {
+                reset();
+            }
         },
-        [onScroll, offsetListRef, setScrollTopOffset, setTrueScrollTop, scrollLeft],
+        [
+            onScroll,
+            offsetListRef,
+            setScrollTopOffset,
+            setTrueScrollTop,
+            scrollLeft,
+            innerWidth,
+            reset,
+        ],
     );
 
     // console.log({ items, data });
@@ -204,6 +240,12 @@ const GodListHorizontal = <T, B, A>({
             windowRef.current.onscroll = _onScroll;
         }
     }, [coreRef, _onScroll]);
+
+    useEffect(() => {
+        // passed as arg here bc:
+        // we only want to check for reset when innerWidth changes
+        checkReset(innerWidth);
+    }, [checkReset, innerWidth]);
 
     return (
         <>

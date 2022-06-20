@@ -173,6 +173,8 @@ export default ({
         ] as const;
     }, [token?.tryout.swaps, myNuggsFormatted, continued]);
 
+    // const ref = React.useRef(null);
+
     return (
         <div
             style={{
@@ -189,9 +191,10 @@ export default ({
                     // @ts-ignore
                     RenderItem={RenderItem}
                     horizontal
+                    // coreRef={ref}
+                    disableScroll
                     startGap={10}
                     itemHeight={90}
-                    // @ts-ignore
                     action={action}
                     selected={selectedMyNugg}
                     style={React.useMemo(
@@ -205,7 +208,6 @@ export default ({
                         [isPhone],
                     )}
                 />
-
                 <Button
                     buttonStyle={{
                         borderRadius: lib.layout.borderRadius.large,

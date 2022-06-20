@@ -74,6 +74,7 @@ export interface GodListProps<T, B, A> {
     displacement?: number;
     dadRef?: React.RefObject<HTMLDivElement> | null;
     noOverflow?: boolean;
+    onReset?: () => void;
 }
 
 const GodList = <T, B, A>({
