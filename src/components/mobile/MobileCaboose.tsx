@@ -47,12 +47,9 @@ const TryoutRenderItem: FC<GodListRenderItemProps<TryoutData, undefined, number>
     );
 };
 
-const MyNuggRenderItem: FC<GodListRenderItemProps<FormatedMyNuggsData, undefined, number>> = ({
-    item,
-    selected,
-    action,
-    index,
-}) => {
+export const MyNuggRenderItem: FC<
+    GodListRenderItemProps<FormatedMyNuggsData, undefined, number>
+> = ({ item, selected, action, index }) => {
     const disabled = React.useMemo(() => {
         if (item?.activeSwap) return t`currenlty for sale`;
         if (item?.lastBid === 'unable-to-bid') return t`previous claim pending for this item`;

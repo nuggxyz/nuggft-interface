@@ -1,6 +1,6 @@
 import { buildTokenIdFactory } from '@src/prototypes';
 import { NuggitemsFragment } from '@src/gql/types.generated';
-import { LiveNuggItem } from '@src/client/interfaces';
+import type { LiveNuggItem } from '@src/client/user';
 
 export default (z: NuggitemsFragment): LiveNuggItem[] => {
     const l = z.items

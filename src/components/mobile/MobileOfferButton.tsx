@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { t } from '@lingui/macro';
+import { BigNumber } from '@ethersproject/bignumber';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
@@ -10,7 +11,44 @@ import { buildTokenIdFactory } from '@src/prototypes';
 import { Lifecycle } from '@src/client/interfaces';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import { Page } from '@src/interfaces/nuggbook';
+import GodListHorizontal from '@src/components/general/List/GodListHorizontal';
+import { GodListRenderItemProps } from '@src/components/general/List/GodList';
+import TokenViewer from '@src/components/nugg/TokenViewer';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 
+type MyNuggToPickFrom = { tokenId: NuggId; eth: BigNumber };
+
+const TryoutRenderItem: FC<GodListRenderItemProps<MyNuggToPickFrom, undefined, number>> = ({
+    item,
+    selected,
+    action,
+    index,
+}) => {
+    const usd = client.usd.useUsdPair(item?.eth);
+    return (
+        <div
+            style={{
+                alignSelf: 'center',
+                borderRadius: lib.layout.borderRadius.medium,
+                transition: '.2s background ease',
+                background: selected ? lib.colors.transparentGrey2 : lib.colors.transparent,
+                padding: '10px',
+            }}
+            aria-hidden="true"
+            onClick={() => action && action(index)}
+        >
+            <TokenViewer
+                tokenId={item?.tokenId}
+                style={{ width: '60px', height: '60px' }}
+                disableOnClick
+            />
+
+            {item?.eth && (
+                <CurrencyText textStyle={{ fontSize: '10px' }} value={usd} stopAnimation />
+            )}
+        </div>
+    );
+};
 export default ({
     tokenId,
     sellingNuggId,
@@ -21,6 +59,7 @@ export default ({
 }) => {
     const address = web3.hook.usePriorityAccount();
     const token = client.live.token(tokenId);
+    const epoch = client.epoch.active.useId();
 
     const swap = React.useMemo(() => {
         return token?.activeSwap;
@@ -28,15 +67,72 @@ export default ({
     const lifecycle = useLifecycleEnhanced(tokenId);
     const nuggbookOpen = client.nuggbook.useGotoOpen();
 
+    const myNuggs = client.user.useNuggs();
+
+    const [selectedMyNuggIndex, setSelectedMyNuggIndex] = React.useState<number>();
+
+    const nuggsThatHaveBid = React.useMemo(() => {
+        if (!epoch || !tokenId || tokenId.isNuggId()) return [];
+        const result: { tokenId: NuggId; eth: BigNumber }[] = [];
+        const haveNot: { tokenId: NuggId; eth: BigNumber }[] = [];
+
+        myNuggs.forEach((x) => {
+            let check = false;
+            x.unclaimedOffers.forEach((y) => {
+                if (y.endingEpoch && y.itemId === tokenId && y.endingEpoch >= epoch) {
+                    result.push({ tokenId: x.tokenId, eth: BigNumber.from(y.eth) });
+                    check = true;
+                }
+            });
+            if (!check) haveNot.push({ tokenId: x.tokenId, eth: BigNumber.from(0) });
+        });
+        return [...result, ...haveNot].sort((a, b) => (a.eth.gt(b.eth) ? -1 : 1));
+    }, [epoch, myNuggs, tokenId]);
+
+    const nuggToBuyFor = React.useMemo(() => {
+        if (selectedMyNuggIndex !== undefined) {
+            return nuggsThatHaveBid[selectedMyNuggIndex].tokenId;
+        }
+        return undefined;
+    }, [selectedMyNuggIndex, nuggsThatHaveBid]);
+
+    // const nuggToBuyFor = React.useMemo(() => {
+    //     if (nuggsThatHaveBid && nuggsThatHaveBid.length > 0) {
+    //         return nuggsThatHaveBid[0];
+    //     }
+    //     return undefined;
+    // }, [nuggsThatHaveBid]);
+
     const openModal = client.modal.useOpenModal();
 
     if (!swap || !tokenId || !lifecycle || lifecycle?.lifecycle === 'tryout') return null;
 
     return (
-        <div style={{ width: '100%', padding: '0px 10px', marginTop: '20px' }}>
+        <div style={{ width: '100%', padding: '0px 10px' }}>
+            {token?.isItem() && nuggsThatHaveBid.length > 0 && (
+                <GodListHorizontal
+                    data={nuggsThatHaveBid}
+                    extraData={undefined}
+                    RenderItem={TryoutRenderItem}
+                    horizontal
+                    disableScroll
+                    startGap={10}
+                    itemHeight={90}
+                    action={setSelectedMyNuggIndex}
+                    style={{
+                        marginTop: '20px',
+                        width: '100%',
+                        background: lib.colors.transparentLightGrey,
+                        height: '100px',
+                        padding: '15px 0rem .4rem',
+                        borderRadius: lib.layout.borderRadius.medium,
+                    }}
+                />
+            )}
             <Button
                 className="mobile-pressable-div"
                 buttonStyle={{
+                    marginTop: '20px',
                     borderRadius: lib.layout.borderRadius.large,
                     background:
                         lifecycle.lifecycle === Lifecycle.Concessions
@@ -48,10 +144,11 @@ export default ({
                     fontSize: 24,
                 }}
                 disabled={
-                    !lifecycle.active &&
-                    lifecycle.lifecycle !== Lifecycle.Concessions &&
-                    lifecycle.lifecycle !== Lifecycle.Minors &&
-                    lifecycle.lifecycle !== Lifecycle.Bench
+                    (!lifecycle.active &&
+                        lifecycle.lifecycle !== Lifecycle.Concessions &&
+                        lifecycle.lifecycle !== Lifecycle.Minors &&
+                        lifecycle.lifecycle !== Lifecycle.Bench) ||
+                    (token?.isItem() && !nuggToBuyFor)
                 }
                 onClick={() => {
                     if (lifecycle.lifecycle === Lifecycle.Concessions && tokenId.isNuggId()) {
@@ -73,13 +170,13 @@ export default ({
                                 endingEpoch: swap.epoch?.id ?? null,
                             }),
                         );
-                    } else if (swap && swap?.isItem()) {
+                    } else if (swap && swap?.isItem() && nuggToBuyFor) {
                         openModal(
                             buildTokenIdFactory({
                                 modalType: ModalEnum.Offer as const,
                                 tokenId: swap.tokenId,
                                 nuggToBuyFrom: sellingNuggId || swap.owner,
-                                nuggToBuyFor: sellingNuggId || swap.owner,
+                                nuggToBuyFor,
                                 endingEpoch: swap.epoch?.id ?? null,
                             }),
                         );

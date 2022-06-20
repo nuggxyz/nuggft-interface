@@ -29,7 +29,7 @@ export interface LiveNuggItem extends ItemIdFactory<TokenIdFactoryBase> {
     count: number;
     displayed: boolean;
 }
-export interface MyNuggs {
+export interface MyNugg {
     activeLoan: boolean;
     activeSwap: boolean;
     tokenId: NuggId;
@@ -42,6 +42,7 @@ export interface MyNuggs {
         endingEpoch: number | null;
         eth: BigNumberish | undefined;
         sellingNuggId: NuggId | null;
+        leader: boolean;
     }[];
 }
 
@@ -80,7 +81,7 @@ const format = (address: AddressString, x: ApolloQueryResult<LiveUserQuery>) => 
 
     const { user } = x.data;
 
-    const myNuggs: MyNuggs[] = user.nuggs.map((z) => {
+    const myNuggs: MyNugg[] = user.nuggs.map((z) => {
         return {
             recent: false,
             tokenId: z.id.toNuggId(),
@@ -91,6 +92,7 @@ const format = (address: AddressString, x: ApolloQueryResult<LiveUserQuery>) => 
             items: formatNuggItems(z),
             unclaimedOffers: z.offers.map((y) => {
                 return {
+                    leader: y.swap.leader?.id === z.id,
                     itemId: y.swap.sellingItem.id.toItemId(),
                     eth: y.eth,
                     sellingNuggId: y.swap.sellingNuggItem.nugg.id.toNuggId(),
@@ -157,7 +159,7 @@ const format = (address: AddressString, x: ApolloQueryResult<LiveUserQuery>) => 
 const store = create(
     combine(
         {
-            nuggs: [] as MyNuggs[],
+            nuggs: [] as MyNugg[],
             unclaimedOffers: [] as UnclaimedOffer[],
             loans: [] as LoanData[],
         },
@@ -236,6 +238,18 @@ const useUnclaimedOffersFilteredByEpoch = () => {
 
 export default {
     useNuggs: () => store((draft) => draft.nuggs),
+    useNugg: (nuggId?: NuggId) =>
+        store(
+            React.useCallback(
+                (state) =>
+                    nuggId !== undefined
+                        ? state.nuggs.find((x) => x.tokenId === nuggId) ?? undefined
+                        : undefined,
+                [nuggId],
+            ),
+            shallow,
+        ),
+
     useUnclaimedOffers: () => store((draft) => draft.unclaimedOffers),
     useLoans: () => store((draft) => draft.loans),
     useFetch: () => store((draft) => draft.fetch),

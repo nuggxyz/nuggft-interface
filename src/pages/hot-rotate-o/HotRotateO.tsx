@@ -37,8 +37,19 @@ import useDimensions from '@src/client/hooks/useDimensions';
 import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 import SimpleList, { SimpleListRenderItemProps } from '@src/components/general/List/SimpleList';
+import { ADDRESS_ZERO } from '@src/web3/constants';
 
 import styles from './HotRotateO.styles';
+
+const mockFloopOpenSlot = (proof: number[], index: number) => {
+    let ptr = 8;
+    index++;
+    while (proof[ptr] !== 0 && index !== 0) {
+        ptr++;
+        index--;
+    }
+    return ptr;
+};
 
 export interface HotRotateOItem extends ItemIdFactory<TokenIdFactoryBase> {
     activeIndex: number;
@@ -48,6 +59,7 @@ export interface HotRotateOItem extends ItemIdFactory<TokenIdFactoryBase> {
     hexId: number;
     desiredIndex?: number;
     duplicates: number;
+    supplemental: boolean;
 }
 
 export type HotRotateOItemList = {
@@ -231,10 +243,19 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
     const [saving, setSaving] = useState(false);
     const [savedToChain, setSavedToChain] = useState(false);
 
+    const myNugg = client.user.useNugg(tokenId);
+
+    const supplementalItems = React.useMemo(() => {
+        if (overrideOwner || !myNugg || epoch === null) return undefined;
+        return myNugg.unclaimedOffers.filter(
+            (y) => y.itemId && y.endingEpoch !== null && y.leader && y.endingEpoch < epoch,
+        );
+    }, [epoch, myNugg, overrideOwner]);
+
     const [items, setItems, og] = useAsyncSetState(() => {
         if (tokenId && provider && epoch) {
             const fmtTokenId = BigNumber.from(tokenId.toRawId());
-            console.log('hi there - floop just got called for tokenId ', tokenId);
+            console.warn('hi there - floop just got called for tokenId ', tokenId);
             const floopCheck = async () => {
                 return nuggft.floop(fmtTokenId).then((x) => {
                     const res = x.reduce(
@@ -247,6 +268,8 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
                             ) {
                                 prev.active.push(
                                     buildTokenIdFactory({
+                                        supplemental: false,
+
                                         duplicates: 1,
                                         activeIndex,
                                         hexId: curr,
@@ -268,6 +291,7 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
                             ) {
                                 prev.hidden.push(
                                     buildTokenIdFactory({
+                                        supplemental: false,
                                         activeIndex,
                                         hexId: curr,
                                         duplicates: 1,
@@ -292,6 +316,8 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
                                 });
                                 prev.duplicates.push(
                                     buildTokenIdFactory({
+                                        supplemental: false,
+
                                         duplicates: 0,
                                         activeIndex,
                                         hexId: curr,
@@ -304,9 +330,33 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
                         },
                         { active: [], hidden: [], duplicates: [] },
                     );
-                    return {
+
+                    const trueRes = {
                         ...res,
-                        byItem: [...res.active, ...res.hidden].reduce(
+                        hidden: [
+                            ...res.hidden,
+                            ...((supplementalItems
+                                ? supplementalItems.map((y, i) =>
+                                      y.itemId
+                                          ? (buildTokenIdFactory({
+                                                supplemental: false,
+                                                activeIndex: mockFloopOpenSlot(x, i),
+                                                hexId: y.itemId?.toRawIdNum(),
+                                                duplicates: 1,
+                                                tokenId: y.itemId,
+                                                ...parseItmeIdToNum(y.itemId.toRawId()),
+                                            }) as HotRotateOItem)
+                                          : undefined,
+                                  )
+                                : []
+                            ).filter((y) => y) as HotRotateOItem[]),
+                        ],
+                    };
+
+                    return {
+                        ...trueRes,
+
+                        byItem: [...trueRes.active, ...trueRes.hidden].reduce(
                             (prev, curr) => {
                                 prev[curr.feature].push(curr);
                                 return prev;
@@ -352,7 +402,7 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
             });
         }
         return undefined;
-    }, [tokenId, nuggft, provider, address, epoch, overrideOwner]);
+    }, [tokenId, nuggft, provider, address, epoch, overrideOwner, supplementalItems]);
 
     const { screen } = useDimensions();
 
@@ -527,6 +577,7 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
         MobileList,
         DesktopList,
         og,
+        supplementalItems,
     ] as const;
 };
 
@@ -554,6 +605,7 @@ export const useHotRotateOTransaction = (tokenId?: NuggId) => {
         MobileList,
         DesktopList,
         og,
+        supplementalItems,
     ] = useHotRotateO(tokenId, false);
 
     const algo: Parameters<typeof nuggft.rotate> | undefined = React.useMemo(() => {
@@ -598,6 +650,26 @@ export const useHotRotateOTransaction = (tokenId?: NuggId) => {
     const populatedTransaction = React.useMemo(() => {
         if (!tokenId || !address || !algo) return undefined;
         const main = nuggft.populateTransaction['rotate(uint24,uint8[],uint8[])'](...algo);
+
+        if (supplementalItems && supplementalItems.length > 0) {
+            const check = async () => {
+                return nuggft.populateTransaction.multicall(
+                    await Promise.all([
+                        nuggft.populateTransaction
+                            .claim(
+                                supplementalItems.map((x) => (x.sellingNuggId as NuggId).toRawId()),
+                                supplementalItems.map(() => ADDRESS_ZERO),
+                                supplementalItems.map(() => tokenId.toRawId()),
+                                supplementalItems.map((x) => (x.itemId as ItemId).toRawId()),
+                            )
+                            .then((x) => x.data || '0x0'),
+                        main.then((x) => x.data || '0x0'),
+                    ]),
+                );
+            };
+
+            return check();
+        }
 
         if (needsToClaim) {
             const check = async () => {

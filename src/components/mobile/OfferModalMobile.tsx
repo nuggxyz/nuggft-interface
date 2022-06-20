@@ -194,6 +194,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         },
     );
 
+    console.log({ check, data });
+
     const epoch = client.epoch.active.useId();
 
     const noBids = React.useMemo(() => {
