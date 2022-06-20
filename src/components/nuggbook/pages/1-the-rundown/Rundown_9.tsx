@@ -20,10 +20,10 @@ const Rundown_9: NuggBookPage = ({ setPage }) => {
                 >{t`When you loan your nugg, you receive the value of the current share price`}</Text>
                 <Text
                     textStyle={styles.text}
-                >{t`Your nugg will be used as collateral for 1024 periods (approx. 1024 hours). Anytime during the duration of the loan you can either extend or pay off the loan:`}</Text>
+                >{t`Your nugg will be used as collateral for 200 periods (approx. 200 hours). Anytime during the duration of the loan you can either extend or pay off the loan:`}</Text>
                 <div style={{ marginLeft: '.5rem' }}>
                     <BulletPoint
-                        text={t`to extend the loan you must pay at least the amount the share price increased since you took out the loan`}
+                        text={t`to extend the loan you must pay the amount the share price increased since you took out the loan`}
                     />
                     <BulletPoint
                         text={t`to pay off the loan, you pay the same amount as you would to extend it, as well as the original value of the loan and a small fee`}

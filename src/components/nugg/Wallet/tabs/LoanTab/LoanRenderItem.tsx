@@ -9,6 +9,7 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import { InfiniteListRenderItemProps } from '@src/components/general/List/InfiniteList';
 import client from '@src/client';
 import { ModalEnum } from '@src/interfaces/modals';
+import lib from '@src/lib';
 
 import styles from './LoanTab.styles';
 
@@ -45,6 +46,12 @@ const LoanRenderItem: FunctionComponent<
                             modalType: ModalEnum.LoanInput,
                             tokenId: item.nugg,
                             actionType: 'rebalance',
+                            backgroundStyle: {
+                                background: lib.colors.gradient2Transparent,
+                            },
+                            containerStyle: {
+                                background: lib.colors.semiTransparentWhite,
+                            },
                         })
                     }
                 />
@@ -59,6 +66,12 @@ const LoanRenderItem: FunctionComponent<
                             modalType: ModalEnum.LoanInput,
                             tokenId: item.nugg,
                             actionType: 'liquidate',
+                            backgroundStyle: {
+                                background: lib.colors.gradient2Transparent,
+                            },
+                            containerStyle: {
+                                background: lib.colors.semiTransparentWhite,
+                            },
                         })
                     }
                 />

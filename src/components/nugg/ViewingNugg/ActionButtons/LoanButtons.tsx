@@ -36,7 +36,10 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                         tokenId,
                         actionType: 'rebalance',
                         backgroundStyle: {
-                            background: lib.colors.gradient3,
+                            background: lib.colors.gradient2Transparent,
+                        },
+                        containerStyle: {
+                            background: lib.colors.semiTransparentWhite,
                         },
                     })
                 }
@@ -60,7 +63,10 @@ const LoanButtons: FunctionComponent<Props> = ({ tokenId }) => {
                         tokenId,
                         actionType: 'liquidate',
                         backgroundStyle: {
-                            background: lib.colors.gradient3,
+                            background: lib.colors.gradient2Transparent,
+                        },
+                        containerStyle: {
+                            background: lib.colors.semiTransparentWhite,
                         },
                     })
                 }
