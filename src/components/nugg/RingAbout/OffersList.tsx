@@ -32,7 +32,7 @@ const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefin
 }) => {
     const leader = web3.hook.usePriorityAnyENSName(
         extraData.type === 'nugg' ? 'nugg' : extraData.provider,
-        item?.user || '',
+        item?.user || undefined,
     );
 
     const amount = client.usd.useUsdPair(item.eth);
@@ -123,7 +123,7 @@ export default ({
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         swap ? (swap.type === 'item' ? 'nugg' : provider) : undefined,
-        (swap && leader?.account) || '',
+        (swap && leader?.account) || undefined,
     );
     return token &&
         lifecycle &&

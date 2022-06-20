@@ -11,7 +11,7 @@ import { Connector as ConnectorEnum, PeerInfo, Peer } from './interfaces';
 export interface Web3ReactState extends State {
     chainId: Chain | undefined;
     peer: PeerInfo | undefined;
-    accounts: string[] | undefined;
+    accounts: AddressString[] | undefined;
     activating: boolean;
     error: Error | undefined;
 }
@@ -20,7 +20,7 @@ export type Web3ReactStore = StoreApi<Web3ReactState>;
 
 export type Web3ReactStateUpdate = {
     chainId?: Chain;
-    accounts?: string[];
+    accounts?: AddressString[];
     peer?: PeerInfo | undefined;
 };
 

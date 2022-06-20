@@ -8,7 +8,7 @@ export default (swapData?: SwapData) => {
 
     const ownerEns = web3.hook.usePriorityAnyENSName(
         swapData?.type === 'item' ? ('nugg' as const) : provider,
-        swapData?.owner || '',
+        swapData?.owner,
     );
 
     const distribution = useMemo(() => {

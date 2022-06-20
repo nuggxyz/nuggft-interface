@@ -88,7 +88,7 @@ const SwapItem: FunctionComponent<
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         item.type === 'item' ? 'nugg' : extraData?.provider,
-        item.leader || '',
+        item.leader || undefined,
     );
 
     const epoch = client.epoch.active.useId();

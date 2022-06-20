@@ -48,7 +48,7 @@ declare type Hex = `0x${
     | 'e'
     | 'f'}`;
 
-declare type AddressString = `0x${string}`;
+declare type AddressString = `0x${Lowercase<string>}`;
 declare type Hash = `0x${string}`;
 declare type GetBetterWalletConnect = `unknown-${string}`;
 declare type ResponseHash = Hash | GetBetterWalletConnect;
@@ -261,6 +261,7 @@ interface Array<T> {
         shouldOverride: (a: T, b: T) => boolean,
         sort?: (a: T, b: T) => number,
     );
+    toLowerCase(): Lowercase<T>[];
     first(count?: number): Array<T>;
     last(count?: number): Array<T>;
     insert<U extends { index: number }>(element: U): Array<U>;

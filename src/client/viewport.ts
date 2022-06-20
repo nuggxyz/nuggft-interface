@@ -10,11 +10,11 @@ const useStore = create(
     combine(
         {
             visualViewport: {
-                height: window.visualViewport.height,
-                width: window.visualViewport.width,
-                offsetTop: window.visualViewport.offsetTop,
+                height: window!.visualViewport?.height,
+                width: window.visualViewport?.width,
+                offsetTop: window.visualViewport?.offsetTop,
 
-                pageTop: window.visualViewport.pageTop,
+                pageTop: window.visualViewport?.pageTop,
             },
         },
         (set) => {
@@ -26,20 +26,20 @@ const useStore = create(
                 set(() => {
                     return {
                         visualViewport: {
-                            height: window.visualViewport.height,
-                            width: window.visualViewport.width,
-                            offsetTop: window.visualViewport.offsetTop,
-                            pageTop: window.visualViewport.pageTop,
+                            height: window.visualViewport?.height,
+                            width: window.visualViewport?.width,
+                            offsetTop: window.visualViewport?.offsetTop,
+                            pageTop: window.visualViewport?.pageTop,
                         },
                     };
                 });
             };
 
             const onClose = () => {
-                window.visualViewport.onresize = () => undefined;
+                if (window.visualViewport) window.visualViewport.onresize = () => undefined;
             };
             const onMount = () => {
-                window.visualViewport.onresize = resize;
+                if (window.visualViewport) window.visualViewport.onresize = resize;
 
                 return onClose;
             };
@@ -62,7 +62,7 @@ export const useEmitOnKeyboardClose = () => {
     const prev = usePrevious(vp);
 
     React.useEffect(() => {
-        if (prev && prev * 1.25 < vp) {
+        if (vp !== undefined && prev && prev * 1.25 < vp) {
             emitter.emit(emitter.events.KeyboardClosed, {});
         }
     }, [prev, vp]);

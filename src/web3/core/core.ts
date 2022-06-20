@@ -117,7 +117,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
     function useSelectedAccount(connector: Connector) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const values = initializedConnectors.map((x) => x.hooks.useAccount());
-        return values[getIndex(connector)]?.toLowerCase();
+        return values[getIndex(connector)]?.toLowerCase() as AddressString | undefined;
     }
 
     function useSelectedIsActive(connector: Connector) {
@@ -164,7 +164,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
     function useSelectedAnyENSName(
         connector: Connector,
         provider: CustomWeb3Provider | 'nugg' | undefined,
-        account: string,
+        account: AddressString | NuggId | undefined,
     ) {
         const index = getIndex(connector);
         const values = initializedConnectors.map((x, i) =>
@@ -178,7 +178,7 @@ export function getSelectedConnector(...initializedConnectors: Res<Connector>[])
         return useBalance(provider, account);
     }
 
-    function useSelectedTx(connector: Connector, hash: string) {
+    function useSelectedTx(connector: Connector, hash: Hash) {
         const provider = useSelectedProvider(connector);
         return useTx(provider, hash);
     }
@@ -288,7 +288,7 @@ export function getNetworkConnector(initializedConnectors: {
 
     function useNetworkAnyENSName(
         provider: CustomWeb3Provider | 'nugg' | undefined,
-        account: string,
+        account: AddressString,
     ) {
         return useSelectedAnyENSName(useNetworkConnector(), provider, account);
     }
@@ -301,7 +301,7 @@ export function getNetworkConnector(initializedConnectors: {
         return useSelectedPeer(useNetworkConnector());
     }
 
-    function useNetworkTx(hash: string) {
+    function useNetworkTx(hash: Hash) {
         return useSelectedTx(useNetworkConnector(), hash);
     }
 
@@ -401,7 +401,7 @@ export function getPriorityConnector(initializedConnectors: {
 
     function usePriorityAnyENSName(
         provider: CustomWeb3Provider | 'nugg' | undefined,
-        account: string,
+        account: AddressString | NuggId | undefined,
     ) {
         return useSelectedAnyENSName(usePriorityConnector(), provider, account);
     }
@@ -414,7 +414,7 @@ export function getPriorityConnector(initializedConnectors: {
         return useSelectedPeer(usePriorityConnector());
     }
 
-    function usePriorityTx(hash: string) {
+    function usePriorityTx(hash: Hash) {
         return useSelectedTx(usePriorityConnector(), hash);
     }
 
@@ -489,7 +489,7 @@ function getDerivedHooks({
     useError,
     usePeer,
 }: ReturnType<typeof getStateHooks>) {
-    function useAccount(): string | undefined {
+    function useAccount(): AddressString | undefined {
         return useAccounts()?.[0];
     }
 
@@ -512,7 +512,7 @@ function getDerivedHooks({
     return { useAccount, useIsActive };
 }
 
-function useTx(provider: CustomWeb3Provider | undefined, hash: string) {
+function useTx(provider: CustomWeb3Provider | undefined, hash: Hash) {
     const [data, setData] = useState<TransactionReceipt>();
 
     useEffect(() => {
@@ -608,7 +608,7 @@ function useTransactionManager(provider: CustomWeb3Provider | undefined) {
     return { response, receipt, send };
 }
 
-function useBalance(provider: CustomWeb3Provider | undefined, account: string | undefined) {
+function useBalance(provider: CustomWeb3Provider | undefined, account: AddressString | undefined) {
     const [balance, setBalance] = useState<EthInt>();
     useEffect(() => {
         if (provider && account) {
@@ -638,7 +638,7 @@ function useBalance(provider: CustomWeb3Provider | undefined, account: string | 
 
 function useENS(
     provider: CustomWeb3Provider | 'nugg' | undefined,
-    account: Lowercase<string> | undefined,
+    account: Lowercase<`0x${string}`> | NuggId | undefined,
     chainId: Chain = DEFAULT_CHAIN,
 ): (string | null) | undefined {
     // const [ENSName, setENSName] = useState<string | null | undefined>();
@@ -721,7 +721,7 @@ function getAugmentedHooks<T extends Connector>(
 
     function useAnyENSName(
         provider: CustomWeb3Provider | 'nugg' | undefined,
-        account: string,
+        account: AddressString | NuggId | undefined,
     ): (string | null) | undefined {
         const chainId = useChainId();
 

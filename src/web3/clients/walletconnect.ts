@@ -111,7 +111,7 @@ export class WalletConnect extends Connector {
         this.actions.update({ chainId: parseChainId(chainId), peer: this.findPeer() });
     };
 
-    private accountsChangedListener = (accounts: string[]): void => {
+    private accountsChangedListener = (accounts: AddressString[]): void => {
         this.actions.update({ accounts, peer: this.findPeer() });
     };
 
@@ -320,7 +320,9 @@ export class WalletConnect extends Connector {
                 // for walletconnect, we always use sequential instead of parallel fetches because otherwise
                 // chainId defaults to 1 even if the connecting wallet isn't on mainnet
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                const accounts = await this.provider!.request<string[]>({ method: 'eth_accounts' });
+                const accounts = (
+                    await this.provider!.request<`0x${string}`[]>({ method: 'eth_accounts' })
+                ).toLowerCase();
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const chainId = parseChainId(
                     await this.provider!.request<string | number>({ method: 'eth_chainId' }),
@@ -390,9 +392,11 @@ export class WalletConnect extends Connector {
 
         try {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const accounts = await this.provider!.request<string[]>({
-                method: 'eth_requestAccounts',
-            });
+            const accounts = (
+                await this.provider!.request<`0x${string}`[]>({
+                    method: 'eth_requestAccounts',
+                })
+            ).toLowerCase();
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const chainId = parseChainId(
                 await this.provider!.request<string | number>({ method: 'eth_chainId' }),
@@ -401,7 +405,11 @@ export class WalletConnect extends Connector {
             const peer = this.findPeer();
 
             if (!desiredChainId || desiredChainId === chainId) {
-                return this.actions.update({ chainId, accounts, peer: this.findPeer() });
+                return this.actions.update({
+                    chainId,
+                    accounts: accounts.toLowerCase(),
+                    peer: this.findPeer(),
+                });
             }
 
             if (!desiredPeer || desiredPeer === peer.peer) {

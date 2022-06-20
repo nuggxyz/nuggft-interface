@@ -85,7 +85,7 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         token && token.type === 'item' ? 'nugg' : provider,
-        leader?.user || '',
+        leader?.user || undefined,
     );
     const { isPhone } = useDimensions();
 

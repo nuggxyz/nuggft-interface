@@ -7,8 +7,8 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import { EthInt } from '@src/classes/Fraction';
 
 type Props = {
-    address: string;
-    hash: string;
+    address: AddressString;
+    hash: Hash;
     textStyle: CSSProperties;
     size: SimpleSizes;
     isNugg: boolean;

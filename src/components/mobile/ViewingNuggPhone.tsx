@@ -310,7 +310,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         token && token.type === 'item' ? 'nugg' : provider,
-        swap?.leader || '',
+        swap?.leader || undefined,
     );
 
     const quick = client.v2.useSwap(tokenId);

@@ -56,7 +56,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         swap && swap.type === 'item' ? 'nugg' : provider,
-        leader?.user || '',
+        leader?.user || undefined,
     );
     const { screen: screenType, isPhone } = useDimensions();
 

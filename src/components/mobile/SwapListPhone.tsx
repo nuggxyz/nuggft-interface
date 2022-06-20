@@ -21,7 +21,7 @@ const SwapItem: FunctionComponent<{ item: SwapDataWithTryout }> = ({ item }) => 
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         item.isItem() ? 'nugg' : provider,
-        item.leader || '',
+        item.leader || undefined,
     );
 
     const amount = useUsdPair(item.eth);

@@ -21,10 +21,7 @@ const NuggListRenderItemSwap = ({
     }, [token?.activeSwap]);
     const preference = client.usd.useUsdPair(swap?.eth);
     const provider = web3.hook.usePriorityProvider();
-    const ens = web3.hook.usePriorityAnyENSName(
-        swap?.isItem() ? 'nugg' : provider,
-        swap?.leader as string,
-    );
+    const ens = web3.hook.usePriorityAnyENSName(swap?.isItem() ? 'nugg' : provider, swap?.leader);
 
     return swap && tokenId ? (
         <div

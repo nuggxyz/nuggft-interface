@@ -29,7 +29,7 @@ export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
         const minutes = Math.floor((remaining * 12) / 60);
         const leaderEns = web3.hook.usePriorityAnyENSName(
             tokenId?.isItemId() ? 'nugg' : provider,
-            swap?.leader || potential?.owner || '',
+            swap?.leader || potential?.owner || undefined,
         );
 
         const dynamicTextColor = React.useMemo(() => {

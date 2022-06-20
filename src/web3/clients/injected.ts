@@ -105,7 +105,7 @@ export class Injected extends Connector {
 
         this.options = options;
 
-        if (connectEagerly) void this.connectEagerly();
+        if (connectEagerly && this.connectEagerly) void this.connectEagerly();
     }
 
     declare peers: {
@@ -177,12 +177,15 @@ export class Injected extends Connector {
                         });
                     });
 
-                    this.provider.on('accountsChanged', (accounts: string[]): void => {
+                    this.provider.on('accountsChanged', (accounts: `0x${string}`[]): void => {
                         if (accounts.length === 0) {
                             // handle this edge case by disconnecting
                             this.actions.reportError(undefined);
                         } else {
-                            this.actions.update({ accounts, peer: this.peerCheck() });
+                            this.actions.update({
+                                accounts: accounts.toLowerCase(),
+                                peer: this.peerCheck(),
+                            });
                         }
                     });
                 }
@@ -224,14 +227,14 @@ export class Injected extends Connector {
 
         return Promise.all([
             this.provider.request({ method: 'eth_chainId' }) as Promise<string>,
-            this.provider.request({ method: 'eth_accounts' }) as Promise<string[]>,
+            this.provider.request({ method: 'eth_accounts' }) as Promise<`0x${string}`[]>,
         ])
             .then(([chainId, accounts]) => {
                 if (accounts.length) {
                     store.getState().connect(this.peerCheck().peer);
                     this.actions.update({
                         chainId: parseChainId(chainId),
-                        accounts,
+                        accounts: accounts.toLowerCase(),
                         peer: this.peerCheck(),
                     });
                 } else {
@@ -279,10 +282,9 @@ export class Injected extends Connector {
 
         return Promise.all([
             this.provider.request({ method: 'eth_chainId' }) as Promise<string>,
-            this.provider.request({ method: 'eth_requestAccounts' }) as Promise<string[]>,
+            this.provider.request({ method: 'eth_requestAccounts' }) as Promise<`0x${string}`[]>,
         ])
             .then(([chainId, accounts]) => {
-                console.log('HIIIIIIII', chainId, accounts);
                 const receivedChainId = parseChainId(chainId);
                 const desiredChainId =
                     typeof desiredChainIdOrChainParameters === 'number'
@@ -295,7 +297,7 @@ export class Injected extends Connector {
 
                     return this.actions.update({
                         chainId: receivedChainId,
-                        accounts,
+                        accounts: accounts.toLowerCase(),
                         peer: this.peerCheck(),
                     });
                 }

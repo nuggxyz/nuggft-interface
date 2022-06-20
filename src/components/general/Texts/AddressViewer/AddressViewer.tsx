@@ -12,7 +12,7 @@ export default ({
     size,
     isNugg,
 }: {
-    address: string;
+    address: AddressString;
     route: 'tx' | 'address';
     param: string;
     textStyle: CSSProperties;

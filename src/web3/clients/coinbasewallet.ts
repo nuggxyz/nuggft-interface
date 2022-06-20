@@ -122,7 +122,7 @@ export class CoinbaseWallet extends Connector {
                 this.actions.update({ chainId: parseChainId(chainId) });
             });
 
-            this.provider.on('accountsChanged', (accounts: string[]): void => {
+            this.provider.on('accountsChanged', (accounts: AddressString[]): void => {
                 this.actions.update({ accounts });
             });
         }));
@@ -153,7 +153,7 @@ export class CoinbaseWallet extends Connector {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 this.provider!.request<string>({ method: 'eth_chainId' }),
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                this.provider!.request<string[]>({ method: 'eth_accounts' }),
+                this.provider!.request<AddressString[]>({ method: 'eth_accounts' }),
             ])
                 .then(([chainId, accounts]) => {
                     if (accounts.length) {
@@ -244,7 +244,7 @@ export class CoinbaseWallet extends Connector {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             this.provider!.request<string>({ method: 'eth_chainId' }),
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            this.provider!.request<string[]>({ method: 'eth_requestAccounts' }),
+            this.provider!.request<AddressString[]>({ method: 'eth_requestAccounts' }),
         ])
             .then(([chainId, accounts]) => {
                 const receivedChainId = parseChainId(chainId);

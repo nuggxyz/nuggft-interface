@@ -652,12 +652,12 @@ export const Status = React.memo<{
 );
 
 export const Account = React.memo<{
-    address?: string;
+    address?: AddressString;
     onClick: (full: boolean) => void;
 }>(
     ({ address, onClick }) => {
         const provider = web3.hook.usePriorityProvider();
-        const ens = web3.hook.usePriorityAnyENSName(provider, address || '');
+        const ens = web3.hook.usePriorityAnyENSName(provider, address || undefined);
         return (
             <Button
                 className="mobile-pressable-div"

@@ -37,8 +37,8 @@ function ensureChainIdIsAllowed(
         : new ChainIdNotAllowedError(chainId, allowedChainIds);
 }
 
-function validateAccount(account: string): string {
-    return getAddress(account);
+function validateAccount(account: AddressString): AddressString {
+    return getAddress(account).toLowerCase() as AddressString;
 }
 
 const DEFAULT_STATE = {

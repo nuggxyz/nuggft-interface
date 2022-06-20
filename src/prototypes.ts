@@ -151,7 +151,13 @@ Number.prototype.toNuggId = function fn() {
 String.prototype.equals = function fn(other: string) {
     return this === other;
 };
+Array.prototype.toLowerCase = function fn() {
+    if (this.length > 0 && typeof this[0] === 'string') {
+        return this.map((x: string) => x.toLowerCase()) as Lowercase<string>[];
+    }
 
+    return [...this];
+};
 Array.prototype.mergeInPlace = function fn<T>(
     incomingData: Array<T>,
     keyFeild: keyof T,
