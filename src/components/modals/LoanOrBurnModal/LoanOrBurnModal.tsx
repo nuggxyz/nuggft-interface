@@ -42,10 +42,7 @@ const LoanOrBurnModal = ({ data: { tokenId, actionType } }: { data: LoanModalDat
     }, [tokenId, myNuggs]);
 
     const populatedTransaction = useMemo(() => {
-        const action =
-            actionType === 'loan'
-                ? nuggft.populateTransaction.loan([tokenId.toRawId()])
-                : nuggft.populateTransaction.burn(tokenId.toRawId());
+        const action = nuggft.populateTransaction.loan([tokenId.toRawId()]);
         if (needToClaim && address) {
             const claim = nuggft.populateTransaction.claim(
                 [tokenId.toRawId()],

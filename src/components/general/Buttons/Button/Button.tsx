@@ -47,7 +47,7 @@ const Button: FunctionComponent<PropsWithChildren<ButtonProps>> = ({
         return {
             ...styles.button,
             ...(hover && !disableHoverAnimation && !disabled ? { filter: 'brightness(.8)' } : {}),
-            ...(disabled && !bypassDisableStyle ? { opacity: '0.3' } : {}),
+            ...(disabled && !bypassDisableStyle ? { opacity: '0.6' } : {}),
             // opacity: disabled && !bypassDisableStyle ? '0.3': '1',
             cursor: disabled && !bypassDisableStyle ? 'not-allowed' : 'pointer',
             position: 'relative' as const,

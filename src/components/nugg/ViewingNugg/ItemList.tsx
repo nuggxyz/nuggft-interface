@@ -18,10 +18,10 @@ import {
     useTransactionManager2,
 } from '@src/contracts/useContract';
 import web3 from '@src/web3';
-import { Address } from '@src/classes/Address';
 import List from '@src/components/general/List/List';
 import Label from '@src/components/general/Label/Label';
 import { buildTokenIdFactory } from '@src/prototypes';
+import { Address } from '@src/classes/Address';
 
 import styles from './ViewingNugg.styles';
 
@@ -87,15 +87,16 @@ const Item: FC<{ item: LiveNuggItem; extraData: ExtraData }> = ({ item, extraDat
                         textStyle={styles.itemListButtonText}
                         type="text"
                         onClick={() => {
-                            if (item.activeSwap && sender)
+                            if (item.activeSwap && sender) {
                                 void send(
                                     nuggft.populateTransaction.claim(
                                         [formatItemSwapIdForSend(item.activeSwap).sellingNuggId],
                                         [Address.ZERO.hash],
-                                        [sender],
+                                        [formatItemSwapIdForSend(item.activeSwap).sellingNuggId],
                                         [formatItemSwapIdForSend(item.activeSwap).itemId],
                                     ),
                                 );
+                            }
                         }}
                     />
                 ))}
