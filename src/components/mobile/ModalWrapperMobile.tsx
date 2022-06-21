@@ -9,6 +9,7 @@ import OfferModalMobile from './OfferModalMobile';
 import SellNuggOrItemModalMobile from './SellModalMobile';
 import ClaimModalMobile from './ClaimModalMobile';
 import HotRotateOModalMobile from './HotRotateOModalMobile';
+import NameModalMobile from './NameModalMobile';
 
 export const ModalSwitchMobile = () => {
     const data = client.modal.useData();
@@ -22,6 +23,8 @@ export const ModalSwitchMobile = () => {
             return <ClaimModalMobile data={data} />;
         case ModalEnum.RotateO:
             return <HotRotateOModalMobile data={data} />;
+        case ModalEnum.Name:
+            return <NameModalMobile data={data} />;
         case undefined:
         default:
             return null;

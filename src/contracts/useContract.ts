@@ -13,6 +13,8 @@ import {
     XNuggftV1__factory,
     NuggftV1,
     NuggftV1__factory,
+    EnsResolver__factory,
+    EnsRegistrar__factory,
 } from '@src/typechain';
 import lib, { shortenTxnHash } from '@src/lib';
 import emitter from '@src/emitter';
@@ -22,6 +24,12 @@ import { Connector as ConnectorEnum } from '@src/web3/core/interfaces';
 import usePrevious from '@src/hooks/usePrevious';
 import { CustomEtherscanProvider } from '@src/web3/classes/CustomEtherscanProvider';
 import useDimensions from '@src/client/hooks/useDimensions';
+import { EnsResolver } from '@src/typechain/EnsResolver';
+import { EnsRegistrar } from '@src/typechain/EnsRegistrar';
+import { EnsRegistrarController } from '@src/typechain/EnsRegistrarController';
+import { EnsRegistrarController__factory } from '@src/typechain/factories/EnsRegistrarController__factory';
+import { EnsReverseRegistrar } from '@src/typechain/EnsReverseRegistrar';
+import { EnsReverseRegistrar__factory } from '@src/typechain/factories/EnsReverseRegistrar__factory';
 
 function useContract<C extends BaseContract>(
     address: string,
@@ -61,6 +69,50 @@ export function useDotnuggV1(provider?: CustomWeb3Provider) {
     }, [chainId]);
 
     return useContract<DotnuggV1>(address, DotnuggV1__factory.abi, provider);
+}
+
+export function useENSResolver(provider?: CustomWeb3Provider) {
+    const chainId = web3.hook.usePriorityChainId();
+
+    const address = useMemo(() => {
+        return web3.config.ENS_RESOLVER_ADDRESSES[chainId ?? web3.config.DEFAULT_CHAIN];
+    }, [chainId]);
+
+    return useContract<EnsResolver>(address, EnsResolver__factory.abi, provider);
+}
+
+export function useENSRegistrar(provider?: CustomWeb3Provider) {
+    const chainId = web3.hook.usePriorityChainId();
+
+    const address = useMemo(() => {
+        return web3.config.ENS_REGISTRAR_ADDRESSES[chainId ?? web3.config.DEFAULT_CHAIN];
+    }, [chainId]);
+
+    return useContract<EnsRegistrar>(address, EnsRegistrar__factory.abi, provider);
+}
+
+export function useENSRegistrarController(provider?: CustomWeb3Provider) {
+    const chainId = web3.hook.usePriorityChainId();
+
+    const address = useMemo(() => {
+        return web3.config.ENS_REGISTRAR_CONTROLLER_ADDRESSES[chainId ?? web3.config.DEFAULT_CHAIN];
+    }, [chainId]);
+
+    return useContract<EnsRegistrarController>(
+        address,
+        EnsRegistrarController__factory.abi,
+        provider,
+    );
+}
+
+export function useENSReverseRegistrar(provider?: CustomWeb3Provider) {
+    const chainId = web3.hook.usePriorityChainId();
+
+    const address = useMemo(() => {
+        return web3.config.ENS_REVERSE_REGISTRAR_ADDRESSES[chainId ?? web3.config.DEFAULT_CHAIN];
+    }, [chainId]);
+
+    return useContract<EnsReverseRegistrar>(address, EnsReverseRegistrar__factory.abi, provider);
 }
 
 export const useEstimateTransaction = (provider?: CustomWeb3Provider, from?: AddressString) => {

@@ -1,3 +1,5 @@
+import { hexValue } from '@ethersproject/bytes';
+import { randomBytes } from '@ethersproject/random';
 import React, { useState } from 'react';
 
 // Hook
@@ -104,3 +106,29 @@ export default function useLocalStorage<T>(key: string, initialValue: T) {
 
 //     return cb;
 // }
+const local_secret = hexValue(randomBytes(32));
+
+export function useLocalSecret(key: string) {
+    // State to store our value
+    // Pass initial state function to useState so logic is only executed once
+    const [storedValue] = useState<string>(() => {
+        try {
+            // Get from local storage by key
+            const item = window.localStorage.getItem(key) as string | undefined | 'undefined';
+            console.log({ item });
+            if (!item || item === 'undefined') {
+                window.localStorage.setItem(key, local_secret);
+
+                return local_secret;
+            }
+
+            return item;
+        } catch (error) {
+            // If error also return local_secret
+            console.log(error);
+            return local_secret;
+        }
+    });
+
+    return storedValue;
+}

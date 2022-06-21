@@ -12,6 +12,7 @@ export enum ModalEnum {
     Adjust,
     RotateO,
     NuggBook,
+    Name,
 }
 
 export interface ModalDataBase {
@@ -62,13 +63,18 @@ export interface QRCodeModalData extends ModalDataBase {
     backgroundStyle: { background: string };
 }
 
-export interface SellModalDataBase extends TokenIdFactoryBase, ModalDataBase {
-    modalType: ModalEnum.Sell;
-    sellingNuggId: null | NuggId;
+export interface NameModalDataBase extends TokenIdFactoryBase, ModalDataBase {
+    modalType: ModalEnum.Name;
+    nuggId: null | NuggId;
 }
 
 export interface NuggBookModalData extends ModalDataBase {
     modalType: ModalEnum.NuggBook;
+}
+
+export interface SellModalDataBase extends TokenIdFactoryBase, ModalDataBase {
+    modalType: ModalEnum.Sell;
+    sellingNuggId: null | NuggId;
 }
 
 export type SellModalData = TokenIdFactoryCreator<
@@ -78,6 +84,7 @@ export type SellModalData = TokenIdFactoryCreator<
 >;
 
 export type ModalType =
+    | NameModalDataBase
     | LoanModalData
     | OfferModalData
     | QRCodeModalData
