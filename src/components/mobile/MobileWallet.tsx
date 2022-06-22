@@ -13,7 +13,7 @@ import InfoClicker from '@src/components/nuggbook/InfoClicker';
 import { LiveNuggItem } from '@src/client/interfaces';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import { ModalEnum } from '@src/interfaces/modals';
-import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
+import ens_icon from '@src/assets/images/app_logos/ens.png';
 
 import MyNuggItemListPhone from './MyNuggItemMobile';
 
@@ -35,9 +35,6 @@ const MobileWallet: FunctionComponent<Props> = () => {
     const [loansOpen, setLoansOpen] = React.useState(false);
 
     const ens = web3.hook.usePriorityENSName(provider);
-
-    const setCurrencyPreference = client.usd.useSetCurrencyPreferrence();
-    const currencyPreferrence = client.usd.useCurrencyPreferrence();
 
     const items = React.useMemo(() => {
         return Object.values(
@@ -91,10 +88,18 @@ const MobileWallet: FunctionComponent<Props> = () => {
                     alignItems: 'center',
                     background: lib.colors.transparentWhite,
                     borderRadius: lib.layout.borderRadius.medium,
+                    boxShadow: lib.layout.boxShadow.basic,
+
                     padding: '1rem',
                 }}
             >
-                <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                <div
+                    style={{
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                    }}
+                >
                     <Text
                         size="larger"
                         textStyle={{
@@ -107,17 +112,60 @@ const MobileWallet: FunctionComponent<Props> = () => {
                     </Text>
                     {peer && <NLStaticImage image={`${peer.peer}_icon`} />}
                 </div>
-                <Button
-                    size="small"
-                    textStyle={{ color: lib.colors.primaryColor }}
-                    buttonStyle={{ background: 'transparent', padding: 0 }}
-                    onClick={() => {
-                        void connector.deactivate();
-                    }}
-                    label={t`sign out`}
-                />
             </div>
-            <CurrencyToggler
+
+            <Button
+                className="mobile-pressable-div"
+                label={t`edit my username`}
+                onClick={() => {
+                    openModal({ modalType: ModalEnum.Name as const });
+                }}
+                buttonStyle={{
+                    borderRadius: lib.layout.borderRadius.medium,
+                    background: lib.colors.transparentWhite,
+                    padding: '10px 10px',
+                    alignItems: 'center',
+                    boxShadow: lib.layout.boxShadow.basic,
+                }}
+                leftIcon={
+                    <img
+                        alt="ethereum logo"
+                        src={ens_icon}
+                        height={30}
+                        style={{
+                            borderRadius: '22.5%',
+                            objectFit: 'cover',
+                            marginRight: '10px',
+                        }}
+                    />
+                }
+                textStyle={{
+                    color: lib.colors.primaryColor,
+                    fontSize: 20,
+                }}
+            />
+            <Button
+                className="mobile-pressable-div"
+                label={t`peace out`}
+                onClick={() => {
+                    void connector.deactivate();
+                }}
+                buttonStyle={{
+                    borderRadius: lib.layout.borderRadius.medium,
+                    background: lib.colors.transparentWhite,
+                    marginTop: '15px',
+                    padding: '10px 10px',
+                    alignItems: 'center',
+                    boxShadow: lib.layout.boxShadow.basic,
+                    marginBottom: '15px',
+                }}
+                leftIcon={<span style={{ fontSize: 20, marginRight: 7 }}>✌️</span>}
+                textStyle={{
+                    color: lib.colors.primaryColor,
+                    fontSize: 20,
+                }}
+            />
+            {/* <CurrencyToggler
                 setPref={(input) => {
                     setCurrencyPreference(input);
                     return undefined;
@@ -125,7 +173,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
                 pref={currencyPreferrence}
                 // floaterStyle={{ background: floaterColor }}
                 // containerStyle={floaterWrapperStyle}
-            />
+            /> */}
             <div style={{ width: '325px', paddingTop: '20px', paddingBottom: '20px' }}>
                 <div style={{ paddingTop: '20px', paddingBottom: '20px' }}>
                     <div

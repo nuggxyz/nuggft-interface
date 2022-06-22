@@ -63,7 +63,7 @@ export interface QRCodeModalData extends ModalDataBase {
     backgroundStyle: { background: string };
 }
 
-export interface NameModalDataBase extends TokenIdFactoryBase, ModalDataBase {
+export interface NameModalDataBase extends ModalDataBase {
     modalType: ModalEnum.Name;
 }
 

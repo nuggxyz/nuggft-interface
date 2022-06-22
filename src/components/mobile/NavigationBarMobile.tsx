@@ -179,15 +179,18 @@ const NavigationBarMobile: FC<unknown> = () => {
 
     const tapper = React.useCallback(() => {
         startTransition(() => {
-            if (nuggbookOpen) close();
-            // purposfully last - dont want to fully close the square if something is open
-            else if (coreManualMatch && matchHomeCore === prevMatchHomeCore) {
+            if (nuggbookOpen) {
+                return undefined;
+            }
+            if (coreManualMatch && matchHomeCore === prevMatchHomeCore) {
+                // purposfully last - dont want to fully close the square if something is open
                 setTimeout(() => {
                     setManualMatch(false);
                 }, 1000);
             }
+            return undefined;
         });
-    }, [coreManualMatch, nuggbookOpen, close, matchHomeCore, prevMatchHomeCore]);
+    }, [coreManualMatch, nuggbookOpen, matchHomeCore, prevMatchHomeCore]);
 
     useOnTapOutside(ref, tapper);
 
