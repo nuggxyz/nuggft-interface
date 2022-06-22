@@ -83,6 +83,7 @@ const useEns = (provider?: Web3Provider, address?: Lowercase<AddressString>) => 
 };
 
 export default {
+    useInject: () => useStore((state) => state.update),
     useEns,
     useStore,
 };

@@ -1,6 +1,11 @@
-import { hexValue } from '@ethersproject/bytes';
+import { hexConcat, hexlify } from '@ethersproject/bytes';
 import { randomBytes } from '@ethersproject/random';
+import { sha256 } from '@ethersproject/sha2';
+import { toUtf8Bytes } from '@ethersproject/strings';
 import React, { useState } from 'react';
+
+import web3 from '@src/web3';
+import { ADDRESS_ZERO } from '@src/web3/constants';
 
 // Hook
 export default function useLocalStorage<T>(key: string, initialValue: T) {
@@ -106,16 +111,15 @@ export default function useLocalStorage<T>(key: string, initialValue: T) {
 
 //     return cb;
 // }
-const local_secret = hexValue(randomBytes(32));
+const local_secret = hexlify(randomBytes(32));
 
-export function useLocalSecret(key: string) {
+export function useLocalSecret(key: string, salt: string) {
     // State to store our value
     // Pass initial state function to useState so logic is only executed once
     const [storedValue] = useState<string>(() => {
         try {
             // Get from local storage by key
             const item = window.localStorage.getItem(key) as string | undefined | 'undefined';
-            console.log({ item });
             if (!item || item === 'undefined') {
                 window.localStorage.setItem(key, local_secret);
 
@@ -130,5 +134,12 @@ export function useLocalSecret(key: string) {
         }
     });
 
-    return storedValue;
+    const addr = web3.hook.usePriorityAccount();
+
+    return React.useMemo(() => {
+        const a = hexlify(toUtf8Bytes(salt === '' ? 'xx' : salt));
+        const b = hexConcat([storedValue, a, addr ?? ADDRESS_ZERO]);
+        const c = sha256(b);
+        return c;
+    }, [storedValue, salt, addr]);
 }

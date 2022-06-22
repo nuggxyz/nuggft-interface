@@ -1,5 +1,7 @@
 overwrite: true
-schema: 'https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-rinkeby'
+schema:
+    - 'https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-goerli'
+    - 'https://api.thegraph.com/subgraphs/name/ensdomains/ens'
 documents: 'src/**/*.graphql'
 generates:
     ./src/gql/types.generated.ts:

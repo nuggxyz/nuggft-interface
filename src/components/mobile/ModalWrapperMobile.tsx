@@ -24,7 +24,7 @@ export const ModalSwitchMobile = () => {
         case ModalEnum.RotateO:
             return <HotRotateOModalMobile data={data} />;
         case ModalEnum.Name:
-            return <NameModalMobile data={data} />;
+            return <NameModalMobile />;
         case undefined:
         default:
             return null;

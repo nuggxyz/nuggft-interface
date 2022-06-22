@@ -59,6 +59,10 @@ export const FEATURE_RARITY = [8, 11, 11, 6, 6, 3, 3, 3].map(
 
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000' as const;
 
+const lower = <T extends string>(str: T) => {
+    return str.toLowerCase() as Lowercase<T>;
+};
+
 export const CONTRACTS = {
     [Chain.MAINNET]: {
         NuggftV1: ADDRESS_ZERO,
@@ -70,36 +74,36 @@ export const CONTRACTS = {
         MintOffset: 1000000,
     },
     [Chain.ROPSTEN]: {
-        NuggftV1: '0x69420000e30fb9095ec2a254765ff919609c1875',
-        xNuggftV1: '0xd67f4462308e6c5c236b107e8d0b77da2c359cae',
-        DotnuggV1: '0xb0ac4a039fd789fe080c8477d8e004b67fc987f1',
+        NuggftV1: lower('0x69420000e30fb9095ec2a254765ff919609c1875'),
+        xNuggftV1: lower('0xd67f4462308e6c5c236b107e8d0b77da2c359cae'),
+        DotnuggV1: lower('0xb0ac4a039fd789fe080c8477d8e004b67fc987f1'),
         Genesis: 12351104,
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
     },
     [Chain.RINKEBY]: {
-        NuggftV1: '0x6942000062516fab40349b13131c34346c0446e8',
-        xNuggftV1: '0x12705e16c18e115b94a6ce6023e96ea328032edb',
-        DotnuggV1: '0x6b11799eaaf5cd8799915c64e901c254207366ba',
+        NuggftV1: lower('0x6942000062516fab40349b13131c34346c0446e8'),
+        xNuggftV1: lower('0x12705e16c18e115b94a6ce6023e96ea328032edb'),
+        DotnuggV1: lower('0x6b11799eaaf5cd8799915c64e901c254207366ba'),
         Genesis: 10840448,
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
     },
     [Chain.GOERLI]: {
-        NuggftV1: '0x69420000887A50595679f0c479e5012FEc187a5B',
-        xNuggftV1: '0xb92506619e827f12b87f5b45d02d0c33fce7721d',
-        DotnuggV1: '0xc5721189039c4232427ed67ebd76c68f26f8500c',
+        NuggftV1: lower('0x69420000887A50595679f0c479e5012FEc187a5B'),
+        xNuggftV1: lower('0xb92506619e827f12b87f5b45d02d0c33fce7721d'),
+        DotnuggV1: lower('0xc5721189039c4232427ed67ebd76c68f26f8500c'),
         Genesis: 7093184,
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
     },
     [Chain.KOVAN]: {
-        NuggftV1: '0x694200002e1540157c5fe987705e418ee0a9577d',
-        xNuggftV1: '0xf4b460f98345b404c9b0455a36f7676a49ad59ab',
-        DotnuggV1: '0x632955df598472c37ef75d2111d450b935ec6abc',
+        NuggftV1: lower('0x694200002e1540157c5fe987705e418ee0a9577d'),
+        xNuggftV1: lower('0xf4b460f98345b404c9b0455a36f7676a49ad59ab'),
+        DotnuggV1: lower('0x632955df598472c37ef75d2111d450b935ec6abc'),
         Genesis: 32140416,
         Interval: 64,
         Offset: 1,
@@ -240,35 +244,43 @@ export const CHAIN_INFO = {
 } as const;
 
 export const ENS_REGISTRAR_CONTROLLER_ADDRESSES = {
-    [Chain.MAINNET]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.ROPSTEN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.GOERLI]: '0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5',
-    [Chain.RINKEBY]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.KOVAN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    [Chain.MAINNET]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.ROPSTEN]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.GOERLI]: lower('0x283Af0B28c62C092C9727F1Ee09c02CA627EB7F5'),
+    [Chain.RINKEBY]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.KOVAN]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
 };
 
 export const ENS_REGISTRAR_ADDRESSES = {
-    [Chain.MAINNET]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.ROPSTEN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.GOERLI]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.RINKEBY]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.KOVAN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    [Chain.MAINNET]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.ROPSTEN]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.GOERLI]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.RINKEBY]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.KOVAN]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
 };
 
 export const ENS_RESOLVER_ADDRESSES = {
-    [Chain.MAINNET]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.ROPSTEN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.GOERLI]: '0x4B1488B7a6B320d2D721406204aBc3eeAa9AD329',
-    [Chain.RINKEBY]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.KOVAN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    [Chain.MAINNET]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.ROPSTEN]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.GOERLI]: lower('0x4B1488B7a6B320d2D721406204aBc3eeAa9AD329'),
+    [Chain.RINKEBY]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.KOVAN]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
 };
 
 export const ENS_REVERSE_REGISTRAR_ADDRESSES = {
-    [Chain.MAINNET]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.ROPSTEN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.GOERLI]: '0x6F628b68b30Dc3c17f345c9dbBb1E483c2b7aE5c',
-    [Chain.RINKEBY]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    [Chain.KOVAN]: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    [Chain.MAINNET]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.ROPSTEN]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.GOERLI]: lower('0x6F628b68b30Dc3c17f345c9dbBb1E483c2b7aE5c'),
+    [Chain.RINKEBY]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+    [Chain.KOVAN]: lower('0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'),
+};
+
+export const ENS_GRAPH_ENDPOINTS = {
+    [Chain.MAINNET]: 'https://api.thegraph.com/subgraphs/name/ensdomains/ens',
+    [Chain.ROPSTEN]: 'https://api.thegraph.com/subgraphs/name/ensdomains/ensropsten',
+    [Chain.GOERLI]: 'https://api.thegraph.com/subgraphs/name/ensdomains/ensgoerli',
+    [Chain.RINKEBY]: 'https://api.thegraph.com/subgraphs/name/ensdomains/ensrinkeby',
+    [Chain.KOVAN]: 'n/a',
 };
 
 export const getNetwork = (chainId: Chain): Network => ({

@@ -1,4 +1,5 @@
 import React from 'react';
+import { BsCheck2All } from 'react-icons/bs';
 
 import lib from '@src/lib';
 import Loader from '@src/components/general/Loader/Loader';
@@ -43,6 +44,18 @@ const AnimatedConfirmation = ({ confirmed }: { confirmed: boolean }) => {
                         }}
                     />
                 </svg>
+            )}
+        </div>
+    );
+};
+
+export const InlineAnimatedConfirmation = ({ confirmed }: { confirmed: boolean }) => {
+    return (
+        <div style={{ height: '30px', width: '30px' }}>
+            {!confirmed ? (
+                <Loader diameter="30px" color={lib.colors.primaryColor} />
+            ) : (
+                <BsCheck2All color={lib.colors.green} size="30px" />
             )}
         </div>
     );

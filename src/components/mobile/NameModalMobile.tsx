@@ -1,6 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import { t } from '@lingui/macro';
+import { plural, t } from '@lingui/macro';
+import { animated, config, useTransition } from '@react-spring/web';
+import { IoChevronBackCircle } from 'react-icons/io5';
+import { BigNumber } from '@ethersproject/bignumber';
 
 import lib from '@src/lib';
 import web3 from '@src/web3';
@@ -11,7 +14,6 @@ import {
     useENSReverseRegistrar,
 } from '@src/contracts/useContract';
 import useAsyncState from '@src/hooks/useAsyncState';
-import { NameModalDataBase } from '@src/interfaces/modals';
 import { useForceUpdateWithVar } from '@src/hooks/useForceUpdate';
 import useInterval from '@src/hooks/useInterval';
 import TextInput from '@src/components/general/TextInputs/TextInput/TextInput';
@@ -19,15 +21,32 @@ import { useLocalSecret } from '@src/hooks/useLocaleStorage';
 import Text from '@src/components/general/Texts/Text/Text';
 import { useUsdPair } from '@src/client/usd';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import { useGetEnsRegistrationsQuery } from '@src/gql/types.generated';
+import { apolloClientEns } from '@src/web3/config';
+import client from '@src/client';
+import CurrencyToggler, {
+    useCurrencyTogglerState,
+} from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
+import Button from '@src/components/general/Buttons/Button/Button';
+import eth from '@src/assets/images/app_logos/eth.png';
+import ens_icon from '@src/assets/images/app_logos/ens.png';
+import { InlineAnimatedConfirmation } from '@src/components/general/AnimatedTimers/AnimatedConfirmation';
+import usePrevious from '@src/hooks/usePrevious';
 
 import PeerButtonMobile from './PeerButtonMobile';
 
+const commitGas = 46500;
+const setNameGas = 54500;
+const registerGas = 270000;
+
+const totalGas = commitGas + setNameGas + registerGas;
+
 const duration = 60 * 60 * 24 * 365;
 
-const useRegisterEnsName = () => {
+export const useRegisterEnsName = () => {
     const provider = web3.hook.usePriorityProvider();
     const address = web3.hook.usePriorityAccount();
-
+    const ens = client.ens.useEns(provider, address);
     const controller = useENSRegistrarController(provider);
     const resolver = useENSResolver(provider);
     const reverseRegistrar = useENSReverseRegistrar(provider);
@@ -37,14 +56,69 @@ const useRegisterEnsName = () => {
 
     const [text, setText] = React.useState<string>('');
 
-    const secret = useLocalSecret('nugg.xyz-ens-secret');
+    const [page, setPage] = React.useState<'home' | 'pick' | 'finalize'>('home');
+
+    const { data } = useGetEnsRegistrationsQuery({
+        client: apolloClientEns,
+        variables: {
+            address: address || '',
+        },
+    });
+
+    const [currentRegistration, registrations] = React.useMemo(() => {
+        if (data?.account?.registrations) {
+            const curr = data.account.registrations
+                .map((x) => {
+                    if (!x?.domain?.name) return null;
+                    const date = Math.floor(
+                        (Number(x.expiryDate) - new Date().getTime() / 1000) / 84600,
+                    );
+                    return x?.domain?.name
+                        ? {
+                              name: x.domain.name,
+                              expiresIn: {
+                                  raw: date,
+                                  days: date % 365,
+                                  years: Math.floor(date / 365),
+                              },
+                          }
+                        : null;
+                })
+                .filter((x): x is NonNullable<typeof x> => x !== null);
+
+            return [curr.find((x) => x.name === ens), curr.filter((x) => x.name !== ens)];
+        }
+        return [undefined, undefined];
+    }, [data, ens]);
+
+    const gasPrice = useAsyncState(() => {
+        if (!provider) return undefined;
+        return provider.getGasPrice();
+    }, [provider]);
+
+    const gasCost = React.useMemo(() => {
+        if (!gasPrice) return undefined;
+        return gasPrice.mul(totalGas);
+    }, [gasPrice]);
+
+    const secret = useLocalSecret('nugg.xyz-ens-secret', text);
+
+    const alreadyOwned = React.useMemo(() => {
+        if (!text || !registrations) return false;
+        return registrations.find((x) => x.name === `${text}.eth`) ?? false;
+    }, [text, registrations]);
 
     const nameOk = useAsyncState(() => {
-        return text ? controller.available(text) : Promise.resolve(false);
-    }, [text]);
+        return alreadyOwned
+            ? Promise.resolve(true)
+            : text && text.length > 2
+            ? controller.available(text)
+            : Promise.resolve(null);
+    }, [text, controller, alreadyOwned]);
 
     const price = useAsyncState(() => {
         if (!nameOk || !text || !controller) return undefined;
+        if (alreadyOwned) return Promise.resolve(BigNumber.from(0));
         return controller.rentPrice(text, duration);
     }, [text, controller, nameOk]);
 
@@ -54,7 +128,15 @@ const useRegisterEnsName = () => {
     const [commitDone, setCommitDone] = React.useState(false);
 
     const commitData = useAsyncState(() => {
-        if (!nameOk || !text || !address || !resolver || !controller || commitDone)
+        if (
+            !nameOk ||
+            !text ||
+            !address ||
+            !resolver ||
+            !controller ||
+            commitDone ||
+            page !== 'finalize'
+        )
             return undefined;
         const chash = controller.makeCommitmentWithConfig(
             text,
@@ -73,7 +155,7 @@ const useRegisterEnsName = () => {
         };
 
         return waiter();
-    }, [text, address, resolver, nameOk, updateOnForce, commitDone]);
+    }, [text, address, resolver, nameOk, updateOnForce, commitDone, page]);
 
     const commit = React.useCallback(() => {
         if (commitData && commitData.ok) void send(commitData.tx, () => setCommitLoading(true));
@@ -82,7 +164,7 @@ const useRegisterEnsName = () => {
     useInterval(force, 20000);
 
     const registerDone = useAsyncState(() => {
-        if (!provider || !address) return Promise.resolve(false);
+        if (!provider || !address || page !== 'finalize') return Promise.resolve(false);
 
         const addr = provider.resolveName(`${text}.eth`);
 
@@ -93,10 +175,12 @@ const useRegisterEnsName = () => {
         };
 
         return waiter();
-    }, [text, address, updateOnForce, provider]);
+    }, [text, address, updateOnForce, provider, page]);
 
     const registerData = useAsyncState(() => {
         if (
+            alreadyOwned ||
+            page !== 'finalize' ||
             registerDone ||
             !nameOk ||
             (commitData && commitData.ok) ||
@@ -132,6 +216,7 @@ const useRegisterEnsName = () => {
         controller,
         price,
         registerDone,
+        page,
     ]);
 
     const register = React.useCallback(() => {
@@ -186,27 +271,101 @@ const useRegisterEnsName = () => {
         }
     }, [commitData, registerData, commitDone, registerDone]);
 
-    // const [stage, caller] = React.useMemo(() => {
-    //     if (!commitDone) return ['commit', commit] as const;
-    //     if (reverseData?.ok && !reverseDone) return ['reverse', reverse] as const;
-    //     if (registerData?.ok && !registerDone) return ['register', register] as const;
-    //     if (!registerDone) return ['waiting', (): void => undefined];
-    //     return ['done', (): void => undefined] as const;
-    // }, [
-    //     reverseData,
-    //     registerData,
-    //     commitDone,
-    //     registerDone,
-    //     reverseDone,
-    //     commit,
-    //     reverse,
-    //     register,
-    // ]);
+    const commitFeeUsd = useUsdPair(
+        commitData?.gasLimit ? commitData.gasLimit.mul(gasPrice ?? 0) : 0,
+    );
+    const reverseFeeUsd = useUsdPair(
+        reverseData?.gasLimit ? reverseData.gasLimit.mul(gasPrice ?? 0) : 0,
+    );
+    const registerFeeUsd = useUsdPair(
+        registerData?.gasLimit ? registerData.gasLimit.add(price ?? 0) : 0,
+    );
 
-    const estimatedGasUsd = useUsdPair(price);
-    const commitFeeUsd = useUsdPair(commitData?.gasLimit);
+    const [stage] = React.useMemo(() => {
+        if (!commitDone) return ['commit', commit] as const;
+        if (reverseData?.ok && !reverseDone) return ['reverse', reverse] as const;
+        if (registerData?.ok && !registerDone) return ['register', register] as const;
+        if (!registerDone) return ['waiting', (): void => undefined];
+        return ['done', (): void => undefined] as const;
+    }, [
+        reverseData,
+        registerData,
+        commitDone,
+        registerDone,
+        reverseDone,
+        commit,
+        reverse,
+        register,
+    ]);
 
-    const CommitMem = React.useMemo(() => {
+    const Butt = React.useMemo(() => {
+        switch (stage) {
+            case 'commit':
+                if (commitLoading || commitDone) return null;
+
+                return (
+                    <PeerButtonMobile
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            commit();
+                        }}
+                        fee={commitFeeUsd}
+                    />
+                );
+
+            case 'reverse': {
+                if (reverseLoading || reverseDone) return null;
+                return (
+                    <PeerButtonMobile
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            reverse();
+                        }}
+                        fee={reverseFeeUsd}
+                    />
+                );
+            }
+
+            case 'register':
+                if (registerLoading || registerDone) return null;
+
+                return (
+                    <PeerButtonMobile
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            register();
+                        }}
+                        fee={registerFeeUsd}
+                    />
+                );
+            default:
+                return null;
+        }
+    }, [
+        stage,
+        commitLoading,
+        commitDone,
+        commitFeeUsd,
+        reverseLoading,
+        reverseDone,
+        reverseFeeUsd,
+        registerLoading,
+        registerDone,
+        registerFeeUsd,
+        commit,
+
+        reverse,
+        register,
+    ]);
+
+    const estimatedPriceUsd = useUsdPair(price);
+    const estimatedGasUsd = useUsdPair(price ? gasCost : 0);
+    const estimatedTotal = useUsdPair(price?.add(gasCost ?? 0));
+
+    const Home = React.useMemo(() => {
         return (
             <div
                 style={{
@@ -217,9 +376,102 @@ const useRegisterEnsName = () => {
                     padding: 20,
                 }}
             >
+                <img
+                    alt="ethereum logo"
+                    src={eth}
+                    height={50}
+                    style={{
+                        objectFit: 'cover',
+                        marginBottom: 10,
+                    }}
+                />
+
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        width: '100%',
+                        padding: 20,
+                        marginBottom: 40,
+                    }}
+                >
+                    {ens ? (
+                        <Text size="larger">{ens}</Text>
+                    ) : (
+                        <Text
+                            size="larger"
+                            textStyle={{ color: lib.colors.transparentPrimaryColorSuper }}
+                        >
+                            [me]<span style={{ color: lib.colors.primaryColor }}>.eth</span>
+                        </Text>
+                    )}
+
+                    {currentRegistration && (
+                        <Text
+                            size="small"
+                            textStyle={{ marginTop: 10, color: lib.colors.transparentPrimaryColor }}
+                        >
+                            expires in{' '}
+                            {`${plural(currentRegistration.expiresIn.years, {
+                                1: '# year,',
+                                other: `# years,`,
+                            })} ${plural(currentRegistration.expiresIn.days, {
+                                1: '# day',
+                                other: `# days`,
+                            })}`}
+                            {}
+                        </Text>
+                    )}
+                </div>
+
+                <PeerButtonMobile
+                    icon={ens_icon}
+                    text="powered by ens"
+                    header="buy a name"
+                    onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        setPage('pick');
+                    }}
+                />
+            </div>
+        );
+    }, [ens, currentRegistration]);
+
+    //     <select aria-label="bob">
+    //     {registrations.map((x) => (
+    //         <option key={x} value={x}>
+    //             {x}
+    //         </option>
+    //     ))}
+    // </select>
+
+    const globalCurrencyPref = client.usd.useCurrencyPreferrence();
+
+    const [localCurrencyPref, setLocalCurrencyPref] = useCurrencyTogglerState(globalCurrencyPref);
+
+    const PickAName = React.useMemo(() => {
+        return (
+            <div
+                style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    padding: 20,
+                }}
+            >
+                <Text
+                    size="larger"
+                    textStyle={{ ...lib.layout.presets.font.main.regular, marginBottom: 20 }}
+                >
+                    pick a name
+                </Text>
                 <TextInput
                     setValue={setText}
                     value={text}
+                    shouldFocus
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -227,6 +479,7 @@ const useRegisterEnsName = () => {
                         alignItems: 'center',
                         width: '100%',
                         color: lib.colors.primaryColor,
+                        margin: 20,
                     }}
                     styleInput={{
                         fontSize: 32,
@@ -237,9 +490,15 @@ const useRegisterEnsName = () => {
                     styleInputContainer={{
                         textAlign: 'left',
                         width: '100%',
-                        background: lib.colors.transparentPrimaryColorSuper,
+                        // background: lib.colors.transparentPrimaryColorSuper,
                         padding: '.3rem .6rem',
-                        border: `4px solid ${nameOk ? lib.colors.green : lib.colors.red}`,
+                        border: `6px solid ${
+                            text.length < 3 || typeof nameOk !== 'boolean'
+                                ? lib.colors.transparentPrimaryColorSuper
+                                : nameOk
+                                ? lib.colors.green
+                                : lib.colors.red
+                        }`,
                         borderRadius: lib.layout.borderRadius.mediumish,
                         boxShadow: lib.layout.boxShadow.basic,
                     }}
@@ -254,106 +513,76 @@ const useRegisterEnsName = () => {
                         </Text>,
                     ]}
                 />
-
-                <Text size="large" textStyle={{ marginTop: 10 }}>
-                    {t`price`}
-                </Text>
-                <CurrencyText
-                    // unitOverride={}
-                    forceEth
-                    size="large"
-                    stopAnimation
-                    value={estimatedGasUsd}
+                <div
+                    style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'start',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                        {t`ens price`}
+                    </Text>
+                    <CurrencyText
+                        unitOverride={localCurrencyPref}
+                        forceEth
+                        size="larger"
+                        stopAnimation
+                        value={estimatedPriceUsd}
+                    />{' '}
+                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                        {t`all transaction fees`}
+                    </Text>
+                    <CurrencyText
+                        unitOverride={localCurrencyPref}
+                        forceEth
+                        size="larger"
+                        stopAnimation
+                        value={estimatedGasUsd}
+                    />{' '}
+                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                        {t`total`}
+                    </Text>
+                    <CurrencyText
+                        unitOverride={localCurrencyPref}
+                        forceEth
+                        size="larger"
+                        stopAnimation
+                        value={estimatedTotal}
+                    />{' '}
+                </div>
+                <Button
+                    disabled={!nameOk}
+                    className="mobile-pressable-div"
+                    label={t`let's do this`}
+                    onClick={() => {
+                        setPage('finalize');
+                    }}
+                    buttonStyle={{
+                        borderRadius: lib.layout.borderRadius.large,
+                        background: lib.colors.primaryColor,
+                        marginTop: '30px',
+                        padding: '10px 20px',
+                    }}
+                    textStyle={{
+                        color: lib.colors.white,
+                        fontSize: 30,
+                    }}
                 />
-
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        width: '100%',
-                        justifyContent: 'center',
-                        marginTop: '20px',
-                    }}
-                >
-                    <PeerButtonMobile
-                        ok={!!nameOk}
-                        loading={commitLoading}
-                        done={!!commitDone}
-                        text="send tx 1/3 on"
-                        onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            commit();
-                        }}
-                        fee={commitFeeUsd}
-                    />
-                </div>
-
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        width: '100%',
-                        justifyContent: 'center',
-                        marginTop: '20px',
-                    }}
-                >
-                    <PeerButtonMobile
-                        ok={!!reverseData?.ok}
-                        loading={reverseLoading}
-                        done={!!reverseDone}
-                        text="send tx 2/3 on"
-                        onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            reverse();
-                        }}
-                    />
-                </div>
-
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        width: '100%',
-                        justifyContent: 'center',
-                        marginTop: '20px',
-                    }}
-                >
-                    <PeerButtonMobile
-                        ok={!!registerData?.ok}
-                        loading={registerLoading}
-                        done={!!registerDone}
-                        text="finalize on"
-                        onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            register();
-                        }}
-                    />
-                </div>
             </div>
         );
     }, [
         text,
         setText,
-        nameOk,
-        commitLoading,
-        commitDone,
-        registerData?.ok,
-        registerDone,
-        registerLoading,
-        reverseData?.ok,
-        reverseDone,
-        reverseLoading,
-        commit,
-        reverse,
-        register,
         estimatedGasUsd,
-        commitFeeUsd,
+        nameOk,
+        estimatedTotal,
+        estimatedPriceUsd,
+        localCurrencyPref,
     ]);
 
-    const Mem = React.useMemo(
+    const Registration = React.useMemo(
         () => (
             <div
                 style={{
@@ -364,299 +593,433 @@ const useRegisterEnsName = () => {
                     padding: 10,
                 }}
             >
-                <Text
-                    size="larger"
-                    textStyle={{ ...lib.layout.presets.font.main.regular, marginBottom: 20 }}
+                <div
+                    style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'start',
+                        flexDirection: 'column',
+                    }}
                 >
-                    pick a name
-                </Text>
+                    <Text size="large" textStyle={{ marginTop: 10 }}>
+                        {t`registering`}
+                    </Text>
+                    <Text size="larger" textStyle={{}}>
+                        {text}.eth
+                    </Text>
+                </div>
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        width: '100%',
+                        justifyContent: 'center',
+                        marginTop: '20px',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'start',
+                            width: '100%',
+                            alignItems: 'center',
+                            marginBottom: '10px',
+                        }}
+                    >
+                        <div
+                            style={{
+                                maxWidth: 30,
+                                maxHeight: 30,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                background: lib.colors.transparentWhite,
+                                padding: '10px',
+                                borderRadius: '50%',
+                            }}
+                        >
+                            1
+                        </div>
+                        <div
+                            style={{
+                                width: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'flex-start',
+                                marginLeft: 10,
+                            }}
+                        >
+                            <Text
+                                textStyle={{
+                                    color: commitDone
+                                        ? lib.colors.transparentPrimaryColor
+                                        : lib.colors.primaryColor,
+                                }}
+                            >
+                                tell ens i want to purchase
+                            </Text>
+                            <Text
+                                textStyle={{
+                                    color: commitDone
+                                        ? lib.colors.transparentPrimaryColor
+                                        : lib.colors.primaryColor,
+                                }}
+                                size="smaller"
+                            >
+                                required for security
+                            </Text>
+                        </div>
+                    </div>
 
-                {CommitMem}
+                    {(commitLoading || commitDone) && (
+                        <InlineAnimatedConfirmation confirmed={commitDone} />
+                    )}
+                </div>
+
+                {commitDone && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%',
+                            justifyContent: 'center',
+                            marginTop: '20px',
+                            flexDirection: 'column',
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'start',
+                                width: '100%',
+                                alignItems: 'center',
+                                marginBottom: '10px',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    maxWidth: 30,
+                                    maxHeight: 30,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: lib.colors.transparentWhite,
+                                    padding: '10px',
+                                    borderRadius: '50%',
+                                }}
+                            >
+                                2
+                            </div>
+                            <div
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'flex-start',
+                                    marginLeft: 10,
+                                }}
+                            >
+                                <Text
+                                    textStyle={{
+                                        color: reverseDone
+                                            ? lib.colors.transparentPrimaryColor
+                                            : lib.colors.primaryColor,
+                                    }}
+                                >
+                                    tell others what to call me
+                                </Text>
+                                <Text
+                                    textStyle={{
+                                        color: reverseDone
+                                            ? lib.colors.transparentPrimaryColor
+                                            : lib.colors.primaryColor,
+                                    }}
+                                    size="smaller"
+                                >
+                                    required to verify ownership
+                                </Text>
+                            </div>
+                        </div>
+                        {(reverseLoading || reverseDone) && (
+                            <InlineAnimatedConfirmation confirmed={!!reverseDone} />
+                        )}
+                    </div>
+                )}
+
+                {reverseDone && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%',
+                            justifyContent: 'center',
+                            marginTop: '20px',
+                            flexDirection: 'column',
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'start',
+                                width: '100%',
+                                alignItems: 'center',
+                                marginBottom: '10px',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    maxWidth: 30,
+                                    maxHeight: 30,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: lib.colors.transparentWhite,
+                                    padding: '10px',
+                                    borderRadius: '50%',
+                                }}
+                            >
+                                3
+                            </div>
+                            <div
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'flex-start',
+                                    marginLeft: 10,
+                                }}
+                            >
+                                <Text
+                                    size="large"
+                                    textStyle={{
+                                        color: registerDone
+                                            ? lib.colors.transparentPrimaryColor
+                                            : lib.colors.primaryColor,
+                                    }}
+                                >
+                                    purchase
+                                </Text>
+                                <Text
+                                    textStyle={{
+                                        color: registerDone
+                                            ? lib.colors.transparentPrimaryColor
+                                            : lib.colors.primaryColor,
+                                    }}
+                                >
+                                    finally 😅
+                                </Text>
+                            </div>
+                        </div>
+
+                        {(registerLoading || registerDone) && (
+                            <InlineAnimatedConfirmation confirmed={!!registerDone} />
+                        )}
+                    </div>
+                )}
+                <div style={{ marginTop: 20 }} />
+                {Butt}
             </div>
         ),
-        [CommitMem],
+        [
+            text,
+            commitDone,
+            commitLoading,
+            reverseDone,
+            reverseLoading,
+            registerDone,
+            registerLoading,
+
+            Butt,
+        ],
     );
 
-    return [text, setText, nameOk, price, Mem] as const;
+    const inject = client.ens.useInject();
+
+    const complete = React.useMemo(() => {
+        return commitDone && reverseDone && registerDone;
+    }, [commitDone, reverseDone, registerDone]);
+
+    const prevComplete = usePrevious(complete);
+    const prevReverseDone = usePrevious(reverseDone);
+
+    React.useEffect(() => {
+        if (!address) return;
+        const the_ens = `${text}.eth`;
+        if (complete && !prevComplete) {
+            setPage('home');
+            inject(address, the_ens);
+
+            setTimeout(() => {
+                setText('');
+            }, 500);
+        } else if (reverseDone && !prevReverseDone && !registerDone && the_ens !== ens) {
+            inject(address, null);
+        }
+    }, [
+        inject,
+        registerDone,
+        prevComplete,
+        reverseDone,
+        prevReverseDone,
+        address,
+        text,
+        ens,
+        complete,
+    ]);
+
+    React.useEffect(() => {
+        setCommitDone(false);
+        setCommitLoading(false);
+        setRegisterLoading(false);
+        setReverseLoading(false);
+    }, [text]);
+
+    return [
+        text,
+        setText,
+        nameOk,
+        price,
+        page,
+        setPage,
+        Registration,
+        PickAName,
+        Home,
+        localCurrencyPref,
+        setLocalCurrencyPref,
+    ] as const;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const NameModalMobile = ({ data }: { data: NameModalDataBase }) => {
-    // const isOpen = client.modal.useOpen();
-    // const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
+const NameModalMobile = () => {
+    const closeModal = client.modal.useCloseModal();
 
-    // const closeModal = client.modal.useCloseModal();
-    // const [page, setPage] = client.modal.usePhase();
+    const [
+        ,
+        ,
+        ,
+        ,
+        stage,
+        setStage,
+        TrippleFinalize,
+        PickAName,
+        Home,
+        localCurrencyPref,
+        setLocalCurrencyPref,
+    ] = useRegisterEnsName();
 
-    const [, , , , Mem] = useRegisterEnsName();
+    const Mem = React.useCallback(
+        (_stage: typeof stage) => {
+            return _stage === 'finalize' ? TrippleFinalize : _stage === 'pick' ? PickAName : Home;
+        },
+        [Home, PickAName, TrippleFinalize],
+    );
 
-    // const [tabFadeTransition] = useTransition(
-    //     stage,
-    //     {
-    //         from: () => ({
-    //             opacity: 0,
-    //         }),
-    //         expires: 500,
-    //         enter: { opacity: 1 },
-    //         leave: () => {
-    //             return {
-    //                 opacity: 0,
-    //             };
-    //         },
-    //         keys: (item) => `tabFadeTransition${item}5`,
-    //         config: config.stiff,
-    //     },
-    //     [stage, isOpen],
-    // );
-
-    // const containerStyle = useSpring({
-    //     to: {
-    //         transform: isOpen ? 'scale(1.0)' : 'scale(0.9)',
-    //     },
-    //     config: config.default,
-    // });
-
-    // const globalCurrencyPref = client.usd.useCurrencyPreferrence();
-
-    // const [localCurrencyPref, setLocalCurrencyPref] = useCurrencyTogglerState(globalCurrencyPref);
-
-    // const estimatedGasUsd = useUsdPair(price);
-
-    // const Page1 = React.useMemo(
-    //     () =>
-    //         isOpen && stage === 'commit' ? (
-    //             <>
-    //                 <Text
-    //                     size="larger"
-    //                     textStyle={{ ...lib.layout.presets.font.main.regular, marginBottom: 20 }}
-    //                 >
-    //                     pick a name
-    //                 </Text>
-
-    //                 <TextInput
-    //                     setValue={setText}
-    //                     value={text}
-    //                     style={{
-    //                         display: 'flex',
-    //                         flexDirection: 'column',
-    //                         justifyContent: 'space-between',
-    //                         alignItems: 'center',
-    //                         width: '100%',
-    //                         color: lib.colors.primaryColor,
-    //                     }}
-    //                     styleInput={{
-    //                         fontSize: 32,
-    //                         color: lib.colors.primaryColor,
-    //                         textAlign: 'right',
-    //                         padding: '.3rem .5rem',
-    //                     }}
-    //                     styleInputContainer={{
-    //                         textAlign: 'left',
-    //                         width: '100%',
-    //                         background: lib.colors.transparentPrimaryColorSuper,
-    //                         padding: '.3rem .6rem',
-    //                         border: `4px solid ${nameOk ? lib.colors.green : lib.colors.red}`,
-    //                         borderRadius: lib.layout.borderRadius.mediumish,
-    //                         boxShadow: lib.layout.boxShadow.basic,
-    //                     }}
-    //                     rightToggles={[
-    //                         <Text
-    //                             textStyle={{
-    //                                 marginLeft: -10,
-    //                             }}
-    //                             size="larger"
-    //                         >
-    //                             .eth
-    //                         </Text>,
-    //                     ]}
-    //                 />
-
-    //                 {nameOk && (
-    //                     <div
-    //                         style={{
-    //                             display: 'flex',
-    //                             alignItems: 'center',
-    //                             width: '100%',
-    //                             justifyContent: 'center',
-    //                             marginTop: '20px',
-    //                         }}
-    //                     >
-    //                         <PeerButtonMobile
-    //                             text="tap to finalize on"
-    //                             onClick={(event) => {
-    //                                 event.preventDefault();
-    //                                 event.stopPropagation();
-    //                                 caller();
-    //                             }}
-    //                         />
-    //                     </div>
-    //                 )}
-    //             </>
-    //         ) : null,
-    //     [isOpen, stage, text, setText, nameOk, caller],
-    // );
-
-    // const Page3 = React.useMemo(
-    //     () =>
-    //         isOpen && stage === 'reverse' ? (
-    //             <>
-    //                 <div>reverse it up</div>
-    //                 <div
-    //                     style={{
-    //                         display: 'flex',
-    //                         alignItems: 'center',
-    //                         width: '100%',
-    //                         justifyContent: 'center',
-    //                         marginTop: '20px',
-    //                     }}
-    //                 >
-    //                     <PeerButtonMobile
-    //                         text="tap to submit on"
-    //                         onClick={(event) => {
-    //                             event.preventDefault();
-    //                             event.stopPropagation();
-    //                             caller();
-    //                         }}
-    //                     />
-    //                 </div>
-    //             </>
-    //         ) : null,
-    //     [isOpen, stage, caller],
-    // );
-
-    // const Page2 = React.useMemo(
-    //     () =>
-    //         isOpen && stage === 'register' ? (
-    //             <>
-    //                 <div>registrate it up</div>
-    //                 <div
-    //                     style={{
-    //                         display: 'flex',
-    //                         alignItems: 'center',
-    //                         width: '100%',
-    //                         justifyContent: 'center',
-    //                         marginTop: '20px',
-    //                     }}
-    //                 >
-    //                     <PeerButtonMobile
-    //                         text="tap to submit on"
-    //                         onClick={(event) => {
-    //                             event.preventDefault();
-    //                             event.stopPropagation();
-    //                             caller();
-    //                         }}
-    //                     />
-    //                 </div>
-    //             </>
-    //         ) : null,
-    //     [isOpen, stage, caller],
-    // );
-
-    // const Page4 = React.useMemo(
-    //     () =>
-    //         isOpen && stage === 'done' ? (
-    //             <>
-    //                 <div>done</div>
-    //             </>
-    //         ) : null,
-    //     [isOpen, stage],
-    // );
+    const [tabFadeTransition] = useTransition(
+        stage,
+        {
+            from: () => ({
+                opacity: 0,
+            }),
+            expires: 500,
+            enter: { opacity: 1 },
+            leave: () => {
+                return {
+                    opacity: 0,
+                };
+            },
+            keys: (item) => `tabFadeTransition${item}5`,
+            config: config.stiff,
+        },
+        [stage],
+    );
 
     return (
         <>
             {Mem}
-            {/* {tabFadeTransition((sty, pager) => {
-                return (
-                    <animated.div
-                        style={{
-                            // position: 'relative',
-                            position: 'absolute',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            width: '100%',
-                            margin: 20,
-                        }}
-                    >
+            <>
+                {tabFadeTransition((sty, pager) => {
+                    return (
                         <animated.div
                             style={{
-                                width: '93%',
-                                padding: '25px',
-                                position: 'relative',
-                                // pointerEvents: 'none',
-                                // ...sty,
-                                background: lib.colors.transparentWhite,
-                                transition: `.2s all ${lib.layout.animation}`,
-
-                                borderRadius: lib.layout.borderRadius.largish,
-                                boxShadow: lib.layout.boxShadow.basic,
-                                margin: '0rem',
-                                justifyContent: 'flex-start',
-                                backdropFilter: 'blur(10px)',
-                                WebkitBackdropFilter: 'blur(10px)',
-                                ...containerStyle,
-                                ...sty,
+                                position: 'absolute',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                width: '100%',
+                                margin: 20,
                             }}
                         >
-                            <>
-                                {pager === 'commit'
-                                    ? Page1
-                                    : pager === 'register'
-                                    ? Page2
-                                    : pager === 'reverse'
-                                    ? Page3
-                                    : Page4}
-                            </>{' '}
-                            {/* {(pager === 1 || pager === 0) && (
-                                <>
-                                    <Button
-                                        className="mobile-pressable-div"
-                                        size="small"
-                                        buttonStyle={{
-                                            position: 'absolute',
-                                            left: 3,
-                                            bottom: -50,
-                                            borderRadius: lib.layout.borderRadius.mediumish,
-                                            background: lib.colors.transparentWhite,
-                                            WebkitBackdropFilter: 'blur(30px)',
-                                            backdropFilter: 'blur(30px)',
-                                            boxShadow: lib.layout.boxShadow.basic,
-                                        }}
-                                        leftIcon={
-                                            <IoChevronBackCircle
-                                                size={24}
-                                                color={lib.colors.primaryColor}
-                                                style={{
-                                                    marginRight: 5,
-                                                    marginLeft: -5,
-                                                }}
-                                            />
-                                        }
-                                        textStyle={{
-                                            color: lib.colors.primaryColor,
-                                            fontSize: 18,
-                                        }}
-                                        label="go back"
-                                        onClick={() => (pager === 0 ? closeModal() : setPage(0))}
-                                    />{' '}
-                                    <CurrencyToggler
-                                        pref={localCurrencyPref}
-                                        setPref={setLocalCurrencyPref}
-                                        containerStyle={{
-                                            position: 'absolute',
-                                            right: 3,
-                                            bottom: -45,
-                                        }}
-                                        floaterStyle={{
-                                            background: lib.colors.transparentWhite,
-                                            boxShadow: lib.layout.boxShadow.basic,
-                                        }}
-                                    />
-                                </>
-                            )} */}
-            {/* </animated.div>
-                    </animated.div>
-                ); */}
-            {/* })}  */}
+                            <animated.div
+                                style={{
+                                    width: '93%',
+                                    padding: '25px',
+                                    position: 'relative',
+                                    background: lib.colors.transparentWhite,
+                                    transition: `.2s all ${lib.layout.animation}`,
+                                    borderRadius: lib.layout.borderRadius.largish,
+                                    boxShadow: lib.layout.boxShadow.basic,
+                                    margin: '0rem',
+                                    justifyContent: 'flex-start',
+                                    backdropFilter: 'blur(10px)',
+                                    WebkitBackdropFilter: 'blur(10px)',
+                                    ...sty,
+                                }}
+                            >
+                                {Mem(pager)}
+
+                                <Button
+                                    className="mobile-pressable-div"
+                                    size="small"
+                                    buttonStyle={{
+                                        position: 'absolute',
+                                        left: 3,
+                                        bottom: -50,
+                                        borderRadius: lib.layout.borderRadius.mediumish,
+                                        background: lib.colors.transparentWhite,
+                                        WebkitBackdropFilter: 'blur(30px)',
+                                        backdropFilter: 'blur(30px)',
+                                        boxShadow: lib.layout.boxShadow.basic,
+                                    }}
+                                    leftIcon={
+                                        <IoChevronBackCircle
+                                            size={24}
+                                            color={lib.colors.primaryColor}
+                                            style={{
+                                                marginRight: 5,
+                                                marginLeft: -5,
+                                            }}
+                                        />
+                                    }
+                                    textStyle={{
+                                        color: lib.colors.primaryColor,
+                                        fontSize: 18,
+                                    }}
+                                    label={t`go back`}
+                                    onClick={() =>
+                                        pager === 'home'
+                                            ? closeModal()
+                                            : pager === 'finalize'
+                                            ? setStage('pick')
+                                            : setStage('home')
+                                    }
+                                />
+                                <CurrencyToggler
+                                    pref={localCurrencyPref}
+                                    setPref={setLocalCurrencyPref}
+                                    containerStyle={{
+                                        position: 'absolute',
+                                        right: 3,
+                                        bottom: -45,
+                                    }}
+                                    floaterStyle={{
+                                        background: lib.colors.transparentWhite,
+                                        boxShadow: lib.layout.boxShadow.basic,
+                                    }}
+                                />
+                            </animated.div>
+                        </animated.div>
+                    );
+                })}
+            </>
         </>
     );
 };

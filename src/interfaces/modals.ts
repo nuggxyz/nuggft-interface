@@ -65,7 +65,6 @@ export interface QRCodeModalData extends ModalDataBase {
 
 export interface NameModalDataBase extends TokenIdFactoryBase, ModalDataBase {
     modalType: ModalEnum.Name;
-    nuggId: null | NuggId;
 }
 
 export interface NuggBookModalData extends ModalDataBase {

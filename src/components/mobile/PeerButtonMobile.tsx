@@ -25,7 +25,7 @@ const Img = ({
 };
 
 const PeerButtonMobile = React.memo<{
-    text: string;
+    text?: string;
     color?: string;
     onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
     loading?: boolean;
@@ -33,6 +33,8 @@ const PeerButtonMobile = React.memo<{
     done?: boolean;
     ok?: boolean;
     fee?: PairInt;
+    icon?: string;
+    header?: string;
 }>(
     ({
         text,
@@ -43,6 +45,8 @@ const PeerButtonMobile = React.memo<{
         ok = true,
         fee,
         done,
+        icon,
+        header,
     }) => {
         const priorityPeer = web3.hook.usePriorityPeer();
 
@@ -68,7 +72,7 @@ const PeerButtonMobile = React.memo<{
                 aria-hidden="true"
                 role="button"
             >
-                {priorityPeer && <Img src={priorityPeer?.icon} />}
+                {priorityPeer && <Img src={icon ?? priorityPeer?.icon} />}
                 <div
                     style={{
                         display: 'flex',
@@ -78,8 +82,13 @@ const PeerButtonMobile = React.memo<{
                         marginLeft: 10,
                     }}
                 >
-                    {!loading && (
+                    {!fee ? (
                         <Text textStyle={{ color: lib.colors.white, fontSize: 20 }}>{text}</Text>
+                    ) : (
+                        <CurrencyText
+                            value={fee}
+                            textStyle={{ color: lib.colors.white, fontSize: 20 }}
+                        />
                     )}
 
                     <Text
@@ -88,7 +97,7 @@ const PeerButtonMobile = React.memo<{
                             fontSize: 30,
                         }}
                     >
-                        {priorityPeer?.name}
+                        {header ?? priorityPeer?.name}
                     </Text>
 
                     {done ? (
@@ -96,18 +105,6 @@ const PeerButtonMobile = React.memo<{
                     ) : loading ? (
                         <Loader style={{}} color={lib.colors.transparentWhite} diameter={30} />
                     ) : null}
-                    {fee && !loading && (
-                        <CurrencyText
-                            value={fee}
-                            textStyle={{ color: lib.colors.white, fontSize: 20 }}
-                        />
-                    )}
-                    {fee && !loading && (
-                        <CurrencyText
-                            value={fee}
-                            textStyle={{ color: lib.colors.white, fontSize: 20 }}
-                        />
-                    )}
                 </div>
             </div>
         );

@@ -1,1 +1,2 @@
 .linguirc linguist-language=jsonc
+.graphqlrc linguist-language=yaml

@@ -60,6 +60,7 @@ import {
     supportedChainIds,
     Chain,
     INFURA_URLS,
+    ENS_GRAPH_ENDPOINTS,
 } from '@src/web3/constants';
 import { CustomEtherscanProvider } from '@src/web3/classes/CustomEtherscanProvider';
 
@@ -348,6 +349,18 @@ export const createAlchemyWebSocket = (
 
 export const apolloClient = new ApolloClient<any>({
     link: buildApolloHttpLink(GRAPH_ENPOINTS[DEFAULT_CHAIN]),
+    // connectToDevTools: true,
+    cache: buildCache(),
+    defaultOptions: {
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
+});
+
+export const apolloClientEns = new ApolloClient<any>({
+    link: buildApolloHttpLink(ENS_GRAPH_ENDPOINTS[DEFAULT_CHAIN]),
     // connectToDevTools: true,
     cache: buildCache(),
     defaultOptions: {

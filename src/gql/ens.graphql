@@ -1,0 +1,11 @@
+query getEnsRegistrations($address: ID!) {
+    account(id: $address) {
+        id
+        registrations {
+            domain {
+                name
+            }
+            expiryDate
+        }
+    }
+}

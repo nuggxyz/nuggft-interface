@@ -2,17 +2,14 @@
 import create from 'zustand';
 import { combine } from 'zustand/middleware';
 
-import { ModalType, ModalEnum } from '@src/interfaces/modals';
+import { ModalType } from '@src/interfaces/modals';
 
 const store = create(
     combine(
         {
-            data: {
-                tokenId: 'nugg-199' as const,
-                modalType: ModalEnum.Name as const,
-            } as unknown as ModalType | undefined,
+            data: undefined as ModalType | undefined,
             phase: 0 as number,
-            open: true,
+            open: false,
         },
         (set, get) => {
             const openModal = (modalData: ModalType | undefined, phase = 0, lock = false) => {
