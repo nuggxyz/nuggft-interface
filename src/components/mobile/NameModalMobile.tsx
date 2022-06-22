@@ -14,8 +14,6 @@ import {
     useENSReverseRegistrar,
 } from '@src/contracts/useContract';
 import useAsyncState from '@src/hooks/useAsyncState';
-import { useForceUpdateWithVar } from '@src/hooks/useForceUpdate';
-import useInterval from '@src/hooks/useInterval';
 import TextInput from '@src/components/general/TextInputs/TextInput/TextInput';
 import { useLocalSecret } from '@src/hooks/useLocaleStorage';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -32,6 +30,7 @@ import eth from '@src/assets/images/app_logos/eth.png';
 import ens_icon from '@src/assets/images/app_logos/ens.png';
 import { InlineAnimatedConfirmation } from '@src/components/general/AnimatedTimers/AnimatedConfirmation';
 import usePrevious from '@src/hooks/usePrevious';
+import Loader from '@src/components/general/Loader/Loader';
 
 import PeerButtonMobile from './PeerButtonMobile';
 
@@ -46,7 +45,10 @@ const duration = 60 * 60 * 24 * 365;
 export const useRegisterEnsName = () => {
     const provider = web3.hook.usePriorityProvider();
     const address = web3.hook.usePriorityAccount();
-    const ens = client.ens.useEns(provider, address);
+    const [ens, ensValid] = client.ens.useEnsWithValidity(provider, address);
+
+    // const registrar = useENSRegistrar(provider);
+
     const controller = useENSRegistrarController(provider);
     const resolver = useENSResolver(provider);
     const reverseRegistrar = useENSReverseRegistrar(provider);
@@ -54,11 +56,16 @@ export const useRegisterEnsName = () => {
     const [reverseLoading, setReverseLoading] = React.useState(false);
     const [registerLoading, setRegisterLoading] = React.useState(false);
 
+    // const expiration = useAsyncState(() => {
+    //     if (!ens) return undefined;
+    //     return controller.ttl(namehash(ens.replace('.eth', '')));
+    // }, [ens, registrar]);
+
     const [text, setText] = React.useState<string>('');
 
     const [page, setPage] = React.useState<'home' | 'pick' | 'finalize'>('home');
 
-    const { data } = useGetEnsRegistrationsQuery({
+    const { data, refetch } = useGetEnsRegistrationsQuery({
         client: apolloClientEns,
         variables: {
             address: address || '',
@@ -90,6 +97,8 @@ export const useRegisterEnsName = () => {
         }
         return [undefined, undefined];
     }, [data, ens]);
+
+    // console.log(expiration, currentRegistration?.expiresIn);
 
     const gasPrice = useAsyncState(() => {
         if (!provider) return undefined;
@@ -123,8 +132,7 @@ export const useRegisterEnsName = () => {
     }, [text, controller, nameOk]);
 
     const [send, estimator] = usePrioritySendTransaction(undefined, true);
-    const [updateOnForce, force] = useForceUpdateWithVar();
-
+    const blocknum = client.block.useBlock();
     const [commitDone, setCommitDone] = React.useState(false);
 
     const commitData = useAsyncState(() => {
@@ -155,13 +163,11 @@ export const useRegisterEnsName = () => {
         };
 
         return waiter();
-    }, [text, address, resolver, nameOk, updateOnForce, commitDone, page]);
+    }, [text, address, resolver, nameOk, blocknum, commitDone, page]);
 
     const commit = React.useCallback(() => {
         if (commitData && commitData.ok) void send(commitData.tx, () => setCommitLoading(true));
     }, [commitData, send]);
-
-    useInterval(force, 20000);
 
     const registerDone = useAsyncState(() => {
         if (!provider || !address || page !== 'finalize') return Promise.resolve(false);
@@ -175,7 +181,7 @@ export const useRegisterEnsName = () => {
         };
 
         return waiter();
-    }, [text, address, updateOnForce, provider, page]);
+    }, [text, address, blocknum, provider, page]);
 
     const registerData = useAsyncState(() => {
         if (
@@ -211,7 +217,7 @@ export const useRegisterEnsName = () => {
         address,
         resolver,
         nameOk,
-        updateOnForce,
+        blocknum,
         commitData,
         controller,
         price,
@@ -237,7 +243,7 @@ export const useRegisterEnsName = () => {
         };
 
         return waiter();
-    }, [text, address, updateOnForce, provider]);
+    }, [text, address, blocknum, provider]);
 
     const reverseData = useAsyncState(() => {
         if (!text || !address || !provider || !commitDone || reverseDone) return undefined;
@@ -252,7 +258,7 @@ export const useRegisterEnsName = () => {
         };
 
         return waiter();
-    }, [text, address, resolver, nameOk, updateOnForce, commitDone, reverseDone]);
+    }, [text, address, resolver, nameOk, blocknum, commitDone, reverseDone]);
 
     const reverse = React.useCallback(() => {
         if (reverseData && reverseData.ok)
@@ -396,7 +402,7 @@ export const useRegisterEnsName = () => {
                         marginBottom: 40,
                     }}
                 >
-                    {ens ? (
+                    {ens && ensValid ? (
                         <Text size="larger">{ens}</Text>
                     ) : (
                         <Text
@@ -407,7 +413,8 @@ export const useRegisterEnsName = () => {
                         </Text>
                     )}
 
-                    {currentRegistration && (
+                    {/* eslint-disable-next-line no-constant-condition */}
+                    {currentRegistration ? (
                         <Text
                             size="small"
                             textStyle={{ marginTop: 10, color: lib.colors.transparentPrimaryColor }}
@@ -422,7 +429,16 @@ export const useRegisterEnsName = () => {
                             })}`}
                             {}
                         </Text>
-                    )}
+                    ) : ensValid ? (
+                        <Text
+                            size="small"
+                            textStyle={{ marginTop: 10, color: lib.colors.transparentPrimaryColor }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                expires in <Loader style={{ marginLeft: 5 }} />
+                            </div>
+                        </Text>
+                    ) : null}
                 </div>
 
                 <PeerButtonMobile
@@ -437,7 +453,13 @@ export const useRegisterEnsName = () => {
                 />
             </div>
         );
-    }, [ens, currentRegistration]);
+    }, [ens, currentRegistration, ensValid]);
+
+    React.useEffect(() => {
+        if (address && page === 'home' && ensValid && !currentRegistration) {
+            void refetch({ address });
+        }
+    }, [currentRegistration, ensValid, page, address, refetch, blocknum]);
 
     //     <select aria-label="bob">
     //     {registrations.map((x) => (
@@ -493,7 +515,7 @@ export const useRegisterEnsName = () => {
                         // background: lib.colors.transparentPrimaryColorSuper,
                         padding: '.3rem .6rem',
                         border: `6px solid ${
-                            text.length < 3 || typeof nameOk !== 'boolean'
+                            text.length < 3 || typeof nameOk !== 'boolean' || ens === `${text}.eth`
                                 ? lib.colors.transparentPrimaryColorSuper
                                 : nameOk
                                 ? lib.colors.green
@@ -580,6 +602,7 @@ export const useRegisterEnsName = () => {
         estimatedTotal,
         estimatedPriceUsd,
         localCurrencyPref,
+        ens,
     ]);
 
     const Registration = React.useMemo(
@@ -747,76 +770,92 @@ export const useRegisterEnsName = () => {
                     </div>
                 )}
 
-                {reverseDone && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            width: '100%',
-                            justifyContent: 'center',
-                            marginTop: '20px',
-                            flexDirection: 'column',
-                        }}
-                    >
+                {reverseDone &&
+                    (!registerData?.ok ? (
+                        <div
+                            style={{
+                                padding: 20,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginTop: '20px',
+                            }}
+                        >
+                            <Loader />{' '}
+                            <Text textStyle={{ marginTop: 5 }}>verifying ability to purchase </Text>
+                        </div>
+                    ) : (
                         <div
                             style={{
                                 display: 'flex',
-                                justifyContent: 'start',
-                                width: '100%',
                                 alignItems: 'center',
-                                marginBottom: '10px',
+                                width: '100%',
+                                justifyContent: 'center',
+                                marginTop: '20px',
+                                flexDirection: 'column',
                             }}
                         >
                             <div
                                 style={{
-                                    maxWidth: 30,
-                                    maxHeight: 30,
                                     display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    background: lib.colors.transparentWhite,
-                                    padding: '10px',
-                                    borderRadius: '50%',
-                                }}
-                            >
-                                3
-                            </div>
-                            <div
-                                style={{
+                                    justifyContent: 'start',
                                     width: '100%',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'flex-start',
-                                    marginLeft: 10,
+                                    alignItems: 'center',
+                                    marginBottom: '10px',
                                 }}
                             >
-                                <Text
-                                    size="large"
-                                    textStyle={{
-                                        color: registerDone
-                                            ? lib.colors.transparentPrimaryColor
-                                            : lib.colors.primaryColor,
+                                <div
+                                    style={{
+                                        maxWidth: 30,
+                                        maxHeight: 30,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        background: lib.colors.transparentWhite,
+                                        padding: '10px',
+                                        borderRadius: '50%',
                                     }}
                                 >
-                                    purchase
-                                </Text>
-                                <Text
-                                    textStyle={{
-                                        color: registerDone
-                                            ? lib.colors.transparentPrimaryColor
-                                            : lib.colors.primaryColor,
+                                    3
+                                </div>
+                                <div
+                                    style={{
+                                        width: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'flex-start',
+                                        marginLeft: 10,
                                     }}
                                 >
-                                    finally 😅
-                                </Text>
+                                    <Text
+                                        size="large"
+                                        textStyle={{
+                                            color: registerDone
+                                                ? lib.colors.transparentPrimaryColor
+                                                : lib.colors.primaryColor,
+                                        }}
+                                    >
+                                        noooow purchase it
+                                    </Text>
+                                    <Text
+                                        size="smaller"
+                                        textStyle={{
+                                            color: registerDone
+                                                ? lib.colors.transparentPrimaryColor
+                                                : lib.colors.primaryColor,
+                                        }}
+                                    >
+                                        finally 😅
+                                    </Text>
+                                </div>
                             </div>
-                        </div>
 
-                        {(registerLoading || registerDone) && (
-                            <InlineAnimatedConfirmation confirmed={!!registerDone} />
-                        )}
-                    </div>
-                )}
+                            {(registerLoading || registerDone) && (
+                                <InlineAnimatedConfirmation confirmed={!!registerDone} />
+                            )}
+                        </div>
+                    ))}
                 <div style={{ marginTop: 20 }} />
                 {Butt}
             </div>
@@ -829,7 +868,7 @@ export const useRegisterEnsName = () => {
             reverseLoading,
             registerDone,
             registerLoading,
-
+            registerData?.ok,
             Butt,
         ],
     );
@@ -933,95 +972,88 @@ const NameModalMobile = () => {
         [stage],
     );
 
-    return (
-        <>
-            {Mem}
-            <>
-                {tabFadeTransition((sty, pager) => {
-                    return (
-                        <animated.div
-                            style={{
-                                position: 'absolute',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                width: '100%',
-                                margin: 20,
-                            }}
-                        >
-                            <animated.div
-                                style={{
-                                    width: '93%',
-                                    padding: '25px',
-                                    position: 'relative',
-                                    background: lib.colors.transparentWhite,
-                                    transition: `.2s all ${lib.layout.animation}`,
-                                    borderRadius: lib.layout.borderRadius.largish,
-                                    boxShadow: lib.layout.boxShadow.basic,
-                                    margin: '0rem',
-                                    justifyContent: 'flex-start',
-                                    backdropFilter: 'blur(10px)',
-                                    WebkitBackdropFilter: 'blur(10px)',
-                                    ...sty,
-                                }}
-                            >
-                                {Mem(pager)}
+    return tabFadeTransition((sty, pager) => {
+        return (
+            <animated.div
+                style={{
+                    position: 'absolute',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    width: '100%',
+                    margin: 20,
+                }}
+            >
+                <animated.div
+                    style={{
+                        width: '93%',
+                        padding: '25px',
+                        position: 'relative',
+                        background: lib.colors.transparentWhite,
+                        transition: `.2s all ${lib.layout.animation}`,
+                        borderRadius: lib.layout.borderRadius.largish,
+                        boxShadow: lib.layout.boxShadow.basic,
+                        margin: '0rem',
+                        justifyContent: 'flex-start',
+                        backdropFilter: 'blur(10px)',
+                        WebkitBackdropFilter: 'blur(10px)',
+                        ...sty,
+                    }}
+                >
+                    {Mem(pager)}
 
-                                <Button
-                                    className="mobile-pressable-div"
-                                    size="small"
-                                    buttonStyle={{
-                                        position: 'absolute',
-                                        left: 3,
-                                        bottom: -50,
-                                        borderRadius: lib.layout.borderRadius.mediumish,
-                                        background: lib.colors.transparentWhite,
-                                        WebkitBackdropFilter: 'blur(30px)',
-                                        backdropFilter: 'blur(30px)',
-                                        boxShadow: lib.layout.boxShadow.basic,
-                                    }}
-                                    leftIcon={
-                                        <IoChevronBackCircle
-                                            size={24}
-                                            color={lib.colors.primaryColor}
-                                            style={{
-                                                marginRight: 5,
-                                                marginLeft: -5,
-                                            }}
-                                        />
-                                    }
-                                    textStyle={{
-                                        color: lib.colors.primaryColor,
-                                        fontSize: 18,
-                                    }}
-                                    label={t`go back`}
-                                    onClick={() =>
-                                        pager === 'home'
-                                            ? closeModal()
-                                            : pager === 'finalize'
-                                            ? setStage('pick')
-                                            : setStage('home')
-                                    }
-                                />
-                                <CurrencyToggler
-                                    pref={localCurrencyPref}
-                                    setPref={setLocalCurrencyPref}
-                                    containerStyle={{
-                                        position: 'absolute',
-                                        right: 3,
-                                        bottom: -45,
-                                    }}
-                                    floaterStyle={{
-                                        background: lib.colors.transparentWhite,
-                                        boxShadow: lib.layout.boxShadow.basic,
-                                    }}
-                                />
-                            </animated.div>
-                        </animated.div>
-                    );
-                })}
-            </>
-        </>
-    );
+                    <Button
+                        className="mobile-pressable-div"
+                        size="small"
+                        buttonStyle={{
+                            position: 'absolute',
+                            left: 3,
+                            bottom: -50,
+                            borderRadius: lib.layout.borderRadius.mediumish,
+                            background: lib.colors.transparentWhite,
+                            WebkitBackdropFilter: 'blur(30px)',
+                            backdropFilter: 'blur(30px)',
+                            boxShadow: lib.layout.boxShadow.basic,
+                        }}
+                        leftIcon={
+                            <IoChevronBackCircle
+                                size={24}
+                                color={lib.colors.primaryColor}
+                                style={{
+                                    marginRight: 5,
+                                    marginLeft: -5,
+                                }}
+                            />
+                        }
+                        textStyle={{
+                            color: lib.colors.primaryColor,
+                            fontSize: 18,
+                        }}
+                        label={t`go back`}
+                        onClick={() =>
+                            pager === 'home'
+                                ? closeModal()
+                                : pager === 'finalize'
+                                ? setStage('pick')
+                                : setStage('home')
+                        }
+                    />
+                    <CurrencyToggler
+                        pref={localCurrencyPref}
+                        setPref={setLocalCurrencyPref}
+                        containerStyle={{
+                            position: 'absolute',
+                            right: 3,
+                            bottom: -45,
+                        }}
+                        floaterStyle={{
+                            background: lib.colors.transparentWhite,
+                            boxShadow: lib.layout.boxShadow.basic,
+                        }}
+                    />
+                </animated.div>
+            </animated.div>
+        );
+    });
 };
 
 export default NameModalMobile;

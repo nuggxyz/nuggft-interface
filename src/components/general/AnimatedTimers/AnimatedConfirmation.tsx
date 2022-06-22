@@ -51,7 +51,7 @@ const AnimatedConfirmation = ({ confirmed }: { confirmed: boolean }) => {
 
 export const InlineAnimatedConfirmation = ({ confirmed }: { confirmed: boolean }) => {
     return (
-        <div style={{ height: '30px', width: '30px' }}>
+        <div style={{ height: '30px', width: '30px', margin: 10 }}>
             {!confirmed ? (
                 <Loader diameter="30px" color={lib.colors.primaryColor} />
             ) : (
