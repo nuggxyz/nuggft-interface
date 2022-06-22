@@ -1,10 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import { animated, config, useSpring, useTransition } from '@react-spring/web';
+import { t } from '@lingui/macro';
 
 import lib from '@src/lib';
 import web3 from '@src/web3';
-import client from '@src/client';
 import {
     usePrioritySendTransaction,
     useENSRegistrarController,
@@ -17,6 +16,9 @@ import { useForceUpdateWithVar } from '@src/hooks/useForceUpdate';
 import useInterval from '@src/hooks/useInterval';
 import TextInput from '@src/components/general/TextInputs/TextInput/TextInput';
 import { useLocalSecret } from '@src/hooks/useLocaleStorage';
+import Text from '@src/components/general/Texts/Text/Text';
+import { useUsdPair } from '@src/client/usd';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 
 import PeerButtonMobile from './PeerButtonMobile';
 
@@ -29,6 +31,9 @@ const useRegisterEnsName = () => {
     const controller = useENSRegistrarController(provider);
     const resolver = useENSResolver(provider);
     const reverseRegistrar = useENSReverseRegistrar(provider);
+    const [commitLoading, setCommitLoading] = React.useState(false);
+    const [reverseLoading, setReverseLoading] = React.useState(false);
+    const [registerLoading, setRegisterLoading] = React.useState(false);
 
     const [text, setText] = React.useState<string>('');
 
@@ -43,7 +48,7 @@ const useRegisterEnsName = () => {
         return controller.rentPrice(text, duration);
     }, [text, controller, nameOk]);
 
-    const [send, estimator] = usePrioritySendTransaction();
+    const [send, estimator] = usePrioritySendTransaction(undefined, true);
     const [updateOnForce, force] = useForceUpdateWithVar();
 
     const [commitDone, setCommitDone] = React.useState(false);
@@ -71,13 +76,28 @@ const useRegisterEnsName = () => {
     }, [text, address, resolver, nameOk, updateOnForce, commitDone]);
 
     const commit = React.useCallback(() => {
-        if (commitData && commitData.ok) void send(commitData.tx);
+        if (commitData && commitData.ok) void send(commitData.tx, () => setCommitLoading(true));
     }, [commitData, send]);
 
     useInterval(force, 20000);
 
+    const registerDone = useAsyncState(() => {
+        if (!provider || !address) return Promise.resolve(false);
+
+        const addr = provider.resolveName(`${text}.eth`);
+
+        const waiter = async () => {
+            const assumed = await addr;
+            if (!assumed) return undefined;
+            return assumed.toLowerCase() === address;
+        };
+
+        return waiter();
+    }, [text, address, updateOnForce, provider]);
+
     const registerData = useAsyncState(() => {
         if (
+            registerDone ||
             !nameOk ||
             (commitData && commitData.ok) ||
             !text ||
@@ -102,44 +122,22 @@ const useRegisterEnsName = () => {
         };
 
         return waiter();
-    }, [text, address, resolver, nameOk, updateOnForce]);
+    }, [
+        text,
+        address,
+        resolver,
+        nameOk,
+        updateOnForce,
+        commitData,
+        controller,
+        price,
+        registerDone,
+    ]);
 
     const register = React.useCallback(() => {
-        if (registerData && registerData.ok) void send(registerData.tx);
+        if (registerData && registerData.ok)
+            void send(registerData.tx, () => setRegisterLoading(true));
     }, [registerData, send]);
-
-    const registerDone = useAsyncState(() => {
-        if (!provider || !address) return Promise.resolve(false);
-
-        const addr = provider.resolveName(`${text}.eth`);
-
-        const waiter = async () => {
-            const assumed = await addr;
-            if (!assumed) return undefined;
-            return assumed.toLowerCase() === address;
-        };
-
-        return waiter();
-    }, [text, address, updateOnForce, provider]);
-
-    const reverseData = useAsyncState(() => {
-        if (!text || !address || !provider || !commitDone) return undefined;
-
-        const tx = reverseRegistrar.populateTransaction['setName(string)'](`${text}.eth`);
-
-        const ok = estimator.estimate(tx);
-
-        const waiter = async () => {
-            const gasLimit = await ok;
-            return { tx, gasLimit, ok: !!gasLimit } as const;
-        };
-
-        return waiter();
-    }, [text, address, resolver, nameOk, updateOnForce, commitDone]);
-
-    const reverse = React.useCallback(() => {
-        if (reverseData && reverseData.ok) void send(reverseData.tx);
-    }, [reverseData, send]);
 
     const reverseDone = useAsyncState(() => {
         if (!provider || !address) return Promise.resolve(false);
@@ -156,6 +154,28 @@ const useRegisterEnsName = () => {
         return waiter();
     }, [text, address, updateOnForce, provider]);
 
+    const reverseData = useAsyncState(() => {
+        if (!text || !address || !provider || !commitDone || reverseDone) return undefined;
+
+        const tx = reverseRegistrar.populateTransaction['setName(string)'](`${text}.eth`);
+
+        const ok = estimator.estimate(tx);
+
+        const waiter = async () => {
+            const gasLimit = await ok;
+            return { tx, gasLimit, ok: !!gasLimit } as const;
+        };
+
+        return waiter();
+    }, [text, address, resolver, nameOk, updateOnForce, commitDone, reverseDone]);
+
+    const reverse = React.useCallback(() => {
+        if (reverseData && reverseData.ok)
+            void send(reverseData.tx, () => {
+                setReverseLoading(true);
+            });
+    }, [reverseData, send]);
+
     React.useEffect(() => {
         if (
             !commitDone &&
@@ -166,69 +186,235 @@ const useRegisterEnsName = () => {
         }
     }, [commitData, registerData, commitDone, registerDone]);
 
-    const [stage, caller] = React.useMemo(() => {
-        if (!commitDone) return ['commit', commit] as const;
-        if (reverseData?.ok && !reverseDone) return ['reverse', reverse] as const;
-        if (registerData?.ok && !registerDone) return ['register', register] as const;
-        return ['done', (): void => undefined] as const;
+    // const [stage, caller] = React.useMemo(() => {
+    //     if (!commitDone) return ['commit', commit] as const;
+    //     if (reverseData?.ok && !reverseDone) return ['reverse', reverse] as const;
+    //     if (registerData?.ok && !registerDone) return ['register', register] as const;
+    //     if (!registerDone) return ['waiting', (): void => undefined];
+    //     return ['done', (): void => undefined] as const;
+    // }, [
+    //     reverseData,
+    //     registerData,
+    //     commitDone,
+    //     registerDone,
+    //     reverseDone,
+    //     commit,
+    //     reverse,
+    //     register,
+    // ]);
+
+    const estimatedGasUsd = useUsdPair(price);
+    const commitFeeUsd = useUsdPair(commitData?.gasLimit);
+
+    const CommitMem = React.useMemo(() => {
+        return (
+            <div
+                style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    padding: 20,
+                }}
+            >
+                <TextInput
+                    setValue={setText}
+                    value={text}
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        width: '100%',
+                        color: lib.colors.primaryColor,
+                    }}
+                    styleInput={{
+                        fontSize: 32,
+                        color: lib.colors.primaryColor,
+                        textAlign: 'right',
+                        padding: '.3rem .5rem',
+                    }}
+                    styleInputContainer={{
+                        textAlign: 'left',
+                        width: '100%',
+                        background: lib.colors.transparentPrimaryColorSuper,
+                        padding: '.3rem .6rem',
+                        border: `4px solid ${nameOk ? lib.colors.green : lib.colors.red}`,
+                        borderRadius: lib.layout.borderRadius.mediumish,
+                        boxShadow: lib.layout.boxShadow.basic,
+                    }}
+                    rightToggles={[
+                        <Text
+                            textStyle={{
+                                marginLeft: -10,
+                            }}
+                            size="larger"
+                        >
+                            .eth
+                        </Text>,
+                    ]}
+                />
+
+                <Text size="large" textStyle={{ marginTop: 10 }}>
+                    {t`price`}
+                </Text>
+                <CurrencyText
+                    // unitOverride={}
+                    forceEth
+                    size="large"
+                    stopAnimation
+                    value={estimatedGasUsd}
+                />
+
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        width: '100%',
+                        justifyContent: 'center',
+                        marginTop: '20px',
+                    }}
+                >
+                    <PeerButtonMobile
+                        ok={!!nameOk}
+                        loading={commitLoading}
+                        done={!!commitDone}
+                        text="send tx 1/3 on"
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            commit();
+                        }}
+                        fee={commitFeeUsd}
+                    />
+                </div>
+
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        width: '100%',
+                        justifyContent: 'center',
+                        marginTop: '20px',
+                    }}
+                >
+                    <PeerButtonMobile
+                        ok={!!reverseData?.ok}
+                        loading={reverseLoading}
+                        done={!!reverseDone}
+                        text="send tx 2/3 on"
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            reverse();
+                        }}
+                    />
+                </div>
+
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        width: '100%',
+                        justifyContent: 'center',
+                        marginTop: '20px',
+                    }}
+                >
+                    <PeerButtonMobile
+                        ok={!!registerData?.ok}
+                        loading={registerLoading}
+                        done={!!registerDone}
+                        text="finalize on"
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            register();
+                        }}
+                    />
+                </div>
+            </div>
+        );
     }, [
-        reverseData,
-        registerData,
+        text,
+        setText,
+        nameOk,
+        commitLoading,
         commitDone,
+        registerData?.ok,
         registerDone,
+        registerLoading,
+        reverseData?.ok,
         reverseDone,
+        reverseLoading,
         commit,
         reverse,
         register,
+        estimatedGasUsd,
+        commitFeeUsd,
     ]);
 
-    return [text, setText, nameOk, price, stage, caller] as const;
+    const Mem = React.useMemo(
+        () => (
+            <div
+                style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    padding: 10,
+                }}
+            >
+                <Text
+                    size="larger"
+                    textStyle={{ ...lib.layout.presets.font.main.regular, marginBottom: 20 }}
+                >
+                    pick a name
+                </Text>
+
+                {CommitMem}
+            </div>
+        ),
+        [CommitMem],
+    );
+
+    return [text, setText, nameOk, price, Mem] as const;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const NameModalMobile = ({ data }: { data: NameModalDataBase }) => {
-    const isOpen = client.modal.useOpen();
+    // const isOpen = client.modal.useOpen();
     // const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
 
     // const closeModal = client.modal.useCloseModal();
     // const [page, setPage] = client.modal.usePhase();
 
-    const [text, setText, nameOk, , stage, caller] = useRegisterEnsName();
+    const [, , , , Mem] = useRegisterEnsName();
 
-    // console.log(
-    //     text,
-    //     nameOk,
-
-    //     [commitOk, null, commitDone],
-    //     [registerOk, null, registerDone],
-    //     [reverseOk, null, reverseDone],
+    // const [tabFadeTransition] = useTransition(
+    //     stage,
+    //     {
+    //         from: () => ({
+    //             opacity: 0,
+    //         }),
+    //         expires: 500,
+    //         enter: { opacity: 1 },
+    //         leave: () => {
+    //             return {
+    //                 opacity: 0,
+    //             };
+    //         },
+    //         keys: (item) => `tabFadeTransition${item}5`,
+    //         config: config.stiff,
+    //     },
+    //     [stage, isOpen],
     // );
 
-    const [tabFadeTransition] = useTransition(
-        stage,
-        {
-            from: () => ({
-                opacity: 0,
-            }),
-            expires: 500,
-            enter: { opacity: 1 },
-            leave: () => {
-                return {
-                    opacity: 0,
-                };
-            },
-            keys: (item) => `tabFadeTransition${item}5`,
-            config: config.stiff,
-        },
-        [stage, isOpen],
-    );
-
-    const containerStyle = useSpring({
-        to: {
-            transform: isOpen ? 'scale(1.0)' : 'scale(0.9)',
-        },
-        config: config.default,
-    });
+    // const containerStyle = useSpring({
+    //     to: {
+    //         transform: isOpen ? 'scale(1.0)' : 'scale(0.9)',
+    //     },
+    //     config: config.default,
+    // });
 
     // const globalCurrencyPref = client.usd.useCurrencyPreferrence();
 
@@ -236,106 +422,150 @@ const NameModalMobile = ({ data }: { data: NameModalDataBase }) => {
 
     // const estimatedGasUsd = useUsdPair(price);
 
-    const Page1 = React.useMemo(
-        () =>
-            isOpen && stage === 'commit' ? (
-                <>
-                    <TextInput setValue={setText} value={text} />
+    // const Page1 = React.useMemo(
+    //     () =>
+    //         isOpen && stage === 'commit' ? (
+    //             <>
+    //                 <Text
+    //                     size="larger"
+    //                     textStyle={{ ...lib.layout.presets.font.main.regular, marginBottom: 20 }}
+    //                 >
+    //                     pick a name
+    //                 </Text>
 
-                    {nameOk && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                width: '100%',
-                                justifyContent: 'center',
-                                marginTop: '20px',
-                            }}
-                        >
-                            <PeerButtonMobile
-                                text="tap to finalize on"
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    caller();
-                                }}
-                            />
-                        </div>
-                    )}
-                </>
-            ) : null,
-        [isOpen, stage, text, setText, nameOk, caller],
-    );
+    //                 <TextInput
+    //                     setValue={setText}
+    //                     value={text}
+    //                     style={{
+    //                         display: 'flex',
+    //                         flexDirection: 'column',
+    //                         justifyContent: 'space-between',
+    //                         alignItems: 'center',
+    //                         width: '100%',
+    //                         color: lib.colors.primaryColor,
+    //                     }}
+    //                     styleInput={{
+    //                         fontSize: 32,
+    //                         color: lib.colors.primaryColor,
+    //                         textAlign: 'right',
+    //                         padding: '.3rem .5rem',
+    //                     }}
+    //                     styleInputContainer={{
+    //                         textAlign: 'left',
+    //                         width: '100%',
+    //                         background: lib.colors.transparentPrimaryColorSuper,
+    //                         padding: '.3rem .6rem',
+    //                         border: `4px solid ${nameOk ? lib.colors.green : lib.colors.red}`,
+    //                         borderRadius: lib.layout.borderRadius.mediumish,
+    //                         boxShadow: lib.layout.boxShadow.basic,
+    //                     }}
+    //                     rightToggles={[
+    //                         <Text
+    //                             textStyle={{
+    //                                 marginLeft: -10,
+    //                             }}
+    //                             size="larger"
+    //                         >
+    //                             .eth
+    //                         </Text>,
+    //                     ]}
+    //                 />
 
-    const Page3 = React.useMemo(
-        () =>
-            isOpen && stage === 'reverse' ? (
-                <>
-                    <div>reverse it up</div>
-                    <div
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            width: '100%',
-                            justifyContent: 'center',
-                            marginTop: '20px',
-                        }}
-                    >
-                        <PeerButtonMobile
-                            text="tap to submit on"
-                            onClick={(event) => {
-                                event.preventDefault();
-                                event.stopPropagation();
-                                caller();
-                            }}
-                        />
-                    </div>
-                </>
-            ) : null,
-        [isOpen, stage, caller],
-    );
+    //                 {nameOk && (
+    //                     <div
+    //                         style={{
+    //                             display: 'flex',
+    //                             alignItems: 'center',
+    //                             width: '100%',
+    //                             justifyContent: 'center',
+    //                             marginTop: '20px',
+    //                         }}
+    //                     >
+    //                         <PeerButtonMobile
+    //                             text="tap to finalize on"
+    //                             onClick={(event) => {
+    //                                 event.preventDefault();
+    //                                 event.stopPropagation();
+    //                                 caller();
+    //                             }}
+    //                         />
+    //                     </div>
+    //                 )}
+    //             </>
+    //         ) : null,
+    //     [isOpen, stage, text, setText, nameOk, caller],
+    // );
 
-    const Page2 = React.useMemo(
-        () =>
-            isOpen && stage === 'register' ? (
-                <>
-                    <div>registrate it up</div>
-                    <div
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            width: '100%',
-                            justifyContent: 'center',
-                            marginTop: '20px',
-                        }}
-                    >
-                        <PeerButtonMobile
-                            text="tap to submit on"
-                            onClick={(event) => {
-                                event.preventDefault();
-                                event.stopPropagation();
-                                caller();
-                            }}
-                        />
-                    </div>
-                </>
-            ) : null,
-        [isOpen, stage, caller],
-    );
+    // const Page3 = React.useMemo(
+    //     () =>
+    //         isOpen && stage === 'reverse' ? (
+    //             <>
+    //                 <div>reverse it up</div>
+    //                 <div
+    //                     style={{
+    //                         display: 'flex',
+    //                         alignItems: 'center',
+    //                         width: '100%',
+    //                         justifyContent: 'center',
+    //                         marginTop: '20px',
+    //                     }}
+    //                 >
+    //                     <PeerButtonMobile
+    //                         text="tap to submit on"
+    //                         onClick={(event) => {
+    //                             event.preventDefault();
+    //                             event.stopPropagation();
+    //                             caller();
+    //                         }}
+    //                     />
+    //                 </div>
+    //             </>
+    //         ) : null,
+    //     [isOpen, stage, caller],
+    // );
 
-    const Page4 = React.useMemo(
-        () =>
-            isOpen && stage === 'done' ? (
-                <>
-                    <div>done</div>
-                </>
-            ) : null,
-        [isOpen, stage],
-    );
+    // const Page2 = React.useMemo(
+    //     () =>
+    //         isOpen && stage === 'register' ? (
+    //             <>
+    //                 <div>registrate it up</div>
+    //                 <div
+    //                     style={{
+    //                         display: 'flex',
+    //                         alignItems: 'center',
+    //                         width: '100%',
+    //                         justifyContent: 'center',
+    //                         marginTop: '20px',
+    //                     }}
+    //                 >
+    //                     <PeerButtonMobile
+    //                         text="tap to submit on"
+    //                         onClick={(event) => {
+    //                             event.preventDefault();
+    //                             event.stopPropagation();
+    //                             caller();
+    //                         }}
+    //                     />
+    //                 </div>
+    //             </>
+    //         ) : null,
+    //     [isOpen, stage, caller],
+    // );
+
+    // const Page4 = React.useMemo(
+    //     () =>
+    //         isOpen && stage === 'done' ? (
+    //             <>
+    //                 <div>done</div>
+    //             </>
+    //         ) : null,
+    //     [isOpen, stage],
+    // );
 
     return (
         <>
-            {tabFadeTransition((sty, pager) => {
+            {Mem}
+            {/* {tabFadeTransition((sty, pager) => {
                 return (
                     <animated.div
                         style={{
@@ -423,10 +653,10 @@ const NameModalMobile = ({ data }: { data: NameModalDataBase }) => {
                                     />
                                 </>
                             )} */}
-                        </animated.div>
+            {/* </animated.div>
                     </animated.div>
-                );
-            })}
+                ); */}
+            {/* })}  */}
         </>
     );
 };

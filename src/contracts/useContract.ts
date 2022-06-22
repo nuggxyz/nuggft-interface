@@ -177,6 +177,7 @@ function useSendTransaction(
     from?: AddressString,
     onHash?: (hash: ResponseHash) => void,
     bypassMobile = false,
+    bypassError = false,
 ) {
     const peer = web3.hook.usePriorityPeer();
 
@@ -232,7 +233,7 @@ function useSendTransaction(
             ptx: Promise<PopulatedTransaction>,
             onSend?: () => void,
         ): Promise<ResponseHash | undefined> => {
-            if (estimator.error) {
+            if (!bypassError && estimator.error) {
                 console.error('OOPS - forgot to check for successful estimator');
                 return undefined;
             }
@@ -369,6 +370,7 @@ function useSendTransaction(
             setHash,
             peer,
             isPhone,
+            bypassError,
         ],
     );
 
@@ -376,7 +378,7 @@ function useSendTransaction(
     // return { send, hash, error, estimator, rejected, clear };
 }
 
-export function usePrioritySendTransaction(bypassMobile?: boolean) {
+export function usePrioritySendTransaction(bypassMobile?: boolean, bypassError?: boolean) {
     const connector = web3.hook.usePriorityConnector();
     const network = web3.hook.useNetworkProvider();
     const provider = web3.hook.usePriorityProvider();
@@ -391,6 +393,7 @@ export function usePrioritySendTransaction(bypassMobile?: boolean) {
         address as AddressString,
         undefined,
         bypassMobile,
+        bypassError,
     );
 }
 
