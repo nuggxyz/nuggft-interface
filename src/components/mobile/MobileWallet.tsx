@@ -24,6 +24,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
 
     const provider = web3.hook.usePriorityProvider();
     const connector = web3.hook.usePriorityConnector();
+    const address = web3.hook.usePriorityAccount();
 
     const peer = web3.hook.usePriorityPeer();
 
@@ -34,7 +35,7 @@ const MobileWallet: FunctionComponent<Props> = () => {
 
     const [loansOpen, setLoansOpen] = React.useState(false);
 
-    const ens = web3.hook.usePriorityENSName(provider);
+    const [ens, ensValid] = client.ens.useEnsWithValidity(provider, address);
 
     const items = React.useMemo(() => {
         return Object.values(
@@ -116,32 +117,39 @@ const MobileWallet: FunctionComponent<Props> = () => {
 
             <Button
                 className="mobile-pressable-div"
-                label={t`edit my username`}
+                label={!ensValid ? t`pick username` : t`edit username`}
                 onClick={() => {
                     openModal({ modalType: ModalEnum.Name as const });
                 }}
                 buttonStyle={{
                     borderRadius: lib.layout.borderRadius.medium,
-                    background: lib.colors.transparentWhite,
+                    background: !ensValid ? lib.colors.nuggRedText : lib.colors.transparentWhite,
                     padding: '10px 10px',
                     alignItems: 'center',
                     boxShadow: lib.layout.boxShadow.basic,
+                    WebkitBackdropFilter: 'blur(50px)',
+                    backdropFilter: 'blur(50px)',
                 }}
                 leftIcon={
-                    <img
-                        alt="ethereum logo"
-                        src={ens_icon}
-                        height={30}
-                        style={{
-                            borderRadius: '22.5%',
-                            objectFit: 'cover',
-                            marginRight: '10px',
-                        }}
-                    />
+                    ensValid ? (
+                        <img
+                            alt="ens logo"
+                            src={ens_icon}
+                            height={30}
+                            style={{
+                                borderRadius: '22.5%',
+                                objectFit: 'cover',
+                                marginRight: '10px',
+                            }}
+                        />
+                    ) : (
+                        <span style={{ fontSize: 20, marginRight: 7 }}>⚠️</span>
+                    )
                 }
                 textStyle={{
-                    color: lib.colors.primaryColor,
+                    color: !ensValid ? lib.colors.white : lib.colors.primaryColor,
                     fontSize: 20,
+                    ...lib.layout.presets.font.main.thicc,
                 }}
             />
             <Button
@@ -163,17 +171,10 @@ const MobileWallet: FunctionComponent<Props> = () => {
                 textStyle={{
                     color: lib.colors.primaryColor,
                     fontSize: 20,
+                    ...lib.layout.presets.font.main.thicc,
                 }}
             />
-            {/* <CurrencyToggler
-                setPref={(input) => {
-                    setCurrencyPreference(input);
-                    return undefined;
-                }}
-                pref={currencyPreferrence}
-                // floaterStyle={{ background: floaterColor }}
-                // containerStyle={floaterWrapperStyle}
-            /> */}
+
             <div style={{ width: '325px', paddingTop: '20px', paddingBottom: '20px' }}>
                 <div style={{ paddingTop: '20px', paddingBottom: '20px' }}>
                     <div

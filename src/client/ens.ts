@@ -82,8 +82,15 @@ const useEns = (provider?: Web3Provider, address?: Lowercase<AddressString>) => 
     return undefined;
 };
 
+export const useEnsWithValidity = (provider?: Web3Provider, address?: Lowercase<AddressString>) => {
+    const me = useEns(provider, address);
+
+    return [me, me && !me.startsWith('0x') && !me.includes('...')] as const;
+};
+
 export default {
     useInject: () => useStore((state) => state.update),
     useEns,
+    useEnsWithValidity,
     useStore,
 };

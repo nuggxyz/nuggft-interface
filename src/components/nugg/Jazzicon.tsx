@@ -1,8 +1,6 @@
 import React, { FC, useEffect, useRef } from 'react';
 import jazziconer from '@metamask/jazzicon';
 
-import lib from '@src/lib';
-
 const Jazzicon: FC<{
     address: string;
     size: number;
@@ -38,7 +36,7 @@ const Jazzicon: FC<{
             style={{
                 height: `${size}px`,
                 width: `${size}px`,
-                borderRadius: lib.layout.borderRadius.large,
+                borderRadius: '22.5%',
                 ...style,
             }}
         />

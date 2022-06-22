@@ -660,13 +660,14 @@ export const Account = React.memo<{
 }>(
     ({ address, onClick }) => {
         const provider = web3.hook.usePriorityProvider();
-        const ens = web3.hook.usePriorityAnyENSName(provider, address || undefined);
+        const [ens, ensValid] = client.ens.useEnsWithValidity(provider, address);
         return (
             <Button
                 className="mobile-pressable-div"
                 buttonStyle={{
-                    backgroundColor: lib.colors.transparentWhite,
-                    color: lib.colors.primaryColor,
+                    backgroundColor:
+                        address && !ensValid ? lib.colors.nuggRedText : lib.colors.transparentWhite,
+                    color: address && !ensValid ? lib.colors.white : lib.colors.primaryColor,
                     borderRadius: lib.layout.borderRadius.mediumish,
                     WebkitBackdropFilter: 'blur(50px)',
                     backdropFilter: 'blur(50px)',
@@ -674,7 +675,15 @@ export const Account = React.memo<{
                     boxShadow: lib.layout.boxShadow.basic,
                 }}
                 textStyle={{ ...lib.layout.presets.font.main.thicc, fontSize: 21 }}
-                label={ens || 'connect wallet'}
+                label={
+                    address
+                        ? ens
+                            ? ensValid
+                                ? ens
+                                : 'pick username'
+                            : 'invalid username'
+                        : 'connect wallet'
+                }
                 leftIcon={
                     <div
                         className="mobile-pressable-div-deep"
@@ -687,7 +696,11 @@ export const Account = React.memo<{
                         }}
                     >
                         {address ? (
-                            <Jazzicon address={address || ''} size={20} className="" />
+                            ensValid ? (
+                                <Jazzicon address={address || ''} size={20} className="" />
+                            ) : (
+                                <span style={{ fontSize: 20 }}>⚠️</span>
+                            )
                         ) : (
                             <IoQrCode
                                 style={{
