@@ -34,7 +34,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
     const [page, setPage] = client.modal.usePhase();
-    const [send, estimator, hash] = usePrioritySendTransaction();
+    const [send, [estimate, estimateError], hash] = usePrioritySendTransaction();
     const args = useMultiClaimArgs();
 
     const populatedTransaction = React.useMemo(() => {
@@ -43,15 +43,14 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
 
     const estimation = useAsyncState(() => {
         if (network) {
-            return Promise.all([
-                estimator.estimate(populatedTransaction.tx),
-                network?.getGasPrice(),
-            ]).then((_data) => ({
-                gasLimit: _data[0] || BigNumber.from(0),
-                gasPrice: new EthInt(_data[1] || 0),
-                mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
-                amount: args[0].length,
-            }));
+            return Promise.all([estimate(populatedTransaction.tx), network?.getGasPrice()]).then(
+                (_data) => ({
+                    gasLimit: _data[0] || BigNumber.from(0),
+                    gasPrice: new EthInt(_data[1] || 0),
+                    mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
+                    amount: args[0].length,
+                }),
+            );
         }
 
         return undefined;
@@ -84,12 +83,12 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
     });
 
     const calculating = React.useMemo(() => {
-        if (estimator.error) return false;
+        if (estimateError) return false;
         if (estimation) {
             if (populatedTransaction.amount === estimation.amount) return false;
         }
         return true;
-    }, [populatedTransaction, estimation, estimator.error]);
+    }, [populatedTransaction, estimation, estimateError]);
 
     const globalCurrencyPref = client.usd.useCurrencyPreferrence();
 
@@ -193,7 +192,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                     >
                         {calculating ? (
                             <Loader style={{ color: lib.colors.primaryColor }} />
-                        ) : estimator.error ? (
+                        ) : estimateError ? (
                             <Label
                                 size="medium"
                                 containerStyles={{
@@ -204,7 +203,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
                                     color: 'white',
                                     ...lib.layout.presets.font.main.thicc,
                                 }}
-                                text={lib.errors.prettify('claim-modal', estimator.error)}
+                                text={lib.errors.prettify('claim-modal', estimateError)}
                             />
                         ) : (
                             <Label
@@ -256,7 +255,7 @@ const ClaimModalMobile = ({ data }: { data: ClaimModalData }) => {
             unclaimedOffers,
             localCurrencyPref,
             calculating,
-            estimator.error,
+            estimateError,
         ],
     );
 

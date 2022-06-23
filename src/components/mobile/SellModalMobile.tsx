@@ -45,7 +45,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
     const [page, setPage] = client.modal.usePhase();
-    const [send, estimator, hash] = usePrioritySendTransaction();
+    const [send, [estimate, estimateError], hash] = usePrioritySendTransaction();
     const [amount, setAmount] = useState('0');
     const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');
 
@@ -187,15 +187,14 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
 
     const estimation = useAsyncState(() => {
         if (populatedTransaction && network) {
-            return Promise.all([
-                estimator.estimate(populatedTransaction.tx),
-                network?.getGasPrice(),
-            ]).then((_data) => ({
-                gasLimit: _data[0] || BigNumber.from(0),
-                gasPrice: new EthInt(_data[1] || 0),
-                mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
-                amount: populatedTransaction.amount,
-            }));
+            return Promise.all([estimate(populatedTransaction.tx), network?.getGasPrice()]).then(
+                (_data) => ({
+                    gasLimit: _data[0] || BigNumber.from(0),
+                    gasPrice: new EthInt(_data[1] || 0),
+                    mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
+                    amount: populatedTransaction.amount,
+                }),
+            );
         }
 
         return undefined;
@@ -282,7 +281,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
     });
 
     const calculating = React.useMemo(() => {
-        if (estimator.error) return false;
+        if (estimateError) return false;
         if (populatedTransaction && estimation) {
             if (populatedTransaction.amount.eq(estimation.amount)) return false;
         }
@@ -326,12 +325,12 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                     >
                         {calculating ? (
                             <Loader style={{ color: lib.colors.primaryColor }} />
-                        ) : estimator.error ? (
+                        ) : estimateError ? (
                             <Label
                                 size="small"
                                 containerStyles={{ background: lib.colors.red }}
                                 textStyle={{ color: 'white' }}
-                                text={lib.errors.prettify('sell-modal', estimator.error)}
+                                text={lib.errors.prettify('sell-modal', estimateError)}
                             />
                         ) : null}
                     </div>
@@ -395,7 +394,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                     label={swap ? t`Update` : t`Review`}
                     // leftIcon={calculating ? <Loader /> : undefined}
                     onClick={() => setPage(1)}
-                    disabled={calculating || !!estimator.error}
+                    disabled={calculating || !!estimateError}
                     buttonStyle={{
                         borderRadius: lib.layout.borderRadius.large,
                         background: lib.colors.primaryColor,
@@ -415,7 +414,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
                             setPage(1);
                             setIsCanceling(true);
                         }}
-                        disabled={calculating || !!estimator.error}
+                        disabled={calculating || !!estimateError}
                         buttonStyle={{
                             borderRadius: lib.layout.borderRadius.large,
                             background: lib.colors.red,
@@ -435,7 +434,7 @@ const SellNuggOrItemModalMobile = ({ data }: { data: SellModalData }) => {
             calculating,
             localCurrencyPref,
             IncrementButton,
-            estimator.error,
+            estimateError,
             epsUsd,
             swap,
             wrappedSetAmount,

@@ -131,7 +131,7 @@ export const useRegisterEnsName = () => {
         return controller.rentPrice(text, duration);
     }, [text, controller, nameOk]);
 
-    const [send, estimator] = usePrioritySendTransaction(undefined, true);
+    const [send, [estimate]] = usePrioritySendTransaction(undefined, true);
     const blocknum = client.block.useBlock();
     const [commitDone, setCommitDone] = React.useState(false);
 
@@ -155,7 +155,7 @@ export const useRegisterEnsName = () => {
         );
         const tx = controller.populateTransaction['commit(bytes32)'](chash);
 
-        const ok = estimator.estimate(tx);
+        const ok = estimate(tx);
 
         const waiter = async () => {
             const gasLimit = await ok;
@@ -204,7 +204,7 @@ export const useRegisterEnsName = () => {
             value: price,
         });
 
-        const ok = estimator.estimate(tx);
+        const ok = estimate(tx);
 
         const waiter = async () => {
             const gasLimit = await ok;
@@ -250,7 +250,7 @@ export const useRegisterEnsName = () => {
 
         const tx = reverseRegistrar.populateTransaction['setName(string)'](`${text}.eth`);
 
-        const ok = estimator.estimate(tx);
+        const ok = estimate(tx);
 
         const waiter = async () => {
             const gasLimit = await ok;

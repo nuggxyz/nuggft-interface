@@ -118,7 +118,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const nuggft = useNuggftV1(network);
     const closeModal = client.modal.useCloseModal();
     const [page, setPage] = client.modal.usePhase();
-    const [send, estimator, hash, error] = usePrioritySendTransaction();
+    const [send, [estimate, estimateError], hash, error] = usePrioritySendTransaction();
     const [amount, setAmount] = useState('0');
     const [lastPressed, setLastPressed] = React.useState('5' as `${bigint}` | null);
     const msp = client.stake.useMsp();
@@ -292,7 +292,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         () => {
             if (populatedTransaction && network) {
                 return Promise.all([
-                    estimator.estimate(populatedTransaction.tx),
+                    estimate(populatedTransaction.tx),
                     network?.getGasPrice(),
                 ]).then((_data) => ({
                     gasLimit: _data[0] || BigNumber.from(0),
@@ -384,12 +384,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     // );
 
     const calculating = React.useMemo(() => {
-        if (estimator.error) return false;
+        if (estimateError) return false;
         if (populatedTransaction && estimation) {
             if (populatedTransaction.amount.eq(estimation.amount)) return false;
         }
         return true;
-    }, [populatedTransaction, estimation, estimator.error]);
+    }, [populatedTransaction, estimation, estimateError]);
 
     const globalCurrencyPref = client.usd.useCurrencyPreferrence();
 
@@ -530,12 +530,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     >
                         {calculating ? (
                             <Loader style={{ color: lib.colors.primaryColor }} />
-                        ) : estimator.error ? (
+                        ) : estimateError ? (
                             <Label
                                 size="small"
                                 containerStyles={{ background: lib.colors.red }}
                                 textStyle={{ color: 'white' }}
-                                text={lib.errors.prettify('offer-modal', estimator.error)}
+                                text={lib.errors.prettify('offer-modal', estimateError)}
                             />
                         ) : null}
                     </div>
@@ -715,7 +715,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     onClick={() => {
                         setPage(1);
                     }}
-                    disabled={calculating || !!estimator.error}
+                    disabled={calculating || !!estimateError}
                     buttonStyle={{
                         borderRadius: lib.layout.borderRadius.large,
                         background: lib.colors.primaryColor,
@@ -738,7 +738,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             lastPressed,
             increments,
             currentPrice,
-            estimator.error,
+            estimateError,
             data.endingEpoch,
             check?.mustOfferOnSeller,
             data.nuggToBuyFrom,

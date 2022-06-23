@@ -54,10 +54,9 @@ export default ({ data }: { data: RotateOModalData }) => {
         hash,
         calculating,
         populatedTransaction,
-        estimator,
+        [, estimateError],
         error,
         ,
-        items,
         ,
         ,
         ,
@@ -66,7 +65,8 @@ export default ({ data }: { data: RotateOModalData }) => {
         ,
         ,
         ,
-        loading,
+        ,
+        ,
         svg,
         ,
         ,
@@ -131,7 +131,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                     onClick={() => {
                         setPage(1);
                     }}
-                    disabled={calculating || !!estimator.error}
+                    disabled={calculating || !!estimateError}
                     buttonStyle={{
                         borderRadius: lib.layout.borderRadius.large,
                         background: lib.colors.primaryColor,
@@ -144,7 +144,7 @@ export default ({ data }: { data: RotateOModalData }) => {
                 />
             </>
         ),
-        [setPage, calculating, estimator.error, items?.byItem, svg, loading, data.tokenId],
+        [setPage, calculating, estimateError, svg, data.tokenId, MobileList],
     );
     const Page1 = React.useMemo(
         () =>

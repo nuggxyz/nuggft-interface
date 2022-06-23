@@ -694,7 +694,7 @@ export const useHotRotateOTransaction = (tokenId?: NuggId) => {
         return main;
     }, [nuggft, address, algo, needsToClaim, tokenId]);
 
-    const [send, estimator, hash, error, ,] = usePrioritySendTransaction();
+    const [send, [estimate, estimateError], hash, error, ,] = usePrioritySendTransaction();
     useTransactionManager2(provider, hash, undefined);
 
     const network = web3.hook.useNetworkProvider();
@@ -702,15 +702,14 @@ export const useHotRotateOTransaction = (tokenId?: NuggId) => {
     const estimation = useMemoizedAsyncState(
         () => {
             if (populatedTransaction && network) {
-                return Promise.all([
-                    estimator.estimate(populatedTransaction),
-                    network?.getGasPrice(),
-                ]).then((_data) => ({
-                    gasLimit: _data[0] || BigNumber.from(0),
-                    // gasPrice: new EthInt(_data[1] || 0),
-                    // mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
-                    // amount: populatedTransaction.amount,
-                }));
+                return Promise.all([estimate(populatedTransaction), network?.getGasPrice()]).then(
+                    (_data) => ({
+                        gasLimit: _data[0] || BigNumber.from(0),
+                        // gasPrice: new EthInt(_data[1] || 0),
+                        // mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
+                        // amount: populatedTransaction.amount,
+                    }),
+                );
             }
 
             return undefined;
@@ -722,7 +721,7 @@ export const useHotRotateOTransaction = (tokenId?: NuggId) => {
     );
 
     const calculating = React.useMemo(() => {
-        if (estimator.error) return false;
+        if (estimateError) return false;
         if (populatedTransaction && estimation) {
             return false;
         }
@@ -748,7 +747,7 @@ export const useHotRotateOTransaction = (tokenId?: NuggId) => {
         hash,
         calculating,
         populatedTransaction,
-        estimator,
+        [estimate, estimateError],
         error,
         screen,
         items,
@@ -785,7 +784,7 @@ export const HotRotateO = ({ tokenId: overridedTokenId }: { tokenId?: NuggId }) 
         hash,
         ,
         populatedTransaction,
-        estimator,
+        [, estimateError],
         ,
         screen,
         items,
@@ -906,8 +905,7 @@ export const HotRotateO = ({ tokenId: overridedTokenId }: { tokenId?: NuggId }) 
                                     buttonStyle={styles.button}
                                     textStyle={{ color: lib.colors.nuggBlueText }}
                                     disabled={
-                                        !(algo && algo[1] && algo[1].length > 0) ||
-                                        !!estimator.error
+                                        !(algo && algo[1] && algo[1].length > 0) || !!estimateError
                                     }
                                     label={t`Save`}
                                     onClick={() => {

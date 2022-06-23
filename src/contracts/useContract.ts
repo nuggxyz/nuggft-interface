@@ -157,7 +157,7 @@ export const useEstimateTransaction = (provider?: CustomWeb3Provider, from?: Add
         [provider, from],
     );
 
-    return { error, gasLimit, estimate };
+    return [estimate, error, gasLimit] as const;
 };
 
 type SimpleTransactionData = {
@@ -203,7 +203,7 @@ function useSendTransaction(
     const addToast = client.toast.useAddToast();
     const toasts = client.toast.useList();
 
-    const estimator = useEstimateTransaction(network, from);
+    const [estimate, estimatorError, estimatorGasLimit] = useEstimateTransaction(network, from);
 
     const [pop, setPop] = React.useState<SimpleTransactionData>();
 
@@ -233,7 +233,7 @@ function useSendTransaction(
             ptx: Promise<PopulatedTransaction>,
             onSend?: () => void,
         ): Promise<ResponseHash | undefined> => {
-            if (!bypassError && estimator.error) {
+            if (!bypassError && estimatorError) {
                 console.error('OOPS - forgot to check for successful estimator');
                 return undefined;
             }
@@ -366,7 +366,7 @@ function useSendTransaction(
             blocknum,
             bypassMobile,
             screen,
-            estimator.error,
+            estimatorError,
             setHash,
             peer,
             isPhone,
@@ -374,7 +374,14 @@ function useSendTransaction(
         ],
     );
 
-    return [send, estimator, hash, error, rejected, clear] as const;
+    return [
+        send,
+        [estimate, estimatorError, estimatorGasLimit],
+        hash,
+        error,
+        rejected,
+        clear,
+    ] as const;
     // return { send, hash, error, estimator, rejected, clear };
 }
 
