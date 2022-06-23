@@ -55,7 +55,10 @@ export default {
         offers: <A extends TokenId>(tokenId: A | undefined) =>
             core(
                 // eslint-disable-next-line react-hooks/rules-of-hooks
-                useCallback((state) => (tokenId ? state.liveOffers[tokenId] ?? [] : []), [tokenId]),
+                useCallback(
+                    (state) => (tokenId ? state.liveTokens[tokenId]?.activeSwap?.offers ?? [] : []),
+                    [tokenId],
+                ),
             ),
         token: <A extends TokenId>(tokenId: A | undefined) =>
             core(

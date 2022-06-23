@@ -34,18 +34,18 @@ const SwapButton = ({
     navigate: NavigateFunction;
     tokenId: string;
 }) => {
-    return !item.epoch?.id || (!isUndefinedOrNull(item.epoch) && epoch <= item.epoch.id) ? (
+    return !item.endingEpoch || epoch <= item.endingEpoch ? (
         <Button
             buttonStyle={styles.goToSwap}
             textStyle={{
                 ...styles.goToSwapGradient,
-                background: !item.epoch ? lib.colors.gradient : lib.colors.gradient3,
+                background: !item.endingEpoch ? lib.colors.gradient : lib.colors.gradient3,
                 paddingRight: '.5rem',
             }}
             label={t`Go to swap`}
             rightIcon={
                 <IoArrowRedo
-                    color={!item.epoch ? lib.colors.gradientGold : lib.colors.gradientPink}
+                    color={!item.endingEpoch ? lib.colors.gradientGold : lib.colors.gradientPink}
                 />
             }
             onClick={() => navigate(`/swap/${item.type === 'item' ? 'item-' : ''}${tokenId}`)}
@@ -58,13 +58,15 @@ const SwapDesc = ({ item, epoch }: { item: SwapData; epoch: number }) => {
 
     return epoch && blocknum ? (
         <Text textStyle={{ color: lib.colors.primaryColor }}>
-            {!item.endingEpoch && !item.epoch
+            {!item.endingEpoch
                 ? t`Awaiting bid!`
-                : !item.epoch
+                : !item.endingEpoch
                 ? t`Swap is cancelled`
-                : item.epoch.id < epoch
+                : item.endingEpoch < epoch
                 ? t`Swap is over`
-                : t`Swap ending in ${item.epoch.endblock - blocknum} blocks`}
+                : t`Swap ending in ${
+                      web3.config.calculateEndBlock(item.endingEpoch) - blocknum
+                  } blocks`}
         </Text>
     ) : null;
 };
@@ -109,12 +111,11 @@ const SwapItem: FunctionComponent<
                 key={index}
                 style={{
                     ...styles.swap,
-                    background:
-                        !item.epoch && !item.endingEpoch
-                            ? lib.colors.gradient
-                            : isUndefinedOrNull(item.epoch) || item.epoch?.id < extraData.epoch
-                            ? lib.colors.gradient2Transparent
-                            : lib.colors.gradient3,
+                    background: !item.endingEpoch
+                        ? lib.colors.gradient
+                        : !item.endingEpoch || item.endingEpoch < extraData.epoch
+                        ? lib.colors.gradient2Transparent
+                        : lib.colors.gradient3,
                 }}
             >
                 <div style={styles.swapButton}>
@@ -132,10 +133,9 @@ const SwapItem: FunctionComponent<
                                 color: lib.colors.textColor,
                             }}
                         >
-                            {!item.endingEpoch ||
-                            (epoch <= item.endingEpoch && !isUndefinedOrNull(item.epoch))
+                            {!item.endingEpoch || epoch <= item.endingEpoch
                                 ? t`On sale by`
-                                : isUndefinedOrNull(item.epoch)
+                                : !item.endingEpoch
                                 ? t`Cancelled by`
                                 : t`Sold by`}
                         </Text>
@@ -151,7 +151,6 @@ const SwapItem: FunctionComponent<
                     {
                         // if this swap is awaiting a bid
                         isUndefinedOrNull(item.endingEpoch) ||
-                        isUndefinedOrNull(item.epoch) ||
                         // if this swap is a minting swap and no one has bid on it
                         (item.owner === Address.ZERO.hash &&
                             item.leader === Address.ZERO.hash) ? null : (
@@ -206,8 +205,7 @@ const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
                 tempSwaps = tempTemp.filter((x) => !x.isTryout);
             }
             const upcoming = tempSwaps.find(
-                (x) =>
-                    !isUndefinedOrNull(x.epoch) && epoch && x.endingEpoch && epoch <= x.endingEpoch,
+                (x) => epoch && x.endingEpoch && epoch <= x.endingEpoch,
             );
             if (upcoming) {
                 res.push({ title: t`Ending in epoch ${upcoming.endingEpoch}`, items: [upcoming] });

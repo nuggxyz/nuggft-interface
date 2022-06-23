@@ -4,7 +4,6 @@ import { IoAdd, IoCheckmarkDoneOutline, IoRemove } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 
 import useLifecycle from '@src/client/hooks/useLifecycle';
-import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import client from '@src/client';
 import web3 from '@src/web3';
 import lib from '@src/lib';
@@ -12,28 +11,17 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import Text from '@src/components/general/Texts/Text/Text';
 import { Lifecycle, OfferData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-import useDistribution from '@src/client/hooks/useDistribution';
 import useDimensions from '@src/client/hooks/useDimensions';
-import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
-import { EthInt, Fraction } from '@src/classes/Fraction';
-import { Chain } from '@src/web3/constants';
+import { Fraction } from '@src/classes/Fraction';
+import SimpleList, { SimpleListRenderItemProps } from '@src/components/general/List/SimpleList';
 
 import styles from './RingAbout.styles';
 
-type OfferExtraData = {
-    chainId?: Chain;
-    provider?: CustomWeb3Provider;
-    type?: 'item' | 'nugg';
-};
-
-const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefined>> = ({
+const OfferRenderItem: FC<SimpleListRenderItemProps<OfferData, undefined, undefined>> = ({
     item,
-    extraData,
 }) => {
-    const leader = web3.hook.usePriorityAnyENSName(
-        extraData.type === 'nugg' ? 'nugg' : extraData.provider,
-        item?.user || undefined,
-    );
+    const provider = web3.hook.usePriorityProvider();
+    const leader = client.ens.useEnsOrNuggId(provider, item.account);
 
     const amount = client.usd.useUsdPair(item.eth);
     return (
@@ -49,9 +37,8 @@ const OfferRenderItem: FC<ListRenderItemProps<OfferData, OfferExtraData, undefin
                 <Button
                     buttonStyle={styles.etherscanBtn}
                     onClick={() =>
-                        extraData.chainId &&
                         item.txhash &&
-                        web3.config.gotoEtherscan(extraData.chainId, 'tx', item.txhash)
+                        web3.config.gotoEtherscan(web3.config.DEFAULT_CHAIN, 'tx', item.txhash)
                     }
                     rightIcon={<IoCheckmarkDoneOutline color={lib.colors.green} size={14} />}
                 />
@@ -76,7 +63,6 @@ export default ({
 
     const [leader, ...others] = client.live.offers(tokenId);
     const lifecycle = useLifecycle(tokenId);
-    const type = client.live.lastSwap.type();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
     const { screen: screenType, isPhone } = useDimensions();
@@ -85,7 +71,7 @@ export default ({
 
     const leaderEth = client.usd.useUsdPair(leader?.eth);
 
-    const { distribution, ownerEns } = useDistribution(swap);
+    // const { distribution, ownerEns } = useDistribution(swap);
 
     useEffect(() => {
         if (Array.isArray(others) && others.length === 0 && open && screenType !== 'tablet') {
@@ -125,6 +111,7 @@ export default ({
         swap ? (swap.type === 'item' ? 'nugg' : provider) : undefined,
         (swap && leader?.account) || undefined,
     );
+
     return token &&
         lifecycle &&
         lifecycle !== Lifecycle.Concessions &&
@@ -227,7 +214,7 @@ export default ({
                             buttonStyle={styles.showMoreButton}
                         />
                         <animated.div style={springStyle}>
-                            {distribution && (
+                            {/* {distribution && (
                                 <div>
                                     <Text>Distribution:</Text>
                                     <Text>
@@ -236,11 +223,11 @@ export default ({
                                     <Text>Protocol: {new EthInt(distribution.proto).number}</Text>
                                     <Text>Staked: {new EthInt(distribution.stake).number}</Text>
                                 </div>
-                            )}
-                            <List
+                            )} */}
+                            <SimpleList
                                 data={others}
                                 RenderItem={OfferRenderItem}
-                                extraData={{ type, provider, chainId }}
+                                extraData={undefined}
                             />
                         </animated.div>
                     </>

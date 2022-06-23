@@ -17,7 +17,7 @@ export default () => {
 
     const epoch = client.epoch.active.useId();
 
-    const startup = useTokenQuery();
+    const [startup] = useTokenQuery();
 
     const { isPhone } = useDimensions();
     useEffect(() => {

@@ -16,7 +16,7 @@ import { MIN_SALE_PRICE } from '@src/web3/constants';
 import TheRingLight from '@src/components/nugg/TheRing/TheRingLight';
 
 export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
-    ({ tokenId }) => {
+    ({ tokenId, visible }) => {
         const swap = client.v2.useSwap(tokenId);
         const potential = client.v3.useSwap(tokenId);
 

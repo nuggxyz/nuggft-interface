@@ -82,6 +82,12 @@ const useEns = (provider?: Web3Provider, address?: Lowercase<AddressString>) => 
     return undefined;
 };
 
+const useEnsOrNuggId = (provider?: Web3Provider, address?: Lowercase<AddressString> | NuggId) => {
+    const ens = useEns(provider, address && address.isNuggId() ? undefined : address);
+    if (address?.isNuggId()) return address.toPrettyId();
+    return ens;
+};
+
 export const useEnsWithValidity = (provider?: Web3Provider, address?: Lowercase<AddressString>) => {
     const me = useEns(provider, address);
 
@@ -92,5 +98,6 @@ export default {
     useInject: () => useStore((state) => state.update),
     useEns,
     useEnsWithValidity,
+    useEnsOrNuggId,
     useStore,
 };

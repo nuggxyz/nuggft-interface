@@ -3,6 +3,7 @@ import React from 'react';
 import lib from '@src/lib';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import { Lifecycle } from '@src/client/interfaces';
+import web3 from '@src/web3';
 
 import client from '..';
 
@@ -22,8 +23,9 @@ export default (tokenId?: TokenId) => {
             case Lifecycle.Bunt:
                 if (
                     token?.activeSwap &&
-                    token.activeSwap.epoch &&
-                    token.activeSwap.epoch.endblock - blocknum < (60 / 12) * 10
+                    token.activeSwap.endingEpoch &&
+                    web3.config.calculateEndBlock(token.activeSwap.endingEpoch) - blocknum <
+                        (60 / 12) * 10
                 )
                     return {
                         color: lib.colors.red,

@@ -3,6 +3,7 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
 import { EthInt } from '@src/classes/Fraction';
 import emitter from '@src/emitter';
+import lib from '@src/lib';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { DEFAULT_CONTRACTS } from '@src/web3/constants';
 
@@ -13,9 +14,12 @@ export default () => {
     const updateStake = client.stake.useUpdate();
     const nuggs = client.user.useNuggs();
 
+    const epoch = client.epoch.active.useId();
+
     emitter.useOn(
         emitter.events.IncomingRpcEvent,
         ({ data: event, log }) => {
+            if (!epoch) return;
             console.log({ event });
 
             const emitCompletedTx = (
@@ -53,18 +57,19 @@ export default () => {
                 case 'Offer':
                 case 'OfferMint': {
                     const agency = BigNumber.from(event.args.agency);
+                    const agencyParsed = lib.parse.agency(agency);
 
                     const data = buildTokenIdFactory({
+                        agencyEpoch: agencyParsed.epoch,
                         tokenId: event.args.tokenId.toNuggId(),
                         eth: EthInt.fromNuggftV1Agency(event.args.agency).bignumber,
-                        user: agency.mask(160)._hex as AddressString,
                         txhash: log.transactionHash,
                         isBackup: false,
                         sellingTokenId: null,
-                        account: agency.mask(160)._hex as AddressString,
+                        account: agencyParsed.address,
                     });
 
-                    const txFrom = data.user;
+                    const txFrom = data.account;
 
                     emitCompletedTx(txFrom, (from) => {
                         return from.toLowerCase() === txFrom.toLowerCase();
@@ -76,7 +81,7 @@ export default () => {
                         data,
                     });
 
-                    void updateOffers(event.args.tokenId.toNuggId(), [data]);
+                    void updateOffers(event.args.tokenId.toNuggId(), data);
                     break;
                 }
                 default:
@@ -96,18 +101,21 @@ export default () => {
                         return allgoood;
                     });
 
-                    updateOffers(event.args.itemId.toItemId(), [
+                    const agencyParsed = lib.parse.agency(agency);
+
+                    updateOffers(
+                        event.args.itemId.toItemId(),
                         buildTokenIdFactory({
+                            agencyEpoch: agencyParsed.epoch,
                             type: 'item' as const,
                             tokenId: event.args.itemId.toItemId(),
                             eth: EthInt.fromNuggftV1Agency(event.args.agency).bignumber,
-                            user: agency.mask(160).toNumber().toString().toNuggId(),
                             txhash: log.transactionHash,
                             sellingTokenId: event.args.sellingTokenId.toNuggId(),
                             isBackup: false,
                             account: agency.mask(160).toNumber().toString().toNuggId(),
                         }),
-                    ]);
+                    );
                     break;
                 }
                 case 'Transfer': {
@@ -141,7 +149,7 @@ export default () => {
                     break;
             }
         },
-        [updateOffers, updateStake, nuggs],
+        [updateOffers, updateStake, nuggs, epoch],
     );
 
     // React.useEffect(() => {

@@ -5,6 +5,8 @@ import client from '@src/client';
 import { useGetLiveItemLazyQuery, useGetLiveNuggLazyQuery } from '@src/gql/types.generated';
 import formatLiveItem from '@src/client/formatters/formatLiveItem';
 import formatLiveNugg from '@src/client/formatters/formatLiveNugg';
+import useLiveNuggBackup from '@src/client/backups/useLiveNuggBackup';
+import useLiveItemBackup from '@src/client/backups/useLiveItemBackup';
 
 export default () => {
     const epoch = client.epoch.active.useId();
@@ -15,7 +17,11 @@ export default () => {
     const [itemLazyQuery] = useGetLiveItemLazyQuery({});
     const [nuggLazyQuery] = useGetLiveNuggLazyQuery({});
 
-    return useCallback(
+    const nuggBackup = useLiveNuggBackup();
+
+    const itemBackup = useLiveItemBackup();
+
+    const graph = useCallback(
         async (tokenId: TokenId) => {
             if (!tokenId.isItemId()) {
                 await nuggLazyQuery({
@@ -49,4 +55,17 @@ export default () => {
         },
         [nuggLazyQuery, itemLazyQuery, updateToken, epoch, navigate],
     );
+
+    const rpc = useCallback(
+        async (tokenId: TokenId) => {
+            if (!tokenId.isItemId()) {
+                await nuggBackup(tokenId);
+            } else {
+                await itemBackup(tokenId);
+            }
+        },
+        [nuggBackup, itemBackup],
+    );
+
+    return [graph, rpc];
 };

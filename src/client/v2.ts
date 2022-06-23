@@ -19,6 +19,7 @@ import web3 from '@src/web3';
 import { OfferData } from './interfaces';
 import health from './health';
 import stake from './stake';
+import block from './block';
 
 interface SwapDataBase extends TokenIdFactoryBase {
     leader: unknown;
@@ -209,20 +210,30 @@ const useStore = create(
     ),
 );
 
-export const usePollV2 = () => {
+const useV2Query = () => {
     const handleV2 = useStore((dat) => dat.handleV2);
-    const handleRpcHit = useStore((dat) => dat.handleRpcHit);
+
     const updateStake = stake.useHandleActiveV2();
 
     const [lazy] = useGetV2ActiveLazyQuery();
 
-    const blocknum = health.useLastGraphBlock();
+    const graph = React.useCallback(
+        async (graphBlock: number) => {
+            const res = await lazy({ fetchPolicy: 'no-cache' });
+            handleV2(res, graphBlock);
+            updateStake(res);
+        },
+        [lazy, handleV2, updateStake],
+    );
 
-    const callback = React.useCallback(async () => {
-        const res = await lazy({ fetchPolicy: 'no-cache' });
-        handleV2(res, blocknum);
-        updateStake(res);
-    }, [lazy, handleV2, blocknum, updateStake]);
+    return [graph];
+};
+
+export const usePollV2 = () => {
+    const handleRpcHit = useStore((dat) => dat.handleRpcHit);
+    const liveHealth = health.useHealth();
+
+    const [graph] = useV2Query();
 
     emitter.useOn(
         emitter.events.Offer,
@@ -232,7 +243,20 @@ export const usePollV2 = () => {
         [handleRpcHit],
     );
 
-    health.useCallbackOnGraphBlockChange(callback);
+    const graphBlock = health.useLastGraphBlock();
+
+    React.useEffect(() => {
+        if (!liveHealth.graphProblem) {
+            void graph(graphBlock);
+        }
+    }, [liveHealth.graphProblem, graphBlock, graph]);
+
+    const blocknum = block.useBlock();
+    React.useEffect(() => {
+        if (liveHealth.graphProblem) {
+            void rpc(_tokenId);
+        }
+    }, [liveHealth.graphProblem, blocknum]);
 };
 
 export default {

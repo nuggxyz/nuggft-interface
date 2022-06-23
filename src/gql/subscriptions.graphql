@@ -112,6 +112,9 @@ fragment swapdata on Swap {
         incrementX64
         eth
         txhash
+        # epoch {
+        #     id
+        # }
     }
 }
 
@@ -166,6 +169,9 @@ fragment itemswapdata on ItemSwap {
         incrementX64
         eth
         txhash
+        # epoch {
+        #     id
+        # }
     }
 }
 

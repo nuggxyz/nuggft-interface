@@ -59,7 +59,7 @@ export default ({
 }) => {
     const address = web3.hook.usePriorityAccount();
     const token = client.live.token(tokenId);
-    const epoch = client.epoch.active.useId();
+    // const epoch = client.epoch.active.useId();
 
     const swap = React.useMemo(() => {
         return token?.activeSwap;
@@ -69,25 +69,28 @@ export default ({
 
     const myNuggs = client.user.useNuggs();
 
+    const offers = client.live.offers(tokenId);
+
     const [selectedMyNuggIndex, setSelectedMyNuggIndex] = React.useState<number>();
 
     const nuggsThatHaveBid = React.useMemo(() => {
-        if (!epoch || !tokenId || tokenId.isNuggId()) return [];
+        if (!tokenId || tokenId.isNuggId()) return [];
         const result: { tokenId: NuggId; eth: BigNumber }[] = [];
         const haveNot: { tokenId: NuggId; eth: BigNumber }[] = [];
 
         myNuggs.forEach((x) => {
-            let check = false;
-            x.unclaimedOffers.forEach((y) => {
-                if (y.endingEpoch && y.itemId === tokenId && y.endingEpoch >= epoch) {
-                    result.push({ tokenId: x.tokenId, eth: BigNumber.from(y.eth) });
-                    check = true;
-                }
+            const check = offers.find((offer) => {
+                return offer.account === x.tokenId;
             });
-            if (!check) haveNot.push({ tokenId: x.tokenId, eth: BigNumber.from(0) });
+            if (check) {
+                result.push({ tokenId: x.tokenId, eth: check.eth });
+            } else {
+                haveNot.push({ tokenId: x.tokenId, eth: BigNumber.from(0) });
+            }
         });
+
         return [...result, ...haveNot].sort((a, b) => (a.eth.gt(b.eth) ? -1 : 1));
-    }, [epoch, myNuggs, tokenId]);
+    }, [myNuggs, tokenId, offers]);
 
     const nuggToBuyFor = React.useMemo(() => {
         if (selectedMyNuggIndex !== undefined) {
@@ -95,13 +98,6 @@ export default ({
         }
         return undefined;
     }, [selectedMyNuggIndex, nuggsThatHaveBid]);
-
-    // const nuggToBuyFor = React.useMemo(() => {
-    //     if (nuggsThatHaveBid && nuggsThatHaveBid.length > 0) {
-    //         return nuggsThatHaveBid[0];
-    //     }
-    //     return undefined;
-    // }, [nuggsThatHaveBid]);
 
     const openModal = client.modal.useOpenModal();
 
@@ -167,7 +163,7 @@ export default ({
                                 tokenId: swap.tokenId,
                                 nuggToBuyFrom: null,
                                 nuggToBuyFor: null,
-                                endingEpoch: swap.epoch?.id ?? null,
+                                endingEpoch: swap.endingEpoch ?? null,
                             }),
                         );
                     } else if (swap && swap?.isItem() && nuggToBuyFor) {
@@ -177,7 +173,7 @@ export default ({
                                 tokenId: swap.tokenId,
                                 nuggToBuyFrom: sellingNuggId || swap.owner,
                                 nuggToBuyFor,
-                                endingEpoch: swap.epoch?.id ?? null,
+                                endingEpoch: swap.endingEpoch ?? null,
                             }),
                         );
                     }

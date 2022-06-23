@@ -85,7 +85,7 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         token && token.type === 'item' ? 'nugg' : provider,
-        leader?.user || undefined,
+        leader.account,
     );
     const { isPhone } = useDimensions();
 
@@ -139,7 +139,7 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
             />
             <Text textStyle={{ fontSize: '13px', color: 'white', marginTop: 5 }}>
                 {t`${
-                    leader?.eth ? `${leaderEns || leader?.user || ''} is leading` : 'starting price'
+                    leader?.eth ? `${leaderEns || leader.account} is leading` : 'starting price'
                 } | ${offers.length} offers`}
             </Text>
         </div>

@@ -119,7 +119,7 @@ export const BuntOfferTextMobile = ({ tokenId }: { tokenId: TokenId }) => {
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         token && token.type === 'item' ? 'nugg' : provider,
-        leader?.user || undefined,
+        leader.account,
     );
 
     const leaderCurrency = useUsdPair(leader?.eth || vfo?.number || 0);
@@ -183,7 +183,7 @@ export const BuntOfferTextMobile = ({ tokenId }: { tokenId: TokenId }) => {
             />
             <Text textStyle={{ fontSize: '13px', color: dynamicTextColor, marginTop: 5 }}>
                 {`${
-                    leader?.eth ? `${leaderEns || leader?.user || ''} is leading` : 'starting price'
+                    leader?.eth ? `${leaderEns || leader.account} is leading` : 'starting price'
                 } | ${offers.length} offers`}
             </Text>
         </div>

@@ -8,13 +8,13 @@ import { Chain } from '@src/web3/constants';
 import { SwapRoutes } from './router';
 
 interface OfferDataBase extends TokenIdFactoryBase {
-    user?: AddressString | NuggId;
     eth: BigNumber;
     txhash: string;
     isBackup: boolean;
     sellingTokenId: null | NuggId;
     account: unknown;
     incrementX64?: BigNumber;
+    agencyEpoch: number | null;
 }
 
 export type OfferData = TokenIdFactoryCreator<
@@ -36,7 +36,6 @@ export interface BasicData extends ListDataBase {
 interface SwapDataBase extends ListDataBase {
     listDataType: 'swap';
     eth: BigNumber;
-    epoch: EpochData | null;
     endingEpoch: number | null;
     canceledEpoch: number | null;
     startUnix?: number;
@@ -47,6 +46,7 @@ interface SwapDataBase extends ListDataBase {
     isBackup: boolean;
     count?: unknown;
     isTryout?: unknown;
+    offers: OfferData[];
 }
 
 export type SwapData = TokenIdFactoryCreator<

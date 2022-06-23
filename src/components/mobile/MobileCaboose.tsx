@@ -233,7 +233,7 @@ export default ({
                                         token,
                                         nuggToBuyFrom,
                                         nuggToBuyFor: selectedMyNugg,
-                                        endingEpoch: token.activeSwap?.epoch?.id ?? null,
+                                        endingEpoch: token.activeSwap?.endingEpoch ?? null,
                                     }),
                                 );
                         }

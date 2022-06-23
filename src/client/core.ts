@@ -146,53 +146,235 @@ const core = create(
                 }
             }
 
-            function updateOffers(tokenId: TokenId, offers: OfferData[]): void {
-                // @ts-ignore
+            function updateOffers(tokenId: TokenId, offer: OfferData): void {
+                const isNugg = tokenId.isNuggId();
 
-                set((draft) => {
-                    if (!draft.liveOffers[tokenId]) draft.liveOffers[tokenId] = [];
-                    if (!draft.liveOffers[tokenId]) draft.liveOffers[tokenId] = [];
+                if (isNugg) {
+                    const { activeSwap } = get().liveTokens[tokenId];
 
-                    draft.liveOffers[tokenId] = draft.liveOffers[tokenId].merge(
-                        offers,
-                        'user',
-                        (a, b) => b.eth.gt(a.eth),
-                        (a, b) => (a.eth.gt(b.eth) ? 1 : -1),
-                    );
+                    if (!activeSwap) {
+                        // @ts-ignore
+                        // set((draft) => {
+                        //     draft.liveTokens[tokenId].activeSwap = buildTokenIdFactory({
+                        //         tokenId,
+                        //         epoch: null,
+                        //         eth: offer.eth,
+                        //         leader: offer.account as AddressString,
+                        //         owner: ADDRESS_ZERO,
+                        //         endingEpoch: offer.agencyEpoch,
+                        //         num: Number(0),
+                        //         isActive: false,
+                        //         bottom: new EthInt(0).bignumber,
+                        //         isBackup: true,
+                        //         listDataType: 'swap' as const,
+                        //         canceledEpoch: null,
+                        //         offers: [offer],
+                        //     });
+                        // });
+                        return;
+                    }
 
-                    // // this makes sure that token rerenders too when a new offer comes in
-                    // if (offers.length > 0) {
-                    //     const token = get().liveTokens[tokenId];
-                    //     const tmpOffer = offers[0];
+                    const currentOffers = activeSwap.offers;
 
-                    //     if (token && token.type === 'item' && !token.activeSwap) {
-                    //         const preloadedSwap = token.swaps.find(
-                    //             (x) => x.owner === tmpOffer.sellingTokenId,
-                    //         );
+                    // const currentUserOffer = currentOffers.find((o) => o.account === offer.account);
 
-                    //         const { nextEpoch } = get();
+                    // if (currentUserOffer) {
+                    //     if (currentUserOffer.eth.lt(offer.eth)) return;
 
-                    //         if (preloadedSwap && nextEpoch) {
-                    //             draft.liveTokens[tokenId].activeSwap = {
-                    //                 ...preloadedSwap,
-                    //                 endingEpoch: nextEpoch.id,
-                    //                 epoch: nextEpoch,
-                    //                 count: 1,
-                    //             };
-                    //         }
-                    //     }
+                    //     currentOffers = [
+                    //         offer,
+                    //         ...currentOffers.filter((o) => o.account !== offer.account),
+                    //     ].sort((a, b) => (a.eth.gt(b.eth) ? 1 : -1));
+                    //     // @ts-ignore
+                    //     set((draft) => {
+                    //         draft.liveTokens[tokenId].activeSwap!.offers = currentOffers;
+                    //         draft.liveTokens[tokenId].activeSwap!.endingEpoch = offer.agencyEpoch;
+                    //     });
+                    // } else {
+                    // @ts-ignore
+                    set((draft) => {
+                        draft.liveTokens[tokenId].activeSwap!.offers = [
+                            offer,
+                            ...currentOffers.filter((o) => o.account !== offer.account),
+                        ];
+                        draft.liveTokens[tokenId].activeSwap!.endingEpoch = offer.agencyEpoch;
+                        draft.liveTokens[tokenId].activeSwap!.eth = offer.eth;
+                        draft.liveTokens[tokenId].activeSwap!.leader =
+                            offer.account as AddressString;
+                    });
                     // }
-                });
+
+                    return;
+                }
+
+                const activeSwap = get().liveTokens[tokenId]?.activeSwap;
+                const upcomingActiveSwap = get().liveTokens[tokenId]?.upcomingActiveSwap;
+
+                if (!activeSwap) {
+                    const theswap = get().liveTokens[tokenId].swaps.find(
+                        (x) => x.owner === offer.sellingTokenId,
+                    );
+                    if (theswap) {
+                        const filteredSwaps = get().liveTokens[tokenId].swaps.filter(
+                            (x) => x.owner !== offer.sellingTokenId,
+                        );
+                        // @ts-ignore
+                        set((draft) => {
+                            draft.liveTokens[tokenId].activeSwap = theswap;
+                            draft.liveTokens[tokenId].activeSwap!.offers = [
+                                offer,
+                                ...theswap.offers,
+                            ];
+                            draft.liveTokens[tokenId].activeSwap!.endingEpoch = offer.agencyEpoch;
+                            draft.liveTokens[tokenId].activeSwap!.eth = offer.eth;
+                            draft.liveTokens[tokenId].activeSwap!.leader = offer.account as NuggId;
+                            draft.liveTokens[tokenId].swaps = filteredSwaps;
+                        });
+
+                        return;
+                    }
+                }
+
+                if (activeSwap && activeSwap.endingEpoch === offer.agencyEpoch) {
+                    const currentOffers = activeSwap.offers;
+
+                    // const currentUserOffer = currentOffers.find((o) => o.account === offer.account);
+
+                    // @ts-ignore
+                    set((draft) => {
+                        draft.liveTokens[tokenId].activeSwap!.offers = [
+                            offer,
+                            ...currentOffers.filter((o) => o.account !== offer.account),
+                        ];
+                        draft.liveTokens[tokenId].activeSwap!.endingEpoch = offer.agencyEpoch;
+                        draft.liveTokens[tokenId].activeSwap!.eth = offer.eth;
+                        draft.liveTokens[tokenId].activeSwap!.leader = offer.account as NuggId;
+                    });
+
+                    return;
+                }
+
+                if (!upcomingActiveSwap) {
+                    const theswap = get().liveTokens[tokenId].swaps.find(
+                        (x) => x.owner === offer.sellingTokenId,
+                    );
+                    if (theswap) {
+                        const filteredSwaps = get().liveTokens[tokenId].swaps.filter(
+                            (x) => x.owner !== offer.sellingTokenId,
+                        );
+                        // @ts-ignore
+                        set((draft) => {
+                            draft.liveTokens[tokenId].upcomingActiveSwap = theswap;
+                            draft.liveTokens[tokenId].upcomingActiveSwap!.offers = [
+                                offer,
+                                ...theswap.offers,
+                            ];
+                            draft.liveTokens[tokenId].upcomingActiveSwap!.endingEpoch =
+                                offer.agencyEpoch;
+                            draft.liveTokens[tokenId].upcomingActiveSwap!.eth = offer.eth;
+                            draft.liveTokens[tokenId].upcomingActiveSwap!.leader =
+                                offer.account as NuggId;
+                            draft.liveTokens[tokenId].swaps = filteredSwaps;
+                        });
+
+                        return;
+                    }
+                }
+
+                if (upcomingActiveSwap && upcomingActiveSwap.endingEpoch === offer.agencyEpoch) {
+                    let currentOffers = upcomingActiveSwap.offers;
+
+                    const currentUserOffer = currentOffers.find((o) => o.account === offer.account);
+
+                    if (currentUserOffer) {
+                        if (currentUserOffer.eth.lt(offer.eth)) return;
+
+                        currentOffers = [
+                            offer,
+                            ...currentOffers.filter((o) => o.account !== offer.account),
+                        ].sort((a, b) => (a.eth.gt(b.eth) ? 1 : -1));
+                        // @ts-ignore
+                        set((draft) => {
+                            draft.liveTokens[tokenId].upcomingActiveSwap!.offers = currentOffers;
+                            draft.liveTokens[tokenId].upcomingActiveSwap!.endingEpoch =
+                                offer.agencyEpoch;
+                            draft.liveTokens[tokenId].upcomingActiveSwap!.eth = offer.eth;
+                            draft.liveTokens[tokenId].upcomingActiveSwap!.leader =
+                                offer.account as NuggId;
+                        });
+                    }
+                }
+
+                // set((draft) => {
+
+                //     draft.liveTokens[tokenId] = draft.liveTokens[tokenId].merge(
+                //         offers,
+                //         'user',
+                //         (a, b) => b.eth.gt(a.eth),
+                //         (a, b) => (a.eth.gt(b.eth) ? 1 : -1),
+                //     );
+                //         if (draft.liveTokens[tokenId].activeSwap) {
+                //             const pre = draft.liveTokens[tokenId].activeSwap.offers;
+                //             draft.liveTokens[tokenId].activeSwap.offers = draft.liveOffers[tokenId].merge(
+                //                 draft.liveTokens[tokenId].activeSwap.offers,
+                //         }
+
+                //     // @ts-ignore
+                //     // draft.liveTokens[tokenId] = { ...draft.liveTokens[tokenId] };
+
+                //     // this makes sure that token rerenders too when a new offer comes in
+                //     if (offers.length > 0) {
+                //         const token = get().liveTokens[tokenId];
+                //         const tmpOffer = offers[0];
+
+                //         if (token && token.type === 'item' && !token.activeSwap) {
+                //             const preloadedSwap = token.swaps.find(
+                //                 (x) => x.owner === tmpOffer.sellingTokenId,
+                //             );
+
+                //             const nextEpoch = epoch + 1;
+
+                //             if (preloadedSwap && nextEpoch) {
+                //                 draft.liveTokens[tokenId].activeSwap = {
+                //                     ...preloadedSwap,
+                //                     endingEpoch: nextEpoch,
+                //                     count: 1,
+                //                 };
+                //             }
+                //         } else if (epoch && !!draft.liveTokens[tokenId].activeSwap) {
+                //             // @ts-ignore
+
+                //             draft.liveTokens[tokenId].activeSwap.endingEpoch = epoch + 1;
+                //         }
+                //     }
+                // });
             }
 
             function updateToken(tokenId: TokenId, data: LiveToken): void {
-                // @ts-ignore
+                const curr = get().liveTokens[tokenId];
 
-                if (JSON.stringify(data) !== JSON.stringify(get().liveTokens[tokenId])) {
+                if (!curr) {
                     // @ts-ignore
-
                     set((draft) => {
-                        // const lifeData = wrapLifecycle(data);
+                        // @ts-ignore
+                        draft.liveTokens[tokenId] = data;
+                    });
+                    return;
+                }
+
+                if (JSON.stringify(data) !== JSON.stringify(curr)) {
+                    const newOffers = data.activeSwap?.offers;
+
+                    const curroffers = curr.activeSwap?.offers;
+
+                    if (newOffers && curroffers) {
+                        if (newOffers.length < curroffers.length) {
+                            data.activeSwap!.offers = curroffers;
+                        }
+                    }
+
+                    // @ts-ignore
+                    set((draft) => {
                         // @ts-ignore
                         draft.liveTokens[tokenId] = data;
                     });

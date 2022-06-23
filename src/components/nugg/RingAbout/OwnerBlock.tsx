@@ -49,7 +49,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 
     const blocknum = client.block.useBlock();
 
-    const { minutes, seconds } = client.epoch.useEpoch(swap?.epoch?.id, blocknum);
+    const { minutes, seconds } = client.epoch.useEpoch(swap?.endingEpoch, blocknum);
 
     const trueSeconds = useRemainingTrueSeconds(seconds ?? 0);
     const provider = web3.hook.usePriorityProvider();

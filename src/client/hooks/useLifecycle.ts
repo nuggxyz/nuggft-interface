@@ -12,6 +12,7 @@ export default (tokenId?: TokenId): Lifecycle | undefined => {
     const address = web3.hook.usePriorityAccount();
 
     const token = client.live.token(tokenId);
+    const offers = client.live.offers(tokenId);
 
     const [lifecycle, setLifecycle] = React.useState<Lifecycle>();
 
@@ -19,12 +20,9 @@ export default (tokenId?: TokenId): Lifecycle | undefined => {
         const find = () => {
             if (!token) return undefined;
 
-            const isToken = 'swaps' in token;
-
-            let abc = isToken ? token.activeSwap : token;
+            let abc = token.activeSwap;
 
             if (
-                isToken &&
                 token.isItem() &&
                 !abc &&
                 'upcomingActiveSwap' in token &&
@@ -34,7 +32,7 @@ export default (tokenId?: TokenId): Lifecycle | undefined => {
                 // delete token.upcomingActiveSwap;
             }
 
-            if (isToken && !abc && token.isItem() && token.tryout.count > 0) {
+            if (!abc && token.isItem() && token.tryout.count > 0) {
                 if (token.tryout.count === 1) return Lifecycle.Formality;
                 return Lifecycle.Tryout;
             }
@@ -55,11 +53,11 @@ export default (tokenId?: TokenId): Lifecycle | undefined => {
                     return Lifecycle.Deck;
                 }
 
-                if (abc.leader === Address.ZERO.hash && abc.epoch && warning) {
+                if (abc.leader === Address.ZERO.hash && abc.endingEpoch && warning) {
                     return Lifecycle.Cut;
                 }
 
-                if (+abc.endingEpoch === epoch) {
+                if (abc.endingEpoch === epoch) {
                     if (abc.type === 'nugg' && abc.owner === Address.ZERO.hash) {
                         return Lifecycle.Bunt;
                     }
@@ -74,7 +72,7 @@ export default (tokenId?: TokenId): Lifecycle | undefined => {
         const check = find();
 
         if (check !== lifecycle) setLifecycle(check);
-    }, [epoch, token, warning, address, lifecycle]);
+    }, [epoch, token, warning, address, lifecycle, offers]);
 
     return lifecycle;
 };

@@ -303,7 +303,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
 
     const lifecycle = useLifecycle(tokenId);
 
-    const { minutes, seconds } = client.epoch.useEpoch(swap?.epoch?.id);
+    const { minutes, seconds } = client.epoch.useEpoch(swap?.endingEpoch);
 
     const trueSeconds = useRemainingTrueSeconds(seconds ?? 0);
     const provider = web3.hook.usePriorityProvider();
@@ -488,8 +488,9 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
         const epoch = client.epoch.active.useId();
         const openModal = client.modal.useOpenModal();
         const sender = web3.hook.usePriorityAccount();
+        const blocknum = client.block.useBlock();
 
-        const tokenQuery = useTokenQuery();
+        const [tokenQuery] = useTokenQuery();
 
         const prevTokenId = usePrevious(tokenId);
 
@@ -497,7 +498,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
 
         React.useEffect(() => {
             if (tokenId) void tokenQuery(tokenId);
-        }, [tokenId, tokenQuery]);
+        }, [tokenId, tokenQuery, blocknum]);
 
         React.useEffect(() => {
             if (ref && ref.current && prevTokenId !== tokenId) {

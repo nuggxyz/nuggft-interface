@@ -12,7 +12,6 @@ import client from '@src/client';
 import HappyTabber from '@src/components/general/HappyTabber/HappyTabber';
 import AddressViewer from '@src/components/general/Texts/AddressViewer/AddressViewer';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
-import useTokenQuery from '@src/client/hooks/useTokenQuery';
 import globalStyles from '@src/lib/globalStyles';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import Button from '@src/components/general/Buttons/Button/Button';
@@ -36,12 +35,6 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const { safeTokenId: tokenId } = useViewingNugg();
 
     const sender = web3.hook.usePriorityAccount();
-
-    const tokenQuery = useTokenQuery();
-
-    React.useEffect(() => {
-        if (tokenId) void tokenQuery(tokenId);
-    }, [tokenId, tokenQuery]);
 
     const { screen: screenType } = useDimensions();
     const chainId = web3.hook.usePriorityChainId();

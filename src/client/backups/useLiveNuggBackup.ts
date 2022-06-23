@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import web3 from '@src/web3';
 import lib from '@src/lib';
@@ -9,93 +9,80 @@ import { buildTokenIdFactory } from '@src/prototypes';
 
 import client from '..';
 
-export default (activate: boolean, tokenId: NuggId | undefined) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+export default () => {
     const chainId = web3.hook.usePriorityChainId();
     const liveEpoch = client.epoch.active.useId();
     const provider = web3.hook.usePriorityProvider();
     const nuggft = useNuggftV1(provider);
-    const blocknum = client.block.useBlock();
     const updateToken = client.mutate.updateToken();
     const updateOffers = client.mutate.updateOffers();
 
-    const callback = useCallback(async () => {
-        if (activate && tokenId && chainId && liveEpoch) {
-            const agency = lib.parse.agency(await nuggft.agency(tokenId.toRawId()));
+    const callback = useCallback(
+        async (tokenId: NuggId | undefined) => {
+            if (tokenId && chainId && liveEpoch) {
+                const agency = lib.parse.agency(await nuggft.agency(tokenId.toRawId()));
 
-            const items = lib.parse
-                .proof(await nuggft.proofOf(tokenId.toRawId()))
-                .map((x) => buildTokenIdFactory({ ...x, activeSwap: undefined }));
+                const items = lib.parse
+                    .proof(await nuggft.proofOf(tokenId.toRawId()))
+                    .map((x) => buildTokenIdFactory({ ...x, activeSwap: undefined }));
 
-            const owner =
-                agency.flag === 0x0 && agency.epoch === 0
-                    ? (Address.ZERO.hash as AddressString)
-                    : (nuggft.address as AddressString);
+                const owner =
+                    agency.flag === 0x0 && agency.epoch === 0
+                        ? (Address.ZERO.hash as AddressString)
+                        : (nuggft.address as AddressString);
 
-            if (agency.flag === 0 && Number(tokenId.toRawId()) === liveEpoch) {
-                agency.epoch = liveEpoch;
-                agency.flag = 0x3;
-            }
+                if (agency.flag === 0 && Number(tokenId.toRawId()) === liveEpoch) {
+                    agency.epoch = liveEpoch;
+                    agency.flag = 0x3;
+                }
 
-            const epoch =
-                agency.flag === 0x3 && agency.epoch !== 0
-                    ? {
-                          id: agency.epoch,
-                          startblock: web3.config.calculateStartBlock(agency.epoch, chainId),
-                          endblock: web3.config.calculateStartBlock(agency.epoch + 1, chainId) - 1,
-                          status: 'PENDING' as const, // i dont think this matters so not calcing it
-                      }
-                    : null;
+                const activeSwap =
+                    agency.flag === 0x3
+                        ? buildTokenIdFactory({
+                              tokenId,
+                              eth: agency.eth.bignumber,
+                              leader: agency.address as AddressString,
+                              owner,
+                              endingEpoch: agency.epoch,
+                              num: Number(0),
+                              bottom: new EthInt(0).bignumber,
+                              isBackup: true,
+                              listDataType: 'swap' as const,
+                              canceledEpoch: null,
+                              offers: [
+                                  buildTokenIdFactory({
+                                      eth: agency.eth.bignumber,
+                                      isBackup: true,
+                                      sellingTokenId: null,
+                                      tokenId,
+                                      account: agency.address as AddressString,
+                                      txhash: '',
+                                      agencyEpoch: agency.epoch,
+                                  }),
+                              ],
+                          })
+                        : undefined;
 
-            const activeSwap =
-                agency.flag === 0x3
-                    ? buildTokenIdFactory({
-                          tokenId,
-                          epoch,
-                          eth: agency.eth.bignumber,
-                          leader: agency.address as AddressString,
-                          owner,
-                          endingEpoch: epoch && epoch.id,
-                          num: Number(0),
-                          isActive: false,
-                          bottom: new EthInt(0).bignumber,
-                          isBackup: true,
-                          listDataType: 'swap' as const,
-                          canceledEpoch: null,
-                      })
-                    : undefined;
-
-            updateToken(
-                tokenId,
-                buildTokenIdFactory({
+                updateToken(
                     tokenId,
-                    activeLoan: null,
-                    owner,
-                    items,
-                    pendingClaim: null,
-                    lastTransfer: null,
-                    swaps: [],
-                    activeSwap,
-                    isBackup: true,
-                }),
-            );
-            if (activeSwap && !activeSwap.eth.eq(0))
-                updateOffers(tokenId, [
                     buildTokenIdFactory({
-                        eth: activeSwap.eth,
-                        user: activeSwap.leader as AddressString,
-                        isBackup: true,
-                        sellingTokenId: null,
                         tokenId,
-                        account: activeSwap.leader as AddressString,
-                        txhash: '',
+                        activeLoan: null,
+                        owner,
+                        items,
+                        pendingClaim: null,
+                        lastTransfer: null,
+                        swaps: [],
+                        activeSwap,
+                        isBackup: true,
                     }),
-                ]);
-        }
-    }, [chainId, tokenId, activate, nuggft, liveEpoch, updateOffers, updateToken]);
+                );
+            }
+        },
+        [chainId, nuggft, liveEpoch, updateOffers, updateToken],
+    );
 
-    useEffect(() => {
-        void callback();
-    }, [blocknum]);
-
-    return null;
+    return callback;
 };
