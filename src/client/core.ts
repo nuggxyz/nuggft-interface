@@ -150,7 +150,7 @@ const core = create(
                 const isNugg = tokenId.isNuggId();
 
                 if (isNugg) {
-                    const { activeSwap } = get().liveTokens[tokenId];
+                    const activeSwap = get().liveTokens[tokenId]?.activeSwap;
 
                     if (!activeSwap) {
                         // @ts-ignore
