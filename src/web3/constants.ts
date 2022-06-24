@@ -72,6 +72,7 @@ export const CONTRACTS = {
         Interval: 0,
         Offset: 1,
         MintOffset: 1000000,
+        PreMintTokens: 2000,
     },
     [Chain.ROPSTEN]: {
         NuggftV1: lower('0x69420000e30fb9095ec2a254765ff919609c1875'),
@@ -81,6 +82,7 @@ export const CONTRACTS = {
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
+        PreMintTokens: 2000,
     },
     [Chain.RINKEBY]: {
         NuggftV1: lower('0x6942000062516fab40349b13131c34346c0446e8'),
@@ -90,6 +92,7 @@ export const CONTRACTS = {
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
+        PreMintTokens: 2000,
     },
     [Chain.GOERLI]: {
         NuggftV1: lower('0xb0b9cd000a5afa56d016c39470c3ec237df4e043'),
@@ -99,6 +102,7 @@ export const CONTRACTS = {
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
+        PreMintTokens: 2000,
     },
     [Chain.KOVAN]: {
         NuggftV1: lower('0x694200002e1540157c5fe987705e418ee0a9577d'),
@@ -108,6 +112,7 @@ export const CONTRACTS = {
         Interval: 64,
         Offset: 1,
         MintOffset: 1000000,
+        PreMintTokens: 2000,
     },
 } as const;
 

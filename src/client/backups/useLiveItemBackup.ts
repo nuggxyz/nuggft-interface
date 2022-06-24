@@ -42,7 +42,7 @@ export default () => {
                                   eth: agency.eth,
                                   leader: agency.addressAsBigNumber.toString().toNuggId(),
                                   nugg: nuggft.address,
-                                  endingEpoch: agency.epoch,
+                                  endingEpoch: agency.epoch === 0 ? null : agency.epoch,
                                   num: Number(0),
                                   bottom: new EthInt(0).bignumber,
                                   isTryout: false,

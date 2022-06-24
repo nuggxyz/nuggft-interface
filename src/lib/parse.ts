@@ -50,7 +50,6 @@ const proof = (_proof: BigNumberish) => {
         const curr = working.and('65535');
         if (!curr.eq(0)) {
             if (!seen[curr._hex]) {
-                seenFeatures[curr.div(1000).toNumber()] = true;
                 seen[curr._hex] = {
                     tokenId: curr.toString().toItemId(),
                     feature: curr.div(1000).toNumber(),
@@ -58,6 +57,7 @@ const proof = (_proof: BigNumberish) => {
                     count: 1,
                     displayed: !seenFeatures[curr.div(1000).toNumber()] && index < 8,
                 };
+                seenFeatures[curr.div(1000).toNumber()] = true;
             } else {
                 seen[curr._hex].count++;
             }

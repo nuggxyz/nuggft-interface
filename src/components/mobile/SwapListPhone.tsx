@@ -12,6 +12,8 @@ import { useUsdPair } from '@src/client/usd';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
 import { ADDRESS_ZERO } from '@src/web3/constants';
 
+import { GraphWarning } from './GraphWarning';
+
 type SwapDataWithTryout = SwapData & {
     tryout?: LiveItem['tryout'];
 };
@@ -34,6 +36,7 @@ const SwapItem: FunctionComponent<{ item: SwapDataWithTryout }> = ({ item }) => 
                 ...globalStyles.centered,
             }}
         >
+            <GraphWarning />
             <div
                 style={{
                     width: '100%',

@@ -24,6 +24,7 @@ import health from './health';
 import stake from './stake';
 import block from './block';
 import v3, { V3RpcInput } from './v3';
+import epoch from './epoch';
 
 interface SwapDataBase extends TokenIdFactoryBase {
     leader: unknown;
@@ -117,7 +118,7 @@ const rpcFormatter = (input: string, hits: TokenIdDictionary<SwapData>, blk: num
 
     const chunked = lib.parse.chunkString(input.slice(2), 74);
 
-    const epoch = web3.config.calculateEpochId(blk);
+    const _epoch = web3.config.calculateEpochId(blk);
     if (!chunked) return [];
 
     for (let index = 0; index < chunked.length; index++) {
@@ -137,11 +138,11 @@ const rpcFormatter = (input: string, hits: TokenIdDictionary<SwapData>, blk: num
                 leader: agency.address,
                 swapId: Number(0),
                 top: agency.eth,
-                commitBlock: web3.config.calculateEndBlock(epoch - 2) + 1,
+                commitBlock: web3.config.calculateEndBlock(agency.epoch - 2) + 1,
                 tokenId: nuggId,
                 updatedAtBlock: blk,
                 updatedAtIndex: null,
-                endingEpoch: epoch,
+                endingEpoch: agency.epoch,
                 numOffers: null,
                 owner: null,
             });
@@ -158,11 +159,11 @@ const rpcFormatter = (input: string, hits: TokenIdDictionary<SwapData>, blk: num
                 leader: agency.addressAsBigNumber.toNumber().toNuggId(),
                 swapId: Number(0),
                 top: agency.eth,
-                commitBlock: web3.config.calculateEndBlock(epoch - 2) + 1,
+                commitBlock: web3.config.calculateEndBlock(agency.epoch - 2) + 1,
                 tokenId: itemId,
                 updatedAtBlock: blk,
                 updatedAtIndex: null,
-                endingEpoch: epoch,
+                endingEpoch: agency.epoch,
                 numOffers: null,
                 owner: nuggId,
             });
@@ -177,8 +178,8 @@ const rpcFormatter = (input: string, hits: TokenIdDictionary<SwapData>, blk: num
 
     const rec = res.sort((a, b) => (a.top.lt(b.top) ? -1 : 1));
 
-    const curr = rec.filter((a) => a.endingEpoch === epoch).map((x) => x.tokenId);
-    const next = rec.filter((a) => a.endingEpoch === epoch + 1).map((x) => x.tokenId);
+    const curr = rec.filter((a) => a.endingEpoch === _epoch).map((x) => x.tokenId);
+    const next = rec.filter((a) => a.endingEpoch === _epoch + 1).map((x) => x.tokenId);
 
     return [curr, next, v] as const;
 };
@@ -229,8 +230,6 @@ const useStore = create(
                 }
                 const { hits } = get().v2;
                 const [current, next, v] = rpcFormatter(input, hits, blk);
-
-                console.log('v2rpc', current, next, v);
 
                 set(() => ({
                     v2: {
@@ -336,22 +335,25 @@ const useV2Query = () => {
 
     const rpc = React.useCallback(
         async (blk: number) => {
-            const res = await nuggft.loop();
-            handleV3Rpc(handleV2Rpc(res, blk), blk);
+            if (provider) {
+                const res = await nuggft.loop();
+                handleV3Rpc(handleV2Rpc(res, blk), blk);
+            }
         },
-        [nuggft, handleV2Rpc, handleV3Rpc],
+        [nuggft, handleV2Rpc, handleV3Rpc, provider],
     );
 
     const _rpc = useThrottle(rpc, 60000 * 5);
 
-    return [graph, _rpc] as const;
+    return [graph, _rpc, rpc] as const;
 };
 
 export const usePollV2 = () => {
     const handleRpcHit = useStore((dat) => dat.handleRpcHit);
-    const liveHealth = health.useHealth();
-
-    const [graph, rpc] = useV2Query();
+    const graphProblem = health.useHealth();
+    const startblock = epoch.active.useStartBlock();
+    const [graph, rpc, unthrottledRpc] = useV2Query();
+    const provider = web3.hook.usePriorityProvider();
 
     emitter.useOn(
         emitter.events.Offer,
@@ -364,21 +366,23 @@ export const usePollV2 = () => {
     const graphBlock = health.useLastGraphBlock();
 
     React.useEffect(() => {
-        if (!liveHealth.graphProblem) {
+        if (!graphProblem) {
             void graph(graphBlock);
         }
-    }, [liveHealth.graphProblem, graphBlock, graph]);
+    }, [graphProblem, graphBlock, graph]);
 
     const blocknum = block.useBlock();
     React.useEffect(() => {
-        if (liveHealth.graphProblem) {
+        if (graphProblem) {
             void rpc(blocknum);
         }
-    }, [liveHealth.graphProblem, blocknum, rpc]);
+    }, [graphProblem, blocknum, rpc]);
 
-    // React.useEffect(() => {
-    //     void rpc(blocknum);
-    // }, []);
+    React.useEffect(() => {
+        if (graphProblem && startblock) {
+            void unthrottledRpc(startblock);
+        }
+    }, [startblock, graphProblem, unthrottledRpc, provider]);
 };
 
 export default {

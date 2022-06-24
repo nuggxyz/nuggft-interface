@@ -8,7 +8,6 @@ import lib from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
 import web3 from '@src/web3';
 import client from '@src/client';
-import useTokenQuery from '@src/client/hooks/useTokenQuery';
 import globalStyles from '@src/lib/globalStyles';
 import { Fraction } from '@src/classes/Fraction';
 import useLifecycle from '@src/client/hooks/useLifecycle';
@@ -38,6 +37,7 @@ import TheRingLight from '@src/components/nugg/TheRing/TheRingLight';
 import { NuggSnapshotRenderItem } from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
 import MobileCaboose from './MobileCaboose';
+import { GraphWarningSmall } from './GraphWarning';
 
 const Ver = ({ left, right, label }: { left: number; right: number; label: string }) => {
     return (
@@ -455,6 +455,7 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                 )}
             </div>
             {(offers.length || 0) > 0 &&
+                lifecycle !== Lifecycle.Bunt &&
                 lifecycle !== Lifecycle.Bench &&
                 lifecycle !== Lifecycle.Minors && <OffersList tokenId={tokenId} />}
             <MobileOfferButton tokenId={tokenId} />
@@ -488,17 +489,10 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
         const epoch = client.epoch.active.useId();
         const openModal = client.modal.useOpenModal();
         const sender = web3.hook.usePriorityAccount();
-        const blocknum = client.block.useBlock();
-
-        const [tokenQuery] = useTokenQuery();
 
         const prevTokenId = usePrevious(tokenId);
 
         const ref = React.useRef<HTMLDivElement>(null);
-
-        React.useEffect(() => {
-            if (tokenId) void tokenQuery(tokenId);
-        }, [tokenId, tokenQuery, blocknum]);
 
         React.useEffect(() => {
             if (ref && ref.current && prevTokenId !== tokenId) {
@@ -846,7 +840,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                         <div
                             style={{
                                 display: 'flex',
-                                justifyContent: 'flex-start',
+                                justifyContent: 'space-between',
                                 alignItems: 'flex-start',
                                 textAlign: 'left',
                                 width: '100%',
@@ -862,13 +856,14 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                             >
                                 {t`purchases`}
                             </Text>
+                            <GraphWarningSmall />
                         </div>
                         <SwapListPhone tokenId={tokenId} />
 
                         <div
                             style={{
                                 display: 'flex',
-                                justifyContent: 'flex-start',
+                                justifyContent: 'space-between',
                                 alignItems: 'flex-start',
                                 textAlign: 'left',
                                 width: '100%',
@@ -884,6 +879,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                             >
                                 {token?.isItem() ? t`worn by` : t`history`}
                             </Text>
+                            <GraphWarningSmall />
                         </div>
 
                         <GodList

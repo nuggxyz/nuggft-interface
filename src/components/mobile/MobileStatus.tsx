@@ -12,16 +12,18 @@ import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyTex
 import useMountLogger from '@src/hooks/useMountLogger';
 
 export default () => {
-    const lastGraphResponse = client.health.useLastGraphResponse();
+    // const lastGraphResponse = client.health.useLastGraphResponse();
     const lastGraphBlock = client.health.useLastGraphBlock();
     const lastRpcBlock = client.block.useBlock();
     const lastRpcChange = client.block.useLastChange();
 
+    // const graphProblem = client.health.useHealth();
+    const lastGraphBlockTimestamp = client.health.useLastGraphBlockTimestamp();
     const isOpen = client.nuggbook.useOpen();
 
     const lastTimestamp = client.usd.useTimestamp();
     const lastPrice = client.usd.useUsd();
-
+    const graphProblem = client.health.useHealth();
     const [secondsSinceGraphResponse, setSecondsSinceGraphResponse] = React.useState(0);
     const [secondsSinceRpcResponse, setSecondsSinceRpcResponse] = React.useState(0);
     const [secondsSinceEtherscanResponse, setSecondsSinceEtherscanResponse] = React.useState(0);
@@ -30,11 +32,11 @@ export default () => {
         React.useCallback(() => {
             if (isOpen) {
                 const now = Math.floor(new Date().getTime() / 1000);
-                setSecondsSinceGraphResponse(now - Math.floor(lastGraphResponse.time / 1000));
+                setSecondsSinceGraphResponse(Math.floor(now - lastGraphBlockTimestamp / 1000));
                 setSecondsSinceRpcResponse(now - Math.floor(lastRpcChange / 1000));
                 setSecondsSinceEtherscanResponse(now - Math.floor(lastTimestamp));
             }
-        }, [isOpen, lastGraphResponse, lastRpcChange, lastTimestamp]),
+        }, [isOpen, lastGraphBlockTimestamp, lastRpcChange, lastTimestamp]),
         1000,
     );
 
@@ -59,6 +61,7 @@ export default () => {
                     background: lib.colors.transparentWhite,
                     padding: 15,
                     borderRadius: lib.layout.borderRadius.mediumish,
+                    boxShadow: lib.layout.boxShadow.basic,
                 }}
             >
                 <div
@@ -132,10 +135,13 @@ export default () => {
                     // marginTop: '20px',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    background: lib.colors.transparentWhite,
+                    background: graphProblem
+                        ? lib.colors.gradientTransparent
+                        : lib.colors.transparentWhite,
                     padding: 15,
                     marginTop: 15,
                     borderRadius: lib.layout.borderRadius.mediumish,
+                    boxShadow: lib.layout.boxShadow.basic,
                 }}
             >
                 <div
@@ -148,8 +154,31 @@ export default () => {
                         background: lib.colors.primaryColor,
                         padding: 10,
                         borderRadius: lib.layout.borderRadius.mediumish,
+                        position: 'relative',
                     }}
                 >
+                    {/* {graphProblem && (
+                        <Text
+                            size="smaller"
+                            textStyle={{
+                                padding: '5px 10px',
+                                background: lib.colors.gradientTransparent,
+                                borderRadius: lib.layout.borderRadius.medium,
+                                right: -75,
+                                top: 0,
+                                textAlign: 'center',
+                                position: 'absolute',
+                            }}
+                        >
+                            <strong>
+                                {Math.floor(
+                                    (new Date().getTime() - lastGraphBlockTimestamp) / 60 / 1000,
+                                )}{' '}
+                                min
+                            </strong>
+                            <br /> ago
+                        </Text>
+                    )} */}
                     <img
                         alt="graph protocol logo"
                         src={graph}
@@ -168,7 +197,6 @@ export default () => {
                         the graph
                     </Text>
                 </div>
-
                 <div
                     style={{
                         display: 'flex',
@@ -178,7 +206,12 @@ export default () => {
                         height: '100%',
                     }}
                 >
-                    <Text textStyle={{ color: lib.colors.primaryColor, fontSize: 14 }}>
+                    <Text
+                        textStyle={{
+                            color: lib.colors.primaryColor,
+                            fontSize: 14,
+                        }}
+                    >
                         {t`last block`}
                     </Text>
                     <Text
@@ -187,13 +220,15 @@ export default () => {
                             fontWeight: lib.layout.fontWeight.thicc,
                             fontFamily: lib.layout.fontFamily.monospace,
                             marginBottom: 5,
+                            display: 'flex',
+                            alignItems: 'center',
                         }}
                     >
                         {lastGraphBlock}
                     </Text>
 
                     <Text textStyle={{ color: lib.colors.primaryColor, fontSize: 14 }}>
-                        {t`last response`}
+                        {t`last updated`}
                     </Text>
                     <Text
                         textStyle={{
@@ -216,6 +251,7 @@ export default () => {
                     padding: 15,
                     marginTop: 15,
                     borderRadius: lib.layout.borderRadius.mediumish,
+                    boxShadow: lib.layout.boxShadow.basic,
                 }}
             >
                 <div

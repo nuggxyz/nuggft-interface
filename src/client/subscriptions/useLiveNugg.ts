@@ -37,22 +37,23 @@ import block from '@src/client/block';
 
 export const useLiveTokenPoll = (activate: boolean, _tokenId: TokenId | undefined) => {
     const [graph, rpc] = useTokenQuery();
-    const liveHealth = health.useHealth();
+    const graphProblem = health.useHealth();
 
     const graphBlock = health.useLastGraphBlock();
     React.useEffect(() => {
-        if (activate && _tokenId && !liveHealth.graphProblem) {
+        if (activate && _tokenId && !graphProblem) {
             void graph(_tokenId);
+            console.log('AYO');
         }
-    }, [activate, _tokenId, liveHealth.graphProblem, graphBlock]);
+    }, [activate, _tokenId, graphProblem, graphBlock]);
 
     const blocknum = block.useBlock();
     React.useEffect(() => {
-        if (activate && _tokenId && liveHealth.graphProblem) {
-            console.log('YEEEEEPPPPP', _tokenId);
+        if (activate && _tokenId && graphProblem) {
             void rpc(_tokenId);
+            console.log('SAYO');
         }
-    }, [activate, _tokenId, liveHealth.graphProblem, blocknum]);
+    }, [activate, _tokenId, graphProblem, blocknum]);
 
     return null;
 };

@@ -4,6 +4,7 @@ import client from '@src/client';
 import { Lifecycle } from '@src/client/interfaces';
 import { Address } from '@src/classes/Address';
 import web3 from '@src/web3';
+import { DEFAULT_CONTRACTS, ADDRESS_ZERO } from '@src/web3/constants';
 
 export default (tokenId?: TokenId): Lifecycle | undefined => {
     const epoch = client.epoch.active.useId();
@@ -58,7 +59,15 @@ export default (tokenId?: TokenId): Lifecycle | undefined => {
                 }
 
                 if (abc.endingEpoch === epoch) {
-                    if (abc.type === 'nugg' && abc.owner === Address.ZERO.hash) {
+                    if (abc.type === 'nugg' && abc.owner === ADDRESS_ZERO) {
+                        return Lifecycle.Bunt;
+                    }
+                    if (
+                        abc.type === 'nugg' &&
+                        abc.owner === DEFAULT_CONTRACTS.NuggftV1 &&
+                        abc.offers.length === 1 &&
+                        abc.offers[0].account === ADDRESS_ZERO
+                    ) {
                         return Lifecycle.Bunt;
                     }
                     return Lifecycle.Bat;

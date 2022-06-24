@@ -48,6 +48,7 @@ const Colors = {
     nuggBlueText: '#5090ea',
     nuggRed: 'rgb(255,64,64)',
     gradientRed: '#FF6871',
+    gradientRedTransparent: '#FF687188',
     gradientRedLight: '#ffe8ea',
     gradientGold: '#F3BE1E',
     gradientPink: '#e856d0',

@@ -48,7 +48,7 @@ const DisplayProblem = () => {
 };
 
 export default () => {
-    const { blockdiff } = client.health.useHealth();
+    const graphProblem = client.health.useHealth();
 
-    return blockdiff < 5 ? <DisplayOk /> : <DisplayProblem />;
+    return !graphProblem ? <DisplayOk /> : <DisplayProblem />;
 };

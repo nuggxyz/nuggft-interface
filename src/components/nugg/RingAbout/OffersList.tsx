@@ -71,8 +71,6 @@ export default ({
 
     const leaderEth = client.usd.useUsdPair(leader?.eth);
 
-    // const { distribution, ownerEns } = useDistribution(swap);
-
     useEffect(() => {
         if (Array.isArray(others) && others.length === 0 && open && screenType !== 'tablet') {
             setOpen(false);

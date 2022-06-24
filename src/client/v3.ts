@@ -181,7 +181,7 @@ const rpcFormatter = (
     }
 
     const output = [
-        res.sort((a, b) => (a?.min?.eth.lt(b?.min?.eth || 0) ? -1 : 1)).map((a) => a.tokenId),
+        res.sort((a, b) => (a?.min?.eth.gt(b?.min?.eth || 0) ? -1 : 1)).map((a) => a.tokenId),
     ];
 
     return output;

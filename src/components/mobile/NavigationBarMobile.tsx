@@ -625,13 +625,13 @@ export const Status = React.memo<{
     () => {
         const openNuggbook = client.nuggbook.useGotoOpen();
 
-        const health = client.health.useHealth();
+        const graphProblem = client.health.useHealth();
 
         return (
             <Button
                 className="mobile-pressable-div"
                 buttonStyle={{
-                    backgroundColor: health.graphProblem
+                    backgroundColor: graphProblem
                         ? lib.colors.transparentRed
                         : lib.colors.transparentWhite,
                     color: lib.colors.primaryColor,
@@ -644,7 +644,7 @@ export const Status = React.memo<{
                     boxShadow: lib.layout.boxShadow.basic,
                 }}
                 textStyle={{ ...lib.layout.presets.font.main.thicc, fontSize: 21 }}
-                label={health.graphProblem ? '📱 ⚠️' : '📲 🆗'}
+                label={graphProblem ? '📱 ⚠️' : '📲 🆗'}
                 onClick={() => {
                     openNuggbook(Page.Status);
                 }}
