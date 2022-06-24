@@ -16,6 +16,7 @@ import { useUserUpdater } from './user';
 import { useBlockUpdater } from './block';
 import { useHealthUpdater } from './health';
 import { useUsdUpdater } from './usd';
+import { useEnsUpdater } from './ens';
 
 export default () => {
     useBlockUpdater();
@@ -53,6 +54,8 @@ export default () => {
     useUsdUpdater();
 
     useDevLogger();
+
+    useEnsUpdater();
 
     return null;
 };

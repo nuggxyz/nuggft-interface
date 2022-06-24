@@ -6,6 +6,7 @@ import { Web3Provider } from '@ethersproject/providers';
 
 import lib from '@src/lib/index';
 import { Address } from '@src/classes/Address';
+import web3 from '@src/web3';
 
 const useStore = create(
     persist(
@@ -34,6 +35,20 @@ const useStore = create(
         { name: 'nugg.xyz-ens' },
     ),
 );
+
+export const useEnsUpdater = () => {
+    const provider = web3.hook.usePriorityProvider();
+    const address = web3.hook.usePriorityAccount();
+    const update = useUpdatePersistedEns();
+    React.useEffect(() => {
+        if (!provider || !address) return;
+        void provider.lookupAddress(address).then((result) => {
+            update(address, result);
+        });
+    }, [provider, update, address]);
+
+    return null;
+};
 
 const useUpdatePersistedEns = () => useStore((state) => state.update);
 

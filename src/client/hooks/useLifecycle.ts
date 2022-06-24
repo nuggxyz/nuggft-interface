@@ -59,14 +59,11 @@ export default (tokenId?: TokenId): Lifecycle | undefined => {
                 }
 
                 if (abc.endingEpoch === epoch) {
-                    if (abc.type === 'nugg' && abc.owner === ADDRESS_ZERO) {
-                        return Lifecycle.Bunt;
-                    }
                     if (
                         abc.type === 'nugg' &&
-                        abc.owner === DEFAULT_CONTRACTS.NuggftV1 &&
-                        abc.offers.length === 1 &&
-                        abc.offers[0].account === ADDRESS_ZERO
+                        (abc.owner === DEFAULT_CONTRACTS.NuggftV1 || abc.owner === ADDRESS_ZERO) &&
+                        offers.length === 1 &&
+                        offers[0].account === ADDRESS_ZERO
                     ) {
                         return Lifecycle.Bunt;
                     }

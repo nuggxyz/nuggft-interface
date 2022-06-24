@@ -43,7 +43,6 @@ export const useLiveTokenPoll = (activate: boolean, _tokenId: TokenId | undefine
     React.useEffect(() => {
         if (activate && _tokenId && !graphProblem) {
             void graph(_tokenId);
-            console.log('AYO');
         }
     }, [activate, _tokenId, graphProblem, graphBlock]);
 
@@ -51,7 +50,6 @@ export const useLiveTokenPoll = (activate: boolean, _tokenId: TokenId | undefine
     React.useEffect(() => {
         if (activate && _tokenId && graphProblem) {
             void rpc(_tokenId);
-            console.log('SAYO');
         }
     }, [activate, _tokenId, graphProblem, blocknum]);
 
