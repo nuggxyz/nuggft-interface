@@ -39,7 +39,7 @@ export default () => {
                         return agency.flag === 0x3
                             ? buildTokenIdFactory({
                                   tokenId,
-                                  eth: agency.eth.bignumber,
+                                  eth: agency.eth,
                                   leader: agency.addressAsBigNumber.toString().toNuggId(),
                                   nugg: nuggft.address,
                                   endingEpoch: agency.epoch,
@@ -53,7 +53,7 @@ export default () => {
                                   canceledEpoch: null,
                                   offers: [
                                       buildTokenIdFactory({
-                                          eth: agency.eth.bignumber,
+                                          eth: agency.eth,
                                           tokenId,
                                           sellingTokenId: 'nugg-0' as NuggId,
                                           isBackup: true,

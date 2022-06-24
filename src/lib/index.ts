@@ -145,9 +145,6 @@ export const NLStyleSheetCreator = <T extends NLStyleSheet>(arg: T): T => {
     return arg;
 };
 
-// eslint-disable-next-line no-return-assign
-export const safeNavigate = (url: string) => (window.location.href = url);
-
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: string): string | false {
     try {

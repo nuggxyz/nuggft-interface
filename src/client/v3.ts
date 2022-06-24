@@ -5,13 +5,11 @@ import React from 'react';
 import { QueryResult } from '@apollo/client';
 import { BigNumber } from '@ethersproject/bignumber';
 import shallow from 'zustand/shallow';
-import { debounce } from 'lodash';
+import { debounce, groupBy } from 'lodash';
 
 import { GetV2PotentialQuery, useGetV2PotentialLazyQuery } from '@src/gql/types.generated';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { MIN_SALE_PRICE } from '@src/web3/constants';
-
-import type { SwapData } from './v2';
 
 interface PotentialDataBase extends TokenIdFactoryBase {
     tokenId: TokenId;
@@ -23,7 +21,7 @@ interface PotentialDataBase__Nugg {
     min: { eth: BigNumber; useMsp: boolean };
 }
 
-interface PotentialDataBase__ItemPreTryout {
+export interface PotentialDataBase__ItemPreTryout {
     owner: NuggId;
     top: BigNumber;
     swapId: number;
@@ -135,40 +133,44 @@ const formatter = (
     return [res.sort((a, b) => (a?.min?.eth.lt(b?.min?.eth || 0) ? -1 : 1)).map((a) => a.tokenId)];
 };
 
+export type V3RpcInput = { owner: AddressString | NuggId; top: string; tokenId: TokenId };
+
 const rpcFormatter = (
-    input: SwapData[],
+    input: V3RpcInput[],
     hits: TokenIdDictionary<PotentialData>,
-    // block: number,
-): [TokenId[]] => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    block: number,
+): TokenId[][] => {
     const res: PotentialData[] = [];
 
-    input.forEach((a) => {
-        if (a.isItem()) {
+    const items = Object.entries(groupBy(input, 'tokenId'));
+
+    for (let index = 0; index < items.length; index++) {
+        const [tokenId, a] = items[index];
+        if (tokenId.isItemId()) {
             const tryouts: PotentialDataBase__ItemPreTryout[] = [];
-            input.forEach((b) => {
+            a.forEach((b) => {
                 const val = buildTokenIdFactory({
-                    owner: a.leader,
+                    owner: b.owner as NuggId,
                     swapId: Number(1),
-                    top: b.top === BigNumber.from('0') ? MIN_SALE_PRICE : BigNumber.from(b.top),
-                    tokenId: a.tokenId,
+                    top: b.top === '0' ? MIN_SALE_PRICE : BigNumber.from(b.top),
+                    tokenId,
                 });
 
                 tryouts.push(val);
             });
-            const val = formatTryout(a.tokenId, tryouts);
+            const val = formatTryout(tokenId, tryouts);
             if (val.count > 0) {
                 res.push(val);
-                hits[a.tokenId] = val;
+                hits[tokenId] = val;
             }
-        } else {
-            const { tokenId } = a;
-
+        } else if (tokenId.isNuggId()) {
             const val = buildTokenIdFactory({
-                owner: a.leader,
+                owner: a[0].owner as AddressString,
                 swapId: Number(0),
                 min: {
-                    eth: BigNumber.from(a?.top),
-                    useMsp: !a?.top || a.top === BigNumber.from('0'),
+                    eth: BigNumber.from(a[0]?.top),
+                    useMsp: !a[0]?.top || a[0].top === '0',
                 },
                 tokenId,
             });
@@ -176,9 +178,13 @@ const rpcFormatter = (
             res.push(val);
             hits[tokenId] = val;
         }
-    });
+    }
 
-    return [res.sort((a, b) => (a?.min?.eth.lt(b?.min?.eth || 0) ? -1 : 1)).map((a) => a.tokenId)];
+    const output = [
+        res.sort((a, b) => (a?.min?.eth.lt(b?.min?.eth || 0) ? -1 : 1)).map((a) => a.tokenId),
+    ];
+
+    return output;
 };
 
 const useStore = create(
@@ -207,15 +213,15 @@ const useStore = create(
                 }
             }
 
-            function handleV3Rpc(input: SwapData[]) {
+            function handleV3Rpc(input: V3RpcInput[], block: number) {
                 const { hits, all } = get().v3;
 
-                const [all2] = rpcFormatter(input, hits);
+                const [all2] = rpcFormatter(input, hits, block);
                 set(() => ({
                     v3: {
-                        all: [...all, ...all2],
+                        all: [...all2],
                         hits,
-                        nextAmount: 0,
+                        nextAmount: all.length,
                     },
                 }));
             }
@@ -233,8 +239,8 @@ export const usePollV3 = () => {
     const [lazy] = useGetV2PotentialLazyQuery();
 
     const callback = React.useCallback(() => {
-        // const amt = len;
-        // void lazy({ variables: { skip: amt } }).then((x) => handleV3(x, amt + 100));
+        const amt = len;
+        void lazy({ variables: { skip: amt } }).then((x) => handleV3(x, amt + 100));
     }, [lazy, handleV3, len]);
 
     const debounced = React.useMemo(() => debounce(callback, 300), [callback]);

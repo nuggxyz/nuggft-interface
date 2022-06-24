@@ -47,4 +47,8 @@ setInterval(() => {
     worker.postMessage({ type: EmitEventNames.HealthCheck });
 }, 9000);
 
+emitter.on(emitter.events.V2Request, (data) => {
+    worker.postMessage({ type: EmitEventNames.V2Request, data });
+});
+
 export {};

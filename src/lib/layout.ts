@@ -23,6 +23,8 @@ const DEFAULTS = {
     },
 } as const;
 
+declare const window: Window;
+
 const Layout = {
     window: {
         width: window.innerWidth,

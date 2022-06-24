@@ -115,6 +115,13 @@ const useOn = <R extends EmitEventNames, T extends EmitEvents>(
     return null;
 };
 
+// export const useTransferToWorker = (event: EmitEvnetName) => {
+//     useOn(EmitEventNames.DevLog, (payload) => {
+//         emit(event, payload);
+//      } );
+
+// }
+
 export const useDevLogger = () => {
     if (ENABLE_LOGS) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -135,4 +142,4 @@ export const useDevLogger = () => {
 //     return null;
 // };
 
-export default { useOn, emit };
+export default { useOn, emit, on };

@@ -107,18 +107,23 @@ setInterval(() => {
     }
 }, 4000);
 
-// ctx.addEventListener('message', ({ data }: MessageEvent<EmitEventsListPayload>) => {
-//     if (data.type === emitter.EmitEventNames.HealthCheck) {
-//         ctx.emitMessage({ type: emitter.EmitEventNames.WorkerIsRunning, label: 'rpc' });
-
-//         // console.log();
-
-//         if (
-//             socket._websocket.readyState === socket._websocket.CLOSED ||
-//             new Date().getTime() - lastBlockTime > 30000
-//         ) {
-//             buildSocket();
-//         }
+// ctx.addEventListener('message', ({ data }: MessageEvent<EmitEvents>) => {
+//     console.log('HIIIIIIII', data);
+//     if (
+//         (data.type as EmitEventNames.V2Request) ===
+//         ('worker.request.rpc.V2Request' as EmitEventNames.V2Request)
+//     ) {
+//         const { blocknum } = data as { blocknum: number };
+//         console.log('socket.io: V2Request', socket);
+//         void socket
+//             .call({
+//                 to: DEFAULT_CONTRACTS.NuggftV1,
+//                 data: inter.encodeFunctionData('loop'),
+//             })
+//             .then((x) => {
+//                 console.log('loop', x);
+//                 rpcFormatter(x, blocknum);
+//             });
 //     }
 // });
 

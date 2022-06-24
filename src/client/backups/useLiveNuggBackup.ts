@@ -42,7 +42,7 @@ export default () => {
                     agency.flag === 0x3
                         ? buildTokenIdFactory({
                               tokenId,
-                              eth: agency.eth.bignumber,
+                              eth: agency.eth,
                               leader: agency.address as AddressString,
                               owner,
                               endingEpoch: agency.epoch,
@@ -53,7 +53,7 @@ export default () => {
                               canceledEpoch: null,
                               offers: [
                                   buildTokenIdFactory({
-                                      eth: agency.eth.bignumber,
+                                      eth: agency.eth,
                                       isBackup: true,
                                       sellingTokenId: null,
                                       tokenId,

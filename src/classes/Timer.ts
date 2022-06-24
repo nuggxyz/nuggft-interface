@@ -27,7 +27,7 @@ export class timer {
     }
 
     private calc() {
-        const dtime = this._end!.getMilliseconds() - this._start!.getMilliseconds();
+        const dtime = this._end!.getTime() - this._start!.getTime();
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         console.info(`Execution time for ${this._name}: %dms`, dtime);
     }

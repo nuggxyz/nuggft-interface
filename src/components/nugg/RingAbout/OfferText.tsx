@@ -80,12 +80,12 @@ export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
     const offers = client.live.offers(tokenId);
 
     const leader = React.useMemo(() => {
-        return offers.first() as unknown as OfferData;
+        return offers.first() as unknown as OfferData | undefined;
     }, [offers]);
 
     const leaderEns = web3.hook.usePriorityAnyENSName(
         token && token.type === 'item' ? 'nugg' : provider,
-        leader.account,
+        leader?.account,
     );
     const { isPhone } = useDimensions();
 

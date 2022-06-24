@@ -16,6 +16,8 @@ import {
 } from '@src/interfaces/events';
 import { OfferData } from '@src/client/interfaces';
 import { RevertError } from '@src/lib/errors';
+import { SwapData } from '@src/client/v2';
+import { PotentialData } from '@src/client/v3';
 
 /*  BASE: DO NOT CHANGE  */
 
@@ -184,6 +186,23 @@ interface EmitRequestCloseMobileNavbar extends EmitEventBase {
     type: EmitEventNames.RequestCloseMobileNavbar;
 }
 
+interface EmitV2Reponse extends EmitEventBase {
+    type: EmitEventNames.V2Reponse;
+    curr: TokenId[];
+    next: TokenId[];
+    dict: TokenIdDictionary<SwapData>;
+}
+
+interface EmitV3Reponse extends EmitEventBase {
+    type: EmitEventNames.V3Reponse;
+    curr: TokenId[];
+    dict: TokenIdDictionary<PotentialData>;
+}
+
+interface EmitV2Request extends EmitEventBase {
+    type: EmitEventNames.V2Request;
+    blocknum: number;
+}
 /*  EXPORTS: must be manually updated  */
 
 export enum EmitEventNames {
@@ -216,6 +235,9 @@ export enum EmitEventNames {
     WorkerIsRunning = 'worker.health.WorkerIsRunning',
     RouteChange = 'main.local.RouteChange',
     RequestCloseMobileNavbar = 'main.local.RequestCloseMobileNavbar',
+    V2Reponse = 'worker.response.rpc.V2Reponse',
+    V3Reponse = 'worker.response.rpc.V3Reponse',
+    V2Request = 'worker.request.rpc.V2Request',
     // Sell = 'local.rpc.event.Sell',
 }
 
@@ -246,4 +268,7 @@ export type EmitEvents =
     | EmitModalOpen
     | EmitReturnTokenSvgQuery
     | EmitWorkerIncomingRpcEvent
-    | EmitWorkerIncomingRpcBlock;
+    | EmitWorkerIncomingRpcBlock
+    | EmitV3Reponse
+    | EmitV2Reponse
+    | EmitV2Request;

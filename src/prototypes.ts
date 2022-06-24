@@ -6,12 +6,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import {
-    isUndefinedOrNullOrArrayEmpty,
-    isUndefinedOrNullOrNotNumber,
-    isUndefinedOrNullOrStringEmpty,
-} from './lib';
-
 // eslint-disable-next-line @typescript-eslint/unbound-method
 // const _getBBox = SVGGraphicsElement.prototype.getBBox;
 
@@ -274,7 +268,7 @@ Array.prototype.last = function fn(count?: number) {
 
 Array.prototype.toggle = function fn<T>(element: T, field?: keyof T) {
     const val = [...this];
-    if (isUndefinedOrNullOrArrayEmpty(val)) {
+    if (val.length === 0) {
         return [element];
     }
 
@@ -282,7 +276,7 @@ Array.prototype.toggle = function fn<T>(element: T, field?: keyof T) {
         field ? item[field] === element[field] : item === element,
     );
 
-    if (!isUndefinedOrNullOrNotNumber(index) && index >= 0) {
+    if (index >= 0) {
         val.splice(index, 1);
     } else {
         val.push(element);
@@ -291,7 +285,7 @@ Array.prototype.toggle = function fn<T>(element: T, field?: keyof T) {
 };
 
 Array.prototype.insert = function fn<T extends { index: number }>(element: T) {
-    if (isUndefinedOrNullOrArrayEmpty(this)) {
+    if (this.length === 0) {
         return [element];
     }
     if (typeof element === 'string') {
@@ -317,7 +311,7 @@ Array.prototype.insert = function fn<T extends { index: number }>(element: T) {
 };
 
 Array.prototype.remove = function fn<T extends { index: number }>(element: T) {
-    if (isUndefinedOrNullOrArrayEmpty(this)) {
+    if (this.length === 0) {
         return [];
     }
     if (typeof element === 'string') {
@@ -344,15 +338,11 @@ Array.prototype.replace = function fn<T extends { id: string } | object>(
     element: T,
     field: keyof T,
 ) {
-    if (isUndefinedOrNullOrArrayEmpty(this)) {
+    if (this.length === 0) {
         return [];
     }
     return this.reduce((acc, elem) => {
-        if (
-            !isUndefinedOrNullOrStringEmpty(field)
-                ? elem[field] === element[field]
-                : elem.id === (element as any).id
-        ) {
+        if (field ? elem[field] === element[field] : elem.id === (element as any).id) {
             acc.push({
                 ...elem,
                 ...element,

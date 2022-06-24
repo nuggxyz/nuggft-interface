@@ -17,12 +17,13 @@ import emitter from '@src/emitter';
 import web3 from '@src/web3';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import lib from '@src/lib/index';
+import useThrottle from '@src/hooks/useThrottle';
 
 import { OfferData } from './interfaces';
 import health from './health';
 import stake from './stake';
 import block from './block';
-import v3 from './v3';
+import v3, { V3RpcInput } from './v3';
 
 interface SwapDataBase extends TokenIdFactoryBase {
     leader: unknown;
@@ -112,12 +113,11 @@ const formatter = (
 
 const rpcFormatter = (input: string, hits: TokenIdDictionary<SwapData>, blk: number) => {
     const res: SwapData[] = [];
-    const v: SwapData[] = [];
+    const v: V3RpcInput[] = [];
 
-    const chunked = lib.parse.chunkString(input, 74);
+    const chunked = lib.parse.chunkString(input.slice(2), 74);
 
     const epoch = web3.config.calculateEpochId(blk);
-    console.log(chunked);
     if (!chunked) return [];
 
     for (let index = 0; index < chunked.length; index++) {
@@ -127,8 +127,8 @@ const rpcFormatter = (input: string, hits: TokenIdDictionary<SwapData>, blk: num
 
         const agency = lib.parse.agency(`0x${strAgency}`);
 
-        const itemId = Number(`0x${strAgency.slice(64, 4)}`).toItemId();
-        const nuggId = Number(`0x${strAgency.slice(68)}`).toNuggId();
+        const itemId = Number(`0x${chunk.slice(64, 68)}`).toItemId();
+        const nuggId = Number(`0x${chunk.slice(68)}`).toNuggId();
 
         if (itemId.toRawIdNum() === 0) {
             // we got outselves a nugg
@@ -136,7 +136,7 @@ const rpcFormatter = (input: string, hits: TokenIdDictionary<SwapData>, blk: num
             const val = buildTokenIdFactory({
                 leader: agency.address,
                 swapId: Number(0),
-                top: agency.eth.bignumber,
+                top: agency.eth,
                 commitBlock: web3.config.calculateEndBlock(epoch - 2) + 1,
                 tokenId: nuggId,
                 updatedAtBlock: blk,
@@ -145,17 +145,19 @@ const rpcFormatter = (input: string, hits: TokenIdDictionary<SwapData>, blk: num
                 numOffers: null,
                 owner: null,
             });
-
-            if (agency.epoch === 0) v.push(val);
-            else {
+            if (agency.epoch === 0) {
+                v.push({ owner: agency.address, top: val.top.toString(), tokenId: nuggId });
+            } else {
                 res.push(val);
                 hits[nuggId] = val;
             }
         } else {
+            // eslint-disable-next-line no-continue
+            if (itemId.toRawIdNum() < 1000) continue;
             const val = buildTokenIdFactory({
                 leader: agency.addressAsBigNumber.toNumber().toNuggId(),
                 swapId: Number(0),
-                top: agency.eth.bignumber,
+                top: agency.eth,
                 commitBlock: web3.config.calculateEndBlock(epoch - 2) + 1,
                 tokenId: itemId,
                 updatedAtBlock: blk,
@@ -164,8 +166,9 @@ const rpcFormatter = (input: string, hits: TokenIdDictionary<SwapData>, blk: num
                 numOffers: null,
                 owner: nuggId,
             });
-            if (agency.epoch === 0) v.push(val);
-            else {
+            if (agency.epoch === 0) {
+                v.push({ owner: nuggId, top: val.top.toString(), tokenId: itemId });
+            } else {
                 res.push(val);
                 hits[itemId] = val;
             }
@@ -189,6 +192,7 @@ const useStore = create(
                 next: [] as TokenId[],
                 all: [] as TokenId[],
             },
+            rpcCalled: false,
         },
         (set, get) => {
             function handleV2(
@@ -218,6 +222,11 @@ const useStore = create(
             }
 
             function handleV2Rpc(input: string, blk: number) {
+                if (input.length > 2) {
+                    set(() => ({
+                        rpcCalled: true,
+                    }));
+                }
                 const { hits } = get().v2;
                 const [current, next, v] = rpcFormatter(input, hits, blk);
 
@@ -307,6 +316,7 @@ const useV2Query = () => {
     const handleV2Rpc = useStore((dat) => dat.handleV2Rpc);
     const handleV3Rpc = v3.useHandleV3Rpc();
     const updateStake = stake.useHandleActiveV2();
+    // const rpcCalled = useStore((dat) => dat.rpcCalled);
 
     const [lazy] = useGetV2ActiveLazyQuery();
 
@@ -318,6 +328,7 @@ const useV2Query = () => {
         async (graphBlock: number) => {
             const res = await lazy({ fetchPolicy: 'no-cache' });
             handleV2(res, graphBlock);
+
             updateStake(res);
         },
         [lazy, handleV2, updateStake],
@@ -326,13 +337,14 @@ const useV2Query = () => {
     const rpc = React.useCallback(
         async (blk: number) => {
             const res = await nuggft.loop();
-
-            handleV3Rpc(handleV2Rpc(res, blk));
+            handleV3Rpc(handleV2Rpc(res, blk), blk);
         },
         [nuggft, handleV2Rpc, handleV3Rpc],
     );
 
-    return [graph, rpc] as const;
+    const _rpc = useThrottle(rpc, 60000 * 5);
+
+    return [graph, _rpc] as const;
 };
 
 export const usePollV2 = () => {
@@ -352,17 +364,21 @@ export const usePollV2 = () => {
     const graphBlock = health.useLastGraphBlock();
 
     React.useEffect(() => {
-        // if (!liveHealth.graphProblem) {
-        //     void graph(graphBlock);
-        // }
+        if (!liveHealth.graphProblem) {
+            void graph(graphBlock);
+        }
     }, [liveHealth.graphProblem, graphBlock, graph]);
 
     const blocknum = block.useBlock();
     React.useEffect(() => {
-        // if (true) {
-        void rpc(blocknum);
-        // }
-    }, [liveHealth.graphProblem, blocknum]);
+        if (liveHealth.graphProblem) {
+            void rpc(blocknum);
+        }
+    }, [liveHealth.graphProblem, blocknum, rpc]);
+
+    // React.useEffect(() => {
+    //     void rpc(blocknum);
+    // }, []);
 };
 
 export default {
