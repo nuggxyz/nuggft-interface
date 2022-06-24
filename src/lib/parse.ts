@@ -71,4 +71,8 @@ const proof = (_proof: BigNumberish) => {
     return Object.values(seen);
 };
 
-export default { agency, proof, lastItemSwap };
+function chunkString(str: string, length: number) {
+    return str.match(new RegExp(`.{1,${length}}`, 'g'));
+}
+
+export default { agency, proof, lastItemSwap, chunkString };

@@ -11,6 +11,8 @@ import { GetV2PotentialQuery, useGetV2PotentialLazyQuery } from '@src/gql/types.
 import { buildTokenIdFactory } from '@src/prototypes';
 import { MIN_SALE_PRICE } from '@src/web3/constants';
 
+import type { SwapData } from './v2';
+
 interface PotentialDataBase extends TokenIdFactoryBase {
     tokenId: TokenId;
     owner: AddressString | NuggId | null;
@@ -85,7 +87,7 @@ const formatTryout = (tokenId: ItemId, input: PotentialDataBase__ItemPreTryout[]
 };
 
 const formatter = (
-    input: QueryResult<GetV2PotentialQuery, unknown>['data'],
+    input: Remap<QueryResult<GetV2PotentialQuery, unknown>['data']>,
     hits: TokenIdDictionary<PotentialData>,
     // block: number,
 ): [TokenId[]] => {
@@ -133,6 +135,52 @@ const formatter = (
     return [res.sort((a, b) => (a?.min?.eth.lt(b?.min?.eth || 0) ? -1 : 1)).map((a) => a.tokenId)];
 };
 
+const rpcFormatter = (
+    input: SwapData[],
+    hits: TokenIdDictionary<PotentialData>,
+    // block: number,
+): [TokenId[]] => {
+    const res: PotentialData[] = [];
+
+    input.forEach((a) => {
+        if (a.isItem()) {
+            const tryouts: PotentialDataBase__ItemPreTryout[] = [];
+            input.forEach((b) => {
+                const val = buildTokenIdFactory({
+                    owner: a.leader,
+                    swapId: Number(1),
+                    top: b.top === BigNumber.from('0') ? MIN_SALE_PRICE : BigNumber.from(b.top),
+                    tokenId: a.tokenId,
+                });
+
+                tryouts.push(val);
+            });
+            const val = formatTryout(a.tokenId, tryouts);
+            if (val.count > 0) {
+                res.push(val);
+                hits[a.tokenId] = val;
+            }
+        } else {
+            const { tokenId } = a;
+
+            const val = buildTokenIdFactory({
+                owner: a.leader,
+                swapId: Number(0),
+                min: {
+                    eth: BigNumber.from(a?.top),
+                    useMsp: !a?.top || a.top === BigNumber.from('0'),
+                },
+                tokenId,
+            });
+
+            res.push(val);
+            hits[tokenId] = val;
+        }
+    });
+
+    return [res.sort((a, b) => (a?.min?.eth.lt(b?.min?.eth || 0) ? -1 : 1)).map((a) => a.tokenId)];
+};
+
 const useStore = create(
     combine(
         {
@@ -157,11 +205,22 @@ const useStore = create(
                         },
                     }));
                 }
-
-                console.log(get().v3);
             }
 
-            return { handleV3 };
+            function handleV3Rpc(input: SwapData[]) {
+                const { hits, all } = get().v3;
+
+                const [all2] = rpcFormatter(input, hits);
+                set(() => ({
+                    v3: {
+                        all: [...all, ...all2],
+                        hits,
+                        nextAmount: 0,
+                    },
+                }));
+            }
+
+            return { handleV3, handleV3Rpc };
         },
     ),
 );
@@ -174,8 +233,8 @@ export const usePollV3 = () => {
     const [lazy] = useGetV2PotentialLazyQuery();
 
     const callback = React.useCallback(() => {
-        const amt = len;
-        void lazy({ variables: { skip: amt } }).then((x) => handleV3(x, amt + 100));
+        // const amt = len;
+        // void lazy({ variables: { skip: amt } }).then((x) => handleV3(x, amt + 100));
     }, [lazy, handleV3, len]);
 
     const debounced = React.useMemo(() => debounce(callback, 300), [callback]);
@@ -186,6 +245,7 @@ export const usePollV3 = () => {
 export default {
     useStore,
     usePollV3,
+    useHandleV3Rpc: () => useStore((dat) => dat.handleV3Rpc),
 
     useSwap: <A extends TokenId>(tokenId: A | undefined) => {
         return useStore(

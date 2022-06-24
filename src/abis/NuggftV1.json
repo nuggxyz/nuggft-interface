@@ -1153,6 +1153,19 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "loop",
+        "outputs": [
+            {
+                "internalType": "bytes",
+                "name": "res",
+                "type": "bytes"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "uint24",
@@ -1797,7 +1810,7 @@
         "name": "xnuggftv1",
         "outputs": [
             {
-                "internalType": "contract xNuggftV1",
+                "internalType": "contract IxNuggftV1",
                 "name": "",
                 "type": "address"
             }
