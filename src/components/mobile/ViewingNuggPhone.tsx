@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { plural, t } from '@lingui/macro';
-import { animated } from '@react-spring/web';
+import { animated, config, useSpring } from '@react-spring/web';
 import { useNavigate } from 'react-router';
 import { BigNumber } from '@ethersproject/bignumber';
 
@@ -214,9 +214,21 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
 
     const currency = client.usd.useUsdPair(selected ? selected.eth : token?.tryout?.min?.eth);
 
+    const [sty] = useSpring(() => ({
+        from: {
+            maxHeight: '0%',
+            opacity: 0,
+        },
+        to: {
+            opacity: 1,
+            maxHeight: '100%',
+        },
+        config: config.molasses,
+    }));
     return (
-        <div
+        <animated.div
             style={{
+                ...sty,
                 display: 'flex',
                 width: '90%',
                 justifyContent: 'center',
@@ -230,6 +242,8 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
         >
             <div
                 style={{
+                    overflow: 'hidden',
+
                     height: 'auto',
                     width: '100%',
                     alignItems: 'center',
@@ -288,7 +302,7 @@ const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
                     />
                 </>
             </div>
-        </div>
+        </animated.div>
     );
 };
 
@@ -330,9 +344,34 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
             : 0,
     );
 
+    const [sty] = useSpring(() => ({
+        from: {
+            maxHeight: '0%',
+            opacity: 0,
+        },
+        to: {
+            opacity: 1,
+            maxHeight: '100%',
+        },
+        config: config.molasses,
+    }));
+
     return (
-        <>
-            <div
+        <animated.div
+            style={{
+                display: 'flex',
+                width: '90%',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                alignItems: 'center',
+                background: lib.colors.transparentWhite,
+                borderRadius: lib.layout.borderRadius.medium,
+                padding: '1rem .5rem',
+                marginTop: '1rem',
+                ...sty,
+            }}
+        >
+            <animated.div
                 style={{
                     display: 'flex',
                     justifyContent: 'space-around',
@@ -453,13 +492,13 @@ const ActiveSwap = ({ tokenId }: { tokenId: TokenId }) => {
                         </Text>
                     </div>
                 )}
-            </div>
+            </animated.div>
             {(offers.length || 0) > 0 &&
                 lifecycle !== Lifecycle.Bunt &&
                 lifecycle !== Lifecycle.Bench &&
                 lifecycle !== Lifecycle.Minors && <OffersList tokenId={tokenId} />}
             <MobileOfferButton tokenId={tokenId} />
-        </>
+        </animated.div>
     );
 };
 
@@ -683,23 +722,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
                             ((swap && swap.endingEpoch) || 0) <= epoch + 1 &&
                             lifecycle &&
                             lifecycle.lifecycle !== Lifecycle.Cut && (
-                                <>
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            width: '90%',
-                                            justifyContent: 'center',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            background: lib.colors.transparentWhite,
-                                            borderRadius: lib.layout.borderRadius.medium,
-                                            padding: '1rem .5rem',
-                                            marginTop: '1rem',
-                                        }}
-                                    >
-                                        <ActiveSwap tokenId={tokenId} />{' '}
-                                    </div>
-                                </>
+                                <ActiveSwap tokenId={tokenId} />
                             )}
 
                         {token && token.isItem() && token.tryout.count > 0 && (
