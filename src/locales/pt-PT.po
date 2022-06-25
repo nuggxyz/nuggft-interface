@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-06-22 21:46+0000\n"
+"POT-Creation-Date: 2022-06-24 19:41+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Portuguese\n"
-"PO-Revision-Date: 2022-06-23 06:05\n"
+"PO-Revision-Date: 2022-06-25 06:04\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 msgid ", and your desired bid for"
@@ -1063,10 +1063,10 @@ msgid "last eth price"
 msgstr ""
 
 #: src/components/mobile/MobileStatus.tsx
-#: src/components/mobile/MobileStatus.tsx
 msgid "last response"
 msgstr ""
 
+#: src/components/mobile/MobileStatus.tsx
 #: src/components/mobile/MobileStatus.tsx
 msgid "last updated"
 msgstr ""
