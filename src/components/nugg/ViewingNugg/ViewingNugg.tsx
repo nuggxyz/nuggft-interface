@@ -19,6 +19,7 @@ import Flyout from '@src/components/general/Flyout/Flyout';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useDimensions from '@src/client/hooks/useDimensions';
 import { LiveToken } from '@src/client/interfaces';
+import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 
 import styles from './ViewingNugg.styles';
 import SwapList from './SwapList';
@@ -39,6 +40,8 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const { screen: screenType } = useDimensions();
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
+
+    useLiveTokenPoll(tokenId !== undefined, tokenId);
 
     const token = client.live.token(tokenId);
 
