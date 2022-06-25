@@ -1,4 +1,6 @@
 import ReactGA from 'react-ga4';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import isCi from 'is-ci';
 
 import { isMobile } from '@src/lib/userAgent';
 
@@ -7,7 +9,7 @@ const GOOGLE_ANALYTICS_ID: string | undefined = process.env.NUGG_APP_GOOGLE_ANAL
 
 const storedClientId = window.localStorage.getItem(GOOGLE_ANALYTICS_CLIENT_ID_STORAGE_KEY);
 
-if (typeof GOOGLE_ANALYTICS_ID === 'string') {
+if (typeof GOOGLE_ANALYTICS_ID === 'string' && !isCi && process.env.NODE_ENV === 'production') {
     ReactGA.initialize(GOOGLE_ANALYTICS_ID, {
         gaOptions: {
             storage: 'none',
