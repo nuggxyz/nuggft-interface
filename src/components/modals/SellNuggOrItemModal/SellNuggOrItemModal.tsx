@@ -9,7 +9,6 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import web3 from '@src/web3';
-import Button from '@src/components/general/Buttons/Button/Button';
 import client from '@src/client';
 import { SellModalData } from '@src/interfaces/modals';
 import {
@@ -25,6 +24,7 @@ import globalStyles from '@src/lib/globalStyles';
 import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 import Loader from '@src/components/general/Loader/Loader';
+import IncrementButton from '@src/components/modals/IncrementButton';
 
 import styles from './SellNuggOrItemModal.styles';
 
@@ -84,7 +84,6 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
 
     const wrappedSetAmount = React.useCallback(
         (amt: string, _lastPressed?: string) => {
-            console.log({ amt });
             setAmount(amt);
             setLastPressed(_lastPressed);
         },
@@ -257,31 +256,31 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
                     >
                         <IncrementButton
                             increment={BigInt(0)}
-                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
                         />
                         <IncrementButton
                             increment={BigInt(5)}
-                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
                         />
                         <IncrementButton
                             increment={BigInt(10)}
-                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
                         />
                         <IncrementButton
                             increment={BigInt(15)}
-                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
                         />
                         <IncrementButton
                             increment={BigInt(20)}
-                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
                         />
                         <IncrementButton
                             increment={BigInt(25)}
-                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
                         />
                         <IncrementButton
                             increment={BigInt(30)}
-                            {...{ lastPressed, wrappedSetAmount, epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
                         />
                     </div>
                 )}
@@ -321,52 +320,5 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
         </div>
     );
 };
-
-const IncrementButton = React.memo(
-    ({
-        increment,
-        wrappedSetAmount,
-        epsUsd,
-        lastPressed,
-    }: {
-        increment: bigint;
-        wrappedSetAmount: (amt: string, _lastPressed?: string) => void;
-        epsUsd: PairInt;
-        lastPressed: string | undefined;
-    }) => {
-        return (
-            <Button
-                className="mobile-pressable-div"
-                label={increment.toString() === '0' ? t`Min` : `+${increment.toString()}%`}
-                onClick={() => {
-                    wrappedSetAmount(
-                        epsUsd.eth.copy().increase(increment).number.toFixed(5) || '0',
-                        increment.toString(),
-                    );
-                }}
-                buttonStyle={{
-                    borderRadius: lib.layout.borderRadius.large,
-                    padding: '.4rem .7rem',
-                    background:
-                        lastPressed === increment.toString()
-                            ? lib.colors.white
-                            : lib.colors.textColor,
-                    boxShadow:
-                        lastPressed === increment.toString()
-                            ? `${lib.layout.boxShadow.medium}`
-                            : '',
-                    transition: `all .5s ${lib.layout.animation}`,
-                }}
-                size="medium"
-                textStyle={{
-                    color:
-                        lastPressed === increment.toString()
-                            ? lib.colors.textColor
-                            : lib.colors.white,
-                }}
-            />
-        );
-    },
-);
 
 export default SellNuggOrItemModal;

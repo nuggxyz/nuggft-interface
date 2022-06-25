@@ -31,16 +31,17 @@ const styles = lib.layout.NLStyleSheetCreator({
     heading: {
         width: '100%',
         marginTop: 0,
+        color: lib.colors.textColor,
     },
     inputCurrency: {
         textAlign: 'left',
         width: '100%',
-        background: lib.colors.transparentLightGrey,
+        background: lib.colors.transparentDarkGrey2,
         padding: '.3rem .6rem',
         borderRadius: lib.layout.borderRadius.mediumish,
     },
     text: {
-        color: lib.colors.transparentWhite,
+        color: lib.colors.textColor,
         textAlign: 'center',
         flexDirection: 'row',
         display: 'flex',

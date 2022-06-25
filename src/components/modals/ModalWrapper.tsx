@@ -126,7 +126,7 @@ const styles = lib.layout.NLStyleSheetCreator({
         background: 'transparent',
     },
     container: {
-        background: lib.colors.transparentDarkGrey,
+        background: lib.colors.semiTransparentWhite,
         backdropFilter: 'blur(20px)',
         // commented out to fix issue #64
         // WebkitBackdropFilter: 'blur(20px)',
