@@ -4,7 +4,7 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 
 import { useMemoizedAsyncState } from '@src/hooks/useAsyncState';
 import Button from '@src/components/general/Buttons/Button/Button';
-import CurrencyInput from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
+import { DualCurrencyInput } from '@src/components/general/TextInputs/CurrencyInput/CurrencyInput';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
@@ -47,15 +47,16 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     const nuggft = useNuggftV1(provider);
     const closeModal = client.modal.useCloseModal();
 
-    const [send, estimator, hash, , ,] = usePrioritySendTransaction();
+    const [send, [estimate, estimateError], hash, , ,] = usePrioritySendTransaction();
 
     useTransactionManager2(provider, hash, closeModal);
 
     const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');
     const [selectedNuggForItem, setSelectedNugg] = useState<FormatedMyNuggsData>();
-    const [amount, setAmount] = useState('');
+    const [amount, setAmount] = useState('0');
     const pref = client.usd.useCurrencyPreferrence();
     const msp = client.stake.useMsp();
+    const blocknum = client.block.useBlock();
     const [currencyPref, setCurrencyPref] = useState<'ETH' | 'USD'>(pref);
 
     const myNuggs = useMemo(() => {
@@ -78,54 +79,35 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         }) as FormatedMyNuggsData[];
     }, [_myNuggs, data.tokenId, data.nuggToBuyFrom]);
 
-    // @danny7even - this started throwing errors when I tried setting up offering on items when other items were "active"
-    // useEffect(() => {
-    //     console.log('ME TOOOOOO');
-    //     if (epoch) {
-    //         const prevBidder = myNuggs.find((nugg) =>
-    //             nugg.unclaimedOffers.find(
-    //                 (offer) =>
-    //                     (offer.endingEpoch ?? 0) === epoch &&
-    //                     offer.itemId === extractItemId(stableId),
-    //             ),
-    //         );
-
-    //         if (prevBidder) {
-    //             setSelectedNugg(prevBidder);
-    //         }
-    //     }
-    // }, [myNuggs, epoch, stableId]);
-
     const sellingNugg = useMemo(() => {
         if (data.isItem()) {
             return data.nuggToBuyFrom;
-            // if (activeItem) return activeItem.sellingNugg;
         }
         return undefined;
     }, [data.nuggToBuyFrom]);
 
-    const check = useMemoizedAsyncState(() => {
-        if (data.tokenId && address && chainId && provider) {
-            if (data.isNugg()) {
-                return nuggft['check(address,uint24)'](address, data.tokenId.toRawId()).then(
-                    (x) => {
-                        return {
-                            canOffer: x.canOffer,
-                            nextUserOffer: x.next,
-                            currentUserOffer: x.currentUserOffer,
-                            increment: x.incrementBps,
-                            currentLeaderOffer: x.currentLeaderOffer,
-                            mustClaimBuyer: false,
-                            mustOfferOnSeller: false,
-                        };
-                    },
-                );
-            }
+    const check = useMemoizedAsyncState(
+        () => {
+            if (data.tokenId && address && chainId && network && msp) {
+                if (data.isNugg()) {
+                    return nuggft['check(address,uint24)'](address, data.tokenId.toRawIdNum()).then(
+                        (x) => {
+                            return {
+                                canOffer: x.canOffer,
+                                nextUserOffer: x.next,
+                                currentUserOffer: x.currentUserOffer,
+                                increment: x.incrementBps,
+                                currentLeaderOffer: x.currentLeaderOffer,
+                                mustClaimBuyer: false,
+                                mustOfferOnSeller: false,
+                            };
+                        },
+                    );
+                }
 
-            if (selectedNuggForItem && sellingNugg) {
                 return nuggft['check(uint24,uint24,uint16)'](
-                    selectedNuggForItem.tokenId.toRawIdNum(),
-                    sellingNugg.toRawId(),
+                    data.nuggToBuyFor.toRawIdNum(),
+                    data.nuggToBuyFrom.toRawId(),
                     data.tokenId.toRawId(),
                 ).then((x) => {
                     return {
@@ -139,11 +121,26 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     };
                 });
             }
-        }
-        return undefined;
-    }, [data, address, chainId, provider, selectedNuggForItem, sellingNugg]);
+            return undefined;
+        },
+        [
+            address,
+            chainId,
+            network,
+            data.nuggToBuyFor,
+            data.nuggToBuyFrom,
+            msp,
+            blocknum,
+            data.tokenId,
+            sellingNugg,
+        ] as const,
+        (prev, curr, res) => {
+            return res !== null && res !== undefined && prev[7] === curr[7];
+        },
+    );
 
     const amountUsd = useUsdPair(amount);
+    const mspUsd = useUsdPair(msp);
 
     // const nextUsd = useUsdPair(check?.nextUserOffer);
 
@@ -161,7 +158,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             () => [
                 amount,
                 check?.currentUserOffer || 0,
-                check?.mustOfferOnSeller ? msp.increase(BigInt(5)) : 0,
+                check?.mustOfferOnSeller ? msp.increase(BigInt(5)) : msp,
             ],
             [amount, check, msp],
         ),
@@ -230,7 +227,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         () => {
             if (populatedTransaction && network) {
                 return Promise.all([
-                    estimator.estimate(populatedTransaction.tx),
+                    estimate(populatedTransaction.tx),
                     network?.getGasPrice(),
                 ]).then((_data) => ({
                     gasLimit: _data[0] || BigNumber.from(0),
@@ -253,12 +250,19 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
     const calculating = React.useMemo(() => {
         if (parseInt(amount, 10) === 0 || Number.isNaN(parseInt(amount, 10))) return false;
-        if (estimator.error) return false;
+        if (estimateError) return false;
         if (populatedTransaction && estimation) {
             if (populatedTransaction.amount.eq(estimation.amount)) return false;
         }
         return true;
-    }, [populatedTransaction, estimation, amount, estimator]);
+    }, [populatedTransaction, estimation, amount, estimateError]);
+
+    React.useEffect(() => {
+        if (check && check.nextUserOffer && (amount === '0' || lastPressed === null)) {
+            setAmount(new EthInt(check.nextUserOffer).toFixedStringRoundingUp(5));
+            setLastPressed('5');
+        }
+    }, [amount, check, lastPressed]);
 
     return (
         <div style={styles.container}>
@@ -283,6 +287,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     <TokenViewer
                         tokenId={data.tokenId}
                         showcase
+                        disableOnClick
                         style={{
                             ...(data.tokenId.isItemId() ? { height: '350px', width: '350px' } : {}),
                         }}
@@ -312,7 +317,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 />
             )}
             <div style={styles.inputContainer}>
-                <CurrencyInput
+                <DualCurrencyInput
                     shouldFocus
                     style={styles.input}
                     styleHeading={styles.heading}
@@ -321,6 +326,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     setValue={setAmount}
                     value={amount}
                     code
+                    currencyPref={currencyPref}
                     className="placeholder-white"
                     rightToggles={[
                         <CurrencyToggler
@@ -363,31 +369,31 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 >
                     <IncrementButton
                         increment={BigInt(0)}
-                        {...{ lastPressed, wrappedSetAmount, amount: paymentUsd }}
+                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
                     />
                     <IncrementButton
                         increment={BigInt(5)}
-                        {...{ lastPressed, wrappedSetAmount, amount: paymentUsd }}
+                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
                     />
                     <IncrementButton
                         increment={BigInt(10)}
-                        {...{ lastPressed, wrappedSetAmount, amount: paymentUsd }}
+                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
                     />
                     <IncrementButton
                         increment={BigInt(15)}
-                        {...{ lastPressed, wrappedSetAmount, amount: paymentUsd }}
+                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
                     />
                     <IncrementButton
                         increment={BigInt(20)}
-                        {...{ lastPressed, wrappedSetAmount, amount: paymentUsd }}
+                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
                     />
                     <IncrementButton
                         increment={BigInt(25)}
-                        {...{ lastPressed, wrappedSetAmount, amount: paymentUsd }}
+                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
                     />
                     <IncrementButton
                         increment={BigInt(30)}
-                        {...{ lastPressed, wrappedSetAmount, amount: paymentUsd }}
+                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
                     />
                 </div>
             </div>
@@ -404,12 +410,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     </Text>
                 )}
             </div>
-            {/* {revert &&
-                (revert instanceof lib.errors.RevertError ? (
-                    <Label text={revert.message} />
-                ) : (
-                    <Label text="something unexpected happened" />
-                ))} */}
             {check ? (
                 <div style={styles.subContainer}>
                     <FeedbackButton

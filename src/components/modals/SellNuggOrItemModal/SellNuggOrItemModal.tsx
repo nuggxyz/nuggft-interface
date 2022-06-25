@@ -48,7 +48,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
     const chainId = web3.hook.usePriorityChainId();
     const closeModal = client.modal.useCloseModal();
 
-    const [send, estimator, hash, , ,] = usePrioritySendTransaction();
+    const [send, [estimate, estimateError], hash, , ,] = usePrioritySendTransaction();
 
     const eps = useAsyncState(() => {
         return swap ? Promise.resolve(swap.eth) : nuggft.eps();
@@ -188,15 +188,14 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
     }, [swap, amountUsd, address, needToClaim, data, nuggft]);
     const estimation = useAsyncState(() => {
         if (populatedTransaction && network) {
-            return Promise.all([
-                estimator.estimate(populatedTransaction.tx),
-                network?.getGasPrice(),
-            ]).then((_data) => ({
-                gasLimit: _data[0] || BigNumber.from(0),
-                gasPrice: new EthInt(_data[1] || 0),
-                mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
-                amount: populatedTransaction.amount,
-            }));
+            return Promise.all([estimate(populatedTransaction.tx), network?.getGasPrice()]).then(
+                (_data) => ({
+                    gasLimit: _data[0] || BigNumber.from(0),
+                    gasPrice: new EthInt(_data[1] || 0),
+                    mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
+                    amount: populatedTransaction.amount,
+                }),
+            );
         }
 
         return undefined;
@@ -204,12 +203,12 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
 
     const calculating = React.useMemo(() => {
         if (parseInt(amount, 10) === 0 || Number.isNaN(parseInt(amount, 10))) return false;
-        if (estimator.error) return false;
+        if (estimateError) return false;
         if (populatedTransaction && estimation) {
             if (populatedTransaction.amount.eq(estimation.amount)) return false;
         }
         return true;
-    }, [populatedTransaction, estimation, amount, estimator]);
+    }, [populatedTransaction, estimation, amount, estimateError]);
 
     return token && chainId && provider && address ? (
         <div style={styles.container}>
@@ -222,9 +221,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
             <div style={styles.inputContainer}>
                 {stake ? (
                     <DualCurrencyInput
-                        warning={
-                            estimator.error && lib.errors.prettify('sell-modal', estimator.error)
-                        }
+                        warning={estimateError && lib.errors.prettify('sell-modal', estimateError)}
                         shouldFocus
                         style={styles.input}
                         currencyPref={currencyPref}
@@ -291,7 +288,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
                     disabled={
                         isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount) ||
                         calculating ||
-                        !!estimator.error
+                        !!estimateError
                     }
                     feedbackText={t`Check Wallet...`}
                     buttonStyle={styles.button}

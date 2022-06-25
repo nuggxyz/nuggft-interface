@@ -31,7 +31,7 @@ const LoanOrBurnModal = ({ data: { tokenId, actionType } }: { data: LoanModalDat
     const closeModal = client.modal.useCloseModal();
     const provider = web3.hook.usePriorityProvider();
 
-    const [send, estimator, hash, , ,] = usePrioritySendTransaction();
+    const [send, [estimate, estimateError], hash, , ,] = usePrioritySendTransaction();
 
     useTransactionManager2(provider, hash, closeModal);
 
@@ -60,29 +60,29 @@ const LoanOrBurnModal = ({ data: { tokenId, actionType } }: { data: LoanModalDat
         }
         return action;
     }, [nuggft, tokenId, address, actionType, needToClaim]);
+
     const estimation = useAsyncState(() => {
         if (!isUndefinedOrNull(populatedTransaction) && network) {
-            return Promise.all([
-                estimator.estimate(populatedTransaction),
-                network?.getGasPrice(),
-            ]).then((_data) => ({
-                gasLimit: _data[0] || BigNumber.from(0),
-                gasPrice: new EthInt(_data[1] || 0),
-                mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
-                // amount: populatedTransaction.amount,
-            }));
+            return Promise.all([estimate(populatedTransaction), network?.getGasPrice()]).then(
+                (_data) => ({
+                    gasLimit: _data[0] || BigNumber.from(0),
+                    gasPrice: new EthInt(_data[1] || 0),
+                    mul: new EthInt((_data[0] || BigNumber.from(0)).mul(_data[1] || 0)),
+                    // amount: populatedTransaction.amount,
+                }),
+            );
         }
 
         return undefined;
     }, [populatedTransaction, network]);
 
     const calculating = React.useMemo(() => {
-        if (estimator.error) return false;
+        if (estimateError) return false;
         if (!isUndefinedOrNull(populatedTransaction) && estimation) {
             return false;
         }
         return true;
-    }, [populatedTransaction, estimation, estimator]);
+    }, [populatedTransaction, estimation, estimateError]);
 
     return tokenId && chainId && provider && address ? (
         <div style={styles.container}>

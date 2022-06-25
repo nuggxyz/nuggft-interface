@@ -15,6 +15,7 @@ const styles = lib.layout.NLStyleSheetCreator({
         width: '100%',
         alignItems: 'flex-end',
         padding: '.5rem',
+        flexDirection: 'column',
     },
     input: {
         paddingTop: '1.5rem',
@@ -37,7 +38,7 @@ const styles = lib.layout.NLStyleSheetCreator({
         textAlign: 'left',
         width: '100%',
         background: lib.colors.transparentDarkGrey2,
-        padding: '.3rem .6rem',
+        padding: '.8rem .6rem',
         borderRadius: lib.layout.borderRadius.mediumish,
     },
     text: {
