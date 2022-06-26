@@ -32,6 +32,14 @@ const lastItemSwap = (_lis: BigNumber) => {
     return items;
 };
 
+const stake = (cache: BigNumberish) => {
+    const bn = BigNumber.from(cache);
+    return {
+        shares: bn.shr(192),
+        staked: bn.shr(96).mask(96),
+    };
+};
+
 const proof = (_proof: BigNumberish) => {
     let working = BigNumber.from(_proof);
 
@@ -138,4 +146,4 @@ function iloop(str: string) {
     return res.sort((a, b) => a - b).map((e) => e.toItemId());
 }
 
-export default { agency, proof, lastItemSwap, chunkString, sloop, tloop, iloop };
+export default { agency, proof, lastItemSwap, chunkString, sloop, tloop, iloop, stake };

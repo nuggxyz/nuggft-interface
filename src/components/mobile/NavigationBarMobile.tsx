@@ -22,7 +22,7 @@ import emitter from '@src/emitter';
 import GodListHorizontal from '@src/components/general/List/GodListHorizontal';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import { MyNuggsData } from '@src/client/interfaces';
+import { MyNugg } from '@src/client/user';
 
 export const useOpacitate = (name: string, arg: boolean | undefined) => {
     const [exit, exitToAnimate, staticStyles] = React.useMemo(() => {
@@ -69,7 +69,7 @@ export const useOpacitate = (name: string, arg: boolean | undefined) => {
     return [staticStyles, animatedStyles] as const;
 };
 
-const MyNuggRenderItem: FC<GodListRenderItemProps<MyNuggsData, undefined, number>> = ({
+const MyNuggRenderItem: FC<GodListRenderItemProps<MyNugg, undefined, number>> = ({
     item,
     selected,
     action,

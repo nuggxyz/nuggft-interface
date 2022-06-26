@@ -230,15 +230,28 @@ export default () => {
                     <Text textStyle={{ color: lib.colors.primaryColor, fontSize: 14 }}>
                         {t`last updated`}
                     </Text>
-                    <Text
-                        textStyle={{
-                            color: lib.colors.primaryColor,
-                            fontWeight: lib.layout.fontWeight.thicc,
-                            fontFamily: lib.layout.fontFamily.monospace,
-                        }}
-                    >
-                        {secondsSinceGraphResponse} sec ago
-                    </Text>
+                    {lastGraphBlock !== 0 ? (
+                        <Text
+                            textStyle={{
+                                color: lib.colors.primaryColor,
+                                fontWeight: lib.layout.fontWeight.thicc,
+                                fontFamily: lib.layout.fontFamily.monospace,
+                            }}
+                        >
+                            {secondsSinceGraphResponse} sec ago
+                        </Text>
+                    ) : (
+                        <Text
+                            textStyle={{
+                                color: lib.colors.primaryColor,
+
+                                fontWeight: lib.layout.fontWeight.normal,
+                                fontFamily: lib.layout.fontFamily.monospace,
+                            }}
+                        >
+                            [no response]
+                        </Text>
+                    )}
                 </div>
             </div>
 

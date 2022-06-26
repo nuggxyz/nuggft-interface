@@ -15,7 +15,7 @@ import {
 import { buildTokenIdFactory } from '@src/prototypes';
 import emitter from '@src/emitter';
 import web3 from '@src/web3';
-import { useXNuggftV1 } from '@src/contracts/useContract';
+import { useNuggftV1, useXNuggftV1 } from '@src/contracts/useContract';
 import lib from '@src/lib/index';
 import useThrottle from '@src/hooks/useThrottle';
 
@@ -306,7 +306,9 @@ const useV2Query = () => {
     const handleV2 = useStore((dat) => dat.handleV2);
     const handleV2Rpc = useStore((dat) => dat.handleV2Rpc);
     const handleV3Rpc = v3.useHandleV3Rpc();
-    const updateStake = stake.useHandleActiveV2();
+    const updateStake = stake.useUpdate();
+    const updateStakeBackup = stake.useUpdateBackup();
+
     // const rpcCalled = useStore((dat) => dat.rpcCalled);
 
     const [lazy] = useGetV2ActiveLazyQuery();
@@ -314,13 +316,29 @@ const useV2Query = () => {
     const provider = web3.hook.usePriorityProvider();
 
     const xnuggft = useXNuggftV1(provider);
+    const nuggft = useNuggftV1(provider);
 
     const graph = React.useCallback(
-        async (graphBlock: number) => {
+        async (graphBlock: number, rpcBlock: number) => {
             const res = await lazy({ fetchPolicy: 'no-cache' });
-            handleV2(res, graphBlock);
 
-            updateStake(res);
+            if (res.error) {
+                void rpc(rpcBlock);
+                return;
+            }
+
+            if (res.data?.protocol) {
+                const { nuggftStakedShares, nuggftStakedEth, featureTotals, totalNuggs } =
+                    res.data.protocol;
+
+                updateStake(
+                    BigNumber.from(nuggftStakedShares),
+                    BigNumber.from(nuggftStakedEth),
+                    Number(totalNuggs),
+                    featureTotals as unknown as FixedLengthArray<number, 8>,
+                );
+            }
+            handleV2(res, graphBlock);
         },
         [lazy, handleV2, updateStake],
     );
@@ -330,9 +348,10 @@ const useV2Query = () => {
             if (provider) {
                 const res = await xnuggft.sloop();
                 handleV3Rpc(handleV2Rpc(res, blk), blk);
+                void updateStakeBackup(nuggft);
             }
         },
-        [xnuggft, handleV2Rpc, handleV3Rpc, provider],
+        [xnuggft, nuggft, handleV2Rpc, handleV3Rpc, provider],
     );
 
     const _rpc = useThrottle(rpc, 60000 * 5);
@@ -346,6 +365,7 @@ export const usePollV2 = () => {
     const startblock = epoch.active.useStartBlock();
     const [graph, rpc, unthrottledRpc] = useV2Query();
     const provider = web3.hook.usePriorityProvider();
+    const blocknum = block.useBlock();
 
     emitter.useOn(
         emitter.events.Offer,
@@ -359,11 +379,10 @@ export const usePollV2 = () => {
 
     React.useEffect(() => {
         if (!graphProblem) {
-            void graph(graphBlock);
+            void graph(graphBlock, blocknum);
         }
-    }, [graphProblem, graphBlock, graph]);
+    }, [graphProblem, graphBlock, graph, blocknum]);
 
-    const blocknum = block.useBlock();
     React.useEffect(() => {
         if (graphProblem) {
             void rpc(blocknum);

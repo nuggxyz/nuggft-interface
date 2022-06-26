@@ -8,11 +8,11 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import lib from '@src/lib';
 import Button from '@src/components/general/Buttons/Button/Button';
 import Label from '@src/components/general/Label/Label';
-import { MyNuggsData, UnclaimedOffer } from '@src/client/interfaces';
 import client from '@src/client';
 import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { ModalEnum } from '@src/interfaces/modals';
+import { MyNugg, UnclaimedOffer } from '@src/client/user';
 
 const MyNuggItemListMobile: FC<unknown> = () => {
     const nuggs = client.user.useNuggs();
@@ -44,7 +44,7 @@ const MyNuggItemListMobile: FC<unknown> = () => {
     );
 };
 
-const MyNuggItem: FC<{ item: MyNuggsData; claims: UnclaimedOffer[] }> = ({ item, claims }) => {
+const MyNuggItem: FC<{ item: MyNugg; claims: UnclaimedOffer[] }> = ({ item, claims }) => {
     const openModal = client.modal.useOpenModal();
 
     const navigate = useNavigate();

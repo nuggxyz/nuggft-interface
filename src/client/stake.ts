@@ -3,11 +3,11 @@ import create from 'zustand';
 import { combine } from 'zustand/middleware';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import React from 'react';
-import { QueryResult } from '@apollo/client';
 
 import { EthInt, Fraction } from '@src/classes/Fraction';
 import { calculateMsp } from '@src/web3/config';
-import { GetV2ActiveQuery } from '@src/gql/types.generated';
+import { NuggftV1 } from '@src/typechain/NuggftV1';
+import { stakeBackup } from '@src/contracts/backup';
 
 const store = create(
     combine(
@@ -49,28 +49,18 @@ const store = create(
                 }
             };
 
-            const handleActiveV2 = (
-                input: QueryResult<
-                    GetV2ActiveQuery,
-                    Exact<{
-                        [key: string]: never;
-                    }>
-                >,
-            ) => {
-                if (input.data?.protocol) {
-                    const { nuggftStakedShares, nuggftStakedEth, featureTotals, totalNuggs } =
-                        input.data.protocol;
-
-                    update(
-                        BigNumber.from(nuggftStakedShares),
-                        BigNumber.from(nuggftStakedEth),
-                        Number(totalNuggs),
-                        featureTotals as unknown as FixedLengthArray<number, 8>,
-                    );
-                }
+            const updateBackup = async (nuggft: NuggftV1) => {
+                return stakeBackup(nuggft).then((x) => {
+                    set(() => {
+                        return {
+                            shares: x.shares,
+                            eth: x.staked,
+                        };
+                    });
+                });
             };
 
-            return { update, handleActiveV2 };
+            return { update, updateBackup };
         },
     ),
 );
@@ -82,7 +72,7 @@ export default {
 
     useEth: () => store((draft) => draft.eth),
     useUpdate: () => store((draft) => draft.update),
-    useHandleActiveV2: () => store((draft) => draft.handleActiveV2),
+    useUpdateBackup: () => store((draft) => draft.updateBackup),
 
     useEps: () => {
         const eth = store((draft) => draft.eth);

@@ -4,6 +4,7 @@ import { combine } from 'zustand/middleware';
 import { ApolloClient, ApolloQueryResult } from '@apollo/client';
 import React from 'react';
 import shallow from 'zustand/shallow';
+import { Promise } from 'bluebird';
 
 import { EthInt } from '@src/classes/Fraction';
 import { LiveUserDocument, LiveUserQuery, LiveUserQueryVariables } from '@src/gql/types.generated';
@@ -11,6 +12,9 @@ import { buildTokenIdFactory } from '@src/prototypes';
 import { Address } from '@src/classes/Address';
 import web3 from '@src/web3';
 import { apolloClient } from '@src/web3/config';
+import { NuggftV1 } from '@src/typechain/NuggftV1';
+import { nuggBackup } from '@src/contracts/backup';
+import { useNuggftV1 } from '@src/contracts/useContract';
 
 import formatNuggItems from './formatters/formatNuggItems';
 import epoch from './epoch';
@@ -29,13 +33,14 @@ export interface LiveNuggItem extends ItemIdFactory<TokenIdFactoryBase> {
     count: number;
     displayed: boolean;
 }
+
 export interface MyNugg {
-    activeLoan: boolean;
-    activeSwap: boolean;
+    activeLoan: boolean | null;
+    activeSwap: boolean | object | undefined;
     tokenId: NuggId;
-    recent: boolean;
-    pendingClaim: boolean;
-    lastTransfer: number;
+    recent: boolean | null;
+    pendingClaim: boolean | null;
+    lastTransfer: number | null;
     items: LiveNuggItem[];
     unclaimedOffers: {
         itemId: ItemId | null;
@@ -164,8 +169,27 @@ const store = create(
             loans: [] as LoanData[],
         },
         (set) => {
-            const fetch = (address?: AddressString, client?: ApolloClient<any>) => {
-                if (!address || !client) return Promise.resolve();
+            const fetch = async (
+                address?: AddressString,
+                client?: ApolloClient<any>,
+                nuggft?: NuggftV1,
+                _epoch?: number,
+            ) => {
+                if (!address || !client || !_epoch) return Promise.resolve();
+                const backup = async () => {
+                    await nuggft?.tokensOf(address).then(async (x) => {
+                        const nuggs = await Promise.map(x, async (z) => {
+                            return nuggBackup(z.toNuggId(), nuggft, _epoch).then((b) => {
+                                return { ...b };
+                            });
+                        });
+                        set(() => ({
+                            // this filter is a hack that can be removed once we deploy the new nuggft - its an issue with ownerOf/agencyOf
+                            nuggs: nuggs.filter((y) => y.owner === address),
+                        }));
+                    });
+                };
+
                 return client
                     .query<LiveUserQuery, LiveUserQueryVariables>({
                         query: LiveUserDocument,
@@ -175,6 +199,11 @@ const store = create(
                         fetchPolicy: 'no-cache',
                     })
                     .then((x) => {
+                        if (x.error || x.errors) {
+                            void backup();
+                            return;
+                        }
+
                         const res2 = format(address, x);
 
                         if (!res2) return;
@@ -186,6 +215,9 @@ const store = create(
                                 ...res2.myUnclaimedNuggOffers,
                             ],
                         }));
+                    })
+                    .catch(() => {
+                        void backup();
                     });
             };
 
@@ -204,22 +236,25 @@ const store = create(
 
 export const useUserUpdater = () => {
     const address = web3.hook.usePriorityAccount();
+    const provider = web3.hook.usePriorityProvider();
+
+    const _epoch = epoch.active.useId();
 
     const fetch = store((draft) => draft.fetch);
     const wipe = store((draft) => draft.wipe);
-
+    const nuggft = useNuggftV1(provider);
     const callback = React.useCallback(() => {
-        if (address) {
-            void fetch(address as AddressString, apolloClient);
+        if (address && _epoch) {
+            void fetch(address as AddressString, apolloClient, nuggft, _epoch);
         }
-    }, [fetch, address]);
+    }, [fetch, address, nuggft, _epoch]);
 
     React.useEffect(() => {
         void wipe();
-        if (address) {
-            void fetch(address as AddressString, apolloClient);
+        if (address && _epoch) {
+            void fetch(address as AddressString, apolloClient, nuggft, _epoch);
         }
-    }, [address, fetch, wipe]);
+    }, [address, fetch, wipe, nuggft, _epoch]);
 
     epoch.useCallbackOnEpochChange(callback);
 };

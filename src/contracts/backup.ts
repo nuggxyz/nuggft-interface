@@ -1,0 +1,128 @@
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
+
+import { Fraction } from '@src/classes/Fraction';
+import lib from '@src/lib';
+import { buildTokenIdFactory } from '@src/prototypes';
+import { NuggftV1 } from '@src/typechain/NuggftV1';
+import { ADDRESS_ZERO } from '@src/web3/constants';
+
+export const nuggBackup = async (tokenId: NuggId, nuggft: NuggftV1, epoch: number) => {
+    const rawId = tokenId.toRawIdNum();
+    const agency = lib.parse.agency(await nuggft['agencyOf(uint24)'](rawId));
+
+    const items = lib.parse
+        .proof(await nuggft.proofOf(rawId))
+        .map((x) => buildTokenIdFactory({ ...x, activeSwap: undefined }));
+
+    const owner =
+        agency.flag === 0x0
+            ? (ADDRESS_ZERO as AddressString)
+            : agency.flag === 0x3 && agency.epoch >= epoch
+            ? (nuggft.address as AddressString)
+            : (agency.address as AddressString);
+
+    const activeSwap =
+        agency.flag === 0x3 && (agency.epoch >= epoch || agency.epoch === 0)
+            ? buildTokenIdFactory({
+                  tokenId,
+                  eth: agency.eth,
+                  leader: agency.address as AddressString,
+                  owner,
+                  endingEpoch: agency.epoch === 0 ? null : agency.epoch,
+                  num: Number(0),
+                  bottom: BigNumber.from(0),
+                  isBackup: true,
+                  listDataType: 'swap' as const,
+                  canceledEpoch: null,
+                  offers: [
+                      buildTokenIdFactory({
+                          eth: agency.eth,
+                          isBackup: true,
+                          sellingTokenId: null,
+                          tokenId,
+                          account: agency.address as AddressString,
+                          txhash: '',
+                          agencyEpoch: agency.epoch,
+                      }),
+                  ],
+              })
+            : undefined;
+
+    return buildTokenIdFactory({
+        tokenId,
+        activeLoan: null,
+        owner,
+        items,
+        pendingClaim: null,
+        lastTransfer: null,
+        swaps: [],
+        activeSwap,
+        isBackup: true,
+        recent: null,
+        unclaimedOffers: [],
+    });
+};
+
+export const itemBackup = async (tokenId: ItemId, nuggft: NuggftV1, epoch: number) => {
+    const items = lib.parse.lastItemSwap(await nuggft.lastItemSwap(tokenId.toRawId()));
+
+    const active = items.find((x) => x.endingEpoch === epoch);
+    const upcoming = items.find((x) => x.endingEpoch === epoch + 1);
+
+    const check = await Promise.all(
+        [active, upcoming].map(async (arg) => {
+            if (!arg) return undefined;
+
+            const agency = lib.parse.agency(
+                await nuggft.itemAgency(arg.tokenId.toRawId(), BigNumber.from(tokenId.toRawId())),
+            );
+
+            return agency.flag === 0x3
+                ? buildTokenIdFactory({
+                      tokenId,
+                      eth: agency.eth,
+                      leader: agency.addressAsBigNumber.toString().toNuggId(),
+                      nugg: nuggft.address,
+                      endingEpoch: agency.epoch === 0 ? null : agency.epoch,
+                      num: Number(0),
+                      bottom: BigNumber.from(0),
+                      isTryout: false,
+                      owner: 'nugg-0' as NuggId,
+                      count: 0,
+                      isBackup: true,
+                      listDataType: 'swap' as const,
+                      canceledEpoch: null,
+                      offers: [
+                          buildTokenIdFactory({
+                              eth: agency.eth,
+                              tokenId,
+                              sellingTokenId: 'nugg-0' as NuggId,
+                              isBackup: true,
+                              account: agency.addressAsBigNumber.toString().toNuggId(),
+                              txhash: '',
+                              agencyEpoch: agency.epoch,
+                          }),
+                      ],
+                  })
+                : undefined;
+        }),
+    );
+
+    return buildTokenIdFactory({
+        tokenId,
+        swaps: [],
+        activeSwap: check[0],
+        upcomingActiveSwap: check[1],
+        count: 0,
+        rarity: new Fraction(0),
+        tryout: {
+            count: 0,
+            swaps: [],
+        },
+        isBackup: true,
+    });
+};
+
+export const stakeBackup = async (nuggft: NuggftV1) => {
+    return lib.parse.stake(await nuggft.stake());
+};

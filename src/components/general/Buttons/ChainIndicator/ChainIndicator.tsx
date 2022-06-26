@@ -73,7 +73,6 @@ const ChainIndicator: FunctionComponent<Props> = ({ style, textStyle, onClick })
                                         marginRight: '.5rem',
                                         padding: '.2rem',
                                     }}
-                                    subscribe
                                 />
                             ) : null}
                         </div>

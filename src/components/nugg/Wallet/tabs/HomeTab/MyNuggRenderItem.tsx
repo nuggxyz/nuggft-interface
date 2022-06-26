@@ -2,7 +2,6 @@ import React, { FunctionComponent } from 'react';
 import { IoEllipsisHorizontal, IoSearch } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 
-import { MyNuggsData } from '@src/client/interfaces';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import globalStyles from '@src/lib/globalStyles';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -14,12 +13,14 @@ import OwnerButtons from '@src/components/nugg/ViewingNugg/ActionButtons/OwnerBu
 import SaleButtons from '@src/components/nugg/ViewingNugg/ActionButtons/SaleButtons';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
+import { MyNugg } from '@src/client/user';
 
 import styles from './HomeTab.styles';
 
-const MyNuggRenderItem: FunctionComponent<
-    GodListRenderItemProps<MyNuggsData, undefined, unknown>
-> = ({ item, style }) => {
+const MyNuggRenderItem: FunctionComponent<GodListRenderItemProps<MyNugg, undefined, unknown>> = ({
+    item,
+    style,
+}) => {
     const { gotoViewingNugg } = useViewingNugg();
 
     return item ? (
