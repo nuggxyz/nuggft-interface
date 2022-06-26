@@ -28,6 +28,8 @@ const styles = lib.layout.NLStyleSheetCreator({
     },
     button: {
         borderRadius: lib.layout.borderRadius.large,
+        background: lib.colors.textColor,
+        color: 'white',
     },
     heading: {
         width: '100%',

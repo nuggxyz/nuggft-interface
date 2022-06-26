@@ -186,6 +186,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
 
         return undefined;
     }, [swap, amountUsd, address, needToClaim, data, nuggft]);
+
     const estimation = useAsyncState(() => {
         if (populatedTransaction && network) {
             return Promise.all([estimate(populatedTransaction.tx), network?.getGasPrice()]).then(
@@ -252,32 +253,32 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
                         }}
                     >
                         <IncrementButton
-                            increment={BigInt(0)}
-                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
-                        />
-                        <IncrementButton
                             increment={BigInt(5)}
-                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: eps }}
                         />
                         <IncrementButton
                             increment={BigInt(10)}
-                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: eps }}
                         />
                         <IncrementButton
                             increment={BigInt(15)}
-                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: eps }}
                         />
                         <IncrementButton
                             increment={BigInt(20)}
-                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: eps }}
                         />
                         <IncrementButton
                             increment={BigInt(25)}
-                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: eps }}
                         />
                         <IncrementButton
                             increment={BigInt(30)}
-                            {...{ lastPressed, wrappedSetAmount, amount: epsUsd }}
+                            {...{ lastPressed, wrappedSetAmount, amount: eps }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(35)}
+                            {...{ lastPressed, wrappedSetAmount, amount: eps }}
                         />
                     </div>
                 )}

@@ -9,10 +9,9 @@ import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
-import lib from '@src/lib';
+import lib, { isUndefinedOrNullOrStringEmptyOrZeroOrStringZero } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
-import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import { MyNuggsData } from '@src/client/interfaces';
 import Label from '@src/components/general/Label/Label';
 import { EthInt } from '@src/classes/Fraction';
@@ -28,6 +27,8 @@ import IncrementButton from '@src/components/modals/IncrementButton';
 import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import { useUsdPair, useUsdPairWithCalculation } from '@src/client/usd';
 import Loader from '@src/components/general/Loader/Loader';
+import GodListHorizontal from '@src/components/general/List/GodListHorizontal';
+import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 
 import styles from './OfferModal.styles';
 
@@ -140,7 +141,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     );
 
     const amountUsd = useUsdPair(amount);
-    const mspUsd = useUsdPair(msp);
+    // const mspUsd = useUsdPair(msp);
+    // const leadingUsd = useUsdPair(check?.currentLeaderOffer);
 
     // const nextUsd = useUsdPair(check?.nextUserOffer);
 
@@ -158,7 +160,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             () => [
                 amount,
                 check?.currentUserOffer || 0,
-                check?.mustOfferOnSeller ? msp.increase(BigInt(5)) : msp,
+                check?.mustOfferOnSeller ? msp.increase(BigInt(5)) : 0,
             ],
             [amount, check, msp],
         ),
@@ -211,6 +213,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     amount: value,
                 };
             }
+            console.log(value);
             return {
                 tx: nuggft.populateTransaction['offer(uint24)'](data.tokenId.toRawId(), {
                     from: address,
@@ -257,12 +260,22 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         return true;
     }, [populatedTransaction, estimation, amount, estimateError]);
 
+    const [valueIsSet, setValue] = React.useReducer(() => true, false);
+
     React.useEffect(() => {
-        if (check && check.nextUserOffer && (amount === '0' || lastPressed === null)) {
-            setAmount(new EthInt(check.nextUserOffer).toFixedStringRoundingUp(5));
-            setLastPressed('5');
+        if (
+            check &&
+            check.nextUserOffer &&
+            (amount === '0' || lastPressed === undefined) &&
+            !valueIsSet
+        ) {
+            wrappedSetAmount(
+                new EthInt(check.nextUserOffer).increaseToFixedStringRoundingUp(BigInt(5), 5),
+                '5',
+            );
+            setValue();
         }
-    }, [amount, check, lastPressed]);
+    }, [amount, check, valueIsSet]);
 
     return (
         <div style={styles.container}>
@@ -296,7 +309,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
             )}
 
             {data.tokenId.isItemId() && (
-                <List
+                <GodListHorizontal
+                    itemHeight={135}
                     data={myNuggs}
                     label={t`Pick a nugg to offer on this item`}
                     labelStyle={{
@@ -304,7 +318,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     }}
                     extraData={undefined}
                     RenderItem={MyNuggRenderItem}
-                    horizontal
+                    // horizontal
                     action={setSelectedNugg}
                     selected={selectedNuggForItem}
                     style={{
@@ -316,173 +330,167 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     }}
                 />
             )}
-            <div style={styles.inputContainer}>
-                <DualCurrencyInput
-                    shouldFocus
-                    style={styles.input}
-                    styleHeading={styles.heading}
-                    styleInputContainer={styles.inputCurrency}
-                    label={t`Enter amount`}
-                    setValue={setAmount}
-                    value={amount}
-                    code
-                    currencyPref={currencyPref}
-                    className="placeholder-white"
-                    rightToggles={[
-                        <CurrencyToggler
-                            pref={currencyPref}
-                            setPref={setCurrencyPref}
-                            containerStyle={{ zIndex: 0 }}
-                        />,
-                    ]}
-                    // rightToggles={[
-                    //     <Button
-                    //         onClick={() => {
-                    //             try {
-                    //                 const next = check && check.next ? fromEth(check.next) : '';
-                    //                 console.log(next);
-                    //                 setAmount(next);
-                    //             } catch (err) {
-                    //                 console.error(err);
-                    //             }
-                    //         }}
-                    //         disabled={data.tokenId.isItemId() && !selectedNuggForItem}
-                    //         label={t`Min`}
-                    //         textStyle={{
-                    //             ...lib.layout.presets.font.main.bold,
-                    //             fontSize: lib.fontSize.h6,
-                    //         }}
-                    //         buttonStyle={{
-                    //             borderRadius: lib.layout.borderRadius.large,
-                    //             padding: '.2rem .5rem',
-                    //         }}
-                    //     />,
-                    // ]}
-                />
-                <div
-                    style={{
-                        // display: 'flex',
-                        margin: '.7rem 0rem',
-                        width: '100%',
-                        ...globalStyles.centeredSpaceBetween,
-                    }}
-                >
-                    <IncrementButton
-                        increment={BigInt(0)}
-                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
-                    />
-                    <IncrementButton
-                        increment={BigInt(5)}
-                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
-                    />
-                    <IncrementButton
-                        increment={BigInt(10)}
-                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
-                    />
-                    <IncrementButton
-                        increment={BigInt(15)}
-                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
-                    />
-                    <IncrementButton
-                        increment={BigInt(20)}
-                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
-                    />
-                    <IncrementButton
-                        increment={BigInt(25)}
-                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
-                    />
-                    <IncrementButton
-                        increment={BigInt(30)}
-                        {...{ lastPressed, wrappedSetAmount, amount: mspUsd }}
-                    />
-                </div>
-            </div>
-            <div
-                style={{
-                    width: '100%',
-                    height: '1rem',
-                    marginBottom: '.5rem',
-                }}
-            >
-                {userBalance && (
-                    <Text type="text" size="smaller" textStyle={styles.text} weight="bolder">
-                        {t`You currently have ${userBalance.decimal.toNumber().toPrecision(5)} ETH`}
-                    </Text>
-                )}
-            </div>
             {check ? (
-                <div style={styles.subContainer}>
-                    <FeedbackButton
-                        overrideFeedback
-                        disabled={!check || !check.canOffer || Number(amount) === 0}
-                        feedbackText={t`Check Wallet...`}
-                        buttonStyle={styles.button}
-                        label={`${
-                            check &&
-                            check.currentUserOffer &&
-                            check.currentUserOffer.toString() !== '0'
-                                ? !check.canOffer
-                                    ? t`You cannot place an offer`
-                                    : t`Update offer`
-                                : t`Place offer`
-                        }`}
-                        onClick={() => {
-                            if (populatedTransaction) {
-                                void send(populatedTransaction.tx);
+                <>
+                    <div style={styles.inputContainer}>
+                        <DualCurrencyInput
+                            warning={
+                                estimateError && lib.errors.prettify('offer-modal', estimateError)
                             }
-                            // if (check.currentUserOffer && chainId && provider && address) {
-                            //     if (data.tokenId.isItemId()) {
-                            //         if (selectedNuggForItem && data.nuggToBuyFrom) {
-                            //             void send(
-                            //                 nuggft.populateTransaction[
-                            //                     'offer(uint24,uint24,uint16)'
-                            //                 ](
-                            //                     selectedNuggForItem?.tokenId.toRawId(),
-                            //                     data.nuggToBuyFrom?.toRawId(),
-                            //                     data.tokenId.toRawId(),
-                            //                     {
-                            //                         value: toEth(amount).sub(
-                            //                             check.currentUserOffer,
-                            //                         ),
-                            //                     },
-                            //                 ),
-                            //             );
-                            //         }
-                            //     } else {
-                            //         void send(
-                            //             nuggft.populateTransaction['offer(uint24)'](
-                            //                 data.tokenId.toRawId(),
-                            //                 {
-                            //                     value: toEth(amount).sub(check.currentUserOffer),
-                            //                     // gasLimit: toGwei('120000'),
-                            //                 },
-                            //             ),
-                            //         );
-                            //     }
-                            // }
+                            shouldFocus
+                            style={styles.input}
+                            styleHeading={styles.heading}
+                            styleInputContainer={styles.inputCurrency}
+                            label={t`Enter amount`}
+                            setValue={wrappedSetAmount}
+                            value={amount}
+                            code
+                            currencyPref={currencyPref}
+                            className="placeholder-white"
+                            rightToggles={[
+                                <CurrencyToggler
+                                    pref={currencyPref}
+                                    setPref={setCurrencyPref}
+                                    containerStyle={{ zIndex: 0 }}
+                                />,
+                            ]}
+                        />
+                        <div
+                            style={{
+                                margin: '.7rem 0rem',
+                                width: '100%',
+                                ...globalStyles.centeredSpaceBetween,
+                            }}
+                        >
+                            <IncrementButton
+                                increment={BigInt(5)}
+                                {...{
+                                    lastPressed,
+                                    wrappedSetAmount,
+                                    amount: check?.nextUserOffer,
+                                }}
+                            />
+                            <IncrementButton
+                                increment={BigInt(10)}
+                                {...{
+                                    lastPressed,
+                                    wrappedSetAmount,
+                                    amount: check?.nextUserOffer,
+                                }}
+                            />
+                            <IncrementButton
+                                increment={BigInt(15)}
+                                {...{
+                                    lastPressed,
+                                    wrappedSetAmount,
+                                    amount: check?.nextUserOffer,
+                                }}
+                            />
+                            <IncrementButton
+                                increment={BigInt(20)}
+                                {...{
+                                    lastPressed,
+                                    wrappedSetAmount,
+                                    amount: check?.nextUserOffer,
+                                }}
+                            />
+                            <IncrementButton
+                                increment={BigInt(25)}
+                                {...{
+                                    lastPressed,
+                                    wrappedSetAmount,
+                                    amount: check?.nextUserOffer,
+                                }}
+                            />
+                            <IncrementButton
+                                increment={BigInt(30)}
+                                {...{
+                                    lastPressed,
+                                    wrappedSetAmount,
+                                    amount: check?.nextUserOffer,
+                                }}
+                            />
+                            <IncrementButton
+                                increment={BigInt(35)}
+                                {...{
+                                    lastPressed,
+                                    wrappedSetAmount,
+                                    amount: check?.nextUserOffer,
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div
+                        style={{
+                            width: '100%',
+                            height: '1rem',
+                            marginBottom: '.5rem',
                         }}
-                        rightIcon={
-                            calculating
-                                ? ((
-                                      <div style={{ position: 'absolute', right: '.7rem' }}>
-                                          <Loader color="white" />
-                                      </div>
-                                  ) as JSX.Element)
-                                : undefined
-                        }
-                    />
-                </div>
+                    >
+                        {userBalance && (
+                            <Text
+                                type="text"
+                                size="smaller"
+                                textStyle={styles.text}
+                                weight="bolder"
+                            >
+                                {t`You currently have ${userBalance.decimal
+                                    .toNumber()
+                                    .toPrecision(5)} ETH`}
+                            </Text>
+                        )}
+                    </div>
+                    <div style={styles.subContainer}>
+                        <FeedbackButton
+                            overrideFeedback
+                            disabled={
+                                !check ||
+                                !check.canOffer ||
+                                isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount) ||
+                                calculating ||
+                                !!estimateError
+                            }
+                            feedbackText={t`Check Wallet...`}
+                            buttonStyle={styles.button}
+                            label={`${
+                                check &&
+                                check.currentUserOffer &&
+                                check.currentUserOffer.toString() !== '0'
+                                    ? !check.canOffer
+                                        ? t`You cannot place an offer`
+                                        : t`Update offer`
+                                    : t`Place offer`
+                            }`}
+                            onClick={() => {
+                                if (populatedTransaction) {
+                                    void send(populatedTransaction.tx);
+                                }
+                            }}
+                            rightIcon={
+                                calculating
+                                    ? ((
+                                          <div style={{ position: 'absolute', right: '.7rem' }}>
+                                              <Loader color="white" />
+                                          </div>
+                                      ) as JSX.Element)
+                                    : undefined
+                            }
+                        />
+                    </div>
+                </>
             ) : null}
         </div>
     );
 };
 
 const MyNuggRenderItem: FC<
-    ListRenderItemProps<FormatedMyNuggsData, undefined, FormatedMyNuggsData>
+    GodListRenderItemProps<FormatedMyNuggsData, undefined, FormatedMyNuggsData>
 > = ({ item, selected, action }) => {
     const disabled = React.useMemo(() => {
-        if (item.activeSwap) return t`currenlty for sale`;
-        if (item.lastBid === 'unable-to-bid') return t`previous claim pending for this item`;
+        if (item) {
+            if (item.activeSwap) return t`currenlty for sale`;
+            if (item.lastBid === 'unable-to-bid') return t`previous claim pending for this item`;
+        }
         return undefined;
     }, [item]);
 
@@ -497,21 +505,26 @@ const MyNuggRenderItem: FC<
                 transition: '.2s background ease',
             }}
             rightIcon={
-                <>
-                    <TokenViewer
-                        tokenId={item.tokenId}
-                        style={
-                            screenType !== 'phone'
-                                ? { width: '80px', height: '80px' }
-                                : { width: '60px', height: '60px' }
-                        }
-                        showLabel
-                        disableOnClick
-                    />
-                    {disabled && (
-                        <Label text={disabled} containerStyles={{ background: 'transparent' }} />
-                    )}
-                </>
+                item && (
+                    <>
+                        <TokenViewer
+                            tokenId={item.tokenId}
+                            style={
+                                screenType !== 'phone'
+                                    ? { width: '80px', height: '80px' }
+                                    : { width: '60px', height: '60px' }
+                            }
+                            showLabel
+                            disableOnClick
+                        />
+                        {disabled && (
+                            <Label
+                                text={disabled}
+                                containerStyles={{ background: 'transparent' }}
+                            />
+                        )}
+                    </>
+                )
             }
             onClick={() => action && action(item)}
         />

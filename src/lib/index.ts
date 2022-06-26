@@ -100,11 +100,7 @@ export const isUndefinedOrNullOrStringEmptyOrZeroOrStringZero = <T>(
     value: T | Undesireable,
 ): value is null | undefined | '0' | 0 => {
     return (
-        isUndefinedOrNullOrNotString(value) ||
-        value === '' ||
-        value === 0 ||
-        value === '0' ||
-        value === '0.0'
+        isUndefinedOrNullOrNotString(value) || value === '' || value === 0 || Number(value) === 0
     );
 };
 export const isUndefinedOrNullOrNotBoolean = <T>(

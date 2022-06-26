@@ -142,26 +142,28 @@ export default ({
     const myNuggsFormatted = React.useMemo(() => {
         const nuggId = nuggToBuyFrom;
 
-        return [...myNuggs]
-            .map((x) => {
-                const filt = x.unclaimedOffers.filter((y) => {
-                    return y.itemId === tokenId;
-                });
+        return (
+            [...myNuggs]
+                .map((x) => {
+                    const filt = x.unclaimedOffers.filter((y) => {
+                        return y.itemId === tokenId;
+                    });
 
-                return {
-                    ...x,
-                    lastBid: x.pendingClaim
-                        ? ('user-must-claim' as const)
-                        : filt.length === 0
-                        ? new EthInt(0)
-                        : filt[0].sellingNuggId === nuggId?.nugg
-                        ? new EthInt(filt[0]?.eth || 0)
-                        : ('unable-to-bid' as const),
-                };
-            })
-            .filter((x) => x.lastBid !== 'user-must-claim')
-            .first(5) as FormatedMyNuggsData[];
-    }, []);
+                    return {
+                        ...x,
+                        lastBid: x.pendingClaim
+                            ? ('user-must-claim' as const)
+                            : filt.length === 0
+                            ? new EthInt(0)
+                            : filt[0].sellingNuggId === nuggId?.nugg
+                            ? new EthInt(filt[0]?.eth || 0)
+                            : ('unable-to-bid' as const),
+                    };
+                })
+                // .filter((x) => x.lastBid !== 'user-must-claim')
+                .first(5) as FormatedMyNuggsData[]
+        );
+    }, [myNuggs]);
 
     return token && token.type === 'item' && token.tryout.count > 0 ? (
         <div

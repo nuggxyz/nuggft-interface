@@ -3,6 +3,7 @@ import { t } from '@lingui/macro';
 
 import Button from '@src/components/general/Buttons/Button/Button';
 import lib from '@src/lib';
+import { EthInt } from '@src/classes/Fraction';
 
 const IncrementButton = React.memo(
     ({
@@ -13,18 +14,20 @@ const IncrementButton = React.memo(
     }: {
         increment: bigint;
         wrappedSetAmount: (amt: string, _lastPressed?: string) => void;
-        amount: PairInt;
+        amount: BigNumberish | null | undefined;
         lastPressed: string | undefined;
     }) => {
         return (
             <Button
                 className="mobile-pressable-div"
-                label={increment.toString() === '0' ? t`Min` : `+${increment.toString()}%`}
+                label={increment.toString() === '5' ? t`Min` : `+${increment.toString()}%`}
                 onClick={() => {
-                    wrappedSetAmount(
-                        amount.eth.copy().increase(increment).number.toFixed(5) || '0',
-                        increment.toString(),
-                    );
+                    if (amount) {
+                        wrappedSetAmount(
+                            new EthInt(amount).increaseToFixedStringRoundingUp(increment, 5),
+                            increment.toString(),
+                        );
+                    }
                 }}
                 buttonStyle={{
                     borderRadius: lib.layout.borderRadius.large,
