@@ -7,7 +7,6 @@ import { useNuggftV1 } from '@src/contracts/useContract';
 import useAsyncState from '@src/hooks/useAsyncState';
 import { EthInt } from '@src/classes/Fraction';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-import Loader from '@src/components/general/Loader/Loader';
 import { Address } from '@src/classes/Address';
 import web3 from '@src/web3';
 import useDimensions from '@src/client/hooks/useDimensions';
@@ -15,8 +14,6 @@ import lib from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import { useUsdPair } from '@src/client/usd';
-
-import styles from './RingAbout.styles';
 
 const OfferTextMobile = ({ tokenId }: { tokenId?: TokenId }) => {
     const token = client.live.token(tokenId);
@@ -124,33 +121,7 @@ export const BuntOfferTextMobile = ({ tokenId }: { tokenId: TokenId }) => {
 
     const leaderCurrency = useUsdPair(leader?.eth || vfo?.number || 0);
 
-    return !isPhone ? (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {vfo ? (
-                <CurrencyText textStyle={styles.title} value={vfo?.number || 0} stopAnimation />
-            ) : (
-                <>
-                    <Loader color="white" />
-                    <Text
-                        textStyle={{
-                            ...styles.title,
-                        }}
-                    >
-                        calculating
-                    </Text>
-                </>
-            )}
-            <Text
-                textStyle={{
-                    ...styles.title,
-
-                    marginRight: '3px',
-                }}
-            >
-                starting offer
-            </Text>
-        </div>
-    ) : (
+    return (
         <div
             style={{
                 alignItems: 'center',

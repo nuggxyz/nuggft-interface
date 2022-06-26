@@ -9,7 +9,7 @@ import { SwapRoutes } from './router';
 
 interface OfferDataBase extends TokenIdFactoryBase {
     eth: BigNumber;
-    txhash: string;
+    txhash: string | null;
     isBackup: boolean;
     sellingTokenId: null | NuggId;
     account: unknown;

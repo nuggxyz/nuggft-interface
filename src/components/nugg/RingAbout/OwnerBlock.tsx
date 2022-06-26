@@ -259,7 +259,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
     );
 };
 
-export default React.memo(OwnerBlock);
+export default React.memo(OwnerBlock, (prev, next) => prev.tokenId === next.tokenId);
 
 // const ens = web3.hook.usePriorityAnyENSName(
 //     token?.type === 'item' ? 'nugg' : provider,

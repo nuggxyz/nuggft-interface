@@ -211,7 +211,7 @@ const core = create(
                 const upcomingActiveSwap = get().liveTokens[tokenId]?.upcomingActiveSwap;
 
                 if (!activeSwap) {
-                    const theswap = get().liveTokens[tokenId].swaps.find(
+                    const theswap = get().liveTokens[tokenId]?.swaps.find(
                         (x) => x.owner === offer.sellingTokenId,
                     );
                     if (theswap) {

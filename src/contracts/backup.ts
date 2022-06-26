@@ -4,7 +4,7 @@ import { Fraction } from '@src/classes/Fraction';
 import lib from '@src/lib';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { NuggftV1 } from '@src/typechain/NuggftV1';
-import { ADDRESS_ZERO } from '@src/web3/constants';
+import { ADDRESS_ZERO, DEFAULT_CONTRACTS } from '@src/web3/constants';
 
 export const nuggBackup = async (tokenId: NuggId, nuggft: NuggftV1, epoch: number) => {
     const rawId = tokenId.toRawIdNum();
@@ -13,6 +13,25 @@ export const nuggBackup = async (tokenId: NuggId, nuggft: NuggftV1, epoch: numbe
     const items = lib.parse
         .proof(await nuggft.proofOf(rawId))
         .map((x) => buildTokenIdFactory({ ...x, activeSwap: undefined }));
+
+    if (agency.flag === 0x0) {
+        if (
+            rawId >= DEFAULT_CONTRACTS.MintOffset &&
+            rawId < DEFAULT_CONTRACTS.PreMintTokens + DEFAULT_CONTRACTS.MintOffset
+        ) {
+            agency.flag = 0x3;
+        } else if (rawId === epoch) {
+            agency.epoch = epoch;
+            agency.flag = 0x3;
+            agency.address = nuggft.address as AddressString;
+        }
+    }
+
+    if (agency.flag === 0x0 && agency.address === ADDRESS_ZERO && rawId === epoch) {
+        agency.flag = 0x3;
+        agency.epoch = epoch;
+        agency.address = nuggft.address as AddressString;
+    }
 
     const owner =
         agency.flag === 0x0
@@ -41,12 +60,14 @@ export const nuggBackup = async (tokenId: NuggId, nuggft: NuggftV1, epoch: numbe
                           sellingTokenId: null,
                           tokenId,
                           account: agency.address as AddressString,
-                          txhash: '',
+                          txhash: null,
                           agencyEpoch: agency.epoch,
                       }),
                   ],
               })
             : undefined;
+
+    console.log(agency, owner);
 
     return buildTokenIdFactory({
         tokenId,
@@ -99,7 +120,7 @@ export const itemBackup = async (tokenId: ItemId, nuggft: NuggftV1, epoch: numbe
                               sellingTokenId: 'nugg-0' as NuggId,
                               isBackup: true,
                               account: agency.addressAsBigNumber.toString().toNuggId(),
-                              txhash: '',
+                              txhash: null,
                               agencyEpoch: agency.epoch,
                           }),
                       ],

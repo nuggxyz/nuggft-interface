@@ -69,7 +69,24 @@ export default ({
 
     const [open, setOpen] = useState(screenType === 'tablet');
 
-    const leaderEth = client.usd.useUsdPair(leader?.eth);
+    const quick = client.v2.useSwap(tokenId);
+    const potential = client.v3.useSwap(tokenId);
+
+    const msp = client.stake.useMsp();
+
+    const leaderEth = client.usd.useUsdPair(
+        leader?.eth.gt(0)
+            ? leader.eth
+            : quick
+            ? quick.top.gt(0)
+                ? quick.top
+                : msp
+            : potential
+            ? potential.min?.eth.gt(0)
+                ? potential.min?.eth
+                : msp
+            : 0,
+    );
 
     useEffect(() => {
         if (Array.isArray(others) && others.length === 0 && open && screenType !== 'tablet') {
@@ -166,13 +183,16 @@ export default ({
                             <Text size="smaller">{leaderEns}</Text>
                         </div>
 
-                        {leader.txhash && (
+                        {leader && (
                             <Button
                                 buttonStyle={styles.etherscanBtn}
                                 onClick={() =>
                                     chainId &&
-                                    leader.txhash &&
-                                    web3.config.gotoEtherscan(chainId, 'tx', leader.txhash)
+                                    web3.config.gotoEtherscan(
+                                        chainId,
+                                        leader.txhash ? 'tx' : 'address',
+                                        leader.txhash ?? leader.account,
+                                    )
                                 }
                                 rightIcon={
                                     <IoCheckmarkDoneOutline color={lib.colors.green} size={14} />
