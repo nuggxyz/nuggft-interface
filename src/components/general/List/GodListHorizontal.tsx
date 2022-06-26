@@ -188,6 +188,7 @@ const GodListHorizontal = <T, B, A>({
     const genid = React.useId();
 
     const reset = React.useCallback(() => {
+        console.log('RESEET');
         if (coreRef && coreRef.current) {
             // @ts-ignore
             coreRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
@@ -203,7 +204,7 @@ const GodListHorizontal = <T, B, A>({
 
     const checkReset = React.useCallback(
         (_innerWidth: number) => {
-            if (scrollLeft > _innerWidth || prevData !== data) {
+            if (scrollLeft > _innerWidth || JSON.stringify(prevData) !== JSON.stringify(data)) {
                 reset();
             }
         },

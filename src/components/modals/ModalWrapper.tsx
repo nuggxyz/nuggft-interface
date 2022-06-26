@@ -87,11 +87,13 @@ const Modal: FC<unknown> = () => {
                     }),
                 }}
             >
-                {screenType !== 'phone' && (
-                    <animated.div
-                        style={{ ...containerBackgroundStyle, ...data?.backgroundStyle }}
-                    />
-                )}
+                <animated.div
+                    style={{
+                        ...containerBackgroundStyle,
+                        ...data?.backgroundStyle,
+                        display: screenType !== 'phone' ? 'auto' : 'none',
+                    }}
+                />
                 <animated.div style={{ ...containerStyle, ...data?.containerStyle }} ref={node}>
                     <ModalSwitch />
                 </animated.div>

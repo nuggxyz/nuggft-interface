@@ -307,7 +307,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                 }}
                 extraData={undefined}
                 RenderItem={MyNuggRenderItem}
-                // horizontal
                 action={setSelectedNugg}
                 style={React.useMemo(
                     () => ({
@@ -414,11 +413,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     marginBottom: '.5rem',
                 }}
             >
-                {userBalance && (
-                    <Text type="text" textStyle={styles.text}>
-                        {t`You currently have ${userBalance.decimal.toNumber().toPrecision(5)} ETH`}
-                    </Text>
-                )}
+                <Text
+                    type="text"
+                    textStyle={{ ...styles.text, display: userBalance ? 'auto' : 'none' }}
+                >
+                    {t`You currently have ${userBalance?.decimal.toNumber().toPrecision(5)} ETH`}
+                </Text>
             </div>
             <div style={styles.subContainer}>
                 <FeedbackButton
