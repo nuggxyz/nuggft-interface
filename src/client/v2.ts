@@ -15,7 +15,7 @@ import {
 import { buildTokenIdFactory } from '@src/prototypes';
 import emitter from '@src/emitter';
 import web3 from '@src/web3';
-import { useNuggftV1 } from '@src/contracts/useContract';
+import { useXNuggftV1 } from '@src/contracts/useContract';
 import lib from '@src/lib/index';
 import useThrottle from '@src/hooks/useThrottle';
 
@@ -321,7 +321,7 @@ const useV2Query = () => {
 
     const provider = web3.hook.usePriorityProvider();
 
-    const nuggft = useNuggftV1(provider);
+    const xnuggft = useXNuggftV1(provider);
 
     const graph = React.useCallback(
         async (graphBlock: number) => {
@@ -336,11 +336,11 @@ const useV2Query = () => {
     const rpc = React.useCallback(
         async (blk: number) => {
             if (provider) {
-                const res = await nuggft.loop();
+                const res = await xnuggft.sloop();
                 handleV3Rpc(handleV2Rpc(res, blk), blk);
             }
         },
-        [nuggft, handleV2Rpc, handleV3Rpc, provider],
+        [xnuggft, handleV2Rpc, handleV3Rpc, provider],
     );
 
     const _rpc = useThrottle(rpc, 60000 * 5);

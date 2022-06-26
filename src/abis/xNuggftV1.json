@@ -5,6 +5,17 @@
         "type": "constructor"
     },
     {
+        "inputs": [
+            {
+                "internalType": "bytes1",
+                "name": "",
+                "type": "bytes1"
+            }
+        ],
+        "name": "Revert",
+        "type": "error"
+    },
+    {
         "anonymous": false,
         "inputs": [
             {
@@ -123,6 +134,19 @@
         "type": "event"
     },
     {
+        "inputs": [],
+        "name": "REBALANCE_FEE_BPS",
+        "outputs": [
+            {
+                "internalType": "uint96",
+                "name": "",
+                "type": "uint96"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "address",
@@ -184,6 +208,38 @@
                 "internalType": "uint256",
                 "name": "res",
                 "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint24",
+                "name": "tokenId",
+                "type": "uint24"
+            }
+        ],
+        "name": "floop",
+        "outputs": [
+            {
+                "internalType": "uint16[16]",
+                "name": "arr",
+                "type": "uint16[16]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "iloop",
+        "outputs": [
+            {
+                "internalType": "bytes",
+                "name": "res",
+                "type": "bytes"
             }
         ],
         "stateMutability": "view",
@@ -262,6 +318,25 @@
             }
         ],
         "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint24",
+                "name": "tokenId",
+                "type": "uint24"
+            }
+        ],
+        "name": "ploop",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -368,6 +443,19 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "sloop",
+        "outputs": [
+            {
+                "internalType": "bytes",
+                "name": "res",
+                "type": "bytes"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "bytes4",
@@ -397,6 +485,19 @@
             }
         ],
         "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "tloop",
+        "outputs": [
+            {
+                "internalType": "bytes",
+                "name": "res",
+                "type": "bytes"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {

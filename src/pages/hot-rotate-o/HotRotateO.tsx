@@ -22,6 +22,7 @@ import {
     useDotnuggV1,
     usePrioritySendTransaction,
     useTransactionManager2,
+    useXNuggftV1,
 } from '@src/contracts/useContract';
 import Label from '@src/components/general/Label/Label';
 import web3 from '@src/web3';
@@ -237,6 +238,7 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
     const epoch = client.epoch.active.useId();
 
     const nuggft = useNuggftV1(provider);
+    const xnuggft = useXNuggftV1(provider);
 
     const [needsToClaim, setNeedsToClaim] = React.useState<boolean>();
     const [cannotProveOwnership, setCannotProveOwnership] = React.useState<boolean>();
@@ -257,7 +259,7 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
             const fmtTokenId = BigNumber.from(tokenId.toRawId());
             console.warn('hi there - floop just got called for tokenId ', tokenId);
             const floopCheck = async () => {
-                return nuggft.floop(fmtTokenId).then((x) => {
+                return xnuggft.floop(fmtTokenId).then((x) => {
                     const res = x.reduce(
                         (prev: Omit<HotRotateOItemList, 'byItem'>, curr, activeIndex) => {
                             const parsed = parseItmeIdToNum(curr);
@@ -402,7 +404,7 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
             });
         }
         return undefined;
-    }, [tokenId, nuggft, provider, address, epoch, overrideOwner, supplementalItems]);
+    }, [tokenId, nuggft, provider, address, epoch, overrideOwner, supplementalItems, xnuggft]);
 
     const { screen } = useDimensions();
 

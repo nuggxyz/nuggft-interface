@@ -594,6 +594,25 @@
     {
         "inputs": [
             {
+                "internalType": "uint24",
+                "name": "tokenId",
+                "type": "uint24"
+            }
+        ],
+        "name": "agencyOf",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "res",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "address",
                 "name": "",
                 "type": "address"
@@ -607,25 +626,6 @@
         "name": "approve",
         "outputs": [],
         "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "balance",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -889,25 +889,6 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "uint24",
-                "name": "tokenId",
-                "type": "uint24"
-            }
-        ],
-        "name": "floop",
-        "outputs": [
-            {
-                "internalType": "uint16[16]",
-                "name": "arr",
-                "type": "uint16[16]"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
         "inputs": [],
         "name": "genesis",
         "outputs": [
@@ -1082,6 +1063,30 @@
         "inputs": [
             {
                 "internalType": "uint24",
+                "name": "seller",
+                "type": "uint24"
+            },
+            {
+                "internalType": "uint16",
+                "name": "itemId",
+                "type": "uint16"
+            }
+        ],
+        "name": "itemAgencyOf",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "res",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint24",
                 "name": "buyingTokenid",
                 "type": "uint24"
             },
@@ -1150,19 +1155,6 @@
         "name": "loan",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "loop",
-        "outputs": [
-            {
-                "internalType": "bytes",
-                "name": "res",
-                "type": "bytes"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -1679,6 +1671,25 @@
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "you",
+                "type": "address"
+            }
+        ],
+        "name": "tokensOf",
+        "outputs": [
+            {
+                "internalType": "uint24[]",
+                "name": "res",
+                "type": "uint24[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "totalSupply",
         "outputs": [
@@ -1712,6 +1723,30 @@
         "name": "transferFrom",
         "outputs": [],
         "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_agency",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint24",
+                "name": "epoch",
+                "type": "uint24"
+            }
+        ],
+        "name": "validAgency",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "pure",
         "type": "function"
     },
     {
