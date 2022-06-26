@@ -44,12 +44,15 @@ const styles = lib.layout.NLStyleSheetCreator({
         borderRadius: lib.layout.borderRadius.mediumish,
     },
     text: {
+        // color: lib.colors.textColor,
+        // textAlign: 'center',
+        // flexDirection: 'row',
+        // display: 'flex',
+        // justifyContent: 'center',
+        // alignItems: 'center',
         color: lib.colors.textColor,
         textAlign: 'center',
-        flexDirection: 'row',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        fontSize: lib.fontSize.h6,
     },
 });
 

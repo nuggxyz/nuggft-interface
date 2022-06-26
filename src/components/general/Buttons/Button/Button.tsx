@@ -8,6 +8,7 @@ import React, {
 
 import useOnHover from '@src/hooks/useOnHover';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
+import lib from '@src/lib';
 
 import styles from './Button.styles';
 
@@ -53,6 +54,7 @@ const Button: FunctionComponent<PropsWithChildren<ButtonProps>> = ({
             position: 'relative' as const,
             ...(hover && !disableHoverAnimation && hoverStyle),
             ...buttonStyle,
+            transition: `all .3s ${lib.layout.animation}`,
         };
     }, [hover, disabled, buttonStyle, hoverStyle, bypassDisableStyle]);
 
