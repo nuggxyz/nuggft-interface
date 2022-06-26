@@ -160,7 +160,7 @@ export const CHAIN_LABEL = {
 } as const;
 
 const buildGraphHttpUrl = <T extends Chain>(chain: T) => {
-    return `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv1-${CHAIN_LABEL[chain]}` as const;
+    return `https://api.thegraph.com/subgraphs/name/nuggxyz/nuggftv2-${CHAIN_LABEL[chain]}` as const;
 };
 
 const buildGraphWssUrl = <T extends Chain>(chain: T) => {

@@ -73,4 +73,69 @@ function chunkString(str: string, length: number) {
     return str.match(new RegExp(`.{1,${length}}`, 'g'));
 }
 
-export default { agency, proof, lastItemSwap, chunkString };
+function sloop(str: string) {
+    const chunked = chunkString(str.slice(2), 37 * 2);
+
+    if (!chunked) return [];
+
+    const res: {
+        itemId: ItemId;
+        nuggId: NuggId;
+        agency: ReturnType<typeof agency>;
+        sorter: number;
+    }[] = [];
+
+    for (let index = 0; index < chunked.length; index++) {
+        const chunk = chunked[index];
+
+        const strAgency = chunk.slice(0, 32 * 2);
+
+        const ag = agency(`0x${strAgency}`);
+
+        const itemId = Number(`0x${chunk.slice(64, 68)}`).toItemId();
+        const nuggId = Number(`0x${chunk.slice(68)}`).toNuggId();
+
+        res.push({
+            agency: ag,
+            itemId,
+            nuggId,
+            sorter: itemId === 'item-0' ? nuggId.toRawIdNum() : itemId.toRawIdNum(),
+        });
+    }
+
+    return res.sort((a, b) => b.sorter - a.sorter);
+}
+
+function tloop(str: string) {
+    const chunked = chunkString(str.slice(2), 3 * 2);
+
+    if (!chunked) return [];
+
+    const res: number[] = [];
+
+    for (let index = 0; index < chunked.length; index++) {
+        const chunk = chunked[index];
+
+        res.push(Number(`0x${chunk.slice(0, 3 * 2)}`));
+    }
+
+    return res.sort((a, b) => a - b).map((e) => e.toNuggId());
+}
+
+function iloop(str: string) {
+    const chunked = chunkString(str.slice(2), 2 * 2);
+
+    if (!chunked) return [];
+
+    const res: number[] = [];
+
+    for (let index = 0; index < chunked.length; index++) {
+        const chunk = chunked[index];
+
+        res.push(Number(`0x${chunk.slice(0, 2 * 2)}`));
+    }
+
+    return res.sort((a, b) => a - b).map((e) => e.toItemId());
+}
+
+export default { agency, proof, lastItemSwap, chunkString, sloop, tloop, iloop };

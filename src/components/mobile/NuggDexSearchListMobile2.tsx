@@ -1,14 +1,6 @@
 import React from 'react';
 import { t } from '@lingui/macro';
 
-import {
-    GetAllItemsQuery,
-    GetAllNuggsQuery,
-    Item_OrderBy,
-    Nugg_OrderBy,
-    useGetAllItemsQuery,
-    useGetAllNuggsQuery,
-} from '@src/gql/types.generated';
 import lib from '@src/lib';
 import BradPittList from '@src/components/general/List/BradPittList';
 import Button from '@src/components/general/Buttons/Button/Button';
@@ -17,35 +9,17 @@ import { Page } from '@src/interfaces/nuggbook';
 
 import { NuggListRenderItemMobileBig, NuggListRenderItemMobile } from './NuggListRenderItemMobile';
 
-const INFINITE_INTERVAL = 100;
+// const INFINITE_INTERVAL = 100;
 
 export const AllNuggs = () => {
     const goto = client.nuggbook.useGoto();
 
-    const [allNuggsData, setAllNuggsData] = React.useState<GetAllNuggsQuery['nuggs']>();
+    const nuggs = client.all.useNuggs();
+    const loadMoreNuggs = client.all.usePollNuggs();
 
-    const { fetchMore: fetchMoreNuggs } = useGetAllNuggsQuery({
-        fetchPolicy: 'cache-first',
-        variables: {
-            skip: 0,
-            first: INFINITE_INTERVAL,
-            orderBy: Nugg_OrderBy.Idnum,
-        },
-        onCompleted: (x) => {
-            setAllNuggsData(x.nuggs);
-        },
-    });
-
-    const loadMoreNuggs = React.useCallback(() => {
-        void fetchMoreNuggs({
-            variables: {
-                first: INFINITE_INTERVAL,
-                skip: allNuggsData?.length || 0,
-            },
-        }).then((x) => {
-            setAllNuggsData((a) => [...(a || []), ...x.data.nuggs]);
-        });
-    }, [allNuggsData, fetchMoreNuggs, setAllNuggsData]);
+    React.useEffect(() => {
+        loadMoreNuggs();
+    }, []);
 
     const id = React.useId();
     const reff = React.useRef(null);
@@ -92,7 +66,7 @@ export const AllNuggs = () => {
                     />
                 }
                 offsetListRef={false}
-                data={allNuggsData?.map((x) => x.id.toNuggId()) || []}
+                data={nuggs}
                 RenderItemSmall={NuggListRenderItemMobile}
                 RenderItemBig={NuggListRenderItemMobileBig}
                 disableScroll
@@ -110,31 +84,14 @@ export const AllNuggs = () => {
 };
 
 export const AllItems = () => {
-    const [allItemsData, setAllItemsData] = React.useState<GetAllItemsQuery['items']>();
     const goto = client.nuggbook.useGoto();
 
-    const { fetchMore: fetchMoreItems } = useGetAllItemsQuery({
-        fetchPolicy: 'cache-first',
-        variables: {
-            skip: 0,
-            first: INFINITE_INTERVAL,
-            orderBy: Item_OrderBy.Idnum,
-        },
-        onCompleted: (x) => {
-            setAllItemsData(x.items);
-        },
-    });
+    const items = client.all.useItems();
+    const loadMoreItems = client.all.usePollItems();
 
-    const loadMoreItems = React.useCallback(() => {
-        void fetchMoreItems({
-            variables: {
-                first: INFINITE_INTERVAL,
-                skip: allItemsData?.length || 0,
-            },
-        }).then((x) => {
-            setAllItemsData((a) => [...(a || []), ...x.data.items]);
-        });
-    }, [allItemsData, fetchMoreItems, setAllItemsData]);
+    React.useEffect(() => {
+        loadMoreItems();
+    }, []);
 
     const id = React.useId();
     const reff = React.useRef(null);
@@ -181,7 +138,7 @@ export const AllItems = () => {
                     />
                 }
                 offsetListRef={false}
-                data={allItemsData?.map((x) => x.id.toItemId()) || []}
+                data={items}
                 RenderItemSmall={NuggListRenderItemMobile}
                 RenderItemBig={NuggListRenderItemMobileBig}
                 disableScroll

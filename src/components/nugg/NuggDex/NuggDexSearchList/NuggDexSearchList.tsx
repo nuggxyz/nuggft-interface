@@ -4,14 +4,6 @@ import { animated, useSpring } from '@react-spring/web';
 import constants from '@src/lib/constants';
 import client from '@src/client';
 import { SearchView } from '@src/client/interfaces';
-import {
-    GetAllItemsSearchQuery,
-    GetAllNuggsSearchQuery,
-    Item_OrderBy,
-    Nugg_OrderBy,
-    useGetAllItemsSearchQuery,
-    useGetAllNuggsSearchQuery,
-} from '@src/gql/types.generated';
 import useDimensions from '@src/client/hooks/useDimensions';
 import useToggle from '@src/hooks/useToggle';
 import { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
@@ -54,54 +46,15 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     });
     const _sortAsc = useRef(sortAsc);
 
-    const [allNuggsData, setAllNuggsData] = React.useState<GetAllNuggsSearchQuery['nuggs']>();
-    const [allItemsData, setAllItemsData] = React.useState<GetAllItemsSearchQuery['items']>();
+    const allNuggs = client.all.useNuggs();
+    const loadMoreAllNuggs = client.all.usePollNuggs();
+    const allItems = client.all.useItems();
+    const loadMoreAllItems = client.all.usePollItems();
 
-    const { fetchMore: fetchMoreNuggs } = useGetAllNuggsSearchQuery({
-        fetchPolicy: 'cache-first',
-        variables: {
-            skip: 0,
-            first: INFINITE_INTERVAL,
-            orderBy: Nugg_OrderBy.Idnum,
-        },
-        onCompleted: (x) => {
-            setAllNuggsData(x.nuggs);
-        },
-    });
-
-    const loadMoreNuggs = React.useCallback(() => {
-        void fetchMoreNuggs({
-            variables: {
-                first: INFINITE_INTERVAL,
-                skip: allNuggsData?.length || 0,
-            },
-        }).then((x) => {
-            setAllNuggsData((a) => [...(a || []), ...x.data.nuggs]);
-        });
-    }, [allNuggsData, fetchMoreNuggs, setAllNuggsData]);
-
-    const { fetchMore: fetchMoreItems } = useGetAllItemsSearchQuery({
-        fetchPolicy: 'cache-first',
-        variables: {
-            skip: 0,
-            first: INFINITE_INTERVAL,
-            orderBy: Item_OrderBy.Idnum,
-        },
-        onCompleted: (x) => {
-            setAllItemsData(x.items);
-        },
-    });
-
-    const loadMoreItems = React.useCallback(() => {
-        void fetchMoreItems({
-            variables: {
-                first: INFINITE_INTERVAL,
-                skip: allItemsData?.length || 0,
-            },
-        }).then((x) => {
-            setAllItemsData((a) => [...(a || []), ...x.data.items]);
-        });
-    }, [allItemsData, fetchMoreItems, setAllItemsData]);
+    React.useEffect(() => {
+        loadMoreAllNuggs();
+        loadMoreAllItems();
+    }, []);
 
     useEffect(() => {
         _sortAsc.current = sortAsc;
@@ -253,19 +206,15 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         bottom: 0,
                     }}
                     type={SearchView.AllItems}
-                    previewNuggs={
-                        allItemsData
-                            ?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT)
-                            ?.map((x) => x.id.toItemId()) ?? []
-                    }
+                    previewNuggs={allItems.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT)}
                 >
                     <NuggList
                         animationToggle={viewing === SearchView.AllItems}
                         style={styles.nuggListEnter}
-                        tokenIds={allItemsData?.map((x) => x.id.toItemId()) || []}
+                        tokenIds={allItems}
                         interval={INFINITE_INTERVAL}
                         type={SearchView.AllItems}
-                        onScrollEnd={loadMoreItems}
+                        onScrollEnd={loadMoreAllItems}
                         cardType="all"
                     />
                 </NuggLink>
@@ -277,20 +226,16 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
                         bottom: 0,
                     }}
                     type={SearchView.AllNuggs}
-                    previewNuggs={
-                        allNuggsData
-                            ?.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT)
-                            ?.map((x) => x.id.toNuggId()) ?? []
-                    }
+                    previewNuggs={allNuggs.first(constants.NUGGDEX_ALLNUGGS_PREVIEW_COUNT)}
                 >
                     <NuggList
                         animationToggle={viewing === SearchView.AllNuggs}
                         style={styles.nuggListEnter}
-                        tokenIds={allNuggsData?.map((x) => x.id.toNuggId()) || []}
+                        tokenIds={allNuggs}
                         cardType="all"
                         interval={INFINITE_INTERVAL}
                         type={SearchView.AllNuggs}
-                        onScrollEnd={loadMoreNuggs}
+                        onScrollEnd={loadMoreAllNuggs}
                     />
                 </NuggLink>
             </animated.div>

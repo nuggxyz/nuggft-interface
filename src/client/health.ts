@@ -3,7 +3,7 @@ import { ApolloClient, ApolloLink, FetchResult } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import React from 'react';
 import create from 'zustand';
-import { combine, persist, subscribeWithSelector } from 'zustand/middleware';
+import { combine, subscribeWithSelector } from 'zustand/middleware';
 
 import { HealthQuery, HealthQueryVariables, HealthDocument } from '@src/gql/types.generated';
 import useInterval from '@src/hooks/useInterval';
@@ -21,111 +21,132 @@ export interface Health {
         Record<string, any>
     > & { time: number };
     lastBlockGraphTimestamp: number;
+    graphNetworkDown: boolean;
+    response: boolean;
 }
 
 const useStore = create(
-    persist(
-        subscribeWithSelector(
-            combine(
-                { lastBlockRpc: 0, lastBlockGraph: 0, lastBlockGraphTimestamp: 0 } as Health,
-                (set) => {
-                    const updateLastRpcBlock = (blocknum: number) => {
-                        // @ts-ignore
-                        set((draft) => {
-                            draft.lastBlockRpc = blocknum;
-                        });
-                    };
+    subscribeWithSelector(
+        combine(
+            {
+                lastBlockRpc: 0,
+                lastBlockGraph: 0,
+                lastBlockGraphTimestamp: 0,
+                graphNetworkDown: false,
+                response: false,
+            } as Health,
+            (set) => {
+                const updateLastRpcBlock = (blocknum: number) => {
+                    // @ts-ignore
+                    set((draft) => {
+                        draft.lastBlockRpc = blocknum;
+                    });
+                };
 
-                    const updateLastBlockGraph = (blocknum: number) => {
-                        // @ts-ignore
-                        set((draft) => {
-                            draft.lastBlockGraph = blocknum;
-                        });
-                    };
+                const updateLastBlockGraph = (blocknum: number) => {
+                    // @ts-ignore
+                    set((draft) => {
+                        draft.lastBlockGraph = blocknum;
+                    });
+                };
 
-                    const updateLastBlockGraphTimestamp = (timestamp: number) => {
-                        // @ts-ignore
-                        set((draft) => {
-                            draft.lastBlockGraphTimestamp = timestamp;
-                        });
-                    };
+                const updateLastBlockGraphTimestamp = (timestamp: number) => {
+                    // @ts-ignore
+                    set((draft) => {
+                        draft.lastBlockGraphTimestamp = timestamp;
+                    });
+                };
 
-                    const generateApolloResponseErrorMiddleware = () => {
-                        return onError(({ graphQLErrors, networkError, operation }) => {
-                            if (graphQLErrors)
-                                graphQLErrors.forEach((hi) => {
-                                    console.log(
-                                        `[GraphQL error:${operation.operationName}:${JSON.stringify(
-                                            operation.variables,
-                                        )}]: Message: ${hi.message}`,
-                                    );
-                                });
-
-                            if (networkError)
+                const generateApolloResponseErrorMiddleware = () => {
+                    return onError(({ graphQLErrors, networkError, operation }) => {
+                        if (graphQLErrors) {
+                            graphQLErrors.forEach((hi) => {
                                 console.log(
-                                    `[Network error:${operation.operationName}:${JSON.stringify(
+                                    `[GraphQL error:${operation.operationName}:${JSON.stringify(
                                         operation.variables,
-                                    )}]: ${networkError.message}`,
+                                    )}]: Message: ${hi.message}`,
                                 );
-                        });
-                    };
+                            });
 
-                    const generateApolloResponseMiddleware = () => {
-                        return new ApolloLink((operation, forward) => {
-                            return forward(operation).map((response) => {
-                                const lastGraphResponse = {
-                                    ...response,
-                                    data:
-                                        response.data === null
-                                            ? ('null' as const)
-                                            : ('non-null' as const),
-                                    time: new Date().getTime(),
-                                };
+                            if (operation.operationName === 'health') {
                                 set(() => ({
-                                    lastGraphResponse,
+                                    graphNetworkDown: true,
                                 }));
+                            }
+                        }
+                        if (networkError) {
+                            console.log(
+                                `[Network error:${operation.operationName}:${JSON.stringify(
+                                    operation.variables,
+                                )}]: ${networkError.message}`,
+                            );
+                        }
+                    });
+                };
 
-                                const { data } = response as {
-                                    data?: {
-                                        _meta?: {
-                                            __typename: '_Meta_';
-                                            block: { __typename: '_Block_'; number: number };
-                                        };
+                const generateApolloResponseMiddleware = () => {
+                    return new ApolloLink((operation, forward) => {
+                        return forward(operation).map((response) => {
+                            const lastGraphResponse = {
+                                ...response,
+                                data:
+                                    response.data === null
+                                        ? ('null' as const)
+                                        : ('non-null' as const),
+                                time: new Date().getTime(),
+                            };
+                            set(() => ({
+                                lastGraphResponse,
+                                response: true,
+                            }));
+
+                            if (!response.errors) {
+                                set(() => ({
+                                    graphNetworkDown: false,
+                                }));
+                            }
+
+                            const { data } = response as {
+                                data?: {
+                                    _meta?: {
+                                        __typename: '_Meta_';
+                                        block: { __typename: '_Block_'; number: number };
                                     };
                                 };
+                            };
 
-                                if (data?._meta) {
-                                    const lastBlockGraph = data._meta.block.number;
-                                    set(() => ({ lastBlockGraph }));
-                                }
+                            if (data?._meta) {
+                                const lastBlockGraph = data._meta.block.number;
+                                set(() => ({ lastBlockGraph, response: true }));
+                            }
 
-                                return response;
-                            });
+                            return response;
                         });
-                    };
+                    });
+                };
 
-                    const fetch = (client?: ApolloClient<any>) => {
-                        if (!client) return Promise.resolve();
-                        return client.query<HealthQuery, HealthQueryVariables>({
-                            query: HealthDocument,
-                            fetchPolicy: 'no-cache',
-                        });
-                    };
+                const fetch = (client?: ApolloClient<any>) => {
+                    if (!client) return Promise.resolve();
+                    return client.query<HealthQuery, HealthQueryVariables>({
+                        query: HealthDocument,
+                        fetchPolicy: 'no-cache',
+                    });
+                };
 
-                    return {
-                        fetch,
-                        updateLastRpcBlock,
-                        updateLastBlockGraph,
-                        generateApolloResponseMiddleware,
-                        generateApolloResponseErrorMiddleware,
-                        updateLastBlockGraphTimestamp,
-                    };
-                },
-            ),
+                return {
+                    fetch,
+                    updateLastRpcBlock,
+                    updateLastBlockGraph,
+                    generateApolloResponseMiddleware,
+                    generateApolloResponseErrorMiddleware,
+                    updateLastBlockGraphTimestamp,
+                };
+            },
         ),
-        { name: 'nugg.xyz-health' },
     ),
 );
+
+void useStore.getState().fetch();
 
 export const useHealthUpdater = () => {
     const fetch = useStore((state) => state.fetch);
@@ -137,6 +158,10 @@ export const useHealthUpdater = () => {
         }, [fetch]),
         4000,
     );
+
+    React.useEffect(() => {
+        void fetch(apolloClient);
+    }, []);
 
     const lastBlockGraph = useStore((state) => state.lastBlockGraph);
 
@@ -158,6 +183,7 @@ export const useHealthUpdater = () => {
 const useHealth = () => {
     const lastBlockRpc = block.useBlock();
     const lastBlockGraph = useStore((state) => state.lastBlockGraph);
+    const response = useStore((state) => state.response);
 
     const blockdiff = React.useMemo(() => {
         return Math.abs(lastBlockGraph - lastBlockRpc) || Number(0);
@@ -167,7 +193,9 @@ const useHealth = () => {
         return blockdiff > 5 && lastBlockGraph < lastBlockRpc;
     }, [lastBlockGraph, lastBlockRpc, blockdiff]);
 
-    return graphProblem;
+    const graphNetworkDown = useStore((state) => state.graphNetworkDown);
+
+    return response && (graphProblem || graphNetworkDown);
 };
 
 const useCallbackOnGraphBlockChange = (callback: (() => Promise<unknown>) | (() => unknown)) => {

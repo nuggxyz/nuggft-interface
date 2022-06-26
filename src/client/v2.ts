@@ -116,20 +116,12 @@ const rpcFormatter = (input: string, hits: TokenIdDictionary<SwapData>, blk: num
     const res: SwapData[] = [];
     const v: V3RpcInput[] = [];
 
-    const chunked = lib.parse.chunkString(input.slice(2), 74);
+    const chunked = lib.parse.sloop(input);
 
     const _epoch = web3.config.calculateEpochId(blk);
-    if (!chunked) return [];
 
     for (let index = 0; index < chunked.length; index++) {
-        const chunk = chunked[index];
-
-        const strAgency = chunk.slice(0, 64);
-
-        const agency = lib.parse.agency(`0x${strAgency}`);
-
-        const itemId = Number(`0x${chunk.slice(64, 68)}`).toItemId();
-        const nuggId = Number(`0x${chunk.slice(68)}`).toNuggId();
+        const { itemId, nuggId, agency } = chunked[index];
 
         if (itemId.toRawIdNum() === 0) {
             // we got outselves a nugg
