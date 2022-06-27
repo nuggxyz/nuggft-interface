@@ -71,6 +71,7 @@ export default ({
     const token = client.live.token(tokenId);
     const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<TryoutData>();
     const openModal = client.modal.useOpenModal();
+    const { minutes } = client.epoch.useEpoch(epoch);
 
     const darkmode = useDarkMode();
 
@@ -102,7 +103,9 @@ export default ({
                         itemHeight={105}
                         labelStyle={{ color: 'white', paddingTop: '0rem' }}
                         label={
-                            nuggToBuyFrom
+                            mustWaitToBid
+                                ? t`Wait ${minutes} min`
+                                : nuggToBuyFrom
                                 ? t`Purchase item from ${nuggToBuyFrom.nugg.toPrettyId()}`
                                 : t`Select a nugg to buy this item from`
                         }
