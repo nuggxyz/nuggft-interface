@@ -315,7 +315,7 @@ const NavigationBarMobile: FC<unknown> = () => {
                             style={{
                                 position: 'relative',
                                 borderRadius: lib.layout.borderRadius.large,
-                                padding: matchHome ? '.2rem .7rem .5rem' : '.5rem .7rem .5rem',
+                                padding: matchHome ? '.2rem 1rem .5rem' : '.5rem 1rem .5rem',
                                 textAlign: 'center',
                                 verticalAlign: 'center',
                                 background: matchHome

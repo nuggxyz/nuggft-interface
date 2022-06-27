@@ -12,14 +12,23 @@ const useStore = create(
                 block: 0 as number,
                 lastUpdate: 0 as number,
                 lastChange: 0 as number,
+                history: [] as { block: number; time: number }[],
             },
             (set, get) => {
                 const update = (block: number) => {
+                    const time = new Date().getTime();
                     const change = block !== get().block;
+                    const { history } = get();
+                    if (change) {
+                        if (history.length > 9) history.pop();
+                        history.push({ block, time });
+                    }
+
                     set(() => ({
                         block,
-                        lastUpdate: new Date().getTime(),
-                        ...(change && { lastChange: new Date().getTime() }),
+                        lastUpdate: time,
+                        ...(change && { lastChange: time }),
+                        history,
                     }));
                 };
 
@@ -45,6 +54,8 @@ export const useBlockUpdater = () => {
 };
 
 export default {
+    useHistory: () => useStore((state) => state.history),
+
     useBlock: () => useStore((state) => state.block),
     useLastUpdate: () => useStore((state) => state.lastUpdate),
     useLastChange: () => useStore((state) => state.lastChange),

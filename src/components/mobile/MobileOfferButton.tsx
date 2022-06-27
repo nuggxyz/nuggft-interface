@@ -100,11 +100,18 @@ export default ({
     }, [selectedMyNuggIndex, nuggsThatHaveBid]);
 
     const openModal = client.modal.useOpenModal();
-
     if (!swap || !tokenId || !lifecycle || lifecycle?.lifecycle === 'tryout') return null;
 
     return (
-        <div style={{ width: '100%', padding: '0px 10px' }}>
+        <div
+            style={{
+                width: '100%',
+                padding: '0px 10px',
+                // display: 'flex',
+                // flexDirection: 'column',
+                // alignItems: 'center',
+            }}
+        >
             {token?.isItem() && nuggsThatHaveBid.length > 0 && (
                 <GodListHorizontal
                     data={nuggsThatHaveBid}
@@ -134,8 +141,10 @@ export default ({
                         lifecycle.lifecycle === Lifecycle.Concessions
                             ? lib.colors.orange
                             : lib.colors.primaryColor,
+                    padding: '10px 20px',
                 }}
                 textStyle={{
+                    ...lib.layout.presets.font.main.thicc,
                     color: lib.colors.white,
                     fontSize: 24,
                 }}
@@ -185,7 +194,9 @@ export default ({
                         ? t`adjust`
                         : lifecycle.lifecycle === Lifecycle.Bench ||
                           lifecycle.lifecycle === Lifecycle.Minors
-                        ? t`accept and start auction`
+                        ? t`start auction`
+                        : lifecycle.lifecycle === Lifecycle.Egg
+                        ? t`starting soon`
                         : !lifecycle.active
                         ? t`swap is over`
                         : isUndefinedOrNullOrStringEmpty(address)

@@ -153,44 +153,11 @@ const core = create(
                     const activeSwap = get().liveTokens[tokenId]?.activeSwap;
 
                     if (!activeSwap) {
-                        // @ts-ignore
-                        // set((draft) => {
-                        //     draft.liveTokens[tokenId].activeSwap = buildTokenIdFactory({
-                        //         tokenId,
-                        //         epoch: null,
-                        //         eth: offer.eth,
-                        //         leader: offer.account as AddressString,
-                        //         owner: ADDRESS_ZERO,
-                        //         endingEpoch: offer.agencyEpoch,
-                        //         num: Number(0),
-                        //         isActive: false,
-                        //         bottom: new EthInt(0).bignumber,
-                        //         isBackup: true,
-                        //         listDataType: 'swap' as const,
-                        //         canceledEpoch: null,
-                        //         offers: [offer],
-                        //     });
-                        // });
                         return;
                     }
 
                     const currentOffers = activeSwap.offers;
 
-                    // const currentUserOffer = currentOffers.find((o) => o.account === offer.account);
-
-                    // if (currentUserOffer) {
-                    //     if (currentUserOffer.eth.lt(offer.eth)) return;
-
-                    //     currentOffers = [
-                    //         offer,
-                    //         ...currentOffers.filter((o) => o.account !== offer.account),
-                    //     ].sort((a, b) => (a.eth.gt(b.eth) ? 1 : -1));
-                    //     // @ts-ignore
-                    //     set((draft) => {
-                    //         draft.liveTokens[tokenId].activeSwap!.offers = currentOffers;
-                    //         draft.liveTokens[tokenId].activeSwap!.endingEpoch = offer.agencyEpoch;
-                    //     });
-                    // } else {
                     // @ts-ignore
                     set((draft) => {
                         draft.liveTokens[tokenId].activeSwap!.offers = [
@@ -255,7 +222,7 @@ const core = create(
                 }
 
                 if (!upcomingActiveSwap) {
-                    const theswap = get().liveTokens[tokenId].swaps.find(
+                    const theswap = get().liveTokens[tokenId]?.swaps.find(
                         (x) => x.owner === offer.sellingTokenId,
                     );
                     if (theswap) {

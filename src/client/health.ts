@@ -146,11 +146,10 @@ const useStore = create(
     ),
 );
 
-void useStore.getState().fetch();
-
 export const useHealthUpdater = () => {
     const fetch = useStore((state) => state.fetch);
     const updateLastBlockGraphTimestamp = useStore((state) => state.updateLastBlockGraphTimestamp);
+    const history = block.useHistory();
 
     useInterval(
         React.useCallback(() => {
@@ -164,8 +163,15 @@ export const useHealthUpdater = () => {
     }, []);
 
     const lastBlockGraph = useStore((state) => state.lastBlockGraph);
-
     const graphProblem = useHealth();
+
+    React.useEffect(() => {
+        if (lastBlockGraph && !graphProblem) {
+            const check = history.find((x) => x.block === lastBlockGraph)?.time;
+            updateLastBlockGraphTimestamp(check ?? new Date().getTime());
+        }
+    }, [lastBlockGraph, history, graphProblem, updateLastBlockGraphTimestamp]);
+
     const provider = web3.hook.usePriorityProvider();
 
     React.useEffect(() => {

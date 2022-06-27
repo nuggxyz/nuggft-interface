@@ -32,7 +32,7 @@ export default () => {
         React.useCallback(() => {
             if (isOpen) {
                 const now = Math.floor(new Date().getTime() / 1000);
-                setSecondsSinceGraphResponse(Math.floor(now - lastGraphBlockTimestamp / 1000));
+                setSecondsSinceGraphResponse(Math.ceil(now - lastGraphBlockTimestamp / 1000));
                 setSecondsSinceRpcResponse(now - Math.floor(lastRpcChange / 1000));
                 setSecondsSinceEtherscanResponse(now - Math.floor(lastTimestamp));
             }
