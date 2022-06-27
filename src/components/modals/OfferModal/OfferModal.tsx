@@ -9,6 +9,7 @@ import TokenViewer from '@src/components/nugg/TokenViewer';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
 import lib, {
+    isUndefinedOrNullOrBooleanFalse,
     isUndefinedOrNullOrObjectEmpty,
     isUndefinedOrNullOrStringEmptyOrZeroOrStringZero,
 } from '@src/lib';
@@ -31,6 +32,8 @@ import { useUsdPair, useUsdPairWithCalculation } from '@src/client/usd';
 import Loader from '@src/components/general/Loader/Loader';
 import GodListHorizontal from '@src/components/general/List/GodListHorizontal';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
+import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
+import Button from '@src/components/general/Buttons/Button/Button';
 
 import styles from './OfferModal.styles';
 
@@ -142,6 +145,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
     );
 
     const amountUsd = useUsdPair(amount);
+    const mspUsd = useUsdPair(msp);
     const wrappedSetAmount = React.useCallback(
         (amt: string, _lastPressed?: string) => {
             setAmount(amt);
@@ -279,188 +283,343 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         }
     }, [amount, check, valueIsSet]);
 
+    const [showNotice, setShowNotice] = useState(false);
+
     return (
-        <div style={styles.container}>
-            <Text textStyle={{ color: lib.colors.textColor, marginBottom: '.5rem' }}>
-                {`${
-                    check && check.currentUserOffer && check.currentUserOffer.toString() !== '0'
-                        ? t`Change offer for`
-                        : t`Offer on`
-                } ${data.tokenId.toPrettyId()}`}
-            </Text>
-            <AnimatedCard>
-                <TokenViewer
-                    tokenId={data.tokenId}
-                    showcase
-                    disableOnClick
-                    style={{
-                        ...(data.tokenId.isItemId() ? { height: '350px', width: '350px' } : {}),
-                    }}
-                />
-            </AnimatedCard>
-            <GodListHorizontal
-                itemHeight={135}
-                data={myNuggs}
-                label={t`Pick a nugg to offer on this item`}
-                labelStyle={{
-                    color: lib.colors.textColor,
+        <>
+            <div
+                style={{
+                    ...styles.container,
+                    ...(showNotice && globalStyles.hidden),
+                    transition: `all .3s ${lib.layout.animation}`,
                 }}
-                extraData={undefined}
-                RenderItem={MyNuggRenderItem}
-                action={setSelectedNugg}
-                style={React.useMemo(
-                    () => ({
-                        width: '100%',
-                        background: lib.colors.transparentDarkGrey2,
-                        height: '140px',
-                        padding: '0rem .4rem',
-                        borderRadius: lib.layout.borderRadius.medium,
-                        display: data.isItem() ? 'auto' : 'none',
-                    }),
-                    [data],
-                )}
-            />
-            <div style={styles.inputContainer}>
-                <DualCurrencyInput
-                    warning={estimateError && lib.errors.prettify('offer-modal', estimateError)}
-                    shouldFocus
-                    style={styles.input}
-                    styleHeading={styles.heading}
-                    styleInputContainer={styles.inputCurrency}
-                    label={t`Enter amount`}
-                    setValue={wrappedSetAmount}
-                    value={amount}
-                    code
-                    currencyPref={currencyPref}
-                    className="placeholder-white"
-                    rightToggles={[
-                        <CurrencyToggler
-                            pref={currencyPref}
-                            setPref={setCurrencyPref}
-                            containerStyle={{ zIndex: 0 }}
-                        />,
-                    ]}
+            >
+                <div style={{ marginBottom: '.5rem', textAlign: 'center' }}>
+                    <Text textStyle={{ color: lib.colors.textColor }}>
+                        {`${
+                            check &&
+                            check.currentUserOffer &&
+                            check.currentUserOffer.toString() !== '0'
+                                ? t`Change offer for`
+                                : t`Offer on`
+                        } ${data.tokenId.toPrettyId()}`}
+                    </Text>
+                    <Text
+                        textStyle={{
+                            color: lib.colors.textColor,
+                            display: data.isItem() ? 'auto' : 'none',
+                        }}
+                        type="text"
+                        size="smaller"
+                    >
+                        <i>{t`On sale by ${data.nuggToBuyFrom?.toPrettyId()}`}</i>
+                    </Text>
+                </div>
+                <AnimatedCard>
+                    <TokenViewer
+                        tokenId={data.tokenId}
+                        showcase
+                        disableOnClick
+                        style={{
+                            ...(data.tokenId.isItemId() ? { height: '350px', width: '350px' } : {}),
+                        }}
+                    />
+                </AnimatedCard>
+                <GodListHorizontal
+                    itemHeight={135}
+                    data={myNuggs}
+                    label={t`Pick a nugg to offer on this item`}
+                    labelStyle={{
+                        color: lib.colors.textColor,
+                    }}
+                    extraData={undefined}
+                    RenderItem={MyNuggRenderItem}
+                    action={setSelectedNugg}
+                    style={React.useMemo(
+                        () => ({
+                            width: '100%',
+                            background: lib.colors.transparentDarkGrey2,
+                            height: '140px',
+                            padding: '0rem .4rem',
+                            borderRadius: lib.layout.borderRadius.medium,
+                            display: data.isItem() ? 'auto' : 'none',
+                        }),
+                        [data],
+                    )}
                 />
+                <div style={styles.inputContainer}>
+                    <DualCurrencyInput
+                        warning={estimateError && lib.errors.prettify('offer-modal', estimateError)}
+                        shouldFocus
+                        style={styles.input}
+                        styleHeading={styles.heading}
+                        styleInputContainer={styles.inputCurrency}
+                        label={t`Enter amount`}
+                        setValue={wrappedSetAmount}
+                        value={amount}
+                        code
+                        currencyPref={currencyPref}
+                        className="placeholder-white"
+                        rightToggles={[
+                            <CurrencyToggler
+                                pref={currencyPref}
+                                setPref={setCurrencyPref}
+                                containerStyle={{ zIndex: 0 }}
+                            />,
+                        ]}
+                    />
+                    <div
+                        style={{
+                            margin: '.7rem 0rem',
+                            width: '100%',
+                            ...globalStyles.centeredSpaceBetween,
+                        }}
+                    >
+                        <IncrementButton
+                            increment={BigInt(5)}
+                            {...{
+                                lastPressed,
+                                wrappedSetAmount,
+                                amount: check?.nextUserOffer,
+                            }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(10)}
+                            {...{
+                                lastPressed,
+                                wrappedSetAmount,
+                                amount: check?.nextUserOffer,
+                            }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(15)}
+                            {...{
+                                lastPressed,
+                                wrappedSetAmount,
+                                amount: check?.nextUserOffer,
+                            }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(20)}
+                            {...{
+                                lastPressed,
+                                wrappedSetAmount,
+                                amount: check?.nextUserOffer,
+                            }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(25)}
+                            {...{
+                                lastPressed,
+                                wrappedSetAmount,
+                                amount: check?.nextUserOffer,
+                            }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(30)}
+                            {...{
+                                lastPressed,
+                                wrappedSetAmount,
+                                amount: check?.nextUserOffer,
+                            }}
+                        />
+                        <IncrementButton
+                            increment={BigInt(35)}
+                            {...{
+                                lastPressed,
+                                wrappedSetAmount,
+                                amount: check?.nextUserOffer,
+                            }}
+                        />
+                    </div>
+                </div>
                 <div
                     style={{
-                        margin: '.7rem 0rem',
                         width: '100%',
-                        ...globalStyles.centeredSpaceBetween,
+                        height: '1rem',
+                        marginBottom: '.5rem',
+                        // display: userBalance ? 'auto' : 'none',
                     }}
                 >
-                    <IncrementButton
-                        increment={BigInt(5)}
-                        {...{
-                            lastPressed,
-                            wrappedSetAmount,
-                            amount: check?.nextUserOffer,
+                    <Text type="text" textStyle={styles.text}>
+                        {t`You currently have ${userBalance?.decimal
+                            .toNumber()
+                            .toPrecision(5)} ETH`}
+                    </Text>
+                </div>
+                <div style={styles.subContainer}>
+                    <FeedbackButton
+                        timeout={
+                            data.isItem() &&
+                            !isUndefinedOrNullOrBooleanFalse(check?.mustOfferOnSeller)
+                                ? 0
+                                : undefined
+                        }
+                        overrideFeedback
+                        disabled={
+                            !check ||
+                            !check.canOffer ||
+                            isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount) ||
+                            calculating ||
+                            !!estimateError ||
+                            (isUndefinedOrNullOrObjectEmpty(selectedNuggForItem) && data.isItem())
+                        }
+                        feedbackText={t`Check Wallet...`}
+                        buttonStyle={styles.button}
+                        label={`${
+                            data.isItem() && isUndefinedOrNullOrObjectEmpty(selectedNuggForItem)
+                                ? t`Select a nugg`
+                                : check &&
+                                  check.currentUserOffer &&
+                                  check.currentUserOffer.toString() !== '0'
+                                ? !check.canOffer
+                                    ? t`You cannot place an offer`
+                                    : t`Update offer`
+                                : t`Place offer`
+                        }`}
+                        onClick={() => {
+                            if (populatedTransaction) {
+                                if (
+                                    data.isItem() &&
+                                    !isUndefinedOrNullOrBooleanFalse(check?.mustOfferOnSeller)
+                                ) {
+                                    setShowNotice(true);
+                                } else {
+                                    void send(populatedTransaction.tx);
+                                }
+                            }
                         }}
-                    />
-                    <IncrementButton
-                        increment={BigInt(10)}
-                        {...{
-                            lastPressed,
-                            wrappedSetAmount,
-                            amount: check?.nextUserOffer,
-                        }}
-                    />
-                    <IncrementButton
-                        increment={BigInt(15)}
-                        {...{
-                            lastPressed,
-                            wrappedSetAmount,
-                            amount: check?.nextUserOffer,
-                        }}
-                    />
-                    <IncrementButton
-                        increment={BigInt(20)}
-                        {...{
-                            lastPressed,
-                            wrappedSetAmount,
-                            amount: check?.nextUserOffer,
-                        }}
-                    />
-                    <IncrementButton
-                        increment={BigInt(25)}
-                        {...{
-                            lastPressed,
-                            wrappedSetAmount,
-                            amount: check?.nextUserOffer,
-                        }}
-                    />
-                    <IncrementButton
-                        increment={BigInt(30)}
-                        {...{
-                            lastPressed,
-                            wrappedSetAmount,
-                            amount: check?.nextUserOffer,
-                        }}
-                    />
-                    <IncrementButton
-                        increment={BigInt(35)}
-                        {...{
-                            lastPressed,
-                            wrappedSetAmount,
-                            amount: check?.nextUserOffer,
-                        }}
+                        rightIcon={
+                            calculating
+                                ? ((
+                                      <div style={{ position: 'absolute', right: '.7rem' }}>
+                                          <Loader color="white" />
+                                      </div>
+                                  ) as JSX.Element)
+                                : undefined
+                        }
                     />
                 </div>
             </div>
+
             <div
                 style={{
-                    width: '100%',
-                    height: '1rem',
-                    marginBottom: '.5rem',
+                    ...styles.container,
+                    ...(!showNotice && globalStyles.hidden),
+                    position: 'absolute',
+                    padding: '1rem',
+                    justifyContent: 'space-between',
+                    ...globalStyles.fillHeight,
+                    transition: `all .3s ${lib.layout.animation}`,
                 }}
             >
-                <Text
-                    type="text"
-                    textStyle={{ ...styles.text, display: userBalance ? 'auto' : 'none' }}
-                >
-                    {t`You currently have ${userBalance?.decimal.toNumber().toPrecision(5)} ETH`}
-                </Text>
-            </div>
-            <div style={styles.subContainer}>
-                <FeedbackButton
-                    overrideFeedback
-                    disabled={
-                        !check ||
-                        !check.canOffer ||
-                        isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount) ||
-                        calculating ||
-                        !!estimateError ||
-                        (isUndefinedOrNullOrObjectEmpty(selectedNuggForItem) && data.isItem())
-                    }
-                    feedbackText={t`Check Wallet...`}
-                    buttonStyle={styles.button}
-                    label={`${
-                        data.isItem() && isUndefinedOrNullOrObjectEmpty(selectedNuggForItem)
-                            ? t`Select a nugg`
-                            : check &&
-                              check.currentUserOffer &&
-                              check.currentUserOffer.toString() !== '0'
-                            ? !check.canOffer
-                                ? t`You cannot place an offer`
-                                : t`Update offer`
-                            : t`Place offer`
-                    }`}
-                    onClick={() => {
-                        if (populatedTransaction) {
-                            void send(populatedTransaction.tx);
-                        }
+                <div
+                    style={{
+                        ...styles.container,
+                        padding: '3rem',
+                        ...globalStyles.fillHeight,
+                        justifyContent: 'space-evenly',
                     }}
-                    rightIcon={
-                        calculating
-                            ? ((
-                                  <div style={{ position: 'absolute', right: '.7rem' }}>
-                                      <Loader color="white" />
-                                  </div>
-                              ) as JSX.Element)
-                            : undefined
-                    }
-                />
+                >
+                    <Text
+                        size="larger"
+                        textStyle={{
+                            textAlign: 'center',
+                            color: lib.colors.textColor,
+                        }}
+                    >
+                        one sec
+                    </Text>
+                    <div style={{ width: '80%', marginTop: '2rem' }}>
+                        <Text
+                            size="medium"
+                            textStyle={{ marginTop: '1rem', color: lib.colors.textColor }}
+                        >
+                            <b>{data.nuggToBuyFrom?.toPrettyId()}</b>{' '}
+                            {t`has never been bid on, they must be bid on before they can sell`}{' '}
+                            <b>{data.tokenId.toPrettyId()}</b>
+                        </Text>
+
+                        <Text
+                            size="medium"
+                            textStyle={{ marginTop: '1rem', color: lib.colors.textColor }}
+                        >
+                            {t`if you move forward, your transaction will include both a minimum bid on`}{' '}
+                            <b>{data.nuggToBuyFrom?.toPrettyId()}</b>
+                            {t`, and your desired bid for`} <b>{data.tokenId.toPrettyId()}</b>
+                        </Text>
+                    </div>
+                    <div
+                        style={{
+                            textAlign: 'center',
+                            color: lib.colors.textColor,
+                            marginTop: '3rem',
+                        }}
+                    >
+                        <Text size="larger" textStyle={{ marginTop: 10 }}>
+                            {t`added cost`}
+                        </Text>
+
+                        <CurrencyText
+                            unitOverride={pref}
+                            // forceEth
+                            stopAnimation
+                            size="larger"
+                            value={mspUsd}
+                        />
+                    </div>
+                </div>
+                <div
+                    style={{
+                        ...globalStyles.centeredSpaceBetween,
+                        ...globalStyles.fillWidth,
+                        marginBottom: '1rem',
+                    }}
+                >
+                    <Button
+                        onClick={() => {
+                            closeModal();
+                            // setShowNotice(false);
+                        }}
+                        label={t`nah`}
+                        buttonStyle={{
+                            ...styles.button,
+                            background: lib.colors.white,
+                            color: lib.colors.textColor,
+                            width: '40%',
+                        }}
+                    />
+                    <FeedbackButton
+                        overrideFeedback
+                        disabled={
+                            !check ||
+                            !check.canOffer ||
+                            isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount) ||
+                            calculating ||
+                            !!estimateError ||
+                            (isUndefinedOrNullOrObjectEmpty(selectedNuggForItem) && data.isItem())
+                        }
+                        feedbackText={t`Check Wallet...`}
+                        buttonStyle={{ ...styles.button, width: '40%' }}
+                        label={t`i got it`}
+                        onClick={() => {
+                            if (populatedTransaction) {
+                                void send(populatedTransaction.tx);
+                            }
+                        }}
+                        rightIcon={
+                            calculating
+                                ? ((
+                                      <div style={{ position: 'absolute', right: '.7rem' }}>
+                                          <Loader color="white" />
+                                      </div>
+                                  ) as JSX.Element)
+                                : undefined
+                        }
+                    />
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

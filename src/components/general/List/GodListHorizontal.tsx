@@ -188,7 +188,6 @@ const GodListHorizontal = <T, B, A>({
     const genid = React.useId();
 
     const reset = React.useCallback(() => {
-        console.log('RESEET');
         if (coreRef && coreRef.current) {
             // @ts-ignore
             coreRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
@@ -258,7 +257,7 @@ const GodListHorizontal = <T, B, A>({
     const Label = useCallback(
         () =>
             label ? (
-                <div style={styles.labelContainer}>
+                <div style={{ ...styles.labelContainer, display: style?.display }}>
                     <div style={styles.title}>
                         <Text textStyle={{ ...styles.label, ...labelStyle }}>{label}</Text>
                         <div
@@ -273,7 +272,7 @@ const GodListHorizontal = <T, B, A>({
                     <div style={{ marginTop: '-2px' }}>{TitleButton && <TitleButton />}</div>
                 </div>
             ) : null,
-        [label, labelStyle, TitleButton, titleLoading, loaderColor],
+        [label, labelStyle, TitleButton, titleLoading, loaderColor, style],
     );
 
     return (
