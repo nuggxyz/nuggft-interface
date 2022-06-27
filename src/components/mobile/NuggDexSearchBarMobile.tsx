@@ -9,27 +9,16 @@ import Button from '@src/components/general/Buttons/Button/Button';
 import TextInput from '@src/components/general/TextInputs/TextInput/TextInput';
 import Text from '@src/components/general/Texts/Text/Text';
 import client from '@src/client';
-import { ListData, LiveItem } from '@src/client/interfaces';
-import {
-    Nugg_OrderBy,
-    useGetAllItemsQuery,
-    useGetAllNuggsQuery,
-    Item_OrderBy,
-    useGetAllNuggsSearchQuery,
-    useGetAllItemsSearchQuery,
-    GetAllNuggsSearchQuery,
-    GetAllItemsSearchQuery,
-    LiveItemFragment,
-} from '@src/gql/types.generated';
 import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib/index';
 import useOnClickOutside from '@src/hooks/useOnClickOutside';
 import useDimensions from '@src/client/hooks/useDimensions';
-import { buildTokenIdFactory } from '@src/prototypes';
 import styles from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.styles';
-import formatLiveItem from '@src/client/formatters/formatLiveItem';
 import Label from '@src/components/general/Label/Label';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import IconButton from '@src/components/general/Buttons/IconButton/IconButton';
+import web3 from '@src/web3';
+import { useXNuggftV1 } from '@src/contracts/useContract';
+import { XNuggftV1 } from '@src/typechain/XNuggftV1';
 
 import { MobileContainerBig } from './NuggListRenderItemMobile';
 // import BackButton from './BackButton';
@@ -63,8 +52,10 @@ export interface BunchOfItemsFilter extends FilterBase {
 }
 export type Filter = NuggsThatOwnThisItemFilter;
 
-export const SearchBarItem: FC<{ item: LiveItem }> = ({ item }) => {
+export const SearchBarItem: FC<{ item: ItemId }> = ({ item }) => {
     const navigate = useNavigate();
+
+    const potential = client.v3.useSwap(item);
     return (
         <div
             aria-hidden="true"
@@ -73,21 +64,19 @@ export const SearchBarItem: FC<{ item: LiveItem }> = ({ item }) => {
                 display: 'flex',
                 alignItems: 'center',
                 position: 'relative',
-
-                width: '140px',
-                height: '140px',
-
+                width: '150px',
+                marginBottom: 15,
+                height: '150px',
                 flexDirection: 'column',
                 justifyContent: 'center',
-                marginBottom: '1.5rem',
                 background:
-                    item.tryout.count > 0
+                    (potential?.count ?? 0) > 0
                         ? lib.colors.gradient3Transparent
                         : lib.colors.transparentWhite,
                 borderRadius: lib.layout.borderRadius.mediumish,
             }}
             onClick={() => {
-                navigate(`/swap/${item.tokenId}`);
+                navigate(`/swap/${item}`);
             }}
         >
             <div
@@ -113,7 +102,7 @@ export const SearchBarItem: FC<{ item: LiveItem }> = ({ item }) => {
                         // paddingBottom: 5,
                         position: 'relative',
                     }}
-                    text={item.tokenId.toPrettyId()}
+                    text={item.toPrettyId()}
                 />
             </div>
 
@@ -125,7 +114,7 @@ export const SearchBarItem: FC<{ item: LiveItem }> = ({ item }) => {
                 }}
             >
                 <TokenViewer
-                    tokenId={item.tokenId}
+                    tokenId={item}
                     style={{
                         height: '80px',
                         width: '80px',
@@ -133,7 +122,7 @@ export const SearchBarItem: FC<{ item: LiveItem }> = ({ item }) => {
                 />
             </div>
 
-            {item.tryout.count > 0 ? (
+            {(potential?.count ?? 0) > 0 ? (
                 <div
                     style={{
                         position: 'absolute',
@@ -150,7 +139,7 @@ export const SearchBarItem: FC<{ item: LiveItem }> = ({ item }) => {
                 >
                     <Label
                         size="small"
-                        text={`${item.tryout.count} for sale`}
+                        text={`${potential?.count ?? 0} for sale`}
                         containerStyles={{ background: lib.colors.gradient3 }}
                         textStyle={{ color: 'white' }}
                     />
@@ -160,19 +149,15 @@ export const SearchBarItem: FC<{ item: LiveItem }> = ({ item }) => {
     );
 };
 
-const SearchBarResults = ({
-    tokens,
-}: {
-    tokens: (GetAllItemsSearchQuery['items'][number] | GetAllNuggsSearchQuery['nuggs'][number])[];
-}) => {
-    const nugg = React.useMemo(() => {
-        const res = tokens.find((x) => x.__typename === 'Nugg');
-        if (res) return res.id.toNuggId();
-        return undefined;
+const SearchBarResults = ({ tokens }: { tokens: TokenId[] }) => {
+    const nuggs = React.useMemo(() => {
+        const res = tokens.filter((x) => x.isNuggId());
+        if (res) return res;
+        return [];
     }, [tokens]);
 
     const itemsData = React.useMemo(() => {
-        return formatLiveItem(tokens.filter((x) => x.__typename === 'Item') as LiveItemFragment[]);
+        return tokens.filter((x) => x.isItemId()) as ItemId[];
     }, [tokens]);
 
     return (
@@ -180,49 +165,67 @@ const SearchBarResults = ({
             style={{
                 width: '100%',
                 height: '100%',
-                padding: '10px',
+                // padding: '10px',
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'scroll',
             }}
         >
-            <div style={{ width: '100%', marginTop: '90px' }} />
-            {nugg && (
+            {nuggs.length > 0 && (
                 <div
                     style={{
+                        paddingTop: 20,
                         display: 'flex',
                         flexDirection: 'column',
                         width: '100%',
-                        alignItems: 'center',
+                        alignItems: 'flex-start',
                     }}
                 >
-                    <Text size="larger" textStyle={{ paddingLeft: '30px', width: '100%' }}>
-                        Nugg
-                    </Text>
-                    <div
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            padding: '10px',
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            justifyContent: 'space-around',
+                    <Text
+                        size="larger"
+                        textStyle={{
+                            ...lib.layout.presets.font.main.thicc,
+                            paddingBottom: 10,
+                            paddingLeft: 10,
                         }}
                     >
-                        <MobileContainerBig tokenId={nugg} />{' '}
-                    </div>
-                    <div style={{ width: '100%', marginTop: '40px' }} />
+                        nuggs
+                    </Text>
+                    {nuggs.map((x) => (
+                        <div
+                            key={`searcher${x}`}
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                padding: '10px',
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                justifyContent: 'space-around',
+                            }}
+                        >
+                            <MobileContainerBig tokenId={x} />{' '}
+                        </div>
+                    ))}
+                    <div style={{ width: '100%', marginTop: 10 }} />
                 </div>
             )}
 
-            <Text size="larger" textStyle={{ paddingLeft: '30px' }}>
-                Items
+            <Text
+                size="larger"
+                textStyle={{
+                    ...lib.layout.presets.font.main.thicc,
+                    paddingBottom: 20,
+                    paddingLeft: 10,
+                }}
+            >
+                items
             </Text>
             <div
                 style={{
                     width: '100%',
                     height: '100%',
-                    padding: '10px',
+                    // padding: '10px',
+                    marginBottom: '30px',
                     display: 'flex',
                     flexWrap: 'wrap',
                     justifyContent: 'space-around',
@@ -230,9 +233,10 @@ const SearchBarResults = ({
             >
                 {itemsData.map((x) => (
                     <>
-                        <SearchBarItem item={x} />
+                        <SearchBarItem item={x} key={`searcher-${x}`} />
                     </>
                 ))}
+                <div style={{ width: '100%', height: 70 }} />
             </div>
         </div>
     );
@@ -243,16 +247,12 @@ const NuggDexSearchBarMobile: FunctionComponent<unknown> = () => {
     const searchValue = client.live.searchFilter.searchValue();
     const { isPhone } = useDimensions();
 
-    // const [open, setMobileExpanded] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [localSearchValue, setSearchValue] = useState('');
     const [isUserInput, setIsUserInput] = useState(false);
     const updateSearchFilterSearchValue = client.mutate.updateSearchFilterSearchValue();
     const updateSearchFilterSort = client.mutate.updateSearchFilterSort();
 
     const [sortAsc, setSortAsc] = useState(sort && sort.direction === 'asc');
-
-    const [activeFilter] = React.useState<Filter>();
 
     const nuggbookClose = client.nuggbook.useCloseNuggBook();
 
@@ -274,115 +274,51 @@ const NuggDexSearchBarMobile: FunctionComponent<unknown> = () => {
         }
     }, [sortAsc, sort, isUserInput, updateSearchFilterSort]);
 
-    const [searchedNuggsData, setSearchedNuggsData] = React.useState<
-        GetAllNuggsSearchQuery['nuggs']
-    >([]);
-    const [searchedItemsData, setSearchedItemsData] = React.useState<
-        GetAllItemsSearchQuery['items']
-    >([]);
+    const blocknum = client.block.useBlock();
 
-    const { fetchMore: getAllNuggs } = useGetAllNuggsQuery({
-        fetchPolicy: 'no-cache',
-    });
+    const provider = web3.hook.usePriorityProvider();
+    const xnuggft = useXNuggftV1(provider);
 
-    const { fetchMore: getAllItems } = useGetAllItemsQuery({
-        fetchPolicy: 'no-cache',
-    });
+    const backupNuggs = client.all.useBackupNuggs();
+    const backupItems = client.all.useBackupItems();
+    const nuggs = client.all.useNuggs();
+    const items = client.all.useItems();
 
-    const { fetchMore: getAllNuggsSearch } = useGetAllNuggsSearchQuery({
-        fetchPolicy: 'no-cache',
-    });
+    const [, v2] = client.v2.useV2Query();
 
-    const { fetchMore: getAllItemsSearch } = useGetAllItemsSearchQuery({
-        fetchPolicy: 'no-cache',
-    });
+    const caller = React.useCallback(
+        (_xnuggft: XNuggftV1) => {
+            if (_xnuggft?.provider) {
+                void backupItems(_xnuggft);
+                void backupNuggs(_xnuggft);
+                void v2(blocknum);
+            }
+        },
+        [backupItems, backupNuggs, blocknum, v2],
+    );
 
-    const blankItemQuery = React.useCallback(() => {
-        setSearchedItemsData([]);
-    }, [setSearchedItemsData]);
+    React.useEffect(() => {
+        if (xnuggft && provider) void caller(xnuggft);
+    }, [xnuggft, provider]);
 
-    useEffect(() => {
-        if (isUndefinedOrNullOrStringEmpty(localSearchValue)) {
-            setSearchedNuggsData([]);
-            setSearchedItemsData([]);
-        }
-    }, [localSearchValue]);
+    const [searchResults, setSearchResults] = useState<TokenId[]>([]);
 
     useEffect(() => {
         if (localSearchValue && localSearchValue !== '') {
-            let cancelled = false;
-            setLoading(true);
-            void Promise.all([
-                getAllItemsSearch({
-                    variables: {
-                        orderBy: Item_OrderBy.Idnum,
-                        where: {
-                            position: localSearchValue,
-                        },
-                    },
-                }).then((x) => {
-                    if (!cancelled) {
-                        setSearchedItemsData(x.data.items);
-                    }
-                }),
-                getAllNuggsSearch({
-                    variables: {
-                        orderBy: Nugg_OrderBy.Idnum,
-
-                        where: {
-                            id: localSearchValue,
-                        },
-                    },
-                }).then((x) => {
-                    if (!cancelled) {
-                        setSearchedNuggsData(x.data.nuggs);
-                    }
-                }),
-            ]).then(() => setLoading(false));
-            return () => {
-                cancelled = true;
-                setLoading(false);
-            };
+            const res = [
+                ...nuggs.filter(
+                    (x) =>
+                        x.toRawIdNum() === Number(localSearchValue) ||
+                        x.toRawIdNum() - 1000000 === Number(localSearchValue),
+                ),
+                ...items.filter((x) => x.toRawIdNum() % 1000 === Number(localSearchValue)),
+            ];
+            setSearchResults(res);
+        } else {
+            setSearchResults([]);
         }
         return () => {};
-    }, [
-        localSearchValue,
-        getAllNuggsSearch,
-        getAllItemsSearch,
-        setSearchedNuggsData,
-        setSearchedItemsData,
-    ]);
-
-    const setActiveSearch = client.mutate.setActiveSearch();
-
-    useEffect(() => {
-        switch (activeFilter?.type) {
-            case FilterEnum.NuggsThatOwnThisItem: {
-                void getAllNuggs({
-                    variables: {
-                        where: {
-                            _items_contains_nocase: [+activeFilter.itemId.toRawId()],
-                        },
-                    },
-                }).then((x) => {
-                    setActiveSearch([
-                        ...(x.data.nuggs.map((y) =>
-                            buildTokenIdFactory({
-                                tokenId: y.id.toNuggId(),
-                                listDataType: 'basic' as const,
-                            }),
-                        ) || []),
-                    ]);
-                });
-                void blankItemQuery();
-                break;
-            }
-            case undefined:
-            default: {
-                break;
-            }
-        }
-    }, [activeFilter, getAllItems, getAllNuggs, blankItemQuery, setActiveSearch]);
+    }, [localSearchValue, setSearchResults, nuggs, items]);
 
     const ref = React.useRef<HTMLDivElement>(null);
 
@@ -391,19 +327,6 @@ const NuggDexSearchBarMobile: FunctionComponent<unknown> = () => {
     }, [nuggbookClose]);
 
     useOnClickOutside(ref, jumpShip);
-
-    const agg = React.useMemo(() => {
-        return [
-            ...(searchedNuggsData ?? []).map((x) => ({
-                tokenId: x.id,
-                listDataType: 'basic' as const,
-            })),
-            ...(searchedItemsData ?? []).map((x) => ({
-                tokenId: `item-${x.id}`,
-                listDataType: 'basic' as const,
-            })),
-        ] as ListData[];
-    }, [searchedNuggsData, searchedItemsData]);
 
     return (
         <animated.div
@@ -505,16 +428,14 @@ const NuggDexSearchBarMobile: FunctionComponent<unknown> = () => {
                     <div style={{ width: '100%', height: '100%', padding: '0px 10px' }}>
                         <NuggDexSearchListMobile2 />
                     </div>
-                ) : agg.length === 0 ? (
+                ) : searchResults.length === 0 ? (
                     <Text textStyle={styles.resultText}>
                         {isUndefinedOrNullOrStringEmpty(localSearchValue)
                             ? t`Type a number`
-                            : loading
-                            ? t`Loading`
                             : t`No results`}
                     </Text>
                 ) : (
-                    <SearchBarResults tokens={[...searchedItemsData, ...searchedNuggsData]} />
+                    <SearchBarResults tokens={searchResults} />
                 )}
             </div>
         </animated.div>

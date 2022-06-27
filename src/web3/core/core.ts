@@ -658,7 +658,7 @@ function useENS(
             account.toLowerCase() === CONTRACTS[chainId].NuggftV1.toLowerCase() ||
             account.toLowerCase() === Address.ZERO.hash
         )
-            return 'nuggftv1.nugg.xyz';
+            return 'nugg.xyz';
 
         return persistedEns;
     }, [persistedEns, account, chainId, provider]);

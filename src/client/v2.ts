@@ -399,7 +399,7 @@ export const usePollV2 = () => {
 export default {
     useStore,
     usePollV2,
-
+    useV2Query,
     useSwap: <A extends TokenId>(tokenId: A | undefined) => {
         return useStore(
             React.useCallback(

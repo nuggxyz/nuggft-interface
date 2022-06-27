@@ -10,6 +10,7 @@ import health from '@src/client/health';
 import web3 from '@src/web3';
 import lib from '@src/lib/index';
 import { useXNuggftV1 } from '@src/contracts/useContract';
+import { XNuggftV1 } from '@src/typechain';
 
 interface PotentialDataBase extends TokenIdFactoryBase {
     tokenId: TokenId;
@@ -54,16 +55,16 @@ const useStore = create(
             function updateNuggs(input: NuggId[], nextAmounter: number, every?: boolean) {
                 const { nuggs, nextNuggAmount } = get();
 
-                if (input && nextNuggAmount !== nextAmounter) {
+                if (input && nextNuggAmount < nextAmounter) {
                     if (every) {
                         set(() => ({
                             nuggs: input,
-                            nextAmount: nuggs.length,
+                            nextNuggAmount: nuggs.length,
                         }));
                     } else {
                         set(() => ({
                             nuggs: [...nuggs, ...input],
-                            nextAmount: nextAmounter,
+                            nextNuggAmount: nextAmounter,
                         }));
                     }
                 }
@@ -72,28 +73,46 @@ const useStore = create(
             function updateItems(input: ItemId[], nextAmounter: number, every?: boolean) {
                 const { items, nextItemAmount } = get();
 
-                if (input && nextItemAmount !== nextAmounter) {
+                if (input && nextItemAmount < nextAmounter) {
                     if (every) {
                         set(() => ({
                             items: input,
-                            nextAmount: items.length,
+                            nextItemAmount: items.length,
                         }));
                     } else {
                         set(() => ({
                             items: [...items, ...input],
-                            nextAmount: nextAmounter,
+                            nextItemAmount: nextAmounter,
                         }));
                     }
                 }
             }
 
-            return { updateNuggs, updateItems };
+            async function backupItems(xnuggft: XNuggftV1) {
+                return xnuggft['iloop()']().then((res) => {
+                    const iloop = lib.parse.iloop(res);
+                    console.log({ iloop });
+                    updateItems(iloop, iloop.length, true);
+                });
+            }
+
+            async function backupNuggs(xnuggft: XNuggftV1) {
+                return xnuggft['tloop()']().then((res) => {
+                    const tloop = lib.parse.tloop(res);
+                    console.log({ tloop });
+
+                    void updateNuggs(tloop, tloop.length, true);
+                });
+            }
+
+            return { updateNuggs, updateItems, backupItems, backupNuggs };
         },
     ),
 );
 
 export const usePollNuggs = () => {
     const updateNuggs = useStore((dat) => dat.updateNuggs);
+    const backup = useStore((dat) => dat.backupNuggs);
 
     const len = useStore((dat) => dat.nextNuggAmount);
 
@@ -106,28 +125,23 @@ export const usePollNuggs = () => {
 
     const callback = React.useCallback(() => {
         const amt = len;
-        const backup = () => {
-            void xnuggft['tloop()']().then((res) => {
-                const tloop = lib.parse.tloop(res);
-                void updateNuggs(tloop, tloop.length, true);
-            });
-        };
+
         if (!graphProblem) {
             void lazy({ variables: { skip: amt } })
                 .then((x) => {
                     if (x.error) {
-                        void backup();
+                        void backup(xnuggft);
                     } else {
                         updateNuggs(x.data?.nuggs.map((y) => y.id.toNuggId()) ?? [], amt + 100);
                     }
                 })
                 .catch(() => {
-                    backup();
+                    void backup(xnuggft);
                 });
         } else {
-            backup();
+            void backup(xnuggft);
         }
-    }, [lazy, updateNuggs, len, graphProblem, xnuggft]);
+    }, [lazy, updateNuggs, len, graphProblem, xnuggft, backup]);
 
     const debounced = React.useMemo(() => debounce(callback, 300), [callback]);
 
@@ -136,6 +150,7 @@ export const usePollNuggs = () => {
 
 export const usePollItems = () => {
     const updateItems = useStore((dat) => dat.updateItems);
+    const backup = useStore((dat) => dat.backupItems);
 
     const len = useStore((dat) => dat.nextItemAmount);
 
@@ -149,28 +164,23 @@ export const usePollItems = () => {
 
     const callback = React.useCallback(() => {
         const amt = len;
-        const backup = () => {
-            void xnuggft['iloop()']().then((res) => {
-                const iloop = lib.parse.iloop(res);
-                void updateItems(iloop, iloop.length, true);
-            });
-        };
+
         if (!graphProblem) {
             void lazy({ variables: { skip: amt } })
                 .then((x) => {
                     if (x.error) {
-                        void backup();
+                        void backup(xnuggft);
                     } else {
                         updateItems(x.data?.items.map((y) => y.id.toItemId()) ?? [], amt + 100);
                     }
                 })
                 .catch(() => {
-                    void backup();
+                    void backup(xnuggft);
                 });
         } else {
-            backup();
+            void backup(xnuggft);
         }
-    }, [lazy, updateItems, len, graphProblem, xnuggft]);
+    }, [lazy, updateItems, len, graphProblem, xnuggft, backup]);
 
     const debounced = React.useMemo(() => debounce(callback, 300), [callback]);
 
@@ -181,7 +191,8 @@ export default {
     useStore,
     usePollNuggs,
     usePollItems,
-
+    useBackupNuggs: () => useStore((dat) => dat.backupNuggs),
+    useBackupItems: () => useStore((dat) => dat.backupItems),
     useNuggs: () => useStore((dat) => dat.nuggs),
     useItems: () => useStore((dat) => dat.items),
 };

@@ -22,15 +22,23 @@ const useStore = create(
                     });
                 };
 
+                // const setPage = (p: Page) => {
+                //     set(() => ({
+                //         page: p
+                //     }));
+                // }
+
                 const checkInit = () => {
                     if (!get().init) {
                         setTimeout(() => {
                             set(() => ({
+                                page: Page.Start,
                                 open: true,
                             }));
                         }, 3000);
                     } else {
                         set(() => ({
+                            page: Page.Start,
                             open: false,
                         }));
                     }
@@ -102,6 +110,7 @@ const useStore = create(
         { name: 'nugg.xyz-nuggbook' },
     ),
 );
+// useStore.getState().checkInit();
 
 useStore.getState().checkInit();
 

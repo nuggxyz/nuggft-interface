@@ -56,7 +56,7 @@ const useNuggBook = (): {
     };
 } => {
     const page = client.nuggbook.useNuggBookPage();
-
+    console.log('HIIIII');
     switch (page) {
         case Page.Start:
             return { top: 450, comp: Start, page };
@@ -160,11 +160,11 @@ const useNuggBook = (): {
                 page,
             };
         case Page.Search:
-            return { top: 100, comp: React.memo(() => <NuggDexSearchBarMobile />), page };
+            return { top: 100, comp: NuggDexSearchBarMobile, page };
         case Page.AllItems:
-            return { top: 100, comp: React.memo(() => <AllItems />), page };
+            return { top: 100, comp: AllItems, page };
         case Page.AllNuggs:
-            return { top: 100, comp: React.memo(() => <AllNuggs />), page };
+            return { top: 100, comp: AllNuggs, page };
         default:
             return { top: 1000, comp: Close, page };
     }
@@ -211,6 +211,8 @@ const useNuggBookHandler = () => {
 
 const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
     const book = useNuggBook();
+
+    console.log('yep');
 
     const { handleClear, handleClose, handleVisit } = useNuggBookHandler();
     const direction = client.nuggbook.useDirection();
@@ -352,4 +354,4 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
     );
 };
 
-export default React.memo(NuggBookPageWrapper2);
+export default NuggBookPageWrapper2;
