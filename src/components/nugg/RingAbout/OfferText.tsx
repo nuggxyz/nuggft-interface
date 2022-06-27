@@ -17,7 +17,7 @@ const OfferText = ({ tokenId }: { tokenId?: TokenId }) => {
     const text = useMemo(() => {
         if (!token || !lifecycle) return '';
         if (lifecycle === Lifecycle.Tryout) {
-            return t`Select a nugg to buy this item from`;
+            return ''; // t`Select a nugg to buy this item from`;
         }
         if (
             lifecycle === Lifecycle.Deck ||
@@ -35,7 +35,7 @@ const OfferText = ({ tokenId }: { tokenId?: TokenId }) => {
         return '';
     }, [token, hasBids, lifecycle]);
 
-    return (
+    return text ? (
         <Text
             textStyle={{
                 ...styles.title,
@@ -43,6 +43,8 @@ const OfferText = ({ tokenId }: { tokenId?: TokenId }) => {
         >
             {text}
         </Text>
+    ) : (
+        <></>
     );
 };
 

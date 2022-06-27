@@ -2,7 +2,6 @@ import React, { FunctionComponent } from 'react';
 import { animated } from '@react-spring/web';
 
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
-import Loader from '@src/components/general/Loader/Loader';
 import lib from '@src/lib';
 import useDesktopSwappingNugg from '@src/client/hooks/useDesktopSwappingNugg';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
@@ -27,7 +26,7 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
 
     useLiveTokenPoll(true, tokenId);
 
-    return tokenId ? (
+    return (
         <>
             <animated.div
                 style={{
@@ -36,7 +35,6 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
                         : darkmode
                         ? styles.containerDark
                         : styles.container),
-
                     boxShadow: lib.layout.boxShadow.dark,
                 }}
             >
@@ -50,8 +48,6 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
             <SideCar tokenId={tokenId} />
             <Caboose tokenId={tokenId.onlyItemId()} />
         </>
-    ) : (
-        <Loader />
     );
 };
 

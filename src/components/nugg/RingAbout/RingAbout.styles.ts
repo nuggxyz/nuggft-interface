@@ -70,6 +70,7 @@ const styles = lib.layout.NLStyleSheetCreator({
         paddingLeft: '.5rem',
         paddingBottom: '.25rem',
         textAlign: 'center',
+        marginTop: '.5rem',
     },
     button: {
         borderRadius: lib.layout.borderRadius.large,
@@ -119,7 +120,7 @@ const styles = lib.layout.NLStyleSheetCreator({
         width: '100%',
         background: 'transparent',
         padding: '0rem',
-        marginTop: 20,
+        // marginTop: 20,
         position: 'relative',
     },
     leadingOfferAmount: {

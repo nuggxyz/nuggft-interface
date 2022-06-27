@@ -34,14 +34,14 @@ export interface ClaimModalData extends ModalDataBase {
 export interface OfferModalDataBase extends TokenIdFactoryBase, ModalDataBase {
     modalType: ModalEnum.Offer;
     nuggToBuyFrom: null | NuggId;
-    nuggToBuyFor: null | NuggId;
+    nuggToBuyFor?: null | NuggId;
     endingEpoch: number | null;
 }
 
 export type OfferModalData = TokenIdFactoryCreator<
     OfferModalDataBase,
     { nuggToBuyFrom: null; nuggToBuyFor: null },
-    { nuggToBuyFrom: NuggId; nuggToBuyFor: NuggId }
+    { nuggToBuyFrom: NuggId; nuggToBuyFor?: NuggId }
 >;
 
 export interface RotateOModalData extends ModalDataBase {
