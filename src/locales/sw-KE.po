@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-06-24 19:41+0000\n"
+"POT-Creation-Date: 2022-06-26 17:23+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Swahili\n"
-"PO-Revision-Date: 2022-06-25 06:04\n"
+"PO-Revision-Date: 2022-06-27 06:05\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 msgid ", and your desired bid for"
@@ -803,10 +803,6 @@ msgstr ""
 msgid "buy some eth"
 msgstr ""
 
-#: src/components/nugg/RingAbout/OfferText.tsx
-msgid "calculating"
-msgstr ""
-
 #: src/components/nuggbook/pages/tldr/Tldr_2.tsx
 msgid "change the way a nugg looks by reordering its items"
 msgstr ""
@@ -1354,10 +1350,6 @@ msgstr ""
 msgid "start the next auction"
 msgstr ""
 
-#: src/components/nugg/RingAbout/OfferText.tsx
-msgid "starting offer"
-msgstr ""
-
 #: src/components/mobile/ViewingNuggPhone.tsx
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "starting price"
@@ -1535,10 +1527,6 @@ msgstr ""
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "{0} Nugg{1} {2} swapping"
-msgstr ""
-
-#: src/components/nugg/RingAbout/OfferText.tsx
-msgid "{0} | {1} offers"
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
