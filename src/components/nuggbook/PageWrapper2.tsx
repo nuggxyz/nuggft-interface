@@ -5,7 +5,6 @@ import { t } from '@lingui/macro';
 import client from '@src/client';
 import lib from '@src/lib';
 import { Page, NuggBookPage } from '@src/interfaces/nuggbook';
-import usePrevious from '@src/hooks/usePrevious';
 import MobileStatus from '@src/components/mobile/MobileStatus';
 import ConnectTab from '@src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab';
 import { AllItems, AllNuggs } from '@src/components/mobile/NuggDexSearchListMobile2';
@@ -56,118 +55,120 @@ const useNuggBook = (): {
     };
 } => {
     const page = client.nuggbook.useNuggBookPage();
-    console.log('HIIIII');
-    switch (page) {
-        case Page.Start:
-            return { top: 450, comp: Start, page };
-        case Page.Welcome:
-            return { top: 100, comp: Tldr_0, page };
-        case Page.Tldr_1:
-            return {
-                top: 100,
-                comp: Tldr_1,
-                page,
-                nextButton: {
-                    text: t`next`,
-                    goto: Page.Tldr_2,
-                },
-            };
-        case Page.Tldr_2:
-            return {
-                top: 100,
-                comp: Tldr_2,
-                page,
-                nextButton: {
-                    text: t`next`,
-                    goto: Page.Tldr_3,
-                },
-            };
-        case Page.Tldr_3:
-            return {
-                top: 100,
-                comp: Tldr_3,
-                page,
-                nextButton: {
-                    text: t`next`,
-                    goto: Page.Tldr_4,
-                },
-            };
 
-        case Page.Tldr_4:
-            return {
-                top: 100,
-                comp: Tldr_4,
-                page,
-                nextButton: {
-                    text: t`next`,
-                    goto: Page.Tldr_5,
-                },
-            };
-        case Page.Tldr_5:
-            return {
-                top: 100,
-                comp: Tldr_5,
-                page,
-                nextButton: {
-                    text: t`keep reading`,
-                    goto: Page.TableOfContents,
-                },
-            };
-        case Page.TableOfContents:
-            return { top: 100, comp: TableOfContents, page };
-        case Page.WhatIsAWallet:
-            return { top: 100, comp: WhatIsAWallet, page };
-        case Page.Feedback:
-            return { top: 100, comp: Feedback, page };
-        case Page.HelpingTest_0:
-            return { top: 100, comp: HelpingTest_0, page };
-        case Page.Rundown_0:
-            return { top: 100, comp: Rundown_0, page };
-        case Page.Rundown_1:
-            return { top: 100, comp: Rundown_1, page };
-        case Page.Rundown_2:
-            return { top: 100, comp: Rundown_2, page };
-        case Page.Rundown_3:
-            return { top: 100, comp: Rundown_3, page };
-        case Page.Rundown_4:
-            return { top: 100, comp: Rundown_4, page };
-        case Page.Rundown_5:
-            return { top: 100, comp: Rundown_5, page };
-        case Page.Rundown_6:
-            return { top: 100, comp: Rundown_6, page };
-        case Page.Rundown_7:
-            return { top: 100, comp: Rundown_7, page };
-        case Page.Rundown_8:
-            return { top: 100, comp: Rundown_8, page };
-        case Page.Rundown_9:
-            return { top: 100, comp: Rundown_9, page };
-        case Page.Rundown_10:
-            return { top: 100, comp: Rundown_10, page };
-        case Page.Setup_0:
-            return { top: 100, comp: Setup_0, page };
-        case Page.Setup_1:
-            return { top: 100, comp: Setup_1, page };
-        case Page.Setup_2:
-            return { top: 100, comp: Setup_2, page };
-        case Page.Setup_3:
-            return { top: 100, comp: Setup_3, page };
-        case Page.Status:
-            return { top: 100, comp: MobileStatus, page };
-        case Page.Connect:
-            return {
-                top: 100,
-                comp: MemoizedWallet,
-                page,
-            };
-        case Page.Search:
-            return { top: 100, comp: NuggDexSearchBarMobile, page };
-        case Page.AllItems:
-            return { top: 100, comp: AllItems, page };
-        case Page.AllNuggs:
-            return { top: 100, comp: AllNuggs, page };
-        default:
-            return { top: 1000, comp: Close, page };
-    }
+    return React.useMemo(() => {
+        switch (page) {
+            case Page.Start:
+                return { top: 450, comp: Start, page };
+            case Page.Welcome:
+                return { top: 100, comp: Tldr_0, page };
+            case Page.Tldr_1:
+                return {
+                    top: 100,
+                    comp: Tldr_1,
+                    page,
+                    nextButton: {
+                        text: t`next`,
+                        goto: Page.Tldr_2,
+                    },
+                };
+            case Page.Tldr_2:
+                return {
+                    top: 100,
+                    comp: Tldr_2,
+                    page,
+                    nextButton: {
+                        text: t`next`,
+                        goto: Page.Tldr_3,
+                    },
+                };
+            case Page.Tldr_3:
+                return {
+                    top: 100,
+                    comp: Tldr_3,
+                    page,
+                    nextButton: {
+                        text: t`next`,
+                        goto: Page.Tldr_4,
+                    },
+                };
+
+            case Page.Tldr_4:
+                return {
+                    top: 100,
+                    comp: Tldr_4,
+                    page,
+                    nextButton: {
+                        text: t`next`,
+                        goto: Page.Tldr_5,
+                    },
+                };
+            case Page.Tldr_5:
+                return {
+                    top: 100,
+                    comp: Tldr_5,
+                    page,
+                    nextButton: {
+                        text: t`keep reading`,
+                        goto: Page.TableOfContents,
+                    },
+                };
+            case Page.TableOfContents:
+                return { top: 100, comp: TableOfContents, page };
+            case Page.WhatIsAWallet:
+                return { top: 100, comp: WhatIsAWallet, page };
+            case Page.Feedback:
+                return { top: 100, comp: Feedback, page };
+            case Page.HelpingTest_0:
+                return { top: 100, comp: HelpingTest_0, page };
+            case Page.Rundown_0:
+                return { top: 100, comp: Rundown_0, page };
+            case Page.Rundown_1:
+                return { top: 100, comp: Rundown_1, page };
+            case Page.Rundown_2:
+                return { top: 100, comp: Rundown_2, page };
+            case Page.Rundown_3:
+                return { top: 100, comp: Rundown_3, page };
+            case Page.Rundown_4:
+                return { top: 100, comp: Rundown_4, page };
+            case Page.Rundown_5:
+                return { top: 100, comp: Rundown_5, page };
+            case Page.Rundown_6:
+                return { top: 100, comp: Rundown_6, page };
+            case Page.Rundown_7:
+                return { top: 100, comp: Rundown_7, page };
+            case Page.Rundown_8:
+                return { top: 100, comp: Rundown_8, page };
+            case Page.Rundown_9:
+                return { top: 100, comp: Rundown_9, page };
+            case Page.Rundown_10:
+                return { top: 100, comp: Rundown_10, page };
+            case Page.Setup_0:
+                return { top: 100, comp: Setup_0, page };
+            case Page.Setup_1:
+                return { top: 100, comp: Setup_1, page };
+            case Page.Setup_2:
+                return { top: 100, comp: Setup_2, page };
+            case Page.Setup_3:
+                return { top: 100, comp: Setup_3, page };
+            case Page.Status:
+                return { top: 100, comp: MobileStatus as NuggBookPage, page };
+            case Page.Connect:
+                return {
+                    top: 100,
+                    comp: MemoizedWallet,
+                    page,
+                };
+            case Page.Search:
+                return { top: 100, comp: NuggDexSearchBarMobile as NuggBookPage, page };
+            case Page.AllItems:
+                return { top: 100, comp: AllItems as NuggBookPage, page };
+            case Page.AllNuggs:
+                return { top: 100, comp: AllNuggs as NuggBookPage, page };
+            default:
+                return { top: 1000, comp: Close, page };
+        }
+    }, [page]);
 };
 
 const useNuggBookHandler = () => {
@@ -176,8 +177,6 @@ const useNuggBookHandler = () => {
 
     const visits = client.nuggbook.useVisits();
     const goto = client.nuggbook.useGoto();
-
-    const [, startTransiton] = React.useTransition();
 
     // this triggers for people who have have not seen it
     React.useEffect(() => {
@@ -188,46 +187,35 @@ const useNuggBookHandler = () => {
 
     const handleClose = React.useCallback(() => {
         // setVisit(Page.Start);
-        startTransiton(close);
-    }, [close, startTransiton]);
+        close();
+    }, [close]);
 
     const handleVisit = React.useCallback(
         (_page: Page, direction?: boolean) => {
             // setVisit(_page);
             goto(_page, direction);
 
-            startTransiton(() => setPage(_page));
+            // (() => setPage(_page));
         },
-        [startTransiton, goto, setPage],
+        [goto, setPage],
     );
 
     const handleClear = React.useCallback(() => {
         window.localStorage.removeItem('nugg.xyz-nuggbook');
-        startTransiton(() => window.location.reload());
-    }, [startTransiton]);
+        void window.location.reload();
+    }, []);
 
-    return { handleClear, handleClose, handleVisit, visits };
+    return [handleClear, handleClose, handleVisit, visits] as const;
 };
 
 const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
     const book = useNuggBook();
 
-    console.log('yep');
-
-    const { handleClear, handleClose, handleVisit } = useNuggBookHandler();
+    const [handleClear, handleClose, handleVisit] = useNuggBookHandler();
     const direction = client.nuggbook.useDirection();
 
-    const [yep, setYep] = React.useState({ book, direction });
-    const prevYep = usePrevious(yep);
-
-    React.useEffect(() => {
-        if (yep.book.page !== book.page) {
-            setYep({ book, direction });
-        }
-    }, [book, direction, setYep, prevYep?.book.page, yep.book.page, yep]);
-
     const [tabFadeTransition] = useTransition(
-        yep,
+        book,
         {
             initial: {
                 transform: `translate(0px,0px)`,
@@ -240,16 +228,16 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
             leave: () => ({
                 transform: `translate(${direction ? -1000 : 1000}px,0px)`,
             }),
-            keys: (item) => `AtabFadeTransition${item.book.page}`,
+            keys: (item) => `AtabFadeTransition${item.page}`,
             config: config.default,
         },
-        [yep, direction],
+        [book, direction],
     );
 
     const node = React.useRef<HTMLDivElement>(null);
 
     return (
-        <animated.div
+        <div
             style={{
                 width: '100%',
                 height: '100%',
@@ -259,7 +247,7 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
                 flexDirection: 'column',
             }}
         >
-            <animated.div
+            <div
                 ref={node}
                 style={{
                     height: '100%',
@@ -272,7 +260,7 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
                     flexDirection: 'column',
                 }}
             >
-                <animated.div
+                <div
                     style={{
                         height: '100%',
                         width: '100%',
@@ -282,7 +270,7 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
                         position: 'relative',
                     }}
                 >
-                    <animated.div
+                    <div
                         style={{
                             height: '100%',
                             overflow: 'scroll',
@@ -306,15 +294,15 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
                                         paddingBottom: 100,
                                     }}
                                 >
-                                    {!!kid.book.comp && (
-                                        <kid.book.comp
+                                    {!!kid.comp && (
+                                        <kid.comp
                                             clear={handleClear}
                                             close={handleClose}
                                             setPage={handleVisit}
                                         />
                                     )}
                                 </animated.div>
-                                {kid.book.nextButton && (
+                                {kid.nextButton && (
                                     <div
                                         className="mobile-pressable-div"
                                         style={{
@@ -337,21 +325,21 @@ const NuggBookPageWrapper2: FC<PropsWithChildren<unknown>> = () => {
                                         role="button"
                                         aria-hidden="true"
                                         onClick={() => {
-                                            handleVisit(kid.book.nextButton!.goto, true);
+                                            handleVisit(kid.nextButton!.goto, true);
                                         }}
                                     >
                                         <span style={{ ...lib.layout.presets.font.main.thicc }}>
-                                            {kid.book.nextButton.text}
+                                            {kid.nextButton.text}
                                         </span>
                                     </div>
                                 )}
                             </>
                         ))}
-                    </animated.div>
-                </animated.div>
-            </animated.div>
-        </animated.div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 
-export default NuggBookPageWrapper2;
+export default React.memo(NuggBookPageWrapper2);
