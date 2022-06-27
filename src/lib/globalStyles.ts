@@ -45,6 +45,10 @@ const globalStyles = lib.layout.NLStyleSheetCreator({
     textRed: {
         color: lib.colors.nuggRedText,
     },
+    hidden: {
+        opacity: 0,
+        pointerEvents: 'none',
+    },
 } as const);
 
 export default globalStyles;

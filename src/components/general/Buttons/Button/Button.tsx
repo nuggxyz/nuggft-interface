@@ -8,6 +8,7 @@ import React, {
 
 import useOnHover from '@src/hooks/useOnHover';
 import Text, { TextProps } from '@src/components/general/Texts/Text/Text';
+import lib from '@src/lib';
 
 import styles from './Button.styles';
 
@@ -47,10 +48,13 @@ const Button: FunctionComponent<PropsWithChildren<ButtonProps>> = ({
         return {
             ...styles.button,
             ...(hover && !disableHoverAnimation && !disabled ? { filter: 'brightness(.8)' } : {}),
-            ...(disabled && !bypassDisableStyle ? { opacity: '0.3' } : {}),
+            ...(disabled && !bypassDisableStyle ? { opacity: '0.6' } : {}),
+            // opacity: disabled && !bypassDisableStyle ? '0.3': '1',
             cursor: disabled && !bypassDisableStyle ? 'not-allowed' : 'pointer',
-            ...buttonStyle,
+            position: 'relative' as const,
             ...(hover && !disableHoverAnimation && hoverStyle),
+            ...buttonStyle,
+            transition: `all .3s ${lib.layout.animation}`,
         };
     }, [hover, disabled, buttonStyle, hoverStyle, bypassDisableStyle]);
 

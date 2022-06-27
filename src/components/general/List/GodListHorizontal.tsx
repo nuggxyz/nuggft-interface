@@ -4,6 +4,8 @@ import { animated } from '@react-spring/web';
 
 import { range } from '@src/lib';
 import usePrevious from '@src/hooks/usePrevious';
+import Text from '@src/components/general/Texts/Text/Text';
+import Loader from '@src/components/general/Loader/Loader';
 
 import styles from './List.styles';
 import { GodListProps } from './GodList';
@@ -35,6 +37,11 @@ const GodListHorizontal = <T, B, A>({
     screenHeight: screenWidth = 0,
     mobileFluid = false,
     onReset,
+    TitleButton,
+    titleLoading,
+    label,
+    labelStyle,
+    loaderColor,
 }: GodListProps<T, B, A>) => {
     const interval = 7;
 
@@ -196,7 +203,7 @@ const GodListHorizontal = <T, B, A>({
 
     const checkReset = React.useCallback(
         (_innerWidth: number) => {
-            if (scrollLeft > _innerWidth || prevData !== data) {
+            if (scrollLeft > _innerWidth || JSON.stringify(prevData) !== JSON.stringify(data)) {
                 reset();
             }
         },
@@ -247,8 +254,30 @@ const GodListHorizontal = <T, B, A>({
         checkReset(innerWidth);
     }, [checkReset, innerWidth]);
 
+    const Label = useCallback(
+        () =>
+            label ? (
+                <div style={{ ...styles.labelContainer, display: style?.display }}>
+                    <div style={styles.title}>
+                        <Text textStyle={{ ...styles.label, ...labelStyle }}>{label}</Text>
+                        <div
+                            style={{
+                                marginLeft: '.5rem',
+                                position: 'relative',
+                            }}
+                        >
+                            {titleLoading && <Loader color={loaderColor || 'black'} />}
+                        </div>
+                    </div>
+                    <div style={{ marginTop: '-2px' }}>{TitleButton && <TitleButton />}</div>
+                </div>
+            ) : null,
+        [label, labelStyle, TitleButton, titleLoading, loaderColor, style],
+    );
+
     return (
         <>
+            <Label />
             <div
                 id={`${genid}wrapper`}
                 ref={windowRef}
@@ -285,7 +314,9 @@ const GodListHorizontal = <T, B, A>({
                         width: `var(--i)`,
                         opacity: uno ? 1 : 0,
                         pointerEvents: uno ? 'auto' : 'none',
-
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        display: 'flex',
                         position: 'absolute',
                         height: '100%',
                     }}
@@ -306,7 +337,9 @@ const GodListHorizontal = <T, B, A>({
                         width: `var(--i)`,
                         opacity: dos ? 1 : 0,
                         pointerEvents: dos ? 'auto' : 'none',
-
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        display: 'flex',
                         position: 'absolute',
                         height: '100%',
                     }}
@@ -326,7 +359,9 @@ const GodListHorizontal = <T, B, A>({
                         transform: `translate(${tres_i * itemWidth + startGap}px, 0px)`,
                         opacity: tres ? 1 : 0,
                         pointerEvents: tres ? 'auto' : 'none',
-
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        display: 'flex',
                         position: 'absolute',
                         height: '100%',
                         width: `var(--i)`,
@@ -348,7 +383,9 @@ const GodListHorizontal = <T, B, A>({
                         transform: `translate(${qu_i * itemWidth + startGap}px, 0px)`,
                         opacity: qu ? 1 : 0,
                         pointerEvents: qu ? 'auto' : 'none',
-
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        display: 'flex',
                         position: 'absolute',
                         height: '100%',
                         width: `var(--i)`,
@@ -370,7 +407,9 @@ const GodListHorizontal = <T, B, A>({
                         transform: `translate(${cin_i * itemWidth + startGap}px, 0px)`,
                         opacity: cin ? 1 : 0,
                         pointerEvents: cin ? 'auto' : 'none',
-
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        display: 'flex',
                         position: 'absolute',
                         height: '100%',
                         width: `var(--i)`,
@@ -391,7 +430,9 @@ const GodListHorizontal = <T, B, A>({
                     style={{
                         opacity: sei ? 1 : 0,
                         pointerEvents: sei ? 'auto' : 'none',
-
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        display: 'flex',
                         position: 'absolute',
                         transform: `translate(${sei_i * itemWidth + startGap}px, 0px)`,
                         height: '100%',
@@ -414,7 +455,9 @@ const GodListHorizontal = <T, B, A>({
                         transform: `translate(${ses_i * itemWidth + startGap}px, 0px)`,
                         opacity: ses ? 1 : 0,
                         pointerEvents: ses ? 'auto' : 'none',
-
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        display: 'flex',
                         position: 'absolute',
                         height: '100%',
                         width: `var(--i)`,

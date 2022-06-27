@@ -15,6 +15,7 @@ const styles = lib.layout.NLStyleSheetCreator({
         width: '100%',
         alignItems: 'flex-end',
         padding: '.5rem',
+        flexDirection: 'column',
     },
     input: {
         paddingTop: '1.5rem',
@@ -27,25 +28,31 @@ const styles = lib.layout.NLStyleSheetCreator({
     },
     button: {
         borderRadius: lib.layout.borderRadius.large,
+        background: lib.colors.textColor,
+        color: 'white',
     },
     heading: {
         width: '100%',
         marginTop: 0,
+        color: lib.colors.textColor,
     },
     inputCurrency: {
         textAlign: 'left',
         width: '100%',
-        background: lib.colors.transparentLightGrey,
-        padding: '.3rem .6rem',
+        background: lib.colors.transparentDarkGrey2,
+        padding: '.8rem .6rem',
         borderRadius: lib.layout.borderRadius.mediumish,
     },
     text: {
-        color: lib.colors.transparentWhite,
+        // color: lib.colors.textColor,
+        // textAlign: 'center',
+        // flexDirection: 'row',
+        // display: 'flex',
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        color: lib.colors.textColor,
         textAlign: 'center',
-        flexDirection: 'row',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        fontSize: lib.fontSize.h6,
     },
 });
 

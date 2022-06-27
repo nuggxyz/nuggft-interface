@@ -28,7 +28,7 @@ const styles = lib.layout.NLStyleSheetCreator({
         flexDirection: 'row',
         display: 'flex',
         padding: 0,
-        marginBottom: '.1rem',
+        marginBottom: '.2rem',
     },
     warningText: {
         color: 'red',

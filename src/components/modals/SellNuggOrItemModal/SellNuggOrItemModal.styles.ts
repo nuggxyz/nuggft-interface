@@ -13,7 +13,8 @@ const styles = lib.layout.NLStyleSheetCreator({
     inputContainer: {
         display: 'flex',
         width: '100%',
-        alignItems: 'flex-end',
+        alignItems: 'center',
+        flexDirection: 'column',
         padding: '.5rem',
     },
     input: {
@@ -27,6 +28,7 @@ const styles = lib.layout.NLStyleSheetCreator({
     },
     button: {
         borderRadius: lib.layout.borderRadius.large,
+        background: lib.colors.textColor,
     },
     heading: {
         width: '100%',
@@ -35,8 +37,8 @@ const styles = lib.layout.NLStyleSheetCreator({
     inputCurrency: {
         textAlign: 'left',
         width: '100%',
-        background: lib.colors.transparentLightGrey,
-        padding: '.3rem .6rem',
+        background: lib.colors.transparentDarkGrey2,
+        padding: '.8rem .6rem',
         borderRadius: lib.layout.borderRadius.mediumish,
     },
     break: {

@@ -155,21 +155,23 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
                     );
                 }
 
-                return nuggft['check(uint24,uint24,uint16)'](
-                    data.nuggToBuyFor.toRawIdNum(),
-                    data.nuggToBuyFrom.toRawId(),
-                    data.tokenId.toRawId(),
-                ).then((x) => {
-                    return {
-                        canOffer: x.canOffer,
-                        nextUserOffer: x.next,
-                        currentUserOffer: x.currentUserOffer,
-                        currentLeaderOffer: x.currentLeaderOffer,
-                        increment: x.incrementBps,
-                        mustClaimBuyer: x.mustClaimBuyer,
-                        mustOfferOnSeller: x.mustOfferOnSeller,
-                    };
-                });
+                if (data.nuggToBuyFor) {
+                    return nuggft['check(uint24,uint24,uint16)'](
+                        data.nuggToBuyFor.toRawIdNum(),
+                        data.nuggToBuyFrom.toRawId(),
+                        data.tokenId.toRawId(),
+                    ).then((x) => {
+                        return {
+                            canOffer: x.canOffer,
+                            nextUserOffer: x.next,
+                            currentUserOffer: x.currentUserOffer,
+                            currentLeaderOffer: x.currentLeaderOffer,
+                            increment: x.incrementBps,
+                            mustClaimBuyer: x.mustClaimBuyer,
+                            mustOfferOnSeller: x.mustOfferOnSeller,
+                        };
+                    });
+                }
             }
             return undefined;
         },
@@ -245,7 +247,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
         const value = paymentUsd.eth.bignumber;
 
         if (!paymentUsd.eth.eq(0)) {
-            if (data.isItem()) {
+            if (data.isItem() && data.nuggToBuyFor) {
                 if (check?.mustClaimBuyer || check?.mustOfferOnSeller) {
                     const realmsp = msp.increase(BigInt(5));
                     return {

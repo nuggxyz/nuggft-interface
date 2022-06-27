@@ -19,11 +19,12 @@ import Flyout from '@src/components/general/Flyout/Flyout';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import useDimensions from '@src/client/hooks/useDimensions';
 import { LiveToken } from '@src/client/interfaces';
+import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 
 import styles from './ViewingNugg.styles';
 import SwapList from './SwapList';
 import MyNuggActions from './MyNuggActions';
-import { ItemListPhone } from './ItemList';
+import ItemList from './ItemList';
 
 type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
 
@@ -40,11 +41,20 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
     const chainId = web3.hook.usePriorityChainId();
     const provider = web3.hook.usePriorityProvider();
 
+    useLiveTokenPoll(tokenId !== undefined, tokenId);
+
     const token = client.live.token(tokenId);
 
     const List = React.useMemo(
-        () => (tokenId && tokenId.isNuggId() ? <ItemListPhone tokenId={tokenId} /> : null),
-        [tokenId],
+        () =>
+            tokenId && tokenId.isNuggId() && token && token.type === 'nugg' && tokenId ? (
+                <ItemList
+                    items={token?.items || []}
+                    isOwner={!!sender && sender === token.owner && !token?.activeSwap?.tokenId}
+                    tokenId={tokenId}
+                />
+            ) : null,
+        [tokenId, token],
     );
 
     const happyTabs = useMemo(() => {

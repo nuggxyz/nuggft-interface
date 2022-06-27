@@ -87,11 +87,13 @@ const Modal: FC<unknown> = () => {
                     }),
                 }}
             >
-                {screenType !== 'phone' && (
-                    <animated.div
-                        style={{ ...containerBackgroundStyle, ...data?.backgroundStyle }}
-                    />
-                )}
+                <animated.div
+                    style={{
+                        ...containerBackgroundStyle,
+                        ...data?.backgroundStyle,
+                        display: screenType !== 'phone' ? 'auto' : 'none',
+                    }}
+                />
                 <animated.div style={{ ...containerStyle, ...data?.containerStyle }} ref={node}>
                     <ModalSwitch />
                 </animated.div>
@@ -126,7 +128,7 @@ const styles = lib.layout.NLStyleSheetCreator({
         background: 'transparent',
     },
     container: {
-        background: lib.colors.transparentDarkGrey,
+        background: lib.colors.semiTransparentWhite,
         backdropFilter: 'blur(20px)',
         // commented out to fix issue #64
         // WebkitBackdropFilter: 'blur(20px)',

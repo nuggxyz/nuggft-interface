@@ -19,16 +19,18 @@ const styles = lib.layout.NLStyleSheetCreator({
     button: {
         borderRadius: lib.layout.borderRadius.large,
         width: '100%',
+        background: lib.colors.textColor,
+        color: 'white',
     },
     text: {
-        color: lib.colors.grey,
-        marginBottom: '.5rem',
-        marginLeft: '.5rem',
+        color: lib.colors.textColor,
+        margin: '1rem .5rem .5rem 0rem',
         textAlign: 'center',
         fontSize: lib.fontSize.h6,
     },
-    textWhite: {
-        color: 'white',
+    title: {
+        color: lib.colors.textColor,
+        marginBottom: '1rem',
     },
 });
 

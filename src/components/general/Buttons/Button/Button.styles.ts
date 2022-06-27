@@ -11,7 +11,7 @@ const styles = lib.layout.NLStyleSheetCreator({
         padding: '.5rem 1rem',
         cursor: 'pointer',
         color: 'black',
-        transition: 'filter .2s ease',
+        transition: `all .2s ${lib.layout.animation}`,
     },
     text: {
         margin: 0,

@@ -17,7 +17,7 @@ const MyNuggActions: FunctionComponent<Props> = () => {
     const token = client.live.token(tokenId);
 
     return tokenId && token && token.isNugg() ? (
-        token?.activeSwap?.tokenId || token?.pendingClaim ? (
+        token?.activeSwap?.tokenId ? (
             <SaleButtons tokenId={tokenId} reclaim={!token?.pendingClaim} />
         ) : token?.activeLoan && token.type === 'nugg' ? (
             <LoanButtons tokenId={token.tokenId} />

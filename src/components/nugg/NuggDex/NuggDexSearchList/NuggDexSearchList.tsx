@@ -21,7 +21,6 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
     const target = client.live.searchFilter.target();
     const sort = client.live.searchFilter.sort();
     const viewing = client.live.searchFilter.viewing();
-    console.log(target);
     // const activeNuggs = client.live.activeSwaps();
     // const potentialNuggs = client.live.potentialSwaps();
 

@@ -172,34 +172,39 @@ const NuggList: FunctionComponent<NuggListProps> = ({
                             }}
                             style={{
                                 position: 'absolute',
-                                top: '1.5rem',
+                                top: '1.9rem',
                                 right: '0rem',
                                 overeflow: 'hidden',
                             }}
                             openOnHover
                         >
                             {toggleInitialState.map((val) => (
-                                <Button
-                                    label={val}
-                                    onClick={() => doToggle(val)}
-                                    buttonStyle={{
-                                        zIndex: 1,
-                                        transition: `background .3s ${lib.layout.animation}`,
-                                        background: toggleValues.includes(val)
-                                            ? lib.colors.nuggBlueSemiTransparent
-                                            : lib.colors.transparent,
-                                        borderRadius: 0,
-                                        // marginBottom: '.25rem',
-                                        padding: '.3rem .3rem .3rem .5rem',
-                                    }}
-                                    rightIcon={
-                                        toggleValues.includes(val) ? (
-                                            <IoCheckmarkCircle style={{ marginLeft: '.3rem' }} />
-                                        ) : (
-                                            <IoEllipseOutline style={{ marginLeft: '.3rem' }} />
-                                        )
-                                    }
-                                />
+                                <React.Fragment key={val}>
+                                    <Button
+                                        label={val}
+                                        onClick={() => doToggle(val)}
+                                        buttonStyle={{
+                                            zIndex: 1,
+                                            transition: `background .3s ${lib.layout.animation}`,
+                                            // background: lib.colors.transparent,
+                                            borderRadius: 0,
+                                            // marginBottom: '.25rem',
+                                            padding: '.3rem .3rem .3rem .5rem',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                        }}
+                                        rightIcon={
+                                            toggleValues.includes(val) ? (
+                                                <IoCheckmarkCircle
+                                                    style={{ marginLeft: '.3rem' }}
+                                                    color={lib.colors.nuggBlueText}
+                                                />
+                                            ) : (
+                                                <IoEllipseOutline style={{ marginLeft: '.3rem' }} />
+                                            )
+                                        }
+                                    />
+                                </React.Fragment>
                             ))}
                         </Flyout>
                     )}

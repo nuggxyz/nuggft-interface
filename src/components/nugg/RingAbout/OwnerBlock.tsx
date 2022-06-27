@@ -81,8 +81,8 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginTop: '.1rem',
-                marginBottom: isPhone ? 0 : '.5rem',
+                // marginTop: '.1rem',
+                // marginBottom: isPhone ? 0 : '.5rem',
                 // boxShadow: `0px 1px 3px ${lib.colors.shadowNuggBlue}`,
                 textAlign: 'center',
             }}
@@ -254,7 +254,6 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
                     />
                 )}
             </div>
-            {/* )} */}
         </div>
     );
 };
