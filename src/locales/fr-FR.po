@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-06-26 17:23+0000\n"
+"POT-Creation-Date: 2022-06-27 15:26+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,9 +14,10 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: French\n"
-"PO-Revision-Date: 2022-06-27 06:05\n"
+"PO-Revision-Date: 2022-06-28 06:04\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid ", and your desired bid for"
 msgstr ""
 
@@ -135,6 +136,7 @@ msgid "Check Wallet"
 msgstr "Vérifier Wallet"
 
 #: src/components/modals/OfferModal/OfferModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 #: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 #: src/components/nugg/Wallet/tabs/ClaimTab/ClaimRenderItem.tsx
 msgid "Check Wallet..."
@@ -209,7 +211,6 @@ msgstr "Fin dans environ {minutes} minutes"
 msgid "Ending in epoch {0}"
 msgstr "Fin à la période {0}"
 
-#: src/components/modals/LoanInputModal/LoanInputModal.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
 msgid "Enter amount"
 msgstr "Saisir le montant"
@@ -295,7 +296,6 @@ msgstr ""
 msgid "Leader"
 msgstr ""
 
-#: src/components/mobile/NuggDexSearchBarMobile.tsx
 #: src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar.tsx
 #: src/pages/hot-rotate-o/HotRotateO.tsx
 msgid "Loading"
@@ -337,9 +337,7 @@ msgstr ""
 msgid "McDonlad's wont answer, so we will"
 msgstr ""
 
-#: src/components/modals/LoanInputModal/LoanInputModal.tsx
-#: src/components/modals/OfferModal/OfferModal.tsx
-#: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
+#: src/components/modals/IncrementButton.tsx
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "Min"
 msgstr ""
@@ -378,10 +376,6 @@ msgstr ""
 msgid "No results"
 msgstr ""
 
-#: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
-msgid "Nugg {0}"
-msgstr ""
-
 #: src/pages/hot-rotate-o/HotRotateO.tsx
 msgid "Nugg {0} saved!"
 msgstr ""
@@ -413,6 +407,10 @@ msgstr ""
 
 #: src/components/nugg/ViewingNugg/SwapList.tsx
 msgid "On sale by"
+msgstr ""
+
+#: src/components/modals/OfferModal/OfferModal.tsx
+msgid "On sale by {0}"
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_8.tsx
@@ -459,6 +457,7 @@ msgid "Pick a nugg to offer on this item"
 msgstr ""
 
 #: src/components/modals/OfferModal/OfferModal.tsx
+#: src/components/nugg/RingAbout/Caboose.tsx
 #: src/components/nugg/RingAbout/OfferButton.tsx
 msgid "Place offer"
 msgstr ""
@@ -480,12 +479,20 @@ msgstr ""
 msgid "Previous Swaps"
 msgstr ""
 
+#: src/components/nugg/RingAbout/Caboose.tsx
+msgid "Purchase item from {0}"
+msgstr ""
+
 #: src/components/nugg/Wallet/tabs/LoanTab/MultiRebalanceButton.tsx
 msgid "Rebalance all ({0})"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/ActionButtons/SaleButtons.tsx
 msgid "Reclaim"
+msgstr ""
+
+#: src/components/modals/LoanInputModal/LoanInputModal.tsx
+msgid "Required amount"
 msgstr ""
 
 #: src/pages/hot-rotate-o/HotRotateO.tsx
@@ -504,7 +511,11 @@ msgstr ""
 msgid "See All"
 msgstr ""
 
-#: src/components/nugg/RingAbout/OfferText.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
+msgid "Select a nugg"
+msgstr ""
+
+#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "Select a nugg to buy this item from"
 msgstr ""
 
@@ -635,6 +646,10 @@ msgstr ""
 msgid "VIEW"
 msgstr ""
 
+#: src/components/nugg/RingAbout/Caboose.tsx
+msgid "Wait {minutes} min"
+msgstr ""
+
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_6.tsx
 msgid "We've made it mathematically impossible for the share to decrease in value, so the longer your nugg belongs to you, the more benefits you will earn"
 msgstr ""
@@ -663,11 +678,8 @@ msgstr ""
 msgid "You cannot place an offer"
 msgstr ""
 
-#: src/components/modals/OfferModal/OfferModal.tsx
-msgid "You currently have"
-msgstr ""
-
 #: src/components/modals/LoanInputModal/LoanInputModal.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "You currently have {0} ETH"
 msgstr ""
 
@@ -692,7 +704,7 @@ msgid "Your nugg is randomly given 6 items when it is minted, however those can 
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_9.tsx
-msgid "Your nugg will be used as collateral for 1024 periods (approx. 1024 hours). Anytime during the duration of the loan you can either extend or pay off the loan:"
+msgid "Your nugg will be used as collateral for 200 periods (approx. 200 hours). Anytime during the duration of the loan you can either extend or pay off the loan:"
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
@@ -723,15 +735,12 @@ msgstr ""
 msgid "accept a nugg's asking price"
 msgstr ""
 
-#: src/components/mobile/MobileOfferButton.tsx
-msgid "accept and start auction"
-msgstr ""
-
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "actual"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "added cost"
 msgstr ""
 
@@ -827,12 +836,10 @@ msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
 #: src/components/mobile/MobileOfferButton.tsx
-#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "connect wallet"
 msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
-#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "continue"
 msgstr ""
 
@@ -854,7 +861,6 @@ msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
-#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "currenlty for sale"
 msgstr ""
 
@@ -960,6 +966,7 @@ msgid "goto form"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "has never been bid on, they must be bid on before they can sell"
 msgstr ""
 
@@ -996,6 +1003,7 @@ msgid "how exactly does selling work?"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "i got it"
 msgstr ""
 
@@ -1018,6 +1026,7 @@ msgid "if you let your loan expire, your nugg will be put up for sale and the wi
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
+#: src/components/modals/OfferModal/OfferModal.tsx
 msgid "if you move forward, your transaction will include both a minimum bid on"
 msgstr ""
 
@@ -1153,6 +1162,10 @@ msgstr ""
 msgid "my nugg"
 msgstr ""
 
+#: src/components/modals/OfferModal/OfferModal.tsx
+msgid "nah"
+msgstr ""
+
 #: src/components/mobile/OfferModalMobile.tsx
 msgid "new bid"
 msgstr ""
@@ -1240,7 +1253,6 @@ msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
 #: src/components/mobile/MobileOfferButton.tsx
-#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "place offer"
 msgstr ""
 
@@ -1254,7 +1266,6 @@ msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
-#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "previous claim pending for this item"
 msgstr ""
 
@@ -1297,7 +1308,6 @@ msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
 #: src/components/mobile/OfferModalMobile.tsx
-#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "review"
 msgstr ""
 
@@ -1314,12 +1324,10 @@ msgid "security"
 msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
-#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "select a nugg"
 msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
-#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "select a nugg from your roost"
 msgstr ""
 
@@ -1347,6 +1355,10 @@ msgstr ""
 msgid "so the more nuggs you have, the more money is attributed to you!"
 msgstr ""
 
+#: src/components/mobile/MobileOfferButton.tsx
+msgid "start auction"
+msgstr ""
+
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "start the next auction"
 msgstr ""
@@ -1354,6 +1366,10 @@ msgstr ""
 #: src/components/mobile/ViewingNuggPhone.tsx
 #: src/components/mobile/ViewingNuggPhone.tsx
 msgid "starting price"
+msgstr ""
+
+#: src/components/mobile/MobileOfferButton.tsx
+msgid "starting soon"
 msgstr ""
 
 #: src/components/mobile/MobileOfferButton.tsx
@@ -1397,7 +1413,7 @@ msgid "this means that there will always be any number of auctions ending at the
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_9.tsx
-msgid "to extend the loan you must pay at least the amount the share price increased since you took out the loan"
+msgid "to extend the loan you must pay the amount the share price increased since you took out the loan"
 msgstr ""
 
 #: src/components/nuggbook/pages/set-up/Setup_0.tsx
@@ -1445,7 +1461,6 @@ msgid "view nuggs with this"
 msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
-#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "wait {minutes} min"
 msgstr ""
 
@@ -1526,8 +1541,16 @@ msgstr ""
 msgid "{0, plural, =1 {# year,} other {# years,}}"
 msgstr ""
 
+#: src/components/modals/LoanOrBurnModal/LoanOrBurnModal.tsx
+msgid "{0}"
+msgstr ""
+
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "{0} Nugg{1} {2} swapping"
+msgstr ""
+
+#: src/components/nugg/RingAbout/Caboose.tsx
+msgid "{0} other nuggs are selling this item"
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
