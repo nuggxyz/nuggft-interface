@@ -6,6 +6,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
+import { FEATURE_NAMES } from './web3/constants';
+
 // eslint-disable-next-line @typescript-eslint/unbound-method
 // const _getBBox = SVGGraphicsElement.prototype.getBBox;
 
@@ -75,9 +77,7 @@ String.prototype.toPrettyId = function fn() {
     const raw = this.toRawIdNum();
 
     if (this.isItemId()) {
-        return `${
-            ['Base', 'Eyes', 'Mouth', 'Hair', 'Hat', 'Back', 'Neck', 'Hold'][Math.floor(raw / 1000)]
-        } ${raw % 1000}`;
+        return `${FEATURE_NAMES[Math.floor(raw / 1000)]} ${raw % 1000}`;
     }
     if (this.isNuggId()) {
         const prefix = ['G', 'M'][Math.floor(raw / 1000000)];
