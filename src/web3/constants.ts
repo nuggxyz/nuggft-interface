@@ -45,11 +45,11 @@ export const FEATURE_NAMES = [
     'Base',
     'Eyes',
     'Mouth',
-    'Hair',
-    'Hat',
+    'Head',
     'Back',
+    'Flag',
+    'Tail',
     'Hold',
-    'Neck',
 ] as unknown as FixedLengthArray<string, 8>;
 
 // chances any nugg will have get a given feature
