@@ -92,7 +92,7 @@ const Modal: FC<unknown> = () => {
             }px`,
         });
     }, [animate, contentRef, data, wrapperHeight]);
-
+    console.log(data);
     return (
         <animated.div style={{ ...style }}>
             <div
@@ -109,9 +109,10 @@ const Modal: FC<unknown> = () => {
                 <animated.div
                     style={{
                         ...containerBackgroundStyle,
-                        ...data?.backgroundStyle,
+                        ...(data && data?.backgroundStyle ? data?.backgroundStyle : {}),
                         display: screenType !== 'phone' ? 'auto' : 'none',
                         height,
+                        transition: `background .5s ${lib.layout.animation}`,
                     }}
                 />
                 <animated.div
@@ -120,6 +121,7 @@ const Modal: FC<unknown> = () => {
                         ...data?.containerStyle,
                         height,
                         overflow: 'hidden',
+                        transition: `background .5s ${lib.layout.animation}`,
                     }}
                     ref={clickBoundaryRef}
                 >

@@ -88,7 +88,10 @@ const ConnectTab: FunctionComponent<Props> = () => {
 									background: lib.colors.transparentWhite,
 									overflow: 'scroll',
 								},
-								previousModal: ModalEnum.Wallet,
+								previousModal: {
+									modalType: ModalEnum.Wallet,
+									containerStyle: { background: lib.colors.transparentWhite },
+								},
 							});
 						}
 					}}
@@ -134,7 +137,6 @@ const ConnectTab: FunctionComponent<Props> = () => {
 							// eslint-disable-next-line @typescript-eslint/no-misused-promises
 							onClick={async () => {
 								const check = web3.config.connector_instances[peer.type];
-
 								if (check) {
 									if (check.store.getState().activating)
 										await check.connector.deactivate();

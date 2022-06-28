@@ -20,7 +20,7 @@ export interface ModalDataBase {
     modalType: ModalEnum;
     backgroundStyle?: CSSProperties;
     containerStyle?: CSSProperties;
-    previousModal?: ModalEnum;
+    previousModal?: ModalType;
 }
 
 export interface LoanModalData extends ModalDataBase {

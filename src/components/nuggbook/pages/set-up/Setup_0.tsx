@@ -2,13 +2,14 @@ import React from 'react';
 import { IoIosArrowDropleftCircle } from 'react-icons/io';
 import { t } from '@lingui/macro';
 
-import lib from '@src/lib';
+import lib, { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 import Text from '@src/components/general/Texts/Text/Text';
 import Button from '@src/components/general/Buttons/Button/Button';
 import { NuggBookPage, Page } from '@src/interfaces/nuggbook';
 import web3 from '@src/web3';
 import NLStaticImage from '@src/components/general/NLStaticImage';
 import { Peer } from '@src/web3/core/interfaces';
+import client from '@src/client';
 
 export const PeerButton = React.memo<{
     peer: Peer.CoinbaseWallet | Peer.MetaMask;
@@ -87,6 +88,8 @@ export const PeerButton = React.memo<{
 );
 
 const Setup_0: NuggBookPage = ({ setPage }) => {
+    const data = client.modal.useData();
+    const openModal = client.modal.useOpenModal();
     return (
         <div
             style={{
@@ -195,7 +198,16 @@ const Setup_0: NuggBookPage = ({ setPage }) => {
                             size={20}
                         />
                     }
-                    onClick={() => setPage(Page.TableOfContents, false)}
+                    onClick={() => {
+                        if (
+                            !isUndefinedOrNullOrObjectEmpty(data) &&
+                            !isUndefinedOrNullOrObjectEmpty(data.previousModal)
+                        ) {
+                            openModal(data.previousModal);
+                        } else {
+                            setPage(Page.TableOfContents, false);
+                        }
+                    }}
                 />
             </div>
         </div>
