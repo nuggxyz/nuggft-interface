@@ -7,10 +7,8 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import { ModalEnum } from '@src/interfaces/modals';
-import useDimensions from '@src/client/hooks/useDimensions';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { Lifecycle } from '@src/client/interfaces';
-import { Page } from '@src/interfaces/nuggbook';
 
 import styles from './RingAbout.styles';
 
@@ -23,27 +21,27 @@ export default ({
 	sellingNuggId?: NuggId;
 	inOverlay?: boolean;
 }) => {
-	const [screenType, isPhone] = useDimensions();
 	const address = web3.hook.usePriorityAccount();
 	const token = client.live.token(tokenId);
 
 	const lifecycle = useLifecycle(tokenId);
 
-	const nuggbookOpen = client.nuggbook.useGotoOpen();
-
 	const openModal = client.modal.useOpenModal();
 
 	const isDisabled = React.useMemo(() => {
-		return !(
-			lifecycle &&
-			lifecycle !== 'shower' &&
-			lifecycle !== 'stands' &&
-			lifecycle !== 'cut' &&
-			lifecycle !== 'tryout'
+		return (
+			!isUndefinedOrNullOrStringEmpty(address) &&
+			!(
+				lifecycle &&
+				lifecycle !== 'shower' &&
+				lifecycle !== 'stands' &&
+				lifecycle !== 'cut' &&
+				lifecycle !== 'tryout'
+			)
 		);
-	}, [token, lifecycle]);
+	}, [token, lifecycle, address]);
 
-	return lifecycle !== 'tryout' && (!isPhone || inOverlay) ? (
+	return lifecycle !== 'tryout' ? (
 		<Button
 			className="mobile-pressable-div"
 			buttonStyle={{
@@ -51,23 +49,18 @@ export default ({
 				...(inOverlay && {
 					width: undefined,
 				}),
-				...(isPhone && {
-					// border: `5px solid ${lib.colors.nuggBlueSemiTransparent}`,
-					// borderRadius: lib.layout.borderRadius.medium,
-					background: lib.colors.primaryColor,
-				}),
 			}}
 			textStyle={{
 				...styles.buttonText,
-				...(isPhone && {
-					color: lib.colors.white,
-				}),
 			}}
 			disabled={isDisabled}
 			onClick={() => {
-				if (screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address))
-					nuggbookOpen(Page.Connect);
-				else if (token && token.isNugg()) {
+				if (isUndefinedOrNullOrStringEmpty(address)) {
+					openModal({
+						modalType: ModalEnum.Wallet,
+						containerStyle: { background: lib.colors.transparentWhite },
+					});
+				} else if (token && token.isNugg()) {
 					openModal(
 						buildTokenIdFactory({
 							modalType: ModalEnum.Offer as const,
@@ -92,12 +85,12 @@ export default ({
 				}
 			}}
 			label={
-				!token
+				isUndefinedOrNullOrStringEmpty(address)
+					? t`Connect wallet`
+					: !token
 					? 'Loading...'
 					: isDisabled
 					? 'swap is over'
-					: screenType === 'phone' && isUndefinedOrNullOrStringEmpty(address)
-					? t`Connect wallet`
 					: lifecycle === Lifecycle.Bench
 					? 'Accept and Start Auction'
 					: t`Place offer`

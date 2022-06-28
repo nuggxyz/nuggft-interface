@@ -1,9 +1,10 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 import { animated, config, useTransition } from '@react-spring/web';
 
 import client from '@src/client';
 import { Page } from '@src/interfaces/nuggbook';
 import usePrevious from '@src/hooks/usePrevious';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 import Start from './pages/Start';
 import Welcome from './pages/Welcome';
@@ -136,6 +137,8 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
     const book = useNuggBook();
     const { handleClear, handleClose, handleVisit } = useNuggBookHandler();
     const direction = client.nuggbook.useDirection();
+    const { height } = useDimensions();
+    const wrapperHeight = useMemo(() => height / 1.5, [height]);
 
     const [yep, setYep] = React.useState({ book, direction });
     const prevYep = usePrevious(yep);
@@ -174,7 +177,7 @@ const PageWrapperDesktop: FunctionComponent<Props> = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 overflow: 'scroll',
-                height: '100%',
+                height: wrapperHeight,
             }}
         >
             {tabFadeTransition((_styles, kid) => (

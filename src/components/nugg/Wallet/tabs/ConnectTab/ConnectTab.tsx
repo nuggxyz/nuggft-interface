@@ -11,16 +11,18 @@ import useDimensions from '@src/client/hooks/useDimensions';
 import lib from '@src/lib';
 import client from '@src/client';
 import { Page } from '@src/interfaces/nuggbook';
+import { ModalEnum } from '@src/interfaces/modals';
 
 import styles from './ConnectTab.styles';
 
 type Props = Record<string, never>;
 
 const ConnectTab: FunctionComponent<Props> = () => {
-	const [, isPhone] = useDimensions();
+	const [, isPhone, { height }] = useDimensions();
 	const goto = client.nuggbook.useOpenNuggBook();
 	const [forceDesktopAction, setForceDesktopAction] = React.useState(false);
 	const [showAll, setShowAll] = React.useState(!isPhone);
+	const openModal = client.modal.useOpenModal();
 	return (
 		<div
 			style={{
@@ -49,37 +51,49 @@ const ConnectTab: FunctionComponent<Props> = () => {
 				</Text>
 			</div>
 
-			{isPhone && (
-				<div
-					style={{
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'flex-start',
-						alignItems: 'center',
-						marginTop: -15,
-						marginBottom: 10,
-						borderRadius: lib.layout.borderRadius.mediumish,
-						backgroundColor: lib.colors.transparentWhite,
-						padding: 15,
-						WebkitBackdropFilter: 'blur(50px)',
-						backdropFilter: 'blur(50px)',
+			<div
+				style={{
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'flex-start',
+					alignItems: 'center',
+					marginTop: -15,
+					marginBottom: 10,
+					borderRadius: lib.layout.borderRadius.mediumish,
+					backgroundColor: lib.colors.transparentWhite,
+					padding: 15,
+					WebkitBackdropFilter: 'blur(50px)',
+					backdropFilter: 'blur(50px)',
+				}}
+			>
+				<Text textStyle={{ marginBottom: 5 }} size="small">
+					lost?
+				</Text>
+				<Button
+					textStyle={{ color: 'white', fontWeight: lib.layout.fontWeight.thicc }}
+					buttonStyle={{
+						background: lib.colors.primaryColor,
+						borderRadius: lib.layout.borderRadius.large,
+						boxShadow: lib.layout.boxShadow.dark,
 					}}
-				>
-					<Text textStyle={{ marginBottom: 5 }} size="small">
-						lost?
-					</Text>
-					<Button
-						textStyle={{ color: 'white', fontWeight: lib.layout.fontWeight.thicc }}
-						buttonStyle={{
-							background: lib.colors.primaryColor,
-							borderRadius: lib.layout.borderRadius.large,
-							boxShadow: lib.layout.boxShadow.dark,
-						}}
-						label="we gotchu 😉 ➡️"
-						onClick={() => goto(Page.Setup_0, true)}
-					/>
-				</div>
-			)}
+					label="we gotchu 😉 ➡️"
+					onClick={() => {
+						goto(Page.Setup_0, true);
+						if (!isPhone) {
+							openModal({
+								modalType: ModalEnum.NuggBook,
+								containerStyle: {
+									padding: '0rem',
+									height: height / 1.5,
+									background: lib.colors.transparentWhite,
+									overflow: 'scroll',
+								},
+								previousModal: ModalEnum.Wallet,
+							});
+						}
+					}}
+				/>
+			</div>
 
 			<div
 				style={{
@@ -94,33 +108,19 @@ const ConnectTab: FunctionComponent<Props> = () => {
 					overflow: isPhone ? undefined : 'scroll',
 				}}
 			>
-				{isPhone && (
-					<div
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							width: '100%',
-							alignItems: 'center',
-							justifyContent: 'start',
-						}}
-					>
-						<Text textStyle={{ padding: 10, fontWeight: lib.layout.fontWeight.thicc }}>
-							tap to connect
-						</Text>
-						{/* <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                justifyContent: 'space-around',
-                                padding: 10,
-                            }}
-                        >
-                            <NLStaticImage image={`${Peer.CoinbaseWallet}_icon`} />
-                            <NLStaticImage image={`${Peer.MetaMask}_icon`} />
-                            <NLStaticImage image={`${Peer.Rainbow}_icon`} />
-                        </div> */}
-					</div>
-				)}
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						width: '100%',
+						alignItems: 'center',
+						justifyContent: 'start',
+					}}
+				>
+					<Text textStyle={{ padding: 10, fontWeight: lib.layout.fontWeight.thicc }}>
+						{isPhone ? t`tap` : t`click`} {t`to connect`}
+					</Text>
+				</div>
 				{Object.values(web3.config.peers).map((peer, ind) =>
 					!peer.fallback && (!isPhone || showAll || ind < 2) ? (
 						<Button

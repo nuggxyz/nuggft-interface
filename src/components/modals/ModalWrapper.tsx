@@ -1,4 +1,4 @@
-import React, { FC, useRef } from 'react';
+import React, { FC, useEffect, useMemo, useRef } from 'react';
 import { animated, config, useSpring } from '@react-spring/web';
 
 import lib from '@src/lib';
@@ -14,39 +14,43 @@ import OfferModal from './OfferModal/OfferModal';
 import QrCodeModal from './QrCodeModal/QrCodeModal';
 import SellNuggOrItemModal from './SellNuggOrItemModal/SellNuggOrItemModal';
 import NuggBookModal from './NuggBookModal/NuggBookModal';
+import WalletModal from './WalletModal/WalletModal';
 
 export const ModalSwitch = () => {
-	const data = client.modal.useData();
-
-	switch (data?.modalType) {
-		case ModalEnum.Offer:
-			return <OfferModal data={data} />;
-		case ModalEnum.Sell:
-			return <SellNuggOrItemModal data={data} />;
+    const data = client.modal.useData();
+    switch (data?.modalType) {
+        case ModalEnum.Offer:
+            return <OfferModal data={data} />;
+        case ModalEnum.Sell:
+            return <SellNuggOrItemModal data={data} />;
 
 		case ModalEnum.QrCode:
 			return <QrCodeModal data={data} />;
 
-		case ModalEnum.LoanInput:
-			return <LoanInputModal data={data} />;
-		case ModalEnum.Loan:
-			return <LoanOrBurnModal data={data} />;
-		case ModalEnum.NuggBook:
-			return <NuggBookModal />;
-		case undefined:
-		default:
-			return null;
-	}
+        case ModalEnum.LoanInput:
+            return <LoanInputModal data={data} />;
+        case ModalEnum.Loan:
+            return <LoanOrBurnModal data={data} />;
+        case ModalEnum.NuggBook:
+            return <NuggBookModal />;
+        case ModalEnum.Wallet:
+            return <WalletModal />;
+        case undefined:
+        default:
+            return <> </>;
+    }
 };
 
 const Modal: FC<unknown> = () => {
-	const isOpen = client.modal.useOpen();
-	const data = client.modal.useData();
-	const closeModal = client.modal.useCloseModal();
+    const contentRef = useRef<HTMLDivElement>(null);
+    const isOpen = client.modal.useOpen();
+    const data = client.modal.useData();
+    const closeModal = client.modal.useCloseModal();
+    const [screenType,,{ height: windowHeight }] = useDimensions();
+    const wrapperHeight = useMemo(() => windowHeight / 1.5, [windowHeight]);
 
-	const node = useRef<HTMLDivElement>(null);
+    const clickBoundaryRef = useRef<HTMLDivElement>(null);
 
-	const [screenType] = useDimensions();
 
 	const containerStyle = useSpring({
 		to: {
@@ -72,34 +76,67 @@ const Modal: FC<unknown> = () => {
 
 	const style: CSSPropertiesAnimated = useAnimateOverlay(isOpen, { zIndex: 999000 });
 
-	useOnClickOutside(node, closeModal);
+    useOnClickOutside(clickBoundaryRef, closeModal);
 
-	return (
-		<animated.div style={{ ...style }}>
-			<div
-				style={{
-					position: 'relative',
-					...(screenType === 'phone' && {
-						width: '100%',
-						display: 'flex',
-						justifyContent: 'center',
-						// marginTop: '150px',
-					}),
-				}}
-			>
-				<animated.div
-					style={{
-						...containerBackgroundStyle,
-						...data?.backgroundStyle,
-						display: screenType !== 'phone' ? 'auto' : 'none',
-					}}
-				/>
-				<animated.div style={{ ...containerStyle, ...data?.containerStyle }} ref={node}>
-					<ModalSwitch />
-				</animated.div>
-			</div>
-		</animated.div>
-	);
+    const [{ height }, animate] = useSpring(
+        () => ({
+            height: `${wrapperHeight}px`,
+        }),
+        [wrapperHeight],
+    );
+
+    useEffect(() => {
+        animate({
+            height: `${
+                data && contentRef.current ? contentRef.current.offsetHeight : wrapperHeight
+            }px`,
+        });
+    }, [animate, contentRef, data, wrapperHeight]);
+
+    return (
+        <animated.div style={{ ...style }}>
+            <div
+                style={{
+                    position: 'relative',
+                    ...(screenType === 'phone' && {
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        // marginTop: '150px',
+                    }),
+                }}
+            >
+                <animated.div
+                    style={{
+                        ...containerBackgroundStyle,
+                        ...data?.backgroundStyle,
+                        display: screenType !== 'phone' ? 'auto' : 'none',
+                        height,
+                    }}
+                />
+                <animated.div
+                    style={{
+                        ...containerStyle,
+                        ...data?.containerStyle,
+                        height,
+                        overflow: 'hidden',
+                    }}
+                    ref={clickBoundaryRef}
+                >
+                    <div
+                        ref={contentRef}
+                        style={{
+                            position: 'absolute',
+                            padding: '1rem',
+                            width: '100%',
+                        }}
+                    >
+                        <ModalSwitch />
+                    </div>
+                </animated.div>
+            </div>
+        </animated.div>
+    );
 };
 
 const styles = lib.layout.NLStyleSheetCreator({
@@ -111,68 +148,68 @@ const styles = lib.layout.NLStyleSheetCreator({
 		justifyContent: 'center',
 		alignItems: 'center',
 
-		background: 'transparent',
-		transition: `opacity .5s ${lib.layout.animation}`,
-		backdropFilter: 'blur(10px)',
-		WebkitBackdropFilter: 'blur(10px)',
-		zIndex: 99900000,
-	},
-	open: {
-		opacity: 1,
-		background: lib.colors.transparentGrey,
-		zIndex: 99900000,
-		overflow: 'hidden',
-	},
-	closed: {
-		opacity: 0,
-		background: 'transparent',
-	},
-	container: {
-		background: lib.colors.semiTransparentWhite,
-		backdropFilter: 'blur(20px)',
-		// commented out to fix issue #64
-		// WebkitBackdropFilter: 'blur(20px)',
-		transition: `.2s all ${lib.layout.animation}`,
-		display: 'flex',
-		flexDirection: 'row',
-		justifyContent: 'center',
-		position: 'relative',
-		borderRadius: lib.layout.borderRadius.largish,
-		padding: '1rem',
-		width: '100%',
-		transform: 'translate(1.5rem, 1.5rem)',
-	},
-	containerFull: { width: '630px' },
-	containerMobile: {
-		width: '90%',
-		maxHeight: '100%',
-		margin: '0rem',
-		// margin: '0rem .5rem',
-		transform: 'translate(0rem, 0rem)',
-		justifyContent: 'flex-start',
-		backdropFilter: 'blur(10px)',
-		WebkitBackdropFilter: 'blur(10px)',
-		minWidth: '0px',
-	},
-	containerOpen: {
-		transform: 'translate(.5rem, .5rem)',
-	},
-	containerBackground: {
-		position: 'absolute',
-		background: lib.colors.gradient2Transparent,
-		transition: `.2s all ${lib.layout.animation}`,
-		opacity: 1,
-		width: '100%',
-		padding: '1rem',
-		height: '100%',
-		borderRadius: lib.layout.borderRadius.largish,
-	},
-	containerBackgroundOpen: { transform: 'translate(-.2rem, -.2rem)' },
-	closeButton: {
-		position: 'absolute',
-		top: 0,
-		right: 0,
-	},
+        background: 'transparent',
+        transition: `opacity .5s ${lib.layout.animation}`,
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        zIndex: 99900000,
+    },
+    open: {
+        opacity: 1,
+        background: lib.colors.transparentGrey,
+        zIndex: 99900000,
+        overflow: 'hidden',
+    },
+    closed: {
+        opacity: 0,
+        background: 'transparent',
+    },
+    container: {
+        background: lib.colors.semiTransparentWhite,
+        backdropFilter: 'blur(20px)',
+        // commented out to fix issue #64
+        // WebkitBackdropFilter: 'blur(20px)',
+        transition: `.2s all ${lib.layout.animation}`,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        position: 'relative',
+        borderRadius: lib.layout.borderRadius.largish,
+        // padding: '1rem',
+        width: '100%',
+        transform: 'translate(1.5rem, 1.5rem)',
+    },
+    containerFull: { width: '630px' },
+    containerMobile: {
+        width: '90%',
+        maxHeight: '100%',
+        margin: '0rem',
+        // margin: '0rem .5rem',
+        transform: 'translate(0rem, 0rem)',
+        justifyContent: 'flex-start',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        minWidth: '0px',
+    },
+    containerOpen: {
+        transform: 'translate(.5rem, .5rem)',
+    },
+    containerBackground: {
+        position: 'absolute',
+        background: lib.colors.gradient2Transparent,
+        transition: `.2s all ${lib.layout.animation}`,
+        opacity: 1,
+        width: '100%',
+        padding: '1rem',
+        height: '100%',
+        borderRadius: lib.layout.borderRadius.largish,
+    },
+    containerBackgroundOpen: { transform: 'translate(-.2rem, -.2rem)' },
+    closeButton: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+    },
 });
 
 export default React.memo(Modal);

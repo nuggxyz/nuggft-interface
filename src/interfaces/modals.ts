@@ -13,12 +13,14 @@ export enum ModalEnum {
     RotateO,
     NuggBook,
     Name,
+    Wallet,
 }
 
 export interface ModalDataBase {
     modalType: ModalEnum;
     backgroundStyle?: CSSProperties;
     containerStyle?: CSSProperties;
+    previousModal?: ModalEnum;
 }
 
 export interface LoanModalData extends ModalDataBase {
@@ -29,6 +31,10 @@ export interface LoanModalData extends ModalDataBase {
 
 export interface ClaimModalData extends ModalDataBase {
     modalType: ModalEnum.Claim;
+}
+
+export interface WalletModalData extends ModalDataBase {
+    modalType: ModalEnum.Wallet;
 }
 
 export interface OfferModalDataBase extends TokenIdFactoryBase, ModalDataBase {
@@ -91,4 +97,5 @@ export type ModalType =
     | ClaimModalData
     | SellModalData
     | RotateOModalData
-    | NuggBookModalData;
+    | NuggBookModalData
+    | WalletModalData;

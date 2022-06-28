@@ -2,7 +2,6 @@ import React from 'react';
 import { IoOpenOutline, IoPowerOutline } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 import { FiAtSign } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
 
 import Jazzicon from '@src/components/nugg/Jazzicon';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -15,6 +14,7 @@ import globalStyles from '@src/lib/globalStyles';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import CurrencyToggler from '@src/components/general/Buttons/CurrencyToggler/CurrencyToggler';
 import client from '@src/client';
+import { ModalEnum } from '@src/interfaces/modals';
 
 import styles from './AccountViewer.styles';
 
@@ -26,11 +26,10 @@ const AccountViewer = () => {
     const balance = web3.hook.usePriorityBalance(provider);
     const peer = web3.hook.usePriorityPeer();
     const connector = web3.hook.usePriorityConnector();
+    const openModal = client.modal.useOpenModal();
 
     const currencyPref = client.usd.useCurrencyPreferrence();
     const setCurrencyPref = client.usd.useSetCurrencyPreferrence();
-
-    const navigate = useNavigate();
 
     const darkmode = useDarkMode();
 
@@ -45,12 +44,16 @@ const AccountViewer = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 boxShadow: lib.layout.boxShadow.basic,
-                // border: `3px solid ${lib.colors.transparentDarkGrey2}`,
             }}
         >
             <Button
                 buttonStyle={{ background: lib.colors.transparent, padding: '.5rem .3rem' }}
-                onClick={() => navigate('/wallet')}
+                onClick={() =>
+                    openModal({
+                        modalType: ModalEnum.Wallet,
+                        containerStyle: { background: lib.colors.transparentWhite },
+                    })
+                }
                 rightIcon={<FiAtSign style={{ color: lib.colors.darkerGray }} />}
             />
         </div>
@@ -63,7 +66,6 @@ const AccountViewer = () => {
                 <div style={styles.textContainer}>
                     <div
                         style={{
-                            // marginRight: screenType ===|'phone' ? '0rem' : '.5rem',
                             ...styles.header,
                         }}
                     >
@@ -91,23 +93,6 @@ const AccountViewer = () => {
             }
         >
             <>
-                {/* {screenType === 'phone' && (
-                    <Button
-                        label={t`Wallet`}
-                        type="text"
-                        buttonStyle={styles.flyoutButton}
-                        leftIcon={
-                            <IoWallet
-                                color={lib.colors.nuggBlueText}
-                                size={25}
-                                style={{ marginRight: '.75rem' }}
-                            />
-                        }
-                        onClick={() => {
-                            navigate('/wallet');
-                        }}
-                    />
-                )} */}
                 <div
                     style={{
                         width: '100%',
