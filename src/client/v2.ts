@@ -18,6 +18,7 @@ import web3 from '@src/web3';
 import { useNuggftV1, useXNuggftV1 } from '@src/contracts/useContract';
 import lib from '@src/lib/index';
 import useThrottle from '@src/hooks/useThrottle';
+import usePrevious from '@src/hooks/usePrevious';
 
 import { OfferData } from './interfaces';
 import health from './health';
@@ -237,6 +238,35 @@ const useStore = create(
 				}));
 			};
 
+			const removeAllSwapsFromAnEpoch = (_epoch: number) => {
+				const { point } = get();
+
+				const { hits } = get()[point];
+
+				const checks: TokenId[] = [];
+				// eslint-disable-next-line no-restricted-syntax
+				for (const key in hits) {
+					if (key.isNuggId() || key.isItemId()) {
+						if (hits[key].endingEpoch === _epoch) {
+							checks.push(hits[key as TokenId].tokenId);
+						}
+					}
+				}
+
+				console.warn(`CLEARING ${checks.length} SWAPS FROM EPOCH:${_epoch} - `);
+
+				// @ts-ignore
+				set((draft) => {
+					for (let i = 0; i < checks.length; i++) {
+						delete draft[point].hits[checks[i]];
+					}
+					draft[point].current = draft[point].next;
+					draft[point].all = draft[point].next;
+
+					draft[point].next = [];
+				});
+			};
+
 			function handleV2Rpc(input: string, blk: number) {
 				if (input.length > 2) {
 					set(() => ({
@@ -328,7 +358,7 @@ const useStore = create(
 				});
 			}
 
-			return { handleV2, handleRpcHit, handleV2Rpc, pointAt };
+			return { handleV2, handleRpcHit, handleV2Rpc, pointAt, removeAllSwapsFromAnEpoch };
 		},
 	),
 );
@@ -392,6 +422,8 @@ const useV2Query = () => {
 export const usePollV2 = () => {
 	const handleRpcHit = useStore((dat) => dat.handleRpcHit);
 	const pointAt = useStore((dat) => dat.pointAt);
+	const _epoch = epoch.active.useId();
+	const removeAllSwapsFromAnEpoch = useStore((dat) => dat.removeAllSwapsFromAnEpoch);
 
 	const graphProblem = health.useHealth();
 	const startblock = epoch.active.useStartBlock();
@@ -408,6 +440,12 @@ export const usePollV2 = () => {
 	);
 
 	const graphBlock = health.useLastGraphBlock();
+	const prevEpoch = usePrevious(_epoch);
+
+	React.useEffect(() => {
+		if (_epoch && prevEpoch !== undefined && prevEpoch !== _epoch)
+			removeAllSwapsFromAnEpoch(_epoch);
+	}, [_epoch, removeAllSwapsFromAnEpoch, prevEpoch]);
 
 	React.useEffect(() => {
 		if (!graphProblem) {

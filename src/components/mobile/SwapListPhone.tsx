@@ -77,8 +77,8 @@ const SwapItem: FunctionComponent<{ item: SwapDataWithTryout }> = ({ item }) => 
 						</Text>
 
 						<CurrencyText
-							image="eth"
 							value={amount}
+							icon
 							textStyle={{
 								background: lib.colors.primaryColor,
 								color: 'white',

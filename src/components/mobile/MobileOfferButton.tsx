@@ -128,7 +128,6 @@ export default ({
 			<Button
 				className="mobile-pressable-div"
 				buttonStyle={{
-					marginTop: '20px',
 					borderRadius: lib.layout.borderRadius.large,
 					background:
 						lifecycle === Lifecycle.Concessions

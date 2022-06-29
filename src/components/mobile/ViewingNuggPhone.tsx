@@ -428,7 +428,7 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 						</div>
 					)}
 				</animated.div>
-				<div style={{ marginTop: 40 }} />
+				<div style={{ marginTop: 30 }} />
 				<OffersList tokenId={tokenId} />
 				<MobileOfferButton tokenId={tokenId} />
 			</animated.div>
