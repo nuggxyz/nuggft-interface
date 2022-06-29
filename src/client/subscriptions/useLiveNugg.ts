@@ -36,24 +36,24 @@ import block from '@src/client/block';
 // };
 
 export const useLiveTokenPoll = (activate: boolean, _tokenId: TokenId | undefined) => {
-    const [graph, rpc] = useTokenQuery();
-    const graphProblem = health.useHealth();
+	const [graph, rpc] = useTokenQuery();
+	const graphProblem = health.useHealth();
 
-    const graphBlock = health.useLastGraphBlock();
-    React.useEffect(() => {
-        if (activate && _tokenId && !graphProblem) {
-            void graph(_tokenId);
-        }
-    }, [activate, _tokenId, graphProblem, graphBlock]);
+	const graphBlock = health.useLastGraphBlock();
+	React.useEffect(() => {
+		if (activate && _tokenId && !graphProblem) {
+			void graph(_tokenId);
+		}
+	}, [activate, _tokenId, graphProblem, graphBlock]);
 
-    const blocknum = block.useBlock();
-    React.useEffect(() => {
-        if (activate && _tokenId && graphProblem) {
-            void rpc(_tokenId);
-        }
-    }, [activate, _tokenId, graphProblem, blocknum]);
+	const blocknum = block.useBlock();
+	React.useEffect(() => {
+		if (activate && _tokenId && graphProblem) {
+			void rpc(_tokenId);
+		}
+	}, [activate, _tokenId, graphProblem, blocknum]);
 
-    return null;
+	return null;
 };
 
 // export const useLiveTokenPoll = (activate: boolean, _tokenId: TokenId | undefined) => {

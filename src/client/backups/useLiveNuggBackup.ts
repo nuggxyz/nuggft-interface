@@ -9,18 +9,19 @@ import client from '..';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 export default () => {
-    const liveEpoch = client.epoch.active.useId();
-    const provider = web3.hook.usePriorityProvider();
-    const nuggft = useNuggftV1(provider);
-    const updateToken = client.mutate.updateToken();
+	const liveEpoch = client.epoch.active.useId();
+	const provider = web3.hook.usePriorityProvider();
+	const nuggft = useNuggftV1(provider);
+	const updateToken = client.mutate.updateToken();
 
-    const callback = useCallback(
-        async (tokenId: NuggId | undefined) => {
-            if (!tokenId || !liveEpoch) return;
-            void updateToken(tokenId, await nuggBackup(tokenId, nuggft, liveEpoch));
-        },
-        [nuggft, liveEpoch, updateToken],
-    );
+	const callback = useCallback(
+		async (tokenId: NuggId | undefined) => {
+			if (!tokenId || !liveEpoch) return;
+			const res = await nuggBackup(tokenId, nuggft, liveEpoch);
+			void updateToken(tokenId, res);
+		},
+		[nuggft, liveEpoch, updateToken],
+	);
 
-    return callback;
+	return callback;
 };

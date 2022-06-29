@@ -19,43 +19,43 @@ import { useUsdUpdater } from './usd';
 import { useEnsUpdater } from './ens';
 
 export default () => {
-    useBlockUpdater();
+	useBlockUpdater();
 
-    useHealthUpdater();
+	useHealthUpdater();
 
-    useDimensionsUpdater();
+	useDimensionsUpdater();
 
-    useMediaUpdater();
+	useMediaUpdater();
 
-    useBackgroundUpdater();
+	useBackgroundUpdater();
 
-    useRpcUpdater();
+	useRpcUpdater();
 
-    useUserUpdater();
+	useUserUpdater();
 
-    useSwapUpdater();
+	useSwapUpdater();
 
-    useMountLogger('ClientUpdater');
+	useMountLogger('ClientUpdater');
 
-    useVisualViewportUpdater();
+	useVisualViewportUpdater();
 
-    useEmitOnKeyboardClose();
+	useEmitOnKeyboardClose();
 
-    useCloseModalOnKeyboardClose();
+	useCloseModalOnKeyboardClose();
 
-    useUpdateTransactionOnEmit();
+	useUpdateTransactionOnEmit();
 
-    useEpochUpdater();
+	useEpochUpdater();
 
-    useOnRouteChange();
+	useOnRouteChange();
 
-    usePollV2();
+	usePollV2();
 
-    useUsdUpdater();
+	useUsdUpdater();
 
-    useDevLogger();
+	useDevLogger();
 
-    useEnsUpdater();
+	useEnsUpdater();
 
-    return null;
+	return null;
 };

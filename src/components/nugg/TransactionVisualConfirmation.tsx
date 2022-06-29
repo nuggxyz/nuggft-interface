@@ -13,59 +13,59 @@ import { CustomError } from '@src/lib/errors';
 import OffersList from './RingAbout/OffersList';
 
 type Props = {
-    hash: ResponseHash | undefined;
-    tokenId?: TokenId;
-    onDismiss?: () => void;
-    ConfirmationView?: (() => JSX.Element) | NamedExoticComponent<unknown>;
-    error?: Error | CustomError | undefined;
+	hash: ResponseHash | undefined;
+	tokenId?: TokenId;
+	onDismiss?: () => void;
+	ConfirmationView?: (() => JSX.Element) | NamedExoticComponent<unknown>;
+	error?: Error | CustomError | undefined;
 };
 
 const TransactionVisualConfirmation: FunctionComponent<Props> = ({
-    hash,
-    tokenId,
-    error,
-    onDismiss,
-    ConfirmationView,
+	hash,
+	tokenId,
+	error,
+	onDismiss,
+	ConfirmationView,
 }) => {
-    const chainId = web3.hook.usePriorityChainId();
-    const address = web3.hook.usePriorityAccount();
+	const chainId = web3.hook.usePriorityChainId();
+	const address = web3.hook.usePriorityAccount();
 
-    const network = web3.hook.useNetworkProvider();
+	const network = web3.hook.useNetworkProvider();
 
-    const transaction = useTransactionManager2(network, hash);
+	const transaction = useTransactionManager2(network, hash);
 
-    React.useEffect(() => {
-        if (hash && !hash.isHash()) {
-            setManualResponse(true);
-        }
-    }, [hash]);
+	React.useEffect(() => {
+		if (hash && !hash.isHash()) {
+			setManualResponse(true);
+		}
+	}, [hash]);
 
-    const [manualResponse, setManualResponse] = React.useState<boolean>(false);
+	const [manualResponse, setManualResponse] = React.useState<boolean>(false);
 
-    // const Con = confetti.useMe({});
-    // const tigger = confetti.useTrigger();
+	// const Con = confetti.useMe({});
+	// const tigger = confetti.useTrigger();
 
-    // const [triggered, setTriggered] = React.useState(false);
+	// const [triggered, setTriggered] = React.useState(false);
 
-    // React.useEffect(() => {
-    //     if (!triggered && transaction?.response && transaction?.receipt) {
-    //         tigger();
-    //         setTriggered(true);
-    //     }
-    // }, [triggered, transaction, tigger]);
+	// React.useEffect(() => {
+	//     if (!triggered && transaction?.response && transaction?.receipt) {
+	//         tigger();
+	//         setTriggered(true);
+	//     }
+	// }, [triggered, transaction, tigger]);
 
-    return (
-        <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-            }}
-        >
-            <AnimatedConfirmation confirmed={!!transaction?.receipt} />
-            {/* {Con} */}
-            {/* <Confetti
+	return (
+		<div
+			style={{
+				width: '100%',
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+			}}
+		>
+			<AnimatedConfirmation confirmed={!!transaction?.receipt} />
+			{/* {Con} */}
+			{/* <Confetti
                 wind={0.02}
                 tweenDuration={500}
                 numberOfPieces={100}
@@ -77,163 +77,163 @@ const TransactionVisualConfirmation: FunctionComponent<Props> = ({
                     opacity: transaction?.response && transaction?.receipt ? 1 : 0,
                 }}
             /> */}
-            {!transaction?.response && !manualResponse && (
-                <div
-                    style={{
-                        display: 'flex',
-                        width: '100%',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        padding: 20,
-                        marginTop: 20,
-                    }}
-                >
-                    <Text
-                        size="large"
-                        textStyle={{
-                            color: lib.colors.primaryColor,
-                            fontWeight: lib.layout.fontWeight.thicc,
-                        }}
-                    >
-                        👀 looking...
-                    </Text>
+			{!transaction?.response && !manualResponse && (
+				<div
+					style={{
+						display: 'flex',
+						width: '100%',
+						flexDirection: 'column',
+						alignItems: 'center',
+						padding: 20,
+						marginTop: 20,
+					}}
+				>
+					<Text
+						size="large"
+						textStyle={{
+							color: lib.colors.primaryColor,
+							fontWeight: lib.layout.fontWeight.thicc,
+						}}
+					>
+						👀 looking...
+					</Text>
 
-                    <Button
-                        buttonStyle={{
-                            borderRadius: lib.layout.borderRadius.large,
-                            background: lib.colors.primaryColor,
-                            marginTop: '20px',
-                        }}
-                        textStyle={{
-                            color: lib.colors.white,
-                        }}
-                        size="large"
-                        onClick={() => {
-                            setManualResponse(true);
-                        }}
-                        label="ok, i confirmed it"
-                    />
-                </div>
-            )}
+					<Button
+						buttonStyle={{
+							borderRadius: lib.layout.borderRadius.large,
+							background: lib.colors.primaryColor,
+							marginTop: '20px',
+						}}
+						textStyle={{
+							color: lib.colors.white,
+						}}
+						size="large"
+						onClick={() => {
+							setManualResponse(true);
+						}}
+						label="ok, i confirmed it"
+					/>
+				</div>
+			)}
 
-            {!transaction?.response && error && (
-                <div
-                    style={{
-                        display: 'flex',
-                        width: '100%',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        padding: 20,
-                        marginTop: 20,
-                    }}
-                >
-                    <Text textStyle={{ color: lib.colors.primaryColor }}>
-                        Error: {error.message}
-                    </Text>
-                </div>
-            )}
+			{!transaction?.response && error && (
+				<div
+					style={{
+						display: 'flex',
+						width: '100%',
+						flexDirection: 'column',
+						alignItems: 'center',
+						padding: 20,
+						marginTop: 20,
+					}}
+				>
+					<Text textStyle={{ color: lib.colors.primaryColor }}>
+						Error: {error.message}
+					</Text>
+				</div>
+			)}
 
-            {(transaction?.response || manualResponse) &&
-                !transaction?.receipt &&
-                chainId &&
-                address && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            width: '100%',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            padding: 20,
-                            marginTop: 20,
-                            marginBottom: 20,
-                        }}
-                    >
-                        <Text
-                            size="large"
-                            textStyle={{
-                                color: lib.colors.etherscanBlue,
-                                fontWeight: lib.layout.fontWeight.thicc,
-                                marginBottom: 20,
-                            }}
-                        >
-                            {hash && hash.isHash() ? shortenTxnHash(hash) : 'submitted'}
-                        </Text>
-                        <Button
-                            className="mobile-pressable-div"
-                            onClick={() =>
-                                hash && hash.isHash()
-                                    ? gotoEtherscan(chainId, 'tx', hash)
-                                    : gotoEtherscan(chainId, 'address', address)
-                            }
-                            label="view on etherscan"
-                            textStyle={{
-                                color: lib.colors.etherscanBlue,
-                                fontWeight: lib.layout.fontWeight.thicc,
-                            }}
-                            size="large"
-                            buttonStyle={{
-                                borderRadius: lib.layout.borderRadius.large,
-                            }}
-                        />
-                        <Text textStyle={{ marginTop: 20 }}>it should be included soon</Text>
-                    </div>
-                )}
+			{(transaction?.response || manualResponse) &&
+				!transaction?.receipt &&
+				chainId &&
+				address && (
+					<div
+						style={{
+							display: 'flex',
+							width: '100%',
+							flexDirection: 'column',
+							alignItems: 'center',
+							padding: 20,
+							marginTop: 20,
+							marginBottom: 20,
+						}}
+					>
+						<Text
+							size="large"
+							textStyle={{
+								color: lib.colors.etherscanBlue,
+								fontWeight: lib.layout.fontWeight.thicc,
+								marginBottom: 20,
+							}}
+						>
+							{hash && hash.isHash() ? shortenTxnHash(hash) : 'submitted'}
+						</Text>
+						<Button
+							className="mobile-pressable-div"
+							onClick={() =>
+								hash && hash.isHash()
+									? gotoEtherscan(chainId, 'tx', hash)
+									: gotoEtherscan(chainId, 'address', address)
+							}
+							label="view on etherscan"
+							textStyle={{
+								color: lib.colors.etherscanBlue,
+								fontWeight: lib.layout.fontWeight.thicc,
+							}}
+							size="large"
+							buttonStyle={{
+								borderRadius: lib.layout.borderRadius.large,
+							}}
+						/>
+						<Text textStyle={{ marginTop: 20 }}>it should be included soon</Text>
+					</div>
+				)}
 
-            {transaction?.response && transaction?.receipt && (
-                <>
-                    {tokenId ? (
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100%',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                padding: 20,
-                                marginTop: 20,
-                                marginBottom: 20,
-                            }}
-                        >
-                            <Label
-                                size="large"
-                                text="boom, you're in the lead"
-                                textStyle={{ color: 'white' }}
-                                containerStyles={{ background: lib.colors.green, marginBottom: 20 }}
-                            />
-                            <OffersList tokenId={tokenId} onlyLeader />
-                        </div>
-                    ) : ConfirmationView ? (
-                        <ConfirmationView />
-                    ) : null}
-                </>
-            )}
+			{transaction?.response && transaction?.receipt && (
+				<>
+					{tokenId ? (
+						<div
+							style={{
+								display: 'flex',
+								width: '100%',
+								flexDirection: 'column',
+								alignItems: 'center',
+								padding: 20,
+								marginTop: 20,
+								marginBottom: 20,
+							}}
+						>
+							<Label
+								size="large"
+								text="boom, you're in the lead"
+								textStyle={{ color: 'white' }}
+								containerStyles={{ background: lib.colors.green, marginBottom: 20 }}
+							/>
+							<OffersList tokenId={tokenId} onlyLeader />
+						</div>
+					) : ConfirmationView ? (
+						<ConfirmationView />
+					) : null}
+				</>
+			)}
 
-            {onDismiss && (
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Button
-                        className="mobile-pressable-div"
-                        label="dismiss"
-                        onClick={onDismiss}
-                        size="smaller"
-                        buttonStyle={{
-                            borderRadius: lib.layout.borderRadius.large,
-                            background: lib.colors.primaryColor,
-                            marginTop: '20px',
-                        }}
-                        textStyle={{
-                            fontWeight: lib.layout.fontWeight.thicc,
+			{onDismiss && (
+				<div
+					style={{
+						display: 'flex',
+						alignItems: 'center',
+					}}
+				>
+					<Button
+						className="mobile-pressable-div"
+						label="dismiss"
+						onClick={onDismiss}
+						size="smaller"
+						buttonStyle={{
+							borderRadius: lib.layout.borderRadius.large,
+							background: lib.colors.primaryColor,
+							marginTop: '20px',
+						}}
+						textStyle={{
+							fontWeight: lib.layout.fontWeight.thicc,
 
-                            color: lib.colors.white,
-                        }}
-                    />
-                </div>
-            )}
-        </div>
-    );
+							color: lib.colors.white,
+						}}
+					/>
+				</div>
+			)}
+		</div>
+	);
 };
 
 export default TransactionVisualConfirmation;
