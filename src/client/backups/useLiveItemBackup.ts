@@ -17,7 +17,9 @@ export default () => {
 		async (tokenId: ItemId | undefined) => {
 			if (!tokenId || !liveEpoch) return;
 			const res = await itemBackup(tokenId, nuggft, liveEpoch);
-			void updateToken(tokenId, res);
+			if (res !== undefined) {
+				void updateToken(tokenId, res);
+			}
 		},
 		[nuggft, updateToken, liveEpoch],
 	);

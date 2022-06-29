@@ -54,6 +54,8 @@ export const useLifecycleData = (tokenId?: TokenId) => {
 					if (swap.count === 1) return Lifecycle.Formality;
 					return Lifecycle.Tryout;
 				}
+				if (swap.owner === web3.constants.DEFAULT_CONTRACTS.NuggftV1)
+					return Lifecycle.Minors;
 				return Lifecycle.Bench;
 			}
 

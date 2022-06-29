@@ -199,7 +199,6 @@ export type TryoutData = { nugg: NuggId; eth: BigNumber };
 
 export interface LiveItem extends ItemIdFactory<Live> {
 	activeSwap?: IsolateItemIdFactory<SwapData>;
-	upcomingActiveSwap?: IsolateItemIdFactory<SwapData>;
 	swaps: IsolateItemIdFactory<SwapData>[];
 	count: number;
 	tryout: {

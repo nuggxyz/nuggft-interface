@@ -29,16 +29,17 @@ const OfferRenderItem: FC<SimpleListRenderItemProps<OfferData, undefined, undefi
 			style={{
 				position: 'relative',
 				padding: '.4rem',
-				borderRadius: lib.layout.borderRadius.smallish,
+				borderRadius: lib.layout.borderRadius.mediumish,
 				display: 'flex',
 				flexDirection: 'column',
 				justifyContent: 'center',
 				alignItems: 'center',
-				width: '100%',
+				width: '90%',
 				marginBottom: '.75rem',
 				zIndex: 1,
 				paddingLeft: '.4rem',
 				background: isPhone ? lib.colors.transparentWhite : lib.colors.transparentLightGrey,
+				boxShadow: lib.layout.boxShadow.basic,
 			}}
 		>
 			<CurrencyText image="eth" value={amount} stopAnimation />
@@ -82,9 +83,9 @@ export default React.memo<{
 	}, [open, others, screenType]);
 
 	const springStyle = useSpring({
-		height: open ? (screenType === 'tablet' ? '100%' : '300px') : '0px',
+		maxHeight: open ? (screenType === 'tablet' ? '100%' : '300px') : '0px',
 		opacity: open ? 1 : 0,
-		padding: open ? '0.75rem' : '0rem',
+		// padding: open ? '0.75rem' : '0rem',
 		pointerEvents: open ? ('auto' as const) : ('none' as const),
 	});
 
@@ -92,21 +93,16 @@ export default React.memo<{
 		return {
 			to: [
 				{
-					...styles.leadingOfferAmount,
 					background: lib.colors.transparentWhite,
 				},
 				{
-					...styles.leadingOfferAmount,
 					background: isPhone
-						? lib.colors.transparentPrimaryColorSuper
+						? lib.colors.transparentWhite
 						: lib.colors.transparentLightGrey,
 				},
 			],
 			from: {
-				...styles.leadingOfferAmount,
-				background: isPhone
-					? lib.colors.transparentPrimaryColorSuper
-					: lib.colors.transparentLightGrey,
+				background: isPhone ? lib.colors.transparentWhite : lib.colors.transparentLightGrey,
 			},
 			config: springConfig.molasses,
 		};
@@ -160,7 +156,20 @@ export default React.memo<{
 					...(isPhone && { marginTop: 30 }),
 				}}
 			>
-				<animated.div style={flashStyle}>
+				<animated.div
+					className="mobile-pressable-div"
+					style={{
+						display: 'flex',
+						justifyContent: 'flex-start',
+						alignItems: 'center',
+						borderRadius: lib.layout.borderRadius.mediumish,
+						padding: '.4rem',
+						width: '100%',
+						marginBottom: '.4rem',
+						...flashStyle,
+					}}
+					onClick={() => setOpen(!open)}
+				>
 					<div
 						style={{
 							display: 'flex',
@@ -168,9 +177,10 @@ export default React.memo<{
 							justifyContent: 'center',
 							alignItems: 'flex-between',
 							background: lib.colors.transparentWhite,
-							borderRadius: lib.layout.borderRadius.smallish,
+							borderRadius: lib.layout.borderRadius.mediumish,
 							padding: '.5rem .6rem',
 							marginRight: '.5rem',
+							boxShadow: lib.layout.boxShadow.basic,
 						}}
 					>
 						<CurrencyText
@@ -180,6 +190,8 @@ export default React.memo<{
 								...styles.leadingOffer,
 								...(isPhone && { color: lib.colors.primaryColor }),
 							}}
+							icon={isPhone}
+							iconSize={15}
 							value={swapCurrency}
 						/>
 					</div>
@@ -198,7 +210,14 @@ export default React.memo<{
 
 					{etherscanRef && (
 						<Button
-							buttonStyle={styles.etherscanBtn}
+							buttonStyle={{
+								position: 'absolute',
+								right: '.5rem',
+								borderRadius: lib.layout.borderRadius.large,
+								background: lib.colors.white,
+								padding: '.3rem',
+								boxShadow: lib.layout.boxShadow.basic,
+							}}
 							onClick={() =>
 								chainId &&
 								web3.config.gotoEtherscan(
@@ -226,54 +245,58 @@ export default React.memo<{
 					</Text>
 				) : (
 					<>
-						<div
-							className="mobile-pressable-div"
-							role="button"
-							aria-hidden
-							onClick={() => setOpen(!open)}
-							style={{
-								borderRadius: lib.layout.borderRadius.large,
-								background: isPhone
-									? lib.colors.primaryColor
-									: lib.colors.nuggBlueText,
-								margin: '10px',
-								display: 'flex',
-								alignItems: 'center',
-								padding: '0.5rem 1rem',
-							}}
-						>
-							<Text
-								size="smaller"
-								textStyle={{
-									fontWeight: lib.layout.fontWeight.thicc,
-
-									color: lib.colors.white,
+						{!isPhone && (
+							<div
+								className="mobile-pressable-div"
+								role="button"
+								aria-hidden
+								onClick={() => setOpen(!open)}
+								style={{
+									borderRadius: lib.layout.borderRadius.large,
+									background: isPhone
+										? lib.colors.primaryColor
+										: lib.colors.nuggBlueText,
+									margin: '10px',
+									display: 'flex',
+									alignItems: 'center',
+									padding: '0.5rem 1rem',
 								}}
 							>
-								{open ? t`hide` : t`all offers`}
-							</Text>
-							{open ? (
-								<IoChevronUpCircle
-									style={{ marginLeft: '4px' }}
-									color="white"
-									size={15}
-								/>
-							) : (
-								<IoChevronDownCircle
-									style={{ marginLeft: '4px' }}
-									color="white"
-									size={15}
-								/>
-							)}
-						</div>
+								<Text
+									size="smaller"
+									textStyle={{
+										fontWeight: lib.layout.fontWeight.thicc,
+
+										color: lib.colors.white,
+									}}
+								>
+									{open ? t`hide` : t`all offers`}
+								</Text>
+								{open ? (
+									<IoChevronUpCircle
+										style={{ marginLeft: '4px' }}
+										color="white"
+										size={15}
+									/>
+								) : (
+									<IoChevronDownCircle
+										style={{ marginLeft: '4px' }}
+										color="white"
+										size={15}
+									/>
+								)}
+							</div>
+						)}
 						<animated.div
 							style={{
 								background: isPhone
-									? lib.colors.transparentPrimaryColorSuper
+									? lib.colors.transparentWhite
 									: lib.colors.transparentGrey,
 								width: '100%',
 								borderRadius: lib.layout.borderRadius.mediumish,
 								...springStyle,
+								overflow: 'visible',
+								paddingTop: '10px',
 							}}
 						>
 							{/* {distribution && (

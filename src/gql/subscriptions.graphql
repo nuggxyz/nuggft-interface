@@ -1,323 +1,317 @@
 subscription liveDotnugg($tokenId: ID!) {
-    nugg(id: $tokenId) {
-        id
-        dotnuggRawCache
-    }
+	nugg(id: $tokenId) {
+		id
+		dotnuggRawCache
+	}
 }
 
 query liveUser($address: ID!) {
-    user(id: $address) {
-        offers(where: { claimed: false }) {
-            id
-            eth
-            swap {
-                id
-                nugg {
-                    id
-                }
-                leader {
-                    id
-                }
-                endingEpoch
-            }
-        }
-        loans(where: { liquidated: false }) {
-            id
-            endingEpoch
-            eth
-            nugg {
-                id
-            }
-            epoch {
-                id
-            }
-        }
-        nuggs(first: 500) {
-            id
-            activeLoan {
-                id
-            }
-            activeSwap {
-                id
-            }
-            ...nuggitems
-            pendingClaim
-            lastTransfer
-            offers(where: { claimed: false }) {
-                id
-                eth
-                swap {
-                    id
-                    sellingItem {
-                        id
-                    }
-                    sellingNuggItem {
-                        id
-                        nugg {
-                            id
-                        }
-                    }
-                    leader {
-                        id
-                    }
-                    endingEpoch
-                }
-            }
-        }
-    }
+	user(id: $address) {
+		offers(where: { claimed: false }) {
+			id
+			eth
+			swap {
+				id
+				nugg {
+					id
+				}
+				leader {
+					id
+				}
+				endingEpoch
+			}
+		}
+		loans(where: { liquidated: false }) {
+			id
+			endingEpoch
+			eth
+			nugg {
+				id
+			}
+			epoch {
+				id
+			}
+		}
+		nuggs(first: 500) {
+			id
+			activeLoan {
+				id
+			}
+			activeSwap {
+				id
+			}
+			...nuggitems
+			pendingClaim
+			lastTransfer
+			offers(where: { claimed: false }) {
+				id
+				eth
+				swap {
+					id
+					sellingItem {
+						id
+					}
+					sellingNuggItem {
+						id
+						nugg {
+							id
+						}
+					}
+					leader {
+						id
+					}
+					endingEpoch
+				}
+			}
+		}
+	}
 }
 
 fragment epochswapdata on Epoch {
-    swaps {
-        ...swapdata
-        nugg {
-            id
-        }
-    }
-    itemSwaps {
-        ...itemswapdata
-        sellingItem {
-            id
-        }
-    }
+	swaps {
+		...swapdata
+		nugg {
+			id
+		}
+	}
+	itemSwaps {
+		...itemswapdata
+		sellingItem {
+			id
+		}
+	}
 }
 
 fragment swapdata on Swap {
-    id
-    endingEpoch
-    epoch {
-        id
-        startblock
-        endblock
-        status
-        starttime
-    }
-    num
-    top
-    topUsd
-    bottom
-    owner {
-        id
-    }
-    startUnix
-    canceledEpoch
-    leader {
-        id
-    }
-    offers(orderBy: eth, orderDirection: desc) {
-        id
-        user {
-            id
-        }
-        incrementX64
-        eth
-        txhash
-        # epoch {
-        #     id
-        # }
-    }
+	id
+	endingEpoch
+	epoch {
+		id
+		startblock
+		endblock
+		status
+		starttime
+	}
+	num
+	top
+	topUsd
+	bottom
+	owner {
+		id
+	}
+	startUnix
+	canceledEpoch
+	leader {
+		id
+	}
+	offers(orderBy: eth, orderDirection: desc) {
+		id
+		user {
+			id
+		}
+		incrementX64
+		eth
+		txhash
+		# epoch {
+		#     id
+		# }
+	}
 }
 
 fragment simpleitemswapdata on ItemSwap {
-    id
-    endingEpoch
-    canceledEpoch
-    num
-    top
-    startUnix
-    owner {
-        id
-    }
-    leader {
-        id
-    }
-    sellingItem {
-        id
-    }
+	id
+	endingEpoch
+	canceledEpoch
+	num
+	top
+	startUnix
+	owner {
+		id
+	}
+	leader {
+		id
+	}
+	sellingItem {
+		id
+	}
 }
 
 fragment itemswapdata on ItemSwap {
-    id
-    endingEpoch
-    epoch {
-        id
-        startblock
-        endblock
-        status
-        starttime
-    }
-    canceledEpoch
-    startUnix
-    num
-    top
-    topUsd
-    bottom
-    owner {
-        id
-    }
-    leader {
-        id
-    }
-    sellingItem {
-        id
-    }
-    offers(orderBy: eth, orderDirection: desc) {
-        id
-        nugg {
-            id
-        }
-        incrementX64
-        eth
-        txhash
-        # epoch {
-        #     id
-        # }
-    }
+	id
+	endingEpoch
+	epoch {
+		id
+		startblock
+		endblock
+		status
+		starttime
+	}
+	canceledEpoch
+	startUnix
+	num
+	top
+	topUsd
+	bottom
+	owner {
+		id
+	}
+	leader {
+		id
+	}
+	sellingItem {
+		id
+	}
+	offers(orderBy: eth, orderDirection: desc) {
+		id
+		nugg {
+			id
+		}
+		incrementX64
+		eth
+		txhash
+		# epoch {
+		#     id
+		# }
+	}
 }
 
 fragment nuggitems on Nugg {
-    items {
-        id
-        count
-        displayed
-        activeSwap {
-            id
-        }
-        item {
-            id
-            feature
-            position
-        }
-    }
+	items {
+		id
+		count
+		displayed
+		activeSwap {
+			id
+		}
+		item {
+			id
+			feature
+			position
+		}
+	}
 }
 
 fragment liveNugg on Nugg {
-    id
-    user {
-        id
-    }
-    ...nuggitems
+	id
+	user {
+		id
+	}
+	...nuggitems
 
-    pendingClaim
-    lastTransfer
-    activeLoan {
-        id
-    }
-    activeSwap {
-        ...swapdata
-    }
-    swaps(orderDirection: desc, orderBy: id) {
-        ...swapdata
-    }
+	pendingClaim
+	lastTransfer
+	activeLoan {
+		id
+	}
+	activeSwap {
+		...swapdata
+	}
+	swaps(orderDirection: desc, orderBy: id) {
+		...swapdata
+	}
 }
 
 fragment liveItem on Item {
-    id
-    count
-    rarityX16
-    activeSwap {
-        ...itemswapdata
-    }
-    upcomingActiveSwap {
-        ...itemswapdata
-    }
-    swaps {
-        ...itemswapdata
-    }
+	id
+	count
+	rarityX16
+	activeSwap {
+		...itemswapdata
+	}
+	swaps {
+		...itemswapdata
+	}
 }
 
 subscription watchLiveItem($tokenId: ID!) {
-    item(id: $tokenId) {
-        ...liveItem
-    }
+	item(id: $tokenId) {
+		...liveItem
+	}
 }
 
 subscription watchLiveNugg($tokenId: ID!) {
-    nugg(id: $tokenId) {
-        ...liveNugg
-        # activeSwap {
-        #     id
-        #     offers(orderBy: eth, orderDirection: desc) {
-        #         user {
-        #             id
-        #         }
-        #         eth
-        #         txhash
-        #     }
-        # }
-    }
+	nugg(id: $tokenId) {
+		...liveNugg
+		# activeSwap {
+		#     id
+		#     offers(orderBy: eth, orderDirection: desc) {
+		#         user {
+		#             id
+		#         }
+		#         eth
+		#         txhash
+		#     }
+		# }
+	}
 }
 
 subscription liveItemOffers($tokenId: String!) {
-    itemOffers(where: { swap_starts_with: $tokenId }, orderBy: eth, orderDirection: desc) {
-        id
-        incrementX64
-        nugg {
-            id
-        }
-        eth
-        txhash
-    }
+	itemOffers(where: { swap_starts_with: $tokenId }, orderBy: eth, orderDirection: desc) {
+		id
+		incrementX64
+		nugg {
+			id
+		}
+		eth
+		txhash
+	}
 }
 
 subscription liveOffers($tokenId: String!) {
-    offers(where: { swap_starts_with: $tokenId }, orderBy: eth, orderDirection: desc) {
-        id
-        incrementX64
-        user {
-            id
-        }
-        eth
-        txhash
-    }
+	offers(where: { swap_starts_with: $tokenId }, orderBy: eth, orderDirection: desc) {
+		id
+		incrementX64
+		user {
+			id
+		}
+		eth
+		txhash
+	}
 }
 
 fragment liveItemSwap on ItemSwap {
-    id
-    sellingNuggItem {
-        id
-        nugg {
-            id
-        }
-    }
-    startUnix
-    offers(orderBy: eth, orderDirection: desc) {
-        id
-        nugg {
-            id
-        }
-        incrementX64
-        eth
-        txhash
-    }
+	id
+	sellingNuggItem {
+		id
+		nugg {
+			id
+		}
+	}
+	startUnix
+	offers(orderBy: eth, orderDirection: desc) {
+		id
+		nugg {
+			id
+		}
+		incrementX64
+		eth
+		txhash
+	}
 }
 
 subscription betterLiveItemOffers($tokenId: ID!) {
-    item(id: $tokenId) {
-        id
-        activeSwap {
-            ...liveItemSwap
-        }
-        upcomingActiveSwap {
-            ...liveItemSwap
-        }
-    }
+	item(id: $tokenId) {
+		id
+		activeSwap {
+			...liveItemSwap
+		}
+	}
 }
 
 subscription betterLiveOffers($tokenId: ID!) {
-    nugg(id: $tokenId) {
-        id
-        activeSwap {
-            id
-            offers(orderBy: eth, orderDirection: desc) {
-                id
-                user {
-                    id
-                }
-                incrementX64
-                eth
-                txhash
-            }
-        }
-    }
+	nugg(id: $tokenId) {
+		id
+		activeSwap {
+			id
+			offers(orderBy: eth, orderDirection: desc) {
+				id
+				user {
+					id
+				}
+				incrementX64
+				eth
+				txhash
+			}
+		}
+	}
 }

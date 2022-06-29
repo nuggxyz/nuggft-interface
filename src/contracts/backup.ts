@@ -87,52 +87,47 @@ export const nuggBackup = async (tokenId: NuggId, nuggft: NuggftV1, epoch: numbe
 export const itemBackup = async (tokenId: ItemId, nuggft: NuggftV1, epoch: number) => {
 	const items = lib.parse.lastItemSwap(await nuggft.lastItemSwap(tokenId.toRawId()));
 
-	const active = items.find((x) => x.endingEpoch === epoch);
-	const upcoming = items.find((x) => x.endingEpoch === epoch + 1);
+	const active = items.find((x) => x.endingEpoch === epoch || x.endingEpoch === epoch + 1);
 
-	const check = await Promise.all(
-		[active, upcoming].map(async (arg) => {
-			if (!arg) return undefined;
+	if (!active) return undefined;
 
-			const agency = lib.parse.agency(
-				await nuggft.itemAgency(arg.tokenId.toRawId(), BigNumber.from(tokenId.toRawId())),
-			);
-			return agency.flag === 0x3
-				? buildTokenIdFactory({
-						tokenId,
-						eth: agency.eth,
-						leader: agency.addressAsBigNumber.toString().toNuggId(),
-						nugg: nuggft.address,
-						endingEpoch: agency.epoch === 0 ? null : agency.epoch,
-						num: Number(0),
-						bottom: BigNumber.from(0),
-						isTryout: false,
-						owner: 'nugg-0' as NuggId,
-						count: 0,
-						isBackup: true,
-						listDataType: 'swap' as const,
-						canceledEpoch: null,
-						offers: [
-							buildTokenIdFactory({
-								eth: agency.eth,
-								tokenId,
-								sellingTokenId: 'nugg-0' as NuggId,
-								isBackup: true,
-								account: agency.addressAsBigNumber.toString().toNuggId(),
-								txhash: null,
-								agencyEpoch: agency.epoch,
-							}),
-						],
-				  })
-				: undefined;
-		}),
+	const agency = lib.parse.agency(
+		await nuggft.itemAgency(active.tokenId.toRawId(), BigNumber.from(tokenId.toRawId())),
 	);
+	const check =
+		agency.flag === 0x3
+			? buildTokenIdFactory({
+					tokenId,
+					eth: agency.eth,
+					leader: agency.addressAsBigNumber.toString().toNuggId(),
+					nugg: nuggft.address,
+					endingEpoch: agency.epoch === 0 ? null : agency.epoch,
+					num: Number(0),
+					bottom: BigNumber.from(0),
+					isTryout: false,
+					owner: 'nugg-0' as NuggId,
+					count: 0,
+					isBackup: true,
+					listDataType: 'swap' as const,
+					canceledEpoch: null,
+					offers: [
+						buildTokenIdFactory({
+							eth: agency.eth,
+							tokenId,
+							sellingTokenId: 'nugg-0' as NuggId,
+							isBackup: true,
+							account: agency.addressAsBigNumber.toString().toNuggId(),
+							txhash: null,
+							agencyEpoch: agency.epoch,
+						}),
+					],
+			  })
+			: undefined;
 
 	return buildTokenIdFactory({
 		tokenId,
-		swaps: [],
-		activeSwap: check[0],
-		upcomingActiveSwap: check[1],
+		...(check ? { activeSwap: check, swaps: [check] } : { activeSwap: undefined, swaps: [] }),
+		activeSwap: check,
 		count: 0,
 		rarity: new Fraction(0),
 		tryout: {

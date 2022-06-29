@@ -352,7 +352,7 @@ const useV2Query = () => {
 			const res = await lazy({ fetchPolicy: 'no-cache' });
 
 			if (res.error) {
-				void rpc(rpcBlock);
+				await rpc(rpcBlock);
 				return;
 			}
 

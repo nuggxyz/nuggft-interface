@@ -103,9 +103,6 @@ export default ({
 			style={{
 				width: '100%',
 				padding: '0px 10px',
-				// display: 'flex',
-				// flexDirection: 'column',
-				// alignItems: 'center',
 			}}
 		>
 			{swap?.isItem() && nuggsThatHaveBid.length > 0 && (

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { plural, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import { animated, config, useSpring } from '@react-spring/web';
 import { useNavigate } from 'react-router';
 import { BigNumber } from '@ethersproject/bignumber';
@@ -10,10 +10,9 @@ import web3 from '@src/web3';
 import client from '@src/client';
 import globalStyles from '@src/lib/globalStyles';
 import { Fraction } from '@src/classes/Fraction';
-import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
-import { Lifecycle, TryoutData } from '@src/client/interfaces';
+import { useDebouncedSeconds } from '@src/client/hooks/useRemaining';
+import { Lifecycle } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-import { Address } from '@src/classes/Address';
 import OffersList from '@src/components/nugg/RingAbout/OffersList';
 import Label from '@src/components/general/Label/Label';
 import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
@@ -35,8 +34,8 @@ import { useLifecycleData } from '@src/client/hooks/useLifecycle';
 
 import { NuggSnapshotRenderItem } from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
-import MobileCaboose from './MobileCaboose';
 import { GraphWarningSmall } from './GraphWarning';
+import MobileCaboose from './MobileCaboose';
 
 const Ver = ({ left, right, label }: { left: number; right: number; label: string }) => {
 	return (
@@ -103,6 +102,8 @@ const Ver = ({ left, right, label }: { left: number; right: number; label: strin
 		</div>
 	);
 };
+
+const twoDigits = (num: number) => String(num).padStart(2, '0');
 
 const Info = ({ tokenId }: { tokenId?: ItemId }) => {
 	const token = client.live.token(tokenId);
@@ -195,113 +196,51 @@ const Info = ({ tokenId }: { tokenId?: ItemId }) => {
 	);
 };
 
-const NextSwap = ({ tokenId }: { tokenId: ItemId }) => {
-	const token = client.live.token(tokenId);
+const Timer = ({ seconds }: { seconds: number }) => {
+	const [trueSeconds] = useDebouncedSeconds(seconds);
 
-	const [selected, setSelected] = React.useState<TryoutData>();
-	const [selectedMyNugg, setSelectedMyNugg] = React.useState<NuggId>();
-
-	const [continued, setContinued] = React.useState<boolean>(false);
-
-	const text = useMemo(() => {
-		if (selected) return t`continue to start auction`;
-		if (token && token.tryout && token.tryout.count && token.tryout.count > 0)
-			return t`accept a nugg's asking price`;
-		if (token && token.tokenId.toRawIdNum() < 1000) return t`bases are non transferable`;
-		return t``;
-	}, [token, selected]);
-
-	const currency = client.usd.useUsdPair(selected ? selected.eth : token?.tryout?.min?.eth);
-
-	const [sty] = useSpring(() => ({
-		from: {
-			maxHeight: '0%',
-			opacity: 0,
+	const [spring] = useSpring(
+		{
+			val: trueSeconds,
+			from: {
+				val: trueSeconds,
+			},
+			config: config.molasses,
 		},
-		to: {
-			opacity: 1,
-			maxHeight: '100%',
-		},
-		config: config.molasses,
-	}));
+		[trueSeconds],
+	);
+
 	return (
-		<animated.div
+		<div
 			style={{
-				...sty,
+				background: lib.colors.transparentWhite,
+				borderRadius: lib.layout.borderRadius.mediumish,
+				boxShadow: lib.layout.boxShadow.basic,
+				WebkitBackdropFilter: 'blur(50px)',
+				backdropFilter: 'blur(50px)',
 				display: 'flex',
-				width: '90%',
 				justifyContent: 'center',
 				flexDirection: 'column',
 				alignItems: 'center',
-				background: lib.colors.transparentWhite,
-				borderRadius: lib.layout.borderRadius.medium,
-				padding: '1rem .5rem',
-				marginTop: '1rem',
+				padding: '.5rem 1rem',
 			}}
 		>
-			<div
+			<animated.span
 				style={{
-					overflow: 'hidden',
-
-					height: 'auto',
-					width: '100%',
-					alignItems: 'center',
-					justifyContent: 'center',
-					display: 'flex',
-					flexDirection: 'column',
+					// margin: 'auto',
+					// position: 'fixed',
+					color: lib.colors.primaryColor,
+					fontSize: '30px',
+					...lib.layout.presets.font.code.semibold,
+					// textAlign: 'center',
+					// width: 78,
 				}}
 			>
-				{token && token.tryout.min && (
-					<div
-						style={{
-							alignItems: 'center',
-							display: 'flex',
-							flexDirection: 'column',
-							marginBottom: '20px',
-							marginTop: '10px',
-						}}
-					>
-						<CurrencyText
-							textStyle={{
-								color: lib.colors.primaryColor,
-								fontSize: '28px',
-							}}
-							image="eth"
-							value={currency}
-							decimals={3}
-						/>
-						<Text
-							textStyle={{
-								fontSize: '13px',
-								color: lib.colors.primaryColor,
-							}}
-						>
-							{selected
-								? t`${selected.nugg.toPrettyId()}'s asking price`
-								: t`minimum price`}
-						</Text>
-					</div>
-				)}
-				<>
-					<Text textStyle={{ color: lib.colors.primaryColor }}>
-						{continued
-							? !selectedMyNugg
-								? t`which nugg should bid on your behalf?`
-								: t`you will bid as ${selectedMyNugg.toPrettyId()}`
-							: text}
-					</Text>
-
-					<MobileCaboose
-						tokenId={tokenId}
-						onSelectNugg={setSelected}
-						onSelectMyNugg={setSelectedMyNugg}
-						onContinue={() => {
-							setContinued(true);
-						}}
-					/>
-				</>
-			</div>
-		</animated.div>
+				{spring.val.to((val) => {
+					return `${twoDigits(Math.floor(val / 60))}:${twoDigits(Math.floor(val % 60))}`;
+				})}
+			</animated.span>
+		</div>
 	);
 };
 
@@ -312,11 +251,9 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 
 		const [lifecycle, swap, swapCurrency] = useLifecycleData(tokenId);
 
-		const { minutes, seconds } = client.epoch.useEpoch(
-			swap?.isPotential ? 0 : swap?.endingEpoch,
-		);
+		const { seconds } = client.epoch.useEpoch(swap?.isPotential ? 0 : swap?.endingEpoch);
 
-		const trueSeconds = useRemainingTrueSeconds(seconds ?? 0);
+		// const trueSeconds = useRemainingTrueSeconds(seconds ?? 0, true);
 		const provider = web3.hook.usePriorityProvider();
 
 		const leaderEns = web3.hook.usePriorityAnyENSName(
@@ -326,11 +263,6 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 
 		const visible = React.useMemo(() => {
 			if (!tokenId || !epoch || !lifecycle) return false;
-
-			if (swap?.isPotential) {
-				if (swap.isItem()) return false;
-				return true;
-			}
 
 			return !!swap;
 		}, [tokenId, swap, lifecycle, epoch]);
@@ -349,6 +281,27 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 			}),
 			[visible],
 		);
+
+		if (swap?.isPotential && swap.isItem()) {
+			return (
+				<animated.div
+					style={{
+						display: 'flex',
+						width: '90%',
+						justifyContent: 'center',
+						flexDirection: 'column',
+						alignItems: 'center',
+						background: lib.colors.transparentWhite,
+						borderRadius: lib.layout.borderRadius.medium,
+						padding: '1rem .5rem',
+						marginTop: '1rem',
+						...sty,
+					}}
+				>
+					<MobileCaboose tokenId={swap.tokenId} />
+				</animated.div>
+			);
+		}
 
 		return (
 			<animated.div
@@ -371,11 +324,12 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 						justifyContent: 'space-around',
 						width: '100%',
 						alignItems: 'center',
+						position: 'relative',
 					}}
 				>
-					{lifecycle === Lifecycle.Minors ||
-					lifecycle === Lifecycle.Bench ||
-					lifecycle === Lifecycle.Concessions ? (
+					{(lifecycle === Lifecycle.Minors ||
+						lifecycle === Lifecycle.Bench ||
+						lifecycle === Lifecycle.Concessions) && (
 						<div
 							style={{
 								alignItems: 'center',
@@ -383,7 +337,7 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 								flexDirection: 'column',
 							}}
 						>
-							<CurrencyText
+							{/* <CurrencyText
 								textStyle={{
 									color: lib.colors.primaryColor,
 									fontSize: '28px',
@@ -401,7 +355,7 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 								{lifecycle === Lifecycle.Minors
 									? t`starting price`
 									: t`asking price`}
-							</Text>
+							</Text> */}
 							{lifecycle !== Lifecycle.Minors && (
 								<div style={{ display: 'flex' }}>
 									<Text
@@ -425,72 +379,56 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 								</div>
 							)}
 						</div>
-					) : (
-						<div
-							style={{
-								alignItems: 'flex-start',
-								display: 'flex',
-								flexDirection: 'column',
-							}}
-						>
-							<CurrencyText
-								textStyle={{
-									color: lib.colors.primaryColor,
-									fontSize: '28px',
-								}}
-								forceEth
-								value={swapCurrency}
-								decimals={3}
-							/>
-							<Text
-								textStyle={{
-									fontSize: '13px',
-									color: lib.colors.primaryColor,
-								}}
-							>
-								{!swap?.isPotential &&
-								leaderEns &&
-								swap?.leader !== Address.ZERO.hash
-									? t`${leaderEns} is leading`
-									: t`starting price`}
-							</Text>
-						</div>
 					)}
-					{swap && !swap.isPotential && swap?.endingEpoch && (
-						<div
-							style={{
-								alignItems: 'flex-end',
+					<div
+						style={{
+							position: 'absolute',
+							top: -8,
+							left: 0,
+							background: lib.colors.transparentWhite,
+							borderRadius: lib.layout.borderRadius.mediumish,
+							boxShadow: lib.layout.boxShadow.basic,
+							WebkitBackdropFilter: 'blur(50px)',
+							backdropFilter: 'blur(50px)',
+							display: 'flex',
+							justifyContent: 'center',
+							flexDirection: 'column',
+							alignItems: 'center',
+							padding: '.5rem .6rem',
+							paddingLeft: '.8rem',
+						}}
+					>
+						<CurrencyText
+							textStyle={{
+								color: lib.colors.primaryColor,
+								fontSize: '30px',
 								display: 'flex',
-								flexDirection: 'column',
+								alignItems: 'center',
+								fontWeight: lib.layout.fontWeight.semibold,
 							}}
-						>
-							<Text
-								textStyle={{
-									fontSize: '13px',
-									color: lib.colors.primaryColor,
-								}}
-							>
-								{t`ending in about`}
-							</Text>
-							<Text
-								textStyle={{
-									color: lib.colors.primaryColor,
-									fontSize: '28px',
-								}}
-							>
-								{!minutes
-									? `${plural(trueSeconds ?? 0, {
-											1: '# second',
-											other: '# seconds',
-									  })}`
-									: `${plural(minutes, {
-											1: '# minute',
-											other: '# minutes',
-									  })}`}
-							</Text>
+							// image="eth"
+							stopAnimationOnStart
+							value={swapCurrency}
+							decimals={3}
+							icon
+							iconSize={22}
+							loadingOnZero
+							// unitStyle={{
+							// 	fontSize: '18px',
+							// 	paddingBottom: 2,
+							// 	marginLeft: -2,
+							// 	...lib.layout.presets.font.main.medium,
+							// }}
+						/>
+					</div>
+
+					{swap && !swap.isPotential && swap?.endingEpoch && (
+						<div style={{ position: 'absolute', top: -8, right: 0 }}>
+							<Timer seconds={seconds ?? 0} />
 						</div>
 					)}
 				</animated.div>
+				<div style={{ marginTop: 40 }} />
 				<OffersList tokenId={tokenId} />
 				<MobileOfferButton tokenId={tokenId} />
 			</animated.div>
@@ -710,34 +648,6 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
 						</div>
 
 						<ActiveSwap tokenId={tokenId} />
-
-						{token && token.isItem() && token.tryout.count > 0 && (
-							<>
-								{token?.activeSwap && (
-									<div
-										style={{
-											display: 'flex',
-											justifyContent: 'flex-start',
-											alignItems: 'flex-start',
-											textAlign: 'left',
-											width: '100%',
-											padding: '2rem 1rem 1rem 1.5rem',
-										}}
-									>
-										<Text
-											size="larger"
-											textStyle={{
-												color: lib.colors.primaryColor,
-												fontWeight: lib.layout.fontWeight.thicc,
-											}}
-										>
-											{t`start the next auction`}
-										</Text>
-									</div>
-								)}
-								<NextSwap tokenId={token.tokenId} />
-							</>
-						)}
 
 						{token && token.isItem() && <Info tokenId={token.tokenId} />}
 

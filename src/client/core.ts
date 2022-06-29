@@ -119,7 +119,6 @@ const core = create(
 				}
 
 				const activeSwap = get().liveTokens[tokenId]?.activeSwap;
-				const upcomingActiveSwap = get().liveTokens[tokenId]?.upcomingActiveSwap;
 
 				if (!activeSwap) {
 					const theswap = get().liveTokens[tokenId]?.swaps.find(
@@ -162,106 +161,7 @@ const core = create(
 						draft.liveTokens[tokenId].activeSwap!.eth = offer.eth;
 						draft.liveTokens[tokenId].activeSwap!.leader = offer.account as NuggId;
 					});
-
-					return;
 				}
-
-				if (!upcomingActiveSwap) {
-					const theswap = get().liveTokens[tokenId]?.swaps.find(
-						(x) => x.owner === offer.sellingTokenId,
-					);
-					if (theswap) {
-						const filteredSwaps = get().liveTokens[tokenId].swaps.filter(
-							(x) => x.owner !== offer.sellingTokenId,
-						);
-
-						// @ts-ignore
-						set((draft) => {
-							draft.liveTokens[tokenId].upcomingActiveSwap = theswap;
-							draft.liveTokens[tokenId].upcomingActiveSwap!.offers = [
-								offer,
-								...theswap.offers,
-							];
-							draft.liveTokens[tokenId].upcomingActiveSwap!.endingEpoch =
-								offer.agencyEpoch;
-							draft.liveTokens[tokenId].upcomingActiveSwap!.eth = offer.eth;
-							draft.liveTokens[tokenId].upcomingActiveSwap!.leader =
-								offer.account as NuggId;
-							draft.liveTokens[tokenId].swaps = filteredSwaps;
-						});
-
-						return;
-					}
-				}
-
-				if (upcomingActiveSwap && upcomingActiveSwap.endingEpoch === offer.agencyEpoch) {
-					let currentOffers = upcomingActiveSwap.offers;
-
-					const currentUserOffer = currentOffers.find((o) => o.account === offer.account);
-
-					if (currentUserOffer) {
-						if (currentUserOffer.eth.lt(offer.eth)) return;
-
-						currentOffers = [
-							offer,
-							...currentOffers.filter((o) => o.account !== offer.account),
-						].sort((a, b) => (a.eth.gt(b.eth) ? 1 : -1));
-
-						// @ts-ignore
-						set((draft) => {
-							draft.liveTokens[tokenId].upcomingActiveSwap!.offers = currentOffers;
-							draft.liveTokens[tokenId].upcomingActiveSwap!.endingEpoch =
-								offer.agencyEpoch;
-							draft.liveTokens[tokenId].upcomingActiveSwap!.eth = offer.eth;
-							draft.liveTokens[tokenId].upcomingActiveSwap!.leader =
-								offer.account as NuggId;
-						});
-					}
-				}
-
-				// set((draft) => {
-
-				//     draft.liveTokens[tokenId] = draft.liveTokens[tokenId].merge(
-				//         offers,
-				//         'user',
-				//         (a, b) => b.eth.gt(a.eth),
-				//         (a, b) => (a.eth.gt(b.eth) ? 1 : -1),
-				//     );
-				//         if (draft.liveTokens[tokenId].activeSwap) {
-				//             const pre = draft.liveTokens[tokenId].activeSwap.offers;
-				//             draft.liveTokens[tokenId].activeSwap.offers = draft.liveOffers[tokenId].merge(
-				//                 draft.liveTokens[tokenId].activeSwap.offers,
-				//         }
-
-				//     // @ts-ignore
-				//     // draft.liveTokens[tokenId] = { ...draft.liveTokens[tokenId] };
-
-				//     // this makes sure that token rerenders too when a new offer comes in
-				//     if (offers.length > 0) {
-				//         const token = get().liveTokens[tokenId];
-				//         const tmpOffer = offers[0];
-
-				//         if (token && token.type === 'item' && !token.activeSwap) {
-				//             const preloadedSwap = token.swaps.find(
-				//                 (x) => x.owner === tmpOffer.sellingTokenId,
-				//             );
-
-				//             const nextEpoch = epoch + 1;
-
-				//             if (preloadedSwap && nextEpoch) {
-				//                 draft.liveTokens[tokenId].activeSwap = {
-				//                     ...preloadedSwap,
-				//                     endingEpoch: nextEpoch,
-				//                     count: 1,
-				//                 };
-				//             }
-				//         } else if (epoch && !!draft.liveTokens[tokenId].activeSwap) {
-				//             // @ts-ignore
-
-				//             draft.liveTokens[tokenId].activeSwap.endingEpoch = epoch + 1;
-				//         }
-				//     }
-				// });
 			}
 
 			function updateToken(tokenId: TokenId, data: LiveToken): void {

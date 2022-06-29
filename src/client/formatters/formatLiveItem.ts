@@ -34,15 +34,7 @@ const calc = (item: LiveItemFragment) => {
 		rarity: new Fraction2x16(item.rarityX16),
 		isBackup: false,
 		activeSwap: item.activeSwap ? formatSwapData(item.activeSwap, tokenId) : undefined,
-		upcomingActiveSwap: item.upcomingActiveSwap
-			? formatSwapData(item.upcomingActiveSwap, tokenId)
-			: undefined,
 	});
-
-	if (!tmp.activeSwap && tmp.upcomingActiveSwap) {
-		tmp.activeSwap = tmp.upcomingActiveSwap;
-		tmp.upcomingActiveSwap = undefined;
-	}
 
 	const tryout = formatTryout(tmp.swaps);
 

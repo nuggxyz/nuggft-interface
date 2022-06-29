@@ -1,177 +1,173 @@
 query getAllNuggs(
-    $first: Int
-    $skip: Int
-    $orderDirection: OrderDirection
-    $orderBy: Nugg_orderBy
-    $where: Nugg_filter
+	$first: Int
+	$skip: Int
+	$orderDirection: OrderDirection
+	$orderBy: Nugg_orderBy
+	$where: Nugg_filter
 ) {
-    nuggs(
-        where: $where
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        first: $first
-        skip: $skip
-    ) {
-        id
-        # dotnuggRawCache
-        idnum
-    }
+	nuggs(
+		where: $where
+		orderBy: $orderBy
+		orderDirection: $orderDirection
+		first: $first
+		skip: $skip
+	) {
+		id
+		# dotnuggRawCache
+		idnum
+	}
 }
-# query getNuggItemSince($nuggItemId: ID! ) {
-#     nuggItem({
 
-#     }
-# }
 query getNuggSnapshots($tokenId: ID!) {
-    nugg(id: $tokenId) {
-        id
-        snapshots {
-            id
-            snapshotNum
-            block
-            user {
-                id
-            }
-            chunk
-            chunkError
-            proof
-        }
-    }
+	nugg(id: $tokenId) {
+		id
+		snapshots {
+			id
+			snapshotNum
+			block
+			user {
+				id
+			}
+			chunk
+			chunkError
+			proof
+		}
+	}
 }
 
 query getAllNuggsSearch(
-    $first: Int
-    $skip: Int
-    $orderDirection: OrderDirection
-    $orderBy: Nugg_orderBy
-    $where: Nugg_filter
+	$first: Int
+	$skip: Int
+	$orderDirection: OrderDirection
+	$orderBy: Nugg_orderBy
+	$where: Nugg_filter
 ) {
-    nuggs(
-        where: $where
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        first: $first
-        skip: $skip
-    ) {
-        id
-        user {
-            id
-        }
-        dotnuggRawCache
-        items {
-            id
-        }
-        activeLoan {
-            id
-        }
-        activeSwap {
-            id
-        }
-    }
+	nuggs(
+		where: $where
+		orderBy: $orderBy
+		orderDirection: $orderDirection
+		first: $first
+		skip: $skip
+	) {
+		id
+		user {
+			id
+		}
+		dotnuggRawCache
+		items {
+			id
+		}
+		activeLoan {
+			id
+		}
+		activeSwap {
+			id
+		}
+	}
 }
 
 query getDotnuggNugg($tokenId: ID!) {
-    nugg(id: $tokenId) {
-        id
-        dotnuggRawCache
-    }
+	nugg(id: $tokenId) {
+		id
+		dotnuggRawCache
+	}
 }
 
 query getDotnuggItem($tokenId: ID!) {
-    item(id: $tokenId) {
-        id
-        dotnuggRawCache
-    }
+	item(id: $tokenId) {
+		id
+		dotnuggRawCache
+	}
 }
 
 query getAllItems(
-    $first: Int
-    $skip: Int
-    $orderDirection: OrderDirection
-    $orderBy: Item_orderBy
-    $where: Item_filter
+	$first: Int
+	$skip: Int
+	$orderDirection: OrderDirection
+	$orderBy: Item_orderBy
+	$where: Item_filter
 ) {
-    items(
-        where: $where
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        first: $first
-        skip: $skip
-    ) {
-        id
-        # dotnuggRawCache
-        idnum
-    }
+	items(
+		where: $where
+		orderBy: $orderBy
+		orderDirection: $orderDirection
+		first: $first
+		skip: $skip
+	) {
+		id
+		# dotnuggRawCache
+		idnum
+	}
 }
 
 query getAllItemsSearch(
-    $first: Int
-    $skip: Int
-    $orderDirection: OrderDirection
-    $orderBy: Item_orderBy
-    $where: Item_filter
+	$first: Int
+	$skip: Int
+	$orderDirection: OrderDirection
+	$orderBy: Item_orderBy
+	$where: Item_filter
 ) {
-    items(
-        where: $where
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        first: $first
-        skip: $skip
-    ) {
-        ...liveItem
-    }
+	items(
+		where: $where
+		orderBy: $orderBy
+		orderDirection: $orderDirection
+		first: $first
+		skip: $skip
+	) {
+		...liveItem
+	}
 }
 
 query getLiveNugg($tokenId: ID!) {
-    nugg(id: $tokenId) {
-        ...liveNugg
-    }
+	nugg(id: $tokenId) {
+		...liveNugg
+	}
 }
 
 query getLiveItem($tokenId: ID!) {
-    item(id: $tokenId) {
-        ...liveItem
-    }
+	item(id: $tokenId) {
+		...liveItem
+	}
 }
 
 query health {
-    _meta {
-        block {
-            number
-        }
-    }
+	_meta {
+		block {
+			number
+		}
+	}
 }
 
 query getNuggsThatHold($first: Int, $skip: Int, $orderDirection: OrderDirection, $itemId: String!) {
-    nuggItems(
-        orderBy: displayedSinceUnix
-        orderDirection: $orderDirection
-        first: $first
-        skip: $skip
-        where: { item: $itemId, displayed: true }
-    ) {
-        id
-        nugg {
-            id
-        }
-        displayedSinceUnix
-        displayedSinceBlock
-    }
+	nuggItems(
+		orderBy: displayedSinceUnix
+		orderDirection: $orderDirection
+		first: $first
+		skip: $skip
+		where: { item: $itemId, displayed: true }
+	) {
+		id
+		nugg {
+			id
+		}
+		displayedSinceUnix
+		displayedSinceBlock
+	}
 }
 
 query getSwapData($tokenId: ID!) {
-    nugg(id: $tokenId) {
-        id
-        activeSwap {
-            ...swapdata
-        }
-    }
+	nugg(id: $tokenId) {
+		id
+		activeSwap {
+			...swapdata
+		}
+	}
 }
 query getItemSwapData($tokenId: ID!) {
-    item(id: $tokenId) {
-        id
-        activeSwap {
-            ...itemswapdata
-        }
-    }
+	item(id: $tokenId) {
+		id
+		activeSwap {
+			...itemswapdata
+		}
+	}
 }
