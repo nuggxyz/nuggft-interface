@@ -44,7 +44,14 @@ const TryoutRenderItem: FC<GodListRenderItemProps<MyNuggToPickFrom, undefined, n
 			/>
 
 			{item?.eth && (
-				<CurrencyText textStyle={{ fontSize: '10px' }} value={usd} stopAnimation />
+				<CurrencyText
+					textStyle={{ fontSize: '10px', marginRight: -20 }}
+					value={usd}
+					stopAnimation
+					decimals={3}
+					icon
+					iconSize={15}
+				/>
 			)}
 		</div>
 	);
@@ -103,6 +110,7 @@ export default ({
 			style={{
 				width: '100%',
 				padding: '0px 10px',
+				margin: '10px 0px',
 			}}
 		>
 			{swap?.isItem() && nuggsThatHaveBid.length > 0 && (
@@ -116,12 +124,14 @@ export default ({
 					itemHeight={90}
 					action={setSelectedMyNuggIndex}
 					style={{
-						marginTop: '20px',
+						marginTop: -5,
+						marginBottom: '20px',
 						width: '100%',
-						background: lib.colors.transparentLightGrey,
+						background: lib.colors.transparentWhite,
 						height: '100px',
 						padding: '15px 0rem .4rem',
 						borderRadius: lib.layout.borderRadius.medium,
+						boxShadow: lib.layout.boxShadow.basic,
 					}}
 				/>
 			)}
@@ -134,6 +144,7 @@ export default ({
 							? lib.colors.orange
 							: lib.colors.primaryColor,
 					padding: '10px 20px',
+					boxShadow: lib.layout.boxShadow.basic,
 				}}
 				textStyle={{
 					...lib.layout.presets.font.main.thicc,
@@ -198,6 +209,10 @@ export default ({
 						? t`swap is over`
 						: isUndefinedOrNullOrStringEmpty(address)
 						? t`connect wallet`
+						: swap.isItem()
+						? !nuggToBuyFor
+							? t`pick your nugg`
+							: t`pick ${nuggToBuyFor.toPrettyId()}`
 						: t`place offer`
 				}
 			/>

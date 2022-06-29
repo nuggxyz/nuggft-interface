@@ -197,29 +197,29 @@ const CurrencyText: React.FC<BalanceProps> = ({
 				{icon && (
 					<div
 						style={{
-							width: iconSize + 10,
-							height: iconSize + 10,
+							width: iconSize,
+							height: iconSize,
 							display: 'flex',
 							alignItems: 'center',
 							justifyContent: 'center',
-							background: lib.colors.transparentWhite,
+							background: lib.colors.white,
 							borderRadius: 10,
-							WebkitBackdropFilter: 'blur(30px)',
-							backdropFilter: 'blur(30px)',
+							WebkitBackdropFilter: 'blur(50px)',
+							backdropFilter: 'blur(50px)',
 							boxShadow: lib.layout.boxShadow.centerDark,
 							// marginRight: 7,
-							padding: 6,
+							// padding: 6,
 						}}
 					>
 						{unit === 'USD' ? (
 							<IoLogoUsd
 								color={lib.colors.primaryColor}
-								style={{ width: '100%', height: '100%' }}
+								style={{ width: '65%', height: '65%' }}
 							/>
 						) : (
 							<SiEthereum
 								color={lib.colors.primaryColor}
-								style={{ width: '100%', height: '100%' }}
+								style={{ width: '65%', height: '65%' }}
 							/>
 						)}
 					</div>

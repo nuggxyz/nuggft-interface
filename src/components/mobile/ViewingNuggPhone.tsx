@@ -31,6 +31,7 @@ import GodList from '@src/components/general/List/GodList';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 import TheRingLight from '@src/components/nugg/TheRing/TheRingLight';
 import { useLifecycleData } from '@src/client/hooks/useLifecycle';
+import { DEFAULT_CONTRACTS } from '@src/web3/constants';
 
 import { NuggSnapshotRenderItem } from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
@@ -258,7 +259,11 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 
 		const leaderEns = web3.hook.usePriorityAnyENSName(
 			token && token.type === 'item' ? 'nugg' : provider,
-			swap?.isPotential ? undefined : swap?.leader || undefined,
+			swap?.isPotential
+				? swap.owner === DEFAULT_CONTRACTS.NuggftV1
+					? DEFAULT_CONTRACTS.NuggftV1
+					: undefined
+				: swap?.leader || undefined,
 		);
 
 		const visible = React.useMemo(() => {
@@ -282,6 +287,14 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 			[visible],
 		);
 
+		const MemoizedTimer = React.useMemo(() => {
+			return swap && !swap.isPotential && swap?.endingEpoch ? (
+				<div>
+					<Timer seconds={seconds ?? 0} />
+				</div>
+			) : null;
+		}, [swap, seconds]);
+
 		if (swap?.isPotential && swap.isItem()) {
 			return (
 				<animated.div
@@ -292,7 +305,7 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 						flexDirection: 'column',
 						alignItems: 'center',
 						background: lib.colors.transparentWhite,
-						borderRadius: lib.layout.borderRadius.medium,
+						borderRadius: lib.layout.borderRadius.largish,
 						padding: '1rem .5rem',
 						marginTop: '1rem',
 						...sty,
@@ -312,79 +325,22 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 					flexDirection: 'column',
 					alignItems: 'center',
 					background: lib.colors.transparentWhite,
-					borderRadius: lib.layout.borderRadius.medium,
-					padding: '1rem .5rem',
+					borderRadius: lib.layout.borderRadius.largish,
+					padding: '10px',
 					marginTop: '1rem',
 					...sty,
 				}}
 			>
-				<animated.div
+				<div
 					style={{
 						display: 'flex',
-						justifyContent: 'space-around',
+						justifyContent: MemoizedTimer ? 'space-between' : 'center',
 						width: '100%',
 						alignItems: 'center',
-						position: 'relative',
 					}}
 				>
-					{(lifecycle === Lifecycle.Minors ||
-						lifecycle === Lifecycle.Bench ||
-						lifecycle === Lifecycle.Concessions) && (
-						<div
-							style={{
-								alignItems: 'center',
-								display: 'flex',
-								flexDirection: 'column',
-							}}
-						>
-							{/* <CurrencyText
-								textStyle={{
-									color: lib.colors.primaryColor,
-									fontSize: '28px',
-								}}
-								forceEth
-								value={swapCurrency}
-								decimals={3}
-							/>
-							<Text
-								textStyle={{
-									fontSize: '13px',
-									color: lib.colors.primaryColor,
-								}}
-							>
-								{lifecycle === Lifecycle.Minors
-									? t`starting price`
-									: t`asking price`}
-							</Text> */}
-							{lifecycle !== Lifecycle.Minors && (
-								<div style={{ display: 'flex' }}>
-									<Text
-										size="large"
-										textStyle={{
-											paddingTop: '1rem',
-											paddingRight: '.5em',
-										}}
-									>
-										{t`for sale by`}
-									</Text>
-									<Text
-										loading={!leaderEns}
-										size="large"
-										textStyle={{
-											paddingTop: '1rem',
-										}}
-									>
-										{leaderEns || 'XXXX...XXXX'}
-									</Text>
-								</div>
-							)}
-						</div>
-					)}
 					<div
 						style={{
-							position: 'absolute',
-							top: -8,
-							left: 0,
 							background: lib.colors.transparentWhite,
 							borderRadius: lib.layout.borderRadius.mediumish,
 							boxShadow: lib.layout.boxShadow.basic,
@@ -406,29 +362,58 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 								alignItems: 'center',
 								fontWeight: lib.layout.fontWeight.semibold,
 							}}
-							// image="eth"
 							stopAnimationOnStart
 							value={swapCurrency}
 							decimals={3}
 							icon
-							iconSize={22}
+							iconSize={32}
 							loadingOnZero
-							// unitStyle={{
-							// 	fontSize: '18px',
-							// 	paddingBottom: 2,
-							// 	marginLeft: -2,
-							// 	...lib.layout.presets.font.main.medium,
-							// }}
 						/>
 					</div>
 
-					{swap && !swap.isPotential && swap?.endingEpoch && (
-						<div style={{ position: 'absolute', top: -8, right: 0 }}>
-							<Timer seconds={seconds ?? 0} />
-						</div>
-					)}
-				</animated.div>
-				<div style={{ marginTop: 30 }} />
+					{MemoizedTimer}
+				</div>
+				{(lifecycle === Lifecycle.Bench ||
+					lifecycle === Lifecycle.Concessions ||
+					lifecycle === Lifecycle.Minors) && (
+					<div
+						style={{
+							alignItems: 'center',
+							display: 'flex',
+							width: '100%',
+							justifyContent: 'center',
+							marginBottom: 10,
+							marginTop: 15,
+						}}
+					>
+						<Text
+							size="medium"
+							textStyle={{
+								...lib.layout.presets.font.main.normal,
+							}}
+						>
+							{t`owned by`}
+						</Text>
+						<Text
+							loading={!leaderEns}
+							size="large"
+							textStyle={{
+								// background: lib.colors.transparentWhite,
+								// borderRadius: lib.layout.borderRadius.mediumish,
+								// boxShadow: lib.layout.boxShadow.basic,
+								// WebkitBackdropFilter: 'blur(50px)',
+								// backdropFilter: 'blur(50px)',
+								// padding: '.5rem .6rem',
+								// margin: 5,
+								marginLeft: 5,
+								...lib.layout.presets.font.main.thicc,
+							}}
+						>
+							{leaderEns || 'XXXX...XXXX'}
+						</Text>
+					</div>
+				)}
+
 				<OffersList tokenId={tokenId} />
 				<MobileOfferButton tokenId={tokenId} />
 			</animated.div>

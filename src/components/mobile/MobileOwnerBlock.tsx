@@ -189,7 +189,7 @@ export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
 						decimals={3}
 						loadingOnZero
 						icon
-						iconSize={25}
+						iconSize={35}
 						// unitStyle={{
 						// 	fontSize: '18px',
 						// 	paddingBottom: 4,

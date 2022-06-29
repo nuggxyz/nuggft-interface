@@ -167,51 +167,42 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
 
 	return (
 		<>
-			<div
-				style={{
-					overflow: 'hidden',
-
-					height: 'auto',
-					width: '100%',
-					alignItems: 'center',
-					justifyContent: 'center',
-					display: 'flex',
-					flexDirection: 'column',
-				}}
-			>
-				{token && token.tryout.min && (
-					<div
-						style={{
-							alignItems: 'center',
+			{token && token.tryout.min && (
+				<div
+					style={{
+						background: lib.colors.transparentWhite,
+						borderRadius: lib.layout.borderRadius.mediumish,
+						boxShadow: lib.layout.boxShadow.basic,
+						WebkitBackdropFilter: 'blur(50px)',
+						backdropFilter: 'blur(50px)',
+						display: 'flex',
+						justifyContent: 'center',
+						flexDirection: 'column',
+						alignItems: 'center',
+						padding: '.5rem .6rem',
+						paddingLeft: '.8rem',
+					}}
+				>
+					<CurrencyText
+						textStyle={{
+							color: lib.colors.primaryColor,
+							fontSize: '30px',
 							display: 'flex',
-							flexDirection: 'column',
-							marginBottom: '20px',
-							marginTop: '10px',
+							alignItems: 'center',
+							fontWeight: lib.layout.fontWeight.semibold,
 						}}
-					>
-						<CurrencyText
-							textStyle={{
-								color: lib.colors.primaryColor,
-								fontSize: '28px',
-							}}
-							image="eth"
-							value={currency}
-							decimals={3}
-						/>
-						<Text
-							textStyle={{
-								fontSize: '13px',
-								color: lib.colors.primaryColor,
-							}}
-						>
-							{selected ? t`selected price` : t`minimum price`}
-						</Text>
-					</div>
-				)}{' '}
-			</div>
+						stopAnimationOnStart
+						value={currency}
+						decimals={3}
+						icon
+						iconSize={32}
+						loadingOnZero
+					/>
+				</div>
+			)}
 			<div
 				style={{
-					marginTop: isPhone ? 0 : '20px',
+					marginTop: isPhone ? '20px' : '20px',
 					width: '90%',
 					display: 'flex',
 					flexDirection: 'column',
@@ -295,7 +286,7 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
 							continued
 								? selectedMyNugg
 									? t`review`
-									: t`select a nugg from your roost`
+									: t`select your nugg`
 								: mustWaitToBid
 								? t`wait ${minutes} min`
 								: isPhone && isUndefinedOrNullOrStringEmpty(address)

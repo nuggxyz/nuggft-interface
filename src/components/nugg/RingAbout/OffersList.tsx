@@ -153,7 +153,7 @@ export default React.memo<{
 					width: '95%',
 					background: 'transparent',
 					position: 'relative',
-					...(isPhone && { marginTop: 30 }),
+					...(isPhone && { marginTop: 15 }),
 				}}
 			>
 				<animated.div
@@ -191,7 +191,7 @@ export default React.memo<{
 								...(isPhone && { color: lib.colors.primaryColor }),
 							}}
 							icon={isPhone}
-							iconSize={15}
+							iconSize={25}
 							value={swapCurrency}
 						/>
 					</div>
