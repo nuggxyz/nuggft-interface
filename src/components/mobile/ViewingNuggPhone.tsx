@@ -194,7 +194,7 @@ const Info = ({ tokenId }: { tokenId?: ItemId }) => {
 	);
 };
 
-const GradientButt = ({
+export const GradientButt = ({
 	onClick,
 	children,
 	style,

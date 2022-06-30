@@ -10,13 +10,15 @@ import './styles/pulse.css';
 
 import web3 from './web3';
 import I18N from './i18n';
-import App from './pages/App';
 import ErrorBoundary from './components/general/ErrorBoundry';
 import useMountLogger from './hooks/useMountLogger';
 import useClientUpdater from './client/useClientUpdater';
 import useAnalyticsReporter from './lib/analytics/useAnalyticsReporter';
 
 global.Buffer = global.Buffer || (await import('buffer')).Buffer;
+
+const App = React.lazy(() => import('@src/pages/App'));
+const Landing = React.lazy(() => import('@src/pages/landing/Landing'));
 
 const GlobalHooks = () => {
 	useMountLogger('GlobalHooks');
@@ -40,20 +42,31 @@ const container = document.getElementById('root') as HTMLElement;
 
 const root = createRoot(container);
 
+const BigRouter = React.memo(() => {
+	if (process.env.NUGG_APP_SIDE_APP === 'landing') {
+		return <Landing />;
+	}
+	return (
+		<ApolloProvider client={web3.config.apolloClient}>
+			<GlobalHooks />
+
+			<ErrorBoundary>
+				<I18N>
+					<ContentBlock>
+						<App />
+					</ContentBlock>
+				</I18N>
+			</ErrorBoundary>
+		</ApolloProvider>
+	);
+});
+
 root.render(
 	<HashRouter>
-		<ApolloProvider client={web3.config.apolloClient}>
-			<React.StrictMode>
-				<GlobalHooks />
-
-				<ErrorBoundary>
-					<I18N>
-						<ContentBlock>
-							<App />
-						</ContentBlock>
-					</I18N>
-				</ErrorBoundary>
-			</React.StrictMode>
-		</ApolloProvider>
+		<React.StrictMode>
+			<React.Suspense>
+				<BigRouter />
+			</React.Suspense>
+		</React.StrictMode>
 	</HashRouter>,
 );

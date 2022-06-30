@@ -12,39 +12,39 @@ import HotRotateOModalMobile from './HotRotateOModalMobile';
 import NameModalMobile from './NameModalMobile';
 
 export const ModalSwitchMobile = () => {
-    const data = client.modal.useData();
+	const data = client.modal.useData();
 
-    switch (data?.modalType) {
-        case ModalEnum.Offer:
-            return <OfferModalMobile data={data} />;
-        case ModalEnum.Sell:
-            return <SellNuggOrItemModalMobile data={data} />;
-        case ModalEnum.Claim:
-            return <ClaimModalMobile data={data} />;
-        case ModalEnum.RotateO:
-            return <HotRotateOModalMobile data={data} />;
-        case ModalEnum.Name:
-            return <NameModalMobile />;
-        case undefined:
-        default:
-            return null;
-    }
+	switch (data?.modalType) {
+		case ModalEnum.Offer:
+			return <OfferModalMobile data={data} />;
+		case ModalEnum.Sell:
+			return <SellNuggOrItemModalMobile data={data} />;
+		case ModalEnum.Claim:
+			return <ClaimModalMobile data={data} />;
+		case ModalEnum.RotateO:
+			return <HotRotateOModalMobile data={data} />;
+		case ModalEnum.Name:
+			return <NameModalMobile />;
+		case undefined:
+		default:
+			return null;
+	}
 };
 
 const ModalWrapperMobile: FC<unknown> = () => {
-    const isOpen = client.modal.useOpen();
+	const isOpen = client.modal.useOpen();
 
-    const style = useAnimateOverlayBackdrop(isOpen, { zIndex: 999000 });
+	const style = useAnimateOverlayBackdrop(isOpen, { zIndex: 999000 });
 
-    return isOpen ? (
-        <animated.div
-            style={{
-                ...style,
-            }}
-        >
-            <ModalSwitchMobile />
-        </animated.div>
-    ) : null;
+	return isOpen ? (
+		<animated.div
+			style={{
+				...style,
+			}}
+		>
+			<ModalSwitchMobile />
+		</animated.div>
+	) : null;
 };
 
 export default React.memo(ModalWrapperMobile);

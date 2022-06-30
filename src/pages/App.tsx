@@ -10,7 +10,7 @@ import NavigationWrapper from '@src/components/nugg/PageLayout/NavigationWrapper
 import { ViewingNuggPhoneController } from '@src/components/mobile/ViewingNuggPhone';
 
 const MemoizedViewingNuggPhone = React.lazy(
-    () => import('@src/components/mobile/ViewingNuggPhoneWrapper'),
+	() => import('@src/components/mobile/ViewingNuggPhoneWrapper'),
 );
 const HotRotateO = React.lazy(() => import('@src/pages/hot-rotate-o/HotRotateOWrapper'));
 const SearchOverlay = React.lazy(() => import('@src/pages/search/SearchOverlayWrapper'));
@@ -18,58 +18,56 @@ const SwapPageWrapper = React.lazy(() => import('@src/pages/swap/SwapPageWrapper
 const GlobalModal = React.lazy(() => import('@src/components/modals/GlobalModal'));
 
 const Router = () => {
-    const { isPhone, screen } = useDimensions();
+	const { isPhone, screen } = useDimensions();
 
-    const epoch = client.epoch.active.useId();
+	const epoch = client.epoch.active.useId();
 
-    const route = useRoutes([
-        {
-            path: '/',
-            element: <Outlet />,
-            children: [
-                {
-                    path: 'edit/:id',
-                    element: <HotRotateO screen={screen} />,
-                },
-                ...(isPhone
-                    ? []
-                    : [
-                          {
-                              path: 'view/*',
-                              element: <SearchOverlay isPhone={isPhone} />,
-                          },
-                      ]),
+	const route = useRoutes([
+		{
+			path: '/',
+			element: <Outlet />,
+			children: [
+				{
+					path: 'edit/:id',
+					element: <HotRotateO screen={screen} />,
+				},
+				...(isPhone
+					? []
+					: [
+							{
+								path: 'view/*',
+								element: <SearchOverlay isPhone={isPhone} />,
+							},
+					  ]),
 
-                { path: 'swap/:id', element: isPhone ? <ViewingNuggPhoneController /> : null },
-                { path: 'live', element: null },
-                { path: '*', element: <Navigate to={!isPhone ? `swap/${epoch || ''}` : 'live'} /> },
-            ],
-        },
-    ]);
+				{ path: 'swap/:id', element: isPhone ? <ViewingNuggPhoneController /> : null },
+				{ path: 'live', element: null },
+				{ path: '*', element: <Navigate to={!isPhone ? `swap/${epoch || ''}` : 'live'} /> },
+			],
+		},
+	]);
 
-    return (
-        <React.Suspense fallback={<div />}>
-            <GlobalModal isPhone={isPhone} />
-            {route}
-            <MemoizedViewingNuggPhone isPhone={isPhone} />
-        </React.Suspense>
-    );
+	return (
+		<>
+			<GlobalModal isPhone={isPhone} />
+			{route}
+			<MemoizedViewingNuggPhone isPhone={isPhone} />
+		</>
+	);
 };
 
 const App = () => {
-    const { isPhone, screen } = useDimensions();
+	const { isPhone, screen } = useDimensions();
 
-    return (
-        <>
-            <ToastContainer />
-            <Helmet />
-            <NavigationWrapper isPhone={isPhone} />
-            <Router />
-            <React.Suspense>
-                <SwapPageWrapper screen={screen} />
-            </React.Suspense>
-        </>
-    );
+	return (
+		<>
+			<ToastContainer />
+			<Helmet />
+			<NavigationWrapper isPhone={isPhone} />
+			<Router />
+			<SwapPageWrapper screen={screen} />
+		</>
+	);
 };
 
 export default App;
