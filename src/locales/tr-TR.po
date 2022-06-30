@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-06-27 15:26+0000\n"
+"POT-Creation-Date: 2022-06-29 23:46+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Turkish\n"
-"PO-Revision-Date: 2022-06-28 06:05\n"
+"PO-Revision-Date: 2022-06-30 06:05\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -160,7 +160,6 @@ msgstr ""
 msgid "Claims"
 msgstr ""
 
-#: src/components/nugg/RingAbout/SideCar.tsx
 #: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
 msgid "Coming Up"
 msgstr ""
@@ -730,7 +729,7 @@ msgstr ""
 msgid "a share"
 msgstr ""
 
-#: src/components/mobile/ViewingNuggPhone.tsx
+#: src/components/mobile/MobileCaboose.tsx
 msgid "accept a nugg's asking price"
 msgstr ""
 
@@ -751,6 +750,10 @@ msgstr ""
 msgid "all interactions with the items happen via the nuggs"
 msgstr ""
 
+#: src/components/nugg/RingAbout/OffersList.tsx
+msgid "all offers"
+msgstr ""
+
 #: src/components/mobile/NameModalMobile.tsx
 msgid "all transaction fees"
 msgstr ""
@@ -760,7 +763,6 @@ msgid "an eth wallet"
 msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
-#: src/components/mobile/ViewingNuggPhone.tsx
 msgid "asking price"
 msgstr ""
 
@@ -780,7 +782,7 @@ msgstr ""
 msgid "back"
 msgstr ""
 
-#: src/components/mobile/ViewingNuggPhone.tsx
+#: src/components/mobile/MobileCaboose.tsx
 msgid "bases are non transferable"
 msgstr ""
 
@@ -842,7 +844,7 @@ msgstr ""
 msgid "continue"
 msgstr ""
 
-#: src/components/mobile/ViewingNuggPhone.tsx
+#: src/components/mobile/MobileCaboose.tsx
 msgid "continue to start auction"
 msgstr ""
 
@@ -879,10 +881,6 @@ msgstr ""
 
 #: src/components/mobile/MobileWallet.tsx
 msgid "edit username"
-msgstr ""
-
-#: src/components/mobile/ViewingNuggPhone.tsx
-msgid "ending in about"
 msgstr ""
 
 #: src/components/mobile/SellModalMobile.tsx
@@ -929,10 +927,6 @@ msgstr ""
 msgid "for sale"
 msgstr ""
 
-#: src/components/mobile/ViewingNuggPhone.tsx
-msgid "for sale by"
-msgstr ""
-
 #: src/components/nugg/RingAbout/OffersList.tsx
 msgid "from"
 msgstr ""
@@ -974,7 +968,7 @@ msgid "helping us test?"
 msgstr ""
 
 #: src/components/nugg/RingAbout/OffersList.tsx
-msgid "hide previous offers"
+msgid "hide"
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
@@ -1124,7 +1118,6 @@ msgstr ""
 msgid "min next bid"
 msgstr ""
 
-#: src/components/mobile/ViewingNuggPhone.tsx
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
 msgid "minimum price"
 msgstr ""
@@ -1225,6 +1218,10 @@ msgstr ""
 msgid "our auction system is built in a way that eliminates any monitary incentive an attacker may have"
 msgstr ""
 
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "owned by"
+msgstr ""
+
 #: src/components/mobile/OfferModalMobile.tsx
 msgid "payment"
 msgstr ""
@@ -1248,6 +1245,14 @@ msgstr ""
 
 #: src/components/mobile/MobileWallet.tsx
 msgid "pick username"
+msgstr ""
+
+#: src/components/mobile/MobileOfferButton.tsx
+msgid "pick your nugg"
+msgstr ""
+
+#: src/components/mobile/MobileOfferButton.tsx
+msgid "pick {0}"
 msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
@@ -1327,7 +1332,7 @@ msgid "select a nugg"
 msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
-msgid "select a nugg from your roost"
+msgid "select your nugg"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/ItemList.tsx
@@ -1342,10 +1347,6 @@ msgstr ""
 msgid "set up a wallet"
 msgstr ""
 
-#: src/components/nugg/RingAbout/OffersList.tsx
-msgid "show previous offers"
-msgstr ""
-
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_3.tsx
 msgid "so I can sell items? 🤯"
 msgstr ""
@@ -1356,15 +1357,6 @@ msgstr ""
 
 #: src/components/mobile/MobileOfferButton.tsx
 msgid "start auction"
-msgstr ""
-
-#: src/components/mobile/ViewingNuggPhone.tsx
-msgid "start the next auction"
-msgstr ""
-
-#: src/components/mobile/ViewingNuggPhone.tsx
-#: src/components/mobile/ViewingNuggPhone.tsx
-msgid "starting price"
 msgstr ""
 
 #: src/components/mobile/MobileOfferButton.tsx
@@ -1495,8 +1487,8 @@ msgstr ""
 msgid "what's going on here?"
 msgstr ""
 
-#: src/components/mobile/ViewingNuggPhone.tsx
-msgid "which nugg should bid on your behalf?"
+#: src/components/mobile/MobileCaboose.tsx
+msgid "who should wear it?"
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
@@ -1507,7 +1499,7 @@ msgstr ""
 msgid "you cannot own an item by itself, it will always belong to a nugg"
 msgstr ""
 
-#: src/components/mobile/ViewingNuggPhone.tsx
+#: src/components/mobile/MobileCaboose.tsx
 msgid "you will bid as {0}"
 msgstr ""
 
@@ -1531,7 +1523,6 @@ msgstr ""
 msgid "{0, plural, =1 {# other bidder} other {# other bidders}}"
 msgstr ""
 
-#: src/components/mobile/ViewingNuggPhone.tsx
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
 msgid "{0, plural, =1 {# second} other {# seconds}}"
 msgstr ""
@@ -1552,15 +1543,6 @@ msgstr ""
 msgid "{0} other nuggs are selling this item"
 msgstr ""
 
-#: src/components/mobile/ViewingNuggPhone.tsx
-msgid "{0}'s asking price"
-msgstr ""
-
-#: src/components/mobile/ViewingNuggPhone.tsx
-msgid "{leaderEns} is leading"
-msgstr ""
-
-#: src/components/mobile/ViewingNuggPhone.tsx
 #: src/components/nugg/RingAbout/OwnerBlock.tsx
 msgid "{minutes, plural, =1 {# minute} other {# minutes}}"
 msgstr ""
