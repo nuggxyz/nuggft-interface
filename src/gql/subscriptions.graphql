@@ -197,7 +197,7 @@ fragment liveNugg on Nugg {
 		id
 	}
 	...nuggitems
-
+	_pickups
 	pendingClaim
 	lastTransfer
 	activeLoan {

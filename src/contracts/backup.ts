@@ -80,6 +80,7 @@ export const nuggBackup = async (tokenId: NuggId, nuggft: NuggftV1, epoch: numbe
 		activeSwap,
 		isBackup: true,
 		recent: null,
+		_pickups: [],
 		unclaimedOffers: [],
 	});
 };

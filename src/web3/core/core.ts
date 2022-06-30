@@ -651,7 +651,7 @@ function useENS(
 	return React.useMemo(() => {
 		if (!account || !provider || !chainId) return undefined;
 
-		if (account === ADDRESS_ZERO) return 'black hole';
+		if (account === ADDRESS_ZERO) return 'nugg.xyz';
 		if (provider === 'nugg') return account.toPrettyId();
 		if (
 			account.toLowerCase() === CONTRACTS[chainId].NuggftV1.toLowerCase() ||

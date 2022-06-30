@@ -47,21 +47,22 @@ export const useRegisterEnsName = () => {
 	const address = web3.hook.usePriorityAccount();
 	const [ens, ensValid] = client.ens.useEnsWithValidity(provider, address);
 
-	// const registrar = useENSRegistrar(provider);
-
 	const controller = useENSRegistrarController(provider);
 	const resolver = useENSResolver(provider);
+
 	const reverseRegistrar = useENSReverseRegistrar(provider);
 	const [commitLoading, setCommitLoading] = React.useState(false);
 	const [reverseLoading, setReverseLoading] = React.useState(false);
 	const [registerLoading, setRegisterLoading] = React.useState(false);
 
-	// const expiration = useAsyncState(() => {
-	//     if (!ens) return undefined;
-	//     return controller.ttl(namehash(ens.replace('.eth', '')));
-	// }, [ens, registrar]);
+	const [text, setRawText] = React.useState<string>('');
 
-	const [text, setText] = React.useState<string>('');
+	const setText = React.useCallback(
+		(txt: string) => {
+			setRawText(txt.toLowerCase());
+		},
+		[setRawText],
+	);
 
 	const [page, setPage] = React.useState<'home' | 'pick' | 'finalize'>('home');
 
