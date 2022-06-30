@@ -10,6 +10,9 @@ export const useLifecycleData = (tokenId?: TokenId) => {
 	const warning = client.epoch.active.useWarning();
 
 	const address = web3.hook.usePriorityAccount();
+	const provider = web3.hook.usePriorityProvider();
+
+	const token = client.live.token(tokenId);
 
 	const offers = client.live.offers(tokenId);
 
@@ -34,6 +37,19 @@ export const useLifecycleData = (tokenId?: TokenId) => {
 	}, [quick, potential]);
 
 	const msp = client.stake.useMsp();
+
+	const leaderEns = client.ens.useEnsOrNuggId(
+		provider,
+		swap
+			? swap.isPotential
+				? swap.owner === DEFAULT_CONTRACTS.NuggftV1
+					? DEFAULT_CONTRACTS.NuggftV1
+					: undefined
+				: swap?.leader || undefined
+			: token?.isNugg()
+			? token.owner
+			: undefined,
+	);
 
 	const swapCurrency = client.usd.useUsdPair(
 		quick
@@ -94,15 +110,17 @@ export const useLifecycleData = (tokenId?: TokenId) => {
 
 				return Lifecycle.Shower;
 			}
+			if (token?.isNugg() && token?.owner === address) return Lifecycle.GrandStands;
+
 			return Lifecycle.Stands;
 		};
 
 		const check = find();
 
 		if (check !== lifecycle) setLifecycle(check);
-	}, [epoch, warning, address, lifecycle, offers, swap]);
+	}, [epoch, warning, address, lifecycle, offers, swap, token, tokenId]);
 
-	return [lifecycle, swap, swapCurrency] as const;
+	return [lifecycle, swap, swapCurrency, leaderEns] as const;
 };
 
 export default (tokenId?: TokenId): Lifecycle | undefined => {

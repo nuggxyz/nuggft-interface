@@ -7,6 +7,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import lib from '@src/lib/index';
 import { Address } from '@src/classes/Address';
 import web3 from '@src/web3';
+import { ADDRESS_ZERO, DEFAULT_CONTRACTS } from '@src/web3/constants';
 
 const useStore = create(
 	persist(
@@ -69,7 +70,7 @@ const useEns = (provider?: Web3Provider, address?: Lowercase<AddressString>) => 
 	React.useEffect(() => {
 		if (!provider) return;
 
-		address = address?.toLowerCase() as Lowercase<AddressString> | undefined;
+		address = address?.toLowerCase() as AddressString | undefined;
 
 		if (!address || address.isNuggId()) return;
 
@@ -97,9 +98,11 @@ const useEns = (provider?: Web3Provider, address?: Lowercase<AddressString>) => 
 	return undefined;
 };
 
-const useEnsOrNuggId = (provider?: Web3Provider, address?: Lowercase<AddressString> | NuggId) => {
+const useEnsOrNuggId = (provider?: Web3Provider, address?: AddressString | NuggId) => {
 	const ens = useEns(provider, address && address.isNuggId() ? undefined : address);
+	if (address === ADDRESS_ZERO) return 'nugg.xyz';
 	if (address?.isNuggId()) return address.toPrettyId();
+	if (address === DEFAULT_CONTRACTS.NuggftV1 || address === ADDRESS_ZERO) return 'nugg.xyz';
 	return ens;
 };
 

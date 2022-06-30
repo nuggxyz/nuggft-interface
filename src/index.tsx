@@ -19,21 +19,21 @@ import useAnalyticsReporter from './lib/analytics/useAnalyticsReporter';
 global.Buffer = global.Buffer || (await import('buffer')).Buffer;
 
 const GlobalHooks = () => {
-    useMountLogger('GlobalHooks');
+	useMountLogger('GlobalHooks');
 
-    web3.config.useActivate();
+	web3.config.useActivate();
 
-    useClientUpdater();
+	useClientUpdater();
 
-    useAnalyticsReporter();
+	useAnalyticsReporter();
 
-    return null;
+	return null;
 };
 
 const ContentBlock: FC<PropsWithChildren<unknown>> = ({ children }) => {
-    const active = web3.hook.usePriorityIsActive();
+	const active = web3.hook.usePriorityIsActive();
 
-    return active ? <>{children}</> : null;
+	return active ? <>{children}</> : null;
 };
 
 const container = document.getElementById('root') as HTMLElement;
@@ -41,19 +41,19 @@ const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
 
 root.render(
-    <HashRouter>
-        <ApolloProvider client={web3.config.apolloClient}>
-            <React.StrictMode>
-                <GlobalHooks />
+	<HashRouter>
+		<ApolloProvider client={web3.config.apolloClient}>
+			<React.StrictMode>
+				<GlobalHooks />
 
-                <ErrorBoundary>
-                    <I18N>
-                        <ContentBlock>
-                            <App />
-                        </ContentBlock>
-                    </I18N>
-                </ErrorBoundary>
-            </React.StrictMode>
-        </ApolloProvider>
-    </HashRouter>,
+				<ErrorBoundary>
+					<I18N>
+						<ContentBlock>
+							<App />
+						</ContentBlock>
+					</I18N>
+				</ErrorBoundary>
+			</React.StrictMode>
+		</ApolloProvider>
+	</HashRouter>,
 );

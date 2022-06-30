@@ -213,6 +213,7 @@ export interface LiveItem extends ItemIdFactory<Live> {
 
 export enum Lifecycle {
 	Stands = 'stands', // [nugg/item] a token that has no active swap
+	GrandStands = 'grandstands', // [nugg/item] a token that has no active swap AND the priority user ownes it
 	Bench = 'bench', //   [nugg/item] a token that is for sale, but no one has bid on it
 	Deck = 'deck', //     [nugg/item] a token that is for sale, someone has bid on it, but it is not yet the final epoch
 	Bat = 'bat', //       [nugg/item] a token that is for sale, and it is in the final epoch

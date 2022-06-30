@@ -42,6 +42,7 @@ export default (tokenId?: TokenId) => {
 					lifecycle,
 					active: false,
 				};
+			case Lifecycle.GrandStands:
 			case Lifecycle.Stands:
 				return {
 					color: lib.colors.primaryColor,

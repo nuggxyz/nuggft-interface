@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { PropsWithChildren, useMemo } from 'react';
 import { t } from '@lingui/macro';
 import { animated, config, useSpring } from '@react-spring/web';
 import { useNavigate } from 'react-router';
@@ -22,8 +22,6 @@ import SwapListPhone from '@src/components/mobile/SwapListPhone';
 import { ItemListPhone } from '@src/components/nugg/ViewingNugg/ItemList';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { ModalEnum } from '@src/interfaces/modals';
-import styles from '@src/components/nugg/ViewingNugg/ViewingNugg.styles';
-import Button from '@src/components/general/Buttons/Button/Button';
 import useAnimateOverlayBackdrop from '@src/hooks/useAnimateOverlayBackdrop';
 import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 import usePrevious from '@src/hooks/usePrevious';
@@ -31,7 +29,6 @@ import GodList from '@src/components/general/List/GodList';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 import TheRingLight from '@src/components/nugg/TheRing/TheRingLight';
 import { useLifecycleData } from '@src/client/hooks/useLifecycle';
-import { DEFAULT_CONTRACTS } from '@src/web3/constants';
 
 import { NuggSnapshotRenderItem } from './NuggSnapshotItemMobile';
 import MobileOfferButton from './MobileOfferButton';
@@ -197,6 +194,201 @@ const Info = ({ tokenId }: { tokenId?: ItemId }) => {
 	);
 };
 
+const GradientButt = ({
+	onClick,
+	children,
+	style,
+	gradient = lib.colors.gradient3,
+	background = lib.colors.white,
+	textStyle,
+	...props
+}: PropsWithChildren<React.HTMLAttributes<HTMLButtonElement>> & {
+	gradient?: string;
+	textStyle?: React.HTMLAttributes<HTMLSpanElement>['style'];
+	background?: string;
+}) => {
+	return React.createElement(
+		'div',
+		{
+			className: 'mobile-pressable-div',
+			role: 'button',
+			'aria-hidden': 'true',
+			onClick,
+			...props,
+			style: {
+				padding: '.6rem 1.2rem',
+				borderRadius: lib.layout.borderRadius.large,
+				boxShadow: lib.layout.boxShadow.basic,
+				backgroundColor: background,
+				...style,
+			},
+		},
+		[
+			React.createElement(
+				'span',
+				{
+					style: {
+						marginBottom: '0.5rem',
+						background: gradient,
+						color: 'black',
+						WebkitBackgroundClip: 'text',
+						WebkitTextFillColor: 'transparent',
+						...lib.layout.presets.font.main.thicc,
+						...textStyle,
+					},
+				},
+				children,
+			),
+		],
+	);
+};
+
+const MyNugg = ({ tokenId }: { tokenId: NuggId }) => {
+	// const token = client.live.token(tokenId);
+	// const address = web3.hook.usePriorityAccount();
+	const openModal = client.modal.useOpenModal();
+
+	const [lifecycle, swap, , leaderEns] = useLifecycleData(tokenId);
+
+	const visible = React.useMemo(() => {
+		if (!tokenId || !lifecycle) return false;
+
+		return !swap;
+	}, [tokenId, swap, lifecycle]);
+
+	const [sty] = useSpring(
+		() => ({
+			from: {
+				maxHeight: '0%',
+				opacity: 0,
+			},
+			to: {
+				opacity: visible ? 1 : 0,
+				maxHeight: visible ? '100%' : '0%',
+			},
+			config: config.molasses,
+		}),
+		[visible],
+	);
+
+	return (
+		<animated.div
+			style={{
+				background: lib.colors.transparentWhite,
+				borderRadius: lib.layout.borderRadius.mediumish,
+				boxShadow: lib.layout.boxShadow.basic,
+				WebkitBackdropFilter: 'blur(50px)',
+				backdropFilter: 'blur(50px)',
+				display: 'flex',
+				justifyContent: 'center',
+				flexDirection: 'column',
+				alignItems: 'center',
+				padding: '.5rem 1rem',
+				...sty,
+			}}
+		>
+			<div
+				style={{
+					display: 'flex',
+					justifyContent: 'center',
+					flexDirection: 'column',
+					alignItems: 'center',
+					padding: 5,
+				}}
+			>
+				<div
+					style={{
+						alignItems: 'center',
+						display: 'flex',
+						width: '100%',
+						justifyContent: 'center',
+						// marginBottom: 10,
+						// marginTop: 15,
+					}}
+				>
+					{/* <Text
+						size="medium"
+						textStyle={{
+							...lib.layout.presets.font.main.normal,
+							...lib.layout.presets.font.main.semibold,
+						}}
+					>
+						{t`owned by`}
+					</Text> */}
+					<Text
+						loading={!leaderEns}
+						textStyle={{
+							// background: lib.colors.transparentWhite,
+							// borderRadius: lib.layout.borderRadius.mediumish,
+							// boxShadow: lib.layout.boxShadow.basic,
+							// WebkitBackdropFilter: 'blur(50px)',
+							// backdropFilter: 'blur(50px)',
+							// padding: '.5rem .6rem',
+							// margin: 5,
+							// marginLeft: 5,
+							fontSize: '25px',
+							...lib.layout.presets.font.main.thicc,
+						}}
+					>
+						{leaderEns || 'XXXX...XXXX'}
+					</Text>
+				</div>
+				<Text
+					size="smaller"
+					textStyle={{ margin: 5, ...lib.layout.presets.font.main.semibold }}
+				>{t`holder since ${new Date().toLocaleDateString()}`}</Text>
+			</div>
+			{lifecycle === Lifecycle.GrandStands && (
+				<div
+					style={{
+						// paddingTop: 5,
+						display: 'flex',
+						alignItems: 'center',
+						// flexDirection: 'column',
+					}}
+				>
+					<GradientButt
+						style={{
+							margin: 5,
+						}}
+						gradient={lib.colors.gradient2}
+						textStyle={{
+							fontSize: '24px',
+						}}
+						onClick={() => {
+							openModal(
+								buildTokenIdFactory({
+									modalType: ModalEnum.RotateO as const,
+									tokenId,
+									currentVersion: 0,
+								}),
+							);
+						}}
+					>{t`edit`}</GradientButt>
+
+					<GradientButt
+						style={{
+							margin: 5,
+						}}
+						textStyle={{
+							fontSize: '24px',
+						}}
+						onClick={() => {
+							openModal(
+								buildTokenIdFactory({
+									modalType: ModalEnum.Sell as const,
+									tokenId,
+									sellingNuggId: null,
+								}),
+							);
+						}}
+					>{t`sell`}</GradientButt>
+				</div>
+			)}
+		</animated.div>
+	);
+};
+
 const Timer = ({ seconds }: { seconds: number }) => {
 	const [trueSeconds] = useDebouncedSeconds(seconds);
 
@@ -228,13 +420,9 @@ const Timer = ({ seconds }: { seconds: number }) => {
 		>
 			<animated.span
 				style={{
-					// margin: 'auto',
-					// position: 'fixed',
 					color: lib.colors.primaryColor,
 					fontSize: '30px',
 					...lib.layout.presets.font.code.semibold,
-					// textAlign: 'center',
-					// width: 78,
 				}}
 			>
 				{spring.val.to((val) => {
@@ -247,24 +435,12 @@ const Timer = ({ seconds }: { seconds: number }) => {
 
 const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 	({ tokenId }) => {
-		const token = client.live.token(tokenId);
+		// const token = client.live.token(tokenId);
 		const epoch = client.epoch.active.useId();
 
-		const [lifecycle, swap, swapCurrency] = useLifecycleData(tokenId);
+		const [lifecycle, swap, swapCurrency, leaderEns] = useLifecycleData(tokenId);
 
 		const { seconds } = client.epoch.useEpoch(swap?.isPotential ? 0 : swap?.endingEpoch);
-
-		// const trueSeconds = useRemainingTrueSeconds(seconds ?? 0, true);
-		const provider = web3.hook.usePriorityProvider();
-
-		const leaderEns = web3.hook.usePriorityAnyENSName(
-			token && token.type === 'item' ? 'nugg' : provider,
-			swap?.isPotential
-				? swap.owner === DEFAULT_CONTRACTS.NuggftV1
-					? DEFAULT_CONTRACTS.NuggftV1
-					: undefined
-				: swap?.leader || undefined,
-		);
 
 		const visible = React.useMemo(() => {
 			if (!tokenId || !epoch || !lifecycle) return false;
@@ -446,8 +622,8 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
 
 		useLiveTokenPoll(isOpen && tokenId !== undefined, tokenId);
 
-		const openModal = client.modal.useOpenModal();
-		const sender = web3.hook.usePriorityAccount();
+		// const openModal = client.modal.useOpenModal();
+		// const sender = web3.hook.usePriorityAccount();
 
 		const prevTokenId = usePrevious(tokenId);
 
@@ -636,85 +812,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
 
 						{token && token.isItem() && <Info tokenId={token.tokenId} />}
 
-						{token && token.type === 'nugg' && token.owner === sender && (
-							<>
-								<div
-									style={{
-										display: 'flex',
-										justifyContent: 'flex-start',
-										alignItems: 'flex-start',
-										textAlign: 'left',
-										width: '100%',
-										marginTop: 20,
-
-										padding: '2rem 1rem 1rem 1.5rem',
-									}}
-								>
-									<Text
-										size="larger"
-										textStyle={{
-											color: lib.colors.primaryColor,
-											fontWeight: lib.layout.fontWeight.thicc,
-										}}
-									>
-										{t`my nugg`}
-									</Text>
-								</div>
-								<Button
-									className="mobile-pressable-div"
-									buttonStyle={{
-										...styles.goToSwap,
-										marginTop: 10,
-
-										position: 'relative',
-									}}
-									textStyle={{
-										...styles.goToSwapGradient,
-										padding: '.2rem .5rem',
-										fontSize: '24px',
-										fontWeight: lib.layout.fontWeight.thicc,
-									}}
-									label={t`put up for sale`}
-									// rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
-									onClick={() => {
-										openModal(
-											buildTokenIdFactory({
-												modalType: ModalEnum.Sell as const,
-												tokenId: token.tokenId,
-												sellingNuggId: null,
-											}),
-										);
-									}}
-								/>
-								<Button
-									className="mobile-pressable-div"
-									buttonStyle={{
-										...styles.goToSwap,
-										marginTop: 10,
-
-										position: 'relative',
-									}}
-									textStyle={{
-										...styles.goToSwapGradient,
-										background: lib.colors.gradient2,
-										padding: '.2rem .5rem',
-										fontSize: '24px',
-										fontWeight: lib.layout.fontWeight.thicc,
-									}}
-									label={t`edit`}
-									// rightIcon={<IoArrowRedo color={lib.colors.gradientPink} />}
-									onClick={() => {
-										openModal(
-											buildTokenIdFactory({
-												modalType: ModalEnum.RotateO as const,
-												tokenId: token.tokenId,
-												currentVersion: renderItemData.length - 1,
-											}),
-										);
-									}}
-								/>
-							</>
-						)}
+						{token && token.isNugg() && <MyNugg tokenId={token.tokenId} />}
 
 						{tokenId && tokenId.isNuggId() && (
 							<>
