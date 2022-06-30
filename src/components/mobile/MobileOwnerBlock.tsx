@@ -10,10 +10,11 @@ import { EthInt } from '@src/classes/Fraction';
 import { useUsdPair } from '@src/client/usd';
 import web3 from '@src/web3';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-import { useRemainingTrueSeconds } from '@src/client/hooks/useRemaining';
 import Label from '@src/components/general/Label/Label';
 import { MIN_SALE_PRICE } from '@src/web3/constants';
 import TheRingLight from '@src/components/nugg/TheRing/TheRingLight';
+
+import { Timer } from './ViewingNuggPhone';
 
 export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
 	({ tokenId }) => {
@@ -25,10 +26,9 @@ export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
 		const blocknum = client.block.useBlock();
 
 		const [remaining] = useRemainingBlocks(blocknum, swap?.commitBlock, swap?.endingEpoch);
-		const trueSeconds = useRemainingTrueSeconds(remaining * 12);
-		const minutes = Math.floor((remaining * 12) / 60);
-		const leaderEns = web3.hook.usePriorityAnyENSName(
-			tokenId?.isItemId() ? 'nugg' : provider,
+
+		const leaderEns = client.ens.useEnsOrNuggId(
+			provider,
 			swap?.leader || potential?.owner || undefined,
 		);
 
@@ -234,39 +234,11 @@ export default React.memo<{ tokenId?: TokenId; visible?: boolean }>(
 						style={{
 							position: 'absolute',
 							top: 0,
-							background: lib.colors.transparentWhite,
-							borderRadius: lib.layout.borderRadius.mediumish,
-							WebkitBackdropFilter: 'blur(50px)',
-							backdropFilter: 'blur(50px)',
+
 							right: 0,
-							display: 'flex',
-							margin: 'auto',
-							justifyContent: 'center',
-							flexDirection: 'column',
-							alignItems: 'center',
-							padding: '.5rem .8rem',
 						}}
 					>
-						<Text
-							textStyle={{
-								color: lib.colors.primaryColor,
-								fontWeight: lib.layout.fontWeight.thicc,
-								fontSize: '26px',
-							}}
-						>
-							{!minutes ? trueSeconds ?? '0' : minutes}
-						</Text>
-						<Text
-							textStyle={{
-								marginTop: -3,
-								color: lib.colors.primaryColor,
-								fontWeight: lib.layout.fontWeight.semibold,
-
-								fontSize: '13px',
-							}}
-						>
-							{!minutes ? t`sec` : t`min`}
-						</Text>
+						<Timer seconds={remaining * 12} />
 					</div>
 				) : (
 					<div

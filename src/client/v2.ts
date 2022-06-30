@@ -200,6 +200,7 @@ const useStore = create(
 				next: [] as TokenId[],
 				all: [] as TokenId[],
 			},
+			_lastEpochSwitch: 0,
 			point: 'main' as 'main' | 'backup',
 			rpcCalled: false,
 		},
@@ -239,7 +240,7 @@ const useStore = create(
 			};
 
 			const removeAllSwapsFromAnEpoch = (_epoch: number) => {
-				const { point } = get();
+				const { point, _lastEpochSwitch } = get();
 
 				const { hits } = get()[point];
 
@@ -247,24 +248,37 @@ const useStore = create(
 				// eslint-disable-next-line no-restricted-syntax
 				for (const key in hits) {
 					if (key.isNuggId() || key.isItemId()) {
-						if (hits[key].endingEpoch === _epoch) {
+						if (hits[key].endingEpoch < _epoch) {
 							checks.push(hits[key as TokenId].tokenId);
 						}
 					}
 				}
 
-				console.warn(`CLEARING ${checks.length} SWAPS FROM EPOCH:${_epoch} - `);
+				// console.warn(`CLEARING ${checks.length} SWAPS FROM EPOCH:${_epoch} - `);
+				if (checks.length > 0)
+					// @ts-ignore
+					set((draft) => {
+						for (let i = 0; i < checks.length; i++) {
+							delete draft[point].hits[checks[i]];
+						}
+					});
 
-				// @ts-ignore
-				set((draft) => {
-					for (let i = 0; i < checks.length; i++) {
-						delete draft[point].hits[checks[i]];
-					}
-					draft[point].current = draft[point].next;
-					draft[point].all = draft[point].next;
+				if (_lastEpochSwitch === 0) {
+					// @ts-ignore
 
-					draft[point].next = [];
-				});
+					set((draft) => {
+						draft._lastEpochSwitch = _epoch;
+					});
+				} else if (_lastEpochSwitch < _epoch) {
+					// @ts-ignore
+					set((draft) => {
+						draft._lastEpochSwitch = _epoch;
+						draft[point].current = draft[point].next;
+						draft[point].all = draft[point].next;
+
+						draft[point].next = [];
+					});
+				}
 			};
 
 			function handleV2Rpc(input: string, blk: number) {
@@ -451,7 +465,8 @@ export const usePollV2 = () => {
 		if (!graphProblem) {
 			void graph(graphBlock, blocknum);
 		}
-	}, [graphProblem, graphBlock, graph, blocknum]);
+		if (_epoch) removeAllSwapsFromAnEpoch(_epoch);
+	}, [graphProblem, graphBlock, graph, blocknum, _epoch, removeAllSwapsFromAnEpoch]);
 
 	React.useEffect(() => {
 		if (graphProblem) {

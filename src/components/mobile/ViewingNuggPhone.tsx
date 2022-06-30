@@ -389,7 +389,7 @@ const MyNugg = ({ tokenId }: { tokenId: NuggId }) => {
 	);
 };
 
-const Timer = ({ seconds }: { seconds: number }) => {
+export const Timer = ({ seconds }: { seconds: number }) => {
 	const [trueSeconds] = useDebouncedSeconds(seconds);
 
 	const [spring] = useSpring(
