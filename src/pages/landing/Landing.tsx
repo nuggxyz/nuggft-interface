@@ -25,6 +25,7 @@ export default () => {
 		}),
 		[],
 	);
+
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Confetti
@@ -134,7 +135,7 @@ export default () => {
 								fontSize: '25px',
 								color: lib.colors.primaryColor,
 								// marginBottom: -34,
-								marginTop: 10,
+								// marginTop: 10,
 								marginBottom: -8,
 							}}
 						>
@@ -142,17 +143,24 @@ export default () => {
 						</span>
 						<GradientButt
 							style={{
-								borderRadius: '50px',
+								borderRadius: '30px',
 								padding: '.4rem 2rem 1rem',
 								margin: 10,
 							}}
-							textStyle={{ fontSize: '50px' }}
+							textStyle={{ fontSize: '30px' }}
 						>
 							nugg.xyz
 						</GradientButt>
 					</animated.div>
 
-					<animated.div style={{ ...sty }}>
+					<animated.div
+						style={{
+							...sty,
+							display: 'flex',
+							justifyContent: 'space-around',
+							flexDirection: 'column',
+						}}
+					>
 						<div
 							style={{
 								background: lib.colors.white,
@@ -160,8 +168,8 @@ export default () => {
 								boxShadow: lib.layout.boxShadow.basic,
 								WebkitBackdropFilter: 'blur(50px)',
 								backdropFilter: 'blur(50px)',
-								padding: 20,
-								margin: 20,
+								padding: 15,
+								marginBottom: 10,
 								display: 'flex',
 								justifyContent: 'center',
 								alignItems: 'center',
@@ -194,8 +202,7 @@ export default () => {
 									...lib.layout.presets.font.main.thicc,
 								}}
 							>
-								{' '}
-								{t`the future of nfts.`}
+								{t`the future of nfts`}
 							</span>
 						</div>
 						<div
@@ -208,8 +215,8 @@ export default () => {
 								boxShadow: lib.layout.boxShadow.basic,
 								WebkitBackdropFilter: 'blur(50px)',
 								backdropFilter: 'blur(50px)',
-								padding: 20,
-								margin: 20,
+								padding: 15,
+								// margin: 20,
 								display: 'flex',
 								justifyContent: 'center',
 								alignItems: 'center',
@@ -285,7 +292,7 @@ export default () => {
 							<span
 								style={{
 									color: '#1DA1F2',
-									fontSize: 20,
+									fontSize: 16,
 								}}
 							>
 								🗑
@@ -293,7 +300,7 @@ export default () => {
 							<span
 								style={{
 									marginLeft: 10,
-									fontSize: '25px',
+									fontSize: '18px',
 									color: lib.colors.primaryColor,
 									...lib.layout.presets.font.main.semibold,
 								}}
@@ -301,39 +308,6 @@ export default () => {
 								{t`read our blog`}
 							</span>
 						</div>
-
-						{/* <div
-							style={{
-								display: 'flex',
-								justifyContent: 'space-around',
-								width: '100%',
-								alignItems: 'center',
-							}}
-						>
-							<div
-								style={{
-									background: lib.colors.transparentWhite,
-									borderRadius: lib.layout.borderRadius.medium,
-									boxShadow: lib.layout.boxShadow.basic,
-									WebkitBackdropFilter: 'blur(50px)',
-									backdropFilter: 'blur(50px)',
-									padding: 10,
-									margin: 10,
-									display: 'flex',
-									justifyContent: 'center',
-									alignItems: 'center',
-								}}
-							>
-								<BsGithub
-									className="mobile-pressable-div"
-									style={{
-										color: lib.colors.primaryColor,
-										// filter: `drop-shadow(2px 3px 5px rgb(0 0 0 / 0.4)) hue-rotate(0)`,
-									}}
-									size={50}
-								/>
-							</div>
-						</div> */}
 
 						<div
 							className="mobile-pressable-div"
@@ -360,12 +334,12 @@ export default () => {
 								style={{
 									color: lib.colors.primaryColor,
 								}}
-								size={25}
+								size={18}
 							/>
 							<span
 								style={{
 									marginLeft: 10,
-									fontSize: '25px',
+									fontSize: '18px',
 									color: lib.colors.primaryColor,
 									...lib.layout.presets.font.main.semibold,
 								}}
@@ -399,12 +373,12 @@ export default () => {
 								style={{
 									color: '#1DA1F2',
 								}}
-								size={25}
+								size={18}
 							/>
 							<span
 								style={{
-									marginLeft: 10,
-									fontSize: '25px',
+									marginLeft: 5,
+									fontSize: '18px',
 									color: lib.colors.primaryColor,
 									...lib.layout.presets.font.main.semibold,
 								}}
@@ -418,23 +392,3 @@ export default () => {
 		</div>
 	);
 };
-
-// {/* <div
-// 						style={{
-// 							borderRadius: '25px',
-// 							padding: '10px 20px',
-// 							margin: 5,
-// 							background: lib.colors.primaryColor,
-// 						}}
-// 						// gradient={lib.colors.gradient2}
-// 					>
-// 						<span
-// 							style={{
-// 								fontSize: '20px',
-// 								color: 'white',
-// 								...lib.layout.presets.font.main.thicc,
-// 							}}
-// 						>
-// 							build
-// 						</span>
-// 					</div> */}
