@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-06-29 23:46+0000\n"
+"POT-Creation-Date: 2022-07-01 02:37+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Japanese\n"
-"PO-Revision-Date: 2022-06-30 06:05\n"
+"PO-Revision-Date: 2022-07-01 06:04\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -975,6 +975,10 @@ msgstr ""
 msgid "history"
 msgstr ""
 
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "holder since {0}"
+msgstr ""
+
 #: src/components/mobile/NuggListRenderItemMobile.tsx
 msgid "holding since {0}"
 msgstr ""
@@ -1110,10 +1114,6 @@ msgstr ""
 msgid "make sure you are on the rinkeby blockchain (we can help you with this too)"
 msgstr ""
 
-#: src/components/mobile/MobileOwnerBlock.tsx
-msgid "min"
-msgstr ""
-
 #: src/components/mobile/OfferModalMobile.tsx
 msgid "min next bid"
 msgstr ""
@@ -1148,10 +1148,6 @@ msgstr ""
 
 #: src/components/mobile/OfferModalMobile.tsx
 msgid "my desired bid"
-msgstr ""
-
-#: src/components/mobile/ViewingNuggPhone.tsx
-msgid "my nugg"
 msgstr ""
 
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -1294,8 +1290,11 @@ msgid "put me in, coach 🔥"
 msgstr ""
 
 #: src/components/mobile/MyNuggItemMobile.tsx
-#: src/components/mobile/ViewingNuggPhone.tsx
 msgid "put up for sale"
+msgstr ""
+
+#: src/pages/landing/Landing.tsx
+msgid "read our blog"
 msgstr ""
 
 #: src/components/nuggbook/pages/tldr/Tldr_1.tsx
@@ -1319,8 +1318,8 @@ msgstr ""
 msgid "save"
 msgstr ""
 
-#: src/components/mobile/MobileOwnerBlock.tsx
-msgid "sec"
+#: src/pages/landing/Landing.tsx
+msgid "say hi"
 msgstr ""
 
 #: src/components/nuggbook/pages/tldr/Tldr_5.tsx
@@ -1335,6 +1334,10 @@ msgstr ""
 msgid "select your nugg"
 msgstr ""
 
+#: src/components/mobile/ViewingNuggPhone.tsx
+msgid "sell"
+msgstr ""
+
 #: src/components/nugg/ViewingNugg/ItemList.tsx
 msgid "sell this item"
 msgstr ""
@@ -1345,6 +1348,10 @@ msgstr ""
 
 #: src/components/nuggbook/pages/TableOfContents.tsx
 msgid "set up a wallet"
+msgstr ""
+
+#: src/pages/landing/Landing.tsx
+msgid "smell our code"
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_3.tsx
@@ -1381,6 +1388,10 @@ msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
 msgid "that lasts about an hour"
+msgstr ""
+
+#: src/pages/landing/Landing.tsx
+msgid "the future of nfts"
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_6.tsx
@@ -1501,6 +1512,10 @@ msgstr ""
 
 #: src/components/mobile/MobileCaboose.tsx
 msgid "you will bid as {0}"
+msgstr ""
+
+#: src/pages/landing/Landing.tsx
+msgid "your art. on chain."
 msgstr ""
 
 #: src/components/mobile/MobileWallet.tsx
