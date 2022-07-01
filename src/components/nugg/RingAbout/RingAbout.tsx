@@ -12,7 +12,6 @@ import OwnerBlock from './OwnerBlock';
 import OfferButton from './OfferButton';
 import SideCar from './SideCar';
 import Caboose from './Caboose';
-import OfferText from './OfferText';
 
 type Props = {
 	asHappyTab?: boolean;
@@ -40,7 +39,7 @@ const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId
 			>
 				<div style={styles.bodyContainer}>
 					<OwnerBlock tokenId={tokenId} />
-					<OfferText tokenId={tokenId} />
+					{/* <OfferText tokenId={tokenId} /> */}
 					<OffersList tokenId={tokenId} />
 				</div>
 				<OfferButton tokenId={tokenId} />

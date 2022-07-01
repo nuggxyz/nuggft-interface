@@ -120,7 +120,9 @@ export const useLifecycleData = (tokenId?: TokenId) => {
 		if (check !== lifecycle) setLifecycle(check);
 	}, [epoch, warning, address, lifecycle, offers, swap, token, tokenId]);
 
-	return [lifecycle, swap, swapCurrency, leaderEns] as const;
+	const { seconds } = client.epoch.useEpoch(swap?.isPotential ? 0 : swap?.endingEpoch);
+
+	return [lifecycle, swap, swapCurrency, leaderEns, seconds] as const;
 };
 
 export default (tokenId?: TokenId): Lifecycle | undefined => {

@@ -133,9 +133,6 @@ export default React.memo<{
 			return undefined;
 		}
 
-		// if (swap.leader && !swap.leader.isNuggId()) {
-		// 	return { ref: swap.leader, type: 'address' } as const;
-		// }
 		return undefined;
 	}, [swap, others]);
 
@@ -154,6 +151,7 @@ export default React.memo<{
 					background: 'transparent',
 					position: 'relative',
 					...(isPhone && { marginTop: 15 }),
+					maxWidth: '300px',
 				}}
 			>
 				<animated.div
@@ -188,9 +186,9 @@ export default React.memo<{
 							image="eth"
 							textStyle={{
 								...styles.leadingOffer,
-								...(isPhone && { color: lib.colors.primaryColor }),
+								color: lib.colors.primaryColor,
 							}}
-							icon={isPhone}
+							icon
 							iconSize={25}
 							value={swapCurrency}
 						/>

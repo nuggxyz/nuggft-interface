@@ -438,9 +438,7 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 		// const token = client.live.token(tokenId);
 		const epoch = client.epoch.active.useId();
 
-		const [lifecycle, swap, swapCurrency, leaderEns] = useLifecycleData(tokenId);
-
-		const { seconds } = client.epoch.useEpoch(swap?.isPotential ? 0 : swap?.endingEpoch);
+		const [lifecycle, swap, swapCurrency, leaderEns, seconds] = useLifecycleData(tokenId);
 
 		const visible = React.useMemo(() => {
 			if (!tokenId || !epoch || !lifecycle) return false;
