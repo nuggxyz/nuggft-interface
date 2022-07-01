@@ -9,7 +9,6 @@ import lib from '@src/lib';
 import { useDarkMode } from '@src/client/hooks/useDarkMode';
 import List, { ListRenderItemProps } from '@src/components/general/List/List';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import TheRing from '@src/components/nugg/TheRing/TheRing';
 import useDimensions from '@src/client/hooks/useDimensions';
 import { Timer } from '@src/components/mobile/ViewingNuggPhone';
 import client from '@src/client';
@@ -41,7 +40,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 
 	const token = client.live.token(tokenId);
 
-	const { screen: screenType, isPhone } = useDimensions();
+	const { screen: screenType } = useDimensions();
 
 	const MemoizedTimer = React.useMemo(() => {
 		return swap && !swap.isPotential && swap?.endingEpoch ? (
@@ -172,28 +171,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 						MemoizedTimer
 					)}
 				</div>
-				{screenType === 'phone' && (
-					<div
-						style={{
-							width: '100%',
-							height: '300px',
-							display: 'flex',
-							flexDirection: 'column',
-							justifyContent: 'center',
-							alignItems: 'center',
-							// marginBottom: '20px',
-						}}
-					>
-						<TheRing
-							circleWidth={800}
-							manualTokenId={swap?.tokenId}
-							disableHover
-							disableClick
-							defaultColor={isPhone ? lib.colors.white : lib.colors.nuggBlue}
-							tokenStyle={{ width: '200px', height: '200px' }}
-						/>
-					</div>
-				)}
+
 				{token && token.isNugg() && (
 					<List
 						data={token.items}

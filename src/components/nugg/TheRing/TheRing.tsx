@@ -1,7 +1,6 @@
 /* eslint-disable react/require-default-props */
 /* eslint-disable no-nested-ternary */
 import React, { CSSProperties, FunctionComponent } from 'react';
-import { IoWarning } from 'react-icons/io5';
 
 import lib from '@src/lib';
 import constants from '@src/lib/constants';
@@ -9,11 +8,8 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import client from '@src/client';
 import { Lifecycle } from '@src/client/interfaces';
-import Text from '@src/components/general/Texts/Text/Text';
 import useLifecycle from '@src/client/hooks/useLifecycle';
 import useDimensions from '@src/client/hooks/useDimensions';
-import useDesktopSwappingNugg from '@src/client/hooks/useDesktopSwappingNugg';
-import useTriggerPageLoad from '@src/client/hooks/useTriggerPageLoad';
 import CircleTimer from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimer';
 import CircleTimerMobileCSS from '@src/components/general/AnimatedTimers/CircleTimer/CircleTimerMobileCSS';
 import { calculateEndBlock } from '@src/web3/constants';
@@ -65,28 +61,26 @@ const TheRing: FunctionComponent<Props> = ({
 }) => {
 	const { screen: screenType, isPhone } = useDimensions();
 
-	const tokenId = useDesktopSwappingNugg(manualTokenId);
-
-	const swap = client.v2.useSwap(tokenId);
-	const lifecycle = useLifecycle(tokenId);
+	const swap = client.v2.useSwap(manualTokenId);
+	const lifecycle = useLifecycle(manualTokenId);
 	const blocknum = client.block.useBlock();
 
-	const startblock = client.epoch.active.useStartBlock();
+	// const startblock = client.epoch.active.useStartBlock();
 
-	useTriggerPageLoad(!isPhone && swap, 5000);
+	// useTriggerPageLoad(!isPhone && swap, 5000);
 
-	const showWarning = React.useMemo(() => {
-		if (
-			lifecycle === Lifecycle.Bunt &&
-			swap &&
-			blocknum &&
-			startblock &&
-			+startblock + 255 - blocknum < 75
-		)
-			return +startblock + 255 - blocknum - 17;
+	// const showWarning = React.useMemo(() => {
+	// 	if (
+	// 		lifecycle === Lifecycle.Bunt &&
+	// 		swap &&
+	// 		blocknum &&
+	// 		startblock &&
+	// 		+startblock + 255 - blocknum < 75
+	// 	)
+	// 		return +startblock + 255 - blocknum - 17;
 
-		return 0;
-	}, [startblock, blocknum, lifecycle, swap]);
+	// 	return 0;
+	// }, [startblock, blocknum, lifecycle, swap]);
 
 	const [remaining, duration] = useRemainingBlocks(
 		blocknum,
@@ -116,14 +110,14 @@ const TheRing: FunctionComponent<Props> = ({
 				? 'white'
 				: 'purple'
 			: 'white';
-	}, [tokenId, swap, lifecycle, isPhone]);
+	}, [manualTokenId, swap, lifecycle, isPhone]);
 
 	return (
 		<div style={{ width: '100%', height: '100%', ...containerStyle }}>
 			<CircleTimerWrap
 				duration={duration}
 				remaining={remaining}
-				tokenId={tokenId}
+				tokenId={manualTokenId}
 				blocktime={constants.BLOCKTIME}
 				width={circleWidth}
 				childrenContainerStyle={circleChildrenContainerStyle}
@@ -140,7 +134,7 @@ const TheRing: FunctionComponent<Props> = ({
 			>
 				{isPhone ? (
 					<TokenViewer
-						tokenId={tokenId}
+						tokenId={manualTokenId}
 						style={tokenStyle}
 						showcase
 						disableOnClick={disableClick}
@@ -159,14 +153,14 @@ const TheRing: FunctionComponent<Props> = ({
                         )} */}
 						<AnimatedCard disable={disableHover}>
 							<TokenViewer
-								tokenId={tokenId}
+								tokenId={manualTokenId}
 								style={tokenStyle}
 								showcase
 								disableOnClick={disableClick}
 							/>
 						</AnimatedCard>
 
-						{showWarning !== 0 && (
+						{/* {showWarning !== 0 && (
 							<div
 								style={{
 									display: 'flex',
@@ -196,10 +190,8 @@ const TheRing: FunctionComponent<Props> = ({
 									</Text>
 								</div>
 								{/* <Text
-									textStyle={{ padding: '5px', textAlign: 'center' }}
-								>{`If Nugg ${tokenId ? } is not bid on in ${showWarning} blocks, it will DIE`}</Text> */}
-							</div>
-						)}
+									</div>
+						)} */}
 					</>
 				)}
 			</CircleTimerWrap>

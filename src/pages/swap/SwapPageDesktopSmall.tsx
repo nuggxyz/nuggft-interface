@@ -10,31 +10,31 @@ import styles from '@src/pages/SwapPage.styles';
 type Props = Record<string, never>;
 
 const SwapPageDesktopSmall: FunctionComponent<Props> = () => {
-    const blur = useBlur(['/', '/swap/:id', '/live']);
+	const blur = useBlur(['/', '/swap/:id', '/live']);
 
-    return (
-        <animated.div
-            style={{
-                ...styles.container,
-                ...blur,
-                alignItems: 'flex-start',
-            }}
-        >
-            <>
-                <div style={styles.tabletMain}>
-                    <div style={styles.tabletRing}>
-                        <TheRing circleWidth={1100} />
-                    </div>
-                    <div style={styles.tabletRingAbout}>
-                        <RingAbout />
-                    </div>
-                </div>
-                <div style={styles.tabletSecondary}>
-                    <Wallet />
-                </div>
-            </>
-        </animated.div>
-    );
+	return (
+		<animated.div
+			style={{
+				...styles.container,
+				...blur,
+				alignItems: 'flex-start',
+			}}
+		>
+			<>
+				<div style={styles.tabletMain}>
+					<div style={styles.tabletRing}>
+						<TheRing circleWidth={1100} />
+					</div>
+					<div style={styles.tabletRingAbout}>
+						<RingAbout />
+					</div>
+				</div>
+				<div style={styles.tabletSecondary}>
+					<Wallet />
+				</div>
+			</>
+		</animated.div>
+	);
 };
 
 export default SwapPageDesktopSmall;
