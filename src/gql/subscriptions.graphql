@@ -96,6 +96,8 @@ fragment swapdata on Swap {
 	top
 	topUsd
 	bottom
+	commitBlock
+	numOffers
 	owner {
 		id
 	}
@@ -125,6 +127,8 @@ fragment simpleitemswapdata on ItemSwap {
 	num
 	top
 	startUnix
+	commitBlock
+	numOffers
 	owner {
 		id
 	}
@@ -151,6 +155,8 @@ fragment itemswapdata on ItemSwap {
 	num
 	top
 	topUsd
+	commitBlock
+	numOffers
 	bottom
 	owner {
 		id

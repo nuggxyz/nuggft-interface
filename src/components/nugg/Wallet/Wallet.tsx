@@ -21,107 +21,107 @@ type Props = Record<string, never>;
 const abc = React.memo(() => <RingAbout asHappyTab />);
 
 const Wallet: FunctionComponent<Props> = () => {
-    const { screen: screenType } = useDimensions();
-    const account = web3.hook.usePriorityAccount();
+	const [screenType] = useDimensions();
+	const account = web3.hook.usePriorityAccount();
 
-    const happytabs: HappyTabberItem[] = useMemo(
-        () => [
-            ...(account
-                ? screenType === 'tablet'
-                    ? [
-                          // @danny7even just here for testing, easier to not reload page...
-                          // ive found like 4 bugs in the graph and a couple here too from trying to implement this
-                          // still not done
-                          {
-                              label: t`Active`,
-                              comp: React.memo(ActiveTab),
-                          },
-                          {
-                              label: t`Swap`,
-                              comp: abc,
-                              labelStyle: { color: lib.colors.nuggBlueText },
-                              bodyStyle: {
-                                  background: lib.colors.gradient2,
-                                  boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggBlue}`,
-                              },
-                          },
-                          {
-                              label: t`Home`,
-                              comp: React.memo(HomeTab),
-                          },
-                          {
-                              label: t`Claims`,
-                              comp: React.memo(ClaimTab),
-                          },
+	const happytabs: HappyTabberItem[] = useMemo(
+		() => [
+			...(account
+				? screenType === 'tablet'
+					? [
+							// @danny7even just here for testing, easier to not reload page...
+							// ive found like 4 bugs in the graph and a couple here too from trying to implement this
+							// still not done
+							{
+								label: t`Active`,
+								comp: React.memo(ActiveTab),
+							},
+							{
+								label: t`Swap`,
+								comp: abc,
+								labelStyle: { color: lib.colors.nuggBlueText },
+								bodyStyle: {
+									background: lib.colors.gradient2,
+									boxShadow: `${lib.layout.boxShadow.prefix} ${lib.colors.shadowNuggBlue}`,
+								},
+							},
+							{
+								label: t`Home`,
+								comp: React.memo(HomeTab),
+							},
+							{
+								label: t`Claims`,
+								comp: React.memo(ClaimTab),
+							},
 
-                          {
-                              label: t`Loans`,
-                              comp: React.memo(LoanTab),
-                          },
-                      ]
-                    : [
-                          ...((screenType !== 'phone' && [
-                              {
-                                  label: t`Active`,
-                                  comp: React.memo(ActiveTab),
-                              },
-                          ]) ||
-                              []),
-                          {
-                              label: t`Home`,
-                              comp: React.memo(screenType !== 'phone' ? HomeTab : HomeTabMobile),
-                          },
-                          {
-                              label: t`Claims`,
-                              comp: React.memo(ClaimTab),
-                          },
+							{
+								label: t`Loans`,
+								comp: React.memo(LoanTab),
+							},
+					  ]
+					: [
+							...((screenType !== 'phone' && [
+								{
+									label: t`Active`,
+									comp: React.memo(ActiveTab),
+								},
+							]) ||
+								[]),
+							{
+								label: t`Home`,
+								comp: React.memo(screenType !== 'phone' ? HomeTab : HomeTabMobile),
+							},
+							{
+								label: t`Claims`,
+								comp: React.memo(ClaimTab),
+							},
 
-                          {
-                              label: t`Loans`,
-                              comp: React.memo(LoanTab),
-                          },
-                      ]
-                : [
-                      ...(screenType !== 'phone'
-                          ? [
-                                {
-                                    label: t`Active`,
-                                    comp: React.memo(ActiveTab),
-                                },
-                            ]
-                          : []),
-                      {
-                          label: t`Connect`,
-                          comp: React.memo(ConnectTab),
-                      },
-                  ]),
-        ],
-        [account, screenType],
-    );
+							{
+								label: t`Loans`,
+								comp: React.memo(LoanTab),
+							},
+					  ]
+				: [
+						...(screenType !== 'phone'
+							? [
+									{
+										label: t`Active`,
+										comp: React.memo(ActiveTab),
+									},
+							  ]
+							: []),
+						{
+							label: t`Connect`,
+							comp: React.memo(ConnectTab),
+						},
+				  ]),
+		],
+		[account, screenType],
+	);
 
-    const darkmode = useDarkMode();
+	const darkmode = useDarkMode();
 
-    return (
-        <div
-            style={{
-                ...styles.wallet,
-                ...(screenType === 'tablet' && { width: '100%' }),
-                ...(screenType === 'phone' && { height: '100%' }),
-            }}
-        >
-            <HappyTabber
-                items={happytabs}
-                bodyStyle={
-                    screenType === 'phone'
-                        ? styles.mobileBody
-                        : styles[darkmode ? 'bodyDark' : 'body']
-                }
-                headerTextStyle={
-                    screenType === 'phone' ? styles.mobileHeaderText : styles.headerText
-                }
-            />
-        </div>
-    );
+	return (
+		<div
+			style={{
+				...styles.wallet,
+				...(screenType === 'tablet' && { width: '100%' }),
+				...(screenType === 'phone' && { height: '100%' }),
+			}}
+		>
+			<HappyTabber
+				items={happytabs}
+				bodyStyle={
+					screenType === 'phone'
+						? styles.mobileBody
+						: styles[darkmode ? 'bodyDark' : 'body']
+				}
+				headerTextStyle={
+					screenType === 'phone' ? styles.mobileHeaderText : styles.headerText
+				}
+			/>
+		</div>
+	);
 };
 
 export default React.memo(Wallet);

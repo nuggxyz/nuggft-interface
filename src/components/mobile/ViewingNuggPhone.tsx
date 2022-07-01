@@ -389,8 +389,8 @@ const MyNugg = ({ tokenId }: { tokenId: NuggId }) => {
 	);
 };
 
-export const Timer = ({ seconds }: { seconds: number }) => {
-	const [trueSeconds] = useDebouncedSeconds(seconds);
+export const Timer = ({ seconds, resetOn }: { seconds: number; resetOn?: unknown }) => {
+	const [trueSeconds] = useDebouncedSeconds(seconds, resetOn);
 
 	const [spring] = useSpring(
 		{
@@ -433,9 +433,8 @@ export const Timer = ({ seconds }: { seconds: number }) => {
 	);
 };
 
-const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
+export const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 	({ tokenId }) => {
-		// const token = client.live.token(tokenId);
 		const epoch = client.epoch.active.useId();
 
 		const [lifecycle, swap, swapCurrency, leaderEns, seconds] = useLifecycleData(tokenId);
@@ -464,10 +463,11 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 		const MemoizedTimer = React.useMemo(() => {
 			return swap && !swap.isPotential && swap?.endingEpoch ? (
 				<div>
-					<Timer seconds={seconds ?? 0} />
+					<Timer seconds={seconds ?? 0} resetOn={tokenId} />
 				</div>
 			) : null;
-		}, [swap, seconds]);
+		}, [swap, seconds, tokenId]);
+		// console.log({ tokenId, visible, swap, swapCurrency, leaderEns, seconds });
 
 		if (swap?.isPotential && swap.isItem()) {
 			return (
@@ -489,7 +489,6 @@ const ActiveSwap = React.memo<{ tokenId?: TokenId }>(
 				</animated.div>
 			);
 		}
-
 		return (
 			<animated.div
 				style={{

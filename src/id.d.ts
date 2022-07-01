@@ -1,6 +1,6 @@
 enum TokenType {
-    Nugg = 'nugg',
-    Item = 'item',
+	Nugg = 'nugg',
+	Item = 'item',
 }
 
 declare type NuggId = `${'nugg'}-${number}`;
@@ -8,56 +8,66 @@ declare type ItemId = `${'item'}-${number}`;
 declare type TokenId = NuggId | ItemId;
 
 declare interface Splitter<N, I> {
-    nugg: N;
-    item: I;
+	nugg: N;
+	item: I;
 }
 declare type IdPrefix = 'nugg' | 'item';
 
 declare function IdFixture<K extends TokenType, T extends `${K}`>(
-    what: T,
+	what: T,
 ): T extends infer R ? (R extends K ? TokenType[R] : never) : never;
 
 declare function IsIdFixture<K extends TokenType, T extends `${K}`>(
-    what: T,
+	what: T,
 ): T extends infer R ? (R extends K ? this is TokenType[R] : never) : never;
 declare function EnsureIdFixture<K extends TokenType, T extends `${K}`>(
-    what: T,
+	what: T,
 ): T extends infer R ? (R extends K ? TokenType[R] : undefined) : undefined;
 
 // declare type PickFromFactory<T extends TokenIdFactory, N, I> = Splitter<N, I>[T['type']];
 
 declare type PickFromTokenId<T extends TokenId, N, I> = T extends `${infer R}-${number}`
-    ? R extends 'nugg' | 'item'
-        ? Splitter<N, I>[R]
-        : never
-    : never;
+	? R extends 'nugg' | 'item'
+		? Splitter<N, I>[R]
+		: never
+	: never;
+
+type IsolateTokenId<T extends TokenIdFactoryBase> = T['tokenId'] extends infer R
+	? R['tokenId'] extends `${infer G}-${number}`
+		? G
+		: never
+	: never;
 
 interface TokenIdFactoryBase {
-    tokenId: TokenId;
-    type: 'nugg' | 'item';
+	tokenId: TokenId;
+	type: 'nugg' | 'item';
 }
 
 interface TokenIdFactory<G extends TokenIdFactoryBase> extends G {
-    tokenId: TokenId;
-    type: 'nugg' | 'item';
-    isItem: () => this is ItemIdFactory<G>;
-    isNugg: () => this is NuggIdFactory<G>;
+	tokenId: TokenId;
+	type: 'nugg' | 'item';
+	isItem: () => this is ItemIdFactory<G>;
+	isNugg: () => this is NuggIdFactory<G>;
 }
 
 interface NuggIdFactory<G> extends TokenIdFactory<G> {
-    type: 'nugg';
-    tokenId: NuggId;
+	type: 'nugg';
+	tokenId: NuggId;
 }
 
 interface ItemIdFactory<G> extends TokenIdFactory<G> {
-    type: 'item';
-    tokenId: ItemId;
+	type: 'item';
+	tokenId: ItemId;
 }
+type SmartPickFromTokenIdFactory<
+	A extends TokenIdFactory,
+	B extends TokenIdFactory,
+> = PickFromTokenId<IsolateTokenId<A>, IsolateNuggIdFactory<B>, IsolateItemIdFactory<B>>;
 
 type SmartPickFromTokenId<A extends TokenId, B extends TokenIdFactory> = PickFromTokenId<
-    A,
-    IsolateNuggIdFactory<B>,
-    IsolateItemIdFactory<B>
+	A,
+	IsolateNuggIdFactory<B>,
+	IsolateItemIdFactory<B>
 >;
 
 // type NameOrId<B extends { tokenId: NuggId | ItemId }> = B extends { tokenId: NuggId }
@@ -77,15 +87,15 @@ type SmartPickFromTokenId<A extends TokenId, B extends TokenIdFactory> = PickFro
 //     | ItemIdFactory<A & C>;
 
 type TokenIdFactoryCreator<A extends TokenIdFactoryBase, B, C> =
-    | NuggIdFactory<Remap<B & A>>
-    | ItemIdFactory<Remap<C & A>>;
+	| NuggIdFactory<Remap<B & A>>
+	| ItemIdFactory<Remap<C & A>>;
 
 type IsolateItemIdFactory<T extends TokenIdFactory> = Remap<{ type: 'item' } & T>;
 type IsolateNuggIdFactory<T extends TokenIdFactory> = Remap<{ type: 'nugg' } & T>;
 
 type TokenIdDictionary<T extends TokenIdFactory> = {
-    [x: ItemId]: IsolateItemIdFactory<T>;
-    [x: NuggId]: IsolateNuggIdFactory<T>;
+	[x: ItemId]: IsolateItemIdFactory<T>;
+	[x: NuggId]: IsolateNuggIdFactory<T>;
 };
 
 // type To<T extends TokenIdFactory, G extends TokenId> = Record<

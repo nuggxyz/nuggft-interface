@@ -40,7 +40,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 
 	const token = client.live.token(tokenId);
 
-	const { screen: screenType } = useDimensions();
+	const [screenType] = useDimensions();
 
 	const MemoizedTimer = React.useMemo(() => {
 		return swap && !swap.isPotential && swap?.endingEpoch ? (

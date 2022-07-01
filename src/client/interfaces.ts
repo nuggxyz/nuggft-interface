@@ -48,6 +48,8 @@ interface SwapDataBase extends ListDataBase {
 	isTryout?: unknown;
 	offers: OfferData[];
 	isPotential?: never;
+	commitBlock: number | null;
+	numOffers: number;
 	isV2?: never;
 }
 

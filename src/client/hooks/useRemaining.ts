@@ -5,6 +5,7 @@ import client from '@src/client';
 import web3 from '@src/web3';
 import useInterval from '@src/hooks/useInterval';
 import useThrottle from '@src/hooks/useThrottle';
+import usePrevious from '@src/hooks/usePrevious';
 
 const interval = web3.config.DEFAULT_CONTRACTS.Interval;
 
@@ -74,7 +75,7 @@ export const useRemainingTrueSeconds = (seconds: number | null, always?: boolean
 	return trueSeconds;
 };
 
-export const useDebouncedSeconds = (seconds: number | null) => {
+export const useDebouncedSeconds = (seconds: number | null, ref: unknown) => {
 	const [trueSeconds, setTrueSeconds] = React.useState(seconds ?? 0);
 	const [hold, setHold] = React.useState(false);
 	const [multip, setMultip] = React.useState(1000);
@@ -110,6 +111,14 @@ export const useDebouncedSeconds = (seconds: number | null) => {
 	React.useEffect(() => {
 		if (seconds) caller(seconds);
 	}, [seconds]);
+
+	const prevRef = usePrevious(ref);
+
+	React.useEffect(() => {
+		if (seconds && ref !== prevRef) {
+			setTrueSeconds(seconds);
+		}
+	}, [seconds, ref, prevRef]);
 
 	return [trueSeconds, hold] as const;
 };

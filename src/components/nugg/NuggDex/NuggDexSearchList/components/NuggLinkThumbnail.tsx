@@ -11,55 +11,55 @@ import useMobileViewingNugg from '@src/client/hooks/useMobileViewingNugg';
 import styles from './NuggDexComponents.styles';
 
 const NuggLinkThumbnail: FunctionComponent<{
-    tokenId: TokenId;
-    index: number;
-    style?: CSSProperties;
+	tokenId: TokenId;
+	index: number;
+	style?: CSSProperties;
 }> = ({ tokenId, index, style: customStyle }) => {
-    const [ref, isHovering] = useOnHover();
+	const [ref, isHovering] = useOnHover();
 
-    const style = useMemo(() => {
-        return {
-            ...styles.nuggLinkThumbnailContainer,
-            ...(isHovering ? styles.hover : {}),
-            // ...(lastView__tokenId === tokenId.tokenId ? styles.selected : {}),
-            ...customStyle,
-        };
-    }, [tokenId, isHovering, customStyle]);
-    const { screen: screenType, isPhone } = useDimensions();
+	const style = useMemo(() => {
+		return {
+			...styles.nuggLinkThumbnailContainer,
+			...(isHovering ? styles.hover : {}),
+			// ...(lastView__tokenId === tokenId.tokenId ? styles.selected : {}),
+			...customStyle,
+		};
+	}, [tokenId, isHovering, customStyle]);
+	const [screenType, isPhone] = useDimensions();
 
-    const { gotoViewingNugg } = useViewingNugg();
-    const { goto } = useMobileViewingNugg();
+	const { gotoViewingNugg } = useViewingNugg();
+	const { goto } = useMobileViewingNugg();
 
-    const onClick = React.useCallback(
-        (item: TokenId) => {
-            if (isPhone) goto(item);
-            else gotoViewingNugg(item);
-        },
-        [gotoViewingNugg, goto, isPhone],
-    );
+	const onClick = React.useCallback(
+		(item: TokenId) => {
+			if (isPhone) goto(item);
+			else gotoViewingNugg(item);
+		},
+		[gotoViewingNugg, goto, isPhone],
+	);
 
-    return (
-        <animated.div
-            ref={ref}
-            key={index}
-            style={{ ...style }}
-            onClick={() => {
-                onClick(tokenId);
-            }}
-        >
-            <TokenViewer
-                tokenId={tokenId}
-                style={styles.nugg}
-                disableOnClick
-                // shouldLoad={pageLoaded}
-            />
-            {screenType !== 'phone' && (
-                <Text size="smaller" textStyle={styles.label}>
-                    {tokenId.toPrettyId()}
-                </Text>
-            )}
-        </animated.div>
-    );
+	return (
+		<animated.div
+			ref={ref}
+			key={index}
+			style={{ ...style }}
+			onClick={() => {
+				onClick(tokenId);
+			}}
+		>
+			<TokenViewer
+				tokenId={tokenId}
+				style={styles.nugg}
+				disableOnClick
+				// shouldLoad={pageLoaded}
+			/>
+			{screenType !== 'phone' && (
+				<Text size="smaller" textStyle={styles.label}>
+					{tokenId.toPrettyId()}
+				</Text>
+			)}
+		</animated.div>
+	);
 };
 
 export default React.memo(NuggLinkThumbnail);

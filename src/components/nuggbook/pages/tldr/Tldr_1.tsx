@@ -26,7 +26,7 @@ const Welcome_0: NuggBookPage = ({ setPage }) => {
 		config: packages.spring.config.default,
 	});
 
-	const { screen } = useDimensions();
+	const [screen] = useDimensions();
 
 	return (
 		<div

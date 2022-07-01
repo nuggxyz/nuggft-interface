@@ -16,149 +16,149 @@ import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import { useUsdPair } from '@src/client/usd';
 
 const OfferTextMobile = ({ tokenId }: { tokenId?: TokenId }) => {
-    const token = client.live.token(tokenId);
+	const token = client.live.token(tokenId);
 
-    const swap = React.useMemo(() => {
-        return token?.activeSwap;
-    }, [token?.activeSwap]);
-    const lifecycle = useLifecycleEnhanced(tokenId);
+	const swap = React.useMemo(() => {
+		return token?.activeSwap;
+	}, [token?.activeSwap]);
+	const lifecycle = useLifecycleEnhanced(tokenId);
 
-    const { isPhone } = useDimensions();
+	const [, isPhone] = useDimensions();
 
-    // const hasBids = client.live.offers(tokenId).length !== 0;
+	// const hasBids = client.live.offers(tokenId).length !== 0;
 
-    // const text = useMemo(() => {
-    //     if (!token || !lifecycle) return '';
-    //     if (lifecycle === Lifecycle.Tryout) {
-    //         return t`Select a nugg to buy this item from`;
-    //     }
-    //     if (lifecycle === Lifecycle.Deck || lifecycle === Lifecycle.Bat) {
-    //         return hasBids ? t`Highest offer` : t`Place the first offer!`;
-    //     }
-    //     if (lifecycle === Lifecycle.Bench) {
-    //         return t`Place offer to begin auction`;
-    //     }
-    //     if (lifecycle === Lifecycle.Shower) {
-    //         return hasBids ? t`Winner` : t`This sale is over`;
-    //     }
-    //     return '';
-    // }, [token, hasBids, lifecycle]);
+	// const text = useMemo(() => {
+	//     if (!token || !lifecycle) return '';
+	//     if (lifecycle === Lifecycle.Tryout) {
+	//         return t`Select a nugg to buy this item from`;
+	//     }
+	//     if (lifecycle === Lifecycle.Deck || lifecycle === Lifecycle.Bat) {
+	//         return hasBids ? t`Highest offer` : t`Place the first offer!`;
+	//     }
+	//     if (lifecycle === Lifecycle.Bench) {
+	//         return t`Place offer to begin auction`;
+	//     }
+	//     if (lifecycle === Lifecycle.Shower) {
+	//         return hasBids ? t`Winner` : t`This sale is over`;
+	//     }
+	//     return '';
+	// }, [token, hasBids, lifecycle]);
 
-    const dynamicTextColor = React.useMemo(() => {
-        if (isPhone && swap?.endingEpoch === null) {
-            return lib.colors.primaryColor;
-        }
-        return lib.colors.white;
-    }, [swap, isPhone]);
+	const dynamicTextColor = React.useMemo(() => {
+		if (isPhone && swap?.endingEpoch === null) {
+			return lib.colors.primaryColor;
+		}
+		return lib.colors.white;
+	}, [swap, isPhone]);
 
-    return tokenId &&
-        token &&
-        (lifecycle?.lifecycle === 'bunt' || lifecycle?.lifecycle === 'bat') ? (
-        <BuntOfferTextMobile tokenId={tokenId} />
-    ) : (
-        <>
-            {lifecycle && (
-                <Label
-                    // type="text"
-                    containerStyles={{
-                        background: 'transparent',
-                    }}
-                    size="small"
-                    textStyle={{
-                        color: dynamicTextColor,
+	return tokenId &&
+		token &&
+		(lifecycle?.lifecycle === 'bunt' || lifecycle?.lifecycle === 'bat') ? (
+		<BuntOfferTextMobile tokenId={tokenId} />
+	) : (
+		<>
+			{lifecycle && (
+				<Label
+					// type="text"
+					containerStyles={{
+						background: 'transparent',
+					}}
+					size="small"
+					textStyle={{
+						color: dynamicTextColor,
 
-                        position: 'relative',
-                    }}
-                    text={lifecycle?.label}
-                    leftDotColor={lifecycle.color}
-                />
-            )}
-        </>
-    );
+						position: 'relative',
+					}}
+					text={lifecycle?.label}
+					leftDotColor={lifecycle.color}
+				/>
+			)}
+		</>
+	);
 };
 
 export const BuntOfferTextMobile = ({ tokenId }: { tokenId: TokenId }) => {
-    const nuggft = useNuggftV1();
-    const token = client.live.token(tokenId);
-    const lifecycle = useLifecycleEnhanced(tokenId);
+	const nuggft = useNuggftV1();
+	const token = client.live.token(tokenId);
+	const lifecycle = useLifecycleEnhanced(tokenId);
 
-    const provider = web3.hook.usePriorityProvider();
+	const provider = web3.hook.usePriorityProvider();
 
-    const swap = React.useMemo(() => {
-        return token?.activeSwap;
-    }, [token?.activeSwap]);
+	const swap = React.useMemo(() => {
+		return token?.activeSwap;
+	}, [token?.activeSwap]);
 
-    const vfo = useAsyncState(() => {
-        if (token && provider && tokenId && lifecycle?.lifecycle === Lifecycle.Bunt) {
-            return nuggft
-                .connect(provider)
-                ['vfo(address,uint24)'](Address.NULL.hash, tokenId.toRawId())
-                .then((x) => {
-                    return new EthInt(x);
-                });
-        }
-        return undefined;
-    }, [token, nuggft, tokenId, provider]);
+	const vfo = useAsyncState(() => {
+		if (token && provider && tokenId && lifecycle?.lifecycle === Lifecycle.Bunt) {
+			return nuggft
+				.connect(provider)
+				['vfo(address,uint24)'](Address.NULL.hash, tokenId.toRawId())
+				.then((x) => {
+					return new EthInt(x);
+				});
+		}
+		return undefined;
+	}, [token, nuggft, tokenId, provider]);
 
-    const offers = client.live.offers(tokenId);
-    const { isPhone } = useDimensions();
+	const offers = client.live.offers(tokenId);
+	const [, isPhone] = useDimensions();
 
-    const dynamicTextColor = React.useMemo(() => {
-        if (isPhone && swap?.endingEpoch === null) {
-            return lib.colors.primaryColor;
-        }
-        return lib.colors.white;
-    }, [swap, isPhone]);
+	const dynamicTextColor = React.useMemo(() => {
+		if (isPhone && swap?.endingEpoch === null) {
+			return lib.colors.primaryColor;
+		}
+		return lib.colors.white;
+	}, [swap, isPhone]);
 
-    const leader = React.useMemo(() => {
-        return offers.first() as unknown as OfferData;
-    }, [offers]);
+	const leader = React.useMemo(() => {
+		return offers.first() as unknown as OfferData;
+	}, [offers]);
 
-    const leaderEns = web3.hook.usePriorityAnyENSName(
-        token && token.type === 'item' ? 'nugg' : provider,
-        leader.account,
-    );
+	const leaderEns = web3.hook.usePriorityAnyENSName(
+		token && token.type === 'item' ? 'nugg' : provider,
+		leader.account,
+	);
 
-    const leaderCurrency = useUsdPair(leader?.eth || vfo?.number || 0);
+	const leaderCurrency = useUsdPair(leader?.eth || vfo?.number || 0);
 
-    return (
-        <div
-            style={{
-                alignItems: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                marginTop: '-20px',
-            }}
-        >
-            {lifecycle && (
-                <Label
-                    // type="text"
-                    containerStyles={{
-                        background: 'transparent',
-                    }}
-                    size="small"
-                    textStyle={{
-                        color: dynamicTextColor,
+	return (
+		<div
+			style={{
+				alignItems: 'center',
+				display: 'flex',
+				flexDirection: 'column',
+				marginTop: '-20px',
+			}}
+		>
+			{lifecycle && (
+				<Label
+					// type="text"
+					containerStyles={{
+						background: 'transparent',
+					}}
+					size="small"
+					textStyle={{
+						color: dynamicTextColor,
 
-                        position: 'relative',
-                    }}
-                    text={lifecycle?.label}
-                    leftDotColor={lifecycle.color}
-                />
-            )}
-            <CurrencyText
-                textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
-                // image="eth"
-                value={leaderCurrency}
-                // decimals={0}
-            />
-            <Text textStyle={{ fontSize: '13px', color: dynamicTextColor, marginTop: 5 }}>
-                {`${
-                    leader?.eth ? `${leaderEns || leader.account} is leading` : 'starting price'
-                } | ${offers.length} offers`}
-            </Text>
-        </div>
-    );
+						position: 'relative',
+					}}
+					text={lifecycle?.label}
+					leftDotColor={lifecycle.color}
+				/>
+			)}
+			<CurrencyText
+				textStyle={{ color: dynamicTextColor, fontSize: '28px' }}
+				// image="eth"
+				value={leaderCurrency}
+				// decimals={0}
+			/>
+			<Text textStyle={{ fontSize: '13px', color: dynamicTextColor, marginTop: 5 }}>
+				{`${
+					leader?.eth ? `${leaderEns || leader.account} is leading` : 'starting price'
+				} | ${offers.length} offers`}
+			</Text>
+		</div>
+	);
 };
 
 export default OfferTextMobile;

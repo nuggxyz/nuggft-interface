@@ -5,6 +5,8 @@ import { Lifecycle } from '@src/client/interfaces';
 import { Address } from '@src/classes/Address';
 import web3 from '@src/web3';
 import { DEFAULT_CONTRACTS, ADDRESS_ZERO } from '@src/web3/constants';
+import { v3FormatLiveToken } from '@src/client/v3';
+import { v2FormatLiveToken } from '@src/client/v2';
 
 export const useLifecycleData = (tokenId?: TokenId) => {
 	const warning = client.epoch.active.useWarning();
@@ -24,17 +26,18 @@ export const useLifecycleData = (tokenId?: TokenId) => {
 	const epoch = client.epoch.active.useId();
 
 	const swap = React.useMemo(() => {
-		// if (!token) return undefined;
+		let res = quick ?? potential;
 
-		// const getit = () => {
-		// 	if (token.isItem()) return token?.activeSwap || token?.upcomingActiveSwap;
-		// 	return token.activeSwap;
-		// };
+		if (!res && token) {
+			if (!token.activeSwap || token.activeSwap.endingEpoch === null) {
+				res = v3FormatLiveToken(token);
+			} else {
+				res = v2FormatLiveToken(token, 0);
+			}
+		}
 
-		// const real = getit();
-
-		return null ?? quick ?? potential;
-	}, [quick, potential]);
+		return res;
+	}, [quick, potential, token]);
 
 	const msp = client.stake.useMsp();
 

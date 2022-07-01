@@ -1,53 +1,50 @@
 import React, { FunctionComponent } from 'react';
 import { animated } from '@react-spring/web';
 
-import { useDarkMode } from '@src/client/hooks/useDarkMode';
-import lib from '@src/lib';
-import useDesktopSwappingNugg from '@src/client/hooks/useDesktopSwappingNugg';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
+import lib from '@src/lib';
 
-import styles from './RingAbout.styles';
+import Caboose from './Caboose';
+import OfferButton from './OfferButton';
 import OffersList from './OffersList';
 import OwnerBlock from './OwnerBlock';
-import OfferButton from './OfferButton';
-import SideCar from './SideCar';
-import Caboose from './Caboose';
+import styles from './RingAbout.styles';
 
 type Props = {
 	asHappyTab?: boolean;
 	manualTokenId?: TokenId;
 };
 
-const RingAbout: FunctionComponent<Props> = ({ asHappyTab = false, manualTokenId }) => {
-	const darkmode = useDarkMode();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const RingAbout: FunctionComponent<Props> = ({ manualTokenId }) => {
+	// const darkmode = useDarkMode();
 
-	const tokenId = useDesktopSwappingNugg(manualTokenId);
+	useLiveTokenPoll(true, manualTokenId);
 
-	useLiveTokenPoll(true, tokenId);
+	// return (
+	// 	<div style={{ width: '400px', overflowY: 'auto', WebkitScrollSnapType: 'y' }}>
+	// 		<ActiveSwap tokenId={manualTokenId} />
+	// 	</div>
+	// );
 
 	return (
 		<>
 			<animated.div
 				style={{
-					...(asHappyTab
-						? styles.containerTablet
-						: darkmode
-						? styles.containerDark
-						: styles.container),
+					...styles.container,
 					boxShadow: lib.layout.boxShadow.dark,
 				}}
 			>
 				<div style={styles.bodyContainer}>
-					<OwnerBlock tokenId={tokenId} />
+					<OwnerBlock tokenId={manualTokenId} />
 					{/* <OfferText tokenId={tokenId} /> */}
-					<OffersList tokenId={tokenId} />
+					<OffersList tokenId={manualTokenId} />
+					<Caboose tokenId={manualTokenId?.onlyItemId()} />
 				</div>
-				<OfferButton tokenId={tokenId} />
+				<OfferButton tokenId={manualTokenId} />
 			</animated.div>
-			<SideCar tokenId={tokenId} />
-			<Caboose tokenId={tokenId?.onlyItemId()} />
 		</>
 	);
 };
 
-export default React.memo(RingAbout);
+export default RingAbout;

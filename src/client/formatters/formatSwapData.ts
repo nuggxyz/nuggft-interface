@@ -39,6 +39,8 @@ export const formatSwapData = <T extends TokenId>(
 		),
 		canceledEpoch: z.canceledEpoch ? Number(z.canceledEpoch) : null,
 		startUnix: z?.startUnix ? BigNumber.from(z.startUnix).toNumber() : undefined,
+		commitBlock: z?.commitBlock ? Number(z.commitBlock) : null,
+		numOffers: z?.numOffers ? Number(z.numOffers) : 0,
 	};
 
 	if (tokenId.isItemId()) {

@@ -8,11 +8,7 @@ import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCard';
-import lib, {
-	isUndefinedOrNullOrBooleanFalse,
-	isUndefinedOrNullOrObjectEmpty,
-	isUndefinedOrNullOrStringEmptyOrZeroOrStringZero,
-} from '@src/lib';
+import lib, { isUndefinedOrNullOrBooleanFalse, isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 import web3 from '@src/web3';
 import client from '@src/client';
 import { MyNuggsData } from '@src/client/interfaces';
@@ -57,7 +53,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 	useTransactionManager2(provider, hash, closeModal);
 
 	const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');
-	const [selectedNuggForItem, setSelectedNugg] = useState<FormatedMyNuggsData>();
+	const [selectedNuggForItem, setSelectedNugg] = useState<NuggId | undefined>(
+		data?.nuggToBuyFor ?? undefined,
+	);
 	const [amount, setAmount] = useState('0');
 	const pref = client.usd.useCurrencyPreferrence();
 	const msp = client.stake.useMsp();
@@ -103,9 +101,11 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 					);
 				}
 
-				if (selectedNuggForItem) {
+				const nuggId = selectedNuggForItem || data.nuggToBuyFor;
+
+				if (nuggId) {
 					return nuggft['check(uint24,uint24,uint16)'](
-						selectedNuggForItem.tokenId.toRawId(),
+						nuggId.toRawId(),
 						data.nuggToBuyFrom.toRawId(),
 						data.tokenId.toRawId(),
 					).then((x) => {
@@ -135,12 +135,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 			selectedNuggForItem,
 		] as const,
 		(prev, curr, res) => {
-			return (
-				res !== null &&
-				res !== undefined &&
-				prev[7] === curr[7] &&
-				prev[8]?.tokenId === curr[8]?.tokenId
-			);
+			return res !== null && res !== undefined && prev[7] === curr[7] && prev[8] === curr[8];
 		},
 	);
 
@@ -189,7 +184,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 							tx: nuggft.populateTransaction[
 								'offer(uint24,uint24,uint16,uint96,uint96)'
 							](
-								selectedNuggForItem.tokenId.toRawId(),
+								selectedNuggForItem.toRawId(),
 								data.nuggToBuyFrom.toRawId(),
 								data.tokenId.toRawId(),
 								check?.mustOfferOnSeller ? realmsp.bignumber : BigNumber.from(0),
@@ -204,7 +199,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 					}
 					return {
 						tx: nuggft.populateTransaction['offer(uint24,uint24,uint16)'](
-							selectedNuggForItem.tokenId.toRawId(),
+							selectedNuggForItem.toRawId(),
 							data.nuggToBuyFrom.toRawId(),
 							data.tokenId.toRawId(),
 							{
@@ -325,28 +320,39 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 						}}
 					/>
 				</AnimatedCard>
-				<GodListHorizontal
-					itemHeight={135}
-					data={myNuggs}
-					label={t`Pick a nugg to offer on this item`}
-					labelStyle={{
-						color: lib.colors.textColor,
-					}}
-					extraData={undefined}
-					RenderItem={MyNuggRenderItem}
-					action={setSelectedNugg}
-					style={React.useMemo(
-						() => ({
+
+				{/* {calculating ? (
+					<Loader style={{ color: lib.colors.primaryColor }} />
+				) : estimateError ? (
+					<Label
+						size="small"
+						containerStyles={{ background: lib.colors.red }}
+						textStyle={{ color: 'white' }}
+						text={lib.errors.prettify('offer-modal', estimateError)}
+					/>
+				) : null} */}
+
+				{data.isItem() && !data.nuggToBuyFor && (
+					<GodListHorizontal
+						itemHeight={135}
+						data={myNuggs}
+						label={t`Pick a nugg to offer on this item`}
+						labelStyle={{
+							color: lib.colors.textColor,
+						}}
+						extraData={undefined}
+						RenderItem={MyNuggRenderItem}
+						action={setSelectedNugg}
+						style={{
 							width: '100%',
 							background: lib.colors.transparentDarkGrey2,
 							height: '140px',
 							padding: '0rem .4rem',
 							borderRadius: lib.layout.borderRadius.medium,
 							display: data.isItem() ? 'auto' : 'none',
-						}),
-						[data],
-					)}
-				/>
+						}}
+					/>
+				)}
 				<div style={styles.inputContainer}>
 					<DualCurrencyInput
 						warning={estimateError && lib.errors.prettify('offer-modal', estimateError)}
@@ -457,17 +463,14 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 						}
 						overrideFeedback
 						disabled={
-							!check ||
-							!check.canOffer ||
-							isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount) ||
 							calculating ||
 							!!estimateError ||
-							(isUndefinedOrNullOrObjectEmpty(selectedNuggForItem) && data.isItem())
+							(!selectedNuggForItem && data.isItem())
 						}
 						feedbackText={t`Check Wallet...`}
 						buttonStyle={styles.button}
 						label={`${
-							data.isItem() && isUndefinedOrNullOrObjectEmpty(selectedNuggForItem)
+							data.isItem() && !selectedNuggForItem
 								? t`Select a nugg`
 								: check &&
 								  check.currentUserOffer &&
@@ -592,12 +595,9 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 					<FeedbackButton
 						overrideFeedback
 						disabled={
-							!check ||
-							!check.canOffer ||
-							isUndefinedOrNullOrStringEmptyOrZeroOrStringZero(amount) ||
 							calculating ||
 							!!estimateError ||
-							(isUndefinedOrNullOrObjectEmpty(selectedNuggForItem) && data.isItem())
+							(!selectedNuggForItem && data.isItem())
 						}
 						feedbackText={t`Check Wallet...`}
 						buttonStyle={{ ...styles.button, width: '40%' }}
@@ -623,9 +623,11 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 	);
 };
 
-const MyNuggRenderItem: FC<
-	GodListRenderItemProps<FormatedMyNuggsData, undefined, FormatedMyNuggsData>
-> = ({ item, selected, action }) => {
+const MyNuggRenderItem: FC<GodListRenderItemProps<FormatedMyNuggsData, undefined, NuggId>> = ({
+	item,
+	selected,
+	action,
+}) => {
 	const disabled = React.useMemo(() => {
 		if (item) {
 			if (item.activeSwap) return t`currenlty for sale`;
@@ -634,7 +636,7 @@ const MyNuggRenderItem: FC<
 		return undefined;
 	}, [item]);
 
-	const { screen: screenType } = useDimensions();
+	const [screenType] = useDimensions();
 	return (
 		<div
 			role="button"
@@ -647,7 +649,7 @@ const MyNuggRenderItem: FC<
 				width: '125px',
 			}}
 			aria-hidden="true"
-			onClick={() => action && action(item)}
+			onClick={() => action && action(item?.tokenId)}
 		>
 			{item && (
 				<TokenViewer

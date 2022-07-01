@@ -59,7 +59,7 @@ const TheRing: FunctionComponent<Props> = ({
 	strokeWidth,
 	defaultColor = lib.colors.nuggBlue,
 }) => {
-	const { screen: screenType, isPhone } = useDimensions();
+	const [screenType, isPhone] = useDimensions();
 
 	const swap = client.v2.useSwap(manualTokenId);
 	const lifecycle = useLifecycle(manualTokenId);

@@ -20,7 +20,7 @@ import lib from '@src/lib/index';
 import useThrottle from '@src/hooks/useThrottle';
 import usePrevious from '@src/hooks/usePrevious';
 
-import { OfferData } from './interfaces';
+import { LiveToken, OfferData } from './interfaces';
 import health from './health';
 import stake from './stake';
 import block from './block';
@@ -118,6 +118,56 @@ const formatter = (
 	return res.sort((a, b) => (a.top.lt(b.top) ? -1 : 1)).map((a) => a.tokenId);
 };
 
+export const v2FormatLiveToken = <
+	A extends TokenId,
+	T extends SmartPickFromTokenId<A, LiveToken>,
+	Z extends SmartPickFromTokenId<A, SwapData>,
+>(
+	token: T,
+	blk: number,
+): Z | undefined => {
+	if (!token.activeSwap || token.activeSwap.endingEpoch === null) return undefined;
+	if (token.isItem())
+		if (token.activeSwap?.isItem()) {
+			const res: IsolateItemIdFactory<SwapData> = buildTokenIdFactory({
+				leader: token.activeSwap.leader as NuggId,
+				swapId: Number(token.activeSwap.num),
+				top: token.activeSwap.eth,
+				// nuggs that are about to be mining will have
+				commitBlock: token.activeSwap.commitBlock ?? 0,
+				tokenId: token.activeSwap.tokenId,
+				updatedAtBlock: blk,
+				endingEpoch: token.activeSwap.endingEpoch,
+				numOffers: token.activeSwap.numOffers,
+				owner: token.activeSwap.owner,
+				updatedAtIndex: null,
+				isV2: true as const,
+			});
+			// @ts-ignore
+			return res;
+		}
+	if (token.isNugg())
+		if (token.activeSwap?.isNugg()) {
+			const val: IsolateNuggIdFactory<SwapData> = buildTokenIdFactory({
+				leader: token.activeSwap.leader as AddressString,
+				swapId: Number(token.activeSwap.num),
+				top: token.activeSwap.eth,
+				// nuggs that are about to be mining will have
+				commitBlock: token.activeSwap.commitBlock ?? 0,
+				tokenId: token.activeSwap.tokenId,
+				updatedAtBlock: blk,
+				endingEpoch: token.activeSwap.endingEpoch,
+				numOffers: token.activeSwap.numOffers,
+				owner: token.owner,
+				updatedAtIndex: null,
+				isV2: true as const,
+			});
+			// @ts-ignore
+			return val;
+		}
+
+	return undefined;
+};
 const rpcFormatter = (input: string, hits: TokenIdDictionary<SwapData>, blk: number) => {
 	const res: SwapData[] = [];
 	const v: V3RpcInput[] = [];
@@ -301,6 +351,22 @@ const useStore = create(
 
 				return v;
 			}
+
+			// function handleTokenUpdate(input: LiveToken,) {
+			// 	const { hits } = get().backup;
+			// 	const [current, next, v] = rpcFormatter(input, hits, 0);
+
+			// 	set(() => ({
+			// 		backup: {
+			// 			current,
+			// 			next,
+			// 			all: [...current, ...next],
+			// 			hits,
+			// 		},
+			// 	}));
+
+			// 	return v;
+			// }
 
 			function handleRpcHit(data: OfferData, log: Log) {
 				// @ts-ignore

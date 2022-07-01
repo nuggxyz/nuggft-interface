@@ -245,7 +245,7 @@ const SearchBarResults = ({ tokens }: { tokens: TokenId[] }) => {
 const NuggDexSearchBarMobile: FunctionComponent<unknown> = () => {
 	const sort = client.live.searchFilter.sort();
 	const searchValue = client.live.searchFilter.searchValue();
-	const { isPhone } = useDimensions();
+	const [, isPhone] = useDimensions();
 
 	const [localSearchValue, setSearchValue] = useState('');
 	const [isUserInput, setIsUserInput] = useState(false);

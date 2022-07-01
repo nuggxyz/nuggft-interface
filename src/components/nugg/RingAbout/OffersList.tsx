@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { animated, config as springConfig, useSpring } from '@react-spring/web';
-import { IoCheckmarkDoneOutline, IoChevronDownCircle, IoChevronUpCircle } from 'react-icons/io5';
+import { IoCheckmarkDoneOutline } from 'react-icons/io5';
 import { t } from '@lingui/macro';
 
 import client from '@src/client';
@@ -21,7 +21,7 @@ const OfferRenderItem: FC<SimpleListRenderItemProps<OfferData, undefined, undefi
 }) => {
 	const provider = web3.hook.usePriorityProvider();
 	const leader = client.ens.useEnsOrNuggId(provider, item.account);
-	const { isPhone } = useDimensions();
+	const [, isPhone] = useDimensions();
 
 	const amount = client.usd.useUsdPair(item.eth);
 	return (
@@ -72,7 +72,7 @@ export default React.memo<{
 	const [lifecycle, swap, swapCurrency] = useLifecycleData(tokenId);
 	const chainId = web3.hook.usePriorityChainId();
 	const provider = web3.hook.usePriorityProvider();
-	const { screen: screenType, isPhone } = useDimensions();
+	const [screenType] = useDimensions();
 
 	const [open, setOpen] = useState(screenType === 'tablet');
 
@@ -83,7 +83,7 @@ export default React.memo<{
 	}, [open, others, screenType]);
 
 	const springStyle = useSpring({
-		maxHeight: open ? (screenType === 'tablet' ? '100%' : '300px') : '0px',
+		maxHeight: open ? '300px' : '0px',
 		opacity: open ? 1 : 0,
 		// padding: open ? '0.75rem' : '0rem',
 		pointerEvents: open ? ('auto' as const) : ('none' as const),
@@ -96,13 +96,11 @@ export default React.memo<{
 					background: lib.colors.transparentWhite,
 				},
 				{
-					background: isPhone
-						? lib.colors.transparentWhite
-						: lib.colors.transparentLightGrey,
+					background: lib.colors.transparentWhite,
 				},
 			],
 			from: {
-				background: isPhone ? lib.colors.transparentWhite : lib.colors.transparentLightGrey,
+				background: lib.colors.transparentWhite,
 			},
 			config: springConfig.molasses,
 		};
@@ -150,8 +148,9 @@ export default React.memo<{
 					width: '95%',
 					background: 'transparent',
 					position: 'relative',
-					...(isPhone && { marginTop: 15 }),
+					marginTop: 15,
 					maxWidth: '300px',
+					zIndex: 5000000000,
 				}}
 			>
 				<animated.div
@@ -231,19 +230,9 @@ export default React.memo<{
 					)}
 				</animated.div>
 			</div>
-			{!onlyLeader &&
-				others.length > 1 &&
-				(screenType === 'tablet' ? (
-					<Text
-						size="small"
-						type="text"
-						textStyle={{ color: 'white', ...styles.showMoreButton }}
-					>
-						{t`previous offers`}
-					</Text>
-				) : (
-					<>
-						{!isPhone && (
+			{!onlyLeader && others.length > 1 && (
+				<>
+					{/* {!isPhone && (
 							<div
 								className="mobile-pressable-div"
 								role="button"
@@ -284,20 +273,18 @@ export default React.memo<{
 									/>
 								)}
 							</div>
-						)}
-						<animated.div
-							style={{
-								background: isPhone
-									? lib.colors.transparentWhite
-									: lib.colors.transparentGrey,
-								width: '100%',
-								borderRadius: lib.layout.borderRadius.mediumish,
-								...springStyle,
-								overflow: 'visible',
-								paddingTop: '10px',
-							}}
-						>
-							{/* {distribution && (
+						)} */}
+					<animated.div
+						style={{
+							background: lib.colors.transparentWhite,
+							width: '100%',
+							borderRadius: lib.layout.borderRadius.mediumish,
+							...springStyle,
+							overflow: 'visible',
+							paddingTop: '10px',
+						}}
+					>
+						{/* {distribution && (
                                 <div>
                                     <Text>Distribution:</Text>
                                     <Text>
@@ -307,14 +294,14 @@ export default React.memo<{
                                     <Text>Staked: {new EthInt(distribution.stake).number}</Text>
                                 </div>
                             )} */}
-							<SimpleList
-								data={others}
-								RenderItem={OfferRenderItem}
-								extraData={undefined}
-							/>
-						</animated.div>
-					</>
-				))}
+						<SimpleList
+							data={others}
+							RenderItem={OfferRenderItem}
+							extraData={undefined}
+						/>
+					</animated.div>
+				</>
+			)}
 		</>
 	) : null;
 });

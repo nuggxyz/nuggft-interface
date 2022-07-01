@@ -9,31 +9,31 @@ import emitter from '@src/emitter';
 const PREFIX = lib.constants.VIEWING_PREFIX;
 
 export default () => {
-    const navigate = useNavigate();
+	const navigate = useNavigate();
 
-    const { goto: gotoMobile } = useMobileViewingNugg();
+	const { goto: gotoMobile } = useMobileViewingNugg();
 
-    const { isPhone } = useDimensions();
+	const [, isPhone] = useDimensions();
 
-    const gotoViewingNugg = React.useCallback(
-        (tokenId: TokenId) => {
-            if (isPhone) {
-                gotoMobile(tokenId);
-                emitter.emit(emitter.events.RequestCloseMobileNavbar, {});
-            } else navigate(`/view/${PREFIX}/${tokenId}`);
-        },
-        [navigate, isPhone, gotoMobile],
-    );
+	const gotoViewingNugg = React.useCallback(
+		(tokenId: TokenId) => {
+			if (isPhone) {
+				gotoMobile(tokenId);
+				emitter.emit(emitter.events.RequestCloseMobileNavbar, {});
+			} else navigate(`/view/${PREFIX}/${tokenId}`);
+		},
+		[navigate, isPhone, gotoMobile],
+	);
 
-    const tokenId = useMatch(`/view/id/:yo`);
+	const tokenId = useMatch(`/view/id/:yo`);
 
-    const showMobileViewOverlay = React.useMemo(() => {
-        return !!tokenId?.params.yo && isPhone;
-    }, [tokenId, isPhone]);
+	const showMobileViewOverlay = React.useMemo(() => {
+		return !!tokenId?.params.yo && isPhone;
+	}, [tokenId, isPhone]);
 
-    return {
-        gotoViewingNugg,
-        safeTokenId: tokenId?.params.yo as TokenId | undefined,
-        showMobileViewOverlay,
-    };
+	return {
+		gotoViewingNugg,
+		safeTokenId: tokenId?.params.yo as TokenId | undefined,
+		showMobileViewOverlay,
+	};
 };

@@ -12,6 +12,7 @@ import { buildTokenIdFactory } from '@src/prototypes';
 import { MIN_SALE_PRICE } from '@src/web3/constants';
 
 import health from './health';
+import { LiveToken } from './interfaces';
 
 interface PotentialDataBase extends TokenIdFactoryBase {
 	tokenId: TokenId;
@@ -45,7 +46,54 @@ export type PotentialData = TokenIdFactoryCreator<
 	PotentialDataBase__Item
 >;
 
-const formatTryout = (tokenId: ItemId, input: PotentialDataBase__ItemPreTryout[]) => {
+export const v3FormatLiveToken = <
+	A extends TokenId,
+	T extends SmartPickFromTokenId<A, LiveToken>,
+	Z extends SmartPickFromTokenId<A, PotentialData>,
+>(
+	token: T,
+): Z | undefined => {
+	if (token.tokenId.isItemId() && token.isItem()) {
+		const tryouts: PotentialDataBase__ItemPreTryout[] = [];
+
+		token.swaps.forEach((b) => {
+			const val = buildTokenIdFactory({
+				owner: b.owner,
+				swapId: Number(token.activeSwap?.num),
+				top: b.eth.eq(0) ? MIN_SALE_PRICE : BigNumber.from(b.eth),
+				tokenId: token.tokenId,
+				isPotential: true as const,
+			});
+
+			tryouts.push(val);
+		});
+
+		const res = formatTryout(token.tokenId, tryouts);
+
+		// @ts-ignore
+		return res;
+	}
+
+	if (token.activeSwap?.isNugg() && token.isNugg()) {
+		const val: IsolateNuggIdFactory<PotentialData> = buildTokenIdFactory({
+			owner: token.activeSwap?.owner,
+			swapId: Number(token.activeSwap.num),
+			min: {
+				eth: token.activeSwap.eth,
+				useMsp: !token.activeSwap.eth || token.activeSwap.eth.eq(0),
+			},
+			tokenId: token.tokenId,
+			isPotential: true as const,
+		});
+
+		// @ts-ignore
+		return val;
+	}
+
+	return undefined;
+};
+
+export const formatTryout = (tokenId: ItemId, input: PotentialDataBase__ItemPreTryout[]) => {
 	const res = input.reduce(
 		(
 			prev: {
@@ -231,6 +279,29 @@ const useStore = create(
 					}));
 				}
 			}
+
+			// const handleLiveToken = (dat: LiveToken) => {
+			// 	if (dat) {
+			// 		const all2 = formatLiveToken(dat);
+
+			// 		if (all2) {
+			// 			const { all, hits } = get().main;
+
+			// 			all.push(all2.tokenId);
+
+			// 			// @ts-ignore
+			// 			hits[all2.tokenId] = all2;
+
+			// 			set(() => ({
+			// 				main: {
+			// 					all,
+			// 					hits,
+			// 					nextAmount: all.length,
+			// 				},
+			// 			}));
+			// 		}
+			// 	}
+			// };
 
 			function handleV3Rpc(input: V3RpcInput[], block: number) {
 				const { hits } = get().backup;

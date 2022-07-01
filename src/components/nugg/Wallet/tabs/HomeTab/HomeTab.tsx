@@ -17,76 +17,76 @@ import MyNuggRenderItem from './MyNuggRenderItem';
 type Props = Record<string, never>;
 
 const HomeTab: FunctionComponent<Props> = () => {
-    const { screen: screenType } = useDimensions();
+	const [screenType] = useDimensions();
 
-    const address = web3.hook.usePriorityAccount();
-    const provider = web3.hook.usePriorityProvider();
-    const chainId = web3.hook.usePriorityChainId();
+	const address = web3.hook.usePriorityAccount();
+	const provider = web3.hook.usePriorityProvider();
+	const chainId = web3.hook.usePriorityChainId();
 
-    const stake__eps = client.stake.useEps();
-    const nuggs = client.user.useNuggs();
-    const loans = client.user.useLoans();
-    const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
+	const stake__eps = client.stake.useEps();
+	const nuggs = client.user.useNuggs();
+	const loans = client.user.useLoans();
+	const unclaimedOffers = client.user.useUnclaimedOffersFilteredByEpoch();
 
-    const balancePair = client.usd.useUsdPair(stake__eps && stake__eps.multiply(nuggs.length));
+	const balancePair = client.usd.useUsdPair(stake__eps && stake__eps.multiply(nuggs.length));
 
-    return chainId && provider && address ? (
-        <div style={styles.container}>
-            <div>
-                <div style={screenType === 'phone' ? styles.phoneContainer : undefined}>
-                    {stake__eps && (
-                        <NumberStatistic
-                            style={{
-                                ...styles.mainStatistic,
-                                width: screenType === 'phone' ? '48%' : '100%',
-                            }}
-                            label={t`Balance`}
-                            value={balancePair}
-                            // image="eth"
-                        />
-                    )}
-                    {screenType === 'phone' && (
-                        <div style={styles.phoneAccountViewer}>
-                            <AccountViewer />
-                        </div>
-                    )}
-                </div>
-                <div style={globalStyles.centeredSpaceBetween}>
-                    <TextStatistic
-                        label={t`Nuggs`}
-                        value={`${nuggs.length || 0}`}
-                        style={styles.statistic}
-                    />
-                    <TextStatistic
-                        label={t`Claims`}
-                        value={`${unclaimedOffers.length}`}
-                        style={styles.statistic}
-                    />
-                    <TextStatistic
-                        label={t`Loans`}
-                        value={`${loans?.length || 0}`}
-                        style={styles.statistic}
-                    />
-                </div>
-            </div>
-            {/* <MyNuggItemListPhone /> */}
-            <GodList
-                id="home-tab-myNuggs"
-                TitleButton={MintNuggButton}
-                labelStyle={styles.listLabel}
-                data={nuggs}
-                extraData={undefined}
-                RenderItem={MyNuggRenderItem}
-                label={t`My Nuggs`}
-                style={styles.list}
-                listEmptyStyle={styles.textWhite}
-                listEmptyText={t`You don't have any Nuggs yet!`}
-                loaderColor="white"
-                itemHeight={108}
-                action={() => undefined}
-            />
-        </div>
-    ) : null;
+	return chainId && provider && address ? (
+		<div style={styles.container}>
+			<div>
+				<div style={screenType === 'phone' ? styles.phoneContainer : undefined}>
+					{stake__eps && (
+						<NumberStatistic
+							style={{
+								...styles.mainStatistic,
+								width: screenType === 'phone' ? '48%' : '100%',
+							}}
+							label={t`Balance`}
+							value={balancePair}
+							// image="eth"
+						/>
+					)}
+					{screenType === 'phone' && (
+						<div style={styles.phoneAccountViewer}>
+							<AccountViewer />
+						</div>
+					)}
+				</div>
+				<div style={globalStyles.centeredSpaceBetween}>
+					<TextStatistic
+						label={t`Nuggs`}
+						value={`${nuggs.length || 0}`}
+						style={styles.statistic}
+					/>
+					<TextStatistic
+						label={t`Claims`}
+						value={`${unclaimedOffers.length}`}
+						style={styles.statistic}
+					/>
+					<TextStatistic
+						label={t`Loans`}
+						value={`${loans?.length || 0}`}
+						style={styles.statistic}
+					/>
+				</div>
+			</div>
+			{/* <MyNuggItemListPhone /> */}
+			<GodList
+				id="home-tab-myNuggs"
+				TitleButton={MintNuggButton}
+				labelStyle={styles.listLabel}
+				data={nuggs}
+				extraData={undefined}
+				RenderItem={MyNuggRenderItem}
+				label={t`My Nuggs`}
+				style={styles.list}
+				listEmptyStyle={styles.textWhite}
+				listEmptyText={t`You don't have any Nuggs yet!`}
+				loaderColor="white"
+				itemHeight={108}
+				action={() => undefined}
+			/>
+		</div>
+	) : null;
 };
 
 export default HomeTab;

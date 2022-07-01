@@ -22,41 +22,41 @@ import packages from '@src/packages';
 // trading -- auctions
 // staking
 const Tldr_2: NuggBookPage = ({ setPage }) => {
-    // const setInit = client.nuggbook.useSetInit();
-    const { screen } = useDimensions();
+	// const setInit = client.nuggbook.useSetInit();
+	const [screen] = useDimensions();
 
-    const spring4 = packages.spring.useSpring({
-        from: {
-            opacity: 0,
-        },
-        to: {
-            opacity: 1,
-        },
-        delay: 500 + 1500 + 1 * 1000,
-        config: packages.spring.config.default,
-    });
+	const spring4 = packages.spring.useSpring({
+		from: {
+			opacity: 0,
+		},
+		to: {
+			opacity: 1,
+		},
+		delay: 500 + 1500 + 1 * 1000,
+		config: packages.spring.config.default,
+	});
 
-    const epoch = client.epoch.active.useId();
+	const epoch = client.epoch.active.useId();
 
-    const tokenId = React.useMemo(() => {
-        return epoch?.toNuggId() ?? 'nugg-1000000';
-    }, [epoch]);
+	const tokenId = React.useMemo(() => {
+		return epoch?.toNuggId() ?? 'nugg-1000000';
+	}, [epoch]);
 
-    const [, , , , , , , , , , svg, , , MobileList] = useHotRotateO(tokenId, true, true);
+	const [, , , , , , , , , , svg, , , MobileList] = useHotRotateO(tokenId, true, true);
 
-    return (
-        <div
-            style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                marginTop: 20,
-                position: 'relative',
-                width: screen === 'phone' ? undefined : '80%',
-            }}
-        >
-            {/* <div
+	return (
+		<div
+			style={{
+				justifyContent: 'center',
+				alignItems: 'center',
+				display: 'flex',
+				flexDirection: 'column',
+				marginTop: 20,
+				position: 'relative',
+				width: screen === 'phone' ? undefined : '80%',
+			}}
+		>
+			{/* <div
                 style={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -83,173 +83,173 @@ const Tldr_2: NuggBookPage = ({ setPage }) => {
                     🥚 🐥 🐓 🍗
                 </span>
             </div> */}
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'relative',
-                    borderRadius: lib.layout.borderRadius.large,
-                    padding: '.4rem 1rem .8rem',
-                    textAlign: 'center',
-                    verticalAlign: 'center',
-                    // marginBottom: '.4rem',
-                    backgroundColor: 'transparent',
-                }}
-            >
-                <span
-                    style={{
-                        marginLeft: 10,
-                        color: lib.colors.transparentPrimaryColor,
-                        ...lib.layout.presets.font.main.semibold,
-                        fontWeight: lib.layout.fontWeight.thicc,
-                        fontSize: '25px',
-                    }}
-                >
-                    {t`modification`}
-                </span>
-            </div>
+			<div
+				style={{
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+					position: 'relative',
+					borderRadius: lib.layout.borderRadius.large,
+					padding: '.4rem 1rem .8rem',
+					textAlign: 'center',
+					verticalAlign: 'center',
+					// marginBottom: '.4rem',
+					backgroundColor: 'transparent',
+				}}
+			>
+				<span
+					style={{
+						marginLeft: 10,
+						color: lib.colors.transparentPrimaryColor,
+						...lib.layout.presets.font.main.semibold,
+						fontWeight: lib.layout.fontWeight.thicc,
+						fontSize: '25px',
+					}}
+				>
+					{t`modification`}
+				</span>
+			</div>
 
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'relative',
-                    borderRadius: lib.layout.borderRadius.large,
-                    padding: '.4rem 1rem .8rem',
-                    textAlign: 'center',
-                    verticalAlign: 'center',
-                    backgroundColor: 'transparent',
-                }}
-            >
-                <span
-                    style={{
-                        fontSize: '20px',
-                        color: lib.colors.transparentPrimaryColor,
-                        ...lib.layout.presets.font.main.semibold,
-                    }}
-                >
-                    {t`change the way a nugg looks by reordering its items`}
-                </span>
-            </div>
+			<div
+				style={{
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+					position: 'relative',
+					borderRadius: lib.layout.borderRadius.large,
+					padding: '.4rem 1rem .8rem',
+					textAlign: 'center',
+					verticalAlign: 'center',
+					backgroundColor: 'transparent',
+				}}
+			>
+				<span
+					style={{
+						fontSize: '20px',
+						color: lib.colors.transparentPrimaryColor,
+						...lib.layout.presets.font.main.semibold,
+					}}
+				>
+					{t`change the way a nugg looks by reordering its items`}
+				</span>
+			</div>
 
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: lib.layout.borderRadius.large,
-                    padding: '.2rem .5rem',
-                    textAlign: 'center',
-                    verticalAlign: 'center',
-                    backgroundColor: 'transparent',
-                    margin: 10,
-                    background: lib.colors.transparentPrimaryColor,
-                }}
-            >
-                <span
-                    style={{
-                        color: lib.colors.white,
-                        ...lib.layout.presets.font.main.thicc,
-                    }}
-                >
-                    {t`try it out`}
-                </span>
-            </div>
+			<div
+				style={{
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+					borderRadius: lib.layout.borderRadius.large,
+					padding: '.2rem .5rem',
+					textAlign: 'center',
+					verticalAlign: 'center',
+					backgroundColor: 'transparent',
+					margin: 10,
+					background: lib.colors.transparentPrimaryColor,
+				}}
+			>
+				<span
+					style={{
+						color: lib.colors.white,
+						...lib.layout.presets.font.main.thicc,
+					}}
+				>
+					{t`try it out`}
+				</span>
+			</div>
 
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-around',
-                    alignItems: 'center',
-                    width: '100%',
-                    position: 'relative',
-                    marginBottom: -10,
-                }}
-            >
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                >
-                    <TokenViewer
-                        tokenId={tokenId}
-                        disableOnClick
-                        style={{
-                            width: '125px',
-                            height: '125px',
-                            padding: 10,
-                            margin: 10,
-                            background: lib.colors.transparentWhite,
-                            borderRadius: lib.layout.borderRadius.medium,
-                            boxShadow: lib.layout.boxShadow.basic,
-                        }}
-                    />
-                </div>
+			<div
+				style={{
+					display: 'flex',
+					justifyContent: 'space-around',
+					alignItems: 'center',
+					width: '100%',
+					position: 'relative',
+					marginBottom: -10,
+				}}
+			>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center',
+					}}
+				>
+					<TokenViewer
+						tokenId={tokenId}
+						disableOnClick
+						style={{
+							width: '125px',
+							height: '125px',
+							padding: 10,
+							margin: 10,
+							background: lib.colors.transparentWhite,
+							borderRadius: lib.layout.borderRadius.medium,
+							boxShadow: lib.layout.boxShadow.basic,
+						}}
+					/>
+				</div>
 
-                <HiArrowCircleRight
-                    size={30}
-                    style={{ marginRight: 3, color: lib.colors.primaryColor }}
-                />
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                >
-                    <TokenViewer
-                        svgNotFromGraph={svg}
-                        disableOnClick
-                        style={{
-                            width: '125px',
-                            height: '125px',
-                            padding: 10,
-                            margin: 10,
-                            background: lib.colors.transparentWhite,
-                            borderRadius: lib.layout.borderRadius.medium,
-                            boxShadow: lib.layout.boxShadow.basic,
-                        }}
-                    />
-                </div>
-            </div>
+				<HiArrowCircleRight
+					size={30}
+					style={{ marginRight: 3, color: lib.colors.primaryColor }}
+				/>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center',
+					}}
+				>
+					<TokenViewer
+						svgNotFromGraph={svg}
+						disableOnClick
+						style={{
+							width: '125px',
+							height: '125px',
+							padding: 10,
+							margin: 10,
+							background: lib.colors.transparentWhite,
+							borderRadius: lib.layout.borderRadius.medium,
+							boxShadow: lib.layout.boxShadow.basic,
+						}}
+					/>
+				</div>
+			</div>
 
-            {MobileList}
+			{MobileList}
 
-            {screen !== 'phone' && (
-                <packages.spring.animated.div
-                    className="mobile-pressable-div"
-                    style={{
-                        alignItems: 'center',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        // padding: 10,
-                        color: lib.colors.white,
-                        boxShadow: lib.layout.boxShadow.basic,
-                        padding: '.7rem 1.3rem',
-                        background: lib.colors.gradient3,
-                        borderRadius: lib.layout.borderRadius.large,
-                        marginBottom: 15,
-                        zIndex: 300,
-                        marginTop: 15,
-                        ...spring4,
-                    }}
-                    role="button"
-                    aria-hidden="true"
-                    onClick={() => {
-                        setPage(Page.Tldr_3, true);
-                    }}
-                >
-                    <span style={{ ...lib.layout.presets.font.main.thicc }}>{t`next`}</span>
-                </packages.spring.animated.div>
-            )}
+			{screen !== 'phone' && (
+				<packages.spring.animated.div
+					className="mobile-pressable-div"
+					style={{
+						alignItems: 'center',
+						display: 'flex',
+						flexDirection: 'column',
+						// padding: 10,
+						color: lib.colors.white,
+						boxShadow: lib.layout.boxShadow.basic,
+						padding: '.7rem 1.3rem',
+						background: lib.colors.gradient3,
+						borderRadius: lib.layout.borderRadius.large,
+						marginBottom: 15,
+						zIndex: 300,
+						marginTop: 15,
+						...spring4,
+					}}
+					role="button"
+					aria-hidden="true"
+					onClick={() => {
+						setPage(Page.Tldr_3, true);
+					}}
+				>
+					<span style={{ ...lib.layout.presets.font.main.thicc }}>{t`next`}</span>
+				</packages.spring.animated.div>
+			)}
 
-            {/* <div
+			{/* <div
                 style={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -273,7 +273,7 @@ const Tldr_2: NuggBookPage = ({ setPage }) => {
                 </span>
             </div> */}
 
-            {/* <packages.spring.animated.div
+			{/* <packages.spring.animated.div
                 className="mobile-pressable-div"
                 style={{
                     alignItems: 'center',
@@ -303,8 +303,8 @@ const Tldr_2: NuggBookPage = ({ setPage }) => {
             >
                 <span style={{ ...lib.layout.presets.font.main.thicc }}>{t`keep reading`}</span>
             </packages.spring.animated.div> */}
-        </div>
-    );
+		</div>
+	);
 };
 
 export default Tldr_2;

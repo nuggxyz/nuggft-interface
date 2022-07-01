@@ -85,7 +85,7 @@ export const MyNuggRenderItem: FC<
 type FormatedMyNuggsData = MyNuggsData & { lastBid: EthInt | 'unable-to-bid' | 'user-must-claim' };
 
 export default ({ tokenId }: { tokenId?: ItemId }) => {
-	const { isPhone } = useDimensions();
+	const [, isPhone] = useDimensions();
 	const address = web3.hook.usePriorityAccount();
 	const epoch = client.epoch.active.useId();
 	const { minutes } = client.epoch.useEpoch(epoch);

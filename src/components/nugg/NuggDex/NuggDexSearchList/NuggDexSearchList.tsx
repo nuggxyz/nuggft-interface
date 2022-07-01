@@ -24,7 +24,7 @@ const NuggDexSearchList: FunctionComponent<Props> = () => {
 	// const activeNuggs = client.live.activeSwaps();
 	// const potentialNuggs = client.live.potentialSwaps();
 
-	const { screen: screenType } = useDimensions();
+	const [screenType] = useDimensions();
 
 	const updateSearchFilterTarget = client.mutate.updateSearchFilterTarget();
 	const updateSearchFilterSort = client.mutate.updateSearchFilterSort();

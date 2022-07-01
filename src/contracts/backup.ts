@@ -4,6 +4,7 @@ import { Fraction } from '@src/classes/Fraction';
 import lib from '@src/lib';
 import { buildTokenIdFactory } from '@src/prototypes';
 import { NuggftV1 } from '@src/typechain/NuggftV1';
+import web3 from '@src/web3';
 import { ADDRESS_ZERO, DEFAULT_CONTRACTS } from '@src/web3/constants';
 
 export const nuggBackup = async (tokenId: NuggId, nuggft: NuggftV1, epoch: number) => {
@@ -53,6 +54,8 @@ export const nuggBackup = async (tokenId: NuggId, nuggft: NuggftV1, epoch: numbe
 					isBackup: true,
 					listDataType: 'swap' as const,
 					canceledEpoch: null,
+					commitBlock: web3.config.calculateStartBlock(agency.epoch - 1),
+					numOffers: 1,
 					offers: [
 						buildTokenIdFactory({
 							eth: agency.eth,
@@ -110,6 +113,8 @@ export const itemBackup = async (tokenId: ItemId, nuggft: NuggftV1, epoch: numbe
 					count: 0,
 					isBackup: true,
 					listDataType: 'swap' as const,
+					commitBlock: web3.config.calculateStartBlock(agency.epoch - 1),
+					numOffers: 1,
 					canceledEpoch: null,
 					offers: [
 						buildTokenIdFactory({
