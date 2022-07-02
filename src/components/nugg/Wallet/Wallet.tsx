@@ -10,7 +10,6 @@ import useDimensions from '@src/client/hooks/useDimensions';
 import HomeTabMobile from '@src/components/mobile/MobileWallet';
 
 import ClaimTab from './tabs/ClaimTab/ClaimTab';
-import ConnectTab from './tabs/ConnectTab/ConnectTab';
 import LoanTab from './tabs/LoanTab/LoanTab';
 import HomeTab from './tabs/HomeTab/HomeTab';
 import styles from './Wallet.styles';
@@ -90,10 +89,10 @@ const Wallet: FunctionComponent<Props> = () => {
 									},
 							  ]
 							: []),
-						{
-							label: t`Connect`,
-							comp: React.memo(ConnectTab),
-						},
+						// {
+						// 	label: t`Connect`,
+						// 	comp: React.memo(ConnectTab),
+						// },
 				  ]),
 		],
 		[account, screenType],
