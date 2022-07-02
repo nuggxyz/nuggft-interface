@@ -5,8 +5,8 @@ import type { SignerConnection } from '@walletconnect/signer-connection';
 import type Core from '@walletconnect/core';
 import type SocketTransport from '@walletconnect/socket-transport';
 import EventEmitter3 from 'eventemitter3';
-import curriedLighten from 'polished/lib/color/lighten';
 import { JsonRpcProvider } from '@ethersproject/providers';
+import curriedLighten from 'polished/lib/color/lighten';
 
 import type { Actions, ProviderRpcError } from '@src/web3/core/types';
 import { Connector, WalletConnectCoreProvider } from '@src/web3/core/types';
@@ -133,12 +133,14 @@ export class WalletConnect extends Connector {
                 if (peer.desktopAction === 'deeplink') {
                     if (typeof window !== 'undefined') window?.open(uri);
                 } else {
+                    const previousModal = client.modal.getState().data;
                     client.modal.getState().openModal({
                         modalType: ModalEnum.QrCode,
                         info: peer,
                         uri,
                         containerStyle: { background: lib.colors.semiTransparentWhite },
                         backgroundStyle: { background: curriedLighten(0.1)(peer.color) },
+                        previousModal,
                     });
                 }
             } else {

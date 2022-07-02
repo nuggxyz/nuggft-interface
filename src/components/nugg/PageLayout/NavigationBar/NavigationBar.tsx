@@ -9,6 +9,7 @@ import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/Hea
 import useBlur from '@src/hooks/useBlur';
 import useDimensions from '@src/client/hooks/useDimensions';
 import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
+import lib from '@src/lib';
 
 import styles from './NavigationBar.styles';
 
@@ -37,7 +38,6 @@ const NavigationBar: FC<Props> = () => {
 			style={{
 				...styles.navBarContainer,
 				...container,
-				// ...(isViewOpen && screenType === 'phone' ? { justifyContent: 'flex-end' } : {}),
 				...(isHome
 					? {
 							backdropFilter: 'blur(1px)',
@@ -55,35 +55,29 @@ const NavigationBar: FC<Props> = () => {
 			<div
 				style={{
 					...styles.searchBarContainer,
-					// ...(isViewOpen && screenType === 'phone'
-					//     ? { width: '100%', position: 'absolute' }
-					//     : {}),
 				}}
 			>
 				<NuggDexSearchBar />
 			</div>
-			{!isViewOpen && (
-				<>
-					<div style={{ marginRight: '10px' }}>
-						<HealthIndicator />
-					</div>
-					{/* {screenType === 'phone' && (
-                        <Button
-                            hoverStyle={{ cursor: 'pointer' }}
-                            buttonStyle={{ background: 'transparent', padding: '0', zIndex: 1000 }}
-                            onClick={onClick}
-                            rightIcon={<NLStaticImage image="nuggbutton" />}
-                        />
-                    )} */}
-				</>
-			)}
 
 			<div
 				style={{
 					whiteSpace: 'nowrap',
 					position: 'relative',
+					display: 'flex',
+					alignItems: 'center',
 				}}
 			>
+				<div
+					style={{
+						left: '-3.2rem',
+						position: 'absolute',
+						...(isViewOpen && { filter: 'blur(10px)' }),
+						transition: `all .5s ${lib.layout.animation}`,
+					}}
+				>
+					<HealthIndicator />
+				</div>
 				<ChainIndicator />
 				{screenType === 'tablet' && (
 					<div
