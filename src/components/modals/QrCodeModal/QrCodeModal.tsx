@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import QRCode from 'qrcode.react';
 import { t } from '@lingui/macro';
 import { IoIosArrowDropleftCircle } from 'react-icons/io';
@@ -16,7 +16,13 @@ import styles from './QrCodeModal.styles';
 
 const QrCodeModal = ({ data }: { data: QRCodeModalData }) => {
 	const [, isPhone] = useDimensions();
+	const address = web3.hook.usePriorityAccount();
 	const closeModal = client.modal.useCloseModal();
+	useEffect(() => {
+		if (address) {
+			closeModal();
+		}
+	}, [address, closeModal]);
 	const openModal = client.modal.useOpenModal();
 	const check = web3.hook.usePriorityPeer();
 	React.useEffect(() => {
@@ -38,7 +44,8 @@ const QrCodeModal = ({ data }: { data: QRCodeModalData }) => {
 					size={isPhone ? 200 : 400}
 					level="L"
 					// fgColor={data.backgroundStyle.background}
-					bgColor={lib.colors.background}
+					bgColor={lib.colors.transparent}
+					// bgColor={lib.colors.background}
 				/>
 			</div>
 			<Button
