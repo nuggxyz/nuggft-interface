@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { t } from '@lingui/macro';
 
 import Button from '@src/components/general/Buttons/Button/Button';
-import lib from '@src/lib';
+import lib, { isUndefinedOrNullOrStringEmpty } from '@src/lib';
 import TokenViewer from '@src/components/nugg/TokenViewer';
 import { TryoutData } from '@src/client/interfaces';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
@@ -11,6 +11,7 @@ import { ModalEnum } from '@src/interfaces/modals';
 import { buildTokenIdFactory } from '@src/prototypes';
 import GodListHorizontal from '@src/components/general/List/GodListHorizontal';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
+import web3 from '@src/web3';
 
 import styles from './RingAbout.styles';
 
@@ -65,6 +66,7 @@ export default ({
 	onSelectMyNugg?: (tokenId: NuggId) => void;
 }) => {
 	const token = client.live.token(tokenId);
+	const address = web3.hook.usePriorityAccount();
 	const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<TryoutData>();
 	const openModal = client.modal.useOpenModal();
 
@@ -76,6 +78,11 @@ export default ({
 				labelStyle={{ color: 'white', paddingTop: '0rem' }}
 				extraData={undefined}
 				RenderItem={TryoutRenderItem}
+				label={
+					nuggToBuyFrom
+						? t`On sale by ${nuggToBuyFrom.nugg.toPrettyId()}`
+						: t`Select a nugg to buy ${tokenId?.toPrettyId()} from`
+				}
 				selected={nuggToBuyFrom}
 				action={(dat?: TryoutData) => {
 					setNuggToBuyFrom(dat);
@@ -91,13 +98,14 @@ export default ({
 				}}
 			/>
 			<Button
+				className="mobile-pressable-div"
 				buttonStyle={{
 					...styles.button,
 				}}
 				textStyle={{
 					...styles.buttonText,
 				}}
-				disabled={!nuggToBuyFrom}
+				disabled={!nuggToBuyFrom && !isUndefinedOrNullOrStringEmpty(address)}
 				onClick={() => {
 					if (nuggToBuyFrom && tokenId && token) {
 						openModal(
@@ -110,9 +118,14 @@ export default ({
 								endingEpoch: token.activeSwap?.endingEpoch ?? null,
 							}),
 						);
+					} else if (isUndefinedOrNullOrStringEmpty(address)) {
+						openModal({
+							modalType: ModalEnum.Wallet,
+							containerStyle: { background: lib.colors.transparentWhite },
+						});
 					}
 				}}
-				label={t`Place offer`}
+				label={isUndefinedOrNullOrStringEmpty(address) ? t`Connect wallet` : t`Place offer`}
 			/>
 		</div>
 	) : null;

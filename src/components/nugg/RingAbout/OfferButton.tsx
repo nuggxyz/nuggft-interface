@@ -41,7 +41,7 @@ export default ({
 		);
 	}, [token, lifecycle, address]);
 
-	return lifecycle !== 'tryout' ? (
+	return lifecycle !== 'tryout' && lifecycle !== 'formality' ? (
 		<Button
 			className="mobile-pressable-div"
 			buttonStyle={{

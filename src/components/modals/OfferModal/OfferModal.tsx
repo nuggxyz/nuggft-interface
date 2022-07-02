@@ -280,12 +280,15 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
 	const [showNotice, setShowNotice] = useState(false);
 
+	console.log({ showNotice });
+
 	return (
 		<>
 			<div
 				style={{
 					...styles.container,
 					...(showNotice && globalStyles.hidden),
+					// position: 'absolute',
 					transition: `all .3s ${lib.layout.animation}`,
 				}}
 			>
@@ -512,6 +515,8 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 					position: 'absolute',
 					padding: '1rem',
 					justifyContent: 'space-between',
+					top: 0,
+					right: 0,
 					...globalStyles.fillHeight,
 					transition: `all .3s ${lib.layout.animation}`,
 				}}
