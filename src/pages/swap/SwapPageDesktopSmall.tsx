@@ -4,21 +4,21 @@ import { animated } from '@react-spring/web';
 import RingAbout from '@src/components/nugg/RingAbout/RingAbout';
 import TheRing from '@src/components/nugg/TheRing/TheRing';
 import Wallet from '@src/components/nugg/Wallet/Wallet';
-import useBlur from '@src/hooks/useBlur';
+// import useBlur from '@src/hooks/useBlur';
 import styles from '@src/pages/SwapPage.styles';
 import useDesktopSwappingNugg from '@src/client/hooks/useDesktopSwappingNugg';
 
 type Props = Record<string, never>;
 
 const SwapPageDesktopSmall: FunctionComponent<Props> = () => {
-	const blur = useBlur(['/', '/swap/:id', '/live']);
+	// const blur = useBlur(['/', '/swap/:id', '/live']);
 	const tokenId = useDesktopSwappingNugg();
 
 	return (
 		<animated.div
 			style={{
 				...styles.container,
-				...blur,
+				// ...blur,
 				alignItems: 'flex-start',
 			}}
 		>

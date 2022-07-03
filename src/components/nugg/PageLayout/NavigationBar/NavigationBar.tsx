@@ -6,7 +6,7 @@ import AccountViewer from '@src/components/nugg/AccountViewer/AccountViewer';
 import FloorPrice from '@src/components/nugg/FloorPrice';
 import NuggDexSearchBar from '@src/components/nugg/NuggDex/NuggDexSearchBar/NuggDexSearchBar';
 import HealthIndicator from '@src/components/general/Buttons/HealthIndicator/HealthIndicator';
-import useBlur from '@src/hooks/useBlur';
+// import useBlur from '@src/hooks/useBlur';
 import useDimensions from '@src/client/hooks/useDimensions';
 import ChainIndicator from '@src/components/general/Buttons/ChainIndicator/ChainIndicator';
 import lib from '@src/lib';
@@ -29,7 +29,7 @@ const NavigationBar: FC<Props> = () => {
 		if (!isHome?.params.id) navigate('/');
 	}, [isHome, navigate]);
 
-	const container = useBlur([]);
+	// const container = useBlur([]);
 
 	// const openNuggBook = client.nuggbook.useOpenNuggBook();
 
@@ -37,7 +37,7 @@ const NavigationBar: FC<Props> = () => {
 		<animated.div
 			style={{
 				...styles.navBarContainer,
-				...container,
+				// ...container,
 				...(isHome
 					? {
 							backdropFilter: 'blur(1px)',

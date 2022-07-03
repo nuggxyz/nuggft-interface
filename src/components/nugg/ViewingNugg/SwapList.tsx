@@ -20,227 +20,227 @@ import { CustomWeb3Provider } from '@src/web3/classes/CustomWeb3Provider';
 import styles from './ViewingNugg.styles';
 
 const SwapTitle = ({ title }: { title: string }) => (
-    <Text textStyle={styles.listTitle}>{title}</Text>
+	<Text textStyle={styles.listTitle}>{title}</Text>
 );
 
 const SwapButton = ({
-    item,
-    epoch,
-    navigate,
-    tokenId,
+	item,
+	epoch,
+	navigate,
+	tokenId,
 }: {
-    item: SwapData;
-    epoch: number;
-    navigate: NavigateFunction;
-    tokenId: string;
+	item: SwapData;
+	epoch: number;
+	navigate: NavigateFunction;
+	tokenId: string;
 }) => {
-    return !item.endingEpoch || epoch <= item.endingEpoch ? (
-        <Button
-            buttonStyle={styles.goToSwap}
-            textStyle={{
-                ...styles.goToSwapGradient,
-                background: !item.endingEpoch ? lib.colors.gradient : lib.colors.gradient3,
-                paddingRight: '.5rem',
-            }}
-            label={t`Go to swap`}
-            rightIcon={
-                <IoArrowRedo
-                    color={!item.endingEpoch ? lib.colors.gradientGold : lib.colors.gradientPink}
-                />
-            }
-            onClick={() => navigate(`/swap/${item.type === 'item' ? 'item-' : ''}${tokenId}`)}
-        />
-    ) : null;
+	return !item.endingEpoch || epoch <= item.endingEpoch ? (
+		<Button
+			buttonStyle={styles.goToSwap}
+			textStyle={{
+				...styles.goToSwapGradient,
+				background: !item.endingEpoch ? lib.colors.gradient : lib.colors.gradient3,
+				paddingRight: '.5rem',
+			}}
+			label={t`Go to swap`}
+			rightIcon={
+				<IoArrowRedo
+					color={!item.endingEpoch ? lib.colors.gradientGold : lib.colors.gradientPink}
+				/>
+			}
+			onClick={() => navigate(`/swap/${item.type === 'item' ? 'item-' : ''}${tokenId}`)}
+		/>
+	) : null;
 };
 
 const SwapDesc = ({ item, epoch }: { item: SwapData; epoch: number }) => {
-    const blocknum = client.block.useBlock();
+	const blocknum = client.block.useBlock();
 
-    return epoch && blocknum ? (
-        <Text textStyle={{ color: lib.colors.primaryColor }}>
-            {!item.endingEpoch
-                ? t`Awaiting bid!`
-                : !item.endingEpoch
-                ? t`Swap is cancelled`
-                : item.endingEpoch < epoch
-                ? t`Swap is over`
-                : t`Swap ending in ${
-                      web3.config.calculateEndBlock(item.endingEpoch) - blocknum
-                  } blocks`}
-        </Text>
-    ) : null;
+	return epoch && blocknum ? (
+		<Text textStyle={{ color: lib.colors.primaryColor }}>
+			{!item.endingEpoch
+				? t`Awaiting bid!`
+				: !item.endingEpoch
+				? t`Swap is cancelled`
+				: item.endingEpoch < epoch
+				? t`Swap is over`
+				: t`Swap ending in ${
+						web3.config.calculateEndBlock(item.endingEpoch) - blocknum
+				  } blocks`}
+		</Text>
+	) : null;
 };
 
 const SwapItem: FunctionComponent<
-    ListRenderItemProps<
-        SwapData,
-        {
-            chainId: Chain;
-            provider: CustomWeb3Provider;
-            token: LiveToken;
-            epoch: number;
-        },
-        undefined
-    >
+	ListRenderItemProps<
+		SwapData,
+		{
+			chainId: Chain;
+			provider: CustomWeb3Provider;
+			token: LiveToken;
+			epoch: number;
+		},
+		undefined
+	>
 > = ({ item, index, extraData }) => {
-    const ownerEns = web3.hook.usePriorityAnyENSName(
-        item.type === 'item' ? 'nugg' : extraData?.provider,
-        item.owner || '',
-    );
+	const ownerEns = web3.hook.usePriorityAnyENSName(
+		item.type === 'item' ? 'nugg' : extraData?.provider,
+		item.owner || '',
+	);
 
-    const leaderEns = web3.hook.usePriorityAnyENSName(
-        item.type === 'item' ? 'nugg' : extraData?.provider,
-        item.leader || undefined,
-    );
+	const leaderEns = web3.hook.usePriorityAnyENSName(
+		item.type === 'item' ? 'nugg' : extraData?.provider,
+		item.leader || undefined,
+	);
 
-    const epoch = client.epoch.active.useId();
+	const epoch = client.epoch.active.useId();
 
-    const navigate = useNavigate();
+	const navigate = useNavigate();
 
-    const itemValue = client.usd.useUsdPair(item.eth);
+	const itemValue = client.usd.useUsdPair(item.eth);
 
-    return epoch ? (
-        <div style={styles.swapItemContainer}>
-            <SwapButton
-                item={item}
-                epoch={epoch}
-                navigate={navigate}
-                tokenId={extraData.token.tokenId}
-            />
-            <div
-                key={index}
-                style={{
-                    ...styles.swap,
-                    background: !item.endingEpoch
-                        ? lib.colors.gradient
-                        : !item.endingEpoch || item.endingEpoch < extraData.epoch
-                        ? lib.colors.gradient2Transparent
-                        : lib.colors.gradient3,
-                }}
-            >
-                <div style={styles.swapButton}>
-                    <SwapDesc item={item} epoch={epoch} />
-                    <CurrencyText image="eth" value={itemValue} />
-                </div>
-                <div
-                    style={{ justifyContent: 'flex-start', display: 'flex', alignItems: 'center' }}
-                >
-                    <div style={{ textAlign: 'left' }}>
-                        <Text
-                            type="text"
-                            size="smaller"
-                            textStyle={{
-                                color: lib.colors.textColor,
-                            }}
-                        >
-                            {!item.endingEpoch || epoch <= item.endingEpoch
-                                ? t`On sale by`
-                                : !item.endingEpoch
-                                ? t`Cancelled by`
-                                : t`Sold by`}
-                        </Text>
-                        <Text
-                            textStyle={{
-                                color: 'white',
-                            }}
-                        >
-                            {ownerEns}
-                        </Text>
-                    </div>
+	return epoch ? (
+		<div style={styles.swapItemContainer}>
+			<SwapButton
+				item={item}
+				epoch={epoch}
+				navigate={navigate}
+				tokenId={extraData.token.tokenId}
+			/>
+			<div
+				key={index}
+				style={{
+					...styles.swap,
+					background: !item.endingEpoch
+						? lib.colors.gradient
+						: !item.endingEpoch || item.endingEpoch < extraData.epoch
+						? lib.colors.gradient2Transparent
+						: lib.colors.gradient3,
+				}}
+			>
+				<div style={styles.swapButton}>
+					<SwapDesc item={item} epoch={epoch} />
+					<CurrencyText image="eth" value={itemValue} />
+				</div>
+				<div
+					style={{ justifyContent: 'flex-start', display: 'flex', alignItems: 'center' }}
+				>
+					<div style={{ textAlign: 'left' }}>
+						<Text
+							type="text"
+							size="smaller"
+							textStyle={{
+								color: lib.colors.textColor,
+							}}
+						>
+							{!item.endingEpoch || epoch <= item.endingEpoch
+								? t`On sale by`
+								: !item.endingEpoch
+								? t`Cancelled by`
+								: t`Sold by`}
+						</Text>
+						<Text
+							textStyle={{
+								color: 'white',
+							}}
+						>
+							{ownerEns}
+						</Text>
+					</div>
 
-                    {
-                        // if this swap is awaiting a bid
-                        isUndefinedOrNull(item.endingEpoch) ||
-                        // if this swap is a minting swap and no one has bid on it
-                        (item.owner === Address.ZERO.hash &&
-                            item.leader === Address.ZERO.hash) ? null : (
-                            <>
-                                <HiArrowRight
-                                    color={lib.colors.primaryColor}
-                                    style={{ margin: '0rem 1rem' }}
-                                />
-                                <div style={{ textAlign: 'left' }}>
-                                    <Text
-                                        type="text"
-                                        size="smaller"
-                                        textStyle={{
-                                            color: lib.colors.textColor,
-                                        }}
-                                    >
-                                        {item.endingEpoch >= epoch ? t`Leader` : t`Buyer`}
-                                    </Text>
-                                    <Text
-                                        textStyle={{
-                                            color: 'white',
-                                        }}
-                                    >
-                                        {leaderEns}
-                                    </Text>
-                                </div>
-                            </>
-                        )
-                    }
-                </div>
-            </div>
-        </div>
-    ) : null;
+					{
+						// if this swap is awaiting a bid
+						isUndefinedOrNull(item.endingEpoch) ||
+						// if this swap is a minting swap and no one has bid on it
+						(item.owner === Address.ZERO.hash &&
+							item.leader === Address.ZERO.hash) ? null : (
+							<>
+								<HiArrowRight
+									color={lib.colors.primaryColor}
+									style={{ margin: '0rem 1rem' }}
+								/>
+								<div style={{ textAlign: 'left' }}>
+									<Text
+										type="text"
+										size="smaller"
+										textStyle={{
+											color: lib.colors.textColor,
+										}}
+									>
+										{item.endingEpoch >= epoch ? t`Leader` : t`Buyer`}
+									</Text>
+									<Text
+										textStyle={{
+											color: 'white',
+										}}
+									>
+										{leaderEns}
+									</Text>
+								</div>
+							</>
+						)
+					}
+				</div>
+			</div>
+		</div>
+	) : null;
 };
 
 const SwapList: FunctionComponent<{ token?: LiveToken }> = ({ token }) => {
-    const chainId = web3.hook.usePriorityChainId();
-    const provider = web3.hook.usePriorityProvider();
-    const epoch = client.epoch.active.useId();
+	const chainId = web3.hook.usePriorityChainId();
+	const provider = web3.hook.usePriorityProvider();
+	const epoch = client.epoch.active.useId();
 
-    const listData = useMemo(() => {
-        const res: { title: string; items: SwapData[] }[] = [];
-        let tempSwaps = token?.swaps ? [...token.swaps] : [];
-        if (token && token.activeSwap && token.activeSwap.tokenId) {
-            res.push({ title: t`Ongoing Swap`, items: [token.activeSwap] });
-            tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'tokenId');
-        }
-        if (token && token.type === 'item') {
-            if ((token?.swaps as SwapData[]).find((swap) => swap.endingEpoch === null)) {
-                const tempTemp: SwapData[] = tempSwaps as SwapData[];
+	const listData = useMemo(() => {
+		const res: { title: string; items: SwapData[] }[] = [];
+		let tempSwaps = token?.swaps ? [...token.swaps] : [];
+		if (token && token.activeSwap && token.activeSwap.tokenId) {
+			res.push({ title: t`Ongoing Swap`, items: [token.activeSwap] });
+			tempSwaps = tempSwaps.smartRemove(token.activeSwap, 'tokenId');
+		}
+		if (token && token.type === 'item') {
+			if ((token?.swaps as SwapData[]).find((swap) => swap.endingEpoch === null)) {
+				const tempTemp: SwapData[] = tempSwaps as SwapData[];
 
-                tempSwaps = tempTemp.filter((x) => !x.isTryout);
-            }
-            const upcoming = tempSwaps.find(
-                (x) => epoch && x.endingEpoch && epoch <= x.endingEpoch,
-            );
-            if (upcoming) {
-                res.push({ title: t`Ending in epoch ${upcoming.endingEpoch}`, items: [upcoming] });
-                tempSwaps = tempSwaps.smartRemove(upcoming, 'tokenId');
-            }
-        }
-        if (!isUndefinedOrNullOrArrayEmpty(tempSwaps)) {
-            res.push({
-                title: t`Previous Swaps`,
-                items: tempSwaps,
-            });
-        }
+				tempSwaps = tempTemp.filter((x) => !x.isTryout);
+			}
+			const upcoming = tempSwaps.find(
+				(x) => epoch && x.endingEpoch && epoch <= x.endingEpoch,
+			);
+			if (upcoming) {
+				res.push({ title: t`Ending in epoch ${upcoming.endingEpoch}`, items: [upcoming] });
+				tempSwaps = tempSwaps.smartRemove(upcoming, 'tokenId');
+			}
+		}
+		if (!isUndefinedOrNullOrArrayEmpty(tempSwaps)) {
+			res.push({
+				title: t`Previous Swaps`,
+				items: tempSwaps,
+			});
+		}
 
-        return res;
-    }, [token]);
+		return res;
+	}, [token]);
 
-    return chainId && provider && epoch && token ? (
-        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
-            <StickyList
-                data={listData}
-                TitleRenderItem={SwapTitle}
-                ChildRenderItem={React.memo(SwapItem)}
-                extraData={{ chainId, provider, token, epoch }}
-                style={styles.stickyList}
-                styleRight={styles.stickyListRight}
-                emptyText={t`This ${token.type} has never been sold`}
-                listEmptyStyle={{
-                    color: lib.colors.white,
-                    display: 'flex',
-                    alignItems: 'center',
-                    height: '100%',
-                }}
-            />
-        </div>
-    ) : null;
+	return chainId && provider && epoch && token ? (
+		<div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
+			<StickyList
+				data={listData}
+				TitleRenderItem={SwapTitle}
+				ChildRenderItem={React.memo(SwapItem)}
+				extraData={{ chainId, provider, token, epoch }}
+				style={styles.stickyList}
+				styleRight={styles.stickyListRight}
+				emptyText={t`This ${token.type} has never been sold`}
+				listEmptyStyle={{
+					color: lib.colors.white,
+					display: 'flex',
+					alignItems: 'center',
+					height: '100%',
+				}}
+			/>
+		</div>
+	) : null;
 };
 
 export default SwapList;

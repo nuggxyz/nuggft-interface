@@ -7,7 +7,8 @@ import ViewingNugg from '@src/components/nugg/ViewingNugg/ViewingNugg';
 import client from '@src/client';
 import useDimensions from '@src/client/hooks/useDimensions';
 import lib from '@src/lib';
-import useBlur from '@src/hooks/useBlur';
+// import useBlur from '@src/hooks/useBlur';
+import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import { useOverlayRouteStyle } from '@src/lib/router';
 
 type Props = Record<string, never>;
@@ -18,7 +19,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		justifyContent: 'space-between',
 		alignItems: 'space-between',
 		zIndex: 997,
-		backdropFilter: 'blur(10)',
+		// backdropFilter: 'blur(10)',
 	},
 	nuggDexContainer: {
 		display: 'flex',
@@ -61,7 +62,8 @@ const SearchOverlay: FunctionComponent<Props> = () => {
 		if (!isPageLoaded && visible) setTimeout(() => setPageIsLoaded(), wasNotVisible ? 500 : 0);
 	}, [visible, isPageLoaded, setPageIsLoaded, wasNotVisible]);
 
-	const blur = useBlur(['/view/*']);
+	// const blur = useBlur(['/view/*']);
+	const style: CSSPropertiesAnimated = useAnimateOverlay(!!visible);
 
 	const overlay = useOverlayRouteStyle();
 
@@ -69,7 +71,8 @@ const SearchOverlay: FunctionComponent<Props> = () => {
 		<animated.div
 			style={{
 				...overlay,
-				...blur,
+				// ...blur,
+				...style,
 				...styles.container,
 			}}
 			onClick={() => {
