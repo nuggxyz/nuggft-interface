@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-07-01 21:23+0000\n"
+"POT-Creation-Date: 2022-07-02 15:14+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: French\n"
-"PO-Revision-Date: 2022-07-02 06:04\n"
+"PO-Revision-Date: 2022-07-03 06:04\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -165,10 +165,7 @@ msgstr "Réclamer"
 msgid "Coming Up"
 msgstr "À venir"
 
-#: src/components/nugg/Wallet/Wallet.tsx
-msgid "Connect"
-msgstr "Se connecter"
-
+#: src/components/nugg/RingAbout/Caboose.tsx
 #: src/components/nugg/RingAbout/OfferButton.tsx
 msgid "Connect wallet"
 msgstr "Connecter votre portefeuille"
@@ -409,6 +406,7 @@ msgid "On sale by"
 msgstr ""
 
 #: src/components/modals/OfferModal/OfferModal.tsx
+#: src/components/nugg/RingAbout/Caboose.tsx
 msgid "On sale by {0}"
 msgstr ""
 
@@ -508,6 +506,10 @@ msgstr ""
 
 #: src/components/modals/OfferModal/OfferModal.tsx
 msgid "Select a nugg"
+msgstr ""
+
+#: src/components/nugg/RingAbout/Caboose.tsx
+msgid "Select a nugg to buy {0} from"
 msgstr ""
 
 #: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
@@ -801,6 +803,10 @@ msgstr ""
 
 #: src/components/nuggbook/pages/tldr/Tldr_2.tsx
 msgid "change the way a nugg looks by reordering its items"
+msgstr ""
+
+#: src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab.tsx
+msgid "click"
 msgstr ""
 
 #: src/components/nuggbook/pages/set-up/Setup_2.tsx
@@ -1351,6 +1357,10 @@ msgstr ""
 msgid "swap is over"
 msgstr ""
 
+#: src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab.tsx
+msgid "tap"
+msgstr ""
+
 #: src/components/nuggbook/pages/set-up/Setup_1.tsx
 msgid "tap to download"
 msgstr ""
@@ -1389,6 +1399,10 @@ msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
 msgid "this means that there will always be any number of auctions ending at the exact same time"
+msgstr ""
+
+#: src/components/nugg/Wallet/tabs/ConnectTab/ConnectTab.tsx
+msgid "to connect"
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_9.tsx
