@@ -1,7 +1,7 @@
-import React, { FunctionComponent, MemoExoticComponent, useMemo } from 'react';
+import React, { FunctionComponent, useMemo, useState } from 'react';
 import { t } from '@lingui/macro';
 import { useNavigate } from 'react-router-dom';
-import { IoArrowRedo } from 'react-icons/io5';
+import { IoArrowRedo, IoChevronDown, IoChevronUp } from 'react-icons/io5';
 
 import lib from '@src/lib';
 import Loader from '@src/components/general/Loader/Loader';
@@ -17,7 +17,6 @@ import AnimatedCard from '@src/components/general/Cards/AnimatedCard/AnimatedCar
 import Button from '@src/components/general/Buttons/Button/Button';
 import Flyout from '@src/components/general/Flyout/Flyout';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
-import useDimensions from '@src/client/hooks/useDimensions';
 import { LiveToken } from '@src/client/interfaces';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 
@@ -26,18 +25,17 @@ import SwapList from './SwapList';
 import MyNuggActions from './MyNuggActions';
 import ItemList from './ItemList';
 
-type Props = { MobileBackButton?: MemoExoticComponent<() => JSX.Element> };
+type Props = Record<string, never>;
 
 const Mem = React.memo<{ token?: LiveToken }>(({ token }) => <SwapList token={token} />);
 
-const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
+const ViewingNugg: FunctionComponent<Props> = () => {
 	const epoch = client.epoch.active.useId();
 
 	const { safeTokenId: tokenId } = useViewingNugg();
 
 	const sender = web3.hook.usePriorityAccount();
 
-	const [screenType] = useDimensions();
 	const chainId = web3.hook.usePriorityChainId();
 	const provider = web3.hook.usePriorityProvider();
 
@@ -68,7 +66,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
 				  ]
 				: []),
 			{
-				label: t`Swaps`,
+				label: t`Purchases`,
 				comp: Mem,
 			},
 			...(provider &&
@@ -92,209 +90,245 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
 	const usdMin = client.usd.useUsdPair(token?.isItem() ? token?.tryout?.min?.eth : undefined);
 	const usdMax = client.usd.useUsdPair(token?.isItem() ? token?.tryout?.max?.eth : undefined);
 
+	const [expanded, setExpanded] = useState(false);
+
 	return (
 		<div
 			style={{ ...styles.container, opacity: provider && epoch && tokenId && token ? 1 : 0 }}
 		>
 			{provider && epoch && tokenId && token ? (
 				<>
-					{MobileBackButton && (
-						<div
-							style={{
-								position: 'fixed',
-								top: '1rem',
-								left: '1rem',
-								zIndex: 101,
-							}}
-						>
-							<MobileBackButton />
-						</div>
-					)}
 					<div style={styles.swapsWrapper}>
-						<div style={screenType === 'phone' ? styles.swapsMobile : styles.swaps}>
+						<div style={styles.swaps}>
 							<div style={styles.owner}>
-								<Text textStyle={styles.nuggId}>
-									{tokenId && tokenId.toPrettyId()}
-								</Text>
-								{token.type === 'nugg' ? (
-									token.owner ? (
-										<div style={{ marginLeft: '1rem' }}>
-											<Text
-												type="text"
-												size="smaller"
-												textStyle={{
-													color: lib.colors.white,
-												}}
-											>
-												{t`Owner`}
-											</Text>
-											<div style={globalStyles.centered}>
-												<AddressViewer
-													address={token.owner}
-													textStyle={styles.titleText}
-													param={token.owner}
-													route="address"
-													size="medium"
-													isNugg={false}
-												/>
-											</div>
-										</div>
-									) : (
-										<Loader color={lib.colors.nuggBlueText} />
-									)
-								) : token ? (
-									token.type === 'item' &&
-									token.tryout.count > 0 &&
-									token.tryout.max &&
-									token.tryout.min ? (
-										<div
-											style={{
-												...globalStyles.centeredSpaceBetween,
-												...globalStyles.fillWidth,
-											}}
-										>
+								<div style={{ display: 'flex' }}>
+									<Text textStyle={styles.nuggId}>
+										{tokenId && tokenId.toPrettyId()}
+									</Text>
+									{token.type === 'nugg' ? (
+										token.owner ? (
 											<div style={{ marginLeft: '1rem' }}>
 												<Text
 													type="text"
-													size="small"
+													size="smaller"
 													textStyle={{
 														color: lib.colors.white,
-														// marginLeft: '1rem',
 													}}
 												>
-													{t`Owned by ${token.count} Nugg${
-														token.count > 1 || !token.count ? 's' : ''
-													}`}
+													{t`Owner`}
 												</Text>
-												<Flyout
-													// openOnHover
-													float="left"
-													top={25}
-													triggerWidth="130px"
-													containerStyle={{
-														position: 'relative',
-													}}
-													button={
-														<Text
-															textStyle={{
-																color: lib.colors.nuggBlueText,
-															}}
-															size="medium"
-														>
-															{t`${token.tryout.count} Nugg${
-																token.tryout.count > 1 ? 's' : ''
-															} ${
-																token.tryout.count > 1
-																	? 'are'
-																	: 'is'
-															} swapping`}
-														</Text>
-													}
-												>
-													<div
-														style={{
-															padding: '.5rem 1rem',
-															zIndex: 1000,
+												<div style={globalStyles.centered}>
+													<AddressViewer
+														address={token.owner}
+														textStyle={styles.titleText}
+														param={token.owner}
+														route="address"
+														size="medium"
+														isNugg={false}
+													/>
+												</div>
+											</div>
+										) : (
+											<Loader color={lib.colors.nuggBlueText} />
+										)
+									) : token ? (
+										token.type === 'item' &&
+										token.tryout.count > 0 &&
+										token.tryout.max &&
+										token.tryout.min ? (
+											<div
+												style={{
+													...globalStyles.centeredSpaceBetween,
+													...globalStyles.fillWidth,
+												}}
+											>
+												<div style={{ marginLeft: '1rem' }}>
+													<Text
+														type="text"
+														size="small"
+														textStyle={{
+															color: lib.colors.white,
+															// marginLeft: '1rem',
 														}}
 													>
-														<Text
-															size="medium"
-															textStyle={{ paddingBottom: '.25rem' }}
-														>{t`Swap price${
-															token.tryout.min.eth.eq(
+														{t`Owned by ${token.count} Nugg${
+															token.count > 1 || !token.count
+																? 's'
+																: ''
+														}`}
+													</Text>
+													<Flyout
+														// openOnHover
+														float="left"
+														top={25}
+														triggerWidth="130px"
+														containerStyle={{
+															position: 'relative',
+														}}
+														button={
+															<Text
+																textStyle={{
+																	color: lib.colors.nuggBlueText,
+																}}
+																size="medium"
+															>
+																{t`${token.tryout.count} Nugg${
+																	token.tryout.count > 1
+																		? 's'
+																		: ''
+																} ${
+																	token.tryout.count > 1
+																		? 'are'
+																		: 'is'
+																} swapping`}
+															</Text>
+														}
+													>
+														<div
+															style={{
+																padding: '.5rem 1rem',
+																zIndex: 1000,
+															}}
+														>
+															<Text
+																size="medium"
+																textStyle={{
+																	paddingBottom: '.25rem',
+																}}
+															>{t`Swap price${
+																token.tryout.min.eth.eq(
+																	token.tryout.max.eth,
+																)
+																	? ''
+																	: 's'
+															}`}</Text>
+															{token.tryout.min.eth.eq(
 																token.tryout.max.eth,
-															)
-																? ''
-																: 's'
-														}`}</Text>
-														{token.tryout.min.eth.eq(
-															token.tryout.max.eth,
-														) ? (
-															<CurrencyText
-																size="small"
-																type="text"
-																image="eth"
-																value={usdMin}
-															/>
-														) : (
-															<div>
-																<div style={{ display: 'flex' }}>
-																	<CurrencyText
-																		image="eth"
-																		size="small"
-																		type="text"
-																		value={usdMin}
-																	/>
-																	<Text
-																		size="small"
-																		textStyle={{
-																			marginLeft: '5px',
-																		}}
-																	>{t`Min`}</Text>
+															) ? (
+																<CurrencyText
+																	size="small"
+																	type="text"
+																	image="eth"
+																	value={usdMin}
+																/>
+															) : (
+																<div>
+																	<div
+																		style={{ display: 'flex' }}
+																	>
+																		<CurrencyText
+																			image="eth"
+																			size="small"
+																			type="text"
+																			value={usdMin}
+																		/>
+																		<Text
+																			size="small"
+																			textStyle={{
+																				marginLeft: '5px',
+																			}}
+																		>{t`Min`}</Text>
+																	</div>
+																	<div
+																		style={{ display: 'flex' }}
+																	>
+																		<CurrencyText
+																			image="eth"
+																			size="small"
+																			type="text"
+																			value={usdMax}
+																		/>
+																		<Text
+																			size="small"
+																			textStyle={{
+																				marginLeft: '5px',
+																			}}
+																		>{t`Max`}</Text>
+																	</div>
 																</div>
-																<div style={{ display: 'flex' }}>
-																	<CurrencyText
-																		image="eth"
-																		size="small"
-																		type="text"
-																		value={usdMax}
-																	/>
-																	<Text
-																		size="small"
-																		textStyle={{
-																			marginLeft: '5px',
-																		}}
-																	>{t`Max`}</Text>
-																</div>
-															</div>
-														)}
-													</div>
-												</Flyout>
+															)}
+														</div>
+													</Flyout>
+												</div>
+												{!token.activeSwap ? (
+													<Button
+														buttonStyle={{
+															...styles.goToSwap,
+															marginBottom: '0rem',
+														}}
+														onClick={() =>
+															navigate(`/swap/${token.tokenId}`)
+														}
+														size="small"
+														textStyle={{
+															...styles.goToSwapGradient,
+															background: lib.colors.gradient2,
+															paddingRight: '.5rem',
+														}}
+														label={t`Go to swap`}
+														rightIcon={
+															<IoArrowRedo color={lib.colors.green} />
+														}
+													/>
+												) : null}
 											</div>
-											{!token.activeSwap ? (
-												<Button
-													buttonStyle={{
-														...styles.goToSwap,
-														marginBottom: '0rem',
-													}}
-													onClick={() =>
-														navigate(`/swap/${token.tokenId}`)
-													}
-													size="small"
-													textStyle={{
-														...styles.goToSwapGradient,
-														background: lib.colors.gradient2,
-														paddingRight: '.5rem',
-													}}
-													label={t`Go to swap`}
-													rightIcon={
-														<IoArrowRedo color={lib.colors.green} />
-													}
-												/>
-											) : null}
-										</div>
-									) : (
-										<Text
-											type="text"
-											size="medium"
-											textStyle={{
-												color: lib.colors.white,
-												marginLeft: '1rem',
+										) : (
+											<Text
+												type="text"
+												size="medium"
+												textStyle={{
+													color: lib.colors.white,
+													marginLeft: '1rem',
+												}}
+											>
+												{t`Owned by ${token.count} Nugg${
+													token.count > 1 || !token.count ? 's' : ''
+												}`}
+											</Text>
+										)
+									) : null}
+								</div>
+								<div style={{ display: 'flex' }}>
+									<div
+										style={{
+											opacity: expanded ? 1 : 0,
+											transition: `opacity .5s ${lib.layout.animation}`,
+											marginRight: '.5rem',
+										}}
+									>
+										<TokenViewer
+											tokenId={tokenId}
+											disableOnClick
+											style={{
+												height: '45px',
+												width: '45px',
 											}}
-										>
-											{t`Owned by ${token.count} Nugg${
-												token.count > 1 || !token.count ? 's' : ''
-											}`}
-										</Text>
-									)
-								) : null}
+										/>
+									</div>
+									<Button
+										buttonStyle={{
+											borderRadius: lib.layout.borderRadius.mediumish,
+											boxShadow: lib.layout.boxShadow.medium,
+										}}
+										rightIcon={
+											expanded ? (
+												<IoChevronDown color={lib.colors.nuggBlueText} />
+											) : (
+												<IoChevronUp color={lib.colors.nuggBlueText} />
+											)
+										}
+										onClick={() => setExpanded((e) => !e)}
+									/>
+								</div>
 							</div>
 							<div
 								style={{
-									...(screenType === 'phone'
-										? styles.nuggContainerMobile
-										: styles.nuggContainer),
+									...styles.nuggContainer,
 									marginTop: token.type === 'item' ? '1.5rem' : '0rem',
+									opacity: expanded ? 0 : 1,
+									height: expanded ? '0px' : '400px',
+									overflow: expanded ? 'hidden' : 'visible',
+									transition: `all .5s ${lib.layout.animation}`,
 								}}
 							>
 								<div
@@ -305,7 +339,7 @@ const ViewingNugg: FunctionComponent<Props> = ({ MobileBackButton }) => {
 										padding: '.5rem',
 									}}
 								>
-									<div style={{ position: 'fixed' }}>
+									<div style={{ position: expanded ? 'relative' : 'fixed' }}>
 										<AnimatedCard>
 											{tokenId && (
 												<TokenViewer

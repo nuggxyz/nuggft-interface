@@ -13,62 +13,62 @@ import lib from '@src/lib';
 type Props = { tokenId: NuggId };
 
 const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
-    const navigate = useNavigate();
-    const openModal = client.modal.useOpenModal();
+	const navigate = useNavigate();
+	const openModal = client.modal.useOpenModal();
 
-    return (
-        <div style={styles.ownerButtonContainer}>
-            <Button
-                textStyle={styles.textBlack}
-                size="medium"
-                type="text"
-                buttonStyle={styles.button}
-                label={t`Sell`}
-                leftIcon={
-                    <IoPricetagsOutline
-                        color={lib.colors.nuggBlueText}
-                        size={25}
-                        // style={{ marginRight: '.75rem' }}
-                    />
-                }
-                onClick={() => {
-                    openModal({
-                        ...buildTokenIdFactory({
-                            modalType: ModalEnum.Sell as const,
-                            tokenId,
-                            sellingNuggId: null,
-                        }),
-                        containerStyle: {
-                            background: lib.colors.semiTransparentWhite,
-                        },
-                    });
-                }}
-            />
-            <Button
-                textStyle={styles.textBlack}
-                size="medium"
-                type="text"
-                buttonStyle={styles.button}
-                label={t`Loan`}
-                leftIcon={
-                    <IoCashOutline
-                        color={lib.colors.nuggBlueText}
-                        size={25}
-                        // style={{ marginRight: '.75rem' }}
-                    />
-                }
-                onClick={() => {
-                    openModal({
-                        modalType: ModalEnum.Loan,
-                        tokenId,
-                        actionType: 'loan',
-                        containerStyle: {
-                            background: lib.colors.semiTransparentWhite,
-                        },
-                    });
-                }}
-            />
-            {/* <Button
+	return (
+		<div style={styles.ownerButtonContainer}>
+			<Button
+				textStyle={styles.textBlack}
+				size="medium"
+				type="text"
+				buttonStyle={styles.button}
+				label={t`Sell`}
+				leftIcon={
+					<IoPricetagsOutline
+						color={lib.colors.nuggBlueText}
+						size={25}
+						// style={{ marginRight: '.75rem' }}
+					/>
+				}
+				onClick={() => {
+					openModal({
+						...buildTokenIdFactory({
+							modalType: ModalEnum.Sell as const,
+							tokenId,
+							sellingNuggId: null,
+						}),
+						containerStyle: {
+							background: lib.colors.semiTransparentWhite,
+						},
+					});
+				}}
+			/>
+			<Button
+				textStyle={styles.textBlack}
+				size="medium"
+				type="text"
+				buttonStyle={styles.button}
+				label={t`Loan`}
+				leftIcon={
+					<IoCashOutline
+						color={lib.colors.nuggBlueText}
+						size={25}
+						// style={{ marginRight: '.75rem' }}
+					/>
+				}
+				onClick={() => {
+					openModal({
+						modalType: ModalEnum.Loan,
+						tokenId,
+						actionType: 'loan',
+						containerStyle: {
+							background: lib.colors.semiTransparentWhite,
+						},
+					});
+				}}
+			/>
+			{/* <Button
                 textStyle={styles.textBlack}
                 size="medium"
                 type="text"
@@ -94,23 +94,23 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                     })
                 }
             /> */}
-            <Button
-                textStyle={styles.textBlack}
-                size="medium"
-                type="text"
-                buttonStyle={styles.button}
-                label={t`Edit`}
-                leftIcon={
-                    <IoPencil
-                        color={lib.colors.nuggBlueText}
-                        size={25}
-                        // style={{ marginRight: '.75rem' }}
-                    />
-                }
-                onClick={() => navigate(`/edit/${tokenId}`)}
-            />
-        </div>
-    );
+			<Button
+				textStyle={styles.textBlack}
+				size="medium"
+				type="text"
+				buttonStyle={styles.button}
+				label={t`Edit`}
+				leftIcon={
+					<IoPencil
+						color={lib.colors.nuggBlueText}
+						size={25}
+						// style={{ marginRight: '.75rem' }}
+					/>
+				}
+				onClick={() => navigate(`/edit/${tokenId}`)}
+			/>
+		</div>
+	);
 };
 
 export default OwnerButtons;
