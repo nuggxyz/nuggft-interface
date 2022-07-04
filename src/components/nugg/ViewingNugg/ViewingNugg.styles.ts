@@ -19,6 +19,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		borderRadius: lib.layout.borderRadius.mediumish,
 		whiteSpace: 'nowrap',
 		boxShadow: lib.layout.boxShadow.basic,
+		...lib.layout.presets.font.main.thicc,
 	},
 	nuggContainer: {
 		position: 'relative',
@@ -43,6 +44,7 @@ const styles = lib.layout.NLStyleSheetCreator({
 		color: lib.colors.white,
 		display: 'flex',
 		alignItems: 'center',
+		...lib.layout.presets.font.main.thicc,
 	},
 	owner: {
 		background: lib.colors.nuggBlueTransparent,
@@ -198,10 +200,10 @@ const styles = lib.layout.NLStyleSheetCreator({
 		right: '.5rem',
 	},
 	goToSwap: {
-		marginBottom: '.4rem',
-		borderRadius: lib.layout.borderRadius.large,
+		borderRadius: lib.layout.borderRadius.medium,
 		backgroundColor: lib.colors.white,
-		padding: '.2rem .7rem',
+		padding: '.5rem 1rem',
+		boxShadow: lib.layout.boxShadow.medium,
 	},
 	goToSwapGradient: {
 		background: lib.colors.gradient3,

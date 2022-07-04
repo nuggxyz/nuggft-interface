@@ -339,7 +339,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 					<GodListHorizontal
 						itemHeight={135}
 						data={myNuggs}
-						label={t`Pick a nugg to offer on this item`}
+						label={t`Pick one of your nuggs to offer on this item`}
 						labelStyle={{
 							color: lib.colors.textColor,
 						}}

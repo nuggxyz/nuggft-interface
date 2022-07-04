@@ -106,6 +106,7 @@ const HappyTabber = ({
 					<animated.div
 						style={{
 							width: `${(WIDTH - 8) / items.length}px`,
+							boxShadow: lib.layout.boxShadow.medium,
 							...selectionIndicatorSpring,
 							...(darkmode ? { background: lib.colors.nuggBlueTransparent } : {}),
 						}}

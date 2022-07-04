@@ -148,13 +148,13 @@ export default React.memo<{
 					width: '95%',
 					background: 'transparent',
 					position: 'relative',
-					marginTop: 15,
+					marginTop: onlyLeader ? 0 : 15,
 					maxWidth: '300px',
-					zIndex: 5000000000,
+					// zIndex: 5000000000,
 				}}
 			>
 				<animated.div
-					className="mobile-pressable-div"
+					className={others.length > 1 && !onlyLeader ? 'mobile-pressable-div' : ''}
 					style={{
 						display: 'flex',
 						justifyContent: 'flex-start',
@@ -162,7 +162,7 @@ export default React.memo<{
 						borderRadius: lib.layout.borderRadius.mediumish,
 						padding: '.4rem',
 						width: '100%',
-						marginBottom: '.4rem',
+						marginBottom: onlyLeader ? '0rem' : '.4rem',
 						...flashStyle,
 					}}
 					onClick={() => setOpen(!open)}

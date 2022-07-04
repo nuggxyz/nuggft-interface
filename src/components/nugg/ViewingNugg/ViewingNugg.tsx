@@ -19,11 +19,13 @@ import Flyout from '@src/components/general/Flyout/Flyout';
 import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import { LiveToken } from '@src/client/interfaces';
 import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
+import { useLifecycleData } from '@src/client/hooks/useLifecycle';
 
 import styles from './ViewingNugg.styles';
 import SwapList from './SwapList';
 import MyNuggActions from './MyNuggActions';
 import ItemList from './ItemList';
+import ActiveSwap from './ActiveSwap';
 
 type Props = Record<string, never>;
 
@@ -33,6 +35,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
 	const epoch = client.epoch.active.useId();
 
 	const { safeTokenId: tokenId } = useViewingNugg();
+	const [, activeSwap] = useLifecycleData(tokenId);
 
 	const sender = web3.hook.usePriorityAccount();
 
@@ -57,6 +60,14 @@ const ViewingNugg: FunctionComponent<Props> = () => {
 
 	const happyTabs = useMemo(() => {
 		return [
+			...(activeSwap
+				? [
+						{
+							label: t`Active`,
+							comp: React.memo(ActiveSwap),
+						},
+				  ]
+				: []),
 			...(token && token.type === 'nugg' && token.owner === sender
 				? [
 						{
@@ -82,8 +93,16 @@ const ViewingNugg: FunctionComponent<Props> = () => {
 						},
 				  ]
 				: []),
+			...(token && token.type === 'nugg'
+				? [
+						{
+							label: t`History`,
+							comp: React.memo(MyNuggActions),
+						},
+				  ]
+				: []),
 		];
-	}, [token, sender, chainId, provider, tokenId, List]);
+	}, [token, sender, chainId, provider, tokenId, List, activeSwap]);
 
 	const navigate = useNavigate();
 
@@ -96,277 +115,280 @@ const ViewingNugg: FunctionComponent<Props> = () => {
 		<div
 			style={{ ...styles.container, opacity: provider && epoch && tokenId && token ? 1 : 0 }}
 		>
-			{provider && epoch && tokenId && token ? (
-				<>
-					<div style={styles.swapsWrapper}>
-						<div style={styles.swaps}>
-							<div style={styles.owner}>
-								<div style={{ display: 'flex' }}>
-									<Text textStyle={styles.nuggId}>
-										{tokenId && tokenId.toPrettyId()}
-									</Text>
-									{token.type === 'nugg' ? (
-										token.owner ? (
+			<>
+				<div style={styles.swapsWrapper}>
+					<div style={styles.swaps}>
+						<div style={styles.owner}>
+							<div style={{ display: 'flex' }}>
+								<Text textStyle={styles.nuggId} size="larger">
+									{tokenId && tokenId.toPrettyId()}
+								</Text>
+								{token && token.type === 'nugg' ? (
+									token.owner ? (
+										<div
+											style={{
+												marginLeft: '1rem',
+												display: 'flex',
+												justifyContent: 'center',
+												flexDirection: 'column',
+											}}
+										>
+											<Text
+												type="text"
+												size="smaller"
+												textStyle={{
+													color: lib.colors.white,
+												}}
+											>
+												{t`Owned by`}
+											</Text>
+											<div style={globalStyles.centered}>
+												<AddressViewer
+													address={token.owner}
+													textStyle={styles.titleText}
+													param={token.owner}
+													route="address"
+													size="large"
+													isNugg={false}
+												/>
+											</div>
+										</div>
+									) : (
+										<Loader color={lib.colors.nuggBlueText} />
+									)
+								) : token ? (
+									token.type === 'item' &&
+									token.tryout.count > 0 &&
+									token.tryout.max &&
+									token.tryout.min ? (
+										<div
+											style={{
+												...globalStyles.centeredSpaceBetween,
+												...globalStyles.fillWidth,
+											}}
+										>
 											<div style={{ marginLeft: '1rem' }}>
 												<Text
 													type="text"
-													size="smaller"
+													size="small"
 													textStyle={{
 														color: lib.colors.white,
+														// marginLeft: '1rem',
 													}}
 												>
-													{t`Owner`}
+													{t`Owned by ${token.count} Nugg${
+														token.count > 1 || !token.count ? 's' : ''
+													}`}
 												</Text>
-												<div style={globalStyles.centered}>
-													<AddressViewer
-														address={token.owner}
-														textStyle={styles.titleText}
-														param={token.owner}
-														route="address"
-														size="medium"
-														isNugg={false}
-													/>
-												</div>
-											</div>
-										) : (
-											<Loader color={lib.colors.nuggBlueText} />
-										)
-									) : token ? (
-										token.type === 'item' &&
-										token.tryout.count > 0 &&
-										token.tryout.max &&
-										token.tryout.min ? (
-											<div
-												style={{
-													...globalStyles.centeredSpaceBetween,
-													...globalStyles.fillWidth,
-												}}
-											>
-												<div style={{ marginLeft: '1rem' }}>
-													<Text
-														type="text"
-														size="small"
-														textStyle={{
-															color: lib.colors.white,
-															// marginLeft: '1rem',
-														}}
-													>
-														{t`Owned by ${token.count} Nugg${
-															token.count > 1 || !token.count
-																? 's'
-																: ''
-														}`}
-													</Text>
-													<Flyout
-														// openOnHover
-														float="left"
-														top={25}
-														triggerWidth="130px"
-														containerStyle={{
-															position: 'relative',
-														}}
-														button={
-															<Text
-																textStyle={{
-																	color: lib.colors.nuggBlueText,
-																}}
-																size="medium"
-															>
-																{t`${token.tryout.count} Nugg${
-																	token.tryout.count > 1
-																		? 's'
-																		: ''
-																} ${
-																	token.tryout.count > 1
-																		? 'are'
-																		: 'is'
-																} swapping`}
-															</Text>
-														}
-													>
-														<div
-															style={{
-																padding: '.5rem 1rem',
-																zIndex: 1000,
+												<Flyout
+													// openOnHover
+													float="left"
+													top={25}
+													triggerWidth="130px"
+													containerStyle={{
+														position: 'relative',
+													}}
+													button={
+														<Text
+															textStyle={{
+																color: lib.colors.nuggBlueText,
 															}}
+															size="medium"
 														>
-															<Text
-																size="medium"
-																textStyle={{
-																	paddingBottom: '.25rem',
-																}}
-															>{t`Swap price${
-																token.tryout.min.eth.eq(
-																	token.tryout.max.eth,
-																)
-																	? ''
-																	: 's'
-															}`}</Text>
-															{token.tryout.min.eth.eq(
+															{t`${token.tryout.count} Nugg${
+																token.tryout.count > 1 ? 's' : ''
+															} ${
+																token.tryout.count > 1
+																	? 'are'
+																	: 'is'
+															} swapping`}
+														</Text>
+													}
+												>
+													<div
+														style={{
+															padding: '.5rem 1rem',
+															zIndex: 1000,
+														}}
+													>
+														<Text
+															size="medium"
+															textStyle={{
+																paddingBottom: '.25rem',
+															}}
+														>{t`Swap price${
+															token.tryout.min.eth.eq(
 																token.tryout.max.eth,
-															) ? (
-																<CurrencyText
-																	size="small"
-																	type="text"
-																	image="eth"
-																	value={usdMin}
-																/>
-															) : (
-																<div>
-																	<div
-																		style={{ display: 'flex' }}
-																	>
-																		<CurrencyText
-																			image="eth"
-																			size="small"
-																			type="text"
-																			value={usdMin}
-																		/>
-																		<Text
-																			size="small"
-																			textStyle={{
-																				marginLeft: '5px',
-																			}}
-																		>{t`Min`}</Text>
-																	</div>
-																	<div
-																		style={{ display: 'flex' }}
-																	>
-																		<CurrencyText
-																			image="eth"
-																			size="small"
-																			type="text"
-																			value={usdMax}
-																		/>
-																		<Text
-																			size="small"
-																			textStyle={{
-																				marginLeft: '5px',
-																			}}
-																		>{t`Max`}</Text>
-																	</div>
+															)
+																? ''
+																: 's'
+														}`}</Text>
+														{token.tryout.min.eth.eq(
+															token.tryout.max.eth,
+														) ? (
+															<CurrencyText
+																size="small"
+																type="text"
+																image="eth"
+																value={usdMin}
+															/>
+														) : (
+															<div>
+																<div style={{ display: 'flex' }}>
+																	<CurrencyText
+																		image="eth"
+																		size="small"
+																		type="text"
+																		value={usdMin}
+																	/>
+																	<Text
+																		size="small"
+																		textStyle={{
+																			marginLeft: '5px',
+																		}}
+																	>{t`Min`}</Text>
 																</div>
-															)}
-														</div>
-													</Flyout>
-												</div>
-												{!token.activeSwap ? (
-													<Button
-														buttonStyle={{
-															...styles.goToSwap,
-															marginBottom: '0rem',
-														}}
-														onClick={() =>
-															navigate(`/swap/${token.tokenId}`)
-														}
-														size="small"
-														textStyle={{
-															...styles.goToSwapGradient,
-															background: lib.colors.gradient2,
-															paddingRight: '.5rem',
-														}}
-														label={t`Go to swap`}
-														rightIcon={
-															<IoArrowRedo color={lib.colors.green} />
-														}
-													/>
-												) : null}
+																<div style={{ display: 'flex' }}>
+																	<CurrencyText
+																		image="eth"
+																		size="small"
+																		type="text"
+																		value={usdMax}
+																	/>
+																	<Text
+																		size="small"
+																		textStyle={{
+																			marginLeft: '5px',
+																		}}
+																	>{t`Max`}</Text>
+																</div>
+															</div>
+														)}
+													</div>
+												</Flyout>
 											</div>
-										) : (
-											<Text
-												type="text"
-												size="medium"
-												textStyle={{
-													color: lib.colors.white,
-													marginLeft: '1rem',
-												}}
-											>
-												{t`Owned by ${token.count} Nugg${
-													token.count > 1 || !token.count ? 's' : ''
-												}`}
-											</Text>
-										)
-									) : null}
-								</div>
-								<div style={{ display: 'flex' }}>
-									<div
-										style={{
-											opacity: expanded ? 1 : 0,
-											transition: `opacity .5s ${lib.layout.animation}`,
-											marginRight: '.5rem',
-										}}
-									>
-										<TokenViewer
-											tokenId={tokenId}
-											disableOnClick
-											style={{
-												height: '45px',
-												width: '45px',
+											{!token.activeSwap ? (
+												<Button
+													buttonStyle={{
+														...styles.goToSwap,
+														marginBottom: '0rem',
+													}}
+													onClick={() =>
+														navigate(`/swap/${token.tokenId}`)
+													}
+													size="small"
+													textStyle={{
+														...styles.goToSwapGradient,
+														background: lib.colors.gradient2,
+														paddingRight: '.5rem',
+													}}
+													label={t`Go to swap`}
+													rightIcon={
+														<IoArrowRedo color={lib.colors.green} />
+													}
+												/>
+											) : null}
+										</div>
+									) : (
+										<Text
+											type="text"
+											size="medium"
+											textStyle={{
+												color: lib.colors.white,
+												marginLeft: '1rem',
 											}}
-										/>
-									</div>
-									<Button
-										buttonStyle={{
-											borderRadius: lib.layout.borderRadius.mediumish,
-											boxShadow: lib.layout.boxShadow.medium,
-										}}
-										rightIcon={
-											expanded ? (
-												<IoChevronDown color={lib.colors.nuggBlueText} />
-											) : (
-												<IoChevronUp color={lib.colors.nuggBlueText} />
-											)
-										}
-										onClick={() => setExpanded((e) => !e)}
-									/>
-								</div>
+										>
+											{t`Owned by ${token.count} Nugg${
+												token.count > 1 || !token.count ? 's' : ''
+											}`}
+										</Text>
+									)
+								) : null}
 							</div>
-							<div
-								style={{
-									...styles.nuggContainer,
-									marginTop: token.type === 'item' ? '1.5rem' : '0rem',
-									opacity: expanded ? 0 : 1,
-									height: expanded ? '0px' : '400px',
-									overflow: expanded ? 'hidden' : 'visible',
-									transition: `all .5s ${lib.layout.animation}`,
-								}}
-							>
+							<div style={{ display: 'flex' }}>
 								<div
 									style={{
-										height: '400px',
-										width: '400px',
-										position: 'relative',
-										padding: '.5rem',
+										opacity: expanded ? 1 : 0,
+										transition: `opacity .5s ${lib.layout.animation}`,
+										marginRight: '.5rem',
 									}}
 								>
-									<div style={{ position: expanded ? 'relative' : 'fixed' }}>
-										<AnimatedCard>
-											{tokenId && (
-												<TokenViewer
-													tokenId={tokenId}
-													showcase
-													disableOnClick
-												/>
-											)}
-										</AnimatedCard>
-									</div>
+									<TokenViewer
+										tokenId={tokenId}
+										disableOnClick
+										style={{
+											height: '45px',
+											width: '45px',
+										}}
+									/>
+								</div>
+								<Button
+									buttonStyle={{
+										borderRadius: lib.layout.borderRadius.mediumish,
+										boxShadow: lib.layout.boxShadow.medium,
+									}}
+									rightIcon={
+										expanded ? (
+											<IoChevronDown
+												color={lib.colors.nuggBlueText}
+												size={26}
+											/>
+										) : (
+											<IoChevronUp
+												color={lib.colors.nuggBlueText}
+												size={26}
+											/>
+										)
+									}
+									onClick={() => setExpanded((e) => !e)}
+								/>
+							</div>
+						</div>
+						<div
+							style={{
+								...styles.nuggContainer,
+								marginTop: token && token.type === 'item' ? '1.5rem' : '0rem',
+								opacity: expanded ? 0 : 1,
+								height: expanded ? '0px' : '400px',
+								overflow: expanded ? 'hidden' : 'visible',
+								transition: `all .5s ${lib.layout.animation}`,
+							}}
+						>
+							<div
+								style={{
+									height: '400px',
+									width: '400px',
+									position: 'relative',
+									padding: '.5rem',
+								}}
+							>
+								<div style={{ position: expanded ? 'relative' : 'fixed' }}>
+									<AnimatedCard>
+										{tokenId && (
+											<TokenViewer
+												tokenId={tokenId}
+												showcase
+												disableOnClick
+											/>
+										)}
+									</AnimatedCard>
 								</div>
 							</div>
-							<HappyTabber
-								defaultActiveIndex={0}
-								items={happyTabs}
-								selectionIndicatorStyle={{ background: lib.colors.white }}
-								bodyStyle={styles.tabberList}
-								headerContainerStyle={{
-									marginTop: '1.5rem',
-									padding: '0rem 1rem',
-									borderRadius: 0,
-								}}
-							/>
 						</div>
+						<HappyTabber
+							defaultActiveIndex={0}
+							items={happyTabs}
+							selectionIndicatorStyle={{ background: lib.colors.white }}
+							bodyStyle={styles.tabberList}
+							headerContainerStyle={{
+								marginTop: '1.5rem',
+								padding: '0rem 1rem',
+								borderRadius: 0,
+							}}
+						/>
 					</div>
-				</>
-			) : null}
+				</div>
+			</>
 		</div>
 	);
 };
