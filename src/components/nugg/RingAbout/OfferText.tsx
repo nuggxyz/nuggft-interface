@@ -16,8 +16,10 @@ const OfferText = ({ tokenId, textStyle }: { tokenId?: TokenId; textStyle?: CSSP
 
 	const text = useMemo(() => {
 		if (!token || !lifecycle) return '';
-		if (lifecycle === Lifecycle.Tryout) {
-			return ''; // t`Select a nugg to buy this item from`;
+		if (lifecycle === Lifecycle.Tryout && token.isItem()) {
+			return t`${token.tryout.count} Nugg${token.tryout.count > 1 ? 's' : ''} ${
+				token.tryout.count > 1 ? 'are' : 'is'
+			} swapping`;
 		}
 		if (
 			lifecycle === Lifecycle.Deck ||
