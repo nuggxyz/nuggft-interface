@@ -8,84 +8,84 @@ import { DEFAULT_CHAIN, INFURA_KEY } from '@src/web3/constants';
 import { EthersWebSocketProvider, getEventTag } from './EthersWebSocketProvider';
 
 export class CustomWebSocketProvider extends EthersWebSocketProvider {
-    private _destroy;
+	private _destroy;
 
-    constructor(url: string, network: Networkish, onClose: (e: CloseEvent) => void) {
-        super(url, network);
+	constructor(url: string, network: Networkish, onClose: (e: CloseEvent) => void) {
+		super(url, network);
 
-        this._destroy = super.destroy.bind(this);
-        this._websocket.onclose = onClose;
-    }
+		this._destroy = super.destroy.bind(this);
+		this._websocket.onclose = onClose;
+	}
 
-    public setOnClose(onClose: (e: CloseEvent) => void) {
-        this._websocket.onclose = onClose;
-    }
+	public setOnClose(onClose: (e: CloseEvent) => void) {
+		this._websocket.onclose = onClose;
+	}
 
-    public closer() {
-        this._websocket.close();
-    }
+	public closer() {
+		this._websocket.close();
+	}
 
-    public override destroy() {
-        this._websocket.onclose = () => {};
-        return this._destroy();
-    }
+	public override destroy() {
+		this._websocket.onclose = () => {};
+		return this._destroy();
+	}
 
-    updateListener(ev: EventType, listener: (...args: any) => void) {
-        const checkTag = getEventTag(ev);
-        this._events.forEach((x, i) => {
-            if (checkTag === x.tag) {
-                this._events[i] = new Event(x.tag, listener, x.once);
-            }
-        });
-    }
+	updateListener(ev: EventType, listener: (...args: any) => void) {
+		const checkTag = getEventTag(ev);
+		this._events.forEach((x, i) => {
+			if (checkTag === x.tag) {
+				this._events[i] = new Event(x.tag, listener, x.once);
+			}
+		});
+	}
 }
 
 export class InfuraWebSocketProvider extends CustomWebSocketProvider {
-    readonly apiKey!: string;
+	readonly apiKey!: string;
 
-    readonly projectId!: string;
+	readonly projectId!: string;
 
-    readonly projectSecret!: string;
+	readonly projectSecret!: string;
 
-    constructor(
-        network: Networkish = DEFAULT_CHAIN,
-        apiKey: string = INFURA_KEY,
-        onClose: (e: CloseEvent) => void = () => undefined,
-    ) {
-        const provider = new InfuraProvider(network, apiKey);
-        const { connection } = provider;
-        // if (connection.password) {
-        //     logger.throwError(
-        //         'INFURA WebSocket project secrets unsupported',
-        //         Logger.errors.UNSUPPORTED_OPERATION,
-        //         {
-        //             operation: 'InfuraProvider.getWebSocketProvider()',
-        //         },
-        //     );
-        // }
+	constructor(
+		network: Networkish = DEFAULT_CHAIN,
+		apiKey: string = INFURA_KEY,
+		onClose: (e: CloseEvent) => void = () => undefined,
+	) {
+		const provider = new InfuraProvider(network, apiKey);
+		const { connection } = provider;
+		// if (connection.password) {
+		//     logger.throwError(
+		//         'INFURA WebSocket project secrets unsupported',
+		//         Logger.errors.UNSUPPORTED_OPERATION,
+		//         {
+		//             operation: 'InfuraProvider.getWebSocketProvider()',
+		//         },
+		//     );
+		// }
 
-        const url = connection.url.replace(/^http/i, 'ws').replace('/v3/', '/ws/v3/');
-        super(url, network, onClose);
+		const url = connection.url.replace(/^http/i, 'ws').replace('/v3/', '/ws/v3/');
+		super(url, network, onClose);
 
-        defineReadOnly(this, 'apiKey', provider.projectId);
-        defineReadOnly(this, 'projectId', provider.projectId);
-        defineReadOnly(this, 'projectSecret', provider.projectSecret);
-    }
+		defineReadOnly(this, 'apiKey', provider.projectId);
+		defineReadOnly(this, 'projectId', provider.projectId);
+		defineReadOnly(this, 'projectSecret', provider.projectSecret);
+	}
 }
 
 export class AlchemyWebSocketProvider extends CustomWebSocketProvider {
-    readonly apiKey!: string;
+	readonly apiKey!: string;
 
-    constructor(network: Networkish, apiKey: string, onClose: (e: CloseEvent) => void) {
-        const provider = new AlchemyProvider(network, apiKey);
+	constructor(network: Networkish, apiKey: string, onClose: (e: CloseEvent) => void) {
+		const provider = new AlchemyProvider(network, apiKey);
 
-        const url = provider.connection.url
-            .replace(/^http/i, 'ws')
-            .replace('.alchemyapi.', '.ws.alchemyapi.');
+		const url = provider.connection.url
+			.replace(/^http/i, 'ws')
+			.replace('.alchemyapi.', '.ws.alchemyapi.');
 
-        super(url, provider.network, onClose);
-        defineReadOnly(this, 'apiKey', provider.apiKey as string);
-    }
+		super(url, provider.network, onClose);
+		defineReadOnly(this, 'apiKey', provider.apiKey as string);
+	}
 }
 
 // class RestartingWebsocket extends InfuraWebSocketProvider {
