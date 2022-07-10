@@ -2,7 +2,7 @@ import React, { FunctionComponent, useMemo, useState } from 'react';
 import { t } from '@lingui/macro';
 import { IoChevronDown, IoChevronUp } from 'react-icons/io5';
 
-import lib from '@src/lib';
+import lib, { isUndefinedOrNullOrArrayEmpty } from '@src/lib';
 import Loader from '@src/components/general/Loader/Loader';
 import Text from '@src/components/general/Texts/Text/Text';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -57,7 +57,9 @@ const ViewingNugg: FunctionComponent<Props> = () => {
 
 	const happyTabs = useMemo(() => {
 		return [
-			...(activeSwap
+			...(activeSwap &&
+			// @ts-ignore
+			(activeSwap.isNugg() || !isUndefinedOrNullOrArrayEmpty(activeSwap.swaps))
 				? [
 						{
 							label: t`Active`,

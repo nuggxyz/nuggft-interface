@@ -55,6 +55,7 @@ export default ({
 			}}
 			disabled={isDisabled}
 			onClick={() => {
+				console.log(token?.activeSwap);
 				if (isUndefinedOrNullOrStringEmpty(address)) {
 					openModal({
 						modalType: ModalEnum.Wallet,

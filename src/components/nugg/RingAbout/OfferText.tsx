@@ -15,8 +15,12 @@ const OfferText = ({ tokenId, textStyle }: { tokenId?: TokenId; textStyle?: CSSP
 	const hasBids = client.live.offers(tokenId).length !== 0;
 
 	const text = useMemo(() => {
+		console.log({ lifecycle, token });
 		if (!token || !lifecycle) return '';
-		if (lifecycle === Lifecycle.Tryout && token.isItem()) {
+		if (
+			(lifecycle === Lifecycle.Tryout || lifecycle === Lifecycle.Formality) &&
+			token.isItem()
+		) {
 			return t`${token.tryout.count} Nugg${token.tryout.count > 1 ? 's' : ''} ${
 				token.tryout.count > 1 ? 'are' : 'is'
 			} swapping`;

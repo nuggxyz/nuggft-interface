@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { t } from '@lingui/macro';
 import { IoArrowRedo } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
@@ -17,12 +17,35 @@ import client from '@src/client';
 
 import styles from './ViewingNugg.styles';
 
+const TransluscentContainer: FunctionComponent<PropsWithChildren<any>> = ({ children }) => (
+	<div
+		style={{
+			background: lib.colors.transparentWhite,
+			borderRadius: lib.layout.borderRadius.mediumish,
+			boxShadow: lib.layout.boxShadow.basic,
+			WebkitBackdropFilter: 'blur(50px)',
+			backdropFilter: 'blur(50px)',
+			display: 'flex',
+			justifyContent: 'center',
+			flexDirection: 'column',
+			alignItems: 'center',
+			padding: '.5rem .6rem',
+			paddingLeft: '.8rem',
+			margin: '0rem .5rem',
+		}}
+	>
+		{children}
+	</div>
+);
+
 type Props = Record<string, never>;
 
 const ActiveSwap: FunctionComponent<Props> = () => {
 	const navigate = useNavigate();
 	const { safeTokenId: tokenId } = useViewingNugg();
 	const [lifecycle, swap, swapCurrency, , seconds, token] = useLifecycleData(tokenId);
+	const usdMin = client.usd.useUsdPair(token?.isItem() ? token?.tryout?.min?.eth : undefined);
+	const usdMax = client.usd.useUsdPair(token?.isItem() ? token?.tryout?.max?.eth : undefined);
 
 	const MemoizedTimer = React.useMemo(() => {
 		return swap && !swap.isPotential && swap?.endingEpoch ? (
@@ -30,8 +53,102 @@ const ActiveSwap: FunctionComponent<Props> = () => {
 		) : null;
 	}, [swap, seconds, tokenId]);
 
-	const usdMin = client.usd.useUsdPair(token?.isItem() ? token?.tryout?.min?.eth : undefined);
-	const usdMax = client.usd.useUsdPair(token?.isItem() ? token?.tryout?.max?.eth : undefined);
+	const MemoizedPrice = React.useMemo(() => {
+		return lifecycle === Lifecycle.Bench ||
+			lifecycle === Lifecycle.Concessions ||
+			lifecycle === Lifecycle.Minors ? (
+			<TransluscentContainer>
+				<CurrencyText
+					textStyle={{
+						color: lib.colors.primaryColor,
+						fontSize: '30px',
+						display: 'flex',
+						alignItems: 'center',
+						fontWeight: lib.layout.fontWeight.semibold,
+					}}
+					stopAnimationOnStart
+					value={swapCurrency}
+					decimals={3}
+					icon
+					iconSize={32}
+					loadingOnZero
+				/>
+			</TransluscentContainer>
+		) : (
+			(lifecycle === Lifecycle.Tryout || lifecycle === Lifecycle.Formality) &&
+				token?.isItem() &&
+				token.tryout.max &&
+				token.tryout.min &&
+				(!token.tryout.min.eth.eq(token.tryout.max.eth) ? (
+					<TransluscentContainer>
+						<CurrencyText
+							textStyle={{
+								color: lib.colors.primaryColor,
+								fontSize: '30px',
+								display: 'flex',
+								alignItems: 'center',
+								fontWeight: lib.layout.fontWeight.semibold,
+							}}
+							stopAnimationOnStart
+							value={usdMin}
+							decimals={3}
+							icon
+							iconSize={32}
+							loadingOnZero
+						/>
+					</TransluscentContainer>
+				) : (
+					<div style={{ display: 'flex' }}>
+						<TransluscentContainer>
+							<Text
+								size="small"
+								textStyle={{
+									marginLeft: '5px',
+								}}
+							>{t`Min`}</Text>
+							<CurrencyText
+								textStyle={{
+									color: lib.colors.primaryColor,
+									fontSize: '30px',
+									display: 'flex',
+									alignItems: 'center',
+									fontWeight: lib.layout.fontWeight.semibold,
+								}}
+								stopAnimationOnStart
+								value={usdMin}
+								decimals={3}
+								icon
+								iconSize={32}
+								loadingOnZero
+							/>
+						</TransluscentContainer>
+						<TransluscentContainer>
+							<Text
+								size="small"
+								textStyle={{
+									marginLeft: '5px',
+								}}
+							>{t`Max`}</Text>
+							<CurrencyText
+								textStyle={{
+									color: lib.colors.primaryColor,
+									fontSize: '30px',
+									display: 'flex',
+									alignItems: 'center',
+									fontWeight: lib.layout.fontWeight.semibold,
+								}}
+								stopAnimationOnStart
+								value={usdMax}
+								decimals={3}
+								icon
+								iconSize={32}
+								loadingOnZero
+							/>
+						</TransluscentContainer>
+					</div>
+				))
+		);
+	}, [lifecycle, usdMax, token, usdMin, swapCurrency]);
 
 	return (
 		<div
@@ -60,105 +177,7 @@ const ActiveSwap: FunctionComponent<Props> = () => {
 				}}
 			>
 				<OffersList tokenId={tokenId} onlyLeader />
-				{lifecycle === Lifecycle.Bench ||
-				lifecycle === Lifecycle.Concessions ||
-				lifecycle === Lifecycle.Minors ? (
-					<div
-						style={{
-							background: lib.colors.transparentWhite,
-							borderRadius: lib.layout.borderRadius.mediumish,
-							boxShadow: lib.layout.boxShadow.basic,
-							WebkitBackdropFilter: 'blur(50px)',
-							backdropFilter: 'blur(50px)',
-							display: 'flex',
-							justifyContent: 'center',
-							flexDirection: 'column',
-							alignItems: 'center',
-							padding: '.5rem .6rem',
-							paddingLeft: '.8rem',
-						}}
-					>
-						<CurrencyText
-							textStyle={{
-								color: lib.colors.primaryColor,
-								fontSize: '30px',
-								display: 'flex',
-								alignItems: 'center',
-								fontWeight: lib.layout.fontWeight.semibold,
-							}}
-							stopAnimationOnStart
-							value={swapCurrency}
-							decimals={3}
-							icon
-							iconSize={32}
-							loadingOnZero
-						/>
-					</div>
-				) : (
-					lifecycle === Lifecycle.Tryout &&
-					token?.isItem() &&
-					token.tryout.max &&
-					token.tryout.min && (
-						<div
-							style={{
-								background: lib.colors.transparentWhite,
-								borderRadius: lib.layout.borderRadius.mediumish,
-								boxShadow: lib.layout.boxShadow.basic,
-								WebkitBackdropFilter: 'blur(50px)',
-								backdropFilter: 'blur(50px)',
-								display: 'flex',
-								justifyContent: 'center',
-								flexDirection: 'column',
-								alignItems: 'center',
-								padding: '.5rem .6rem',
-								paddingLeft: '.8rem',
-							}}
-						>
-							<Text
-								size="medium"
-								textStyle={{
-									paddingBottom: '.25rem',
-								}}
-							>{t`Swap price${
-								token.tryout.min.eth.eq(token.tryout.max.eth) ? '' : 's'
-							}`}</Text>
-							{token.tryout.min.eth.eq(token.tryout.max.eth) ? (
-								<CurrencyText size="small" type="text" image="eth" value={usdMin} />
-							) : (
-								<div>
-									<div style={{ display: 'flex' }}>
-										<CurrencyText
-											image="eth"
-											size="small"
-											type="text"
-											value={usdMin}
-										/>
-										<Text
-											size="small"
-											textStyle={{
-												marginLeft: '5px',
-											}}
-										>{t`Min`}</Text>
-									</div>
-									<div style={{ display: 'flex' }}>
-										<CurrencyText
-											image="eth"
-											size="small"
-											type="text"
-											value={usdMax}
-										/>
-										<Text
-											size="small"
-											textStyle={{
-												marginLeft: '5px',
-											}}
-										>{t`Max`}</Text>
-									</div>
-								</div>
-							)}
-						</div>
-					)
-				)}
+				{MemoizedPrice}
 				{MemoizedTimer}
 			</div>
 			<Button
