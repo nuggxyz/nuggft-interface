@@ -126,22 +126,26 @@ export default () => {
 				case 'Transfer': {
 					break;
 				}
-				case 'Loan': {
-					break;
-				}
+				case 'Loan':
+				case 'Liquidate':
 				case 'Rebalance': {
+					const agency = BigNumber.from(event.args.agency);
+					const agencyParsed = lib.parse.agency(agency);
+					emitCompletedTx(agencyParsed.address as AddressString, (from) => {
+						return from.toLowerCase() === agencyParsed.address.toLowerCase();
+					});
 					break;
 				}
 
 				case 'Claim': {
 					emitCompletedTx(event.args.account as AddressString, (from) => {
-						return from === event.args.account;
+						return from.toLowerCase() === event.args.account.toLowerCase();
 					});
 					break;
 				}
 				case 'ClaimItem': {
 					emitCompletedTx(null, (from, dat) => {
-						return log.data === dat;
+						return log.data.toLowerCase() === dat.toLowerCase();
 					});
 
 					break;

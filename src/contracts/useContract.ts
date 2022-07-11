@@ -479,8 +479,9 @@ export function useTransactionManager2(
 					txdata.response !== null &&
 					prevTxdata.response !== txdata.response &&
 					onResponse
-				)
+				) {
 					onResponse(hash);
+				}
 				if (txdata.receipt && !prevTxdata.receipt) {
 					if (onReceipt) {
 						onReceipt(hash as Hash);

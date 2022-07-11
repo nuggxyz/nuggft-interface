@@ -19,6 +19,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
 	return (
 		<div style={styles.ownerButtonContainer}>
 			<Button
+				className="mobile-pressable-div"
 				textStyle={styles.textBlack}
 				size="medium"
 				type="text"
@@ -45,6 +46,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
 				}}
 			/>
 			<Button
+				className="mobile-pressable-div"
 				textStyle={styles.textBlack}
 				size="medium"
 				type="text"
@@ -95,6 +97,7 @@ const OwnerButtons: FunctionComponent<Props> = ({ tokenId }) => {
                 }
             /> */}
 			<Button
+				className="mobile-pressable-div"
 				textStyle={styles.textBlack}
 				size="medium"
 				type="text"

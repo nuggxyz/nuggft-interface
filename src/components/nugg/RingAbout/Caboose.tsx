@@ -106,7 +106,7 @@ export default ({
 					: t`Select a nugg to buy ${tokenId?.toPrettyId()} from`}
 			</Text>
 			<Button
-				className="mobile-pressable-div"
+				className="mobile-pressable-div-shallow"
 				buttonStyle={{
 					...styles.button,
 				}}

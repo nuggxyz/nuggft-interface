@@ -458,6 +458,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 				</div>
 				<div style={styles.subContainer}>
 					<FeedbackButton
+						className="mobile-pressable-div-shallow"
 						timeout={
 							data.isItem() &&
 							!isUndefinedOrNullOrBooleanFalse(check?.mustOfferOnSeller)
