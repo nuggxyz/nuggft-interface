@@ -166,6 +166,25 @@ html {
 	display: none;
 }
 
+.mobile-pressable-div-shallow {
+	-webkit-transition: 0.2s cubic-bezier(0.34, 0.55, 0.06, 0.99);
+	transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);
+	-webkit-tap-highlight-color: transparent;
+	cursor: pointer;
+}
+
+.mobile-pressable-div-shallow:hover {
+	-webkit-transform: scale(1.02);
+	-ms-transform: scale(1.02);
+	transform: scale(1.02);
+}
+
+.mobile-pressable-div-shallow:active {
+	-webkit-transform: scale(0.98);
+	-ms-transform: scale(0.98);
+	transform: scale(0.98);
+}
+
 .mobile-pressable-div {
 	-webkit-transition: 0.2s cubic-bezier(0.34, 0.55, 0.06, 0.99);
 	transition: 0.3s cubic-bezier(0.34, 0.55, 0.06, 0.99);

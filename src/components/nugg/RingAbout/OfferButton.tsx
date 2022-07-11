@@ -43,7 +43,7 @@ export default ({
 
 	return lifecycle !== 'tryout' && lifecycle !== 'formality' ? (
 		<Button
-			className="mobile-pressable-div"
+			className="mobile-pressable-div-shallow"
 			buttonStyle={{
 				...styles.button,
 				...(inOverlay && {
@@ -55,7 +55,6 @@ export default ({
 			}}
 			disabled={isDisabled}
 			onClick={() => {
-				console.log(token?.activeSwap);
 				if (isUndefinedOrNullOrStringEmpty(address)) {
 					openModal({
 						modalType: ModalEnum.Wallet,
