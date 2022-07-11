@@ -17,7 +17,7 @@ import client from '@src/client';
 
 import styles from './ViewingNugg.styles';
 
-const TransluscentContainer: FunctionComponent<PropsWithChildren<any>> = ({ children }) => (
+const TransluscentContainer: FunctionComponent<PropsWithChildren> = ({ children }) => (
 	<div
 		style={{
 			background: lib.colors.transparentWhite,
@@ -79,7 +79,7 @@ const ActiveSwap: FunctionComponent<Props> = () => {
 				token?.isItem() &&
 				token.tryout.max &&
 				token.tryout.min &&
-				(!token.tryout.min.eth.eq(token.tryout.max.eth) ? (
+				(token.tryout.min.eth.eq(token.tryout.max.eth) ? (
 					<TransluscentContainer>
 						<CurrencyText
 							textStyle={{
