@@ -8,6 +8,7 @@ import {
 	GodListRenderItemBig,
 	GodListRenderItemSmall,
 } from '@src/components/general/List/BradPittList';
+import useDimensions from '@src/client/hooks/useDimensions';
 
 type PropsBig = GodListRenderItemBig<
 	TokenId,
@@ -181,9 +182,10 @@ export const MobileContainerBig: FC<PropsWithChildren<{ tokenId?: TokenId }>> = 
 	tokenId,
 	children,
 }) => {
+	const [, isPhone] = useDimensions();
 	return (
 		<div
-			className="mobile-pressable-div"
+			className={isPhone ? 'mobile-pressable-div' : ''}
 			style={{
 				display: 'flex',
 				alignItems: 'center',

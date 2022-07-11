@@ -71,7 +71,7 @@ export default ({
 	const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<TryoutData>();
 	const openModal = client.modal.useOpenModal();
 
-	return token && token.isItem() && token.tryout.count > 0 ? (
+	return token && token.isItem() && token.tryout.count > 0 && !token.activeSwap ? (
 		<div style={{ width: '100%' }}>
 			<GodListHorizontal
 				data={token.tryout.swaps}

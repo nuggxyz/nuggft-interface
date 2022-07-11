@@ -15,7 +15,6 @@ const OfferText = ({ tokenId, textStyle }: { tokenId?: TokenId; textStyle?: CSSP
 	const hasBids = client.live.offers(tokenId).length !== 0;
 
 	const text = useMemo(() => {
-		console.log({ lifecycle, token });
 		if (!token || !lifecycle) return '';
 		if (
 			(lifecycle === Lifecycle.Tryout || lifecycle === Lifecycle.Formality) &&

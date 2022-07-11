@@ -34,7 +34,7 @@ const getter = ({ data }: { data?: ModalType }) => {
 			return <WalletModal />;
 		case undefined:
 		default:
-			return <> </>;
+			return null;
 	}
 };
 
@@ -51,9 +51,14 @@ export const ModalSwitch = () => {
 		leave: { opacity: 0, pointerEvents: 'none' as const, position: 'absolute' as const },
 		config: config.stiff,
 	});
-	return transition((style, Item) => (
-		<animated.div style={{ ...style, padding: '1rem', width: '100%' }}>{Item}</animated.div>
-	));
+	return transition(
+		(style, Item) =>
+			Item && (
+				<animated.div style={{ ...style, padding: '1rem', width: '100%' }}>
+					{Item}
+				</animated.div>
+			),
+	);
 };
 
 const Modal: FC<unknown> = () => {
