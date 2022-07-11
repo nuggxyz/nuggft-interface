@@ -18,7 +18,7 @@ type SwapDataWithTryout = SwapData & {
 	tryout?: LiveItem['tryout'];
 };
 
-const SwapItem: FunctionComponent<{ item: SwapDataWithTryout }> = ({ item }) => {
+export const SwapListItem: FunctionComponent<{ item: SwapDataWithTryout }> = ({ item }) => {
 	const provider = web3.hook.usePriorityProvider();
 
 	const leaderEns = web3.hook.usePriorityAnyENSName(
@@ -133,7 +133,7 @@ const SwapListPhone: FunctionComponent<{ tokenId?: TokenId }> = ({ tokenId }) =>
 				) : (
 					<>
 						{filtered.map((item, index) => (
-							<SwapItem key={`SwapItem${token.tokenId}${index}`} item={item} />
+							<SwapListItem key={`SwapItem${token.tokenId}${index}`} item={item} />
 						))}
 					</>
 				))}

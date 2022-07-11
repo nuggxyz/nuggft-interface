@@ -35,7 +35,15 @@ import MobileOfferButton from './MobileOfferButton';
 import { GraphWarningSmall } from './GraphWarning';
 import MobileCaboose from './MobileCaboose';
 
-const Ver = ({ left, right, label }: { left: number; right: number; label: string }) => {
+export const InfoPoint = ({
+	left,
+	right,
+	label,
+}: {
+	left: number;
+	right: number;
+	label: string;
+}) => {
 	return (
 		<div
 			style={{
@@ -168,13 +176,13 @@ const Info = ({ tokenId }: { tokenId?: ItemId }) => {
 				}}
 			>
 				<div style={{ width: '100%', marginTop: 15 }}> </div>{' '}
-				<Ver
+				<InfoPoint
 					left={observedPositionRarity * observedFeatureRarity * 100}
 					right={featureRarity * positionRarity * 100}
 					label={t`a new nugg has ${tokenId.toPrettyId().toLowerCase()}`}
 				/>
 				<div style={{ width: '100%', marginTop: 20 }}> </div>
-				<Ver
+				<InfoPoint
 					left={observedPositionRarity * 100}
 					right={positionRarity * 100}
 					label={t`a given ${web3.config.FEATURE_NAMES[
@@ -182,7 +190,7 @@ const Info = ({ tokenId }: { tokenId?: ItemId }) => {
 					].toLowerCase()} is ${tokenId.toPrettyId().toLowerCase()}`}
 				/>
 				<div style={{ width: '100%', marginTop: 20 }}> </div>
-				<Ver
+				<InfoPoint
 					left={observedFeatureRarity * 100}
 					right={featureRarity * 100}
 					label={t`a nugg is minted with ${web3.config.FEATURE_NAMES[

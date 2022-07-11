@@ -125,7 +125,7 @@ export const useLifecycleData = (tokenId?: TokenId) => {
 
 	const { seconds } = client.epoch.useEpoch(swap?.isPotential ? 0 : swap?.endingEpoch);
 
-	return [lifecycle, swap, swapCurrency, leaderEns, seconds] as const;
+	return [lifecycle, swap, swapCurrency, leaderEns, seconds, token] as const;
 };
 
 export default (tokenId?: TokenId): Lifecycle | undefined => {

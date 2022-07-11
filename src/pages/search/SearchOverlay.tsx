@@ -37,7 +37,6 @@ const styles = lib.layout.NLStyleSheetCreator({
 		justifyContent: 'center',
 		alignItems: 'center',
 		position: 'relative',
-		overflow: 'scroll',
 	},
 });
 

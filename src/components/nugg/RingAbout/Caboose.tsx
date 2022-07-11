@@ -12,6 +12,7 @@ import { buildTokenIdFactory } from '@src/prototypes';
 import GodListHorizontal from '@src/components/general/List/GodListHorizontal';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
 import web3 from '@src/web3';
+import Text from '@src/components/general/Texts/Text/Text';
 
 import styles from './RingAbout.styles';
 
@@ -70,7 +71,7 @@ export default ({
 	const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<TryoutData>();
 	const openModal = client.modal.useOpenModal();
 
-	return token && token.isItem() && token.tryout.count > 0 ? (
+	return token && token.isItem() && token.tryout.count > 0 && !token.activeSwap ? (
 		<div style={{ width: '100%' }}>
 			<GodListHorizontal
 				data={token.tryout.swaps}
@@ -78,11 +79,6 @@ export default ({
 				labelStyle={{ color: 'white', paddingTop: '0rem' }}
 				extraData={undefined}
 				RenderItem={TryoutRenderItem}
-				label={
-					nuggToBuyFrom
-						? t`On sale by ${nuggToBuyFrom.nugg.toPrettyId()}`
-						: t`Select a nugg to buy ${tokenId?.toPrettyId()} from`
-				}
 				selected={nuggToBuyFrom}
 				action={(dat?: TryoutData) => {
 					setNuggToBuyFrom(dat);
@@ -97,6 +93,18 @@ export default ({
 					borderRadius: lib.layout.borderRadius.medium,
 				}}
 			/>
+			<Text
+				textStyle={{
+					width: '100%',
+					color: 'white',
+					textAlign: 'center',
+					margin: '.3rem 0rem',
+				}}
+			>
+				{nuggToBuyFrom
+					? t`On sale by ${nuggToBuyFrom.nugg.toPrettyId()}`
+					: t`Select a nugg to buy ${tokenId?.toPrettyId()} from`}
+			</Text>
 			<Button
 				className="mobile-pressable-div"
 				buttonStyle={{

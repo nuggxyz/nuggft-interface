@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { CSSProperties, useMemo } from 'react';
 import { t } from '@lingui/macro';
 
 import Text from '@src/components/general/Texts/Text/Text';
@@ -8,7 +8,7 @@ import useLifecycle from '@src/client/hooks/useLifecycle';
 
 import styles from './RingAbout.styles';
 
-const OfferText = ({ tokenId }: { tokenId?: TokenId }) => {
+const OfferText = ({ tokenId, textStyle }: { tokenId?: TokenId; textStyle?: CSSProperties }) => {
 	const token = client.live.token(tokenId);
 	const lifecycle = useLifecycle(tokenId);
 
@@ -16,8 +16,13 @@ const OfferText = ({ tokenId }: { tokenId?: TokenId }) => {
 
 	const text = useMemo(() => {
 		if (!token || !lifecycle) return '';
-		if (lifecycle === Lifecycle.Tryout) {
-			return ''; // t`Select a nugg to buy this item from`;
+		if (
+			(lifecycle === Lifecycle.Tryout || lifecycle === Lifecycle.Formality) &&
+			token.isItem()
+		) {
+			return t`${token.tryout.count} Nugg${token.tryout.count > 1 ? 's' : ''} ${
+				token.tryout.count > 1 ? 'are' : 'is'
+			} swapping`;
 		}
 		if (
 			lifecycle === Lifecycle.Deck ||
@@ -26,7 +31,7 @@ const OfferText = ({ tokenId }: { tokenId?: TokenId }) => {
 		) {
 			return hasBids ? t`Highest offer` : t`Place the first offer!`;
 		}
-		if (lifecycle === Lifecycle.Bench) {
+		if (lifecycle === Lifecycle.Bench || lifecycle === Lifecycle.Minors) {
 			return t`Place offer to begin auction`;
 		}
 		if (lifecycle === Lifecycle.Shower) {
@@ -39,6 +44,7 @@ const OfferText = ({ tokenId }: { tokenId?: TokenId }) => {
 		<Text
 			textStyle={{
 				...styles.title,
+				...textStyle,
 			}}
 		>
 			{text}

@@ -118,7 +118,7 @@ const TokenViewer: FunctionComponent<TokenViewerProps> = ({
 					// width: '100%',
 					...style,
 					// transform: 'translate3d(0,0,0)',
-					...(isHovering && !disableOnClick ? { cursor: 'pointer' } : {}),
+					...(isHovering || !disableOnClick ? { cursor: 'pointer' } : {}),
 					// ...strokeWidth,
 				}}
 				ref={hoverRef}
