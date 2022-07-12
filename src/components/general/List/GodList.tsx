@@ -26,6 +26,7 @@ export interface GodListRenderItemProps<T, B, A> {
 	rootRef?: LegacyRef<HTMLDivElement>;
 	selected?: boolean;
 	style?: CSSProperties;
+	id?: number;
 }
 
 // const fast = { tension: 1200, friction: 40 };

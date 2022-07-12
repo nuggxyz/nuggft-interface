@@ -2,15 +2,10 @@ import { animated } from '@react-spring/web';
 import React, { FC, useState } from 'react';
 import { useNavigate, useMatch } from 'react-router-dom';
 import { t } from '@lingui/macro';
-import {
-	IoArrowDown,
-	IoArrowDownCircle,
-	IoArrowUp,
-	IoArrowUpCircle,
-	IoReload,
-} from 'react-icons/io5';
+import { IoArrowDownCircle, IoArrowUpCircle, IoReload } from 'react-icons/io5';
 import Confetti from 'react-confetti';
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
+import { isUndefined } from 'lodash';
 
 import client from '@src/client';
 import TokenViewer from '@src/components/nugg/TokenViewer';
@@ -31,14 +26,12 @@ import Text from '@src/components/general/Texts/Text/Text';
 import { buildTokenIdFactory } from '@src/prototypes';
 import Loader from '@src/components/general/Loader/Loader';
 import emitter from '@src/emitter';
-import globalStyles from '@src/lib/globalStyles';
 import { useDotnuggInjectToCache } from '@src/client/hooks/useDotnugg';
 import FeedbackButton from '@src/components/general/Buttons/FeedbackButton/FeedbackButton';
 import useDimensions from '@src/client/hooks/useDimensions';
 import TransactionVisualConfirmation from '@src/components/nugg/TransactionVisualConfirmation';
 import { GodListRenderItemProps } from '@src/components/general/List/GodList';
-import SimpleList, { SimpleListRenderItemProps } from '@src/components/general/List/SimpleList';
-import { ADDRESS_ZERO } from '@src/web3/constants';
+import { ADDRESS_ZERO, FEATURE_NAMES } from '@src/web3/constants';
 
 import styles from './HotRotateO.styles';
 
@@ -87,6 +80,46 @@ const HotRotateOController = () => {
 	}, [tokenId, openEditScreen, closeEditScreen, navigate]);
 
 	return <HotRotateO />;
+};
+
+const RenderItemDesktop: FC<
+	GodListRenderItemProps<
+		(HotRotateOItem | undefined)[],
+		undefined,
+		HotRotateOItemList['byItem'][number][number]
+	>
+> = ({ item, action, index: feature }) => {
+	const id = React.useId();
+	const [first, ...list] = React.useMemo(() => item ?? [], [item]);
+	return (
+		<div>
+			<RenderItemMedium
+				item={first}
+				action={action}
+				index={0}
+				key={`${id}-${0}`}
+				id={feature}
+			/>
+			<div
+				style={{
+					overflowY: 'scroll',
+					height: '200px',
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'flex-start',
+				}}
+			>
+				{(list ?? []).map((x, index) => (
+					<RenderItemMedium
+						item={x}
+						action={action}
+						index={index + 1}
+						key={`${id}-${index + 1}`}
+					/>
+				))}
+			</div>
+		</div>
+	);
 };
 
 const RenderItemMobileTiny2: FC<
@@ -187,49 +220,165 @@ const RenderItemMobileTiny: FC<
 		</div>
 	);
 };
-
-const RenderItem: FC<
-	SimpleListRenderItemProps<
-		HotRotateOItem,
-		{
-			type: 'storage' | 'displayed';
-		},
-		HotRotateOItem
-	>
-> = ({ item, action, extraData }) => {
+const RenderItemMedium: FC<GodListRenderItemProps<HotRotateOItem, undefined, HotRotateOItem>> = ({
+	item,
+	action,
+	id,
+	index,
+}) => {
 	return (
-		<div style={styles.renderItemContainer}>
-			<TokenViewer
-				forceCache
-				tokenId={item.tokenId}
-				style={styles.renderToken}
-				showLabel
-				disableOnClick
-			/>
-			{item.duplicates > 1 && (
-				<Label containerStyles={styles.duplicateItem} text={String(item.duplicates)} />
-			)}
-			{item.feature !== 0 && (
-				<Button
-					size="small"
-					onClick={() => action && action(item)}
-					buttonStyle={styles.renderItemButton}
-					textStyle={{
-						paddingRight: '.2rem',
-					}}
-					label={extraData.type === 'storage' ? t`Show` : t`Hide`}
-					rightIcon={
-						extraData.type === 'storage' ? (
-							<IoArrowUp color={lib.colors.nuggBlueText} />
-						) : (
-							<IoArrowDown color={lib.colors.nuggRedText} />
-						)
-					}
-				/>
-			)}
+		<div
+			className={item === undefined ? '' : 'mobile-pressable-div'}
+			role="button"
+			aria-hidden="true"
+			onClick={() => action && action(item)}
+			style={{
+				borderRadius: lib.layout.borderRadius.largish,
+				overflowY: 'visible',
+				// width: '80px',
+				height: '100%',
+			}}
+		>
+			<div
+				style={{
+					borderRadius: lib.layout.borderRadius.medium,
+					transition: '.2s background ease',
+					position: 'relative',
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+					padding: 10,
+				}}
+			>
+				{index === 0 && (
+					<div
+						style={{
+							position: 'absolute',
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center',
+							flexDirection: 'column',
+						}}
+					>
+						<Text textStyle={{ color: 'black' }} size="large">
+							{!isUndefined(id) && FEATURE_NAMES[id]}
+						</Text>
+						<div
+							style={{
+								height: '80px',
+								width: '80px',
+								borderRadius: lib.layout.borderRadius.medium,
+								background: lib.colors.transparentWhite,
+								margin: '30px',
+								marginTop: '5px',
+							}}
+						/>
+					</div>
+				)}
+				{item === undefined ? (
+					<div
+						style={{
+							width: '100px',
+							height: '100px',
+							padding: '10px',
+							marginTop: '15px',
+							// borderRadius: lib.layout.borderRadius.medium,
+							// background: lib.colors.transparentWhite,
+							// position: 'absolute',
+						}}
+					/>
+				) : (
+					<TokenViewer
+						// forceCache
+						tokenId={item?.tokenId}
+						style={{
+							width: '100px',
+							height: '100px',
+							padding: '10px',
+							marginTop: '15px',
+						}}
+						disableOnClick
+					/>
+				)}
+
+				{item?.feature !== 0 &&
+					item &&
+					(index !== 0 ? (
+						<IoArrowUpCircle
+							color={lib.colors.transparentGreen}
+							style={{
+								position: 'absolute',
+								top: 5,
+								right: 5,
+								zIndex: 2,
+								background: lib.colors.transparentWhite,
+								// WebkitBackdropFilter: 'blur(20px)',
+								borderRadius: '100px',
+							}}
+							size={30}
+						/>
+					) : (
+						<IoArrowDownCircle
+							color={lib.colors.transparentRed}
+							style={{
+								position: 'absolute',
+								top: 5,
+								right: 5,
+								zIndex: 2,
+								background: lib.colors.transparentWhite,
+								// WebkitBackdropFilter: 'blur(20px)',
+								borderRadius: '100px',
+							}}
+							size={30}
+						/>
+					))}
+			</div>
 		</div>
 	);
 };
+
+// const RenderItem: FC<
+// 	SimpleListRenderItemProps<
+// 		HotRotateOItem,
+// 		{
+// 			type: 'storage' | 'displayed';
+// 		},
+// 		HotRotateOItem
+// 	>
+// > = ({ item, action, extraData }) => {
+// 	return (
+// 		<div style={styles.renderItemContainer}>
+// 			<TokenViewer
+// 				forceCache
+// 				tokenId={item.tokenId}
+// 				style={styles.renderToken}
+// 				showLabel
+// 				disableOnClick
+// 			/>
+// 			{item.duplicates > 1 && (
+// 				<Label containerStyles={styles.duplicateItem} text={String(item.duplicates)} />
+// 			)}
+// 			{item.feature !== 0 && (
+// 				<Button
+// 					size="small"
+// 					onClick={() => action && action(item)}
+// 					buttonStyle={styles.renderItemButton}
+// 					textStyle={{
+// 						paddingRight: '.2rem',
+// 					}}
+// 					label={extraData.type === 'storage' ? t`Show` : t`Hide`}
+// 					rightIcon={
+// 						extraData.type === 'storage' ? (
+// 							<IoArrowUp color={lib.colors.nuggBlueText} />
+// 						) : (
+// 							<IoArrowDown color={lib.colors.nuggRedText} />
+// 						)
+// 					}
+// 				/>
+// 			)}
+// 		</div>
+// 	);
+// };
 
 export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobileList = false) => {
 	const provider = web3.hook.useNetworkProvider();
@@ -480,9 +629,10 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
 		}
 		return [];
 	}, [items]);
+	console.log(sortedList);
 
 	const MobileList = React.useMemo(() => {
-		return screen === 'phone' || forceMobileList ? (
+		return screen !== 'phone' || forceMobileList ? (
 			<div
 				style={{
 					marginTop: 20,
@@ -516,51 +666,88 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
 			</div>
 		) : null;
 	}, [sortedList, caller, screen, forceMobileList]);
+	const DesktopList2 = React.useMemo(() => {
+		return (
+			<div
+				style={{
+					marginTop: 20,
+					width: '100%',
+					display: 'flex',
+					alignItems: 'flex-start',
+					overflowX: 'scroll',
+					overflowY: 'hidden',
+					// overflow: 'scroll',
+					// height: 200,
+				}}
+			>
+				{(!sortedList || sortedList.length === 0) && (
+					<div
+						style={{
+							width: '100%',
+							height: 200,
+							display: 'flex',
+							justifyContent: 'center',
+						}}
+					>
+						<Loader style={{ color: lib.colors.primaryColor }} />{' '}
+					</div>
+				)}
+				{(sortedList ?? [[], [], [], [], [], [], [], []]).map((x, index) => (
+					<RenderItemDesktop
+						item={x}
+						action={caller}
+						index={index}
+						key={`sorted-list-${index}`}
+					/>
+				))}
+			</div>
+		);
+	}, [sortedList, caller]);
 
-	const DesktopList = React.useMemo(() => {
-		return screen !== 'phone' && !forceMobileList ? (
-			<>
-				<div
-					style={{
-						width: '100%',
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'space-between',
-						position: 'relative',
-					}}
-				>
-					<div style={styles[`${'horizontal'}ListContainer`]}>
-						<SimpleList
-							data={items?.active || []}
-							label={t`Displayed`}
-							labelStyle={globalStyles.textBlack}
-							action={caller}
-							extraData={{
-								type: 'displayed' as const,
-							}}
-							RenderItem={RenderItem}
-							horizontal
-							style={styles.list}
-						/>
-					</div>
-					<div style={styles[`${'horizontal'}ListContainer`]}>
-						<SimpleList
-							data={items?.hidden || []}
-							label={t`In storage`}
-							listEmptyText={t`All items are displayed`}
-							listEmptyStyle={globalStyles.centered}
-							labelStyle={globalStyles.textBlack}
-							extraData={{ type: 'storage' as const }}
-							RenderItem={RenderItem}
-							horizontal
-							action={caller}
-							style={styles.list}
-						/>
-					</div>
-				</div>
-			</>
-		) : null;
-	}, [caller, items?.active, screen, items?.hidden]);
+	// const DesktopList = React.useMemo(() => {
+	// 	return screen !== 'phone' && !forceMobileList ? (
+	// 		<>
+	// 			<div
+	// 				style={{
+	// 					width: '100%',
+	// 					display: 'flex',
+	// 					flexDirection: 'column',
+	// 					justifyContent: 'space-between',
+	// 					position: 'relative',
+	// 				}}
+	// 			>
+	// 				<div style={styles[`${'horizontal'}ListContainer`]}>
+	// 					<SimpleList
+	// 						data={items?.active || []}
+	// 						label={t`Displayed`}
+	// 						labelStyle={globalStyles.textBlack}
+	// 						action={caller}
+	// 						extraData={{
+	// 							type: 'displayed' as const,
+	// 						}}
+	// 						RenderItem={RenderItem}
+	// 						horizontal
+	// 						style={styles.list}
+	// 					/>
+	// 				</div>
+	// 				<div style={styles[`${'horizontal'}ListContainer`]}>
+	// 					<SimpleList
+	// 						data={items?.hidden || []}
+	// 						label={t`In storage`}
+	// 						listEmptyText={t`All items are displayed`}
+	// 						listEmptyStyle={globalStyles.centered}
+	// 						labelStyle={globalStyles.textBlack}
+	// 						extraData={{ type: 'storage' as const }}
+	// 						RenderItem={RenderItem}
+	// 						horizontal
+	// 						action={caller}
+	// 						style={styles.list}
+	// 					/>
+	// 				</div>
+	// 			</div>
+	// 		</>
+	// 	) : null;
+	// }, [caller, items?.active, screen, items?.hidden]);
 
 	return [
 		screen,
@@ -577,7 +764,7 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
 		caller,
 		sortedList,
 		MobileList,
-		DesktopList,
+		DesktopList2,
 		og,
 		supplementalItems,
 	] as const;
