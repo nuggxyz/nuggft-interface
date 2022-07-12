@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-07-02 15:14+0000\n"
+"POT-Creation-Date: 2022-07-11 18:14+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Ukrainian\n"
-"PO-Revision-Date: 2022-07-03 06:04\n"
+"PO-Revision-Date: 2022-07-12 06:09\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -61,6 +61,7 @@ msgstr ""
 msgid "A nugg that you have sold will follow this same pattern of periods. Say you put your nugg up for auction midway through period 100, the auction will last until the end of period 101"
 msgstr ""
 
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 #: src/components/nugg/Wallet/Wallet.tsx
 #: src/components/nugg/Wallet/Wallet.tsx
 #: src/components/nugg/Wallet/Wallet.tsx
@@ -123,6 +124,10 @@ msgstr ""
 
 #: src/components/nugg/ViewingNugg/SwapList.tsx
 msgid "Cancelled by"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
+msgid "Chances"
 msgstr ""
 
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -249,8 +254,8 @@ msgstr ""
 msgid "Go back"
 msgstr ""
 
+#: src/components/nugg/ViewingNugg/ActiveSwap.tsx
 #: src/components/nugg/ViewingNugg/SwapList.tsx
-#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "Go to swap"
 msgstr ""
 
@@ -260,6 +265,10 @@ msgstr ""
 
 #: src/components/nugg/RingAbout/OfferText.tsx
 msgid "Highest offer"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
+msgid "History"
 msgstr ""
 
 #: src/components/nugg/Wallet/Wallet.tsx
@@ -287,6 +296,10 @@ msgstr ""
 msgid "Item auctions work exactly like nugg auctions except for one thing:"
 msgstr ""
 
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
+msgid "Items"
+msgstr ""
+
 #: src/components/nugg/ViewingNugg/SwapList.tsx
 msgid "Leader"
 msgstr ""
@@ -306,6 +319,7 @@ msgstr ""
 msgid "Loan all ({0})"
 msgstr ""
 
+#: src/components/nugg/ViewingNugg/ActionButtons/LoanButtons.tsx
 #: src/components/nugg/Wallet/tabs/HomeTab/MyNuggRenderItem.tsx
 msgid "Loaned"
 msgstr ""
@@ -324,7 +338,7 @@ msgstr ""
 msgid "MORE"
 msgstr ""
 
-#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
+#: src/components/nugg/ViewingNugg/ActiveSwap.tsx
 msgid "Max"
 msgstr ""
 
@@ -333,7 +347,7 @@ msgid "McDonlad's wont answer, so we will"
 msgstr ""
 
 #: src/components/modals/IncrementButton.tsx
-#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
+#: src/components/nugg/ViewingNugg/ActiveSwap.tsx
 msgid "Min"
 msgstr ""
 
@@ -423,11 +437,7 @@ msgstr ""
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
-msgid "Owned by {0} Nugg{1}"
-msgstr ""
-
-#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
-msgid "Owner"
+msgid "Owned by"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/ActionButtons/LoanButtons.tsx
@@ -449,7 +459,7 @@ msgid "Pending Transaction"
 msgstr ""
 
 #: src/components/modals/OfferModal/OfferModal.tsx
-msgid "Pick a nugg to offer on this item"
+msgid "Pick one of your nuggs to offer on this item"
 msgstr ""
 
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -473,6 +483,10 @@ msgstr ""
 
 #: src/components/nugg/ViewingNugg/SwapList.tsx
 msgid "Previous Swaps"
+msgstr ""
+
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
+msgid "Purchases"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/LoanTab/MultiRebalanceButton.tsx
@@ -564,14 +578,6 @@ msgstr ""
 msgid "Swap is over"
 msgstr ""
 
-#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
-msgid "Swap price{0}"
-msgstr ""
-
-#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
-msgid "Swaps"
-msgstr ""
-
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_1.tsx
 msgid "That's right! You can swap items without even selling your nft!"
 msgstr ""
@@ -654,6 +660,10 @@ msgstr ""
 msgid "Winner"
 msgstr ""
 
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
+msgid "Worn by"
+msgstr ""
+
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_10.tsx
 msgid "You can customize your nugg any way you like! except for the base, every category of items can be edited"
 msgstr ""
@@ -696,10 +706,12 @@ msgid "Your nugg will be used as collateral for 200 periods (approx. 200 hours).
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "a given {0} is {1}"
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "a new nugg has {0}"
 msgstr ""
 
@@ -712,6 +724,7 @@ msgid "a nugg is a collection of items"
 msgstr ""
 
 #: src/components/mobile/ViewingNuggPhone.tsx
+#: src/components/nugg/ViewingNugg/ViewingNugg.tsx
 msgid "a nugg is minted with {0}"
 msgstr ""
 
@@ -1537,6 +1550,10 @@ msgid "{0}"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/ViewingNugg.tsx
+msgid "{0} Nugg{1}"
+msgstr ""
+
+#: src/components/nugg/RingAbout/OfferText.tsx
 msgid "{0} Nugg{1} {2} swapping"
 msgstr ""
 
