@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-07-11 18:14+0000\n"
+"POT-Creation-Date: 2022-07-12 22:19+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Dutch\n"
-"PO-Revision-Date: 2022-07-12 06:09\n"
+"PO-Revision-Date: 2022-07-13 06:05\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -78,10 +78,6 @@ msgstr ""
 
 #: src/client/formatters/formatSearchFilter.ts
 msgid "All Nuggs"
-msgstr ""
-
-#: src/pages/hot-rotate-o/HotRotateO.tsx
-msgid "All items are displayed"
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
@@ -182,10 +178,6 @@ msgstr ""
 msgid "Disconnect"
 msgstr ""
 
-#: src/pages/hot-rotate-o/HotRotateO.tsx
-msgid "Displayed"
-msgstr ""
-
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_0.tsx
 msgid "Each nuggft (or nugg) starts out as a plain nugget, randomly selected from the following:"
 msgstr ""
@@ -259,10 +251,6 @@ msgstr ""
 msgid "Go to swap"
 msgstr ""
 
-#: src/pages/hot-rotate-o/HotRotateO.tsx
-msgid "Hide"
-msgstr ""
-
 #: src/components/nugg/RingAbout/OfferText.tsx
 msgid "Highest offer"
 msgstr ""
@@ -282,10 +270,6 @@ msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
 msgid "In addition to being a fun nft, your nugg also represents"
-msgstr ""
-
-#: src/pages/hot-rotate-o/HotRotateO.tsx
-msgid "In storage"
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_0.tsx
@@ -540,10 +524,6 @@ msgstr ""
 
 #: src/components/modals/SellNuggOrItemModal/SellNuggOrItemModal.tsx
 msgid "Sell Nugg"
-msgstr ""
-
-#: src/pages/hot-rotate-o/HotRotateO.tsx
-msgid "Show"
 msgstr ""
 
 #: src/components/modals/QrCodeModal/QrCodeModal.tsx
