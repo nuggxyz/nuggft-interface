@@ -1,7 +1,7 @@
 {
 	"build": {
 		"image": "node",
-		"command": "yarn --immutable --immutable-cache && yarn build",
+		"command": "yarn --immutable --immutable-cache && yarn prebuild && yarn build",
 		"publicDir": "build"
 	}
 }
