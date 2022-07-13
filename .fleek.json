@@ -1,6 +1,6 @@
 {
 	"build": {
-		"image": "fleek/create-react-app",
+		"image": "node",
 		"command": "yarn && yarn build",
 		"publicDir": "dist"
 	}
