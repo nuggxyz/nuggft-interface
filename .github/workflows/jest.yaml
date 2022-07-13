@@ -34,7 +34,7 @@ jobs:
             #           ${{ runner.os }}-yarn-
 
             - name: Install dependencies
-              run: yarn set version berry && yarn
+              run: yarn --immutable --immutable-cache
 
             - name: Run jest
               run: yarn test
