@@ -1,2 +1,4 @@
 .linguirc linguist-language=jsonc
 .graphqlrc linguist-language=yaml
+/.yarn/releases/** binary
+/.yarn/plugins/** binary

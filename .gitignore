@@ -102,3 +102,11 @@ src/locales/*
 src/locales/en-US.po
 
 !.env
+
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
