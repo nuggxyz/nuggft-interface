@@ -1,3 +1,5 @@
+import './sentry';
+
 import React, { FC, PropsWithChildren } from 'react';
 import { ApolloProvider } from '@apollo/client/react/context/ApolloProvider';
 import { createRoot } from 'react-dom/client';

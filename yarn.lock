@@ -4872,6 +4872,85 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/browser@npm:7.6.0":
+  version: 7.6.0
+  resolution: "@sentry/browser@npm:7.6.0"
+  dependencies:
+    "@sentry/core": 7.6.0
+    "@sentry/types": 7.6.0
+    "@sentry/utils": 7.6.0
+    tslib: ^1.9.3
+  checksum: baf0ee62cb5bbfa0abd6e15e53a8a7072c26a2a456a873ca12991b8f33fdba3abede9fc55034679b07282346de3b1fd74651d5c99e1ce88f470132f960445333
+  languageName: node
+  linkType: hard
+
+"@sentry/core@npm:7.6.0":
+  version: 7.6.0
+  resolution: "@sentry/core@npm:7.6.0"
+  dependencies:
+    "@sentry/hub": 7.6.0
+    "@sentry/types": 7.6.0
+    "@sentry/utils": 7.6.0
+    tslib: ^1.9.3
+  checksum: bef8f89599c3849e2f24273d2c0045d4095c4297a6b9b2e9d4d6e409f2ad1584b88b1ac0b958339d9bcdbf47bc33a807cfad2442dae4c021e13d90f7a223a66d
+  languageName: node
+  linkType: hard
+
+"@sentry/hub@npm:7.6.0":
+  version: 7.6.0
+  resolution: "@sentry/hub@npm:7.6.0"
+  dependencies:
+    "@sentry/types": 7.6.0
+    "@sentry/utils": 7.6.0
+    tslib: ^1.9.3
+  checksum: 436c546ac0418efdbd8e07e65feac2bb9965fdd4c44dbb7a033eb1211b2a8ccb7c01f5db7e8b80032da81d3af23a807a66a9e1490133dbed3c9b90c0a378ccf3
+  languageName: node
+  linkType: hard
+
+"@sentry/react@npm:^7.6.0":
+  version: 7.6.0
+  resolution: "@sentry/react@npm:7.6.0"
+  dependencies:
+    "@sentry/browser": 7.6.0
+    "@sentry/types": 7.6.0
+    "@sentry/utils": 7.6.0
+    hoist-non-react-statics: ^3.3.2
+    tslib: ^1.9.3
+  peerDependencies:
+    react: 15.x || 16.x || 17.x || 18.x
+  checksum: 7c610242dd6e89e72a870e90ad7c74e9ade5320eada50139563ed3a1f72c2c9405c1a419b404d44215ecc64998d4afb90c3640a75b4a53f802db2e1c3497e242
+  languageName: node
+  linkType: hard
+
+"@sentry/tracing@npm:^7.6.0":
+  version: 7.6.0
+  resolution: "@sentry/tracing@npm:7.6.0"
+  dependencies:
+    "@sentry/hub": 7.6.0
+    "@sentry/types": 7.6.0
+    "@sentry/utils": 7.6.0
+    tslib: ^1.9.3
+  checksum: ceda51b6ac3afd3a5355e45e9c14dcabd78d907e996dc8e9368b5def203f810062ddbc751577423ccc9afdb13f0b7d6e4640021d6bb53c42f259059cf60ca8bc
+  languageName: node
+  linkType: hard
+
+"@sentry/types@npm:7.6.0":
+  version: 7.6.0
+  resolution: "@sentry/types@npm:7.6.0"
+  checksum: 679f786e34af1ef395c0539ed1530b4825931d77e228f30527a82291d4d62bf7d5841660b76a5f0c42531b0d70ed2900ed1b8f64359964c33fa299a44f7af007
+  languageName: node
+  linkType: hard
+
+"@sentry/utils@npm:7.6.0":
+  version: 7.6.0
+  resolution: "@sentry/utils@npm:7.6.0"
+  dependencies:
+    "@sentry/types": 7.6.0
+    tslib: ^1.9.3
+  checksum: 6c5a20ca67883b5c5900005d26ad0599ee13ea367fbf9ec9fa9415efaf2df75c578d04f784773943cff03a44dff59c3fcc8cf712690b093707bb8d33aec5543c
+  languageName: node
+  linkType: hard
+
 "@sinclair/typebox@npm:^0.23.3":
   version: 0.23.5
   resolution: "@sinclair/typebox@npm:0.23.5"
@@ -14678,6 +14757,8 @@ __metadata:
     "@metamask/jazzicon": ^2.0.0
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.7
     "@react-spring/web": ^9.4.5
+    "@sentry/react": ^7.6.0
+    "@sentry/tracing": ^7.6.0
     "@svgr/webpack": ^6.2.1
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^13.3.0
