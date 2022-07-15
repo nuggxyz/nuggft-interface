@@ -1,9 +1,9 @@
-import './sentry';
-
 import React, { FC, PropsWithChildren } from 'react';
 import { ApolloProvider } from '@apollo/client/react/context/ApolloProvider';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
+
+import { Sentry } from './sentry';
 
 import './prototypes';
 import './lib/analytics';
@@ -63,11 +63,13 @@ const BigRouter = React.memo(() => {
 	);
 });
 
+const Profiled = Sentry.withProfiler(BigRouter, {});
+
 root.render(
 	<HashRouter>
 		<React.StrictMode>
 			<React.Suspense>
-				<BigRouter />
+				<Profiled />
 			</React.Suspense>
 		</React.StrictMode>
 	</HashRouter>,

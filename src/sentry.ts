@@ -15,4 +15,4 @@ Sentry.init({
 	tracesSampleRate: 1.0,
 });
 
-export default { Sentry };
+export { Sentry };
