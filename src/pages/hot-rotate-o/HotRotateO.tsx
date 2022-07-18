@@ -20,6 +20,7 @@ import {
 	useXNuggftV1,
 } from '@src/contracts/useContract';
 import Label from '@src/components/general/Label/Label';
+import eth from '@src/assets/images/app_logos/eth.png';
 import web3 from '@src/web3';
 import useAnimateOverlay from '@src/hooks/useAnimateOverlay';
 import Text from '@src/components/general/Texts/Text/Text';
@@ -103,6 +104,7 @@ const RenderItemDesktop: FC<
 			<div
 				style={{
 					overflowY: 'scroll',
+					overflowX: 'hidden',
 					height: '200px',
 					display: 'flex',
 					flexDirection: 'column',
@@ -128,16 +130,25 @@ const RenderItemMobileTiny2: FC<
 		undefined,
 		HotRotateOItemList['byItem'][number][number]
 	>
-> = ({ item, action }) => {
+> = ({ item, action, index: feature }) => {
 	const id = React.useId();
+
+	const [first, ...list] = React.useMemo(() => item ?? [], [item]);
 	return (
 		<div>
-			{(item ?? []).map((x, index) => (
+			<RenderItemMobileTiny
+				item={first}
+				action={action}
+				index={0}
+				key={`${id}-${0}`}
+				id={feature}
+			/>
+			{(list ?? []).map((x, index) => (
 				<RenderItemMobileTiny
 					item={x}
 					action={action}
-					index={index}
-					key={`${id}-${index}`}
+					index={index + 1}
+					key={`${id}-${index + 1}`}
 				/>
 			))}
 		</div>
@@ -146,7 +157,7 @@ const RenderItemMobileTiny2: FC<
 
 const RenderItemMobileTiny: FC<
 	GodListRenderItemProps<HotRotateOItem, undefined, HotRotateOItem>
-> = ({ item, action, index }) => {
+> = ({ item, action, index, id }) => {
 	return (
 		<div
 			className="mobile-pressable-div"
@@ -171,7 +182,49 @@ const RenderItemMobileTiny: FC<
 					padding: 10,
 				}}
 			>
-				{item === undefined && index === 0 ? (
+				{index === 0 && (
+					<div
+						style={{
+							position: 'absolute',
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center',
+							flexDirection: 'column',
+						}}
+					>
+						<Text textStyle={{ color: 'black' }} size="medium">
+							{!isUndefined(id) && FEATURE_NAMES[id]}
+						</Text>
+						<div
+							style={{
+								height: '45px',
+								width: '45px',
+								margin: '18px',
+								marginTop: '5px',
+								borderRadius: lib.layout.borderRadius.mediumish,
+								background: lib.colors.transparentWhite,
+							}}
+						/>
+					</div>
+				)}
+				{item === undefined ? (
+					<div
+						style={{
+							height: '60px',
+							width: '60px',
+							padding: '3px',
+							marginTop: '15px',
+						}}
+					/>
+				) : (
+					<TokenViewer
+						// forceCache
+						tokenId={item?.tokenId}
+						style={{ width: '60px', height: '60px', padding: '3px', marginTop: '15px' }}
+						disableOnClick
+					/>
+				)}
+				{/* {item === undefined && index === 0 ? (
 					<div
 						style={{
 							height: '45px',
@@ -187,7 +240,7 @@ const RenderItemMobileTiny: FC<
 						style={{ width: '60px', height: '60px', padding: '3px' }}
 						disableOnClick
 					/>
-				)}
+				)} */}
 
 				{item?.feature !== 0 &&
 					item &&
@@ -196,8 +249,8 @@ const RenderItemMobileTiny: FC<
 							color={lib.colors.transparentGreen}
 							style={{
 								position: 'absolute',
-								top: 5,
-								right: 5,
+								top: 20,
+								right: 10,
 								zIndex: 2,
 								WebkitBackdropFilter: 'blur(20px)',
 								borderRadius: '100px',
@@ -208,8 +261,8 @@ const RenderItemMobileTiny: FC<
 							color={lib.colors.transparentRed}
 							style={{
 								position: 'absolute',
-								top: 5,
-								right: 5,
+								top: 20,
+								right: 10,
 								zIndex: 2,
 								WebkitBackdropFilter: 'blur(20px)',
 								borderRadius: '100px',
@@ -336,49 +389,6 @@ const RenderItemMedium: FC<GodListRenderItemProps<HotRotateOItem, undefined, Hot
 		</div>
 	);
 };
-
-// const RenderItem: FC<
-// 	SimpleListRenderItemProps<
-// 		HotRotateOItem,
-// 		{
-// 			type: 'storage' | 'displayed';
-// 		},
-// 		HotRotateOItem
-// 	>
-// > = ({ item, action, extraData }) => {
-// 	return (
-// 		<div style={styles.renderItemContainer}>
-// 			<TokenViewer
-// 				forceCache
-// 				tokenId={item.tokenId}
-// 				style={styles.renderToken}
-// 				showLabel
-// 				disableOnClick
-// 			/>
-// 			{item.duplicates > 1 && (
-// 				<Label containerStyles={styles.duplicateItem} text={String(item.duplicates)} />
-// 			)}
-// 			{item.feature !== 0 && (
-// 				<Button
-// 					size="small"
-// 					onClick={() => action && action(item)}
-// 					buttonStyle={styles.renderItemButton}
-// 					textStyle={{
-// 						paddingRight: '.2rem',
-// 					}}
-// 					label={extraData.type === 'storage' ? t`Show` : t`Hide`}
-// 					rightIcon={
-// 						extraData.type === 'storage' ? (
-// 							<IoArrowUp color={lib.colors.nuggBlueText} />
-// 						) : (
-// 							<IoArrowDown color={lib.colors.nuggRedText} />
-// 						)
-// 					}
-// 				/>
-// 			)}
-// 		</div>
-// 	);
-// };
 
 export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobileList = false) => {
 	const provider = web3.hook.useNetworkProvider();
@@ -527,14 +537,11 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
 				return undefined;
 			}
 
-			return nuggft.ownerOf(fmtTokenId).then((y) => {
+			return nuggft.ownerOf(fmtTokenId).then(async (y) => {
 				setNeedsToClaim(false);
 				setCannotProveOwnership(false);
-				if (y.toLowerCase() === address.toLowerCase()) {
-					return floopCheck();
-				}
-				return nuggft.agency(fmtTokenId).then((agency) => {
-					return nuggft.offers(fmtTokenId, address).then((offer) => {
+				await nuggft.agency(fmtTokenId).then(async (agency) => {
+					await nuggft.offers(fmtTokenId, address).then((offer) => {
 						if (
 							agency._hex === offer._hex ||
 							(offer.isZero() &&
@@ -542,14 +549,14 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
 								agency.shr(230).mask(24).lt(epoch))
 						) {
 							setNeedsToClaim(true);
-
-							return floopCheck();
 						}
 						setCannotProveOwnership(true);
-
-						return undefined;
 					});
 				});
+				if (y.toLowerCase() === address.toLowerCase()) {
+					setCannotProveOwnership(false);
+				}
+				return floopCheck();
 			});
 		}
 		return undefined;
@@ -629,10 +636,9 @@ export const useHotRotateO = (tokenId?: NuggId, overrideOwner = true, forceMobil
 		}
 		return [];
 	}, [items]);
-	console.log(sortedList);
 
 	const MobileList = React.useMemo(() => {
-		return screen !== 'phone' || forceMobileList ? (
+		return screen === 'phone' || forceMobileList ? (
 			<div
 				style={{
 					marginTop: 20,
@@ -836,6 +842,12 @@ export const useHotRotateOTransaction = (tokenId?: NuggId) => {
 		return undefined;
 	}, [items, tokenId]);
 
+	// const token = client.live.token(tokenId);
+
+	// const needToClaim = React.useMemo(() => {
+	// 	return token && token.isNugg() && token.pendingClaim;
+	// }, [token]);
+
 	const populatedTransaction = React.useMemo(() => {
 		if (!tokenId || !address || !algo) return undefined;
 		const main = nuggft.populateTransaction['rotate(uint24,uint8[],uint8[])'](...algo);
@@ -1020,6 +1032,8 @@ export const HotRotateO = ({ tokenId: overridedTokenId }: { tokenId?: NuggId }) 
 		);
 	}
 
+	// console.log(!(algo && algo[1] && algo[1].length > 0), estimateError);
+
 	return (
 		<animated.div
 			style={{
@@ -1137,6 +1151,40 @@ export const HotRotateO = ({ tokenId: overridedTokenId }: { tokenId?: NuggId }) 
 								showcase
 								style={styles[`${screen}Token`]}
 							/>
+							<div
+								style={{
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+									position: 'relative',
+									borderRadius: lib.layout.borderRadius.large,
+									padding: '.4rem 1rem .8rem',
+									textAlign: 'center',
+									verticalAlign: 'center',
+									marginBottom: '.4rem',
+									backgroundColor: 'transparent',
+								}}
+							>
+								<img
+									alt="ethereum logo"
+									src={eth}
+									height={30}
+									style={{
+										objectFit: 'cover',
+									}}
+								/>
+
+								<span
+									style={{
+										marginLeft: 10,
+										fontSize: '18px',
+										color: lib.colors.transparentPrimaryColor,
+										...lib.layout.presets.font.main.semibold,
+									}}
+								>
+									{t`generated on ethereum`}
+								</span>
+							</div>
 						</div>
 						<div
 							style={{
