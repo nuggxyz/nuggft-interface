@@ -2,7 +2,8 @@
 import create from 'zustand';
 import { combine } from 'zustand/middleware';
 import { ApolloClient, ApolloQueryResult } from '@apollo/client';
-import React from 'react';
+import React, { useState } from 'react';
+import shallow from 'zustand/shallow';
 import { Promise } from 'bluebird';
 
 import { EthInt } from '@src/classes/Fraction';
@@ -14,6 +15,8 @@ import { apolloClient } from '@src/web3/config';
 import { NuggftV1 } from '@src/typechain/NuggftV1';
 import { nuggBackup } from '@src/contracts/backup';
 import { useNuggftV1 } from '@src/contracts/useContract';
+import emitter from '@src/emitter';
+import { EmitEventNames } from '@src/emitter/interfaces';
 
 import formatNuggItems from './formatters/formatNuggItems';
 import epoch from './epoch';
@@ -242,11 +245,18 @@ export const useUserUpdater = () => {
 	const fetch = store((draft) => draft.fetch);
 	const wipe = store((draft) => draft.wipe);
 	const nuggft = useNuggftV1(provider);
+	const [trigger, setTrigger] = useState(false);
+	emitter.useOn(EmitEventNames.Offer, () => {
+		setTrigger((t) => !t);
+	});
+	emitter.useOn(EmitEventNames.OfferMint, () => {
+		setTrigger((t) => !t);
+	});
 	const callback = React.useCallback(() => {
 		if (address && _epoch) {
 			void fetch(address as AddressString, apolloClient, nuggft, _epoch);
 		}
-	}, [fetch, address, nuggft, _epoch]);
+	}, [fetch, address, nuggft, _epoch, trigger]);
 
 	React.useEffect(() => {
 		void wipe();
@@ -266,7 +276,18 @@ const useUnclaimedOffersFilteredByEpoch = () => {
 				.flat()
 				.filter((x) => x.endingEpoch !== null && _epoch && x.endingEpoch < _epoch)
 				.sort((a, b) => ((a.endingEpoch ?? 0) > (b.endingEpoch ?? 0) ? -1 : 1)),
-		// shallow removed
+		shallow,
+	);
+};
+const useActiveOffers = () => {
+	const _epoch = epoch.active.useId();
+	return store(
+		(state) =>
+			state.unclaimedOffers
+				.flat()
+				.filter((x) => x.endingEpoch !== null && _epoch && x.endingEpoch >= _epoch)
+				.sort((a, b) => ((a.endingEpoch ?? 0) > (b.endingEpoch ?? 0) ? -1 : 1)),
+		shallow,
 	);
 };
 
@@ -288,5 +309,6 @@ export default {
 	useLoans: () => store((draft) => draft.loans),
 	useFetch: () => store((draft) => draft.fetch),
 	useUnclaimedOffersFilteredByEpoch,
+	useActiveOffers,
 	...store,
 };
