@@ -4,7 +4,6 @@ import { combine } from 'zustand/middleware';
 import React from 'react';
 import { QueryResult } from '@apollo/client';
 import { BigNumber } from '@ethersproject/bignumber';
-import shallow from 'zustand/shallow';
 import { Log } from '@ethersproject/abstract-provider';
 
 import {
@@ -563,7 +562,7 @@ export default {
 				(state) => (tokenId !== undefined ? state[state.point].hits[tokenId] : undefined),
 				[tokenId],
 			),
-			shallow,
+			// shallow removed
 		);
 	},
 

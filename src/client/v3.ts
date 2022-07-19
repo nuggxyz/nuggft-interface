@@ -4,7 +4,6 @@ import { combine } from 'zustand/middleware';
 import React from 'react';
 import { QueryResult } from '@apollo/client';
 import { BigNumber } from '@ethersproject/bignumber';
-import shallow from 'zustand/shallow';
 import { debounce, groupBy } from 'lodash';
 
 import { GetV2PotentialQuery, useGetV2PotentialLazyQuery } from '@src/gql/types.generated';
@@ -357,7 +356,7 @@ export default {
 				(state) => (tokenId !== undefined ? state[state.point].hits[tokenId] : undefined),
 				[tokenId],
 			),
-			shallow,
+			// shallow removed
 		);
 	},
 	useSwapList: () => {

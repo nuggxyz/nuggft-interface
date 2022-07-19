@@ -29,7 +29,10 @@ export default {
 	live: {
 		/// ///// simple ////////
 		graph: () => web3.config.apolloClient,
-		activeSearch: () => core((state) => state.activeSearch, shallow),
+		activeSearch: () =>
+			core(
+				(state) => state.activeSearch, // shallow removed
+			),
 
 		lastSwap: {
 			tokenId: () => core((state) => state.lastSwap?.tokenId),
