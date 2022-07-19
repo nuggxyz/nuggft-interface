@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-07-12 22:19+0000\n"
+"POT-Creation-Date: 2022-07-18 13:30+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Romanian\n"
-"PO-Revision-Date: 2022-07-13 06:05\n"
+"PO-Revision-Date: 2022-07-19 06:06\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -915,6 +915,7 @@ msgid "from"
 msgstr ""
 
 #: src/components/mobile/HotRotateOModalMobile.tsx
+#: src/pages/hot-rotate-o/HotRotateO.tsx
 msgid "generated on ethereum"
 msgstr ""
 
