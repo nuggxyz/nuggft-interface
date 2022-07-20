@@ -97,7 +97,8 @@ export default () => {
 
 	const minutes = client.epoch.active.useMinutes();
 
-	const user = client.user.useActiveOffers();
+	const activeOffers = client.user.useActiveOffers();
+	console.log({ activeOffers });
 
 	return chainId && provider ? (
 		<div style={styles.container}>

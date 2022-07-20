@@ -2,7 +2,7 @@
 import create from 'zustand';
 import { combine } from 'zustand/middleware';
 import { ApolloClient, ApolloQueryResult } from '@apollo/client';
-import React, { useState } from 'react';
+import React from 'react';
 import shallow from 'zustand/shallow';
 import { Promise } from 'bluebird';
 
@@ -16,10 +16,11 @@ import { NuggftV1 } from '@src/typechain/NuggftV1';
 import { nuggBackup } from '@src/contracts/backup';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import emitter from '@src/emitter';
-import { EmitEventNames } from '@src/emitter/interfaces';
+import { EmitEventNames, EmitEvents } from '@src/emitter/interfaces';
 
 import formatNuggItems from './formatters/formatNuggItems';
 import epoch from './epoch';
+import { OfferData } from './interfaces';
 
 export interface LoanData {
 	endingEpoch: number;
@@ -231,7 +232,52 @@ const store = create(
 				}));
 			};
 
-			return { fetch, wipe };
+			const handleIncomingOffers = (data: OfferData, address: AddressString) => {
+				set((draft) => {
+					if (data.isItem()) {
+						draft.unclaimedOffers = [
+							buildTokenIdFactory({
+								tokenId: data.tokenId,
+								endingEpoch: Number(data.agencyEpoch),
+								eth: new EthInt(data.eth),
+								leader: data.account.toLowerCase() === address.toLowerCase(),
+								nugg: data.account,
+								claimParams: {
+									itemId: data.tokenId,
+									buyingTokenId: data.account,
+									sellingTokenId: data.sellingTokenId,
+									address: Address.ZERO.hash as AddressStringZero,
+								},
+							}),
+							...draft.unclaimedOffers.filter(
+								(offer) => offer.tokenId !== data.tokenId,
+							),
+						];
+					} else {
+						draft.unclaimedOffers = [
+							buildTokenIdFactory({
+								tokenId: data.tokenId,
+								endingEpoch: Number(data.agencyEpoch),
+								eth: new EthInt(data.eth),
+								leader: data.account.toLowerCase() === address.toLowerCase(),
+								claimParams: {
+									address: address as AddressString,
+									sellingTokenId: data.tokenId,
+									itemId: 'item-0',
+									buyingTokenId: 'nugg-0',
+								},
+								nugg: null,
+							}),
+							...draft.unclaimedOffers.filter(
+								(offer) => offer.tokenId !== data.tokenId,
+							),
+						];
+					}
+					return draft;
+				});
+			};
+
+			return { fetch, wipe, handleIncomingOffers };
 		},
 	),
 );
@@ -244,19 +290,24 @@ export const useUserUpdater = () => {
 
 	const fetch = store((draft) => draft.fetch);
 	const wipe = store((draft) => draft.wipe);
+	const handleIncomingOffers = store((draft) => draft.handleIncomingOffers);
 	const nuggft = useNuggftV1(provider);
-	const [trigger, setTrigger] = useState(false);
-	emitter.useOn(EmitEventNames.Offer, () => {
-		setTrigger((t) => !t);
-	});
-	emitter.useOn(EmitEventNames.OfferMint, () => {
-		setTrigger((t) => !t);
-	});
 	const callback = React.useCallback(() => {
 		if (address && _epoch) {
 			void fetch(address as AddressString, apolloClient, nuggft, _epoch);
 		}
-	}, [fetch, address, nuggft, _epoch, trigger]);
+	}, [fetch, address, nuggft, _epoch]);
+
+	const cb = React.useCallback(
+		(data: EmitEvents) => {
+			if (address && data.type === EmitEventNames.Offer) {
+				handleIncomingOffers(data.data as OfferData, address);
+			}
+		},
+		[address, handleIncomingOffers],
+	);
+
+	emitter.useOn(EmitEventNames.Offer, cb);
 
 	React.useEffect(() => {
 		void wipe();
