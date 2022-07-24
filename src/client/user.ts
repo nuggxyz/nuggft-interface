@@ -3,6 +3,7 @@ import create from 'zustand';
 import { combine } from 'zustand/middleware';
 import { ApolloClient, ApolloQueryResult } from '@apollo/client';
 import React from 'react';
+import shallow from 'zustand/shallow';
 import { Promise } from 'bluebird';
 
 import { EthInt } from '@src/classes/Fraction';
@@ -14,9 +15,13 @@ import { apolloClient } from '@src/web3/config';
 import { NuggftV1 } from '@src/typechain/NuggftV1';
 import { nuggBackup } from '@src/contracts/backup';
 import { useNuggftV1 } from '@src/contracts/useContract';
+import emitter from '@src/emitter';
+import { EmitEventNames, EmitEvents } from '@src/emitter/interfaces';
+import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 
 import formatNuggItems from './formatters/formatNuggItems';
 import epoch from './epoch';
+import { OfferData } from './interfaces';
 
 export interface LoanData {
 	endingEpoch: number;
@@ -228,7 +233,85 @@ const store = create(
 				}));
 			};
 
-			return { fetch, wipe };
+			const handleIncomingOffers = (data: OfferData, address: AddressString) => {
+				set((draft) => {
+					if (
+						data.isItem() &&
+						(!isUndefinedOrNullOrObjectEmpty(
+							draft.nuggs.find(
+								(nugg) => data.account.toLowerCase() === nugg.tokenId.toLowerCase(),
+							),
+						) ||
+							!isUndefinedOrNullOrObjectEmpty(
+								draft.unclaimedOffers.find(
+									(offer) =>
+										offer.tokenId.toLowerCase() === data.tokenId.toLowerCase(),
+								),
+							))
+					) {
+						console.log(
+							draft.nuggs.find(
+								(nugg) => data.account.toLowerCase() === nugg.tokenId.toLowerCase(),
+							),
+						);
+						draft.unclaimedOffers = [
+							buildTokenIdFactory({
+								tokenId: data.tokenId,
+								endingEpoch: Number(data.agencyEpoch),
+								eth: new EthInt(data.eth),
+								leader: !isUndefinedOrNullOrObjectEmpty(
+									draft.nuggs.find(
+										(nugg) =>
+											data.account.toLowerCase() ===
+											nugg.tokenId.toLowerCase(),
+									),
+								),
+								nugg: data.account,
+								claimParams: {
+									itemId: data.tokenId,
+									buyingTokenId: data.account,
+									sellingTokenId: data.sellingTokenId,
+									address: Address.ZERO.hash as AddressStringZero,
+								},
+							}),
+							...draft.unclaimedOffers.filter(
+								(offer) => offer.tokenId !== data.tokenId,
+							),
+						];
+					} else if (
+						data.isNugg() &&
+						(data.account.toLowerCase() === address.toLowerCase() ||
+							!isUndefinedOrNullOrObjectEmpty(
+								draft.unclaimedOffers.find(
+									(offer) =>
+										offer.tokenId.toLowerCase() === data.tokenId.toLowerCase(),
+								),
+							))
+					) {
+						draft.unclaimedOffers = [
+							buildTokenIdFactory({
+								tokenId: data.tokenId,
+								endingEpoch: Number(data.agencyEpoch),
+								eth: new EthInt(data.eth),
+								leader: data.account.toLowerCase() === address.toLowerCase(),
+								claimParams: {
+									address: address as AddressString,
+									sellingTokenId: data.tokenId,
+									itemId: 'item-0',
+									buyingTokenId: 'nugg-0',
+								},
+								nugg: null,
+							}),
+							...draft.unclaimedOffers.filter(
+								(offer) => offer.tokenId !== data.tokenId,
+							),
+						];
+					}
+					return draft;
+				});
+			};
+
+			return { fetch, wipe, handleIncomingOffers };
 		},
 	),
 );
@@ -241,12 +324,24 @@ export const useUserUpdater = () => {
 
 	const fetch = store((draft) => draft.fetch);
 	const wipe = store((draft) => draft.wipe);
+	const handleIncomingOffers = store((draft) => draft.handleIncomingOffers);
 	const nuggft = useNuggftV1(provider);
 	const callback = React.useCallback(() => {
 		if (address && _epoch) {
 			void fetch(address as AddressString, apolloClient, nuggft, _epoch);
 		}
 	}, [fetch, address, nuggft, _epoch]);
+
+	const cb = React.useCallback(
+		(data: EmitEvents) => {
+			if (address && data.type === EmitEventNames.Offer) {
+				handleIncomingOffers(data.data as OfferData, address);
+			}
+		},
+		[address, handleIncomingOffers],
+	);
+
+	emitter.useOn(EmitEventNames.Offer, cb);
 
 	React.useEffect(() => {
 		void wipe();
@@ -266,7 +361,18 @@ const useUnclaimedOffersFilteredByEpoch = () => {
 				.flat()
 				.filter((x) => x.endingEpoch !== null && _epoch && x.endingEpoch < _epoch)
 				.sort((a, b) => ((a.endingEpoch ?? 0) > (b.endingEpoch ?? 0) ? -1 : 1)),
-		// shallow removed
+		shallow,
+	);
+};
+const useActiveOffers = () => {
+	const _epoch = epoch.active.useId();
+	return store(
+		(state) =>
+			state.unclaimedOffers
+				.flat()
+				.filter((x) => x.endingEpoch !== null && _epoch && x.endingEpoch >= _epoch)
+				.sort((a, b) => ((a.endingEpoch ?? 0) > (b.endingEpoch ?? 0) ? -1 : 1)),
+		shallow,
 	);
 };
 
@@ -288,5 +394,6 @@ export default {
 	useLoans: () => store((draft) => draft.loans),
 	useFetch: () => store((draft) => draft.fetch),
 	useUnclaimedOffersFilteredByEpoch,
+	useActiveOffers,
 	...store,
 };

@@ -47,7 +47,6 @@ const Item: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = ({
 	const [send, , hash, , ,] = usePrioritySendTransaction();
 
 	useTransactionManager2(provider, hash);
-	console.log(item);
 
 	return (
 		<div style={styles.itemListItem}>
@@ -58,12 +57,12 @@ const Item: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = ({
 				text={item.tokenId.toPrettyId()}
 				containerStyles={{ position: 'absolute', top: '.4rem', right: '.4rem', zIndex: 1 }}
 			/>
-			<Button
+			{/* <Button
 				label="error"
 				// @ts-ignore
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				onClick={abcd}
-			/>
+			/> */}
 			<Label
 				type="text"
 				size="small"

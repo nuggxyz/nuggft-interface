@@ -1,6 +1,6 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
 import { t } from '@lingui/macro';
-import { IoArrowRedo } from 'react-icons/io5';
+import { IoLocate } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 import { useLifecycleData } from '@src/client/hooks/useLifecycle';
@@ -190,7 +190,7 @@ const ActiveSwap: FunctionComponent<Props> = () => {
 					fontSize: lib.fontSize.h2_small,
 				}}
 				label={t`Go to swap`}
-				rightIcon={<IoArrowRedo color={lib.colors.green} size={30} />}
+				rightIcon={<IoLocate color={lib.colors.green} size={30} />}
 				onClick={() => swap && tokenId && navigate(`/swap/${tokenId}`)}
 			/>
 		</div>
