@@ -18,63 +18,63 @@ import { MyNugg } from '@src/client/user';
 import styles from './HomeTab.styles';
 
 const MyNuggRenderItem: FunctionComponent<GodListRenderItemProps<MyNugg, undefined, unknown>> = ({
-    item,
-    style,
+	item,
+	style,
 }) => {
-    const { gotoViewingNugg } = useViewingNugg();
+	const { gotoViewingNugg } = useViewingNugg();
 
-    return item ? (
-        <div style={{ padding: '0rem .5rem' }}>
-            <div
-                style={{
-                    ...styles.myNuggItemContainer,
-                    ...style,
-                }}
-            >
-                <div style={globalStyles.centered}>
-                    <TokenViewer
-                        tokenId={item.tokenId || ''}
-                        style={{ ...globalStyles.listNugg, padding: '.5rem' }}
-                    />
+	return item ? (
+		<div style={{ padding: '0rem .5rem' }}>
+			<div
+				style={{
+					...styles.myNuggItemContainer,
+					...style,
+				}}
+			>
+				<div style={globalStyles.centered}>
+					<TokenViewer
+						tokenId={item.tokenId || ''}
+						style={{ ...globalStyles.listNugg, padding: '.5rem' }}
+					/>
 
-                    <Text textStyle={styles.textRed}>Nugg {item.tokenId.toRawId() || ''}</Text>
-                </div>
-                {item.activeLoan || item.activeSwap ? (
-                    <Text textStyle={styles.badge} size="smaller" type="text">
-                        {/* eslint-disable-next-line no-nested-ternary */}
-                        {item.recent ? t`New` : item.activeLoan ? t`Loaned` : t`On sale`}
-                    </Text>
-                ) : null}
-                <Flyout
-                    containerStyle={styles.flyout}
-                    style={{ right: '0rem', top: '2rem' }}
-                    button={
-                        <div style={styles.flyoutButton}>
-                            <IoEllipsisHorizontal color={lib.colors.white} />
-                        </div>
-                    }
-                >
-                    {item.tokenId &&
-                        // eslint-disable-next-line no-nested-ternary
-                        (item?.activeSwap ? (
-                            <SaleButtons tokenId={item.tokenId} />
-                        ) : item?.activeLoan ? (
-                            <LoanButtons tokenId={item.tokenId} />
-                        ) : (
-                            <OwnerButtons tokenId={item.tokenId} />
-                        ))}
-                </Flyout>
-                <Button
-                    key={JSON.stringify(item)}
-                    onClick={() => {
-                        gotoViewingNugg(item.tokenId);
-                    }}
-                    buttonStyle={styles.searchButton}
-                    rightIcon={<IoSearch color={lib.colors.white} />}
-                />
-            </div>
-        </div>
-    ) : null;
+					<Text textStyle={styles.textRed}>{item.tokenId.toPrettyId() || ''}</Text>
+				</div>
+				{item.activeLoan || item.activeSwap ? (
+					<Text textStyle={styles.badge} size="smaller" type="text">
+						{/* eslint-disable-next-line no-nested-ternary */}
+						{item.recent ? t`New` : item.activeLoan ? t`Loaned` : t`On sale`}
+					</Text>
+				) : null}
+				<Flyout
+					containerStyle={styles.flyout}
+					style={{ right: '0rem', top: '2rem' }}
+					button={
+						<div style={styles.flyoutButton}>
+							<IoEllipsisHorizontal color={lib.colors.white} />
+						</div>
+					}
+				>
+					{item.tokenId &&
+						// eslint-disable-next-line no-nested-ternary
+						(item?.activeSwap ? (
+							<SaleButtons tokenId={item.tokenId} />
+						) : item?.activeLoan ? (
+							<LoanButtons tokenId={item.tokenId} />
+						) : (
+							<OwnerButtons tokenId={item.tokenId} />
+						))}
+				</Flyout>
+				<Button
+					key={JSON.stringify(item)}
+					onClick={() => {
+						gotoViewingNugg(item.tokenId);
+					}}
+					buttonStyle={styles.searchButton}
+					rightIcon={<IoSearch color={lib.colors.white} />}
+				/>
+			</div>
+		</div>
+	) : null;
 };
 
 export default MyNuggRenderItem;

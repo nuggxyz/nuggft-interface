@@ -15,6 +15,8 @@ const styles = lib.layout.NLStyleSheetCreator({
 		height: '100%',
 		display: 'flex',
 		flexDirection: 'column',
+		justifyContent: 'space-between',
+		alignItem: 'space-between',
 	},
 	flyout: {
 		// position: 'absolute',
@@ -28,11 +30,11 @@ const styles = lib.layout.NLStyleSheetCreator({
 	},
 	list: {
 		background: lib.colors.transparentLightGrey,
-		borderRadius: lib.layout.borderRadius.mediumish,
-		padding: ' .65rem ',
-		flexGrow: 1,
-		minHeight: '100px',
-		height: '100%',
+		borderRadius: lib.layout.borderRadius.medium,
+		padding: ' .25rem ',
+		// flexGrow: 1,
+		// minHeight: '100px',
+		height: '160px',
 	},
 	listLabel: {
 		color: lib.colors.white,
@@ -80,10 +82,11 @@ const styles = lib.layout.NLStyleSheetCreator({
 	textWhite: {
 		color: lib.colors.white,
 	},
-	searchButton: {
+	button: {
 		borderRadius: lib.layout.borderRadius.large,
 		padding: '.5rem .5rem',
 		background: lib.colors.gradient3Transparent,
+		boxShadow: lib.layout.boxShadow.medium,
 	},
 	statistic: {
 		width: '31%',

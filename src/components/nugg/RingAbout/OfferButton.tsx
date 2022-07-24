@@ -78,7 +78,7 @@ export default ({
 							tokenId: token.tokenId,
 							token,
 							nuggToBuyFrom: sellingNuggId || token.activeSwap.owner,
-							nuggToBuyFor: sellingNuggId || token.activeSwap.owner,
+							nuggToBuyFor: undefined,
 							endingEpoch: token.activeSwap?.endingEpoch ?? null,
 						}),
 					);

@@ -17,6 +17,7 @@ import { nuggBackup } from '@src/contracts/backup';
 import { useNuggftV1 } from '@src/contracts/useContract';
 import emitter from '@src/emitter';
 import { EmitEventNames, EmitEvents } from '@src/emitter/interfaces';
+import { isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 
 import formatNuggItems from './formatters/formatNuggItems';
 import epoch from './epoch';
@@ -234,13 +235,37 @@ const store = create(
 
 			const handleIncomingOffers = (data: OfferData, address: AddressString) => {
 				set((draft) => {
-					if (data.isItem()) {
+					if (
+						data.isItem() &&
+						(!isUndefinedOrNullOrObjectEmpty(
+							draft.nuggs.find(
+								(nugg) => data.account.toLowerCase() === nugg.tokenId.toLowerCase(),
+							),
+						) ||
+							!isUndefinedOrNullOrObjectEmpty(
+								draft.unclaimedOffers.find(
+									(offer) =>
+										offer.tokenId.toLowerCase() === data.tokenId.toLowerCase(),
+								),
+							))
+					) {
+						console.log(
+							draft.nuggs.find(
+								(nugg) => data.account.toLowerCase() === nugg.tokenId.toLowerCase(),
+							),
+						);
 						draft.unclaimedOffers = [
 							buildTokenIdFactory({
 								tokenId: data.tokenId,
 								endingEpoch: Number(data.agencyEpoch),
 								eth: new EthInt(data.eth),
-								leader: data.account.toLowerCase() === address.toLowerCase(),
+								leader: !isUndefinedOrNullOrObjectEmpty(
+									draft.nuggs.find(
+										(nugg) =>
+											data.account.toLowerCase() ===
+											nugg.tokenId.toLowerCase(),
+									),
+								),
 								nugg: data.account,
 								claimParams: {
 									itemId: data.tokenId,
@@ -253,7 +278,16 @@ const store = create(
 								(offer) => offer.tokenId !== data.tokenId,
 							),
 						];
-					} else {
+					} else if (
+						data.isNugg() &&
+						(data.account.toLowerCase() === address.toLowerCase() ||
+							!isUndefinedOrNullOrObjectEmpty(
+								draft.unclaimedOffers.find(
+									(offer) =>
+										offer.tokenId.toLowerCase() === data.tokenId.toLowerCase(),
+								),
+							))
+					) {
 						draft.unclaimedOffers = [
 							buildTokenIdFactory({
 								tokenId: data.tokenId,

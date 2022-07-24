@@ -280,7 +280,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
 	const [showNotice, setShowNotice] = useState(false);
 
-	console.log({ showNotice });
 
 	return (
 		<>

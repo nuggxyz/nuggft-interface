@@ -1,61 +1,97 @@
 import React from 'react';
 import { t } from '@lingui/macro';
-import { IoSearch } from 'react-icons/io5';
+import { IoLocate, IoSearch } from 'react-icons/io5';
 import curriedLighten from 'polished/lib/color/lighten';
+import { useNavigate } from 'react-router-dom';
+import { GiQueenCrown } from 'react-icons/gi';
 
-import TextStatistic from '@src/components/nugg/Statistics/TextStatistic';
 import web3 from '@src/web3';
 import client from '@src/client';
 import globalStyles from '@src/lib/globalStyles';
 import Button from '@src/components/general/Buttons/Button/Button';
-import CurrencyText from '@src/components/general/Texts/CurrencyText/CurrencyText';
 import TokenViewer from '@src/components/nugg/TokenViewer';
-import lib from '@src/lib';
+import lib, { isUndefinedOrNullOrBooleanFalse, isUndefinedOrNullOrObjectEmpty } from '@src/lib';
 import Label from '@src/components/general/Label/Label';
 import SimpleList from '@src/components/general/List/SimpleList';
 import useViewingNugg from '@src/client/hooks/useViewingNugg';
+import { useLiveTokenPoll } from '@src/client/subscriptions/useLiveNugg';
 
 import styles from './ActiveTab.styles';
-import SeeAllButton from './SeeAllButton';
 
 const fancy = curriedLighten(0.25)(lib.colors.blue);
 
 export const ActiveRenderItem = ({
 	item: tokenId,
-	onClick,
+	extraData: { isActiveOffers },
 }: {
 	item: TokenId;
-	onClick?: (arg: typeof tokenId) => void;
+	extraData: { isActiveOffers?: boolean };
 }) => {
 	const { gotoViewingNugg } = useViewingNugg();
+	const navigate = useNavigate();
 	const token = client.live.token(tokenId);
+	const account = web3.hook.usePriorityAccount();
 
 	const swap = React.useMemo(() => {
 		return token?.activeSwap;
 	}, [token?.activeSwap]);
-	const swapValue = client.usd.useUsdPair(swap?.eth);
+
+	const itemNugg = client.live.token(swap?.isItem() ? swap?.leader : undefined);
+	const myNuggs = client.user.useNuggs();
+	const myNugg = React.useMemo(() => {
+		return myNuggs.find((nugg) => nugg.tokenId === swap?.leader);
+	}, [swap, myNuggs]);
+
+	useLiveTokenPoll(!isUndefinedOrNullOrBooleanFalse(isActiveOffers), tokenId);
+	useLiveTokenPoll(!isUndefinedOrNullOrBooleanFalse(myNugg), itemNugg?.tokenId);
+	const leader = React.useMemo(() => {
+		if (token?.isItem()) {
+			return itemNugg?.owner;
+		}
+		return token?.activeSwap?.leader;
+	}, [token, itemNugg]);
 	return tokenId ? (
 		<div
-			aria-hidden="true"
-			role="button"
 			style={{
 				display: 'flex',
-				padding: '.5rem 1rem',
+				flexDirection: 'column',
+				// padding: '.5rem 1rem',
 				background: lib.colors.white,
 				justifyContent: 'space-between',
 				alignItems: 'center',
-				width: '100%',
-				borderRadius: lib.layout.borderRadius.medium,
-				margin: '0rem 0rem',
+				// width: '100%',
+				borderRadius: lib.layout.borderRadius.mediumish,
+				margin: '0rem .25rem',
+				position: 'relative',
 			}}
-			onClick={
-				onClick
-					? () => {
-							onClick(tokenId);
-					  }
-					: undefined
-			}
 		>
+			<Label
+				text={tokenId.toPrettyId()}
+				size="smaller"
+				containerStyles={{
+					color: 'white',
+					background: fancy,
+					position: 'absolute',
+					top: 5,
+					left: 5,
+				}}
+			/>
+			{account &&
+				(account?.toLowerCase() === leader?.toLowerCase() ||
+					!isUndefinedOrNullOrObjectEmpty(myNugg)) && (
+					<div
+						style={{
+							position: 'absolute',
+							top: -5,
+							right: -7,
+							background: lib.colors.gradient,
+							borderRadius: lib.layout.borderRadius.large,
+							padding: '.4rem .4rem .1rem .4rem',
+						}}
+					>
+						<GiQueenCrown color={lib.colors.white} />
+					</div>
+				)}
 			<div
 				style={{
 					display: 'flex',
@@ -63,28 +99,43 @@ export const ActiveRenderItem = ({
 					alignItems: 'center',
 				}}
 			>
-				<TokenViewer tokenId={tokenId} style={globalStyles.listNugg} />
-				<div>
-					<Label
-						text={tokenId.toPrettyId()}
-						containerStyles={{
-							color: 'white',
-							marginBottom: '5px',
-							background: fancy,
-						}}
-					/>
-					<CurrencyText textStyle={{ color: fancy }} value={swapValue} />
-				</div>
+				<TokenViewer
+					tokenId={tokenId}
+					style={{ ...globalStyles.listNugg, margin: '1.5rem 1rem 0rem 1rem' }}
+				/>
 			</div>
 
-			<Button
-				key={JSON.stringify(swap)}
-				onClick={() => {
-					gotoViewingNugg(tokenId);
+			{/* <CurrencyText
+				textStyle={{ color: fancy, paddingTop: '.4rem' }}
+				value={swapValue}
+				size="smaller"
+			/> */}
+			<div
+				style={{
+					display: 'flex',
+					width: '100%',
+					justifyContent: 'space-between',
+					padding: '.2rem .4rem .4rem .4rem',
 				}}
-				buttonStyle={styles.searchButton}
-				rightIcon={<IoSearch color={lib.colors.white} />}
-			/>
+			>
+				<Button
+					onClick={() => {
+						gotoViewingNugg(tokenId);
+					}}
+					buttonStyle={styles.button}
+					rightIcon={<IoSearch color={lib.colors.white} />}
+				/>
+				<Button
+					onClick={() => {
+						navigate(`/swap/${tokenId}`);
+					}}
+					buttonStyle={{
+						...styles.button,
+						background: lib.colors.gradient2Transparent,
+					}}
+					rightIcon={<IoLocate color={lib.colors.white} />}
+				/>
+			</div>
 		</div>
 	) : null;
 };
@@ -98,11 +149,10 @@ export default () => {
 	const minutes = client.epoch.active.useMinutes();
 
 	const activeOffers = client.user.useActiveOffers();
-	console.log({ activeOffers });
 
 	return chainId && provider ? (
 		<div style={styles.container}>
-			<div>
+			{/* <div>
 				<div style={globalStyles.centeredSpaceBetween}>
 					<TextStatistic
 						label={t`Nuggs`}
@@ -115,33 +165,52 @@ export default () => {
 						style={styles.statistic}
 					/>
 				</div>
+			</div> */}
+			<div>
+				<SimpleList
+					labelStyle={{ ...styles.listLabel }}
+					data={swaps.current}
+					extraData={{ isActiveOffers: false }}
+					RenderItem={ActiveRenderItem}
+					label={t`Ending in about ${minutes} minutes`}
+					style={styles.list}
+					loaderColor="white"
+					listEmptyStyle={styles.textWhite}
+					listEmptyText={t`no ongoing auctions`}
+					action={() => undefined}
+					horizontal
+				/>
 			</div>
-
-			<SimpleList
-				TitleButton={SeeAllButton}
-				labelStyle={styles.listLabel}
-				data={swaps.current}
-				extraData={undefined}
-				RenderItem={ActiveRenderItem}
-				label={t`Ending in about ${minutes} minutes`}
-				style={styles.list}
-				loaderColor="white"
-				action={() => undefined}
-			/>
-
-			<SimpleList
-				// TitleButton={SeeAllButton}
-				labelStyle={{ ...styles.listLabel, marginTop: '20px' }}
-				data={swaps.next}
-				extraData={undefined}
-				RenderItem={ActiveRenderItem}
-				label={t`Coming Up`}
-				style={{ ...styles.list }}
-				listEmptyStyle={styles.textWhite}
-				listEmptyText={t`no action here...`}
-				loaderColor="white"
-				action={() => undefined}
-			/>
+			<div>
+				<SimpleList
+					labelStyle={{ ...styles.listLabel, marginTop: '10px' }}
+					data={swaps.next}
+					extraData={{ isActiveOffers: false }}
+					RenderItem={ActiveRenderItem}
+					label={t`Coming Up`}
+					style={{ ...styles.list }}
+					listEmptyStyle={styles.textWhite}
+					listEmptyText={t`no upcoming auctions`}
+					loaderColor="white"
+					action={() => undefined}
+					horizontal
+				/>
+			</div>
+			<div>
+				<SimpleList
+					horizontal
+					labelStyle={{ ...styles.listLabel, marginTop: '10px' }}
+					data={activeOffers.map((i) => i.tokenId)}
+					extraData={{ isActiveOffers: true }}
+					RenderItem={ActiveRenderItem}
+					label={t`Auctions you've bid on`}
+					listEmptyStyle={styles.textWhite}
+					listEmptyText={t`place some bids`}
+					style={styles.list}
+					loaderColor="white"
+					action={() => undefined}
+				/>
+			</div>
 		</div>
 	) : null;
 };
