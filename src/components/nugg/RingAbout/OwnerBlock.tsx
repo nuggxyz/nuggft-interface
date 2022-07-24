@@ -38,7 +38,7 @@ const OwnerBlock = ({ tokenId }: { tokenId?: TokenId }) => {
 
 	const darkmode = useDarkMode();
 
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 
 	const [screenType] = useDimensions();
 

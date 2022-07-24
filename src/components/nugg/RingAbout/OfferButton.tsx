@@ -22,7 +22,7 @@ export default ({
 	inOverlay?: boolean;
 }) => {
 	const address = web3.hook.usePriorityAccount();
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 
 	const lifecycle = useLifecycle(tokenId);
 

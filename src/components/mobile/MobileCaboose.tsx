@@ -89,7 +89,7 @@ export default ({ tokenId }: { tokenId?: ItemId }) => {
 	const address = web3.hook.usePriorityAccount();
 	const epoch = client.epoch.active.useId();
 	const { minutes } = client.epoch.useEpoch(epoch);
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 
 	const swap = React.useMemo(() => {
 		return token?.activeSwap;

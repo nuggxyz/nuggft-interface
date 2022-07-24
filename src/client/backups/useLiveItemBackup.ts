@@ -11,7 +11,7 @@ export default () => {
 	const provider = web3.hook.usePriorityProvider();
 	const nuggft = useNuggftV1(provider);
 
-	const updateToken = client.mutate.updateToken();
+	const updateToken = client.token.useUpdateToken();
 
 	const callback = useCallback(
 		async (tokenId: ItemId | undefined) => {

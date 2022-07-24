@@ -112,7 +112,7 @@ export const InfoPoint = ({
 const twoDigits = (num: number) => String(num).padStart(2, '0');
 
 const Info = ({ tokenId }: { tokenId?: ItemId }) => {
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 	const totalNuggs = client.stake.useTotalNuggs();
 	const featureTotals = client.stake.useFeatureTotals();
 
@@ -252,7 +252,7 @@ export const GradientButt = ({
 };
 
 const MyNugg = ({ tokenId }: { tokenId: NuggId }) => {
-	// const token = client.live.token(tokenId);
+	// const token = client.token.useToken(tokenId);
 	// const address = web3.hook.usePriorityAccount();
 	const openModal = client.modal.useOpenModal();
 
@@ -644,7 +644,7 @@ const ViewingNuggPhone = React.memo<{ tokenId?: TokenId }>(
 			}
 		}, [tokenId, prevTokenId, ref]);
 
-		const token = client.live.token(tokenId);
+		const token = client.token.useToken(tokenId);
 
 		const lifecycle = useLifecycleEnhanced(tokenId);
 

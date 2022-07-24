@@ -45,7 +45,7 @@ const ViewingNugg: FunctionComponent<Props> = () => {
 
 	useLiveTokenPoll(tokenId !== undefined, tokenId);
 
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 
 	const filteredPurchases = React.useMemo(() => {
 		if (token && epoch && token.isNugg()) {

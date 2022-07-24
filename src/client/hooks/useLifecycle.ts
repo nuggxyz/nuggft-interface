@@ -14,9 +14,9 @@ export const useLifecycleData = (tokenId?: TokenId) => {
 	const address = web3.hook.usePriorityAccount();
 	const provider = web3.hook.usePriorityProvider();
 
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 
-	const offers = client.live.offers(tokenId);
+	const offers = client.token.useOffers(tokenId);
 
 	const [lifecycle, setLifecycle] = React.useState<Lifecycle>();
 

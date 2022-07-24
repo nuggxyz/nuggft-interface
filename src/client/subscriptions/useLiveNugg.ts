@@ -5,7 +5,7 @@ import health from '@src/client/health';
 import block from '@src/client/block';
 
 // export default (_tokenId: NuggId | undefined) => {
-//     const updateToken = client.mutate.updateToken();
+//     const updateToken = client.token.useUpdateToken();
 
 //     const tokenId = useDevStable(_tokenId);
 
@@ -57,7 +57,7 @@ export const useLiveTokenPoll = (activate: boolean, _tokenId: TokenId | undefine
 };
 
 // export const useLiveTokenPoll = (activate: boolean, _tokenId: TokenId | undefined) => {
-//     const updateToken = client.mutate.updateToken();
+//     const updateToken = client.token.useUpdateToken();
 
 //     const tokenId = useDevStable(_tokenId);
 

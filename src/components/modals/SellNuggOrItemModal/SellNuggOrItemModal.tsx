@@ -33,7 +33,7 @@ const SellNuggOrItemModal = ({ data }: { data: SellModalData }) => {
 	const network = web3.hook.useNetworkProvider();
 	const stake = client.stake.useEps();
 	const nuggft = useNuggftV1(network);
-	const token = client.live.token(data.tokenId);
+	const token = client.token.useToken(data.tokenId);
 	useLiveTokenPoll(!token, data.tokenId);
 	const myNuggs = client.user.useNuggs();
 	const [lastPressed, setLastPressed] = React.useState<string | undefined>('5');

@@ -11,7 +11,7 @@ import useLiveItemBackup from '@src/client/backups/useLiveItemBackup';
 export default () => {
 	const epoch = client.epoch.active.useId();
 
-	const updateToken = client.mutate.updateToken();
+	const updateToken = client.token.useUpdateToken();
 	const navigate = useNavigate();
 
 	const [itemLazyQuery] = useGetLiveItemLazyQuery({

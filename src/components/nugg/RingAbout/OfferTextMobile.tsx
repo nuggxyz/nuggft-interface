@@ -16,7 +16,7 @@ import useLifecycleEnhanced from '@src/client/hooks/useLifecycleEnhanced';
 import { useUsdPair } from '@src/client/usd';
 
 const OfferTextMobile = ({ tokenId }: { tokenId?: TokenId }) => {
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 
 	const swap = React.useMemo(() => {
 		return token?.activeSwap;
@@ -25,7 +25,7 @@ const OfferTextMobile = ({ tokenId }: { tokenId?: TokenId }) => {
 
 	const [, isPhone] = useDimensions();
 
-	// const hasBids = client.live.offers(tokenId).length !== 0;
+	// const hasBids = client.token.useOffers(tokenId).length !== 0;
 
 	// const text = useMemo(() => {
 	//     if (!token || !lifecycle) return '';
@@ -79,7 +79,7 @@ const OfferTextMobile = ({ tokenId }: { tokenId?: TokenId }) => {
 
 export const BuntOfferTextMobile = ({ tokenId }: { tokenId: TokenId }) => {
 	const nuggft = useNuggftV1();
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 	const lifecycle = useLifecycleEnhanced(tokenId);
 
 	const provider = web3.hook.usePriorityProvider();
@@ -100,7 +100,7 @@ export const BuntOfferTextMobile = ({ tokenId }: { tokenId: TokenId }) => {
 		return undefined;
 	}, [token, nuggft, tokenId, provider]);
 
-	const offers = client.live.offers(tokenId);
+	const offers = client.token.useOffers(tokenId);
 	const [, isPhone] = useDimensions();
 
 	const dynamicTextColor = React.useMemo(() => {

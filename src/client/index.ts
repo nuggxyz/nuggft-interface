@@ -22,6 +22,7 @@ import v2 from './v2';
 import v3 from './v3';
 import user from './user';
 import all from './all';
+import token from './token';
 
 export default {
 	core,
@@ -56,22 +57,22 @@ export default {
 		},
 		darkmode: () => core((state) => state.darkmode, shallow),
 		/// ///// complex ////////
-		offers: <A extends TokenId>(tokenId: A | undefined) =>
-			core(
-				// eslint-disable-next-line react-hooks/rules-of-hooks
-				useCallback(
-					(state) => (tokenId ? state.liveTokens[tokenId]?.activeSwap?.offers ?? [] : []),
-					[tokenId],
-				),
-			),
-		token: <A extends TokenId>(tokenId: A | undefined) =>
-			core(
-				// eslint-disable-next-line react-hooks/rules-of-hooks
-				useCallback(
-					(state) => (tokenId ? state.liveTokens[tokenId] : undefined),
-					[tokenId],
-				),
-			),
+		// offers: <A extends TokenId>(tokenId: A | undefined) =>
+		// 	core(
+		// 		// eslint-disable-next-line react-hooks/rules-of-hooks
+		// 		useCallback(
+		// 			(state) => (tokenId ? state.liveTokens[tokenId]?.activeSwap?.offers ?? [] : []),
+		// 			[tokenId],
+		// 		),
+		// 	),
+		// token: <A extends TokenId>(tokenId: A | undefined) =>
+		// 	core(
+		// 		// eslint-disable-next-line react-hooks/rules-of-hooks
+		// 		useCallback(
+		// 			(state) => (tokenId ? state.liveTokens[tokenId] : undefined),
+		// 			[tokenId],
+		// 		),
+		// 	),
 
 		myRecents: () =>
 			core((state) =>
@@ -86,7 +87,7 @@ export default {
 		updateOffers: () => core((state) => state.updateOffers),
 		setLastSwap: () => core((state) => state.setLastSwap),
 		setPageIsLoaded: () => core((state) => state.setPageIsLoaded),
-		updateToken: () => core((state) => state.updateToken),
+		// updateToken: () => core((state) => state.updateToken),
 		updateLocale: () => core((state) => state.updateLocale),
 		updateSearchFilterTarget: () => core((state) => state.updateSearchFilterTarget),
 		updateSearchFilterViewing: () => core((state) => state.updateSearchFilterViewing),
@@ -114,4 +115,5 @@ export default {
 	v3,
 	user,
 	all,
+	token,
 };

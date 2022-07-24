@@ -11,20 +11,20 @@ import SaleButtons from './ActionButtons/SaleButtons';
 type Props = Record<string, never>;
 
 const MyNuggActions: FunctionComponent<Props> = () => {
-    const { safeTokenId: regular } = useViewingNugg();
-    const { tokenId: mobile } = useMobileViewingNugg();
-    const tokenId = useMemo(() => regular || mobile, [regular, mobile]);
-    const token = client.live.token(tokenId);
+	const { safeTokenId: regular } = useViewingNugg();
+	const { tokenId: mobile } = useMobileViewingNugg();
+	const tokenId = useMemo(() => regular || mobile, [regular, mobile]);
+	const token = client.token.useToken(tokenId);
 
-    return tokenId && token && token.isNugg() ? (
-        token?.activeSwap?.tokenId ? (
-            <SaleButtons tokenId={tokenId} reclaim={!token?.pendingClaim} />
-        ) : token?.activeLoan && token.type === 'nugg' ? (
-            <LoanButtons tokenId={token.tokenId} />
-        ) : (
-            <OwnerButtons tokenId={token.tokenId} />
-        )
-    ) : null;
+	return tokenId && token && token.isNugg() ? (
+		token?.activeSwap?.tokenId ? (
+			<SaleButtons tokenId={tokenId} reclaim={!token?.pendingClaim} />
+		) : token?.activeLoan && token.type === 'nugg' ? (
+			<LoanButtons tokenId={token.tokenId} />
+		) : (
+			<OwnerButtons tokenId={token.tokenId} />
+		)
+	) : null;
 };
 
 export default MyNuggActions;

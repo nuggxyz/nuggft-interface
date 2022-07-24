@@ -10,7 +10,7 @@ import { DEFAULT_CONTRACTS } from '@src/web3/constants';
 import client from '..';
 
 export default () => {
-	const updateOffers = client.mutate.updateOffers();
+	const updateOffers = client.token.useUpdateOffers();
 	const updateStake = client.stake.useUpdate();
 	const nuggs = client.user.useNuggs();
 

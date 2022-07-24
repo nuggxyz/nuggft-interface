@@ -11,7 +11,7 @@ import packages from '@src/packages';
 
 const Tldr_6: NuggBookPage = ({ setPage }) => {
 	const epoch = client.epoch.active.useId();
-	const token = client.live.token(epoch?.toNuggId());
+	const token = client.token.useToken(epoch?.toNuggId());
 	const spring4 = packages.spring.useSpring({
 		from: {
 			opacity: 0,

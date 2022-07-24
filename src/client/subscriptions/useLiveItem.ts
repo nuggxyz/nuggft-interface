@@ -4,7 +4,7 @@ import client from '@src/client';
 import useDevStable from '@src/hooks/useDevStable';
 
 export default (_tokenId: ItemId | undefined) => {
-	const updateToken = client.mutate.updateToken();
+	const updateToken = client.token.useUpdateToken();
 
 	const tokenId = useDevStable(_tokenId);
 

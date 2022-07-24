@@ -9,10 +9,10 @@ import useLifecycle from '@src/client/hooks/useLifecycle';
 import styles from './RingAbout.styles';
 
 const OfferText = ({ tokenId, textStyle }: { tokenId?: TokenId; textStyle?: CSSProperties }) => {
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 	const lifecycle = useLifecycle(tokenId);
 
-	const hasBids = client.live.offers(tokenId).length !== 0;
+	const hasBids = client.token.useOffers(tokenId).length !== 0;
 
 	const text = useMemo(() => {
 		if (!token || !lifecycle) return '';
@@ -55,7 +55,7 @@ const OfferText = ({ tokenId, textStyle }: { tokenId?: TokenId; textStyle?: CSSP
 };
 
 // export const BuntOfferText = ({ tokenId }: { tokenId: TokenId }) => {
-//     const token = client.live.token(tokenId);
+//     const token = client.token.useToken(tokenId);
 
 //     const provider = web3.hook.usePriorityProvider();
 
@@ -77,7 +77,7 @@ const OfferText = ({ tokenId, textStyle }: { tokenId?: TokenId; textStyle?: CSSP
 //     //     // },
 //     // );
 
-//     const offers = client.live.offers(tokenId);
+//     const offers = client.token.useOffers(tokenId);
 
 //     const leader = React.useMemo(() => {
 //         return offers.first() as unknown as OfferData | undefined;

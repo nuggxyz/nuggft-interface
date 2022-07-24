@@ -29,14 +29,14 @@ export const ActiveRenderItem = ({
 }) => {
 	const { gotoViewingNugg } = useViewingNugg();
 	const navigate = useNavigate();
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 	const account = web3.hook.usePriorityAccount();
 
 	const swap = React.useMemo(() => {
 		return token?.activeSwap;
 	}, [token?.activeSwap]);
 
-	const itemNugg = client.live.token(swap?.isItem() ? swap?.leader : undefined);
+	const itemNugg = client.token.useToken(swap?.isItem() ? swap?.leader : undefined);
 	const myNuggs = client.user.useNuggs();
 	const myNugg = React.useMemo(() => {
 		return myNuggs.find((nugg) => nugg.tokenId === swap?.leader);

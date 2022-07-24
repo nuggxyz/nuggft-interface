@@ -96,7 +96,7 @@ export const SwapListItem: FunctionComponent<{ item: SwapDataWithTryout }> = ({ 
 };
 
 const SwapListPhone: FunctionComponent<{ tokenId?: TokenId }> = ({ tokenId }) => {
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 
 	const epoch = client.epoch.active.useId();
 	const filtered = React.useMemo(() => {

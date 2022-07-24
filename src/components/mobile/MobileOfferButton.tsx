@@ -72,7 +72,7 @@ export default ({
 
 	const myNuggs = client.user.useNuggs();
 
-	const offers = client.live.offers(tokenId);
+	const offers = client.token.useOffers(tokenId);
 
 	const [selectedMyNuggIndex, setSelectedMyNuggIndex] = React.useState<number>();
 

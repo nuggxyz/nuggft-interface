@@ -66,7 +66,7 @@ export default ({
 	onContinue?: () => void;
 	onSelectMyNugg?: (tokenId: NuggId) => void;
 }) => {
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 	const address = web3.hook.usePriorityAccount();
 	const [nuggToBuyFrom, setNuggToBuyFrom] = React.useState<TryoutData>();
 	const openModal = client.modal.useOpenModal();

@@ -12,7 +12,7 @@ export const useStartupCallback = () => {
 	const provider = web3.hook.usePriorityProvider();
 	const chainId = web3.hook.usePriorityChainId();
 
-	const updateToken = client.mutate.updateToken();
+	const updateToken = client.token.useUpdateToken();
 	const setLastSwap = client.mutate.setLastSwap();
 
 	const [itemLazyQuery] = useGetLiveItemLazyQuery({ client: graph });

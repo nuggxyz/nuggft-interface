@@ -10,7 +10,7 @@ import client from '..';
 export default (tokenId?: TokenId) => {
 	const lifecycle = useLifecycle(tokenId);
 
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 
 	const epoch = client.epoch.active.useId();
 	const blocknum = client.block.useBlock();

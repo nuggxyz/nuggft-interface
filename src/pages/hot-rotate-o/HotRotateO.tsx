@@ -842,7 +842,7 @@ export const useHotRotateOTransaction = (tokenId?: NuggId) => {
 		return undefined;
 	}, [items, tokenId]);
 
-	// const token = client.live.token(tokenId);
+	// const token = client.token.useToken(tokenId);
 
 	// const needToClaim = React.useMemo(() => {
 	// 	return token && token.isNugg() && token.pendingClaim;

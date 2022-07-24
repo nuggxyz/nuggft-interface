@@ -68,7 +68,7 @@ export default React.memo<{
 	sellingNuggId?: NuggId;
 	onlyLeader?: boolean;
 }>(({ tokenId, onlyLeader }) => {
-	const others = client.live.offers(tokenId);
+	const others = client.token.useOffers(tokenId);
 	const [lifecycle, swap, swapCurrency] = useLifecycleData(tokenId);
 	const chainId = web3.hook.usePriorityChainId();
 	const provider = web3.hook.usePriorityProvider();

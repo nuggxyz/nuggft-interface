@@ -12,116 +12,116 @@ import useViewingNugg from '@src/client/hooks/useViewingNugg';
 import styles from './NuggDexComponents.styles';
 
 const NuggListRenderItemSwap = ({
-    item: tokenId,
+	item: tokenId,
 }: GodListRenderItemProps<TokenId, undefined, undefined>) => {
-    const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 
-    const swap = React.useMemo(() => {
-        return token?.activeSwap;
-    }, [token?.activeSwap]);
-    const preference = client.usd.useUsdPair(swap?.eth);
-    const provider = web3.hook.usePriorityProvider();
-    const ens = web3.hook.usePriorityAnyENSName(swap?.isItem() ? 'nugg' : provider, swap?.leader);
+	const swap = React.useMemo(() => {
+		return token?.activeSwap;
+	}, [token?.activeSwap]);
+	const preference = client.usd.useUsdPair(swap?.eth);
+	const provider = web3.hook.usePriorityProvider();
+	const ens = web3.hook.usePriorityAnyENSName(swap?.isItem() ? 'nugg' : provider, swap?.leader);
 
-    return swap && tokenId ? (
-        <div
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                alignItems: 'center',
-            }}
-        >
-            <Label
-                text={tokenId.toPrettyId()}
-                size="larger"
-                containerStyles={{ marginBottom: '10px' }}
-            />
-            <CurrencyText
-                textStyle={{ color: lib.colors.primaryColor }}
-                // image="eth"
-                value={preference}
-                stopAnimation
-            />
-            {swap.leader && ens && <Label text={ens} />}
-        </div>
-    ) : null;
+	return swap && tokenId ? (
+		<div
+			style={{
+				display: 'flex',
+				justifyContent: 'center',
+				flexDirection: 'column',
+				alignItems: 'center',
+			}}
+		>
+			<Label
+				text={tokenId.toPrettyId()}
+				size="larger"
+				containerStyles={{ marginBottom: '10px' }}
+			/>
+			<CurrencyText
+				textStyle={{ color: lib.colors.primaryColor }}
+				// image="eth"
+				value={preference}
+				stopAnimation
+			/>
+			{swap.leader && ens && <Label text={ens} />}
+		</div>
+	) : null;
 };
 
 type Props = GodListRenderItemProps<TokenId, { cardType: 'swap' | 'all' | 'recent' }, TokenId>;
 
 const NuggListRenderItem: FunctionComponent<Props> = ({
-    item: tokenId,
-    action,
-    extraData,
-    index,
+	item: tokenId,
+	action,
+	extraData,
+	index,
 }) => {
-    const { safeTokenId: viewingId } = useViewingNugg();
+	const { safeTokenId: viewingId } = useViewingNugg();
 
-    const style = useMemo(() => {
-        return {
-            ...(tokenId ? styles.nuggListRenderItemContainer : {}),
-            background:
-                viewingId === tokenId ? lib.colors.nuggBlueTransparent : lib.colors.transparent,
-        };
-    }, [tokenId, viewingId]);
+	const style = useMemo(() => {
+		return {
+			...(tokenId ? styles.nuggListRenderItemContainer : {}),
+			background:
+				viewingId === tokenId ? lib.colors.nuggBlueTransparent : lib.colors.transparent,
+		};
+	}, [tokenId, viewingId]);
 
-    return (
-        <div
-            id={`item-${tokenId || index || 0}`}
-            aria-hidden="true"
-            role="button"
-            style={style}
-            onClick={() => action && action(tokenId)}
-        >
-            <TokenViewer
-                tokenId={tokenId}
-                style={{
-                    height: '200px',
-                    width: '200px',
-                    padding: '1rem',
-                }}
-                disableOnClick
-                // forceCache
-                // shouldLoad={isPageLoaded}
-            />
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                {extraData?.cardType === 'swap' ? (
-                    <NuggListRenderItemSwap item={tokenId} />
-                ) : (
-                    tokenId && (
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <Label
-                                text={tokenId.toPrettyId()}
-                                size="larger"
-                                containerStyles={{ marginBottom: '10px' }}
-                            />
-                        </div>
-                    )
-                )}
-            </div>
-        </div>
-    );
+	return (
+		<div
+			id={`item-${tokenId || index || 0}`}
+			aria-hidden="true"
+			role="button"
+			style={style}
+			onClick={() => action && action(tokenId)}
+		>
+			<TokenViewer
+				tokenId={tokenId}
+				style={{
+					height: '200px',
+					width: '200px',
+					padding: '1rem',
+				}}
+				disableOnClick
+				// forceCache
+				// shouldLoad={isPageLoaded}
+			/>
+			<div
+				style={{
+					display: 'flex',
+					justifyContent: 'center',
+					flexDirection: 'column',
+					alignItems: 'center',
+				}}
+			>
+				{extraData?.cardType === 'swap' ? (
+					<NuggListRenderItemSwap item={tokenId} />
+				) : (
+					tokenId && (
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'center',
+								flexDirection: 'column',
+								alignItems: 'center',
+							}}
+						>
+							<Label
+								text={tokenId.toPrettyId()}
+								size="larger"
+								containerStyles={{ marginBottom: '10px' }}
+							/>
+						</div>
+					)
+				)}
+			</div>
+		</div>
+	);
 };
 
 export default React.memo(
-    NuggListRenderItem,
-    (prevProps, props) =>
-        prevProps.item === props.item &&
-        prevProps.selected === props.selected &&
-        JSON.stringify(prevProps.action) === JSON.stringify(props.action),
+	NuggListRenderItem,
+	(prevProps, props) =>
+		prevProps.item === props.item &&
+		prevProps.selected === props.selected &&
+		JSON.stringify(prevProps.action) === JSON.stringify(props.action),
 ) as typeof NuggListRenderItem;

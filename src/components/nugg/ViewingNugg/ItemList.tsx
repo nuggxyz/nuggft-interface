@@ -125,7 +125,7 @@ const Item: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggId }> = ({
 };
 
 const ItemList: FunctionComponent<Props> = ({ items, tokenId }) => {
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 	const address = web3.hook.usePriorityAccount();
 
 	if (!token || !token?.isNugg()) return null;
@@ -421,7 +421,7 @@ export const ItemPhone: FC<{ item: LiveNuggItem; isOwner: boolean; nuggId: NuggI
 };
 
 export const ItemListPhone: FunctionComponent<{ tokenId?: NuggId }> = ({ tokenId }) => {
-	const token = client.live.token(tokenId);
+	const token = client.token.useToken(tokenId);
 	const address = web3.hook.usePriorityAccount();
 
 	if (!token || !token?.isNugg()) return null;
