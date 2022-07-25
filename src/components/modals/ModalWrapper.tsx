@@ -82,13 +82,19 @@ const Modal: FC<unknown> = () => {
 		[wrapperHeight],
 	);
 
+	const [trig, setTrig] = React.useState(false);
+
 	useEffect(() => {
 		animate({
 			height: `${
-				data && contentRef.current ? contentRef.current.offsetHeight : wrapperHeight
+				data && contentRef.current
+					? contentRef.current.offsetHeight === 0 && contentRef.current.lastChild
+						? (contentRef.current.lastChild as HTMLElement).offsetHeight
+						: contentRef.current.offsetHeight
+					: wrapperHeight
 			}px`,
 		});
-	}, [animate, contentRef, data, wrapperHeight]);
+	}, [animate, contentRef, data, wrapperHeight, trig]);
 
 	return (
 		<animated.div style={{ ...style }}>
@@ -131,11 +137,13 @@ const Modal: FC<unknown> = () => {
 					ref={clickBoundaryRef}
 				>
 					<div
+						aria-hidden="true"
 						ref={contentRef}
 						style={{
 							position: 'absolute',
 							width: '100%',
 						}}
+						onClick={() => setTrig(!trig)}
 					>
 						<ModalSwitch />
 					</div>

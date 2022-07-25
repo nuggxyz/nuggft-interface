@@ -49,6 +49,11 @@ const globalStyles = lib.layout.NLStyleSheetCreator({
 		opacity: 0,
 		pointerEvents: 'none',
 	},
+	displayNone: {
+		opacity: 0,
+		pointerEvents: 'none',
+		display: 'none',
+	},
 } as const);
 
 export default globalStyles;

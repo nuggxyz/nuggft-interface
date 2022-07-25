@@ -280,7 +280,6 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 
 	const [showNotice, setShowNotice] = useState(false);
 
-
 	return (
 		<>
 			<div
@@ -355,7 +354,12 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 						}}
 					/>
 				)}
-				<div style={styles.inputContainer}>
+				<div
+					style={{
+						...styles.inputContainer,
+						...(!data.isItem() || selectedNuggForItem ? {} : globalStyles.displayNone),
+					}}
+				>
 					<DualCurrencyInput
 						warning={estimateError && lib.errors.prettify('offer-modal', estimateError)}
 						shouldFocus
@@ -449,13 +453,26 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 						// display: userBalance ? 'auto' : 'none',
 					}}
 				>
-					<Text type="text" textStyle={styles.text}>
+					<Text
+						type="text"
+						textStyle={{
+							...styles.text,
+							...(!data.isItem() || selectedNuggForItem
+								? {}
+								: globalStyles.displayNone),
+						}}
+					>
 						{t`You currently have ${userBalance?.decimal
 							.toNumber()
 							.toPrecision(5)} ETH`}
 					</Text>
 				</div>
-				<div style={styles.subContainer}>
+				<div
+					style={{
+						...styles.subContainer,
+						...(!data.isItem() || selectedNuggForItem ? {} : globalStyles.displayNone),
+					}}
+				>
 					<FeedbackButton
 						className="mobile-pressable-div-shallow"
 						timeout={
@@ -654,6 +671,7 @@ const MyNuggRenderItem: FC<GodListRenderItemProps<FormatedMyNuggsData, undefined
 				width: '125px',
 			}}
 			aria-hidden="true"
+			className="mobile-pressable-div-shallow"
 			onClick={() => action && action(item?.tokenId)}
 		>
 			{item && (
