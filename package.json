@@ -24,7 +24,7 @@
         "version:commit": "git add . && git commit -m \"v$(yarn version:get)\"",
         "version:changeset": "yarn changeset add && yarn changeset version",
         "version:platform": "echo \"WINDOWS USER DETECTED - INITATING SELF DESTRUCTION\"",
-        "version:push": "git push origin --tags",
+        "version:push": "git push --follow-tags",
         "release": "yarn version:changeset && yarn version:platform  && yarn version:commit && yarn version:tag && yarn version:push"
     },
     "browserslist": {
