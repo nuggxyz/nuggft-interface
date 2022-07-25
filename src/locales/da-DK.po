@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2022-07-18 13:30+0000\n"
+"POT-Creation-Date: 2022-07-24 15:03+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-File-ID: 10\n"
 "Project-Id-Version: nuggft-interface\n"
 "Language-Team: Danish\n"
-"PO-Revision-Date: 2022-07-19 06:06\n"
+"PO-Revision-Date: 2022-07-25 06:05\n"
 
 #: src/components/mobile/OfferModalMobile.tsx
 #: src/components/modals/OfferModal/OfferModal.tsx
@@ -68,10 +68,6 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
-#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
-msgid "Active Items"
-msgstr ""
-
 #: src/client/formatters/formatSearchFilter.ts
 msgid "All Items"
 msgstr ""
@@ -86,6 +82,10 @@ msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_2.tsx
 msgid "At the end of each period a new nugg is minted and the next period begins, following this cycle until all 10,000 nuggs have been minted"
+msgstr ""
+
+#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
+msgid "Auctions you've bid on"
 msgstr ""
 
 #: src/components/nugg/ViewingNugg/SwapList.tsx
@@ -377,7 +377,6 @@ msgstr ""
 msgid "Nugg {tokenId} is happily owned by"
 msgstr ""
 
-#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
 #: src/components/nugg/Wallet/tabs/HomeTab/HomeTab.tsx
 msgid "Nuggs"
 msgstr ""
@@ -1162,7 +1161,11 @@ msgid "nice, so how do I get a nugg? 🆒"
 msgstr ""
 
 #: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
-msgid "no action here..."
+msgid "no ongoing auctions"
+msgstr ""
+
+#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
+msgid "no upcoming auctions"
 msgstr ""
 
 #: src/components/nuggbook/pages/tldr/Tldr_5.tsx
@@ -1234,6 +1237,10 @@ msgstr ""
 #: src/components/mobile/MobileCaboose.tsx
 #: src/components/mobile/MobileOfferButton.tsx
 msgid "place offer"
+msgstr ""
+
+#: src/components/nugg/Wallet/tabs/ActiveTab/ActiveTab.tsx
+msgid "place some bids"
 msgstr ""
 
 #: src/components/nuggbook/pages/1-the-rundown/Rundown_5.tsx
