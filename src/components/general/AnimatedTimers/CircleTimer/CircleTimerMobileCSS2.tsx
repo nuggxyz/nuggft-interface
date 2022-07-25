@@ -107,6 +107,9 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
 					filter: `drop-shadow(2px 3px 2px rgb(0 0 0 / 0.2)) hue-rotate(0)`,
 					willChange: 'filter',
 					transformOrigin: 'center',
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
 				}}
 			>
 				<svg
@@ -115,6 +118,7 @@ const CircleTimerMobileCSS: FunctionComponent<Props> = ({
 						transformBox: 'fill-box',
 						transformOrigin: 'center',
 						transform: 'rotate(-90deg)',
+						position: 'absolute',
 					}}
 				>
 					<circle

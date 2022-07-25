@@ -62,6 +62,8 @@ const Butter = ({
 		return [1, 1];
 	}, [blocknum, endingEpoch, activated, hasNoBids]);
 
+	console.log([secsTillNextInterval, intervalLastsForSecs]);
+
 	return (
 		<div
 			role="button"
@@ -578,7 +580,7 @@ const OfferModal = ({ data }: { data: OfferModalData }) => {
 						display: 'flex',
 						width: '100%',
 						justifyContent: 'flex-start',
-						padding: '20px 10px 10px 10px',
+						padding: '20px 10px',
 						overflowX: 'scroll',
 						overflowY: 'hidden',
 					}}
