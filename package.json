@@ -1,6 +1,6 @@
 {
     "name": "nuggft-interface",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "nuggft web facing application",
     "main": "src/index.tsx",
     "author": "nuggxyz",
@@ -19,13 +19,13 @@
         "i18n:compile": "yarn i18n:extract && lingui compile",
         "i18n:pseudo": "lingui extract --locale pseudo && lingui compile",
         "typechain:compile": "typechain --target ethers-v5 --always-generate-overloads --out-dir src/typechain/ './src/abis/*'",
-		"version:tag": "git tag \"v$(yarn version:get)\"",
-		"version:get": "grep '\"version\"' package.json | sed 's/.*\"version\": \"\\(.*\\)\".*/\\1/'",
-		"version:commit": "git add . && git commit -m \"v$(yarn version:get)\"",
-		"version:changeset": "yarn changeset add && yarn changeset version",
-		"version:platform": "echo \"WINDOWS USER DETECTED - INITATING SELF DESTRUCTION\"",
-		"version:push": "git push origin --tags",
-		"release": "yarn version:changeset && yarn version:platform  && yarn version:commit && yarn version:tag && yarn version:push"
+        "version:tag": "git tag \"v$(yarn version:get)\"",
+        "version:get": "grep '\"version\"' package.json | sed 's/.*\"version\": \"\\(.*\\)\".*/\\1/'",
+        "version:commit": "git add . && git commit -m \"v$(yarn version:get)\"",
+        "version:changeset": "yarn changeset add && yarn changeset version",
+        "version:platform": "echo \"WINDOWS USER DETECTED - INITATING SELF DESTRUCTION\"",
+        "version:push": "git push origin --tags",
+        "release": "yarn version:changeset && yarn version:platform  && yarn version:commit && yarn version:tag && yarn version:push"
     },
     "browserslist": {
         "production": [
